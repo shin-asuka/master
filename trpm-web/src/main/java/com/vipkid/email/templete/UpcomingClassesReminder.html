@@ -1,0 +1,26 @@
+<meta charset="UTF8">	
+<div style="padding-top:16px;"><img style="width:150px;" src='http://vipkid.oss-cn-beijing.aliyuncs.com/teacher_recruitment/resource_2016_03_01/logotm.png'></div>
+<div style="background:#333;width:100%;height:25px;margin-top:15px;"></div>
+<div style="font-family:'Source Sans Pro', 'Helvetica Neue', Helvetica, Arial, sans-serif;font-size:large;padding:10px 35px;background:#fff;">
+	<p>Dear teacher {{teacherName}},</p>
+	<p>This email is to remind you that you have <b>{{count}}</b> class(es) in total booked in <b>{{mouth-day}}</b> Beijing time: </p>
+	<table style="width:100%">
+		<thead><tr><th>Course Time(Beijing Time)</th><th>Student's English Name</th><th>Course Code</th></tr></thead>
+		<tbody>
+			{{datetime-name-course}}
+		</tbody>
+	</table>
+	<p>Please make sure you check your schedule ahead on your teacher portal. The opened timeslots can always be booked or cancelled at least 24 hours before the scheduled time, so the number of your booked class(es) can be different.</p>
+	<p>Please do NOT reply to this email directly. For any further Education related inquiries, please create a ticket on our service platform vipkid.freshdesk.com. We are moving away from our email system starting now. You will also find a wealth of information to help get you started with any issues or concerns you may have.</p>
+	<p>Best Regards,</p>
+	<p>VIPKID Education</p>
+</div>
+<div style="text-align:center;font-weight:bold;padding-top:30px;">© 2016 VIPKID Limited.</div>
+<div style="text-align:center;font-weight:bold;">If you need any assistance or have any questions feel free to contact <a href="mailto:teachvip@vipkid.com.cn">The VIPKID Recruitment Team</a></div>
+<style>
+table td{text-align:center;height:25px;line-height:25px;}
+body{
+width:980px;margin:0 auto!important;
+background:#dfdfdf!important;
+}
+</style>

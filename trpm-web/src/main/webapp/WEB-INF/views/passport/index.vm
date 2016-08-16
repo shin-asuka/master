@@ -1,0 +1,6 @@
+<div style="text-align:left;padding-top:50px;padding-left:100px;font-size:14px;opacity:0.7;color:#ccc;">
+	<h3>Please wait for a moment.Page Jump...</h3><br/>
+</div>
+#if($!{token})
+	<script type="text/javascript" src="$!{recruitmentUrl}signlogin.shtml?token=$!{token}"></script>
+#end

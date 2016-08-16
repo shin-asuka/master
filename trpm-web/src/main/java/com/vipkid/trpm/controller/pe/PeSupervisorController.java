@@ -1,0 +1,143 @@
+package com.vipkid.trpm.controller.pe;
+
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.ServletRequestUtils;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import com.vipkid.trpm.constant.ApplicationConstant.FinishType;
+import com.vipkid.trpm.dao.TeacherApplicationDao;
+import com.vipkid.trpm.entity.Teacher;
+import com.vipkid.trpm.entity.TeacherApplication;
+import com.vipkid.trpm.entity.TeacherPe;
+import com.vipkid.trpm.service.passport.IndexService;
+import com.vipkid.trpm.service.pe.PeSupervisorService;
+import com.vipkid.trpm.service.portal.OnlineClassService;
+
+@Controller
+public class PeSupervisorController extends AbstractPeController {
+
+    private static Logger logger = LoggerFactory.getLogger(PeSupervisorController.class);
+
+    @Autowired
+    private PeSupervisorService peSupervisorService;
+
+    @Autowired
+    private IndexService indexService;
+
+    @Autowired
+    private OnlineClassService onlineclassService;
+
+    @Autowired
+    private TeacherApplicationDao teacherApplicationDao;
+
+    @RequestMapping("/pesupervisor")
+    public String peSupervisor(HttpServletRequest request, HttpServletResponse response,
+            Model model) {
+        model.addAttribute("linePerPage", LINE_PER_PAGE);
+        Teacher teacher = indexService.getTeacher(request);
+        model.addAttribute("totalLine", peSupervisorService.totalPe(teacher.getId()));
+        return view("classrooms_pe");
+    }
+
+    @RequestMapping("/pe/classList")
+    public String classList(HttpServletRequest request, HttpServletResponse response, Model model) {
+        int curPage = ServletRequestUtils.getIntParameter(request, "curPage", 1);
+        Teacher teacher = indexService.getTeacher(request);
+        model.addAllAttributes(
+                peSupervisorService.classList(teacher.getId(), curPage, LINE_PER_PAGE));
+        return jsonView();
+    }
+
+    @RequestMapping("/pereview")
+    public String peReview(HttpServletRequest request, HttpServletResponse response, Model model) {
+        Teacher teacher = this.indexService.getTeacher(request);
+        int id = ServletRequestUtils.getIntParameter(request, "id", 0);
+        long onlineClassId = ServletRequestUtils.getLongParameter(request, "classId", 0);
+        TeacherPe teacherPe = this.peSupervisorService.getTeacherPe(id);
+
+        if (teacherPe != null && teacher.getId() == teacherPe.getPeId()) {
+            logger.info("PE(" + teacher.getId() + "):进入onloineClassId:" + onlineClassId);
+            model.addAttribute("url", this.peSupervisorService.getClassRoomUrl(teacherPe));
+            model.addAttribute("teacherPe", teacherPe);
+
+            TeacherApplication teacherApplication =
+                    peSupervisorService.getTeacherApplication(teacherPe.getTeacherId());
+            model.addAttribute("teacherApplication", teacherApplication);
+
+            // 更新审核开始时间
+            if (null == teacherPe.getOperatorStartTime()) {
+                peSupervisorService.updatePeSupervisorStartTime(teacherPe.getId());
+            }
+
+            List<TeacherApplication> list = teacherApplicationDao
+                    .findApplictionForPracticum2(teacherApplication.getTeacherId());
+            if (list != null && list.size() > 0) {
+                model.addAttribute("practicum2", true);
+            } else {
+                model.addAttribute("practicum2", false);
+            }
+
+            return view("online_class_pe");
+        } else {
+            logger.error("PE(" + teacher.getId() + "):没有权限进入该class Review");
+            String errorHTML = "You cannot enter this classroom!";
+            model.addAttribute("info", errorHTML);
+            return "error/info";
+        }
+    }
+
+    /**
+     * audit 课程
+     *
+     * @Author:ALong
+     * @Title: doAudit
+     * @param type 完成类型
+     * @param onlineClassId 课程Id
+     * @param studentId 学生Id
+     * @param comments 备注
+     * @param finishType 完成类型
+     * @return String
+     * @date 2016年1月11日
+     */
+    @RequestMapping("/pe/doAudit")
+    public String peDoAudit(HttpServletRequest request, HttpServletResponse response,
+            TeacherApplication teacherApplication, Model model) {
+        Teacher peSupervisor = indexService.getTeacher(request);
+        int peId = ServletRequestUtils.getIntParameter(request, "peId", -1);
+        String type = ServletRequestUtils.getStringParameter(request, "type", "");
+        String finishType = ServletRequestUtils.getStringParameter(request, "finishType", "");
+
+        if (StringUtils.isEmpty(finishType)) {
+            finishType = FinishType.AS_SCHEDULED;
+        }
+        Map<String, Object> modelMap = peSupervisorService.updateAudit(peSupervisor,
+                teacherApplication, type, finishType, peId);
+        model.addAllAttributes(modelMap);
+
+        // Finish课程
+        if ((Boolean) modelMap.get("result")) {
+            onlineclassService.finishPracticum(teacherApplication.getOnlineClassId(), finishType);
+        }
+
+        return jsonView(response, modelMap);
+    }
+
+    @RequestMapping("/peExitClass")
+    public String peExitClass(HttpServletRequest request, HttpServletResponse response,
+            long teacherApplicationId, Model model) {
+        Map<String, Object> modelMap = peSupervisorService.peExitClass(teacherApplicationId);
+        return jsonView(response, modelMap);
+    }
+
+}

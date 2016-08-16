@@ -1,0 +1,244 @@
+#set($layout = "/activity/layout.vm")
+<style>
+	.section{text-align:center;color:#fff;}
+	audio{height:0px;}
+</style>
+	<audio src="http://resource.vipkid.com.cn/bigdata/song-puzzle.mp3" controls="controls" preload id="music1" loop="loop" hidden></audio>
+	<div class="section homepage">	
+		<div class="content">
+      <img class="titpic" src="#styleUrl('/resources/images/activity/titpic.png')"/>
+      <div class="mico">
+        <img class="micoimg" src="#styleUrl('/resources/images/activity/mico.png')" />
+        <p class="mute">mute</p>
+      </div>
+      <img class="posab pinkball" src="#styleUrl('/resources/images/activity/pinkball.png')"/>
+      <img class="posab yellowball" src="#styleUrl('/resources/images/activity/yellowball.png')"/>
+      <img class="posab ball" src="#styleUrl('/resources/images/activity/ball.png')"/>
+      <img class="posab ufo" src="#styleUrl('/resources/images/activity/ufo.png')"/>
+      <img class="posab greenball" src="#styleUrl('/resources/images/activity/greenball.png')"/>
+      <img class="posab blueball" src="#styleUrl('/resources/images/activity/blueball.png')"/>
+      <img class="posab down down1" src="#styleUrl('/resources/images/activity/down.png')"/>
+      <img class="posab light" src="#styleUrl('/resources/images/activity/light.png')"/>
+      <div class="accomplished">
+      	<p class="dearteachername">Dear <span class="teachername">$!{teacher.realName}</span>,</p>
+      	<p>Take a look at what you have</p>
+      	<p>accomplished at VIPKID.</p>
+      </div>
+		</div>
+	</div>
+	<div class="section pagetwo">
+		<div class="content">
+		<img class="posab down down2" src="#styleUrl('/resources/images/activity/down.png')"/>
+		  <div class="mico">
+        <img class="micoimg" src="#styleUrl('/resources/images/activity/mico.png')" />
+        <p class="mute">mute</p>
+      </div>
+		<img class="posab hq" src="#styleUrl('/resources/images/activity/hq.png')"/>
+		<img class="posab greenball" src="#styleUrl('/resources/images/activity/greenball.png')"/>
+		<img class="posab blueball" src="#styleUrl('/resources/images/activity/blueball.png')"/>
+		<img class="posab topico" src="#styleUrl('/resources/images/activity/top.png')"/>
+    <img class="posab ball" src="#styleUrl('/resources/images/activity/ball.png')"/>
+    <div class="yhy">
+
+      <img class="posab yhybody" src="#styleUrl('/resources/images/activity/yhy.png')"/>
+      <p class="posab teacherphoto">
+          #if($stringUtils.contains($!{teacher.avatar}, 'http://')) 
+          	<img class="avatarImg" src="$!{teacher.avatar}" onerror="javascript:this.src='${resourceTool.oss.url_preffix}/static/images/teacher_portal/default_avatar.png';this.onerror=null;"/> 
+          #else 
+          	<img class="avatarImg" src="#if($!{teacher.avatar})${resourceTool.oss.url_preffix}/$!{teacher.avatar}#end" onerror="javascript:this.src='${resourceTool.oss.url_preffix}/static/images/teacher_portal/default_avatar.png';this.onerror=null;"/> 
+          #end
+      </p> 
+      <img class="posab flag" src="#styleUrl('/resources/images/activity/flag.png')"/>
+    </div>
+ 
+    <img class="posab yellowbanball" src="#styleUrl('/resources/images/activity/yellowbanball.png')"/>
+    <div class="posab wordwhite posmonth">
+    	<p>Teacher</p>
+    	<p class="teachername">$!{teacher.realName}</p>
+    	<p>has been with VIPKID for</p>
+    	<p class="hasbeenmonths corh">$!{message}.</p>
+    </div>
+		</div>
+	</div>
+	<div class="section pagethree">
+		<div class="content">
+		<img class="posab down down3" src="#styleUrl('/resources/images/activity/down.png')"/>
+			<div class="mico">
+        <img class="micoimg" src="#styleUrl('/resources/images/activity/mico.png')" />
+        <p class="mute">mute</p>
+      </div>
+			<div class="wordwhite">
+				<p>Teacher <span class="teachername">$!{teacher.realName}</span></p>
+				<p>has taught</p>
+				<p class="corh">$!{student}.</p>
+			</div>
+			<img class="posab greenball" src="#styleUrl('/resources/images/activity/greenball.png')"/>
+			<img class="posab ball" src="#styleUrl('/resources/images/activity/ball.png')"/>
+			<img class="posab topico" src="#styleUrl('/resources/images/activity/top.png')"/>
+			<div class="pathway">
+	      <img class="cir1" src="#styleUrl('/resources/images/activity/yelcir.png')"/>
+	      <img class="cir2" src="#styleUrl('/resources/images/activity/yelcir2.png')"/>
+	      <img class="cir3" src="#styleUrl('/resources/images/activity/yelcir3.png')"/>
+	      <img class="fireball" src="#styleUrl('/resources/images/activity/fireball.png')"/>
+	      <img class="hq" src="#styleUrl('/resources/images/activity/hq.png')"/>
+				<img class="blueball" src="#styleUrl('/resources/images/activity/blueball.png')"/>
+				<img class="lq" src="#styleUrl('/resources/images/activity/lq.png')"/>
+				<img class="kid1" src="#styleUrl('/resources/images/activity/kid1.png')"/>
+				<img class="kid2" src="#styleUrl('/resources/images/activity/kid2.png')"/>
+				<img class="kid3" src="#styleUrl('/resources/images/activity/kid3.png')"/>
+				<img class="kid4" src="#styleUrl('/resources/images/activity/kid4.png')"/>
+      </div>
+		</div>
+	</div>
+	<div class="section pagefour">
+		<div class="content">
+		<img class="posab down down4" src="#styleUrl('/resources/images/activity/down.png')"/>
+			<div class="mico">
+        <img class="micoimg" src="#styleUrl('/resources/images/activity/mico.png')" />
+        <p class="mute">mute</p>
+      </div>
+      <div class="wordwhite">
+				<p class="teachername">$!{studentName}</p>
+				<p>has taken the most classes with teacher $!{teacher.realName}.</p>
+				<p class="corh">$!{avatar} has taken $!{moreclass}.</p>
+			</div>
+			<img class="posab yellowball" src="#styleUrl('/resources/images/activity/yellowball.png')"/>
+			<img class="posab pinkball" src="#styleUrl('/resources/images/activity/pinkball.png')"/>
+			<img class="posab blueball" src="#styleUrl('/resources/images/activity/blueball.png')"/>
+			<img class="posab greenball" src="#styleUrl('/resources/images/activity/greenball.png')"/>
+			<img class="posab banfirq" src="#styleUrl('/resources/images/activity/banfirq.png')"/>
+			<img class="posab lyh" src="#styleUrl('/resources/images/activity/lyh.png')"/>
+			<img class="posab ryh" src="#styleUrl('/resources/images/activity/ryh.png')"/>
+			<img class="posab topico" src="#styleUrl('/resources/images/activity/top.png')"/>
+			<img class="posab ball" src="#styleUrl('/resources/images/activity/ball.png')"/>
+    </div>
+
+
+	</div>
+		<div class="section pagefive">
+		 <div class="content">
+		 	<img class="posab down down5" src="#styleUrl('/resources/images/activity/down.png')"/>
+				<div class="mico">
+	        <img class="micoimg" src="#styleUrl('/resources/images/activity/mico.png')" />
+	        <p class="mute">mute</p>
+	      </div>
+	      <div class="wordwhite  pad70">
+					<p>Teacher  <span class="teachername">  $!{teacher.realName} </span>has taught</p>
+					<p class="corh">$!{class}.</p>
+				</div>
+				<img class="posab yellowball" src="#styleUrl('/resources/images/activity/yellowball.png')"/>
+				<img class="posab pinkball" src="#styleUrl('/resources/images/activity/pinkball.png')"/>
+				<img class="posab blueball" src="#styleUrl('/resources/images/activity/blueball.png')"/>
+				<img class="posab ball" src="#styleUrl('/resources/images/activity/ball.png')"/>
+				<img class="posab topico"src="#styleUrl('/resources/images/activity/top.png')"/>
+				<img class="posab fbanfirball"src="#styleUrl('/resources/images/activity/fbanfirball.png')"/>
+				<img class="posab computer"src="#styleUrl('/resources/images/activity/computer.png')"/>
+				<img class="posab greenball"src="#styleUrl('/resources/images/activity/greenball.png')"/>
+     </div>
+	</div>
+		<div class="section pagesix">
+   		<div class="content">
+   				<img class="posab down down6" src="#styleUrl('/resources/images/activity/down.png')"/>
+				<div class="mico">
+	        <img class="micoimg" src="#styleUrl('/resources/images/activity/mico.png')" />
+	        <p class="mute">mute</p>
+	      </div>
+	      <div class="wordwhite">
+					<p class="wordan1">Teacher  <span class="teachername">$!{teacher.realName}</span></p>
+					<p class="wordan1">has completed</p>
+					<p class="corh wordan2">$!{minutes}</p>
+					<p class="wordan2">of teaching at VIPKID!</p> 
+			  </div>
+   			<img class="posab yellowball" src="#styleUrl('/resources/images/activity/yellowball.png')"/>
+   			<img class="posab greenball" src="#styleUrl('/resources/images/activity/greenball.png')"/>
+   			<img class="posab blueball" src="#styleUrl('/resources/images/activity/blueball.png')"/>
+   			<img class="posab ball" src="#styleUrl('/resources/images/activity/ball.png')"/>
+   			<img class="posab topico" src="#styleUrl('/resources/images/activity/top.png')"/>
+   			<img class="posab wavingast wavingasblue" src="#styleUrl('/resources/images/activity/wavingastblue.png')"/>
+			  <ul id="clock">	
+				   	<li id="sec"></li>
+				   	<li id="hour"></li>
+					  <li id="min"></li>
+				</ul>
+   		</div>
+	</div>
+	<div class="section pageseven">
+			<div class="content">
+				<img class="posab down down7" src="#styleUrl('/resources/images/activity/down.png')"/>
+				<div class="mico">
+	        <img class="micoimg" src="#styleUrl('/resources/images/activity/mico.png')" />
+	        <p class="mute">mute</p>
+	      </div>	
+	      <div class="wordwhite pad70">
+					<p>Teacher  <span class="teachername">$!{teacher.realName}</span>,</p>
+					<p>VIPKID would not be the same without you!</p>
+					<p class="corh">Thank you for your time with us!</p> 
+			  </div>
+			  <img class="posab yellowball" src="#styleUrl('/resources/images/activity/yellowball.png')"/>
+			  <img class="posab pinkball" src="#styleUrl('/resources/images/activity/pinkball.png')"/>
+			  <img class="posab blueball" src="#styleUrl('/resources/images/activity/blueball.png')"/>
+			  <img class="posab ball" src="#styleUrl('/resources/images/activity/ball.png')"/>
+			  <img class="posab greenball" src="#styleUrl('/resources/images/activity/greenball.png')"/>
+			  <img class="posab fireball" src="#styleUrl('/resources/images/activity/fireball.png')"/>
+			  <img class="posab rocket" src="#styleUrl('/resources/images/activity/rocket.png')"/>
+			  <img class="posab topico" src="#styleUrl('/resources/images/activity/top.png')"/>
+			</div>
+	</div>
+	<div class="section pageeight">
+		<div class="content">
+				<div class="mico">
+	        <img class="micoimg" src="#styleUrl('/resources/images/activity/mico.png')" />
+	        <p class="mute">mute</p>
+	      </div>
+	      <img class="posab yellowball" src="#styleUrl('/resources/images/activity/yellowball.png')"/>
+	      <img class="posab pinkball" src="#styleUrl('/resources/images/activity/pinkball.png')"/>
+	      <img class="posab blueball" src="#styleUrl('/resources/images/activity/blueball.png')"/>
+	      <img class="posab greenball" src="#styleUrl('/resources/images/activity/greenball.png')"/>
+	      <img class="posab topico" src="#styleUrl('/resources/images/activity/top.png')"/>
+	      <img class="posab fireball"src="#styleUrl('/resources/images/activity/fireball.png')"/>
+	      
+	      <ul class="sharelink">
+		       <li class="shareto">Share to:</li>
+		       <li>
+			      	 <a id="fb_share" href="javascript:void(0)"><img src="#styleUrl('/resources/images/activity/fbico.png')"/></a>
+		      	 </li>
+	      	</ul>
+	      <div class="wordwhite pad70">
+	      	<p class="padd57">$!{teacher.realName} has been with VIPKID for <span class="f32">$!{message}</span>.</p>
+	      	<p class="padd57">$!{teacher.realName} has taught <span class="f32">$!{student}</span>.</p>
+	      	<p>$!{studentName} has taken the most classes with teacher $!{teacher.realName},</p>
+	      	<p class="padd57">$!{avatar} has taken <span class="f32">$!{moreclass}</span>.</p>
+	      	<p class="padd57">$!{teacher.realName} has taught <span class="f32">$!{class}</span>.</p>
+	      	<p class="padd57">$!{teacher.realName} has completed <span class="f32">$!{minutes}</span> of teaching at VIPKID!</p>
+	      </div>
+	      <div class="wavingastphoto">
+	      	<img class="posab wavingast"src="#styleUrl('/resources/images/activity/wavphoto.png')"/>
+	          #if($stringUtils.contains($!{teacher.avatar}, 'http://')) 
+	          	<img class="posab tphoto" src="$!{teacher.avatar}" onerror="javascript:this.src='${resourceTool.oss.url_preffix}/static/images/teacher_portal/default_avatar.png';this.onerror=null;"/> 
+	          #else 
+	          	<img class="posab tphoto" src="#if($!{teacher.avatar})${resourceTool.oss.url_preffix}/$!{teacher.avatar}#end" onerror="javascript:this.src='${resourceTool.oss.url_preffix}/static/images/teacher_portal/default_avatar.png';this.onerror=null;"/> 
+	          #end   
+	      </div>
+		</div>
+	</div>
+<script>
+	$(document).ready(function(){
+		$.removeCookie("from", {path : '/'});
+        function sharefun(){
+			var shareLink = "https://www.facebook.com/sharer/sharer.php"
+ 							+"?u=$!{shareUrl}"
+ 							+"&picture=$!{www}resources/images/activity/icon3.png"
+ 							+"&t=Check out $!{teacher.realName}'s achievement with VIPKID."
+ 							##+"&t=Check out $!{teacher.realName}’s accomplishment with VIPKID from April 2014 - April 2016. Become a VIPKID teacher, if you haven’t already."
+ 							+"&description=VIPKID would not be the same without $!{teacher.realName}"
+ 							##+"&description=$!{teacher.realName} has been with VIPKID for $!{message},$!{teacher.realName} has taught  $!{student},$!{studentName} has taken the most classes with teacher $!{teacher.realName},$!{avatar} has taken $!{moreclass}.$!{teacher.realName} has taught $!{class},$!{teacher.realName} has completed $!{minutes} of teaching at VIPKID"
+ 							+"&display=popup";
+			var iWidth = 650;
+			var iHeight = 400;
+			var iTop = (window.screen.availHeight - 30 - iHeight) / 2;
+			var iLeft = (window.screen.availWidth - 10 - iWidth) / 2;
+			var win = window.open(shareLink, "VIPKID Teacher Accomplishments", "width=" + iWidth + ", height=" + iHeight + ",top=" + iTop + ",left=" + iLeft + ",toolbar=no, menubar=no, scrollbars=no, resizable=no,location=no, status=no,alwaysRaised=yes,depended=yes");
+		}
+		$("#fb_share").bind("click",sharefun);
+	});
+</script>

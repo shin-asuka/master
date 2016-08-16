@@ -1,0 +1,2 @@
+##<span>|</span>&nbsp;<a onclick="require('report-practicum').showPracticumReport('${serialNumber}', ${studentId}, ${onlineClassId});" href="javascript:;">Prac Eval Form$!{lifeCycle}</a>
+<span>|</span>&nbsp;<span style="color:#dd4814;">Prac Eval Form$!{lifeCycle}</span>

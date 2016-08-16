@@ -1,0 +1,95 @@
+<div id="scheduleContainer">
+  #if($courseType.equals("MAJOR"))
+  <div class="row">
+    <div class="col-md-12">
+      <p style="line-height: 36px; font-size: 16px; color: #dd4814;"><span class="glyphicon glyphicon-bullhorn"></span> You can make a timeslot available to be booked within 24 hours now! <a href="#springUrl('/faq#booking')" target="_blank" style="color: #009fda;">Learn more...</a></p>
+    </div>
+  </div>
+  #end
+  <div class="row">
+    <div class="col-md-6">
+      <div style="line-height: 34px; font-weight: bold;"> <span> ${dateTool.format('yyyy-MM-dd', $startDate)} ~~ ${dateTool.format('yyyy-MM-dd', $endDate)} </span> &nbsp;&nbsp;&nbsp; <span> Time Zone: $!{TRPM_TEACHER.timezone} </span> </div>
+    </div>
+    <div class="col-md-2">
+      <button type="button" class="btn btn-primary btn-sm prev" style="float: right; -margin-right:30px; width:180px;">&lt; Prev Week</button>
+    </div>
+    <div class="col-md-2">
+      <button type="button" class="btn btn-primary btn-sm curr" style="float: right; margin-right:15px; width:180px;">This Week</button>
+    </div>
+    <div class="col-md-2">
+      <button type="button" class="btn btn-primary btn-sm next" style="float: right; margin-right:30px; width:180px;">Next Week &gt;</button>
+    </div>
+    <form id="scheduleForm" style="display: none;" method="post" action="#springUrl('/schedule.shtml')">
+      <input type="hidden" id="offsetOfWeek" name="offsetOfWeek" value="$!{offsetOfWeek}" />
+      <input type="hidden" id="courseType" name="courseType" value="$!{courseType}" />
+      <input type="submit" />
+    </form>
+  </div>
+  <div class="scheduleCon">
+    <div class="schedule_table center-block text-center" #if($courseType.equals("PRACTICUM"))style="height: 1202px;"#elseif(26 < ${scheduleTable.keySet().size()})style="height: 722px;"#end>
+      <div class="schedule_tr">
+        <div class="schedule_td" style="height: 48px;">&nbsp;</div>
+        ## 迭代显示Schedule表头
+        #foreach($day in $daysOfWeek)
+          ## 过滤最后一列数据
+          #if($velocityCount != ${daysOfWeek.size()})
+          <div class="schedule_td" style="height: 48px;">
+            ## 格式化日期星期
+            <div> <strong>$dateTool.format('EEEE', $day, $locale)</strong> </div>
+            ## 格式化日期年月日
+            <div> <strong>$dateTool.format('yyyy-MM-dd', $day, $locale)</strong> </div>
+          </div>
+          #end
+        #end
+      </div>
+      #foreach($timePoint in $scheduleTable.keySet())
+        ## 根据时间点获取TimeSlot
+        #set($timeSlots = $scheduleTable.get($timePoint))
+        <div class="schedule_tr" index="${velocityCount}">
+          <div class="schedule_td#if(!${timePoint.isAm()}) afternoon#end" style="height: 23px; margin-top: 1px;">
+            <span>${timePoint.name}</span>
+          </div>
+          ## 循环TimeSlot列表开始
+          #foreach($timeSlot in $timeSlots) 
+            ## 过滤最后一列数据
+            #if($velocityCount != $timeSlots.size())
+              ## 设置TimeSlot索引
+              #set($timeSlotIndex = $velocityCount)
+              ## 显示Schedule的TimeSlot
+              #if($courseType.equals("MAJOR"))  
+                  #parse("/portal/schedule_major.vm")
+              #elseif($courseType.equals("PRACTICUM"))
+                  #parse("/portal/schedule_practicum.vm")
+              #end
+            #end
+          #end
+          ## 循环TimeSlot列表结束
+        </div>
+      #end
+    </div>
+  </div>
+</div>
+<div class="icon">
+    <a href='javascript:;' onclick='easemobim.bind({tenantId: 20182})'><img
+            src="#styleUrl('/resources/images/portal/contact_us.png')"></a>
+    <a href='javascript:;' onclick='easemobim.bind({tenantId: 20182})'><img class="contact"
+                                                                            src="#styleUrl('/resources/images/portal/contact_us_txt.png')"></a>
+</div>
+<script>
+    window.easemobim = window.easemobim || {};
+    easemobim.config = {
+        hide:true,
+        appKey: '513276871#teachertest',
+        to: 'vipkid_teacher_portal_web',
+        visitor: {         //访客信息，以下参数支持变量
+            trueName: '$!{TRPM_USER.name}',
+            qq: '',
+            phone: '$!{TRPM_TEACHER.mobile}',
+            companyName: 'VIPKID',
+            userNickname: '$!{TRPM_USER.name}',
+            description: '老师ID：$!{TRPM_TEACHER.id}',
+            email: '$!{TRPM_TEACHER.email}'
+        },
+    };
+</script>
+<script src='//kefu.easemob.com/webim/easemob.js?tenantId=20182&hide=false&sat=false' async='async'></script>

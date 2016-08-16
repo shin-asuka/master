@@ -1,0 +1,601 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="OnlineClassMapper">
+
+	<sql id="onlineClassColumns">online_class.id AS online_class_id,
+		online_class.able_to_enter_classroom_date_time AS
+		online_class_able_to_enter_classroom_date_time, online_class.archived
+		AS online_class_archived,
+		online_class.attatchdocumentsucess AS
+		online_class_attatchdocumentsucess, online_class.backup AS
+		online_class_backup, online_class.book_date_time AS
+		online_class_book_date_time,
+		online_class.can_undo_finish AS
+		online_class_can_undo_finish, online_class.classroom AS
+		online_class_classroom, online_class.comments AS
+		online_class_comments,
+		online_class.consume_class_hour AS
+		online_class_consume_class_hour, online_class.finish_type AS
+		online_class_finish_type, online_class.last_edit_date_time AS
+		online_class_last_edit_date_time,
+		online_class.max_student_number AS
+		online_class_max_student_number, online_class.min_student_number
+		AS
+		online_class_min_student_number, online_class.scheduled_date_time AS
+		online_class_scheduled_date_time, online_class.serial_number AS
+		online_class_serial_number,
+		online_class.status AS
+		online_class_status, online_class.student_enter_classroom_date_time AS
+		online_class_student_enter_classroom_date_time,
+		online_class.teacher_enter_classroom_date_time AS
+		online_class_teacher_enter_classroom_date_time,
+		online_class.wxt_course_id AS
+		online_class_wxt_course_id,
+		online_class.creater_id AS online_class_creater_id,
+		online_class.last_editor_id AS online_class_last_editor_id,
+		online_class.lesson_id AS
+		online_class_lesson_id,
+		online_class.teacher_id AS online_class_teacher_id,
+		online_class.dby_document AS online_class_dby_document,
+		online_class.short_notice AS
+		online_class_short_notice,
+		online_class.unit_price AS online_class_unit_price,
+		online_class.supplier_code AS online_class_supplier_code,
+        online_class.student_changed_tag AS online_class_student_changed_tag,
+		online_class.is_paid_trail AS online_class_is_paid_trail,
+		online_class.class_type AS online_class_class_type
+	</sql>
+
+	<sql id="onlineClassWhere">
+		<trim prefix="WHERE" prefixOverrides="AND">
+			<if test="id!=0">AND online_class.id = #{id}</if>
+			<if test="ableToEnterClassroomDateTime!=null">AND online_class.able_to_enter_classroom_date_time =
+				#{ableToEnterClassroomDateTime}
+			</if>
+			<if test="archived!=0">AND online_class.archived = #{archived}</if>
+			<if test="attatchdocumentsucess!=0">AND online_class.attatchdocumentsucess =
+				#{attatchdocumentsucess}
+			</if>
+			<if test="backup!=0">AND online_class.backup = #{backup}</if>
+			<if test="bookDateTime!=null">AND online_class.book_date_time = #{bookDateTime}</if>
+			<if test="canUndoFinish!=0">AND online_class.can_undo_finish = #{canUndoFinish}</if>
+			<if test="classroom!=null">AND online_class.classroom = #{classroom}</if>
+			<if test="comments!=null">AND online_class.comments = #{comments}</if>
+			<if test="consumeClassHour!=0">AND online_class.consume_class_hour = #{consumeClassHour}
+			</if>
+			<if test="finishType!=null">AND online_class.finish_type = #{finishType}</if>
+			<if test="lastEditDateTime!=null">AND online_class.last_edit_date_time =
+				#{lastEditDateTime}
+			</if>
+			<if test="maxStudentNumber!=0">AND online_class.max_student_number = #{maxStudentNumber}
+			</if>
+			<if test="minStudentNumber!=0">AND online_class.min_student_number = #{minStudentNumber}
+			</if>
+			<if test="scheduledDateTime!=null">AND online_class.scheduled_date_time =
+				#{scheduledDateTime}
+			</if>
+			<if test="serialNumber!=null">AND online_class.serial_number = #{serialNumber}</if>
+			<if test="status!=null">AND online_class.status = #{status}</if>
+			<if test="studentEnterClassroomDateTime!=null">AND online_class.student_enter_classroom_date_time =
+				#{studentEnterClassroomDateTime}
+			</if>
+			<if test="teacherEnterClassroomDateTime!=null">AND online_class.teacher_enter_classroom_date_time =
+				#{teacherEnterClassroomDateTime}
+			</if>
+			<if test="wxtCourseId!=null">AND online_class.wxt_course_id = #{wxtCourseId}</if>
+			<if test="createrId!=0">AND online_class.creater_id = #{createrId}</if>
+			<if test="lastEditorId!=0">AND online_class.last_editor_id = #{lastEditorId}</if>
+			<if test="lessonId!=0">AND online_class.lesson_id = #{lessonId}</if>
+			<if test="teacherId!=0">AND online_class.teacher_id = #{teacherId}</if>
+			<if test="dbyDocument!=null">AND online_class.dby_document = #{dbyDocument}</if>
+			<if test="shortNotice!=0">AND online_class.short_notice = #{shortNotice}</if>
+			<if test="unitPrice!=0.0">AND online_class.unit_price = #{unitPrice}</if>
+			<if test="isPaidTrail!=0">AND online_class.is_paid_trail = #{isPaidTrail}</if>
+			<if test="classType!=-1">AND online_class.class_type = #{classType}</if>
+		</trim>
+	</sql>
+
+	<sql id="onlineClassOrder">
+		<if test="orderString!=null">ORDER BY ${orderString}</if>
+	</sql>
+
+	<sql id="onlineClassLimit">LIMIT #{startLine},#{limitLine}</sql>
+
+	<resultMap type="com.vipkid.trpm.entity.OnlineClass" id="onlineClassResultMap">
+		<id column="online_class_id" property="id" />
+		<result column="online_class_able_to_enter_classroom_date_time" property="ableToEnterClassroomDateTime" />
+		<result column="online_class_archived" property="archived" />
+		<result column="online_class_attatchdocumentsucess" property="attatchdocumentsucess" />
+		<result column="online_class_backup" property="backup" />
+		<result column="online_class_book_date_time" property="bookDateTime" />
+		<result column="online_class_can_undo_finish" property="canUndoFinish" />
+		<result column="online_class_classroom" property="classroom" />
+		<result column="online_class_comments" property="comments" />
+		<result column="online_class_consume_class_hour" property="consumeClassHour" />
+		<result column="online_class_finish_type" property="finishType" />
+		<result column="online_class_last_edit_date_time" property="lastEditDateTime" />
+		<result column="online_class_max_student_number" property="maxStudentNumber" />
+		<result column="online_class_min_student_number" property="minStudentNumber" />
+		<result column="online_class_scheduled_date_time" property="scheduledDateTime" />
+		<result column="online_class_serial_number" property="serialNumber" />
+		<result column="online_class_status" property="status" />
+		<result column="online_class_student_enter_classroom_date_time" property="studentEnterClassroomDateTime" />
+		<result column="online_class_teacher_enter_classroom_date_time" property="teacherEnterClassroomDateTime" />
+		<result column="online_class_wxt_course_id" property="wxtCourseId" />
+		<result column="online_class_creater_id" property="createrId" />
+		<result column="online_class_last_editor_id" property="lastEditorId" />
+		<result column="online_class_lesson_id" property="lessonId" />
+		<result column="online_class_teacher_id" property="teacherId" />
+		<result column="online_class_dby_document" property="dbyDocument" />
+		<result column="online_class_short_notice" property="shortNotice" />
+		<result column="online_class_unit_price" property="unitPrice" />
+		<result column="online_class_is_paid_trail" property="isPaidTrail" />
+		<result column="online_class_class_type" property="classType" />
+		<result column="online_class_supplier_code" property="supplierCode" />
+	</resultMap>
+
+	<select id="findDao" resultMap="onlineClassResultMap">
+		SELECT
+		<include refid="onlineClassColumns" />
+		FROM online_class
+		<include refid="onlineClassWhere" />
+		<include refid="onlineClassOrder" />
+	</select>
+
+	<select id="countDao" resultType="int">
+		SELECT COUNT(*) FROM online_class
+		<include refid="onlineClassWhere" />
+	</select>
+
+	<select id="pageDao" resultMap="onlineClassResultMap">
+		SELECT
+		<include refid="onlineClassColumns" />
+		FROM online_class
+		<include refid="onlineClassWhere" />
+		<include refid="onlineClassOrder" />
+		<include refid="onlineClassLimit" />
+	</select>
+
+	<select id="limitDao" resultMap="onlineClassResultMap">
+		SELECT
+		<include refid="onlineClassColumns" />
+		FROM online_class
+		<include refid="onlineClassWhere" />
+		<include refid="onlineClassOrder" />
+		<include refid="onlineClassLimit" />
+	</select>
+
+	<insert id="saveDao" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO online_class
+		<trim prefix="(" prefixOverrides=",">
+			<if test="id!=0">,id</if>
+			<if test="ableToEnterClassroomDateTime!=null">,able_to_enter_classroom_date_time</if>
+			<if test="archived!=0">,archived</if>
+			<if test="attatchdocumentsucess!=0">,attatchdocumentsucess</if>
+			<if test="backup!=0">,backup</if>
+			<if test="bookDateTime!=null">,book_date_time</if>
+			<if test="canUndoFinish!=0">,can_undo_finish</if>
+			<if test="classroom!=null">,classroom</if>
+			<if test="comments!=null">,comments</if>
+			<if test="consumeClassHour!=0">,consume_class_hour</if>
+			<if test="finishType!=null">,finish_type</if>
+			<if test="lastEditDateTime!=null">,last_edit_date_time</if>
+			<if test="maxStudentNumber!=0">,max_student_number</if>
+			<if test="minStudentNumber!=0">,min_student_number</if>
+			<if test="scheduledDateTime!=null">,scheduled_date_time</if>
+			<if test="serialNumber!=null">,serial_number</if>
+			<if test="status!=null">,status</if>
+			<if test="studentEnterClassroomDateTime!=null">,student_enter_classroom_date_time</if>
+			<if test="teacherEnterClassroomDateTime!=null">,teacher_enter_classroom_date_time</if>
+			<if test="wxtCourseId!=null">,wxt_course_id</if>
+			<if test="createrId!=0">,creater_id</if>
+			<if test="lastEditorId!=0">,last_editor_id</if>
+			<if test="lessonId!=0">,lesson_id</if>
+			<if test="teacherId!=0">,teacher_id</if>
+			<if test="dbyDocument!=null">,dby_document</if>
+			<if test="shortNotice!=0">,short_notice</if>
+			<if test="unitPrice!=0.0">,unit_price</if>
+			<if test="isPaidTrail!=0">,is_paid_trail</if>
+			<if test="classType!=-1">,class_type</if>
+		</trim>
+		) VALUES
+		<trim prefix="(" prefixOverrides=",">
+			<if test="id!=0">,#{id}</if>
+			<if test="ableToEnterClassroomDateTime!=null">,#{ableToEnterClassroomDateTime}</if>
+			<if test="archived!=0">,#{archived}</if>
+			<if test="attatchdocumentsucess!=0">,#{attatchdocumentsucess}</if>
+			<if test="backup!=0">,#{backup}</if>
+			<if test="bookDateTime!=null">,#{bookDateTime}</if>
+			<if test="canUndoFinish!=0">,#{canUndoFinish}</if>
+			<if test="classroom!=null">,#{classroom}</if>
+			<if test="comments!=null">,#{comments}</if>
+			<if test="consumeClassHour!=0">,#{consumeClassHour}</if>
+			<if test="finishType!=null">,#{finishType}</if>
+			<if test="lastEditDateTime!=null">,#{lastEditDateTime}</if>
+			<if test="maxStudentNumber!=0">,#{maxStudentNumber}</if>
+			<if test="minStudentNumber!=0">,#{minStudentNumber}</if>
+			<if test="scheduledDateTime!=null">,#{scheduledDateTime}</if>
+			<if test="serialNumber!=null">,#{serialNumber}</if>
+			<if test="status!=null">,#{status}</if>
+			<if test="studentEnterClassroomDateTime!=null">,#{studentEnterClassroomDateTime}</if>
+			<if test="teacherEnterClassroomDateTime!=null">,#{teacherEnterClassroomDateTime}</if>
+			<if test="wxtCourseId!=null">,#{wxtCourseId}</if>
+			<if test="createrId!=0">,#{createrId}</if>
+			<if test="lastEditorId!=0">,#{lastEditorId}</if>
+			<if test="lessonId!=0">,#{lessonId}</if>
+			<if test="teacherId!=0">,#{teacherId}</if>
+			<if test="dbyDocument!=null">,#{dbyDocument}</if>
+			<if test="shortNotice!=0">,#{shortNotice}</if>
+			<if test="unitPrice!=0.0">,#{unitPrice}</if>
+			<if test="isPaidTrail!=0">,#{isPaidTrail}</if>
+			<if test="classType!=-1">,#{classType}</if>
+		</trim>
+		)
+	</insert>
+
+	<update id="updateDao">
+		UPDATE online_class
+		<trim prefix="SET" prefixOverrides=",">
+			<if test="id!=0">,id = #{id}</if>
+			<if test="ableToEnterClassroomDateTime!=null">,able_to_enter_classroom_date_time =
+				#{ableToEnterClassroomDateTime}
+			</if>
+			<if test="archived!=0">,archived = #{archived}</if>
+			<if test="attatchdocumentsucess!=0">,attatchdocumentsucess = #{attatchdocumentsucess}</if>
+			<if test="backup!=0">,backup = #{backup}</if>
+			<if test="bookDateTime!=null">,book_date_time = #{bookDateTime}</if>
+			<if test="canUndoFinish!=0">,can_undo_finish = #{canUndoFinish}</if>
+			<if test="classroom!=null">,classroom = #{classroom}</if>
+			<if test="comments!=null">,comments = #{comments}</if>
+			<if test="consumeClassHour!=0">,consume_class_hour = #{consumeClassHour}</if>
+			<if test="finishType!=null">,finish_type = #{finishType}</if>
+			<if test="lastEditDateTime!=null">,last_edit_date_time = #{lastEditDateTime}</if>
+			<if test="maxStudentNumber!=0">,max_student_number = #{maxStudentNumber}</if>
+			<if test="minStudentNumber!=0">,min_student_number = #{minStudentNumber}</if>
+			<if test="scheduledDateTime!=null">,scheduled_date_time = #{scheduledDateTime}</if>
+			<if test="serialNumber!=null">,serial_number = #{serialNumber}</if>
+			<if test="status!=null">,status = #{status}</if>
+			<if test="studentEnterClassroomDateTime!=null">,student_enter_classroom_date_time =
+				#{studentEnterClassroomDateTime}
+			</if>
+			<if test="teacherEnterClassroomDateTime!=null">,teacher_enter_classroom_date_time =
+				#{teacherEnterClassroomDateTime}
+			</if>
+			<if test="wxtCourseId!=null">,wxt_course_id = #{wxtCourseId}</if>
+			<if test="createrId!=0">,creater_id = #{createrId}</if>
+			<if test="lastEditorId!=0">,last_editor_id = #{lastEditorId}</if>
+			<if test="lessonId!=0">,lesson_id = #{lessonId}</if>
+			<if test="teacherId!=0">,teacher_id = #{teacherId}</if>
+			<if test="dbyDocument!=null">,dby_document = #{dbyDocument}</if>
+			<if test="shortNotice!=0">,short_notice = #{shortNotice}</if>
+			<if test="unitPrice!=0.0">,unit_price = #{unitPrice}</if>
+			<if test="isPaidTrail!=0">,is_paid_trail = #{isPaidTrail}</if>
+			<if test="classType!=-1">,class_type = #{classType}</if>
+		</trim>
+		<trim prefix="WHERE" prefixOverrides="AND">AND id = #{id}</trim>
+	</update>
+
+	<delete id="deleteDao">
+		DELETE FROM online_class
+		<trim prefix="WHERE" prefixOverrides="AND">AND id = #{id}</trim>
+	</delete>
+
+	<!-- 通过老师id及时区，开始时间，结束时间查找 -->
+	<select id="findByTeacherIdWithFromAndToTime" resultType="java.util.HashMap">
+		SELECT
+		online_class.id AS id,
+		online_class.lesson_id AS lessonId,
+		student.english_name AS englishName,
+		student.id AS studentId,
+		online_class.scheduled_date_time AS scheduledDateTime,
+		online_class.status AS status,
+		lesson.serial_number AS serialNumber,
+		lesson.name AS lessonName,
+		online_class.finish_type AS finishType,
+		online_class.classroom AS classroom,
+		online_class.dby_document AS dbyDocument,
+		online_class.class_type AS classType
+		FROM online_class 
+		LEFT JOIN lesson ON (lesson.id = online_class.lesson_id)
+		LEFT JOIN online_class_student ON (online_class.id = online_class_student.online_class_id)
+		LEFT JOIN student ON (online_class_student.student_id = student.id)
+		WHERE
+		online_class.teacher_id = #{teacherId}
+		AND online_class.status != 'REMOVED'
+		AND (online_class.finish_type != 'STUDENT_NO_SHOW_24H' OR online_class.finish_type IS NULL)
+		AND online_class.scheduled_date_time BETWEEN CONVERT_TZ(#{fromTime}, #{toTZOffset}, '+08:00')
+		AND CONVERT_TZ(#{toTime}, #{toTZOffset}, '+08:00')
+		ORDER BY online_class.scheduled_date_time ASC
+	</select>
+	
+	<!-- 通过老师id及时区，开始时间，结束时间查找 TimeSlot 数量 -->
+	<select id="countByTeacherIdWithFromAndToTime" resultType="int">
+		SELECT COUNT(*) FROM online_class WHERE online_class.teacher_id = #{teacherId}
+		AND online_class.status != 'REMOVED' AND online_class.class_type = 0
+		AND online_class.scheduled_date_time BETWEEN CONVERT_TZ(#{fromTime}, #{toTZOffset}, '+08:00')
+		AND CONVERT_TZ(#{toTime}, #{toTZOffset}, '+08:00')
+	</select>
+
+	<!-- 通过OnlineClassId查询上课学生数量 -->
+	<select id="countStudentDaoByOnlineClassId" resultType="int">
+		SELECT COUNT(DISTINCT online_class_student.student_id)
+		FROM online_class_student
+		INNER JOIN online_class ON (online_class_student.online_class_id = online_class.id)
+		WHERE online_class.id = #{id}
+	</select>
+
+	<!-- 通过OnlineClassId更新lessonId -->
+	<update id="updateLessonByOnlineClassId">
+		UPDATE online_class SET online_class.lesson_id = #{lessonId} WHERE online_class.id = #{id}
+	</update>
+
+	<!-- Classrooms的查询列 -->
+	<sql id="classroomsColumns">
+		online_class.lesson_id AS lessonId,
+		online_class.teacher_id AS teacherId,
+		online_class.is_paid_trail AS isPaidTrail,
+		online_class.scheduled_date_time AS scheduledDateTime,
+		online_class.short_notice AS shortNotice,
+		online_class.status AS status,
+		online_class.finish_type AS finishType,
+		online_class.classroom AS classroom,
+		online_class.class_type AS classType,
+		online_class_student.student_id AS studentId,
+		student.english_name AS englishName,
+		lesson.serial_number AS serialNumber,
+		lesson.name AS lessonName,
+		lesson.learning_cycle_id AS learningCycleId
+	</sql>
+
+	<!-- 查询BOOKED和OPEN的课程列表 -->
+	<sql id="findBookedInClassroomsByTeacherIdAndTimezoneAndMonthOfYear">
+		SELECT online_class.id AS id,
+		<include refid="classroomsColumns"></include>
+		FROM online_class
+		INNER JOIN online_class_student ON (online_class.id = online_class_student.online_class_id)
+		INNER JOIN student ON (online_class_student.student_id = student.id)
+		INNER JOIN lesson ON (online_class.lesson_id = lesson.id)
+		WHERE
+		online_class.teacher_id = #{teacherId}
+		AND (online_class.status = 'BOOKED' OR online_class.status = 'OPEN')
+		AND CONVERT_TZ(online_class.scheduled_date_time, '+08:00', #{toTZOffset}) LIKE CONCAT(#{monthOfYear}, '%')
+		GROUP BY online_class.id
+	</sql>
+
+	<!-- COUNT查询BOOKED和OPEN的课程列表 @Deprecated -->
+	<sql id="countBookedInClassroomsByTeacherIdAndTimezoneAndMonthOfYear">
+		SELECT COUNT(online_class.id) AS TOTAL FROM online_class
+		INNER JOIN online_class_student ON (online_class.id = online_class_student.online_class_id)
+		INNER JOIN student ON (online_class_student.student_id = student.id)
+		INNER JOIN lesson ON (online_class.lesson_id = lesson.id)
+		WHERE
+		online_class.teacher_id = #{teacherId} 
+		AND (online_class.status = 'BOOKED' OR online_class.status = 'OPEN') 
+		AND lesson.serial_number ${likeString}
+		AND CONVERT_TZ(online_class.scheduled_date_time, '+08:00', #{toTZOffset}) LIKE CONCAT(#{monthOfYear}, '%')
+		GROUP BY online_class.id
+	</sql>
+
+	<!-- 查询FINISHED的AS_SCHEDULED, STUDENT_NO_SHOW课程列表 -->
+	<sql id="findFinishedInClassroomsByTeacherIdAndTimezoneAndMonthOfYear">
+		SELECT online_class.id AS id,
+		<include refid="classroomsColumns"></include>
+		FROM online_class
+		INNER JOIN online_class_student ON (online_class.id = online_class_student.online_class_id)
+		INNER JOIN student ON (online_class_student.student_id = student.id)
+		INNER JOIN lesson ON (online_class.lesson_id = lesson.id)
+		WHERE
+		online_class.teacher_id = #{teacherId} 
+		AND online_class.status = 'FINISHED' 
+		AND (online_class.finish_type = 'AS_SCHEDULED' OR online_class.finish_type = 'STUDENT_NO_SHOW') 
+		AND CONVERT_TZ(online_class.scheduled_date_time, '+08:00', #{toTZOffset}) LIKE CONCAT(#{monthOfYear}, '%')
+	</sql>
+
+	<!-- COUNT查询FINISHED的AS_SCHEDULED, STUDENT_NO_SHOW课程列表 @Deprecated -->
+	<sql id="countFinishedInClassroomsByTeacherIdAndTimezoneAndMonthOfYear">
+		SELECT COUNT(*) AS TOTAL
+		FROM online_class
+		INNER JOIN online_class_student ON (online_class.id = online_class_student.online_class_id)
+		INNER JOIN student ON (online_class_student.student_id = student.id)
+		INNER JOIN lesson ON (online_class.lesson_id = lesson.id)
+		WHERE
+		online_class.teacher_id = #{teacherId} 
+		AND online_class.status = 'FINISHED' 
+		AND lesson.serial_number ${likeString}
+		AND (online_class.finish_type = 'AS_SCHEDULED' OR online_class.finish_type = 'STUDENT_NO_SHOW') 
+		AND CONVERT_TZ(online_class.scheduled_date_time, '+08:00', #{toTZOffset}) LIKE CONCAT(#{monthOfYear}, '%')
+	</sql>
+
+	<!-- 查询INVALID的课程列表 -->
+	<sql id="findInvalidInClassroomsByTeacherIdAndTimezoneAndMonthOfYear">
+		SELECT MIN(online_class.id) AS id,
+		<include refid="classroomsColumns"></include>
+		FROM online_class
+		INNER JOIN online_class_student ON (online_class.id = online_class_student.online_class_id)
+		INNER JOIN student ON (online_class_student.student_id = student.id)
+		INNER JOIN lesson ON (online_class.lesson_id = lesson.id)
+		WHERE
+		online_class.status = 'INVALID' 
+		AND CONVERT_TZ(online_class.scheduled_date_time, '+08:00', #{toTZOffset}) LIKE CONCAT(#{monthOfYear}, '%')
+		GROUP BY online_class_student.student_id, online_class.scheduled_date_time
+		HAVING online_class.teacher_id = #{teacherId}
+	</sql>
+
+	<!-- COUNT查询INVALID的课程列表 @Deprecated -->
+	<sql id="countInvalidInClassroomsByTeacherIdAndTimezoneAndMonthOfYear">
+		SELECT COUNT(T.id) AS TOTAL FROM (SELECT
+		MIN(online_class.id) AS id, online_class.teacher_id AS teacherId
+		FROM online_class
+		INNER JOIN online_class_student ON (online_class.id = online_class_student.online_class_id)
+		INNER JOIN student ON (online_class_student.student_id = student.id)
+		INNER JOIN lesson ON (online_class.lesson_id = lesson.id)
+		WHERE
+		online_class.status = 'INVALID' 
+		AND lesson.serial_number ${likeString} 
+		AND CONVERT_TZ(online_class.scheduled_date_time, '+08:00', #{toTZOffset}) LIKE CONCAT(#{monthOfYear}, '%')
+		GROUP BY online_class_student.student_id, online_class.scheduled_date_time
+		HAVING online_class.teacher_id = #{teacherId}) AS T
+	</sql>
+
+	<!-- 查询FINISHED的AS_SCHEDULED, STUDENT_NO_SHOW以外的课程列表，同一时间只显示一条 -->
+	<sql id="findOtherFinishedInClassroomsByTeacherIdAndTimezoneAndMonthOfYear">
+		SELECT online_class.id AS id,
+		<include refid="classroomsColumns"></include>
+		FROM online_class
+		INNER JOIN online_class_student ON (online_class.id = online_class_student.online_class_id)
+		INNER JOIN student ON (online_class_student.student_id = student.id)
+		INNER JOIN lesson ON (online_class.lesson_id = lesson.id)
+		WHERE
+		online_class.teacher_id = #{teacherId} 
+		AND online_class.status = 'FINISHED'
+		AND (online_class.finish_type = 'TEACHER_CANCELLATION' OR
+		online_class.finish_type = 'TEACHER_CANCELLATION_24H' OR
+		online_class.finish_type = 'TEACHER_NO_SHOW_2H' OR
+		online_class.finish_type = 'TEACHER_NO_SHOW' OR
+		online_class.finish_type = 'STUDENT_IT_PROBLEM' OR
+		online_class.finish_type = 'TEACHER_IT_PROBLEM' OR
+		online_class.finish_type = 'SYSTEM_PROBLEM')
+		AND CONVERT_TZ(online_class.scheduled_date_time, '+08:00', #{toTZOffset}) LIKE CONCAT(#{monthOfYear}, '%')
+		GROUP BY online_class.scheduled_date_time
+	</sql>
+
+	<!-- COUNT查询FINISHED的AS_SCHEDULED, STUDENT_NO_SHOW以外的课程列表，同一时间只显示一条 @Deprecated -->
+	<sql id="countOtherFinishedInClassroomsByTeacherIdAndTimezoneAndMonthOfYear">
+		SELECT COUNT(*) AS TOTAL
+		FROM online_class
+		INNER JOIN online_class_student ON (online_class.id = online_class_student.online_class_id)
+		INNER JOIN student ON (online_class_student.student_id = student.id)
+		INNER JOIN lesson ON (online_class.lesson_id = lesson.id)
+		WHERE
+		online_class.teacher_id = #{teacherId} 
+		AND online_class.status = 'FINISHED'
+		AND (online_class.finish_type = 'TEACHER_CANCELLATION' OR
+		online_class.finish_type = 'TEACHER_CANCELLATION_24H' OR
+		online_class.finish_type = 'TEACHER_NO_SHOW_2H' OR
+		online_class.finish_type = 'TEACHER_NO_SHOW' OR
+		online_class.finish_type = 'STUDENT_IT_PROBLEM' OR
+		online_class.finish_type = 'TEACHER_IT_PROBLEM' OR
+		online_class.finish_type = 'SYSTEM_PROBLEM')
+		AND lesson.serial_number ${likeString}
+		AND CONVERT_TZ(online_class.scheduled_date_time, '+08:00', #{toTZOffset}) LIKE CONCAT(#{monthOfYear}, '%')
+		GROUP BY online_class.scheduled_date_time
+	</sql>
+
+	<!-- 分页查询Classrooms的课程 -->
+	<select id="findByTeacherIdAndTimezoneAndMonthOfYear" resultType="java.util.HashMap">
+	    SELECT Filter.* FROM 
+		( SELECT Result.* FROM (SELECT Booked.* FROM (
+		<include refid="findBookedInClassroomsByTeacherIdAndTimezoneAndMonthOfYear"></include>
+		) AS Booked UNION ALL SELECT Finished.* FROM (
+		<include refid="findFinishedInClassroomsByTeacherIdAndTimezoneAndMonthOfYear"></include>
+		) AS Finished UNION ALL SELECT Invalid.* FROM (
+		<include refid="findInvalidInClassroomsByTeacherIdAndTimezoneAndMonthOfYear"></include>
+		) AS Invalid UNION ALL SELECT Other.* FROM (
+		<include refid="findOtherFinishedInClassroomsByTeacherIdAndTimezoneAndMonthOfYear"></include>
+		) AS Other) AS Result
+		WHERE Result.serialNumber ${likeString} ORDER BY Result.scheduledDateTime DESC, Result.id DESC ) AS Filter
+		GROUP BY Filter.scheduledDateTime ORDER BY Filter.scheduledDateTime DESC
+		<include refid="onlineClassLimit" />
+	</select>
+
+	<!-- COUNT查询Classrooms的课程 -->
+	<select id="countByTeacherIdAndTimezoneAndMonthOfYear" resultType="int">
+	    SELECT COUNT(Total.id) FROM 
+		( SELECT Filter.* FROM ( SELECT Result.* FROM (SELECT Booked.* FROM (
+        <include refid="findBookedInClassroomsByTeacherIdAndTimezoneAndMonthOfYear"></include>
+        ) AS Booked UNION ALL SELECT Finished.* FROM (
+        <include refid="findFinishedInClassroomsByTeacherIdAndTimezoneAndMonthOfYear"></include>
+        ) AS Finished UNION ALL SELECT Invalid.* FROM (
+        <include refid="findInvalidInClassroomsByTeacherIdAndTimezoneAndMonthOfYear"></include>
+        ) AS Invalid UNION ALL SELECT Other.* FROM (
+        <include refid="findOtherFinishedInClassroomsByTeacherIdAndTimezoneAndMonthOfYear"></include>
+        ) AS Other) AS Result
+        WHERE Result.serialNumber ${likeString} ORDER BY Result.scheduledDateTime DESC, Result.id DESC ) AS Filter
+        GROUP BY Filter.scheduledDateTime ORDER BY Filter.scheduledDateTime DESC ) AS Total
+	</select>
+	
+	<!-- COUNT查询从当前日期开始的Classrooms课程 -->
+	<select id="countByTeacherIdAndTimezoneAndMonthOfYearAndFromNow" resultType="int">
+	    SELECT COUNT(DISTINCT Result.scheduledDateTime) 
+	    FROM (SELECT Booked.* FROM (
+        <include refid="findBookedInClassroomsByTeacherIdAndTimezoneAndMonthOfYear"></include>
+        ) AS Booked UNION ALL SELECT Finished.* FROM (
+        <include refid="findFinishedInClassroomsByTeacherIdAndTimezoneAndMonthOfYear"></include>
+        ) AS Finished UNION ALL SELECT Invalid.* FROM (
+        <include refid="findInvalidInClassroomsByTeacherIdAndTimezoneAndMonthOfYear"></include>
+        ) AS Invalid UNION ALL SELECT Other.* FROM (
+        <include refid="findOtherFinishedInClassroomsByTeacherIdAndTimezoneAndMonthOfYear"></include>
+        ) AS Other) AS Result
+        WHERE Result.serialNumber ${likeString}
+        <![CDATA[
+        AND CONVERT_TZ(Result.scheduledDateTime, '+08:00', #{toTZOffset}) > DATE(NOW())
+        ]]>
+	</select>
+	
+	<!-- 查询统计Classrooms课程的FinishType -->
+	<select id="findStatFinishTypeByTeacherIdAndTimezoneAndMonthOfYear" resultType="java.util.HashMap">
+	    SELECT Stat.finishType, COUNT(Stat.finishType) AS finishCount FROM 
+        ( SELECT Filter.* FROM ( SELECT Result.* FROM (SELECT Booked.* FROM (
+        <include refid="findBookedInClassroomsByTeacherIdAndTimezoneAndMonthOfYear"></include>
+        ) AS Booked UNION ALL SELECT Finished.* FROM (
+        <include refid="findFinishedInClassroomsByTeacherIdAndTimezoneAndMonthOfYear"></include>
+        ) AS Finished UNION ALL SELECT Invalid.* FROM (
+        <include refid="findInvalidInClassroomsByTeacherIdAndTimezoneAndMonthOfYear"></include>
+        ) AS Invalid UNION ALL SELECT Other.* FROM (
+        <include refid="findOtherFinishedInClassroomsByTeacherIdAndTimezoneAndMonthOfYear"></include>
+        ) AS Other) AS Result
+        WHERE Result.serialNumber ${likeString} ORDER BY Result.scheduledDateTime DESC, Result.id DESC ) AS Filter
+        GROUP BY Filter.scheduledDateTime ORDER BY Filter.scheduledDateTime DESC ) AS Stat 
+        GROUP BY Stat.finishType
+    </select>
+    
+    <!-- 根据开始和结束时间查询INVALID的课程列表 -->
+    <select id="findInvalidByTeacherIdAndTimezoneAndFromToTime" resultType="java.util.HashMap">
+        SELECT MIN(online_class.id) AS id,
+        <include refid="classroomsColumns"></include>
+        FROM online_class
+        INNER JOIN online_class_student ON (online_class.id = online_class_student.online_class_id)
+        INNER JOIN student ON (online_class_student.student_id = student.id)
+        INNER JOIN lesson ON (online_class.lesson_id = lesson.id)
+        WHERE
+        online_class.status = 'INVALID' 
+        AND online_class.scheduled_date_time BETWEEN CONVERT_TZ(#{fromTime}, #{toTZOffset}, '+08:00')
+        AND CONVERT_TZ(#{toTime}, #{toTZOffset}, '+08:00')
+        GROUP BY online_class_student.student_id, online_class.scheduled_date_time
+        HAVING online_class.teacher_id = #{teacherId}
+    </select>
+    
+    <!-- 查询与BOOKED课程冲突的INVALID课程列表 @Deprecated-->
+    <select id="findNoShowInvalidByTeacherIdAndTimezoneAndMonthOfYear" resultType="java.util.HashMap">
+        SELECT MIN(online_class.id) AS id,
+        <include refid="classroomsColumns"></include>
+		FROM online_class
+		INNER JOIN online_class_student ON (online_class.id = online_class_student.online_class_id)
+		INNER JOIN student ON (online_class_student.student_id = student.id)
+		INNER JOIN lesson ON (online_class.lesson_id = lesson.id)
+		WHERE (online_class.status = 'BOOKED' OR online_class.status = 'INVALID') 
+		AND online_class.teacher_id = #{teacherId}
+		AND CONVERT_TZ(online_class.scheduled_date_time, '+08:00', #{toTZOffset}) LIKE CONCAT(#{monthOfYear}, '%')
+		GROUP BY online_class.scheduled_date_time, online_class_student.student_id
+		HAVING COUNT(online_class.id) > 1
+    </select>
+    
+    <select id="findTomorrowAllBook" resultType="java.util.HashMap">
+	    select oc.id classId,oc.teacher_id teacherId,ocs.student_id studentId,oc.scheduled_date_time scheduledDateTime,oc.lesson_id lessonId
+	    from  online_class oc join online_class_student ocs on oc.id = ocs.online_class_id
+		where oc.class_type = 1
+		<if test="teacherId != 0">
+			oc.teacher_id = #{teacherId}
+		</if>
+		and oc.status = 'BOOKED'
+		and oc.scheduled_date_time BETWEEN #{startTime} and #{endTime}
+    </select>
+    
+    <select id="findOnlineClassIdAndStudentId" resultType="java.util.HashMap">
+    	select * 
+    	from online_class_student ocs
+    	where ocs.online_class_id = #{onlineClassId}
+    	and ocs.student_id = #{studentId}
+    </select>
+    
+</mapper>

@@ -1,0 +1,73 @@
+#set($layout = "/portal/layout.vm")
+#set($activeClassroomsPe = "active")
+<style type="text/css">
+li[role] a {
+    color: #000;
+}
+.nav-tabs > li.active > a {
+    color: #dd4814;
+}
+</style>
+<div id="classrooms_pe">
+  <ul class="nav nav-tabs" role="tablist">
+    <li role="presentation" class="active">
+      <a href="javascript:;">Practicum Review</a>
+    </li>
+  </ul>
+  <div class="tab-content">
+    <div role="tabpanel" class="tab-pane active panel-body">
+      <div class="tab-pane active" style="border: 0px;">
+        <div class="row form-group form-inline" style="margin-top:13px; margin-right: 0; display: none;">
+          <button class="btn btn-primary btn-sm next" style="float: right; -margin-right:30px; width:180px;">NEXT MONTH</button>
+          <button class="btn btn-primary btn-sm curr" style="float: right; margin-right:30px; width:180px;">CURRENT MONTH</button>
+          <button class="btn btn-primary btn-sm prev" style="float: right; margin-right: 30px; width:180px;">PREV MONTH</button>
+        </div>
+        <div id="yearMonthTitle" align="center" style="background-color: #AEA79F; border: 1px solid #DDDDDD; 
+    border-bottom: 0px;" class="ng-binding">$!{monthOfYear}</div>
+        <div id="table-frame" style="height: auto; border: 1px solid #DDDDDD; border-top: 0px; border-bottom:0px;">
+          <table id="roomsTable" class="table table-striped" style="font-size: 11px; border-bottom: 1px solid #DDDDDD;">
+            <thead style="background-color: #AEA79F">
+              <tr>
+                <th sort="true"> <div> <a href="javascript:;">Lesson SN</a> </div>
+                </th>
+                <th sort="true"> <div> <a href="javascript:;">Lesson Name</a> </div>
+                </th>
+                <th sort="true"> <div> <a href="javascript:;">Teacher Name</a> </div>
+                </th>
+                <th sort="true"> <div> <a href="javascript:;">Scheduled Time</a> </div>
+                </th>
+                <th sort="true"> <div> <a href="javascript:;">Status</a> </div>
+                </th>
+                <th> <div> <a href="javascript:;" style="cursor:default;">Actions</a> </div>
+                </th>
+              </tr>
+            </thead>
+            <tbody id="classList" ms-controller="pe-list-controller">
+              <tr ms-repeat="dataList" class="ng-scope">
+                <td><div class="ng-scope ng-binding"> {{el.serialNumber}} </div></td>
+                <td><div class="ng-scope ng-binding"> {{el.lessonName}} </div></td>
+                <td> <div class="ng-binding"> {{el.teacherName}} </div> </td>
+                <td><div class="ng-binding"> {{el.scheduleTime|formatDate}} </div></td>
+                <td> <div class="ng-binding"> {{el.status|formatStatus}} </div> </td>
+                <td><div class="ng-binding"> <a ms-attr-href="#springUrl('/pereview.shtml?id={{el.id}}&classId={{el.onlineClassId}}')">Review</a> </div></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div>
+          <nav style="float:right; margin-right: 30px;">
+            <ul class="pagination">
+            </ul>
+          </nav>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+#@requireJs()
+    require(["pe"], function(pe){
+        Portal.paging(".pagination", ${totalLine}, ${linePerPage}, function(page){
+            pe.classList(page);
+        });
+    });
+#end

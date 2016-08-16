@@ -1,0 +1,50 @@
+<div name="practicum" class="schedule_td" index="${velocityCount}">
+## 循环ZoneTime列表开始
+#foreach($zoneTime in ${timeSlot.zoneTime})
+  #** 获取ZoneTime北京时间字符串 *# 
+  #set($beiJingTime = $!{zoneTime.formatToBeiJing})
+  
+  #** PRACTICUM不显示PeakTime *# 
+  #if(${timeSlot.style} == "peakTime")
+    #set($timeSlotStyle = "empty")
+  #else
+    #set($timeSlotStyle = $!{timeSlot.style})
+  #end
+  
+  #** 设置一个TimeSlot包含多个ZoneTime的样式 *#
+  #multiZoneStyle(${timeSlot.zoneTime.size()}, $velocityCount, $multiStyle)
+  
+  ## 显示OnlineClass开始
+  #if($!{teacherScheduleMap.get($beiJingTime)})
+    #** 获取北京时间对应的OnlineClass *# 
+    #set($onlineClass = $!{teacherScheduleMap.get($beiJingTime)})
+    
+    #if(${onlineClass.isPracticum})
+    <div class="${timeSlotStyle}" style="z-index: 999; position: relative; $!{multiStyle}"
+      #if(${onlineClass.status} == "OPEN" || ${onlineClass.status} == "BOOKED")id="${onlineClass.id}" data-toggle="popover" data-html="true" data-placement="#dataPlacement(${timeSlotIndex})" title="Lesson Information"#end>
+      #** 可编辑OnlineClass *# 
+      #enabledOnlineClass($timePoint, $onlineClass, $zoneTime, $beiJingTime, "practicumSlot")
+    </div>
+    #else
+    <div class="${timeSlotStyle}" style="$!{multiStyle}">
+      #** 只读OnlineClass *#
+      #readOnlineClass($timePoint, $onlineClass, "majorSlot", "courses")
+    </div>
+    #end
+  #** 没有OnlineClass的情况 *# 
+  #else
+  <div class="${timeSlotStyle}" style="$!{multiStyle}" data-schedule="${beiJingTime}" data-toggle="tooltip" data-html="true" data-placement="#dataPlacement(${timeSlotIndex})">
+    #** 设置时间提示 *# 
+    #timeInfo(${zoneTime})
+  </div>
+  #end
+  ## 显示OnlineClass结束
+  
+#end
+## 循环ZoneTime列表结束
+
+## 夏令时特殊处理
+#if(0 == ${timeSlot.zoneTime.size()})
+  <div class="expiredTimeSlot"></div>
+#end
+</div>

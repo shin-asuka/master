@@ -1,0 +1,48 @@
+#parse("/library/portal.vm")
+#set($layout = "/portal/layout.vm")
+#set($activeClassrooms = "active")
+#set($showClassroomsLayer = false)
+<style type="text/css">
+li[role] a {
+    color: #000;
+}
+.nav-tabs > li.active > a {
+    color: #dd4814;
+}
+</style>
+<div id="classrooms"> 
+  <!-- Nav tabs -->
+  <ul class="nav nav-tabs" role="tablist">
+    <li role="presentation" #tabActive($courseType, "MAJOR")>
+      <a href="javascript:;" id="courses">Courses</a>
+    </li>
+    #@teachedPracticum()
+    #set($showClassroomsLayer = $showLayer)
+    <li role="presentation" #tabActive($courseType, "PRACTICUM")>
+      <a href="javascript:;" id="practicum">Practicum</a>
+    </li>
+    #end
+  </ul>
+  <!-- Tab panes -->
+  <div class="tab-content">
+    <div role="tabpanel" class="tab-pane active panel-body">
+    #if($courseType.equals("MAJOR"))  
+      #parse("/portal/classrooms_major.vm")
+    #elseif($courseType.equals("PRACTICUM"))
+      #parse("/portal/classrooms_practicum.vm")
+    #end
+    </div>
+  </div>
+  <form id="classroomsForm" style="display: none;" method="post" action="#springUrl('/classrooms.shtml')">
+    <input type="hidden" id="offsetOfMonth" name="offsetOfMonth" value="$!{offsetOfMonth}" />
+    <input type="hidden" id="courseType" name="courseType" value="$!{courseType}" />
+    <input type="submit" />
+  </form>
+</div>
+
+<div class="schedule-guide">
+      <div class="schedule-guide-bg"></div>
+      <div class="classroom-guide-img"> 
+      <a href="javascript:;"></a> 
+ </div>
+</div>

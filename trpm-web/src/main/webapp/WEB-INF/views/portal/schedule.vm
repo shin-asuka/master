@@ -1,0 +1,78 @@
+<div class="divload"
+     style="position:fixed;left:0;top:0;z-index:1024;background:rgba(230,230,230,0.0);width:100%;height:100%;text-align:center;line-height:600px;">
+    <p style="font-size:30px;margin-top:300px;" class="loadtext"></p>
+</div>
+#parse("/library/portal.vm")
+#set($layout = "/portal/layout.vm")
+#set($activeSchedule = "active")
+#set($showScheduleLayer = false)
+#set($locale = $fieldTool.in("java.util.Locale").US)
+<style type="text/css">
+    li[role] a {
+        color: #000;
+    }
+
+    .nav-tabs > li.active > a {
+        color: #dd4814;
+    }
+
+    .icon {
+        width: 46px;
+        height: 46px;
+        position: fixed;
+        bottom: 21%;
+        right: 1px;
+    }
+
+    .icon .contact {
+        visibility: hidden;
+        width: 111px;
+        height: 29px;
+        position: absolute;
+        top: 9px;
+        left: -90px;
+        opacity: .3;
+        z-index: -1;
+        transition: all .1s;
+    }
+
+    .icon:hover .contact {
+        visibility: visible;
+        opacity: 1;
+        left: -111px;
+        transition: all .3s;
+    }
+</style>
+<div>
+    <!-- Nav tabs -->
+    <ul class="nav nav-tabs" role="tablist">
+        <li role="presentation" #tabActive($courseType, "MAJOR")>
+            <a href="javascript:;" id="courses">Courses</a>
+        </li>
+        #@teachedPracticum()
+            #set($showScheduleLayer = $showLayer)
+            <li role="presentation" #tabActive($courseType, "PRACTICUM")>
+                <a href="javascript:;" id="practicum">Practicum</a>
+            </li>
+        #end
+    </ul>
+    <!-- Tab panes -->
+    <div class="tab-content">
+        <div role="tabpanel" class="tab-pane active panel-body">
+            #parse("/portal/schedule_content.vm")
+        </div>
+    </div>
+</div>
+
+<div class="schedule-guide">
+    <div class="schedule-guide-bg"></div>
+    <div class="schedule-guide-img">
+        <a href="javascript:;"></a>
+    </div>
+</div>
+<div id="dialog"></div>
+#@requireJs()
+    require(["schedule"], function(schedule){
+        schedule.init($!{offsetOfWeek}, $!{showScheduleLayer}, $!{show24HoursInfo});
+    });
+#end

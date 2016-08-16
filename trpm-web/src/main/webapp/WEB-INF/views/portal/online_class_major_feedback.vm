@@ -1,0 +1,45 @@
+##<!-- 是否显示DemoReport 按钮 -->		
+#if($stringUtils.startsWith($!{lesson.serialNumber},'A'))
+	#if($currentReport)
+	  <div class="edgings">
+        <div name="listening-s" style="padding: 5px; cursor: pointer;" class="ng-pristine ng-valid"
+          onclick="require('room-demo').openDemoReportRoom('$lesson.serialNumber','$!onlineClass.id','$!student.id','listening-s')">L: Listening</div>
+        <hr class="ihr" />
+        
+        <div name="speaking-s" style="padding: 5px; cursor: pointer;" class="ng-pristine ng-valid"
+          onclick="require('room-demo').openDemoReportRoom('$lesson.serialNumber','$!onlineClass.id','$!student.id','speaking-s')">S: Speaking</div>
+        <hr class="ihr" />
+        
+        <div name="reading-s" style="padding: 5px; cursor: pointer;" class="ng-pristine ng-valid"
+          onclick="require('room-demo').openDemoReportRoom('$lesson.serialNumber','$!onlineClass.id','$!student.id','reading-s')">R: Reading</div>
+        <hr class="ihr" />
+        
+		<div name="math-s" style="padding: 5px; cursor: pointer;" class="ng-pristine ng-valid"
+		  onclick="require('room-demo').openDemoReportRoom('$lesson.serialNumber','$!onlineClass.id','$!student.id','math-s')">M:<br /> Math</div>
+		<hr class="ihr" />
+		
+		<div name="score-s" style="padding: 5px; cursor: pointer;" class="ng-pristine ng-valid"
+		  onclick="require('room-demo').openDemoReportRoom('$lesson.serialNumber','$!onlineClass.id','$!student.id','score-s')">S:<br /> Score</div>
+ 	  </div>
+	#end
+#else
+##否则显示feedback 按钮
+	#**
+	  <div class="edgingsForTrail">
+		<div name="Required" style="padding: 5px; cursor: pointer;" class="Required ng-pristine ng-valid" 
+			onclick="require('feedback').openFeedback('Required','$!onlineClass.id','$!student.id')">Required</div>								
+		<hr class="ihr" />	
+						
+		<div name="NoRequired" style="padding: 5px; cursor: pointer;" class="NoRequired ng-pristine ng-valid" 
+			onclick="require('feedback').openFeedback('NoRequired','$!onlineClass.id','$!student.id')">Optional</div>								
+		<hr class="ihr" />
+	  </div>
+	**#
+#end
+
+##feedback 内容展示区
+<div class="reportContainer" style="display: none;"> </div>
+	<div class="trailFeedbackContainer" style="display: none;"> </div>
+  	<div id="bigStar" style="position: absolute; z-index: 1999; opacity: 0; background: url('${request.getContextPath()}/resources/images/star/star.png') no-repeat; background-size: 100% 100%;"></div>
+  	<audio id="player"></audio>
+</div>

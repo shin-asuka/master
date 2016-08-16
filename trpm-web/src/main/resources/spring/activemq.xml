@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:amq="http://activemq.apache.org/schema/core"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:jms="http://www.springframework.org/schema/jms"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+     http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+     http://www.springframework.org/schema/context
+     http://www.springframework.org/schema/context/spring-context-4.0.xsd
+    http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd">
+
+    <!-- Connection的ConnectionFactory，由对应的 JMS服务厂商提供-->
+    <bean id="targetConnectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
+        <property name="brokerURL" value="${activemq.brokerURL}"/>
+        <property name="userName" value="${activemq.new.username}"/>
+        <property name="password" value="${activemq.new.password}"/>
+    </bean>
+
+    <!-- A cached connection to wrap the ActiveMQ connection -->
+    <bean id="cacheConnectionFactory" class="org.springframework.jms.connection.CachingConnectionFactory">
+        <property name="targetConnectionFactory" ref="targetConnectionFactory"/>
+        <property name="sessionCacheSize" value="10"/>
+    </bean>
+
+    <!-- Spring提供的JMS工具类，它可以进行消息发送、接收等 -->
+    <bean id="jmsTemplate" class="org.springframework.jms.core.JmsTemplate">
+        <property name="connectionFactory" ref="cacheConnectionFactory"/>
+        <property name="explicitQosEnabled" value="true" />
+		<!-- deliveryMode, priority, timeToLive 的开关，要生效，必须配置为true，默认false -->
+		<property name="deliveryMode" value="1" />
+		<!-- 发送模式 DeliveryMode.NON_PERSISTENT=1:非持久 ; DeliveryMode.PERSISTENT=2:持久 -->
+		<property name="pubSubDomain" value="false" />
+    </bean>
+
+	<!-- Payroll消息队列 -->
+	<!-- 管理端结束课程 -->
+    <bean id="finishOnlineClassDestination" class="org.apache.activemq.command.ActiveMQQueue">
+        <constructor-arg value="${activemq.queue.payroll.finishOnlineClass}"/>
+    </bean>
+
+</beans>

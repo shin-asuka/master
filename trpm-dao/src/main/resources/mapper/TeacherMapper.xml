@@ -1,0 +1,465 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="TeacherMapper">
+
+	<sql id="teacherColumns">teacher.id AS teacher_id, teacher.address AS
+		teacher_address, teacher.avatar AS teacher_avatar,
+		teacher.bank_account_name AS teacher_bank_account_name,
+		teacher.bank_address AS teacher_bank_address, teacher.bank_card_number
+		AS teacher_bank_card_number, teacher.bank_name AS teacher_bank_name,
+		teacher.bank_swift_code AS teacher_bank_swift_code, teacher.birthday
+		AS teacher_birthday, teacher.certificates AS teacher_certificates,
+		teacher.contract_end_date AS teacher_contract_end_date,
+		teacher.contract_start_date AS teacher_contract_start_date,
+		teacher.entry_date AS teacher_entry_date,
+		teacher.country AS teacher_country, teacher.currency AS
+		teacher_currency, teacher.email AS teacher_email,
+		teacher.extra_class_salary AS teacher_extra_class_salary, teacher.hide
+		AS teacher_hide, teacher.introduction AS teacher_introduction,
+		teacher.job AS teacher_job, teacher.life_cycle AS teacher_life_cycle,
+		teacher.linkedin AS teacher_linkedin, teacher.mobile AS
+		teacher_mobile, teacher.no_show_time AS teacher_no_show_time,
+		teacher.notes AS teacher_notes, teacher.over_time_class_salary AS
+		teacher_over_time_class_salary, teacher.paypal_account AS
+		teacher_paypal_account, teacher.recruitment_channel AS
+		teacher_recruitment_channel, teacher.serial_number AS
+		teacher_serial_number, teacher.skype AS teacher_skype, teacher.summary
+		AS teacher_summary, teacher.teaching_experience AS
+		teacher_teaching_experience, teacher.timezone AS teacher_timezone,
+		teacher.type AS teacher_type, teacher.qq AS teacher_qq,
+		teacher.real_name AS teacher_real_name, teacher.additional_diplomas AS
+		teacher_additional_diplomas, teacher.bachelor_diploma AS
+		teacher_bachelor_diploma, teacher.certificate_files AS
+		teacher_certificate_files, teacher.life_picture1 AS
+		teacher_life_picture1, teacher.life_picture2 AS teacher_life_picture2,
+		teacher.referee AS teacher_referee, teacher.resume AS teacher_resume,
+		teacher.short_video AS teacher_short_video, teacher.partner_id AS
+		teacher_partner_id, teacher.contract AS teacher_contract,
+		teacher.passport AS teacher_passport, teacher.photos AS
+		teacher_photos, teacher.recruitment_id AS teacher_recruitment_id,
+		teacher.has_tested AS teacher_has_tested, teacher.introduction_zh AS
+		teacher_introduction_zh, teacher.graduated_from AS
+		teacher_graduated_from, teacher.teacher_tags AS teacher_teacher_tags,
+		teacher.vipkid_remarks AS teacher_vipkid_remarks, 
+		teacher.manager AS teacher_manager,
+		
+		teacher.identity_type AS teacher_identity_type,
+		teacher.identity_number AS teacher_identity_number,
+		teacher.issuance_country as teacher_issuance_country,
+		teacher.phone_nation_code as teacher_phone_nation_code,
+		teacher.phone_nation_id as teacher_phone_nation_id,
+		teacher.current_address_id as teacher_current_address_id,
+		teacher.beneficiary_bank_address_id as teacher_beneficiary_bank_address_id,
+		teacher.beneficiary_address_id as teacher_beneficiary_address_id,
+		
+		teacher.contract_type AS teacher_contract_type,
+		teacher.highest_degree AS teacher_highest_degree
+	</sql>
+
+	<sql id="teacherWhere">
+		<trim prefix="WHERE" prefixOverrides="AND">
+			<if test="id!=0">AND teacher.id = #{id}</if>
+			<if test="address!=null">AND teacher.address = #{address}</if>
+			<if test="avatar!=null">AND teacher.avatar = #{avatar}</if>
+			<if test="bankAccountName!=null">AND teacher.bank_account_name = #{bankAccountName}</if>
+			<if test="bankAddress!=null">AND teacher.bank_address = #{bankAddress}</if>
+			<if test="bankCardNumber!=null">AND teacher.bank_card_number = #{bankCardNumber}</if>
+			<if test="bankName!=null">AND teacher.bank_name = #{bankName}</if>
+			<if test="bankSwiftCode!=null">AND teacher.bank_swift_code = #{bankSwiftCode}</if>
+			<if test="birthday!=null">AND teacher.birthday = #{birthday}</if>
+			<if test="certificates!=null">AND teacher.certificates = #{certificates}</if>
+			<if test="contractEndDate!=null">AND teacher.contract_end_date = #{contractEndDate}</if>
+			<if test="contractStartDate!=null">AND teacher.contract_start_date = #{contractStartDate}</if>
+			<if test="entryDate!=null">AND teacher.entry_date = #{entryDate}</if>
+			<if test="country!=null">AND teacher.country = #{country}</if>
+			<if test="currency!=null">AND teacher.currency = #{currency}</if>
+			<if test="email!=null">AND teacher.email = #{email}</if>
+			<if test="extraClassSalary!=0.0">AND teacher.extra_class_salary = #{extraClassSalary}</if>
+			<if test="hide!=null">AND teacher.hide = #{hide}</if>
+			<if test="introduction!=null">AND teacher.introduction = #{introduction}</if>
+			<if test="job!=null">AND teacher.job = #{job}</if>
+			<if test="lifeCycle!=null">AND teacher.life_cycle = #{lifeCycle}</if>
+			<if test="linkedin!=null">AND teacher.linkedin = #{linkedin}</if>
+			<if test="mobile!=null">AND teacher.mobile = #{mobile}</if>
+			<if test="noShowTime!=0">AND teacher.no_show_time = #{noShowTime}</if>
+			<if test="notes!=null">AND teacher.notes = #{notes}</if>
+			<if test="overTimeClassSalary!=0.0">AND teacher.over_time_class_salary =
+				#{overTimeClassSalary}</if>
+			<if test="paypalAccount!=null">AND teacher.paypal_account = #{paypalAccount}</if>
+			<if test="recruitmentChannel!=null">AND teacher.recruitment_channel = #{recruitmentChannel}
+			</if>
+			<if test="serialNumber!=null">AND teacher.serial_number = #{serialNumber}</if>
+			<if test="skype!=null">AND teacher.skype = #{skype}</if>
+			<if test="summary!=null">AND teacher.summary = #{summary}</if>
+			<if test="teachingExperience!=0">AND teacher.teaching_experience = #{teachingExperience}
+			</if>
+			<if test="timezone!=null">AND teacher.timezone = #{timezone}</if>
+			<if test="type!=null">AND teacher.type = #{type}</if>
+			<if test="qq!=null">AND teacher.qq = #{qq}</if>
+			<if test="realName!=null">AND teacher.real_name = #{realName}</if>
+			<if test="additionalDiplomas!=null">AND teacher.additional_diplomas = #{additionalDiplomas}
+			</if>
+			<if test="bachelorDiploma!=null">AND teacher.bachelor_diploma = #{bachelorDiploma}</if>
+			<if test="certificateFiles!=null">AND teacher.certificate_files = #{certificateFiles}</if>
+			<if test="lifePicture1!=null">AND teacher.life_picture1 = #{lifePicture1}</if>
+			<if test="lifePicture2!=null">AND teacher.life_picture2 = #{lifePicture2}</if>
+			<if test="referee!=null">AND teacher.referee = #{referee}</if>
+			<if test="resume!=null">AND teacher.resume = #{resume}</if>
+			<if test="shortVideo!=null">AND teacher.short_video = #{shortVideo}</if>
+			<if test="partnerId!=0">AND teacher.partner_id = #{partnerId}</if>
+			<if test="contract!=null">AND teacher.contract = #{contract}</if>
+			<if test="passport!=null">AND teacher.passport = #{passport}</if>
+			<if test="photos!=null">AND teacher.photos = #{photos}</if>
+			<if test="recruitmentId!=null">AND teacher.recruitment_id = #{recruitmentId}</if>
+			<if test="hasTested!=0">AND teacher.has_tested = #{hasTested}</if>
+			<if test="introductionZh!=null">AND teacher.introduction_zh = #{introductionZh}</if>
+			<if test="graduatedFrom!=null">AND teacher.graduated_from = #{graduatedFrom}</if>
+			<if test="highestLevelOfEdu!=null">AND teacher.highest_degree = #{highestLevelOfEdu}</if>
+			<if test="teacherTags!=null">AND teacher.teacher_tags = #{teacherTags}</if>
+			<if test="vipkidRemarks!=null">AND teacher.vipkid_remarks = #{vipkidRemarks}</if>
+			<if test="manager!=0">AND teacher.manager = #{manager}</if>
+			
+			<if test="identityType!=0"> AND teacher.identity_type = #{identityType}</if>
+			<if test="identityNumber!=null"> AND teacher.identity_number = #{identityNumber}</if>
+			<if test="issuanceCountry!=0">AND teacher.issuance_country = #{issuanceCountry}</if>
+			<if test="phoneNationCode!=null">AND teacher.phone_nation_code = #{phoneNationCode}</if>
+			<if test="phoneNationId!=0">AND teacher.phone_nation_id = #{phoneNationId}</if>
+			<if test="currentAddressId!=0">AND teacher.current_address_id = #{currentAddressId}</if>
+			<if test="beneficiaryBankAddressId">AND teacher.beneficiary_bank_address_id = #{beneficiaryBankAddressId}</if>
+			<if test="beneficiaryAddressId"> AND teacher.beneficiary_address_id = #{beneficiaryAddressId}</if>
+		</trim>
+	</sql>
+
+	<sql id="teacherOrder">
+		<if test="orderString!=null">ORDER BY ${orderString}</if>
+	</sql>
+
+	<sql id="teacherLimit">LIMIT #{startLine},#{limitLine}</sql>
+
+	<resultMap type="com.vipkid.trpm.entity.Teacher" id="teacherResultMap">
+		<id column="teacher_id" property="id" />
+		<result column="teacher_address" property="address" />
+		<result column="teacher_avatar" property="avatar" />
+		<result column="teacher_bank_account_name" property="bankAccountName" />
+		<result column="teacher_bank_address" property="bankAddress" />
+		<result column="teacher_bank_card_number" property="bankCardNumber" />
+		<result column="teacher_bank_name" property="bankName" />
+		<result column="teacher_bank_swift_code" property="bankSwiftCode" />
+		<result column="teacher_birthday" property="birthday" />
+		<result column="teacher_certificates" property="certificates" />
+		<result column="teacher_contract_end_date" property="contractEndDate" />
+		<result column="teacher_contract_start_date" property="contractStartDate" />
+		<result column="teacher_entry_date" property="entryDate" />
+		<result column="teacher_country" property="country" />
+		<result column="teacher_currency" property="currency" />
+		<result column="teacher_email" property="email" />
+		<result column="teacher_extra_class_salary" property="extraClassSalary" />
+		<result column="teacher_hide" property="hide" />
+		<result column="teacher_introduction" property="introduction" />
+		<result column="teacher_job" property="job" />
+		<result column="teacher_life_cycle" property="lifeCycle" />
+		<result column="teacher_linkedin" property="linkedin" />
+		<result column="teacher_mobile" property="mobile" />
+		<result column="teacher_no_show_time" property="noShowTime" />
+		<result column="teacher_notes" property="notes" />
+		<result column="teacher_over_time_class_salary" property="overTimeClassSalary" />
+		<result column="teacher_paypal_account" property="paypalAccount" />
+		<result column="teacher_recruitment_channel" property="recruitmentChannel" />
+		<result column="teacher_serial_number" property="serialNumber" />
+		<result column="teacher_skype" property="skype" />
+		<result column="teacher_summary" property="summary" />
+		<result column="teacher_teaching_experience" property="teachingExperience" />
+		<result column="teacher_timezone" property="timezone" />
+		<result column="teacher_type" property="type" />
+		<result column="teacher_qq" property="qq" />
+		<result column="teacher_real_name" property="realName" />
+		<result column="teacher_additional_diplomas" property="additionalDiplomas" />
+		<result column="teacher_bachelor_diploma" property="bachelorDiploma" />
+		<result column="teacher_certificate_files" property="certificateFiles" />
+		<result column="teacher_life_picture1" property="lifePicture1" />
+		<result column="teacher_life_picture2" property="lifePicture2" />
+		<result column="teacher_referee" property="referee" />
+		<result column="teacher_resume" property="resume" />
+		<result column="teacher_short_video" property="shortVideo" />
+		<result column="teacher_partner_id" property="partnerId" />
+		<result column="teacher_contract" property="contract" />
+		<result column="teacher_passport" property="passport" />
+		<result column="teacher_photos" property="photos" />
+		<result column="teacher_recruitment_id" property="recruitmentId" />
+		<result column="teacher_has_tested" property="hasTested" />
+		<result column="teacher_introduction_zh" property="introductionZh" />
+		<result column="teacher_graduated_from" property="graduatedFrom" />
+		<result column="teacher_highest_degree" property="highestLevelOfEdu" />
+		<result column="teacher_teacher_tags" property="teacherTags" />
+		<result column="teacher_vipkid_remarks" property="vipkidRemarks" />
+		<result column="teacher_manager" property="manager" />
+		
+		<result column="teacher_identity_type" property="identityType"/>
+		<result column="teacher_identity_number" property="identityNumber"/>
+		<result column="teacher_issuance_country" property="issuanceCountry"/>
+		<result column="teacher_phone_nation_code" property="phoneNationCode"/>
+		<result column="teacher_phone_nation_id" property="phoneNationId"/>
+		<result column="teacher_current_address_id" property="currentAddressId"/>
+		<result column="teacher_beneficiary_bank_address_id" property="beneficiaryBankAddressId"/>
+		<result column="teacher_beneficiary_address_id" property="beneficiaryAddressId"/>
+		
+		<result column="teacher_contract_type" property="contractType" />
+	</resultMap>
+
+	<select id="findDao" resultMap="teacherResultMap">
+		SELECT
+		<include refid="teacherColumns" />
+		FROM teacher
+		<include refid="teacherWhere" />
+		<include refid="teacherOrder" />
+	</select>
+
+	<select id="countDao" resultType="int">
+		SELECT COUNT(*) FROM teacher
+		<include refid="teacherWhere" />
+	</select>
+
+	<select id="pageDao" resultMap="teacherResultMap">
+		SELECT
+		<include refid="teacherColumns" />
+		FROM teacher
+		<include refid="teacherWhere" />
+		<include refid="teacherOrder" />
+		<include refid="teacherLimit" />
+	</select>
+
+	<select id="limitDao" resultMap="teacherResultMap">
+		SELECT
+		<include refid="teacherColumns" />
+		FROM teacher
+		<include refid="teacherWhere" />
+		<include refid="teacherOrder" />
+		<include refid="teacherLimit" />
+	</select>
+
+	<insert id="saveDao" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO teacher
+		<trim prefix="(" prefixOverrides=",">
+			<if test="id!=0">,id</if>
+			<if test="address!=null">,address</if>
+			<if test="avatar!=null">,avatar</if>
+			<if test="bankAccountName!=null">,bank_account_name</if>
+			<if test="bankAddress!=null">,bank_address</if>
+			<if test="bankCardNumber!=null">,bank_card_number</if>
+			<if test="bankName!=null">,bank_name</if>
+			<if test="bankSwiftCode!=null">,bank_swift_code</if>
+			<if test="birthday!=null">,birthday</if>
+			<if test="certificates!=null">,certificates</if>
+			<if test="contractEndDate!=null">,contract_end_date</if>
+			<if test="entryDate!=null">,entry_date</if>
+			<if test="country!=null">,country</if>
+			<if test="currency!=null">,currency</if>
+			<if test="email!=null">,email</if>
+			<if test="extraClassSalary!=0.0">,extra_class_salary</if>
+			<if test="hide!=null">,hide</if>
+			<if test="introduction!=null">,introduction</if>
+			<if test="job!=null">,job</if>
+			<if test="lifeCycle!=null">,life_cycle</if>
+			<if test="linkedin!=null">,linkedin</if>
+			<if test="mobile!=null">,mobile</if>
+			<if test="noShowTime!=0">,no_show_time</if>
+			<if test="notes!=null">,notes</if>
+			<if test="overTimeClassSalary!=0.0">,over_time_class_salary</if>
+			<if test="paypalAccount!=null">,paypal_account</if>
+			<if test="recruitmentChannel!=null">,recruitment_channel</if>
+			<if test="serialNumber!=null">,serial_number</if>
+			<if test="skype!=null">,skype</if>
+			<if test="summary!=null">,summary</if>
+			<if test="teachingExperience!=0">,teaching_experience</if>
+			<if test="timezone!=null">,timezone</if>
+			<if test="type!=null">,type</if>
+			<if test="qq!=null">,qq</if>
+			<if test="realName!=null">,real_name</if>
+			<if test="additionalDiplomas!=null">,additional_diplomas</if>
+			<if test="bachelorDiploma!=null">,bachelor_diploma</if>
+			<if test="certificateFiles!=null">,certificate_files</if>
+			<if test="lifePicture1!=null">,life_picture1</if>
+			<if test="lifePicture2!=null">,life_picture2</if>
+			<if test="referee!=null">,referee</if>
+			<if test="resume!=null">,resume</if>
+			<if test="shortVideo!=null">,short_video</if>
+			<if test="partnerId!=0">,partner_id</if>
+			<if test="contract!=null">,contract</if>
+			<if test="passport!=null">,passport</if>
+			<if test="photos!=null">,photos</if>
+			<if test="recruitmentId!=null">,recruitment_id</if>
+			<if test="hasTested!=0">,has_tested</if>
+			<if test="introductionZh!=null">,introduction_zh</if>
+			<if test="graduatedFrom!=null">,graduated_from</if>
+			<if test="highestLevelOfEdu!=null">,highest_degree</if>
+			<if test="teacherTags!=null">,teacher_tags</if>
+			<if test="vipkidRemarks!=null">,vipkid_remarks</if>
+			<if test="manager!=0">,manager</if>
+			
+			<if test="identityType!=0">,identity_type</if>
+			<if test="identityNumber!=null">,identity_number</if>
+			<if test="issuanceCountry!=0">,issuance_country</if>
+			<if test="phoneNationCode!=null">,phone_nation_code</if>
+			<if test="phoneNationId!=0">,phone_nation_id</if>
+			<if test="currentAddressId!=0">,current_address_id</if>
+			<if test="beneficiaryBankAddressId">,beneficiary_bank_address_id</if>
+			<if test="beneficiaryAddressId">,beneficiary_address_id</if>
+			
+		</trim>
+		) VALUES
+		<trim prefix="(" prefixOverrides=",">
+			<if test="id!=0">,#{id}</if>
+			<if test="address!=null">,#{address}</if>
+			<if test="avatar!=null">,#{avatar}</if>
+			<if test="bankAccountName!=null">,#{bankAccountName}</if>
+			<if test="bankAddress!=null">,#{bankAddress}</if>
+			<if test="bankCardNumber!=null">,#{bankCardNumber}</if>
+			<if test="bankName!=null">,#{bankName}</if>
+			<if test="bankSwiftCode!=null">,#{bankSwiftCode}</if>
+			<if test="birthday!=null">,#{birthday}</if>
+			<if test="certificates!=null">,#{certificates}</if>
+			<if test="contractEndDate!=null">,#{contractEndDate}</if>
+			<if test="contractStartDate!=null">,#{contractStartDate}</if>
+			<if test="country!=null">,#{country}</if>
+			<if test="currency!=null">,#{currency}</if>
+			<if test="email!=null">,#{email}</if>
+			<if test="extraClassSalary!=0.0">,#{extraClassSalary}</if>
+			<if test="hide!=null">,#{hide}</if>
+			<if test="introduction!=null">,#{introduction}</if>
+			<if test="job!=null">,#{job}</if>
+			<if test="lifeCycle!=null">,#{lifeCycle}</if>
+			<if test="linkedin!=null">,#{linkedin}</if>
+			<if test="mobile!=null">,#{mobile}</if>
+			<if test="noShowTime!=0">,#{noShowTime}</if>
+			<if test="notes!=null">,#{notes}</if>
+			<if test="overTimeClassSalary!=0.0">,#{overTimeClassSalary}</if>
+			<if test="paypalAccount!=null">,#{paypalAccount}</if>
+			<if test="recruitmentChannel!=null">,#{recruitmentChannel}</if>
+			<if test="serialNumber!=null">,#{serialNumber}</if>
+			<if test="skype!=null">,#{skype}</if>
+			<if test="summary!=null">,#{summary}</if>
+			<if test="teachingExperience!=0">,#{teachingExperience}</if>
+			<if test="timezone!=null">,#{timezone}</if>
+			<if test="type!=null">,#{type}</if>
+			<if test="qq!=null">,#{qq}</if>
+			<if test="realName!=null">,#{realName}</if>
+			<if test="additionalDiplomas!=null">,#{additionalDiplomas}</if>
+			<if test="bachelorDiploma!=null">,#{bachelorDiploma}</if>
+			<if test="certificateFiles!=null">,#{certificateFiles}</if>
+			<if test="lifePicture1!=null">,#{lifePicture1}</if>
+			<if test="lifePicture2!=null">,#{lifePicture2}</if>
+			<if test="referee!=null">,#{referee}</if>
+			<if test="resume!=null">,#{resume}</if>
+			<if test="shortVideo!=null">,#{shortVideo}</if>
+			<if test="partnerId!=0">,#{partnerId}</if>
+			<if test="contract!=null">,#{contract}</if>
+			<if test="passport!=null">,#{passport}</if>
+			<if test="photos!=null">,#{photos}</if>
+			<if test="recruitmentId!=null">,#{recruitmentId}</if>
+			<if test="hasTested!=0">,#{hasTested}</if>
+			<if test="introductionZh!=null">,#{introductionZh}</if>
+			<if test="graduatedFrom!=null">,#{graduatedFrom}</if>
+			<if test="highestLevelOfEdu!=null">,#{highestLevelOfEdu}</if>
+			<if test="teacherTags!=null">,#{teacherTags}</if>
+			<if test="vipkidRemarks!=null">,#{vipkidRemarks}</if>
+			<if test="manager!=0">,#{manager}</if>
+			
+			<if test="identityType!=0">,#{identityType}</if>
+			<if test="identityNumber!=null">,#{identityNumber}</if>
+			<if test="issuanceCountry!=0">,#{issuanceCountry}</if>
+			<if test="phoneNationCode!=null">,#{phoneNationCode}</if>
+			<if test="phoneNationId!=0">,#{phoneNationId}</if>
+			<if test="currentAddressId!=0">,#{currentAddressId}</if>
+			<if test="beneficiaryBankAddressId">,#{beneficiaryBankAddressId}</if>
+			<if test="beneficiaryAddressId">,#{beneficiaryAddressId}</if>
+			
+		</trim>
+		)
+	</insert>
+
+	<update id="updateDao">
+		UPDATE teacher
+		<trim prefix="SET" prefixOverrides=",">
+			<if test="id!=0">,id = #{id}</if>
+			<if test="address!=null">,address = #{address}</if>
+			<if test="avatar!=null">,avatar = #{avatar}</if>
+			<if test="bankAccountName!=null">,bank_account_name = #{bankAccountName}</if>
+			<if test="bankAddress!=null">,bank_address = #{bankAddress}</if>
+			<if test="bankCardNumber!=null">,bank_card_number = #{bankCardNumber}</if>
+			<if test="bankName!=null">,bank_name = #{bankName}</if>
+			<if test="bankSwiftCode!=null">,bank_swift_code = #{bankSwiftCode}</if>
+			<if test="birthday!=null">,birthday = #{birthday}</if>
+			<if test="certificates!=null">,certificates = #{certificates}</if>
+			<if test="contractEndDate!=null">,contract_end_date = #{contractEndDate}</if>
+			<if test="contractStartDate!=null">,contract_start_date = #{contractStartDate}</if>
+			<if test="entryDate!=null">,entry_date = #{entryDate}</if>
+			<if test="country!=null">,country = #{country}</if>
+			<if test="currency!=null">,currency = #{currency}</if>
+			<if test="email!=null">,email = #{email}</if>
+			<if test="extraClassSalary!=0.0">,extra_class_salary = #{extraClassSalary}</if>
+			<if test="hide!=null">,hide = #{hide}</if>
+			<if test="introduction!=null">,introduction = #{introduction}</if>
+			<if test="job!=null">,job = #{job}</if>
+			<if test="lifeCycle!=null">,life_cycle = #{lifeCycle}</if>
+			<if test="linkedin!=null">,linkedin = #{linkedin}</if>
+			<if test="mobile!=null">,mobile = #{mobile}</if>
+			<if test="noShowTime!=0">,no_show_time = #{noShowTime}</if>
+			<if test="notes!=null">,notes = #{notes}</if>
+			<if test="overTimeClassSalary!=0.0">,over_time_class_salary = #{overTimeClassSalary}</if>
+			<if test="paypalAccount!=null">,paypal_account = #{paypalAccount}</if>
+			<if test="recruitmentChannel!=null">,recruitment_channel = #{recruitmentChannel}</if>
+			<if test="serialNumber!=null">,serial_number = #{serialNumber}</if>
+			<if test="skype!=null">,skype = #{skype}</if>
+			<if test="summary!=null">,summary = #{summary}</if>
+			<if test="teachingExperience!=0">,teaching_experience = #{teachingExperience}</if>
+			<if test="timezone!=null">,timezone = #{timezone}</if>
+			<if test="type!=null">,type = #{type}</if>
+			<if test="qq!=null">,qq = #{qq}</if>
+			<if test="realName!=null">,real_name = #{realName}</if>
+			<if test="additionalDiplomas!=null">,additional_diplomas = #{additionalDiplomas}</if>
+			<if test="bachelorDiploma!=null">,bachelor_diploma = #{bachelorDiploma}</if>
+			<if test="certificateFiles!=null">,certificate_files = #{certificateFiles}</if>
+			<if test="lifePicture1!=null">,life_picture1 = #{lifePicture1}</if>
+			<if test="lifePicture2!=null">,life_picture2 = #{lifePicture2}</if>
+			<if test="referee!=null">,referee = #{referee}</if>
+			<if test="resume!=null">,resume = #{resume}</if>
+			<if test="shortVideo!=null">,short_video = #{shortVideo}</if>
+			<if test="partnerId!=0">,partner_id = #{partnerId}</if>
+			<if test="contract!=null">,contract = #{contract}</if>
+			<if test="passport!=null">,passport = #{passport}</if>
+			<if test="photos!=null">,photos = #{photos}</if>
+			<if test="recruitmentId!=null">,recruitment_id = #{recruitmentId}</if>
+			<if test="hasTested!=0">,has_tested = #{hasTested}</if>
+			<if test="introductionZh!=null">,introduction_zh = #{introductionZh}</if>
+			<if test="graduatedFrom!=null">,graduated_from = #{graduatedFrom}</if>
+			<if test="highestLevelOfEdu!=null">,highest_degree = #{highestLevelOfEdu}</if>
+			<if test="teacherTags!=null">,teacher_tags = #{teacherTags}</if>
+			<if test="vipkidRemarks!=null">,vipkid_remarks = #{vipkidRemarks}</if>
+			<if test="manager!=0">,manager = #{manager}</if>
+			
+			<if test="identityType!=0">,identity_type=#{identityType}</if>
+			<if test="identityNumber!=null">,identity_number=#{identityNumber}</if>
+			<if test="issuanceCountry!=-1">,issuance_country=#{issuanceCountry}</if>
+			<if test="phoneNationCode!=null">,phone_nation_code=#{phoneNationCode}</if>
+			<if test="phoneNationId!=0">,phone_nation_id=#{phoneNationId}</if>
+			<if test="currentAddressId!=0">,current_address_id=#{currentAddressId}</if>
+			<if test="beneficiaryBankAddressId">,beneficiary_bank_address_id=#{beneficiaryBankAddressId}</if>
+			<if test="beneficiaryAddressId">,beneficiary_address_id=#{beneficiaryAddressId}</if>
+			
+		</trim>
+		<trim prefix="WHERE" prefixOverrides="AND">AND id = #{id}</trim>
+	</update>
+
+	<delete id="deleteDao">
+		DELETE FROM teacher
+		<trim prefix="WHERE" prefixOverrides="AND">AND id = #{id}</trim>
+	</delete>
+	
+	<select id="getMaxSerialNumber" resultType="int">
+		select MAX(CAST(t.serial_number AS SIGNED)) max from teacher t
+	</select>
+	
+	<select id="findAllRegularId" resultType="String">
+		select t.id  from teacher t where t.life_cycle = 'REGULAR'
+	</select>
+</mapper>

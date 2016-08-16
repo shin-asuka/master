@@ -1,0 +1,82 @@
+##PE
+<style type="text/css">
+.finishType { width: 300px!important; }
+.finishTypeItem, .finishTypeButton { float: right!important; }
+.mainContainer { margin: 0 auto 0 auto!important; }
+</style>
+<form class='feedBackForm' id ='practicumFeedBackForm' action="#springUrl('/doAudit.json')">
+    <div class="wrapper"> 
+        ##关闭
+        <div class='closeBtn' onclick="require('classpracticum').closeFeedBackForm()"></div>
+        <div style="margin-top:15px; height:500px; width:350px; overflow-y:scroll;">
+        #if($!{PESupervisor} || "PE-Supervisor" == $!{teacherApplication.contractUrl})
+            #parse("/pe/pe_supervisor_form.vm")
+        #else
+        	#parse("/pe/pe_form.vm")
+        #end
+        </div>
+        <div class='row commentDiv'>
+            <input type="hidden" id="onlineClassId" name="onlineClassId" value="$!onlineClass.id"/>
+            <input type="hidden" id="teacherId" name="teacherId" value="$!teacherApplication.teacherId"/>
+            <input type="hidden" id="id" name="id" value="$!teacherApplication.id"/>
+            <input type="hidden" id="type" name="type" value=""/>
+        </div>
+        <div style="margin: 10px 0 0 0;">
+            <b>Total Score: <span id="score">0</span></b>
+        </div>
+        <hr />
+        <div calss="row">
+            <div class='btnDiv'>
+                
+                <div class='commentDiv'>
+                    <input id="Pass" onclick="require('classpracticum').doAudit('PASS')" type='button' value='Pass' class='ui blue button submitBtn disabled'/>
+                    <input id="Tbd-Fail" onclick="require('classpracticum').doAudit('TBD_FAIL')" type='button' value='Fail' class='ui blue button submitBtn disabled'/>
+                </div>
+                <div class='commentDiv'>
+                    <input onclick="require('classpracticum').showFinshType()" type='button' value='ReSchedule' class='ui blue button submitBtn'/>
+                    ##如果当前用户拥有PE Supervisor权限则不显示TBD按钮
+                    #if(!$!{PESupervisor} && "PE-Supervisor" != $!{teacherApplication.contractUrl})
+                    <input id="Tbd" onclick="require('classpracticum').doAudit('TBD')" type='button' value="TBD" class='ui blue button submitBtn'/>
+                    #end
+                </div>
+                #if($!{lesson.name} == "Practicum Lesson One")
+                <div class='commentDiv'>
+                    <input id="Practicum2" onclick="require('classpracticum').doAudit('PRACTICUM2')" type='button' value='Practicum2' class='ui blue button submitBtn disabled'/>
+                </div>
+                #end 
+            </div>
+        </div>
+        <hr>
+        <div style='margin: 5px 0 0 20px;'>
+            <p><strong>Pass</strong> – This button allows the teacher to finish training and become a new VIPKID Teacher.</p>
+            <p><strong>Fail</strong> – This button PERMANENTLY fails the teacher and kicks them OUT of the training process. They will not be able to become a VIPKID Teacher. Use this button with extreme caution.</p>
+            <p><strong>Reschedule</strong> – This button reschedules the practicum to tech or scheduling issues.</p>
+            <p><strong>TBD</strong> – To be determined: Choose this option if you are unsure what the candidate's result should be. This can refer to if a candidate is on the border between "pass" and "practicum 2" or "pass" and "fail".</p>
+            #if($!{lesson.name} == "Practicum Lesson One")
+            <p><strong>Practicum 2</strong> – This button tells the teacher to schedule a second practicum.</p>
+            #end 
+        </div>
+    </div>
+    <div class="modal fade" id="finish-modal" style="overflow:hidden;" role="dialog" aria-labelledby="finishModal">
+        <div class="modal-dialog" style="margin-top: 10%; width: 400px; height: auto; opacity:1; overflow: visible;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">&times;</button>
+                    <h4 class="modal-title"> <strong>Select Finish Type</strong> </h4>
+                </div>
+                <div class="modal-body form-horizontal">
+                    <select id="finishType" name="finishType" class="form-control">
+                        <option value="">-Finish Type-</option>
+                        <option value="STUDENT_NO_SHOW">CANDIDATE_NO_SHOW</option>
+                        <option value="STUDENT_IT_PROBLEM">CANDIDATE_IT_PROBLEM</option>
+                        <option value="SYSTEM_PROBLEM">SYSTEM_PROBLEM</option>
+                    </select>
+                </div>
+                <div class="modal-footer" style="margin-top:0px;">
+                    <button type="button" class="btn btn-primary" onclick="require('classpracticum').doAudit('REAPPLY')">ReSchedule</button>
+                    <button type="button" class="btn btn-warning" data-dismiss="modal" aria-label="Close">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>

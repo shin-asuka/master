@@ -1,0 +1,234 @@
+<div class="tab-pane active" id="bankInfo" style="border: 0px;">
+	    
+        <div class="row form-group">
+          <div class="col-sm-1 col-md-1"></div>
+          <div class="col-sm-11 col-md-11">
+            <h4>Bank and ID Information</h4>
+          </div>
+        </div>
+        
+        <div class="row form-group">
+          <div class="col-sm-1 col-md-1"></div>
+          <div class="col-xs-10 col-sm-10 col-md-5">
+            <p>
+            	Teacher bank account information is used solely for the purposes of transferring salary payments. We will not share this information with other teachers or any third party other than our financial institution without your consent.
+            </p>
+            <p>
+            	Please provide us with your personal banking information at least 10 days prior to pay day for a given month. Late or incomplete submisson of information will likely result in salary for that month being delayed to the following month.
+            </p>
+            <p style="color:#dd4814;width:500px"><font style="font-weight:bold;">[Attention]:</font>
+            	Only provide beneficiary bank information for successful payment. Intermediary bank information will not suffice.
+            </p>
+          </div>
+          <div class="col-sm-1 col-sm-1 col-md-6"></div>
+        </div>
+        
+        <div class="row form-group">
+          <div class="col-sm-1 col-md-1"></div>
+          <div class="col-sm-5 col-md-5 add-right-border">
+            <div class='title-lable'>Beneficiary's account name</div>
+            <input type="text" class="form-control replace" id="bankAccountName" name="bankAccountName" value="$!{TRPM_TEACHER.bankAccountName}"/>
+            <div>(e.g.,John Doe)</div>
+            <span id="bankAccountName-tip" class="help-block has-error"></span>
+          </div>          
+          <div class="col-sm-6 col-md-6">
+            The name you enter has to be identical to the one on your bank statement.<br/>
+            Replace any "," "." "-" with a space and "&" with the word "and".
+          </div>
+        </div>
+        
+        <div class="row form-group"><div class="col-sm-1 col-md-1"></div><div class="col-sm-11 col-md-11"><hr/></div></div>
+        
+        <div class="row form-group">
+           	<div class="col-sm-1 col-md-1"></div>
+           	<div class="col-sm-5 col-md-5 add-right-border">
+            	<div class='title-lable'>Beneficiary's checking account number</div>
+            	<input type="text" class="form-control" id="bankCardNumber" name="bankCardNumber" value="$!{TRPM_TEACHER.bankCardNumber}">
+            	<div>(e.g.,0123456789)</div>
+            	<div class="line_input">
+					<span id="bankCardNumber-tip" class="help-block has-error"></span>
+				</div>
+           	</div>          	
+          	<div class="col-sm-6 col-md-6">
+          		Can only contain numbers and letters.
+			</div>
+        </div>
+        
+        <div class="row form-group"><div class="col-sm-1 col-md-1"></div><div class="col-sm-11 col-md-11"><hr/></div></div>
+        
+        <div class="row form-group">
+           	<div class="col-sm-1 col-md-1"></div>
+           	<div class="col-sm-5 col-md-5 add-right-border">
+            	<div class='title-lable'>Beneficiary's bank name</div>
+            	<input type="text" class="form-control" id="bankName" name="bankName" value="$!{TRPM_TEACHER.bankName}">
+            	<div>(e.g.,0123456789)</div>
+           	</div>          
+          	<div class="col-sm-6 col-md-6">
+				The full name of the bank you want. your salary transferred to, NOT abbreviated.
+			</div>
+        </div>
+        
+        <div class="row form-group"><div class="col-sm-1 col-md-1"></div><div class="col-sm-11 col-md-11"><hr/></div></div>
+        
+        <div class="row form-group">
+           	<div class="col-sm-1 col-md-1"></div>
+           	<div class="col-sm-5 col-md-5 add-right-border">
+            	<div class='title-lable'>Beneficiary's bank address</div>
+            		#location("#beneficiarybank-address","bank_country_id","bank_state_id","bank_city_id",$!beneficiaryBankAddress)
+            		<div><p id="beneficiarybank-address-tip" class="help-block has-error"></p></div>
+            		#if($!beneficiaryBankAddress)
+            			<input type="text" class="form-control replace"  placeholder="Street" id="bank_street"  name="bankAddress" value="$!{beneficiaryBankAddress.streetAddress}">
+            		#else
+            			<input type="text" class="form-control replace"  placeholder="Street" id="bank_street"  name="bankAddress" value="$!{TRPM_TEACHER.bankAddress}">
+            		#end
+            		<span id="bank_street-tip" class="help-block has-error"></span>
+            		<div class="row" style="margin-top:10px;margin-bottom:10px;">
+					<div class="col-xs-4 col-sm-4 col-md-4">
+						<input type="text" placeholder="Zip code" maxlength="8" value="$!{beneficiaryBankAddress.zipCode}" id="bank_zip_code" name="bankZipcode" class="form-control"/>
+					</div>
+		        </div>
+           	</div>         	
+          	<div class="col-sm-6 col-md-6">
+				The name you enter has to be identical to the one on your bank statement.<br/>
+				Replace any "," "." "-" with a space and "&" with the word "and".
+			</div>
+        </div>
+        
+        <div class="row form-group"><div class="col-sm-1 col-md-1"></div><div class="col-sm-11 col-md-11"><hr/></div></div>
+        
+        <div class="row form-group">
+           	<div class="col-sm-1 col-md-1"></div>
+           	<div class="col-sm-5 col-md-5 add-right-border">
+            	<div class='title-lable'>Beneficiary's address</div>
+            	#location("#beneficiary-address","beneficiary_country_id","beneficiary_state_id","beneficiary_city_id",$!beneficiaryAddress)
+            	<div><p id="beneficiary-address-tip" class="help-block has-error"></p></div>
+            	<input type="text" placeholder="Street" class="form-control replace" id="beneficiary_street" name="beneficiaryAddress" value="$!{beneficiaryAddress.streetAddress}">
+            	<span id="beneficiary_street-tip" class="help-block has-error"></span>
+            	<div class="row" style="margin-top:10px;margin-bottom:10px;">
+					<div class="col-xs-4 col-sm-4 col-md-4">
+						<input type="text" placeholder="Zip code" maxlength="8" value="$!{beneficiaryAddress.zipCode}" id="beneficiary_zip_code" name="beneficiaryZipcode" class="form-control"/>
+					</div>
+		        </div>
+           	</div>          	
+          	<div class="col-sm-6 col-md-6">
+				The name you enter has to be identical to the one on your bank statement.<br/>
+				Replace any "," "." "-" with a space and "&" with the word "and".
+          	</div>
+        </div>
+        
+        <div class="row form-group"><div class="col-sm-1 col-md-1"></div><div class="col-sm-11 col-md-11"><hr/></div></div>
+        
+        <div class="row form-group">
+          	<div class="col-sm-1 col-md-1"></div>
+           	<div class="col-sm-5 col-md-5 add-right-border">
+	            <div class='title-lable'>Swift code</div>
+	            <input type="text" class="form-control" id="bankSwiftCode" name="bankSwiftCode" value="$!{TRPM_TEACHER.bankSwiftCode}">
+	            <div>(e.g.,BOFAUS3N)</div>
+	        </div>          	
+          	<div class="col-sm-6 col-md-6">
+            	If you cannot confirm this, please refer to your bank manager.
+          	</div>
+        </div>
+        
+        <div class="row form-group"><div class="col-sm-1 col-md-1"></div><div class="col-sm-11 col-md-11"><hr/></div></div>
+        
+        <div class="row form-group">
+          	<div class="col-sm-1 col-md-1"></div>
+           	<div class="col-sm-5 col-md-5 add-right-border">
+            	<div class='title-lable'>ID type</div>
+            	#set($identityType = $!TRPM_TEACHER.identityType)
+            	#if(!$TRPM_TEACHER.identityType)  #set($identityType = 1)  #end
+            	<label><input type="radio" name="identityType" value="1" field="$!identityType"/> Passport picture page </label>&nbsp;
+				<label><input type="radio" name="identityType" value="2" field="$!identityType"/> Driver's license </label>&nbsp;
+				<label><input type="radio" name="identityType" value="4" field="$!identityType"/> Identity card </label><br/>
+				##-----------
+				<div id="passport-input" class="line_input" #if($stringUtils.isNotEmpty($!TRPM_TEACHER.passport) && $stringUtils.isNotBlank($!TRPM_TEACHER.passport)) style="display:none" #end >
+					<form id="passportForm" action="#springUrl('/uploadNormalFile.json')" method="post" enctype="multipart/form-data">
+						<input id="passport-attachfile"  type="button" class="attachfile" value="Attach File"/>
+						<!--
+						<input type='text'  id='passport-textfield' readOnly="readOnly" placeholder="*.jpg,*.jpeg,*.png,*.bmp,*.doc,*.docx,*.pdf," class="textfield" /> 
+						-->
+						<span id='passport-textfield' class="textfield">No file attached...</span>
+						<input type='hidden'id='passport-size' name="size"/>
+						<input type="file" name="file" id="passport" class="uploadFile" size="28" accept=".doc,.docx,.pdf,.jpg,.jpeg,.png,.bmp"/>
+					    <input type="button" fileType="ALLFILE" id="passport-submit" class="browse" title="*.jpg,*.jpeg,*.png,*.bmp,*.doc,*.docx,*.pdf" value="Upload" style = "display:none;"/>
+						<div id="passport-uploading" class="contactUploadStatus" style="display:none;">
+							<span class="contactUploadStatusImg" ></span><span class="contactUploadStatusWz">Cancel</span>
+						</div>
+					</form>
+				</div>
+				<div class="line_input">
+					<span id="passport-tip" class="help-block has-error"></span>
+				</div>
+				#*显示部分*#
+				<div id="passport-text" class="line_input" #if($stringUtils.isEmpty($!TRPM_TEACHER.passport) || $stringUtils.isBlank($!TRPM_TEACHER.passport)) style="height:55px;line-height: 30px;display:none;" #end>
+					#set($name = "")
+					#if($stringUtils.isNotEmpty($!TRPM_TEACHER.passport) && $stringUtils.isNotBlank($!TRPM_TEACHER.passport))
+						#set($name = $!TRPM_TEACHER.passport.substring($!TRPM_TEACHER.passport.lastIndexOf("/")))
+					#end
+					<a id="passport-link" style="display:none;" href="${resourceTool.oss.url_preffix}/$!TRPM_TEACHER.passport" target="blank">$name.replace("/","")</a>
+					<span class="textName">$name.replace("/","")</span>
+					<span id="passport-remove" class="delete-file">Remove</span>
+				</div>
+				##-----------
+          	</div>          	
+          	<div class="col-sm-6 col-md-6">
+            	Please attach a scanned copy of your ID. This will also be used to verify your identity for your salary transfer.<br/>
+            	We only accept .doc, .docx, .pdf, .jpg, .jpeg, .png, .bmp file types.
+          	</div>
+        </div>
+        
+        <div class="row form-group"><div class="col-sm-1 col-md-1"></div><div class="col-sm-11 col-md-11"><hr/></div></div>
+        
+        <div class="row form-group">
+			<div class="col-sm-1 col-md-1"></div>
+	        <div class="col-sm-5 col-md-5 add-right-border">
+	            <div class='title-lable'>ID number</div>
+	            <input type="text" id="identityNumber" name="identityNumber" value="$!{TRPM_TEACHER.identityNumber}" placeholder="" class="form-control" />
+	        </div>
+          	<div class="col-sm-6 col-md-6">
+				This has to be identical to the number on the ID you provide above.
+	        </div>
+        </div>
+        
+        <div class="row form-group"><div class="col-sm-1 col-md-1"></div><div class="col-sm-11 col-md-11"><hr/></div></div>
+        
+        <div class="row form-group">
+          	<div class="col-sm-1 col-md-1"></div>
+           	<div class="col-sm-5 col-md-5 add-right-border">
+	            <div class='title-lable'>Country of issuance</div>
+				<select class="js-example-basic-single form-control select2"  name="issuanceCountry" id="countryOfIssu">
+		          	<option value="">-Country-</option>
+					#foreach($location in $countrys)
+					<option value="${location.id}" #if($!{TRPM_TEACHER.issuanceCountry} == ${location.id}) selected #end>${location.name}</option>
+					#end
+		        </select>
+	        </div>
+          	<div class="col-sm-6 col-md-6">
+          		The country which issued the ID you provided above.
+          	</div>
+        </div>
+        
+        <div class="row form-group"><div class="col-sm-1 col-md-1"></div><div class="col-sm-11 col-md-11"><hr/></div></div>
+       
+        <div class="row form-group form-inline" style="margin-top:40px;">
+        	<div class="col-sm-12 col-md-12" align="center">
+        		<button id="setBankInfoSubmit" class="btn btn-primary" style="margin: 0px 10px;">Update</button>
+        		<button id="toCancel" url="#springUrl('/personal/bankinfo.shtml')" class="btn btn-gray" style="margin:0px 10px;">Cancel</button>
+            </div>
+        </div>
+</div>
+ #** Bank Info End *# 
+ #@requireJs()
+    require(['personal-bankinfo','personal-location'], function(bankinfo,location){
+      
+      bankinfo.init("${resourceTool.oss.url_preffix}/");
+      
+      #if($!beneficiaryBankAddress)
+      	##location.initLocation("#bank-address",$!{beneficiaryBankAddress.countryId},$!{beneficiaryBankAddress.stateId},$!{beneficiaryBankAddress.city});
+      #end
+      #if($!beneficiaryAddress)
+      	##location.initLocation("#beneficiary-address",$!{beneficiaryAddress.countryId},$!{beneficiaryAddress.stateId},$!{beneficiaryAddress.city});
+      #end
+    });
+#end

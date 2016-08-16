@@ -1,0 +1,225 @@
+#set($layout = "/passport/layout.vm")
+<div class="divload" style="position:fixed;left:0;top:0;z-index:999;background:#fff;width:100%;height:100%;text-align:center;line-height:600px;">
+	<p style="font-size:30px;color:#eee" class="loadtext">Loading...</p>
+</div>
+<section>
+<div class="border-buttom"></div>
+	<div class="content-blank">
+		<div class="privacycontent">
+			<div class="title"><div class="title-ioc"></div><span class="title-font">Privacy policy<span></div>
+			<div class="privacycontent-left">
+				<ul class="left-ul">
+					<li><a href="#one">How to reach us</a></li>
+					<li><a href="#two">Special note to international users</a></li>
+					<li style="margin-bottom:20px;"><a href="#three">Information we collect</a></li>
+					<ul class="sub-left-ul" style="margin-bottom:40px;">
+						<li><a href="#three1">Registration information</a></li>
+						<li><a href="#three2">Testimonials</a></li>
+						<li><a href="#three3">Automatic Collection of Data</a></li>
+					</ul>
+					<li><a href="#four">What we do with your information</a></li>
+					<li><a href="#five">How to review, update or delete your registration information</a></li>
+					<li><a href="#six">Invitations - Refer a Friend</a></li>
+					<li><a href="#seven">Security</a></li>
+				</ul>
+			</div>
+			<div class="privacycontent-right">
+			
+				## --- Introduction
+				<div class="panels">
+					<div class="sub-title">Introduction </div>
+					<div class="sub-content">
+						<ul>
+							<li class="margin-btm">Welcome to VIPKID, a web-based service that instructs ths English language to young learners("<a href='http://www.vipkid.com.cn' target='_blank'>www.vipkid.com.cn</a>" the main website and "<a href='http://t.vipkid.com.cn' target='_blank'>t.vipkid.com.cn</a>" affiliate web sites). We respect your privacy and want you to know what information about you we collect and what we do with that information. In order to help you understand how the information you provide VIPKID will be used, we have created the following Privacy Policy. This Privacy Policy applies to all information we collect or receive from you.</li>
+							<li>Please note that VIPKID may contain links to other websites and occasionally other websites may be co-branded with the VIPKID name. Those websites may have privacy policies which differ from that of VIPKID.</li>
+						</ul>
+					</div>
+				</div>
+				
+				## ---How to reach us
+				<div class="panels">
+					<div class="sub-title"><a name="one">How to reach us</a><div class="back"><div class="top-ioc"></div>Back to top</div></div>
+					<div class="sub-content">
+						<ul>
+							<li class="numbers">1.
+								<ul>
+									<li>If you have any questions regarding this Privacy Policy, or if you would like to contact VIPKID for any other reason, please email <a href="mailto:teachvip@vipkid.com.cn">teachvip@vipkid.com.cn</a>.</li>
+								</ul>
+							</li>
+						</ul>
+					</div>
+				</div>
+				
+				## ---Special note to international users
+				<div class="panels">
+					<div class="sub-title"><a name="two">Special note to international users</a><div class="back"><div class="top-ioc"></div>Back to top</div></div>
+					<div class="sub-content">
+						<ul>
+							<li class="numbers">2.
+								<ul>
+									<li class="margin-btm">The Service is hosted in China. If you are a user accessing the Service from North America, European Union (EU) or any other region with laws governing personal data collection, use, and disclosure, that differ from Chinese laws, please note that you are transferring your personal data to China which does not have the same data protection laws as the United States, EU and other regions, and by providing your personal data you consent to:</li>
+									<li class="numbers small">2.1
+										<ul>
+											<li class="li-title2 nobold">Use of your personal data for legal uses and the uses identified above in accordance with the Privacy Policy.</li>
+										</ul>
+									</li>
+									<li class="numbers small">2.2
+										<ul>
+											<li class="li-title2 nobold">The transfer of your personal data to China as indicated above.</li>
+										</ul>
+									</li>
+								</ul>
+							</li>
+						</ul>
+					</div>
+				</div>
+				
+				## ---Special note to international users
+				<div class="panels">
+					<div class="sub-title"><a name="three">Information we collect</a><div class="back"><div class="top-ioc"></div>Back to top</div></div>
+					<div class="sub-content">
+						<ul>
+							<li class="numbers">3.
+								<ul>
+									<li class="li-title"><a name="three1">Registration information</a><li>
+									<li class="margin-btm">When you create your VIPKID Teacher Account, you will be required to provide certain personal information, including your first and last name, a user name (which will be your email address), the country in which you reside, your Linkedin account, your nationality, your gender, your time zone, your current job and a password.</li>
+									<li>If you are a teacher, we collect and store all of the additional information that you provide to us in your profile. This may include: your time availability, your location, pictures and videos you choose to post, your phone number, address, Skype accounts.</li>
+								</ul>
+							</li>
+							<li class="numbers">4.
+								<ul>
+									<li class="li-title"><a name="three2">Testimonials</a><li>
+									<li>VIPKID may post customers’ testimonials on our Website, which may contain personal information from our customers. Once you accept the VIPKID contract, you give your consent to VIPKID to publish any testimonial, post, comments, name and any other representations.</li>
+								</ul>
+							</li>
+							<li class="numbers">5.
+								<ul>
+									<li class="li-title"><a name="three3">Automatic Collection of Data</a><li>
+									<li class="numbers small">5.1
+										<ul>
+											<li class="li-title2">Cookies<li>
+											<li>When you visit our Website or click through hyperlinks appearing thereon, or use one or more of our services, we may use an industry-wide technology called "cookies" which stores certain information on your computer and which will allow us to customize your experience to better match your interests and preferences or simply facilitate your signing-in to use the services. Most browsers will allow you to erase cookies from your computer hard drive, block acceptance of cookies, or receive a warning before a cookie is stored. Please refer to your browser instructions or help screen to learn more about these functions. Please note, however, that if you set your browser to block acceptance of cookies, you may not be able to use the Service or enter our Website or it may otherwise adversely impact the functionality of the site. By allowing your browser settings to accept cookies from this Website or Service, you consent to our placement of cookies on your personal computer and/or technology device. However, users of our Website and Service can set their browsers to accept or reject all, or certain, cookies. Please note that if you set your browser to disable cookies or other technologies, you may not be able to access certain parts of our Website or Service and other parts of our Service may not work properly. If you do not wish to share this information with VIPKID, then you should take steps to limit the passive collection of data about your activities on our site, for example, by changing your browser settings to disable cookies. We reserve the right to use and disclose such Non Personal Information, as well as any other Non-Personal Information we collect, with our advertisers and other third parties at our discretion.</li>
+										</ul>
+									</li>
+									<li class="numbers small">5.2
+										<ul>
+											<li class="li-title2">Social media features and widgets<li>
+											<li>Our Site includes social media features and widgets, such as the Facebook “Like” button and the Facebook “Share” button. These features may collect your IP address, the URL of the page you are visiting on our Site, and may set a cookie to enable the feature to function properly. Social media features and widgets are either hosted by a third party or hosted directly on our Site. Your interactions with these features are governed by the privacy policy of the company providing it.</li>
+										</ul>
+									</li>
+								</ul>
+							</li>
+						</ul>
+					</div>
+				</div>
+				
+				## ---V	What we do with your information
+				<div class="panels">
+					<div class="sub-title"><a name="four">What we do with your information</a><div class="back"><div class="top-ioc"></div>Back to top</div></div>
+					<div class="sub-content">
+						<ul>
+							<li class="numbers">6.
+								<ul>
+									<li>In general, the Personal Information we collect is used to (1) improve our services and enhance your experience with VIPKID, (2) enable us to provide a safer community for all of our Registered Users, and (3) communicate with us. We may use your Personal Information to register and service your account, include in teacher profiles, contact you for questions and to solicit feedback, enable students to search for you, verify information you provide us, help protect the safety and integrity of the site and VIPKID users, target promotional messages or content on the Site, via email or other ads on VIPKID or third party sites.</li>
+									<li class="numbers small">6.1
+										<ul>
+											<li class="li-title2">Background Check<li>
+											<li class="margin-btm">In order to promote the safety and integrity of the Site and Service, you authorize VIPKID to utilize third party service providers to use your Personal Information to scan on an ongoing basis a variety of sources, which may include, but are not limited to, national criminal databases, sex offender registries, certain media streams, terrorist watch lists, criminal and fugitive watch lists, fraud watch lists, law enforcement reports, and other data to assist us in verifying the information you provide us (such as your name, address, email address, etc.). The results of any Verification Checks will be made available to VIPKID.</li>
+											<li>For the legitimate business purpose of protecting the safety and integrity of the website and VIPKID users, you authorize VIPKID to utilize a third party consumer reporting agency to use your Personal Information to run periodic background checks on you when you register with VIPKID.</li>	
+										</ul>
+									</li>
+									<li class="numbers small">6.2
+										<ul>
+											<li class="li-title2">Sharing Information with Affiliates<li>
+											<li class="margin-btm">From teacher recruitment website to VIPKID main website which is open to Company members;</li>
+											<li class="margin-btm">Your information will be stored in VIPKID's database, which is only accessible through the use of a Virtual Private Network (VPN) with access restricted to only a few key members in the company. </li>
+											<li>Following termination or deactivation of your account, VIPKID, its Affiliates, or its Service Providers may retain information associated with your profile information for a commercially reasonable time for backup, archival, and/or audit purposes.</li>
+										</ul>
+									</li>
+									<li class="numbers small">6.3
+										<ul>
+											<li class="li-title2">Share information with third parties<li>
+											<li class="margin-btm">We work with third parties who provide services, which may include website hosting, bank payment and other services of an administrative nature. Personal information, including financial information, may be shared with such third parties for the purpose of providing such services to you. We seek to impose confidentiality obligations on such service providers.</li>
+											<li class="numbers addsmall">6.3.1
+												<ul>
+													<li class="li-title3">Registered students and parents<li>
+													<li>If you are a teacher, in order to increase your class booking rate, we share with registered users the information that is included in your profile, aside from your contact information, as well as the following registration information, which we may include in your profile: your first name, first initial of your last name, city, state, profile picture, your gender and your age. The more information you share, the better chance you have of finding students. We may also share on your profile any company reviews you have posted on our Site. If you post information in a VIPKID online forum, that information may be viewed by any Site Visitor or Registered User who accesses the forum.</li>
+												</ul>
+											</li>
+											<li class="numbers addsmall">6.3.2
+												<ul>
+													<li class="li-title3">Links to other sites<li>
+													<li class="margin-btm">Linking to other sites is an integral part of the functionality of the Internet, including our Website. Any link to a page which displays a URL other than a domain name that ends in vipkid.com.cn in the address window of your browser is a link to a site outside of our service and thus outside the control of VIPKID. This includes links to our suppliers of content on the service, affiliates, and links to any other third parties that may be linked to VIPKID. These other sites may send their own cookies to you, collect data or solicit personal information. VIPKID cannot guarantee and is not responsible for the content of outside sites.</li>
+													<li>Please keep in mind that whenever you give out personal information on other sites (for example via message boards or chat), that information can be collected and used by people you don't know. While VIPKID strives to protect our users' personal information and privacy, we cannot guarantee the security and privacy of any information you disclose at other sites, and you do so at your own risk. Please learn about the privacy and security practices and policies of external websites before providing them with personal information.</li>
+												</ul>
+											</li>
+										</ul>
+									</li>
+									<li class="numbers small">6.4
+										<ul>
+											<li class="li-title2">Not to use for profit (rent or sell) <li>
+											<li>If you provide VIPKID with personally identifiable information, we will take reasonable and appropriate steps to protect this information. Except as otherwise described in this Privacy Policy, VIPKID will not disclose, share, sell or rent personally identifiable information collected on our Website to third-party organizations for their marketing or promotional use without your consent or except as part of a specific program or feature for which you will have the ability to opt-out. If we sell or otherwise transfer part or the whole of VIPKID business and/or our assets to another organization like in a course of a merger and acquisition transaction, or in the case of a bankruptcy, dissolution or liquidation, your information such as name and email address and any other information collected through our Website or Service may be among the items sold or transferred. The resulting buyer, surviving company or transferee will honor the commitments we have made in this Privacy Policy. We do not share your bank account information with Affiliate Sites or any other third parties, other than making salary payments for teachers.</li>
+										</ul>
+									</li>
+								</ul>
+							</li>
+						</ul>
+					</div>
+				</div>
+				
+				## ---How to review, update or delete your registration information
+				<div class="panels">
+					<div class="sub-title"><a name="five">How to review, update or delete your registration information</a><div class="back"><div class="top-ioc"></div>Back to top</div></div>
+					<div class="sub-content">
+						<ul>
+							<li class="numbers">7.
+								<ul>
+									<li class="margin-btm">As part of your use of our Service, you are responsible for updating your submitted registration information so that it is both current, complete and effective. You can update this information by logging into your account and accessing your account settings. If you would like to remove some of the Personal Information you have posted on the Site, such as information you posted in profiles, you may do so by editing or deleting that item. To request removal of other Personal Information you have voluntarily posted on our Site, such as information you may have posted in online group forums, contact VIPKID. In some cases, we may not be able to reasonably accommodate your request to remove your Personal Information, in which case we will let you know if we are unable to do so and why. </li>
+									<li>Please note that by using our Website, you signify your agreement to this Privacy Policy, as it may be amended from time to time. If you do not agree to this Privacy Policy, please do not use our Website or the services provided thereon. We reserve the right to make changes to this Privacy Policy. We will provide notice to you of any material changes by any reasonable means including sending an email to the most recently updated address in your VIPKID Account and/or posting such notice and the amended policy on the VIPKID Website. Your continued use of our Website following changes to this Privacy Policy will mean that you accept and agree to the changes and that any information collected or provided after such change will be governed by the updated Privacy Policy.</li>
+								</ul>
+							</li>
+						</ul>
+					</div>
+				</div>
+				
+				##Invitations - refer a friend
+				<div class="panels">
+					<div class="sub-title"><a name="six">Invitations - Refer a Friend</a><div class="back"><div class="top-ioc"></div>Back to top</div></div>
+					<div class="sub-content">
+						<ul>
+							<li class="numbers">8.
+								<ul>
+									<li>If you decide to refer a friend to our site, they will have to provide information for registration as outlined above. Your friend will be subject to this Privacy Policies and the terms of service of VIPKID.</li>
+								</ul>
+							</li>
+						</ul>
+					</div>
+				</div>
+				
+				##Invitations - Security
+				<div class="panels">
+					<div class="sub-title"><a name="seven">Security</a><div class="back"><div class="top-ioc"></div>Back to top</div></div>
+					<div class="sub-content">
+						<ul>
+							<li class="numbers">9.
+								<ul>
+									<li class="margin-btm">Whenever you give VIPKID sensitive information (e.g., bank information), VIPKID will take commercially reasonable steps to protect such information by establishing a secure connection with your Web browser. We use reasonable security methods to protect the data that resides on our servers. However, because no security system is impenetrable, we cannot guarantee the security of our servers. It is also possible that information you supply to us will be intercepted during transmission.</li>
+									<li class="margin-btm">Please remember to sign out of your VIPKID Account, and close your browser window whenever you leave your computer. This is to ensure that others cannot access your personal information, because your computer may be accessible to others or used in a shared setting. To help protect your VIPKID Account information, please keep your password secure. Your password will be maintained in our system in encrypted form because VIPKID understands that privacy is important to you. We suggest that you pick a non-obvious password that mixes numbers and letters. In addition, we recommend that you do not divulge your password to anyone. Ultimately, you are responsible for maintaining the secrecy of your passwords and any VIPKID Account information.</li>
+									<li class="margin-btm">VIPKID's Privacy Policy does not extend to anything that is inherent in the operation of the Internet, and therefore beyond VIPKID's control, and is not to be applied in any manner contrary to applicable law or governmental regulation.</li>
+									<li>VIPKID is dedicated to protecting your personal information and welcomes comments and questions on this Privacy Policy. You may reach out to our team by sending us an email to <a href="mailto:teachvip@vipkid.com.cn">teachvip@vipkid.com.cn</a>.</li>
+								</ul>
+							</li>
+						</ul>
+					</div>
+				</div>
+				
+			</div>
+		</div>
+	</div>
+<div class="border-buttom"></div>
+</section>
+#@requireJs()
+    require(["privacy"], function(privacy){
+        privacy.init();
+    });
+#end

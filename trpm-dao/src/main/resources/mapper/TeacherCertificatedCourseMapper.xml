@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="TeacherCertificatedCourseMapper">
+
+	<sql id="teacherCertificatedCourseColumns">teacher_certificated_course.teacher_id AS
+		teacher_certificated_course_teacher_id,
+		teacher_certificated_course.course_id AS teacher_certificated_course_course_id
+	</sql>
+
+	<!-- 带有course name的 -->
+	<sql id="teacherCertificatedCourseWithNameColumns">teacher_certificated_course.teacher_id AS
+		teacher_certificated_course_teacher_id,
+		teacher_certificated_course.course_id AS
+		teacher_certificated_course_course_id,
+		course.name AS
+		course_name
+	</sql>
+
+	<sql id="teacherCertificatedCourseWhere">
+		<trim prefix="WHERE" prefixOverrides="AND">
+			<if test="teacherId!=0">AND teacher_certificated_course.teacher_id = #{teacherId}
+			</if>
+			<if test="courseId!=0">AND teacher_certificated_course.course_id = #{courseId}
+			</if>
+		</trim>
+	</sql>
+
+	<sql id="teacherCertificatedCourseOrder">
+		<if test="orderString!=null">ORDER BY ${orderString}</if>
+	</sql>
+
+	<sql id="teacherCertificatedCourseLimit">LIMIT #{startLine},#{limitLine}</sql>
+
+	<resultMap type="com.vipkid.trpm.entity.TeacherCertificatedCourse" id="teacherCertificatedCourseResultMap">
+		<id column="teacher_certificated_course_teacher_id" property="teacherId" />
+		<id column="teacher_certificated_course_course_id" property="courseId" />
+	</resultMap>
+
+	<select id="findDao" resultMap="teacherCertificatedCourseResultMap">
+		SELECT
+		<include refid="teacherCertificatedCourseColumns" />
+		FROM teacher_certificated_course
+		<include refid="teacherCertificatedCourseWhere" />
+		<include refid="teacherCertificatedCourseOrder" />
+	</select>
+
+	<select id="countDao" resultType="int">
+		SELECT COUNT(*) FROM teacher_certificated_course
+		<include refid="teacherCertificatedCourseWhere" />
+	</select>
+
+	<select id="pageDao" resultMap="teacherCertificatedCourseResultMap">
+		SELECT
+		<include refid="teacherCertificatedCourseColumns" />
+		FROM teacher_certificated_course
+		<include refid="teacherCertificatedCourseWhere" />
+		<include refid="teacherCertificatedCourseOrder" />
+		<include refid="teacherCertificatedCourseLimit" />
+	</select>
+
+	<select id="limitDao" resultMap="teacherCertificatedCourseResultMap">
+		SELECT
+		<include refid="teacherCertificatedCourseColumns" />
+		FROM teacher_certificated_course
+		<include refid="teacherCertificatedCourseWhere" />
+		<include refid="teacherCertificatedCourseOrder" />
+		<include refid="teacherCertificatedCourseLimit" />
+	</select>
+
+	<insert id="saveDao">
+		INSERT INTO teacher_certificated_course
+		<trim prefix="(" prefixOverrides=",">
+			<if test="teacherId!=0">,teacher_id</if>
+			<if test="courseId!=0">,course_id</if>
+		</trim>
+		) VALUES
+		<trim prefix="(" prefixOverrides=",">
+			<if test="teacherId!=0">,#{teacherId}</if>
+			<if test="courseId!=0">,#{courseId}</if>
+		</trim>
+		)
+	</insert>
+
+	<update id="updateDao">
+		UPDATE teacher_certificated_course
+		<trim prefix="SET" prefixOverrides=",">
+			<if test="teacherId!=0">,teacher_id = #{teacherId}</if>
+			<if test="courseId!=0">,course_id = #{courseId}</if>
+		</trim>
+		<trim prefix="WHERE" prefixOverrides="AND">AND teacher_id =
+			#{teacherId} AND course_id = #{courseId}
+		</trim>
+	</update>
+
+	<delete id="deleteDao">
+		DELETE FROM teacher_certificated_course
+		<trim prefix="WHERE" prefixOverrides="AND">AND teacher_id =
+			#{teacherId} AND course_id = #{courseId}
+		</trim>
+	</delete>
+
+	<select id="findByTeacherIdDao" resultType="java.util.HashMap">
+		SELECT
+		course.name AS courseName,
+		course.type AS courseType
+		From course
+		INNER JOIN teacher_certificated_course ON
+		(teacher_certificated_course.course_id = course.id)
+		INNER JOIN teacher ON
+		(teacher.id = teacher_certificated_course.teacher_id )
+		WHERE
+		teacher.id = #{teacherId}
+	</select>
+
+</mapper>

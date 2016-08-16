@@ -1,0 +1,60 @@
+#set($layout = "/portal/online_class_layout.vm")
+
+<div class="vk-content ng-scope">
+	<div class="classroom ng-scope">
+  
+	    <section class="topSection">
+	      	#** TOP A *#
+			<div class="actionBar">
+				#**1.课程标题 *#
+		        <div class="classroomLabelGroup">
+		            <div class="logo"></div>
+		            <div class="classroomLabel">Classroom</div>
+		            <div class="lessonName ng-binding" style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis; width:492px;">
+		              <a href="javascript:;" style="color: white; text-decoration: none;" title="$!{lesson.serialNumber}:$!{lesson.name}($!{student.englishName})">
+		                $!{lesson.serialNumber} : $!{lesson.name}($!{student.englishName})
+		              </a>
+		            </div>
+		        </div>
+		                
+		        #**2.退出教室*# 
+		        <div class="rightActionBarGroup2">
+		        	#if(!$isReplay)
+		        		<div><a href="http://help.duobeiyun.com/room/test/?result=http://beta-app-proxy.vipkid.com.cn/api/service/public/ittest/callback&amp;lang=en&amp;role=TEACHER&amp;id=$teacher.id" style="color: red;" target="_blank">Test your computer</a></div>
+		        	#end	               
+		            <div class="lastAction"><a href="javascript:;" onclick="require('classopen').endThisClass('$!onlineClass.id');" style="color:white;">End this class</a> </div>
+		        </div>
+		        
+		        #** 3 倒计时显示 *#
+		        <div class="rightActionBarGroup">
+		            <label id="countTimeDiv" class="classTime ng-scope ng-binding"> </label> <label class="classTimeLog ng-hide"> </label>
+		        </div>	  
+	    	</div>
+	    </section>         
+	
+		<div class="container">
+		    <div class="mainContainer">
+				##教室加载
+				<iframe width="1300" height="580" frameborder="0" scrolling="no" src="$!url"></iframe>
+			</div>
+		</div>
+
+	</div>
+</div>
+
+#@requireJs()
+    require(['classopen'], function(classopen){    	
+    	classopen.init("$!serverTime", "$!scheduleTime","$!onlineClass.id", "$!student.id","$!teacher.id","$!onlineClass.classroom","$!teacherApplication.result","$studentUser.createDateTime");  
+        classopen.sendTeacherInClassroom("$!onlineClass.id");
+    });
+    ## 2代表多贝云
+    #if(${onlineClass.supplierCode} == 2)
+        require(['dbyproxy'], function(dby){
+            dby.initChannel($!{TRPM_USER.id}, "$!onlineClass.classroom", true, "$!stars");
+        });    
+    #else
+        require(['xdyproxy'], function(xdy){
+            xdy.initChannel($!{TRPM_USER.id}, "$!onlineClass.classroom", true, "$!stars");
+        });  
+    #end      
+#end

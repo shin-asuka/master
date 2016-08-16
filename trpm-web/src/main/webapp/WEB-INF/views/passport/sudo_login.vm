@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>${title}</title>
+  <link rel="stylesheet" href="#styleUrl('/resources/styles/portal/semantic.min.css')" />
+  <link rel="stylesheet" href="#styleUrl('/resources/styles/portal/bootstrap.min.css')" />
+  <link rel="stylesheet" href="#styleUrl('/resources/styles/portal/bootstrap-additions.min.css')" />
+  <link rel="stylesheet" href="#styleUrl('/resources/styles/portal/main.css')" />
+  <link rel="shortcut icon" href="#styleUrl('/resources/images/portal/favicon.ico')" type="image/x-icon" />
+</head>
+<body>
+<div class="container">
+  	<div class="vk-logo"></div>
+  	<div class="vk-nav-info"></div>
+  	<div class="vk-content">
+		<div class="vk-article">
+	      	<div class="vk-form">
+	        <h1>Welcome to ${title}</h1>
+	        <form class="form" id="loginForm" method="post" action="#springUrl('/sudoLogin.shtml')" autocomplete="off">
+				<div class="form-group row">
+					<div class="col-sm-12 col-md-7">
+						<input type="text" id="j_teacherName" name="j_teacherName" valid-options='{"req-string":"Required","req-email":"Not An Email","errorDiv":"#teachername-tip"}'
+               			class="req-string req-email form-control input-lg" placeholder="Enter your e-mail address" />
+						<p id="teachername-tip" class="help-block has-error"></p>
+					</div>
+				</div>
+				<div class="form-group row">
+		            <div class="col-sm-12 col-md-7">
+						<input type="text" id="j_adminName" name="j_adminName" valid-options='{"req-string":"Required","errorDiv":"#adminname-tip"}'
+						class="req-string form-control input-lg" placeholder="Enter admin username" />
+						<p id="adminname-tip" class="help-block has-error"></p>
+					</div>
+				</div>
+	          	<div class="form-group row">
+		            <div class="col-sm-12 col-md-7">
+		            	<input type="password" id="j_adminPassword" name="j_adminPassword" valid-options='{"req-string":"Required","errorDiv":"#password-tip"}'
+		               	class="req-string form-control input-lg" placeholder="Enter admin password" />
+		              	<p id="password-tip" class="help-block has-error"></p>
+		            </div>
+	          	</div>
+				<input type="submit" id="loginSubmit"  class="btn btn-lg btn-primary" value="Login" />
+	        </form>
+	 		</div>
+	    </div>
+  	</div>
+</div>
+#@requireJs()
+    require(["index"], function(index){
+        index.init();
+    });
+#end
+</body>
+</html>

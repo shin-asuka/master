@@ -1,0 +1,84 @@
+<div class="tab-pane active" style="border: 0px;">
+  <div class="row form-group form-inline" style="margin-top:13px; margin-right: 0;">
+    <button class="btn btn-primary btn-sm next" style="float: right; -margin-right:30px; width:180px;">NEXT MONTH</button>
+    <button class="btn btn-primary btn-sm curr" style="float: right; margin-right:30px; width:180px;">CURRENT MONTH</button>
+    <button class="btn btn-primary btn-sm prev" style="float: right; margin-right: 30px; width:180px;">PREV MONTH</button>
+  </div>
+  <div id="yearMonthTitle" align="center" style="background-color: #AEA79F; border: 1px solid #DDDDDD; 
+    border-bottom: 0px;" class="ng-binding">$!{monthOfYear}</div>
+  <div id="table-frame" style="height: auto; border: 1px solid #DDDDDD; border-top: 0px; border-bottom:0px;">
+    <table id="roomsTable" class="table table-striped" style="font-size: 11px; border-bottom: 1px solid #DDDDDD;">
+      <thead style="background-color: #AEA79F">
+        <tr>
+          <th sort="true"> <div> <a href="javascript:;">Lesson SN</a> </div>
+          </th>
+          <th sort="true"> <div> <a href="javascript:;">Lesson Name</a> </div>
+          </th>
+          <th sort="true"> <div> <a href="javascript:;">Student Name</a> </div>
+          </th>
+          <th sort="true"> <div> <a href="javascript:;">Scheduled Time</a> </div>
+          </th>
+          <th sort="true"> <div> <a href="javascript:;">Short Notice</a> </div>
+          </th>
+          <th sort="true"> <div> <a href="javascript:;">Status</a> </div>
+          </th>
+          <th sort="true"> <div> <a href="javascript:;">Finish Type</a> </div>
+          </th>
+          <th> <div> <a href="javascript:;" style="cursor:default;">Actions</a> </div>
+          </th>
+        </tr>
+      </thead>
+      <tbody id="classList" ms-controller="major-list-controller">
+        <tr ms-repeat="dataList" class="ng-scope">
+		  <td> <div class="ng-scope ng-binding"> {{el.serialNumber}} </div> </td>
+		  <td> <div class="ng-scope ng-binding"> {{el.lessonName|html}} </div> </td>
+		  <td> <div class="ng-binding"> {{el.englishName}} </div> </td>
+		  <td> <div class="ng-binding"> {{el.scheduledDateTime|formatDate}} </div> </td>
+		  <td> <div class="ng-binding"> {{el.shortNotice|formatShortNotice}} </div> </td>
+		  <td> <div class="ng-binding"> {{el.status|formatStatus}}&nbsp;{{el.isPaidTrail|formatIsPaidTrail}}</div> </td>
+		  <td> <div class="ng-binding"> {{el.finishType}} </div> </td>
+		  <td> 
+		    <div class="ng-binding">
+		      ## 显示Classroom的链接
+		      <span ms-if="el.finishType != 'TEACHER_NO_SHOW' && el.status != 'INVALID' "> 
+		        <a ms-attr-href="#springUrl('/classroom/{{el.id}}-{{el.studentId}}-{{el.lessonId}}.shtml')">{{el.serialNumber|formatClassroom}}</a> 
+		        <span>|</span>
+		      </span>
+		      ## 显示Materials的链接
+		      <a href="javascript:;" ms-click="materials(el.lessonId,el.serialNumber)">Materials</a>
+		      ## 显示Report的链接
+		      <span ms-if="el.finishType != 'TEACHER_NO_SHOW' && !el.serialNumber.startsWith('OPEN') && el.status != 'INVALID'">
+		        <span ms-attr-id="{{el.id}}">{{el|showReport}}</span>
+		      </span> 
+		    </div>
+		  </td>
+		</tr>
+      </tbody>
+    </table>
+  </div>
+  <div>
+    <nav style="float:right; margin-right: 30px;">
+      <ul class="pagination">
+      </ul>
+    </nav>
+  </div>
+  <div class="row form-group form-inline" style="margin-top: 40px; margin-right: 30px;">
+    <div style="margin-left:30px;display: inline-block; font-size: 11px;" id="finishCount">
+    #foreach($statFinishTypeMap in $statFinishTypeList)
+      #if($!{statFinishTypeMap.finishType})
+        #set($statCount = ${statFinishTypeMap.finishCount})
+        ${statFinishTypeMap.finishType}: ${statCount} <div style="width:10px;display:inline-block;"></div>
+      #end
+    #end
+    </div>
+  </div>
+</div>
+#@requireJs()
+    require(["classrooms", "report-ua", "report-demo"], function(classrooms){
+        classrooms.init("$!{TRPM_TEACHER.timezone}", $!{offsetOfMonth}, $!{inPage}, $!{showClassroomsLayer});
+        
+        Portal.paging(".pagination", ${totalLine}, ${linePerPage}, function(page){
+            classrooms.majorList(page);
+        });
+    });
+#end

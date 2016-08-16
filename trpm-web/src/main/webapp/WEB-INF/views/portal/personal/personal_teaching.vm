@@ -1,0 +1,85 @@
+<div class="tab-pane active" id="teacherInfo" style="border: 0px;">
+      <form class="form-horizontal" name="form" style="width: 600px;">
+        <div class="row form-group">
+          <div align="right" class="col-md-3">
+            <label class="control-label">Teacher</label>
+          </div>
+          <div class="col-md-9">
+            <div style="background-color:#eeeeee" class="form-control">$!{TRPM_TEACHER.serialNumber}</div>
+          </div>
+        </div>
+        <div class="row form-group">
+          <div align="right" class="col-md-3">
+            <label class="control-label">Full Time/Part Time</label>
+          </div>
+          <div class="col-md-9">
+            <div style="background-color:#eeeeee" class="form-control">$!{TRPM_TEACHER.type}</div>
+          </div>
+        </div>
+        <div class="row form-group">
+          <div align="right" class="col-md-3">
+            <label class="control-label">Life Cycle</label>
+          </div>
+          <div class="col-md-9">
+            <div style="background-color:#eeeeee" class="form-control">$!{TRPM_TEACHER.lifeCycle}</div>
+          </div>
+        </div>
+        <div class="row form-group">
+          <div align="right" class="col-md-3">
+            <label class="control-label">Status</label>
+          </div>
+          <div class="col-md-9">
+            <div style="background-color:#eeeeee" class="form-control">$!{TRPM_USER.status}</div>
+          </div>
+        </div>
+        <div class="row form-group">
+          <div align="right" class="col-md-3">
+            <label class="control-label">Teaching Experience</label>
+          </div>
+          <div class="col-md-9">
+            <div style="background-color:#eeeeee" class="form-control">$!{TRPM_TEACHER.teachingExperience}</div>
+          </div>
+        </div>
+        <div class="row form-group">
+          <div align="right" class="col-md-3">
+            <label class="control-label">Certificates</label>
+          </div>
+          <div class="col-md-9">
+            <div style="background-color:#eeeeee" class="form-control">$!{TRPM_TEACHER.certificates}</div>
+          </div>
+        </div>
+        <div class="row form-group">
+          <div align="right" class="col-md-3">
+            <label class="control-label">Training Profile</label>
+          </div>
+          <div class="col-md-9">
+            <div style="background-color:#eeeeee;height:auto;min-height:35px;" class="form-control">$!{teacherCertificatedCourseName}</div>
+          </div>
+        </div>
+        <div class="row form-group">
+          <div align="right" class="col-md-3">
+            <label class="control-label">Contract Duration</label>
+          </div>
+          <div class="col-md-9"> 
+            #if($!{TRPM_TEACHER.contractStartDate})
+            <div style="background-color: #eeeeee" class="form-control">$!{TRPM_TEACHER.contractStartDate}~~$!{TRPM_TEACHER.contractEndDate}</div>
+            #else
+            <div style="background-color: #eeeeee" class="form-control">Invalid date ~ Invalid date</div>
+            #end 
+          </div>
+        </div>
+        <div class="row form-group">
+          <div align="right" class="col-md-3">
+            <label class="control-label">Currency</label>
+          </div>
+          <div class="col-md-9">
+            <select class="form-control" name="currency" id="currency" disabled="disabled">
+              <option value="US_DOLLAR" #if(${TRPM_TEACHER.currency} == "US_DOLLAR") selected="selected" #end >US Dollar</option>
+              <option value="CANADIAN_DOLAR" #if(${TRPM_TEACHER.currency} == "CANADIAN_DOLAR") selected="selected" #end >Canadian Dollar</option>
+              <option value="CNY" #if(${TRPM_TEACHER.currency} == "CNY") selected="selected" #end >CNY</option>
+            </select>
+          </div>
+        </div>
+      </form>
+    </div>
+#** Teaching Info End *# 

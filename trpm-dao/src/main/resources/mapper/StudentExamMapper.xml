@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="StudentExamMapper">
+    
+    <sql id="studentExamColumns">student_exam.id AS student_exam_id, student_exam.student_id AS student_exam_student_id, student_exam.family_id AS student_exam_family_id, student_exam.exam_comment AS student_exam_exam_comment, student_exam.exam_level AS student_exam_exam_level, student_exam.exam_score AS student_exam_exam_score, student_exam.record_uuid AS student_exam_record_uuid, student_exam.create_datetime AS student_exam_create_datetime, student_exam.end_datetime AS student_exam_end_datetime, student_exam.status AS student_exam_status</sql>
+    
+    <sql id="studentExamWhere">
+        <trim prefix="WHERE" prefixOverrides="AND">
+            <if test="id!=0">AND student_exam.id = #{id}</if>
+            <if test="studentId!=0">AND student_exam.student_id = #{studentId}</if>
+            <if test="familyId!=0">AND student_exam.family_id = #{familyId}</if>
+            <if test="examComment!=null">AND student_exam.exam_comment = #{examComment}</if>
+            <if test="examLevel!=null">AND student_exam.exam_level = #{examLevel}</if>
+            <if test="examScore!=0">AND student_exam.exam_score = #{examScore}</if>
+            <if test="recordUuid!=null">AND student_exam.record_uuid = #{recordUuid}</if>
+            <if test="createDatetime!=null">AND student_exam.create_datetime = #{createDatetime}</if>
+            <if test="endDatetime!=null">AND student_exam.end_datetime = #{endDatetime}</if>
+            <if test="status!=0">AND student_exam.status = #{status}</if>
+        </trim>
+    </sql>
+    
+    <sql id="studentExamOrder">
+        <if test="orderString!=null">ORDER BY ${orderString}</if>
+    </sql>
+    
+    <sql id="studentExamLimit">LIMIT #{startLine},#{limitLine}</sql>
+    
+    <resultMap type="com.vipkid.trpm.entity.StudentExam" id="studentExamResultMap">
+        <id column="student_exam_id" property="id" />
+        <result column="student_exam_student_id" property="studentId" />
+        <result column="student_exam_family_id" property="familyId" />
+        <result column="student_exam_exam_comment" property="examComment" />
+        <result column="student_exam_exam_level" property="examLevel" />
+        <result column="student_exam_exam_score" property="examScore" />
+        <result column="student_exam_record_uuid" property="recordUuid" />
+        <result column="student_exam_create_datetime" property="createDatetime" />
+        <result column="student_exam_end_datetime" property="endDatetime" />
+        <result column="student_exam_status" property="status" />
+    </resultMap>
+    
+    <select id="findDao" resultMap="studentExamResultMap">
+        SELECT
+        <include refid="studentExamColumns" />
+        FROM student_exam
+        <include refid="studentExamWhere" />
+        <include refid="studentExamOrder" />
+    </select>
+    
+    <select id="countDao" resultType="int">
+        SELECT COUNT(*) FROM student_exam
+        <include refid="studentExamWhere" />
+    </select>
+    
+    <select id="pageDao" resultMap="studentExamResultMap">
+        SELECT
+        <include refid="studentExamColumns" />
+        FROM student_exam
+        <include refid="studentExamWhere" />
+        <include refid="studentExamOrder" />
+        <include refid="studentExamLimit" />
+    </select>
+    
+    <select id="limitDao" resultMap="studentExamResultMap">
+        SELECT
+        <include refid="studentExamColumns" />
+        FROM student_exam
+        <include refid="studentExamWhere" />
+        <include refid="studentExamOrder" />
+        <include refid="studentExamLimit" />
+    </select>
+    
+    <insert id="saveDao" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO student_exam
+        <trim prefix="(" prefixOverrides=",">
+            <if test="id!=0">,id</if>
+            <if test="studentId!=0">,student_id</if>
+            <if test="familyId!=0">,family_id</if>
+            <if test="examComment!=null">,exam_comment</if>
+            <if test="examLevel!=null">,exam_level</if>
+            <if test="examScore!=0">,exam_score</if>
+            <if test="recordUuid!=null">,record_uuid</if>
+            <if test="createDatetime!=null">,create_datetime</if>
+            <if test="endDatetime!=null">,end_datetime</if>
+            <if test="status!=0">,status</if>
+        </trim>
+        ) VALUES
+        <trim prefix="(" prefixOverrides=",">
+            <if test="id!=0">,#{id}</if>
+            <if test="studentId!=0">,#{studentId}</if>
+            <if test="familyId!=0">,#{familyId}</if>
+            <if test="examComment!=null">,#{examComment}</if>
+            <if test="examLevel!=null">,#{examLevel}</if>
+            <if test="examScore!=0">,#{examScore}</if>
+            <if test="recordUuid!=null">,#{recordUuid}</if>
+            <if test="createDatetime!=null">,#{createDatetime}</if>
+            <if test="endDatetime!=null">,#{endDatetime}</if>
+            <if test="status!=0">,#{status}</if>
+        </trim>
+        )
+    </insert>
+    
+    <update id="updateDao">
+        UPDATE student_exam
+        <trim prefix="SET" prefixOverrides=",">
+            <if test="id!=0">,id = #{id}</if>
+            <if test="studentId!=0">,student_id = #{studentId}</if>
+            <if test="familyId!=0">,family_id = #{familyId}</if>
+            <if test="examComment!=null">,exam_comment = #{examComment}</if>
+            <if test="examLevel!=null">,exam_level = #{examLevel}</if>
+            <if test="examScore!=0">,exam_score = #{examScore}</if>
+            <if test="recordUuid!=null">,record_uuid = #{recordUuid}</if>
+            <if test="createDatetime!=null">,create_datetime = #{createDatetime}</if>
+            <if test="endDatetime!=null">,end_datetime = #{endDatetime}</if>
+            <if test="status!=0">,status = #{status}</if>
+        </trim>
+        <trim prefix="WHERE" prefixOverrides="AND">AND id = #{id}</trim>
+    </update>
+    
+    <delete id="deleteDao">
+        DELETE FROM student_exam
+        <trim prefix="WHERE" prefixOverrides="AND">AND id = #{id}</trim>
+    </delete>
+    
+</mapper>

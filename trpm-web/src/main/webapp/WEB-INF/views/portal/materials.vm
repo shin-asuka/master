@@ -1,0 +1,29 @@
+<div id="materials-content">
+  <div class="aside-backdrop am-fade"> </div>
+  <div class="aside ng-scope left am-slide-left" tabindex="-1" style="width: 40%; display: block;">
+    <div class="aside-dialog">
+      <div class="aside-content">
+        <div class="aside-header">
+          <button type="button" class="close" onclick="require('classrooms').closeMaterials();">×</button>
+          <h4 class="aside-title">Materials</h4>
+          <button id="prev-sn" class="btn btn-sm ng-binding" onclick="require('classrooms').changeMaterials(this);">Prev: </button>
+          <button id="next-sn" class="btn btn-sm ng-binding" onclick="require('classrooms').changeMaterials(this);">Next: </button>
+        </div>
+        #foreach($lesson in $lessonList)
+        <div id="${lesson.serialNumber}" style="#if(${lesson.serialNumber} == ${serialNumber})display:block;#{else}display:none;#end" class="aside-body">
+          <h3 class="ng-binding">${lesson.name}(${lesson.serialNumber})</h3>
+          <div style="font-size: 20px; font-weight: bold;">Objective:</div>
+          <div class="ng-binding" style="max-width: 500px;">${lesson.objective}</div>
+          <div style="font-size: 20px; font-weight: bold;">Vocabulary:</div>
+          <div class="ng-binding">${lesson.vocabularies}</div>
+          <div style="font-size: 20px; font-weight: bold;">Sentence Patterns:</div>
+          <div class="ng-binding">${lesson.sentencePatterns}</div>
+        </div>
+        #end
+        <div class="aside-footer">
+          <button type="button" class="btn btn-default" onclick="require('classrooms').closeMaterials();">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

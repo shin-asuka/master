@@ -1,0 +1,20 @@
+#set($layout = "/passport/layout.vm")
+<section>
+	<div class="content">
+		<div class="signupmeg">
+		    <div class="hookico"><img src="#styleUrl('/resources/images/passport/hookico.png')" /></div>
+			<div class="greatmeg">
+				<p class="f20 corf60">Great!</p>
+				<p>You have successfully registered an account with us. </p>
+				<p>Please check your email for the verification link.</p>
+			</div>
+			<div class="quemeg">
+				Please remember to check your spam and trash mail boxes, in addition to adding our email address teachvip@vipkid.com.cn to your contact list.
+			</div>
+			<div class="quemeg">Have questions? Contact us! <a href="mailto:teachvip@vipkid.com.cn" class="corblue">teachvip@vipkid.com.cn</a></div>
+		</div>
+	</div>
+</section>
+
+<!-- BING Code -->
+<noscript><img src="//bat.bing.com/action/0?ti=5186896&Ver=2" height="0" width="0" style="display:none; visibility: hidden;"  /></noscript>

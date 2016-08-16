@@ -1,0 +1,47 @@
+#set($layout = "/activity/layout.vm")
+<audio src="http://resource.vipkid.com.cn/bigdata/song-puzzle.mp3" controls="controls" preload id="music1" loop="loop" hidden style="display: none;"></audio>
+	<div class="section pageeight facebook active">
+	<div class="content">
+			<div class="mico">
+        <img class="micoimg" src="#styleUrl('/resources/images/activity/mico.png')" />
+        <p class="mute">mute</p>
+      </div>
+      <img class="posab yellowball" src="#styleUrl('/resources/images/activity/yellowball.png')"/>
+      <img class="posab pinkball" src="#styleUrl('/resources/images/activity/pinkball.png')"/>
+      <img class="posab blueball" src="#styleUrl('/resources/images/activity/blueball.png')"/>
+      <img class="posab greenball" src="#styleUrl('/resources/images/activity/greenball.png')"/>
+      <img class="posab topico" src="#styleUrl('/resources/images/activity/top.png')"/>
+      <img class="posab fireball"src="#styleUrl('/resources/images/activity/fireball.png')"/>
+      
+      <a class="checkbtn" href="javascript:void(0)">Check your VIPKID achievement</a>
+      <div class="wordwhite pad70">
+      	<p class="padd57">$!{teacher.realName} has been with VIPKID for <span class="f32">$!{message}</span>.</p>
+      	<p class="padd57">$!{teacher.realName} has taught <span class="f32">$!{student}</span>.</p>
+      	<p>$!{studentName} has taken the most classes with teacher $!{teacher.realName},</p>
+      	<p class="padd57">$!{avatar} has taken <span class="f32">$!{moreclass}</span>.</p>
+
+      	<p class="padd57">$!{teacher.realName} has taught <span class="f32">$!{class}</span>.</p>
+      	<p class="padd57">$!{teacher.realName} has completed <span class="f32">$!{minutes}</span> of teaching at VIPKID!</p>
+      </div>
+      <div class="wavingastphoto">
+      	<img class="posab wavingast"src="#styleUrl('/resources/images/activity/wavphoto.png')"/>
+          #if($stringUtils.contains($!{teacher.avatar}, 'http://')) 
+          	<img class="posab tphoto" src="$!{teacher.avatar}" onerror="javascript:this.src='${resourceTool.oss.url_preffix}/static/images/teacher_portal/default_avatar.png';this.onerror=null;"/> 
+          #else 
+          	<img class="posab tphoto" src="#if($!{teacher.avatar})${resourceTool.oss.url_preffix}/$!{teacher.avatar}#end" onerror="javascript:this.src='${resourceTool.oss.url_preffix}/static/images/teacher_portal/default_avatar.png';this.onerror=null;"/> 
+          #end
+      </div>
+	</div>
+</div>
+<script>
+
+$(document).ready(function(){
+	$(".checkbtn").click(function(){
+		$.cookie("from", "facebook", {path : '/'});
+		location.href="#styleUrl('/activity.shtml')";
+	});
+	var wh=$(window).height();
+	$(".facebook").height(wh);
+	$(".divload").hide();
+});
+</script>

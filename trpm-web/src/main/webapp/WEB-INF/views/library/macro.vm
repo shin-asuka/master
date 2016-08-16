@@ -1,0 +1,101 @@
+#**
+ * styleUrl
+ *
+ * web 应用样式文件的绝对 URL 路径。
+ *#
+#macro( styleUrl $relativeUrl )${request.getContextPath()}${relativeUrl}#end
+
+#**
+ * imageUrl
+ *
+ * web 应用图片文件的绝对 URL 路径。
+ *#
+#macro( imageUrl $relativeUrl )${request.getContextPath()}${relativeUrl}#end
+
+#**
+ * jsUrl
+ *
+ * web 应用脚本文件的绝对 URL 路径。
+ *#
+#macro( jsUrl $relativeUrl )${request.getContextPath()}${relativeUrl}#end
+
+#**
+ * requireJs
+ *
+ * 引入 require js 需要用到的 js 文件，该宏只需要在页面底部调用一次，切勿重复执行。
+ *#
+#macro( requireJs )
+<script type="text/javascript"> var webPath = "${request.getContextPath()}", jsPath = "${request.getContextPath()}"; </script>
+<script type="text/javascript" src="#jsUrl('/resources/js/require.min.js')"></script>
+<script type="text/javascript" src="#jsUrl('/resources/js/apps/main2.js')?t=$!{dateTool.getSystemTime()}"></script>
+<script type="text/javascript"> $!bodyContent </script>
+#end
+
+#**
+ * script
+ *
+ * 嵌入页面的 javascript 代码。
+ *#
+#macro( script )
+<script type="text/javascript"> $!bodyContent </script>
+#end
+
+#**
+ * authorizeAccess
+ * 
+ * 验证当前登录用户是否有权限显示内容体。
+ * @param $access : spring security 表达式 
+ *#
+#macro( authorizeAccess $access )
+    #if( 1 == $webSecurityExpressionVoter.authorizeUsingAccessExpression( $request, $response, $access) )
+       $!bodyContent 
+    #end
+#end
+
+#**
+ * location
+ *
+ * 级联查询 country, state, city。
+ *#
+#macro( location $id $countryLabel $stateLabel $cityLabel $teacherAddress )
+<div id="${id}" class="row" style="margin-top:10px;margin-bottom:10px;">
+  <div class="col-xs-4 col-sm-6 col-md-4">
+    <select onchange="require('personal-location').getState('#${countryLabel}','#${stateLabel}')" class="js-example-basic-single form-control select2" name="${countryLabel}" id="${countryLabel}">
+      <option value="0">Country</option>
+      #foreach($country in $countrys)
+      <option value="${country.id}" #if($!{teacherAddress} && $!{teacherAddress.countryId} == ${country.id})selected#end>${country.name}</option>
+      #end
+    </select>
+  </div>
+  <div class="col-xs-4 col-sm-6 col-md-4">
+    <select onchange="require('personal-location').getCity('#${stateLabel}','#${cityLabel}')" class="js-example-basic-single form-control select2" name="${stateLabel}" id="${stateLabel}">
+      <option value="0">State</option>
+      #if($!{teacherAddress} && $!{teacherAddress.stateId} != 0 && $!{teacherAddress.countryId} != 0)
+        #set($states = $locationService.getLocationList($!{teacherAddress.countryId},2))
+        #if($!{states})
+          #foreach($state in $states)
+          <option value="${state.id}" #if($!{teacherAddress} && $!{teacherAddress.stateId} == ${state.id})selected#end>${state.name}</option>
+          #end
+        #end
+      #end
+    </select>
+  </div>
+  <div class="col-xs-4 col-sm-6 col-md-4">
+    <select class="js-example-basic-single form-control select2" name="${cityLabel}" id="${cityLabel}">
+      <option value="0">City</option>
+      #if($!{teacherAddress} && $!{teacherAddress.city} != 0)
+        #set($citys = $locationService.getLocationList($!{teacherAddress.stateId},3))
+        #if($!{citys})
+          #foreach($city in $citys)
+          <option value="${city.id}" #if($!{teacherAddress} && $!{teacherAddress.city} == ${city.id})selected#end>${city.name}</option>
+          #end
+        #end
+      #end
+    </select>
+  </div>
+</div>
+#end
+
+
+
+

@@ -1,0 +1,2404 @@
+/* line 3, */
+.browsehappy {
+	margin: 0.2em 0;
+	background: #ccc;
+	color: #000;
+	padding: 0.2em 0;
+}
+/* Space out content a bit */
+body {
+	font-family: "Microsoft Yahei", "Heiti SC", STXihei, Hei, SimSun;
+	background-color: #f9f9f2;
+	height: 100%;
+}
+/* line 17, */
+hr {
+	margin-top: 10px;
+	margin-bottom: 10px;
+	border: 0;
+	border-top: 1px solid #eeeeee;
+}
+/* Everything but the jumbotron gets side spacing for mobile first views */
+/* line 27, */
+.header, .marketing, .footer {
+	padding-left: 15px;
+	padding-right: 15px;
+	padding-bottom: 15px;
+	text-align: center;
+}
+/* Custom page header */
+/* line 35, */
+.header {
+	margin-top: -50px;
+}
+/* Make the masthead heading the same height as the navigation */
+/* line 41, */
+.header h3 {
+	margin-top: 0;
+	margin-bottom: 0;
+	line-height: 40px;
+}
+/* Custom page footer */
+/* line 49, */
+.footer {
+	padding-top: 40px;
+	color: #777;
+}
+/* line 55, */
+.container-narrow>hr {
+	margin: 30px 0;
+}
+/* Main marketing message and sign up button */
+/* line 60, */
+.jumbotron {
+	text-align: center;
+	border-bottom: 1px solid #e5e5e5;
+}
+/* line 65, */
+.jumbotron .btn {
+	font-size: 21px;
+	padding: 14px 24px;
+}
+/* line 70, */
+.vk-nav {
+	margin-top: -10px;
+}
+/* line 74, */
+.vk-menu {
+	padding: 10px 0 10px 10px;
+}
+/* line 78, */
+.vk-content {
+	margin: 10px;
+}
+/* line 82, */
+.welcome-msg {
+	margin-top: -18px;
+	margin-right: 20px;
+}
+/* line 87, */
+.dotted {
+	border-top: 1px dotted black;
+	color: #f9f9f2;
+	background-color: #f9f9f2;
+	height: 1px;
+}
+/* line 94, */
+.arranged {
+	background-color: green;
+	color: #FFFFFF;
+	text-align: center;
+}
+/* line 100, */
+.empty {
+	cursor: pointer;
+	height: 23px;
+	margin-top: 1px;
+}
+/* line 104, */
+.available {
+	background-color: #FFFFFF;
+	color: green;
+	text-align: center;
+	cursor: pointer;
+	height: 23px;
+	margin-top: 1px;
+}
+/* line 111, */
+.booked {
+	background-color: green;
+	color: #FFFFFF;
+	text-align: center;
+	cursor: pointer;
+	overflow: hidden;
+	height: 23px;
+	margin-top: 1px;
+}
+
+.expired {
+	width: 100%;
+	border: 0px;
+	padding: 0px;
+	cursor: default;
+	margin-top: 1px;
+	height: 23px;
+	background-color: #999;
+}
+
+.afternoon {
+	text-align: center;
+	width: 12.5%;
+	color: rgb(232, 232, 232);
+	background-color: rgb(122, 129, 130);
+}
+
+.expiredTimeSlot {
+	background-color: #C0C0C0;
+	width: 100%;
+	border: 0px;
+	padding: 0px;
+	cursor: default;
+	height: 23px;
+	margin-top: 1px;
+}
+
+.peakTime {
+	background-color: orange;
+	width: 100%;
+	border: 0px;
+	padding: 0px;
+	cursor: pointer;
+	height: 23px;
+	margin-top: 1px;
+}
+
+.open {
+	background-color: green;
+	color: #FFFFFF;
+	text-align: center;
+	cursor: default;
+}
+/* line 118, */
+.ready {
+	background-color: red;
+	color: #FFFFFF;
+	text-align: center;
+	cursor: default;
+}
+/* line 125, */
+.finished {
+	background-color: grey;
+	color: #FFFFFF;
+	text-align: center;
+	cursor: default;
+	overflow: hidden;
+	height: 23px;
+	margin-top: 1px;
+}
+/* line 132, */
+.backup {
+	background-color: orange;
+	color: #FFFFFF;
+	text-align: center;
+	cursor: default;
+}
+/* line 139, */
+.inpro {
+	color: #FFFFFF;
+	text-align: center;
+	cursor: default;
+}
+/* line 145, */
+.popover {
+	max-width: 500px;
+}
+/* style for the header */
+/* line 150, */
+.vk-header {
+	height: 40px;
+	background-color: black;
+}
+/* line 155, */
+.vk-header p {
+	font-size: 1.3em;
+	float: right;
+	color: #c93939;
+	margin-right: 10px;
+	height: 40px;
+	line-height: 40px;
+}
+/* line 164, */
+.vk-header img {
+	float: right;
+	margin-right: 60px;
+	margin-top: 10px;
+}
+/* line 170, */
+.vk-logo {
+	height: 95px;
+	width: 500px;
+	background: url("../../images/portal/logo.png") no-repeat 39px 6px;
+	background-size: 40%;
+}
+/* line 177, */
+.vk-nav-info {
+	height: 25px;
+	border-bottom: 1px dashed #C0C0C0;
+}
+/* line 182, */
+.vk-sub-title {
+	font-size: 1.1em;
+	float: left;
+	width: 300px;
+	text-align: center;
+	margin-top: -19px;
+	margin-left: -11px;
+}
+/* line 189, */
+.vk-nav-right {
+	float: right;
+	font-size: 1.2em;
+	margin-right: 52px;
+}
+/* line 195, */
+.vk-article {
+	min-height: 600px;
+	background: url("../../images/portal/article_bg.png") no-repeat 50px 0px;
+	background-size: 50%;
+	padding: 5px;
+}
+/* line 202, */
+.vk-date-inline {
+	width: 200px !important;
+}
+/* line 206, */
+.vk-grid {
+	border: 1px solid #dcdcdc;
+	height: 300px;
+}
+/* line 211, */
+.vk-actions {
+	margin: 10px 0;
+}
+/* line 215, */
+.vk-grid-actions {
+	padding: 4px;
+}
+/* line 219, */
+.vk-form {
+	margin-left: 60%;
+}
+/* line 223, */
+.vk-form h1 {
+	padding-top: 45px;
+	padding-bottom: 45px;
+}
+/* line 228, */
+.vk-form .form-group {
+	padding-top: 10px;
+}
+/* line 232, */
+.vk-signup {
+	margin-left: -110px;
+}
+/* line 236, */
+.vk-info {
+	font-size: 1.3em;
+	padding-bottom: 40px;
+}
+/* line 241, */
+.vk-highlight {
+	color: red;
+}
+/* line 245, */
+.vk-tab-content {
+	padding: 10px;
+}
+/* line 249, */
+.vk-nav>li>a {
+	padding: 0px 15px;
+}
+/* line 253, */
+.vk-left-nav>li>a {
+	padding: 0px 15px;
+}
+/* line 257, */
+.vk-left-nav>li {
+	height: 68px;
+	line-height: 68px;
+	background: no-repeat 47px 0px;
+}
+/* line 263, */
+.vk-left-nav>li+li {
+	margin-top: 0px;
+}
+/* line 267, */
+.vk-left-nav>li>a {
+	margin-left: 94px;
+	font-size: 1.2em;
+}
+/* line 272, */
+.vk-left-nav>li.active {
+	background: url("../../images/portal/active_nav_bg.png") no-repeat 47px
+		0px;
+}
+/* line 276, */
+.vk-left-nav>li:last-child {
+	background: url("../../images/portal/last_nav_bg.png") no-repeat 47px
+		0px;
+}
+/* line 280, */
+.vk-left-nav>li:last-child.active {
+	background: url("../../images/portal/last_active_nav_bg.png") no-repeat
+		47px 0px;
+}
+/* line 284, */
+.avatar {
+	height: 123px;
+	margin-left: 15px;
+	margin-top: 30px;
+	background: url("../../images/portal/avatar_bg.png") no-repeat;
+}
+/* line 291, */
+.avatar>img {
+	margin-left: 4px;
+	margin-top: 7px;
+	background-color: black;
+}
+/* line 297, */
+.vk-gender {
+	font-size: 1.5em;
+	color: #48c2f1;
+}
+/* line 302, */
+.vk-trial {
+	margin-top: 10px;
+	margin-right: 10px;
+}
+/* line 307, */
+.vk-course-intro {
+	width: 755px;
+	height: 414px;
+	padding: 15px 25px;
+	background: url("../../images/portal/course_intro_bg.png") no-repeat;
+}
+/* line 314, */
+.vk-bottom-btn {
+	width: 100%;
+	text-align: center;
+	padding-top: 340px;
+}
+/* line 320, */
+.vk-course-ad {
+	margin-top: 30px;
+	background: url("../../images/portal/ad_bg.png") no-repeat;
+	padding: 20px 25px;
+}
+/* line 326, */
+.vk-course-ad>h3 {
+	text-align: center;
+}
+/* line 330, */
+.vk-system {
+	width: 774px;
+	height: 383px;
+	margin-left: -15px;
+	margin-top: 20px;
+	background: url("../../images/portal/system.png") no-repeat;
+}
+/* line 338, */
+.vk-settings {
+	margin-top: 20px;
+}
+/* line 342, */
+.vk-settings>ul>li>a {
+	cursor: pointer;
+}
+/* line 346, */
+.tab-pane {
+	border-bottom: 1px solid #dddddd;
+	border-left: 1px solid #dddddd;
+	border-right: 1px solid #dddddd;
+}
+/* line 352, */
+.vk-setting-form {
+	padding: 20px;
+	width: 80%;
+}
+/* line 357, */
+.vk-table {
+	padding: 10px;
+	margin-left: -15px;
+}
+/* line 362, */
+.vk-search-bar {
+	margin: 10px 0px;
+}
+/* line 366, */
+.vk-search-bar>form>.form-group {
+	padding: 0px;
+}
+/* line 370, */
+.alert.top-right {
+	position: fixed;
+	top: 50px;
+	z-index: 1050;
+	margin: 20px;
+	right: 0;
+}
+/* line 378, */
+.copy-btn {
+	margin-top: -80px;
+}
+/* line 382, */
+.vk-currentwk-hint {
+	margin-top: 100px;
+}
+/* line 384, */
+.vk-currentwk-hint div {
+	margin-top: 30px;
+}
+/* line 389, */
+.vk-time-table {
+	width: 900px;
+}
+/* line 393, */
+.vk-td-disabled {
+	cursor: not-allowed;
+	background-color: red !important;
+}
+/* line 398, */
+.vk-td-selected {
+	cursor: not-allowed;
+	background-color: blue !important;
+}
+/* line 403, */
+.vk-img-circle {
+	background-color: gray;
+	height: 60px;
+	line-height: 60px;
+	width: 60px;
+	border-style: double;
+	border-width: 3px;
+	border-radius: 50% !important;
+	color: white;
+	text-align: center;
+	font-size: 1em;
+	border-color: white;
+	padding: 0px;
+	margin: 0px;
+}
+/* line 419, */
+.vk-img-circle.active {
+	border-color: #f77229;
+}
+/* line 424, */
+.vk-schedule-table .row {
+	line-height: 66px;
+}
+/* line 429, */
+.vk-schedule-row {
+	margin: 5px 0px;
+	border-bottom-width: 1px;
+	border-bottom-color: gray;
+	border-bottom-style: solid;
+}
+/* line 436, */
+.vk-warning {
+	background-color: #fcf8e3;
+	font-size: 2em;
+	text-align: center;
+	opacity: 0.8;
+}
+/* line 443, */
+.vk-warn {
+	color: red;
+	font-weight: bold;
+}
+/* line 448, */
+.vk-well {
+	margin: 10px;
+}
+/* line 452, */
+.vk-detail-header {
+	padding: 10px 5px;
+	font-size: 14px;
+	font-weight: bold;
+	-webkit-box-shadow: inset 1px 1px 25px 3px #c7c5c7;
+	-moz-box-shadow: inset 1px 1px 25px 3px #c7c5c7;
+	box-shadow: inset 1px 1px 25px 3px #c7c5c7;
+}
+/* line 461, */
+.vk-detail-tab {
+	padding: 10px 20px;
+	font-size: 14px;
+	font-weight: bold;
+}
+/* line 467, */
+.vk-studentMoreInfo {
+	background-color: #343434 !important;
+	border: 0px;
+	color: white;
+}
+/* line 473, */
+.btn-default {
+	color: #000000;
+	background-color: #FFFFFF;
+	border-color: #FFFFFF;
+}
+/* line 479, */
+.lessonInfoTitle {
+	font-size: 20px;
+	display: block;
+}
+/* line 484, */
+.lessonInfoContent {
+	display: block;
+}
+/* line 488, */
+.ratingTitle {
+	font-size: 18px;
+	display: inline;
+}
+/* line 493, */
+.ratingContent {
+	display: inline;
+	float: right;
+	margin-top: 5px;
+}
+/* Responsive: Portrait tablets and up */
+@media screen and (min-width: 768px) {
+	/* line 501, */
+	.container {
+		width: 100%;
+		padding: 0;
+	}
+	/* Remove the padding we set earlier */
+	/* line 508, */
+	.header, .footer {
+		padding-left: 0;
+		padding-right: 0;
+	}
+	/* Space out the masthead */
+	/* line 513, */
+	.header {
+		margin-bottom: 30px;
+	}
+	/* Remove the bottom border on the jumbotron for visual effect */
+	/* line 517, */
+	.jumbotron {
+		border-bottom: 0;
+	}
+	/*add model css*/
+	/* line 522, */
+	.app-modal-window .modal-dialog {
+		width: 70%;
+		min-width: 500px;
+	}
+	.new-student-tab {
+		background: url(../../images/portal/new_student_icon.png) no-repeat;
+		background-size: 100% 100%;
+		height: 65px;
+		width: 66px;
+		float: left;
+		position: absolute;
+		z-index: 500;
+	}
+	/* online classroom css*/
+	body {
+		width: 100%;
+		height: 100%;
+	}
+	.hideCanvas {
+		display: none;
+	}
+	#tmp_canvas {
+		position: absolute;
+		left: 0px;
+		right: 0;
+		bottom: 0;
+		top: 0;
+		cursor: crosshair;
+	}
+	.toolsOpen {
+		position: absolute;
+		top: 435px;
+		z-index: 9999;
+		width: 755px;
+		right: 212px;
+	}
+	.toolsClose {
+		position: relative;
+		background: whitesmoke;
+		top: 435px;
+		z-index: 999;
+		width: 755px;
+		left: -327px;
+	}
+	.syncController {
+		position: absolute;
+		width: 816px;
+		top: 33px;
+		left: -139px;
+		opacity: 0.8;
+	}
+	.pageController {
+		position: relative;
+		width: 640px;
+		top: 300px;
+		z-index: 3;
+	}
+	.pageController input {
+		border: none;
+		background: transparent;
+		font-size: 20px;
+	}
+	.pageController #nextSlide {
+		background-image: url("../../images/portal/xiayiye.png");
+		background-repeat: no-repeat;
+		background-color: transparent;
+		background-size: 100% 100%;
+		background-position: center;
+		margin: 13px 0 0 0;
+		width: 20px;
+		margin: 18px 0 0 0;
+		width: 20px;
+		height: 20px;
+	}
+	.pageController #nextSlide:hover {
+		background-image: url("../../images/portal/xiayiye_dianji.png");
+	}
+	.pageController .nextSlideBg {
+		height: 53px;
+		width: 40px;
+		right: 0px;
+		position: absolute;
+		background-color: #AEB0A8;
+		text-align: center;
+		vertical-align: middle;
+		top: -54px;
+		opacity: 0.9;
+		border-radius: 8px 0 0 8px;
+	}
+	.pageController .prevActionBg {
+		height: 53px;
+		width: 40px;
+		left: 0;
+		position: absolute;
+		background-color: #AEB0A8;
+		text-align: center;
+		vertical-align: middle;
+		top: -4px;
+		opacity: 0.9;
+		border-radius: 0 8px 8px 0;
+	}
+	.pageController .prevSlideBg {
+		height: 53px;
+		width: 40px;
+		left: 0;
+		position: absolute;
+		background-color: #AEB0A8;
+		text-align: center;
+		vertical-align: middle;
+		top: -58px;
+		opacity: 0.9;
+		border-radius: 0 8px 8px 0;
+	}
+	.pageController .nextActionBg {
+		height: 53px;
+		width: 40px;
+		right: 43px;
+		position: absolute;
+		background-color: #AEB0A8;
+		text-align: center;
+		vertical-align: middle;
+	}
+	.pageController #nextAction {
+		background-image: url("../../images/portal/xiayidong.png");
+		background-repeat: no-repeat;
+		background-color: transparent;
+		background-size: 100% 100%;
+		background-position: center;
+		margin: 13px 0 0 0;
+		width: 20px;
+		margin: 18px 0 0 0;
+		width: 20px;
+		height: 20px;
+	}
+	.pageController #nextAction:hover {
+		background-image: url("../../images/portal/xiayidong_dianji.png");
+	}
+	.pageController #prevAction {
+		background-image: url("../../images/portal/shangyidong.png");
+		background-repeat: no-repeat;
+		background-color: transparent;
+		background-size: 100% 100%;
+		background-position: center;
+		margin: 18px 0 0 0;
+		width: 20px;
+		height: 20px;
+	}
+	.pageController #prevAction:hover {
+		background-image: url("../../images/portal/shangyidong_dianji.png");
+	}
+	.pageController #prevSlide {
+		background-image: url("../../images/portal/shangyiye.png");
+		background-repeat: no-repeat;
+		background-color: transparent;
+		background-size: 100% 100%;
+		background-position: center;
+		margin: 13px 0 0 0;
+		width: 20px;
+		margin: 18px 0 0 0;
+		width: 20px;
+		height: 20px;
+	}
+	.pageController #prevSlide:hover {
+		background-image: url("../../images/portal/shangyiye_dianji.png");
+	}
+	.pageController .nextActionBg {
+		height: 53px;
+		width: 40px;
+		right: 0;
+		position: absolute;
+		background-color: #AEB0A8;
+		text-align: center;
+		vertical-align: middle;
+		opacity: 0.9;
+		border-radius: 8px 0 0 8px;
+	}
+	#sketch {
+		height: 480px;
+		width: 640px;
+		position: absolute;
+	}
+	#sketch textarea {
+		width: 200px;
+	}
+	#pptFrame {
+		height: 480px;
+		width: 640px;
+		border: 0px;
+	}
+	#projectBorder {
+		top: 0px;
+		left: 0px;
+		position: absolute;
+		display: block;
+		width: 640px;
+		height: 480px;
+	}
+	/* #videoContainer { */
+	/* 	position: absolute; */
+	/* 	top: 29px; */
+	/* 	left: 950px; */
+	/* 	width: 420px; */
+	/* 	height: 560px; */
+	/* 	border: 1px solid gray; */
+	/* } */
+	.tool {
+		float: right;
+	}
+	.playBarCover {
+		position: absolute;
+		top: 558px;
+		width: 640px;
+		height: 50px;
+		background-color: white;
+	}
+	.modal-footer {
+		margin-top: 25px;
+		padding: 19px 20px 20px;
+		text-align: right;
+		border-top: 1px solid #e5e5e5;
+	}
+	.whiteBoardContainer {
+		width: 640px;
+		height: 480px;
+		position: absolute;
+		left: 200px;
+	}
+	.viewCommentsModal {
+		z-index: 999999;
+		display: block;
+		width: 920px;
+		margin: 0 auto;
+		overflow-y: hidden;
+	}
+	.viewCommentsModal .modal-dialog {
+		width: 500px;
+		margin: 30px auto;
+		overflow-x: hidden;
+	}
+	.viewCommentsModal .modal-body {
+		width: 500px;
+		min-height: 400px;
+		overflow-y: auto;
+	}
+	.viewCommentsModal .commentTitle {
+		font-weight: bold;
+		font-size: 16px;
+	}
+	.viewCommentsModal .teacherComments {
+		width: 200px;
+		position: relative;
+		display: inline;
+		height: 600px;
+	}
+	.viewCommentsModal .staffComments {
+		/* display: inline; */
+		width: 200px;
+		float: left;
+		position: absolute;
+		left: 303px;
+		top: 50px;
+	}
+	.viewCommentsModal .commentItem {
+		width: 187px;
+		margin: 10px 0 10px 0;
+	}
+	.classroom .mainContainer {
+		/* position: absolute; */
+		width: 1300px;
+		margin: -14px auto 0 auto;
+		/* left: 20px; */
+	}
+	.classroom .prevSlideBtn {
+		width: 40px;
+		margin: 5px 0 0 15px;
+		position: absolute;
+		left: 80px;
+		background-size: 60% 60%;
+		cursor: pointer;
+	}
+	.classroom .nextSlideBtn {
+		width: 40px;
+		margin: 5px 0 0 15px;
+		position: absolute;
+		left: 80px;
+		background-size: 60% 60%;
+		cursor: pointer;
+		top: 494px;
+	}
+	.toolsContainer {
+		border: 1px solid lightgray;
+		height: 40px;
+		width: 130px;
+		right: -212px;
+		/* float: right; */
+		position: absolute;
+		top: 10px;
+		background-color: whitesmoke;
+	}
+	.colorPicker {
+		position: absolute;
+		width: 140px;
+		height: 308px;
+		right: -139px;
+		top: -296px;
+		border-radius: 10px;
+		padding: 10px 0;
+		background-image:
+			url("http://resource.vipkid.com.cn/static/images/classroom/yinliangkuang.png");
+		background-repeat: no-repeat;
+		background-color: transparent;
+		background-size: 100% 100%;
+		background-position: center;
+	}
+	.colorRow {
+		height: 28px;
+		padding: 4px;
+	}
+	.colorRow:hover {
+		background-color: #54C7E9;
+	}
+	.colorItem {
+		height: 20px;
+		width: 80%;
+		margin: auto;
+	}
+	.color1 {
+		background-color: #F21831;
+	}
+	.color2 {
+		background-color: #FC4887;
+	}
+	.color3 {
+		background-color: #C037C1;
+	}
+	.color4 {
+		background-color: #1997C9;
+	}
+	.color5 {
+		background-color: #149537;
+	}
+	.color6 {
+		background-color: #F7BF3F;
+	}
+	.color7 {
+		background-color: #F34D25;
+	}
+	.color8 {
+		background-color: #838383;
+	}
+	.color9 {
+		background-color: #040404;
+	}
+	.color10 {
+		background-color: #F0F0F0;
+	}
+	.classroom {
+		height: 100%;
+		width: 100%;
+		min-width: 1300px;
+		/* overflow: hidden; */
+	}
+	.classroom .topSection {
+		margin: -10px -10px 20px -10px;
+	}
+	.classroom .pptSelector {
+		margin: 10px 0 0 0;
+		width: 100px;
+		height: 500px;
+		display: inline;
+	}
+	.classroom .actionBar {
+		height: 36px;
+		width: 100%;
+		background-color: #535353;
+		color: white;
+	}
+	.classroom .lessonInfoRow {
+		height: 80px;
+		width: 100%;
+		background-color: #D6D6D6;
+		clear: left;
+		min-width: 1000px;
+		overflow: hidden;
+	}
+	.whiteBoardContainer .toggleBtnLeftArrow {
+		border: none;
+		position: absolute;
+		background-image:
+			url("http://resource.vipkid.com.cn/static/images/classroom/jiantou.png");
+		background-repeat: no-repeat;
+		background-color: transparent;
+		background-position: center;
+		height: 40px;
+		width: 40px;
+	}
+	.whiteBoardContainer .toggleBtnRightArrow {
+		border: none;
+		background-image:
+			url("http://resource.vipkid.com.cn/static/images/classroom/toolOpen.png");
+		background-repeat: no-repeat;
+		background-color: transparent;
+		background-position: center;
+		height: 40px;
+		width: 40px;
+	}
+	.whiteBoardContainer .pencilBtn {
+		border: none;
+		background-image:
+			url("http://resource.vipkid.com.cn/static/images/classroom/bishua.png");
+		background-repeat: no-repeat;
+		background-color: transparent;
+		background-position: center;
+		height: 40px;
+		width: 40px;
+	}
+	.whiteBoardContainer .pencilBtnSelected {
+		border: none;
+		background-image:
+			url("http://resource.vipkid.com.cn/static/images/classroom/bishua_dianji.png");
+		background-repeat: no-repeat;
+		background-color: transparent;
+		background-position: center;
+		height: 40px;
+		width: 40px;
+	}
+	.whiteBoardContainer .textBtn {
+		border: none;
+		background-image:
+			url("http://resource.vipkid.com.cn/static/images/classroom/ziti.png");
+		background-repeat: no-repeat;
+		background-color: transparent;
+		background-position: center;
+		height: 40px;
+		width: 40px;
+	}
+	.whiteBoardContainer .textBtnSelected {
+		border: none;
+		background-image:
+			url("http://resource.vipkid.com.cn/static/images/classroom/ziti_dianji.png");
+		background-repeat: no-repeat;
+		background-color: transparent;
+		background-position: center;
+		height: 40px;
+		width: 40px;
+	}
+	.whiteBoardContainer .colorBtn {
+		border: none;
+		background-image:
+			url("http://resource.vipkid.com.cn/static/images/classroom/tiaose.png");
+		background-repeat: no-repeat;
+		background-color: transparent;
+		background-position: center;
+		height: 23px;
+		width: 23px;
+		margin: 9px;
+		background-color: bl;
+	}
+	.whiteBoardContainer .colorBtnSelected {
+		border: none;
+		background-image:
+			url("http://resource.vipkid.com.cn/static/images/classroom/tiaose.png");
+		background-repeat: no-repeat;
+		background-color: transparent;
+		background-position: center;
+		height: 40px;
+		width: 40px;
+	}
+	.whiteBoardContainer .eraserBtn {
+		border: none;
+		background-image:
+			url("http://resource.vipkid.com.cn/static/images/classroom/xingpica.png");
+		background-repeat: no-repeat;
+		background-color: transparent;
+		background-position: center;
+		height: 40px;
+		width: 40px;
+	}
+	.whiteBoardContainer .eraseAllBtn {
+		border: none;
+		background-image:
+			url("http://resource.vipkid.com.cn/static/images/classroom/eraseAll.png");
+		background-repeat: no-repeat;
+		background-color: transparent;
+		background-position: center;
+		height: 32px;
+		width: 40px;
+	}
+	.whiteBoardContainer .eraserBtnSelected {
+		border: none;
+		background-image:
+			url("http://resource.vipkid.com.cn/static/images/classroom/xingpica_dianji.png");
+		background-repeat: no-repeat;
+		background-color: transparent;
+		background-position: center;
+		height: 40px;
+		width: 40px;
+	}
+	.whiteBoardContainer .enablePaintBtn {
+		border: none;
+		background-image:
+			url("http://resource.vipkid.com.cn/static/images/classroom/biaoqing.png");
+		background-repeat: no-repeat;
+		background-color: transparent;
+		background-position: center;
+		height: 40px;
+		width: 40px;
+	}
+	.whiteBoardContainer .disablePaintBtn {
+		border: none;
+		background-image:
+			url("http://resource.vipkid.com.cn/static/images/classroom/biaoqing_2.png");
+		background-repeat: no-repeat;
+		background-color: transparent;
+		background-position: center;
+		height: 40px;
+		width: 40px;
+	}
+	#sync {
+		position: absolute;
+		border: none;
+		background-image:
+			url("http://resource.vipkid.com.cn/static/images/classroom/tongbuzhangtai_zhengchang.png");
+		background-repeat: no-repeat;
+		background-color: transparent;
+		background-position: center;
+		height: 80px;
+		width: 80px;
+		right: 42px;
+		top: -55px;
+	}
+	#async {
+		position: absolute;
+		border: none;
+		background-image:
+			url("http://resource.vipkid.com.cn/static/images/classroom/tongbuzhangtai_yichang.png");
+		background-repeat: no-repeat;
+		background-color: transparent;
+		background-position: center;
+		height: 80px;
+		width: 80px;
+		right: 42px;
+		top: -55px;
+	}
+	/* ppt preview*/
+	.classroom ul {
+		float: left;
+		/* display: inline; */
+		height: 525px;
+		background-color: white;
+		margin: 0 0 0 30px;
+		width: 140px;
+		padding: 16px 0px 0px 47px;
+		border: 1px solid lightgray;
+	}
+	.classroom ul.t-feedback {
+		float: none;
+		display: block;
+		height: auto;
+		background: none;
+		margin: 0;
+		width: auto;
+		padding: 0;
+		border: 0 none;
+	}
+	.classroom li {
+		list-style: none;
+		margin: 10px 0 0 -40px;
+	}
+	.classroom ul.t-feedback li {
+		margin: 0;
+	}
+	.classroom li img {
+		width: 90px;
+		padding: 2px;
+		background: #eee;
+		border: 3px solid white;
+	}
+	.classroom li a:hover {
+		zoom: 1;
+	}
+	.classroom li.cur img, .classroom li a:hover img {
+		background: #ffc;
+		border: 1px solid #f40;
+	}
+	.classroom .videoContainer {
+		width: 320px;
+		height: 320px;
+		border: 1px solid lightgray;
+		margin: 0 0 0 870px;
+		position: absolute;
+	}
+	.classroom .videoContainer #video {
+		top: 50px;
+		position: absolute;
+	}
+	.classroom .slideSelected {
+		border: 3px solid #80C014;
+	}
+	.classroom .videoContainer .stars {
+		/* float: left; */
+		position: absolute;
+		height: 34px;
+		top: 0px;
+		width: 196px;
+		/* border: 1px solid; */
+		margin: 8px;
+		z-index: 99999999;
+	}
+	.classroom .videoContainer .ownedStars, .classroom .videoContainer .futureStars
+		{
+		float: left;
+		margin: 20px 0 0 0;
+	}
+	.classroom .videoContainer .ownedStar {
+		width: 31px;
+		height: 29px;
+		background-image:
+			url("../../images/star/ownedStar.png");
+		background-size: 100% 100%;
+		float: left;
+		margin: -18px 0px 0 6px;
+	}
+	.classroom .videoContainer .futureStar {
+		width: 31px;
+		height: 29px;
+		background-image:
+			url("../../images/star/futureStar.png");
+		background-size: 100% 100%;
+		float: left;
+		margin: -18px 0px 0 6px;
+	}
+	.classroom .videoContainer .infoBtn {
+		position: absolute;
+		top: 0px;
+		left: 267px;
+		margin: 8px;
+		background-color: lightgray;
+		border: none;
+		border-radius: 4px;
+		height: 34px;
+	}
+	.classroom .chatContainer {
+		width: 320px;
+		height: 197px;
+		border: 1px solid lightgray;
+		margin: 10px 0 0 870px;
+		background-color: white;
+		position: absolute;
+		top: 318px;
+		/* left: 870px; */
+	}
+	.classroom .chatContainer .sendBtn {
+		/* background-image: url("../../images/portal/classroom/fasong.png"); */
+		height: 39px;
+		width: 60px;
+		/* border-right: 8px; */
+		/* float: right; */
+		position: relative;
+		right: -242px;
+		border-radius: 8px;
+		top: -36px;
+		background-color: gray;
+		text-align: center;
+		/* vertical-align: middle; */
+		padding-top: 10px;
+		color: white;
+	}
+	.classroom .chatContainer .chatLabel {
+		background-color: #E6E6E6;
+		padding: 4px 0 4px 10px;
+		color: gray;
+	}
+	.classroom .chatContainer .msgInput {
+		position: relative;
+		top: 126px;
+		left: 5px;
+		border: 4px solid lightgray;
+		border-radius: 8px;
+		height: 41px;
+		width: 310px;
+	}
+	.classroom .chatContainer .sendBtn:hover {
+		background-image: url("../../images/portal/fasong_dianji.png");
+		cursor: pointer;
+	}
+	.classroom .chatContainer .inputArea {
+		height: 33px;
+		position: relative;
+		width: 220px;
+		left: 0px;
+		top: 0px;
+		border: none;
+		font-size: 20px;
+	}
+	.classroom .chatHistory {
+		position: absolute;
+		height: 120px;
+		width: 320px;
+		overflow-y: auto;
+		overflow-x: hidden;
+		padding: 0 0 0 16px;
+	}
+	.classroom .teachingHintFold {
+		height: 40px;
+		position: relative;
+		width: 640px;
+		border: none;
+		font-size: 20px;
+		background-color: gray;
+	}
+	.classroom .teachingHintUnFold {
+		height: 200px;
+		position: relative;
+		width: 800px;
+		border: none;
+		font-size: 20px;
+		background-color: gray;
+	}
+	.classroom .openTeachingHintFolderBtn {
+		height: 40px;
+		position: relative;
+		width: 40px;
+		border: none;
+		left: 600px;
+		background-image:
+			url("http://resource.vipkid.com.cn/static/images/classroom/tips_up.png");
+		background-size: 50% 50%;
+		background-position: center;
+		background-repeat: no-repeat;
+		background-color: gray;
+	}
+	.classroom .closeTeachingHintFolderBtn {
+		height: 40px;
+		position: relative;
+		width: 40px;
+		border: none;
+		left: 600px;
+		background-image:
+			url("http://resource.vipkid.com.cn/static/images/classroom/tips_down.png");
+		background-size: 50% 50%;
+		background-position: center;
+		background-repeat: no-repeat;
+		background-color: gray;
+	}
+	.classroom .chatHistory .row {
+		display: block;
+		color: gray;
+		padding: 4px 0 0 0px;
+		margin: 0px;
+	}
+	.classroom .chatHistory .value {
+		display: block;
+		padding: 4px 0 0 0px;
+	}
+	.classroom .teachingHintUnFold {
+		height: 140px;
+		position: relative;
+		width: 640px;
+		top: -100px;
+		border: none;
+		font-size: 20px;
+		background-color: gray;
+		z-index: 9999;
+	}
+	.classroom .actionBar .classroomLabelGroup {
+		/* width: 690px; */
+		height: 34px;
+		float: left;
+	}
+	.classroom .actionBar .classroomLabelGroup .logo {
+		height: 34px;
+		background-image: url("../../images/portal/logo_classroom.png");
+		width: 104px;
+		float: left;
+		margin: -2px 0 0 -2px;
+		background-repeat: no-repeat;
+		background-position: center;
+	}
+	.classroom .actionBar .classroomLabelGroup .classroomLabel {
+		height: 34px;
+		width: 100px;
+		float: left;
+		color: white;
+		padding: 8px 0 0 21px;
+		border-right: 1px solid gray;
+	}
+	.classroom .actionBar .lessonName {
+		color: white;
+		margin: 8px 0 0 8px;
+		height: 34px;
+		/* width: 420px; */
+		float: left;
+		text-overflow: none;
+		white-space: nowrap;
+		overflow: hidden;
+	}
+	.classroom .rightActionBarGroup {
+		float: right;
+		border-right: 1px solid gray;
+		height: 34px;
+		padding: 8px;
+	}
+	.classroom .rightActionBarGroup .classTime {
+		
+	}
+	.classroom .rightActionBarGroup2 {
+		float: right;
+		padding: 8px;
+	}
+	.classroom .rightActionBarGroup2 div {
+		float: left;
+		/* border-right: 1px solid gray; */
+		padding: 0 8px 0 8px;
+		cursor: pointer;
+	}
+	.classroom .rightActionBarGroup2 .lastAction {
+		float: left;
+		padding: 0 8px 0 8px;
+		border: none;
+		height: 20px;
+		cursor: pointer;
+		border-left: 1px solid gray;
+	}
+	.classroom .lessonInfoRow .infoLabel {
+		width: 6px;
+		line-height: 18px;
+		text-align: center;
+		word-wrap: break-word;
+		margin: 6px 0 0 35px;
+		float: left;
+		/* height: 80px; */
+		display: inline;
+	}
+	.classroom .lessonInfoRow .infoColumn1 {
+		width: 300px;
+		line-height: 18px;
+		word-wrap: break-word;
+		height: 80px;
+		float: left;
+		overflow-y: auto;
+		padding: 6px 10px 0 10px;
+		border-left: 1px solid white;
+	}
+	.classroom .lessonInfoRow .infoColumn1Hover {
+		width: 300px;
+		line-height: 18px;
+		word-wrap: break-word;
+		/* margin: 0 0 0 40px; */
+		min-height: 80px;
+		float: left;
+		overflow-y: auto;
+		padding: 6px 10px 0 10px;
+		border-left: 1px solid white;
+		background-color: lightgray;
+	}
+	.classroom .lessonInfoRow .infoColumn2 {
+		width: 300px;
+		line-height: 18px;
+		word-wrap: break-word;
+		height: 76px;
+		float: left;
+		overflow-y: hidden;
+		padding: 6px 10px 0 10px;
+		border-left: 1px solid white;
+	}
+	.classroom .slideNumber {
+		float: left;
+		margin: 25px 10px 0 0;
+		width: 16px;
+		text-align: right;
+	}
+	.classroom .previewSlidePopup {
+		position: absolute;
+		left: 156px;
+		top: -51px;
+		z-index: 9;
+		width: 320px;
+		height: 240px;
+		background-image:
+			url("http://resource.vipkid.com.cn/static/images/classroom/slidePreviewPopUpBg.png");
+		background-size: 100% 100%;
+		background-position: center;
+		background-repeat: no-repeat;
+	}
+	.classroom .previewSlidePopupImg {
+		width: 302px;
+		margin: 3px 0 0 13px;
+		height: 233px;
+	}
+	.classroom .lessonInfoRow .infoColumn3 {
+		width: 300px;
+		line-height: 18px;
+		word-wrap: break-word;
+		height: 80px;
+		float: left;
+		padding: 6px 10px 0 10px;
+		overflow-y: auto;
+		border-left: 1px solid white;
+		border-right: 1px solid white;
+	}
+	.classroom .lessonInfoRow .infoColumn3Hover {
+		width: 300px;
+		line-height: 18px;
+		word-wrap: break-word;
+		/* margin: 0 0 0 40px; */
+		min-height: 80px;
+		float: left;
+		overflow-y: auto;
+		padding: 6px 10px 0 10px;
+		border-left: 1px solid white;
+		background-color: lightgray;
+		border-right: 1px solid white;
+		height: 135px;
+	}
+	.classroom .teachingHintUnFold .currentPageTips {
+		color: white;
+		position: absolute;
+		padding: 8px 10px;
+		width: 630px;
+		height: 140px;
+		overflow: auto;
+		text-overflow: ellipsis;
+	}
+	.classroom .teachingHintUnFold {
+		
+	}
+	.classroom .teachingHintFold .currentPageTips {
+		color: white;
+		position: absolute;
+		padding: 8px 10px;
+		width: 630px;
+		height: 40px;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+	.classroom .isNewComer {
+		position: absolute;
+		top: 8px;
+		left: 233px;
+		height: 37px;
+		width: 30px;
+		background-size: 100% 100%;
+		background-repeat: no-repeat;
+		background-image: url("../../images/portal/isNewStudent.png");
+	}
+	.classroom .finishType {
+		top: 8px;
+		al: 10px;
+		float: right;
+		width: 400px;
+		height: 37px;
+		background-size: 100% 100%;
+		background-repeat: no-repeat;
+	}
+	.ui.form select.finishTypeItem {
+		float: left;
+		width: 150px !important;
+		height: 35px;
+	}
+	.finishTypeButton {
+		float: right;
+		/*width: 120px;
+		margin-right: 65px;  */
+	}
+	.openCommentModal {
+		width: 540px;
+	}
+	.schedule-table tr:hover {
+		background-color: #cfe9f7;
+	}
+	.classroom .classroom2Info {
+		/* position: absolute; */
+		/* left: -6px; */
+		
+	}
+	.classroom .loading {
+		background-image: url('../../images/portal/loading.gif');
+		height: 24px;
+		width: 24px;
+		background-size: 100% 100%;
+		position: absolute;
+	}
+	.classroom .classroom2Info .infoBtn {
+		/* position: absolute; */
+		/* top: 0px; */
+		/* left: 225px; */
+		margin: 8px 0 8px 8px;
+		background-color: lightgray;
+		border: none;
+		border-radius: 4px;
+		height: 34px;
+		float: right;
+	}
+	.classroom .classroom2Info .isNewComer {
+		/* position: absolute; */
+		/* top: 8px; */
+		/* left: 193px; */
+		height: 37px;
+		/* display: inline; */
+		float: right;
+		width: 30px;
+		background-size: 100% 100%;
+		background-repeat: no-repeat;
+		background-image: url("../../images/portal/isNewStudent.png");
+		/* margin: 0; */
+		position: relative;
+		left: 0;
+	}
+	.classroom .classroom2Info .stars {
+		float: right;
+		/* position: absolute; */
+		height: 34px;
+		top: 0px;
+		width: 196px;
+		/* border: 1px solid; */
+		margin: 8px 0;
+		/* z-index: 99999999; */
+	}
+	.classroom .classroom2Info .ownedStars, .classroom .classroom2Info .futureStars
+		{
+		float: left;
+		margin: 20px 0 0 0;
+	}
+	.classroom .classroom2Info .ownedStar {
+		width: 31px;
+		height: 29px;
+		background-image:
+			url("../../images/star/ownedStar.png");
+		background-size: 100% 100%;
+		float: left;
+		margin: -18px 0px 0 6px;
+		cursor: pointer;
+	}
+	.classroom .classroom2Info .futureStar {
+		width: 31px;
+		height: 29px;
+		background-image:
+			url("../../images/star/futureStar.png");
+		background-size: 100% 100%;
+		float: left;
+		margin: -18px 0px 0 6px;
+		cursor: pointer;
+	}
+}
+
+.replay2 {
+	
+}
+
+.replay2 .addFeedbackBtn {
+	margin: 0 10px 10px 0;
+	float: right;
+}
+
+.classroom .reportContainer {
+	display: none;
+	position: absolute;
+	width: 280px;
+	height: 620px;
+	border: 1px solid lightgray;
+	padding: 5px;
+	right: 70px;
+	top: 200px;
+	filter: alpha(opacity = 85); /* IE */
+	-moz-opacity: 0.85; /* Moz + FF */
+	opacity: 0.85;
+	background: lightgray;
+}
+
+.classroom .trailFeedbackContainer {
+	display: none;
+	position: absolute;
+	padding: 15px;
+	width: 600px;
+	height: 600px;
+	z-index:1001;
+	top:-700px;
+	margin:0px auto!important;
+	border: 1px solid lightgray;
+	filter: alpha(opacity = 90); /* IE */
+	-moz-opacity: 0.9; /* Moz + FF */
+	opacity: 0.9;
+	background: lightgray;
+}
+
+.selected {
+	background-color: lightgray;
+}
+
+.classroom .ihr {
+	margin-top: 1px;
+	margin-bottom: 1px;
+	border: 1 dashed #987cb9;
+	width: 80%;
+	color: #987cb9;
+}
+
+.classroom .hideReportButton {
+	position: absolute;
+	right: 280px;
+	width: 50px;
+	top: 249px;
+	/* border: 1px solid lightgray; */
+	margin-left: -1px;
+	width: 13px;
+	height: 47px;
+	background: lightgray;
+	padding: 5px;
+	cursor: pointer;
+	/* background-image: url("../../images/portal/fasong_dianji.png"); */
+	background-image: url("../../images/portal/closebn.png");
+}
+
+.classroom .hideFeedbackButton {
+	position: absolute;
+	right: 479px;
+	width: 50px;
+	top: 249px;
+	/* border: 1px solid lightgray; */
+	/* border-radius: 5px 0px 0px 5px; */
+	margin-left: -1px;
+	width: 10px;
+	height: 48px;
+	/*  background: lightgray; */
+	padding: 5px;
+	cursor: pointer;
+	/* background-image: url("../../images/portal/fasong_dianji.png"); */
+	background-image: url("../../images/portal/closebn.png");
+}
+
+.classroom .edgings {
+	position: absolute;
+	right: 0px;
+	width: 70px;
+	top: 200px;
+	border: 1px solid lightgray;
+	margin-left: -1px;
+	background: rgb(243, 249, 249);
+}
+
+.classroom .divide {
+	border-right: 1px solid white;
+	float: left;
+	margin-left: 30px;
+	height: 80px;
+}
+
+.classroom .edgingsForTrail {
+	position: absolute;
+	right: 0px;
+	width: 70px;
+	top: 170px;
+	border: 1px solid lightgray;
+	margin-left: -1px;
+	background: rgb(243, 249, 249);
+}
+
+.classroom .divide {
+	border-right: 1px solid white;
+	float: left;
+	margin-left: 30px;
+	height: 80px;
+}
+
+.classroom .infoLabelContainer {
+	width: 100px;
+	float: left;
+}
+
+ul, li {
+	list-style: none;
+}
+
+.histogram-container {
+	position: relative;
+	margin-left: 60px;
+	margin-top: 10px;
+	margin-bottom: 25px;
+}
+
+.histogram-bg-line {
+	border: #999 solid;
+	border-width: 0 0px 1px 0px;
+	border-right-color: #eee;
+	overflow: hidden;
+	width: 99%;
+	margin-left: -29px;
+}
+
+.histogram-bg-line ul {
+	overflow: hidden;
+	border: #eee solid;
+	border-width: 0px 0 0 0;
+}
+
+.histogram-bg-line li {
+	float: left;
+	width: 13%; /*根据.histogram-bg-line下的ul里面li标签的个数来控制比例*/
+	overflow: hidden;
+}
+
+.histogram-bg-line li div {
+	border-right: 0px #eee solid;
+}
+
+.histogram-content {
+	position: absolute;
+	left: -44px;
+	top: 0;
+	width: 99%;
+	height: 100%;
+}
+
+.histogram-content ul {
+	height: 100%;
+}
+
+.histogram-content li {
+	float: left;
+	height: 100%;
+	width: 13%; /*根据直方图的个数来控制这个width比例*/
+	text-align: center;
+	position: relative;
+}
+
+.histogram-box {
+	position: relative;
+	display: inline-block;
+	height: 100%;
+	width: 40px;
+}
+
+.histogram-content li a {
+	position: absolute;
+	bottom: 0;
+	right: 0;
+	display: block;
+	width: 40px;
+}
+
+.histogram-content li .a1 {
+	position: absolute;
+	bottom: 0;
+	right: 0;
+	display: block;
+	width: 40px;
+	height: 91%;
+	background: DarkBlue;
+}
+
+.histogram-content  .hisLevel1 {
+	background: Orange;
+}
+
+.histogram-content  .hisLevel2 {
+	background: Chocolate;
+}
+
+.histogram-content  .hisLevel3 {
+	background: BurlyWood;
+}
+
+.histogram-content  .hisLevel4 {
+	background: green;
+}
+
+.histogram-content  .hisLevel5 {
+	background: DarkGreen;
+}
+
+.histogram-content  .hisLevel6 {
+	background: #2f87d9;
+}
+
+.histogram-content  .hisLevel7 {
+	background: DarkBlue;
+}
+
+.histogram-content li .name {
+	position: absolute;
+	bottom: -20px;
+	left: 0px;
+	white-space: nowrap;
+	display: inline-block;
+	width: 100%;
+	font-size: 12px;
+}
+
+.histogram-y {
+	position: absolute;
+	left: -60px;
+	top: -10px;
+	font: 12px/1.8 verdana, arial;
+}
+
+.histogram-y li {
+	text-align: right;
+	width: 55px;
+	padding-right: 5px;
+	color: #333;
+}
+
+.histogram-bg-line li div, .histogram-y li {
+	height: 20px;
+}
+
+.finish-type-filter {
+	width: 300px;
+	display: inline-block;
+	margin-right: 30px;
+}
+
+.lesson-serial-number-filter {
+	width: 400px;
+	display: inline-block;
+	margin: 0 10px 0 0;
+}
+/* error css */
+.error-input {
+	border: 1px solid #b94a48;
+}
+
+.has-error {
+	color: #b94a48;
+	display: none;
+}
+
+.ng-hide {
+	display: none;
+}
+/*Don't remvoed ,use for selecting tab in the tool bar ,even it is empty */
+.ng-hide-feedback {
+	
+}
+/* alert css */
+.alert {
+	padding: 15px;
+	border: 1px solid #eed3d7;
+	border-radius: 4px;
+	position: fixed;	
+	/* Each alert has its own width */
+	clear:both;
+	z-index: 65535;
+	left:50%;
+	top:40px;
+	margin-top:-20px;
+}
+/* materials css */
+.aside-backdrop.am-fade {
+	background: rgba(0, 0, 0, .5);
+	-webkit-animation-duration: .15s;
+	animation-duration: .15s;
+}
+
+.aside-backdrop {
+	position: fixed;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	z-index: 1040;
+	background-color: #000;
+}
+
+.am-fade {
+	-webkit-animation-duration: .3s;
+	animation-duration: .3s;
+	-webkit-animation-timing-function: linear;
+	animation-timing-function: linear;
+	-webkit-animation-fill-mode: backwards;
+	animation-fill-mode: backwards;
+	opacity: 1;
+}
+
+.aside.left {
+	right: auto;
+	left: 0;
+}
+
+.aside {
+	position: fixed;
+	top: 0;
+	bottom: 0;
+	z-index: 1049;
+	overflow: auto;
+	min-width: 320px;
+	background: #fff;
+}
+
+.am-slide-left {
+	-webkit-animation-duration: .3s;
+	animation-duration: .3s;
+	-webkit-animation-timing-function: ease-in-out;
+	animation-timing-function: ease-in-out;
+	-webkit-animation-fill-mode: backwards;
+	animation-fill-mode: backwards;
+}
+
+.teacherInfo {
+	padding: 8px 10px;
+	background: #fff;
+	border: #fdb8a3 1px solid;
+	border-radius: 4px;
+	position: absolute;
+	z-index: 2;
+	left: 278px;
+	top: 152px;
+	font-size: 10px;
+	line-height: 20px;
+	box-shadow: 0 2px 0 0 rgba(232, 181, 165, 0.5);
+	display: none;
+}
+
+.teacherInfoIcon {
+	position: absolute;
+	background: url(../../images/portal/homepage.spirits.png) no-repeat
+		-119px -113px;
+	width: 7px;
+	height: 10px;
+	position: absolute;
+	left: -7px;
+	top: 20px;
+}
+
+.teacherInfo.pointerL .teacherInfoIcon {
+	left: auto;
+	right: -7px;
+	background-position: -119px -97px;
+}
+
+.timeInfo {
+	padding: 8px 10px;
+	background: #fff;
+	border: #fdb8a3 1px solid;
+	border-radius: 4px;
+	position: absolute;
+	z-index: 3;
+	left: 278px;
+	top: 152px;
+	font-size: 10px;
+	line-height: 20px;
+	box-shadow: 0 2px 0 0 rgba(232, 181, 165, 0.5);
+	display: none;
+}
+
+.scheduleTable {
+	table-layout: fixed;
+}
+
+#trailFeedbackForm .trialLevel {
+	color: black;
+	margin-bottom: 10px;
+	display: inline-block;
+	font-size: 20px;
+	margin-top: 10px;
+}
+
+#trailFeedbackForm .trialLevelContent {
+	color: #333;
+	margin-bottom: 10px;
+	display: inline-block;
+	cursor: pointer;
+}
+
+#trailFeedbackForm .trialLevelContentDetail {
+	color: #333;
+	margin-bottom: 10px;
+	margin-top: 10px;
+	display: inline-block;
+}
+
+.ng-hide .levelAdddrss {
+	cursor: pointer;
+	margin-bottom: 10px;
+	display: inline-block;
+	font-size: 25px;
+	margin-top: 10px;
+}
+
+/* 自定义css */
+.tooltip-inner {
+	max-width: 230px !important;
+	padding: 8px 8px;
+	color: #000;
+	text-align: left !important;
+	text-decoration: none;
+	background-color: #fff;
+	border: #fdb8a3 1px solid;
+	border-radius: 4px;
+}
+
+.tooltip.top .tooltip-arrow {
+	border-top-color: #fdb8a3 !important;
+}
+
+.tooltip.right .tooltip-arrow {
+	border-right-color: #fdb8a3 !important;
+}
+
+.tooltip.left .tooltip-arrow {
+	border-left-color: #fdb8a3 !important;
+}
+
+.tooltip.in {
+	opacity: 1;
+	filter: alpha(opacity = 100);
+}
+
+.hides {
+	display: none;
+}
+
+.schedule_table {
+	width: 1281px;
+	border: 1px solid #dddddd;
+	border-left: none;
+	margin-top: 10px;
+	height: 674px;
+}
+
+.schedule_tr {
+	border-bottom: 1px solid #dddddd;
+	width: 100%;
+	clear: both;
+}
+
+.schedule_td {
+	float: left;
+	border-left: 1px solid #dddddd;
+	width: 160px;
+	padding: 0;
+	height: 24px;
+	line-height: 24px;
+}
+
+.schedule_mask {
+	background: rgb(122, 129, 130) url("../../images/portal/mask.gif")
+		no-repeat 50% 50%;
+	position: absolute;
+	opacity: 0.6;
+	filter: alpha(opacity = 60);
+	z-index: 65535;
+}
+
+.practicumSlot {
+	height: 47px;
+	line-height: 47px;
+}
+
+.readSlot {
+	background-color: rgb(122, 129, 130);
+	color: rgb(232, 232, 232);
+}
+
+[ms-controller] {
+	display: none;
+}
+
+/** practicumClassroom start **/
+
+.practicumClassroom .feedBackForm {
+	/* height: 71px; */
+	/* overflow-y: scroll; */
+	width: 350px;
+	border: 1px solid lightgray;
+	position:absolute;
+	right: -340px;
+	top: 40px;
+	background: lightblue;
+	font-size: 14px;
+	border-radius: 10px 0px 0px 10px;
+	display:none;
+}
+
+.practicumClassroom .feedBackForm .wrapper {
+	padding: 10px;
+	/* text-align: center; */
+	/* margin: 0 auto; */
+	min-height: 650px;
+}
+
+.practicumClassroom .feedBackForm .btnDiv .submitBtn {
+	padding: 10px 8px;
+	width: 100px;
+}
+
+.practicumClassroom .feedBackForm .commentDiv, .practicumClassroom .feedBackForm .btnDiv,
+	.practicumClassroom .feedBackForm .hintDiv {
+	margin: 5px 0 0 20px;
+}
+
+.practicumClassroom .feedBackForm .closeBtn {
+	background-size: 100% 100%;
+	background-image:
+		url("http://resource.vipkid.com.cn/static/images/management_portal/close.png");
+	height: 30px;
+	width: 30px;
+	position: absolute;
+	top: -5px;
+	right: 322px;
+	cursor: pointer;
+	opacity: 0.7;
+	z-index: 999;
+}
+
+/*practicumClassroom end*/
+
+/* tips */
+.schedule-guide {
+	position: absolute;
+	left: 0;
+	top: 0;
+	z-index: 99999;
+	width: 100%;
+	height: 100%;
+	display: none;
+}
+
+.schedule-guide-bg {
+	position: absolute;
+	left: 0;
+	top: 0;
+	z-index: 100000;
+	width: 100%;
+	height: 100%;
+	background: #000;
+	filter: alpha(opacity = 65);
+	opacity: 0.65;
+}
+
+.schedule-guide-img {
+	width: 1040px;
+	height: 380px;
+	background: url(../../images/portal/guide_schedule.png) no-repeat left
+		top;
+	position: absolute;
+	left: 44px;
+	top: 79px;
+	z-index: 100001;
+}
+
+.schedule-guide-img a {
+	width: 120px;
+	height: 35px;
+	display: block;
+	position: absolute;
+	right: 104px;
+	bottom: 53px;
+}
+
+.classroom-guide-img {
+	width: 1050px;
+	height: 380px;
+	background: url(../../images/portal/guide_classroom.png) no-repeat left
+		top;
+	position: absolute;
+	left: 54px;
+	top: 85px;
+	z-index: 100001;
+}
+
+.classroom-guide-img a {
+	width: 120px;
+	height: 35px;
+	display: block;
+	position: absolute;
+	right: 83px;
+	bottom: 54px;
+}
+
+.btn-seft{
+	background-color: #e8e8e8;
+    border-color: #e8e8e8;
+}
+
+.btn-seft:HOVER{
+	background-color: #808080;
+	border-color: #808080;
+}
+
+.btn-gray{
+	color: #fff;
+    background-color: #aea79f;
+    border-color: #aea79f;
+}
+.btn-gray:HOVER {
+	background-color: #808080;
+	border-color: #808080;
+}
+
+.title-lable{
+	font-weight: bold;
+	margin-bottom:5px;
+}
+.title-lable:after{
+	content:':';
+}
+.req:after{
+	color:red;
+	content:'*';
+}
+.add-right-border{
+	border-right:1px solid #ddd;
+	padding-right:50px;
+}
+.contactUploadStatus .contactUploadStatusWz{margin-left: 0px;margin-top: 4px;float:left;line-height:36px; display:inline-block; text-align:center; cursor:pointer; }
+.contactUploadStatus .contactUploadStatusImg{float:left;background:url(../../images/common/uploadloading.gif) no-repeat center center; width:45%;height:34px; display:inline-block; margin:0 auto;margin-top: 3px;}
+.line_input{ position:relative; margin-bottom: 20px; }
+.line_input p{margin:0;padding:0;}
+.line_input .error{margin:5px 0 0;}
+.line_input:after{content:'\20';display:block;height:0;clear:both}
+.line_input{*zoom:1}
+.line_input input[type="text"],.line_input select{width:250px; outline:none; border-radius:6px; height:36px; border: solid 1px #d9d9d9; font-size:16px; color:#666; text-indent:4px;}
+.line_input input.phoneInput,.line_input input.phone{z-index:4;position: absolute; top:0;  left:0;  color:#999;text-indent:5px;width:250px; outline:none; border-radius:6px; height:36px; border: solid 1px #d9d9d9; font-size:16px;}
+.line_input input.phone{z-index:3; color:#666}
+.line_input#phonePra .textfield{width:256px; height:38px;border:0 none;}
+.line_input#phonePra .error{margin:0 0 0 290px}
+.line_input input[type="text"].textfield{ height:36px; border:1px solid #d9d9d9; float:left;} 
+.line_input input[type="text"].textforbidden{height:36px; border:1px solid #d9d9d9; float:left;background:#f0f0f0}
+.line_input .contactUploadStatus{float:left;cursor:auto;height:36px; width:85px;border:#d9d9d9 0px solid; border-radius:0 0px 0px 0;border-left:0 none; float:left; margin-left:0px; color:blue;text-shadow:rgba(255,255,255,.4) 0px 2px 1px;font-size:16px}
+.line_input .browse{height:36px; width:86px; cursor:pointer; background:#e0e0e0;border:#d9d9d9 1px solid; border-radius:0 6px 6px 0;border-left:0 none; float:left; margin-left:-6px; color:#5a5a5a;text-shadow:rgba(255,255,255,.4) 0px 2px 1px;}
+.line_input .browse:hover{background:#e8e8e8; color:#333;} 
+.line_input .textfield{float:left;margin-top: 9px;margin-left: 20px;font-size: 17px;color: #9B9B9B;}
+.line_input .attachfile{height:36px; width:86px; cursor:pointer; background:#e0e0e0;border:#d9d9d9 1px solid; border-radius:6px 6px 6px 6px;float:left;color:red;text-shadow:rgba(255,255,255,.4) 0px 2px 1px;}
+.line_input .attachfile:hover{height:36px; width:86px; cursor:pointer; background:#e0e0e0;border:#d9d9d9 1px solid; border-radius:6px 6px 6px 6px;float:left;color:#5a5a5a;text-shadow:rgba(255,255,255,.4) 0px 2px 1px;}
+
+.line_input .uploadFile{cursor: pointer;z-index:-1;position: absolute; top:0px; height: 35px; filter: alpha(opacity:0); opacity: 0; width: 86px; left: 0;}
+.line_input .delete-file{margin-left:60px;color: blue;font-size: 16px;cursor: pointer;}
+.line_input .optional{font-size: 16px;}
+.bankTitle{margin: 40px auto;text-align: left;font-size: 18px; padding-left:40px; }
+.submit{width:100%; text-align:center; }
+.submit .submit_button{width:100px; height:35px;}
+.lotBrowse{margin-left:220px;margin-top:5px;}
+.form_line2{  margin-top: 40px; margin-left: -35px;margin-bottom:40px}
+.contractTitle {margin: 60px auto;margin-bottom: 0px;	text-align: center;	font-size: 31px;}
+.uploadSuccess{margin:5px 0;}
+.select2-dropdown{min-width:210px!important;}
+
+/* 电话号码国家码style*/
+#mobilePix	{ background-color: #ccc; border-radius: 4px; }
+#mobilePix  button { background-color: white; border: 1px solid #ccc; color:black;}
+
+
+*::after, *::before {
+    box-sizing: border-box;
+}
+*, *::after, *::before {
+    box-sizing: border-box;
+}
+*::after, *::before {
+    box-sizing: border-box;
+}
+*, *::after, *::before {
+    box-sizing: border-box;
+}
+
+.downCaret{
+	display: inline-block;
+	width: 0;
+	height: 0;
+	vertical-align: top;
+	margin-left: 4px;
+	margin-top: 7px;
+	border-left: 6px solid transparent;
+	border-right: 6px solid transparent;
+	_border-left: 6px solid white;
+	_border-right: 6px solid white;
+	border-top: 6px solid #000;
+	overflow:hidden;
+}
+.upCaret {
+	display: inline-block;
+	width: 0;
+	height: 0;
+	vertical-align: top;
+	margin-left: 4px;
+	margin-top: 7px;
+	border-left: 6px solid transparent;
+	border-right: 6px solid transparent;
+	_border-left: 6px solid white;
+	_border-right: 6px solid white;
+	border-bottom: 6px solid black;
+	overflow:hidden;
+}
+
+.scrollContentcss{
+	border: 1px solid #A9C25A;
+	margin: 20px 40px 20px 40px;
+	background-color: #E1F0D9;
+	overflow: hidden;
+	position: relative;
+}
+.announcecss{
+	border: 0px solid #ddd;
+	width: auto;
+	height: 100px;
+	padding-left:40px;
+	padding-right:40px;
+	text-align: center;
+	overflow: hidden;
+}
+.rownoCss{
+	display: table;
+	height: 100px;
+	width: 100%;
+}  
+.rownoCss a{
+	color: blue;
+}
+.contentcss{
+	word-break:normal; 
+	width:auto; 
+	display: table-cell; 
+	color: #879E56;
+	vertical-align: middle;
+	text-align: center;
+}
+
+.closeSpancss{
+	border: 0px solid #ddd;
+	position: absolute;	right:10px;top:10px;
+	width: 20px;
+	height: 20px;
+	cursor: pointer;
+	background: url("../../images/portal/close_line2.png") no-repeat center center;
+	background-size:25px 25px; 
+}
+
+
+ 

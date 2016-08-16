@@ -1,0 +1,385 @@
+package com.vipkid.trpm.controller.portal;
+
+import java.sql.Timestamp;
+import java.util.Map;
+import java.util.TimeZone;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
+
+import com.google.common.collect.Maps;
+import com.vipkid.enums.OnlineClassEnum;
+import com.vipkid.trpm.entity.*;
+import com.vipkid.trpm.service.passport.IndexService;
+import com.vipkid.trpm.service.portal.ReportService;
+import com.vipkid.trpm.util.DateUtils;
+
+/**
+ * 1.主要负责UAReport、DemoReport、FeebBack等模块的参数接收和页面跳转<br>
+ * 
+ * UAReport对应表 AssessmentsReport DemoReport对应表 Demoreport FeedBack对应表TeacherComment
+ * 
+ * @Title: ReportController.java
+ * @Package com.vipkid.trpm.controller.portal
+ * @author ALong
+ * @date 2015年12月16日 下午8:56:43
+ */
+@Controller
+public class ReportController extends AbstractPortalController {
+
+    @Autowired
+    private ReportService reportService;
+
+    @Autowired
+    private IndexService indexService;
+    
+    /**
+     * UA报告上传页面进入
+     * 
+     * @Author:ALong
+     * @Title: uploadPage
+     * @param report
+     * @param model
+     * @return String
+     * @date 2015年12月12日
+     */
+    @RequestMapping("/uploadPage")
+    public String uaReport(AssessmentReport report, HttpServletRequest request, Model model) {
+        model = this.uploadData(report, request, model, "0");
+        return view("ua_report_upload");
+    }
+
+    /**
+     * PracticumReport报告上传页面进入
+     * 
+     * @Author:ALong
+     * @Title: uploadPracticum
+     * @param report
+     * @param model
+     * @return String
+     * @date 2015年12月12日
+     */
+    @RequestMapping("/uploadPracticum")
+    public String practicumReport(AssessmentReport report, HttpServletRequest request, Model model) {
+        model = this.uploadData(report, request, model, "1");
+        return view("practicum_report_upload");
+    }
+
+    /**
+     * UA报告上传实现
+     * 
+     * @Author:ALong
+     * @Title: upload
+     * @param request
+     * @param response
+     * @param report
+     * @param file
+     * @return String
+     * @date 2015年12月12日
+     */
+    @RequestMapping(value = "/uploadReport", method = RequestMethod.POST)
+    public String uaReportSubmit(MultipartHttpServletRequest request, HttpServletResponse response,
+            AssessmentReport report, @RequestParam("file") MultipartFile file) {
+        String score = request.getParameter("score");
+        String onlineClassId = request.getParameter("onlineClassId");
+        Map<String, Object> map = reportService.saveUAReport(report, file, request.getFile(file.getName()).getSize(),
+                indexService.getUser(request), score, onlineClassId);
+
+        return jsonView(response, map);
+    }
+
+    /**
+     * Practicum 报告上传实现
+     * 
+     * @Author:ALong
+     * @Title: upload
+     * @param request
+     * @param response
+     * @param report
+     * @param file
+     * @return String
+     * @date 2015年12月12日
+     */
+    @RequestMapping(value = "/uploadPracticumReport", method = RequestMethod.POST)
+    public String practicumReportSubmit(MultipartHttpServletRequest request, HttpServletResponse response,
+            AssessmentReport report, @RequestParam("file") MultipartFile file) {
+        String score = request.getParameter("score");
+        String onlineClassId = request.getParameter("onlineClassId");
+        Map<String, Object> map = reportService.savePracticumReport(report, file, request.getFile(file.getName())
+                .getSize(), indexService.getUser(request), score, onlineClassId);
+
+        return jsonView(response, map);
+    }
+
+    /**
+     * 
+     * 进入DemoReport页面
+     * 
+     * @Author:ALong
+     * @Title: demoReport
+     * @param response
+     * @param onlineClassId
+     * @param studentId
+     * @return String
+     * @date 2015年12月12日
+     */
+    @RequestMapping("/demoReport")
+    public String demoReport(HttpServletResponse response, String serialNumber, long onlineClassId, long studentId,
+            Model model) {
+        /* 根据参数查询当前的DemoReport */
+        initData(response, serialNumber, onlineClassId, studentId, model);
+        return view("demo_report_page");
+    }
+
+    /**
+     * 
+     * 从教室里面进入DemoReport页面，右边滑动效果
+     * 
+     * @Author:ALong
+     * @Title: demoReport
+     * @param response
+     * @param onlineClassId
+     * @param studentId
+     * @return String
+     * @date 2015年12月12日
+     */
+    @RequestMapping("/demoReportRoom")
+    public String demoReportRoom(HttpServletResponse response, String serialNumber, long onlineClassId, long studentId,
+            Model model) {
+        /* 根据参数查询当前的DemoReport */
+        initData(response, serialNumber, onlineClassId, studentId, model);
+        return view("demo_report_room");
+    }
+
+    /**
+     * 保存或提交DemoReport
+     * 
+     * @Author:ALong
+     * @Title: reportSubmit
+     * @param response
+     * @param demoReport
+     * @param isSubmited
+     * @return String
+     * @date 2015年12月14日
+     * @throws
+     */
+    @RequestMapping("/reportSubmit")
+    public String demoReportSubmit(HttpServletRequest request, HttpServletResponse response, DemoReport demoReport,
+            boolean isSubmited) {
+        Map<String, Object> map = reportService.saveOrSubmitDemoReport(demoReport, isSubmited, indexService.getUser(request));
+
+        return jsonView(response, map);
+    }
+
+    /**
+     * 教室右侧Feedback 进入
+     * 
+     * @param request
+     * @param response
+     * @param onlineClassId
+     * @param studentId
+     * @param model
+     * @return
+     */
+    @RequestMapping("/feedback")
+    public String feedback(HttpServletRequest request, HttpServletResponse response, @RequestParam long onlineClassId,
+            @RequestParam long studentId, Model model) {
+
+        // 查询课程信息
+        OnlineClass onlineClass = reportService.findOnlineClassById(onlineClassId);
+        model.addAttribute("onlineClass", onlineClass);
+
+        // 查询Lesson
+        Lesson lesson = reportService.findLessonById(onlineClass.getLessonId());
+        model.addAttribute("lesson", lesson);
+
+        // 查询FeedBack信息
+        TeacherComment teacherComment = reportService.findTectBycIdAndStuId(onlineClassId, studentId);
+        model.addAttribute("teacherComment", teacherComment);
+
+        model.addAttribute("studentId", studentId);
+
+        return view("online_class_feedback");
+    }
+
+    /**
+     * feedback保存，任何时候都可以保存  2016-5-10 修改feedback 只允许提交一次，因为要通知家长老师有反馈
+     * 
+     * @Author:ALong
+     * @Title: commentSubmit
+     * @param request
+     * @param response
+     * @param teacherComment
+     * @param model
+     * @return String
+     * @date 2015年12月16日
+     * @throws
+     */
+    @RequestMapping("/commentSubmit")
+    public String feedbackSubmit(HttpServletRequest request, HttpServletResponse response,
+            TeacherComment teacherComment, Model model) {
+        String serialNumber = request.getParameter("serialNumber");
+        Map<String, Object> parmMap = reportService.submitTeacherComment(teacherComment, indexService.getUser(request),serialNumber);
+        return jsonView(response, parmMap);
+    }
+
+    /**
+     * info 展示 学生基本信息 / 学生测试信息 / 教师feedback
+     * 
+     * @Author:ALong
+     * @Title: openInfo
+     * @param request
+     * @param response
+     * @param studentId
+     * @param model
+     * @return String
+     * @date 2015年12月18日
+     * @throws
+     */
+    @RequestMapping("/openInfo")
+    public String openInfo(HttpServletRequest request, HttpServletResponse response, long studentId, String serialNum,
+            Model model) {
+
+        // 查询学生个人信息
+        model.addAttribute("student", reportService.findStudentById(studentId));
+
+        // 查询学生考试情况
+        StudentExam studentExam = reportService.findStudentExamByStudentId(studentId);
+
+        // 处理考试名称
+        model.addAttribute("studentExam", handleExamLevel(studentExam, serialNum));
+
+        // 查询教师评价
+        model.addAttribute("teacherComments", reportService.listRecentlyTeacherComment(studentId));
+
+        return view("online_class_info");
+    }
+
+    @RequestMapping("/findServerTime")
+    public String findServerTime(HttpServletResponse response, HttpServletRequest request) {
+        Map<String, Object> map = Maps.newHashMap();
+        map.put("serverTime", DateUtils.getThisYearMonth(TimeZone.getDefault().getID()));
+        return jsonView(response, map);
+    }
+
+    /**
+     * DemoReport
+     * 
+     * 根据参数查询当前的DemoReport
+     * 
+     * @Author:ALong
+     * @Title: initData
+     * @param response
+     * @param serialNumber
+     * @param onlineClassId
+     * @param studentId
+     * @param model
+     * @return void
+     * @date 2015年12月23日
+     */
+    private void initData(HttpServletResponse response, String serialNumber, long onlineClassId, long studentId,
+            Model model) {
+        DemoReport currentReport = reportService.getDemoReport(studentId, onlineClassId);
+        if (currentReport == null)
+            currentReport = new DemoReport();
+        model.addAttribute("onlineClassId", onlineClassId);
+        model.addAttribute("currentReport", currentReport);
+
+        model.addAttribute("demoReports", reportService.getDemoReports());
+        model.addAttribute("reportLevels", reportService.getReportLevels());
+    }
+
+    /**
+     * 根据serialNum处理 考试的Level名称显示<br/>
+     * studentExam 为NULL 则返回一个空对象
+     * 
+     * @Author:ALong
+     * @Title: handleExamLevel
+     * @param studentExam
+     * @param serialNum
+     * @return StudentExam
+     * @date 2016年1月12日
+     */
+    private StudentExam handleExamLevel(StudentExam studentExam, String serialNum) {
+        // studentExam 不为空则进行替换逻辑
+        if (studentExam != null) {
+            // ExamLevel 不为空则进行替换逻辑
+            if (studentExam.getExamLevel() != null) {
+                String lowerCase = studentExam.getExamLevel().toLowerCase();
+                if ("l1u0".equals(lowerCase)) {
+                    studentExam.setExamLevel("Level 0 Unit 0");
+                } else if (lowerCase.startsWith("l")) {
+                    studentExam.setExamLevel(lowerCase.replaceAll("l", "Level ").replaceAll("u", " Unit "));
+                }
+            }
+        } else {
+            // studentExam 为空则返回空对象
+            studentExam = new StudentExam();
+            // ExamLevel 为空则根据Lession的SerialNum进行处理
+            if (serialNum != null) {
+                switch (serialNum) {
+                case "T1-U1-LC1-L1":
+                    studentExam.setExamLevel("No Computer Test result, use Level 2 Unit 01");
+                    break;
+                case "T1-U1-LC1-L2":
+                    studentExam.setExamLevel("No Computer Test result, use Level 2 Unit 04");
+                    break;
+                case "T1-U1-LC1-L3":
+                    studentExam.setExamLevel("No Computer Test result, use Level 3 Unit 01");
+                    break;
+                case "T1-U1-LC1-L4":
+                    studentExam.setExamLevel("No Computer Test result, use Level 4 Unit 01");
+                    break;
+                default:
+                    break;
+                }
+            }
+        }
+        return studentExam;
+    }
+
+    private Model uploadData(AssessmentReport report, HttpServletRequest request, Model model, String classType) {
+        model.addAttribute("templete", report);
+
+        String onlineClassId = request.getParameter("onlineClassId");
+        OnlineClass onlineClass = reportService.findOnlineClassById(Long.valueOf(onlineClassId));
+        model.addAttribute("onlineClass", onlineClass);
+        if (onlineClass.getScheduledDateTime().before(new Timestamp(System.currentTimeMillis())) && !OnlineClassEnum.Status.INVALID.toString().equals(onlineClass.getStatus())) {
+            model.addAttribute("mark", onlineClass.getScheduledDateTime());
+        }
+
+        AssessmentReport reports = null;
+
+        /** 主修课按照student和lessonSN查询 */
+        /** 主修课优先按照onlineClass 查询，如果没有则按照student和lessonSN查询 */
+        if ("0".equals(classType)) {
+            if(DateUtils.isSearchById(onlineClass.getScheduledDateTime().getTime())){
+                reports = reportService.findReportByClassId(Long.valueOf(onlineClassId));
+            }else{
+                reports = reportService.findReportByStudentIdAndName(report.getName(), report.getStudentId());
+            }
+            /** Practicum课程按照classId查询 */
+        } else if ("1".equals(classType)) {
+            reports = reportService.findReportByClassId(Long.valueOf(onlineClassId));
+        }
+
+        model.addAttribute("bean", reports);
+
+        /* 如果报告不等于空则需要对其名称进行显示处理 */
+        if (reports != null && reports.getUrl() != null) {
+            String complete = reports.getUrl().substring(reports.getUrl().lastIndexOf("/") + 1);
+            model.addAttribute("uploadName", complete);
+        }
+        return model;
+    }
+
+}

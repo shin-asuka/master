@@ -1,0 +1,31 @@
+#set($layout = "/portal/online_class_layout.vm")
+
+<div class="classroom replay2 ng-scope">
+	#if($stringUtils.startsWith($!lesson.serialNumber,'OPEN'))
+	  <button class="addFeedbackBtn btn btn-primary btn-sm" onclick="history.back()">Exit</button>
+	#end
+	<div style="width: 100%; height: auto; text-align:center;" class="$!{onlineClass.serialNumber}">
+		<iframe src="$!url" width="1300" height="580" frameborder="0" style="margin: 10 auto; border: 1px solid rgb(172, 172, 172);" scrolling="no"></iframe>
+		#if(!$currentReport)
+		  #if($lesson.serialNumber)
+			#if(!$stringUtils.startsWith($lesson.serialNumber,'A') && !$stringUtils.startsWith($lesson.serialNumber,'P') && !$stringUtils.startsWith($lesson.serialNumber,'OPEN'))
+				<div class="edgingsForTrail">
+					<div name="Required" style="padding: 5px; cursor: pointer;" class="Required ng-pristine ng-valid"
+						onclick="require('feedback').openFeedback('Required','$!onlineClass.id', '$!student.id')">Required</div>
+					<hr class="ihr" />
+					
+					<div name="NoRequired" style="padding: 5px; cursor: pointer;" class="NoRequired ng-pristine ng-valid"
+						onclick="require('feedback').openFeedback('NoRequired','$!onlineClass.id', '$!student.id')">Optional</div>
+					<hr class="ihr" />
+				</div>
+			#end
+		  #end
+		#end		
+		<div class="trailFeedbackContainer" style="display: none;"></div>
+	</div>
+</div>
+
+##feedback部分
+#if($stringUtils.startsWith($lesson.serialNumber,'P'))  
+	#parse("/portal/practicum_feedback.vm")
+#end

@@ -1,0 +1,448 @@
+<form id="trailFeedbackForm" name="form" action="#springUrl('/commentSubmit.json')" method="post" class="form-horizontal ng-pristine ng-valid">
+	<style>
+		.classroom .trailFeedbackContainer{text-align:left;}
+	</style>
+	<div>
+		<div id="Required" style="height:530px;overflow-x:hidden; overflow-y:auto;">
+			##<div class="hideFeedbackButton"></div>
+			<div>
+				#**
+				<div class="form-control" style="margin-bottom: 5px; height: 50px">
+					<label style="width: 280px;">How difficult or easy was the lesson for this student?<span style="color: red;">*</span></label>
+					<select id="lessonDiff" name="performance" field="$!teacherComment.performance" style="float: right;" class="ng-pristine ng-valid">
+						<option value="0"></option>
+						<option value="1">very difficult</option>
+						<option value="2">difficult</option>
+						<option value="3">appropriate</option>
+						<option value="4">easy</option>
+						<option value="5">very easy</option>
+					</select>
+				</div>
+				**#
+				
+				<div>
+					<label>How did your student do in today's class?<span style="color: red;">*</span></label>
+					<div style="font-weight:normal;color:#666;margin-top:-5px;padding-bottom:5px;">
+					(Remember, this goes to the parents.)</div>
+					<div>
+						#if(!$teacherComment.teacherFeedback || $teacherComment.teacherFeedback == "")
+							<textarea id="teacherFeedbackText" name="teacherFeedback" class="form-control ng-pristine ng-valid">$!teacherComment.teacherFeedback</textarea>
+						#else
+							<textarea id="teacherFeedbackText" disabled="disabled" name="teacherFeedback" class="form-control ng-pristine ng-valid">$!teacherComment.teacherFeedback</textarea>
+						#end
+					</div>
+				</div>
+				
+				<div style="padding-top:10px;">
+					<label>Your tips for the next teacher. </label>
+					<div style="font-weight:normal;color:#666;margin-top:-5px;padding-bottom:5px;">
+					(This goes to the next teacher.)</div>
+					<div>
+						#if(!$teacherComment.teacherFeedback || $teacherComment.teacherFeedback == "")
+							<textarea name="tipsForOtherTeachers" class="form-control ng-pristine ng-valid">$!teacherComment.tipsForOtherTeachers</textarea>
+						#else
+							<textarea name="tipsForOtherTeachers" disabled="disabled" class="form-control ng-pristine ng-valid">$!teacherComment.tipsForOtherTeachers</textarea>
+						#end
+					</div>
+				</div>
+				
+				#if($lesson.serialNumber)
+					#if($stringUtils.startsWith($!lesson.serialNumber,'T'))
+					<div id="Suggestion">
+	
+						<label Style="margin-top: 20px">Suggest an entry point for this student based on the Student Level Test and in-class assessment. <span style="display:none;" id="result_suggest"></span></label>
+	
+						<div Style="margin: 13px 0px">
+							<input type="radio" name="trialLevelResult" field="$!teacherComment.trialLevelResult"  value="" class="ng-pristine ng-valid" /> <b>No Student Level Test result</b>
+						</div>
+	
+						<div>
+							<a href="javascript:;" name="level2" class="trialLevel ng-hide-feedback">Level2</a>
+							<div>
+								<a name="level2" class="trialLevelContent ng-hide-feedback">The reading goals in Level 2 start with capital and lower-case letter recognition, moving
+                                    on to individual phonics sounds, vowel word families, and blending sounds to read CVC words.
+                                    Level 2 speaking goals begin with the repetition of single words and very basic introductory
+                                    dialogue, move on to the repetition of complete but simple sentences, answering in sentence
+                                    fragments, and answering in complete sentences. In level 2, students are required to actively
+                                    respond to the one-step directions like “Sit down!” “Repeat!” or “Circle it!” If the student cannot
+                                    read, but is a confident speaker, they still belong in Level 2. The aim of Level 1 is to teach students
+                                    reading basics. </a>
+							</div>
+						</div>
+						<hr class="ihr" style="width: 100%;" />
+						<div>
+							<a href="javascript:;" name="level3" class="trialLevel ng-hide-feedback">Level3</a>
+							<a name="level3" class="trialLevelContent ng-hide-feedback">The reading goals in Level 3 start with CVC and CVCe words, and move to vowel 
+								digraphs and initial blends, digraphs blends, moving on to four and five letter words combining all of the above. Reading comprehension 
+								goals include identifying the main topic and key elements of a level-appropriate text, sequencing and retelling stories with teacher 
+								support. Level 3 students also learn tenses: simple present, simple past, and present progressive, while simple future was taught 
+								in Level 2. Grammar including articles, adverbs of frequency, prepositions, noun/verb conjugation, selected adjectives, sentence 
+								types and capitalization and punctuation rules. Level 3 speaking goals begin with the student answering in complete sentences, 
+								moving on to compound sentences, asking questions, and finally engaging in a free talk-style discussion with the teacher that
+								incorporates taught sentence structures and natural language usage. In level 3, students are required to actively respond 
+								to multi-step instructions. </a>
+						</div>
+						<hr class="ihr" style="width: 100%;" />
+						<div>
+							<a href="javascript:;" name="level4" class="trialLevel ng-hide-feedback">Level4</a> 
+							<a name="level4" class="trialLevelContent ng-hide-feedback">The reading goals in Level 4 continue to focus on new phonics skills with 
+								irregular spellings, but moves away from learning to read towards “reading to learn.” Students in Level 4 gain information fiction 
+								and non-fiction texts, using these to understand thematic topics with less pictorial support, and are able to discuss key elements 
+								and the language used. Thematically Level 4 begins to address more mature, advanced topics.  Level 4 speaking goals require students 
+								to ask and answer questions, describe their thoughts clearly, and make connections between multiple topics. Students will review 
+								simple future, simple past, simple present, and present continuous tense, and begin to learn the past progressive tense. They do 
+								not use these tenses at native proficiency. </a>
+						</div>
+						<hr class="ihr" style="width: 100%;" />
+						<div>
+							<a href="javascript:;" name="level5" class="trialLevel ng-hide-feedback">Level5</a> 
+							<a name="level5" class="trialLevelContent ng-hide-feedback">The reading goals in Level 5 practice higher level reading skills, including 
+								identifying the points that an author gives in the text to support claims. By the end of Level 5, students can speak in regular 
+								past tense (including a handful of irregular verbs) and simple forms of the present perfect tense.  </a>
+						</div>
+					</div>
+					#end
+				#end
+			</div>
+		</div>
+
+
+		<div class="ng-hide" id="level2">			
+			##<div class="hideFeedbackButton"></div>
+			<a class="levelAdddrss ng-hide-feedback" name="Required">&#171; Back</a>
+			<div style="height: 480px; overflow: hidden; overflow-y: scroll;">
+				<div class="trialLevelContentDetail">
+					<label>Level 2 </label>
+					<div>
+						<b>Reading:</b> The reading goals in Level 2 start with capital and lower-
+                        case letter recognition, moving on to individual phonics sounds,
+                        vowel word families, and blending sounds to read CVC words.
+                        <b>Speaking/Listening:</b> Level 2 speaking goals begin with the
+                        repetition of single words and very basic introductory dialogue,
+                        move on to the repetition of complete but simple sentences,
+                        answering in sentence fragments, and answering in complete
+                        sentences. In level 2, students are required to actively respond to
+                        the one-step directions like “Sit down!” “Repeat!” or “Circle it!” If
+                        the student cannot read, but is a confident speaker, they still belong
+                        in Level 2. The aim of Level 1 is to teach students reading basics.
+					</div>
+				</div>
+				<hr class="ihr" style="width: 100%;" />
+				<div class="trialLevelContentDetail">
+					<input type="radio" name="trialLevelResult" field="$!teacherComment.trialLevelResult" value="L2U1" class="ng-pristine ng-valid" /> <span>Level 2 unit 1</span>
+					<div>
+						<b>Reading:</b> Zero English ability. Student knows no alphabets and phonics and cannot read.  
+						<b>Speaking/Listening:</b> Student does not repeat after the teacher, cannot use basic dialogue to introduce themselves or state their age, etc. Goal is to learn basic commands, classroom language, and introductory dialogue.
+					</div>
+				</div>
+				<hr class="ihr" style="width: 100%;" />
+				<div class="trialLevelContentDetail">
+					<input type="radio" name="trialLevelResult" field="$!teacherComment.trialLevelResult" value="L2U4" class="ng-pristine ng-valid" /> <span>Level 2 unit 4</span>
+					<div>
+						<b>Reading:</b> S recognizes letters of the alphabet and is able to identify some letter sounds and letter families, but lacks confidence with CVC blending. 
+						<b>Speaking/Listening:</b> May produce very basic introductory greetings but lacks ability to answer questions with more than one word. Repeats after teacher. Knows basic vocabulary about some everyday life topics (school, friends, family, colors) and can answer basic questions about the topics with prompting from T. Can distinguish between singular and plural, knows basic classroom commands and understands basic subject/verb sentence structure. 
+					</div>
+				</div>
+				<hr class="ihr" style="width: 100%;" />
+				<div class="trialLevelContentDetail">
+					<input type="radio" name="trialLevelResult" field="$!teacherComment.trialLevelResult" value="L2U7" class="ng-pristine ng-valid" /> <span>Level 2 unit 7</span>
+					<div>
+						<b>Reading:</b> Knows phonics sounds of each letter of the alphabet and is able to blend initial consonants with vowel-consonant blends. Reads with some difficulty and needs more review/practice to be a confident reader. 
+						<b>Speaking/Listening:</b> Answers in one word or fragment, repeats in complete sentences. Able to talk simply about family and hobbies. Able to use some subject pronouns when talking about people. Can use basic action verbs in present simple tense. Can follow two-step instructions.
+					</div>
+				</div>
+				<hr class="ihr" style="width: 100%;" />
+				<div class="trialLevelContentDetail">
+					<input type="radio" name="trialLevelResult" field="$!teacherComment.trialLevelResult" value="L2U10" class="ng-pristine ng-valid" /> <span>Level 2 unit 10</span>
+					<div>
+						<b>Reading:</b> Is able to read simple sentences with CVC words easily. 
+						<b>Speaking/Listening:</b> Replaces nouns with pronouns and exhibits correct pronoun/verb agreement. Speaks in complete but basic sentences about a limited range of familiar topics, including body parts, feelings and transportation. Uses adjectives to describe objects and can compare sizes of different objects.
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<div class="ng-hide" id="level3">
+			##<div class="hideFeedbackButton"></div>
+			<a class="levelAdddrss ng-hide-feedback" name="Required">&#171; Back</a>
+			<div style="height: 480px; overflow: hidden; overflow-y: scroll;">
+				<div class="trialLevelContentDetail">
+					<label>Level 3 </label>
+					<div>
+						<b>Reading:</b> The reading goals in Level 3 start with CVC and CVCe
+                        words, and move to vowel digraphs and initial blends, digraphs
+                        blends, moving on to four and five letter words combining all of the
+                        above. Reading comprehension goals include identifying the main
+                        topic and key elements of a level-appropriate text, sequencing and
+                        retelling stories with teacher support. Level 3 students also learn
+                        tenses: simple present, simple past, and present progressive, while
+                        simple future was taught in Level 2. Grammar including articles,
+                        adverbs of frequency, prepositions, noun/verb conjugation,
+                        selected adjectives, sentence types and capitalization and
+                        punctuation rules.
+                        <b>Speaking/Listening:</b> Level 3 speaking goals begin with the student
+                        answering in complete sentences, moving on to compound
+                        sentences, asking questions, and finally engaging in a free talk-style
+                        discussion with the teacher that incorporates taught sentence
+                        structures and natural language usage. In level 3, students are
+                        required to actively respond to multi-step instructions.
+					</div>
+				</div>
+				<hr class="ihr" style="width: 100%;" />
+				<div class="trialLevelContentDetail">
+					<input type="radio" name="trialLevelResult" field="$!teacherComment.trialLevelResult" value="L3U1" class="ng-pristine ng-valid" /> <span>Level 3 unit 1</span>
+					<div>
+						<b>Reading:</b> Student can read CVC words and some sight words and 4-letter words fluently.  Student reads phonics reader with confidence. 
+						<b>Speaking/Listening:</b> Student answers in complete sentences (ie. I like cats and dogs.). Student can use simple future tense to describe future events, use the plural form of nouns, and describe the size of objects. Student understands the basic vocabulary for weather and seasons, and knows the names of farm and wild animals. Student can distinguish between nouns and verbs in a sentence.
+					</div>
+				</div>
+				<hr class="ihr" style="width: 100%;" />
+				<div class="trialLevelContentDetail">
+					<input type="radio" name="trialLevelResult" field="$!teacherComment.trialLevelResult" value="L3U4" class="ng-pristine ng-valid" /> <span>Level 3 unit 4</span>
+					<div>
+						<b>Reading:</b> Student can read sight words, CVC and some CVCe words. Student is able to identify characters in a story and retell stories with teacher support. 
+						<b>Speaking/Listening:</b> Student can speak in complete sentences and is familiar with a wider range of topics, including days/months, clothes, body parts, and actions. Student can understand currently occurring events using the present continuous tense.
+					</div>
+				</div>
+				<hr class="ihr" style="width: 100%;" />
+				<div class="trialLevelContentDetail">
+					<input type="radio" name="trialLevelResult" field="$!teacherComment.trialLevelResult" value="L3U7" class="ng-pristine ng-valid" /> <span>Level 3 unit 7</span>
+					<div>
+						<b>Reading:</b> Student can read sight words, CVC and CVCe words with all vowels fluently. Student is able to identify and describe characters and setting, ask questions about words in a text, and retell stories with teacher support.
+						<b>Speaking/Listening:</b>  Student answers in complete, compound sentences and is able to ask the teacher questions. Student can speak in full sentences about familiar topics, including the five senses, animal body parts, and animal groups. Student can use basic prepositions of location. Can conjugate common irregular verbs (have, be) in speech and can conjugate verbs in present simple and present progressive.
+					</div>
+				</div>
+				<hr class="ihr" style="width: 100%;" />
+				<div class="trialLevelContentDetail">
+					<input type="radio" name="trialLevelResult" field="$!teacherComment.trialLevelResult" value="L3U10" class="ng-pristine ng-valid" /> <span>Level 3 unit 10</span>
+					<div>
+						<b>Reading:</b>  Student reads CVC and CVCe words, words with vowel digraphs, and sight words. With prompting, student is able compare two stories and sequence a story based on illustrations. 
+						<b>Speaking/Listening:</b>  Student answers in multiple sentences, conjugating verbs and nouns correctly. Student explains thoughts and ideas by responding to simple question words and is able to ask the teacher questions. Student can engage in basic free talk on familiar topics, including school, movements and birthdays. Student is aware of using articles in speech, although they might confuse the usage of a/an and the. 
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<div class="ng-hide" id="level4">
+			##<div class="hideFeedbackButton"></div>
+			<a class="levelAdddrss ng-hide-feedback" name="Required">&#171; Back</a>
+			<div style="height: 480px; overflow: hidden; overflow-y: scroll;">
+				<div class="trialLevelContentDetail">
+					<label>Level 4 </label>
+					<div>
+						<b>Reading:</b> The reading goals in Level 4 continue to focus on new
+                        phonics skills with irregular spellings, but moves away from learning
+                        to read towards “reading to learn.” Students in Level 4 gain
+                        information fiction and non-fiction texts, using these to understand
+                        thematic topics with less pictorial support, and are able to discuss
+                        key elements and the language used. Thematically Level 4 begins to
+                        address more mature, advanced topics.
+                        <b>Speaking/Listening:</b> Level 4 speaking goals require students to ask
+                        and answer questions, describe their thoughts clearly, and make
+                        connections between multiple topics. Students will review simple
+                        future, simple past, simple present, and present continuous tense,
+                        and begin to learn the past progressive tense. They do not use these
+                        tenses at native proficiency.
+					</div>
+				</div>
+				<hr class="ihr" style="width: 100%;" />
+				<div class="trialLevelContentDetail">
+					<input type="radio" name="trialLevelResult" field="$!teacherComment.trialLevelResult" value="L4U1" class="ng-pristine ng-valid" /> <span>Level 4 unit 1</span>
+					<div>
+						<b>Reading:</b> Student understands the key elements and major details
+                        of level-appropriate fiction and non-fiction texts, and can retell a
+                        story with teacher support. Student can read a text with CVC and
+                        CVCe words, vowel digraphs and words with double initial
+                        consonant blends.
+                        <b>Speaking/Listening:</b> Student describes people, places, things and
+                        events with relevant details, expressing ideas and feelings clearly.
+                        Student is able to use adverbs of frequency and knows common
+                        antonyms.
+					</div>
+				</div>
+				<hr class="ihr" style="width: 100%;" />
+				<div class="trialLevelContentDetail">
+					<input type="radio" name="trialLevelResult" field="$!teacherComment.trialLevelResult" value="L4U4" class="ng-pristine ng-valid" /> <span>Level 4 unit 4</span>
+					<div>
+						<b>Reading:</b> Student can read most digraphs (e.g. ch/tch, sh, wh, ph,)
+                        as well as tell the difference between soft and hard consonants (e.g.
+                        c, g) Students can segment words into syllables with minimal
+                        assistance from T. S can use illustrations to describe key elements
+                        (characters, setting, events) of level-appropriate texts, and can
+                        identify language relating to feelings or the senses.
+                        <b>Speaking/Listening:</b> Student uses past progressive tense (was/were
+                        verb+ing). Students is able to ask and answer questions using the 6
+                        basic question words, use the past progressive tense, and use
+                        contractions in speech. Students can discuss relevant details about
+                        reading selections using complete sentences. Student is able to
+                        describe differences based on categories (e.g. land vs aquatic
+                        animals, landforms). S is able to tell the time.
+					</div>
+				</div>
+				<hr class="ihr" style="width: 100%;" />
+				<div class="trialLevelContentDetail">
+					<input type="radio" name="trialLevelResult" field="$!teacherComment.trialLevelResult" value="L4U7" class="ng-pristine ng-valid" /> <span>Level 4 unit 7</span>
+					<div>
+						<b>Reading:</b> Student can read texts that include multi-syllabic words
+                        with some digraphs and double consonants, and words with r-
+                        controlled vowels. Student will answer basic comprehension
+                        questions about a given reading selection as well as sequencing
+                        reading selections. Student can identify the subject and verb in a
+                        sentence. Student can describe the connection between two
+                        individuals, events, ideas, or pieces of information in a text.
+                        <b>Speaking/Listening:</b> Student will be able to form sentences with a
+                        verb or verbs that agree with the subject, speak about events that
+                        are occurring using the present continuous tense, and use
+                        conjunctions to connect a complex series of thoughts. Student
+                        can retell about reading selections using complete sentences.
+                        Student can compare and contrast different experiences (traveling,
+                        hobbies, living environments) when prompted by T.
+					</div>
+				</div>
+				<hr class="ihr" style="width: 100%;" />
+				<div class="trialLevelContentDetail">
+					<input type="radio" name="trialLevelResult" field="$!teacherComment.trialLevelResult" value="L4U10" class="ng-pristine ng-valid" /> <span>Level 4 unit 10</span>
+					<div>
+						<b>Reading:</b> Student can read texts that include multi-syllabic words
+                        with various digraphs and double consonants and r-controlled
+                        vowels (e.g. –ng, kn-, -mb, wr-, th-). Student can independently
+                        retell stories, including key details, and demonstrate understanding
+                        of their central message or lesson.
+                        <b>Speaking/Listening:</b> Student understands and uses positional
+                        prepositions, object prepositions, and compound words. Student is
+                        able to talk about and make connections between a range of topics,
+                        including animals’ and people’s homes, needs vs wants, jobs, etc.
+                        Student can voice opinions and give supporting reasons to defend
+                        the position they have taken.
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<div class="ng-hide" id="level5">
+			##<div class="hideFeedbackButton"></div>
+			<a style="height:30px;" class="levelAdddrss ng-hide-feedback" name="Required">&#171; Back</a>
+			<div style="height:480px; overflow-x:hidden; overflow-y:auto;">
+				<label>Level 5 </label>
+				<div>
+					<b>Reading:</b> The reading goals in Level 5 practice higher level reading
+                    skills, including identifying the points that an author gives in the text
+                    to support claims.
+                    <b>Speaking/Listening:</b> By the end of Level 5, students can speak in
+                    regular past tense (including a handful of irregular verbs) and simple
+                    forms of the present perfect tense.
+				</div>
+				<hr class="ihr" style="width: 100%;" />
+				<div class="trialLevelContentDetail">
+					<input type="radio" name="trialLevelResult" field="$!teacherComment.trialLevelResult" value="L5U1" class="ng-pristine ng-valid" /> <span>Level 5 unit 1</span>
+					<div>
+						<b>Reading:</b> Student identifies the reasons an author gives to
+                        support points in a text.
+                        <b>Speaking/Listening:</b> Student compares and contrasts experiences
+                        or objects. Student should be able to talk about more complex
+                        topics such as technology in the past and present, or simple folk and
+                        fairy tales. Student uses object pronouns (him, her, me, etc), and a
+                        range of tenses (simple and continuous past, present, future),
+                        although the usage may not always be correct.
+					</div>
+				</div>
+			</div>
+		</div>
+		#**
+		<div id="NoRequired" class="ng-hide">
+			<div class="hideFeedbackButton"></div>
+			<div style="height: 530px; overflow: hidden; overflow-y: scroll;">
+				<div class="form-control" style="margin-bottom: 5px;">
+					<label>Ability to Follow Instructions</label> 
+					<select name="abilityToFollowInstructions" field="$!teacherComment.abilityToFollowInstructions" style="float: right;" class="ng-pristine ng-valid">
+						<option value="0"></option>
+						<option value="1">1 star</option>
+						<option value="2">2 stars</option>
+						<option value="3">3 stars</option>
+						<option value="4">4 stars</option>
+						<option value="5">5 stars</option>
+					</select>
+				</div>
+				<div class="form-control" style="margin-bottom: 5px;">
+					<label>Repetition</label>
+					<select name="repetition" field="$!teacherComment.repetition" style="float: right;" class="ng-pristine ng-valid">
+						<option value="0"></option>
+						<option value="1">1 star</option>
+						<option value="2">2 stars</option>
+						<option value="3">3 stars</option>
+						<option value="4">4 stars</option>
+						<option value="5">5 stars</option>
+					</select>
+				</div>
+				<div class="form-control" style="margin-bottom: 5px;">
+					<label>Pronunciation</label>
+					<select name="clearPronunciation" field="$!teacherComment.clearPronunciation" style="float: right;" class="ng-pristine ng-valid">
+						<option value="0"></option>
+						<option value="1">1 star</option>
+						<option value="2">2 stars</option>
+						<option value="3">3 stars</option>
+						<option value="4">4 stars</option>
+						<option value="5">5 stars</option>
+					</select>
+				</div>
+				<div class="form-control" style="margin-bottom: 5px;">
+					<label>Reading Skills</label> 
+					<select name="readingSkills" field="$!teacherComment.readingSkills" style="float: right;" class="ng-pristine ng-valid">
+						<option value="0"></option>
+						<option value="1">1 star</option>
+						<option value="2">2 stars</option>
+						<option value="3">3 stars</option>
+						<option value="4">4 stars</option>
+						<option value="5">5 stars</option>
+					</select>
+				</div>
+				<div class="form-control" style="margin-bottom: 5px;">
+					<label>Spelling Accuracy</label> 
+					<select name="spellingAccuracy" field="$!teacherComment.spellingAccuracy" style="float: right;" class="ng-pristine ng-valid">
+						<option value="0"></option>
+						<option value="1">1 star</option>
+						<option value="2">2 stars</option>
+						<option value="3">3 stars</option>
+						<option value="4">4 stars</option>
+						<option value="5">5 stars</option>
+					</select>
+				</div>
+				<div class="form-control" style="margin-bottom: 5px;">
+					<label>Interaction</label> 
+					<select name="activelyInteraction" field="$!teacherComment.activelyInteraction" style="float: right;" class="ng-pristine ng-valid">
+						<option value="0"></option>
+						<option value="1">1 star</option>
+						<option value="2">2 stars</option>
+						<option value="3">3 stars</option>
+						<option value="4">4 stars</option>
+						<option value="5">5 stars</option>
+					</select>
+				</div>
+				<div>
+					<label>Your tips for the next teacher. </label>
+					<div>
+						<textarea name="tipsForOtherTeachers" class="form-control ng-pristine ng-valid">$!teacherComment.tipsForOtherTeachers</textarea>
+					</div>
+				</div>
+				<div>
+					<label>Report other issues to VIPKID. </label>
+					<div>
+						<textarea name="reportIssues" class="form-control ng-pristine ng-valid">$!teacherComment.reportIssues</textarea>
+					</div>
+				</div>
+			</div>
+		</div>
+		**#
+	</div>
+	<div style="text-align:right;padding:8px;">
+		##仅仅没有提交过才能显示提交
+		#if(!$teacherComment.teacherFeedback || $teacherComment.teacherFeedback == "")
+			<button type="button" class="btn btn-gray" onclick="require('feedback').trailCommentClose();">Cancel</button>
+			<input type="hidden" name="id" value="$!{teacherComment.id}" />
+			<input type="hidden" name="serialNumber" value="$!{lesson.serialNumber}" />
+			<button type="button" class="btn btn-primary" onclick="require('feedback').trailCommentSubmit();">Submit</button>
+		#else
+			<button type="button" class="btn btn-gray" onclick="require('feedback').trailCommentClose();">Close</button>
+		#end
+	</div>
+</form>

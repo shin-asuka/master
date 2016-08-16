@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>${title}</title>
+	<meta charset="UTF-8">	
+	<meta name="baidu-site-verification" content="8SALM4aETp">
+	<meta name="msvalidate.01" content="C99CBBDA9CD136894A8971CE94EE9B92">
+	<meta name="360-site-verification" content="1b8ba692dd60752b3a9245aebb986870">
+	<meta name="description" content="VIPKID is a fun and dynamic company providing the American Elementary School experience to Chinese children online! We hire ESL teachers who are English native speakers to teach online with comfort work from home and flexibility. ">
+	<meta name="keywords" content="online English teaching, work from home, teach English online, vipkid, ESL teacher, English education, elementary school teacher, part-time English teacher">
+	<link href="http://resource.vipkid.com.cn/static/images/learning_portal/logo.gif" type="image/x-icon" rel="shortcut icon">	       
+    <link rel="stylesheet" href="#styleUrl('/resources/styles/portal/bootstrap.min.css')" />
+    <link rel="stylesheet" type="text/css" href="#styleUrl('/resources/styles/passport/teachersigninup.css?v=20160326')">    
+</head>
+<body>
+	<header>
+		<div class="header">
+			<div class="top">
+				<div class="logo w340">$!pageName</div>
+					#if($tosignin)
+						<a href="#springUrl('/index.shtml')" class="signinbtn">Sign in</a>
+					#end
+					#if($tosignout)
+						<a href="#springUrl('/logout.shtml')" class="signinbtn">Sign out</a>
+					#end
+				</div>
+			</div>
+		</div>
+	</header>
+	$screen_content
+	<footer>
+		<div class="footer">
+			<div class="lowbot">
+				<div class="followus">
+					<span class="inb p7">Follow us on:</span>
+					<a class="inb" href="https://www.facebook.com/VIPKID.com.cn"><div class="ibcon ficon"></div></a>
+					<a class="inb" href="https://www.linkedin.com/company/3802582"><div class="ibcon licon"></div></a>
+					<a class="inb" href="https://www.youtube.com/channel/UCw6opz_WEXAZf1vKr1MgdNw"><div class="ibcon yicon"></div></a>
+				</div>
+				<div class="footIcp">
+				<span class="cor333">© VIPKID</span> Beijing ICP 14002500
+				</div>
+			</div>
+		</div>
+	</footer>
+</body>
+</html>

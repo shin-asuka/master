@@ -1,0 +1,411 @@
+{
+    "reports" : [
+            {
+                "reportName" : "listening",
+                "options" : [
+                        {
+                            "title" : "L1",
+                            "body" : {
+                                "en" : " Student can follow simple, one step commands (i.e. sit down, stand up, open the door).【L1U1】",
+                                "ch" : "学生能根据简单指令做出相应动作",
+                                "sequence" : 1
+                            }
+                        },
+                        {
+                            "title" : "L2",
+                            "body" : {
+                                "en" : " Student can follow basic classroom instructions (i.e. repeat after me).【L1U4】",
+                                "ch" : "能接受简单的课堂指令(如，跟我读)",
+                                "sequence" : 2
+                            }
+                        },
+                        {
+                            "title" : "L3",
+                            "body" : {
+                                "en" : " Student can follow two-step commands (i.e. shut the door and then sit down on the couch).【L1U9】",
+                                "ch" : "学生能完成两步的指令",
+                                "sequence" : 3
+                            }
+                        },
+                        {
+                            "title" : "L4",
+                            "body" : {
+                                "en" : " Student understands rules to a simple game and can play the game with the teacher.【L2U1】",
+                                "ch" : "能理解简单游戏的规则，并跟老师玩游戏",
+                                "sequence" : 4
+                            }
+                        },
+                        {
+                            "title" : "L5",
+                            "body" : {
+                                "en" : " Student follows directions using maps.【L2U7】",
+                                "ch" : "用地图时能跟随方向指令",
+                                "sequence" : 5
+                            }
+                        },
+                        {
+                            "title" : "L6",
+                            "body" : {
+                                "en" : " Student asks and answers questions in order to seek help, get information, or clarify something that is not understood.【L2U10】",
+                                "ch" : "能询问、回答问题以寻求帮助. 得到相关信息或指出不理解的地方",
+                                "sequence" : 6
+                            }
+                        },
+                        {
+                            "title" : "L7",
+                            "body" : {
+                                "en" : " Student asks and answers questions about what a speaker says in order to gather additional information or clarify something that is not understood.【L3U1】",
+                                "ch" : "能对说话者内容提出疑问、回答问题，以获得额外信息或者指出不理解的地方",
+                                "sequence" : 7
+                            }
+                        } ]
+            },
+            {
+                "reportName" : "speaking",
+                "options" : [
+                        {
+                            "title" : "S1",
+                            "body" : {
+                                "en" : " Student introduces him or herself in on introductory dialogue.【L1U1】",
+                                "ch" : "学生通过回答老师的问题来介绍目己",
+                                "sequence" : 1
+                            }
+                        },
+                        {
+                            "title" : "S2",
+                            "body" : {
+                                "en" : " Student answers interviewer's question(s) with body movement or sound.【L1U1】",
+                                "ch" : "学生能遇过声音和身体语言回答面试官问题",
+                                "sequence" : 2
+                            }
+                        },
+                        {
+                            "title" : "S3",
+                            "body" : {
+                                "en" : " Student repeats after the teacher.【L1U1】",
+                                "ch" : "能复述老师的话",
+                                "sequence" : 3
+                            }
+                        },
+                        {
+                            "title" : "S4",
+                            "body" : {
+                                "en" : " Student answers interviewer's question(s) with a one word answer.【L1U4】",
+                                "ch" : "用一个词回答面试官问题",
+                                "sequence" : 4
+                            }
+                        },
+                        {
+                            "title" : "S5",
+                            "body" : {
+                                "en" : " Student answers in fragments.【L1U9】",
+                                "ch" : "能用零散的句子回答问题",
+                                "sequence" : 5
+                            }
+                        },
+                        {
+                            "title" : "S6",
+                            "body" : {
+                                "en" : " Student answers in complete sentences but may have difficulty conjugating verbs.【L2U1】",
+                                "ch" : "能以完整的句子回答问题，但在动词变位上可能有一点困难",
+                                "sequence" : 6
+                            }
+                        },
+                        {
+                            "title" : "S7",
+                            "body" : {
+                                "en" : " Student can name the four seasons and the weather conditions commonly associated with each.【L2U1】",
+                                "ch" : "能说出四个季节和常与之联系的天气情况",
+                                "sequence" : 7
+                            }
+                        },
+                        {
+                            "title" : "S8",
+                            "body" : {
+                                "en" : " Student answers in complete sentences.【L2U4】",
+                                "ch" : "能用完整的句子回答问题",
+                                "sequence" : 8
+                            }
+                        },
+                        {
+                            "title" : "S9",
+                            "body" : {
+                                "en" : " Student identifies weather and weather patterns.【L2U4】",
+                                "ch" : "能辨识天气和天气规律",
+                                "sequence" : 9
+                            }
+                        },
+                        {
+                            "title" : "S10",
+                            "body" : {
+                                "en" : " Student names common animals.【L2U4】",
+                                "ch" : "能说出常见动物的名字",
+                                "sequence" : 10
+                            }
+                        },
+                        {
+                            "title" : "S11",
+                            "body" : {
+                                "en" : " Student gives simple but clear directions using maps.【L2U7】",
+                                "ch" : "使用地图时能绐出简单但清楚的方向",
+                                "sequence" : 11
+                            }
+                        },
+                        {
+                            "title" : "S12",
+                            "body" : {
+                                "en" : " Student answers in multiple sentence.【L2U10】",
+                                "ch" : "能用多个句子回答问题",
+                                "sequence" : 12
+                            }
+                        },
+                        {
+                            "title" : "S13",
+                            "body" : {
+                                "en" : " Student explains thoughts and ideas by responding to question words (i.e. why?).【L2U10】",
+                                "ch" : "对于类似 '为什么' 这样的问题，能够阐述自己的想法",
+                                "sequence" : 13
+                            }
+                        },
+                        {
+                            "title" : "S14",
+                            "body" : {
+                                "en" : " Student describes people, places, things, and events with relevant details, clearly expressing their ideas and feelings.【L3U1】",
+                                "ch" : "能用相关细节描述人物、 地点、 物体、 事件，清晰表达自己的观点和感受",
+                                "sequence" : 14
+                            }
+                        },
+                        {
+                            "title" : "S15",
+                            "body" : {
+                                "en" : " Student compares and contrasts experiences or objects【L4U1】",
+                                "ch" : "能类比和对比经历或物件",
+                                "sequence" : 15
+                            }
+                        } ]
+            },
+            {
+                "reportName" : "reading",
+                "options" : [
+                        {
+                            "title" : "R1",
+                            "body" : {
+                                "en" : " Student identifies big and small letters of the alphabet.【L1U1】",
+                                "ch" : "学生能辩识出字母表里的大小写宇母",
+                                "sequence" : 1
+                            }
+                        },
+                        {
+                            "title" : "R2",
+                            "body" : {
+                                "en" : " Student knows some single letter phonics sounds but has difficulty with others.【L1U4】",
+                                "ch" : "学生知道一些单个字母的发音 , 但是在其他发音上有困难",
+                                "sequence" : 2
+                            }
+                        },
+                        {
+                            "title" : "R3",
+                            "body" : {
+                                "en" : " Student reads some CVC words.【L1U4】",
+                                "ch" : "学生可以读一些CVC ( 辅元辅 ) 单词",
+                                "sequence" : 3
+                            }
+                        },
+                        {
+                            "title" : "R4",
+                            "body" : {
+                                "en" : " Student says phonics sound of single letters of the alphabet when prompted by interviewer.【L1U9】",
+                                "ch" : "在面试官提示下学生能自然拼谟简单的字母",
+                                "sequence" : 4
+                            }
+                        },
+                        {
+                            "title" : "R5",
+                            "body" : {
+                                "en" : " Student con read all simple CVC phonics words (ie fap, bop).【L1U9】",
+                                "ch" : "学生可以读出所有辅元辅单词",
+                                "sequence" : 5
+                            }
+                        },
+                        {
+                            "title" : "R6",
+                            "body" : {
+                                "en" : " Student can read simple four letter words that may or may not contain blends (i.e. bear, jump, that).【L2U1】",
+                                "ch" : "能读简单的四个字母组成的单词 ( 带有混台辅音的也可以)",
+                                "sequence" : 6
+                            }
+                        },
+                        {
+                            "title" : "R7",
+                            "body" : {
+                                "en" : " Student reads decodable reader with confidence.【L2U1】",
+                                "ch" : "能自信朗读易于解读的读本",
+                                "sequence" : 7
+                            }
+                        },
+                        {
+                            "title" : "R8",
+                            "body" : {
+                                "en" : " Student uses common adjectives to describe nouns.【L2U4】",
+                                "ch" : "能用常见的形容词描述名词",
+                                "sequence" : 8
+                            }
+                        },
+                        {
+                            "title" : "R9",
+                            "body" : {
+                                "en" : " Student changes singular nouns to plural by adding -s.【L2U4】",
+                                "ch" : "会在单数名词后面加-s构造复数名词",
+                                "sequence" : 9
+                            }
+                        },
+                        {
+                            "title" : "R10",
+                            "body" : {
+                                "en" : " Student reads five letter words but may have some difficulty with vowel blends.【L2U7】",
+                                "ch" : "会读含有5个字母的单词 , 但在组台元音上可能有困难",
+                                "sequence" : 10
+                            }
+                        },
+                        {
+                            "title" : "R11",
+                            "body" : {
+                                "en" : " Student reads five letter words with some fluency.【L2U10】",
+                                "ch" : "能流利读出含有5个字母的单词",
+                                "sequence" : 11
+                            }
+                        },
+                        {
+                            "title" : "R12",
+                            "body" : {
+                                "en" : " Student matches pronouns to noun.【L2U10】",
+                                "ch" : "正确搭配代词和名词",
+                                "sequence" : 12
+                            }
+                        },
+                        {
+                            "title" : "R13",
+                            "body" : {
+                                "en" : " Student identifies the noun/pronoun and verb in a simple sentence (i.e. the cat drinks milk.).【L2U10】",
+                                "ch" : "能辨识简单句中的名词/代词和动词",
+                                "sequence" : 13
+                            }
+                        },
+                        {
+                            "title" : "R14",
+                            "body" : {
+                                "en" : " Student orders and retells a simple story.【L3U1】",
+                                "ch" : "学生要求听简单的故事并能复述该故事",
+                                "sequence" : 14
+                            }
+                        },
+                        {
+                            "title" : "R15",
+                            "body" : {
+                                "en" : " Student gathers information from nonfiction and fiction texts【L3U1】",
+                                "ch" : "能从虚构和非虚构的文本中收集信息",
+                                "sequence" : 15
+                            }
+                        },
+                        {
+                            "title" : "R16",
+                            "body" : {
+                                "en" : " Student compares and contrasts experiences of characters in stories.【L4U1】",
+                                "ch" : "能对故事中的任务进行类比和对比",
+                                "sequence" : 16
+                            }
+                        },
+                        {
+                            "title" : "R17",
+                            "body" : {
+                                "en" : " Student identifies the reasons on author gives to support points in a text.【L4U1】",
+                                "ch" : "能找出文中作者用以论证观点的理由",
+                                "sequence" : 17
+                            }
+                        } ]
+            },
+            {
+                "reportName" : "math",
+                "options" : [
+                        {
+                            "title" : "M1",
+                            "body" : {
+                                "en" : " Student can represent a number of objects with a written numeral.【L1U1】",
+                                "ch" : "能明白数字概念",
+                                "sequence" : 1
+                            }
+                        },
+                        {
+                            "title" : "M2",
+                            "body" : {
+                                "en" : " Student can count to five in the correct sequence.【L1U9】",
+                                "ch" : "学生能依次从一数到五",
+                                "sequence" : 2
+                            }
+                        },
+                        {
+                            "title" : "M3",
+                            "body" : {
+                                "en" : " Student can perform simple addition.【L1U9】",
+                                "ch" : "学生能做简单加法",
+                                "sequence" : 3
+                            }
+                        },
+                        {
+                            "title" : "M4",
+                            "body" : {
+                                "en" : " Student can determine the unknown whole number in an addition or subtraction equation relating three whole numbers.【L2U1】",
+                                "ch" : "学生能做简单的加减法等式运算",
+                                "sequence" : 4
+                            }
+                        },
+                        {
+                            "title" : "M5",
+                            "body" : {
+                                "en" : " Student counts to 100 by tens.【L2U10】",
+                                "ch" : "能数整十数到一百",
+                                "sequence" : 5
+                            }
+                        },
+                        {
+                            "title" : "M6",
+                            "body" : {
+                                "en" : " Student can identify numbers to 100.【L2U10】",
+                                "ch" : "认识数字1-100",
+                                "sequence" : 6
+                            }
+                        },
+                        {
+                            "title" : "M7",
+                            "body" : {
+                                "en" : " Student can verbally identify all the parts of the math equation (E.g.'two plus two equals four').【L2U10】",
+                                "ch" : "能口头表达出数学算式中的各个部分 , 例如：'2+2 = 4'",
+                                "sequence" : 7
+                            }
+                        },
+                        {
+                            "title" : "M8",
+                            "body" : {
+                                "en" : " Student can solve equations which use a symbol to represent the unknown number.【L3U1】",
+                                "ch" : "可以通过物品，图画来解含有未知数的等式",
+                                "sequence" : 8
+                            }
+                        },
+                        {
+                            "title" : "M9",
+                            "body" : {
+                                "en" : " Student compares the lengths of two objects by using a third object.【L3U1】",
+                                "ch" : "能用第三个物件去比较两物件的长短",
+                                "sequence" : 9
+                            }
+                        },
+                        {
+                            "title" : "M10",
+                            "body" : {
+                                "en" : " Student can describe objects in comparative language as being halves or quarters of the size of a second object.【L4U1】",
+                                "ch" : "能用对比性的语言描述物品，例如：一个物品是另一个物品的一半或四分之一",
+                                "sequence" : 10
+                            }
+                        } ]
+            } ]
+}

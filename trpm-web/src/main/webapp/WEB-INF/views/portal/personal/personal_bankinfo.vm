@@ -1,0 +1,141 @@
+<div class="tab-pane active" id="bankInfo" style="border: 0px;">
+		<div class="row form-group">
+          <div class="col-sm-1 col-md-1"></div>
+          <div class="col-sm-11 col-md-11">
+            <h4>Bank and ID Information</h4>
+          </div>
+        </div>
+        
+        <div class="row form-group">
+          <div class="col-sm-1 col-md-1"></div>
+          <div class="col-xs-10 col-sm-10 col-md-5">
+            <p>
+            	Teacher bank account information is used solely for the purposes of transferring salary payments. We will not share this information with other teachers or any third party other than our financial institution without your consent.
+            </p>
+            <p>
+            	Please provide us with your personal banking information at least 10 days prior to pay day for a given month. Late or incomplete submisson of information will likely result in salary for that month being delayed to the following month.
+            </p>
+            <p style="color:#dd4814;width:500px"><font style="font-weight:bold;">[Attention]:</font>
+            	Only provide beneficiary bank information for successful payment. Intermediary bank information will not suffice.
+            </p>
+          </div>
+          <div class="col-sm-1 col-sm-1 col-md-6"></div>
+        </div>
+        
+        <div class="row form-group">
+          <div class="col-sm-1 col-md-1"></div>
+          <div align="right" class="col-sm-3 col-md-4">
+            <div class='title-lable'>Beneficiary's account name</div>
+          </div>
+          <div class="col-sm-8 col-md-7">
+            $!{TRPM_TEACHER.bankAccountName}
+          </div>
+        </div>
+        
+        <div class="row form-group">
+           	<div class="col-sm-1 col-md-1"></div>
+           	<div align="right" class="col-sm-3 col-md-4">
+            	<div class='title-lable'>Beneficiary's checking account number</div>
+           	</div>
+			<div class="col-sm-8 col-md-7">
+				$!{TRPM_TEACHER.bankCardNumber}
+			</div>
+        </div>
+        
+        <div class="row form-group">
+           	<div class="col-sm-1 col-md-1"></div>
+           	<div align="right" class="col-sm-3 col-md-4">
+            	<div class='title-lable'>Beneficiary's bank name</div>
+           	</div>
+			<div class="col-sm-8 col-md-7">
+				$!{TRPM_TEACHER.bankName}
+			</div>
+        </div>
+        
+        <div class="row form-group">
+           	<div class="col-sm-1 col-md-1"></div>
+           	<div align="right" class="col-sm-3 col-md-4">
+            	<div class='title-lable'>Beneficiary's bank address</div>
+           	</div>
+			<div class="col-sm-8 col-md-7" style="line-height:30px;">
+				#if($beneficiaryBankAddress)
+					<div>$!{beneficiaryBankCountry.name}  $!{beneficiaryBankState.name}  $!{beneficiaryBankCity.name}</div>
+					<div>$!{beneficiaryBankAddress.streetAddress}</div>
+					<div>$!{beneficiaryBankAddress.zipCode}</div>
+				#else
+					<div>$!{TRPM_TEACHER.bankAddress}</div>
+				#end
+			</div>
+        </div>
+        
+        <div class="row form-group">
+           	<div class="col-sm-1 col-md-1"></div>
+           	<div align="right" class="col-sm-3 col-md-4">
+            	<div class='title-lable'>Beneficiary's address</div>
+           	</div>
+			<div class="col-sm-8 col-md-7" style="line-height:30px;">
+				#if($beneficiaryCountry)
+					<div>$!{beneficiaryCountry.name}  $!{beneficiaryState.name}  $!{beneficiaryCity.name}</div>
+					<div>$!{beneficiaryAddress.streetAddress}</div>
+					<div>$!{beneficiaryAddress.zipCode}</div>
+				#end
+			</div>
+        </div>
+        
+        <div class="row form-group">
+          	<div class="col-sm-1 col-md-1"></div>
+           	<div align="right" class="col-sm-3 col-md-4">
+            <div class='title-lable'>Swift code</div>
+          </div>
+          <div class="col-sm-8 col-sm-7">
+            $!{TRPM_TEACHER.bankSwiftCode}
+          </div>
+        </div>
+        
+        <div class="row form-group">
+          	<div class="col-sm-1 col-md-1"></div>
+           	<div align="right" class="col-sm-3 col-md-4">
+            <div class='title-lable'>ID type</div>
+          </div>
+          <div class="col-sm-8 col-sm-7">
+            
+            #set($identityType = $!TRPM_TEACHER.identityType)
+            #if(!$TRPM_TEACHER.identityType)  #set($identityType = 1)  #end
+            
+            #if($identityType == 2) Driver's license 
+            #elseif($identityType == 4) Identity card 
+            #else Passport picture page #end
+            
+            #if($stringUtils.isNotEmpty($!TRPM_TEACHER.passport) && $stringUtils.isNotBlank($!TRPM_TEACHER.passport))
+            	<a style="margin-left:20px;color:blue;" target="blank" href="${resourceTool.oss.url_preffix}/$!{TRPM_TEACHER.passport}">view</a>
+            #end
+          </div>
+        </div>
+        
+        <div class="row form-group">
+          	<div class="col-sm-1 col-md-1"></div>
+           	<div align="right" class="col-sm-3 col-md-4">
+            <div class='title-lable'>ID number</div>
+          </div>
+          <div class="col-sm-8 col-sm-7">
+            $!{TRPM_TEACHER.identityNumber}
+          </div>
+        </div>
+        
+        <div class="row form-group">
+          	<div class="col-sm-1 col-md-1"></div>
+           	<div align="right" class="col-sm-3 col-md-4">
+            <div class='title-lable'>Country of issuance</div>
+          </div>
+          <div class="col-sm-8 col-sm-7">
+            $!{issuanceCountry.name}
+          </div>
+        </div>
+       
+        <div class="row form-group form-inline">
+	      	<div align="center" class="col-sm-7 col-md-8">
+	        	<input id="toEdit" url="#springUrl('/personal/bankinfo_edit.shtml')" type="button" class="btn btn-primary" style="width:80px;margin: 0px 10px;" value="Edit" />
+	        </div>
+	        <div class="col-sm-4 col-md-4"></div>
+        </div>
+</div>

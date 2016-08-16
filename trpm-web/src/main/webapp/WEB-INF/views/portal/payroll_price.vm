@@ -1,0 +1,203 @@
+ #set($layout = "/portal/layout.vm") 
+ #set($activeComments = "active")
+<div class="tab-pane active ng-scope" id="comments" style="border: 0px;" layout:fragment="content">
+    <div class="row form-group form-inline" style="margin-top: 15px; margin-right: 0px;">
+        <button class="btn btn-primary btn-sm next" style="float: right; -margin-right: 30px; width: 180px;">NEXT MONTH</button>
+        <button class="btn btn-primary btn-sm curr" style="float: right; margin-right: 30px; width: 180px;">CURRENT MONTH</button>
+        <button class="btn btn-primary btn-sm prev" style="float: right; margin-right: 30px; width: 180px;">PREV MONTH</button>
+    </div>
+    <div id="yearMonthTitle" align="center" style="background-color: #AEA79F; border: 1px solid #DDDDDD; border-bottom: 0px;" class="ng-binding">$!{monthOfYear}</div>
+    <div class="container-fluid price-list-wrapper">
+        
+        ##正常结束类型pirce rule
+        <div class="center-block">
+            <div class="table-title clearfix">
+                <div class="pull-left">
+                    <h4>Course Additions Price List</h4>
+                </div>
+                
+            </div>
+            <table class="table table-bordered">
+                <thead>
+                    <tr class="info">
+                        <th class="text-center">Item</th>
+                        <th class="text-center">Unit Price</th>
+                        <th class="text-center">Date Effective</th>
+                    </tr>
+                </thead>
+                <tbody>
+                       #foreach($courseRule in $course_addition_rule.ruleList)
+                        <tr class="rowscss #if($courseRule.visible==false) rowsDisableCss #end">
+                            <td class="text-center">$courseRule.ruleName</td>
+							#set($courseRule_unitPrice = $courseRule.attributes.unitPrice /100.0)
+                            <td class="text-center">$!{courseRule_unitPrice}</td>
+                            <td class="text-center" >
+                                <span name="effectiveDateFrom" showType="date" format="yyyy-MM-dd" value="$!{courseRule.effectiveDateFrom}"></span>
+								--
+								<span name="effectiveDateTo" showType="date" format="yyyy-MM-dd" value="$!{courseRule.effectiveDateTo}"></span>
+							</td>
+                        </tr>
+                        #end           
+                </tbody>
+            </table>
+        </div>
+        ##正常结束类型pirce结束
+        <br>
+        ##adjustment类型
+        <div class="center-block">
+            <div class="table-title clearfix">
+                <div class="pull-left">
+                    <h4>Adjustments Price List</h4>
+                </div>
+                
+            </div>
+            <table class="table table-bordered">
+                <thead>
+                    <tr class="info">
+                        <th class="text-center">Item</th>
+                        <th class="text-center">Description</th>
+                        <th class="text-center">Unit Price ($)</th>
+                        <th class="text-center">Date Effective</th>
+                    </tr>
+                </thead>
+                <tbody>
+                #foreach($adjustmentRule in $adjustment_rule.ruleList)
+                    <tr class="rowscss #if($adjustmentRule.visible==false) rowsDisableCss #end">
+                        <td class="text-center">$!{adjustmentRule.ruleName}</td>
+                        <td class="text-center">$!{adjustmentRule.attributes.description}</td>
+						#set($adjustmentRule_unitPrice = $adjustmentRule.attributes.unitPrice/100.0)
+                        <td class="text-center">$!{adjustmentRule_unitPrice}</td>
+						<td class="text-center">
+                            <span name="effectiveDateFrom" showType="date" format="yyyy-MM-dd" value="$!{adjustmentRule.effectiveDateFrom}"></span>
+							--
+							<span name="effectiveDateTo" showType="date" format="yyyy-MM-dd" value="$!{adjustmentRule.effectiveDateTo}"></span>
+						</td>
+                    </tr>
+                 #end 
+                </tbody>
+            </table>
+        </div>
+        ##adjustment类型结束
+        <br>
+        ##bonus类型
+        <div class="center-block">
+            <div class="table-title clearfix">
+                <div class="pull-left">
+                    <h4>Bonus Price List</h4>
+                </div>
+            </div>
+            <table class="table table-bordered">
+                <thead>
+                    <tr class="info">
+                        <th class="text-center">Item</th>
+                        <th class="text-center">Unit Price ($)</th>
+                        <th class="text-center">Date Effective</th>
+                    </tr>
+                </thead>
+                <tbody>
+                #foreach($bounsRule in $bonus_rule.ruleList)
+                    <tr class="rowscss #if($bounsRule.visible==false) rowsDisableCss #end">
+                        <td class="text-center">$!{bounsRule.categoryName}</td>
+						#set($bounsRule_unitPrice = $bounsRule.attributes.unitPrice/100.0)
+                        <td class="text-center">$!{bounsRule_unitPrice}</td>
+                        <td class="text-center">
+                            <span name="effectiveDateFrom" showType="date" format="yyyy-MM-dd" value="$!{bounsRule.effectiveDateFrom}"></span>
+							--
+							<span name="effectiveDateTo" showType="date" format="yyyy-MM-dd" value="$!{bounsRule.effectiveDateTo}"></span>
+						</td>
+                    </tr>
+                 #end 
+                </tbody>
+            </table>
+        </div>
+         ##bonus类型结束
+        <br>
+        ##trail 类型 
+        <div class="center-block">
+            <div class="table-title clearfix">
+                <div class="pull-left">
+                    <h4>Trial Class Percentage List</h4>
+                </div>
+            </div>
+            <table class="table table-bordered">
+                <thead>
+                    <tr class="info">
+                        <th class="text-center">Percentage (%)</th>
+                        <th class="text-center">Date Effective</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    #foreach($trailRule in $trial_class_rule.ruleList)
+                    <tr class="rowscss #if($trailRule.visible==false) rowsDisableCss #end">
+                        <td class="text-center">$!{trailRule.attributes.percentage}</td>
+                        <td class="text-center">
+                            <span name="effectiveDateFrom" showType="date" format="yyyy-MM-dd" value="$!{trailRule.effectiveDateFrom}"></span>
+							--
+							<span name="effectiveDateTo" showType="date" format="yyyy-MM-dd" value="$!{trailRule.effectiveDateTo}"></span>
+						</td>
+                    </tr>
+                   #end 
+                </tbody>
+            </table>
+        </div>
+        ##trail 类型 结束
+        <br>
+        ##不正常结束课程price rule
+        #if(  $is2VersionContactType == true)   
+        <div class="center-block">
+            <div class="table-title clearfix">
+                <div class="pull-left">
+                    <h4>Course Deductions</h4>
+                </div>
+            </div>
+            <table class="table table-bordered">
+                <thead>
+                    <tr class="info">
+                        <th class="text-center">Finish Type</th>
+                        <th class="text-center">Amount ($)</th>
+						<th class="text-center">Date Effective</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    #foreach($deRule in $course_deduction_rule.ruleList)
+                    <tr class="rowscss #if($deRule.visible==false) rowsDisableCss #end">
+                        <td class="text-center">$deRule.ruleName</td>
+						#set($deRule_unitPrice = $deRule.attributes.unitPrice /100.0)
+                        <td class="text-center">$!{deRule_unitPrice}</td>
+						<td class="text-center">
+                            <span name="effectiveDateFrom" showType="date" format="yyyy-MM-dd" value="$!{deRule.effectiveDateFrom}"></span>
+							--
+							<span name="effectiveDateTo" showType="date" format="yyyy-MM-dd" value="$!{deRule.effectiveDateTo}"></span>
+						</td>
+                    </tr>
+                    #end 
+                </tbody>
+            </table>
+        </div>
+        #end
+        ##不正常结束类型结束
+        <br>
+        
+    </div>
+    <div>
+        <nav style="float: right; margin-right: 30px;">
+            <ul class="pagination">
+            </ul>
+        </nav>
+    </div>
+   
+</div>
+#@requireJs()
+    require(["payroll"], function(payroll){
+        payroll.init("$!{TRPM_TEACHER.timezone}", $!{offsetOfMonth});
+        
+       ## Portal.paging(".pagination", 100,${linePerPage}, function(page){
+        ##    payroll.priceList(page);
+      ## });
+    });
+#end
+<style >
+	.rowscss {background-color: #fff;}
+	.rowsDisableCss {background-color: #F5F5F5;}
+</style>
+

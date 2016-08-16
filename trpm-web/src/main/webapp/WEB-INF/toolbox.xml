@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- http://velocity.apache.org/tools/releases/2.0/javadoc/org/apache/velocity/tools/generic/package-summary.html -->
+<tools>
+
+	<data key="title" value="VIPKID Teacher's Portal" />
+
+	<!-- http://velocity.apache.org/tools/devel/javadoc/org/apache/velocity/tools/view/ViewContextTool.html -->
+	<toolbox scope="request">
+		<tool key="contextTool" class="org.apache.velocity.tools.view.ViewContextTool" />
+	</toolbox>
+
+	<!-- http://velocity.apache.org/tools/devel/javadoc/org/apache/velocity/tools/generic/ResourceTool.html -->
+	<toolbox scope="application">
+		<tool key="resourceTool" class="org.apache.velocity.tools.generic.ResourceTool" bundles="application" />
+	</toolbox>
+
+	<!-- http://velocity.apache.org/tools/devel/javadoc/org/apache/velocity/tools/generic/DateTool.html -->
+	<toolbox scope="application">
+		<tool key="dateTool" class="org.apache.velocity.tools.generic.DateTool" format="yyyy-MM-dd H:m:s" />
+	</toolbox>
+
+	<!-- http://velocity.apache.org/tools/releases/2.0/javadoc/org/apache/velocity/tools/generic/ListTool.html -->
+	<toolbox scope="application">
+		<tool key="listTool" class="org.apache.velocity.tools.generic.ListTool" />
+	</toolbox>
+
+	<!-- http://velocity.apache.org/tools/devel/javadoc/org/apache/velocity/tools/generic/RenderTool.html -->
+	<toolbox scope="application">
+		<tool key="renderTool" class="org.apache.velocity.tools.generic.RenderTool">
+			<property name="parseDepth" type="number" value="3" />
+		</tool>
+	</toolbox>
+
+	<!-- http://velocity.apache.org/tools/devel/javadoc/org/apache/velocity/tools/generic/DisplayTool.html -->
+	<toolbox scope="application">
+		<tool key="displayTool" class="org.apache.velocity.tools.generic.DisplayTool" />
+	</toolbox>
+
+	<!-- http://velocity.apache.org/tools/devel/javadoc/org/apache/velocity/tools/generic/ConversionTool.html -->
+	<toolbox scope="application">
+		<tool key="conversionTool" class="org.apache.velocity.tools.generic.ConversionTool"
+			dateFormat="yyyy-MM-dd" />
+	</toolbox>
+
+	<!-- http://velocity.apache.org/tools/releases/2.0/javadoc/org/apache/velocity/tools/generic/EscapeTool.html -->
+	<toolbox scope="application">
+		<tool key="escapeTool" class="org.apache.velocity.tools.generic.EscapeTool" />
+	</toolbox>
+
+	<!-- http://velocity.apache.org/tools/releases/2.0/javadoc/org/apache/velocity/tools/generic/FieldTool.html -->
+	<toolbox scope="application">
+		<tool key="fieldTool" class="org.apache.velocity.tools.generic.FieldTool" />
+	</toolbox>
+
+	<toolbox scope="application">
+		<tool key="stringUtils" class="org.apache.commons.lang3.StringUtils" />
+	</toolbox>
+
+</tools>

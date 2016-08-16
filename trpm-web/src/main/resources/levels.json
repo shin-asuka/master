@@ -1,0 +1,136 @@
+{
+    "levels" : [ {
+        "name" : "Level1",
+        "options" : [ {
+            "title" : "U0",
+            "value" : 0,
+            "show" : true
+        }, {
+            "title" : "U1",
+            "value" : 1,
+            "show" : true
+        }, {
+            "title" : "U4",
+            "value" : 2,
+            "show" : true
+        }, {
+            "title" : "U9",
+            "value" : 3,
+            "show" : true
+        } ]
+    }, {
+        "name" : "Level2",
+        "options" : [ {
+            "title" : "U1",
+            "value" : 4,
+            "show" : true
+        }, {
+            "title" : "U4",
+            "value" : 5,
+            "show" : true
+        }, {
+            "title" : "U7",
+            "value" : 6,
+            "show" : true
+        }, {
+            "title" : "U10",
+            "value" : 7,
+            "show" : true
+        } ]
+    }, {
+        "name" : "Level3",
+        "options" : [ {
+            "title" : "U1",
+            "value" : 8,
+            "show" : true
+        }, {
+            "title" : "U4",
+            "value" : 9,
+            "show" : true
+        }, {
+            "title" : "U7",
+            "value" : 10,
+            "show" : false
+        }, {
+            "title" : "U10",
+            "value" : 11,
+            "show" : false
+        } ]
+    }, {
+        "name" : "Level4",
+        "options" : [ {
+            "title" : "U1",
+            "value" : 12,
+            "show" : true
+        }, {
+            "title" : "U4",
+            "value" : 13,
+            "show" : false
+        }, {
+            "title" : "U7",
+            "value" : 14,
+            "show" : false
+        }, {
+            "title" : "U10",
+            "value" : 15,
+            "show" : false
+        } ]
+    }, {
+        "name" : "Level5",
+        "options" : [ {
+            "title" : "U1",
+            "value" : 16,
+            "show" : false
+        }, {
+            "title" : "U4",
+            "value" : 17,
+            "show" : false
+        }, {
+            "title" : "U7",
+            "value" : 18,
+            "show" : false
+        }, {
+            "title" : "U10",
+            "value" : 19,
+            "show" : false
+        } ]
+    }, {
+        "name" : "Level6",
+        "options" : [ {
+            "title" : "U1",
+            "value" : 20,
+            "show" : false
+        }, {
+            "title" : "U4",
+            "value" : 21,
+            "show" : false
+        }, {
+            "title" : "U7",
+            "value" : 22,
+            "show" : false
+        }, {
+            "title" : "U10",
+            "value" : 23,
+            "show" : false
+        } ]
+    }, {
+        "name" : "Level7",
+        "options" : [ {
+            "title" : "U1",
+            "value" : 24,
+            "show" : false
+        }, {
+            "title" : "U4",
+            "value" : 25,
+            "show" : false
+        }, {
+            "title" : "U7",
+            "value" : 26,
+            "show" : false
+        }, {
+            "title" : "U10",
+            "value" : 27,
+            "show" : false
+        } ]
+    } ]
+}

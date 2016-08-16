@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="UserMapper">
+
+	<sql id="userColumns">user.id AS user_id, user.dtype AS user_dtype,
+		user.create_date_time AS
+		user_create_date_time, user.gender AS
+		user_gender, user.last_edit_date_time AS
+		user_last_edit_date_time,
+		user.last_login_date_time AS user_last_login_date_time, user.name AS
+		user_name, user.password AS user_password, user.register_date_time AS
+		user_register_date_time,
+		user.roles AS user_roles, user.status AS
+		user_status, user.token AS user_token, user.username AS
+		user_username,
+		user.creater_id AS user_creater_id, user.last_editor_id AS
+		user_last_editor_id,
+		user.init_password AS user_init_password,
+		user.account_type AS user_account_type, user.isfirstlogin
+		AS
+		user_isfirstlogin
+	</sql>
+
+	<sql id="userWhere">
+		<trim prefix="WHERE" prefixOverrides="AND">
+			<if test="id!=0">AND user.id = #{id}</if>
+			<if test="dtype!=null">AND user.dtype = #{dtype}</if>
+			<if test="createDateTime!=null">AND user.create_date_time = #{createDateTime}</if>
+			<if test="gender!=null">AND user.gender = #{gender}</if>
+			<if test="lastEditDateTime!=null">AND user.last_edit_date_time = #{lastEditDateTime}</if>
+			<if test="lastLoginDateTime!=null">AND user.last_login_date_time = #{lastLoginDateTime}</if>
+			<if test="name!=null">AND user.name = #{name}</if>
+			<if test="password!=null">AND user.password = #{password}</if>
+			<if test="registerDateTime!=null">AND user.register_date_time = #{registerDateTime}</if>
+			<if test="roles!=null">AND user.roles = #{roles}</if>
+			<if test="status!=null">AND user.status = #{status}</if>
+			<if test="token!=null">AND user.token = #{token}</if>
+			<if test="username!=null">AND user.username = #{username}</if>
+			<if test="createrId!=0">AND user.creater_id = #{createrId}</if>
+			<if test="lastEditorId!=0">AND user.last_editor_id = #{lastEditorId}</if>
+			<if test="initPassword!=null">AND user.init_password = #{initPassword}</if>
+			<if test="accountType!=null">AND user.account_type = #{accountType}</if>
+			<if test="isfirstlogin!=null">AND user.isfirstlogin = #{isfirstlogin}</if>
+		</trim>
+	</sql>
+
+	<sql id="userOrder">
+		<if test="orderString!=null">ORDER BY ${orderString}</if>
+	</sql>
+
+	<sql id="userLimit">LIMIT #{startLine},#{limitLine}</sql>
+
+	<resultMap type="com.vipkid.trpm.entity.User" id="userResultMap">
+		<id column="user_id" property="id" />
+		<result column="user_dtype" property="dtype" />
+		<result column="user_create_date_time" property="createDateTime" />
+		<result column="user_gender" property="gender" />
+		<result column="user_last_edit_date_time" property="lastEditDateTime" />
+		<result column="user_last_login_date_time" property="lastLoginDateTime" />
+		<result column="user_name" property="name" />
+		<result column="user_password" property="password" />
+		<result column="user_register_date_time" property="registerDateTime" />
+		<result column="user_roles" property="roles" />
+		<result column="user_status" property="status" />
+		<result column="user_token" property="token" />
+		<result column="user_username" property="username" />
+		<result column="user_creater_id" property="createrId" />
+		<result column="user_last_editor_id" property="lastEditorId" />
+		<result column="user_init_password" property="initPassword" />
+		<result column="user_account_type" property="accountType" />
+		<result column="user_isfirstlogin" property="isfirstlogin" />
+	</resultMap>
+
+	<select id="findDao" resultMap="userResultMap">
+		SELECT
+		<include refid="userColumns" />
+		FROM user
+		<include refid="userWhere" />
+		<include refid="userOrder" />
+	</select>
+
+	<select id="countDao" resultType="int">
+		SELECT COUNT(*) FROM user
+		<include refid="userWhere" />
+	</select>
+
+	<select id="pageDao" resultMap="userResultMap">
+		SELECT
+		<include refid="userColumns" />
+		FROM user
+		<include refid="userWhere" />
+		<include refid="userOrder" />
+		<include refid="userLimit" />
+	</select>
+
+	<select id="limitDao" resultMap="userResultMap">
+		SELECT
+		<include refid="userColumns" />
+		FROM user
+		<include refid="userWhere" />
+		<include refid="userOrder" />
+		<include refid="userLimit" />
+	</select>
+
+	<insert id="saveDao" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO user
+		<trim prefix="(" prefixOverrides=",">
+			<if test="id!=0">,id</if>
+			<if test="dtype!=null">,dtype</if>
+			<if test="createDateTime!=null">,create_date_time</if>
+			<if test="gender!=null">,gender</if>
+			<if test="lastEditDateTime!=null">,last_edit_date_time</if>
+			<if test="lastLoginDateTime!=null">,last_login_date_time</if>
+			<if test="name!=null">,name</if>
+			<if test="password!=null">,password</if>
+			<if test="registerDateTime!=null">,register_date_time</if>
+			<if test="roles!=null">,roles</if>
+			<if test="status!=null">,status</if>
+			<if test="token!=null">,token</if>
+			<if test="username!=null">,username</if>
+			<if test="createrId!=0">,creater_id</if>
+			<if test="lastEditorId!=0">,last_editor_id</if>
+			<if test="initPassword!=null">,init_password</if>
+			<if test="accountType!=null">,account_type</if>
+			<if test="isfirstlogin!=null">,isfirstlogin</if>
+		</trim>
+		) VALUES
+		<trim prefix="(" prefixOverrides=",">
+			<if test="id!=0">,#{id}</if>
+			<if test="dtype!=null">,#{dtype}</if>
+			<if test="createDateTime!=null">,#{createDateTime}</if>
+			<if test="gender!=null">,#{gender}</if>
+			<if test="lastEditDateTime!=null">,#{lastEditDateTime}</if>
+			<if test="lastLoginDateTime!=null">,#{lastLoginDateTime}</if>
+			<if test="name!=null">,#{name}</if>
+			<if test="password!=null">,#{password}</if>
+			<if test="registerDateTime!=null">,#{registerDateTime}</if>
+			<if test="roles!=null">,#{roles}</if>
+			<if test="status!=null">,#{status}</if>
+			<if test="token!=null">,#{token}</if>
+			<if test="username!=null">,#{username}</if>
+			<if test="createrId!=0">,#{createrId}</if>
+			<if test="lastEditorId!=0">,#{lastEditorId}</if>
+			<if test="initPassword!=null">,#{initPassword}</if>
+			<if test="accountType!=null">,#{accountType}</if>
+			<if test="isfirstlogin!=null">,#{isfirstlogin}</if>
+		</trim>
+		)
+	</insert>
+
+	<update id="updateDao">
+		UPDATE user
+		<trim prefix="SET" prefixOverrides=",">
+			<if test="id!=0">,id = #{id}</if>
+			<if test="dtype!=null">,dtype = #{dtype}</if>
+			<if test="createDateTime!=null">,create_date_time = #{createDateTime}</if>
+			<if test="gender!=null">,gender = #{gender}</if>
+			<if test="lastEditDateTime!=null">,last_edit_date_time = #{lastEditDateTime}</if>
+			<if test="lastLoginDateTime!=null">,last_login_date_time = #{lastLoginDateTime}</if>
+			<if test="name!=null">,name = #{name}</if>
+			<if test="password!=null">,password = #{password}</if>
+			<if test="registerDateTime!=null">,register_date_time = #{registerDateTime}</if>
+			<if test="roles!=null">,roles = #{roles}</if>
+			<if test="status!=null">,status = #{status}</if>
+			<if test="token!=null">,token = #{token}</if>
+			<if test="username!=null">,username = #{username}</if>
+			<if test="createrId!=0">,creater_id = #{createrId}</if>
+			<if test="lastEditorId!=0">,last_editor_id = #{lastEditorId}</if>
+			<if test="initPassword!=null">,init_password = #{initPassword}</if>
+			<if test="accountType!=null">,account_type = #{accountType}</if>
+			<if test="isfirstlogin!=null">,isfirstlogin = #{isfirstlogin}</if>
+		</trim>
+		<trim prefix="WHERE" prefixOverrides="AND">AND id = #{id}</trim>
+	</update>
+
+	<delete id="deleteDao">
+		DELETE FROM user
+		<trim prefix="WHERE" prefixOverrides="AND">AND id = #{id}</trim>
+	</delete>
+
+	<!-- 更新密码 -->
+	<update id="updatePasswordDao">
+		UPDATE user SET password = #{password} WHERE id = #{id}
+	</update>
+
+	<!-- 用户登录 -->
+	<select id="userLoginDao" resultMap="userResultMap">
+		SELECT <include refid="userColumns" /> FROM user,teacher
+		WHERE teacher.id =
+		user.id AND dtype = 'Teacher' AND username =
+		#{username}
+	</select>
+
+</mapper>

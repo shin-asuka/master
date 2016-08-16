@@ -1,0 +1,106 @@
+#set($layout = "/portal/layout.vm")
+#set($activeComments = "active")
+<div class="tab-pane active ng-scope" id="comments" style="border: 0px;" layout:fragment="content">
+  <div class="row form-group form-inline" style="margin-top: 15px; margin-right: 0px;">
+    <button class="btn btn-primary btn-sm next" style="float: right; -margin-right:30px; width:180px;">NEXT MONTH</button>
+    <button class="btn btn-primary btn-sm curr" style="float: right; margin-right:30px; width:180px;">CURRENT MONTH</button>
+    <button class="btn btn-primary btn-sm prev" style="float: right; margin-right:30px; width:180px;">PREV MONTH</button>
+  </div>
+  <div id="yearMonthTitle" align="center" style="background-color: #AEA79F; border: 1px solid #DDDDDD; border-bottom: 0px;" class="ng-binding">$!{monthOfYear}</div>
+  <div id="comments-content">
+    <table class="table table-striped" style="font-size: 13px; border-bottom: 1px solid #DDDDDD;">
+      <thead style="background-color: #AEA79F">
+        <tr>
+          <th style="width: 200px;"> <div> <a href="">Lesson Info</a> </div>
+          </th>
+          <th style="width: 360px;"> <div> <a href="">Ratings</a> </div>
+          </th>
+          <th> <div> <a href="">Teacher's Feedbacks</a> </div>
+          </th>
+          <th> <div> <a href="">Tips for Other Teachers</a> </div>
+          </th>
+          <th> <div> <a href="">Other Issues</a> </div>
+          </th>
+        </tr>
+      </thead>
+      <tbody id="commentsList" ms-controller="comments-list-controller">
+        <tr class="ng-scope" ms-repeat="dataList">
+          <td>
+            <div>
+              <div class="lessonInfoTitle">Lesson SN:</div>
+              <div class="lessonInfoContent ng-binding">{{el.lesssonSerialNumber}}</div>
+            </div>
+            <div>
+              <div class="lessonInfoTitle">Lesson Name:</div>
+              <div class="lessonInfoContent ng-binding">{{el.lessonName}}</div>
+            </div>
+            <div>
+              <div class="lessonInfoTitle">Student Name:</div>
+              <div class="lessonInfoContent ng-binding">{{el.studentEnglishName}}</div>
+            </div>
+            <div>
+              <div class="lessonInfoTitle">Scheduled Time:</div>
+              <div class="lessonInfoContent ng-binding">{{el.scheduledDateTime|formatDate}}</div>
+            </div>
+          </td>
+          <td>
+            <div>
+              <div class="ratingTitle">Ability To Follow Instructions:</div>
+              <div class="ratingContent ng-binding">{{el.abilityToFollowInstructions}}-★</div>
+            </div>
+            <div>
+              <div class="ratingTitle">Repetition:</div>
+              <div class="ratingContent ng-binding">{{el.repetition}}-★</div>
+            </div>
+            <div>
+              <div class="ratingTitle">Clear Pronunciation:</div>
+              <div class="ratingContent ng-binding">{{el.clearPronunciation}}-★</div>
+            </div>
+            <div>
+              <div class="ratingTitle">Reading Skills:</div>
+              <div class="ratingContent ng-binding">{{el.readingSkills}}-★</div>
+            </div>
+            <div>
+              <div class="ratingTitle">Spelling Accuracy :</div>
+              <div class="ratingContent ng-binding">{{el.spellingAccuracy}}-★</div>
+            </div>
+            <div>
+              <div class="ratingTitle">Active Interaction:</div>
+              <div class="ratingContent ng-binding">{{el.activelyInteraction}}-★</div>
+            </div>
+            <div>
+              <div class="ratingTitle">Performance:</div>
+              <div class="ratingContent ng-binding">{{el.performance}}-★</div>
+            </div>
+            <div> 
+              <div class="ratingTitle">Student Level:</div>
+              <div class="ratingContent ng-binding"> {{el.trialLevelResult}}</div>
+            </div>
+          </td>
+          <td><div style ="word-wrap:break-word; width:260px;" class="ng-binding">{{el.teacherFeedback|formatHtml}}</div></td>
+          <td><div style ="word-wrap:break-word; width:260px;" class="ng-binding">{{el.tipsForOtherTeachers|formatHtml}}</div></td>
+          <td><div style ="word-wrap:break-word; width:260px;" class="ng-binding">{{el.reportIssues}}</div></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div>
+    <nav style="float:right; margin-right: 30px;">
+      <ul class="pagination">
+      </ul>
+    </nav>
+  </div>
+  <form id="commentsForm" style="display: none;" method="post" action="#springUrl('/comments.shtml')">
+    <input type="hidden" id="offsetOfMonth" name="offsetOfMonth" value="$!{offsetOfMonth}" />
+    <input type="submit" />
+  </form>
+</div>
+#@requireJs()
+    require(["comments"], function(comments){
+        comments.init("$!{TRPM_TEACHER.timezone}", $!{offsetOfMonth});
+     
+        Portal.paging(".pagination", ${totalLine}, ${linePerPage}, function(page){
+            comments.commentsList(page);
+        });
+    });
+#end

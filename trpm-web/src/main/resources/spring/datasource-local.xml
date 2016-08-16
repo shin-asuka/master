@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:beans="http://www.springframework.org/schema/beans" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd
+        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.0.xsd
+        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.0.xsd">
+
+	<beans:bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource" init-method="init" destroy-method="close">
+        <beans:property name="url" value="${master.jdbc.url}"/>
+        <beans:property name="connectionProperties" value="useUnicode=true;characterEncoding=UTF-8;zeroDateTimeBehavior=convertToNull;connectTimeout=60000;socketTimeout=60000"/>
+        <beans:property name="username" value="${master.jdbc.username}"/>
+        <beans:property name="password" value="${master.jdbc.password}"/>
+        <beans:property name="driverClassName" value="com.mysql.jdbc.Driver"/>
+        <beans:property name="initialSize" value="10"/>
+        <beans:property name="minIdle" value="10"/>
+        <beans:property name="maxActive" value="100"/>
+        <beans:property name="maxWait" value="30000"/>
+        <beans:property name="removeAbandoned" value="true"/>
+        <beans:property name="removeAbandonedTimeoutMillis" value="7200000"/>
+        <beans:property name="timeBetweenEvictionRunsMillis" value="60000"/>
+        <beans:property name="minEvictableIdleTimeMillis" value="300000"/>
+        <beans:property name="validationQuery" value="SELECT 1"/>
+	</beans:bean>
+</beans>

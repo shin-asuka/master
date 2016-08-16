@@ -1,0 +1,26 @@
+<div class="modal fade" id="teacher_avatar_modal" style="overflow:hidden;" role="dialog" aria-labelledby="reportModal">
+  <div class="modal-dialog" style="margin-top: 10%; width: 600px; height: auto; opacity: 1; overflow: visible;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">&times;</button>
+        <h4 class="modal-title"> <strong>Upload a new image</strong> </h4>
+      </div>
+      <div class="modal-body">
+        <form class="form-horizontal" id="uploadAvatarForm" action="#springUrl('/uploadImage.json')" method="post" enctype="multipart/form-data">
+          <div>
+            <input type="file" name="file" class="form-control" id="avatarFile" accept=".jpg,.png,.gif,.bpm"/>
+          </div>
+          <div class="modal-footer">
+            <input type="submit" class="btn btn-primary" id="uploadAvatarFormSubmit" value="Upload" />
+            <button type="button" class="btn btn-info" data-dismiss="modal">Cancel</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+#@script();
+    require('personal-basicinfo').uploadAvatarForm();
+#end
+
+

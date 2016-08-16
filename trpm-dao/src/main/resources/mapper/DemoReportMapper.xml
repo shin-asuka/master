@@ -1,0 +1,455 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="DemoReportMapper">
+
+	<sql id="demoReportColumns">demo_report.id AS demo_report_id, demo_report.attention AS
+		demo_report_attention,
+		demo_report.comment AS demo_report_comment,
+		demo_report.confidence AS demo_report_confidence,
+		demo_report.confirm_date_time AS demo_report_confirm_date_time,
+		demo_report.create_date_time AS
+		demo_report_create_date_time,
+		demo_report.independent AS demo_report_independent,
+		demo_report.interaction AS demo_report_interaction, demo_report.l1 AS
+		demo_report_l1,
+		demo_report.l2 AS demo_report_l2, demo_report.l3 AS
+		demo_report_l3, demo_report.l4 AS
+		demo_report_l4, demo_report.l5 AS
+		demo_report_l5, demo_report.l6 AS demo_report_l6, demo_report.l7
+		AS
+		demo_report_l7, demo_report.level AS demo_report_level,
+		demo_report.life_cycle AS
+		demo_report_life_cycle, demo_report.m1 AS
+		demo_report_m1, demo_report.m10 AS demo_report_m10,
+		demo_report.m2 AS
+		demo_report_m2, demo_report.m3 AS demo_report_m3, demo_report.m4 AS
+		demo_report_m4, demo_report.m5 AS demo_report_m5, demo_report.m6 AS
+		demo_report_m6, demo_report.m7
+		AS demo_report_m7, demo_report.m8 AS
+		demo_report_m8, demo_report.m9 AS demo_report_m9,
+		demo_report.mouse AS
+		demo_report_mouse, demo_report.r1 AS demo_report_r1, demo_report.r10
+		AS
+		demo_report_r10, demo_report.r11 AS demo_report_r11,
+		demo_report.r12 AS demo_report_r12,
+		demo_report.r13 AS
+		demo_report_r13, demo_report.r14 AS demo_report_r14, demo_report.r15
+		AS
+		demo_report_r15, demo_report.r16 AS demo_report_r16,
+		demo_report.r17 AS demo_report_r17,
+		demo_report.r2 AS demo_report_r2,
+		demo_report.r3 AS demo_report_r3, demo_report.r4 AS
+		demo_report_r4,
+		demo_report.r5 AS demo_report_r5, demo_report.r6 AS demo_report_r6,
+		demo_report.r7
+		AS demo_report_r7, demo_report.r8 AS demo_report_r8,
+		demo_report.r9 AS demo_report_r9,
+		demo_report.s1 AS demo_report_s1,
+		demo_report.s10 AS demo_report_s10, demo_report.s11 AS
+		demo_report_s11, demo_report.s12 AS demo_report_s12, demo_report.s13
+		AS demo_report_s13,
+		demo_report.s14 AS demo_report_s14,
+		demo_report.s15 AS demo_report_s15, demo_report.s2 AS
+		demo_report_s2,
+		demo_report.s3 AS demo_report_s3, demo_report.s4 AS demo_report_s4,
+		demo_report.s5
+		AS demo_report_s5, demo_report.s6 AS demo_report_s6,
+		demo_report.s7 AS demo_report_s7,
+		demo_report.s8 AS demo_report_s8,
+		demo_report.s9 AS demo_report_s9, demo_report.submit_date_time AS
+		demo_report_submit_date_time, demo_report.online_class_id AS
+		demo_report_online_class_id,
+		demo_report.student_id AS
+		demo_report_student_id, demo_report.teacher_id AS
+		demo_report_teacher_id
+	</sql>
+
+	<sql id="demoReportWhere">
+		<trim prefix="WHERE" prefixOverrides="AND">
+			<if test="id!=0">AND demo_report.id = #{id}</if>
+			<if test="attention!=0">AND demo_report.attention = #{attention}</if>
+			<if test="comment!=null">AND demo_report.comment = #{comment}</if>
+			<if test="confidence!=0">AND demo_report.confidence = #{confidence}</if>
+			<if test="confirmDateTime!=null">AND demo_report.confirm_date_time = #{confirmDateTime}
+			</if>
+			<if test="createDateTime!=null">AND demo_report.create_date_time = #{createDateTime}</if>
+			<if test="independent!=0">AND demo_report.independent = #{independent}</if>
+			<if test="interaction!=0">AND demo_report.interaction = #{interaction}</if>
+			<if test="l1!=0">AND demo_report.l1 = #{l1}</if>
+			<if test="l2!=0">AND demo_report.l2 = #{l2}</if>
+			<if test="l3!=0">AND demo_report.l3 = #{l3}</if>
+			<if test="l4!=0">AND demo_report.l4 = #{l4}</if>
+			<if test="l5!=0">AND demo_report.l5 = #{l5}</if>
+			<if test="l6!=0">AND demo_report.l6 = #{l6}</if>
+			<if test="l7!=0">AND demo_report.l7 = #{l7}</if>
+			<if test="level!=0">AND demo_report.level = #{level}</if>
+			<if test="lifeCycle!=null">AND demo_report.life_cycle = #{lifeCycle}</if>
+			<if test="m1!=0">AND demo_report.m1 = #{m1}</if>
+			<if test="m10!=0">AND demo_report.m10 = #{m10}</if>
+			<if test="m2!=0">AND demo_report.m2 = #{m2}</if>
+			<if test="m3!=0">AND demo_report.m3 = #{m3}</if>
+			<if test="m4!=0">AND demo_report.m4 = #{m4}</if>
+			<if test="m5!=0">AND demo_report.m5 = #{m5}</if>
+			<if test="m6!=0">AND demo_report.m6 = #{m6}</if>
+			<if test="m7!=0">AND demo_report.m7 = #{m7}</if>
+			<if test="m8!=0">AND demo_report.m8 = #{m8}</if>
+			<if test="m9!=0">AND demo_report.m9 = #{m9}</if>
+			<if test="mouse!=0">AND demo_report.mouse = #{mouse}</if>
+			<if test="r1!=0">AND demo_report.r1 = #{r1}</if>
+			<if test="r10!=0">AND demo_report.r10 = #{r10}</if>
+			<if test="r11!=0">AND demo_report.r11 = #{r11}</if>
+			<if test="r12!=0">AND demo_report.r12 = #{r12}</if>
+			<if test="r13!=0">AND demo_report.r13 = #{r13}</if>
+			<if test="r14!=0">AND demo_report.r14 = #{r14}</if>
+			<if test="r15!=0">AND demo_report.r15 = #{r15}</if>
+			<if test="r16!=0">AND demo_report.r16 = #{r16}</if>
+			<if test="r17!=0">AND demo_report.r17 = #{r17}</if>
+			<if test="r2!=0">AND demo_report.r2 = #{r2}</if>
+			<if test="r3!=0">AND demo_report.r3 = #{r3}</if>
+			<if test="r4!=0">AND demo_report.r4 = #{r4}</if>
+			<if test="r5!=0">AND demo_report.r5 = #{r5}</if>
+			<if test="r6!=0">AND demo_report.r6 = #{r6}</if>
+			<if test="r7!=0">AND demo_report.r7 = #{r7}</if>
+			<if test="r8!=0">AND demo_report.r8 = #{r8}</if>
+			<if test="r9!=0">AND demo_report.r9 = #{r9}</if>
+			<if test="s1!=0">AND demo_report.s1 = #{s1}</if>
+			<if test="s10!=0">AND demo_report.s10 = #{s10}</if>
+			<if test="s11!=0">AND demo_report.s11 = #{s11}</if>
+			<if test="s12!=0">AND demo_report.s12 = #{s12}</if>
+			<if test="s13!=0">AND demo_report.s13 = #{s13}</if>
+			<if test="s14!=0">AND demo_report.s14 = #{s14}</if>
+			<if test="s15!=0">AND demo_report.s15 = #{s15}</if>
+			<if test="s2!=0">AND demo_report.s2 = #{s2}</if>
+			<if test="s3!=0">AND demo_report.s3 = #{s3}</if>
+			<if test="s4!=0">AND demo_report.s4 = #{s4}</if>
+			<if test="s5!=0">AND demo_report.s5 = #{s5}</if>
+			<if test="s6!=0">AND demo_report.s6 = #{s6}</if>
+			<if test="s7!=0">AND demo_report.s7 = #{s7}</if>
+			<if test="s8!=0">AND demo_report.s8 = #{s8}</if>
+			<if test="s9!=0">AND demo_report.s9 = #{s9}</if>
+			<if test="submitDateTime!=null">AND demo_report.submit_date_time = #{submitDateTime}</if>
+			<if test="onlineClassId!=0">AND demo_report.online_class_id = #{onlineClassId}</if>
+			<if test="studentId!=0">AND demo_report.student_id = #{studentId}</if>
+			<if test="teacherId!=0">AND demo_report.teacher_id = #{teacherId}</if>
+		</trim>
+	</sql>
+
+	<sql id="demoReportOrder">
+		<if test="orderString!=null">ORDER BY ${orderString}</if>
+	</sql>
+
+	<sql id="demoReportLimit">LIMIT #{startLine},#{limitLine}</sql>
+
+	<resultMap type="com.vipkid.trpm.entity.DemoReport" id="demoReportResultMap">
+		<id column="demo_report_id" property="id" />
+		<result column="demo_report_attention" property="attention" />
+		<result column="demo_report_comment" property="comment" />
+		<result column="demo_report_confidence" property="confidence" />
+		<result column="demo_report_confirm_date_time" property="confirmDateTime" />
+		<result column="demo_report_create_date_time" property="createDateTime" />
+		<result column="demo_report_independent" property="independent" />
+		<result column="demo_report_interaction" property="interaction" />
+		<result column="demo_report_l1" property="l1" />
+		<result column="demo_report_l2" property="l2" />
+		<result column="demo_report_l3" property="l3" />
+		<result column="demo_report_l4" property="l4" />
+		<result column="demo_report_l5" property="l5" />
+		<result column="demo_report_l6" property="l6" />
+		<result column="demo_report_l7" property="l7" />
+		<result column="demo_report_level" property="level" />
+		<result column="demo_report_life_cycle" property="lifeCycle" />
+		<result column="demo_report_m1" property="m1" />
+		<result column="demo_report_m10" property="m10" />
+		<result column="demo_report_m2" property="m2" />
+		<result column="demo_report_m3" property="m3" />
+		<result column="demo_report_m4" property="m4" />
+		<result column="demo_report_m5" property="m5" />
+		<result column="demo_report_m6" property="m6" />
+		<result column="demo_report_m7" property="m7" />
+		<result column="demo_report_m8" property="m8" />
+		<result column="demo_report_m9" property="m9" />
+		<result column="demo_report_mouse" property="mouse" />
+		<result column="demo_report_r1" property="r1" />
+		<result column="demo_report_r10" property="r10" />
+		<result column="demo_report_r11" property="r11" />
+		<result column="demo_report_r12" property="r12" />
+		<result column="demo_report_r13" property="r13" />
+		<result column="demo_report_r14" property="r14" />
+		<result column="demo_report_r15" property="r15" />
+		<result column="demo_report_r16" property="r16" />
+		<result column="demo_report_r17" property="r17" />
+		<result column="demo_report_r2" property="r2" />
+		<result column="demo_report_r3" property="r3" />
+		<result column="demo_report_r4" property="r4" />
+		<result column="demo_report_r5" property="r5" />
+		<result column="demo_report_r6" property="r6" />
+		<result column="demo_report_r7" property="r7" />
+		<result column="demo_report_r8" property="r8" />
+		<result column="demo_report_r9" property="r9" />
+		<result column="demo_report_s1" property="s1" />
+		<result column="demo_report_s10" property="s10" />
+		<result column="demo_report_s11" property="s11" />
+		<result column="demo_report_s12" property="s12" />
+		<result column="demo_report_s13" property="s13" />
+		<result column="demo_report_s14" property="s14" />
+		<result column="demo_report_s15" property="s15" />
+		<result column="demo_report_s2" property="s2" />
+		<result column="demo_report_s3" property="s3" />
+		<result column="demo_report_s4" property="s4" />
+		<result column="demo_report_s5" property="s5" />
+		<result column="demo_report_s6" property="s6" />
+		<result column="demo_report_s7" property="s7" />
+		<result column="demo_report_s8" property="s8" />
+		<result column="demo_report_s9" property="s9" />
+		<result column="demo_report_submit_date_time" property="submitDateTime" />
+		<result column="demo_report_online_class_id" property="onlineClassId" />
+		<result column="demo_report_student_id" property="studentId" />
+		<result column="demo_report_teacher_id" property="teacherId" />
+	</resultMap>
+
+	<select id="findDao" resultMap="demoReportResultMap" useCache="true">
+		SELECT
+		<include refid="demoReportColumns" />
+		FROM demo_report
+		<include refid="demoReportWhere" />
+		<include refid="demoReportOrder" />
+	</select>
+
+	<select id="countDao" resultType="int" useCache="true">
+		SELECT COUNT(*) FROM demo_report
+		<include refid="demoReportWhere" />
+	</select>
+
+	<select id="pageDao" resultMap="demoReportResultMap" useCache="true">
+		SELECT
+		<include refid="demoReportColumns" />
+		FROM demo_report
+		<include refid="demoReportWhere" />
+		<include refid="demoReportOrder" />
+		<include refid="demoReportLimit" />
+	</select>
+
+	<select id="limitDao" resultMap="demoReportResultMap" useCache="true">
+		SELECT
+		<include refid="demoReportColumns" />
+		FROM demo_report
+		<include refid="demoReportWhere" />
+		<include refid="demoReportOrder" />
+		<include refid="demoReportLimit" />
+	</select>
+
+	<insert id="saveDao" useGeneratedKeys="true" keyProperty="id" flushCache="true">
+		INSERT INTO demo_report
+		<trim prefix="(" prefixOverrides=",">
+			<if test="id!=0">,id</if>
+			<if test="attention!=0">,attention</if>
+			<if test="comment!=null">,comment</if>
+			<if test="confidence!=0">,confidence</if>
+			<if test="confirmDateTime!=null">,confirm_date_time</if>
+			<if test="createDateTime!=null">,create_date_time</if>
+			<if test="independent!=0">,independent</if>
+			<if test="interaction!=0">,interaction</if>
+			<if test="l1!=0">,l1</if>
+			<if test="l2!=0">,l2</if>
+			<if test="l3!=0">,l3</if>
+			<if test="l4!=0">,l4</if>
+			<if test="l5!=0">,l5</if>
+			<if test="l6!=0">,l6</if>
+			<if test="l7!=0">,l7</if>
+			<if test="level!=0">,level</if>
+			<if test="lifeCycle!=null">,life_cycle</if>
+			<if test="m1!=0">,m1</if>
+			<if test="m10!=0">,m10</if>
+			<if test="m2!=0">,m2</if>
+			<if test="m3!=0">,m3</if>
+			<if test="m4!=0">,m4</if>
+			<if test="m5!=0">,m5</if>
+			<if test="m6!=0">,m6</if>
+			<if test="m7!=0">,m7</if>
+			<if test="m8!=0">,m8</if>
+			<if test="m9!=0">,m9</if>
+			<if test="mouse!=0">,mouse</if>
+			<if test="r1!=0">,r1</if>
+			<if test="r10!=0">,r10</if>
+			<if test="r11!=0">,r11</if>
+			<if test="r12!=0">,r12</if>
+			<if test="r13!=0">,r13</if>
+			<if test="r14!=0">,r14</if>
+			<if test="r15!=0">,r15</if>
+			<if test="r16!=0">,r16</if>
+			<if test="r17!=0">,r17</if>
+			<if test="r2!=0">,r2</if>
+			<if test="r3!=0">,r3</if>
+			<if test="r4!=0">,r4</if>
+			<if test="r5!=0">,r5</if>
+			<if test="r6!=0">,r6</if>
+			<if test="r7!=0">,r7</if>
+			<if test="r8!=0">,r8</if>
+			<if test="r9!=0">,r9</if>
+			<if test="s1!=0">,s1</if>
+			<if test="s10!=0">,s10</if>
+			<if test="s11!=0">,s11</if>
+			<if test="s12!=0">,s12</if>
+			<if test="s13!=0">,s13</if>
+			<if test="s14!=0">,s14</if>
+			<if test="s15!=0">,s15</if>
+			<if test="s2!=0">,s2</if>
+			<if test="s3!=0">,s3</if>
+			<if test="s4!=0">,s4</if>
+			<if test="s5!=0">,s5</if>
+			<if test="s6!=0">,s6</if>
+			<if test="s7!=0">,s7</if>
+			<if test="s8!=0">,s8</if>
+			<if test="s9!=0">,s9</if>
+			<if test="submitDateTime!=null">,submit_date_time</if>
+			<if test="onlineClassId!=0">,online_class_id</if>
+			<if test="studentId!=0">,student_id</if>
+			<if test="teacherId!=0">,teacher_id</if>
+		</trim>
+		) VALUES
+		<trim prefix="(" prefixOverrides=",">
+			<if test="id!=0">,#{id}</if>
+			<if test="attention!=0">,#{attention}</if>
+			<if test="comment!=null">,#{comment}</if>
+			<if test="confidence!=0">,#{confidence}</if>
+			<if test="confirmDateTime!=null">,#{confirmDateTime}</if>
+			<if test="createDateTime!=null">,#{createDateTime}</if>
+			<if test="independent!=0">,#{independent}</if>
+			<if test="interaction!=0">,#{interaction}</if>
+			<if test="l1!=0">,#{l1}</if>
+			<if test="l2!=0">,#{l2}</if>
+			<if test="l3!=0">,#{l3}</if>
+			<if test="l4!=0">,#{l4}</if>
+			<if test="l5!=0">,#{l5}</if>
+			<if test="l6!=0">,#{l6}</if>
+			<if test="l7!=0">,#{l7}</if>
+			<if test="level!=0">,#{level}</if>
+			<if test="lifeCycle!=null">,#{lifeCycle}</if>
+			<if test="m1!=0">,#{m1}</if>
+			<if test="m10!=0">,#{m10}</if>
+			<if test="m2!=0">,#{m2}</if>
+			<if test="m3!=0">,#{m3}</if>
+			<if test="m4!=0">,#{m4}</if>
+			<if test="m5!=0">,#{m5}</if>
+			<if test="m6!=0">,#{m6}</if>
+			<if test="m7!=0">,#{m7}</if>
+			<if test="m8!=0">,#{m8}</if>
+			<if test="m9!=0">,#{m9}</if>
+			<if test="mouse!=0">,#{mouse}</if>
+			<if test="r1!=0">,#{r1}</if>
+			<if test="r10!=0">,#{r10}</if>
+			<if test="r11!=0">,#{r11}</if>
+			<if test="r12!=0">,#{r12}</if>
+			<if test="r13!=0">,#{r13}</if>
+			<if test="r14!=0">,#{r14}</if>
+			<if test="r15!=0">,#{r15}</if>
+			<if test="r16!=0">,#{r16}</if>
+			<if test="r17!=0">,#{r17}</if>
+			<if test="r2!=0">,#{r2}</if>
+			<if test="r3!=0">,#{r3}</if>
+			<if test="r4!=0">,#{r4}</if>
+			<if test="r5!=0">,#{r5}</if>
+			<if test="r6!=0">,#{r6}</if>
+			<if test="r7!=0">,#{r7}</if>
+			<if test="r8!=0">,#{r8}</if>
+			<if test="r9!=0">,#{r9}</if>
+			<if test="s1!=0">,#{s1}</if>
+			<if test="s10!=0">,#{s10}</if>
+			<if test="s11!=0">,#{s11}</if>
+			<if test="s12!=0">,#{s12}</if>
+			<if test="s13!=0">,#{s13}</if>
+			<if test="s14!=0">,#{s14}</if>
+			<if test="s15!=0">,#{s15}</if>
+			<if test="s2!=0">,#{s2}</if>
+			<if test="s3!=0">,#{s3}</if>
+			<if test="s4!=0">,#{s4}</if>
+			<if test="s5!=0">,#{s5}</if>
+			<if test="s6!=0">,#{s6}</if>
+			<if test="s7!=0">,#{s7}</if>
+			<if test="s8!=0">,#{s8}</if>
+			<if test="s9!=0">,#{s9}</if>
+			<if test="submitDateTime!=null">,#{submitDateTime}</if>
+			<if test="onlineClassId!=0">,#{onlineClassId}</if>
+			<if test="studentId!=0">,#{studentId}</if>
+			<if test="teacherId!=0">,#{teacherId}</if>
+		</trim>
+		)
+	</insert>
+
+	<update id="updateDao">
+		UPDATE demo_report
+		<trim prefix="SET" prefixOverrides=",">
+			<if test="id!=0">,id = #{id}</if>
+			<if test="attention!=0">,attention = #{attention}</if>
+			<if test="comment!=null">,comment = #{comment}</if>
+			<if test="confidence!=0">,confidence = #{confidence}</if>
+			<if test="confirmDateTime!=null">,confirm_date_time = #{confirmDateTime}</if>
+			<if test="createDateTime!=null">,create_date_time = #{createDateTime}</if>
+			<if test="independent!=0">,independent = #{independent}</if>
+			<if test="interaction!=0">,interaction = #{interaction}</if>
+			<if test="l1!=-1">,l1 = #{l1}</if>
+			<if test="l2!=-1">,l2 = #{l2}</if>
+			<if test="l3!=-1">,l3 = #{l3}</if>
+			<if test="l4!=-1">,l4 = #{l4}</if>
+			<if test="l5!=-1">,l5 = #{l5}</if>
+			<if test="l6!=-1">,l6 = #{l6}</if>
+			<if test="l7!=-1">,l7 = #{l7}</if>
+			<if test="level!=0">,level = #{level}</if>
+			<if test="lifeCycle!=null">,life_cycle = #{lifeCycle}</if>
+			<if test="m1!=-1">,m1 = #{m1}</if>
+			<if test="m10!=-1">,m10 = #{m10}</if>
+			<if test="m2!=-1">,m2 = #{m2}</if>
+			<if test="m3!=-1">,m3 = #{m3}</if>
+			<if test="m4!=-1">,m4 = #{m4}</if>
+			<if test="m5!=-1">,m5 = #{m5}</if>
+			<if test="m6!=-1">,m6 = #{m6}</if>
+			<if test="m7!=-1">,m7 = #{m7}</if>
+			<if test="m8!=-1">,m8 = #{m8}</if>
+			<if test="m9!=-1">,m9 = #{m9}</if>
+			<if test="mouse!=0">,mouse = #{mouse}</if>
+			<if test="r1!=-1">,r1 = #{r1}</if>
+			<if test="r10!=-1">,r10 = #{r10}</if>
+			<if test="r11!=-1">,r11 = #{r11}</if>
+			<if test="r12!=-1">,r12 = #{r12}</if>
+			<if test="r13!=-1">,r13 = #{r13}</if>
+			<if test="r14!=-1">,r14 = #{r14}</if>
+			<if test="r15!=-1">,r15 = #{r15}</if>
+			<if test="r16!=-1">,r16 = #{r16}</if>
+			<if test="r17!=-1">,r17 = #{r17}</if>
+			<if test="r2!=-1">,r2 = #{r2}</if>
+			<if test="r3!=-1">,r3 = #{r3}</if>
+			<if test="r4!=-1">,r4 = #{r4}</if>
+			<if test="r5!=-1">,r5 = #{r5}</if>
+			<if test="r6!=-1">,r6 = #{r6}</if>
+			<if test="r7!=-1">,r7 = #{r7}</if>
+			<if test="r8!=-1">,r8 = #{r8}</if>
+			<if test="r9!=-1">,r9 = #{r9}</if>
+			<if test="s1!=-1">,s1 = #{s1}</if>
+			<if test="s10!=-1">,s10 = #{s10}</if>
+			<if test="s11!=-1">,s11 = #{s11}</if>
+			<if test="s12!=-1">,s12 = #{s12}</if>
+			<if test="s13!=-1">,s13 = #{s13}</if>
+			<if test="s14!=-1">,s14 = #{s14}</if>
+			<if test="s15!=-1">,s15 = #{s15}</if>
+			<if test="s2!=-1">,s2 = #{s2}</if>
+			<if test="s3!=-1">,s3 = #{s3}</if>
+			<if test="s4!=-1">,s4 = #{s4}</if>
+			<if test="s5!=-1">,s5 = #{s5}</if>
+			<if test="s6!=-1">,s6 = #{s6}</if>
+			<if test="s7!=-1">,s7 = #{s7}</if>
+			<if test="s8!=-1">,s8 = #{s8}</if>
+			<if test="s9!=-1">,s9 = #{s9}</if>
+			<if test="submitDateTime!=null">,submit_date_time = #{submitDateTime}</if>
+			<if test="onlineClassId!=0">,online_class_id = #{onlineClassId}</if>
+			<if test="studentId!=0">,student_id = #{studentId}</if>
+			<if test="teacherId!=0">,teacher_id = #{teacherId}</if>
+		</trim>
+		<trim prefix="WHERE" prefixOverrides="AND">AND id = #{id}</trim>
+	</update>
+
+	<delete id="deleteDao" flushCache="true">
+		DELETE FROM demo_report
+		<trim prefix="WHERE" prefixOverrides="AND">AND id = #{id}</trim>
+	</delete>
+
+</mapper>

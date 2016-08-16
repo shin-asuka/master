@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="AppRestfulMapper">
+	
+	<!-- 一段时间内老师的课以天为单位的分布情况（现在默认是一周，主要是booked or finished状态的课，顺序返回）-->
+	<select id="AppRestfulCountOnlineClass" resultType="java.util.HashMap">
+		SELECT straight_join  
+		DATE_FORMAT(CONVERT_TZ(oc.scheduled_date_time, '+08:00', #{timezone}),'%Y-%m-%d') days,count(1) total
+		FROM online_class oc 
+		<if test="classType != null">
+			JOIN lesson l on oc.lesson_id = l.id 
+			JOIN learning_cycle lc on l.learning_cycle_id = lc.id 
+			JOIN unit u on lc.unit_id = u.id
+			JOIN course c on u.course_id = c.id
+		</if>
+		WHERE oc.teacher_id = ${teacherId}
+		AND (oc.finish_type != 'STUDENT_NO_SHOW_24H' or oc.finish_type is null)
+		<if test="classStatus != null">
+			AND oc.status IN
+			<foreach collection="classStatus" open="(" close=")" separator="," item="val">
+				<if test="val != null">#{val}</if>
+			</foreach>
+		</if>
+		
+		<if test="classType != null">
+			AND c.type IN
+			<foreach collection="classType" open="(" close=")" separator="," item="val">
+				<if test="val != null">#{val}</if>
+			</foreach>
+		</if>
+		AND CONVERT_TZ(oc.scheduled_date_time, '+08:00', #{timezone}) BETWEEN #{startTime} AND #{endTime}
+		GROUP BY days ORDER BY days
+    </select>
+    
+    
+    <!-- 一段时间内老师的课程列表-->
+	<select id="appRestfulListOnlineClass" resultType="com.vipkid.trpm.entity.AppOnlineClass">
+		SELECT straight_join 
+			oc.id,oc.teacher_id as teacherId,ocs.student_id as studentId,
+		  	unix_timestamp(oc.scheduled_date_time)*1000 startTime,
+		  	(unix_timestamp(oc.scheduled_date_time)+1800)*1000 endTime,
+			oc.`status`,oc.finish_type statusInfo,c.id as courseId,c.`name` 
+		  	as courseName,c.type as courseType,l.id as lessonId,l.`name` as lessonName,
+		  	l.serial_number as serialNumber,l.objective,l.sentence_patterns as sentencePatterns,
+		  	l.topic,l.vocabularies,l.goal,u.grammar,'0' hasFeedback, '0' unitAssessmentStatus
+		FROM
+			online_class oc
+		JOIN lesson l ON oc.lesson_id = l.id
+		JOIN online_class_student ocs ON oc.id = ocs.online_class_id
+		JOIN learning_cycle lc ON l.learning_cycle_id = lc.id
+		JOIN unit u ON lc.unit_id = u.id
+		JOIN course c ON u.course_id = c.id
+		WHERE oc.teacher_id = ${teacherId}
+		AND (oc.finish_type != 'STUDENT_NO_SHOW_24H' or oc.finish_type is null)
+		<if test="classStatus != null">
+			AND oc.status IN
+			<foreach collection="classStatus" open="(" close=")" separator="," item="val">
+				<if test="val != null">#{val}</if>
+			</foreach>
+		</if>
+		
+		<if test="classType != null">
+			AND c.type IN
+			<foreach collection="classType" open="(" close=")" separator="," item="val">
+				<if test="val != null">#{val}</if>
+			</foreach>
+		</if>
+		AND unix_timestamp(oc.scheduled_date_time)*1000 BETWEEN #{startTime} AND #{endTime}
+		ORDER BY oc.scheduled_date_time
+		<if test="order == 1">
+			DESC
+		</if>
+    </select>
+    
+    
+    <!-- 老师的某种状态的课列表-->
+	<select id="appRestfulListForPage" resultType="com.vipkid.trpm.entity.AppOnlineClass">
+		SELECT straight_join 
+			oc.id,oc.teacher_id as teacherId,ocs.student_id as studentId,
+		  	unix_timestamp(oc.scheduled_date_time)*1000 startTime,
+		  	(unix_timestamp(oc.scheduled_date_time)+1800)*1000 endTime,
+			oc.`status`,oc.finish_type statusInfo,c.id as courseId,c.`name` 
+		  	as courseName,c.type as courseType,l.id as lessonId,l.`name` as lessonName,
+		  	l.serial_number as serialNumber,l.objective,l.sentence_patterns as sentencePatterns,
+		  	l.topic,l.vocabularies,l.goal,u.grammar,'0' hasFeedback, '0' unitAssessmentStatus
+		FROM
+			online_class oc
+		JOIN lesson l ON oc.lesson_id = l.id
+		JOIN online_class_student ocs ON oc.id = ocs.online_class_id
+		JOIN learning_cycle lc ON l.learning_cycle_id = lc.id
+		JOIN unit u ON lc.unit_id = u.id
+		JOIN course c ON u.course_id = c.id
+		WHERE oc.teacher_id = ${teacherId}
+		AND (oc.finish_type != 'STUDENT_NO_SHOW_24H' or oc.finish_type is null)
+		<if test="classType != null">
+			AND c.type IN
+			<foreach collection="classType" open="(" close=")" separator="," item="val">
+				<if test="val != null">#{val}</if>
+			</foreach>
+		</if>
+		<if test="classStatus == 0">
+			AND oc.status = 'BOOKED'
+			AND  unix_timestamp(oc.scheduled_date_time)*1000 >= ${currTime}
+		</if>
+		<if test="classStatus == 1">
+			AND oc.status = 'BOOKED'
+			AND  (unix_timestamp(oc.scheduled_date_time)+1800)*1000 > ${currTime}  AND  ${currTime} > unix_timestamp(oc.scheduled_date_time)*1000
+		</if>
+		<if test="classStatus == 2">
+			AND oc.status in ('BOOKED','FINISHED')
+			AND  ${currTime} >= (unix_timestamp(oc.scheduled_date_time)+1800)*1000
+		</if>
+		ORDER BY oc.scheduled_date_time
+		<if test="order == 1">
+			DESC
+		</if>
+		LIMIT ${startNum},${endNum}
+    </select>
+    
+     <!-- 老师的某种状态的课列表 Count-->
+	<select id="appRestfulListForCount" resultType="java.util.HashMap">
+		SELECT straight_join
+			count(1) total
+		FROM
+			online_class oc
+		JOIN lesson l ON oc.lesson_id = l.id
+		JOIN online_class_student ocs ON oc.id = ocs.online_class_id
+		JOIN learning_cycle lc ON l.learning_cycle_id = lc.id
+		JOIN unit u ON lc.unit_id = u.id
+		JOIN course c ON u.course_id = c.id
+		WHERE oc.teacher_id = ${teacherId}
+		AND (oc.finish_type != 'STUDENT_NO_SHOW_24H' or oc.finish_type is null)
+		<if test="classType != null">
+			AND c.type IN
+			<foreach collection="classType" open="(" close=")" separator="," item="val">
+				<if test="val != null">#{val}</if>
+			</foreach>
+		</if>
+		<if test="classStatus == 0">
+			AND oc.status = 'BOOKED'
+			AND  unix_timestamp(oc.scheduled_date_time)*1000 >= ${currTime}
+		</if>
+		<if test="classStatus == 1">
+			AND oc.status = 'BOOKED'
+			AND  (unix_timestamp(oc.scheduled_date_time)+1800)*1000 > ${currTime}  AND  ${currTime} > unix_timestamp(oc.scheduled_date_time)*1000
+		</if>
+		<if test="classStatus == 2">
+			AND oc.status in ('BOOKED','FINISHED')
+			AND  ${currTime} >= (unix_timestamp(oc.scheduled_date_time)+1800)*1000
+		</if>
+    </select>
+    
+    <select id="selectFeedback" resultType="java.util.HashMap">
+    	SELECT tc.id,tc.online_class_id onlineClassId,tc.teacher_feedback teacherFeedback,tc.tips_for_other_teachers otherTeachers 
+    	FROM teacher_comment tc where tc.teacher_feedback is not null
+    	<if test="onlineClassIds != null">
+			AND tc.online_class_id IN
+			<foreach collection="onlineClassIds" open="(" close=")" separator="," item="val">
+				<if test="val != 0">#{val}</if>
+			</foreach>
+		</if>
+    </select>
+    
+    <insert id="saveTeacherToken" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO teacher_token
+		<trim prefix="(" prefixOverrides=",">
+			<if test="id !=0 and id != null "> ,id</if>
+			<if test="teacherId !=0 and teacherId != null "> ,teacher_id</if>
+			<if test="appToken!=null">,app_token</if>
+		</trim>
+		) VALUES
+		<trim prefix="(" prefixOverrides=",">
+			<if test="id !=0 and id != null ">${id}</if>
+			<if test="teacherId !=0 and teacherId != null "> ${teacherId}</if>
+			<if test="appToken != null">,#{appToken}</if>
+		</trim>
+		)
+	</insert>
+	
+	<update id="updateTeacherToken">
+		UPDATE teacher_token
+		<trim prefix="SET" prefixOverrides=",">
+			<if test="teacherId !=0 and teacherId != null "> ,teacher_id = ${teacherId}</if>
+			<if test="appToken!=null">,app_token = #{appToken}</if>
+		</trim>
+		<trim prefix="WHERE" prefixOverrides="AND">AND id = ${id}</trim>
+	</update>
+	
+	<select id="findByAppTokenById" resultType="java.util.HashMap">
+		SELECT tt.id id,tt.app_token appToken,tt.teacher_id teacherId
+		FROM teacher_token tt
+		where 1 = 1
+		<if test="id !=0 and id != null "> 
+			AND tt.id = ${id}
+		</if>
+		<if test="teacherId !=0 and teacherId != null "> 
+			AND tt.teacher_id = ${teacherId}
+		</if>
+		<if test="appToken != null">
+			AND tt.app_token = #{appToken}
+		</if>
+	</select>
+   
+</mapper>

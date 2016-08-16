@@ -1,0 +1,28 @@
+#set($layout = "/activity/layout.vm")
+<audio src="http://resource.vipkid.com.cn/bigdata/song-puzzle.mp3" controls="controls" preload id="music1" loop="loop" hidden style="display: none;"></audio>
+<div class="erromessagemain active">
+	<div class="erromessagecontent content">
+		<div class="mico">
+	       <img class="micoimg" src="#styleUrl('/resources/images/activity/mico.png')" /> 
+	       <p class="mute">mute</p>
+	    </div>
+		<img class="posab pinkball" src="#styleUrl('/resources/images/activity/pinkball.png')"/>
+		<img class="posab yellowball" src="#styleUrl('/resources/images/activity/yellowball.png')"/>
+		<img class="posab greenball" src="#styleUrl('/resources/images/activity/greenball.png')"/>
+		<img class="posab blueball" src="#styleUrl('/resources/images/activity/blueball.png')"/>
+		<img class="posab ball" src="#styleUrl('/resources/images/activity/ball.png')"/>
+		<img class="posab wavingastblue" src="#styleUrl('/resources/images/activity/wavingastblue.png')"/>
+		<div class="bigfireball">
+			<p class="sorry">Sorry, </p>
+			<p>you have not taught enough classes</p>
+			<p>with us yet.</p>
+		</div>
+	</div>
+</div>
+<script>
+$(document).ready(function(){
+	var wh=$(window).height();
+	$(".erromessagemain").height(wh);
+	$(".divload").hide();
+});
+</script>

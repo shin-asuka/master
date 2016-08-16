@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="TeacherPeMapper">
+
+	<sql id="teacherPeColumns">teacher_pe.id AS teacher_pe_id, teacher_pe.online_class_id
+		AS
+		teacher_pe_online_class_id, teacher_pe.teacher_id AS
+		teacher_pe_teacher_id,
+		teacher_pe.teacher_name AS
+		teacher_pe_teacher_name, teacher_pe.pe_id AS teacher_pe_pe_id,
+		teacher_pe.serial_number AS teacher_pe_serial_number,
+		teacher_pe.lesson_name AS
+		teacher_pe_lesson_name,
+		teacher_pe.schedule_time AS teacher_pe_schedule_time,
+		teacher_pe.student_name AS teacher_pe_student_name,
+		teacher_pe.student_id AS
+		teacher_pe_student_id,
+		teacher_pe.teacher_comment AS teacher_pe_teacher_comment,
+		teacher_pe.pe_comment AS teacher_pe_pe_comment,
+		teacher_pe.creation_time AS
+		teacher_pe_creation_time,
+		teacher_pe.operator_time AS teacher_pe_operator_time,
+		teacher_pe.status
+		AS teacher_pe_status, teacher_pe.url AS
+		teacher_pe_url,teacher_pe.teacher_action AS teacher_pe_teacher_action,
+		teacher_pe.expired_millis AS teacher_pe_expired_millis,
+		teacher_pe.expired_remind AS expiredRemind,
+		teacher_pe.operator_start_time AS teacher_pe_operator_start_time
+	</sql>
+
+	<sql id="teacherPeWhere">
+		<trim prefix="WHERE" prefixOverrides="AND">
+			<if test="id!=0">AND teacher_pe.id = #{id}</if>
+			<if test="onlineClassId!=0">AND teacher_pe.online_class_id = #{onlineClassId}</if>
+			<if test="teacherId!=0">AND teacher_pe.teacher_id = #{teacherId}</if>
+			<if test="teacherName!=null">AND teacher_pe.teacher_name = #{teacherName}</if>
+			<if test="peId!=-1">AND teacher_pe.pe_id = #{peId}</if>
+			<if test="serialNumber!=null">AND teacher_pe.serial_number = #{serialNumber}</if>
+			<if test="lessonName!=null">AND teacher_pe.lesson_name = #{lessonName}</if>
+			<if test="scheduleTime!=null">AND teacher_pe.schedule_time = #{scheduleTime}</if>
+			<if test="studentName!=null">AND teacher_pe.student_name = #{studentName}</if>
+			<if test="studentId!=0">AND teacher_pe.student_id = #{studentId}</if>
+			<if test="teacherComment!=null">AND teacher_pe.teacher_comment = #{teacherComment}</if>
+			<if test="peComment!=null">AND teacher_pe.pe_comment = #{peComment}</if>
+			<if test="creationTime!=null">AND teacher_pe.creation_time = #{creationTime}</if>
+			<if test="operatorTime!=null">AND teacher_pe.operator_time = #{operatorTime}</if>
+			<if test="status!=0">AND teacher_pe.status = #{status}</if>
+			<if test="url!=null">AND teacher_pe.url = #{url}</if>
+			<if test="teacherAction!=0">AND teacher_pe.teacher_action = #{teacherAction}</if>
+		</trim>
+	</sql>
+
+	<sql id="teacherPeOrder">
+		<if test="orderString!=null">ORDER BY ${orderString}</if>
+	</sql>
+
+	<sql id="teacherPeLimit">LIMIT #{startLine},#{limitLine}</sql>
+
+	<resultMap type="com.vipkid.trpm.entity.TeacherPe" id="teacherPeResultMap">
+		<id column="teacher_pe_id" property="id" />
+		<result column="teacher_pe_online_class_id" property="onlineClassId" />
+		<result column="teacher_pe_teacher_id" property="teacherId" />
+		<result column="teacher_pe_teacher_name" property="teacherName" />
+		<result column="teacher_pe_pe_id" property="peId" />
+		<result column="teacher_pe_serial_number" property="serialNumber" />
+		<result column="teacher_pe_lesson_name" property="lessonName" />
+		<result column="teacher_pe_schedule_time" property="scheduleTime" />
+		<result column="teacher_pe_student_name" property="studentName" />
+		<result column="teacher_pe_student_id" property="studentId" />
+		<result column="teacher_pe_teacher_comment" property="teacherComment" />
+		<result column="teacher_pe_pe_comment" property="peComment" />
+		<result column="teacher_pe_creation_time" property="creationTime" />
+		<result column="teacher_pe_operator_time" property="operatorTime" />
+		<result column="teacher_pe_status" property="status" />
+		<result column="teacher_pe_url" property="url" />
+		<result column="teacher_pe_teacher_action" property="teacherAction" />
+		<result column="teacher_pe_expired_millis" property="expiredMillis" />
+		<result column="teacher_pe_expired_remind" property="expiredRemind" />
+		<result column="teacher_pe_operator_start_time" property="operatorStartTime" />
+	</resultMap>
+
+	<select id="findDao" resultMap="teacherPeResultMap">
+		SELECT
+		<include refid="teacherPeColumns" />
+		FROM teacher_pe
+		<include refid="teacherPeWhere" />
+		<include refid="teacherPeOrder" />
+	</select>
+
+	<select id="countDao" resultType="int">
+		SELECT COUNT(*) FROM teacher_pe
+		<include refid="teacherPeWhere" />
+	</select>
+
+	<select id="pageDao" resultMap="teacherPeResultMap">
+		SELECT
+		<include refid="teacherPeColumns" />
+		FROM teacher_pe
+		<include refid="teacherPeWhere" />
+		<include refid="teacherPeOrder" />
+		<include refid="teacherPeLimit" />
+	</select>
+
+	<select id="limitDao" resultMap="teacherPeResultMap">
+		SELECT
+		<include refid="teacherPeColumns" />
+		FROM teacher_pe
+		<include refid="teacherPeWhere" />
+		<include refid="teacherPeOrder" />
+		<include refid="teacherPeLimit" />
+	</select>
+
+	<insert id="saveDao" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO teacher_pe
+		<trim prefix="(" prefixOverrides=",">
+			<if test="id!=0">,id</if>
+			<if test="onlineClassId!=0">,online_class_id</if>
+			<if test="teacherId!=0">,teacher_id</if>
+			<if test="teacherName!=null">,teacher_name</if>
+			<if test="peId!=-1">,pe_id</if>
+			<if test="serialNumber!=null">,serial_number</if>
+			<if test="lessonName!=null">,lesson_name</if>
+			<if test="scheduleTime!=null">,schedule_time</if>
+			<if test="studentName!=null">,student_name</if>
+			<if test="studentId!=0">,student_id</if>
+			<if test="teacherComment!=null">,teacher_comment</if>
+			<if test="peComment!=null">,pe_comment</if>
+			<if test="creationTime!=null">,creation_time</if>
+			<if test="operatorTime!=null">,operator_time</if>
+			<if test="status!=0">,status</if>
+			<if test="url!=null">,url</if>
+			<if test="teacherAction!=0">,teacher_action</if>
+		</trim>
+		) VALUES
+		<trim prefix="(" prefixOverrides=",">
+			<if test="id!=0">,#{id}</if>
+			<if test="onlineClassId!=0">,#{onlineClassId}</if>
+			<if test="teacherId!=0">,#{teacherId}</if>
+			<if test="teacherName!=null">,#{teacherName}</if>
+			<if test="peId!=-1">,#{peId}</if>
+			<if test="serialNumber!=null">,#{serialNumber}</if>
+			<if test="lessonName!=null">,#{lessonName}</if>
+			<if test="scheduleTime!=null">,#{scheduleTime}</if>
+			<if test="studentName!=null">,#{studentName}</if>
+			<if test="studentId!=0">,#{studentId}</if>
+			<if test="teacherComment!=null">,#{teacherComment}</if>
+			<if test="peComment!=null">,#{peComment}</if>
+			<if test="creationTime!=null">,#{creationTime}</if>
+			<if test="operatorTime!=null">,#{operatorTime}</if>
+			<if test="status!=0">,#{status}</if>
+			<if test="url!=null">,#{url}</if>
+			<if test="teacherAction!=0">,#{teacherAction}</if>
+		</trim>
+		)
+	</insert>
+
+	<update id="updateDao">
+		UPDATE teacher_pe
+		<trim prefix="SET" prefixOverrides=",">
+			<if test="id!=0">,id = #{id}</if>
+			<if test="onlineClassId!=0">,online_class_id = #{onlineClassId}</if>
+			<if test="teacherId!=0">,teacher_id = #{teacherId}</if>
+			<if test="teacherName!=null">,teacher_name = #{teacherName}</if>
+			<if test="peId!=-1">,pe_id = #{peId}</if>
+			<if test="serialNumber!=null">,serial_number = #{serialNumber}</if>
+			<if test="lessonName!=null">,lesson_name = #{lessonName}</if>
+			<if test="scheduleTime!=null">,schedule_time = #{scheduleTime}</if>
+			<if test="studentName!=null">,student_name = #{studentName}</if>
+			<if test="studentId!=0">,student_id = #{studentId}</if>
+			<if test="teacherComment!=null">,teacher_comment = #{teacherComment}</if>
+			<if test="peComment!=null">,pe_comment = #{peComment}</if>
+			<if test="creationTime!=null">,creation_time = #{creationTime}</if>
+			<if test="operatorTime!=null">,operator_time = #{operatorTime}</if>
+			<if test="status!=0">,status = #{status}</if>
+			<if test="url!=null">,url = #{url}</if>
+			<if test="teacherAction!=0">,teacher_action = #{teacherAction}</if>
+			<if test="expiredMillis!=0">,expired_millis = #{expiredMillis}</if>
+			<if test="expiredRemind!=-1">,expired_remind = #{expiredRemind}</if>
+		</trim>
+		<trim prefix="WHERE" prefixOverrides="AND">AND id = #{id}</trim>
+	</update>
+
+	<update id="updateStartTime">
+		UPDATE teacher_pe SET operator_start_time = NOW()
+		WHERE id = #{id}
+	</update>
+
+	<delete id="deleteDao">
+		DELETE FROM teacher_pe
+		<trim prefix="WHERE" prefixOverrides="AND">AND id = #{id}</trim>
+	</delete>
+
+	<select id="randomTeachersForPE" resultType="java.lang.Long">
+		SELECT t.teacher_id
+		from teacher_module t
+		WHERE t.module_name = 'PE'
+	</select>
+
+	<select id="findNotAllocations" resultMap="teacherPeResultMap">
+		SELECT
+		<include refid="teacherPeColumns" />
+		FROM teacher_pe WHERE pe_id = 0
+	</select>
+
+	<select id="findNotRecyclings" resultMap="teacherPeResultMap">
+		SELECT
+		<include refid="teacherPeColumns" />
+		<![CDATA[
+		FROM teacher_pe WHERE status = 0 AND pe_id != 0 AND expired_millis < #{currentTimeMillis} 
+		]]>
+	</select>
+
+	<select id="findNotReminds" resultMap="teacherPeResultMap">
+		SELECT
+		<include refid="teacherPeColumns" />
+		FROM teacher_pe WHERE status = 0 AND expired_remind = 0 AND pe_id != 0
+	</select>
+
+</mapper>

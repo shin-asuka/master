@@ -1,0 +1,342 @@
+<div class="modal fade" id="report-Modal" role="dialog" style="overflow:hidden;" aria-labelledby="reportModal">
+	<style>
+		.tab-content .heightdiv{height:400px; overflow-y:scroll; overflow-x:auto;padding: 8px;text-align:left;}
+	</style>
+	    <div class="modal-dialog report-dialog" style="width: 600px;">
+	      
+	      <div class="modal-content modalPopWaper">
+	        
+	        <div class="modal-header" style="border-bottom:0px;padding-buttom:5px;">
+		          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+		          <h4 class="modal-title"> <strong>Please Fill Out The Student Interview Form.</strong> </h4>
+		          <div style="margin-top:10px;" align="right">
+		            ##if ("UNFINISHED" == "$!currentReport.lifeCycle" || "" == "$!currentReport.lifeCycle" )
+		          	#if ("UNFINISHED" == "$!currentReport.lifeCycle" || "SUBMITTED" == "$!currentReport.lifeCycle" || "" == "$!currentReport.lifeCycle")
+		              <button type="button" class="btn-primary" style="display: inline-block;" onclick="require('report-demo').reportSubmit(false);">Save &amp; Exit</button>
+		              <button type="button" class="btn-primary" style="display: inline-block;" onclick="require('report-demo').reportSubmit(true);">Save &amp; Submit</button>
+		            #end
+		          </div>
+	        </div>
+	        
+	       <div class="modal-body" style="padding-top:5px;"> 
+	       
+	       	  <form id="reportForm" action="#springUrl('/reportSubmit.json')" method="post">
+	       
+	          <ul class="nav nav-tabs">
+				  <li class="active"><a style="color: #777" href="#listening" data-toggle="tab">Listening</a></li>
+				  <li><a style="color: #777" href="#speaking" data-toggle="tab">Speaking</a></li>
+				  <li><a style="color: #777" href="#reading" data-toggle="tab">Reading</a></li>
+				  <li><a style="color: #777" href="#math" data-toggle="tab">Math</a></li>
+				  <li><a style="color: #777" href="#score" data-toggle="tab">Score</a></li>
+	          </ul>
+	          
+	          <div class="tab-content">
+	              
+	              <div class="tab-pane active" id="listening">
+		              #foreach($demoReport in $demoReports.reports)	                
+			                #if ($demoReport.reportName == "listening")
+			               	  	<div class="heightdiv">	
+					               	#foreach ($options in $demoReport.options)
+				                		#set($optionName = $options.title)
+				                		#set($var = "${"+"currentReport"+".${options.title}}")
+					                  	<div >
+						                    <p class="ng-binding">$options.title : $options.body.en </p>
+						                    <label>
+						                      <input type="radio" name="$optionName" field="#evaluate($var)" value="0" class="ng-pristine ng-valid" />
+						                      Y</label>
+						                    <label>
+						                      <input type="radio" name="$optionName" field="#evaluate($var)" value="1" class="ng-pristine ng-valid" />
+						                      WD</label>
+						                    <label>
+						                      <input type="radio" name="$optionName" field="#evaluate($var)" value="2" class="ng-pristine ng-valid" />
+						                      N</label>
+						                    <hr class="ihr" />
+					                    </div>
+				                     #end ## ------------for options
+					          	</div>    
+				            #end  ##---------for demoReport
+		               #end ## -------- if
+	              </div>
+	              
+	              <div class="tab-pane" id="speaking">
+		              #foreach($demoReport in $demoReports.reports) 		            
+			              	#if($demoReport.reportName == "speaking")
+			              	    <div class="heightdiv">
+					                #foreach($options in $demoReport.options)
+						                  #set($optionName = $options.title )
+						                  #set($var = "${"+"currentReport"+".${options.title}}")
+						                  <div>
+						                    <p class="ng-binding">$options.title: $options.body.en </p>
+						                    <label>
+						                      <input type="radio" name="$optionName" field="#evaluate($var)" value="0" class="ng-pristine ng-valid" />
+						                      Y</label>
+						                    <label>
+						                      <input type="radio" name="$optionName" field="#evaluate($var)" value="1" class="ng-pristine ng-valid" />
+						                      WD</label>
+						                    <label>
+						                      <input type="radio" name="$optionName" field="#evaluate($var)" value="2" class="ng-pristine ng-valid" />
+						                      N</label>
+						                    <hr class="ihr" />
+						                  </div>
+					                #end  ##--------for options
+				                </div>
+			                #end  ##--------for demoReport
+		              #end 	##--------if
+	              </div>
+	              
+	              <div class="tab-pane" id="reading">
+		              #foreach($demoReport in $demoReports.reports)
+			              	#if($demoReport.reportName == "reading")
+				                <div class="heightdiv">
+					                  #foreach($options in  $demoReport.options)
+					                      #set($optionName = $options.title )
+					                      #set($var = "${"+"currentReport"+".${options.title}}")
+						                  <div>
+						                    <p class="ng-binding" > $options.title . $options.body.en </p>
+						                    <label>
+						                      <input type="radio" name="$optionName" field="#evaluate($var)" value="0" class="ng-pristine ng-valid" />
+						                      Y</label>
+						                    <label>
+						                      <input type="radio" name="$optionName" field="#evaluate($var)"  value="1" class="ng-pristine ng-valid" />
+						                      WD</label>
+						                    <label>
+						                      <input type="radio" name="$optionName" field="#evaluate($var)" value="2" class="ng-pristine ng-valid" />
+						                      N</label>
+						                    <hr class="ihr" />
+						                  </div>
+					                  #end  ##---------------end option
+				                </div>
+			                #end  ## ------------End demo
+		              #end ## ---------- if
+	              </div>
+	              
+	              <div class="tab-pane" id="math">
+		              #foreach($demoReport in $demoReports.reports)
+			              	#if($demoReport.reportName == "math")
+				                <div class="heightdiv">
+					                  #foreach($options in  $demoReport.options)
+					                      #set($optionName = $options.title )
+					                      #set($var = "${"+"currentReport"+".${options.title}}")
+						                  <div>
+						                    <p class="ng-binding" > $options.title . $options.body.en </p>
+						                    <label>
+						                      <input type="radio" name="$optionName" field="#evaluate($var)" value="0" class="ng-pristine ng-valid" />
+						                      Y</label>
+						                    <label>
+						                      <input type="radio" name="$optionName" field="#evaluate($var)"  value="1" class="ng-pristine ng-valid" />
+						                      WD</label>
+						                    <label>
+						                      <input type="radio" name="$optionName" field="#evaluate($var)" value="2" class="ng-pristine ng-valid" />
+						                      N</label>
+						                    <hr class="ihr" />
+						                  </div>
+					                  #end  ##---------------end option
+				                </div>
+			                #end  ## ------------End demo
+		              #end ## ---------- if
+	              </div>
+	              	              
+	              <div class="tab-pane" id="score">
+	                  <div class="heightdiv">
+		                  ##1
+		                  <div class="histogram-container"> 
+			                    <div class="histogram-bg-line">
+				                      <ul>
+				                        <li><div></div></li>
+				                        <li><div></div></li>
+				                        <li><div></div></li>
+				                        <li><div></div></li>
+				                      </ul>
+				                      <ul>
+				                        <li><div></div></li>
+				                        <li><div></div></li>
+				                        <li><div></div></li>
+				                        <li><div></div></li>
+				                      </ul>
+				                      <ul>
+				                        <li><div></div></li>
+				                        <li><div></div></li>
+				                        <li><div></div></li>
+				                        <li><div></div></li>
+				                      </ul>
+				                      <ul>
+				                        <li><div></div></li>
+				                        <li><div></div></li>
+				                        <li><div></div></li>
+				                        <li><div></div></li>
+				                      </ul>
+				                      <ul>
+				                        <li><div></div></li>
+				                        <li><div></div></li>
+				                        <li><div></div></li>
+				                        <li><div></div></li>
+				                      </ul>
+			                    </div>
+			                    <div class="histogram-content">
+			                      <ul>
+				                      #foreach($level in $reportLevels.levels)
+					                      #if($velocityCount < 5)
+					                        <li> 				                        	
+					                        	<span class="histogram-box"> 
+					                        	
+					                        	<a href="javascript:;" name="hisLevel$velocityCount" 
+					                            
+					                            onclick="require('report-demo').selectLevel('${level.name}','$velocityCount')" 
+					                            
+					                            #if($velocityCount == 1)
+					                            	class="hisLevel$velocityCount"
+					                            #else
+					                            	class="selected"
+					                            #end
+					                            #set($height = $velocityCount * 13)
+					                            style="height:${height}%" title="${level.name}">
+					                            
+					                            </a> 
+					                            
+					                            </span>
+					                            <span class="name">$!level.name</span> 
+					                        </li>
+					                      #end
+				                      #end 
+			                      </ul>
+			                      
+			                    </div>
+		                   </div>
+		                   
+		                   <div id="histogram-container">
+				               #foreach($level in $reportLevels.levels)
+			                   <div class="ng-scope"  #if($velocityCount == 1)  style="display:block;" #else style="display:none;"  #end id="$level.name">
+			                   		<p>Unit:</p>
+					                    #foreach($option in $level.options)
+						                     #if($option.show)
+							                      <label>
+							                        <input style="margin-left: 30px;" type="radio" name="level" value="$!option.value" class="ng-pristine ng-valid" />
+							                        <span>$!option.title</span>
+							                      </label>
+						                     #end
+					                    #end
+				                    <hr class="ihr" />			                    
+			                   </div>
+			                   #end
+		                   </div>
+		                   
+		                   <div>
+			                    <p>Attention:</p>
+			                    <label>
+						            <input style="margin-left: 30px;" type="radio" name="attention"  field="$!currentReport.attention" value="1" class="ng-pristine ng-valid" />
+						            1</label>
+						          <label>
+						            <input style="margin-left: 30px;" type="radio" name="attention"  field="$!currentReport.attention" value="2" class="ng-pristine ng-valid" />
+						            2</label>
+						          <label>
+						            <input style="margin-left: 30px;" type="radio" name="attention"  field="$!currentReport.attention" value="3" class="ng-pristine ng-valid" />
+						            3</label>
+						          <label>
+						            <input style="margin-left: 30px;" type="radio" name="attention"  field="$!currentReport.attention" value="4" class="ng-pristine ng-valid" />
+						            4</label>
+						          <label>
+						            <input style="margin-left: 30px;" type="radio" name="attention"  field="$!currentReport.attention" value="5" class="ng-pristine ng-valid" />
+						            5</label>
+			                    	<hr class="ihr" />
+		                  </div>
+		                  <div>
+			                    <p>Interaction:</p>
+			                    <label>
+					            <input style="margin-left: 30px;" type="radio" name="interaction" field="$!currentReport.interaction" value="1" class="ng-pristine ng-valid" />
+						            1</label>
+						          <label>
+						            <input style="margin-left: 30px;" type="radio" name="interaction" field="$!currentReport.interaction" value="2" class="ng-pristine ng-valid" />
+						            2</label>
+						          <label>
+						            <input style="margin-left: 30px;" type="radio" name="interaction" field="$!currentReport.interaction" value="3" class="ng-pristine ng-valid" />
+						            3</label>
+						          <label>
+						            <input style="margin-left: 30px;" type="radio" name="interaction" field="$!currentReport.interaction" value="4" class="ng-pristine ng-valid" />
+						            4</label>
+						          <label>
+						            <input style="margin-left: 30px;" type="radio" name="interaction" field="$!currentReport.interaction" value="5" class="ng-pristine ng-valid" />
+						            5</label>
+			                    	<hr class="ihr" />
+		                  </div>
+		                  <div>
+				                  <p>Confidence:</p>
+				                    <label>
+						            <input style="margin-left: 30px;" type="radio" name="confidence" field="$!currentReport.confidence" value="1" class="ng-pristine ng-valid" />
+						            1</label>
+						          <label>
+						            <input style="margin-left: 30px;" type="radio" name="confidence" field="$!currentReport.confidence" value="2" class="ng-pristine ng-valid" />
+						            2</label>
+						          <label>
+						            <input style="margin-left: 30px;" type="radio" name="confidence" field="$!currentReport.confidence" value="3" class="ng-pristine ng-valid" />
+						            3</label>
+						          <label>
+						            <input style="margin-left: 30px;" type="radio" name="confidence" field="$!currentReport.confidence" value="4" class="ng-pristine ng-valid" />
+						            4</label>
+						          <label>
+						            <input style="margin-left: 30px;" type="radio" name="confidence" field="$!currentReport.confidence" value="5" class="ng-pristine ng-valid" />
+						            5</label>
+				                    <hr class="ihr" />
+		                  </div>
+		                  <div>
+			                    <p>Independent:</p>
+			                    <label>
+						            <input style="margin-left: 30px;" type="radio" name="independent" field="$!currentReport.independent" value="1" class="ng-pristine ng-valid" />
+						            1</label>
+						          <label>
+						            <input style="margin-left: 30px;" type="radio" name="independent" field="$!currentReport.independent" value="2" class="ng-pristine ng-valid" />
+						            2</label>
+						          <label>
+						            <input style="margin-left: 30px;" type="radio" name="independent" field="$!currentReport.independent" value="3" class="ng-pristine ng-valid" />
+						            3</label>
+						          <label>
+						            <input style="margin-left: 30px;" type="radio" name="independent" field="$!currentReport.independent" value="4" class="ng-pristine ng-valid" />
+						            4</label>
+						          <label>
+						            <input style="margin-left: 30px;" type="radio" name="independent" field="$!currentReport.independent" value="5" class="ng-pristine ng-valid" />
+						            5</label>
+			                    	<hr class="ihr" />
+		                  </div>
+		                  <div>
+			                    <p>Mouse:</p>
+			                    <label>
+						            <input style="margin-left: 30px;" type="radio" name="mouse" field="$!currentReport.mouse" value="1" class="ng-pristine ng-valid" />
+						            1</label>
+						          <label>
+						            <input style="margin-left: 30px;" type="radio" name="mouse" field="$!currentReport.mouse" value="2" class="ng-pristine ng-valid" />
+						            2</label>
+						          <label>
+						            <input style="margin-left: 30px;" type="radio" name="mouse" field="$!currentReport.mouse" value="3" class="ng-pristine ng-valid" />
+						            3</label>
+						          <label>
+						            <input style="margin-left: 30px;" type="radio" name="mouse" field="$!currentReport.mouse" value="4" class="ng-pristine ng-valid" />
+						            4</label>
+						          <label>
+						            <input style="margin-left: 30px;" type="radio" name="mouse" field="$!currentReport.mouse" value="5" class="ng-pristine ng-valid" />
+						            5</label>
+			                    	<hr class="ihr" />
+		                  </div>
+		                  <div>
+			                    <p>Comment:</p>
+			                    <textarea style="height: 120px; width: 100%;" name="comment" class="ng-pristine ng-valid">$!currentReport.comment</textarea>
+		                  </div>
+			            <input type="hidden" name="id" value="$currentReport.id" />
+			            <input type="hidden" id="onlineClassId" name="onlineClassId" value="$!currentReport.onlineClassId" />
+	               </div>            
+	            </div>
+			</div>
+			##tab-content end
+	        </form>
+        </div>
+        ##body end
+      </div>
+      ##content end
+    </div>
+    ##dialog end
+	#@script()
+        $(function(){
+        	require("report-demo").listener();
+            require("report-demo").setLevel($!currentReport.level);
+        });
+	#end
+</div>
+##modul end

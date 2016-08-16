@@ -1,0 +1,150 @@
+<div class="tab-pane active" id="basic" style="border: 0px;">
+    <div class="row form-group">
+      <div align="right" class="col-sm-3 col-md-3">
+        <div class='title-lable'>Professional profile picture</div>
+      </div>
+      <div class="col-sm-9 col-md-9"> 
+          #if($stringUtils.contains($!{TRPM_TEACHER.avatar}, 'http://')) 
+          	<img class="avatarImg" src="$!{TRPM_TEACHER.avatar}" onerror="javascript:this.src='${resourceTool.oss.url_preffix}/static/images/teacher_portal/default_avatar.png';this.onerror=null;" style="width:100px; margin:0 30px 0 5px;"/> 
+          #else 
+          	<img class="avatarImg" src="#if($!{TRPM_TEACHER.avatar})${resourceTool.oss.url_preffix}/$!{TRPM_TEACHER.avatar}#end" onerror="javascript:this.src='${resourceTool.oss.url_preffix}/static/images/teacher_portal/default_avatar.png';this.onerror=null;" style="width:100px; margin:0 30px 0 5px;"/> 
+          #end
+      </div>
+    </div>
+    <div class="row form-group">
+      <div align="right" class="col-sm-3 col-md-3">
+        <div class='title-lable'>Email address</div>
+      </div>
+      <div class="col-sm-9 col-md-9">
+        $!{TRPM_TEACHER.email}
+      </div>
+    </div>
+    <div class="row form-group">
+      <div align="right" class="col-sm-3 col-md-3">
+        <div class='title-lable'>Display name</div>
+      </div>
+      <div class="col-sm-9 col-md-9">
+        #** 必填项 *# 
+        $!{TRPM_USER.name}
+      </div>
+    </div>
+    <div class="row form-group">
+      <div align="right" class="col-sm-3 col-md-3">
+       <div class='title-lable'>Gender</div>
+      </div>
+      <div class="col-sm-9 col-md-9">
+        $!{TRPM_USER.gender.substring(0,1)}$!{TRPM_USER.gender.substring(1).toLowerCase()}
+      </div>
+    </div>
+    <div class="row form-group">
+      <div align="right" class="col-sm-3 col-md-3">
+        <div class='title-lable'>Birthday</div>
+      </div>
+      <div class="col-sm-9 col-md-9">
+        #** 必填项 *# 
+        $!{TRPM_TEACHER.birthday}
+      </div>
+    </div>
+    <div class="row form-group">
+      <div align="right" class="col-sm-3 col-md-3">
+        <div class='title-lable'>Nationality</div>
+      </div>
+      <div class="col-sm-9 col-md-9">
+        $!{TRPM_TEACHER.country}
+      </div>
+    </div>
+    <div class="row form-group">
+      <div align="right" class="col-sm-3 col-md-3">
+        <div class='title-lable'>Time zone</div>
+      </div>
+      <div class="col-sm-9 col-md-9">
+        $!{TRPM_TEACHER.timezone}
+      </div>
+    </div>
+    <div class="row form-group">
+      <div align="right" class="col-sm-3 col-md-3">
+        <div class='title-lable'>Mobile</div>
+      </div>
+      <div class="col-sm-9 col-md-9">
+        #** 必填项 *# 
+        $!{TRPM_TEACHER.phoneNationCode} $!{TRPM_TEACHER.mobile}
+      </div>
+    </div>
+    <div class="row form-group">
+      <div align="right" class="col-sm-3 col-md-3">
+        <div class='title-lable'>Skype</div>
+      </div>
+      <div class="col-sm-9 col-md-9">
+        #** 必填项 *# 
+        $!{TRPM_TEACHER.skype}
+      </div>
+    </div>
+    <div class="row form-group">
+      <div align="right" class="col-sm-3 col-md-3">
+        <div class='title-lable'>Your current location</div>
+      </div>
+      <div class="col-sm-9 col-md-9" style="line-height:30px;">
+      	#if($currentAddress)
+	        <div>$!{currentCountry.name}  $!{currentState.name}  $!{currentCity.name}</div>
+	        <div>$!{currentAddress.streetAddress}</div>
+	        <div>$!{currentAddress.zipCode}</div>
+        #else
+        	<div>$!{TRPM_TEACHER.address}</div>
+        #end
+      </div>
+    </div>
+    <div class="row form-group">
+      <div align="right" class="col-sm-3 col-md-3">
+        <div class='title-lable'>College/University</div>
+      </div>
+      <div class="col-sm-9 col-md-9">
+        $!{TRPM_TEACHER.graduatedFrom}
+      </div>
+    </div>
+    <div class="row form-group">
+      <div align="right" class="col-sm-3 col-md-3">
+        <div class='title-lable'>Hightest level of education</div>
+      </div>
+      <div id="eduLevel" class="col-sm-9 col-md-9">
+      </div>
+      <script type="text/javascript">
+      var before = "$!{TRPM_TEACHER.highestLevelOfEdu}";
+      var after = "";
+      switch(before){
+      case "HIGH_SCHOOL" : after = "High School" ;break;
+      case "ASSOCIATES" : after = "Associate's"; break;
+      case "BACHELORS" : after = "Bachelor's" ;break;
+      case "MASTERS" : after = "Master's"; break;
+      case "PHD" : after = "PhD"; break;
+      default : after = "";
+      }
+      document.getElementById("eduLevel").innerHTML=after;
+      </script>
+    </div>
+    <div class="row form-group">
+      <div align="right" class="col-sm-3 col-md-3">
+        <div class='title-lable'>Self introduction</div>
+      </div>
+      <div class="col-sm-9 col-md-9">
+        #** 必填项 *# 
+        $!{TRPM_TEACHER.introduction}
+      </div>
+    </div>
+     <div class="row form-group">
+      <div align="right" class="col-sm-3 col-md-3">
+        <div class='title-lable'>Personal recruitment url</div>
+      </div>
+      <div class="col-sm-7 col-md-7">
+      	<input readonly="true" style="border:0px;background:RGB(249,249,242);width:100%;" type="text" value="$!{recruitmentUrl}home.shtml?refereeId=$!{TRPM_TEACHER.id}" id="copyurl"/>
+      </div>
+      <div class="col-sm-2 col-md-2">
+        <button id="urlButton" type="button" class="btn btn-seft" style="margin:-10px 10px 0px 0px;width:100px;">Copy Link</button>
+      </div>
+    </div>
+    <div class="row form-group form-inline"> 
+    	<div align="right" class="col-sm-10 col-md-10">&nbsp;</div>
+      	<div class="col-sm-2 col-md-2">
+      		<input id="toEdit" url="#springUrl('/personal/basicinfo_edit.shtml')" type="button" class="btn btn-primary" style="margin:0px 10px 0px 0px;width:100px;" value="Edit" />
+      	</div>
+    </div>
+</div>

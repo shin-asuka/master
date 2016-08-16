@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://java.sun.com/xml/ns/javaee"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+	id="TRPM" version="3.0">
+
+	<display-name>TRPM Web</display-name>
+
+	<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>classpath:spring/applicationContext.xml</param-value>
+	</context-param>
+
+	<filter>
+		<filter-name>EncodingFilter</filter-name>
+		<filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+		<async-supported>true</async-supported>
+		<init-param>
+			<param-name>encoding</param-name>
+			<param-value>UTF-8</param-value>
+		</init-param>
+	</filter>
+
+	<filter-mapping>
+		<filter-name>EncodingFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+
+    <filter>
+        <filter-name>GZipServletFilter</filter-name>
+        <filter-class>com.vipkid.trpm.filter.GZipServletFilter</filter-class>
+        <async-supported>true</async-supported>
+    </filter>
+    
+	<filter-mapping>
+		<filter-name>GZipServletFilter</filter-name>
+		<url-pattern>*.js</url-pattern>
+		<url-pattern>*.jpg</url-pattern>
+		<url-pattern>*.png</url-pattern>
+		<url-pattern>*.css</url-pattern>
+	</filter-mapping>
+	
+	<filter>
+		<filter-name>htmlEncodingFilter</filter-name>
+		<filter-class>com.vipkid.trpm.interceptor.HtmlEncodingFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>htmlEncodingFilter</filter-name>
+		<url-pattern>*.shtml</url-pattern>
+		<url-pattern>*.json</url-pattern>
+	</filter-mapping>
+	
+	<listener>
+		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+	</listener>
+	
+	<listener>  
+        <listener-class>org.springframework.web.context.request.RequestContextListener</listener-class>
+	</listener> 
+
+	<servlet>
+		<servlet-name>action</servlet-name>
+		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+		<async-supported>true</async-supported>
+	</servlet>
+	
+	<servlet-mapping>
+		<servlet-name>action</servlet-name>
+		<url-pattern>*.shtml</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>action</servlet-name>
+		<url-pattern>*.json</url-pattern>
+	</servlet-mapping>
+	
+	<servlet-mapping>
+		<servlet-name>action</servlet-name>
+		<url-pattern>/api/*</url-pattern>
+	</servlet-mapping>
+
+	<welcome-file-list>
+		<welcome-file>index.shtml</welcome-file>
+	</welcome-file-list>
+
+   	<error-page>
+		<error-code>500</error-code>
+		<location>/common/500.jsp</location>
+	</error-page>
+
+	<error-page>
+		<error-code>404</error-code>
+		<location>/common/404.jsp</location>
+	</error-page>
+	
+	<error-page>
+		<error-code>405</error-code>
+		<location>/common/404.jsp</location>
+	</error-page>	
+	
+	<error-page>
+		<error-code>400</error-code>
+		<location>/common/400.jsp</location>
+	</error-page>
+	
+
+</web-app>

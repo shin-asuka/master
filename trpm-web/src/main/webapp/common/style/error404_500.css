@@ -1,0 +1,317 @@
+﻿@charset "utf-8";
+/* CSS Document */
+*{
+	margin:0 auto;
+}
+body{
+	position:relative;
+	text-align:center;
+	font-family:"Microsoft YaHei","Arial";
+	font-size:14px;
+	color:#333;
+        
+      height:800px;
+      overflow: hidden;
+}
+
+body, ul, ol, li, p, h1, h2, h3, h4, h5, h6, form, fieldset, table, td, img, div, dl, dt, dd, p, label, input, button {
+    border: 0 none;
+    margin: 0;
+    padding: 0;
+}
+.bg404{
+	background:#372f3c;
+}
+.bg500{
+	background:#22b4e7;
+}
+img{
+	max-width:100%;
+}
+/*--------------------------404-----------------------*/
+.main404{
+	
+	top:0px;
+	left:0px;
+	width:100%;
+	height:800px;
+	
+	background-size:100% 100%;
+	
+	display: block;
+}
+.main404 p{
+      font-size:16px;
+      width:300px;
+      color:#fff;
+      position: absolute;
+     top:500px;
+     left:50%;
+     margin-left:-150px;
+     margin-bottom: 30px;
+ }
+ 
+ .backhome404:hover{
+ 	background:#4b4450;
+ }
+ .main404 .anball{
+  display: block;
+  width:124px;
+  height:123px;
+  position: absolute;
+  margin-top:-381px;
+  margin-left:-100px;
+}
+/*-----------------ch404-------------------*/
+.content{
+	position:fixed;
+	top:0;
+	left:0;
+	width:100%;
+	height:100%;
+}
+.main{
+	position:absolute;
+	height:700px;
+	width:700px;
+	top:50%;
+	left:50%;
+	margin-top:-350px;
+	margin-left:-350px;
+	
+	
+}
+.mainch404{
+	
+	top:0px;
+	left:0px;
+	width:100%;
+	height:800px;
+    position:absolute;
+	display: block;
+	text-align:center;
+	
+}
+.sorrymessage500{
+      font-size:16px;
+      width:400px;
+      color:#fff;
+      position: absolute;
+     top:224px;
+     left:50%;
+     margin-left:-200px;
+     margin-bottom: 30px;
+	
+ }
+ .sorrymessage404{
+      font-size:16px;
+      width:300px;
+      color:#fff;
+      position: absolute;
+     top:427px;
+     left:50%;
+     margin-left:-150px;
+     margin-bottom: 30px;
+ }
+ .main a{
+ 	display: block;
+ 	width:88px;
+ 	height:35px;
+ 	border:1px solid #fff;
+ 	line-height: 35px;
+ 	font-size:14px;
+ 	text-decoration: none;
+ 	color:#fff;
+ 	position:absolute;
+	z-index:20px;
+    top:543px;
+    left:50%;
+	margin-left:-44px;
+ }
+ .main .anball{
+  display: block;
+  width:124px;
+  height:123px;
+  position: absolute;
+ top:260px;
+ left:50%;
+ margin-left:-62px;
+border-radius: 124px;
+}
+
+#rocket{background: url(../images/rocket.png) no-repeat;
+  width:95px;
+  margin-left:-47.5px;
+  height:190px;
+  position:absolute; 
+  z-index:10;
+  animation:sheng 2.5s linear  infinite ;
+  -webkit-animation: sheng 2.5s linear  infinite ;
+  display: block; 
+  left:50%;
+  top:50px;
+}
+
+#anball{animation:zhuan 2.5s linear  infinite ;
+-webkit-animation: zhuan 2.5s linear  infinite ;
+-moz-animation:zhuan 2.5s linear  infinite ;
+-ms-animation:zhuan 2.5s linear  infinite ;
+-o-animation:zhuan 2.5s linear  infinite ;}
+@-webkit-keyframes zhuan {
+    0% {transform:rotate(0) ;}
+    50%{box-shadow: inset 5px 5px 2px 2px #ccc;}
+    100% {transform:rotate(360deg) ;transform:scale(-1);}
+}
+@-moz-keyframes zhuan {
+    0% {transform:rotate(0) ;}
+    50%{box-shadow: inset 5px 5px 2px 2px #ccc;}
+    100% {transform:rotate(360deg) ;}
+}
+@-o-keyframes zhuan {
+    0% {transform:rotate(0) ;}
+    50%{box-shadow: inset 5px 5px 2px 2px #ccc;}
+    100% {transform:rotate(360deg) ;}
+}
+@-ms-keyframes zhuan {
+    0% {transform:rotate(0) ;}
+    50%{box-shadow: inset 5px 5px 2px 2px #ccc;}
+    100% {transform:rotate(360deg) ;transform:scale(-1);}
+}
+@-webkit-keyframes zhuan {
+    0% {transform:rotate(0) ;}
+    50%{box-shadow: inset 5px 5px 2px 2px #ccc;}
+    100% {transform:rotate(360deg) ;transform:scale(-1);}
+}
+@keyframes zhuan {
+    0% {transform:rotate(0) ;}
+ 50%{box-shadow: inset 5px 5px 2px 2px #ccc;}
+    100% {transform:rotate(360deg) ;transform:scale(-1);}
+}
+
+@-webkit-keyframes sheng {
+    0% {top:0px;opacity:1;}
+    50%{top:50px;}
+    60%{top:-300px;
+      }
+    100% {top:0px;
+transform:scale(-1);
+
+    }
+}
+@keyframes sheng {
+    0% {top:0px;opacity:1;}
+    50%{top:50px;}
+    60%{top:-300px;}
+    100% {top:0px;
+transform:scale(-1);
+
+    }
+}
+
+/*--------------------------500-----------------------*/
+.home_bg {
+    /* background: url(../images/body_bg.png) no-repeat; 
+    background-size: 100% 100%;*/
+    background-image: -webkit-radial-gradient(circle at center, #aadbf3, #22b4e7);
+    background-image: radial-gradient(circle at center, #aadbf3, #22b4e7);
+}
+.main500{
+  
+  top:0px;
+  left:0px;
+  width:100%;
+  display: block;
+}
+.main500 p{
+      font-size:16px;
+      width:308px;
+      color:#fff;
+      position: absolute;
+     top:314px;
+     left:50%;
+     margin-left:-150px;
+     margin-bottom: 30px;
+ 
+ }
+ .main500 a{
+  display: block;
+  width:88px;
+  height:35px;
+  border:1px solid #fff;
+  line-height: 35px;
+  font-size:14px;
+  text-decoration: none;
+  color:#fff;
+  position: relative;
+    top:710px;
+ }
+.backhome500:hover{
+	background:#41bdea;
+}
+@keyframes blink{
+  0%{opacity: 1;}
+  50%{opacity: 1;}
+  50.01%{opacity: 0;} /* 注意这里定义50.01%立刻透明度为０，可以设置闪烁效果 */
+  100%{opacity: 0;} 
+}
+
+
+/* 定义keyframe动画，命名为blink */
+
+@keyframes blink{
+  0%{opacity: 1;}
+  50%{opacity: 1;}
+  50.01%{opacity: 0;} /* 注意这里定义50.01%立刻透明度为０，可以设置闪烁效果 */
+  100%{opacity: 0;} 
+}
+
+/* 添加兼容性前缀 */
+
+@-webkit-keyframes blink {
+    0% { opacity: 1; }
+    50% { opacity: 1; }
+    50.01% { opacity: 0; }
+    100% { opacity: 0; }
+}
+
+@-moz-keyframes blink {
+    0% { opacity: 1; }
+    50% { opacity: 1; }
+    50.01% { opacity: 0; }
+    100% { opacity: 0; }
+}
+
+@-ms-keyframes blink {
+    0% { opacity: 1; }
+    50% { opacity: 1; }
+    50.01% { opacity: 0; }
+    100% { opacity: 0; }
+}
+
+@-o-keyframes blink {
+    0% { opacity: 1; }
+    50% { opacity: 1; }
+    50.01% { opacity: 0; }
+    100% { opacity: 0; }
+}
+
+/* 定义blink类*/
+.blink{
+    animation: blink 1s linear infinite;  
+    /* 其它浏览器兼容性前缀 */
+    -webkit-animation: blink 2s linear infinite;
+    -moz-animation: blink 2s linear infinite;
+    -ms-animation: blink 2s linear infinite;
+    -o-animation: blink 2s linear infinite;
+    
+}
+.effect01{
+	font-size:20px;
+    color:#fefefe;
+    text-shadow:
+    0px 1px 0px #c0c0c0,
+    0px 2px 0px #b0b0b0,
+    0px 3px 0px #a0a0a0,
+    0px 4px 0px #909090,
+    0px 5px 10px rgba(0, 0, 0, 0.6);
+}

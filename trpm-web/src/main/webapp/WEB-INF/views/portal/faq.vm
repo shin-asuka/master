@@ -1,0 +1,583 @@
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>FAQ Page</title>
+  <link rel="stylesheet" href="#styleUrl('/resources/styles/portal/bootstrap.min.css')" />
+  
+  <script src="#styleUrl('/resources/js/libs/jquery.1.11.3.min.js')"></script>
+  <script src="#styleUrl('/resources/js/libs/bootstrap.min.js')"></script>
+  
+  <style>
+  p{
+  	margin:0;
+  }
+  .tab{
+  		color:#888;
+  		border:1px solid #888;
+  		background:inherit;
+  }
+  .nav-pills>li.active>a, .nav-pills>li.active>a:focus, .nav-pills>li.active>a:hover{
+   		color: #dd4814;
+    	background-color: inherit;
+    	border:1px solid #dd4814;
+   }
+  .remark{
+  	margin-top:10px;
+  	margin-bottom:5px;
+  }
+  	.collapse.in,.collapsing{
+  		border-left: 1px solid #ccc;
+    	border-right: 1px solid #ccc;
+    	border-top: 1px solid #ccc;
+    	border-bottom: 1px solid #999;
+    	background:#fff;
+    	margin-bottom: 10px;
+  	}
+  	.content-title{
+  		background:#dfdfdf;
+  		padding-left: 45px;
+  		padding-top: 5px;
+    	padding-bottom: 5px;
+    	cursor:pointer;
+  	}
+  	.content-content{
+  		margin-left: 45px;
+  		margin-top: 10px;
+    	margin-bottom: 22px;
+  	}
+  	.dropdown-toggle{
+  		color:black;
+  		display:block;
+  		background:white;
+  		padding:7px;
+  		padding-left: 25px;
+  		border:1px solid #ccc;
+  		margin-bottom: 7px;
+  	}
+  	.dropdown-toggle:focus, .dropdown-toggle:hover {
+    	color: #dd4814;
+    	text-decoration:none;
+	}
+	.nav-pills>li>a:focus, .nav-pills>li>a:hover{
+		color: #dd4814;
+	}
+	.part{
+	  margin-bottom:10px;
+	}
+	.tab2-size1{
+		margin-bottom:20px;
+		font-size: 20px;
+	}
+	.tab2-size2{
+		margin-bottom:20px;
+	}
+	.caret{
+		float:right;
+		margin: 8px;
+	}
+	img{
+	display: block;
+	border:1px solid #ccc;
+	margin-bottom:10px;
+	}
+  </style>
+  
+  <script type="text/javascript">
+		$(function(){
+		   // jQuery 代码...
+			$(".content-title").click(function(){
+		  		var id1 = "title"+$(this).attr("id");
+		  		var id2 = $(this).attr("id")+"-item-title";
+		  		if($(this).parent().attr("class")=="collapse in"){
+		  			$("#"+id1).click();
+			  		$("#"+id2).show(300);
+		  		}
+		  		});
+		  	$(".dropdown").click(function(){
+		  			var thisid = $(this).attr("id");
+		  			var targetid = "question"+thisid.split("-")[0];
+		  			if($("#"+targetid).attr("class") == "collapse"){
+		  				$(this).hide();
+		  			}
+		  		});
+		});
+  </script>
+</head>
+<body style="font-family:Microsoft Yahei;background: #f5f4ee;margin-top: 40px;margin-right: 60px;margin-bottom: 40px;margin-left: 60px;">
+
+	<ul id="myTab" class="nav nav-pills">
+		<li class="active" style="margin-right:20px"><a class="tab" href="#tab1" data-toggle="tab">Troubleshooting Guide </a></li>
+		<li><a class="tab" href="#tab2" data-toggle="tab">Chinese phrases to parents</a></li>
+	</ul>
+	
+	<div id="myTabContent" class="tab-content">
+	
+			<!--第一个tab的内容-->
+			<div class="tab-pane fade in active" id="tab1">
+					<p class="remark">Take a look at the information below to try and solve any IT problems you may encounter.</p>
+					
+					<!--item的标题-->
+					<div id="1-item-title" class="dropdown">
+				      	<a id="title1" class="dropdown-toggle" data-toggle="collapse" href="#question1">
+				         	1. Kicked out of classroom<span class="caret"></span>
+				      	</a>
+				     </div>
+				     
+				  <!--下面是展开item的内容-->
+			      <div class="collapse" id="question1">
+			      	<div id="1" class="content-title dropup">
+			      		1. Kicked out of classroom<span class="caret"></span>
+			      	</div>
+			         <div  class="content-content">
+			         	<div class="part">
+			         		Description:<br/>
+			         		Classroom loads continually, teacher or student is kicked out of classroom
+			         	</div>
+			         	<div class="part">
+			         		Issue:<br/>
+			         		 Unstable network
+			         	</div>
+			         	<div class="part">
+				         	Resolution:<br/>
+							1. Use Google Chrome<br/>
+							2. Refresh the tab<br/>
+							3.  Re-start computer<br/>
+							4.  Re-start router<br/>
+							5.  Plug in to router manually using an ethernet cord<br/>
+							6. Contact Internet Service Provider to upgrade Internet package/connection
+			         	</div>
+					</div>
+			      </div>
+			      
+			      <!--item的标题-->
+					<div id="2-item-title" class="dropdown">
+				      	<a id="title2" class="dropdown-toggle" data-toggle="collapse" href="#question2">
+				         	2. Video delay or resolution<span class="caret"></span>
+				      	</a>
+				     </div>
+				     
+				  <!--下面是展开item的内容-->
+			      <div class="collapse" id="question2">
+			      	<div id="2" class="content-title dropup">
+			      		2. Video delay or resolution<span class="caret"></span>
+			      	</div>
+			         <div  class="content-content">
+			         	<div class="part">
+			         		Description:<br/>
+			         		Teacher or student video is delayed
+			         	</div>
+			         	<div class="part">
+			         		Reason:<br/>
+			         		1）Slow network speed<br/>
+							2）Out dated video driver
+			         	</div>
+			         	<div class="part">
+				         	Resolution:<br/>
+							1. Use Google Chrome<br/>
+							2. Refresh the tab<br/>
+							3.  Re-start computer<br/>
+							4.  Re-start router<br/>
+							5.  Plug in to router manually using an ethernet cord <br/>
+							6.  If using a PC, download the Lot Client (see Part 1 details below)<br/>
+							7. Upgrade your video driver (see Part 2 details below)<br/>
+							8. Contact Internet Service Provider to upgrade Internet package/connection
+			         	</div>
+			         	<div class="part">
+				         	Part 1: Upgrade Video Driver<br/>
+							1.  Go to the Control Panel on your computer.<br/>
+							<img src="#styleUrl('/resources/images/faq/image001.jpg')">
+							2. In Control Panel —> System and Security, click on the Device Manager<br/>
+							<img src="#styleUrl('/resources/images/faq/image002.jpg')">
+							3. In Device Manager, click on Display Adapters. Choose “Update Driver Software”.<br/>
+							<img src="#styleUrl('/resources/images/faq/image003.jpg')">
+			         	</div>
+			         	<div class="part">
+			         		 Part 2: Installation Method for Lot Client (PC only)<br/>
+							1. Go to Google Drive to download the installation package <br/>
+							https://drive.google.com/open?id=0B516N4U_VCDWRDd3bFJCT3daaFE<br/>
+							2. Follow the steps by clicking yes and accept. Enter the following username and password in the authentication box<br/>
+							<img src="#styleUrl('/resources/images/faq/image004.jpg')">
+							e-mail:  yunwei@duobei.com   <br/>
+							password: duovip2015  <br/>
+							3. Re-boot PC after completing all steps.<br/>
+							<img src="#styleUrl('/resources/images/faq/image005.jpg')">
+			         	</div>
+					</div>
+			      </div>
+			      
+			      <!--item的标题-->
+					<div id="3-item-title" class="dropdown">
+				      	<a id="title3" class="dropdown-toggle" data-toggle="collapse" href="#question3">
+				         	3. Echo in the classroom<span class="caret"></span>
+				      	</a>
+				     </div>
+				     
+				  <!--下面是展开item的内容-->
+			      <div class="collapse" id="question3">
+			      	<div id="3" class="content-title dropup">
+			      		3. Echo in the classroom<span class="caret"></span>
+			      	</div>
+			         <div  class="content-content">
+			         	<div class="part">
+			         		Description:<br/>
+			         		Teacher hears their voice or the student's voice with an echo or screeching sound in the classroom
+			         	</div>
+			         	<div class="part">
+			         		Reason:<br/>
+			         		 Student or teacher is not wearing a headset
+			         	</div>
+			         	<div class="part">
+				         	Solution:<br/>
+							Wear a headset with mic when teaching. Ask your student to wear a headset as well, or contact the Education Department to request that the student uses a headset.
+			         	</div>
+					</div>
+			      </div>
+			      
+			      <!--item的标题-->
+					<div id="4-item-title" class="dropdown">
+				      	<a id="title4" class="dropdown-toggle" data-toggle="collapse" href="#question4">
+				         	4. Student sound issues<span class="caret"></span>
+				      	</a>
+				     </div>
+				     
+				  <!--下面是展开item的内容-->
+			      <div class="collapse" id="question4">
+			      	<div id="4" class="content-title dropup">
+			      		4. Student sound issues<span class="caret"></span>
+			      	</div>
+			         <div  class="content-content">
+			         	<div class="part">
+			         		Description:<br/>
+			         		Student's sound is too loud or quiet, teacher has a difficult time hearing student
+			         	</div>
+			         	<div class="part">
+			         		Reason:<br/>
+			         		 Poor student mic quality or sound adjustment
+			         	</div>
+			         	<div class="part">
+				         	Solution:<br/>
+							1. Hover your mouse over the student's screen<br/>
+							2. Click settings
+							<img src="#styleUrl('/resources/images/faq/image006.jpg')">
+							3. Adjust the student's microphone
+							<img src="#styleUrl('/resources/images/faq/image007.jpg')">
+							4. If you still cannot hear the student, please reset your Chrome. <br/>
+							Paste "chrome://settings/resetProfileSettings" to your Brower and click “Reset”.
+							<img src="#styleUrl('/resources/images/faq/image008.jpg')">
+							5. Close Chrome and log in again.
+			         	</div>
+					</div>
+			      </div>
+			      
+			      <!--item的标题-->
+					<div id="5-item-title" class="dropdown">
+				      	<a id="title5" class="dropdown-toggle" data-toggle="collapse" href="#question5">
+				         	5. Unstable video<span class="caret"></span>
+				      	</a>
+				     </div>
+				     
+				  <!--下面是展开item的内容-->
+			      <div class="collapse" id="question5">
+			      	<div id="5" class="content-title dropup">
+			      		5. Unstable video<span class="caret"></span>
+			      	</div>
+			         <div  class="content-content">
+			         	<div class="part">
+			         		Description:<br/>
+			         		Student or teacher video flashes in and out, cuts off
+			         	</div>
+			         	<div class="part">
+			         		Reason:<br/>
+			         		 1) Unstable network<br/>
+		     				 2) Full browser cache
+			         	</div>
+			         	<div class="part">
+				         	Resolution:<br/>
+							1. Use Google Chrome<br/>
+							2. Refresh the tab<br/>
+							3.  Re-start computer<br/>
+							4.  Re-start router<br/>
+							5.  Plug in to router manually using an ethernet cord <br/>
+							6. Contact Internet Service Provider to upgrade Internet package/connection
+			         	</div>
+					</div>
+			      </div>
+			      
+			      <!--item的标题-->
+					<div id="6-item-title" class="dropdown">
+				      	<a id="title6" class="dropdown-toggle" data-toggle="collapse" href="#question6">
+				         	6. Classroom will not load<span class="caret"></span>
+				      	</a>
+				     </div>
+				     
+				  <!--下面是展开item的内容-->
+			      <div class="collapse" id="question6">
+			      	<div id="6" class="content-title dropup">
+			      		6. Classroom will not load<span class="caret"></span>
+			      	</div>
+			         <div  class="content-content">
+			         	<div class="part">
+			         		Description:<br/>
+			         		Student or teacher video flashes in and out, cuts off 
+			         	</div>
+			         	<div class="part">
+			         		Reason:<br/>
+			         		1) Unstable network<br/>
+						   2) Incorrect browser cache <br/>
+						   3) Speed test result shows disabled RTMP
+			         	</div>
+			         	<div class="part">
+				         	Resolution:<br/>
+							1. Use Google Chrome<br/>
+							2. Refresh the tab<br/>
+							3.  Re-start computer<br/>
+							4.  Re-start router<br/>
+							5.  Plug in to router manually using an ethernet cord <br/>
+							6. Wipe the cache and reboot the browser (see Part 1 details below)<br/>
+							7. Change to DNS server 8.8.8 and restart your computer (if speed test shows disabled RTMP) (see Part 2 details below for PC, Part 3 details for Mac)
+			         	</div>
+			         	<div class="part">
+			         		Part 1: Cleaning the Browser<br/>
+							1. Input the website：chrome://settings/clearBrowserData<br/>
+							2. Clear browsing data by selecting the following- browsing history, download history, cookies and the site plugin data, and cached images and files. 
+							<img src="#styleUrl('/resources/images/faq/image009.jpg')">
+							3. Restart your computer.
+			         	</div>
+			         	<div class="part">
+			         		Part 2- Change DNS (PC only)<br/>
+							1. Right click the desktop network icon to open the Network and Sharing Center
+							<img src="#styleUrl('/resources/images/faq/image010.jpg')">
+							2. You will be redirected to the Control Panel. Click Control Panel —> All Control Panel Items —> Network and Sharing Center. <br/>
+							3. Click C\change adapter settings on the left portion of the Window.
+							<img src="#styleUrl('/resources/images/faq/image011.jpg')">
+							4. Click to choose the Internet connection that you are using. 
+							<img src="#styleUrl('/resources/images/faq/image012.jpg')">
+							5. Click the Properties button.
+							<img src="#styleUrl('/resources/images/faq/image013.jpg')">
+							6. Click and highlight Internet Protocol Version 4 (TCP/IPv4) and click Properties. Enter the new DNS addresses (8.8.8.8) and click OK and close out of all other windows.
+							<img src="#styleUrl('/resources/images/faq/image014.jpg')">
+			         	</div>
+			         	<div class="part">
+			         		Part 3- Change DNS (Mac only)<br/>
+							1. From the Apple menu, select System Preferences.
+							<img src="#styleUrl('/resources/images/faq/image015.jpg')">
+							2. Choose Network from the System Preferences menu.
+							<img src="#styleUrl('/resources/images/faq/image016.jpg')">
+							3. By detault, the active Internet connection is already selected. Click Advanced to access the selected interface's DNS settings.
+							<img src="#styleUrl('/resources/images/faq/image017.jpg')">
+							4. Click the DNS tab. The window shown below appears. Click the + button to add a new DNS server. To use Google DNS, enter 8.8.8.8 <br/>
+							Click OK and then apply.
+			         	</div>
+					</div>
+			      </div>
+			      
+			      <!--item的标题-->
+					<div id="7-item-title" class="dropdown">
+				      	<a id="title7" class="dropdown-toggle" data-toggle="collapse" href="#question7">
+				         	7 . No sound in classroom<span class="caret"></span>
+				      	</a>
+				     </div>
+				     
+				  <!--下面是展开item的内容-->
+			      <div class="collapse" id="question7">
+			      	<div id="7" class="content-title dropup">
+			      		7 . No sound in classroom<span class="caret"></span>
+			      	</div>
+			         <div  class="content-content">
+			         	<div class="part">
+			         		Description:<br/>
+			         		Teacher can't hear student
+			         	</div>
+			         	<div class="part">
+			         		Reason:<br/>
+			         		1) Headset doesn't work<br/>
+		   					2) Sound driver is not updated 
+			         	</div>
+			         	<div class="part">
+				         	Resolution:<br/>
+							1.  Make sure your headset is working properly (test on another device and replace headset if necessary)<br/>
+							2. Use Google Chrome<br/>
+							3. Refresh the tab<br/>
+							4.  Re-start computer<br/>
+							5.  Re-start router<br/>
+							6.  Plug in to router manually using an ethernet cord<br/>
+							7.  Update the sound driver (see Part 1 details below)
+			         	</div>
+			         	<div class="part">
+			         		Part 1: Updating the Sound Driver<br/>
+							1. Go to the Control Panel on your computer.
+							<img src="#styleUrl('/resources/images/faq/image018.jpg')">
+							2. In Control Panel —> System and Security, click on the Device Manager
+							<img src="#styleUrl('/resources/images/faq/image019.jpg')">
+							3. In Device Manager, click on Display Adapters. Choose “Update Driver Software”.
+							<img src="#styleUrl('/resources/images/faq/image020.jpg')">
+							4. Choose to search automatically for updated driver software.
+							<img src="#styleUrl('/resources/images/faq/image021.jpg')">
+							5. Restart your computer.
+			         	</div>
+					</div>
+			      </div>
+			      
+			      <!--item的标题-->
+					<div id="8-item-title" class="dropdown">
+				      	<a id="title8" class="dropdown-toggle" data-toggle="collapse" href="#question8">
+				         	8. Additional classroom sound issues<span class="caret"></span>
+				      	</a>
+				     </div>
+				     
+				  <!--下面是展开item的内容-->
+			      <div class="collapse" id="question8">
+			      	<div id="8" class="content-title dropup">
+			      		8. Additional classroom sound issues<span class="caret"></span>
+			      	</div>
+			         <div  class="content-content">
+			         	<div class="part">
+			         		Description:<br/>
+			         		Classroom makes screeching, feedback, student or teacher sounds “like a monster”
+			         	</div>
+			         	<div class="part">
+			         		Reason:<br/>
+			         		 Internal microphone is not working or is not updated
+			         	</div>
+			         	<div class="part">
+				         	Resolution:<br/>
+							1.  If you are using a headset with external mic, make sure it is working properl<br/>
+							2. Use Google Chrome<br/>
+							3. Refresh the tab<br/>
+							4.  Re-start computer<br/>
+							5.  Re-start router<br/>
+							6.  Plug in to router manually using an ethernet cord<br/>
+							7.  Accelerate internal mic hardware (see Part 1 details below)
+			         	</div>
+			         	<div class="part">
+			         		Part 1: Internal mic hardware acceleration <br/>
+							1. Click the volume icon on your screen (loudspeaker icon)
+							<img src="#styleUrl('/resources/images/faq/image022.jpg')">
+							2. Choose Recording devices
+							<img src="#styleUrl('/resources/images/faq/image023.jpg')">
+							3. Double click internal microphone
+							<img src="#styleUrl('/resources/images/faq/image024.jpg')">
+							4. Choose the Advanced tab and set parameters as shown in the image below: 
+							<img src="#styleUrl('/resources/images/faq/image025.jpg')">
+							5. Enter classroom and right click on PPT. Choose Settings form the selection menu.
+							<img src="#styleUrl('/resources/images/faq/image026.jpg')">
+							6. Uncheck “Enable hardware acceleration”
+							<img src="#styleUrl('/resources/images/faq/image027.jpg')">
+							7. Reboot your PC.
+			         	</div>
+					</div>
+			      </div>
+			      
+			      <!--item的标题-->
+					<div id="9-item-title" class="dropdown">
+				      	<a id="title9" class="dropdown-toggle" data-toggle="collapse" href="#question9">
+				         	9. Flash crash<span class="caret"></span>
+				      	</a>
+				     </div>
+				     
+				  <!--下面是展开item的内容-->
+			      <div class="collapse" id="question9">
+			      	<div id="9" class="content-title dropup">
+			      		9. Flash crash<span class="caret"></span>
+			      	</div>
+			         <div  class="content-content">
+			         	<div class="part">
+			         		Description:<br/>
+			         		Notification that the flash plug-in has crashed, or is no longer working 
+			         	</div>
+			         	<div class="part">
+			         		Reason:<br/>
+			         		 Flash is not updated
+			         	</div>
+			         	<div class="part">
+				         	Resolution:<br/>
+							1.  Use Google Chrome<br/>
+							2. Wipe the cache partition and reboot the browser. Input the following link: <br/>
+							chrome://settings/clearBrowserData<br/>
+							3. Choose “Clear Browsing Data”
+							<img src="#styleUrl('/resources/images/faq/image028.jpg')">
+							4.  Close and re-start Chrome<br/>
+							5. If the above operation doesn't work，please reset the browser. Input the following link: chrome://settings/resetProfileSettings<br/>
+							6. If your flash still does not work, change browsers and re-install Chrome when time allows
+			         	</div>
+					</div>
+			      </div>
+			      
+			      <!--item的标题-->
+					<div id="10-item-title" class="dropdown">
+				      	<a id="title10" class="dropdown-toggle" data-toggle="collapse" href="#question10">
+				         	10. Voice lag<span class="caret"></span>
+				      	</a>
+				     </div>
+				     
+				  <!--下面是展开item的内容-->
+			      <div class="collapse" id="question10">
+			      	<div id="10" class="content-title dropup">
+			      		10. Voice lag<span class="caret"></span>
+			      	</div>
+			         <div  class="content-content">
+			         	<div class="part">
+			         		Description:<br/>
+			         		One party speaks and must wait to be heard or hear the other party (voice lag or delay)
+			         	</div>
+			         	<div class="part">
+			         		Reason:<br/>
+			         		 Incorrect cache
+			         	</div>
+			         	<div class="part">
+				         	Resolution:<br/>
+							1  Use Google Chrome<br/>
+							2.  Wipe the cache partition and reboot browser by inputting the following link in the address bar:  chrome://settings/clearBrowserData in address bar, click the button for clearing the browser data and then reboot the chrome.<br/>
+							3. Choose “Clear browsing data” and re-boot Chrome
+							<img src="#styleUrl('/resources/images/faq/image029.jpg')">
+							4. If you still experience a voice lag or delay, please re-start your computer. <br/>
+							5. If this still does not work, please contact your Internet Service Provider.
+			         	</div>
+					</div>
+			      </div>
+				   
+					
+			</div>
+			
+			<!--第二个tab的内容-->
+			<div class="tab-pane fade" id="tab2">
+					<p class="remark">If you are having problems communicating with the parents, you can copy the relevant chinese and paste it into the classroom chat box.</p>
+					<div style="background:white;border:1px solid #ccc;">
+					<div style="margin:20px">
+					
+					<!--这里添加第二个tab的内容-->
+						<div class="tab2-size1">
+						If the child's parents are at home:
+						</div>
+						<div class="tab2-size2">
+						1. The Firemen are calling your parents now. Please tell your parents to answer the phone.<br/>
+						教务老师正在联系家长，请家长接电话！<br/><br/>
+						2. Sorry, teacher can't hear you. Please ask your parents to come and help.<br/>
+						抱歉，老师现在听不到你的声音，请家长过来帮忙，可以吗？<br/><br/>
+						3. Sorry, teacher can't see you. Please ask your parents to come and help.<br/>
+						抱歉，老师现在看不到你，请家长过来帮忙，可以吗？
+						</div>
+						
+						<div class="tab2-size1">
+						If the child is at home alone:
+						</div>
+						<div class="tab2-size2">
+						1. I can't hear you. You can refresh the screen.<br/>
+						抱歉，老师现在听不到你的声音，你可以尝试刷新。<br/><br/>
+						2. I can't see you. You can refresh the screen.<br/>
+						抱歉，老师现在看不到你，你可以尝试刷新。
+						</div>
+						
+						<div class="tab2-size1">
+						If it is a trial class, but the child can't use the mouse:
+						</div>
+						<div class="tab2-size2">
+						Are you able to use the mouse?<br/>
+						你会用鼠标连线吗？
+						</div>
+					</div>
+					</div>
+			</div>
+	</div>
+</body>
+</html>

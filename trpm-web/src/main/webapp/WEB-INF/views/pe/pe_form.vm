@@ -1,0 +1,233 @@
+<style type="text/css">
+.practicum-table tr td {
+	padding: 3px;
+}
+</style>
+<table class="practicum-table">
+    <tr>
+        <td width="*"><b>1.Class time</b></td>
+        <td width="20">&nbsp;</td>
+        <td width="76"><b>0</b><b style="margin-left:10px;">1</b><b style="margin-left:8px;">2</b><b style="margin-left:8px;">3</b></td>
+    </tr>
+    <tr>
+        <td width="*">&middot;Starts and ends class in clear and friendly manner.</td>
+        <td width="20">&nbsp;</td>
+        <td width="76" valign="top"><input type="radio" name="delayDays" #if(0 == ${teacherApplication.delayDays} && 0 != $!{teacherApplication.auditorId})checked="checked"#end value="0" />
+            <input type="radio" name="delayDays" #if(1 == ${teacherApplication.delayDays})checked="checked"#end value="1" />
+            <input type="radio" name="delayDays" disabled="disabled" value="2" />
+            <input type="radio" name="delayDays" disabled="disabled" value="3" /></td>
+    </tr>
+    <tr>
+        <td width="*">&middot;Spends an appropriate amount of time on each slide.</td>
+        <td width="20">&nbsp;</td>
+        <td width="76" valign="top"><input type="radio" name="englishLanguageScore" #if(0 == ${teacherApplication.englishLanguageScore})checked="checked"#end value="0" />
+            <input type="radio" name="englishLanguageScore" #if(1 == ${teacherApplication.englishLanguageScore})checked="checked"#end value="1" />
+            <input type="radio" name="englishLanguageScore" disabled="disabled" value="2" />
+            <input type="radio" name="englishLanguageScore" disabled="disabled" value="3" /></td>
+    </tr>
+    <tr>
+        <td width="*"><b>2.Appearance</b></td>
+        <td width="20">&nbsp;</td>
+        <td width="76">&nbsp;</td>
+    </tr>
+    <tr>
+        <td width="*">&middot;The lighting is excellent and allows the student to clearly see the teacher. Teacher does not appear dirty or rumpled.</td>
+        <td width="20">&nbsp;</td>
+        <td width="76" valign="top"><input type="radio" name="grade6TeachingExperience" #if(0 == ${teacherApplication.grade6TeachingExperience})checked="checked"#end value="0" />
+            <input type="radio" name="grade6TeachingExperience" #if(1 == ${teacherApplication.grade6TeachingExperience})checked="checked"#end value="1" />
+            <input type="radio" name="grade6TeachingExperience" disabled="disabled" value="2" />
+            <input type="radio" name="grade6TeachingExperience" disabled="disabled" value="3" /></td>
+    </tr>
+    <tr>
+        <td width="*">&middot;Teacher has an appropriate background.</td>
+        <td width="20">&nbsp;</td>
+        <td width="76" valign="top"><input type="radio" name="highSchoolTeachingExperience" #if(0 == ${teacherApplication.highSchoolTeachingExperience})checked="checked"#end value="0" />
+            <input type="radio" name="highSchoolTeachingExperience" #if(1 == ${teacherApplication.highSchoolTeachingExperience})checked="checked"#end value="1" />
+            <input type="radio" name="highSchoolTeachingExperience" disabled="disabled" value="2" />
+            <input type="radio" name="highSchoolTeachingExperience" disabled="disabled" value="3" /></td>
+    </tr>
+    <tr>
+        <td width="*"><b>3.Lesson Preparation</b></td>
+        <td width="20">&nbsp;</td>
+        <td width="76">&nbsp;</td>
+    </tr>
+    <tr>
+        <td width="*">&middot;Activities are clearly planned out ahead of time (teacher has prepared materials to help explain activities clearly).</td>
+        <td width="20">&nbsp;</td>
+        <td width="76" valign="top"><input type="radio" name="homeCountryTeachingExperience" #if(0 == ${teacherApplication.homeCountryTeachingExperience})checked="checked"#end value="0" />
+            <input type="radio" name="homeCountryTeachingExperience" #if(1 == ${teacherApplication.homeCountryTeachingExperience})checked="checked"#end value="1" />
+            <input type="radio" name="homeCountryTeachingExperience" #if(2 == ${teacherApplication.homeCountryTeachingExperience})checked="checked"#end value="2" />
+            <input type="radio" name="homeCountryTeachingExperience" #if(3 == ${teacherApplication.homeCountryTeachingExperience})checked="checked"#end value="3" /></td>
+    </tr>
+    <tr>
+        <td width="*">&middot;Teacher is not reading directly from TD and there is a smooth transition between slides.</td>
+        <td width="20">&nbsp;</td>
+        <td width="76" valign="top"><input type="radio" name="interactionRapportScore" #if(0 == ${teacherApplication.interactionRapportScore})checked="checked"#end value="0" />
+            <input type="radio" name="interactionRapportScore" #if(1 == ${teacherApplication.interactionRapportScore})checked="checked"#end value="1" />
+            <input type="radio" name="interactionRapportScore" #if(2 == ${teacherApplication.interactionRapportScore})checked="checked"#end value="2" />
+            <input type="radio" name="interactionRapportScore" disabled="disabled" value="3" /></td>
+    </tr>
+    <tr>
+        <td width="*"><b>4.Supplementary Tools</b></td>
+        <td width="20">&nbsp;</td>
+        <td width="76">&nbsp;</td>
+    </tr>
+    <tr>
+        <td width="*">&middot;Teacher uses at least one supplementary tool.</td>
+        <td width="20">&nbsp;</td>
+        <td width="76" valign="top"><input type="radio" name="kidTeachingExperience" #if(0 == ${teacherApplication.kidTeachingExperience})checked="checked"#end value="0" />
+            <input type="radio" name="kidTeachingExperience" #if(1 == ${teacherApplication.kidTeachingExperience})checked="checked"#end value="1" />
+            <input type="radio" name="kidTeachingExperience" disabled="disabled" value="2" />
+            <input type="radio" name="kidTeachingExperience" disabled="disabled" value="3" /></td>
+    </tr>
+    <tr>
+        <td width="*">&middot;Uses tool in a clear and visible fashion.</td>
+        <td width="20">&nbsp;</td>
+        <td width="76" valign="top"><input type="radio" name="kidUnder12TeachingExperience" #if(0 == ${teacherApplication.kidUnder12TeachingExperience})checked="checked"#end value="0" />
+            <input type="radio" name="kidUnder12TeachingExperience" #if(1 == ${teacherApplication.kidUnder12TeachingExperience})checked="checked"#end value="1" />
+            <input type="radio" name="kidUnder12TeachingExperience" disabled="disabled" value="2" />
+            <input type="radio" name="kidUnder12TeachingExperience" disabled="disabled" value="3" /></td>
+    </tr>
+    <tr>
+        <td width="*"><b>5.ESL Techniques</b></td>
+        <td width="20">&nbsp;</td>
+        <td width="76">&nbsp;</td>
+    </tr>
+    <tr>
+        <td width="*">&middot;Speaks with speed and language appropriate to student's level.</td>
+        <td width="20">&nbsp;</td>
+        <td width="76" valign="top"><input type="radio" name="lessonObjectivesScore" #if(0 == ${teacherApplication.lessonObjectivesScore})checked="checked"#end value="0" />
+            <input type="radio" name="lessonObjectivesScore" #if(1 == ${teacherApplication.lessonObjectivesScore})checked="checked"#end value="1" />
+            <input type="radio" name="lessonObjectivesScore" #if(2 == ${teacherApplication.lessonObjectivesScore})checked="checked"#end value="2" />
+            <input type="radio" name="lessonObjectivesScore" #if(3 == ${teacherApplication.lessonObjectivesScore})checked="checked"#end value="3" /></td>
+    </tr>
+    <tr>
+        <td width="*">&middot;Uses TPR and examples when needed.</td>
+        <td width="20">&nbsp;</td>
+        <td width="76" valign="top"><input type="radio" name="onlineTeachingExperience" #if(0 == ${teacherApplication.onlineTeachingExperience})checked="checked"#end value="0" />
+            <input type="radio" name="onlineTeachingExperience" #if(1 == ${teacherApplication.onlineTeachingExperience})checked="checked"#end value="1" />
+            <input type="radio" name="onlineTeachingExperience" #if(2 == ${teacherApplication.onlineTeachingExperience})checked="checked"#end value="2" />
+            <input type="radio" name="onlineTeachingExperience" #if(3 == ${teacherApplication.onlineTeachingExperience})checked="checked"#end value="3" /></td>
+    </tr>
+    <tr>
+        <td width="*"><b>6.Response to Feedback</b></td>
+        <td width="20">&nbsp;</td>
+        <td width="76">&nbsp;</td>
+    </tr>
+    <tr>
+        <td width="*">&middot;Accepts feedback and applies it the remaining portion of the practicum (if applicable).</td>
+        <td width="20">&nbsp;</td>
+        <td width="76" valign="top"><input type="radio" name="preparationPlanningScore" #if(0 == ${teacherApplication.preparationPlanningScore})checked="checked"#end value="0" />
+            <input type="radio" name="preparationPlanningScore" #if(1 == ${teacherApplication.preparationPlanningScore})checked="checked"#end value="1" />
+            <input type="radio" name="preparationPlanningScore" #if(2 == ${teacherApplication.preparationPlanningScore})checked="checked"#end value="2" />
+            <input type="radio" name="preparationPlanningScore" disabled="disabled" value="3" /></td>
+    </tr>
+    <tr>
+        <td width="*"><b>7.Lesson Objectives</b></td>
+        <td width="20">&nbsp;</td>
+        <td width="76">&nbsp;</td>
+    </tr>
+    <tr>
+        <td width="*">&middot;Teaches all vocabulary as set forth in the objectives.</td>
+        <td width="20">&nbsp;</td>
+        <td width="76" valign="top"><input type="radio" name="studentOutputScore" #if(0 == ${teacherApplication.studentOutputScore})checked="checked"#end value="0" />
+            <input type="radio" name="studentOutputScore" #if(1 == ${teacherApplication.studentOutputScore})checked="checked"#end value="1" />
+            <input type="radio" name="studentOutputScore" #if(2 == ${teacherApplication.studentOutputScore})checked="checked"#end value="2" />
+            <input type="radio" name="studentOutputScore" disabled="disabled" value="3" /></td>
+    </tr>
+    <tr>
+        <td width="*">&middot;Teaches all sentence patterns as set forth in the objectives.</td>
+        <td width="20">&nbsp;</td>
+        <td width="76" valign="top"><input type="radio" name="teachingCertificate" #if(0 == ${teacherApplication.teachingCertificate})checked="checked"#end value="0" />
+            <input type="radio" name="teachingCertificate" #if(1 == ${teacherApplication.teachingCertificate})checked="checked"#end value="1" />
+            <input type="radio" name="teachingCertificate" #if(2 == ${teacherApplication.teachingCertificate})checked="checked"#end value="2" />
+            <input type="radio" name="teachingCertificate" disabled="disabled" value="3" /></td>
+    </tr>
+    <tr>
+        <td width="*">&middot;Accomplishes overall class objectives.</td>
+        <td width="20">&nbsp;</td>
+        <td width="76" valign="top"><input type="radio" name="teachingMethodScore" #if(0 == ${teacherApplication.teachingMethodScore})checked="checked"#end value="0" />
+            <input type="radio" name="teachingMethodScore" #if(1 == ${teacherApplication.teachingMethodScore})checked="checked"#end value="1" />
+            <input type="radio" name="teachingMethodScore" #if(2 == ${teacherApplication.teachingMethodScore})checked="checked"#end value="2" />
+            <input type="radio" name="teachingMethodScore" disabled="disabled" value="3" /></td>
+    </tr>
+    <tr>
+        <td width="*"><b>8.Student Output</b></td>
+        <td width="20">&nbsp;</td>
+        <td width="76">&nbsp;</td>
+    </tr>
+    <tr>
+        <td width="*">&middot;Encourages student to speak in full sentences whenever possible.</td>
+        <td width="20">&nbsp;</td>
+        <td width="76" valign="top"><input type="radio" name="teenagerTeachingExperience" #if(0 == ${teacherApplication.teenagerTeachingExperience} && 0 != $!{teacherApplication.auditorId})checked="checked"#end value="0" />
+            <input type="radio" name="teenagerTeachingExperience" #if(1 == ${teacherApplication.teenagerTeachingExperience})checked="checked"#end value="1" />
+            <input type="radio" name="teenagerTeachingExperience" #if(2 == ${teacherApplication.teenagerTeachingExperience})checked="checked"#end value="2" />
+            <input type="radio" name="teenagerTeachingExperience" disabled="disabled" value="3" /></td>
+    </tr>
+    <tr>
+        <td width="*">&middot;Allows the student ample opportunity to speak out (approx 30/70 rule).</td>
+        <td width="20">&nbsp;</td>
+        <td width="76" valign="top"><input type="radio" name="teflOrToselCertificate" #if(0 == ${teacherApplication.teflOrToselCertificate} && 0 != $!{teacherApplication.auditorId})checked="checked"#end value="0" />
+            <input type="radio" name="teflOrToselCertificate" #if(1 == ${teacherApplication.teflOrToselCertificate})checked="checked"#end value="1" />
+            <input type="radio" name="teflOrToselCertificate" #if(2 == ${teacherApplication.teflOrToselCertificate})checked="checked"#end value="2" />
+            <input type="radio" name="teflOrToselCertificate" #if(3 == ${teacherApplication.teflOrToselCertificate})checked="checked"#end value="3" /></td>
+    </tr>
+    <tr>
+        <td width="*">&middot;Corrects all student's mistakes.</td>
+        <td width="20">&nbsp;</td>
+        <td width="76" valign="top"><input type="radio" name="timeManagementScore" #if(0 == ${teacherApplication.timeManagementScore} && 0 != $!{teacherApplication.auditorId})checked="checked"#end value="0" />
+            <input type="radio" name="timeManagementScore" #if(1 == ${teacherApplication.timeManagementScore})checked="checked"#end value="1" />
+            <input type="radio" name="timeManagementScore" #if(2 == ${teacherApplication.timeManagementScore})checked="checked"#end value="2" />
+            <input type="radio" name="timeManagementScore" disabled="disabled" value="3" /></td>
+    </tr>
+    <tr>
+        <td width="*">&middot;Has student repeat new words/sentence patterns.</td>
+        <td width="20">&nbsp;</td>
+        <td width="76" valign="top"><input type="radio" name="accent" #if(0 == ${teacherApplication.accent} && 0 != $!{teacherApplication.auditorId})checked="checked"#end value="0" />
+            <input type="radio" name="accent" #if(1 == ${teacherApplication.accent})checked="checked"#end value="1" />
+            <input type="radio" name="accent" #if(2 == ${teacherApplication.accent})checked="checked"#end value="2" />
+            <input type="radio" name="accent" disabled="disabled" value="3" /></td>
+    </tr>
+    <tr>
+        <td width="*"><b>9.Interactivity</b></td>
+        <td width="20">&nbsp;</td>
+        <td width="76">&nbsp;</td>
+    </tr>
+    <tr>
+        <td width="*">&middot;Is friendly throughout the class and offers positive feedback (rewards).</td>
+        <td width="20">&nbsp;</td>
+        <td width="76" valign="top"><input type="radio" name="positive" #if(0 == ${teacherApplication.positive} && 0 != $!{teacherApplication.auditorId})checked="checked"#end value="0" />
+            <input type="radio" name="positive" #if(1 == ${teacherApplication.positive})checked="checked"#end value="1" />
+            <input type="radio" name="positive" #if(2 == ${teacherApplication.positive})checked="checked"#end value="2" />
+            <input type="radio" name="positive" #if(3 == ${teacherApplication.positive})checked="checked"#end value="3" /></td>
+    </tr>
+    <tr>
+        <td width="*">&middot;Can tell when the student does not understand and changes method/activity accordingly.</td>
+        <td width="20">&nbsp;</td>
+        <td width="76" valign="top"><input type="radio" name="engaged" #if(0 == ${teacherApplication.engaged} && 0 != $!{teacherApplication.auditorId})checked="checked"#end value="0" />
+            <input type="radio" name="engaged" #if(1 == ${teacherApplication.engaged})checked="checked"#end value="1" />
+            <input type="radio" name="engaged" #if(2 == ${teacherApplication.engaged})checked="checked"#end value="2" />
+            <input type="radio" name="engaged" #if(3 == ${teacherApplication.engaged})checked="checked"#end value="3" /></td>
+    </tr>
+    <tr>
+        <td width="*"><b>10.Teaching Methodology</b></td>
+        <td width="20">&nbsp;</td>
+        <td width="76">&nbsp;</td>
+    </tr>
+    <tr>
+        <td width="*">&middot;Overall teaching methods work to accomplish lesson objectives.</td>
+        <td width="20">&nbsp;</td>
+        <td width="76" valign="top"><input type="radio" name="appearance" #if(0 == ${teacherApplication.appearance} && 0 != $!{teacherApplication.auditorId})checked="checked"#end value="0" />
+            <input type="radio" name="appearance" #if(1 == ${teacherApplication.appearance})checked="checked"#end value="1" />
+            <input type="radio" name="appearance" #if(2 == ${teacherApplication.appearance})checked="checked"#end value="2" />
+            <input type="radio" name="appearance" disabled="disabled" value="3" /></td>
+    </tr>
+    <tr>
+        <td width="*">&middot;Teacher simplifies /extends material that is too difficult/easy for the student.</td>
+        <td width="20">&nbsp;</td>
+        <td width="76" valign="top"><input type="radio" name="phonics" #if(0 == ${teacherApplication.phonics} && 0 != $!{teacherApplication.auditorId})checked="checked"#end value="0" />
+            <input type="radio" name="phonics" #if(1 == ${teacherApplication.phonics})checked="checked"#end value="1" />
+            <input type="radio" name="phonics" #if(2 == ${teacherApplication.phonics})checked="checked"#end value="2" />
+            <input type="radio" name="phonics" disabled="disabled" value="3" /></td>
+    </tr>
+</table>

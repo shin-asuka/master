@@ -1,0 +1,231 @@
+#**
+ * teachedPracticum
+ * 
+ * 验证当前登录用户是否可以教授PRACTICUM的课程
+ *#
+#macro( teachedPracticum )
+    #if($TRPM_COURSE_TYPES.contains("PRACTICUM"))
+        $!bodyContent
+    #end
+#end
+
+#**
+ * tabActive
+ * 
+ * 判断tab是否激活
+ *#
+#macro( tabActive $courseType $valueType)
+    #if($courseType.equals($valueType)) class="active" #end
+#end
+
+#**
+ * dataPlacement
+ * 
+ * 设置tooltip提示的显示位置
+ *#
+#macro( dataPlacement $timeSlotIndex )#if($timeSlotIndex > 3)left#{else}right#end#end
+
+#**
+ * timeInfo
+ * 
+ * 设置时间提示
+ *#
+#macro( timeInfo $zoneTime )
+<div class="timeInfo" style="display: none;">
+  #** 格式化北京时间 *# 
+  <div class="arrow">Beijing Time: $dateTool.format('yyyy-MM-dd hh:mm a', ${zoneTime.dateFromBeiJing}, $locale)</div>
+  <div class="arrow">Your Time: $!{zoneTime.localTime}</div>
+</div>
+#end
+
+#**
+ * messageInfo
+ * 
+ * 设置信息提示
+ *#
+#macro( messageInfo $title )
+<div class="timeInfo" style="display: none;"> 
+  <div class="arrow">Please go to the $!{title}</div>
+  <div class="arrow">schedule to edit this time slot.</div>
+</div>
+#end
+
+#**
+ * multiZoneStyle
+ * 
+ * 设置单个TimeSlot包含多个ZoneTime的样式
+ *#
+#macro( multiZoneStyle $zoneTimeSize $velocityCount $multiStyle )
+  #if(1 != $zoneTimeSize && 1 == ${velocityCount})
+      #set($multiStyle = "width: 50%; float: left; margin-top: 0;")
+  #elseif(1 != $zoneTimeSize && 1 < ${velocityCount})
+      #set($multiStyle = "width: 50%; border-left: 1px solid #dddddd; float: right; margin-top: 0;")
+  #else
+      #set($multiStyle = "")
+  #end
+#end
+
+#**
+ * enabledOnlineClass
+ * 
+ * 可编辑的OnlineClass
+ *#
+#macro( enabledOnlineClass $timePoint $onlineClass $zoneTime $beiJingTime $style )
+    ## 显示OnlineClass状态为BOOKED的片段
+    #if(${onlineClass.status} == "BOOKED")
+    <div class="booked $!{style}" data-toggle="tooltip" data-html="true" data-placement="#dataPlacement(${timeSlotIndex})">
+      #** 设置时间提示 *# 
+      #timeInfo(${zoneTime})
+    
+      <span>${onlineClass.status}&nbsp;${onlineClass.englishName}</span>
+    </div>
+    
+    <div id="${onlineClass.id}-info" style="display: none;">
+      <p> <strong>Student: </strong> <span>${onlineClass.englishName}</span> </p>
+      <p> <strong>Lesson SN: </strong> <br/> <span>${onlineClass.serialNumber}</span> </p>
+      <p style="width: 155px; table-layout: fixed; word-wrap: break-word; word-break: break-all;">
+        <strong>Lesson Name: </strong> <br/> <span>${onlineClass.lessonName}</span> 
+      </p>
+      <p>
+      #if($!{onlineClass.studentId})
+        <a class='btn btn-danger' style="color: white;"
+         href="${request.getContextPath()}/classroom/${onlineClass.id}-$!{onlineClass.studentId}-${onlineClass.lessonId}.shtml">Go To Classroom..</a> 
+      #else
+        <a class='btn btn-danger' style="color: white;"
+         href="${request.getContextPath()}/classroom/${onlineClass.id}-0-${onlineClass.lessonId}.shtml">Go To Classroom..</a> 
+      #end
+      </p>
+    </div>
+    #end
+
+    ## 显示OnlineClass状态为OPEN的片段  
+    #if(${onlineClass.status} == "OPEN")
+    <div class="booked $!{style}" data-toggle="tooltip" data-html="true" data-placement="#dataPlacement(${timeSlotIndex})">
+      #** 设置时间提示 *# 
+      #timeInfo(${zoneTime})
+     
+      <span>${onlineClass.status} / ${onlineClass.studentCount}</span>
+    </div>
+    
+    <div id="${onlineClass.id}-info" style="display: none;">
+      <p> <strong>Student Count: </strong> <span>${onlineClass.studentCount}</span> </p>
+      <p> <strong>Lesson SN: </strong> <br/> <span>${onlineClass.serialNumber}</span> </p>
+      <p style="width: 155px; table-layout: fixed; word-wrap: break-word; word-break: break-all;">
+        <strong>Lesson Name: </strong> <br/> <span>${onlineClass.lessonName}</span> 
+      </p>
+      <p>
+      #if($!{onlineClass.studentId})
+        <a class='btn btn-danger' style="color: white;"
+         href="${request.getContextPath()}/classroom/${onlineClass.id}-$!{onlineClass.studentId}-${onlineClass.lessonId}.shtml">Go To Classroom..</a> 
+      #else
+        <a class='btn btn-danger' style="color: white;"
+         href="${request.getContextPath()}/classroom/${onlineClass.id}-0-${onlineClass.lessonId}.shtml">Go To Classroom..</a> 
+      #end
+      </p>
+    </div>
+    #end
+    
+    ## 显示OnlineClass状态为FINISHED的片段
+    #if(${onlineClass.status} == "FINISHED")
+    <div class="finished $!{style}" data-toggle="tooltip" data-html="true" data-placement="#dataPlacement(${timeSlotIndex})">
+      #** 设置时间提示 *# 
+      #timeInfo(${zoneTime})
+      
+      <span>${onlineClass.status}&nbsp;${onlineClass.englishName}</span>
+    </div>
+    #end
+    
+    ## 显示OnlineClass状态为INVALID的片段
+    #if(${onlineClass.status} == "INVALID")
+    <div class="finished $!{style}" data-toggle="tooltip" data-html="true" data-placement="#dataPlacement(${timeSlotIndex})">
+      #** 设置时间提示 *# 
+      #timeInfo(${zoneTime})
+      
+      <span>FINISHED&nbsp;${onlineClass.englishName}</span>
+    </div>
+    #end
+    
+    ## 显示OnlineClass状态为EXPIRED的片段
+    #if(${onlineClass.status} == "EXPIRED")
+    <div class="expired $!{style}" data-toggle="tooltip" data-html="true" data-placement="#dataPlacement(${timeSlotIndex})">
+      #** 设置时间提示 *# 
+      #timeInfo(${zoneTime})
+      
+      <span>${onlineClass.status}</span>
+    </div>
+    #end
+    
+    ## 显示OnlineClass状态为AVAILABLE的片段  
+    #if(${onlineClass.status} == "AVAILABLE")
+    <div class="#if('expiredTimeSlot' != ${timeSlot.style})available#{else}expiredTimeSlot#end $!{style}" 
+      ## 过滤过期的AVAILABLE片段
+      #if("expiredTimeSlot" != ${timeSlot.style})data-schedule="${beiJingTime}" data-id="${onlineClass.id}"#end
+      data-toggle="tooltip" data-html="true" data-placement="#dataPlacement(${timeSlotIndex})">
+      #** 设置时间提示 *# 
+      #timeInfo(${zoneTime})
+      
+      <span>${timePoint.name}#if(!${onlineClass.isPracticum})&nbsp;<input type="checkbox" class="24hours" value="${onlineClass.id}" #if(${onlineClass.is24Hour})checked#end />#end</span>
+    </div>
+    #end
+#end
+
+#**
+ * readOnlineClass
+ * 
+ * 只读的OnlineClass
+ *#
+#macro( readOnlineClass $timePoint $onlineClass $style $title )
+    ## 显示OnlineClass状态为BOOKED的片段
+    #if(${onlineClass.status} == "BOOKED")
+    <div class="booked readSlot $!{style}" data-toggle="tooltip" data-html="true" data-placement="#dataPlacement(${timeSlotIndex})">
+      #** 设置提示信息 *# 
+      #messageInfo($title)
+      <span>${onlineClass.status}&nbsp;${onlineClass.englishName}</span>
+    </div>
+    #end
+
+    ## 显示OnlineClass状态为OPEN的片段  
+    #if(${onlineClass.status} == "OPEN")
+    <div class="booked readSlot $!{style}" data-toggle="tooltip" data-html="true" data-placement="#dataPlacement(${timeSlotIndex})">
+      #** 设置提示信息 *# 
+      #messageInfo($title)
+      <span>${onlineClass.status} / ${onlineClass.studentCount}</span>
+    </div>
+    #end
+    
+    ## 显示OnlineClass状态为FINISHED的片段
+    #if(${onlineClass.status} == "FINISHED")
+    <div class="finished readSlot $!{style}" data-toggle="tooltip" data-html="true" data-placement="#dataPlacement(${timeSlotIndex})">
+      #** 设置提示信息 *# 
+      #messageInfo($title)
+      <span>${onlineClass.status}&nbsp;${onlineClass.englishName}</span>
+    </div>
+    #end
+    
+    ## 显示OnlineClass状态为INVALID的片段
+    #if(${onlineClass.status} == "INVALID")
+    <div class="finished readSlot $!{style}" data-toggle="tooltip" data-html="true" data-placement="#dataPlacement(${timeSlotIndex})">
+      #** 设置提示信息 *# 
+      #messageInfo($title)
+      <span>FINISHED&nbsp;${onlineClass.englishName}</span>
+    </div>
+    #end
+    
+    ## 显示OnlineClass状态为EXPIRED的片段
+    #if(${onlineClass.status} == "EXPIRED")
+    <div class="expired readSlot $!{style}" data-toggle="tooltip" data-html="true" data-placement="#dataPlacement(${timeSlotIndex})">
+      #** 设置提示信息 *# 
+      #messageInfo($title)
+      <span>${onlineClass.status}</span>
+    </div>
+    #end
+    
+    ## 显示OnlineClass状态为AVAILABLE的片段  
+    #if(${onlineClass.status} == "AVAILABLE")
+    <div class="available readSlot $!{style}" data-toggle="tooltip" data-html="true" data-placement="#dataPlacement(${timeSlotIndex})">
+      #** 设置提示信息 *# 
+      #messageInfo($title)
+      <span>${timePoint.name}#if(!${onlineClass.isPracticum})&nbsp;<input type="checkbox" class="24hours" disabled value="${onlineClass.id}" #if(${onlineClass.is24Hour})checked#end />#end</span>
+    </div>
+    #end
+#end

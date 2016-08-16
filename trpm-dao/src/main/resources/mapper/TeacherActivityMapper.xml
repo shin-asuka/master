@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="TeacherActivityMapper">
+	
+	<select id="countClassByTeacherId" resultType="int">
+	    <![CDATA[ 
+			SELECT count(oc.id)
+			FROM online_class oc 
+			WHERE oc.teacher_id = ${teacherId}
+			AND oc.`status` = 'FINISHED'
+			AND oc.finish_type = 'AS_SCHEDULED'
+			AND oc.class_type = 0 
+			AND oc.scheduled_date_time < '${yearmd}'
+	    ]]>
+    </select>
+    
+    <sql id="studentlist">
+	    <![CDATA[ 
+	    	SELECT ocs.student_id,count(1) as counts
+			FROM online_class_student ocs 
+			WHERE ocs.online_class_id 
+			IN (SELECT oc.id
+				FROM online_class oc 
+				WHERE oc.teacher_id = ${teacherId} 
+				AND oc.`status` = 'FINISHED'
+				AND oc.finish_type = 'AS_SCHEDULED'
+				AND oc.class_type = 0 
+				AND oc.scheduled_date_time < '${yearmd}')
+			GROUP BY ocs.student_id
+	    ]]>
+    </sql>
+    
+    <select id="countStudentByTeacherId" resultType="java.util.HashMap">
+    	<include refid="studentlist"/>
+    </select>
+    
+    <select id="countStudentByMax" resultType="java.util.HashMap">
+	    <include refid="studentlist"/>
+		order by counts desc
+		LIMIT 0,3
+	</select>
+</mapper>

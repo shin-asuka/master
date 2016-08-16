@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>${title}</title>
+<link rel="stylesheet" href="#styleUrl('/resources/styles/portal/semantic.min.css')">
+<link rel="stylesheet" href="#styleUrl('/resources/styles/portal/bootstrap.min.css')">
+<link rel="stylesheet" href="#styleUrl('/resources/styles/portal/bootstrap-additions.min.css')">
+<link rel="stylesheet" href="#styleUrl('/resources/styles/portal/main.css')" />
+<link rel="shortcut icon" href="#styleUrl('/resources/images/portal/favicon.ico')" type="image/x-icon"/>
+</head>
+<body>
+<div class="container">
+  <div class="vk-content ng-scope">
+    <div class="classroom ng-scope">
+      <section class="topSection"> #** TOP A *#
+        <div class="actionBar"> #**1.课程标题 *#
+          <div class="classroomLabelGroup">
+            <div class="logo"></div>
+            <div class="classroomLabel">Practicum</div>
+            <div class="lessonName ng-binding" style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis; width:492px;"> 
+              <a href="javascript:;" style="color: white; text-decoration: none;" title="$!{teacherPe.serialNumber} : $!{teacherPe.lessonName}($!{teacherPe.teacherName})"> $!{teacherPe.serialNumber} : $!{teacherPe.lessonName}($!{teacherPe.teacherName}) </a> 
+            </div>
+          </div>
+          #**2.反馈和退出 *#
+          <div class="rightActionBarGroup2"> 
+            ##报告不存在的P课程
+            <div id="addFeedback">Add Feedback</div>
+            <div class="lastAction"> <a href="#springUrl('/pesupervisor.shtml')" style="color: white;">Exit Classroom</a></div>
+          </div>
+        </div>
+      </section>
+      ##body start
+      <div class="container">
+        <div class="mainContainer"> ##教室加载
+          <iframe width="1300" height="580" frameborder="0" scrolling="no" src="$!{url}"></iframe>
+          <div class="container practicumClassroom"> 
+            ##feedback
+            #parse("/pe/online_class_feedback.vm") </div>
+        </div>
+      </div>
+      ##body end 
+    </div>
+  </div>
+</div>
+</body>
+</html>
+#@requireJs()
+    require(["pe"], function(pe){
+        pe.feedback("$!{teacherPe.status}",$!{practicum2});
+        #if(0!=$!{teacherApplication.auditorId})
+        $("input[type=radio]").prop("disabled","disabled");
+        #end
+    });
+#end

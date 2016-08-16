@@ -1,0 +1,25 @@
+#set($layout = "/portal/layout.vm")
+#set($activePersonalInfo = "active")
+<div>
+	<ul class="nav nav-pills nav-stacked col-md-2 col-sm-2 ng-scope" style="padding-left:0px; padding-right:0px;">
+		<li class="active" url="#springUrl('/personal/basicinfo.shtml')"><a style="cursor: pointer;">Basic Info</a></li>
+	    <li url="#springUrl('/personal/bankinfo.shtml')"><a id = "bankInfo"  style="cursor: pointer;">Bank Info<span id="point" style=" position:absolute;margin-left: 5px;width: 10px; height: 10px;background: #ff6600; -moz-border-radius: 5px;-webkit-border-radius: 5px;border-radius: 5px;display="inline"></span></a></li>
+	    <li url="#springUrl('/personal/teaching.shtml')"><a style="cursor: pointer;">Teaching Info</a></li>
+	    <li url="#springUrl('/personal/password.shtml')"><a style="cursor: pointer;">Change Password</a></li>
+	</ul>
+  	<div id="persion-info" class="tab-content col-md-9 col-sm-9" style="padding-left:0px; padding-right:0px;">
+	    #** Basic Info Start *#
+	    #parse("/portal/personal/personal_basicinfo.vm")
+	    #** Basic Info end *#
+  	</div>
+</div>
+#@requireJs()
+    require(['personal'], function(personal){
+      personal.init();
+    });
+#end
+<script language = "javascript">
+if($isRemindEditBankInfo==false){
+document.getElementById("point").style.display = "none";
+}
+</script>

@@ -1,0 +1,6 @@
+#if($!{locationList} && !${locationList.isEmpty()})
+<option value="0">${title}</option>
+#foreach($location in $locationList)
+<option value="${location.id}">${location.name}</option>
+#end
+#end

@@ -1,0 +1,1447 @@
+﻿html{
+	font-size: 12px;
+	font-family: "Segoe UI","Lucida Grande",Helvetica,Arial,"Microsoft YaHei",FreeSans,Arimo,"Droid Sans","wenquanyi micro hei","Hiragino Sans GB","Hiragino Sans GB W3",FontAwesome,sans-serif !important;
+}
+body,div,ol,ul,h1,h2,h3,h4,h5,h6,p,th,td,dl,dd,form,iframe,input,textarea,select,label,article,aside,footer,header,menu,nav,section,time,audio,video { 
+    display: block; 
+    margin:0; 
+    padding:0;
+    letter-spacing: 1px;
+}
+
+.topico{
+	z-index:999;
+}
+
+.facebook .content{
+	box-sizing: border-box;
+	left: 0px;
+}
+.facebook.pageeight .greenball {
+    right: 126px;
+}
+.facebook.pageeight .tphoto{
+	left:18px;
+}
+.facebook.pageeight .wavingastphoto{
+   margin-left:856px;
+}
+.facebook .checkbtn,.pageeight .checkbtn{
+	width:350px;
+	height:70px;
+	display: block;
+	color:#fff;
+	font-size:18px;
+	line-height:70px;
+	background:#ff484c;
+	text-align: center;
+	border-bottom:5px solid #bf2f32;
+	border-radius: 5px;
+	text-decoration: none;
+	position:absolute;
+	bottom:65px;
+	left:50%;
+	margin-left:-175px;
+
+}
+.pageeight .bottom85{
+	bottom:105px;
+}
+.pageeight .bottom60{
+	bottom:45px;
+}
+.pageeight .pagebtn{
+	height:40px;
+	line-height: 40px;	
+	
+}
+
+ul{
+	list-style:none;
+}
+
+
+.erromessagemain {
+      width:100%;
+      background:url(../../images/activity/bg2.png) no-repeat;
+      background-size:100% 100%;      
+}
+
+.erromessagemain .content{
+	 left: 0px;
+}
+
+.section{
+	background-image: url(../../images/activity/bgpic.png);
+	font-family: "Segoe UI","Lucida Grande",Helvetica,Arial,"Microsoft YaHei",FreeSans,Arimo,"Droid Sans","wenquanyi micro hei","Hiragino Sans GB","Hiragino Sans GB W3",FontAwesome,sans-serif !important;
+}
+
+.homepage,.pagetwo,.pagethree,.pagefour,.pagefive,.pagesix,.pageseven,.pageeight{
+	height:100%;
+	width:100%;
+	background-size:100% 100%;
+	background-position: center center;
+}
+.pageeight{
+	background-image: url(../../images/activity/bg2.png);
+}
+.content{
+	width:988px;
+	height:100%;
+	margin:0 auto;
+	padding-top:3rem;
+	position:relative;
+}
+/* #superContainer{transition:all 0.01s ease;-webkit-transition:all 0.01s ease;} */
+.erromessagemain .content{
+	box-sizing: border-box;
+}
+.mico{
+	position:absolute;
+	top:80px;
+	right:0px;
+	cursor:pointer;
+	z-index: 1005;
+}
+.mico .mute{
+	color:#8178b9;
+	font-size:15px;
+	margin:0;
+}
+.posab{
+	position: absolute;
+}
+.homepage .pinkball{
+	top:160px;
+	left:50px;
+}
+.homepage .yellowball{
+	top:306px;
+	left:138px;
+}
+.homepage .ball{
+	top:38.91rem;
+	left:60px;
+}
+.homepage .ufo{
+	bottom:486px;
+	left:50%;
+	margin-left:-171px;
+	
+}
+.homepage .greenball{
+	top:22.08rem;
+	right:30px;
+}
+.homepage .blueball{
+	top:41.16rem;
+	right:60px;
+}
+.down{
+	bottom:50px;
+	left:50%;
+	margin-left:-25px;
+	cursor:pointer;
+	z-index: 999;
+}
+.homepage .light{
+	bottom:30px;
+	left:50%;
+	margin-left:-494.5px;
+}
+.homepage .dearteachername{
+	padding-bottom:10px;
+}
+.homepage .accomplished{
+	font-size:2.08rem;
+	color:#fff;
+	text-align:left;
+	position: absolute;
+	bottom:238px;
+	left:50%;
+	margin-left:-247px;
+}
+.homepage .accomplished p{
+	margin:0;
+	}
+.homepage .accomplished .teachername{
+text-align:center;
+display:inline-block;
+}
+/*------------------page2---------------*/
+.pagetwo .yellowbanball{
+	bottom:0px;
+	left:37%;
+	margin-left:-364.5px;
+}
+
+.pagetwo .yhy{
+	width:490px;
+	height:475px;
+    position:relative;
+    z-index:6;
+    margin-top:245px;
+    margin-left:77px;
+ }
+.pagetwo .yhybody{
+	z-index:3;
+	left:0px;
+}
+.pagetwo .teacherphoto{
+	width:180px;
+	height:180px;
+	position:absolute;
+	top:16px;
+	z-index:1;
+	left:244px;
+}
+.pagetwo .teacherphoto img{
+	width:180px;
+	height:180px;
+    border-radius: 50%;
+
+}
+.pagetwo .flag{
+	z-index: 1;
+	left:5px;
+	top:92px;
+}
+
+.pagetwo .hq{
+	left:90px;
+	top:102px;
+}
+.pagetwo .greenball{
+	right:164px;
+	top:157px;
+}
+.pagetwo .ball{
+	left:22px;
+	bottom:287px;
+}
+.pagetwo .blueball{
+	bottom:246px;
+	right:72px;
+}
+.teachername{
+	font-size:48px;
+	color:#ff484c;
+	
+}
+.pagetwo .wordwhite{
+	width:330px;
+    text-align: left;
+}
+.wordwhite{
+	font-size:25px;
+	color:#fff;
+	
+}
+.posmonth{
+	right:35px;
+	bottom:405px;
+}
+/*-------------page3---------------*/
+.hides{
+	display: none;
+}
+.corh{
+	color:#fff100;
+	font-size:40px;
+}
+.pagethree .wordwhite{
+	padding-top:70px;
+}
+.pagethree .pathway{
+
+	width:632px;
+    margin-top: 103px;
+    margin-left: -151px;
+}
+.pagethree .pathway .cir2{    
+    margin-top: 70px;
+    margin-left: 106px;
+}
+.pagethree .pathway .cir3{  
+    margin-left: 194px;
+    margin-top: 127px;
+}
+.pagethree .pathway img{
+	position: absolute;
+}
+.pagethree .cir2{
+	width:420px;
+	height:299px;
+}
+.pagethree .cir3{
+	width:248px;
+	height:175px;
+}
+.pagethree .greenball{
+	left:57px;
+	bottom:99px;
+}
+.pagethree .fireball{
+    margin-top:95px;
+    margin-left:238px;
+}
+.pagethree .blueball{
+	margin-left:186px;
+	margin-top:-20px;
+}
+.pagethree .kid4{
+    margin-top: 105px;
+    margin-left: -32px;
+}
+.pagethree .kid3{
+    margin-left: 366px;
+    margin-top: -10px;
+}
+.pagethree .kid2{
+	margin-top:365px;
+	margin-left:486px;
+}
+.pagethree .kid1{
+	margin-left:132px;
+	margin-top:258px;
+}
+.pagethree .lq{
+	margin-left:177px;
+	margin-top:172px;
+}
+.pagethree .greenball{
+	left:57px;
+	bottom:92px;
+	transform:rotate(30deg); ;
+}
+.pagethree .ball{
+	top:237px;
+	right:103px;
+}
+.topico{
+	bottom:57px;
+	right:0px;
+	cursor:pointer;
+	z-index:999;
+}
+.pagethree .pathway .hq{
+	margin-left: 482px;
+    margin-top: 266px;
+}
+/*----------------------page4---------------*/
+.pagefour .banfirq{
+	bottom:0px;
+	left:-50px;
+}
+.pagefour .yellowball{
+	left:80px;
+	top:113px;
+}
+.pagefour .pinkball{
+	left:519px;
+	top:294px;
+}
+.pagefour .blueball{
+	right:37px;
+	bottom:300px;
+}
+.pagefour .lyh{
+	left:219px;
+	bottom:154px;
+}
+.pagefour .ryh{
+	right:202px;
+	bottom:154px;
+}
+.pagefour .greenball{
+	right:30px;
+	top:248px;
+}
+.pagefour .ball{
+	left:75px;
+	bottom:360px;
+}
+/*---------------------page5----------------*/
+.pagefive .wordwhite{
+	text-align: left;
+	margin:0 auto;
+	padding-left: 245px;
+}
+.pagefive .yellowball{
+	top:135px;
+	left:104px;
+}
+.pagefive .pinkball{
+	right:289px;
+	top:208px;
+}
+.pagefive .blueball{
+	right:103px;
+	bottom:287px;
+}
+.pagefive .ball{
+	left:70px;
+	bottom:250px;
+}
+.pagefive .computer{
+	bottom:200px;
+	left:50%;
+	margin-left:-261.5px;
+}
+.pagefive .fbanfirball{
+	bottom:0px;
+	left:50%;
+	margin-left:-381px;
+}
+.pagefive .greenball{
+	top:217px;
+	right:0px;
+}
+/*------------------------page6--------------------------*/
+#clock{
+	position:relative;
+	width:379px;
+	height:385px;
+	background:url(../../images/activity/clockbg.png) no-repeat;
+	list-style:none;
+	margin-top:218px;
+	margin-left:535px;
+}
+#sec,#min,#hour{
+	position:absolute;
+	width:30px;
+	height:385px;
+	top:5px;
+	left:173px;
+}
+#sec{
+	background:url(../../images/activity/sz.png) no-repeat;
+	z-ind/activity/ 3;
+	z-index:999;
+}
+#min{
+	background:url(../../images/activity/mz.png) no-repeat;
+	z-index: 2;
+	
+
+}
+#hour{
+	background:url(../../images/activity/hz.png) no-repeat;
+	z-index: 1;
+}
+.pagesix .yellowball{
+	left:161px;
+	top:84px;
+}
+.pagesix .greenball{
+	left:420px;
+	top:107px;
+}
+.pagesix .blueball{
+	right:232px;
+	top:121px;
+}
+.pagesix .ball{
+	left:66px;
+	bottom:202px;
+}
+.pagesix .wordwhite{
+	position:absolute;
+	top:218px;
+	text-align: left;
+	padding-left:17px;
+}
+.pagesix .wavingast{
+	bottom:118px;
+	left:238px;
+	transform: rotate(-20deg);
+}
+/*--------------------------page7--------------------*/
+.pageseven .yellowball{
+	left:137px;
+	top:113px;
+}
+.pageseven .teachername{
+	display: inline-block;
+}
+.pageseven .pinkball{
+	left:283px;
+	top:400px;
+}
+.pageseven .blueball{
+	right:43px;
+	bottom:310px;
+}
+.pageseven .ball{
+	bottom:269px;
+	right:190px;
+}
+.pageseven .greenball{
+	top:295px;
+	right:18px;
+}
+.pageseven .rocket{
+	bottom:119px;
+	left:50%;
+	margin-left:-110px;
+}
+.pageseven .fireball{
+	bottom:209px;
+	left:0px;
+	opacity:0.5;
+}
+.pad70{
+	padding-top:70px;
+}
+/*------------------page8-------------------*/
+.pageeight .sharelink{
+	position: absolute;
+	bottom:70px;
+	left:50%;
+	margin-left:-50px;
+}
+.pageeight .sharelink li{
+float:left;
+padding-right:20px;
+}
+.pageeight .shareto{
+	font-size:24px;
+	color:#fff;
+}
+.pageeight .yellowball{
+	top:219px;
+	left:94px;
+}
+.pageeight .pinkball{
+	left:603px;
+	top:125px;
+}
+.pageeight .blueball{
+	right:50px;
+	bottom:225px;
+}
+.pageeight .greenball{
+	right:196px;
+	bottom:90px;
+}
+.pageeight .fireball{
+	bottom:311px;
+	left:-20px;
+	opacity: 0.5;
+}
+.f32{
+	font-size:32px;
+	color:#ff484c;
+}
+.pageeight .wordwhite{
+	padding-top:204px;
+	position: absolute;
+	width:100%;
+	text-align: center;
+	z-index:999;
+}
+.padd57{
+	padding-bottom:57px;
+}
+.pageeight .wavingastphoto{
+	width: 176px;
+    height: 258px;
+	position: relative;
+	margin-top:289px;
+	margin-left:771px;
+}
+.pageeight .tphoto {
+    width: 96px;
+    height: 96px;
+    z-index: 1;
+    top: 6px;
+    left: 106px;
+    border-radius: 50%;
+    transform: rotate(-11deg);
+}
+
+.pageeight .wavingast{
+	z-index: 2;
+	width:176px;
+	height:258px;
+}
+/*----------------erromessage-------------------*/
+.erromessagecontent .pinkball{
+	left:117px;
+	top:191px;
+}
+.erromessagecontent .yellowball{
+	right:307px;
+	top:84px;
+}
+.erromessagecontent .ball{
+	left:88px;
+	bottom:164px;
+}
+.erromessagecontent .greenball{
+	right:99px;
+	bottom:218px;
+}
+.erromessagecontent .blueball{
+	right:317px;
+	bottom:110px;
+}
+.erromessagecontent .bigfireball{
+	width:415px;
+	height:406px;
+	background:url(../../images/activity/bigfireball.png) no-repeat;
+	font-size:22px;
+	color:#fff;
+	text-shadow: 2px 2px 0 #b31919,-2px -2px 0 #b31919;
+	left:50%;
+	margin-left:-207.5px;
+	bottom:335px;
+	position: absolute;
+}
+.erromessagecontent .bigfireball p{
+	padding-bottom:18px;
+	padding-left:20px;
+}
+.erromessagecontent .sorry{
+	padding-top:115px;
+}
+.erromessagecontent .wavingastblue{
+	width:145px;
+	height:196px;
+	right:110px;
+	top:170px;
+	transform: rotate(-20deg);
+}
+@media only screen and (max-width: 1500px) {
+	.erromessagecontent .sorry{
+	padding-top:76px;
+}
+.erromessagecontent .bigfireball{
+	width:303px;
+	height:303px;
+	background:url(../../images/activity/bigfireball.png) no-repeat;
+	background-size:100% 100%;
+	font-size:15px;
+	color:#fff;
+	text-shadow: 2px 2px 0 #b31919,-2px -2px 0 #b31919;
+	left:50%;
+	margin-left:-151.5px;
+	bottom:169px;
+	position: absolute;
+}
+.erromessagecontent .ball{
+	bottom:114px;
+	left: 26px;
+}
+.erromessagecontent .pinkball{
+	left: 65px;
+    top: 125px;
+}
+.erromessagecontent .yellowball {
+    right: 222px;
+    top: 48px;
+}
+.erromessagecontent .blueball{
+	bottom:80px;
+	width:23px;
+	right:265px;
+}
+.erromessagecontent .greenball {
+    right: 30px;
+    bottom: 140px;
+    width:105px;
+}
+.erromessagecontent .wavingastblue{
+	width:112px;
+	height:145px;
+	right:75px;
+	top:118px;
+	transform: rotate(-20deg);
+}
+.facebook.pageeight .tphoto{
+	left:12px;
+}
+.facebook .checkbtn{
+	width:290px;
+	height:50px;
+	font-size:14px;
+	line-height: 50px;
+}
+.facebook.pageeight .wavingastphoto{
+   margin-left:587px;
+}
+.erromessagecontent .wavingastblue{
+
+}
+.homepage .accomplished{
+	font-size:20px;
+	bottom:205px;
+	margin-left:-150px;
+}
+.homepage .light{
+	width:750px;
+	
+	left:50%;
+	margin-left:-375px;
+}
+.homepage .down{
+	width:40px;
+}
+.homepage .micoimg{
+	width:30px;
+}
+.homepage .greenball{
+	width:109px;
+}
+.homepage .titpic{
+	width:530px;
+}
+.homepage .ufo{
+    width: 227px;
+    margin-left: -127px;
+    bottom: 376px;
+}
+.homepage .ball{
+	width:62px;
+	top:350px;
+	left:9px;
+}
+.homepage .pinkball{
+	width:16px;
+	height:16px;
+	top:112px;
+	left:0px;
+}
+.homepage .yellowball{
+	width:20px;
+    left:70px;
+    top:220px;
+}
+.homepage .blueball{
+	width:37px;
+	top:420px;
+	right:50px;
+}
+.content{
+	width:683px;
+	height:100%;
+}
+/*-----------------page2------------------*/
+.pagetwo .yellowbanball {
+	margin-left: -262px;
+	width: 524px;
+}
+.pagetwo .yhy{
+    width: 356px;
+    position:absolute;
+    z-index:6;
+    bottom:0px;
+    bottom: 26px;
+    left: -35px;
+ }
+.pagetwo .yhybody{
+	width: 356px;
+	z-index:3;
+	left:0px;
+}
+.pagetwo .teacherphoto{
+    width: 156px;
+    height: 156px;
+	position:absolute;
+	top:11px;
+	z-index:1;
+	left:165px;
+	
+}
+.pagetwo .teacherphoto img{
+	width:134px;
+	height:134px;
+    border-radius: 50%;
+
+}
+.pagetwo .flag{
+	z-index: 1;
+	left:-8px;
+	top:67px;
+	width: 120px;
+}
+
+.teachername {
+    font-size: 30px;
+    color: #ff484c;
+}
+.wordwhite {
+    font-size: 16px;
+    color: #fff;
+}
+.corh {
+    font-size: 28px;
+}
+.posmonth {
+    right: 0px;
+    bottom: 300px;
+}
+.pagetwo .wordwhite {
+    width: 249px;
+    text-align: left;
+}
+.pagetwo .greenball {
+    right: 127px;
+    top: 85px;
+    width: 140px;
+}
+.pagetwo .ball {
+    width: 60px;
+    bottom: 205px;
+}
+.pagetwo .blueball {
+    bottom: 170px;
+    right: 72px;
+    width: 36px;
+}
+.topico{
+	width:34px;
+}
+
+/*-------------------------page3------------------------*/
+.pagethree .pathway .cir1{
+	width:453px;
+	height:324px;
+}
+.pagethree .pathway .cir2{
+	width:303px;
+	height:219px;
+	margin-top:60px;
+	margin-left:80px;
+}
+.pagethree .pathway .cir3{
+	width:184px;
+	height:123px;
+	margin-left: 145px;
+    margin-top: 108px;
+}
+.pagethree .fireball {
+	width:125px;
+	margin-top: 86px;
+    margin-left: 184px;
+}
+.pagethree .pathway .hq{
+    margin-left: 345px;
+    margin-top: 207px;
+	}
+.pagethree .pathway .lq {
+    margin-left: 124px;
+    margin-top: 139px;
+}
+.pagethree .kid2 {
+    margin-top: 252px;
+    margin-left: 353px;
+    width: 70px;
+}
+.pagethree .kid3 {
+    margin-left: 322px;
+    margin-top: 21px;
+    width: 60px;
+}
+.pagethree .kid1 {
+    margin-left: 132px;
+    margin-top: 272px;
+    width: 55px;
+}
+.pagethree .kid4 {
+    margin-top: 105px;
+    margin-left: -32px;
+    width: 70px;
+}
+.pagethree .ball {
+    right: 79px;
+    width: 60px;
+    top: 170px;
+}
+.pagethree .wordwhite {
+    padding-top: 15px;
+}
+.pagethree .pathway {
+    width: 632px;
+    margin-top: 65px;
+    margin-left: -178px;
+}
+.pagethree .greenball {
+    bottom: 50px;
+    width: 108px;
+}
+/*----------------------page4-----------------------*/
+.pad70 {
+    padding-top: 15px;
+}
+.pagefour .ryh {
+    right: 155px;
+    bottom: 111px;
+    width: 205px;
+}
+.pagefour .lyh {
+    left: 118px;
+    bottom: 112px;
+    width: 215px;
+}
+.pagefour .banfirq {
+    width: 197px;
+}
+.pagefour .greenball {
+    top: 146px;
+    width:110px;
+}
+.pagefour .blueball {
+    bottom: 209px;
+    width: 28px;
+}
+.pagefour .pinkball{
+    left: 325px;
+    top: 223px;
+    width: 26px;
+}
+.micoimg{
+	width:30px;
+}
+.mico .mute{
+	font-size:10px;
+}
+.pagefour .ball {
+    left: 20px;
+    bottom: 258px;
+    width: 50px;
+}
+.pagefour .yellowball {
+    left: 20px;
+}
+/*---------------------------page5--------------------*/
+.pagefive .fbanfirball{
+	width:537px;
+	margin-left:-268.5px;
+}
+.pagefive .computer{
+	width:380px;
+	margin-left:-190px;
+	bottom:146px;
+}
+.pagefive .pinkball {
+    right: 189px;
+    top:144px;
+}
+.pagefive .yellowball {
+    top: 86px;
+    left: 72px;
+}
+.pagefive .ball {
+    left: 35px;
+    bottom: 170px;
+    width:50px;
+}
+.pagefive .blueball {
+	width:23px;
+	right: 75px;
+    bottom: 200px
+}
+.pagefive .greenball {
+    top: 144px;
+    right: 10px;
+    width: 105px;
+}
+.pagefive .wordwhite{
+	padding-left:155px;
+}
+/*-------------------------------------page6-----------------*/
+#clock {
+    background-size: 100% 100%;
+    position: relative;
+    width: 276px;
+    height: 279px;
+    margin-left:368px;
+}
+.pagesix .wavingast{
+	width:145px;
+	bottom: 78px;
+    left: 183px;
+}
+#sec, #min, #hour{
+	height:279px;
+	background-size:100% 100%;
+    left:124px;
+
+}
+.pagesix .ball {
+    left: 66px;
+    width: 50px;
+    bottom: 145px;
+}
+.pagesix .greenball {
+    width: 88px;
+    left: 305px;
+    top: 98px;
+}
+.pagesix .blueball {
+	width:20px;
+	top:146px;
+	right:166px;
+	}
+.pagesix .yellowball {
+	width:26px;
+	top:76px;
+}
+/*---------------------page7----------------------*/
+.pageseven .rocket{
+	width:149px;
+	margin-left:-67.5px;
+}
+.pageseven .fireball{
+	width:158px;
+	opacity:0.5;
+}
+.pageseven .ball{
+	width:50px;
+	bottom: 192px;
+    right: 126px
+}
+.pageseven .greenball {
+    top: 200px;
+    width:100px;
+}
+.pageseven .yellowball {
+    left: 62px;
+    top: 75px;
+}
+.pageseven .blueball{
+	width:23px;
+	right:40px;
+	bottom:216px;
+}
+.pageseven .pinkball {
+    left: 204px;
+    top: 270px;
+}
+/*--------------------------page8---------------------*/
+.pageeight .fireball{
+	width:108px;
+	opacity:0.8;
+}
+.padd57{
+	padding-bottom: 33px;
+}
+.f32{
+	font-size:25px;
+}
+.pageeight .wordwhite {
+	padding-top:115px;
+}
+.pageeight .fireball {
+    bottom: 220px;
+    opacity: 0.5;
+}
+.pageeight .wavingastphoto{
+	width:123px;
+	height:183px;
+
+}
+.pageeight .wavingast{
+	width:122px;
+	height:190px;
+}
+.pageeight .tphoto {
+    width: 68px;
+    height: 68px;
+    left: 73px;
+    top: 6px;
+    transform: rotate(-11deg);
+}
+ .pageeight .wavingastphoto {
+ 	margin-left:535px;
+ 	width:123px;
+ 	height:183px;
+}
+.pageeight .blueball{
+	width:23px;
+	bottom:160px;
+}
+.pageeight .pinkball {
+    left: 416px;
+    top: 72px;
+}
+.pageeight .yellowball {
+    top: 145px;
+}
+.pageeight .wavingastphoto{
+	margin-top:236px;
+}
+.pageeight .greenball {
+    right: 75px;
+    bottom: 65px;
+    width: 90px;
+}
+/*------------------------*/
+
+.show.homepage .light{animation: lightmove1 2s ease-in-out !important;-webkit-animation: lightmove1 2s ease-in-out !important;}
+@keyframes lightmove1{
+	0%{opacity: 0.5;
+    transform: rotate(-10deg) translate(40px,0);
+    }
+    50%{
+    
+    transform: rotate(10deg) translate(-40px,0);
+    }
+    100%{
+    transform: rotate(0deg) translate(0,0);
+    }
+}
+@-webkit-keyframes lightmove1{
+	0%{
+		opacity:0.5;
+	-webkit-transform: rotate(-10deg) translate(40px,0);
+	}
+	50%{
+	
+	 -webkit-transform: rotate(10deg) translate(-40px,0);	
+	}
+	100%{
+    -webkit-transform: rotate(0deg) translate(0,0);
+    }
+}
+
+}
+/*-------------------------动画-----------------------------------------*/
+.active .down{-webkit-animation: huangs 2s linear infinite;animation: huangs 2s linear infinite;}
+@-webkit-keyframes huangs {
+	0%{-webkit-transform: translate(0,5px)}
+	50%{-webkit-transform: translate(0,0)}
+	100%{-webkit-transform: translate(0,5px)}
+}
+@keyframes huangs {
+	0%{transform: translate(0,5px)}
+	50%{transform: translate(0,0)}
+	100%{transform: translate(0,5px)}
+}
+.active .musiczhuan,.active .ball,.active .fireball{-webkit-animation: zhuan 3s linear infinite;animation: zhuan 3s linear infinite;}
+@-webkit-keyframes zhuan {
+	0%{-webkit-transform:rotate(5deg)}	
+	100%{-webkit-transform:rotate(360deg)}
+}
+@keyframes zhuan {
+	0%{transform:rotate(5deg)}	
+	100%{transform:rotate(360deg)}
+}
+.active .pinkball,.active .yellowball,.active .blueball,.active .hq,.active .lq{transition: all 0.5s;}
+.active .pinkball{opacity:0.5;-webkit-animation: twinkling 1s infinite ease-in-out;animation: twinkling 1s infinite ease-in-out;}
+.active .hq,.active .yellowball{opacity:0.6;-webkit-animation: twinkling 2s infinite ease-in-out;animation: twinkling 2s infinite ease-in-out;}
+.active .blueball,.active .lq{opacity:0.8;-webkit-animation: twinkling 3s infinite ease-in-out;animation: twinkling 3s infinite ease-in-out;}
+ @-webkit-keyframes twinkling{ 
+    0%{
+       opacity:0;
+     }
+    100%{
+       opacity:1; 
+    }
+  }
+   @keyframes twinkling{ 
+    0%{
+       opacity:0;
+     }
+    100%{
+       opacity:1; 
+    }
+  }
+ /* .active .greenball{
+  	transition: all 1s ease-out;
+    -webkit-transform-style: preserve-3d;
+    -webkit-animation: loader 5s infinite linear;
+    transform-style: preserve-3d;
+    animation: loader 5s infinite linear;
+}*/
+
+@-webkit-keyframes loader {
+    0% {
+    	
+        -webkit-transform: translateX(-50%) translateY(-50%) rotate(0);
+        transform: translateX(-50%) translateY(-50%) rotate(0);
+    }
+    50% {
+       transform:rotate(-30deg);
+    }
+    100% { 
+        opacity: 0;
+        -webkit-transform: translateX(-50%) translateY(-50%) rotateX(180deg) rotate(360deg) scale(0.5);
+        transform: translateX(-50%) translateY(-50%) rotateY(180deg) rotate(360deg) scale(0.5);
+    }
+}
+@keyframes loader {
+    0% {
+    	
+        -webkit-transform: translateX(-50%) translateY(-50%) rotate(0);
+        transform: translateX(-50%) translateY(-50%) rotate(0);
+    }
+    50% {
+        transform:rotate(-30deg) scale(0.5);
+    }
+    100% { 
+    	opacity: 0;
+        -webkit-transform: translateX(-50%) translateY(-50%) rotateX(180deg) rotate(360deg) scale(0.5);
+        transform: translateX(-50%) translateY(-50%) rotateY(180deg) rotate(360deg) scale(0.5);
+    }
+}
+.active .yellowbanball,.active .fbanfirball{
+	transition: all 0.5;
+	-webkit-transition: all 0.5;
+	-webkit-animation: yellowbanballmov 2s ease-in-out;
+	animation: yellowbanballmov 2s ease-in-out;
+}
+.active .titpic,.active.pageeight .wordwhite{
+	transition: all 0.5;
+	-webkit-transition: all 0.5;
+	-webkit-animation: titpicmove 3s ease-in-out;
+	animation: titpicmove 3s ease-in-out;
+}
+
+@keyframes titpicmove{
+	0%{opacity:0;transform: translate(0,-212px);-webkit-transform: translate(0,-212px);}
+	100%{opacity:1;transform: translate(0,0px);-webkit-transform: translate(0,0px);}
+}
+@-webkit-keyframes titpicmove{
+	0%{opacity:0;transform: translate(0,-212px);-webkit-transform: translate(0,-212px);}
+	100%{opacity:1;transform: translate(0,0px);-webkit-transform: translate(0,0px);}
+}
+@keyframes yellowbanballmov{
+	0%{transform: translate(0,212px);-webkit-transform: translate(0,212px);}
+	100%{transform: translate(0,0px);-webkit-transform: translate(0,0px);}
+}
+@-webkit-keyframes yellowbanballmov{
+	0%{transform: translate(0,212px);-webkit-transform: translate(0,212px);}
+	100%{transform: translate(0,0px);-webkit-transform: translate(0,0px);}
+}
+.active .ufo{animation: ufomove 3s ease-in-out;-webkit-animation: ufomove 3s ease-in-out;}
+.active .light{animation: lightmove 3s ease-in-out;-webkit-animation: lightmove 3s ease-in-out;}
+@keyframes ufomove{
+	0%{
+    transform: rotate(-10deg);
+    }
+	50%{
+		transform: rotate(10deg);
+	}
+	100%{
+		transform: rotate(0deg);
+	}
+}
+@-webkit-keyframes ufomove{
+	0%{
+		-webkit-transform: rotate(-10deg);
+	}
+	50%{
+		-webkit-transform: rotate(10deg);
+	}
+	100%{
+		-webkit-transform: rotate(0deg);
+	}
+}
+@keyframes lightmove{
+	0%{opacity: 0.5;
+    transform: rotate(-10deg) translate(55px,0);
+    }
+    50%{
+    
+    transform: rotate(10deg) translate(-55px,0);
+    }
+    100%{
+    transform: rotate(0deg) translate(0,0);
+    }
+}
+@-webkit-keyframes lightmove{
+	0%{
+		opacity:0.5;
+	transform: rotate(-10deg) translate(55px,0);
+	}
+	50%{
+	
+	 transform: rotate(10deg) translate(-55px,0);	
+	}
+	100%{
+    transform: rotate(0deg) translate(0,0);
+    }
+}
+.active .flag,.active .kid1,.active.pagethree .kid2,.active .kid3,.active .kid4{-webkit-animation: youdang2 5s linear infinite;animation: youdang2 5s linear infinite;
+}
+@-webkit-keyframes youdang2 {
+	0%{-webkit-transform: translate(-3px,3px)}	
+	50%{-webkit-transform: translate(3px,-3px)}
+	75%{-webkit-transform: translate(-5px,-3px)}
+	25%{-webkit-transform: translate(3px,3px)}	
+	100%{-webkit-transform: translate(-3px,3px)}
+}
+@keyframes youdang2 {
+	0%{transform: translate(-3px,3px)}	
+	50%{transform: translate(3px,-3px)}
+	75%{transform: translate(-3px,-3px)}
+	25%{transform: translate(3px,3px)}	
+	100%{transform: translate(-3px,3px)}
+}
+.active .yhy,.active .computer,.active.pagethree .wordwhite,.active.pageseven .wordwhite,.active.pagefive .wordwhite{
+   -webkit-animation: zoomAdd 2s linear;
+    animation: zoomAdd 2s linear;
+    opacity: 1;
+} 
+@-webkit-keyframes zoomAdd {
+	0%{opacity: 0;-webkit-transform: scale(0.2)}
+	100%{opacity: 1;-webkit-transform: scale(1)}
+}
+@keyframes zoomAdd {
+	0%{opacity: 0;transform:scale(0.2)}
+	100%{opacity: 1;transform: scale(1)}
+}
+/*------------------page3动画---------------------------*/
+
+.active .pathway .blueball{
+    }
+@-webkit-keyframes pathballmov {
+	0%{-webkit-transform: rotate(35deg) translate(0,100px);}
+	20%{-webkit-transform: rotate(25deg) translate(0,0);}	
+	100%{-webkit-transform: rotate(20deg) translate(950px,0);}
+}
+@-webkit-keyframes circles{
+	
+	to{
+		-webkit-transform:rotate(1turn);
+		transform:rotate(1turn);
+}
+}
+.active .topico,.active .rocket{-webkit-animation: huang 2s linear infinite;animation: huang 2s linear infinite;}
+@-webkit-keyframes huang {
+	0%{-webkit-transform: translate(0,30px)}
+	50%{-webkit-transform: translate(0,0)}
+	100%{-webkit-transform: translate(0,30px)}
+}
+@keyframes huang {
+	0%{transform: translate(0,30px)}
+	50%{transform: translate(0,0)}
+	100%{transform: translate(0,30px)}
+}
+.active.pagefour .wordwhite{
+	animation: lhyhmov 5s ease-in-out infinite;-webkit-animation: lhyhmov 5s ease-in-out;
+}
+.active .lyh{
+	animation: lhyhmov 5s ease-in-out infinite;-webkit-animation: lhyhmov 5s ease-in-out infinite;
+}
+.active .ryh{
+	animation: rhyhmov 5s ease-in-out infinite;-webkit-animation: rhyhmov 5s ease-in-out infinite;
+}
+@keyframes rhyhmov{
+	0%{
+    transform: rotate(0deg) translate(0,0);
+    }
+    50%{
+    opacity: 0.5;
+    transform: scale(0.6) rotate(-10deg) translate(55px,0);
+    }
+    100%{
+    transform: rotate(0deg) translate(0,0);
+    }
+}
+@-webkit-keyframes rhyhmov{
+	0%{
+    -webkit-transform: rotate(0deg) translate(0,0);
+    }
+    50%{
+    opacity: 0.5;
+    -webkit-transform: scale(0.6) rotate(-10deg) translate(55px,0);
+    }
+    100%{
+    -webkit-transform: rotate(0deg) translate(0,0);
+    }
+}
+@keyframes lhyhmov{
+	0%{
+    transform: rotate(0deg) translate(0,0);
+    }
+    50%{
+    opacity: 0.5;
+    transform: scale(0.6) rotate(10deg) translate(-55px,0);
+    }
+    100%{
+    transform: rotate(0deg) translate(0,0);
+    }
+}
+@-webkit-keyframes lhyhmov{
+	0%{
+    transform: rotate(0deg) translate(0,0);
+    }
+    50%{
+    opacity: 0.5;
+    -webkit-transform: scale(0.6) rotate(10deg) translate(-55px,0);
+    }
+    100%{
+    -webkit-transform: rotate(0deg) translate(0,0);
+    }
+}
+/*---------------------page7----------------
+.active .rocket{	
+	-webkit-animation: flymans 0.8s linear 1s;
+    animation: flymans 0.8s linear 1s;
+    opacity: 1;
+}
+@-webkit-keyframes flymans {
+	0%{opacity: 0;-webkit-transform: translate(-250px,250px) rotate(65deg)
+	}
+}
+@keyframes flymans {
+	0%{opacity: 0;transform: translate(-250px,250px) rotate(65deg)}
+}
+-----*/
+/*--------------------page1word------------------------------*/
+.active.pagetwo .wordwhite{
+	 -webkit-animation: leftIn 3s linear 0.4s;
+    animation: leftIn 3s linear 0.4s;
+    -webkit-animation-fill-mode: forwards;
+    animation-fill-mode: forwards;
+}
+
+@-webkit-keyframes leftIn {
+	0%{opacity: 0;-webkit-transform: translate(80px,0)}
+	100%{opacity: 1;-webkit-transform: translate(0,0)}
+}
+@keyframes leftIn {
+	0%{opacity: 0;transform: translate(80px,0)}
+	100%{opacity: 1;transform: translate(0,0)}
+}
+@-webkit-keyframes leftIns {
+	0%{opacity: 0;-webkit-transform: translate(-80px,0)}
+	100%{opacity: 1;-webkit-transform: translate(0,0)}
+}
+@keyframes leftIns {
+	0%{opacity: 0;transform: translate(-80px,0)}
+	100%{opacity: 1;transform: translate(0,0)}
+}
+.active .wordan1{ -webkit-animation: leftIns 1s linear 0.5s;
+    animation: leftIns 1s linear 0.2s;
+    -webkit-animation-fill-mode: forwards;
+    animation-fill-mode: forwards;
+}
+.active .wordan2{
+	-webkit-animation: leftIns 3s linear;
+    animation: leftIns 3s linear;
+    opacity: 1;
+}
+.active .wavingasblue,.active .wavingastblue{
+    transition:all 0.5s;	
+	-webkit-animation: wavhand 1s ease-in-out infinite;
+    animation: wavhand 1s ease-in-out infinite;}
+
+.active .wavingastphoto{
+    transition:all 0.5s;	
+	-webkit-animation: wavhand 3s ease-in-out infinite;
+    animation: wavhand 3s ease-in-out infinite;
+}
+@keyframes wavhand{
+	0%{transform: rotate(5deg);}
+    50%{transform: rotate(-5deg);}
+    100%{transform: rotate(5deg);}
+}
+@-webkit-keyframes wavhand{
+	0%{-webkit-transform: rotate(5deg);}
+    50%{-webkit-transform: rotate(-5deg);}
+    100%{-webkit-transform: rotate(5deg);}
+}

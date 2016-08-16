@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>${title}</title>
+    <link rel="stylesheet" href="#styleUrl('/resources/styles/portal/semantic.min.css')">
+    <link rel="stylesheet" href="#styleUrl('/resources/styles/portal/bootstrap.min.css')">
+    <link rel="stylesheet" href="#styleUrl('/resources/styles/portal/bootstrap-additions.min.css')">
+    <link rel="stylesheet" href="#styleUrl('/resources/styles/portal/main.css')"/>
+    <link rel="shortcut icon" href="#styleUrl('/resources/images/portal/favicon.ico')" type="image/x-icon"/>
+    <style type="text/css">
+        .icon {
+            width: 46px;
+            height: 46px;
+            position: fixed;
+            bottom: 21%;
+            right: 1px;
+        }
+
+        .icon .contact {
+            visibility: hidden;
+            width: 111px;
+            height: 29px;
+            position: absolute;
+            top: 9px;
+            left: -90px;
+            opacity: .3;
+            z-index: -1;
+            transition: all .1s;
+        }
+
+        .icon:hover .contact {
+            visibility: visible;
+            opacity: 1;
+            left: -111px;
+            transition: all .3s;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    $screen_content
+</div>
+<div class="icon">
+    <a href='javascript:;' onclick='easemobim.bind({tenantId: 20182})'><img
+            src="#styleUrl('/resources/images/portal/contact_us.png')"></a>
+    <a href='javascript:;' onclick='easemobim.bind({tenantId: 20182})'><img class="contact"
+                                                                            src="#styleUrl('/resources/images/portal/contact_us_txt.png')"></a>
+</div>
+    #@requireJs()
+    require(['checkalive'], function(checkalive){
+    checkalive.changeroom("$!onlineClass.classroom","$!lesson.serialNumber","$!onlineClass.id","$!msURL");
+    checkalive.checkIsAlive("$!onlineClass.classroom","$!{TRPM_USER.id}","$!msURL");
+    checkalive.sendSysInfo("$!onlineClass.id","$!onlineClass.classroom","$!{TRPM_USER.id}","$!sysInfoURL");
+    });
+    #end
+<script>
+    window.easemobim = window.easemobim || {};
+    easemobim.config = {
+        hide: true,
+        appKey: '513276871#teachertest',
+        to: 'vipkid_teacher_portal_web',
+        visitor: {         //访客信息，以下参数支持变量
+            trueName: '$!{TRPM_USER.name}',
+            qq: '',
+            phone: '$!{TRPM_TEACHER.mobile}',
+            companyName: 'VIPKID',
+            userNickname: '$!{TRPM_USER.name}',
+            description: '老师ID：$!{TRPM_TEACHER.id}',
+            email: '$!{TRPM_TEACHER.email}'
+        },
+    };
+</script>
+<script src='//kefu.easemob.com/webim/easemob.js?tenantId=20182&hide=false&sat=false' async='async'></script>
+</body>
+</html>
