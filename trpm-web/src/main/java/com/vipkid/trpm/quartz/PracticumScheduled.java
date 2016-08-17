@@ -145,7 +145,9 @@ public class PracticumScheduled {
                     Map<String, String> emailMap = new TempleteUtils().readTemplete(
                             "PracticumRemiderTQ.html", paramsMap, "PracticumRemiderTQ-Title.html");
 
-                    new EmailEngine().addMailPool("practicum@vipkid.com.cn", emailMap,
+                    // new EmailEngine().addMailPool("practicum@vipkid.com.cn", emailMap,
+                    // EmailFormEnum.TEACHVIP);
+                    new EmailEngine().addMailPool("lilibo@vipkid.com.cn", emailMap,
                             EmailFormEnum.TEACHVIP);
                 } catch (Exception e) {
                     logger.error("Send TQ mail error", e);
