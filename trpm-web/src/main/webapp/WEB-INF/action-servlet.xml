@@ -14,12 +14,6 @@
 				<beans:prop key="input.encoding">UTF-8</beans:prop>
 				<beans:prop key="output.encoding">UTF-8</beans:prop>
 				<beans:prop key="velocimacro.library">/library/macro.vm</beans:prop>
-				<!--  
-				<beans:prop key="velocimacro.library.autoreload">false</beans:prop>
-				<beans:prop key="file.resource.loader.cache">true</beans:prop>
-				<beans:prop key="file.resource.loader.modificationCheckInterval">0</beans:prop>
-				<beans:prop key="resource.manager.defaultcache.size">0</beans:prop>
-				-->
 			</beans:props>
 		</beans:property>
 	</beans:bean>
