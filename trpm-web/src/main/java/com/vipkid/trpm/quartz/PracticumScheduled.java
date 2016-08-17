@@ -104,19 +104,20 @@ public class PracticumScheduled {
             Map<Long, Teacher> map = Maps.newHashMap();
             for (TeacherPe teacherPe : notRecyclings) {
                 try {
+                    long peId = teacherPe.getPeId();
                     teacherPe.setPeId(0);
                     teacherPeDao.updateTeacherPe(teacherPe);
 
                     // 统计每个PESupervisor的提示数量
-                    Teacher peSupervisor = map.get(teacherPe.getPeId());
+                    Teacher peSupervisor = map.get(peId);
                     if (null == peSupervisor) {
-                        peSupervisor = teacherDao.findById(teacherPe.getPeId());
+                        peSupervisor = teacherDao.findById(peId);
                         peSupervisor.setTeachingExperience(1);
                     } else {
                         peSupervisor
                                 .setTeachingExperience(peSupervisor.getTeachingExperience() + 1);
                     }
-                    map.put(teacherPe.getPeId(), peSupervisor);
+                    map.put(peId, peSupervisor);
                 } catch (Exception e) {
                     logger.error("Practicum recycling error", e);
                 }
