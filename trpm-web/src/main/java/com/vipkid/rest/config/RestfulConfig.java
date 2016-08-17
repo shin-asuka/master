@@ -33,4 +33,6 @@ public class RestfulConfig {
     }
     
     public static final String JSON_UTF_8 = "application/json;charset=UTF-8";
+    
+    public static final int QUIZ_PASS_SCORE = 60; 
 }

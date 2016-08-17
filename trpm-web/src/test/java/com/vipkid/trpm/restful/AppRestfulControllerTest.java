@@ -15,11 +15,9 @@ import org.slf4j.LoggerFactory;
 
 import com.google.api.client.util.Maps;
 
-public class AppRestfulControllerTest {
+public class AppRestfulControllerTest extends BaseTestCase{
 
     private static Logger logger = LoggerFactory.getLogger(AppRestfulControllerTest.class);
-
-    private static final String URL_PREFIX = "http://127.0.0.1:7080/trpm-web";
 
     //@Test
     public void login() throws IOException {

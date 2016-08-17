@@ -31,9 +31,9 @@ import com.vipkid.trpm.entity.User;
 import com.vipkid.trpm.entity.app.AppEnum;
 import com.vipkid.trpm.entity.app.AppTeacher;
 import com.vipkid.trpm.security.SHA256PasswordEncoder;
-import com.vipkid.trpm.service.app.AppRestfulService;
 import com.vipkid.trpm.service.passport.PassportService;
 import com.vipkid.trpm.service.portal.CommentsService;
+import com.vipkid.trpm.service.rest.AppRestfulService;
 
 @Controller
 public class AppRestfulController {

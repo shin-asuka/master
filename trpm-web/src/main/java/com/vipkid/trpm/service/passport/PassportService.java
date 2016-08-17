@@ -318,7 +318,7 @@ public class PassportService {
             long timeout = PropertyConfigurer.intValue("token.timeout") * 3600 * 1000;
             return count <= timeout ? true : false;
         } catch (Exception e) {
-            logger.error(e.getMessage(), e);
+            logger.warn("token :'" + strToken + "' of no avail");
             return false;
         }
     }

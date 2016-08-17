@@ -1,4 +1,4 @@
-package com.vipkid.rest;
+package com.vipkid.rest.web;
 
 import java.util.Map;
 

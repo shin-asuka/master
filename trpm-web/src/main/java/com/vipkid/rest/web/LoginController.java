@@ -1,12 +1,12 @@
-package com.vipkid.rest;
+package com.vipkid.rest.web;
 
-import java.util.Enumeration;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
+import org.community.config.PropertyConfigurer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,12 +26,13 @@ import com.vipkid.trpm.constant.ApplicationConstant.TeacherLifeCycle;
 import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.entity.User;
 import com.vipkid.trpm.security.SHA256PasswordEncoder;
-import com.vipkid.trpm.service.app.LoginService;
 import com.vipkid.trpm.service.passport.PassportService;
+import com.vipkid.trpm.service.rest.LoginService;
 import com.vipkid.trpm.util.AES;
 import com.vipkid.trpm.util.IPUtils;
 
 @RestController
+@RequestMapping("/user")
 public class LoginController {
 
     private static Logger logger = LoggerFactory.getLogger(LoginController.class);
@@ -51,7 +52,7 @@ public class LoginController {
      * @return String
      * @date 2016年5月16日
      */
-    @RequestMapping(value = "/user/login", method = RequestMethod.POST, produces = RestfulConfig.JSON_UTF_8)
+    @RequestMapping(value = "/login", method = RequestMethod.POST, produces = RestfulConfig.JSON_UTF_8)
     public Map<String, Object> login(HttpServletRequest request, HttpServletResponse response,
             @RequestParam String email, @RequestParam String password,
             @RequestParam(value = "key", required = false) String key,
@@ -60,7 +61,7 @@ public class LoginController {
         result.put("status", RestfulConfig.HttpStatus.STATUS_403);
         logger.info(" 请求参数 email ： " + email + ";password=" + password);
         if (StringUtils.isBlank(email) || StringUtils.isBlank(password)) {
-            logger.error("email or password is null password:" + password + ";email:" + email);
+            logger.warn("email or password is null password:" + password + ";email:" + email);
             result.put("info", ApplicationConstant.AjaxCode.ERROR_CODE);
             return result;
         }
@@ -69,7 +70,7 @@ public class LoginController {
         if (StringUtils.isEmpty(ip) || passportService.isExceedMaxLoginPerIP(ip)
                 || passportService.isExceedMaxLoginFailed(email)) {
             if (StringUtils.isEmpty(key) || StringUtils.isEmpty(imageCode)) {
-                logger.info("同一IP超过最大登录次数，或登录失败次数超限，需要添加验证码,userName = {}", email);
+                logger.warn("同一IP超过最大登录次数，或登录失败次数超限，需要添加验证码,userName = {}", email);
                 result.put("info", ApplicationConstant.AjaxCode.VERIFY_CODE);
                 return result;
             } else if (!passportService.checkVerifyCode(key, imageCode)) {
@@ -84,7 +85,7 @@ public class LoginController {
         User user = passportService.findUserByUsername(email);
         // 根据email，检查是否有此账号。
         if (null == user) {
-            logger.error(" User is Null " + email + ";password=" + password);
+            logger.warn(" User is Null " + email + ";password=" + password);
             result.put("info", ApplicationConstant.AjaxCode.ERROR_CODE);
             passportService.addLoginFailedCount(email);
             return result;
@@ -100,7 +101,7 @@ public class LoginController {
         SHA256PasswordEncoder encoder = new SHA256PasswordEncoder();
         String mypwd = encoder.encode(password);
         if (!mypwd.equals(user.getPassword())) {
-            logger.error(" Username or password  error!" + email + ";password=" + password);
+            logger.warn(" Username or password  error!" + email + ";password=" + password);
             result.put("info", ApplicationConstant.AjaxCode.ERROR_CODE);
             passportService.addLoginFailedCount(email);
             return result;
@@ -109,7 +110,7 @@ public class LoginController {
         logger.info("password Dtype start!");
         // 非教师在此登陆
         if (!(UserEnum.Dtype.TEACHER.toString()).equals(user.getDtype())) {
-            logger.error(" Username type error!" + email + ";password=" + password);
+            logger.warn(" Username type error!" + email + ";password=" + password);
             result.put("info", ApplicationConstant.AjaxCode.TYPE_CODE);
             passportService.addLoginFailedCount(email);
             return result;
@@ -118,7 +119,7 @@ public class LoginController {
         logger.info("teacher null start!");
         Teacher teacher = this.passportService.findTeacherById(user.getId());
         if (teacher == null) {
-            logger.error(" Username teacher error!" + email + ";password=" + password);
+            logger.warn(" Username teacher error!" + email + ";password=" + password);
             result.put("info", ApplicationConstant.AjaxCode.ERROR_CODE);
             passportService.addLoginFailedCount(email);
             return result;
@@ -127,7 +128,7 @@ public class LoginController {
         logger.info("登陆  FAIL start !");
         // 检查老师状态是否FAIL
         if (TeacherEnum.LifeCycle.FAIL.toString().equals(teacher.getLifeCycle())) {
-            logger.error(" Username fail error!" + email + ";password=" + password);
+            logger.warn(" Username fail error!" + email + ";password=" + password);
             result.put("info", ApplicationConstant.AjaxCode.QUIT_CODE);
             passportService.addLoginFailedCount(email);
             return result;
@@ -136,7 +137,7 @@ public class LoginController {
         logger.info("登陆  QUIT start !");
         // 检查老师状态是否QUIT
         if (TeacherEnum.LifeCycle.QUIT.toString().equals(teacher.getLifeCycle())) {
-            logger.error(" Username quit error!" + email + ";password=" + password);
+            logger.warn(" Username quit error!" + email + ";password=" + password);
             result.put("info", ApplicationConstant.AjaxCode.QUIT_CODE);
             passportService.addLoginFailedCount(email);
             return result;
@@ -147,13 +148,13 @@ public class LoginController {
         if (UserEnum.Status.isLocked(user.getStatus())) {
             // 新注册的需要激活
             if (TeacherEnum.LifeCycle.SIGNUP.toString().equals(teacher.getLifeCycle())) {
-                logger.error(" Username 没有激活 error!" + email + ";password=" + password);
+                logger.warn(" Username 没有激活 error!" + email + ";password=" + password);
                 result.put("info", ApplicationConstant.AjaxCode.LOCKED_CODE);
                 passportService.addLoginFailedCount(email);
                 return result;
             } else {
                 // 否则告诉被锁定
-                logger.error(" Username locked error!" + email + ";password=" + password);
+                logger.warn(" Username locked error!" + email + ";password=" + password);
                 result.put("info", ApplicationConstant.AjaxCode.QUIT_CODE);
                 passportService.addLoginFailedCount(email);
                 return result;
@@ -199,7 +200,7 @@ public class LoginController {
      * @return String code码
      * @date 2016年5月16日
      */
-    @RequestMapping(value = "/user/register", method = RequestMethod.POST, produces = RestfulConfig.JSON_UTF_8)
+    @RequestMapping(value = "/register", method = RequestMethod.POST, produces = RestfulConfig.JSON_UTF_8)
     public Map<String, Object> register(@RequestParam String email, @RequestParam String password,
             @RequestParam(value = "refereeId", required = false) String refereeId,
             @RequestParam(value = "key", required = true) String key,
@@ -219,7 +220,7 @@ public class LoginController {
             return result;
         }
         if (StringUtils.isBlank(email) || StringUtils.isBlank(password)) {
-            logger.error("email or password is null password:" + password + ";email:" + email);
+            logger.warn("email or password is null password:" + password + ";email:" + email);
             result.put("info", ApplicationConstant.AjaxCode.EMAIL_CODE);
             result.put("status", RestfulConfig.HttpStatus.STATUS_403);
             return result;
@@ -228,7 +229,7 @@ public class LoginController {
         User user = passportService.findUserByUsername(email);
         // 1.用户名存在，反馈
         if (user != null) {
-            logger.error("user is null:" + email);
+            logger.warn("user is null:" + email);
             result.put("info", ApplicationConstant.AjaxCode.ERROR_CODE);
             result.put("status", RestfulConfig.HttpStatus.STATUS_403);
             return result;
@@ -250,39 +251,39 @@ public class LoginController {
      * @return String code码
      * @date 2016年5月16日
      */
-    @RequestMapping(value = "/user/resetPasswordRequest", method = RequestMethod.POST, produces = RestfulConfig.JSON_UTF_8)
+    @RequestMapping(value = "/resetPasswordRequest", method = RequestMethod.POST, produces = RestfulConfig.JSON_UTF_8)
     public Map<String, Object> resetPasswordRequest(HttpServletRequest request, HttpServletResponse response,
             @RequestParam String email) {
         Map<String, Object> result = Maps.newHashMap();
         result.put("status", RestfulConfig.HttpStatus.STATUS_403);
         if (StringUtils.isBlank(email)) {
-            logger.error("email is null");
+            logger.warn("email is null");
             result.put("info", ApplicationConstant.AjaxCode.ERROR_CODE);
             return result;
         }
         // 根据email，检查是否有此账号。
         User user = this.passportService.findUserByUsername(email);
         if (null == user) {
-            logger.error("user is null email:" + email);
+            logger.warn("user is null email:" + email);
             result.put("info", ApplicationConstant.AjaxCode.ERROR_CODE);
             return result;
         }
         // 检查用户类型
         if (!UserEnum.Dtype.TEACHER.toString().equals(user.getDtype())) {
-            logger.error("user not is teacher id = " + user.getId());
+            logger.warn("user not is teacher id = " + user.getId());
             result.put("info", ApplicationConstant.AjaxCode.TYPE_CODE);
             return result;
         }
         // techer null check
         Teacher teacher = this.passportService.findTeacherById(user.getId());
         if (teacher == null) {
-            logger.error("teacher is null id = " + user.getId());
+            logger.warn("teacher is null id = " + user.getId());
             result.put("info", ApplicationConstant.AjaxCode.ERROR_CODE);
             return result;
         }
         // 检查老师状态是否FAIL
         if (TeacherEnum.LifeCycle.FAIL.toString().equals(teacher.getLifeCycle())) {
-            logger.error("teacher is fail id = " + user.getId());
+            logger.warn("teacher is fail id = " + user.getId());
             result.put("info", ApplicationConstant.AjaxCode.QUIT_CODE);
             return result;
         }
@@ -291,19 +292,19 @@ public class LoginController {
         if (UserEnum.Status.isLocked(user.getStatus())) {
             // 新注册的需要激活
             if (TeacherEnum.LifeCycle.SIGNUP.toString().equals(teacher.getLifeCycle())) {
-                logger.error("teacher 未激活  id = " + user.getId());
+                logger.warn("teacher 未激活  id = " + user.getId());
                 result.put("info", ApplicationConstant.AjaxCode.LOCKED_CODE);
                 return result;
             } else {
                 // 否则告诉被锁定
-                logger.error("teacher is 被锁定 id = " + user.getId());
+                logger.warn("teacher is 被锁定 id = " + user.getId());
                 result.put("info", ApplicationConstant.AjaxCode.QUIT_CODE);
                 return result;
             }
         }
         // 检查老师状态是否QUIT
         if (TeacherEnum.LifeCycle.QUIT.toString().equals(teacher.getLifeCycle())) {
-            logger.error("teacher is QUIT id = " + user.getId());
+            logger.warn("teacher is QUIT id = " + user.getId());
             result.put("info", ApplicationConstant.AjaxCode.QUIT_CODE);
             return result;
         }
@@ -325,34 +326,35 @@ public class LoginController {
      * @return String code码
      * @date 2016年5月16日
      */
-    @RequestMapping(value = "/user/resetPassword", method = RequestMethod.POST, produces = RestfulConfig.JSON_UTF_8)
+    @RequestMapping(value = "/resetPassword", method = RequestMethod.POST, produces = RestfulConfig.JSON_UTF_8)
     public Map<String, Object> resetPassword(HttpServletRequest request, HttpServletResponse response,
             @RequestParam String password, @RequestParam String token) {
         Map<String, Object> result = Maps.newHashMap();
         result.put("status", RestfulConfig.HttpStatus.STATUS_403);
         result.put("info", ApplicationConstant.AjaxCode.ERROR_CODE);
         if (StringUtils.isBlank(password) || StringUtils.isBlank(token)) {
-            logger.error("password or token is null password = " + password + ";token:" + token);
+            logger.warn("password or token is null password = " + password + ";token:" + token);
             return result;
         }
         if (!this.passportService.checkTokenTimeout(token)) {
-            logger.error("token 过期   token:" + token);
+            logger.warn("token 过期   token:" + token);
             return result;
         }
         Teacher teacher = this.passportService.findByRecruitmentId(token);
         if (teacher == null) {
-            logger.error("teacher is null:" + teacher);
+            logger.warn("teacher is null:" + teacher);
             return result;
         }
         // 修改成功后strToken替换成最新
         token = this.passportService.updatePassword(teacher, password);
         if (StringUtils.isEmpty(token)) {
-            logger.error("update token fail ,token:" + token);
+            logger.warn("update token fail ,token:" + token);
             return result;
         }
         // 重置密码后模拟登陆
-        result.put("status", RestfulConfig.HttpStatus.STATUS_200);
         result.remove("info");
+        
+        result.put("status", RestfulConfig.HttpStatus.STATUS_200);
         result.put("portal", RestfulConfig.Port.RECRUITMENT);
         if (TeacherEnum.LifeCycle.REGULAR.toString().equals(teacher.getLifeCycle())) {
             result.put("portal", RestfulConfig.Port.TEACHER);
@@ -361,43 +363,29 @@ public class LoginController {
         return result;
     }
 
-    @RequestMapping(value = "/user/auth", method = RequestMethod.POST, produces = RestfulConfig.JSON_UTF_8)
+    @RequestMapping(value = "/auth", method = RequestMethod.POST, produces = RestfulConfig.JSON_UTF_8)
     public Map<String, Object> auth(HttpServletRequest request, HttpServletResponse response) {
         Map<String, Object> result = Maps.newHashMap();
         String token = request.getHeader(CookieKey.AUTOKEN);
         result.put("status", RestfulConfig.HttpStatus.STATUS_403);
-        logger.info("check auth token value " + token + " By:Header" + request.getHeaderNames());
-        // 循环head内容
-        if (request.getHeaderNames() != null) {
-            Enumeration<String> em = request.getHeaderNames();
-            while (em.hasMoreElements()) {
-                String name = em.nextElement();
-                logger.info("HEAD:" + name + ";value:" + request.getHeader(name));
-            }
-        }
         if (StringUtils.isBlank(token)) {
-            logger.error("auth : token is null");
+            logger.warn("auth : token is null");
             return result;
         }
         User user = loginService.getUser(request);
         if (user == null) {
-            logger.error("check auth user is null " + user);
+            logger.warn("check auth user is null " + user);
             return result;
         }
         Teacher teacher = loginService.getTeacher(request);
         if (teacher == null) {
-            logger.error("check auth teacher is null " + teacher);
+            logger.warn("check auth teacher is null " + teacher);
             return result;
         }
         /* 判断老师的LifeCycle，进行项目跳转 */
         logger.info("登陆  REGULAR start !");
-        
         if (TeacherLifeCycle.REGULAR.toString().equals(teacher.getLifeCycle())) {
             logger.info("to teacher !");
-            // 只有教师端老师登陆后才做强制修改密码判断
-            loginService.setLoginCooke(response, user);
-            /* 设置老师能教的课程类型列表 */
-            loginService.setCourseTypes(user.getId(), loginService.getCourseType(user.getId()));
             result.put("portal", RestfulConfig.Port.TEACHER);
             result.put("action", "schedule.shtml");
             // 招聘端跳转URL
@@ -407,7 +395,15 @@ public class LoginController {
             result.put("action", "signlogin.shtml?token=" + AES.encrypt(user.getToken(), AES.getKey(AES.KEY_LENGTH_128, ApplicationConstant.AES_128_KEY)));
         }
         result.put("teacher", teacher);
-        result.put("LifeCycle", teacher.getLifeCycle());
+        String headsrc = teacher.getAvatar();
+        if(StringUtils.isNotBlank(headsrc)){
+            if(!headsrc.startsWith("/")){
+                headsrc = "/" + headsrc;
+            }
+            headsrc = PropertyConfigurer.stringValue("oss.url_preffix") + headsrc;
+        }
+        result.put("headsrc", headsrc);
+        result.put("showName", user.getName());
         result.put("status", RestfulConfig.HttpStatus.STATUS_200);
         return result;
     }
