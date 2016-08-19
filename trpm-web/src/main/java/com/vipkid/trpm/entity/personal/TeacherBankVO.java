@@ -27,6 +27,8 @@ public class TeacherBankVO implements Serializable {
     private String beneficiaryZipCode;
     
     private String swiftCode;
+    private Integer bankABARoutingNumber;
+    private Integer bankACHNumber;
     
     
     ////=======
@@ -155,7 +157,25 @@ public class TeacherBankVO implements Serializable {
         this.swiftCode = swiftCode;
     }
 
-    public Integer getIdType() {
+    public Integer getBankABARoutingNumber() {
+		return bankABARoutingNumber;
+	}
+
+	public void setBankABARoutingNumber(Integer bankABARoutingNumber) {
+		if(bankABARoutingNumber == null)  bankABARoutingNumber = 0;
+		this.bankABARoutingNumber = bankABARoutingNumber;
+	}
+
+	public Integer getBankACHNumber() {
+		return bankACHNumber;
+	}
+
+	public void setBankACHNumber(Integer bankACHNumber) {
+		if(bankACHNumber == null)  bankACHNumber = 0;
+		this.bankACHNumber = bankACHNumber;
+	}
+
+	public Integer getIdType() {
         return idType;
     }
 

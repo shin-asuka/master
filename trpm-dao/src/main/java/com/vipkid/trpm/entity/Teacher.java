@@ -26,6 +26,10 @@ public class Teacher extends Entity implements Serializable {
 	/*  */
 	private String bankSwiftCode;
 	/*  */
+	private int bankABARoutingNumber;
+	/*  */
+	private int bankACHNumber;
+	/*  */
 	private java.sql.Date birthday;
 	/*  */
 	private String certificates;
@@ -203,6 +207,24 @@ public class Teacher extends Entity implements Serializable {
 
 	public String getBankSwiftCode() {
 		return this.bankSwiftCode;
+	}
+
+	public int getBankABARoutingNumber() {
+		return bankABARoutingNumber;
+	}
+
+	public Teacher setBankABARoutingNumber(int bankABARoutingNumber) {
+		this.bankABARoutingNumber = bankABARoutingNumber;
+		return this;
+	}
+
+	public int getBankACHNumber() {
+		return bankACHNumber;
+	}
+
+	public Teacher setBankACHNumber(int bankACHNumber) {
+		this.bankACHNumber = bankACHNumber;
+		return this;
 	}
 
 	public Teacher setBankSwiftCode(String bankSwiftCode) {

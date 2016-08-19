@@ -122,6 +122,8 @@ public class PersonalInfoService {
 		teacher.setBankCardNumber(bankInfo.getBeneficiaryAccountNumber());
 
 		teacher.setBankSwiftCode(bankInfo.getSwiftCode());
+		teacher.setBankABARoutingNumber(bankInfo.getBankABARoutingNumber());
+		teacher.setBankACHNumber(bankInfo.getBankACHNumber());
 
 		teacher.setIdentityType(bankInfo.getIdType());
 		teacher.setPassport(bankInfo.getPassportURL());

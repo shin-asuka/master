@@ -245,6 +245,8 @@ define(depends, function(personal) {
 		data.beneficiaryBankName = $("#bankName").val();
 		
 		data.swiftCode = $("#bankSwiftCode").val();
+		data.bankABARoutingNumber = ($("#bankABARoutingNumber").val()=="")? "-1" : $("#bankABARoutingNumber").val();//等于0的话，会被mybatis的mapper里面的if滤掉，所以换成-1
+		data.bankACHNumber = ($("#bankACHNumber").val()=="")?"-1":$("#bankACHNumber").val();
 		data.idType = $("input[type='radio']:checked").val();
 		var file = $("#passport-link").attr("href").substring($("#passport-link").attr("href").indexOf("file"));
 		data.passportURL = file.replace(aliyunroot,"");

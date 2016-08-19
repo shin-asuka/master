@@ -126,7 +126,35 @@
 	            <div>(e.g.,BOFAUS3N)</div>
 	        </div>          	
           	<div class="col-sm-6 col-md-6">
-            	If you cannot confirm this, please refer to your bank manager.
+            	Please refer to your bank manager if you cannot confirm this.
+          	</div>
+        </div>
+        
+        <div class="row form-group"><div class="col-sm-1 col-md-1"></div><div class="col-sm-11 col-md-11"><hr/></div></div>
+        
+        <div class="row form-group">
+          	<div class="col-sm-1 col-md-1"></div>
+           	<div class="col-sm-5 col-md-5 add-right-border">
+	            <div class='title-lable'>ABA routing number</div>
+	            <input type="text" maxlength="9" onkeyup="value=value.replace(/[^\d]/g,'') " class="form-control" id="bankABARoutingNumber" name="bankABARoutingNumber" value="#if($!{TRPM_TEACHER.bankABARoutingNumber}!=0&&$!{TRPM_TEACHER.bankABARoutingNumber}!=-1)$!{TRPM_TEACHER.bankABARoutingNumber}#end">
+	            <div>(e.g.,123456789)</div>
+	        </div>          	
+          	<div class="col-sm-6 col-md-6">
+            	If it is confirmed that there's no SWIFT code, please fill out the ABA routing number.
+          	</div>
+        </div>
+        
+        <div class="row form-group"><div class="col-sm-1 col-md-1"></div><div class="col-sm-11 col-md-11"><hr/></div></div>
+        
+        <div class="row form-group">
+          	<div class="col-sm-1 col-md-1"></div>
+           	<div class="col-sm-5 col-md-5 add-right-border">
+	            <div class='title-lable'>ACH number (US only)</div>
+	            <input type="text" maxlength="9" onkeyup="value=value.replace(/[^\d]/g,'') " class="form-control" id="bankACHNumber" name="bankACHNumber" value="#if($!{TRPM_TEACHER.bankACHNumber}!=0&&$!{TRPM_TEACHER.bankACHNumber}!=-1)$!{TRPM_TEACHER.bankACHNumber}#end">
+	            <div>(e.g.,123456789)</div>
+	        </div>          	
+          	<div class="col-sm-6 col-md-6">
+            	The transfer made with the ACH number will save part of the transfer fee.
           	</div>
         </div>
         
