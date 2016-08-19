@@ -52,7 +52,7 @@
         <td width="76">&nbsp;</td>
     </tr>
     <tr>
-        <td width="*">&middot;Speaks with speed and language appropriate to student’s level.</td>
+        <td width="*">&middot;Speaks with speed and language appropriate to student's level.</td>
         <td width="20">&nbsp;</td>
         <td width="76" valign="top"><input type="radio" name="homeCountryTeachingExperience" #if(0 == ${teacherApplication.homeCountryTeachingExperience})checked="checked"#end value="0" />
             <input type="radio" name="homeCountryTeachingExperience" #if(1 == ${teacherApplication.homeCountryTeachingExperience})checked="checked"#end value="1" />

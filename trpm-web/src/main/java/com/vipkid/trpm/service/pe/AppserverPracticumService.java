@@ -62,6 +62,7 @@ public class AppserverPracticumService {
 
         executorService.execute(() -> {
             try {
+                Thread.sleep(10 * 1000);
                 HttpClientProxy.post(FINISH_PRACTICUM_PROCESS_URL, requestParams, requestHeader);
             } catch (Exception e) {
                 logger.error(e.getMessage());
