@@ -2,7 +2,11 @@ package com.vipkid.trpm.service.portal;
 
 import java.sql.Timestamp;
 import java.time.Instant;
-import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.TimeZone;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.collections.CollectionUtils;
@@ -17,11 +21,33 @@ import org.springframework.stereotype.Service;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 import com.vipkid.trpm.constant.ApplicationConstant;
-import com.vipkid.trpm.constant.ApplicationConstant.*;
-import com.vipkid.trpm.dao.*;
-import com.vipkid.trpm.entity.*;
+import com.vipkid.trpm.constant.ApplicationConstant.ClassStatus;
+import com.vipkid.trpm.constant.ApplicationConstant.FinishType;
+import com.vipkid.trpm.constant.ApplicationConstant.RecruitmentResult;
+import com.vipkid.trpm.constant.ApplicationConstant.RecruitmentStatus;
+import com.vipkid.trpm.constant.ApplicationConstant.TeacherLifeCycle;
+import com.vipkid.trpm.constant.ApplicationConstant.TeacherType;
+import com.vipkid.trpm.dao.AuditDao;
+import com.vipkid.trpm.dao.DemoReportDao;
+import com.vipkid.trpm.dao.LessonDao;
+import com.vipkid.trpm.dao.OnlineClassDao;
+import com.vipkid.trpm.dao.StudentDao;
+import com.vipkid.trpm.dao.TeacherApplicationDao;
+import com.vipkid.trpm.dao.TeacherCommentDao;
+import com.vipkid.trpm.dao.TeacherDao;
+import com.vipkid.trpm.dao.TeacherModuleDao;
+import com.vipkid.trpm.dao.TeacherPeDao;
+import com.vipkid.trpm.dao.UserDao;
+import com.vipkid.trpm.entity.DemoReport;
+import com.vipkid.trpm.entity.Lesson;
+import com.vipkid.trpm.entity.OnlineClass;
+import com.vipkid.trpm.entity.Student;
+import com.vipkid.trpm.entity.Teacher;
+import com.vipkid.trpm.entity.TeacherApplication;
+import com.vipkid.trpm.entity.TeacherComment;
+import com.vipkid.trpm.entity.TeacherModule;
+import com.vipkid.trpm.entity.User;
 import com.vipkid.trpm.proxy.ClassroomProxy;
-import com.vipkid.trpm.service.pe.AppserverPracticumService;
 import com.vipkid.trpm.util.DateUtils;
 import com.vipkid.trpm.util.FilesUtils;
 import com.vipkid.trpm.util.IPUtils;
@@ -63,9 +89,6 @@ public class OnlineClassService {
 
     @Autowired
     private TeacherModuleDao teacherModuleDao;
-
-    @Autowired
-    private AppserverPracticumService appserverPracticumService;
 
     /**
      * 根据id找online class
@@ -396,8 +419,9 @@ public class OnlineClassService {
                     "Practicum Online Class[finish] updateAudit,studentId:{},onlineClassId:{},recruitTeacher:{},teacherId:{}",
                     pe.getId(), onlineClass.getId(), recruitTeacher.getId(), pe.getId());
 
-            // 并异步调用AppServer发送邮件及消息
-            appserverPracticumService.finishPracticumProcess(currTeacherApplication.getId(),
+            // 设置调用接口的参数
+            modelMap.put("teacherApplicationId", currTeacherApplication.getId());
+            modelMap.put("recruitTeacher",
                     teacherDao.findById(currTeacherApplication.getTeacherId()));
 
             return modelMap;
