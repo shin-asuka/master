@@ -87,7 +87,7 @@ public class CookieExpiredHandleInterceptor extends HandlerInterceptorAdapter {
 		try {
 			String ids = PropertyConfigurer.stringValue("displayedPayrollId");
 			if (ids.indexOf(new Long(user.getId()).toString()) > -1) {
-				redisProxy.setex("payroll_" + user.getId(), RedisConstants.PAYROLL_DISPLAY_MAX_NUM_EXCEED_DAY_SEC,
+				redisProxy.setnx("payroll_" + user.getId(),
 						"payroll_exd");
 			}
 			String pid = redisProxy.get("payroll_"+user.getId());

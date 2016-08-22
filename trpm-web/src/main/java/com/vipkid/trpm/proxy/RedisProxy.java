@@ -206,6 +206,19 @@ public class RedisProxy implements InitializingBean, DisposableBean {
         }
         return ret;
     }
+    
+    public long setnx(String key, String value) {
+        Jedis jedis = jedisPool.getResource();
+        Long ret = null;
+        try {
+            ret = jedis.setnx(key, value);
+        } catch (Exception e) {
+            throw new RedisException(e);
+        } finally {
+            jedis.close();
+        }
+        return ret;
+    }
 
     /**
      *
