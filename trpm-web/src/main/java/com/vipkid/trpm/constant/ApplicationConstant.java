@@ -378,7 +378,7 @@ public interface ApplicationConstant {
                                                                                // 一天=86400秒
 
         public static final int IMAGE_CODE_INVALID_SEC = 120; // 图片验证码失效时间阀值
-
+        public static final int PAYROLL_DISPLAY_MAX_NUM_EXCEED_DAY_SEC = 60 * 60 * 24 * 60 ;//payroll 部分老师可用 60天
     }
 
 }

@@ -19,6 +19,7 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import com.vipkid.http.service.AnnouncementHttpService;
 import com.vipkid.trpm.constant.ApplicationConstant;
 import com.vipkid.trpm.constant.ApplicationConstant.CookieKey;
+import com.vipkid.trpm.constant.ApplicationConstant.RedisConstants;
 import com.vipkid.trpm.entity.User;
 import com.vipkid.trpm.proxy.RedisProxy;
 import com.vipkid.trpm.service.passport.IndexService;
@@ -83,6 +84,19 @@ public class CookieExpiredHandleInterceptor extends HandlerInterceptorAdapter {
 		request.setAttribute("TRPM_COURSE_TYPES", indexService.getCourseType(user.getId()));
 		request.setAttribute("recruitmentUrl", PropertyConfigurer.stringValue("recruitment.www"));
 		request.setAttribute("isPe", indexService.isPe(user.getId()));
+		try {
+			String ids = PropertyConfigurer.stringValue("displayedPayrollId");
+			if (ids.indexOf(new Long(user.getId()).toString()) > -1) {
+				redisProxy.setex("payroll_" + user.getId(), RedisConstants.PAYROLL_DISPLAY_MAX_NUM_EXCEED_DAY_SEC,
+						"payroll_exd");
+			}
+			String pid = redisProxy.get("payroll_"+user.getId());
+			if (pid != null) {
+					request.setAttribute("isDisplayPayroll", true);
+			}
+		} catch (Exception e) {
+			logger.error("捕获payroll redis 异常 ，teacher id是{}",user.getId());
+		}
 		if (!checkChangePasswordUri(request) && checkCookie(request)) {
 			logger.info("拦截检测到需要修改密码进入页面");
 			response.sendRedirect(request.getContextPath() + "/schedule.shtml");
