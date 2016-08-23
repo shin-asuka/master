@@ -37,7 +37,7 @@
                 <div class="col-xs-6 text-right">
                     #set($payTo=$payroll.totalSalary /100.0)
                     #if(<0)
-                       #set($payTo = 'N/A')
+                       #set($payTo="N/A")
                     #end
                     <h4>$ $!{payTo}</h4>
                 </div>
