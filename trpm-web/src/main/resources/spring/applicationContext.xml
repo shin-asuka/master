@@ -9,7 +9,7 @@
         http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-4.0.xsd
         http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.0.xsd">
 
-	<context:component-scan base-package="com.vipkid.trpm,com.vipkid.payroll,com.vipkid.mq,com.vipkid.http,com.vipkid.rest" />
+	<context:component-scan base-package="com.vipkid" />
 
 	<!-- 定时器任务注解驱动 -->
 	<task:annotation-driven />

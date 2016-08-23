@@ -1,4 +1,4 @@
-package com.vipkid.trpm.quartz;
+package com.vipkid.task.job;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
@@ -10,7 +10,6 @@ import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import com.google.api.client.util.Maps;
@@ -21,9 +20,11 @@ import com.vipkid.trpm.dao.TeacherDao;
 import com.vipkid.trpm.dao.TeacherPeDao;
 import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.entity.TeacherPe;
-import com.vipkid.trpm.proxy.redis.RedisClient;
+import com.vipkid.vschedule.client.common.Vschedule;
+import com.vipkid.vschedule.client.schedule.JobContext;
 
 @Component
+@Vschedule
 public class PracticumScheduled {
 
     private static final Logger logger = LoggerFactory.getLogger(PracticumScheduled.class);
@@ -38,62 +39,48 @@ public class PracticumScheduled {
     @Autowired
     private TeacherDao teacherDao;
 
-    @Scheduled(cron = "0 0 0/2 * * ?")
-    public void executeAllocation() {
+    @Vschedule
+    // @Scheduled(cron = "0 0 0/2 * * ?")
+    public void executeAllocation(JobContext jobContext) {
         logger.info("Practicum allocation start at {}", LocalDateTime.now());
 
-        final String key = "TRPM.PE.executeAllocation";
-        if (!RedisClient.me().lock(key)) {
-            logger.info("Practicum allocation get lock failed at {}", LocalDateTime.now());
-            return;
-        }
+        List<TeacherPe> notAllocations = teacherPeDao.findNotAllocations();
+        if (CollectionUtils.isNotEmpty(notAllocations)) {
+            logger.info("Practicum allocation get datas {} line", notAllocations.size());
 
-        try {
-            List<TeacherPe> notAllocations = teacherPeDao.findNotAllocations();
-            if (CollectionUtils.isNotEmpty(notAllocations)) {
-                logger.info("Practicum allocation get datas {} line", notAllocations.size());
+            List<Long> teacherIds = teacherPeDao.randomTeachersForPE();
+            Iterator<TeacherPe> it = notAllocations.iterator();
 
-                List<Long> teacherIds = teacherPeDao.randomTeachersForPE();
-                Iterator<TeacherPe> it = notAllocations.iterator();
+            if (CollectionUtils.isNotEmpty(teacherIds)) {
+                for (int i = 0; i < teacherIds.size();) {
+                    if (it.hasNext()) {
+                        TeacherPe teacherPe = it.next();
+                        teacherPe.setPeId(teacherIds.get(i));
+                        teacherPe.setExpiredRemind(0);
+                        teacherPe.setCreationTime(new Timestamp(System.currentTimeMillis()));
+                        // 设置过期时间为48小时之后
+                        teacherPe.setExpiredMillis(System.currentTimeMillis() + HOURS_48);
+                        teacherPeDao.updateTeacherPe(teacherPe);
 
-                if (CollectionUtils.isNotEmpty(teacherIds)) {
-                    for (int i = 0; i < teacherIds.size();) {
-                        if (it.hasNext()) {
-                            TeacherPe teacherPe = it.next();
-                            teacherPe.setPeId(teacherIds.get(i));
-                            teacherPe.setExpiredRemind(0);
-                            teacherPe.setCreationTime(new Timestamp(System.currentTimeMillis()));
-                            // 设置过期时间为48小时之后
-                            teacherPe.setExpiredMillis(System.currentTimeMillis() + HOURS_48);
-                            teacherPeDao.updateTeacherPe(teacherPe);
-
-                            if (i == (teacherIds.size() - 1)) {
-                                i = 0;
-                            } else {
-                                i++;
-                            }
+                        if (i == (teacherIds.size() - 1)) {
+                            i = 0;
                         } else {
-                            break;
+                            i++;
                         }
+                    } else {
+                        break;
                     }
                 }
             }
-        } finally {
-            RedisClient.me().unlock(key);
         }
 
         logger.info("Practicum allocation end at {}", LocalDateTime.now());
     }
 
-    @Scheduled(cron = "0 0/10 * * * ?")
-    public void executeRecycling() {
+    @Vschedule
+    // @Scheduled(cron = "0 0/10 * * * ?")
+    public void executeRecycling(JobContext jobContext) {
         logger.info("Practicum recycling start at {}", LocalDateTime.now());
-
-        final String key = "TRPM.PE.executeRecycling";
-        if (!RedisClient.me().lock(key)) {
-            logger.info("Practicum recycling get lock failed at {}", LocalDateTime.now());
-            return;
-        }
 
         List<TeacherPe> notRecyclings = teacherPeDao.findNotRecyclings(System.currentTimeMillis());
         if (CollectionUtils.isNotEmpty(notRecyclings)) {
@@ -151,19 +138,13 @@ public class PracticumScheduled {
             }
         }
 
-        RedisClient.me().unlock(key);
         logger.info("Practicum recycling end at {}", LocalDateTime.now());
     }
 
-    @Scheduled(cron = "0 0/5 * * * ?")
-    public void executeRemind() {
+    @Vschedule
+    // @Scheduled(cron = "0 0/5 * * * ?")
+    public void executeRemind(JobContext jobContext) {
         logger.info("Practicum remind start at {}", LocalDateTime.now());
-
-        final String key = "TRPM.PE.executeRemind";
-        if (!RedisClient.me().lock(key)) {
-            logger.info("Practicum remind get lock failed at {}", LocalDateTime.now());
-            return;
-        }
 
         List<TeacherPe> notReminds = teacherPeDao.findNotReminds();
         if (CollectionUtils.isNotEmpty(notReminds)) {
@@ -199,7 +180,6 @@ public class PracticumScheduled {
                     "PracticumReminder-Title.html"));
         }
 
-        RedisClient.me().unlock(key);
         logger.info("Practicum remind end at {}", LocalDateTime.now());
     }
 
