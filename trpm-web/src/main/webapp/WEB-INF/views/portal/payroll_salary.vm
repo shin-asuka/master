@@ -390,7 +390,8 @@
                 </table>
 				#end
 				
-                <br>
+               #*<br>
+               2016.08.23 不显示referall bonus
                 <table class="table table-bordered">
                     <thead>
                         <tr class="active">
@@ -424,6 +425,7 @@
                     <tbody>
                     </tbody>
                 </table>
+				*#			
 				
 				<br>
 				<table id="otherNewVipkid_table_id" class="table table-bordered">
