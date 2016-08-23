@@ -289,6 +289,133 @@ define(depends, function(personal) {
 		}
 	}
 	
+	/////////////////////////以下添加blur事件来校验输入/////////////////////////////////////
+	$(".replace").blur(function(){
+		var value = $(this).val();
+		if(value==""){
+			$("#"+$(this).attr("id")+"-tip").html("This field is required.").hide().fadeIn();//刚好class为replace的3个字段都是必填
+		}
+		else if(value.indexOf(",") > -1 || value.indexOf(".") > -1 || value.indexOf("-") > -1 || value.indexOf("&") > -1){
+			$("#"+$(this).attr("id")+"-tip").html("Cannot contain period, comma, dash or ampersand.").hide().fadeIn();
+		}else{
+			$("#"+$(this).attr("id")+"-tip").html("").hide();
+		}
+	});
+	
+	$("#bankAccountName").blur(function(){
+		var Regx = /^[A-Za-z\s]*$/;
+		if($("#bankAccountName").val()=="" ){
+			$("#bankAccountName-tip").html("This field is required.").hide().fadeIn();
+		}
+		else if(!Regx.test($("#bankAccountName").val())){
+			$("#bankAccountName-tip").html("Can only contain letters and spaces.").hide().fadeIn();
+		}else{
+			$("#bankAccountName-tip").html("").hide();
+		}
+	});
+	$("#bankCardNumber").blur(function(){
+		var Regx = /^[0-9]*$/;
+		if($("#bankCardNumber").val()=="" ){
+			$("#bankCardNumber-tip").html("This field is required.").hide().fadeIn();
+		}
+		else if(!Regx.test($("#bankCardNumber").val())){
+			$("#bankCardNumber-tip").html("Can only contain numbers and letters.").hide().fadeIn();
+		}else{
+			$("#bankCardNumber-tip").html("").hide();
+		}
+	});
+	$("#bankName").blur(function(){
+		var Regx = /^[A-Za-z0-9\s]*$/;
+		if($("#bankName").val()=="" ){
+			$("#bankName-tip").html("This field is required.").hide().fadeIn();
+		}
+		else if(!Regx.test($("#bankName").val())){
+			$("#bankName-tip").html("Can only contain numbers, letters and spaces.").hide().fadeIn();
+		}else{
+			$("#bankName-tip").html("").hide();
+		}
+	});
+	$("#bank_zip_code").blur(function(){
+		var Regx = /^[0-9]*$/;
+		if($("#bank_zip_code").val()=="" ){
+			$("#bank_zip_code-tip").html("This field is required.").hide().fadeIn();
+		}
+		else if(!Regx.test($("#bank_zip_code").val())){
+			$("#bank_zip_code-tip").html("Can only contain numbers.").hide().fadeIn();
+		}else{
+			$("#bank_zip_code-tip").html("").hide();
+		}
+	});
+	$("#beneficiary_zip_code").blur(function(){
+		if($("#beneficiary_zip_code").val()=="" ){
+			$("#beneficiary_zip_code-tip").html("This field is required.").hide().fadeIn();
+		}
+		else if(!Regx.test($("#beneficiary_zip_code").val())){
+			$("#beneficiary_zip_code-tip").html("Can only contain numbers.").hide().fadeIn();
+		}else{
+			$("#beneficiary_zip_code-tip").html("").hide();
+		}
+	});
+	$("#bankSwiftCode").blur(function(){
+		var Regx = /^[A-Za-z0-9]{9}$/;
+		if($("#bankSwiftCode").val()==""&&$("#bankABARoutingNumber").val()==""){
+			$("#bankSwiftCode-tip").html("Swift code or ABA routing number is required.").hide().fadeIn();
+		}
+		else if($("#bankSwiftCode").val()!=""&&!Regx.test($("#bankSwiftCode").val())){
+			$("#bankSwiftCode-tip").html("Can only contain 9 numbers or letters.").hide().fadeIn();
+		}else{
+			$("#bankSwiftCode-tip").html("").hide();
+		}
+	});
+	$("#bankABARoutingNumber").blur(function(){
+		var Regx = /^\d{9}$/;
+		if($("#bankSwiftCode").val()==""&&$("#bankABARoutingNumber").val()==""){
+			$("#bankABARoutingNumber-tip").html("Swift code or ABA routing number is required.").hide().fadeIn();
+		}
+		else if($("#bankABARoutingNumber").val()!=""&&!Regx.test($("#bankABARoutingNumber").val())){
+			$("#bankABARoutingNumber-tip").html("Must be 9 numbers.").hide().fadeIn();
+		}
+		else if($("#bankABARoutingNumber").val()=="000000000"){
+			$("#bankABARoutingNumber-tip").html("Please fill in your real number.").hide().fadeIn();
+		}
+		else{
+			$("#bankABARoutingNumber-tip").html("").hide();
+		}
+	});
+	$("#bankACHNumber").blur(function(){
+		var Regx = /^\d{9}$/;
+		if($("#bankACHNumber").val()==""){
+			$("#bankACHNumber-tip").html("").hide();//此项不是必填项
+		}
+		else if(!Regx.test($("#bankACHNumber").val())){
+			$("#bankACHNumber-tip").html("Must be 9 numbers.").hide().fadeIn();
+		}
+		else if($("#bankACHNumber").val()=="000000000"){
+			$("#bankACHNumber-tip").html("Please fill in your real number.").hide().fadeIn();
+		}
+		else{
+			$("#bankACHNumber-tip").html("").hide();
+		}
+	});
+	$("#identityNumber").blur(function(){
+		var Regx = /^[0-9]*$/;
+		if($("#identityNumber").val()==""){
+			$("#identityNumber-tip").html("This field is required.").hide().fadeIn();
+		}
+		else if(!Regx.test($("#identityNumber").val())){
+			$("#identityNumber-tip").html("Can only contain numbers.").hide().fadeIn();
+		}else{
+			$("#identityNumber-tip").html("").hide();
+		}
+	});
+	$("#countryOfIssu").blur(function(){
+		if($("#countryOfIssu").val()==""){
+			$("#countryOfIssu-tip").html("This field is required.").hide().fadeIn();
+		}else{
+			$("#countryOfIssu-tip").html("").hide();
+		}
+	});
+	/////////////////////////////////////////////////////////////////////////////////////////////////
 	var checkSelect = function(postData){
 		var flag = true;
 		
