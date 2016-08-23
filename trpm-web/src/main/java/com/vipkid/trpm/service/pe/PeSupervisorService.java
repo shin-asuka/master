@@ -17,9 +17,26 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 import com.vipkid.enums.TbdResultEnum;
 import com.vipkid.trpm.constant.ApplicationConstant;
-import com.vipkid.trpm.constant.ApplicationConstant.*;
-import com.vipkid.trpm.dao.*;
-import com.vipkid.trpm.entity.*;
+import com.vipkid.trpm.constant.ApplicationConstant.ClassStatus;
+import com.vipkid.trpm.constant.ApplicationConstant.RecruitmentResult;
+import com.vipkid.trpm.constant.ApplicationConstant.RecruitmentStatus;
+import com.vipkid.trpm.constant.ApplicationConstant.TeacherLifeCycle;
+import com.vipkid.trpm.constant.ApplicationConstant.TeacherType;
+import com.vipkid.trpm.dao.AuditDao;
+import com.vipkid.trpm.dao.LessonDao;
+import com.vipkid.trpm.dao.OnlineClassDao;
+import com.vipkid.trpm.dao.TeacherApplicationDao;
+import com.vipkid.trpm.dao.TeacherDao;
+import com.vipkid.trpm.dao.TeacherModuleDao;
+import com.vipkid.trpm.dao.TeacherPeDao;
+import com.vipkid.trpm.dao.UserDao;
+import com.vipkid.trpm.entity.Lesson;
+import com.vipkid.trpm.entity.OnlineClass;
+import com.vipkid.trpm.entity.Teacher;
+import com.vipkid.trpm.entity.TeacherApplication;
+import com.vipkid.trpm.entity.TeacherModule;
+import com.vipkid.trpm.entity.TeacherPe;
+import com.vipkid.trpm.entity.User;
 import com.vipkid.trpm.proxy.ClassroomProxy;
 import com.vipkid.trpm.util.DateUtils;
 import com.vipkid.trpm.util.FilesUtils;
@@ -53,9 +70,6 @@ public class PeSupervisorService {
 
     @Autowired
     private TeacherModuleDao teacherModuleDao;
-
-    @Autowired
-    private AppserverPracticumService appserverPracticumService;
 
     public int totalPe(long teacherId) {
         return teacherPeDao.countByTeacherId(teacherId);
@@ -201,9 +215,9 @@ public class PeSupervisorService {
                         recruitTeacher.getId(), peSupervisor.getId());
             }
 
-            // 并异步调用AppServer发送邮件及消息
-            appserverPracticumService.finishPracticumProcess(currTeacherApplication.getId(),
-                    recruitTeacher);
+            // 设置调用接口的参数
+            modelMap.put("teacherApplicationId", currTeacherApplication.getId());
+            modelMap.put("recruitTeacher", recruitTeacher);
 
             return modelMap;
         } else {
@@ -310,9 +324,9 @@ public class PeSupervisorService {
 
             modelMap.put("result", true);
 
-            // 并异步调用AppServer发送邮件及消息
-            appserverPracticumService.finishPracticumProcess(teacherApplication.getId(),
-                    teacherDao.findById(teacherApplication.getTeacherId()));
+            // 设置调用接口的参数
+            modelMap.put("teacherApplicationId", teacherApplication.getId());
+            modelMap.put("recruitTeacher", teacherDao.findById(teacherApplication.getTeacherId()));
 
         } else {
             // 没有PE Supervisor权限

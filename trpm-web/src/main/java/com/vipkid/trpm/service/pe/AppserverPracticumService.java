@@ -64,7 +64,7 @@ public class AppserverPracticumService {
             try {
                 HttpClientProxy.post(FINISH_PRACTICUM_PROCESS_URL, requestParams, requestHeader);
             } catch (Exception e) {
-                logger.error(e.getMessage());
+                logger.error("Invoke appserver api error", e);
             }
         });
         logger.info("Invoke appserver to finish practicum [{}] process done.",

@@ -2,6 +2,7 @@ package com.vipkid.trpm.controller.pe;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -21,6 +22,7 @@ import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.entity.TeacherApplication;
 import com.vipkid.trpm.entity.TeacherPe;
 import com.vipkid.trpm.service.passport.IndexService;
+import com.vipkid.trpm.service.pe.AppserverPracticumService;
 import com.vipkid.trpm.service.pe.PeSupervisorService;
 import com.vipkid.trpm.service.portal.OnlineClassService;
 
@@ -40,6 +42,9 @@ public class PeSupervisorController extends AbstractPeController {
 
     @Autowired
     private TeacherApplicationDao teacherApplicationDao;
+
+    @Autowired
+    private AppserverPracticumService appserverPracticumService;
 
     @RequestMapping("/pesupervisor")
     public String peSupervisor(HttpServletRequest request, HttpServletResponse response,
@@ -128,6 +133,13 @@ public class PeSupervisorController extends AbstractPeController {
         // Finish课程
         if ((Boolean) modelMap.get("result")) {
             onlineclassService.finishPracticum(teacherApplication.getOnlineClassId(), finishType);
+        }
+
+        // 并异步调用AppServer发送邮件及消息
+        Long teacherApplicationId = (Long) modelMap.get("teacherApplicationId");
+        Teacher recruitTeacher = (Teacher) modelMap.get("recruitTeacher");
+        if (Objects.nonNull(teacherApplicationId) && Objects.nonNull(recruitTeacher)) {
+            appserverPracticumService.finishPracticumProcess(teacherApplicationId, recruitTeacher);
         }
 
         return jsonView(response, modelMap);

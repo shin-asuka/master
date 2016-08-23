@@ -3,6 +3,7 @@ package com.vipkid.trpm.controller.portal;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -22,8 +23,14 @@ import com.google.common.collect.Maps;
 import com.vipkid.enums.OnlineClassEnum;
 import com.vipkid.trpm.constant.ApplicationConstant.FinishType;
 import com.vipkid.trpm.constant.ApplicationConstant.RecruitmentResult;
-import com.vipkid.trpm.entity.*;
+import com.vipkid.trpm.entity.DemoReport;
+import com.vipkid.trpm.entity.Lesson;
+import com.vipkid.trpm.entity.OnlineClass;
+import com.vipkid.trpm.entity.Teacher;
+import com.vipkid.trpm.entity.TeacherApplication;
+import com.vipkid.trpm.entity.User;
 import com.vipkid.trpm.service.passport.IndexService;
+import com.vipkid.trpm.service.pe.AppserverPracticumService;
 import com.vipkid.trpm.service.pe.PeSupervisorService;
 import com.vipkid.trpm.service.portal.OnlineClassService;
 
@@ -40,6 +47,9 @@ public class OnlineClassController extends AbstractPortalController {
 
     @Autowired
     private PeSupervisorService peSupervisorService;
+
+    @Autowired
+    private AppserverPracticumService appserverPracticumService;
 
     /**
      * 进入教室
@@ -234,6 +244,13 @@ public class OnlineClassController extends AbstractPortalController {
                 onlineclassService.finishPracticum(teacherApplication.getOnlineClassId(),
                         finishType);
             }
+        }
+
+        // 并异步调用AppServer发送邮件及消息
+        Long teacherApplicationId = (Long) modelMap.get("teacherApplicationId");
+        Teacher recruitTeacher = (Teacher) modelMap.get("recruitTeacher");
+        if (Objects.nonNull(teacherApplicationId) && Objects.nonNull(recruitTeacher)) {
+            appserverPracticumService.finishPracticumProcess(teacherApplicationId, recruitTeacher);
         }
 
         return jsonView(response, modelMap);
