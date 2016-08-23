@@ -19,9 +19,11 @@ import com.vipkid.trpm.constant.ApplicationConstant.CookieKey;
 import com.vipkid.trpm.constant.ApplicationConstant.CourseType;
 import com.vipkid.trpm.dao.CourseDao;
 import com.vipkid.trpm.dao.TeacherDao;
+import com.vipkid.trpm.dao.TeacherModuleDao;
 import com.vipkid.trpm.dao.TeacherPageLoginDao;
 import com.vipkid.trpm.dao.UserDao;
 import com.vipkid.trpm.entity.Teacher;
+import com.vipkid.trpm.entity.TeacherModule;
 import com.vipkid.trpm.entity.TeacherPageLogin;
 import com.vipkid.trpm.entity.User;
 import com.vipkid.trpm.proxy.RedisProxy;
@@ -46,6 +48,9 @@ public class LoginService {
     @Autowired
     private RedisProxy redisProxy;
 
+    @Autowired
+    private TeacherModuleDao teacherModuleDao;
+    
     /**
      * 获取当前登录的老师
      * 
@@ -129,12 +134,37 @@ public class LoginService {
         redisProxy.set(key, JsonTools.getJson(courseTypes));
     }
 
-    public boolean enabledPracticum(long userId) {
+    /**
+     * 是否是PE
+     *  
+     * @Author:ALong (ZengWeiLong)
+     * @param userId
+     * @return    
+     * boolean
+     * @date 2016年8月23日
+     */
+    public boolean isPe(long userId) {
         String key = CacheUtils.getCoursesKey(userId);
         String json = redisProxy.get(key);
         List<String> courseTypes = JsonTools.readValue(json, new TypeReference<List<String>>() {
         });
         return courseTypes.contains(CourseType.PRACTICUM);
+    }
+    
+    /**
+     * 判断User是否有PES权限
+     * 
+     * @Author:ALong (ZengWeiLong)
+     * @param teacherId
+     * @return boolean
+     * @date 2016年7月4日
+     */
+    public boolean isPes(long teacherId) {
+        List<TeacherModule> modulelist = teacherModuleDao.findByTeacherPe(teacherId);
+        if (modulelist == null || modulelist.isEmpty()) {
+            return false;
+        }
+        return true;
     }
 
     public User findUserById(long id) {

@@ -388,6 +388,9 @@ public class LoginController {
             logger.info("to teacher !");
             result.put("portal", RestfulConfig.Port.TEACHER);
             result.put("action", "schedule.shtml");
+            String role = loginService.isPe(teacher.getId()) ? "":"PE,";
+            role += loginService.isPes(teacher.getId()) ? "":"PE-Supervisor,";
+            result.put("role",role);
             // 招聘端跳转URL
         } else {
             logger.info("to recruitment !");
@@ -397,10 +400,7 @@ public class LoginController {
         result.put("teacher", teacher);
         String headsrc = teacher.getAvatar();
         if(StringUtils.isNotBlank(headsrc)){
-            if(!headsrc.startsWith("/")){
-                headsrc = "/" + headsrc;
-            }
-            headsrc = PropertyConfigurer.stringValue("oss.url_preffix") + headsrc;
+            headsrc = PropertyConfigurer.stringValue("oss.url_preffix") + (headsrc.startsWith("/") ? headsrc:"/"+headsrc);
         }
         result.put("headsrc", headsrc);
         result.put("showName", user.getName());
