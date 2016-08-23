@@ -38,8 +38,7 @@ public class PracticumScheduled {
     @Autowired
     private TeacherDao teacherDao;
 
-    // @Scheduled(cron = "0 0 0/2 * * ?") TODO
-    @Scheduled(cron = "0 0/1 * * * ?")
+    @Scheduled(cron = "0 0 0/2 * * ?")
     public void executeAllocation() {
         logger.info("Practicum allocation start at {}", LocalDateTime.now());
 
@@ -86,8 +85,7 @@ public class PracticumScheduled {
         logger.info("Practicum allocation end at {}", LocalDateTime.now());
     }
 
-    // @Scheduled(cron = "0 0/5 * * * ?")
-    @Scheduled(cron = "0 0/2 * * * ?")
+    @Scheduled(cron = "0 0/10 * * * ?")
     public void executeRecycling() {
         logger.info("Practicum recycling start at {}", LocalDateTime.now());
 
@@ -102,8 +100,8 @@ public class PracticumScheduled {
             logger.info("Practicum recycling get datas {} line", notRecyclings.size());
 
             Map<Long, Teacher> map = Maps.newHashMap();
-            for (TeacherPe teacherPe : notRecyclings) {
-                try {
+            try {
+                for (TeacherPe teacherPe : notRecyclings) {
                     long peId = teacherPe.getPeId();
                     teacherPe.setPeId(0);
                     teacherPeDao.updateTeacherPe(teacherPe);
@@ -118,9 +116,9 @@ public class PracticumScheduled {
                                 .setTeachingExperience(peSupervisor.getTeachingExperience() + 1);
                     }
                     map.put(peId, peSupervisor);
-                } catch (Exception e) {
-                    logger.error("Practicum recycling error", e);
                 }
+            } catch (Exception e) {
+                logger.error("Practicum recycling error", e);
             }
 
             // 发送邮件
@@ -145,9 +143,7 @@ public class PracticumScheduled {
                     Map<String, String> emailMap = new TempleteUtils().readTemplete(
                             "PracticumRemiderTQ.html", paramsMap, "PracticumRemiderTQ-Title.html");
 
-                    // new EmailEngine().addMailPool("practicum@vipkid.com.cn", emailMap,
-                    // EmailFormEnum.TEACHVIP);
-                    new EmailEngine().addMailPool("lilibo@vipkid.com.cn", emailMap,
+                    new EmailEngine().addMailPool("practicum@vipkid.com.cn", emailMap,
                             EmailFormEnum.TEACHVIP);
                 } catch (Exception e) {
                     logger.error("Send TQ mail error", e);
@@ -159,8 +155,7 @@ public class PracticumScheduled {
         logger.info("Practicum recycling end at {}", LocalDateTime.now());
     }
 
-    // @Scheduled(cron = "0 0/5 * * * ?")
-    @Scheduled(cron = "0 0/2 * * * ?")
+    @Scheduled(cron = "0 0/5 * * * ?")
     public void executeRemind() {
         logger.info("Practicum remind start at {}", LocalDateTime.now());
 
@@ -175,9 +170,9 @@ public class PracticumScheduled {
             logger.info("Practicum remind get datas {} line", notReminds.size());
 
             Map<Long, Teacher> map = Maps.newHashMap();
-            for (TeacherPe teacherPe : notReminds) {
-                if ((teacherPe.getExpiredMillis() - System.currentTimeMillis()) <= HOURS_24) {
-                    try {
+            try {
+                for (TeacherPe teacherPe : notReminds) {
+                    if ((teacherPe.getExpiredMillis() - System.currentTimeMillis()) <= HOURS_24) {
                         teacherPe.setExpiredRemind(1);
                         teacherPeDao.updateTeacherPe(teacherPe);
 
@@ -194,12 +189,11 @@ public class PracticumScheduled {
 
                         logger.info("Practicum remind for peSupervisor {}",
                                 peSupervisor.getRealName());
-                    } catch (Exception e) {
-                        logger.error("Practicum remind error", e);
                     }
                 }
+            } catch (Exception e) {
+                logger.error("Practicum remind error", e);
             }
-
             // 发送邮件
             map.forEach((k, v) -> sendMail(v, "PracticumReminder.html",
                     "PracticumReminder-Title.html"));
