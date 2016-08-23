@@ -4,15 +4,20 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.community.tools.JsonTools;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.vipkid.enums.TeacherQuizEnum;
 import com.vipkid.rest.config.RestfulConfig;
 import com.vipkid.trpm.dao.TeacherQuizDao;
+import com.vipkid.trpm.dao.TeacherQuizDetailsDao;
 import com.vipkid.trpm.entity.TeacherQuiz;
+import com.vipkid.trpm.entity.TeacherQuizDetails;
 
 @Service
 public class AdminQuizService {
@@ -21,6 +26,9 @@ public class AdminQuizService {
     
     @Autowired
     private TeacherQuizDao teacherQuizDao;
+    
+    @Autowired
+    private TeacherQuizDetailsDao teacherQuizDetailsDao;
     
     /**
      * 查询用户最后一次有结果的考试记录 
@@ -59,12 +67,13 @@ public class AdminQuizService {
      * boolean
      * @date 2016年8月18日
      */
-    public boolean saveQuizResult(long teacherId,int quizScore){
+    public boolean saveQuizResult(long teacherId,String grade){
         //查询老师待考试记录
         List<TeacherQuiz> list = this.getLastQuiz(teacherId);
         if(CollectionUtils.isNotEmpty(list)){
             //更新待考记录
             TeacherQuiz teacherQuiz = list.get(0);
+            int quizScore = this.saveQuizDetals(teacherId,teacherQuiz,grade);
             teacherQuiz.setQuizScore(quizScore);
             teacherQuiz.setUpdateTime(new Date());
             teacherQuiz.setUpdateId(teacherId);
@@ -79,4 +88,41 @@ public class AdminQuizService {
         return true;
     }
     
+    /**
+     * 保存考试详细 
+     * @Author:ALong (ZengWeiLong)
+     * @param teacherId
+     * @param teacherQuiz
+     * @param grade
+     * @return    
+     * int
+     * @date 2016年8月23日
+     */
+    private int saveQuizDetals(long teacherId,TeacherQuiz teacherQuiz,String grade){
+        int quizScore = 0;
+        
+        if(StringUtils.isEmpty(grade)){
+            logger.warn("老师成绩提交转化结果是Null");
+        }
+        
+        List<TeacherQuizDetails> list = JsonTools.readValue(grade, new TypeReference<List<TeacherQuizDetails>>(){});
+        
+        if(CollectionUtils.isNotEmpty(list)){
+            logger.warn("老师成绩提交为Null");
+        }
+        
+        for (TeacherQuizDetails details:list) {
+            details.setTeacherId(teacherId);
+            details.setQuizId(teacherQuiz.getId());
+            int score = details.getCorrectAnswer() == details.getTeacherAnswer() ? 5 : 0;
+            details.setScore(score);
+            quizScore += score;
+            logger.info("sn:{},teacherId:{},quizId:{},correctAnswer:{},teacherAnswer:{},score:{}",
+                    details.getSn(),details.getTeacherId(),details.getQuizId(),details.getCorrectAnswer(),details.getTeacherAnswer(),details.getScore());
+            
+            teacherQuizDetailsDao.save(details);
+        } 
+        
+        return quizScore;
+    }
 }

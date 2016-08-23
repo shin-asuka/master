@@ -12,7 +12,7 @@ public final class TeacherQuizDetails extends Entity implements Serializable {
     /*  */
     private int id;
     /*  */
-    private int teacherId;
+    private long teacherId;
     /*  */
     private String sn;
     /*  */
@@ -33,11 +33,11 @@ public final class TeacherQuizDetails extends Entity implements Serializable {
         return this;
     }
 
-    public int getTeacherId() {
+    public long getTeacherId() {
         return this.teacherId;
     }
 
-    public TeacherQuizDetails setTeacherId(int teacherId) {
+    public TeacherQuizDetails setTeacherId(long teacherId) {
         this.teacherId = teacherId;
         return this;
     }

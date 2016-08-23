@@ -96,7 +96,7 @@ public class AdminQuizController {
     
     
     @RequestMapping(value = "/saveQuizResult", method = RequestMethod.POST, produces = RestfulConfig.JSON_UTF_8)
-    public Map<String,Object> saveQuizResult(HttpServletRequest request, HttpServletResponse response,@RequestParam(value="grade") int grade){
+    public Map<String,Object> saveQuizResult(HttpServletRequest request, HttpServletResponse response,@RequestParam(value="grade") String grade){
         Map<String,Object> result = Maps.newHashMap();
         result.put("result", false);
         try{
