@@ -229,7 +229,7 @@ public class LoginController {
         User user = passportService.findUserByUsername(email);
         // 1.用户名存在，反馈
         if (user != null) {
-            logger.warn("user is null:" + email);
+            logger.warn("Email 已经注册:" + email);
             result.put("info", ApplicationConstant.AjaxCode.ERROR_CODE);
             result.put("status", RestfulConfig.HttpStatus.STATUS_403);
             return result;

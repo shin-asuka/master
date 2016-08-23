@@ -1,10 +1,12 @@
 package com.vipkid.rest.web;
 
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,7 +20,9 @@ import com.google.api.client.util.Maps;
 import com.google.common.base.Preconditions;
 import com.vipkid.rest.config.RestfulConfig;
 import com.vipkid.trpm.constant.ApplicationConstant.CookieKey;
+import com.vipkid.trpm.entity.TeacherQuiz;
 import com.vipkid.trpm.entity.User;
+import com.vipkid.trpm.service.rest.AdminQuizService;
 import com.vipkid.trpm.service.rest.LoginService;
 
 @RestController
@@ -29,6 +33,9 @@ public class AdminQuizController {
     
     @Autowired
     private LoginService loginService;
+    
+    @Autowired
+    private AdminQuizService adminQuizService;
     
     @RequestMapping(value = "/getLastQuiz", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
     public Map<String,Object> getLastQuiz(HttpServletRequest request, HttpServletResponse response){
@@ -42,10 +49,14 @@ public class AdminQuizController {
                 logger.warn("用户不存在，token过期");
                 return result;
             }
-            // TODO 查询用户最后一次考试记录
-            result.put("isPass",true);
-            result.put("grade",61);
-            result.put("count",2);
+            //查询用户最后一次考试记录
+            List<TeacherQuiz> list = adminQuizService.getLastQuiz(user.getId());
+            if(CollectionUtils.isNotEmpty(list)){
+                TeacherQuiz teacherQuiz = list.get(0);
+                result.put("isPass",(teacherQuiz.getStatus()==1));
+                result.put("grade",teacherQuiz.getQuizScore());
+                result.put("count",list.size());
+            }
             return result;
         } catch (IllegalArgumentException e) {
             logger.error("内部参数转化异常:"+e.getMessage());
@@ -61,6 +72,7 @@ public class AdminQuizController {
     @RequestMapping(value = "/findNeedQuiz", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
     public Map<String,Object> findNeedQuiz(HttpServletRequest request, HttpServletResponse response){
         Map<String,Object> result = Maps.newHashMap();
+        result.put("need",false);
         try{
             String token = request.getHeader(CookieKey.AUTOKEN);
             Preconditions.checkArgument(StringUtils.isNotBlank(token));
@@ -70,8 +82,7 @@ public class AdminQuizController {
                 logger.warn("用户不存在，token过期");
                 return result;
             }
-            // TODO 查询用户是否需要考试
-            result.put("need",false);
+            result.put("need",this.adminQuizService.findNeedQuiz(user.getId()));
             return result;
         } catch (IllegalArgumentException e) {
             logger.error("内部参数转化异常:"+e.getMessage());
@@ -87,6 +98,7 @@ public class AdminQuizController {
     @RequestMapping(value = "/saveQuizResult", method = RequestMethod.POST, produces = RestfulConfig.JSON_UTF_8)
     public Map<String,Object> saveQuizResult(HttpServletRequest request, HttpServletResponse response,@RequestParam(value="grade") int grade){
         Map<String,Object> result = Maps.newHashMap();
+        result.put("result", false);
         try{
             String token = request.getHeader(CookieKey.AUTOKEN);
             Preconditions.checkArgument(StringUtils.isNotBlank(token));
@@ -96,9 +108,7 @@ public class AdminQuizController {
                 logger.warn("用户不存在，token过期");
                 return result;
             }
-            // TODO 保存考试结果,大于60分更新当前数据PASS通过，不插入新的考试
-            // 小于60分则更新当前数据，并插入新的考试记录
-            result.put("result",true);
+            result.put("result",this.adminQuizService.saveQuizResult(user.getId(), grade));
             return result;
         } catch (IllegalArgumentException e) {
             logger.error("内部参数转化异常:"+e.getMessage());
