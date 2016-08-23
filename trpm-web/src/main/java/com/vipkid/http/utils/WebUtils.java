@@ -25,6 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 
+import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Lists;
 import com.vipkid.http.vo.HttpResult;
 
@@ -190,4 +191,47 @@ public class WebUtils {
         }
 		return null;
 	}
+    
+    public static String postNameValuePair(String url, Object object) {
+    	JSONObject json = JsonUtils.toJSONObject(object);
+        logger.info("Post data,url = {},params = {}", url, json);
+        CloseableHttpResponse response = null;
+        try {
+			HttpPost httpPost = new HttpPost(url);
+			Map<String, Object> map = MapUtils.parseJsonToMap(json);
+			List<NameValuePair> paramsList = Lists.newArrayList();
+			if( json != null){
+//				for (String key : json.keySet()) {
+//					String value = json.getString(key);
+//					paramsList.add(new BasicNameValuePair(key, value));
+//				}
+				for (String key : map.keySet()) {
+					String value = map.get(key)==null?null:map.get(key).toString();
+					paramsList.add(new BasicNameValuePair(key, value));
+				}
+			}
+			logger.info("Post data map,url = {},params = {}", url, map);
+			//httpPost.addHeader("Authorization", UserUtils.getAuthorization());
+			httpPost.setEntity(new UrlEncodedFormEntity(paramsList, Charset.forName(DEFAULT_CHARSET)));
+			
+			CloseableHttpClient httpclient = HttpClients.createDefault();
+			response = httpclient.execute(httpPost);
+            logger.info("Post data,response status line = {}",response.getStatusLine());
+            HttpEntity entity = response.getEntity();
+            String rt = EntityUtils.toString(entity);
+            return rt;
+		} catch (Exception e) {
+			logger.error("Post data error,url = {},params = {}",url,json,e);
+		} finally {
+            if (null != response) {
+                try {
+                    response.close();
+                } catch (IOException e) {
+                    logger.error("关闭输出流时出错，url = {}",url,e);
+                }
+            }
+        }
+		return null;
+	}
+    
 }

@@ -75,4 +75,11 @@ public class JsonUtils {
     	return list;
     }
 
+    public static JSONObject toJSONObject(Object object){
+    	JSONObject jsonObject = null;
+    	if(object!=null){
+    		jsonObject = (JSONObject) JSON.toJSON(object);
+    	}
+    	return jsonObject;
+    }
 }
