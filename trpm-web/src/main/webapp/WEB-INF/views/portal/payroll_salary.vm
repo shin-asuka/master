@@ -35,10 +35,8 @@
                     <h4>Total Salary:</h4>
                 </div>
                 <div class="col-xs-6 text-right">
-                    #set($payTo=$payroll.totalSalary /100.0)
-                    #if($payTo<0)
-                       #set($payTo="N/A")
-                    #end
+                    #set($payTo=$payroll.totalSalary>0?$payroll.totalSalary /100.0:'N A')
+                    
                     <h4>$ $!{payTo}</h4>
                 </div>
             </div>
