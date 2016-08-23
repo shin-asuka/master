@@ -1,3 +1,10 @@
+#macro(padLeft $str $length)
+	#if($str.length()>=$length)
+		#set($return=$str)
+	#else
+		#padLeft("0$str" $length)
+	#end
+#end
 <div class="tab-pane active" id="bankInfo" style="border: 0px;">
 	    
         <div class="row form-group">
@@ -43,14 +50,14 @@
            	<div class="col-sm-1 col-md-1"></div>
            	<div class="col-sm-5 col-md-5 add-right-border">
             	<div class='title-lable'>Beneficiary's checking account number</div>
-            	<input type="text" class="form-control" id="bankCardNumber" name="bankCardNumber" value="$!{TRPM_TEACHER.bankCardNumber}">
+            	<input type="text" onkeyup="value=value.replace(/[^\d]/g,'') " class="form-control" id="bankCardNumber" name="bankCardNumber" value="$!{TRPM_TEACHER.bankCardNumber}">
             	<div>(e.g.,0123456789)</div>
             	<div class="line_input">
 					<span id="bankCardNumber-tip" class="help-block has-error"></span>
 				</div>
            	</div>          	
           	<div class="col-sm-6 col-md-6">
-          		Can only contain numbers and letters.
+          		Can only contain numbers.
 			</div>
         </div>
         
@@ -61,10 +68,11 @@
            	<div class="col-sm-5 col-md-5 add-right-border">
             	<div class='title-lable'>Beneficiary's bank name</div>
             	<input type="text" class="form-control" id="bankName" name="bankName" value="$!{TRPM_TEACHER.bankName}">
-            	<div>(e.g.,0123456789)</div>
+            	<div>(e.g.,BOFAUS3N)</div>
+            	<span id="bankName-tip" class="help-block has-error"></span>
            	</div>          
           	<div class="col-sm-6 col-md-6">
-				The full name of the bank you want. your salary transferred to, NOT abbreviated.
+				The full name of the bank you want. Your salary transferred to, NOT abbreviated.
 			</div>
         </div>
         
@@ -84,7 +92,8 @@
             		<span id="bank_street-tip" class="help-block has-error"></span>
             		<div class="row" style="margin-top:10px;margin-bottom:10px;">
 					<div class="col-xs-4 col-sm-4 col-md-4">
-						<input type="text" placeholder="Zip code" maxlength="8" value="$!{beneficiaryBankAddress.zipCode}" id="bank_zip_code" name="bankZipcode" class="form-control"/>
+						<input type="text" placeholder="Zip code" maxlength="8" onkeyup="value=value.replace(/[^\d]/g,'') " value="$!{beneficiaryBankAddress.zipCode}" id="bank_zip_code" name="bankZipcode" class="form-control"/>
+						<span id="bank_zip_code-tip" class="help-block has-error"></span>
 					</div>
 		        </div>
            	</div>         	
@@ -106,7 +115,8 @@
             	<span id="beneficiary_street-tip" class="help-block has-error"></span>
             	<div class="row" style="margin-top:10px;margin-bottom:10px;">
 					<div class="col-xs-4 col-sm-4 col-md-4">
-						<input type="text" placeholder="Zip code" maxlength="8" value="$!{beneficiaryAddress.zipCode}" id="beneficiary_zip_code" name="beneficiaryZipcode" class="form-control"/>
+						<input type="text" placeholder="Zip code" maxlength="8" onkeyup="value=value.replace(/[^\d]/g,'') " value="$!{beneficiaryAddress.zipCode}" id="beneficiary_zip_code" name="beneficiaryZipcode" class="form-control"/>
+						<span id="beneficiary_zip_code-tip" class="help-block has-error"></span>
 					</div>
 		        </div>
            	</div>          	
@@ -122,8 +132,9 @@
           	<div class="col-sm-1 col-md-1"></div>
            	<div class="col-sm-5 col-md-5 add-right-border">
 	            <div class='title-lable'>Swift code</div>
-	            <input type="text" class="form-control" id="bankSwiftCode" name="bankSwiftCode" value="$!{TRPM_TEACHER.bankSwiftCode}">
+	            <input type="text" maxlength="9" class="form-control" id="bankSwiftCode" name="bankSwiftCode" value="$!{TRPM_TEACHER.bankSwiftCode}">
 	            <div>(e.g.,BOFAUS3N)</div>
+	            <span id="bankSwiftCode-tip" class="help-block has-error"></span>
 	        </div>          	
           	<div class="col-sm-6 col-md-6">
             	Please refer to your bank manager if you cannot confirm this.
@@ -136,8 +147,10 @@
           	<div class="col-sm-1 col-md-1"></div>
            	<div class="col-sm-5 col-md-5 add-right-border">
 	            <div class='title-lable'>ABA routing number</div>
-	            <input type="text" maxlength="9" onkeyup="value=value.replace(/[^\d]/g,'') " class="form-control" id="bankABARoutingNumber" name="bankABARoutingNumber" value="#if($!{TRPM_TEACHER.bankABARoutingNumber}!=0&&$!{TRPM_TEACHER.bankABARoutingNumber}!=-1)$!{TRPM_TEACHER.bankABARoutingNumber}#end">
+	            #if($!{TRPM_TEACHER.bankABARoutingNumber}!=0&&$!{TRPM_TEACHER.bankABARoutingNumber}!=-1)#padLeft($!{TRPM_TEACHER.bankABARoutingNumber} 9)#end
+	            <input type="text" maxlength="9" onkeyup="value=value.replace(/[^\d]/g,'') " class="form-control" id="bankABARoutingNumber" name="bankABARoutingNumber" value="#if($!{TRPM_TEACHER.bankABARoutingNumber}!=0&&$!{TRPM_TEACHER.bankABARoutingNumber}!=-1)$return#end">
 	            <div>(e.g.,123456789)</div>
+	            <span id="bankABARoutingNumber-tip" class="help-block has-error"></span>
 	        </div>          	
           	<div class="col-sm-6 col-md-6">
             	If it is confirmed that there's no SWIFT code, please fill out the ABA routing number.
@@ -150,8 +163,10 @@
           	<div class="col-sm-1 col-md-1"></div>
            	<div class="col-sm-5 col-md-5 add-right-border">
 	            <div class='title-lable'>ACH number (US only)</div>
-	            <input type="text" maxlength="9" onkeyup="value=value.replace(/[^\d]/g,'') " class="form-control" id="bankACHNumber" name="bankACHNumber" value="#if($!{TRPM_TEACHER.bankACHNumber}!=0&&$!{TRPM_TEACHER.bankACHNumber}!=-1)$!{TRPM_TEACHER.bankACHNumber}#end">
+	            #if($!{TRPM_TEACHER.bankACHNumber}!=0&&$!{TRPM_TEACHER.bankACHNumber}!=-1)#padLeft($!{TRPM_TEACHER.bankACHNumber} 9)#end
+	            <input type="text" maxlength="9" onkeyup="value=value.replace(/[^\d]/g,'') " class="form-control" id="bankACHNumber" name="bankACHNumber" value="#if($!{TRPM_TEACHER.bankACHNumber}!=0&&$!{TRPM_TEACHER.bankACHNumber}!=-1)$return#end">
 	            <div>(e.g.,123456789)</div>
+	            <span id="bankACHNumber-tip" class="help-block has-error"></span>
 	        </div>          	
           	<div class="col-sm-6 col-md-6">
             	The transfer made with the ACH number will save part of the transfer fee.
@@ -212,7 +227,8 @@
 			<div class="col-sm-1 col-md-1"></div>
 	        <div class="col-sm-5 col-md-5 add-right-border">
 	            <div class='title-lable'>ID number</div>
-	            <input type="text" id="identityNumber" name="identityNumber" value="$!{TRPM_TEACHER.identityNumber}" placeholder="" class="form-control" />
+	            <input type="text" id="identityNumber" name="identityNumber" onkeyup="value=value.replace(/[^\d]/g,'') " value="$!{TRPM_TEACHER.identityNumber}" placeholder="" class="form-control" />
+	            <span id="identityNumber-tip" class="help-block has-error"></span>
 	        </div>
           	<div class="col-sm-6 col-md-6">
 				This has to be identical to the number on the ID you provide above.
@@ -231,6 +247,7 @@
 					<option value="${location.id}" #if($!{TRPM_TEACHER.issuanceCountry} == ${location.id}) selected #end>${location.name}</option>
 					#end
 		        </select>
+		        <span id="countryOfIssu-tip" class="help-block has-error"></span>
 	        </div>
           	<div class="col-sm-6 col-md-6">
           		The country which issued the ID you provided above.

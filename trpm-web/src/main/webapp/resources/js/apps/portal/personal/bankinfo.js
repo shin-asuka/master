@@ -294,7 +294,11 @@ define(depends, function(personal) {
 		
 		$(".replace").each(function(){
 			var value = $(this).val();
-			if(value.indexOf(",") > -1 || value.indexOf(".") > -1 || value.indexOf("-") > -1 || value.indexOf("&") > -1){
+			if(value==""){
+				$("#"+$(this).attr("id")+"-tip").html("This field is required.").hide().fadeIn();//刚好class为replace的3个字段都是必填
+				flag = false;
+			}
+			else if(value.indexOf(",") > -1 || value.indexOf(".") > -1 || value.indexOf("-") > -1 || value.indexOf("&") > -1){
 				$("#"+$(this).attr("id")+"-tip").html("Cannot contain period, comma, dash or ampersand.").hide().fadeIn();
 				flag = false;
 			}else{
@@ -302,15 +306,120 @@ define(depends, function(personal) {
 			}
 		});
 		
-		var Regx = /^[A-Za-z0-9]*$/;
-		if(postData.beneficiaryAccountNumber !="" && !Regx.test(postData.beneficiaryAccountNumber)){
+		var Regx = /^[A-Za-z\s]*$/;
+		if(postData.beneficiaryAccountName=="" ){
+			$("#bankAccountName-tip").html("This field is required.").hide().fadeIn();
+			flag = false;
+		}
+		else if(!Regx.test(postData.beneficiaryAccountName)){
+			$("#bankAccountName-tip").html("Can only contain letters and spaces.").hide().fadeIn();
+			flag = false;
+		}else{
+			$("#bankAccountName-tip").html("").hide();
+		}
+		
+		Regx = /^[0-9]*$/;
+		if(postData.beneficiaryAccountNumber=="" ){
+			$("#bankCardNumber-tip").html("This field is required.").hide().fadeIn();
+			flag = false;
+		}
+		else if(!Regx.test(postData.beneficiaryAccountNumber)){
 			$("#bankCardNumber-tip").html("Can only contain numbers and letters.").hide().fadeIn();
 			flag = false;
 		}else{
 			$("#bankCardNumber-tip").html("").hide();
 		}
+		
+
+		Regx = /^[A-Za-z0-9\s]*$/;
+		if(postData.beneficiaryBankName=="" ){
+			$("#bankName-tip").html("This field is required.").hide().fadeIn();
+			flag = false;
+		}
+		else if(!Regx.test(postData.beneficiaryBankName)){
+			$("#bankName-tip").html("Can only contain numbers, letters and spaces.").hide().fadeIn();
+			flag = false;
+		}else{
+			$("#bankName-tip").html("").hide();
+		}
+		
+		Regx = /^[0-9]*$/;
+		if(postData.bankZipCode=="" ){
+			$("#bank_zip_code-tip").html("This field is required.").hide().fadeIn();
+			flag = false;
+		}
+		else if(!Regx.test(postData.bankZipCode)){
+			$("#bank_zip_code-tip").html("Can only contain numbers.").hide().fadeIn();
+			flag = false;
+		}else{
+			$("#bank_zip_code-tip").html("").hide();
+		}
+		
+		if(postData.beneficiaryZipCode=="" ){
+			$("#beneficiary_zip_code-tip").html("This field is required.").hide().fadeIn();
+			flag = false;
+		}
+		else if(!Regx.test(postData.beneficiaryZipCode)){
+			$("#beneficiary_zip_code-tip").html("Can only contain numbers.").hide().fadeIn();
+			flag = false;
+		}else{
+			$("#beneficiary_zip_code-tip").html("").hide();
+		}
+		
+		Regx = /^[A-Za-z0-9]{9}$/;
+		if(postData.swiftCode==""&&postData.bankABARoutingNumber=="-1"){
+			$("#bankSwiftCode-tip").html("Swift code or ABA routing number is required.").hide().fadeIn();
+			flag = false;
+		}
+		else if(!Regx.test(postData.swiftCode)){
+			$("#bankSwiftCode-tip").html("Can only contain 9 numbers or letters.").hide().fadeIn();
+			flag = false;
+		}else{
+			$("#bankSwiftCode-tip").html("").hide();
+		}
+		
+		Regx = /^\d{9}$/;
+		if(postData.swiftCode==""&&postData.bankABARoutingNumber=="-1"){
+			$("#bankABARoutingNumber-tip").html("Swift code or ABA routing number is required.").hide().fadeIn();
+			flag = false;
+		}
+		else if(!Regx.test(postData.bankABARoutingNumber)){
+			$("#bankABARoutingNumber-tip").html("Must be 9 numbers.").hide().fadeIn();
+			flag = false;
+		}else{
+			$("#bankABARoutingNumber-tip").html("").hide();
+		}
+		
+		if(postData.bankACHNumber=="-1"){
+			$("#bankACHNumber-tip").html("").hide();//此项不是必填项
+		}
+		else if(!Regx.test(postData.bankACHNumber)){
+			$("#bankACHNumber-tip").html("Must be 9 numbers.").hide().fadeIn();
+			flag = false;
+		}else{
+			$("#bankACHNumber-tip").html("").hide();
+		}
+		
+		Regx = /^[0-9]*$/;
+		if(postData.idNumber==""){
+			$("#identityNumber-tip").html("This field is required.").hide().fadeIn();
+			flag = false;
+		}
+		else if(!Regx.test(postData.idNumber)){
+			$("#identityNumber-tip").html("Can only contain numbers.").hide().fadeIn();
+			flag = false;
+		}else{
+			$("#identityNumber-tip").html("").hide();
+		}
+		
+		if(postData.issuanceCountryId==""){
+			$("#countryOfIssu-tip").html("This field is required.").hide().fadeIn();
+			flag = false;
+		}else{
+			$("#countryOfIssu-tip").html("").hide();
+		}
 		/*文件选择*/
-		if(postData.passportURL != "" && postData.passportURL.indexOf("file") > 0){
+		if(postData.passportURL == ""){
 			$("#passport-tip").html(message.NOT_FILE).hide().fadeIn();
 			flag = false;
 		}else{
@@ -320,26 +429,22 @@ define(depends, function(personal) {
 		var a = postData.beneficiaryCountryId != "0";
 		var b = postData.beneficiaryStateId != "0";
 		var c = postData.beneficiaryCityId != "0";
-		if(a || b || c){
-			if(a&&b || a&&c){
-				$("#beneficiary-address-tip").html("").hide();
-			}else{
-				$("#beneficiary-address-tip").html("At least Country and State/City is mandatory<br/><br/>").hide().fadeIn();
-				flag = false;
-			}
+		if(a&&b || a&&c){
+			$("#beneficiary-address-tip").html("").hide();
+		}else{
+			$("#beneficiary-address-tip").html("At least Country and State/City is mandatory<br/><br/>").hide().fadeIn();
+			flag = false;
 		}
 		
 		/*地址2*/
 		var a1 = postData.bankCountryId != "0";
 		var b1 = postData.bankStateId != "0";
 		var c1 = postData.bankCityId != "0";
-		if(a1 || b1 || c1){
-			if(a1&&b1 || a1&&c1){
-				$("#beneficiarybank-address-tip").html("").hide();
-			}else{
-				$("#beneficiarybank-address-tip").html("At least Country and State/City is mandatory<br/><br/>").hide().fadeIn();
-				flag = false;
-			}
+		if(a1&&b1 || a1&&c1){
+			$("#beneficiarybank-address-tip").html("").hide();
+		}else{
+			$("#beneficiarybank-address-tip").html("At least Country and State/City is mandatory<br/><br/>").hide().fadeIn();
+			flag = false;
 		}
 		
 		return flag;
