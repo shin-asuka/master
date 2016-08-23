@@ -380,7 +380,7 @@
                     </thead>
                     <tbody>
 						#foreach($finishClassRow in $otherFinishedClasses.list)
-                        
+                         <tr class="rowscss">
                             #set($finishClassRow_unitPrice=$finishClassRow.unitPrice /100.0)
                             <td class="text-center">$!{finishClassRow_unitPrice}</td>
                             <td class="text-center">$!{finishClassRow.quantity}</td>
@@ -434,8 +434,6 @@
 							<td colspan="3" class="text-left" style="border-right:0;">
                                  New VIPKID Enrollment
                             </td>
-                             <tr class="rowscss">
-                       
 							#set($otherNewVipkid_totalSalary=$otherNewVipkid.totalSalary /100.0)
 							<td colspan="1" class="text-right" style="border-left:0;">
                                  $ $!{otherNewVipkid_totalSalary}
