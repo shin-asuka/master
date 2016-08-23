@@ -371,7 +371,7 @@ define(depends, function(personal) {
 			$("#bankSwiftCode-tip").html("Swift code or ABA routing number is required.").hide().fadeIn();
 			flag = false;
 		}
-		else if(!Regx.test(postData.swiftCode)){
+		else if(postData.swiftCode!=""&&!Regx.test(postData.swiftCode)){
 			$("#bankSwiftCode-tip").html("Can only contain 9 numbers or letters.").hide().fadeIn();
 			flag = false;
 		}else{
@@ -383,10 +383,15 @@ define(depends, function(personal) {
 			$("#bankABARoutingNumber-tip").html("Swift code or ABA routing number is required.").hide().fadeIn();
 			flag = false;
 		}
-		else if(!Regx.test(postData.bankABARoutingNumber)){
+		else if(postData.bankABARoutingNumber!="-1"&&!Regx.test(postData.bankABARoutingNumber)){
 			$("#bankABARoutingNumber-tip").html("Must be 9 numbers.").hide().fadeIn();
 			flag = false;
-		}else{
+		}
+		else if(postData.bankABARoutingNumber=="000000000"){
+			$("#bankABARoutingNumber-tip").html("Please fill in your real number.").hide().fadeIn();
+			flag = false;
+		}
+		else{
 			$("#bankABARoutingNumber-tip").html("").hide();
 		}
 		
@@ -396,7 +401,12 @@ define(depends, function(personal) {
 		else if(!Regx.test(postData.bankACHNumber)){
 			$("#bankACHNumber-tip").html("Must be 9 numbers.").hide().fadeIn();
 			flag = false;
-		}else{
+		}
+		else if(postData.bankACHNumber=="000000000"){
+			$("#bankACHNumber-tip").html("Please fill in your real number.").hide().fadeIn();
+			flag = false;
+		}
+		else{
 			$("#bankACHNumber-tip").html("").hide();
 		}
 		
