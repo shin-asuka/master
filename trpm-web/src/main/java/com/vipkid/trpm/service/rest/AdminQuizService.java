@@ -68,6 +68,7 @@ public class AdminQuizService {
      * @date 2016年8月18日
      */
     public boolean saveQuizResult(long teacherId,String grade){
+        logger.info("teacehrId:{},提交分数:{}",teacherId, grade);
         //查询老师待考试记录
         List<TeacherQuiz> list = this.getLastQuiz(teacherId);
         if(CollectionUtils.isNotEmpty(list)){
@@ -77,11 +78,11 @@ public class AdminQuizService {
             teacherQuiz.setQuizScore(quizScore);
             teacherQuiz.setUpdateTime(new Date());
             teacherQuiz.setUpdateId(teacherId);
-            teacherQuiz.setStatus(quizScore < RestfulConfig.QUIZ_PASS_SCORE?TeacherQuizEnum.Status.FAIL.val():TeacherQuizEnum.Status.PASS.val());
+            teacherQuiz.setStatus(quizScore < RestfulConfig.Quiz.QUIZ_PASS_SCORE?TeacherQuizEnum.Status.FAIL.val():TeacherQuizEnum.Status.PASS.val());
             //更新当前考试记录
             this.teacherQuizDao.update(teacherQuiz);
             // 插入新的待考记录
-            if(quizScore < RestfulConfig.QUIZ_PASS_SCORE){
+            if(quizScore < RestfulConfig.Quiz.QUIZ_PASS_SCORE){
               this.teacherQuizDao.insertQuiz(teacherId);
             }
         }
@@ -114,6 +115,7 @@ public class AdminQuizService {
         for (TeacherQuizDetails details:list) {
             details.setTeacherId(teacherId);
             details.setQuizId(teacherQuiz.getId());
+            details.setCorrectAnswer(RestfulConfig.Quiz.CORRECTANSWERMAP.get(details.getSn()));
             int score = details.getCorrectAnswer() == details.getTeacherAnswer() ? 5 : 0;
             details.setScore(score);
             quizScore += score;

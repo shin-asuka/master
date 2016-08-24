@@ -33,7 +33,7 @@ public class AdminQuizController {
     
     @Autowired
     private LoginService loginService;
-    
+        
     @Autowired
     private AdminQuizService adminQuizService;
     
@@ -100,6 +100,7 @@ public class AdminQuizController {
         Map<String,Object> result = Maps.newHashMap();
         result.put("result", false);
         try{
+            logger.info("提交分数:{}",grade);
             String token = request.getHeader(CookieKey.AUTOKEN);
             Preconditions.checkArgument(StringUtils.isNotBlank(token));
             User user = loginService.getUser(request);
@@ -111,7 +112,7 @@ public class AdminQuizController {
             result.put("result",this.adminQuizService.saveQuizResult(user.getId(), grade));
             return result;
         } catch (IllegalArgumentException e) {
-            logger.error("内部参数转化异常:"+e.getMessage());
+            logger.error("内部参数转化异常:"+e.getMessage(),e);
             response.setStatus(RestfulConfig.HttpStatus.STATUS_400);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
