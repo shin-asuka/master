@@ -55,5 +55,10 @@
 	<toolbox scope="application">
 		<tool key="stringUtils" class="org.apache.commons.lang3.StringUtils" />
 	</toolbox>
+	
+	<toolbox scope="application">
+        <tool key="numberTool" class="org.apache.velocity.tools.generic.NumberTool">
+        </tool>
+    </toolbox>
 
 </tools>
