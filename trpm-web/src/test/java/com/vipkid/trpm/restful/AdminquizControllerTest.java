@@ -47,7 +47,8 @@ public class AdminquizControllerTest extends BaseTestCase{
         String url = URL_PREFIX + "/api/quiz/saveQuizResult";
         try{
             Map<String, String> data = Maps.newHashMap();
-            data.put("grade", "65");
+            data.put("grade","[{sn:PQ-1-0001,teacherAnswer:2,correctAnswer:2},{sn:PQ-1-0002,teacherAnswer:1,correctAnswer:2},{sn:PQ-1-0003,teacherAnswer:2,correctAnswer:3}]");
+
             Response response = Jsoup.connect(url).ignoreContentType(true).header(CookieKey.AUTOKEN, "3153bc29-eb61-4399-9d60-bb72995d4ce1").data(data).method(Method.POST).execute();
             String json = response.body();
             logger.info(" get saveQuizResult ==> " + json);
