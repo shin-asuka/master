@@ -1,16 +1,16 @@
  #set($layout = "/portal/layout.vm")
  #set($activePayrollInfo = "active")
  <style >
-	#comments-content .bottom-border {
-		background-color: #F63B00;
-		color: #fff;
-		border: 1px solid #ddd;
-	}
-	#comments-content .salary-details-warpper{
-		border: 1px solid #ddd;
-	}
-	
-	
+    #comments-content .bottom-border {
+        background-color: #F63B00;
+        color: #fff;
+        border: 1px solid #ddd;
+    }
+    #comments-content .salary-details-warpper{
+        border: 1px solid #ddd;
+    }
+    
+    
 </style>
 <div class="tab-pane active ng-scope" id="comments" style="border: 0px;" layout:fragment="content">
     <div class="row form-group form-inline" style="margin-top: 15px; margin-right: 0px;">
@@ -35,7 +35,7 @@
                     <h4>Total Salary:</h4>
                 </div>
                 <div class="col-xs-6 text-right">
-                    #set($payTo=$numberTool.format("#0.00",$payroll.totalSalary /100.00))
+                    #set($payTo=$payroll.totalSalary /100.00)
                     #if($payTo<0)
                        #set($payTo="N/A")
                     #end
@@ -58,7 +58,7 @@
                     $!{course.courseName}
                 </div>
                 <div class="col-xs-6  text-right">
-                   #set($couTo=$numberTool.format("#0.00",$course.totalSalary /100.00))
+                   #set($couTo=$course.totalSalary /100.00)
                     $!{couTo}
                 </div>
                 #end
@@ -71,7 +71,7 @@
                         Attendance Bonus<b class="downCaret"></b>
                     </p>
                 </div>
-				#set($attendance_couTo=$attendance.totalSalary /100.00)
+                #set($attendance_couTo=$attendance.totalSalary /100.00)
                 <div class="col-xs-6 text-right">$ $!{attendance_couTo}</div>
             </div>
             <div class="row panel-collapse collapse f9f9f9" id="attendance-bonus">
@@ -80,7 +80,7 @@
                     $!{attendanceBonus.name}
                 </div>
                 <div class="col-xs-6  text-right">
-                    #set($attTo=$numberTool.format("#0.00",$attendanceBonus.totalSalary /100.00))
+                    #set($attTo=$attendanceBonus.totalSalary /100.00)
                     <span> $ $!{attTo}</span>
                 </div>
                 #end
@@ -93,7 +93,7 @@
                         Other Bonus<b class="downCaret"></b>
                     </p>
                 </div>
-                 #set($othsTo=$numberTool.format("#0.00",$other.totalSalary /100.00))
+                 #set($othsTo=$other.totalSalary /100.00)
                 <div class="col-xs-6 text-right">$ $!{othsTo}</div>
             </div>
             <div class="row panel-collapse collapse f9f9f9" id="other-bonus">
@@ -102,49 +102,49 @@
                     $!{otherBonus.name}
                 </div>
                 <div class="col-xs-6  text-right">
-                    #set($othTo=$numberTool.format("#0.00",$otherBonus.totalSalary /100.00))
+                    #set($othTo=$otherBonus.totalSalary /100.00)
                     <span> $ $!{othTo}</span>
                 </div>
                 #end
             </div>
-			
+            
             <br>
             <div class="row total-adjustment-warpper">
                 <div class="col-xs-6 dropdown text-left">
                     <p class="dropdown-toggle" data-toggle="collapse" href="#adjustments">
-						Adjustments<b class="downCaret"></b>
-					</p>
+                        Adjustments<b class="downCaret"></b>
+                    </p>
                 </div>
-                #set($adjustmentsTo=$numberTool.format("#0.00",$adjustments.totalSalary /100.00))
+                #set($adjustmentsTo=$adjustments.totalSalary /100.00)
                 <div class="col-xs-6 text-right">$ $!{adjustmentsTo}</div>
             </div>
             <div class="row panel-collapse collapse f9f9f9" id="adjustments">
-				#if($adjustments.selectList.size()>0)
-    				#foreach($adjRows in $adjustments.selectList)
+                #if($adjustments.selectList.size()>0)
+                    #foreach($adjRows in $adjustments.selectList)
                     <div class="col-xs-6  text-left">
                         $!{adjRows.ruleName}
                     </div>
                     <div class="col-xs-6  text-right">
-                        #set($adjRowsTo=$numberTool.format("#0.00",$adjRows.totalSalary /100.00))
+                        #set($adjRowsTo=$adjRows.totalSalary /100.00)
                         <span> $ $!{adjRowsTo}</span>
                     </div>
-					#end
-				#else
-					<div class="col-xs-6  text-left">
+                    #end
+                #else
+                    <div class="col-xs-6  text-left">
                         Addition
                     </div>
                     <div class="col-xs-6  text-right">
                         <span> $ 0</span>
                     </div>
-					<div class="col-xs-6  text-left">
+                    <div class="col-xs-6  text-left">
                         Deducition
                     </div>
                     <div class="col-xs-6  text-right">
                         <span> $ 0</span>
                     </div>
-				#end	
-			</div>
-			
+                #end    
+            </div>
+            
             <br>
             <div class="coureses-warpper">
                 <div class="row bottom-border top-border" style="">
@@ -152,7 +152,7 @@
                         <h5 class="text-left">Courses</h5>
                     </div>
                     <div class="col-xs-4">
-                        #set($courTo=$numberTool.format("#0.00",$courses.totalSalary /100.00))
+                        #set($courTo=$courses.totalSalary /100.00)
                         <h5 class="text-right">$ $!{courTo}</h5>
                     </div>
                 </div>
@@ -216,23 +216,23 @@
                         <h5 class="text-left">Attendance Bonus</h5>
                     </div>
                     <div class="col-xs-6">
-                         #set($attTo=$numberTool.format("#0.00",$attendance.totalSalary /100.00))
+                         #set($attTo=$attendance.totalSalary /100.00)
                         <h5 class="text-right">$ $!{attTo}</h5>
                     </div>
                 </div>
-				
-				#if(  $is2VersionContactType == true)
+                
+                #if(  $is2VersionContactType == true)
                 <br>
                 <table class="table table-bordered table-striped">
                     <thead>
                         <tr class="active">
                             <td class="text-left" style="border-right:0;">Attendance</td>
-							#set($attendance_tr_totalSalary = 0)
-							#if($attendance.attendanceList.size()>0)
-        						#foreach($attendanceRow in $attendance.attendanceList)
-									#set($attendance_tr_totalSalary = $numberTool.format("#0.00",${attendanceRow.unitPrice} /100.00*${attendance.attendanceList[0].quantity}+$attendance_tr_totalSalary))
-								#end
-							#end
+                            #set($attendance_tr_totalSalary = 0)
+                            #if($attendance.attendanceList.size()>0)
+                                #foreach($attendanceRow in $attendance.attendanceList)
+                                    #set($attendance_tr_totalSalary = ${attendanceRow.unitPrice} /100.00*${attendance.attendanceList[0].quantity}+$attendance_tr_totalSalary)
+                                #end
+                            #end
                             <td class="text-right" style="border-left:0;">$ $!{attendance_tr_totalSalary}</td>
                         </tr>
                     </thead>
@@ -241,25 +241,25 @@
                             <td class="text-center">Unit Price ($)</td>
                             <td class="text-center">Quantity</td>
                         </tr>
-						
-						#if($attendance.attendanceList.size()>0)
-    						#foreach($attendanceRow in $attendance.attendanceList)
+                        
+                        #if($attendance.attendanceList.size()>0)
+                            #foreach($attendanceRow in $attendance.attendanceList)
                             <tr class="rowscss">
-                                #set($attendanceRow_unitPrice=$numberTool.format("#0.00",$attendanceRow.unitPrice /100.00 ))
+                                #set($attendanceRow_unitPrice=$attendanceRow.unitPrice /100.00 )
                                 <td class="text-center">$ $!{attendanceRow_unitPrice}</td>
                                 <td class="text-center">$!{attendance.attendanceList[0].quantity}</td>
                             </tr>
-    						#end
-						#else
-							<tr class="rowscss">
+                            #end
+                        #else
+                            <tr class="rowscss">
                                 <td class="text-center">$ 0</td>
                                 <td class="text-center">0</td>
                             </tr>
-						#end
+                        #end
                     </tbody>
                 </table>
-				#end
-				
+                #end
+                
                 <br>
                 <table class="table table-bordered table-striped">
                     <thead>
@@ -267,10 +267,10 @@
                             <td colspan="4" class="text-left" style="border-right:0;">
                                  Course Deductions
                             </td>
-							#set($deductions_totalSalary=$numberTool.format("#0.00",$attendance.totalSalaryMap.dedduction /100.00))
-							<td colspan="1" class="text-right" style="border-left:0;">
+                            #set($deductions_totalSalary=$attendance.totalSalaryMap.dedduction /100.00)
+                            <td colspan="1" class="text-right" style="border-left:0;">
                                  $ $!{deductions_totalSalary}
-							</td>
+                            </td>
                         </tr>
                         <tr class="info">
                             <td class="text-center">Scheduled Time</td>
@@ -325,56 +325,56 @@
                         <h5 class="text-left">Other Bonus</h5>
                     </div>
                     <div class="col-xs-6">
-                      #set($otherTo=$numberTool.format("#0.00",$other.totalSalary /100.00))
+                      #set($otherTo=$other.totalSalary /100.00)
                         <h5 class="text-right">$ $!{otherTo}</h5>
                     </div>
                 </div>
                 <br>
 
-				#if(  $is2VersionContactType == false)		
+                #if(  $is2VersionContactType == false)      
                 <br> 
-				<table id="finishClass_table_id" class="table table-bordered">
-                    <thead>
-                        <tr class="active">
-							<td colspan="2" class="text-left" style="border-right:0;">
-                             Monthly Evaluation
-                            </td>
-							#set($omeT=$numberTool.format("#0.00",$otherMonthlyEvaluation.totalSalary /100.00))
-							<td colspan="1" class="text-right" style="border-left:0;">
-                                 $ $!{omeT}
-							</td>
-                        </tr>
-                        <tr class="info">
-							<td class="text-center">Percentage(%)</td>
-                            <td class="text-center">Unit Price ($)</td>
-                            <td class="text-center">Quantity</td>
-                        </tr>
-                    </thead>
-                    <tbody>
-						#foreach($row in $otherMonthlyEvaluation.list)
-                         <tr class="rowscss">
-                            #set($row_ome_unitPrice=$numberTool.format("#0.00",$row.unitPrice /100.00))
-							<td class="text-center">$!{row.percentage}</td>
-                            <td class="text-center">$!{row_ome_unitPrice}</td>
-                            <td class="text-center">$!{row.quantity}</td>
-                        </tr>
-						#end
-                    </tbody>
-                </table>	
-				#end
-			
-				#if(  $is2VersionContactType == true)
-				<br>
                 <table id="finishClass_table_id" class="table table-bordered">
                     <thead>
                         <tr class="active">
-							<td colspan="1" class="text-left" style="border-right:0;">
+                            <td colspan="2" class="text-left" style="border-right:0;">
+                             Monthly Evaluation
+                            </td>
+                            #set($omeT=$otherMonthlyEvaluation.totalSalary /100.00)
+                            <td colspan="1" class="text-right" style="border-left:0;">
+                                 $ $!{omeT}
+                            </td>
+                        </tr>
+                        <tr class="info">
+                            <td class="text-center">Percentage(%)</td>
+                            <td class="text-center">Unit Price ($)</td>
+                            <td class="text-center">Quantity</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        #foreach($row in $otherMonthlyEvaluation.list)
+                         <tr class="rowscss">
+                            #set($row_ome_unitPrice=$row.unitPrice /100.00)
+                            <td class="text-center">$!{row.percentage}</td>
+                            <td class="text-center">$!{row_ome_unitPrice}</td>
+                            <td class="text-center">$!{row.quantity}</td>
+                        </tr>
+                        #end
+                    </tbody>
+                </table>    
+                #end
+            
+                #if(  $is2VersionContactType == true)
+                <br>
+                <table id="finishClass_table_id" class="table table-bordered">
+                    <thead>
+                        <tr class="active">
+                            <td colspan="1" class="text-left" style="border-right:0;">
                              Finished Classes
                             </td>
-							#set($othFC=$numberTool.format("#0.00",$otherFinishedClasses.totalSalary /100.00))
-							<td colspan="1" class="text-right" style="border-left:0;">
+                            #set($othFC=$otherFinishedClasses.totalSalary /100.00)
+                            <td colspan="1" class="text-right" style="border-left:0;">
                                  $ $!{othFC}
-							</td>
+                            </td>
                         </tr>
                         <tr class="info">
                             <td class="text-center">Unit Price ($)</td>
@@ -382,29 +382,29 @@
                         </tr>
                     </thead>
                     <tbody>
-						#foreach($finishClassRow in $otherFinishedClasses.list)
+                        #foreach($finishClassRow in $otherFinishedClasses.list)
                          <tr class="rowscss">
-                            #set($finishClassRow_unitPrice=$numberTool.format("#0.00",$finishClassRow.unitPrice /100.00))
+                            #set($finishClassRow_unitPrice=$finishClassRow.unitPrice /100.00)
                             <td class="text-center">$!{finishClassRow_unitPrice}</td>
                             <td class="text-center">$!{finishClassRow.quantity}</td>
                         </tr>
-						#end
+                        #end
                     </tbody>
                 </table>
-				#end
-				
+                #end
+                
                #*<br>
                2016.08.23 不显示referall bonus
                 <table class="table table-bordered">
                     <thead>
                         <tr class="active">
-							<td colspan="3" class="text-left" style="border-right:0;">
+                            <td colspan="3" class="text-left" style="border-right:0;">
                                  Teacher Referral Fee
                             </td>
-							#set($othTRF=$otherTeacherReferralFee.totalSalary /100.0)
-							<td colspan="1" class="text-right" style="border-left:0;">
+                            #set($othTRF=$otherTeacherReferralFee.totalSalary /100.0)
+                            <td colspan="1" class="text-right" style="border-left:0;">
                                  $ $!{othTRF}
-							</td>
+                            </td>
                         </tr>
                         <tr class="info">
                             <td class="text-center">Signing Date</td>
@@ -428,19 +428,19 @@
                     <tbody>
                     </tbody>
                 </table>
-				*#			
-				
-				<br>
-				<table id="otherNewVipkid_table_id" class="table table-bordered">
+                *#          
+                
+                <br>
+                <table id="otherNewVipkid_table_id" class="table table-bordered">
                     <thead>
                         <tr class="active">
-							<td colspan="3" class="text-left" style="border-right:0;">
+                            <td colspan="3" class="text-left" style="border-right:0;">
                                  New VIPKID Enrollment
                             </td>
-							#set($otherNewVipkid_totalSalary=$numberTool.format("#0.00",$otherNewVipkid.totalSalary /100.00))
-							<td colspan="1" class="text-right" style="border-left:0;">
+                            #set($otherNewVipkid_totalSalary=$otherNewVipkid.totalSalary /100.00)
+                            <td colspan="1" class="text-right" style="border-left:0;">
                                  $ $!{otherNewVipkid_totalSalary}
-							</td>
+                            </td>
                         </tr>
                         <tr class="info">
                             <td class="text-center">Enrollment Time</td>
@@ -454,7 +454,7 @@
                             <td class="text-center" showType="date" value="$vipSet.registerDate">$!{dateTool.format($reg)}</td>      
                             <td class="text-center" showType="date" value="$vipSet.scheduledTime">$!{dateTool.format($vipSet.scheduledTime)}</td>             
                             <td class="text-center">$vipSet.studentName</td>
-                            #set($vipSetTo=$numberTool.format("#0.00",$vipSet.totalSalary /100.00))
+                            #set($vipSetTo=$vipSet.totalSalary /100.00)
                             <td class="text-center">$vipSetTo</td>
                         </tr>
                         #end
@@ -471,7 +471,7 @@
                         <h5 class="text-left">Adjustments</h5>
                     </div>
                     <div class="col-xs-6">
-                        #set($adjs= $numberTool.format("#0.00",$adjustments.totalSalary /100.00))
+                        #set($adjs=$adjustments.totalSalary /100.00)
                         <h5 class="text-right">$ $!{adjs}</h5>
                     </div>
                 </div>
@@ -487,16 +487,16 @@
                         </tr>
                     </thead>
                     <tbody>
-						#if($adjustments.list.size()>0)
-							#foreach($adjust in $adjustments.list)
-							<tr class="rowscss">
+                        #if($adjustments.list.size()>0)
+                            #foreach($adjust in $adjustments.list)
+                            <tr class="rowscss">
                                 <td class="text-center" value="$adjust.itemId">$adjust.itemName</td>
                                 <td class="text-center" value="$adjust.descriptionId">$adjust.descriptionName</td>
-                                #set($adj=$numberTool.format("#0.00",$adjust.unitPrice /100.00))
+                                #set($adj=$adjust.unitPrice /100.00)
                                 <td class="text-center">$!{adj}</td>
-							</tr>
-							#end
-						#end
+                            </tr>
+                            #end
+                        #end
                     </tbody>
                 </table>
             </div>
