@@ -533,7 +533,12 @@ hr {
 }
 /* line 484, */
 .lessonInfoContent {
-	display: block;
+	display: block;	
+}
+.lessonInfoContentPayroll {
+    display: block;
+    TEXT-ALIGN: center;
+    
 }
 /* line 488, */
 .ratingTitle {

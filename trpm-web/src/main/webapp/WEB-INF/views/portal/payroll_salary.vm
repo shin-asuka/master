@@ -61,7 +61,7 @@
                 <div class="col-xs-6  text-right">
                    #set($couTo=$course.totalSalary /100.00)
                     #set($couTo=$numberTool.format('#0.00',$couTo))
-                    $!{couTo}
+                    $ $!{couTo}
                 </div>
                 #end
             </div>
@@ -108,8 +108,8 @@
                 </div>
                 <div class="col-xs-6  text-right">
                     #set($othTo=$otherBonus.totalSalary /100.00)
-                     #set($othsTo=$numberTool.format('#0.00',$othsTo))
-                    <span> $ $!{othTo}</span>
+                     #set($othTo=$numberTool.format('#0.00',$othTo))
+                     <span> $ $!{othTo}</span>
                 </div>
                 #end
             </div>
@@ -166,7 +166,7 @@
                     </div>
                 </div>
                 <br>
-                <table id="courses_table_id" class="table table-bordered table-striped">
+                <table id="courses_table_id" class="table table-bordered table-striped"  align="center">
                     <thead>
                         <tr class="info">
                             <td class="text-center">Scheduled Time</td>
@@ -180,22 +180,22 @@
                     <tbody id="coursesList" ms-controller="course-list-controller">
                         <tr class="rowscss ng-scope" ms-repeat="dataList">
                             <td>
-                                <div name="scheduledTime" class="lessonInfoContent ng-binding">{{el.scheduledTime}}</div>
+                                <div name="scheduledTime" class="lessonInfoContentPayroll ng-binding">{{el.scheduledTime}}</div>
                             </td>
                             <td>
-                                <div class="lessonInfoContent ng-binding">{{el.lessonSn}}</div>
+                                <div class="lessonInfoContentPayroll ng-binding">{{el.lessonSn}}</div>
                             </td>
                             <td>
-                                <div class="lessonInfoContent ng-binding">{{el.lessonType}}</div>
+                                <div class="lessonInfoContentPayroll ng-binding">{{el.lessonType}}</div>
                             </td> 
                             <td>
-                                <div class="lessonInfoContent ng-binding">{{el.finishType}}</div>
+                                <div class="lessonInfoContentPayroll ng-binding">{{el.finishType}}</div>
                             </td>
                             <td>
-                                <div class="lessonInfoContent ng-binding">{{el.shortNotice}}</div>
+                                <div class="lessonInfoContentPayroll ng-binding">{{el.shortNotice}}</div>
                             </td>
                             <td>
-                                <div class="lessonInfoContent ng-binding">{{el.totalSalary.toFixed(2)}}</div>
+                                <div class="lessonInfoContentPayroll ng-binding">{{el.totalSalary.toFixed(2)}}</div>
                             </td>
                         </tr>
                     </tbody>
@@ -296,19 +296,19 @@
                     <tbody id="coursesList" ms-controller="course-list-controller">
                         <tr class="ng-scope" ms-repeat="deDataList">
                             <td>
-                                <div class="lessonInfoContent ng-binding">{{el.scheduledTime}}</div>
+                                <div class="lessonInfoContentPayroll ng-binding">{{el.scheduledTime}}</div>
                             </td>
                             <td>
-                                <div class="lessonInfoContent ng-binding">{{el.lessonSn}}</div>
+                                <div class="lessonInfoContentPayroll ng-binding">{{el.lessonSn}}</div>
                             </td>
                             <td>
-                                <div class="lessonInfoContent ng-binding">{{el.lessonType}}</div>
+                                <div class="lessonInfoContentPayroll ng-binding">{{el.lessonType}}</div>
                             </td>
                             <td>
-                                <div class="lessonInfoContent ng-binding">{{el.finishType}}</div>
+                                <div class="lessonInfoContentPayroll ng-binding">{{el.finishType}}</div>
                             </td>
                             <td>
-                                <div class="lessonInfoContent ng-binding">{{el.totalSalary.toFixed(2)}}</div>
+                                <div class="lessonInfoContentPayroll ng-binding">{{el.totalSalary.toFixed(2)}}</div>
                             </td>
                         </tr>
                     </tbody>
