@@ -106,7 +106,7 @@
           </div>
           <div class="col-sm-8 col-sm-7">
           #if($!{TRPM_TEACHER.bankABARoutingNumber}!=0&&$!{TRPM_TEACHER.bankABARoutingNumber}!=-1)
-            	#padLeft($!{TRPM_TEACHER.bankABARoutingNumber} 9)
+            	#padLeft("$!{TRPM_TEACHER.bankABARoutingNumber}" 9)
             	$return
            #end
           </div>
@@ -119,7 +119,7 @@
           </div>
           <div class="col-sm-8 col-sm-7">
           #if( $!{TRPM_TEACHER.bankACHNumber}!=0&& $!{TRPM_TEACHER.bankACHNumber}!=-1)
-            #padLeft($!{TRPM_TEACHER.bankACHNumber} 9)
+            #padLeft("$!{TRPM_TEACHER.bankACHNumber}" 9)
             $return
            #end
           </div>

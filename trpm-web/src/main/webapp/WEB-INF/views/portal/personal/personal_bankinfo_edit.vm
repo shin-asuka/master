@@ -147,7 +147,7 @@
           	<div class="col-sm-1 col-md-1"></div>
            	<div class="col-sm-5 col-md-5 add-right-border">
 	            <div class='title-lable'>ABA routing number</div>
-	            #if($!{TRPM_TEACHER.bankABARoutingNumber}!=0&&$!{TRPM_TEACHER.bankABARoutingNumber}!=-1)#padLeft($!{TRPM_TEACHER.bankABARoutingNumber} 9)#end
+	            #if($!{TRPM_TEACHER.bankABARoutingNumber}!=0&&$!{TRPM_TEACHER.bankABARoutingNumber}!=-1)#padLeft("$!{TRPM_TEACHER.bankABARoutingNumber}" 9)#end
 	            <input type="text" maxlength="9" onkeyup="value=value.replace(/[^\d]/g,'') " class="form-control" id="bankABARoutingNumber" name="bankABARoutingNumber" value="#if($!{TRPM_TEACHER.bankABARoutingNumber}!=0&&$!{TRPM_TEACHER.bankABARoutingNumber}!=-1)$return#end">
 	            <div>(e.g.,123456789)</div>
 	            <span id="bankABARoutingNumber-tip" class="help-block has-error"></span>
@@ -163,7 +163,7 @@
           	<div class="col-sm-1 col-md-1"></div>
            	<div class="col-sm-5 col-md-5 add-right-border">
 	            <div class='title-lable'>ACH number (US only)</div>
-	            #if($!{TRPM_TEACHER.bankACHNumber}!=0&&$!{TRPM_TEACHER.bankACHNumber}!=-1)#padLeft($!{TRPM_TEACHER.bankACHNumber} 9)#end
+	            #if($!{TRPM_TEACHER.bankACHNumber}!=0&&$!{TRPM_TEACHER.bankACHNumber}!=-1)#padLeft("$!{TRPM_TEACHER.bankACHNumber}" 9)#end
 	            <input type="text" maxlength="9" onkeyup="value=value.replace(/[^\d]/g,'') " class="form-control" id="bankACHNumber" name="bankACHNumber" value="#if($!{TRPM_TEACHER.bankACHNumber}!=0&&$!{TRPM_TEACHER.bankACHNumber}!=-1)$return#end">
 	            <div>(e.g.,123456789)</div>
 	            <span id="bankACHNumber-tip" class="help-block has-error"></span>

@@ -290,17 +290,17 @@ define(depends, function(personal) {
 	}
 	
 	/////////////////////////以下添加blur事件来校验输入/////////////////////////////////////
-	$(".replace").blur(function(){
-		var value = $(this).val();
-		if(value==""){
-			$("#"+$(this).attr("id")+"-tip").html("This field is required.").hide().fadeIn();//刚好class为replace的3个字段都是必填
-		}
-		else if(value.indexOf(",") > -1 || value.indexOf(".") > -1 || value.indexOf("-") > -1 || value.indexOf("&") > -1){
-			$("#"+$(this).attr("id")+"-tip").html("Cannot contain period, comma, dash or ampersand.").hide().fadeIn();
-		}else{
-			$("#"+$(this).attr("id")+"-tip").html("").hide();
-		}
-	});
+//	$(".replace").blur(function(){
+//		var value = $(this).val();
+//		if(value==""){
+//			$("#"+$(this).attr("id")+"-tip").html("This field is required.").hide().fadeIn();//刚好class为replace的3个字段都是必填
+//		}
+//		else if(value.indexOf(",") > -1 || value.indexOf(".") > -1 || value.indexOf("-") > -1 || value.indexOf("&") > -1){
+//			$("#"+$(this).attr("id")+"-tip").html("Cannot contain period, comma, dash or ampersand.").hide().fadeIn();
+//		}else{
+//			$("#"+$(this).attr("id")+"-tip").html("").hide();
+//		}
+//	});
 	
 	$("#bankAccountName").blur(function(){
 		var Regx = /^[A-Za-z\s]*$/;
@@ -319,7 +319,7 @@ define(depends, function(personal) {
 			$("#bankCardNumber-tip").html("This field is required.").hide().fadeIn();
 		}
 		else if(!Regx.test($("#bankCardNumber").val())){
-			$("#bankCardNumber-tip").html("Can only contain numbers and letters.").hide().fadeIn();
+			$("#bankCardNumber-tip").html("Can only contain numbers.").hide().fadeIn();
 		}else{
 			$("#bankCardNumber-tip").html("").hide();
 		}
@@ -335,6 +335,17 @@ define(depends, function(personal) {
 			$("#bankName-tip").html("").hide();
 		}
 	});
+	$("#bank_street").blur(function(){
+		var Regx = /^[A-Za-z0-9\s]*$/;
+		if($("#bank_street").val()=="" ){
+			$("#bank_street-tip").html("This field is required.").hide().fadeIn();
+		}
+		else if(!Regx.test($("#bank_street").val())){
+			$("#bank_street-tip").html("Can only contain numbers, letters and spaces.").hide().fadeIn();
+		}else{
+			$("#bank_street-tip").html("").hide();
+		}
+	});
 	$("#bank_zip_code").blur(function(){
 		var Regx = /^[0-9]*$/;
 		if($("#bank_zip_code").val()=="" ){
@@ -344,6 +355,17 @@ define(depends, function(personal) {
 			$("#bank_zip_code-tip").html("Can only contain numbers.").hide().fadeIn();
 		}else{
 			$("#bank_zip_code-tip").html("").hide();
+		}
+	});
+	$("#beneficiary_street").blur(function(){
+		var Regx = /^[A-Za-z0-9\s]*$/;
+		if($("#beneficiary_street").val()=="" ){
+			$("#beneficiary_street-tip").html("This field is required.").hide().fadeIn();
+		}
+		else if(!Regx.test($("#bank_street").val())){
+			$("#beneficiary_street-tip").html("Can only contain numbers, letters and spaces.").hide().fadeIn();
+		}else{
+			$("#beneficiary_street-tip").html("").hide();
 		}
 	});
 	$("#beneficiary_zip_code").blur(function(){
@@ -365,6 +387,8 @@ define(depends, function(personal) {
 		else if($("#bankSwiftCode").val()!=""&&!Regx.test($("#bankSwiftCode").val())){
 			$("#bankSwiftCode-tip").html("Can only contain 9 numbers or letters.").hide().fadeIn();
 		}else{
+			if($("#bankABARoutingNumber").val()=="")
+				$("#bankABARoutingNumber-tip").html("").hide();
 			$("#bankSwiftCode-tip").html("").hide();
 		}
 	});
@@ -380,6 +404,8 @@ define(depends, function(personal) {
 			$("#bankABARoutingNumber-tip").html("Please fill in your real number.").hide().fadeIn();
 		}
 		else{
+			if($("#bankSwiftCode").val()=="")
+				$("#bankSwiftCode-tip").html("").hide();
 			$("#bankABARoutingNumber-tip").html("").hide();
 		}
 	});
@@ -452,7 +478,7 @@ define(depends, function(personal) {
 			flag = false;
 		}
 		else if(!Regx.test(postData.beneficiaryAccountNumber)){
-			$("#bankCardNumber-tip").html("Can only contain numbers and letters.").hide().fadeIn();
+			$("#bankCardNumber-tip").html("Can only contain numbers.").hide().fadeIn();
 			flag = false;
 		}else{
 			$("#bankCardNumber-tip").html("").hide();
@@ -471,6 +497,18 @@ define(depends, function(personal) {
 			$("#bankName-tip").html("").hide();
 		}
 		
+		Regx = /^[A-Za-z0-9\s]*$/;
+		if($("#bank_street").val()=="" ){
+			$("#bank_street-tip").html("This field is required.").hide().fadeIn();
+			flag = false;
+		}
+		else if(!Regx.test($("#bank_street").val())){
+			$("#bank_street-tip").html("Can only contain numbers, letters and spaces.").hide().fadeIn();
+			flag = false;
+		}else{
+			$("#bank_street-tip").html("").hide();
+		}
+		
 		Regx = /^[0-9]*$/;
 		if(postData.bankZipCode=="" ){
 			$("#bank_zip_code-tip").html("This field is required.").hide().fadeIn();
@@ -483,6 +521,19 @@ define(depends, function(personal) {
 			$("#bank_zip_code-tip").html("").hide();
 		}
 		
+		Regx = /^[A-Za-z0-9\s]*$/;
+		if($("#beneficiary_street").val()=="" ){
+			$("#beneficiary_street-tip").html("This field is required.").hide().fadeIn();
+			flag = false;
+		}
+		else if(!Regx.test($("#bank_street").val())){
+			$("#beneficiary_street-tip").html("Can only contain numbers, letters and spaces.").hide().fadeIn();
+			flag = false;
+		}else{
+			$("#beneficiary_street-tip").html("").hide();
+		}
+		
+		Regx = /^[0-9]*$/;
 		if(postData.beneficiaryZipCode=="" ){
 			$("#beneficiary_zip_code-tip").html("This field is required.").hide().fadeIn();
 			flag = false;
