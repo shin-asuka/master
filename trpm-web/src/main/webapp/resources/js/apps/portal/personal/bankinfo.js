@@ -347,6 +347,7 @@ define(depends, function(personal) {
 		}
 	});
 	$("#beneficiary_zip_code").blur(function(){
+		var Regx = /^[0-9]*$/;
 		if($("#beneficiary_zip_code").val()=="" ){
 			$("#beneficiary_zip_code-tip").html("This field is required.").hide().fadeIn();
 		}
