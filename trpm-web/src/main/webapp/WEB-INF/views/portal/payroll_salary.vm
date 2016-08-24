@@ -49,9 +49,9 @@
                         Courses<b class="downCaret"></b>
                     </p>
                 </div>
-                #set($couTo=$course.totalSalary /100.00)
-                #set($cousTo=$numberTool.format('#0.00',$couTo))
-                <div class="col-xs-6 text-right">$ $!{cousTo}</div>
+                #set($cousTo=$courses.totalSalary/100.00)
+                #set($cousTo=$numberTool.format('#0.00',$cousTo))
+                <div class="col-xs-6 text-right">$ $!{cousTo}</div>                 
             </div>
             <div class="row panel-collapse collapse f9f9f9" id="courses">
                 #foreach($course in $courses.list)
@@ -60,6 +60,7 @@
                 </div>
                 <div class="col-xs-6  text-right">
                    #set($couTo=$course.totalSalary /100.00)
+                    #set($couTo=$numberTool.format('#0.00',$couTo))
                     $!{couTo}
                 </div>
                 #end
@@ -73,6 +74,7 @@
                     </p>
                 </div>
                 #set($attendance_couTo=$attendance.totalSalary /100.00)
+                 #set($attendance_couTo=$numberTool.format('#0.00',$attendance_couTo))
                 <div class="col-xs-6 text-right">$ $!{attendance_couTo}</div>
             </div>
             <div class="row panel-collapse collapse f9f9f9" id="attendance-bonus">
@@ -82,6 +84,7 @@
                 </div>
                 <div class="col-xs-6  text-right">
                     #set($attTo=$attendanceBonus.totalSalary /100.00)
+                     #set($attTo=$numberTool.format('#0.00',$attTo))
                     <span> $ $!{attTo}</span>
                 </div>
                 #end
@@ -95,6 +98,7 @@
                     </p>
                 </div>
                  #set($othsTo=$other.totalSalary /100.00)
+                  #set($othsTo=$numberTool.format('#0.00',$othsTo))
                 <div class="col-xs-6 text-right">$ $!{othsTo}</div>
             </div>
             <div class="row panel-collapse collapse f9f9f9" id="other-bonus">
@@ -104,6 +108,7 @@
                 </div>
                 <div class="col-xs-6  text-right">
                     #set($othTo=$otherBonus.totalSalary /100.00)
+                     #set($othsTo=$numberTool.format('#0.00',$othsTo))
                     <span> $ $!{othTo}</span>
                 </div>
                 #end
@@ -117,6 +122,7 @@
                     </p>
                 </div>
                 #set($adjustmentsTo=$adjustments.totalSalary /100.00)
+                #set($adjustmentsTo=$numberTool.format('#0.00',$adjustmentsTo))
                 <div class="col-xs-6 text-right">$ $!{adjustmentsTo}</div>
             </div>
             <div class="row panel-collapse collapse f9f9f9" id="adjustments">
@@ -127,6 +133,7 @@
                     </div>
                     <div class="col-xs-6  text-right">
                         #set($adjRowsTo=$adjRows.totalSalary /100.00)
+                          #set($adjRowsTo=$numberTool.format('#0.00',$adjRowsTo))
                         <span> $ $!{adjRowsTo}</span>
                     </div>
                     #end
@@ -154,6 +161,7 @@
                     </div>
                     <div class="col-xs-4">
                         #set($courTo=$courses.totalSalary /100.00)
+                         #set($courTo=$numberTool.format('#0.00',$courTo))
                         <h5 class="text-right">$ $!{courTo}</h5>
                     </div>
                 </div>
@@ -187,7 +195,7 @@
                                 <div class="lessonInfoContent ng-binding">{{el.shortNotice}}</div>
                             </td>
                             <td>
-                                <div class="lessonInfoContent ng-binding">{{el.totalSalary}}</div>
+                                <div class="lessonInfoContent ng-binding">{{el.totalSalary.toFixed(2)}}</div>
                             </td>
                         </tr>
                     </tbody>
@@ -218,6 +226,7 @@
                     </div>
                     <div class="col-xs-6">
                          #set($attTo=$attendance.totalSalary /100.00)
+                          #set($attTo=$numberTool.format('#0.00',$attTo))
                         <h5 class="text-right">$ $!{attTo}</h5>
                     </div>
                 </div>
@@ -232,6 +241,7 @@
                             #if($attendance.attendanceList.size()>0)
                                 #foreach($attendanceRow in $attendance.attendanceList)
                                     #set($attendance_tr_totalSalary = ${attendanceRow.unitPrice} /100.00*${attendance.attendanceList[0].quantity}+$attendance_tr_totalSalary)
+                                    #set($attendance_tr_totalSalary=$numberTool.format('#0.00',$attendance_tr_totalSalary))
                                 #end
                             #end
                             <td class="text-right" style="border-left:0;">$ $!{attendance_tr_totalSalary}</td>
@@ -247,6 +257,7 @@
                             #foreach($attendanceRow in $attendance.attendanceList)
                             <tr class="rowscss">
                                 #set($attendanceRow_unitPrice=$attendanceRow.unitPrice /100.00 )
+                                 #set($attendanceRow_unitPrice=$numberTool.format('#0.00',$attendanceRow_unitPrice))
                                 <td class="text-center">$ $!{attendanceRow_unitPrice}</td>
                                 <td class="text-center">$!{attendance.attendanceList[0].quantity}</td>
                             </tr>
@@ -269,6 +280,7 @@
                                  Course Deductions
                             </td>
                             #set($deductions_totalSalary=$attendance.totalSalaryMap.dedduction /100.00)
+                             #set($deductions_totalSalary=$numberTool.format('#0.00',$deductions_totalSalary))
                             <td colspan="1" class="text-right" style="border-left:0;">
                                  $ $!{deductions_totalSalary}
                             </td>
@@ -296,7 +308,7 @@
                                 <div class="lessonInfoContent ng-binding">{{el.finishType}}</div>
                             </td>
                             <td>
-                                <div class="lessonInfoContent ng-binding">{{el.totalSalary}}</div>
+                                <div class="lessonInfoContent ng-binding">{{el.totalSalary.toFixed(2)}}</div>
                             </td>
                         </tr>
                     </tbody>
@@ -327,6 +339,7 @@
                     </div>
                     <div class="col-xs-6">
                       #set($otherTo=$other.totalSalary /100.00)
+                      #set($otherTo=$numberTool.format('#0.00',$otherTo))
                         <h5 class="text-right">$ $!{otherTo}</h5>
                     </div>
                 </div>
@@ -341,6 +354,7 @@
                              Monthly Evaluation
                             </td>
                             #set($omeT=$otherMonthlyEvaluation.totalSalary /100.00)
+                            #set($omeT=$numberTool.format('#0.00',$omeT))
                             <td colspan="1" class="text-right" style="border-left:0;">
                                  $ $!{omeT}
                             </td>
@@ -355,6 +369,7 @@
                         #foreach($row in $otherMonthlyEvaluation.list)
                          <tr class="rowscss">
                             #set($row_ome_unitPrice=$row.unitPrice /100.00)
+                             #set($row_ome_unitPrice=$numberTool.format('#0.00',$row_ome_unitPrice))
                             <td class="text-center">$!{row.percentage}</td>
                             <td class="text-center">$!{row_ome_unitPrice}</td>
                             <td class="text-center">$!{row.quantity}</td>
@@ -373,6 +388,7 @@
                              Finished Classes
                             </td>
                             #set($othFC=$otherFinishedClasses.totalSalary /100.00)
+                              #set($othFC=$numberTool.format('#0.00',$othFC))
                             <td colspan="1" class="text-right" style="border-left:0;">
                                  $ $!{othFC}
                             </td>
@@ -386,6 +402,7 @@
                         #foreach($finishClassRow in $otherFinishedClasses.list)
                          <tr class="rowscss">
                             #set($finishClassRow_unitPrice=$finishClassRow.unitPrice /100.00)
+                               #set($finishClassRow_unitPrice=$numberTool.format('#0.00',$finishClassRow_unitPrice))
                             <td class="text-center">$!{finishClassRow_unitPrice}</td>
                             <td class="text-center">$!{finishClassRow.quantity}</td>
                         </tr>
@@ -439,6 +456,7 @@
                                  New VIPKID Enrollment
                             </td>
                             #set($otherNewVipkid_totalSalary=$otherNewVipkid.totalSalary /100.00)
+                             #set($otherNewVipkid_totalSalary=$numberTool.format('#0.00',$otherNewVipkid_totalSalary))
                             <td colspan="1" class="text-right" style="border-left:0;">
                                  $ $!{otherNewVipkid_totalSalary}
                             </td>
@@ -456,6 +474,7 @@
                             <td class="text-center" showType="date" value="$vipSet.scheduledTime">$!{dateTool.format($vipSet.scheduledTime)}</td>             
                             <td class="text-center">$vipSet.studentName</td>
                             #set($vipSetTo=$vipSet.totalSalary /100.00)
+                              #set($vipSetTo=$numberTool.format('#0.00',$vipSetTo))
                             <td class="text-center">$vipSetTo</td>
                         </tr>
                         #end
@@ -473,6 +492,7 @@
                     </div>
                     <div class="col-xs-6">
                         #set($adjs=$adjustments.totalSalary /100.00)
+                        #set($adjs=$numberTool.format('#0.00',$adjs))
                         <h5 class="text-right">$ $!{adjs}</h5>
                     </div>
                 </div>
@@ -494,6 +514,7 @@
                                 <td class="text-center" value="$adjust.itemId">$adjust.itemName</td>
                                 <td class="text-center" value="$adjust.descriptionId">$adjust.descriptionName</td>
                                 #set($adj=$adjust.unitPrice /100.00)
+                                #set($adj=$numberTool.format('#0.00',$adj))
                                 <td class="text-center">$!{adj}</td>
                             </tr>
                             #end
