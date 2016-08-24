@@ -336,13 +336,18 @@ define(depends, function(personal) {
 		}
 	});
 	$("#bank_street").blur(function(){
-		var Regx = /^[A-Za-z0-9\s]*$/;
+		var Regx = /.*[\u4e00-\u9fa5].*/;//查看是否有中文
+		var value = $("#bank_street").val();
 		if($("#bank_street").val()=="" ){
 			$("#bank_street-tip").html("This field is required.").hide().fadeIn();
 		}
-		else if(!Regx.test($("#bank_street").val())){
-			$("#bank_street-tip").html("Can only contain numbers, letters and spaces.").hide().fadeIn();
-		}else{
+		else if(value.indexOf(",") > -1 || value.indexOf(".") > -1 || value.indexOf("-") > -1 || value.indexOf("&") > -1){
+			$("#bank_street-tip").html("Cannot contain period, comma, dash or ampersand.").hide().fadeIn();
+		}
+		else if(Regx.test($("#bank_street").val())){
+			$("#bank_street-tip").html("Can only fill in English.").hide().fadeIn();
+		}
+		else{
 			$("#bank_street-tip").html("").hide();
 		}
 	});
@@ -358,13 +363,18 @@ define(depends, function(personal) {
 		}
 	});
 	$("#beneficiary_street").blur(function(){
-		var Regx = /^[A-Za-z0-9\s]*$/;
+		var Regx = /.*[\u4e00-\u9fa5].*/;//查看是否有中文
+		var value = $("#beneficiary_street").val();
 		if($("#beneficiary_street").val()=="" ){
 			$("#beneficiary_street-tip").html("This field is required.").hide().fadeIn();
 		}
-		else if(!Regx.test($("#bank_street").val())){
-			$("#beneficiary_street-tip").html("Can only contain numbers, letters and spaces.").hide().fadeIn();
-		}else{
+		else if(value.indexOf(",") > -1 || value.indexOf(".") > -1 || value.indexOf("-") > -1 || value.indexOf("&") > -1){
+			$("#beneficiary_street-tip").html("Cannot contain period, comma, dash or ampersand.").hide().fadeIn();
+		}
+		else if(Regx.test($("#beneficiary_street").val())){
+			$("#beneficiary_street-tip").html("Can only fill in English.").hide().fadeIn();
+		}
+		else{
 			$("#beneficiary_street-tip").html("").hide();
 		}
 	});
@@ -497,15 +507,21 @@ define(depends, function(personal) {
 			$("#bankName-tip").html("").hide();
 		}
 		
-		Regx = /^[A-Za-z0-9\s]*$/;
+		Regx = /.*[\u4e00-\u9fa5].*/;//查看是否有中文
+		var value = $("#bank_street").val();
 		if($("#bank_street").val()=="" ){
 			$("#bank_street-tip").html("This field is required.").hide().fadeIn();
 			flag = false;
 		}
-		else if(!Regx.test($("#bank_street").val())){
-			$("#bank_street-tip").html("Can only contain numbers, letters and spaces.").hide().fadeIn();
+		else if(value.indexOf(",") > -1 || value.indexOf(".") > -1 || value.indexOf("-") > -1 || value.indexOf("&") > -1){
+			$("#bank_street-tip").html("Cannot contain period, comma, dash or ampersand.").hide().fadeIn();
 			flag = false;
-		}else{
+		}
+		else if(Regx.test($("#bank_street").val())){
+			$("#bank_street-tip").html("Can only fill in English.").hide().fadeIn();
+			flag = false;
+		}
+		else{
 			$("#bank_street-tip").html("").hide();
 		}
 		
@@ -521,15 +537,21 @@ define(depends, function(personal) {
 			$("#bank_zip_code-tip").html("").hide();
 		}
 		
-		Regx = /^[A-Za-z0-9\s]*$/;
+		Regx = /.*[\u4e00-\u9fa5].*/;//查看是否有中文
+		value = $("#beneficiary_street").val();
 		if($("#beneficiary_street").val()=="" ){
 			$("#beneficiary_street-tip").html("This field is required.").hide().fadeIn();
 			flag = false;
 		}
-		else if(!Regx.test($("#bank_street").val())){
-			$("#beneficiary_street-tip").html("Can only contain numbers, letters and spaces.").hide().fadeIn();
+		else if(value.indexOf(",") > -1 || value.indexOf(".") > -1 || value.indexOf("-") > -1 || value.indexOf("&") > -1){
+			$("#beneficiary_street-tip").html("Cannot contain period, comma, dash or ampersand.").hide().fadeIn();
 			flag = false;
-		}else{
+		}
+		else if(Regx.test($("#beneficiary_street").val())){
+			$("#beneficiary_street-tip").html("Can only fill in English.").hide().fadeIn();
+			flag = false;
+		}
+		else{
 			$("#beneficiary_street-tip").html("").hide();
 		}
 		
