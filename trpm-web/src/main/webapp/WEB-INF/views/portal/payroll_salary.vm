@@ -49,7 +49,7 @@
                         Courses<b class="downCaret"></b>
                     </p>
                 </div>
-                #set($cousTo=$numberToolTool.format('#0.00',$courses.totalSalary /100.00))
+                #set($cousTo=$numberTool.format('#0.00',$courses.totalSalary /100.00))
                 <div class="col-xs-6 text-right">$ $!{cousTo}</div>
             </div>
             <div class="row panel-collapse collapse f9f9f9" id="courses">
