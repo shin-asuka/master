@@ -28,6 +28,9 @@
 							#set($isDemoReport = true)
 							<div onclick="require('report-demo').showDemoReport('$lesson.serialNumber','$!onlineClass.id', '$!student.id')">Add Feedback</div>
 						#end
+					#elseif($lesson.isUnitAssessment == 1)
+						##需要填写单元评估报告的课程  is Unit Assessment
+						<div onclick="require('feedback').openUnitAssessment('Required','$!onlineClass.id','$!student.id')">Add Feedback</div> 
 					#else
 						##否则显示feedback
 						<div onclick="require('feedback').openFeedback('Required','$!onlineClass.id','$!student.id')">Add Feedback</div> 

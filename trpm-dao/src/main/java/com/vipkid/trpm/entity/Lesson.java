@@ -40,6 +40,11 @@ public class Lesson extends Entity implements Serializable {
 	/*  */
 	private String number;
 
+	/**
+	 * 是否生成UA报告
+	 */
+	private Integer isUnitAssessment; 
+	
 	public long getId() {
 		return this.id;
 	}
@@ -182,6 +187,14 @@ public class Lesson extends Entity implements Serializable {
 	public Lesson setNumber(String number) {
 		this.number = number;
 		return this;
+	}
+
+	public Integer getIsUnitAssessment() {
+		return isUnitAssessment;
+	}
+
+	public void setIsUnitAssessment(Integer isUnitAssessment) {
+		this.isUnitAssessment = isUnitAssessment;
 	}
 
 }

@@ -112,6 +112,38 @@ define([ "jquery-form", "jquery-bootstrap", "jquery-load", "tools" ], function()
 			}
 		});
 	};
+	
+	/** **public 请求页面 */
+	var openUnitAssessment = function(isRequire, onlineClassId, studentId) {
+		/** * 已经打开直接返回 */
+		if ($("div.trailFeedbackContainer").children().length > 0) {
+			openShow(isRequire);
+			return false;
+		}
+		/** * 未打开，从后台请求页面,再打开返回 */
+		var data = {
+			"type" : "required",
+			"onlineClassId" : onlineClassId,
+			"studentId" : studentId
+		};
+		var url = webPath + "/unitAssessment.shtml";
+		Portal.loading("open");
+		$.ajaxRequest({
+			url : url,
+			data : data,
+			success : function(datas) {
+				$("div.trailFeedbackContainer").html(datas);
+				openShow(isRequire);
+				listener();
+				openSessionStorage(onlineClassId);
+				Portal.loading("close");
+			},
+			timeout : _timeout,
+			error : function(reponse, status, info) {
+				feedbackError(reponse, status, info);
+			}
+		});
+	};
 
 	/** *public 提交保存整个feedback表单 */
 	var trailCommentSubmit = function() {
@@ -293,7 +325,8 @@ define([ "jquery-form", "jquery-bootstrap", "jquery-load", "tools" ], function()
 		trailCommentClose : hideFeedBack,
 		parentTab : parentTab,
 		trailCommentSubmit : trailCommentSubmit,
-		openFeedback : openFeedback
+		openFeedback : openFeedback,
+		openUnitAssessment : openUnitAssessment
 	}
 
 });

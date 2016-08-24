@@ -213,6 +213,13 @@ public class ReportController extends AbstractPortalController {
         return view("online_class_feedback");
     }
 
+    @RequestMapping("/unitAssessment")
+    public String unitAssessment(@RequestParam long onlineClassId,HttpServletRequest request, HttpServletResponse response, 
+             Model model) {
+    	
+    	model.addAttribute("onlineClassId", onlineClassId);
+    	return view("online_class_unitAssessment");
+    }
     /**
      * feedback保存，任何时候都可以保存  2016-5-10 修改feedback 只允许提交一次，因为要通知家长老师有反馈
      * 
