@@ -4,7 +4,7 @@
 	</style>
 	<div>
 		<div id="Required" style="height:530px;overflow-x:hidden; overflow-y:auto;">
-			<iframe id="iframepage" frameborder="0" scrolling="auto" width="100%" height="500" 
+			<iframe id="iframepage" frameborder="0" scrolling="auto" width="100%" height="520" 
 				src="/unit_assessment?onlineClassId=${onlineClassId}"></iframe>
 			
         </div>

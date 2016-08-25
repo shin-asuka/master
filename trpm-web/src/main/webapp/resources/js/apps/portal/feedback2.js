@@ -132,9 +132,23 @@ define([ "jquery-form", "jquery-bootstrap", "jquery-load", "tools" ], function()
 			url : url,
 			data : data,
 			success : function(datas) {
+				var screenWidth = $(window).width();
+				var width = screenWidth - 100;
+				debugger;
+				if(width<1000){
+					width = 1000;
+				}else if(width>1200){
+					width = 1200;
+				}
+				//width = 1000;
+				$("div.trailFeedbackContainer").width(width);
 				$("div.trailFeedbackContainer").html(datas);
 				openShow(isRequire);
 				listener();
+				
+				var w_width = ($(window).width()-$("div.trailFeedbackContainer").width())/2-15;
+				$("div.trailFeedbackContainer").css({"left":w_width+"px"})
+				
 				openSessionStorage(onlineClassId);
 				Portal.loading("close");
 			},
