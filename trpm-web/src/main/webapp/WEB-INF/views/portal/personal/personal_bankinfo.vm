@@ -95,6 +95,26 @@
         <div class="row form-group">
           	<div class="col-sm-1 col-md-1"></div>
            	<div align="right" class="col-sm-3 col-md-4">
+            <div class='title-lable'>ABA routing number</div>
+          </div>
+          <div class="col-sm-8 col-sm-7">
+          	$!{TRPM_TEACHER.bankABARoutingNumber}
+          </div>
+        </div>
+        
+        <div class="row form-group">
+          	<div class="col-sm-1 col-md-1"></div>
+           	<div align="right" class="col-sm-3 col-md-4">
+            <div class='title-lable'>ACH number (US only)</div>
+          </div>
+          <div class="col-sm-8 col-sm-7">
+            $!{TRPM_TEACHER.bankACHNumber}
+          </div>
+        </div>
+        
+        <div class="row form-group">
+          	<div class="col-sm-1 col-md-1"></div>
+           	<div align="right" class="col-sm-3 col-md-4">
             <div class='title-lable'>ID type</div>
           </div>
           <div class="col-sm-8 col-sm-7">

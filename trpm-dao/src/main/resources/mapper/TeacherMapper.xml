@@ -7,8 +7,10 @@
 		teacher.bank_account_name AS teacher_bank_account_name,
 		teacher.bank_address AS teacher_bank_address, teacher.bank_card_number
 		AS teacher_bank_card_number, teacher.bank_name AS teacher_bank_name,
-		teacher.bank_swift_code AS teacher_bank_swift_code, teacher.birthday
-		AS teacher_birthday, teacher.certificates AS teacher_certificates,
+		teacher.bank_swift_code AS teacher_bank_swift_code, 
+		teacher.bank_aba_routing_number AS teacher_bank_aba_routing_number, 
+		teacher.bank_ach_number AS teacher_bank_ach_number, 
+		teacher.birthday AS teacher_birthday, teacher.certificates AS teacher_certificates,
 		teacher.contract_end_date AS teacher_contract_end_date,
 		teacher.contract_start_date AS teacher_contract_start_date,
 		teacher.entry_date AS teacher_entry_date,
@@ -66,6 +68,8 @@
 			<if test="bankCardNumber!=null">AND teacher.bank_card_number = #{bankCardNumber}</if>
 			<if test="bankName!=null">AND teacher.bank_name = #{bankName}</if>
 			<if test="bankSwiftCode!=null">AND teacher.bank_swift_code = #{bankSwiftCode}</if>
+			<if test="bankABARoutingNumber!=null">AND teacher.bank_aba_routing_number = #{bankABARoutingNumber}</if>
+			<if test="bankACHNumber!=null">AND teacher.bank_ach_number = #{bankACHNumber}</if>
 			<if test="birthday!=null">AND teacher.birthday = #{birthday}</if>
 			<if test="certificates!=null">AND teacher.certificates = #{certificates}</if>
 			<if test="contractEndDate!=null">AND teacher.contract_end_date = #{contractEndDate}</if>
@@ -145,6 +149,8 @@
 		<result column="teacher_bank_card_number" property="bankCardNumber" />
 		<result column="teacher_bank_name" property="bankName" />
 		<result column="teacher_bank_swift_code" property="bankSwiftCode" />
+		<result column="teacher_bank_aba_routing_number" property="bankABARoutingNumber" />
+		<result column="teacher_bank_ach_number" property="bankACHNumber" />
 		<result column="teacher_birthday" property="birthday" />
 		<result column="teacher_certificates" property="certificates" />
 		<result column="teacher_contract_end_date" property="contractEndDate" />
@@ -248,6 +254,8 @@
 			<if test="bankCardNumber!=null">,bank_card_number</if>
 			<if test="bankName!=null">,bank_name</if>
 			<if test="bankSwiftCode!=null">,bank_swift_code</if>
+			<if test="bankABARoutingNumber!=null">,bank_aba_routing_number</if>
+			<if test="bankACHNumber!=null">,bank_ach_number</if>
 			<if test="birthday!=null">,birthday</if>
 			<if test="certificates!=null">,certificates</if>
 			<if test="contractEndDate!=null">,contract_end_date</if>
@@ -316,6 +324,8 @@
 			<if test="bankCardNumber!=null">,#{bankCardNumber}</if>
 			<if test="bankName!=null">,#{bankName}</if>
 			<if test="bankSwiftCode!=null">,#{bankSwiftCode}</if>
+			<if test="bankABARoutingNumber!=null">,#{bankABARoutingNumber}</if>
+			<if test="bankACHNumber!=null">,#{bankACHNumber}</if>
 			<if test="birthday!=null">,#{birthday}</if>
 			<if test="certificates!=null">,#{certificates}</if>
 			<if test="contractEndDate!=null">,#{contractEndDate}</if>
@@ -388,6 +398,8 @@
 			<if test="bankCardNumber!=null">,bank_card_number = #{bankCardNumber}</if>
 			<if test="bankName!=null">,bank_name = #{bankName}</if>
 			<if test="bankSwiftCode!=null">,bank_swift_code = #{bankSwiftCode}</if>
+			<if test="bankABARoutingNumber!=null">,bank_aba_routing_number = #{bankABARoutingNumber}</if>
+			<if test="bankACHNumber!=null">,bank_ach_number = #{bankACHNumber}</if>
 			<if test="birthday!=null">,birthday = #{birthday}</if>
 			<if test="certificates!=null">,certificates = #{certificates}</if>
 			<if test="contractEndDate!=null">,contract_end_date = #{contractEndDate}</if>
