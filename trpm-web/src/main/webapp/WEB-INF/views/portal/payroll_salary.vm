@@ -345,40 +345,6 @@
                 </div>
                 <br>
 
-              
-            
-                #if(  $is2VersionContactType == true)
-                <br>
-                <table id="finishClass_table_id" class="table table-bordered">
-                    <thead>
-                        <tr class="active">
-                            <td colspan="1" class="text-left" style="border-right:0;">
-                             Finished Classes
-                            </td>
-                            #set($othFC=$otherFinishedClasses.totalSalary /100.00)
-                              #set($othFC=$numberTool.format('#0.00',$othFC))
-                            <td colspan="1" class="text-right" style="border-left:0;">
-                                 $ $!{othFC}
-                            </td>
-                        </tr>
-                        <tr class="info">
-                            <td class="text-center">Unit Price ($)</td>
-                            <td class="text-center">Quantity</td>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        #foreach($finishClassRow in $otherFinishedClasses.list)
-                         <tr class="rowscss">
-                            #set($finishClassRow_unitPrice=$finishClassRow.unitPrice /100.00)
-                               #set($finishClassRow_unitPrice=$numberTool.format('#0.00',$finishClassRow_unitPrice))
-                            <td class="text-center">$!{finishClassRow_unitPrice}</td>
-                            <td class="text-center">$!{finishClassRow.quantity}</td>
-                        </tr>
-                        #end
-                    </tbody>
-                </table>
-                #end
-                
                 
                #*<br>
                2016.08.23 不显示referall bonus
@@ -455,39 +421,72 @@
             </div>
             <br>
             
-                #if(  $is2VersionContactType == false)      
-                <br> 
-                <table id="finishClass_table_id" class="table table-bordered">
-                    <thead>
-                        <tr class="active">
-                            <td colspan="2" class="text-left" style="border-right:0;">
-                             Monthly Evaluation
-                            </td>
-                            #set($omeT=$otherMonthlyEvaluation.totalSalary /100.00)
-                            #set($omeT=$numberTool.format('#0.00',$omeT))
-                            <td colspan="1" class="text-right" style="border-left:0;">
-                                 $ $!{omeT}
-                            </td>
-                        </tr>
-                        <tr class="info">
-                            <td class="text-center">Percentage(%)</td>
-                            <td class="text-center">Unit Price ($)</td>
-                            <td class="text-center">Quantity</td>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        #foreach($row in $otherMonthlyEvaluation.list)
-                         <tr class="rowscss">
-                            #set($row_ome_unitPrice=$row.unitPrice /100.00)
-                             #set($row_ome_unitPrice=$numberTool.format('#0.00',$row_ome_unitPrice))
-                            <td class="text-center">$!{row.percentage}</td>
-                            <td class="text-center">$!{row_ome_unitPrice}</td>
-                            <td class="text-center">$!{row.quantity}</td>
-                        </tr>
-                        #end
-                    </tbody>
-                </table>    
-                #end
+            #if(  $is2VersionContactType == false)      
+            <br> 
+            <table id="finishClass_table_id" class="table table-bordered">
+                <thead>
+                    <tr class="active">
+                        <td colspan="2" class="text-left" style="border-right:0;">
+                         Monthly Evaluation
+                        </td>
+                        #set($omeT=$otherMonthlyEvaluation.totalSalary /100.00)
+                        #set($omeT=$numberTool.format('#0.00',$omeT))
+                        <td colspan="1" class="text-right" style="border-left:0;">
+                             $ $!{omeT}
+                        </td>
+                    </tr>
+                    <tr class="info">
+                        <td class="text-center">Percentage(%)</td>
+                        <td class="text-center">Unit Price ($)</td>
+                        <td class="text-center">Quantity</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    #foreach($row in $otherMonthlyEvaluation.list)
+                     <tr class="rowscss">
+                        #set($row_ome_unitPrice=$row.unitPrice /100.00)
+                         #set($row_ome_unitPrice=$numberTool.format('#0.00',$row_ome_unitPrice))
+                        <td class="text-center">$!{row.percentage}</td>
+                        <td class="text-center">$!{row_ome_unitPrice}</td>
+                        <td class="text-center">$!{row.quantity}</td>
+                    </tr>
+                    #end
+                </tbody>
+            </table>    
+            #end
+                
+            #if(  $is2VersionContactType == true)
+            <br>
+            <table id="finishClass_table_id" class="table table-bordered">
+                <thead>
+                    <tr class="active">
+                        <td colspan="1" class="text-left" style="border-right:0;">
+                         Finished Classes
+                        </td>
+                        #set($othFC=$otherFinishedClasses.totalSalary /100.00)
+                          #set($othFC=$numberTool.format('#0.00',$othFC))
+                        <td colspan="1" class="text-right" style="border-left:0;">
+                             $ $!{othFC}
+                        </td>
+                    </tr>
+                    <tr class="info">
+                        <td class="text-center">Unit Price ($)</td>
+                        <td class="text-center">Quantity</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    #foreach($finishClassRow in $otherFinishedClasses.list)
+                     <tr class="rowscss">
+                        #set($finishClassRow_unitPrice=$finishClassRow.unitPrice /100.00)
+                           #set($finishClassRow_unitPrice=$numberTool.format('#0.00',$finishClassRow_unitPrice))
+                        <td class="text-center">$!{finishClassRow_unitPrice}</td>
+                        <td class="text-center">$!{finishClassRow.quantity}</td>
+                    </tr>
+                    #end
+                </tbody>
+            </table>
+            #end
+                
             <div class="attendance-warpper">
                 <div class="row bottom-border top-border">
                     <div class="col-xs-6">
