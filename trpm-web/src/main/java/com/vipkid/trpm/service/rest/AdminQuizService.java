@@ -70,7 +70,7 @@ public class AdminQuizService {
     public boolean saveQuizResult(long teacherId,String grade){
         logger.info("teacehrId:{},提交分数:{}",teacherId, grade);
         //查询老师待考试记录
-        List<TeacherQuiz> list = this.getLastQuiz(teacherId);
+        List<TeacherQuiz> list = this.teacherQuizDao.findNeedQuiz(teacherId);
         if(CollectionUtils.isNotEmpty(list)){
             //更新待考记录
             TeacherQuiz teacherQuiz = list.get(0);
@@ -83,7 +83,7 @@ public class AdminQuizService {
             this.teacherQuizDao.update(teacherQuiz);
             // 插入新的待考记录
             if(quizScore < RestfulConfig.Quiz.QUIZ_PASS_SCORE){
-              this.teacherQuizDao.insertQuiz(teacherId);
+              this.teacherQuizDao.insertQuiz(teacherId,teacherId);
             }
         }
         return true;
@@ -104,12 +104,14 @@ public class AdminQuizService {
         
         if(StringUtils.isEmpty(grade)){
             logger.warn("老师成绩提交转化结果是Null");
+            return quizScore;
         }
         
         List<TeacherQuizDetails> list = JsonTools.readValue(grade, new TypeReference<List<TeacherQuizDetails>>(){});
         
-        if(CollectionUtils.isNotEmpty(list)){
+        if(CollectionUtils.isEmpty(list)){
             logger.warn("老师成绩提交为Null");
+            return quizScore;
         }
         
         for (TeacherQuizDetails details:list) {

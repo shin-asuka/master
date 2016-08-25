@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.google.api.client.util.Maps;
 import com.google.common.base.Preconditions;
+import com.vipkid.enums.TeacherQuizEnum;
 import com.vipkid.rest.config.RestfulConfig;
 import com.vipkid.trpm.constant.ApplicationConstant.CookieKey;
 import com.vipkid.trpm.entity.TeacherQuiz;
@@ -53,7 +54,7 @@ public class AdminQuizController {
             List<TeacherQuiz> list = adminQuizService.getLastQuiz(user.getId());
             if(CollectionUtils.isNotEmpty(list)){
                 TeacherQuiz teacherQuiz = list.get(0);
-                result.put("isPass",(teacherQuiz.getStatus()==1));
+                result.put("isPass",(teacherQuiz.getStatus() == TeacherQuizEnum.Status.PASS.val()));
                 result.put("grade",teacherQuiz.getQuizScore());
                 result.put("count",list.size());
             }

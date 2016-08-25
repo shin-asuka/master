@@ -469,6 +469,8 @@ public class OnlineClassService {
             recruitTeacher.setEntryDate(new Date());
             recruitTeacher.setType(TeacherType.PART_TIME);
             this.teacherDao.update(recruitTeacher);
+            // 增加quiz的考试记录
+            teacherQuizDao.insertQuiz(recruitTeacher.getId(),pe.getId());
         }
         // 3.更新teacherApplication
         this.teacherApplicationDao.update(teacherApplication);

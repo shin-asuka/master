@@ -16,13 +16,13 @@
 	<sql id="TeacherQuizWhere">
 		<trim prefix="WHERE" prefixOverrides="AND">
 			<if test="id!=0">AND teacher_quiz.id = #{id}</if>
-			<if test="quizScore!=-1">AND teacher_quiz.quiz_score = #{quizScore}</if>
+			<if test="quizScore!=0">AND teacher_quiz.quiz_score = #{quizScore}</if>
 			<if test="creationTime!=null">AND teacher_quiz.creation_time = #{creationTime}</if>
 			<if test="teacherId!=0">AND teacher_quiz.teacher_id = #{teacherId}</if>
 			<if test="updateTime!=null">AND teacher_quiz.update_time = #{updateTime}</if>
-			<if test="updateId!=0">AND teacher_quiz.update_id = #{updateId}</if>
-			<if test="version!=-1">AND teacher_quiz.version = #{version}</if>
-			<if test="status!=-1">AND teacher_quiz.status = #{status}</if>
+			<if test="updateId !=0">AND teacher_quiz.update_id = #{updateId}</if>
+			<if test="version!=0">AND teacher_quiz.version = #{version}</if>
+			<if test="status != -1">AND teacher_quiz.status = #{status}</if>
 			<if test="andwhere!=null"> ${andwhere} </if>
 		</trim>
 	</sql>

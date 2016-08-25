@@ -243,7 +243,7 @@ public class PeSupervisorService {
      * @return Map<String,Object>
      * @date 2016年1月14日
      */
-    private Map<String, Object> updateTeacherApplication(Teacher recruitTeacher, Teacher teacher,
+    private Map<String, Object> updateTeacherApplication(Teacher recruitTeacher, Teacher pes,
             String result, String comments, TeacherApplication teacherApplication) {
 
         Map<String, Object> modelMap = Maps.newHashMap();
@@ -253,7 +253,7 @@ public class PeSupervisorService {
         // 设置审核备注
         teacherApplication.setComments(comments);
         // 设置面试官Id
-        teacherApplication.setAuditorId(teacher.getId());
+        teacherApplication.setAuditorId(pes.getId());
         // 设置应聘老师Id
         teacherApplication.setTeacherId(recruitTeacher.getId());
         teacherApplication.setCurrent(1);
@@ -266,6 +266,8 @@ public class PeSupervisorService {
             recruitTeacher.setEntryDate(new Date());
             recruitTeacher.setType(TeacherType.PART_TIME);
             this.teacherDao.update(recruitTeacher);
+            // 增加quiz的考试记录
+            teacherQuizDao.insertQuiz(recruitTeacher.getId(),pes.getId());
         }
         // 3.更新teacherApplication
         this.teacherApplicationDao.update(teacherApplication);
@@ -273,7 +275,7 @@ public class PeSupervisorService {
         // 4.更新最后一次编辑人,编辑时间
         User ruser = this.userDao.findById(recruitTeacher.getId());
         if (ruser != null) {
-            ruser.setLastEditorId(teacher.getId());
+            ruser.setLastEditorId(pes.getId());
             ruser.setLastEditDateTime(new Timestamp(System.currentTimeMillis()));
             this.userDao.update(ruser);
         }

@@ -5,6 +5,8 @@ import java.util.List;
 
 import org.community.dao.support.MapperDaoTemplate;
 import org.mybatis.spring.SqlSessionTemplate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -13,6 +15,8 @@ import com.vipkid.trpm.entity.TeacherQuiz;
 
 @Repository
 public class TeacherQuizDao extends MapperDaoTemplate<TeacherQuiz>{
+    
+    private Logger logger = LoggerFactory.getLogger(TeacherQuizDao.class);
 
     @Autowired
     public TeacherQuizDao(SqlSessionTemplate sqlSessionTemplate) {
@@ -30,6 +34,7 @@ public class TeacherQuizDao extends MapperDaoTemplate<TeacherQuiz>{
         TeacherQuiz teacherQuiz = new TeacherQuiz();
         teacherQuiz.setTeacherId(teacherId);
         teacherQuiz.setAndwhere(" AND status > " + TeacherQuizEnum.Status.NOQUIZ.val());
+        teacherQuiz.setStatus(-1);
         teacherQuiz.setOrderString(" id DESC ");
         return super.selectList(teacherQuiz);
     }
@@ -63,7 +68,8 @@ public class TeacherQuizDao extends MapperDaoTemplate<TeacherQuiz>{
      * int
      * @date 2016年8月18日
      */
-    public int insertQuiz(long teacherId){
+    public int insertQuiz(long teacherId,long passId){
+        logger.info("新增一条考试记录:{}",teacherId);
         TeacherQuiz teacherQuiz = new TeacherQuiz();
         teacherQuiz.setTeacherId(teacherId);
         teacherQuiz.setCreationTime(new Date());

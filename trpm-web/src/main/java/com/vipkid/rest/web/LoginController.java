@@ -382,26 +382,21 @@ public class LoginController {
             logger.warn("check auth teacher is null " + teacher);
             return result;
         }
-        /* 判断老师的LifeCycle，进行项目跳转 */
-        logger.info("登陆  REGULAR start !");
-        if (TeacherLifeCycle.REGULAR.toString().equals(teacher.getLifeCycle())) {
-            logger.info("to teacher !");
-            result.put("portal", RestfulConfig.Port.TEACHER);
-            result.put("action", "schedule.shtml");
-            String role = loginService.isPe(teacher.getId()) ? "":"PE,";
-            role += loginService.isPes(teacher.getId()) ? "":"PE-Supervisor,";
-            result.put("role",role);
-            // 招聘端跳转URL
-        } else {
-            logger.info("to recruitment !");
-            result.put("portal", RestfulConfig.Port.RECRUITMENT);
-            result.put("action", "signlogin.shtml?token=" + AES.encrypt(user.getToken(), AES.getKey(AES.KEY_LENGTH_128, ApplicationConstant.AES_128_KEY)));
-        }
-        result.put("teacher", teacher);
+        
+        logger.info("check teacher is PE:" + teacher.getId());
+        String role = loginService.isPe(teacher.getId()) ? "":"PE,";
+        
+        logger.info("check teacher is PES:" + teacher.getId());
+        role += loginService.isPes(teacher.getId()) ? "":"PE-Supervisor,";
+        
+        logger.info("check result is role:{},teacherId:{}",role,teacher.getId());
+        result.put("role",role);
+        
         String headsrc = teacher.getAvatar();
         if(StringUtils.isNotBlank(headsrc)){
             headsrc = PropertyConfigurer.stringValue("oss.url_preffix") + (headsrc.startsWith("/") ? headsrc:"/"+headsrc);
         }
+        result.put("teacherId",teacher.getId());
         result.put("headsrc", headsrc);
         result.put("showName", user.getName());
         result.put("status", RestfulConfig.HttpStatus.STATUS_200);
