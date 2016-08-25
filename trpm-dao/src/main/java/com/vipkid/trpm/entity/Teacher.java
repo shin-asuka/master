@@ -26,9 +26,9 @@ public class Teacher extends Entity implements Serializable {
 	/*  */
 	private String bankSwiftCode;
 	/*  */
-	private int bankABARoutingNumber;
+	private String bankABARoutingNumber;
 	/*  */
-	private int bankACHNumber;
+	private String bankACHNumber;
 	/*  */
 	private java.sql.Date birthday;
 	/*  */
@@ -209,29 +209,29 @@ public class Teacher extends Entity implements Serializable {
 		return this.bankSwiftCode;
 	}
 
-	public int getBankABARoutingNumber() {
-		return bankABARoutingNumber;
-	}
-
-	public Teacher setBankABARoutingNumber(int bankABARoutingNumber) {
-		this.bankABARoutingNumber = bankABARoutingNumber;
-		return this;
-	}
-
-	public int getBankACHNumber() {
-		return bankACHNumber;
-	}
-
-	public Teacher setBankACHNumber(int bankACHNumber) {
-		this.bankACHNumber = bankACHNumber;
-		return this;
-	}
-
 	public Teacher setBankSwiftCode(String bankSwiftCode) {
 		this.bankSwiftCode = bankSwiftCode;
 		return this;
 	}
 
+	public String getBankABARoutingNumber() {
+		return bankABARoutingNumber;
+	}
+
+	public Teacher setBankABARoutingNumber(String bankABARoutingNumber) {
+		this.bankABARoutingNumber = bankABARoutingNumber;
+		return this;
+	}
+
+	public String getBankACHNumber() {
+		return bankACHNumber;
+	}
+
+	public Teacher setBankACHNumber(String bankACHNumber) {
+		this.bankACHNumber = bankACHNumber;
+		return this;
+	}
+	
 	public java.sql.Date getBirthday() {
 		return this.birthday;
 	}

@@ -245,8 +245,8 @@ define(depends, function(personal) {
 		data.beneficiaryBankName = $("#bankName").val();
 		
 		data.swiftCode = $("#bankSwiftCode").val();
-		data.bankABARoutingNumber = ($("#bankABARoutingNumber").val()=="")? "-1" : $("#bankABARoutingNumber").val();//等于0的话，会被mybatis的mapper里面的if滤掉，所以换成-1
-		data.bankACHNumber = ($("#bankACHNumber").val()=="")?"-1":$("#bankACHNumber").val();
+		data.bankABARoutingNumber = $("#bankABARoutingNumber").val()
+		data.bankACHNumber = $("#bankACHNumber").val()
 		data.idType = $("input[type='radio']:checked").val();
 		var file = $("#passport-link").attr("href").substring($("#passport-link").attr("href").indexOf("file"));
 		data.passportURL = file.replace(aliyunroot,"");
@@ -410,9 +410,6 @@ define(depends, function(personal) {
 		else if($("#bankABARoutingNumber").val()!=""&&!Regx.test($("#bankABARoutingNumber").val())){
 			$("#bankABARoutingNumber-tip").html("Must be 9 numbers.").hide().fadeIn();
 		}
-		else if($("#bankABARoutingNumber").val()=="000000000"){
-			$("#bankABARoutingNumber-tip").html("Please fill in your real number.").hide().fadeIn();
-		}
 		else{
 			if($("#bankSwiftCode").val()=="")
 				$("#bankSwiftCode-tip").html("").hide();
@@ -426,9 +423,6 @@ define(depends, function(personal) {
 		}
 		else if(!Regx.test($("#bankACHNumber").val())){
 			$("#bankACHNumber-tip").html("Must be 9 numbers.").hide().fadeIn();
-		}
-		else if($("#bankACHNumber").val()=="000000000"){
-			$("#bankACHNumber-tip").html("Please fill in your real number.").hide().fadeIn();
 		}
 		else{
 			$("#bankACHNumber-tip").html("").hide();
@@ -568,7 +562,7 @@ define(depends, function(personal) {
 		}
 		
 		Regx = /^[A-Za-z0-9]{9}$/;
-		if(postData.swiftCode==""&&postData.bankABARoutingNumber=="-1"){
+		if(postData.swiftCode==""&&postData.bankABARoutingNumber==""){
 			$("#bankSwiftCode-tip").html("Swift code or ABA routing number is required.").hide().fadeIn();
 			flag = false;
 		}
@@ -580,31 +574,23 @@ define(depends, function(personal) {
 		}
 		
 		Regx = /^\d{9}$/;
-		if(postData.swiftCode==""&&postData.bankABARoutingNumber=="-1"){
+		if(postData.swiftCode==""&&postData.bankABARoutingNumber==""){
 			$("#bankABARoutingNumber-tip").html("Swift code or ABA routing number is required.").hide().fadeIn();
 			flag = false;
 		}
-		else if(postData.bankABARoutingNumber!="-1"&&!Regx.test(postData.bankABARoutingNumber)){
+		else if(postData.bankABARoutingNumber!=""&&!Regx.test(postData.bankABARoutingNumber)){
 			$("#bankABARoutingNumber-tip").html("Must be 9 numbers.").hide().fadeIn();
-			flag = false;
-		}
-		else if(postData.bankABARoutingNumber=="000000000"){
-			$("#bankABARoutingNumber-tip").html("Please fill in your real number.").hide().fadeIn();
 			flag = false;
 		}
 		else{
 			$("#bankABARoutingNumber-tip").html("").hide();
 		}
 		
-		if(postData.bankACHNumber=="-1"){
+		if(postData.bankACHNumber==""){
 			$("#bankACHNumber-tip").html("").hide();//此项不是必填项
 		}
 		else if(!Regx.test(postData.bankACHNumber)){
 			$("#bankACHNumber-tip").html("Must be 9 numbers.").hide().fadeIn();
-			flag = false;
-		}
-		else if(postData.bankACHNumber=="000000000"){
-			$("#bankACHNumber-tip").html("Please fill in your real number.").hide().fadeIn();
 			flag = false;
 		}
 		else{

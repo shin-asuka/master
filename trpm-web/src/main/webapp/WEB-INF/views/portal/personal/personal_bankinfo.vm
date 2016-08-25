@@ -1,10 +1,3 @@
-#macro(padLeft $str $length)
-	#if($str.length()>=$length)
-		#set($return=$str)
-	#else
-		#padLeft("0$str" $length)
-	#end
-#end
 <div class="tab-pane active" id="bankInfo" style="border: 0px;">
 		<div class="row form-group">
           <div class="col-sm-1 col-md-1"></div>
@@ -105,10 +98,7 @@
             <div class='title-lable'>ABA routing number</div>
           </div>
           <div class="col-sm-8 col-sm-7">
-          #if($!{TRPM_TEACHER.bankABARoutingNumber}!=0&&$!{TRPM_TEACHER.bankABARoutingNumber}!=-1)
-            	#padLeft("$!{TRPM_TEACHER.bankABARoutingNumber}" 9)
-            	$return
-           #end
+          	$!{TRPM_TEACHER.bankABARoutingNumber}
           </div>
         </div>
         
@@ -118,10 +108,7 @@
             <div class='title-lable'>ACH number (US only)</div>
           </div>
           <div class="col-sm-8 col-sm-7">
-          #if( $!{TRPM_TEACHER.bankACHNumber}!=0&& $!{TRPM_TEACHER.bankACHNumber}!=-1)
-            #padLeft("$!{TRPM_TEACHER.bankACHNumber}" 9)
-            $return
-           #end
+            $!{TRPM_TEACHER.bankACHNumber}
           </div>
         </div>
         
