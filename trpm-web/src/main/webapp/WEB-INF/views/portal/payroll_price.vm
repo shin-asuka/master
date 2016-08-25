@@ -63,7 +63,7 @@
                 <tbody>
                 #foreach($adjustmentRule in $adjustment_rule.ruleList)
                     <tr class="rowscss #if($adjustmentRule.visible==false) rowsDisableCss #end">
-                        <td class="text-center">$!{adjustmentRule.ruleName}</td>
+                        <td class="text-center">$!{adjustmentRule.attributes.ruleName}</td>
                         <td class="text-center">$!{adjustmentRule.attributes.description}</td>
 						#set($adjustmentRule_unitPrice = $adjustmentRule.attributes.unitPrice/100.0)
                         <td class="text-center">$!{adjustmentRule_unitPrice}</td>
