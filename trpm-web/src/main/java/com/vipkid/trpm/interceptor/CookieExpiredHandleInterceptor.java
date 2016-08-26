@@ -87,12 +87,13 @@ public class CookieExpiredHandleInterceptor extends HandlerInterceptorAdapter {
 		try {
 			String ids = PropertyConfigurer.stringValue("displayedPayrollId");
 			if (ids.indexOf(new Long(user.getId()).toString()) > -1) {
-				redisProxy.setnx("payroll_" + user.getId(),
-						"payroll_exd");
-			}
-			String pid = redisProxy.get("payroll_"+user.getId());
-			if (pid != null) {
+				String pid = redisProxy.get("payroll_" + user.getId());
+				if (pid != null) {
 					request.setAttribute("isDisplayPayroll", true);
+				} else {
+					redisProxy.setex("payroll_" + user.getId(), RedisConstants.PAYROLL_DISPLAY_MAX_NUM_EXCEED_DAY_SEC,
+							"payroll_exd");
+				}
 			}
 		} catch (Exception e) {
 			logger.error("捕获payroll redis 异常 ，teacher id是{}",user.getId());
