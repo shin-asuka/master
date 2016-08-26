@@ -94,6 +94,9 @@ public class OnlineClassService {
 
     @Autowired
     private TeacherModuleDao teacherModuleDao;
+    
+    @Autowired
+    private TeacherQuizDao teacherQuizDao;
 
     @Autowired
     private TeacherQuizDao teacherQuizDao;
