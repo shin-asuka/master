@@ -14,8 +14,11 @@ import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.vipkid.enums.TeacherQuizEnum;
 import com.vipkid.rest.config.RestfulConfig;
+import com.vipkid.trpm.constant.ApplicationConstant.LoginType;
+import com.vipkid.trpm.dao.TeacherPageLoginDao;
 import com.vipkid.trpm.dao.TeacherQuizDao;
 import com.vipkid.trpm.dao.TeacherQuizDetailsDao;
+import com.vipkid.trpm.entity.TeacherPageLogin;
 import com.vipkid.trpm.entity.TeacherQuiz;
 import com.vipkid.trpm.entity.TeacherQuizDetails;
 
@@ -29,6 +32,37 @@ public class AdminQuizService {
     
     @Autowired
     private TeacherQuizDetailsDao teacherQuizDetailsDao;
+
+    @Autowired    
+    private TeacherPageLoginDao teacherPageLoginDao;
+    
+    /**
+     * is first quiz 
+     * @Author:ALong (ZengWeiLong)
+     * @param teacerId
+     * @return    
+     * TeacherPageLogin
+     * @date 2016年8月25日
+     */
+    public boolean openQuiz(long teacerId){
+        TeacherPageLogin teacherPageLogin = this.teacherPageLoginDao.findByUserIdAndLoginType(teacerId, LoginType.ADMINQUIZ);
+        return teacherPageLogin == null ? true : false;
+    }
+    
+    /**
+     * 点击保存admin quiz 
+     * @Author:ALong (ZengWeiLong)
+     * @param teacerId
+     * @return    
+     * boolean
+     * @date 2016年8月25日
+     */
+    public boolean saveOpenQuiz(long teacerId){
+        TeacherPageLogin teacherPageLogin = new TeacherPageLogin();
+        teacherPageLogin.setUserId(teacerId);
+        teacherPageLogin.setLoginType(LoginType.ADMINQUIZ);
+        return this.teacherPageLoginDao.saveTeacherPageLogin(teacherPageLogin) == 1 ? true : false;
+    }
     
     /**
      * 查询用户最后一次有结果的考试记录 
@@ -83,7 +117,7 @@ public class AdminQuizService {
             this.teacherQuizDao.update(teacherQuiz);
             // 插入新的待考记录
             if(quizScore < RestfulConfig.Quiz.QUIZ_PASS_SCORE){
-              this.teacherQuizDao.insertQuiz(teacherId,teacherId);
+                this.teacherQuizDao.insertQuiz(teacherId,teacherId);
             }
         }
         return true;
