@@ -36,9 +36,12 @@
                 </div>
                 <div class="col-xs-6 text-right">
                     #set($payTo=$payroll.totalSalary /100.00)
-                     #set($payTo=$numberTool.format('#0.00',$payTo))
+                   
                     #if($payTo<0)
                        #set($payTo="N/A")
+                    #end   
+                    #if($payTo>=0)   
+                        #set($payTo=$numberTool.format('#0.00',$payTo))
                     #end
                     <h4>$ $!{payTo}</h4>
                 </div>
@@ -67,7 +70,7 @@
                 #end
             </div>
             <br> 
-             #if(  $is2VersionContactType == true)   
+            #if(  $is2VersionContactType == true)   
             <div class="row total-attendance-warpper">
                 <div class="col-xs-6 dropdown text-left">
                     <p class="dropdown-toggle" data-toggle="collapse" href="#attendance-bonus">
@@ -143,13 +146,13 @@
                         Addition
                     </div>
                     <div class="col-xs-6  text-right">
-                        <span> $ 0</span>
+                        <span> $ 0.00</span>
                     </div>
                     <div class="col-xs-6  text-left">
                         Deducition
                     </div>
                     <div class="col-xs-6  text-right">
-                        <span> $ 0</span>
+                        <span> $ 0.00</span>
                     </div>
                 #end    
             </div>
@@ -245,6 +248,9 @@
                                     #set($attendance_tr_totalSalary=$numberTool.format('#0.00',$attendance_tr_totalSalary))
                                 #end
                             #end
+                             #if($attendance.attendanceList.size()==0)
+                                 #set($attendance_tr_totalSalary=$numberTool.format('#0.00',$attendance_tr_totalSalary))
+                             #end
                             <td class="text-right" style="border-left:0;">$ $!{attendance_tr_totalSalary}</td>
                         </tr>
                     </thead>
