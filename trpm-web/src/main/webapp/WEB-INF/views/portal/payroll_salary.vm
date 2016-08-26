@@ -36,6 +36,7 @@
                 </div>
                 <div class="col-xs-6 text-right">
                     #set($payTo=$payroll.totalSalary /100.00)
+                     #set($payTo=$numberTool.format('#0.00',$payTo))
                     #if($payTo<0)
                        #set($payTo="N/A")
                     #end
