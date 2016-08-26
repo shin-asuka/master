@@ -29,6 +29,7 @@ import com.vipkid.trpm.dao.TeacherApplicationDao;
 import com.vipkid.trpm.dao.TeacherDao;
 import com.vipkid.trpm.dao.TeacherModuleDao;
 import com.vipkid.trpm.dao.TeacherPeDao;
+import com.vipkid.trpm.dao.TeacherQuizDao;
 import com.vipkid.trpm.dao.UserDao;
 import com.vipkid.trpm.entity.Lesson;
 import com.vipkid.trpm.entity.OnlineClass;
@@ -70,6 +71,9 @@ public class PeSupervisorService {
 
     @Autowired
     private TeacherModuleDao teacherModuleDao;
+    
+    @Autowired
+    private TeacherQuizDao teacherQuizDao;
 
     public int totalPe(long teacherId) {
         return teacherPeDao.countByTeacherId(teacherId);

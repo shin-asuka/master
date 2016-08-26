@@ -37,6 +37,7 @@ import com.vipkid.trpm.dao.TeacherCommentDao;
 import com.vipkid.trpm.dao.TeacherDao;
 import com.vipkid.trpm.dao.TeacherModuleDao;
 import com.vipkid.trpm.dao.TeacherPeDao;
+import com.vipkid.trpm.dao.TeacherQuizDao;
 import com.vipkid.trpm.dao.UserDao;
 import com.vipkid.trpm.entity.DemoReport;
 import com.vipkid.trpm.entity.Lesson;
@@ -89,6 +90,9 @@ public class OnlineClassService {
 
     @Autowired
     private TeacherModuleDao teacherModuleDao;
+    
+    @Autowired
+    private TeacherQuizDao teacherQuizDao;
 
     /**
      * 根据id找online class
