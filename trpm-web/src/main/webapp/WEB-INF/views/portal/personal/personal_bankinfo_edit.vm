@@ -86,7 +86,7 @@
             		<span id="bank_street-tip" class="help-block has-error"></span>
             		<div class="row" style="margin-top:10px;margin-bottom:10px;">
 					<div class="col-xs-4 col-sm-4 col-md-4">
-						<input type="text" placeholder="Zip code"  value="$!{beneficiaryBankAddress.zipCode}" id="bank_zip_code" name="bankZipcode" class="form-control"/>
+						<input type="text" placeholder="Zip code" maxlength="8"  value="$!{beneficiaryBankAddress.zipCode}" id="bank_zip_code" name="bankZipcode" class="form-control"/>
 						<span id="bank_zip_code-tip" class="help-block has-error"></span>
 					</div>
 		        </div>
@@ -109,7 +109,7 @@
             	<span id="beneficiary_street-tip" class="help-block has-error"></span>
             	<div class="row" style="margin-top:10px;margin-bottom:10px;">
 					<div class="col-xs-4 col-sm-4 col-md-4">
-						<input type="text" placeholder="Zip code"  value="$!{beneficiaryAddress.zipCode}" id="beneficiary_zip_code" name="beneficiaryZipcode" class="form-control"/>
+						<input type="text" placeholder="Zip code"  maxlength="8" value="$!{beneficiaryAddress.zipCode}" id="beneficiary_zip_code" name="beneficiaryZipcode" class="form-control"/>
 						<span id="beneficiary_zip_code-tip" class="help-block has-error"></span>
 					</div>
 		        </div>
