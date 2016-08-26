@@ -22,7 +22,7 @@ public class AdminquizControllerTest extends BaseTestCase{
     public void getLastQuiz() throws IOException{
         String url = URL_PREFIX + "/api/quiz/getLastQuiz";
         try{
-            Response response = Jsoup.connect(url).ignoreContentType(true).timeout(60000).header(CookieKey.AUTOKEN, token).method(Method.GET).execute();
+            Response response = Jsoup.connect(url).ignoreContentType(true).timeout(6000).header(CookieKey.AUTOKEN, token).method(Method.GET).execute();
             String json = response.body();
             logger.info(" get LastQuiz ==> " + json);
         }catch(HttpStatusException e){
@@ -34,7 +34,7 @@ public class AdminquizControllerTest extends BaseTestCase{
     public void findNeedQuiz() throws IOException{
         String url = URL_PREFIX + "/api/quiz/findNeedQuiz";
         try{
-            Response response = Jsoup.connect(url).ignoreContentType(true).timeout(60000).header(CookieKey.AUTOKEN, token).method(Method.GET).execute();
+            Response response = Jsoup.connect(url).ignoreContentType(true).timeout(6000).header(CookieKey.AUTOKEN, token).method(Method.GET).execute();
             String json = response.body();
             logger.info(" get findNeedQuiz ==> " + json);
         }catch(HttpStatusException e){
@@ -47,7 +47,7 @@ public class AdminquizControllerTest extends BaseTestCase{
         String url = URL_PREFIX + "/api/quiz/saveQuizResult";
         try{
             Map<String, String> data = Maps.newHashMap();
-            data.put("grade","[{\"sn\":\"QP-1-0001\",\"teacherAnswer\":2},{\"sn\":\"QP-1-0002\",\"teacherAnswer\":1},{\"sn\":\"QP-1-0003\",\"teacherAnswer\":2}]");
+            data.put("grade","[{\"sn\":\"QP-1-001\",\"teacherAnswer\":2},{\"sn\":\"QP-1-002\",\"teacherAnswer\":1},{\"sn\":\"QP-1-003\",\"teacherAnswer\":2}]");
             Response response = Jsoup.connect(url).ignoreContentType(true).timeout(60000).header(CookieKey.AUTOKEN, token).data(data).method(Method.POST).execute();
             String json = response.body();
             logger.info(" get saveQuizResult ==> " + json);

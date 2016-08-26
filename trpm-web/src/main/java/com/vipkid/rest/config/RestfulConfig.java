@@ -45,7 +45,7 @@ public class RestfulConfig {
     
         public static final int QUIZ_PASS_SCORE = 60; 
         
-        public static final String RIGHTANSWER = "{\"QP-1-0001\": 2,\"QP-1-0002\": 1,\"QP-1-0003\": 1,\"QP-1-0004\": 4,\"QP-1-0005\": 5,\"QP-1-0006\": 1,\"QP-1-0007\": 3,\"QP-1-0008\": 4,\"QP-1-0009\": 4,\"QP-1-0010\": 3,\"QP-1-0011\": 1,\"QP-1-0012\": 2,\"QP-1-0013\": 3,\"QP-1-0014\": 4,\"QP-1-0015\": 1,\"QP-1-0016\": 2,\"QP-1-0017\": 4,\"QP-1-0018\": 1,\"QP-1-0019\": 4,\"QP-1-0020\": 3}";
+        public static final String RIGHTANSWER = "{\"QP-1-001\": 2,\"QP-1-002\": 1,\"QP-1-003\": 1,\"QP-1-004\": 4,\"QP-1-005\": 5,\"QP-1-006\": 1,\"QP-1-007\": 3,\"QP-1-008\": 4,\"QP-1-009\": 4,\"QP-1-010\": 3,\"QP-1-011\": 1,\"QP-1-012\": 2,\"QP-1-013\": 3,\"QP-1-014\": 4,\"QP-1-015\": 1,\"QP-1-016\": 2,\"QP-1-017\": 4,\"QP-1-018\": 1,\"QP-1-019\": 4,\"QP-1-020\": 3}";
         
         public static final Map<String,Integer> CORRECTANSWERMAP = JsonTools.readValue(RIGHTANSWER,new TypeReference<HashMap<String,Integer>>(){});
     
