@@ -9,7 +9,6 @@
 		teacher_quiz.teacher_id AS teacher_quiz_teacher_id,
 		teacher_quiz.update_time AS teacher_quiz_update_time,
 		teacher_quiz.update_id	AS teacher_quiz_update_id, 
-		teacher_quiz.version AS teacher_quiz_version,
 		teacher_quiz.status AS teacher_quiz_status
 	</sql>
 
@@ -21,7 +20,6 @@
 			<if test="teacherId!=0">AND teacher_quiz.teacher_id = #{teacherId}</if>
 			<if test="updateTime!=null">AND teacher_quiz.update_time = #{updateTime}</if>
 			<if test="updateId !=0">AND teacher_quiz.update_id = #{updateId}</if>
-			<if test="version!=0">AND teacher_quiz.version = #{version}</if>
 			<if test="status != -1">AND teacher_quiz.status = #{status}</if>
 			<if test="andwhere!=null"> ${andwhere} </if>
 		</trim>
@@ -40,7 +38,6 @@
 		<result column="teacher_quiz_teacher_id" property="teacherId" />
 		<result column="teacher_quiz_update_time" property="updateTime" />
 		<result column="teacher_quiz_update_id" property="updateId" />
-		<result column="teacher_quiz_version" property="version" />
 		<result column="teacher_quiz_status" property="status" />
 	</resultMap>
 
@@ -84,7 +81,6 @@
 			<if test="updateTime!=null">,update_time</if>
 			<if test="teacherId!=0">,teacher_id</if>
 			<if test="updateId!=0">,update_id</if>
-			<if test="version!=0">,version</if>
 			<if test="status!=0">,status</if>
 		</trim>
 		) VALUES
@@ -95,7 +91,6 @@
 			<if test="updateTime!=null">,#{updateTime}</if>
 			<if test="teacherId!=0">,#{teacherId}</if>
 			<if test="updateId!=0">,#{updateId}</if>
-			<if test="version!=0">,#{version}</if>
 			<if test="status!=0">,#{status}</if>
 		</trim>
 		)
@@ -110,7 +105,6 @@
 			<if test="updateTime!=null">,update_time = #{updateTime}</if>
 			<if test="teacherId!=0">,teacher_id = #{teacherId}</if>
 			<if test="updateId!=0">,update_id = #{updateId}</if>
-			<if test="version!=0">,version = #{version}</if>
 			<if test="status!=0">,status = #{status}</if>
 		</trim>
 		<trim prefix="WHERE" prefixOverrides="AND">AND id = #{id}</trim>

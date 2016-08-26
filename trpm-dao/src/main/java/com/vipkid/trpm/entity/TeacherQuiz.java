@@ -24,8 +24,6 @@ public class TeacherQuiz extends Entity implements Serializable {
     
     private long updateId;
     
-    private int version;
-    
     private int status;
     
     private String andwhere;
@@ -81,15 +79,6 @@ public class TeacherQuiz extends Entity implements Serializable {
 
     public TeacherQuiz setUpdateId(long updateId) {
         this.updateId = updateId;
-        return this;
-    }
-
-    public int getVersion() {
-        return version;
-    }
-
-    public TeacherQuiz setVersion(int version) {
-        this.version = version;
         return this;
     }
 
