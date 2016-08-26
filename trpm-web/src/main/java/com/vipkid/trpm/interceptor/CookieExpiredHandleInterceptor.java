@@ -28,6 +28,8 @@ import com.vipkid.trpm.util.CookieUtils;
 
 public class CookieExpiredHandleInterceptor extends HandlerInterceptorAdapter {
 
+	private static final String PAYROLL_EXD = "payroll_exd";
+
 	private Logger logger = LoggerFactory.getLogger(CookieExpiredHandleInterceptor.class);
 
 	private static final String AUTHORIZE = "permitAll";
@@ -87,12 +89,12 @@ public class CookieExpiredHandleInterceptor extends HandlerInterceptorAdapter {
 		try {
 			String ids = PropertyConfigurer.stringValue("displayedPayrollId");			
 			String pid = redisProxy.get("payroll_" + user.getId());
-			if (pid != null) {
+			if (pid != null && PAYROLL_EXD.equals(pid)) {
 				request.setAttribute("isDisplayPayroll", true);
 			} else {
 				if (ids.indexOf(new Long(user.getId()).toString()) > -1) {
 					redisProxy.setex("payroll_" + user.getId(), RedisConstants.PAYROLL_DISPLAY_MAX_NUM_EXCEED_DAY_SEC,
-							"payroll_exd");
+							PAYROLL_EXD);
 					request.setAttribute("isDisplayPayroll", true);
 				}
 			}
