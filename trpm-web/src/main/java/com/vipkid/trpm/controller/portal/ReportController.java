@@ -2,6 +2,7 @@ package com.vipkid.trpm.controller.portal;
 
 import java.sql.Timestamp;
 import java.util.Map;
+import java.util.Objects;
 import java.util.TimeZone;
 
 import javax.servlet.http.HttpServletRequest;
@@ -10,6 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.ServletRequestUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -229,6 +231,21 @@ public class ReportController extends AbstractPortalController {
             TeacherComment teacherComment, Model model) {
         String serialNumber = request.getParameter("serialNumber");
         Map<String, Object> parmMap = reportService.submitTeacherComment(teacherComment, indexService.getUser(request),serialNumber);
+        return jsonView(response, parmMap);
+    }
+    
+    @RequestMapping("/getComment")
+    public String getComment(HttpServletRequest request, HttpServletResponse response, @RequestParam long id){
+        // 查询FeedBack信息
+        TeacherComment teacherComment = reportService.findTeacherCommentById(id);
+        
+        Map<String, Object> parmMap=Maps.newHashMap();
+        if(Objects.nonNull(teacherComment)&&Objects.nonNull(teacherComment.getFirstDateTime())){
+            parmMap.put("status", true);
+            parmMap.put("teacherComment", teacherComment);
+        }else{
+            parmMap.put("status", false);
+        }
         return jsonView(response, parmMap);
     }
 
