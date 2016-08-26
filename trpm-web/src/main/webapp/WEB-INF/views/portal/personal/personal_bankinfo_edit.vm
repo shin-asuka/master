@@ -61,7 +61,7 @@
            	<div class="col-sm-5 col-md-5 add-right-border">
             	<div class='title-lable'>Beneficiary's bank name</div>
             	<input type="text" class="form-control" id="bankName" name="bankName" value="$!{TRPM_TEACHER.bankName}">
-            	<div>(e.g.,BOFAUS3N)</div>
+            	<div>(e.g.,Capital One 360)</div>
             	<span id="bankName-tip" class="help-block has-error"></span>
            	</div>          
           	<div class="col-sm-6 col-md-6">
@@ -126,7 +126,7 @@
           	<div class="col-sm-1 col-md-1"></div>
            	<div class="col-sm-5 col-md-5 add-right-border">
 	            <div class='title-lable'>Swift code</div>
-	            <input type="text" maxlength="9" class="form-control" id="bankSwiftCode" name="bankSwiftCode" value="$!{TRPM_TEACHER.bankSwiftCode}">
+	            <input type="text" class="form-control" id="bankSwiftCode" name="bankSwiftCode" value="$!{TRPM_TEACHER.bankSwiftCode}">
 	            <div>(e.g.,BOFAUS3N)</div>
 	            <span id="bankSwiftCode-tip" class="help-block has-error"></span>
 	        </div>          	

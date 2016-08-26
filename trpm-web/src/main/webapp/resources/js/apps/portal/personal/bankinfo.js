@@ -390,13 +390,10 @@ define(depends, function(personal) {
 		}
 	});
 	$("#bankSwiftCode").blur(function(){
-		var Regx = /^[A-Za-z0-9]{9}$/;
 		if($("#bankSwiftCode").val()==""&&$("#bankABARoutingNumber").val()==""){
 			$("#bankSwiftCode-tip").html("Swift code or ABA routing number is required.").hide().fadeIn();
 		}
-		else if($("#bankSwiftCode").val()!=""&&!Regx.test($("#bankSwiftCode").val())){
-			$("#bankSwiftCode-tip").html("Can only contain 9 numbers or letters.").hide().fadeIn();
-		}else{
+		else{
 			if($("#bankABARoutingNumber").val()=="")
 				$("#bankABARoutingNumber-tip").html("").hide();
 			$("#bankSwiftCode-tip").html("").hide();
@@ -561,15 +558,12 @@ define(depends, function(personal) {
 			$("#beneficiary_zip_code-tip").html("").hide();
 		}
 		
-		Regx = /^[A-Za-z0-9]{9}$/;
+		//Regx = /^[A-Za-z0-9]{9}$/;
 		if(postData.swiftCode==""&&postData.bankABARoutingNumber==""){
 			$("#bankSwiftCode-tip").html("Swift code or ABA routing number is required.").hide().fadeIn();
 			flag = false;
 		}
-		else if(postData.swiftCode!=""&&!Regx.test(postData.swiftCode)){
-			$("#bankSwiftCode-tip").html("Can only contain 9 numbers or letters.").hide().fadeIn();
-			flag = false;
-		}else{
+		else{
 			$("#bankSwiftCode-tip").html("").hide();
 		}
 		
