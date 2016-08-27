@@ -115,6 +115,8 @@ define([ "function", "tools", "jquery-bootstrap", "jquery-cookie", "jquery-load"
 	var showAdminQuizFun = function(showAdminQuiz,showPracticum){
 		if (showAdminQuiz) {
 			$("div.admin-quiz-tips").show();
+			var right = $(window).width() - $("#quiz-tips").width() - $("#quiz-tips").offset().left - 20;
+			$(".admin-quiz-tips").find(".light").css({"right":right+"px"});
 			$("body").addClass("modal-open");
 			$("div.sure-btn").click(function() {
 				$.ajaxRequest({
