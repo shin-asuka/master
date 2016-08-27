@@ -43,7 +43,7 @@
            	<div class="col-sm-1 col-md-1"></div>
            	<div class="col-sm-5 col-md-5 add-right-border">
             	<div class='title-lable'>Beneficiary's checking account number</div>
-            	<input type="text" onkeyup="value=value.replace(/[^\d]/g,'') " class="form-control" id="bankCardNumber" name="bankCardNumber" value="$!{TRPM_TEACHER.bankCardNumber}">
+            	<input type="text" class="form-control" id="bankCardNumber" name="bankCardNumber" value="$!{TRPM_TEACHER.bankCardNumber}">
             	<div>(e.g.,0123456789)</div>
             	<div class="line_input">
 					<span id="bankCardNumber-tip" class="help-block has-error"></span>
@@ -86,7 +86,7 @@
             		<span id="bank_street-tip" class="help-block has-error"></span>
             		<div class="row" style="margin-top:10px;margin-bottom:10px;">
 					<div class="col-xs-4 col-sm-4 col-md-4">
-						<input type="text" placeholder="Zip code" maxlength="8" onkeyup="value=value.replace(/[^\d]/g,'') " value="$!{beneficiaryBankAddress.zipCode}" id="bank_zip_code" name="bankZipcode" class="form-control"/>
+						<input type="text" placeholder="Zip code" maxlength="8"  value="$!{beneficiaryBankAddress.zipCode}" id="bank_zip_code" name="bankZipcode" class="form-control"/>
 						<span id="bank_zip_code-tip" class="help-block has-error"></span>
 					</div>
 		        </div>
@@ -109,7 +109,7 @@
             	<span id="beneficiary_street-tip" class="help-block has-error"></span>
             	<div class="row" style="margin-top:10px;margin-bottom:10px;">
 					<div class="col-xs-4 col-sm-4 col-md-4">
-						<input type="text" placeholder="Zip code" maxlength="8" onkeyup="value=value.replace(/[^\d]/g,'') " value="$!{beneficiaryAddress.zipCode}" id="beneficiary_zip_code" name="beneficiaryZipcode" class="form-control"/>
+						<input type="text" placeholder="Zip code"  maxlength="8" value="$!{beneficiaryAddress.zipCode}" id="beneficiary_zip_code" name="beneficiaryZipcode" class="form-control"/>
 						<span id="beneficiary_zip_code-tip" class="help-block has-error"></span>
 					</div>
 		        </div>
@@ -219,7 +219,7 @@
 			<div class="col-sm-1 col-md-1"></div>
 	        <div class="col-sm-5 col-md-5 add-right-border">
 	            <div class='title-lable'>ID number</div>
-	            <input type="text" id="identityNumber" name="identityNumber" onkeyup="value=value.replace(/[^\d]/g,'') " value="$!{TRPM_TEACHER.identityNumber}" placeholder="" class="form-control" />
+	            <input type="text" id="identityNumber" name="identityNumber"  value="$!{TRPM_TEACHER.identityNumber}" placeholder="" class="form-control" />
 	            <span id="identityNumber-tip" class="help-block has-error"></span>
 	        </div>
           	<div class="col-sm-6 col-md-6">

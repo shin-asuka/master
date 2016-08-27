@@ -130,7 +130,8 @@ define(depends, function(personal) {
 					$("#"+submitname+"-textfield").html(filename);
 					$("#"+submitname+"-tip").html("");
 					//张伯乐修改，选过文件后，自动点击upload
-					$("#"+submitname+"-submit").click();
+//					$("#"+submitname+"-submit").click();
+					commonUpload($("#"+submitname+"-submit"), submitname);//兼容ie
 				}
 			}else{
 				$(this).val("");
@@ -314,13 +315,11 @@ define(depends, function(personal) {
 		}
 	});
 	$("#bankCardNumber").blur(function(){
-		var Regx = /^[0-9]*$/;
+		//var Regx = /^[0-9]*$/;
 		if($("#bankCardNumber").val()=="" ){
 			$("#bankCardNumber-tip").html("This field is required.").hide().fadeIn();
 		}
-		else if(!Regx.test($("#bankCardNumber").val())){
-			$("#bankCardNumber-tip").html("Can only contain numbers.").hide().fadeIn();
-		}else{
+		else{
 			$("#bankCardNumber-tip").html("").hide();
 		}
 	});
@@ -352,13 +351,11 @@ define(depends, function(personal) {
 		}
 	});
 	$("#bank_zip_code").blur(function(){
-		var Regx = /^[0-9]*$/;
+		//var Regx = /^[0-9]*$/;
 		if($("#bank_zip_code").val()=="" ){
 			$("#bank_zip_code-tip").html("This field is required.").hide().fadeIn();
 		}
-		else if(!Regx.test($("#bank_zip_code").val())){
-			$("#bank_zip_code-tip").html("Can only contain numbers.").hide().fadeIn();
-		}else{
+		else{
 			$("#bank_zip_code-tip").html("").hide();
 		}
 	});
@@ -379,13 +376,11 @@ define(depends, function(personal) {
 		}
 	});
 	$("#beneficiary_zip_code").blur(function(){
-		var Regx = /^[0-9]*$/;
+		//var Regx = /^[0-9]*$/;
 		if($("#beneficiary_zip_code").val()=="" ){
 			$("#beneficiary_zip_code-tip").html("This field is required.").hide().fadeIn();
 		}
-		else if(!Regx.test($("#beneficiary_zip_code").val())){
-			$("#beneficiary_zip_code-tip").html("Can only contain numbers.").hide().fadeIn();
-		}else{
+		else{
 			$("#beneficiary_zip_code-tip").html("").hide();
 		}
 	});
@@ -426,13 +421,11 @@ define(depends, function(personal) {
 		}
 	});
 	$("#identityNumber").blur(function(){
-		var Regx = /^[0-9]*$/;
+		//var Regx = /^[0-9]*$/;
 		if($("#identityNumber").val()==""){
 			$("#identityNumber-tip").html("This field is required.").hide().fadeIn();
 		}
-		else if(!Regx.test($("#identityNumber").val())){
-			$("#identityNumber-tip").html("Can only contain numbers.").hide().fadeIn();
-		}else{
+		else{
 			$("#identityNumber-tip").html("").hide();
 		}
 	});
@@ -473,15 +466,12 @@ define(depends, function(personal) {
 			$("#bankAccountName-tip").html("").hide();
 		}
 		
-		Regx = /^[0-9]*$/;
+		//Regx = /^[0-9]*$/;
 		if(postData.beneficiaryAccountNumber=="" ){
 			$("#bankCardNumber-tip").html("This field is required.").hide().fadeIn();
 			flag = false;
 		}
-		else if(!Regx.test(postData.beneficiaryAccountNumber)){
-			$("#bankCardNumber-tip").html("Can only contain numbers.").hide().fadeIn();
-			flag = false;
-		}else{
+		else{
 			$("#bankCardNumber-tip").html("").hide();
 		}
 		
@@ -516,15 +506,12 @@ define(depends, function(personal) {
 			$("#bank_street-tip").html("").hide();
 		}
 		
-		Regx = /^[0-9]*$/;
+		//Regx = /^[0-9]*$/;
 		if(postData.bankZipCode=="" ){
 			$("#bank_zip_code-tip").html("This field is required.").hide().fadeIn();
 			flag = false;
 		}
-		else if(!Regx.test(postData.bankZipCode)){
-			$("#bank_zip_code-tip").html("Can only contain numbers.").hide().fadeIn();
-			flag = false;
-		}else{
+		else{
 			$("#bank_zip_code-tip").html("").hide();
 		}
 		
@@ -546,15 +533,12 @@ define(depends, function(personal) {
 			$("#beneficiary_street-tip").html("").hide();
 		}
 		
-		Regx = /^[0-9]*$/;
+		//Regx = /^[0-9]*$/;
 		if(postData.beneficiaryZipCode=="" ){
 			$("#beneficiary_zip_code-tip").html("This field is required.").hide().fadeIn();
 			flag = false;
 		}
-		else if(!Regx.test(postData.beneficiaryZipCode)){
-			$("#beneficiary_zip_code-tip").html("Can only contain numbers.").hide().fadeIn();
-			flag = false;
-		}else{
+		else{
 			$("#beneficiary_zip_code-tip").html("").hide();
 		}
 		
@@ -591,15 +575,12 @@ define(depends, function(personal) {
 			$("#bankACHNumber-tip").html("").hide();
 		}
 		
-		Regx = /^[0-9]*$/;
+		//Regx = /^[0-9]*$/;
 		if(postData.idNumber==""){
 			$("#identityNumber-tip").html("This field is required.").hide().fadeIn();
 			flag = false;
 		}
-		else if(!Regx.test(postData.idNumber)){
-			$("#identityNumber-tip").html("Can only contain numbers.").hide().fadeIn();
-			flag = false;
-		}else{
+		else{
 			$("#identityNumber-tip").html("").hide();
 		}
 		
