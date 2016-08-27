@@ -2441,6 +2441,7 @@ ul, li {
 	top: 0;
 	right: 0;
 	color: #9B9B9B;
+	cursor:pointer;
 }
 .admin-quiz-tips .close-btn:before{
 	content: "\00D7";
@@ -2461,6 +2462,9 @@ ul, li {
 	bottom: 0%;
 	margin: 30px auto 0;
 	cursor:pointer;
+}
+.admin-quiz-tips .sure-btn:HOVER{
+	background:#b83c11;
 }
 .admin-quiz-tips .btn-area{
 	width: 240px;

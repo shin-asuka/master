@@ -118,22 +118,8 @@ define([ "function", "tools", "jquery-bootstrap", "jquery-cookie", "jquery-load"
 			var right = $(window).width() - $("#quiz-tips").width() - $("#quiz-tips").offset().left - 20;
 			$(".admin-quiz-tips").find(".light").css({"right":right+"px"});
 			$("body").addClass("modal-open");
-			$("div.sure-btn").click(function() {
-				$.ajaxRequest({
-					url : webPath + "/disableLayer.json",
-					dataType : "json",
-					data : {
-						"loginType" : 2
-					},
-					success : function(datas) {
-						$("div.admin-quiz-tips").hide();
-						$("body").removeClass("modal-open");
-						showPracticumFun(showPracticum);
-						if (undefined !== console) {
-							console.log("disable adminquiz layer.");
-						}
-					}
-				});
+			$("div.sure-btn,div.close-btn").click(function() {
+				saveLayer(2,"div.admin-quiz-tips");
 			});
 		}	
 	};
@@ -143,22 +129,27 @@ define([ "function", "tools", "jquery-bootstrap", "jquery-cookie", "jquery-load"
 			$("div.schedule-guide").show();
 			$("body").addClass("modal-open");
 			$("div.schedule-guide-img > a").click(function() {
-				$.ajaxRequest({
-					url : webPath + "/disableLayer.json",
-					dataType : "json",
-					data : {
-						"loginType" : 1
-					},
-					success : function(datas) {
-						$("div.schedule-guide").hide();
-						$("body").removeClass("modal-open");
-						if (undefined !== console) {
-							console.log("disable schedule layer.");
-						}
-					}
-				});
+				saveLayer(1,"div.schedule-guide");
 			});
 		}	
+	};
+	
+	var saveLayer = function(type,divcss){
+		$.ajaxRequest({
+			url : webPath + "/disableLayer.json",
+			dataType : "json",
+			data : {
+				"loginType" : type
+			},
+			success : function(datas) {
+				$(divcss).hide();
+				$("body").removeClass("modal-open");
+				showPracticumFun(showPracticum);
+				if (undefined !== console) {
+					console.log("disable adminquiz layer.");
+				}
+			}
+		});
 	};
 
 	/* 查找PRACTICUM的单元格 */

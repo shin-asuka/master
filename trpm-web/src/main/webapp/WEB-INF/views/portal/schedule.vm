@@ -67,10 +67,10 @@
 <!-- admin Quiz 弹出层 -->
 <div class="admin-quiz-tips">
 	<div class="light"></div>
-	<div class="notice-c js-modal-notice-c">
+	<div class="notice-c">
 		<div class="title">NOTICE</div>
-		<div class="close-btn js-close-btn"></div>
-		<div class="content js-modal-content">You can now access the training materials in your teacher portal. If you think you need to brush up on training, feel free to take a look!</div>
+		<div class="close-btn"></div>
+		<div class="content">You can now access the training materials in your teacher portal. If you think you need to brush up on training, feel free to take a look!</div>
 		<div class="sure-btn">OK</div>
 	</div>
 </div>
