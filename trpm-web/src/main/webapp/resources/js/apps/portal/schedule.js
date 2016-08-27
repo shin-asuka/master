@@ -106,9 +106,7 @@ define([ "function", "tools", "jquery-bootstrap", "jquery-cookie", "jquery-load"
 		if(showAdminQuiz){
 			showAdminQuizFun(showAdminQuiz,showPracticum);
 		}else{
-			if(showPracticum){
-				showPracticumFun(showPracticum);
-			}
+			showPracticumFun(showPracticum);
 		}
 	};
 	
