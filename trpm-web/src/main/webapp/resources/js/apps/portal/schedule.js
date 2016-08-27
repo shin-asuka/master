@@ -116,7 +116,7 @@ define([ "function", "tools", "jquery-bootstrap", "jquery-cookie", "jquery-load"
 			var right = $(window).width() - $("#quiz-tips").width() - $("#quiz-tips").offset().left - 20;
 			$(".admin-quiz-tips").find(".light").css({"right":right+"px"});
 			$("body").addClass("modal-open");
-			$("div.sure-btn").click(function() {
+			$("div.sure-btn,div.close-btn").click(function() {
 				$.ajaxRequest({
 					url : webPath + "/disableLayer.json",
 					dataType : "json",
