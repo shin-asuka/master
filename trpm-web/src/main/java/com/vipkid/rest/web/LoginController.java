@@ -384,10 +384,10 @@ public class LoginController {
         }
         
         logger.info("check teacher is PE:" + teacher.getId());
-        String role = loginService.isPe(teacher.getId()) ? "":"PE,";
+        String role = loginService.isPe(teacher.getId()) ? "PE,":"";
         
         logger.info("check teacher is PES:" + teacher.getId());
-        role += loginService.isPes(teacher.getId()) ? "":"PE-Supervisor,";
+        role += loginService.isPes(teacher.getId()) ? "PE-Supervisor,":"";
         
         logger.info("check result is role:{},teacherId:{}",role,teacher.getId());
         result.put("role",role);
