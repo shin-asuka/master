@@ -340,7 +340,7 @@ public interface ApplicationConstant {
 
         public static final int CLASSROOMS = 0;
 
-        public static final int SCHEDULE = 1;
+        public static final int PRACTICUM = 1;
         
         public static final int ADMINQUIZ = 2;
 

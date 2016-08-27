@@ -71,9 +71,10 @@
 		<div class="title">NOTICE</div>
 		<div class="close-btn js-close-btn"></div>
 		<div class="content js-modal-content">You can now access the training materials in your teacher portal. If you think you need to brush up on training, feel free to take a look!</div>
-		<div class="sure-btn js-ok-btn">OK</div>
+		<div class="sure-btn">OK</div>
 	</div>
 </div>
+
 <!-- practicum 弹出层 -->
 <div class="schedule-guide">
     <div class="schedule-guide-bg"></div>
@@ -84,7 +85,7 @@
 <div id="dialog"></div>
 #@requireJs()
     require(["schedule"], function(schedule){
-        schedule.init($!{offsetOfWeek}, $!{showScheduleLayer}, $!{show24HoursInfo});
+        schedule.init($!{offsetOfWeek},$!{showPracticum}, $!{showAdminQuiz},$!{show24HoursInfo});
     });
     require(["easemob"]);
 #end

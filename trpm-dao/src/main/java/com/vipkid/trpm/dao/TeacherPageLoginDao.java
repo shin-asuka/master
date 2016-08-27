@@ -18,6 +18,10 @@ public class TeacherPageLoginDao extends MapperDaoTemplate<TeacherPageLogin> {
 	public TeacherPageLogin findByUserIdAndLoginType(long userId, int loginType) {
 		return selectOne(new TeacherPageLogin().setUserId(userId).setLoginType(loginType));
 	}
+	
+	public TeacherPageLogin findByUserId(long userId) {
+        return selectOne(new TeacherPageLogin().setUserId(userId));
+    }
 
 	public int saveTeacherPageLogin(TeacherPageLogin teacherPageLogin) {
 		return super.save(teacherPageLogin);

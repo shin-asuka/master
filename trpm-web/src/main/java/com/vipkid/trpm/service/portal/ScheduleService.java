@@ -781,17 +781,30 @@ public class ScheduleService {
 	}
 
 	/**
-	 * 判断是否显示ScheduleLayer
+	 * 判断是否显示Practicum
 	 * 
 	 * @author John
 	 *
 	 * @param teacher
 	 * @return boolean
 	 */
-	public boolean showScheduleLayer(Teacher teacher) {
-		TeacherPageLogin pageLogin = teacherLoginTypeDao.findByUserIdAndLoginType(teacher.getId(), LoginType.SCHEDULE);
+	public boolean showPracticum(Teacher teacher) {
+		TeacherPageLogin pageLogin = teacherLoginTypeDao.findByUserIdAndLoginType(teacher.getId(), LoginType.PRACTICUM);
 		return (null == pageLogin) ? true : false;
 	}
+	
+	/**
+     * 判断显示的内容
+     * 
+     * @author John
+     *
+     * @param teacher
+     * @return boolean
+     */
+    public boolean showAdminQuiz(Teacher teacher) {
+        TeacherPageLogin pageLogin = teacherLoginTypeDao.findByUserIdAndLoginType(teacher.getId(), LoginType.ADMINQUIZ);
+        return (null == pageLogin) ? true : false;
+    }
 
 	public boolean isShow24HourInfo(HttpServletRequest request, HttpServletResponse response) {
 		Cookie cookie = CookieUtils.getCookie(request, CookieKey.TRPM_HOURS_24);

@@ -2184,69 +2184,6 @@ ul, li {
 
 /*practicumClassroom end*/
 
-/* tips */
-.schedule-guide {
-	position: absolute;
-	left: 0;
-	top: 0;
-	z-index: 99999;
-	width: 100%;
-	height: 100%;
-	display: none;
-}
-
-.schedule-guide-bg {
-	position: absolute;
-	left: 0;
-	top: 0;
-	z-index: 100000;
-	width: 100%;
-	height: 100%;
-	background: #000;
-	filter: alpha(opacity = 65);
-	opacity: 0.65;
-}
-
-.schedule-guide-img {
-	width: 1040px;
-	height: 380px;
-	background: url(../../images/portal/guide_schedule.png) no-repeat left
-		top;
-	position: absolute;
-	left: 44px;
-	top: 79px;
-	z-index: 100001;
-}
-
-.schedule-guide-img a {
-	width: 120px;
-	height: 35px;
-	display: block;
-	position: absolute;
-	right: 104px;
-	bottom: 53px;
-}
-
-.classroom-guide-img {
-	width: 1050px;
-	height: 380px;
-	background: url(../../images/portal/guide_classroom.png) no-repeat left
-		top;
-	position: absolute;
-	left: 54px;
-	top: 85px;
-	z-index: 100001;
-}
-
-.classroom-guide-img a {
-	width: 120px;
-	height: 35px;
-	display: block;
-	position: absolute;
-	right: 83px;
-	bottom: 54px;
-}
-
 .btn-seft{
 	background-color: #e8e8e8;
     border-color: #e8e8e8;
@@ -2406,6 +2343,70 @@ ul, li {
 }
 
 
+/* practicum tips */
+.schedule-guide {
+	position: absolute;
+	left: 0;
+	top: 0;
+	z-index: 999;
+	width: 100%;
+	height: 100%;
+	display: none;
+}
+
+.schedule-guide-bg {
+	position: absolute;
+	left: 0;
+	top: 0;
+	z-index: 100000;
+	width: 100%;
+	height: 100%;
+	background: #000;
+	filter: alpha(opacity = 65);
+	opacity: 0.65;
+}
+
+.schedule-guide-img {
+	width: 1040px;
+	height: 380px;
+	background: url(../../images/portal/guide_schedule.png) no-repeat left
+		top;
+	position: absolute;
+	left: 44px;
+	top: 79px;
+	z-index: 100001;
+}
+
+.schedule-guide-img a {
+	width: 120px;
+	height: 35px;
+	display: block;
+	position: absolute;
+	right: 104px;
+	bottom: 53px;
+}
+
+.classroom-guide-img {
+	width: 1050px;
+	height: 380px;
+	background: url(../../images/portal/guide_classroom.png) no-repeat left
+		top;
+	position: absolute;
+	left: 54px;
+	top: 85px;
+	z-index: 100001;
+}
+
+.classroom-guide-img a {
+	width: 120px;
+	height: 35px;
+	display: block;
+	position: absolute;
+	right: 83px;
+	bottom: 54px;
+}
+
+/* admin-quiz tips */
 .admin-quiz-tips{
     width: 100%;
     height: 100%;
@@ -2414,6 +2415,7 @@ ul, li {
     left: 0;
     background: rgba(0, 0, 0, .5);
     z-index: 999;
+    display: none;
   }
 .admin-quiz-tips .notice-c{
 	width: 520px;
@@ -2458,6 +2460,7 @@ ul, li {
 	position: relative;
 	bottom: 0%;
 	margin: 30px auto 0;
+	cursor:pointer;
 }
 .admin-quiz-tips .btn-area{
 	width: 240px;
