@@ -153,19 +153,24 @@ public class AdminQuizService {
     public boolean updatePassword(long teacherId,String password){
         logger.info("强制更新密码");
         User user = this.userDao.findById(teacherId);
-        if (user == null)
+        if (user == null){
+            logger.warn("用户为Null,userId:{}",teacherId);
             return false;
+        }
         String strPwd = new String(Base64.getDecoder().decode(password));
-        if (StringUtils.isEmpty(strPwd))
+        if (StringUtils.isBlank(strPwd)){
+            logger.warn("teacherId:{},密码为空{}",teacherId,strPwd);
             return false;
+        }
         SHA256PasswordEncoder encoder = new SHA256PasswordEncoder();
         user.setPassword(encoder.encode(strPwd));
-        if (StringUtils.isEmpty(user.getToken())) {
+        if (StringUtils.isBlank(user.getToken())) {
             user.setToken(UUID.randomUUID().toString());
         }
         // 更新手机端appToken
         Map<String, Object> tokenMap = this.appRestfulDao.findAppTokenByTeacherId(teacherId);
         if (tokenMap != null && !tokenMap.isEmpty()) {
+            logger.warn("更新token,teacherId:{},手机端需要重新登陆",teacherId);
             this.appRestfulDao.updateTeacherToken(Long.valueOf(tokenMap.get("id") + ""), user.getToken());
         }
         
