@@ -196,11 +196,11 @@ public class LoginService {
     }
 
     public void changePasswordNotice(HttpServletResponse response, String strPwd) {
-        CookieUtils.removeCookie(response, ApplicationConstant.CookieKey.TRPM_CHANGE_WINDOW,null,null);
+        CookieUtils.removeCookie(response, ApplicationConstant.CookieKey.AUTOKEN_CHANGE_WINDOW,null,null);
         String matching = RestfulConfig.Validate.WD_REG;
         String matching1 = RestfulConfig.Validate.PASSWORD_REG;
         if (StringUtils.isEmpty(strPwd) || !strPwd.matches(matching) || !(strPwd.matches(matching1))) {
-            CookieUtils.setCookie(response, ApplicationConstant.CookieKey.TRPM_CHANGE_WINDOW, ApplicationConstant.CookieKey.TRPM_CHANGE_WINDOW, null);
+            CookieUtils.setCookie(response, ApplicationConstant.CookieKey.AUTOKEN_CHANGE_WINDOW, ApplicationConstant.CookieKey.AUTOKEN_CHANGE_WINDOW, null);
         }
 
     }

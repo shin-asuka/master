@@ -1,7 +1,10 @@
 package com.vipkid.trpm.service.rest;
 
+import java.util.Base64;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -15,12 +18,18 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.vipkid.enums.TeacherQuizEnum;
 import com.vipkid.rest.config.RestfulConfig;
 import com.vipkid.trpm.constant.ApplicationConstant.LoginType;
+import com.vipkid.trpm.dao.AppRestfulDao;
+import com.vipkid.trpm.dao.TeacherDao;
 import com.vipkid.trpm.dao.TeacherPageLoginDao;
 import com.vipkid.trpm.dao.TeacherQuizDao;
 import com.vipkid.trpm.dao.TeacherQuizDetailsDao;
+import com.vipkid.trpm.dao.UserDao;
+import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.entity.TeacherPageLogin;
 import com.vipkid.trpm.entity.TeacherQuiz;
 import com.vipkid.trpm.entity.TeacherQuizDetails;
+import com.vipkid.trpm.entity.User;
+import com.vipkid.trpm.security.SHA256PasswordEncoder;
 
 @Service
 public class AdminQuizService {
@@ -35,6 +44,15 @@ public class AdminQuizService {
 
     @Autowired    
     private TeacherPageLoginDao teacherPageLoginDao;
+    
+    @Autowired
+    private UserDao userDao;
+    
+    @Autowired
+    private TeacherDao teacherDao;
+    
+    @Autowired
+    private AppRestfulDao appRestfulDao;
     
     /**
      * is first quiz 
@@ -121,6 +139,58 @@ public class AdminQuizService {
             }
         }
         return true;
+    }
+    
+    /**
+     * 修改密码 
+     * @Author:ALong (ZengWeiLong)
+     * @param teacherId
+     * @param grade
+     * @return    
+     * boolean
+     * @date 2016年8月27日
+     */
+    public boolean updatePassword(long teacherId,String password){
+        logger.info("强制更新密码");
+        User user = this.userDao.findById(teacherId);
+        if (user == null)
+            return false;
+        String strPwd = new String(Base64.getDecoder().decode(password));
+        if (StringUtils.isEmpty(strPwd))
+            return false;
+        SHA256PasswordEncoder encoder = new SHA256PasswordEncoder();
+        user.setPassword(encoder.encode(strPwd));
+        if (StringUtils.isEmpty(user.getToken())) {
+            user.setToken(UUID.randomUUID().toString());
+        }
+        // 更新手机端appToken
+        Map<String, Object> tokenMap = this.appRestfulDao.findAppTokenByTeacherId(teacherId);
+        if (tokenMap != null && !tokenMap.isEmpty()) {
+            this.appRestfulDao.updateTeacherToken(Long.valueOf(tokenMap.get("id") + ""), user.getToken());
+        }
+        
+        int i = this.userDao.update(user);
+        if (i > 0) {
+            this.updateRecruitmentId(teacherId);
+        }
+        return true;
+    }
+    
+    /**
+     * 单独更新 Teacher 的recruitmentId
+     * 
+     * @Author:ALong (ZengWeiLong) void
+     * @date 2016年3月2日
+     */
+    public String updateRecruitmentId(long teacherId) {
+        Teacher teacher = this.teacherDao.findById(teacherId);
+        String uuid = UUID.randomUUID().toString().replace("-", "").substring(0, 10);
+        SHA256PasswordEncoder encoder = new SHA256PasswordEncoder();
+        uuid = encoder.encode(teacher.getSerialNumber() + uuid + teacher.getEmail());
+        uuid = System.currentTimeMillis() + "-" + uuid;
+        teacher.setRecruitmentId(uuid);
+        this.teacherDao.update(teacher);
+        return uuid;
     }
     
     /**

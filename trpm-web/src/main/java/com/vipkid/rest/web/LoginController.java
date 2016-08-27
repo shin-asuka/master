@@ -177,6 +177,7 @@ public class LoginController {
             loginService.setCourseTypes(user.getId(), loginService.getCourseType(user.getId()));
             result.put("portal", RestfulConfig.Port.TEACHER);
             result.put("LifeCycle", teacher.getLifeCycle());
+            loginService.changePasswordNotice(response, password);
             result.put("action", "schedule.shtml");
             // 招聘端跳转URL
         } else {

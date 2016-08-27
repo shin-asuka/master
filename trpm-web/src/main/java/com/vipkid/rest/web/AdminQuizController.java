@@ -25,6 +25,7 @@ import com.vipkid.trpm.entity.TeacherQuiz;
 import com.vipkid.trpm.entity.User;
 import com.vipkid.trpm.service.rest.AdminQuizService;
 import com.vipkid.trpm.service.rest.LoginService;
+import com.vipkid.trpm.util.CookieUtils;
 
 @RestController
 @RequestMapping("/quiz")
@@ -149,5 +150,34 @@ public class AdminQuizController {
         return result;
     }
     
+    
+    @RequestMapping(value = "/updatePassword", method = RequestMethod.POST, produces = RestfulConfig.JSON_UTF_8)
+    public Map<String,Object> updatePassword(HttpServletRequest request, HttpServletResponse response,@RequestParam(value="password") String password){
+        Map<String,Object> result = Maps.newHashMap();
+        result.put("result", false);
+        try{
+            logger.info("提交密码修改:{}",password);
+            String token = request.getHeader(CookieKey.AUTOKEN);
+            Preconditions.checkArgument(StringUtils.isNotBlank(token));
+            Preconditions.checkArgument(StringUtils.isNotBlank(password));
+            User user = loginService.getUser(request);
+            if(user == null){
+                response.setStatus(RestfulConfig.HttpStatus.STATUS_404);
+                logger.warn("用户不存在，token过期");
+                return result;
+            }
+            boolean rest = this.adminQuizService.updatePassword(user.getId(), password);
+            CookieUtils.removeCookie(response, CookieKey.AUTOKEN_CHANGE_WINDOW, null, null);
+            result.put("result",rest);
+            return result;
+        } catch (IllegalArgumentException e) {
+            logger.error("内部参数转化异常:"+e.getMessage(),e);
+            response.setStatus(RestfulConfig.HttpStatus.STATUS_400);
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            response.setStatus(RestfulConfig.HttpStatus.STATUS_500);
+        }
+        return result;
+    }
     
 }

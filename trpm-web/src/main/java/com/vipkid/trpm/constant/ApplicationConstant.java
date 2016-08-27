@@ -359,9 +359,11 @@ public interface ApplicationConstant {
 
         public static final String TRPM_LOGIN_TOKEN_ID = "TRPM_TOKEN_ID";
 
-        public static final String AUTOKEN = "Authorization";
-
         public static final String TRPM_HOURS_24 = "TRPM_HOURS_24";
+        
+        public static final String AUTOKEN = "Authorization";
+        
+        public static final String AUTOKEN_CHANGE_WINDOW = "AuChangeWindow";
 
     }
 
