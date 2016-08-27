@@ -29,7 +29,7 @@
         #if($isPe == 'true')
         <li class="$!{activeClassroomsPe}"><a href="#springUrl('/pesupervisor.shtml')">PE Supervisor</a></li>
 		#end        
-        <li class="$!{activeComments}"><a href="#springUrl('/comments.shtml')">Comments</a></li>
+        ##<li class="$!{activeComments}"><a href="#springUrl('/comments.shtml')">Comments</a></li>
         <li class="$!{activePersonalInfo}"><a href="#springUrl('/personalInfo.shtml')">Personal Info</a></li>
         ##教师端不展示Payroll模块 2016-06-02
         #if($isDisplayPayroll == 'true')
