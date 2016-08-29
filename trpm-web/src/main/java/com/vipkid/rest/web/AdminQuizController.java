@@ -123,6 +123,31 @@ public class AdminQuizController {
         return result;
     }
     
+    @RequestMapping(value = "/startQuiz", method = RequestMethod.POST, produces = RestfulConfig.JSON_UTF_8)
+    public Map<String,Object> startQuiz(HttpServletRequest request, HttpServletResponse response){
+        Map<String,Object> result = Maps.newHashMap();
+        result.put("result", false);
+        try{
+            logger.info("开始考试");
+            String token = request.getHeader(CookieKey.AUTOKEN);
+            Preconditions.checkArgument(StringUtils.isNotBlank(token));
+            User user = loginService.getUser(request);
+            if(user == null){
+                response.setStatus(RestfulConfig.HttpStatus.STATUS_404);
+                logger.warn("用户不存在，token过期");
+                return result;
+            }
+            result.put("result",this.adminQuizService.startQuiz(user.getId()));
+            return result;
+        } catch (IllegalArgumentException e) {
+            logger.error("内部参数转化异常:"+e.getMessage(),e);
+            response.setStatus(RestfulConfig.HttpStatus.STATUS_400);
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            response.setStatus(RestfulConfig.HttpStatus.STATUS_500);
+        }
+        return result;
+    }
     
     @RequestMapping(value = "/saveQuizResult", method = RequestMethod.POST, produces = RestfulConfig.JSON_UTF_8)
     public Map<String,Object> saveQuizResult(HttpServletRequest request, HttpServletResponse response,@RequestParam(value="grade") String grade){

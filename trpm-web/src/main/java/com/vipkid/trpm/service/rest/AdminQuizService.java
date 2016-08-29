@@ -238,4 +238,29 @@ public class AdminQuizService {
         
         return quizScore;
     }
+    
+    
+    /**
+     * 待考记录更新 开始考试 
+     * @Author:ALong (ZengWeiLong)
+     * @param teacherId
+     * @return    
+     * boolean
+     * @date 2016年8月29日
+     */
+    public boolean startQuiz(long teacherId){
+        logger.info("teacehrId:{},开始考试",teacherId);
+        //查询老师待考试记录
+        List<TeacherQuiz> list = this.teacherQuizDao.findNeedQuiz(teacherId);
+        if(CollectionUtils.isNotEmpty(list)){
+            //更新待考记录
+            TeacherQuiz teacherQuiz = list.get(0);
+            teacherQuiz.setStartQuizTime(new Date());
+            teacherQuiz.setQuizTime(teacherQuiz.getStartQuizTime().getTime() - System.currentTimeMillis());
+            teacherQuiz.setUpdateId(teacherId);
+            //更新当前考试记录
+            this.teacherQuizDao.update(teacherQuiz);
+        }
+        return true;        
+    }
 }

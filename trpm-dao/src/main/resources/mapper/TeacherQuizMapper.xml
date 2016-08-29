@@ -6,6 +6,8 @@
 		teacher_quiz.id AS teacher_quiz_id, 
 		teacher_quiz.quiz_score AS teacher_quiz_quiz_score, 
 		teacher_quiz.creation_time AS teacher_quiz_creation_time,
+		teacher_quiz.start_quiz_time AS teacher_quiz_start_quiz_time,
+		teacher_quiz.quiz_time AS teacher_quiz_quiz_time,
 		teacher_quiz.teacher_id AS teacher_quiz_teacher_id,
 		teacher_quiz.update_time AS teacher_quiz_update_time,
 		teacher_quiz.update_id	AS teacher_quiz_update_id, 
@@ -17,6 +19,8 @@
 			<if test="id!=0">AND teacher_quiz.id = #{id}</if>
 			<if test="quizScore!=0">AND teacher_quiz.quiz_score = #{quizScore}</if>
 			<if test="creationTime!=null">AND teacher_quiz.creation_time = #{creationTime}</if>
+			<if test="startQuizTime!=null">AND teacher_quiz.start_quiz_time = #{startQuizTime}</if>
+			<if test="quizTime!=null">AND teacher_quiz.quiz_time = #{quizTime}</if>
 			<if test="teacherId!=0">AND teacher_quiz.teacher_id = #{teacherId}</if>
 			<if test="updateTime!=null">AND teacher_quiz.update_time = #{updateTime}</if>
 			<if test="updateId !=0">AND teacher_quiz.update_id = #{updateId}</if>
@@ -35,6 +39,8 @@
 		<id column="teacher_quiz_id" property="id" />
 		<result column="teacher_quiz_quiz_score" property="quizScore" />
 		<result column="teacher_quiz_creation_time" property="creationTime" />
+		<result column="teacher_quiz_start_quiz_time" property="startQuizTime" />
+		<result column="teacher_quiz_quiz_time" property="quizTime" />
 		<result column="teacher_quiz_teacher_id" property="teacherId" />
 		<result column="teacher_quiz_update_time" property="updateTime" />
 		<result column="teacher_quiz_update_id" property="updateId" />
@@ -78,6 +84,8 @@
 			<if test="id!=0">,id</if>
 			<if test="quizScore!=0">,quiz_score</if>
 			<if test="creationTime!=null">,creation_time</if>
+			<if test="startQuizTime!=null">,start_quiz_time</if>
+			<if test="quizTime!=0">,quiz_time</if>
 			<if test="updateTime!=null">,update_time</if>
 			<if test="teacherId!=0">,teacher_id</if>
 			<if test="updateId!=0">,update_id</if>
@@ -88,6 +96,8 @@
 			<if test="id!=0">,#{id}</if>
 			<if test="quizScore!=0">,#{quizScore}</if>
 			<if test="creationTime!=null">,#{creationTime}</if>
+			<if test="startQuizTime!=null">,#{startQuizTime}</if>
+			<if test="quizTime!=null">,#{quizTime}</if>
 			<if test="updateTime!=null">,#{updateTime}</if>
 			<if test="teacherId!=0">,#{teacherId}</if>
 			<if test="updateId!=0">,#{updateId}</if>
@@ -102,6 +112,8 @@
 			<if test="id!=0">,id = #{id}</if>
 			<if test="quizScore!=0">,quiz_score = #{quizScore}</if>
 			<if test="creationTime!=null">,creation_time = #{creationTime}</if>
+			<if test="startQuizTime!=null">,start_quiz_time = #{startQuizTime}</if>
+			<if test="quizTime!=null">,quiz_time = #{quizTime}</if>
 			<if test="updateTime!=null">,update_time = #{updateTime}</if>
 			<if test="teacherId!=0">,teacher_id = #{teacherId}</if>
 			<if test="updateId!=0">,update_id = #{updateId}</if>

@@ -18,6 +18,10 @@ public class TeacherQuiz extends Entity implements Serializable {
     
     private Date creationTime;
     
+    private Date startQuizTime;
+    
+    private long quizTime;
+    
     private Date updateTime;
     
     private long teacherId;
@@ -100,4 +104,21 @@ public class TeacherQuiz extends Entity implements Serializable {
         return this;
     }
 
+    public Date getStartQuizTime() {
+        return startQuizTime;
+    }
+
+    public TeacherQuiz setStartQuizTime(Date startQuizTime) {
+        this.startQuizTime = startQuizTime;
+        return this;
+    }
+
+    public long getQuizTime() {
+        return quizTime;
+    }
+
+    public TeacherQuiz setQuizTime(long quizTime) {
+        this.quizTime = quizTime;
+        return this;
+    } 
 }
