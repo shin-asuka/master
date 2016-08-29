@@ -18,7 +18,7 @@ public class AdminquizControllerTest extends BaseTestCase{
 
     private static Logger logger = LoggerFactory.getLogger(AdminquizControllerTest.class);
     
-    @Test
+    //@Test
     public void getLastQuiz() throws IOException{
         String url = URL_PREFIX + "/api/quiz/getLastQuiz";
         try{
@@ -30,7 +30,7 @@ public class AdminquizControllerTest extends BaseTestCase{
         }
     }
     
-    @Test
+    //@Test
     public void findNeedQuiz() throws IOException{
         String url = URL_PREFIX + "/api/quiz/findNeedQuiz";
         try{
@@ -42,7 +42,7 @@ public class AdminquizControllerTest extends BaseTestCase{
         }
     }
     
-    @Test
+    //@Test
     public void saveQuizResult() throws IOException{
         String url = URL_PREFIX + "/api/quiz/saveQuizResult";
         try{
@@ -53,6 +53,18 @@ public class AdminquizControllerTest extends BaseTestCase{
             logger.info(" get saveQuizResult ==> " + json);
         }catch(HttpStatusException e){
             logger.info(" get saveQuizResult  status ==> " + e.getStatusCode());
+        }
+    }
+    
+    @Test
+    public void startQuiz() throws IOException{
+        String url = URL_PREFIX + "/api/quiz/startQuiz";
+        try{
+            Response response = Jsoup.connect(url).ignoreContentType(true).timeout(60000).header(CookieKey.AUTOKEN, token).method(Method.POST).execute();
+            String json = response.body();
+            logger.info(" get startQuiz ==> " + json);
+        }catch(HttpStatusException e){
+            logger.info(" get startQuiz  status ==> " + e.getStatusCode());
         }
     }
 }

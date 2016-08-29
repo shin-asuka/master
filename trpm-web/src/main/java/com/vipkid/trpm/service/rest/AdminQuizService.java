@@ -128,6 +128,7 @@ public class AdminQuizService {
             TeacherQuiz teacherQuiz = list.get(0);
             int quizScore = this.saveQuizDetals(teacherId,teacherQuiz,grade);
             teacherQuiz.setQuizScore(quizScore);
+            teacherQuiz.setQuizTime(System.currentTimeMillis() - teacherQuiz.getStartQuizTime().getTime());
             teacherQuiz.setUpdateTime(new Date());
             teacherQuiz.setUpdateId(teacherId);
             teacherQuiz.setStatus(quizScore < RestfulConfig.Quiz.QUIZ_PASS_SCORE?TeacherQuizEnum.Status.FAIL.val():TeacherQuizEnum.Status.PASS.val());
@@ -256,7 +257,7 @@ public class AdminQuizService {
             //更新待考记录
             TeacherQuiz teacherQuiz = list.get(0);
             teacherQuiz.setStartQuizTime(new Date());
-            teacherQuiz.setQuizTime(teacherQuiz.getStartQuizTime().getTime() - System.currentTimeMillis());
+            teacherQuiz.setUpdateTime(new Date());
             teacherQuiz.setUpdateId(teacherId);
             //更新当前考试记录
             this.teacherQuizDao.update(teacherQuiz);

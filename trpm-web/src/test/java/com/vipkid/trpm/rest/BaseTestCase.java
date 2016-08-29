@@ -5,6 +5,6 @@ public class BaseTestCase {
     public static final String URL_PREFIX = "http://weilong.ngrok.cc/trpm-web";
     
     
-    public static final String token = "cdd4a051-4964-429c-89df-ada50383793b";
+    public static final String token = "f399726d-8d16-42fe-9c7e-1b3d4241b51c";
     
 }
