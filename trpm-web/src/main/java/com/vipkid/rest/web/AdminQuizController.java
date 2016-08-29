@@ -167,7 +167,7 @@ public class AdminQuizController {
                 return result;
             }
             boolean rest = this.adminQuizService.updatePassword(user.getId(), password);
-            CookieUtils.removeCookie(response, CookieKey.AUTOKEN_CHANGE_WINDOW, null, null);
+            CookieUtils.removeCookie(response, CookieKey.TRPM_CHANGE_WINDOW, null, null);
             result.put("result",rest);
             return result;
         } catch (IllegalArgumentException e) {
