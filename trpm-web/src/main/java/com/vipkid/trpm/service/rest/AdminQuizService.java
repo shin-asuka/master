@@ -110,7 +110,7 @@ public class AdminQuizService {
     }
     
     /**
-     * // 保存考试结果,大于60分更新当前数据PASS通过，不插入新的考试
+     * // 提交考试结果,大于60分更新当前数据PASS通过，不插入新的考试
      * // 小于60分则更新当前数据，并插入新的考试记录
      * @Author:ALong (ZengWeiLong)
      * @param teacherId
@@ -136,8 +136,10 @@ public class AdminQuizService {
             this.teacherQuizDao.update(teacherQuiz);
             // 插入新的待考记录
             if(quizScore < RestfulConfig.Quiz.QUIZ_PASS_SCORE){
+                logger.info("teacehrId:{},提交考试结果，quizId:{} 没通过,新增一条考试记录",teacherId,teacherQuiz.getId(),teacherQuiz.getStatus());
                 this.teacherQuizDao.insertQuiz(teacherId,teacherId);
             }
+            logger.info("teacehrId:{},提交考试结果，quizId:{},result:{} ",teacherId,teacherQuiz.getId(),teacherQuiz.getStatus());
         }
         return true;
     }
@@ -210,6 +212,7 @@ public class AdminQuizService {
      * @date 2016年8月23日
      */
     private int saveQuizDetals(long teacherId,TeacherQuiz teacherQuiz,String grade){
+        logger.info("teacehrId:{},保存考试结果，quizId:{} ",teacherId,teacherQuiz.getId());
         int quizScore = 0;
         
         if(StringUtils.isEmpty(grade)){
@@ -261,6 +264,7 @@ public class AdminQuizService {
             teacherQuiz.setUpdateId(teacherId);
             //更新当前考试记录
             this.teacherQuizDao.update(teacherQuiz);
+            logger.info("teacehrId:{},开始考试更新成功，quizId:{}",teacherId,teacherQuiz.getId());
         }
         return true;        
     }
