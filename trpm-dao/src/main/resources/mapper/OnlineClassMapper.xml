@@ -617,8 +617,8 @@
 		where 1=1
 			and c.type = 'MAJOR'
 			and l.is_unit_assessment = 1
-			and oc.status = 'FINISHED'
-			and oc.finish_type = 'AS_SCHEDULED'
+			and oc.status in( 'FINISHED','BOOKED')
+			and (oc.finish_type = 'AS_SCHEDULED' or oc.finish_type is null )
 			and oc.scheduled_date_time BETWEEN #{startTime} and #{endTime}
 		<if test="teacherId != null and teacherId != 0">
 			and oc.teacher_id = #{teacherId}
