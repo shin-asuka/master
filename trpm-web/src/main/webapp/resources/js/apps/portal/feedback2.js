@@ -195,7 +195,16 @@ define([ "jquery-form", "jquery-bootstrap", "jquery-load", "tools" ], function()
 				Portal.loading("close");
 				datas = jQuery.parseJSON(datas);
 				if(datas.status){
-					alert("Feedback submitted successfully! Submitted content is: '" + datas.teacherComment.teacherFeedback + "'");
+					$.alert("confirm", {
+						title : "Feedback submitted successfully",
+						content : "Submitted content: '" + datas.teacherComment.teacherFeedback + "'",
+						cancel:"OK",
+						cancelClass:"primary",
+						style : {
+							"margin-top" : "10%",
+							"width" : "600px"
+						}
+					});
 					reomveFeedBack();
 				}else{
 					$.alert("error", {

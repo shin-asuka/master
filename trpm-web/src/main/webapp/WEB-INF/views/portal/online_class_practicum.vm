@@ -49,7 +49,6 @@
 		##body end
 	</div>
 </div>
-
 #@requireJs()
 	require(['classpracticum'], function(classpracticum){
     	classpracticum.init("$!serverTime", "$!scheduleTime","$!teacherApplication.result",$!{practicum2},"$!{teacherPe.teacherAction}",$!{PESupervisor});    

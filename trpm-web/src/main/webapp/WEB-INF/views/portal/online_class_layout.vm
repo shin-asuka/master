@@ -42,19 +42,17 @@
     $screen_content
 </div>
 <div class="icon">
-    <a href='javascript:;' onclick='easemobim.bind({tenantId: 20182})'><img
-            src="#styleUrl('/resources/images/portal/contact_us.png')"></a>
-    <a href='javascript:;' onclick='easemobim.bind({tenantId: 20182})'><img class="contact"
-                                                                            src="#styleUrl('/resources/images/portal/contact_us_txt.png')"></a>
+    <a href='javascript:;' onclick='easemobim.bind({tenantId: 20182})'><img src="#styleUrl('/resources/images/portal/contact_us.png')"></a>
+    <a href='javascript:;' onclick='easemobim.bind({tenantId: 20182})'><img class="contact" src="#styleUrl('/resources/images/portal/contact_us_txt.png')"></a>
 </div>
-    #@requireJs()
+<script type="text/javascript">
     require(['checkalive'], function(checkalive){
-    checkalive.changeroom("$!onlineClass.classroom","$!lesson.serialNumber","$!onlineClass.id","$!msURL");
-    checkalive.checkIsAlive("$!onlineClass.classroom","$!{TRPM_USER.id}","$!msURL");
-    checkalive.sendSysInfo("$!onlineClass.id","$!onlineClass.classroom","$!{TRPM_USER.id}","$!sysInfoURL");
+    	checkalive.changeroom("$!onlineClass.classroom","$!lesson.serialNumber","$!onlineClass.id","$!msURL");
+    	checkalive.checkIsAlive("$!onlineClass.classroom","$!{TRPM_USER.id}","$!msURL");
+    	checkalive.sendSysInfo("$!onlineClass.id","$!onlineClass.classroom","$!{TRPM_USER.id}","$!sysInfoURL");
     });
-    #end
-<script>
+</script>
+<script type="text/javascript">
     window.easemobim = window.easemobim || {};
     easemobim.config = {
         hide: true,
@@ -71,6 +69,8 @@
         },
     };
 </script>
-<script src='//kefu.easemob.com/webim/easemob.js?tenantId=20182&hide=false&sat=false' async='async'></script>
+<script type="text/javascript">
+	require(["easemob"]);
+</script>
 </body>
 </html>

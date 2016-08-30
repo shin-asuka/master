@@ -70,10 +70,8 @@
   </div>
 </div>
 <div class="icon">
-    <a href='javascript:;' onclick='easemobim.bind({tenantId: 20182})'><img
-            src="#styleUrl('/resources/images/portal/contact_us.png')"></a>
-    <a href='javascript:;' onclick='easemobim.bind({tenantId: 20182})'><img class="contact"
-                                                                            src="#styleUrl('/resources/images/portal/contact_us_txt.png')"></a>
+    <a href='javascript:;' onclick='easemobim.bind({tenantId: 20182})'><img src="#styleUrl('/resources/images/portal/contact_us.png')"></a>
+    <a href='javascript:;' onclick='easemobim.bind({tenantId: 20182})'><img class="contact" src="#styleUrl('/resources/images/portal/contact_us_txt.png')"></a>
 </div>
 <script>
     window.easemobim = window.easemobim || {};
@@ -92,4 +90,5 @@
         },
     };
 </script>
-<script src='//kefu.easemob.com/webim/easemob.js?tenantId=20182&hide=false&sat=false' async='async'></script>
+
+
