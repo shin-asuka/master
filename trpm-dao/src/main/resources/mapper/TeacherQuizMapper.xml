@@ -20,9 +20,9 @@
 			<if test="quizScore!=0">AND teacher_quiz.quiz_score = #{quizScore}</if>
 			<if test="creationTime!=null">AND teacher_quiz.creation_time = #{creationTime}</if>
 			<if test="startQuizTime!=null">AND teacher_quiz.start_quiz_time = #{startQuizTime}</if>
-			<if test="quizTime!=null">AND teacher_quiz.quiz_time = #{quizTime}</if>
+			<if test="quizTime!=0">AND teacher_quiz.quiz_time = #{quizTime}</if>
 			<if test="teacherId!=0">AND teacher_quiz.teacher_id = #{teacherId}</if>
-			<if test="updateTime!=0">AND teacher_quiz.update_time = #{updateTime}</if>
+			<if test="updateTime!=null">AND teacher_quiz.update_time = #{updateTime}</if>
 			<if test="updateId !=0">AND teacher_quiz.update_id = #{updateId}</if>
 			<if test="status != -1">AND teacher_quiz.status = #{status}</if>
 			<if test="andwhere!=null"> ${andwhere} </if>
