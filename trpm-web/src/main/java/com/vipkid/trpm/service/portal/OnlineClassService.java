@@ -99,6 +99,12 @@ public class OnlineClassService {
     private TeacherQuizDao teacherQuizDao;
 
     @Autowired
+	private AssessmentHttpService assessmentHttpService;
+    
+    @Autowired
+    private AssessmentReportDao assessmentReportDao;
+    
+    @Autowired
     private TeacherQuizDao teacherQuizDao;
 
     @Autowired
