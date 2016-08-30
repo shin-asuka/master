@@ -122,11 +122,11 @@
         </div>
     </div>
 </div>
-<div id="dialog" title="Unit Assessment Report">
-	<iframe id="iframepageua" frameborder="0" scrolling="auto" width="100%" height="500" 
-    				ng-src="/unit_assessment?onlineClassId=${onlineClassId}"></iframe>
+<div id="dialog" title="Unit Assessment Report" style="display:none;">
+	<iframe id="iframepageua" frameborder="0" scrolling="auto" width="100%" style="min-height:450px;"
+    				ng-src="http://a12-t.vipkid.com.cn/unit_assessment?onlineClassId=3332241"></iframe>
 </div>
-<div style="height:500px;width:100%;"></div>
+<div id="dialogArea" style="height:500px;width:100%;display:none;"></div>
 <link rel="stylesheet" href="#styleUrl('/resources/styles/portal/jquery-ui.min.css')" />
 
 #@requireJs()

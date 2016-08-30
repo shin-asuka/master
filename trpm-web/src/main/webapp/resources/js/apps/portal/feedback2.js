@@ -125,7 +125,7 @@ define([ "jquery-form", "jquery-bootstrap", "jquery-load", "tools" ], function()
 		
 		$( "#dialog" ).dialog({
 			width : 1200
-			,height : 500
+			,height : 550
 			,modal: false 
 			,open : function(event, ui){
 				//$(".ui-dialog-titlebar-close", $(this).parent()).hide();
@@ -135,6 +135,10 @@ define([ "jquery-form", "jquery-bootstrap", "jquery-load", "tools" ], function()
 				var html = '<span class="ui-button-icon-primary ui-icon ui-icon-closethick"></span>'
 				closeObj.html(html);
 				closeObj.addClass(classButton);
+				$("#dialogArea").show();
+			}
+			,close: function(){
+				$("#dialogArea").hide();
 			}
 			
 		});
