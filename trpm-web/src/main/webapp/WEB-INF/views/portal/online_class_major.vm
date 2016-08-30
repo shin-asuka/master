@@ -122,7 +122,12 @@
         </div>
     </div>
 </div>
-
+<div id="dialog" title="Unit Assessment Report">
+	<iframe id="iframepageua" frameborder="0" scrolling="auto" width="100%" height="500" 
+    				ng-src="/unit_assessment?onlineClassId=${onlineClassId}"></iframe>
+</div>
+<div style="height:500px;width:100%;"></div>
+<link rel="stylesheet" href="#styleUrl('/resources/styles/portal/jquery-ui.min.css')" />
 
 #@requireJs()
     require(['classmajor'], function(classmajor){        	

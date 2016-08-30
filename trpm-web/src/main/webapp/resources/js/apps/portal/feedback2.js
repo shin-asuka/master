@@ -116,12 +116,29 @@ define([ "jquery-form", "jquery-bootstrap", "jquery-load", "tools" ], function()
 	/** **public 请求页面 */
 	var openUnitAssessment = function(isRequire, onlineClassId, studentId) {
 		
-		$("#modalDialog").draggable();//为对话框添加拖拽
-		$("#myModal").css("overflow", "hidden");//禁止对话框的半透明背景滚动
+		var src = $('#iframepageua').attr('ng-src');
+		$('#iframepageua').attr('src',src);
 		
-		var src = $('#iframepage').attr('ng-src');
-		$('#iframepage').attr('src',src);
-		$('#myModal').modal('show') ;
+		/*$("#modalDialog").draggable();//为对话框添加拖拽
+		$("#myModal").css("overflow", "hidden");//禁止对话框的半透明背景滚动
+		$('#myModal').modal('show') ;*/
+		
+		$( "#dialog" ).dialog({
+			width : 1200
+			,height : 500
+			,modal: false 
+			,open : function(event, ui){
+				//$(".ui-dialog-titlebar-close", $(this).parent()).hide();
+				var closeObj = $(".ui-dialog-titlebar-close", $(this).parent());
+				//closeObj.html('close');
+				var classButton = "ui-button ui-widget ui-state-default ui-corner-all ui-button-icon-only ui-dialog-titlebar-close";
+				var html = '<span class="ui-button-icon-primary ui-icon ui-icon-closethick"></span>'
+				closeObj.html(html);
+				closeObj.addClass(classButton);
+			}
+			
+		});
+		
 	};
 
 	/** *public 提交保存整个feedback表单 */
