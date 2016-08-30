@@ -123,6 +123,9 @@ define([ "jquery-form", "jquery-bootstrap", "jquery-load", "tools" ], function()
 		$("#myModal").css("overflow", "hidden");//禁止对话框的半透明背景滚动
 		$('#myModal').modal('show') ;*/
 		
+		var dialogParent = $('#dialog').parent();  
+		var dialogOwn = $('#dialog').clone(); //克隆弹框里面的内容 
+		dialogOwn.hide();  
 		$( "#dialog" ).dialog({
 			width : 1200
 			,height : 550
@@ -139,6 +142,8 @@ define([ "jquery-form", "jquery-bootstrap", "jquery-load", "tools" ], function()
 			}
 			,close: function(){
 				$("#dialogArea").hide();
+				 dialogOwn.appendTo(dialogParent);  
+			     $(this).dialog("destroy").remove();
 			}
 			
 		});
