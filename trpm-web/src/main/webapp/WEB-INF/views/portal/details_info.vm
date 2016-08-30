@@ -1,0 +1,41 @@
+<div class="modal fade" id="info-Modal111" role="dialog" style="overflow:hidden;" aria-labelledby="infoModal">
+    <style>
+    	.commentTitle{font-size:16px;}
+    </style>
+    <div class="modal-dialog info-dialog" style="width: 500px;">
+    
+      <div class="modal-content">
+        
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title"> <strong>Comments about this student</strong> </h4>
+        </div>
+        
+        <div class="modal-body">
+          <div style="width: 100%;height: 30px;" class="StudentInfo">
+            <div style="width: 190px;display: table-cell;" class="ng-binding">Student: <span> $!student.englishName </span> </div>
+            <div style="width: 50%;display: table-cell;" class="ng-binding">QQ: <span> $!student.qq</span> </div>
+          </div>
+          <hr />
+          <div class="staffComments" style="position: static;width: 85%;display: block; float:none;">
+            <div class="commentTitle"><strong>Know the student</strong></div>
+            <div class="commentItem ng-binding" style="overflow-y:auto; height:100px;word-break:break-all; word-wrap:break-word;">$!student.knowTheStudent</div>
+          </div>
+          <hr />
+          <div class="teacherComments">
+            <div class="commentTitle"><strong>Computer Placement Test</strong></div>
+            
+          
+          
+          </div>
+          <hr />
+          
+         
+        <div class="modal-footer" style="margin-top:0px;">
+          <button type="button" class="btn btn-info" data-dismiss="modal" aria-label="Close"> Ok </button>
+        </div>
+      
+      </div>      
+    
+    </div>
+</div>

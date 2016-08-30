@@ -43,8 +43,9 @@
         </div>
         ##正常结束类型pirce结束
         <br>
+        #*
         ##adjustment类型
-        <div class="center-block">
+        /#<div class="center-block">
             <div class="table-title clearfix">
                 <div class="pull-left">
                     <h4>Adjustments Price List</h4>
@@ -78,6 +79,7 @@
             </table>
         </div>
         ##adjustment类型结束
+       *#
         <br>
         ##bonus类型
         <div class="center-block">

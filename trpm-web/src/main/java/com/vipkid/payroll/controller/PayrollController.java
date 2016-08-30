@@ -76,8 +76,6 @@ public class PayrollController extends AbstractPortalController {
 	    	return priceList(request, response, model,payrollType);
 	    }
 		
-//	    teacherId = 1167406;
-//		month = 201605;
 		
 		try {
 
@@ -128,8 +126,6 @@ public class PayrollController extends AbstractPortalController {
 		int month = monthOfYear.getYear() * 100 + monthOfYear.getMonthValue() ;
 		Integer teacherId = new Long(teacher.getId()).intValue();
 		
-//		teacherId = 1167406;
-//		month = 201605;
 		
 		LOGGER.info("获取教师各种规则详情, teacherId={} ,month={}", teacher.getId(), month);
 

@@ -272,13 +272,27 @@ define(depends, function() {
 		$("input[name=offsetOfMonth]").val(_month);
 		$("#payrollForm").submit();
 	};
+	
+	var showDetials = function(details){
+		$('#popWindow').show();
+		$('#maskLayer').show();
+		$('.detailInfo').html(details) ;
+	
+	};
+	var closeDetials = function(details){
+		$('#popWindow').hide();
+		$('#maskLayer').hide();
+		
+	
+	};
 
 	return {
 		init : init,
 		salaryList : salaryList,
 		preSalaryList : preSalaryList,
 		priceList : priceList,
-		
+		showDetials : showDetials,
+		closeDetials:closeDetials,
 	};
 
 });
