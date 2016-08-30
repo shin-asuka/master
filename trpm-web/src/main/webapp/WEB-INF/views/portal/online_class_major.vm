@@ -30,8 +30,8 @@
 						#end
 					#elseif($lesson.isUnitAssessment == 1 && $isNewUa == 1)
 						##需要填写单元评估报告的课程  is Unit Assessment
-						##<div onclick="require('feedback').openUnitAssessment('Required','$!onlineClass.id','$!student.id')">Add Feedback</div> 
-						<div onclick="showUADailog('$!onlineClass.id')">Add Feedback</div> 
+						<div onclick="require('feedback').openUnitAssessment('Required','$!onlineClass.id','$!student.id')">Add Feedback</div> 
+						##<div onclick="showUADailog('$!onlineClass.id')">Add Feedback</div> 
 					
 					#else
 						##否则显示feedback
@@ -123,22 +123,6 @@
     </div>
 </div>
 
-<script src="#styleUrl('/resources/js/libs/jquery.1.11.3.min.js')"></script>
-<script src="#styleUrl('/resources/js/libs/jquery-ui.min.js')"></script>
-<script>
-    $(document).ready(function(){
-
-        $("#modalDialog").draggable();//为模态对话框添加拖拽
-        $("#myModal").css("overflow", "hidden");//禁止模态对话框的半透明背景滚动
-		
-    })
-	
-	function showUADailog(onlineClassId){
-		var src = $('#iframepage').attr('ng-src');
-		$('#iframepage').attr('src',src);
-		$('#myModal').modal('show') ;
-    }
-</script>
 
 #@requireJs()
     require(['classmajor'], function(classmajor){        	
@@ -176,5 +160,11 @@
         require(['xdyproxy'], function(xdy){
             xdy.initChannel("$!{TRPM_USER.id}", "$!onlineClass.classroom", true, "$!stars");
         });  
-    #end      
+    #end  
+	
+	##UA 报告 弹出框 拖动效果 依赖类库
+	require(['jquery'], function(){ } );
+	require(['jquery-ui'], function(){ } );
+	
 #end
+
