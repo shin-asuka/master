@@ -80,7 +80,7 @@
         <a href="javascript:;"></a>
     </div>
 </div>
-<div id="dialog"></div>
+<div id="dialog" data="$!{showPracticum},$!{showAdminQuiz}"></div>
 #@requireJs()
     require(["schedule"], function(schedule){
         schedule.init($!{offsetOfWeek},$!{showPracticum}, $!{showAdminQuiz},$!{show24HoursInfo});

@@ -73,6 +73,12 @@ define(["validator","utils","function", "tools", "jquery-bootstrap", "jquery-for
 			});
 			$.removeCookie("changeWindow");
 			$('#password-Modal').modal('hide');
+			$('#password-Modal').on('hidden.bs.modal', function () {
+				var datas = $("#dialog").attr("data");
+				if(datas != "false,false"){
+					$("body").addClass("modal-open");
+				}
+			});
 		} else if (datas.originalPasswordErr) {
 			$.alert("error", {
 				title : "The original password you typed is wrong！"
