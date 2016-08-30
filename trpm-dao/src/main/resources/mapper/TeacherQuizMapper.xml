@@ -97,7 +97,7 @@
 			<if test="quizScore!=0">,#{quizScore}</if>
 			<if test="creationTime!=null">,#{creationTime}</if>
 			<if test="startQuizTime!=null">,#{startQuizTime}</if>
-			<if test="quizTime!=null">,#{quizTime}</if>
+			<if test="quizTime!=0">,#{quizTime}</if>
 			<if test="updateTime!=null">,#{updateTime}</if>
 			<if test="teacherId!=0">,#{teacherId}</if>
 			<if test="updateId!=0">,#{updateId}</if>
