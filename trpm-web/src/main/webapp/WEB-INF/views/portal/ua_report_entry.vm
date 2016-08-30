@@ -1,1 +1,1 @@
-<span>|</span>&nbsp;<a onclick="require('report-ua').showUAReport('${serialNumber}', ${studentId}, ${onlineClassId});" href="javascript:;">UA Report$!{lifeCycle}</a>
+<span>|</span>&nbsp;<a isNewUa="${isNewUa}"onclick="require('report-ua').showUAReport('${serialNumber}', ${studentId}, ${onlineClassId},${isNewUa});" href="javascript:;">UA Report$!{lifeCycle}</a>

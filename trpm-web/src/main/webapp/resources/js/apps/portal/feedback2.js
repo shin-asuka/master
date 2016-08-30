@@ -115,6 +115,8 @@ define([ "jquery-form", "jquery-bootstrap", "jquery-load", "tools" ], function()
 	
 	/** **public 请求页面 */
 	var openUnitAssessment = function(isRequire, onlineClassId, studentId) {
+		
+		
 		/** * 已经打开直接返回 */
 		if ($("div.trailFeedbackContainer").children().length > 0) {
 			openShow(isRequire);
@@ -134,7 +136,7 @@ define([ "jquery-form", "jquery-bootstrap", "jquery-load", "tools" ], function()
 			success : function(datas) {
 				var screenWidth = $(window).width();
 				var width = screenWidth - 100;
-				debugger;
+				//debugger;
 				if(width<1000){
 					width = 1000;
 				}else if(width>1200){
@@ -344,3 +346,6 @@ define([ "jquery-form", "jquery-bootstrap", "jquery-load", "tools" ], function()
 	}
 
 });
+
+
+

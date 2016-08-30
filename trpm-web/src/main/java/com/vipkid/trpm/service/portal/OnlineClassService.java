@@ -20,6 +20,8 @@ import org.springframework.stereotype.Service;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
+import com.vipkid.http.service.AssessmentHttpService;
+import com.vipkid.http.vo.StudentUnitAssessment;
 import com.vipkid.trpm.constant.ApplicationConstant;
 import com.vipkid.trpm.constant.ApplicationConstant.ClassStatus;
 import com.vipkid.trpm.constant.ApplicationConstant.FinishType;
@@ -27,6 +29,7 @@ import com.vipkid.trpm.constant.ApplicationConstant.RecruitmentResult;
 import com.vipkid.trpm.constant.ApplicationConstant.RecruitmentStatus;
 import com.vipkid.trpm.constant.ApplicationConstant.TeacherLifeCycle;
 import com.vipkid.trpm.constant.ApplicationConstant.TeacherType;
+import com.vipkid.trpm.dao.AssessmentReportDao;
 import com.vipkid.trpm.dao.AuditDao;
 import com.vipkid.trpm.dao.DemoReportDao;
 import com.vipkid.trpm.dao.LessonDao;
@@ -39,6 +42,7 @@ import com.vipkid.trpm.dao.TeacherModuleDao;
 import com.vipkid.trpm.dao.TeacherPeDao;
 import com.vipkid.trpm.dao.TeacherQuizDao;
 import com.vipkid.trpm.dao.UserDao;
+import com.vipkid.trpm.entity.AssessmentReport;
 import com.vipkid.trpm.entity.DemoReport;
 import com.vipkid.trpm.entity.Lesson;
 import com.vipkid.trpm.entity.OnlineClass;
@@ -94,6 +98,12 @@ public class OnlineClassService {
     @Autowired
     private TeacherQuizDao teacherQuizDao;
 
+    @Autowired
+	private AssessmentHttpService assessmentHttpService;
+    
+    @Autowired
+    private AssessmentReportDao assessmentReportDao;
+    
     /**
      * 根据id找online class
      *
@@ -215,6 +225,19 @@ public class OnlineClassService {
                         ClassroomProxy.ROLE_TEACHER, onlineClass.getSupplierCode()));
 
         this.enterAfter(teacher, onlineClass);
+        
+        //查询是否旧版UA报告
+        AssessmentReport assessmentReport = null;
+        String serialNumber = lesson.getSerialNumber();
+        Long onlineClassId = onlineClass.getId();
+        long schedDateTime = onlineClass.getScheduledDateTime().getTime();
+        
+        if (DateUtils.isSearchById(schedDateTime)) {
+            assessmentReport = assessmentReportDao.findReportByClassId(onlineClassId);
+        } else {
+            assessmentReport = assessmentReportDao.findReportByStudentIdAndName(serialNumber, studentId);
+        }
+        modelMap.put("isNewUa", assessmentReport == null ? 1: 0);
         return modelMap;
     }
 
@@ -601,6 +624,12 @@ public class OnlineClassService {
                 teacherCommentDao.findByStudentIdAndOnlineClassId(studentId, onlineClassId);
         if (null == teacherComment || StringUtils.isBlank(teacherComment.getTeacherFeedback())) {
             modelMap.put("empty", true);
+            
+            //查询UA是否已经填写
+            StudentUnitAssessment studentUnitAssessment = assessmentHttpService.findStudentUnitAssessmentByOnlineClassId(onlineClassId);
+            if(studentUnitAssessment !=null){
+            	modelMap.put("empty", false);
+            }
         } else {
             modelMap.put("empty", false);
         }

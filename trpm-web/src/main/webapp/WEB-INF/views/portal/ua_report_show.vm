@@ -1,0 +1,20 @@
+<div class="modal fade" id="report-Modal" style="overflow:hidden;" role="dialog" aria-labelledby="reportModal">
+	<style>   
+	
+	</style>
+	  
+	<div  class="modal-dialog report-dialog" style="min-width:1200px;margin-top:2%;">
+		<div class="modal-content modalPopWaper">
+			
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">&times;</button>
+				<h4 class="modal-title"> <strong>Unit Assessment Report</strong> </h4>
+			</div>
+			<div id="Required" style="height:500px;overflow-x:hidden; overflow-y:auto;">
+    			<iframe id="iframepage" frameborder="0" scrolling="auto" width="100%" height="480" 
+    				src="/unit_assessment?onlineClassId=${onlineClassId}"></iframe>
+    			
+            </div>
+		</div>
+	</div>
+</div>

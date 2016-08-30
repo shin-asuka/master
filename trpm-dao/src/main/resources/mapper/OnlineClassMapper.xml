@@ -344,7 +344,8 @@
 		student.english_name AS englishName,
 		lesson.serial_number AS serialNumber,
 		lesson.name AS lessonName,
-		lesson.learning_cycle_id AS learningCycleId
+		lesson.learning_cycle_id AS learningCycleId,
+		lesson.is_unit_assessment AS isUnitAssessment
 	</sql>
 
 	<!-- 查询BOOKED和OPEN的课程列表 -->

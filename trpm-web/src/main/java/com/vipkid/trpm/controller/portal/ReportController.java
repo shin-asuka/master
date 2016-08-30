@@ -20,7 +20,14 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.google.common.collect.Maps;
 import com.vipkid.enums.OnlineClassEnum;
-import com.vipkid.trpm.entity.*;
+import com.vipkid.http.service.AssessmentHttpService;
+import com.vipkid.http.vo.StudentUnitAssessment;
+import com.vipkid.trpm.entity.AssessmentReport;
+import com.vipkid.trpm.entity.DemoReport;
+import com.vipkid.trpm.entity.Lesson;
+import com.vipkid.trpm.entity.OnlineClass;
+import com.vipkid.trpm.entity.StudentExam;
+import com.vipkid.trpm.entity.TeacherComment;
 import com.vipkid.trpm.service.passport.IndexService;
 import com.vipkid.trpm.service.portal.ReportService;
 import com.vipkid.trpm.util.DateUtils;
@@ -60,6 +67,13 @@ public class ReportController extends AbstractPortalController {
         return view("ua_report_upload");
     }
 
+    @RequestMapping("/uaReportShow")
+    public String uaReportShow(AssessmentReport report,Long onlineClassId, HttpServletRequest request, Model model) {
+    	model.addAttribute("onlineClassId", onlineClassId);
+    	
+        return view("ua_report_show");
+    }
+    
     /**
      * PracticumReport报告上传页面进入
      * 
@@ -220,6 +234,7 @@ public class ReportController extends AbstractPortalController {
     	model.addAttribute("onlineClassId", onlineClassId);
     	return view("online_class_unitAssessment");
     }
+    
     /**
      * feedback保存，任何时候都可以保存  2016-5-10 修改feedback 只允许提交一次，因为要通知家长老师有反馈
      * 

@@ -25,6 +25,9 @@ public class OnlineClassVo implements Serializable{
 	}
 
 	public List<Long> getIdList() {
+		if(idList == null){
+			idList = Lists.newArrayList();
+		}
 		return idList;
 	}
 

@@ -75,9 +75,9 @@ public class PersonalInfoRestController {
 		return model;
 	}
 
-//	@RequestMapping(value = "/assess/test")
-//	public void test(){
-//		unitAsusesssmentService.remindTeacherUnitAssessmentFor6Hour();
-//		unitAsusesssmentService.remindTeacherUnitAssessmentFor12Hour();
-//	}
+	@RequestMapping(value = "/assess/test")
+	public void test(){
+		unitAsusesssmentService.remindTeacherUnitAssessmentFor6Hour();
+		unitAsusesssmentService.remindTeacherUnitAssessmentFor12Hour();
+	}
 }
