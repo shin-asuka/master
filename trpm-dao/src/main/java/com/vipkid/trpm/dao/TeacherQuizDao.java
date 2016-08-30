@@ -73,6 +73,7 @@ public class TeacherQuizDao extends MapperDaoTemplate<TeacherQuiz>{
         TeacherQuiz teacherQuiz = new TeacherQuiz();
         teacherQuiz.setTeacherId(teacherId);
         teacherQuiz.setCreationTime(new Date());
+        teacherQuiz.setStartQuizTime(new Date());
         teacherQuiz.setUpdateId(teacherId);
         teacherQuiz.setUpdateTime(new Date());
         teacherQuiz.setQuizScore(0);

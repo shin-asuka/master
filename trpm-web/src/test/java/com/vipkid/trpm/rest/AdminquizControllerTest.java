@@ -42,7 +42,7 @@ public class AdminquizControllerTest extends BaseTestCase{
         }
     }
     
-    //@Test
+    @Test
     public void saveQuizResult() throws IOException{
         String url = URL_PREFIX + "/api/quiz/saveQuizResult";
         try{
@@ -56,7 +56,7 @@ public class AdminquizControllerTest extends BaseTestCase{
         }
     }
     
-    @Test
+    //@Test
     public void startQuiz() throws IOException{
         String url = URL_PREFIX + "/api/quiz/startQuiz";
         try{
