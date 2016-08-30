@@ -98,7 +98,6 @@
 		##body end
   </div>
 </div>
-
 #@requireJs()
     require(['classmajor'], function(classmajor){        	
     	classmajor.init("$!serverTime", "$!scheduleTime","$!studentUser.createDateTime");    

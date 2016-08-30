@@ -162,10 +162,9 @@ define([ "jquery-form", "jquery-bootstrap", "jquery-load", "tools" ], function()
 				$("button.btn-primary").removeAttr("disabled");
 				if(data.result){
 					$("#" + $("#onlineClassId").val() + " a").html("Feedback");
-					$.alert("info", {
-						title : "Feedback submitted successfully !"
-					});
-					reomveFeedBack();
+					/* 重新检查Feedback */
+					var id = $("input[name=id]").val();
+					checkFeedback(id);
 				}else if(data.msg){
 					$.alert("error", {
 						title : data.msg
@@ -186,6 +185,40 @@ define([ "jquery-form", "jquery-bootstrap", "jquery-load", "tools" ], function()
 		});
 	}
 
+	var checkFeedback = function(id){
+		var url = webPath + "/getComment.json";
+		Portal.loading("open");
+		$.ajaxRequest({
+			url : url,
+			data : {"id": id},
+			success : function(datas) {
+				Portal.loading("close");
+				datas = jQuery.parseJSON(datas);
+				if(datas.status){
+					$.alert("confirm", {
+						title : "Feedback submitted successfully",
+						content : "Submitted content: '" + datas.teacherComment.teacherFeedback + "'",
+						cancel:"OK",
+						cancelClass:"primary",
+						style : {
+							"margin-top" : "10%",
+							"width" : "600px"
+						}
+					});
+					reomveFeedBack();
+				}else{
+					$.alert("error", {
+						title : "Feedback submitted failed, please try again later!"
+					});
+				}
+			},
+			timeout : _timeout,
+			error : function(reponse, status, info) {
+				feedbackError(reponse, status, info);
+			}
+		});
+	};
+	
 	/** 提交后处理，关闭feedback，清空feedback */
 	var reomveFeedBack = function() {
 		hideFeedBack();

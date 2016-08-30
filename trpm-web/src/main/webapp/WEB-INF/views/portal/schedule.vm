@@ -75,4 +75,5 @@
     require(["schedule"], function(schedule){
         schedule.init($!{offsetOfWeek}, $!{showScheduleLayer}, $!{show24HoursInfo});
     });
+    require(["easemob"]);
 #end

@@ -23,6 +23,7 @@ require.config({
 		"jquery-sort" : "libs/jquery.table.sort.min",
 		"jquery-bootstrap" : "libs/jquery.bootstrap",
 		"select2" : "libs/select2/select2.min",
+		"easemob" : "http://kefu.easemob.com/webim/easemob.js?tenantId=20182&hide=false&sat=false",
 		/* 模块JS */
 		"index" : "apps/common/index",
 		"schedule" : "apps/portal/schedule",
@@ -64,7 +65,7 @@ require.config({
 	waitSeconds : 0,
 
 	/* 更新JS缓存 */
-	urlArgs : "t=201608151500",
+	urlArgs : "t=201608301046",
 
 	/* 加载非AMD规范的JS */
 	shim : {

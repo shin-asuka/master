@@ -1,5 +1,4 @@
 #set($layout = "/portal/online_class_layout.vm")
-
 <div class="classroom replay2 ng-scope">
 	#if($stringUtils.startsWith($!lesson.serialNumber,'OPEN'))
 	  <button class="addFeedbackBtn btn btn-primary btn-sm" onclick="history.back()">Exit</button>
@@ -24,8 +23,5 @@
 		<div class="trailFeedbackContainer" style="display: none;"></div>
 	</div>
 </div>
-
-##feedback部分
-#if($stringUtils.startsWith($lesson.serialNumber,'P'))  
-	#parse("/portal/practicum_feedback.vm")
+#@requireJs()
 #end

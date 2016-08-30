@@ -41,7 +41,6 @@
 
 	</div>
 </div>
-
 #@requireJs()
     require(['classopen'], function(classopen){    	
     	classopen.init("$!serverTime", "$!scheduleTime","$!onlineClass.id", "$!student.id","$!teacher.id","$!onlineClass.classroom","$!teacherApplication.result","$studentUser.createDateTime");  
