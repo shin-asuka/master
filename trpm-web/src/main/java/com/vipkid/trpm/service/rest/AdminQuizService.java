@@ -265,15 +265,15 @@ public class AdminQuizService {
         List<TeacherQuiz> list = this.teacherQuizDao.findNeedQuiz(teacherId);
         if(CollectionUtils.isNotEmpty(list)){
             //更新待考记录
-            Timestamp date = new Timestamp(System.currentTimeMillis()/1000);
+            Timestamp date = new Timestamp(System.currentTimeMillis());
             TeacherQuiz teacherQuiz = list.get(0);
             teacherQuiz.setStartQuizTime(date);
             teacherQuiz.setUpdateTime(date);
             teacherQuiz.setUpdateId(teacherId);
             //更新当前考试记录
             this.teacherQuizDao.update(teacherQuiz);
-            logger.info("teacehrId:{},开始考试更新成功，quizId:{},toekn:{}",teacherId,teacherQuiz.getId(),teacherQuiz.getStartQuizTime().getTime());
-            return teacherQuiz.getStartQuizTime().getTime();
+            logger.info("teacehrId:{},开始考试更新成功，quizId:{},toekn:{}",teacherId,teacherQuiz.getId(),(teacherQuiz.getStartQuizTime().getTime()/1000));
+            return (teacherQuiz.getStartQuizTime().getTime()/1000);
         }
         return 0;        
     }
