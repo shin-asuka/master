@@ -2477,5 +2477,5 @@ ul, li {
 	position: absolute;
 	top: 0px;
 	border-radius: 50%;
-	background: -webkit-radial-gradient(rgba(247, 248, 237, .6), rgba(255, 255, 255, 0) 60%)
+	background: radial-gradient(rgba(247, 248, 237, .6), rgba(255, 255, 255, 0) 60%)
 }
