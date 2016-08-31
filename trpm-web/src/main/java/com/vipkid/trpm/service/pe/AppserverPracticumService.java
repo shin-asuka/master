@@ -62,7 +62,8 @@ public class AppserverPracticumService {
 
         executorService.execute(() -> {
             try {
-                HttpClientProxy.post(FINISH_PRACTICUM_PROCESS_URL, requestParams, requestHeader);
+                String result = HttpClientProxy.post(FINISH_PRACTICUM_PROCESS_URL, requestParams, requestHeader);
+                logger.info("teacherApplicationId:{},请求结果:{}",teacherApplicationId,result);
             } catch (Exception e) {
                 logger.error("Invoke appserver api error", e);
             }

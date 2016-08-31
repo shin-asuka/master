@@ -152,7 +152,7 @@ public class LoginService {
     }
     
     /**
-     * 判断User是否有PES权限
+     * 判断User拥有的权限
      * 
      * @Author:ALong (ZengWeiLong)
      * @param teacherId
