@@ -127,7 +127,7 @@ public class AdminQuizService {
         if(CollectionUtils.isNotEmpty(list)){
             //更新待考记录
             TeacherQuiz teacherQuiz = list.get(0);
-            if(quizToken == teacherQuiz.getStartQuizTime().getTime()){
+            if(quizToken == (teacherQuiz.getStartQuizTime().getTime()/1000)){
                 int quizScore = this.saveQuizDetals(teacherId,teacherQuiz,grade);
                 teacherQuiz.setQuizScore(quizScore);
                 teacherQuiz.setQuizTime(System.currentTimeMillis() - teacherQuiz.getStartQuizTime().getTime());
@@ -144,7 +144,7 @@ public class AdminQuizService {
                 logger.info("teacehrId:{},提交考试结果，quizId:{},result:{} ",teacherId,teacherQuiz.getId(),teacherQuiz.getStatus());
                 return true;
             }else{
-                logger.error("teacehrId:{},提交考试结果，quizId:{},token不匹配,请求token:{},实际token:{}",teacherId,teacherQuiz.getId(),quizToken,teacherQuiz.getStartQuizTime().getTime());
+                logger.error("teacehrId:{},提交考试结果，quizId:{},token不匹配,请求token:{},实际token:{}",teacherId,teacherQuiz.getId(),quizToken,(teacherQuiz.getStartQuizTime().getTime()/1000));
                 return false;
             }
         }
