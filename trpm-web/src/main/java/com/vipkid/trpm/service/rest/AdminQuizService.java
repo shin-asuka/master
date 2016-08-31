@@ -143,7 +143,7 @@ public class AdminQuizService {
                 logger.info("teacehrId:{},提交考试结果，quizId:{},result:{} ",teacherId,teacherQuiz.getId(),teacherQuiz.getStatus());
                 return true;
             }else{
-                logger.warn("teacehrId:{},提交考试结果，quizId:{},token不匹配,请求token:{},实际token:{}",teacherId,teacherQuiz.getId(),quizToken,teacherQuiz.getStartQuizTime().getTime());
+                logger.error("teacehrId:{},提交考试结果，quizId:{},token不匹配,请求token:{},实际token:{}",teacherId,teacherQuiz.getId(),quizToken,teacherQuiz.getStartQuizTime().getTime());
                 return false;
             }
         }
