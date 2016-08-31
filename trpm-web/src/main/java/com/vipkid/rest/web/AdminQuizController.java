@@ -126,7 +126,7 @@ public class AdminQuizController {
     @RequestMapping(value = "/startQuiz", method = RequestMethod.POST, produces = RestfulConfig.JSON_UTF_8)
     public Map<String,Object> startQuiz(HttpServletRequest request, HttpServletResponse response){
         Map<String,Object> result = Maps.newHashMap();
-        result.put("result", false);
+        result.put("quizToken", 0);
         try{
             logger.info("开始考试");
             String token = request.getHeader(CookieKey.AUTOKEN);
@@ -137,7 +137,7 @@ public class AdminQuizController {
                 logger.warn("用户不存在，token过期");
                 return result;
             }
-            result.put("result",this.adminQuizService.startQuiz(user.getId()));
+            result.put("quizToken",this.adminQuizService.startQuiz(user.getId()));
             return result;
         } catch (IllegalArgumentException e) {
             logger.error("内部参数转化异常:"+e.getMessage(),e);
@@ -150,7 +150,7 @@ public class AdminQuizController {
     }
     
     @RequestMapping(value = "/saveQuizResult", method = RequestMethod.POST, produces = RestfulConfig.JSON_UTF_8)
-    public Map<String,Object> saveQuizResult(HttpServletRequest request, HttpServletResponse response,@RequestParam(value="grade") String grade){
+    public Map<String,Object> saveQuizResult(HttpServletRequest request, HttpServletResponse response,@RequestParam(value="grade") String grade,@RequestParam(value="quizToken") long quizToken){
         Map<String,Object> result = Maps.newHashMap();
         result.put("result", false);
         try{
@@ -163,7 +163,7 @@ public class AdminQuizController {
                 logger.warn("用户不存在，token过期");
                 return result;
             }
-            result.put("result",this.adminQuizService.saveQuizResult(user.getId(), grade));
+            result.put("result",this.adminQuizService.saveQuizResult(user.getId(), grade,quizToken));
             return result;
         } catch (IllegalArgumentException e) {
             logger.error("内部参数转化异常:"+e.getMessage(),e);

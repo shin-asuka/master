@@ -119,29 +119,35 @@ public class AdminQuizService {
      * boolean
      * @date 2016年8月18日
      */
-    public boolean saveQuizResult(long teacherId,String grade){
+    public boolean saveQuizResult(long teacherId,String grade,long quizToken){
         logger.info("teacehrId:{},提交分数:{}",teacherId, grade);
         //查询老师待考试记录
         List<TeacherQuiz> list = this.teacherQuizDao.findNeedQuiz(teacherId);
         if(CollectionUtils.isNotEmpty(list)){
             //更新待考记录
             TeacherQuiz teacherQuiz = list.get(0);
-            int quizScore = this.saveQuizDetals(teacherId,teacherQuiz,grade);
-            teacherQuiz.setQuizScore(quizScore);
-            teacherQuiz.setQuizTime(System.currentTimeMillis() - teacherQuiz.getStartQuizTime().getTime());
-            teacherQuiz.setUpdateTime(new Date());
-            teacherQuiz.setUpdateId(teacherId);
-            teacherQuiz.setStatus(quizScore < RestfulConfig.Quiz.QUIZ_PASS_SCORE?TeacherQuizEnum.Status.FAIL.val():TeacherQuizEnum.Status.PASS.val());
-            //更新当前考试记录
-            this.teacherQuizDao.update(teacherQuiz);
-            // 插入新的待考记录
-            if(quizScore < RestfulConfig.Quiz.QUIZ_PASS_SCORE){
-                logger.info("teacehrId:{},提交考试结果，quizId:{} 没通过,新增一条考试记录",teacherId,teacherQuiz.getId(),teacherQuiz.getStatus());
-                this.teacherQuizDao.insertQuiz(teacherId,teacherId);
+            if(quizToken == teacherQuiz.getStartQuizTime().getTime()){
+                int quizScore = this.saveQuizDetals(teacherId,teacherQuiz,grade);
+                teacherQuiz.setQuizScore(quizScore);
+                teacherQuiz.setQuizTime(System.currentTimeMillis() - teacherQuiz.getStartQuizTime().getTime());
+                teacherQuiz.setUpdateTime(new Date());
+                teacherQuiz.setUpdateId(teacherId);
+                teacherQuiz.setStatus(quizScore < RestfulConfig.Quiz.QUIZ_PASS_SCORE?TeacherQuizEnum.Status.FAIL.val():TeacherQuizEnum.Status.PASS.val());
+                //更新当前考试记录
+                this.teacherQuizDao.update(teacherQuiz);
+                // 插入新的待考记录
+                if(quizScore < RestfulConfig.Quiz.QUIZ_PASS_SCORE){
+                    logger.info("teacehrId:{},提交考试结果，quizId:{} 没通过,新增一条考试记录",teacherId,teacherQuiz.getId(),teacherQuiz.getStatus());
+                    this.teacherQuizDao.insertQuiz(teacherId,teacherId);
+                }
+                logger.info("teacehrId:{},提交考试结果，quizId:{},result:{} ",teacherId,teacherQuiz.getId(),teacherQuiz.getStatus());
+                return true;
+            }else{
+                logger.warn("teacehrId:{},提交考试结果，quizId:{},token不匹配,请求token:{},实际token:{}",teacherId,teacherQuiz.getId(),quizToken,teacherQuiz.getStartQuizTime().getTime());
+                return false;
             }
-            logger.info("teacehrId:{},提交考试结果，quizId:{},result:{} ",teacherId,teacherQuiz.getId(),teacherQuiz.getStatus());
         }
-        return true;
+        return false;
     }
     
     /**
@@ -252,20 +258,22 @@ public class AdminQuizService {
      * boolean
      * @date 2016年8月29日
      */
-    public boolean startQuiz(long teacherId){
+    public long startQuiz(long teacherId){
         logger.info("teacehrId:{},开始考试",teacherId);
         //查询老师待考试记录
         List<TeacherQuiz> list = this.teacherQuizDao.findNeedQuiz(teacherId);
         if(CollectionUtils.isNotEmpty(list)){
             //更新待考记录
+            Date date = new Date();
             TeacherQuiz teacherQuiz = list.get(0);
-            teacherQuiz.setStartQuizTime(new Date());
-            teacherQuiz.setUpdateTime(new Date());
+            teacherQuiz.setStartQuizTime(date);
+            teacherQuiz.setUpdateTime(date);
             teacherQuiz.setUpdateId(teacherId);
             //更新当前考试记录
             this.teacherQuizDao.update(teacherQuiz);
             logger.info("teacehrId:{},开始考试更新成功，quizId:{}",teacherId,teacherQuiz.getId());
+            return teacherQuiz.getStartQuizTime().getTime();
         }
-        return true;        
+        return 0;        
     }
 }
