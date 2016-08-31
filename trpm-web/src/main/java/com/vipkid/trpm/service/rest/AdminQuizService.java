@@ -1,5 +1,6 @@
 package com.vipkid.trpm.service.rest;
 
+import java.sql.Timestamp;
 import java.util.Base64;
 import java.util.Date;
 import java.util.List;
@@ -264,14 +265,14 @@ public class AdminQuizService {
         List<TeacherQuiz> list = this.teacherQuizDao.findNeedQuiz(teacherId);
         if(CollectionUtils.isNotEmpty(list)){
             //更新待考记录
-            Date date = new Date();
+            Timestamp date = new Timestamp(System.currentTimeMillis()/1000);
             TeacherQuiz teacherQuiz = list.get(0);
             teacherQuiz.setStartQuizTime(date);
             teacherQuiz.setUpdateTime(date);
             teacherQuiz.setUpdateId(teacherId);
             //更新当前考试记录
             this.teacherQuizDao.update(teacherQuiz);
-            logger.info("teacehrId:{},开始考试更新成功，quizId:{}",teacherId,teacherQuiz.getId());
+            logger.info("teacehrId:{},开始考试更新成功，quizId:{},toekn:{}",teacherId,teacherQuiz.getId(),teacherQuiz.getStartQuizTime().getTime());
             return teacherQuiz.getStartQuizTime().getTime();
         }
         return 0;        
