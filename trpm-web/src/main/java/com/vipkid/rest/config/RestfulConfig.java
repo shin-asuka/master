@@ -16,6 +16,17 @@ public class RestfulConfig {
         public static int RECRUITMENT = 2;
     }
     
+    public static final class RoleClass{
+        
+        public static String PE = "PE";
+        
+        public static String PES = "PE-Supervisor";
+        
+        public static String TE = "TE";
+        
+        public static String TES = "TE-Supervisor";
+    }
+    
     public static final class HttpStatus{
         
         public static int STATUS_403 = 403;

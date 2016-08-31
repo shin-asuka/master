@@ -20,6 +20,7 @@ import com.google.common.collect.Maps;
 import com.vipkid.enums.TeacherEnum;
 import com.vipkid.enums.UserEnum;
 import com.vipkid.rest.config.RestfulConfig;
+import com.vipkid.rest.config.RestfulConfig.RoleClass;
 import com.vipkid.trpm.constant.ApplicationConstant;
 import com.vipkid.trpm.constant.ApplicationConstant.CookieKey;
 import com.vipkid.trpm.constant.ApplicationConstant.TeacherLifeCycle;
@@ -385,10 +386,10 @@ public class LoginController {
         }
         
         logger.info("check teacher is PE:" + teacher.getId());
-        String role = loginService.isPe(teacher.getId()) ? "PE,":"";
+        String role = loginService.isPe(teacher.getId()) ? RoleClass.PE + ",":"";
         
         logger.info("check teacher is PES:" + teacher.getId());
-        role += loginService.isPes(teacher.getId()) ? "PE-Supervisor,":"";
+        role += loginService.isPes(teacher.getId()) ? RoleClass.PES + ",":"";
         
         logger.info("check result is role:{},teacherId:{}",role,teacher.getId());
         result.put("role",role);

@@ -18,7 +18,7 @@ public class AdminquizControllerTest extends BaseTestCase{
 
     private static Logger logger = LoggerFactory.getLogger(AdminquizControllerTest.class);
     
-    @Test
+    //@Test
     public void getLastQuiz() throws IOException{
         String url = URL_PREFIX + "/api/quiz/getLastQuiz";
         try{
@@ -56,7 +56,7 @@ public class AdminquizControllerTest extends BaseTestCase{
         }
     }
     
-    //@Test
+    @Test
     public void startQuiz() throws IOException{
         String url = URL_PREFIX + "/api/quiz/startQuiz";
         try{
