@@ -76,12 +76,11 @@
                 </div>
                 <div class="col-xs-6 text-right">
                    #if($payroll.totalSalaryFinal>$payroll.totalSalary)
-                       #set(($payTo=$payroll.totalSalaryFinal /100.00)
+                       #set($payTo=$payroll.totalSalaryFinal /100.00)
                     #end 
                     #if($payroll.totalSalaryFinal<=$payroll.totalSalary)
-                       #set(($payTo=$payroll.totalSalary /100.00)
+                       #set($payTo=$payroll.totalSalary /100.00)
                     #end 
-                 
                    
                     #if($payTo<0)
                        #set($payTo="N/A")
@@ -92,6 +91,9 @@
                     <h4>$ $!{payTo}</h4>
                 </div>
             </div>
+            <div class="col-xs-12 text-left">
+                    <h5>Your local amount may differ by 12$ money transfer fee</h5>
+             </div>
 
             <div class="row total-courses-warpper" style="margin-top:10px;">
                 <div class="col-xs-6 dropdown text-left">
