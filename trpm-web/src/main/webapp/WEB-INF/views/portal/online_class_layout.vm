@@ -52,6 +52,9 @@
     	checkalive.sendSysInfo("$!onlineClass.id","$!onlineClass.classroom","$!{TRPM_USER.id}","$!sysInfoURL");
     });
 </script>
+#if($onlineClass)
+#set($classUrl="http://management.vipkid.com.cn/operation/classroom/classroom/"+$!onlineClass.id)
+#end
 <script type="text/javascript">
     window.easemobim = window.easemobim || {};
     easemobim.config = {
@@ -59,12 +62,12 @@
         appKey: '513276871#teachertest',
         to: 'vipkid_teacher_portal_web',
         visitor: {         //访客信息，以下参数支持变量
-            trueName: '$!{TRPM_USER.name}',
+            trueName: '$!{TRPM_TEACHER.realName}',
             qq: '',
             phone: '$!{TRPM_TEACHER.mobile}',
             companyName: 'VIPKID',
-            userNickname: '$!{TRPM_USER.name}',
-            description: '老师ID：$!{TRPM_TEACHER.id}',
+            userNickname: '$!{TRPM_TEACHER.realName}',
+            description: '老师ID：$!{TRPM_TEACHER.id} , 监控教室Classroom：$!classUrl',
             email: '$!{TRPM_TEACHER.email}'
         },
     };
