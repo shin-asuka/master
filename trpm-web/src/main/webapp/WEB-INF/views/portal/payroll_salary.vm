@@ -558,9 +558,9 @@
                 <table class="table table-bordered table-striped">
                     <thead>
                         <tr class="info">
-                            <th class="text-center">Item</th>
-                            <th class="text-center">Description</th>
-                            <th class="text-center">Unit Price ($)</th>
+                            <td class="text-center">Item</th>
+                            <td class="text-center">Description</th>
+                            <td class="text-center">Unit Price ($)</th>
                             <td class="text-center">Details</td>
                         </tr>
                     </thead>
@@ -585,17 +585,16 @@
              <div id="popWindow" class="popWindow" style="display: none;"> 
               
               </div> 
-		    <div id="maskLayer" class="maskLayer" style="display: none;"> 
-		        <button type="button" class="close" onclick="require('payroll').closeDetials();">×</button>
+		    <div id="maskLayer" class="maskLayer" style="display: none;-moz-border-radius: 15px;-webkit-border-radius: 15px;"> 
+		        <button type="button" class="close"  style="padding:15px"onclick="require('payroll').closeDetials();">×</button>
                   
 			       <div>
-			        <div style="background-color:#eeeeee; " >Detail:</div>
+			        <div style="margin-top: 15px;margin-bottom: 20px;color: black;font-size:20px" >Detail</div>
 			      </div>
 			      
-			      <div style="background-color:#eeeeee;color:#000000;" class="detailInfo">Detail</div>
+			      <div style="color:#000000;" class="detailInfo">Detail</div>
 			      <div class="modal-footer">
-			        
-			        <button type="button" class="btn btn-info" data-dismiss="modal" onclick="require('payroll').closeDetials();">OK</button>
+			        <button type="button" style="border:1px solid red; left: 40%;position: absolute;background-color: #F63B00;width:20%"  data-dismiss="modal" onclick="require('payroll').closeDetials();">OK</button>
 			      </div>
 		    </div> 
             
