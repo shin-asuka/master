@@ -76,7 +76,7 @@
                 </div>
                 <div class="col-xs-6 text-right">
                       #if($payroll.status==0)
-                        <h6>This month''s salary will be displayed on the 8th of next month, Beijing time. </h6>
+                        This month/'s salary will be displayed on the 6th of next month, Beijing time.
 	                   #end
 	                   #if($payroll.totalSalaryFinal>$payroll.totalSalary)
 	                       #set($payTo=$payroll.totalSalaryFinal /100.00)
@@ -488,6 +488,7 @@
                         <td colspan="2" class="text-left" style="border-right:0;">
                          Monthly Evaluation
                         </td>
+                         #set($omeT=0.00)
                         #set($omeT=$otherMonthlyEvaluation.totalSalary /100.00)
                         #set($omeT=$numberTool.format('#0.00',$omeT))
                         <td colspan="1" class="text-right" style="border-left:0;">
