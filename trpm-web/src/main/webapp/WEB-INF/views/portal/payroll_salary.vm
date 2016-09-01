@@ -92,7 +92,7 @@
                 </div>
             </div>
             <div class="col-xs-12 text-left">
-                    <h5>Your local amount may differ by 12$ money transfer fee</h5>
+                    <h4 style="color: #a94442;">Your total amount may differ by $12 depending on the payment method we use.</h4>
              </div>
 
             <div class="row total-courses-warpper" style="margin-top:10px;">
