@@ -91,7 +91,7 @@
 	                    #if($payTo>=0)   
 	                        #set($payTo=$numberTool.format('#0.00',$payTo))
 	                    #end
-	                    <h3 class="text-info title inline-block">$ $!{payTo}</h3>
+	                    <h3 style= "display: inline-block;"class="text-info title">$ $!{payTo}</h3>
                 </div>
                 
             </div>
