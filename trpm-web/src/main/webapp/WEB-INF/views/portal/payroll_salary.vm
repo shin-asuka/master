@@ -591,15 +591,17 @@
               
               </div> 
 		    <div id="maskLayer" class="maskLayer" style="display: none;-moz-border-radius: 15px;-webkit-border-radius: 15px;"> 
-		        <button type="button" class="close"  style="padding:15px"onclick="require('payroll').closeDetials();">×</button>
-                  
+		        ##<button type="button" class="close"  style="padding:15px"onclick="require('payroll').closeDetials();">×</button>
+		           <div class="container-fluid">
+				        <button type="button" class="close" aria-label="Close"onclick="require('payroll').closeDetials();"><span aria-hidden="true">×</span></button>
+				    </div> 
 			       <div>
-			        <div style="margin-top: 15px;margin-bottom: 20px;color: black;font-size:20px" >Detail</div>
+			        <div style="margin-top: 20px;margin-bottom: 20px;color: black;font-size:20px" >Details</div>
 			      </div>
 			      
-			      <div style="color:#000000;height:auto"  class="detailInfo">Detail</div>
-			      <div class="modal-footer">
-			        <button type="button" style="border:1px solid red; left: 40%;position: absolute;background-color: #F63B00;width:20%"  data-dismiss="modal" onclick="require('payroll').closeDetials();">OK</button>
+			      <div style="color:#000000;height:auto"  class="detailInfo">Details</div>
+			      <div style="margin-top: 20px;    margin-right: -15px; margin-left: -15px;">
+			        <button type="button" style="display: block;margin-right: auto;margin-left: auto;"  data-dismiss="modal" onclick="require('payroll').closeDetials();">OK</button>
 			      </div>
 		    </div> 
             
