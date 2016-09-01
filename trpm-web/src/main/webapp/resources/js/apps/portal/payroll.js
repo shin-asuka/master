@@ -15,6 +15,7 @@ define(depends, function() {
 	/* 初始分页变量 */
 	var _initPage = 1;
 
+
 	//顶部下拉事件
 	$("#comments-content").find(".dropdown-toggle").click(function(){
 		var hrefId = jQuery(this).attr("href");
@@ -273,10 +274,10 @@ define(depends, function() {
 		$("#payrollForm").submit();
 	};
 	
-	var showDetials = function(details){
+	var showDetials = function(obj){
 		$('#popWindow').show();
 		$('#maskLayer').show();
-		$('.detailInfo').html(details) ;
+		$('.detailInfo').html($(obj).attr("content")) ;
 	
 	};
 	var closeDetials = function(details){

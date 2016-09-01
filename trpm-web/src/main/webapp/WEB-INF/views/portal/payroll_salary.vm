@@ -41,7 +41,7 @@
 		background-color:#f9f8f8; 
 		width: 450px; 
 		height: 200px; 
-		line-height: 30px; 
+		
 		left: 47%; 
 		top: 50%; 
 		color:#fff; 
@@ -574,7 +574,7 @@
                                 #set($adj=$numberTool.format('#0.00',$adj))
                                 <td class="text-center">$!{adj}</td>
                                 <td class="text-center">
-                                   <a href="javascript:;" onclick="require('payroll').showDetials('${adjust.details}')">view</a>
+                                   <a href="javascript:;" content="${adjust.details}" onclick="require('payroll').showDetials(this)">view</a>
                                 </td>
                             </tr>
                             #end
@@ -592,7 +592,7 @@
 			        <div style="margin-top: 15px;margin-bottom: 20px;color: black;font-size:20px" >Detail</div>
 			      </div>
 			      
-			      <div style="color:#000000;" class="detailInfo">Detail</div>
+			      <div style="color:#000000;height:auto"  class="detailInfo">Detail</div>
 			      <div class="modal-footer">
 			        <button type="button" style="border:1px solid red; left: 40%;position: absolute;background-color: #F63B00;width:20%"  data-dismiss="modal" onclick="require('payroll').closeDetials();">OK</button>
 			      </div>
