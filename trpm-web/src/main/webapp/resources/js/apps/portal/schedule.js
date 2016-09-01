@@ -114,10 +114,10 @@ define([ "function", "tools", "jquery-bootstrap", "jquery-cookie", "jquery-load"
 		if (showAdminQuiz) {
 			$("div.admin-quiz-tips").show();
 			$("body").addClass("modal-open");
-			var left = 2000 - $("#quiz-tips").offset().left - 70;
+			var left = $(".admin-quiz-tips").find(".light").width()/2 - $("#quiz-tips").offset().left - 70;
 			$(".admin-quiz-tips").find(".light").css({"left":(0-left)+"px"});
 			$(window).resize(function(){
-				var left = 2000 - $("#quiz-tips").offset().left - 70;
+				var left = $(".admin-quiz-tips").find(".light").width()/2 - $("#quiz-tips").offset().left - 70;
 				$(".admin-quiz-tips").find(".light").css({"left":(0-left)+"px"});
 			});
 			$("div.sure-btn,div.close-btn").click(function() {
