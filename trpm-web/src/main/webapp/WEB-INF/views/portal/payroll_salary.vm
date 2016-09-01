@@ -40,7 +40,7 @@
 		.maskLayer { 
 		background-color:#f9f8f8; 
 		width: 450px; 
-		height: 200px; 
+		
 		
 		left: 47%; 
 		top: 50%; 
@@ -76,7 +76,7 @@
                 </div>
                 <div class="col-xs-6 text-right">
                       #if($payroll.status==0)
-                        This month/'s salary will be displayed on the 6th of next month, Beijing time.
+                        This month&acute;s salary will be displayed on the 6th of next month, Beijing time.
 	                   #end
 	                   #if($payroll.totalSalaryFinal>$payroll.totalSalary)
 	                       #set($payTo=$payroll.totalSalaryFinal /100.00)
