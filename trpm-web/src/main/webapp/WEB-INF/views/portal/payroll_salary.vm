@@ -76,7 +76,7 @@
                 </div>
                 <div class="col-xs-6 text-right">
                       #if($payroll.status==0)
-                        <h6>This month"'"s salary will be displayed on the 8th of next month, Beijing time. </h6>
+                        <h6>This month''s salary will be displayed on the 8th of next month, Beijing time. </h6>
 	                   #end
 	                   #if($payroll.totalSalaryFinal>$payroll.totalSalary)
 	                       #set($payTo=$payroll.totalSalaryFinal /100.00)
@@ -91,7 +91,7 @@
 	                    #if($payTo>=0)   
 	                        #set($payTo=$numberTool.format('#0.00',$payTo))
 	                    #end
-	                    <h2>$ $!{payTo}</h2>
+	                    <h3 class="text-info title inline-block">$ $!{payTo}</h3>
                 </div>
                 
             </div>
