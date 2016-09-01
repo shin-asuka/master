@@ -601,7 +601,7 @@
 			      
 			      <div style="color:#000000;height:auto"  class="detailInfo">Details</div>
 			      <div style="margin-top: 20px;    margin-right: -15px; margin-left: -15px; margin-bottom :20px">
-			        <button type="button" style="border:1px solid red; left: 40%;position: absolute;background-color: #F63B00;width:20%"  data-dismiss="modal" onclick="require('payroll').closeDetials();">OK</button>
+			        <button type="button" style="border:1px solid red; left: 40%;background-color: #F63B00;width:20%"  data-dismiss="modal" onclick="require('payroll').closeDetials();">OK</button>
 			      </div>
 		    </div> 
             
