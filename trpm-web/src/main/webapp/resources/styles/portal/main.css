@@ -2413,7 +2413,6 @@ ul, li {
     position: fixed;
     top: 0;
     left: 0;
-    background: rgba(0, 0, 0, .5);
     z-index: 999;
     display: none;
   }
@@ -2472,10 +2471,10 @@ ul, li {
 	clearfix();
 }
 .admin-quiz-tips .light{
-	width: 200px;
-	height: 200px;
-	position: absolute;
-	top: 0px;
-	border-radius: 50%;
-	background: radial-gradient(rgba(247, 248, 237, .6), rgba(255, 255, 255, 0) 60%)
+    width: 4000px;
+    height: 4000px;
+    position: absolute;
+    top: -1903px;
+    border-radius: 50%;
+    box-shadow: inset 0 0 50px 1930px rgba(0,0,0,.5);
 }
