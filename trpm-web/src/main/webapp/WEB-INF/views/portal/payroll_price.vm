@@ -30,6 +30,7 @@
                         <tr class="rowscss #if($courseRule.visible==false) rowsDisableCss #end">
                             <td class="text-center">$courseRule.ruleName</td>
 							#set($courseRule_unitPrice = $courseRule.attributes.unitPrice /100.0)
+							 #set($courseRule_unitPrice=$numberTool.format('#0.00',$courseRule_unitPrice))
                             <td class="text-center">$!{courseRule_unitPrice}</td>
                             <td class="text-center" >
                                 <span name="effectiveDateFrom" showType="date" format="yyyy-MM-dd" value="$!{courseRule.effectiveDateFrom}"></span>
@@ -101,6 +102,7 @@
                     <tr class="rowscss #if($bounsRule.visible==false) rowsDisableCss #end">
                         <td class="text-center">$!{bounsRule.categoryName}</td>
 						#set($bounsRule_unitPrice = $bounsRule.attributes.unitPrice/100.0)
+						 #set($bounsRule_unitPrice=$numberTool.format('#0.00',$bounsRule_unitPrice))
                         <td class="text-center">$!{bounsRule_unitPrice}</td>
                         <td class="text-center">
                             <span name="effectiveDateFrom" showType="date" format="yyyy-MM-dd" value="$!{bounsRule.effectiveDateFrom}"></span>
@@ -131,7 +133,8 @@
                 <tbody>
                     #foreach($trailRule in $trial_class_rule.ruleList)
                     <tr class="rowscss #if($trailRule.visible==false) rowsDisableCss #end">
-                        <td class="text-center">$!{trailRule.attributes.percentage}</td>
+                        #set($tPercentage=$numberTool.format('#0.00',$trailRule.attributes.percentage))
+                        <td class="text-center">$!{tPercentage}</td>
                         <td class="text-center">
                             <span name="effectiveDateFrom" showType="date" format="yyyy-MM-dd" value="$!{trailRule.effectiveDateFrom}"></span>
 							--
@@ -165,6 +168,7 @@
                     <tr class="rowscss #if($deRule.visible==false) rowsDisableCss #end">
                         <td class="text-center">$deRule.ruleName</td>
 						#set($deRule_unitPrice = $deRule.attributes.unitPrice /100.0)
+						 #set($deRule_unitPrice=$numberTool.format('#0.00',$deRule_unitPrice))
                         <td class="text-center">$!{deRule_unitPrice}</td>
 						<td class="text-center">
                             <span name="effectiveDateFrom" showType="date" format="yyyy-MM-dd" value="$!{deRule.effectiveDateFrom}"></span>
