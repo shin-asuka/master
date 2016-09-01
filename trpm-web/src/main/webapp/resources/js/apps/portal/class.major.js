@@ -138,7 +138,7 @@ define(["function","jquery-bootstrap","jquery-load","countdown" ], function() {
 		if (isShow) {
 			$.alert("confirm", {
 				title : "Prompt",
-				content : "Please remember to fill in the class feedback!",
+				content : "Please make sure you have saved your form.",
 				button : "OK",
 				callback : function() {
 					Portal.loading("open");
