@@ -15,6 +15,7 @@ define(depends, function() {
 	/* 初始分页变量 */
 	var _initPage = 1;
 
+
 	//顶部下拉事件
 	$("#comments-content").find(".dropdown-toggle").click(function(){
 		var hrefId = jQuery(this).attr("href");
@@ -272,13 +273,27 @@ define(depends, function() {
 		$("input[name=offsetOfMonth]").val(_month);
 		$("#payrollForm").submit();
 	};
+	
+	var showDetials = function(obj){
+		$('#popWindow').show();
+		$('#maskLayer').show();
+		$('.detailInfo').html($(obj).attr("content")) ;
+	
+	};
+	var closeDetials = function(details){
+		$('#popWindow').hide();
+		$('#maskLayer').hide();
+		
+	
+	};
 
 	return {
 		init : init,
 		salaryList : salaryList,
 		preSalaryList : preSalaryList,
 		priceList : priceList,
-		
+		showDetials : showDetials,
+		closeDetials:closeDetials,
 	};
 
 });
