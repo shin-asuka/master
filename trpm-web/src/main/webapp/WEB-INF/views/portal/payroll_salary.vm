@@ -43,7 +43,7 @@
 		
 		
 		left: 47%; 
-		top: 50%; 
+		top: 40%; 
 		color:#fff; 
 		z-index: 2; 
 		position: fixed; 
@@ -91,7 +91,7 @@
 	                    #if($payTo>=0)   
 	                        #set($payTo=$numberTool.format('#0.00',$payTo))
 	                    #end
-	                    <h3 style= "display: inline-block;"class="text-info title">$ $!{payTo}</h3>
+	                    <h3 style= "display: inline-block;"class="title">$ $!{payTo}</h3>
                 </div>
                 
             </div>
