@@ -28,7 +28,11 @@ import com.vipkid.trpm.util.CookieUtils;
 
 public class CookieExpiredHandleInterceptor extends HandlerInterceptorAdapter {
 
+	private static final String IS_DISPLAY_PAYROLL = "isDisplayPayroll";
+	private static final String PAYROLL_OPEN_FLAG = "payroll_open_for_teacher";
+	private static final String PAYROLL_BLACK_LIST = "payroll_black_list_";
 	private static final String PAYROLL_EXD = "payroll_exd";
+	private static final String PAYROLL_OPEN_VALUE = "1";
 
 	private Logger logger = LoggerFactory.getLogger(CookieExpiredHandleInterceptor.class);
 
@@ -87,18 +91,22 @@ public class CookieExpiredHandleInterceptor extends HandlerInterceptorAdapter {
 		request.setAttribute("recruitmentUrl", PropertyConfigurer.stringValue("recruitment.www"));
 		request.setAttribute("isPe", indexService.isPe(user.getId()));
 		try {
-			String ids = PropertyConfigurer.stringValue("displayedPayrollId");			
-			String pid = redisProxy.get("payroll_" + user.getId());
-			if (pid != null && PAYROLL_EXD.equals(pid)) {
-				request.setAttribute("isDisplayPayroll", true);
-			} else {
-				if (ids.indexOf(new Long(user.getId()).toString()) > -1) {
-					redisProxy.setex("payroll_" + user.getId(), RedisConstants.PAYROLL_DISPLAY_MAX_NUM_EXCEED_DAY_SEC,
-							PAYROLL_EXD);
-					request.setAttribute("isDisplayPayroll", true);
+			// teacher payroll 开关
+			String openPayrollKey = PropertyConfigurer.stringValue(PAYROLL_OPEN_FLAG);
+			// redis 中的teacher payroll 开关
+			String openKeyRedis = redisProxy.get(PAYROLL_OPEN_FLAG);
+			// redis 中的 payroll 黑名单
+			String blackListRedis = redisProxy.get(PAYROLL_BLACK_LIST + user.getId());
+			if (openKeyRedis == null) {
+				redisProxy.setex(PAYROLL_OPEN_FLAG, RedisConstants.PAYROLL_DISPLAY_MAX_NUM_EXCEED_DAY_SEC,
+						openPayrollKey);
+			}
+			openKeyRedis = redisProxy.get(PAYROLL_OPEN_FLAG);
+			if (PAYROLL_OPEN_VALUE.equals(openKeyRedis)) {
+				if (blackListRedis == null || (!PAYROLL_EXD.equals(blackListRedis))) {
+					request.setAttribute(IS_DISPLAY_PAYROLL, true);
 				}
 			}
-			
 		} catch (Exception e) {
 			logger.error("捕获payroll redis 异常 ，teacher id是{}",user.getId());
 		}
