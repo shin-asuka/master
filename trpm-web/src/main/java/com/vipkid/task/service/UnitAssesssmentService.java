@@ -77,7 +77,7 @@ public class UnitAssesssmentService {
 			//调用homework服务查询为完成UA报告的课程
 			OnlineClassVo onlineClassVoUnSubmit = assessmentHttpService.findUnSubmitonlineClassVo(onlineClassVo );
 			logger.info("Result unSubmit OnlineClass  = {}",JsonUtils.toJSONString(onlineClassVoUnSubmit));
-			sendEmail(onlineClassVoUnSubmit, ocMap,"UARemindTeacher6hour.html","UARemindTeacher6hourTile.html");
+			sendEmail(onlineClassVoUnSubmit, ocMap,"UARemindTeacher6hour.html","UARemindTeacher6hourTitle.html");
 		}
 		
 	}
@@ -110,7 +110,7 @@ public class UnitAssesssmentService {
 			//调用homework服务查询为完成UA报告的课程
 			OnlineClassVo onlineClassVoUnSubmit = assessmentHttpService.findUnSubmitonlineClassVo(onlineClassVo );
 			logger.info("Result unSubmit OnlineClass  = {}",JsonUtils.toJSONString(onlineClassVoUnSubmit));
-			sendEmail(onlineClassVoUnSubmit, ocMap,"UARemindTeacher12hour.html","UARemindTeacher12hourTilte.html");
+			sendEmail(onlineClassVoUnSubmit, ocMap,"UARemindTeacher12hour.html","UARemindTeacher12hourTitle.html");
 		}
 		
 	}
