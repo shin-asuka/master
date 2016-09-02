@@ -92,17 +92,18 @@ public class CookieExpiredHandleInterceptor extends HandlerInterceptorAdapter {
 		request.setAttribute("isPe", indexService.isPe(user.getId()));
 		try {
 			// teacher payroll 开关
-			String openPayrollKey = PropertyConfigurer.stringValue(PAYROLL_OPEN_FLAG);
+			String openFlagInConfig = PropertyConfigurer.stringValue(PAYROLL_OPEN_FLAG);
 			// redis 中的teacher payroll 开关
-			String openKeyRedis = redisProxy.get(PAYROLL_OPEN_FLAG);
+			String openFlagInRedis = redisProxy.get(PAYROLL_OPEN_FLAG);
 			// redis 中的 payroll 黑名单
 			String blackListRedis = redisProxy.get(PAYROLL_BLACK_LIST + user.getId());
-			if (openKeyRedis == null) {
+			if (openFlagInRedis == null) {
 				redisProxy.setex(PAYROLL_OPEN_FLAG, RedisConstants.PAYROLL_DISPLAY_MAX_NUM_EXCEED_DAY_SEC,
-						openPayrollKey);
+						openFlagInConfig);
+				openFlagInRedis = redisProxy.get(PAYROLL_OPEN_FLAG);
 			}
-			openKeyRedis = redisProxy.get(PAYROLL_OPEN_FLAG);
-			if (PAYROLL_OPEN_VALUE.equals(openKeyRedis)) {
+			
+			if (PAYROLL_OPEN_VALUE.equals(openFlagInRedis)) {
 				if (blackListRedis == null || (!PAYROLL_EXD.equals(blackListRedis))) {
 					request.setAttribute(IS_DISPLAY_PAYROLL, true);
 				}
