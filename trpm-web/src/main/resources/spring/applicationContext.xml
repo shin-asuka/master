@@ -56,7 +56,7 @@
 	<aop:config proxy-target-class="true">
 		<aop:advisor advice-ref="monitorAdvice" pointcut="execution(* com.vipkid.trpm.controller.**.*Controller.*(..))" />
 		<aop:advisor advice-ref="monitorAdvice" pointcut="execution(* com.vipkid.trpm.service.**.*Service.*(..))" />
-		<aop:advisor advice-ref="monitorAdvice" pointcut="execution(* com.vipkid.trpm.restful.*Controller.*(..))" />
+		<aop:advisor advice-ref="monitorAdvice" pointcut="execution(* com.vipkid.rest.**.*Controller.*(..))" />
 	</aop:config>
 
 	<beans:import resource="dataAccessContext.xml" />

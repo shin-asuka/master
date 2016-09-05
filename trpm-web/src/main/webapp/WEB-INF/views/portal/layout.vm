@@ -22,13 +22,14 @@
       </font> 
     </div>
     <div>
-      <ul class="nav nav-pills pull-right vk-nav">
+      <ul id="quiz-tips" class="nav nav-pills pull-right vk-nav">
+		<li class="$!{material}"><a href="#springUrl('/training/material')">Training Center</a></li>
         <li class="$!{activeSchedule}"><a href="#springUrl('/schedule.shtml')">Schedule</a></li>
         <li class="$!{activeClassrooms}"><a href="#springUrl('/classrooms.shtml')">Classrooms</a></li>
         #if($isPe == 'true')
         <li class="$!{activeClassroomsPe}"><a href="#springUrl('/pesupervisor.shtml')">PE Supervisor</a></li>
 		#end        
-        <li class="$!{activeComments}"><a href="#springUrl('/comments.shtml')">Comments</a></li>
+        ##<li class="$!{activeComments}"><a href="#springUrl('/comments.shtml')">Comments</a></li>
         <li class="$!{activePersonalInfo}"><a href="#springUrl('/personalInfo.shtml')">Personal Info</a></li>
         ##教师端不展示Payroll模块 2016-06-02
         #if($isDisplayPayroll == 'true')

@@ -38,6 +38,7 @@ public class IndexController extends AbstractController {
 	private RemberService remberService;
 
 	@RequestMapping("/index")
+	@Deprecated
 	public String index(HttpServletRequest request, HttpServletResponse response, Model model) {
 		String token = request.getParameter("uuid");
 		if (StringUtils.isEmpty(token)) {
@@ -84,6 +85,7 @@ public class IndexController extends AbstractController {
 	}
 
 	@RequestMapping("/accessDenied")
+	@Deprecated
 	public String accessDenied(HttpServletRequest request, HttpServletResponse response, Model model) {
 		return "template/accessDenied";
 	}

@@ -65,6 +65,7 @@ public class PassportController extends AbstractController {
 	 * @date 2016年3月3日
 	 */
 	@RequestMapping("/signInAction")
+	@Deprecated
 	public String signInAction(HttpServletRequest request, HttpServletResponse response, Model model,
 			@RequestParam("email") String strEmail, @RequestParam("passwd") String strPwd,
 			@RequestParam("remember") boolean remember) {
@@ -178,6 +179,7 @@ public class PassportController extends AbstractController {
 	 * @return
 	 */
 	@RequestMapping("/signUp")
+	@Deprecated
 	public String signUp(HttpServletRequest request, HttpServletResponse response, Model model) {
 		// 推荐人
 		if (!StringUtils.isEmpty(request.getParameter(ApplicationConstant.REFEREEID))) {
@@ -199,6 +201,7 @@ public class PassportController extends AbstractController {
 	 * @return
 	 */
 	@RequestMapping("/signUpAction")
+	@Deprecated
 	public String signUpAction(HttpServletRequest request, HttpServletResponse response, Model model,
 			@RequestParam("email") String email, @RequestParam("privateCode") String privateCode) {
 		logger.info("sign up teacher email = {" + email + "," + new String(Base64.getDecoder().decode(privateCode))
@@ -238,6 +241,7 @@ public class PassportController extends AbstractController {
 	 * @return
 	 */
 	@RequestMapping("/resetPassword")
+	@Deprecated
 	public String resetPassword(HttpServletRequest request, HttpServletResponse response, Model model) {
 		model.addAttribute("tosignin", "button");
 		model.addAttribute("pageName", "Password Reset Center");
@@ -253,6 +257,7 @@ public class PassportController extends AbstractController {
 	 * @return
 	 */
 	@RequestMapping("/resetPasswordAction")
+	@Deprecated
 	public String resetPasswordAction(HttpServletRequest request, HttpServletResponse response, Model model,
 			@RequestParam("email") String strEmail) {
 		// 根据email，检查是否有此账号。
@@ -312,6 +317,7 @@ public class PassportController extends AbstractController {
 	 * @date 2016年3月3日
 	 */
 	@RequestMapping("/modifyPassword")
+	@Deprecated
 	public String modifyPassword(HttpServletRequest request, HttpServletResponse response, Model model,
 			@RequestParam("validate_token") String strToken) {
 		if (StringUtils.isEmpty("strToken")) {
@@ -339,6 +345,7 @@ public class PassportController extends AbstractController {
 	 * @date 2016年3月3日
 	 */
 	@RequestMapping("/modifyPasswordAction")
+	@Deprecated
 	public String modifyPasswordAction(HttpServletRequest request, HttpServletResponse response, Model model,
 			@RequestParam("privateCode") String password, @RequestParam("strToken") String strToken) {
 		// 修改成功后strToken替换成最新
@@ -379,6 +386,7 @@ public class PassportController extends AbstractController {
 	 * @date 2016年3月3日
 	 */
 	@RequestMapping("/signupSuccess")
+	@Deprecated
 	public String signupSuccess(HttpServletRequest request, HttpServletResponse response, Model model,
 			@RequestParam("uuid") String strToken) {
 		if (StringUtils.isEmpty(strToken)) {
@@ -419,6 +427,7 @@ public class PassportController extends AbstractController {
 	}
 
 	@RequestMapping("/privacy")
+	@Deprecated
 	public String privacy(HttpServletRequest request, HttpServletResponse response, Model model) {
 		model.addAttribute("tosignin", "button");
 		return "passport/privacy";

@@ -20,10 +20,12 @@ import com.vipkid.http.service.AnnouncementHttpService;
 import com.vipkid.trpm.constant.ApplicationConstant;
 import com.vipkid.trpm.constant.ApplicationConstant.CookieKey;
 import com.vipkid.trpm.constant.ApplicationConstant.RedisConstants;
+import com.vipkid.trpm.controller.portal.PersonalInfoController;
 import com.vipkid.trpm.entity.User;
 import com.vipkid.trpm.proxy.RedisProxy;
 import com.vipkid.trpm.service.passport.IndexService;
 import com.vipkid.trpm.service.portal.LocationService;
+import com.vipkid.trpm.service.rest.AdminQuizService;
 import com.vipkid.trpm.util.CookieUtils;
 
 public class CookieExpiredHandleInterceptor extends HandlerInterceptorAdapter {
@@ -52,6 +54,9 @@ public class CookieExpiredHandleInterceptor extends HandlerInterceptorAdapter {
 
 	@Resource
 	private AnnouncementHttpService announcementHttpService;
+	
+	@Autowired
+	private AdminQuizService adminQuizService;
 	
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
@@ -111,6 +116,17 @@ public class CookieExpiredHandleInterceptor extends HandlerInterceptorAdapter {
 		} catch (Exception e) {
 			logger.error("捕获payroll redis 异常 ，teacher id是{}",user.getId());
 		}
+		
+        String clazz = handlerMethod.getBeanType().getCanonicalName();
+        if (adminQuizService.findNeedQuiz(user.getId())) {
+            if(!PersonalInfoController.class.getCanonicalName().equals(clazz)){
+                logger.info("当前老师 [{}] 未通过考试", user.getName());
+                response.sendRedirect("/training/material");
+                return false;
+            }
+            return true;
+        }
+		
 		if (!checkChangePasswordUri(request) && checkCookie(request)) {
 			logger.info("拦截检测到需要修改密码进入页面");
 			response.sendRedirect(request.getContextPath() + "/schedule.shtml");

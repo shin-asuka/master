@@ -44,10 +44,14 @@ public class ScheduleController extends AbstractPortalController {
 				courseType));
 
 		// 判断是否能上Practicum类型的课程
+		model.addAttribute("showPracticum", false);
 		if (indexService.enabledPracticum(teacher.getId())) {
-			model.addAttribute("showLayer", scheduleService.showScheduleLayer(teacher));
+			model.addAttribute("showPracticum", scheduleService.showPracticum(teacher));
 		}
-
+		
+		//判断是否显示adminQuiz
+		model.addAttribute("showAdminQuiz", scheduleService.showAdminQuiz(teacher));
+		
 		// 判断是否需要显示24小时提示
 		model.addAttribute("show24HoursInfo", scheduleService.isShow24HourInfo(request, response));
 

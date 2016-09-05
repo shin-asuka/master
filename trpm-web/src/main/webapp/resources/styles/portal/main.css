@@ -2186,69 +2186,6 @@ ul, li {
 
 /*practicumClassroom end*/
 
-/* tips */
-.schedule-guide {
-	position: absolute;
-	left: 0;
-	top: 0;
-	z-index: 99999;
-	width: 100%;
-	height: 100%;
-	display: none;
-}
-
-.schedule-guide-bg {
-	position: absolute;
-	left: 0;
-	top: 0;
-	z-index: 100000;
-	width: 100%;
-	height: 100%;
-	background: #000;
-	filter: alpha(opacity = 65);
-	opacity: 0.65;
-}
-
-.schedule-guide-img {
-	width: 1040px;
-	height: 380px;
-	background: url(../../images/portal/guide_schedule.png) no-repeat left
-		top;
-	position: absolute;
-	left: 44px;
-	top: 79px;
-	z-index: 100001;
-}
-
-.schedule-guide-img a {
-	width: 120px;
-	height: 35px;
-	display: block;
-	position: absolute;
-	right: 104px;
-	bottom: 53px;
-}
-
-.classroom-guide-img {
-	width: 1050px;
-	height: 380px;
-	background: url(../../images/portal/guide_classroom.png) no-repeat left
-		top;
-	position: absolute;
-	left: 54px;
-	top: 85px;
-	z-index: 100001;
-}
-
-.classroom-guide-img a {
-	width: 120px;
-	height: 35px;
-	display: block;
-	position: absolute;
-	right: 83px;
-	bottom: 54px;
-}
-
 .btn-seft{
 	background-color: #e8e8e8;
     border-color: #e8e8e8;
@@ -2408,4 +2345,138 @@ ul, li {
 }
 
 
- 
+/* practicum tips */
+.schedule-guide {
+	position: absolute;
+	left: 0;
+	top: 0;
+	z-index: 999;
+	width: 100%;
+	height: 100%;
+	display: none;
+}
+
+.schedule-guide-bg {
+	position: absolute;
+	left: 0;
+	top: 0;
+	z-index: 100000;
+	width: 100%;
+	height: 100%;
+	background: #000;
+	filter: alpha(opacity = 65);
+	opacity: 0.65;
+}
+
+.schedule-guide-img {
+	width: 1040px;
+	height: 380px;
+	background: url(../../images/portal/guide_schedule.png) no-repeat left
+		top;
+	position: absolute;
+	left: 44px;
+	top: 79px;
+	z-index: 100001;
+}
+
+.schedule-guide-img a {
+	width: 120px;
+	height: 35px;
+	display: block;
+	position: absolute;
+	right: 104px;
+	bottom: 53px;
+}
+
+.classroom-guide-img {
+	width: 1050px;
+	height: 380px;
+	background: url(../../images/portal/guide_classroom.png) no-repeat left
+		top;
+	position: absolute;
+	left: 54px;
+	top: 85px;
+	z-index: 100001;
+}
+
+.classroom-guide-img a {
+	width: 120px;
+	height: 35px;
+	display: block;
+	position: absolute;
+	right: 83px;
+	bottom: 54px;
+}
+
+/* admin-quiz tips */
+.admin-quiz-tips{
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 999;
+    display: none;
+  }
+.admin-quiz-tips .notice-c{
+	width: 520px;
+	background: #FFFFFF;
+	margin: 0 auto;
+	top: 30%;
+	position: relative;
+	border-radius: 5px;
+	padding: 26px 50px;
+}
+.admin-quiz-tips .title{
+	color: #333333;
+	font-size: 18px;
+	text-align: center;
+	margin-bottom: 16px;
+}
+.admin-quiz-tips .close-btn{
+	position: absolute;
+	width: 30px;
+	height: 30px;
+	font-size: 30px;
+	padding: 1px;
+	top: 0;
+	right: 0;
+	color: #9B9B9B;
+	cursor:pointer;
+}
+.admin-quiz-tips .close-btn:before{
+	content: "\00D7";
+}
+.admin-quiz-tips .content{
+	font-size: 14px;
+	line-height: 18px;
+}
+.admin-quiz-tips .sure-btn{
+	width: 100px;
+	text-align: center;
+	background: #FF6600;
+	color: #FFFFFF;
+	font-size: 16px;
+	line-height: 36px;
+	border-radius: 5px;
+	position: relative;
+	bottom: 0%;
+	margin: 30px auto 0;
+	cursor:pointer;
+}
+.admin-quiz-tips .sure-btn:HOVER{
+	background:#b83c11;
+}
+.admin-quiz-tips .btn-area{
+	width: 240px;
+	margin: 30px auto 0;
+	clearfix();
+}
+.admin-quiz-tips .light{
+    width: 4000px;
+    height: 4000px;
+    position: absolute;
+    top: -1903px;
+    border-radius: 50%;
+    box-shadow: inset 0 0 50px 1930px rgba(0,0,0,.5);
+}
