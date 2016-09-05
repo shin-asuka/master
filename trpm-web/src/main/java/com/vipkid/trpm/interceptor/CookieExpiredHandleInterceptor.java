@@ -31,6 +31,7 @@ public class CookieExpiredHandleInterceptor extends HandlerInterceptorAdapter {
 	private static final String IS_DISPLAY_PAYROLL = "isDisplayPayroll";
 	private static final String PAYROLL_OPEN_FLAG = "payroll_open_for_teacher";
 	private static final String PAYROLL_BLACK_LIST = "payroll_black_list_";
+	private static final String PAYROLL_WHITE_LIST = "payroll_white_list_";
 	private static final String PAYROLL_EXD = "payroll_exd";
 	private static final String PAYROLL_OPEN_VALUE = "1";
 
@@ -96,17 +97,16 @@ public class CookieExpiredHandleInterceptor extends HandlerInterceptorAdapter {
 			// redis 中的teacher payroll 开关
 			String openFlagInRedis = redisProxy.get(PAYROLL_OPEN_FLAG);
 			// redis 中的 payroll 黑名单
-			String blackListRedis = redisProxy.get(PAYROLL_BLACK_LIST + user.getId());
+			//String blackListRedis = redisProxy.get(PAYROLL_BLACK_LIST + user.getId());
+			String whiteListRedis = redisProxy.get(PAYROLL_WHITE_LIST + user.getId());
 			if (openFlagInRedis == null) {
 				redisProxy.setex(PAYROLL_OPEN_FLAG, RedisConstants.PAYROLL_DISPLAY_MAX_NUM_EXCEED_DAY_SEC,
 						openFlagInConfig);
 				openFlagInRedis = redisProxy.get(PAYROLL_OPEN_FLAG);
 			}
 			
-			if (PAYROLL_OPEN_VALUE.equals(openFlagInRedis)) {
-				if (blackListRedis == null || (!PAYROLL_EXD.equals(blackListRedis))) {
-					request.setAttribute(IS_DISPLAY_PAYROLL, true);
-				}
+			if (PAYROLL_OPEN_VALUE.equals(openFlagInRedis) || PAYROLL_EXD.equals(whiteListRedis)) {
+				request.setAttribute(IS_DISPLAY_PAYROLL, true);
 			}
 		} catch (Exception e) {
 			logger.error("捕获payroll redis 异常 ，teacher id是{}",user.getId());
