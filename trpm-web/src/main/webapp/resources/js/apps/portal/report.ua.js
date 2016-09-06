@@ -67,6 +67,7 @@ define([ "function", "jquery-bootstrap", "jquery-form", "jquery-load", "tools" ]
 	
 	/**页面请求开始*/
 	var showUAReport = function(serialNumber, studentId, onlineClassId,isNewUa) {
+		debugger;
 		Portal.loading("open");
 		var url = webPath + "/uploadPage.shtml";
 		//var url = webPath + "/uaReportShow.shtml";
@@ -78,6 +79,7 @@ define([ "function", "jquery-bootstrap", "jquery-form", "jquery-load", "tools" ]
 		data.put("name", serialNumber);
 		data.put("studentId", studentId);
 		data.put("onlineClassId", onlineClassId);
+		data.put("isUa","ua");
 
 		_serialNumber = serialNumber;
 		_studentId = studentId;

@@ -37,15 +37,15 @@
 					
 					#else
 						##否则显示feedback
-##						<div onclick="require('feedback').openFeedback('Required','$!onlineClass.id','$!student.id')">Add Feedback</div>
-                        <div class="js-add">Add Feedback</div>
+						<div onclick="require('feedback').openFeedback('Required','$!onlineClass.id','$!student.id')">Add Feedback</div>
+##                      x<div class="js-add">Add Feedback</div>
 					#end
 					
 					#if(!$isReplay)
 						<div class="lastAction"><a href="http://help.duobeiyun.com/room/test/?result=http://beta-app-proxy.vipkid.com.cn/api/service/public/ittest/callback&amp;lang=en&amp;role=TEACHER&amp;id=$teacher.id" style="color: red;" target="_blank">Test your computer</a></div>
 					#end
 					
-					<div class="lastAction"> <a href="javascript:;" onclick="require('classmajor').confirmExitClassroom($isDemoReport,'$!onlineClass.id', '$!student.id')"  style="color: white;">Exit Classroom</a></div>
+					<div class="lastAction"> <a href="javascript:;" onclick="require('classmajor').confirmExitClassroom($isDemoReport,'$!onlineClass.id', '$!student.id','$lesson.isUnitAssessment')"  style="color: white;">Exit Classroom</a></div>
 		        </div>
 		        
 		        #**3.倒计时显示 *#
@@ -138,7 +138,7 @@ body {
 
 <div class="js-iframe-score iframe-score">
 	<span>X</span>
-	<iframe frameborder="0" scrolling="auto" width="100%" height="500" ng-src="/unit_assessment?onlineClassId=${onlineClassId}"></iframe>
+	<iframe frameborder="0" scrolling="auto" width="100%" height="500" src="/unit_assessment?onlineClassId=${onlineClassId}"></iframe>
 	<strong></strong>
 </div>
 
@@ -149,7 +149,6 @@ body {
 			init : function (){
 				this.status = true;
 				this.iframe = $('.js-iframe-score');
-                this.modifyIframeHeight(3);
                 this.addEvent();
 				this.urls();
 			},
@@ -157,12 +156,16 @@ body {
 			urls : function (){
                 var url = window.location.href;
                 var ua = url.indexOf('from=ua');
-				ua!=-1 && this.iframe.show();
+				if(ua!=-1){
+                    this.modifyIframeHeight(3);
+                    this.iframe.show();
+				}
 			},
 
 			modifyIframeHeight : function (num){
                 this.iframe.show();
                 this.iframe.css('height', $('body').outerHeight()/num);
+
 			},
 
 			addEvent : function (){
@@ -230,7 +233,7 @@ body {
 	    #if($currentReport)
 	    	 require(['report-demo','room-demo'], function(report,roomdemo){
 	    	 	roomdemo.parentTab();
-	    	 	#if($from)
+	    	 	#if($from && $from!="ua")
 	    	 		roomdemo.openDemoReportRoom("$!lesson.serialNumber","$!onlineClass.id","$!student.id","listening-s");
 	    	 	#end
 	    	 });
@@ -238,7 +241,7 @@ body {
     #else
     	require(['feedback'], function(feedback){
 		 	feedback.parentTab();
-		 	#if($from)
+		 	#if($from && $from!="ua")
 		 		feedback.openFeedback("Required","$!onlineClass.id","$!student.id");
 		 	#end
 		});
