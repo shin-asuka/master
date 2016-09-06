@@ -26,16 +26,19 @@
 					#if($stringUtils.startsWith($!{lesson.serialNumber},'A'))
 						#if($currentReport)
 							#set($isDemoReport = true)
-							<div onclick="require('report-demo').showDemoReport('$lesson.serialNumber','$!onlineClass.id', '$!student.id')">Add Feedback</div>
+##							<div onclick="require('report-demo').showDemoReport('$lesson.serialNumber','$!onlineClass.id', '$!student.id')">Add Feedback</div>
+                            <div class="js-add">Add Feedback</div>
 						#end
 					#elseif($lesson.isUnitAssessment == 1 && $isNewUa == 1)
 						##需要填写单元评估报告的课程  is Unit Assessment
-						<div onclick="require('feedback').openUnitAssessment('Required','$!onlineClass.id','$!student.id')">Add Feedback</div> 
-						##<div onclick="showUADailog('$!onlineClass.id')">Add Feedback</div> 
+##						<div onclick="require('feedback').openUnitAssessment('Required','$!onlineClass.id','$!student.id')">Add Feedback</div>
+                        <div class="js-add">Add Feedback</div>
+					##<div onclick="showUADailog('$!onlineClass.id')">Add Feedback</div>
 					
 					#else
 						##否则显示feedback
-						<div onclick="require('feedback').openFeedback('Required','$!onlineClass.id','$!student.id')">Add Feedback</div> 
+##						<div onclick="require('feedback').openFeedback('Required','$!onlineClass.id','$!student.id')">Add Feedback</div>
+                        <div class="js-add">Add Feedback</div>
 					#end
 					
 					#if(!$isReplay)
@@ -103,6 +106,91 @@
 		##body end
   </div>
 </div>
+
+<style>
+body {
+	overflow:hidden;
+}
+
+.iframe-score {
+	position:absolute;
+	bottom:-34px;
+	width:100%;
+	padding:0 100px;
+	display:none;
+}
+.iframe-score span {
+	position:absolute;
+	right:50px;
+	top:19px;
+	font-size:24px;
+}
+.iframe-score strong {
+	position:absolute;
+	right:20px;
+	bottom:20px;
+	background:#000;
+	width:50px;
+	height:50px;
+	cursor:pointer;
+}
+</style>
+
+<div class="js-iframe-score iframe-score">
+	<span>X</span>
+	<iframe frameborder="0" scrolling="auto" width="100%" height="500" ng-src="/unit_assessment?onlineClassId=${onlineClassId}"></iframe>
+	<strong></strong>
+</div>
+
+
+<script>
+
+		var setIframe = {
+			init : function (){
+				this.status = true;
+				this.iframe = $('.js-iframe-score');
+                this.modifyIframeHeight(3);
+                this.addEvent();
+				this.urls();
+			},
+
+			urls : function (){
+                var url = window.location.href;
+                var ua = url.indexOf('from=ua');
+				ua!=-1 && this.iframe.show();
+			},
+
+			modifyIframeHeight : function (num){
+                this.iframe.show();
+                this.iframe.css('height', $('body').outerHeight()/num);
+			},
+
+			addEvent : function (){
+				var t = this;
+				$(window).on('resize', function (){
+					t.modifyIframeHeight(3);
+				});
+				$('.js-add').on('click', function (){
+                    t.modifyIframeHeight(3);
+				});
+				$('strong', this.iframe).on('click', function (){
+					t.modifyIframeHeight(t.status ? 2 : 3);
+                    t.status = t.status ? false : true;
+				});
+                $('span', this.iframe).on('click', function (){
+					t.iframe.hide();
+				});
+			}
+		};
+
+		window.onload = function (){
+            setIframe.init();
+		};
+</script>
+<!--<iframe id="iframe-score" frameborder="0" scrolling="auto" width="100%" height="500"
+        src="/unit_assessment?onlineClassId=${onlineClassId}"></iframe>-->
+
+
 
 <!-- Modal -->
 <div  class="modal fade" data-backdrop="false" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
