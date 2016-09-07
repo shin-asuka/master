@@ -90,7 +90,7 @@ public class OnlineClassService {
 
     @Autowired
     private TeacherModuleDao teacherModuleDao;
-    
+
     @Autowired
     private TeacherQuizDao teacherQuizDao;
 
@@ -410,8 +410,14 @@ public class OnlineClassService {
         // 6.然后操作TeacherApllication
         if (ClassStatus.isBooked(onlineClass.getStatus())
                 || ClassStatus.isFinished(onlineClass.getStatus())) {
+            List<TeacherModule> teacherModules = teacherModuleDao.findByTeacherPe(pe.getId());
+            // 判断当前用户是否拥有PE Supervisor权限
+            if (CollectionUtils.isNotEmpty(teacherModules)) {
+                currTeacherApplication.setContractUrl("PE-Supervisor");
+            } else {
+                currTeacherApplication.setContractUrl("PE");
+            }
             // 如果课程已经结束
-            currTeacherApplication.setContractUrl("PE");
             modelMap = this.updateTeacherApplication(recruitTeacher, pe, result, "",
                     currTeacherApplication);
             // 日志 2
@@ -474,7 +480,7 @@ public class OnlineClassService {
             recruitTeacher.setType(TeacherType.PART_TIME);
             this.teacherDao.update(recruitTeacher);
             // 增加quiz的考试记录
-            teacherQuizDao.insertQuiz(recruitTeacher.getId(),pe.getId());
+            teacherQuizDao.insertQuiz(recruitTeacher.getId(), pe.getId());
         }
         // 3.更新teacherApplication
         this.teacherApplicationDao.update(teacherApplication);

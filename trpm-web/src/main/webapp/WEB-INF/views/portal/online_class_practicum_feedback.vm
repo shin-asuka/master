@@ -4,11 +4,7 @@
 .finishTypeItem, .finishTypeButton { float: right!important; }
 .mainContainer { margin: 0 auto 0 auto!important; }
 </style>
-#if($!{PESupervisor} || "PE-Supervisor" == $!{teacherApplication.contractUrl})
-<form class='feedBackForm' id ='practicumFeedBackForm' action="#springUrl('/pe/doAudit.json')">
-#else
 <form class='feedBackForm' id ='practicumFeedBackForm' action="#springUrl('/doAudit.json')">
-#end
     <div class="wrapper"> 
         ##关闭
         <div class='closeBtn' onclick="require('classpracticum').closeFeedBackForm()"></div>
