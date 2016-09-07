@@ -108,12 +108,8 @@
 </div>
 
 <style>
-body {
-	overflow:hidden;
-}
-
 .iframe-score {
-	position:absolute;
+	position:fixed;
 	bottom:-34px;
 	width:100%;
 	padding:0 100px;
