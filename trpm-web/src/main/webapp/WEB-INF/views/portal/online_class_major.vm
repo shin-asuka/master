@@ -117,18 +117,32 @@
 }
 .iframe-score span {
 	position:absolute;
-	right:50px;
+	right:70px;
 	top:19px;
-	font-size:24px;
+	font-size:26px;
+	cursor:pointer;
+}
+.iframe-score span:hover {
+	color:#C00;
 }
 .iframe-score strong {
 	position:absolute;
-	right:20px;
-	bottom:20px;
+	right:50px;
+	bottom:40px;
 	background:#000;
 	width:50px;
 	height:50px;
 	cursor:pointer;
+	background:url(../../trpm-web/resources/images/portal/up_hover.png) no-repeat 0 0;
+}
+.iframe-score strong:hover {
+    background:url(../../trpm-web/resources/images/portal/up_normal.png) no-repeat 0 0;
+}
+.iframe-score strong.click {
+    background:url(../../trpm-web/resources/images/portal/down-hover.png) no-repeat 0 0;
+}
+.iframe-score strong.click:hover {
+    background:url(../../trpm-web/resources/images/portal/down_normal.png) no-repeat 0 0;
 }
 </style>
 
@@ -145,6 +159,7 @@
 			init : function (){
 				this.status = true;
 				this.iframe = $('.js-iframe-score');
+				this.el = $('iframe', this.iframe)
                 this.addEvent();
 				this.urls();
 			},
@@ -161,7 +176,7 @@
 			modifyIframeHeight : function (num){
                 this.iframe.show();
                 this.iframe.css('height', $('body').outerHeight()/num);
-
+                this.el.css('height', $('body').outerHeight()/num);
 			},
 
 			addEvent : function (){
@@ -173,8 +188,15 @@
                     t.modifyIframeHeight(3);
 				});
 				$('strong', this.iframe).on('click', function (){
-					t.modifyIframeHeight(t.status ? 2 : 3);
-                    t.status = t.status ? false : true;
+					if(t.status){
+                        t.modifyIframeHeight(2);
+                        t.status = false;
+						$(this).addClass('click');
+					}else{
+                        t.status = true;
+                        t.modifyIframeHeight(3);
+                        $(this).removeClass('click');
+					}
 				});
                 $('span', this.iframe).on('click', function (){
 					t.iframe.hide();
