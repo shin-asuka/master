@@ -222,7 +222,7 @@ public class ReportService {
             long ocId = resultReport.getOnlineClassId();
 
             executor.execute(() -> {
-                payrollMessageService.sendFinishOnlineClassMessage(ocId,
+                payrollMessageService.sendFinishOnlineClassMessage(report,ocId,
                         OperatorType.ADD_UNIT_ASSESSMENT);
             });
         }
@@ -692,7 +692,7 @@ public class ReportService {
             logger.info("填写评语发送消息  onlineClassId = {} ", onlineClassId);
 
             executor.execute(() -> {
-                payrollMessageService.sendFinishOnlineClassMessage(onlineClassId,
+                payrollMessageService.sendFinishOnlineClassMessage(teacherComment,onlineClassId,
                         OperatorType.ADD_TEACHER_COMMENTS);
             });
         }
