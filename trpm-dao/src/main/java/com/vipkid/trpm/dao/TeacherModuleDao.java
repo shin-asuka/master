@@ -28,4 +28,13 @@ public class TeacherModuleDao extends MapperDaoTemplate<TeacherModule> {
 	    paramsMap.put("moduleName","PE");
 	    return super.selectList(new TeacherModule(), paramsMap);
 	}
+	
+	   public List<TeacherModule> findByTeacherModule(long teacherId){
+	        if(teacherId == 0){
+	            return null;
+	        }
+	        Map<String,Object> paramsMap = Maps.newHashMap();
+	        paramsMap.put("teacherId", teacherId);
+	        return super.selectList(new TeacherModule(), paramsMap);
+	    }
 }

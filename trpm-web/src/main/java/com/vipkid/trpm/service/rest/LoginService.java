@@ -2,10 +2,12 @@ package com.vipkid.trpm.service.rest;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.community.tools.JsonTools;
 import org.slf4j.Logger;
@@ -16,6 +18,7 @@ import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.google.common.collect.Lists;
 import com.vipkid.rest.config.RestfulConfig;
+import com.vipkid.rest.config.RestfulConfig.RoleClass;
 import com.vipkid.trpm.constant.ApplicationConstant;
 import com.vipkid.trpm.constant.ApplicationConstant.CookieKey;
 import com.vipkid.trpm.constant.ApplicationConstant.CourseType;
@@ -156,7 +159,7 @@ public class LoginService {
     }
     
     /**
-     * 判断User拥有的权限
+     * 判断User拥有的PES权限
      * 
      * @Author:ALong (ZengWeiLong)
      * @param teacherId
@@ -170,6 +173,25 @@ public class LoginService {
         }
         return true;
     }
+    
+    /**
+     * 判断User拥有的权限
+     * 
+     * @Author:ALong (ZengWeiLong)
+     * @param teacherId
+     * @return boolean
+     * @date 2016年7月4日
+     */
+    public String findByTeacherModule(long teacherId) {
+        String result = "";
+        List<TeacherModule> modulelist = teacherModuleDao.findByTeacherModule(teacherId);
+        if(CollectionUtils.isNotEmpty(modulelist)){
+            result = modulelist.stream().map(bean -> (String)bean.getModuleName()).collect(Collectors.joining(","));
+            result = result.replace(RoleClass.PE, RoleClass.PES);
+        }
+        return result;
+    }  
+    
 
     public User findUserById(long id) {
         return this.userDao.findById(id);

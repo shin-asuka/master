@@ -400,10 +400,11 @@ public class LoginController {
         logger.info("check teacher is PE:" + teacher.getId());
         String role = loginService.isPe(teacher.getId()) ? RoleClass.PE + ",":"";
         
-        logger.info("check teacher is PES:" + teacher.getId());
-        role += loginService.isPes(teacher.getId()) ? RoleClass.PES + ",":"";
+        logger.info("check pe role:{},teacherId:{}",role,teacher.getId());
         
-        logger.info("check result is role:{},teacherId:{}",role,teacher.getId());
+        role += loginService.findByTeacherModule(teacher.getId());
+        logger.info("check module:{},teacher:{}",role,teacher.getId());
+        
         result.put("role",role);
         
         String headsrc = teacher.getAvatar();
