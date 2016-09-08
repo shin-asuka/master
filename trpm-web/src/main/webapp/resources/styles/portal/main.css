@@ -533,12 +533,12 @@ hr {
 }
 /* line 484, */
 .lessonInfoContent {
-	display: block;	
+	display: block;
 }
 .lessonInfoContentPayroll {
     display: block;
     TEXT-ALIGN: center;
-    
+
 }
 /* line 488, */
 .ratingTitle {
@@ -952,6 +952,9 @@ hr {
 		width: 100%;
 		background-color: #535353;
 		color: white;
+		position: fixed;
+		top: 0;
+		left: 0;
 	}
 	.classroom .lessonInfoRow {
 		height: 80px;
@@ -960,9 +963,10 @@ hr {
 		clear: left;
 		min-width: 1000px;
 		overflow: hidden;
+		margin-top: 44px;
 	}
-	
-	
+
+
 	.whiteBoardContainer .toggleBtnLeftArrow {
 		border: none;
 		position: absolute;
@@ -1382,7 +1386,7 @@ hr {
 		padding: 8px;
 	}
 	.classroom .rightActionBarGroup .classTime {
-		
+
 	}
 	.classroom .rightActionBarGroup2 {
 		float: right;
@@ -1503,7 +1507,7 @@ hr {
 		text-overflow: ellipsis;
 	}
 	.classroom .teachingHintUnFold {
-		
+
 	}
 	.classroom .teachingHintFold .currentPageTips {
 		color: white;
@@ -1552,7 +1556,7 @@ hr {
 	.classroom .classroom2Info {
 		/* position: absolute; */
 		/* left: -6px; */
-		
+
 	}
 	.classroom .loading {
 		background-image: url('../../images/portal/loading.gif');
@@ -1625,7 +1629,7 @@ hr {
 }
 
 .replay2 {
-	
+
 }
 
 .replay2 .addFeedbackBtn {
@@ -1911,14 +1915,14 @@ ul, li {
 }
 /*Don't remvoed ,use for selecting tab in the tool bar ,even it is empty */
 .ng-hide-feedback {
-	
+
 }
 /* alert css */
 .alert {
 	padding: 15px;
 	border: 1px solid #eed3d7;
 	border-radius: 4px;
-	position: fixed;	
+	position: fixed;
 	/* Each alert has its own width */
 	clear:both;
 	z-index: 65535;
@@ -2233,11 +2237,11 @@ ul, li {
 .line_input input.phone{z-index:3; color:#666}
 .line_input#phonePra .textfield{width:256px; height:38px;border:0 none;}
 .line_input#phonePra .error{margin:0 0 0 290px}
-.line_input input[type="text"].textfield{ height:36px; border:1px solid #d9d9d9; float:left;} 
+.line_input input[type="text"].textfield{ height:36px; border:1px solid #d9d9d9; float:left;}
 .line_input input[type="text"].textforbidden{height:36px; border:1px solid #d9d9d9; float:left;background:#f0f0f0}
 .line_input .contactUploadStatus{float:left;cursor:auto;height:36px; width:85px;border:#d9d9d9 0px solid; border-radius:0 0px 0px 0;border-left:0 none; float:left; margin-left:0px; color:blue;text-shadow:rgba(255,255,255,.4) 0px 2px 1px;font-size:16px}
 .line_input .browse{height:36px; width:86px; cursor:pointer; background:#e0e0e0;border:#d9d9d9 1px solid; border-radius:0 6px 6px 0;border-left:0 none; float:left; margin-left:-6px; color:#5a5a5a;text-shadow:rgba(255,255,255,.4) 0px 2px 1px;}
-.line_input .browse:hover{background:#e8e8e8; color:#333;} 
+.line_input .browse:hover{background:#e8e8e8; color:#333;}
 .line_input .textfield{float:left;margin-top: 9px;margin-left: 20px;font-size: 17px;color: #9B9B9B;}
 .line_input .attachfile{height:36px; width:86px; cursor:pointer; background:#e0e0e0;border:#d9d9d9 1px solid; border-radius:6px 6px 6px 6px;float:left;color:red;text-shadow:rgba(255,255,255,.4) 0px 2px 1px;}
 .line_input .attachfile:hover{height:36px; width:86px; cursor:pointer; background:#e0e0e0;border:#d9d9d9 1px solid; border-radius:6px 6px 6px 6px;float:left;color:#5a5a5a;text-shadow:rgba(255,255,255,.4) 0px 2px 1px;}
@@ -2321,14 +2325,14 @@ ul, li {
 	display: table;
 	height: 100px;
 	width: 100%;
-}  
+}
 .rownoCss a{
 	color: blue;
 }
 .contentcss{
-	word-break:normal; 
-	width:auto; 
-	display: table-cell; 
+	word-break:normal;
+	width:auto;
+	display: table-cell;
 	color: #879E56;
 	vertical-align: middle;
 	text-align: center;
@@ -2341,7 +2345,7 @@ ul, li {
 	height: 20px;
 	cursor: pointer;
 	background: url("../../images/portal/close_line2.png") no-repeat center center;
-	background-size:25px 25px; 
+	background-size:25px 25px;
 }
 
 
