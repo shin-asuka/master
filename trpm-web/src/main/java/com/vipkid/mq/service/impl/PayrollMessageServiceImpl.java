@@ -181,7 +181,7 @@ public class PayrollMessageServiceImpl implements PayrollMessageService {
 	            }
 				//查询是否有评语
 				if (teacherComment != null) {
-					hasComments = teacherComment.getHasComment();
+					//hasComments = teacherComment.getHasComment();
 					Long tcUpdateDateTime = teacherComment.getLastDateTime() == null ? null : teacherComment
 							.getLastDateTime().getTime();
 					onlineClassMessage.setTcUpdateDateTime(tcUpdateDateTime);
