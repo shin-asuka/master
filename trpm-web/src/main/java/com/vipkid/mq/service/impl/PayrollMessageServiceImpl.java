@@ -5,6 +5,7 @@ import javax.jms.Destination;
 
 import net.sf.json.JSONObject;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -171,9 +172,14 @@ public class PayrollMessageServiceImpl implements PayrollMessageService {
 			OnlineClassMessage onlineClassMessage = message.getOnlineClassMessage();
 			Long studentId = student.getId();
 			if(onlineClassMessage!=null && onlineClassMessage.getFinishType()!=null){
-				
-				//查询是否有评语
 				Boolean hasComments = false;
+				if (teacherComment == null 
+	                    || StringUtils.isBlank(teacherComment.getTeacherFeedback())) {
+					hasComments = false;
+	            }else{
+	            	hasComments = true;
+	            }
+				//查询是否有评语
 				if (teacherComment != null) {
 					hasComments = teacherComment.getHasComment();
 					Long tcUpdateDateTime = teacherComment.getLastDateTime() == null ? null : teacherComment
@@ -253,6 +259,7 @@ public class PayrollMessageServiceImpl implements PayrollMessageService {
 				}
 				
 				//是否有unitAssessment
+				assessmentReport.setHasUnitAssessment(true);
 				Boolean hasAssessmentReport = false;
 				LessonMessage lessonMessage = message.getLessonMessage();
 				if(lessonMessage!=null && lessonMessage.getSerialNumber()!=null){

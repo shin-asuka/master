@@ -100,6 +100,8 @@ public class ReportService {
     @Autowired
     private PayrollMessageService payrollMessageService;
 
+	private AssessmentReport resultReport;
+
     /**
      * uaReport<br/>
      *
@@ -120,6 +122,7 @@ public class ReportService {
      */
     public Map<String, Object> saveUAReport(AssessmentReport report, MultipartFile file, long size,
             User user, String score, String onlineClassId) {
+    	resultReport = null;
         Map<String, Object> resultMap = Maps.newHashMap();
         resultMap.put("result", false);
 
@@ -152,7 +155,7 @@ public class ReportService {
             return resultMap;
         }
 
-        AssessmentReport resultReport = null;
+        
         if (DateUtils.isSearchById(onlineClass.getScheduledDateTime().getTime())) {
             // 根据名称和studentId去匹配，匹配唯条
             resultReport = assessmentReportDao.findReportByClassId(Long.valueOf(onlineClassId));
@@ -222,7 +225,7 @@ public class ReportService {
             long ocId = resultReport.getOnlineClassId();
 
             executor.execute(() -> {
-                payrollMessageService.sendFinishOnlineClassMessage(report,ocId,
+                payrollMessageService.sendFinishOnlineClassMessage(resultReport,ocId,
                         OperatorType.ADD_UNIT_ASSESSMENT);
             });
         }
