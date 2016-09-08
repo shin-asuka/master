@@ -100,7 +100,6 @@ public class ReportService {
     @Autowired
     private PayrollMessageService payrollMessageService;
 
-	private AssessmentReport resultReport;
 
     /**
      * uaReport<br/>
@@ -122,7 +121,7 @@ public class ReportService {
      */
     public Map<String, Object> saveUAReport(AssessmentReport report, MultipartFile file, long size,
             User user, String score, String onlineClassId) {
-    	resultReport = null;
+    	AssessmentReport resultReport;
         Map<String, Object> resultMap = Maps.newHashMap();
         resultMap.put("result", false);
 
@@ -218,6 +217,7 @@ public class ReportService {
             }
         }
 
+        final AssessmentReport finalResultReport = resultReport;
         // 上传报告发送消息
         if (resultReport != null && (resultReport.getReaded() == UaReportStatus.REVIEWED||resultReport.getReaded() == UaReportStatus.NEWADD)
                 && resultReport.getOnlineClassId() > 0) {
@@ -225,7 +225,7 @@ public class ReportService {
             long ocId = resultReport.getOnlineClassId();
 
             executor.execute(() -> {
-                payrollMessageService.sendFinishOnlineClassMessage(resultReport,ocId,
+                payrollMessageService.sendFinishOnlineClassMessage(finalResultReport,ocId,
                         OperatorType.ADD_UNIT_ASSESSMENT);
             });
         }
