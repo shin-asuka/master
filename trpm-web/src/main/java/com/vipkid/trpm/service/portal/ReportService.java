@@ -219,7 +219,7 @@ public class ReportService {
         }
 
         // 上传报告发送消息
-        if (resultReport != null && resultReport.getReaded() == UaReportStatus.REVIEWED
+        if (resultReport != null && (resultReport.getReaded() == UaReportStatus.REVIEWED||resultReport.getReaded() == UaReportStatus.NEWADD)
                 && resultReport.getOnlineClassId() > 0) {
             logger.info("上传报告发送消息  onlineClassId = {} ", resultReport.getOnlineClassId());
             long ocId = resultReport.getOnlineClassId();
