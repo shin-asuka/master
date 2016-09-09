@@ -109,47 +109,58 @@
 
 <style>
 .iframe-score {
-	position:fixed;
-	bottom:-34px;
+	position:relative;
 	width:100%;
+	height: 300px;
 	padding:0 100px;
 	display:none;
+	background: rgba(194, 197, 188, .5)
 }
-.iframe-score span {
+.iframe-score.iframe-fixed{
+	position: fixed;
+	top: 0;
+	left: 0;
+	bottom: 0;
+    right: 0;
+}
+.iframe-score iframe{
+	background: #FFF;
+}
+.iframe-score span{
 	position:absolute;
-	right:70px;
-	top:19px;
+    width: 40px;
+	height: 40px;
+	right: 60px;
+	top:0;
 	font-size:26px;
 	cursor:pointer;
+}
+
+.iframe-score .down{
+    background: url("#styleUrl('/resources/images/portal/down_normal.png')");
+    background-size: 100% 100%;
+}
+
+.iframe-score .down:hover {
+    background: url("#styleUrl('/resources/images/portal/down-hover.png')");
+    background-size: 100% 100%;
+}
+.iframe-score .up {
+    background: url("#styleUrl('/resources/images/portal/up_normal.png')");
+    background-size: 100% 100%;
+}
+.iframe-score .up:hover {
+    background: url("#styleUrl('/resources/images/portal/up_hover.png')");
+    background-size: 100% 100%;
 }
 .iframe-score span:hover {
 	color:#C00;
 }
-.iframe-score strong {
-	position:absolute;
-	right:50px;
-	bottom:40px;
-	background:#000;
-	width:50px;
-	height:50px;
-	cursor:pointer;
-	background:url(../../trpm-web/resources/images/portal/up_hover.png) no-repeat 0 0;
-}
-.iframe-score strong:hover {
-    background:url(../../trpm-web/resources/images/portal/up_normal.png) no-repeat 0 0;
-}
-.iframe-score strong.click {
-    background:url(../../trpm-web/resources/images/portal/down-hover.png) no-repeat 0 0;
-}
-.iframe-score strong.click:hover {
-    background:url(../../trpm-web/resources/images/portal/down_normal.png) no-repeat 0 0;
-}
 </style>
 
 <div class="js-iframe-score iframe-score">
-	<span>X</span>
-	<iframe frameborder="0" scrolling="auto" width="100%" height="500" src="/unit_assessment?onlineClassId=${onlineClassId}"></iframe>
-	<strong></strong>
+	<span class="down"></span>
+	<iframe frameborder="0" scrolling="auto" width="100%" height="300"  style="filter:Chroma(Color=white);" src="http://a12-t.vipkid.com.cn/unit_assessment?onlineClassId=${onlineClassId}"></iframe>
 </div>
 
 
@@ -168,38 +179,43 @@
                 var url = window.location.href;
                 var ua = url.indexOf('from=ua');
 				if(ua!=-1){
-                    this.modifyIframeHeight(3);
                     this.iframe.show();
 				}
 			},
 
-			modifyIframeHeight : function (num){
+			modifyIframeHeight : function (){
                 this.iframe.show();
-                this.iframe.css('height', $('body').outerHeight()/num);
-                this.el.css('height', $('body').outerHeight()/num);
+                this.iframe.css('height', $('body').outerHeight());
+                this.el.css('height', $('body').outerHeight());
+				this.iframe.addClass('iframe-fixed');
+			},
+
+			showIframe : function (){
+                this.iframe.show();
 			},
 
 			addEvent : function (){
 				var t = this;
-				$(window).on('resize', function (){
-					t.modifyIframeHeight(3);
-				});
+				var iframeState = 1
 				$('.js-add').on('click', function (){
-                    t.modifyIframeHeight(3);
-				});
-				$('strong', this.iframe).on('click', function (){
-					if(t.status){
-                        t.modifyIframeHeight(2);
-                        t.status = false;
-						$(this).addClass('click');
-					}else{
-                        t.status = true;
-                        t.modifyIframeHeight(3);
-                        $(this).removeClass('click');
-					}
+                    t.showIframe();
+					t.modifyIframeHeight();
 				});
                 $('span', this.iframe).on('click', function (){
-					t.iframe.hide();
+					if (iframeState === 1) {
+                        t.iframe.removeClass('iframe-fixed');
+                        t.iframe.css('height', '300');
+                        t.el.css('height', '300');
+						$(this).addClass('up')
+						$(this).removeClass('down')
+						$('body').scrollTop($('body').height())
+                        iframeState = 0;
+					} else {
+						t.modifyIframeHeight();
+                        $(this).addClass('down')
+                        $(this).removeClass('up')
+                        iframeState = 1;
+					}
 				});
 			}
 		};
