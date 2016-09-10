@@ -158,7 +158,7 @@
 </style>
 
 <div class="js-iframe-score iframe-score">
-	<span class="down"></span>
+	<span class="down js-span"></span>
 	<iframe frameborder="0" scrolling="auto" width="100%" height="300"  style="filter:Chroma(Color=white);" src="http://a12-t.vipkid.com.cn/unit_assessment?onlineClassId=${onlineClassId}"></iframe>
 </div>
 
@@ -167,6 +167,7 @@
 
 		var setIframe = {
 			init : function (){
+				this.iframeState = 1;
 				this.status = true;
 				this.iframe = $('.js-iframe-score');
 				this.el = $('iframe', this.iframe)
@@ -178,7 +179,9 @@
                 var url = window.location.href;
                 var ua = url.indexOf('from=ua');
 				if(ua!=-1){
-                    this.iframe.show();
+					this.modifyIframeHeight();
+
+//                    this.iframe.show();
 				}
 			},
 
@@ -192,29 +195,32 @@
 
 			showIframe : function (){
                 this.iframe.show();
+                $('.js-span').addClass('down')
+                $('.js-span').removeClass('up');
+				this.iframeState = 1;
 			},
 
 			addEvent : function (){
 				var t = this;
-				var iframeState = 1
 				$('.js-add').on('click', function (){
                     t.showIframe();
 					t.modifyIframeHeight();
 				});
                 $('span', this.iframe).on('click', function (){
-					if (iframeState === 1) {
+					if (t.iframeState === 1) {
                         t.iframe.removeClass('iframe-fixed');
                         t.iframe.css('height', '300');
                         t.el.css('height', '300');
 						$(this).addClass('up')
 						$(this).removeClass('down')
 						$('body').scrollTop($('body').height())
-                        iframeState = 0;
+                        t.iframeState = 0;
 					} else {
 						t.modifyIframeHeight();
                         $(this).addClass('down')
                         $(this).removeClass('up')
-                        iframeState = 1;
+                        t.iframeState = 1;
+                        $('body').scrollTop(0)
 					}
 				});
 			}
