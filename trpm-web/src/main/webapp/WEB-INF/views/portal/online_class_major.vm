@@ -155,11 +155,26 @@
 .iframe-score span:hover {
 	color:#C00;
 }
+	.relative {
+		position:relative;
+	}
+.relative strong {
+	position:absolute;
+	top:20px;
+	right:36px;
+	width:22px;
+	cursor:pointer;
+	height:22px;
+    background: url("#styleUrl('/resources/images/portal/delete.png')");
+}
 </style>
 
 <div class="js-iframe-score iframe-score">
 	<span class="down js-span"></span>
+	<div class="relative">
 	<iframe frameborder="0" scrolling="auto" width="100%" height="300"  style="filter:Chroma(Color=white);" src="http://a12-t.vipkid.com.cn/unit_assessment?onlineClassId=${onlineClassId}"></iframe>
+	<strong></strong>
+    </div>
 </div>
 
 
@@ -222,6 +237,10 @@
                         t.iframeState = 1;
                         $('body').scrollTop(0)
 					}
+				});
+
+				$('.relative strong').on('click', function (){
+					t.iframe.hide();
 				});
 			}
 		};
