@@ -1,6 +1,7 @@
 package com.vipkid.trpm.dao;
 
 import java.sql.Timestamp;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -122,4 +123,12 @@ public class TeacherCommentDao extends MapperDaoTemplate<TeacherComment> {
         return super.selectOne(new TeacherComment().setStudentId(studentId).setOnlineClassId(onlineClassId)
                 .setTeacherId(teacherId));
     }
+
+	public List<TeacherComment> batchGetByOnlineClassIds(List<Long> onlineClassIds) {
+
+		Map<String, Object> paramsMap = Maps.newHashMap();
+		paramsMap.put("onlineClassIds", onlineClassIds);
+
+		return listEntity("batchGetByOnlineClassIds", paramsMap);
+	}
 }

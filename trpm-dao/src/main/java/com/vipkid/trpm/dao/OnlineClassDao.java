@@ -362,10 +362,10 @@ public class OnlineClassDao extends MapperDaoTemplate<OnlineClass> {
 		paramsMap.put("studentId", studentId);
 		return listEntity("findOnlineClassIdAndStudentId", paramsMap);
 	}
-	
+
 	/**
 	 * 查询指定时间内所有的课
-	 * 
+	 *
 	 * @param startTime
 	 * @param endTime
 	 * @param teacherId
@@ -377,5 +377,21 @@ public class OnlineClassDao extends MapperDaoTemplate<OnlineClass> {
 		paramsMap.put("endTime", endTime);
 		paramsMap.put("teacherId", teacherId);
 		return listEntity("findMajorCourseListByStartTimeAndEndTime", paramsMap);
+	}
+
+	/**
+	 * 查询指定时间内所有需要填写feedback的课
+	 *
+	 * @param startTime
+	 * @param endTime
+	 * @param teacherId
+	 * @return
+	 */
+	public List<Map<String, Object>> findOnlineClassList4CheckTeacherComment(String startTime, String endTime, Long teacherId) {
+		Map<String, Object> paramsMap = new HashMap<String, Object>();
+		paramsMap.put("startTime", startTime);
+		paramsMap.put("endTime", endTime);
+		paramsMap.put("teacherId", teacherId);
+		return listEntity("findOnlineClassList4CheckTeacherComment", paramsMap);
 	}
 }

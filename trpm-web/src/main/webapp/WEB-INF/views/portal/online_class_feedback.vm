@@ -2,34 +2,21 @@
 	<style>
 		.classroom .trailFeedbackContainer{text-align:left;}
 	</style>
+	#if(!$teacherComment.teacherFeedback || $teacherComment.teacherFeedback == "")
+		#set($elememtDisabled="")
+	#else
+		#set($elememtDisabled="disabled")
+	#end
 	<div>
 		<div id="Required" style="height:530px;overflow-x:hidden; overflow-y:auto;">
 			##<div class="hideFeedbackButton"></div>
 			<div>
-				#**
-				<div class="form-control" style="margin-bottom: 5px; height: 50px">
-					<label style="width: 280px;">How difficult or easy was the lesson for this student?<span style="color: red;">*</span></label>
-					<select id="lessonDiff" name="performance" field="$!teacherComment.performance" style="float: right;" class="ng-pristine ng-valid">
-						<option value="0"></option>
-						<option value="1">very difficult</option>
-						<option value="2">difficult</option>
-						<option value="3">appropriate</option>
-						<option value="4">easy</option>
-						<option value="5">very easy</option>
-					</select>
-				</div>
-				**#
-				
 				<div>
 					<label>How did your student do in today's class?<span style="color: red;">*</span></label>
 					<div style="font-weight:normal;color:#666;margin-top:-5px;padding-bottom:5px;">
 					(Remember, this goes to the parents.)</div>
 					<div>
-						#if(!$teacherComment.teacherFeedback || $teacherComment.teacherFeedback == "")
-							<textarea id="teacherFeedbackText" name="teacherFeedback" class="form-control ng-pristine ng-valid">$!teacherComment.teacherFeedback</textarea>
-						#else
-							<textarea id="teacherFeedbackText" disabled="disabled" name="teacherFeedback" class="form-control ng-pristine ng-valid">$!teacherComment.teacherFeedback</textarea>
-						#end
+						<textarea id="teacherFeedbackText" $elememtDisabled name="teacherFeedback" class="form-control ng-pristine ng-valid">$!teacherComment.teacherFeedback</textarea>
 					</div>
 				</div>
 				
@@ -38,14 +25,28 @@
 					<div style="font-weight:normal;color:#666;margin-top:-5px;padding-bottom:5px;">
 					(This goes to the next teacher.)</div>
 					<div>
-						#if(!$teacherComment.teacherFeedback || $teacherComment.teacherFeedback == "")
-							<textarea name="tipsForOtherTeachers" class="form-control ng-pristine ng-valid">$!teacherComment.tipsForOtherTeachers</textarea>
-						#else
-							<textarea name="tipsForOtherTeachers" disabled="disabled" class="form-control ng-pristine ng-valid">$!teacherComment.tipsForOtherTeachers</textarea>
-						#end
+						<textarea name="tipsForOtherTeachers" $elememtDisabled class="form-control ng-pristine ng-valid">$!teacherComment.tipsForOtherTeachers</textarea>
 					</div>
 				</div>
-				
+
+				<div style="padding-top:10px;">
+					<label>Level of Difficult</label>
+                    <div style="font-weight:normal;color:#666;margin-top:-5px;padding-bottom:5px;">
+                        (This helps us with overall lesson performance/ student ability)</div>
+					<div>
+					<select name="performance" field="$!teacherComment.performance" $elememtDisabled class="ng-pristine ng-valid">
+						<option value="0">Choose From Here</option>
+						<option value="5">Very Easy</option>
+						<option value="4">Slightly Easy</option>
+						<option value="3">On Level</option>
+						<option value="2">Slightly Difficulty</option>
+						<option value="1">Very Difficulty</option>
+					</select>
+                    </div>
+				</div>
+                <div style="padding-top:10px;">
+                    <input type="checkbox" name="performanceAdjust" value="1" $elememtDisabled #if($teacherComment.performanceAdjust == 1) checked #end/>I suggest adjustment to the current student placement
+                </div>
 				#if($lesson.serialNumber)
 					#if($stringUtils.startsWith($!lesson.serialNumber,'T'))
 					<div id="Suggestion">
