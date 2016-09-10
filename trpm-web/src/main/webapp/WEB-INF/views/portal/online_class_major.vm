@@ -118,7 +118,6 @@
 }
 .iframe-score.iframe-fixed{
 	position: fixed;
-	top: 0;
 	left: 0;
 	bottom: 0;
     right: 0;
@@ -184,9 +183,10 @@
 			},
 
 			modifyIframeHeight : function (){
+				var bodyHeight = $('body').outerHeight()-35;
                 this.iframe.show();
-                this.iframe.css('height', $('body').outerHeight());
-                this.el.css('height', $('body').outerHeight());
+                this.iframe.css('height', bodyHeight);
+                this.el.css('height', bodyHeight);
 				this.iframe.addClass('iframe-fixed');
 			},
 
