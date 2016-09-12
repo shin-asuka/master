@@ -1,6 +1,7 @@
 package com.vipkid.trpm.service.rest;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -182,14 +183,21 @@ public class LoginService {
      * @return boolean
      * @date 2016年7月4日
      */
-    public String findByTeacherModule(long teacherId) {
-        String result = "";
+    public void findByTeacherModule(long teacherId,Map<String,Object> roles) {
+        String result = ",";
         List<TeacherModule> modulelist = teacherModuleDao.findByTeacherModule(teacherId);
         if(CollectionUtils.isNotEmpty(modulelist)){
-            result = modulelist.stream().map(bean -> (String)bean.getModuleName()).collect(Collectors.joining(","));
-            result = result.replace(RoleClass.PE, RoleClass.PES);
+            result = modulelist.stream().parallel().map(bean -> (String)bean.getModuleName()).collect(Collectors.joining(",")) + ",";
         }
-        return result;
+        if(result.indexOf(","+RoleClass.PE+",") > -1){
+            roles.put(RoleClass.PES,true);
+        }
+        if(result.indexOf(","+RoleClass.TE+",") > -1){
+            roles.put(RoleClass.TE,true);
+        }
+        if(result.indexOf(","+RoleClass.TES+",") > -1){
+            roles.put(RoleClass.TES,true);
+        }
     }  
     
 

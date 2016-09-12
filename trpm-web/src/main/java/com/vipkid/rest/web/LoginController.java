@@ -397,16 +397,19 @@ public class LoginController {
             return result;
         }
         
-        logger.info("check teacher is PE:" + teacher.getId());
-        String role = loginService.isPe(teacher.getId()) ? RoleClass.PE + ",":"";
-        
-        logger.info("check pe role:{},teacherId:{}",role,teacher.getId());
-        
-        role += loginService.findByTeacherModule(teacher.getId());
-        logger.info("check module:{},teacher:{}",role,teacher.getId());
-        
-        result.put("role",role);
-        
+        Map<String,Object> roles = Maps.newHashMap();
+        roles.put(RoleClass.PE, false);
+        roles.put(RoleClass.PES, false);
+        roles.put(RoleClass.TE, false);
+        roles.put(RoleClass.TES, false);
+        //权限判断 start
+        logger.info("check module start teacherId:{}",teacher.getId());
+        loginService.findByTeacherModule(teacher.getId(),roles);
+        logger.info("check end module:{},teacher:{}",roles,teacher.getId());
+        roles.put(RoleClass.PE,loginService.isPe(teacher.getId()));
+        logger.info("check pe end module:{},teacher:{}",roles,teacher.getId());
+        result.put("role",roles);
+        //权限判断 end
         String headsrc = teacher.getAvatar();
         if(StringUtils.isNotBlank(headsrc)){
             headsrc = PropertyConfigurer.stringValue("oss.url_preffix") + (headsrc.startsWith("/") ? headsrc:"/"+headsrc);
