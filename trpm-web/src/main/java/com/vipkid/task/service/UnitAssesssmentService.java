@@ -123,8 +123,7 @@ public class UnitAssesssmentService {
 				if(oc!=null && StringUtils.isNoneBlank(oc.getTeacherEmail())){
 					String email = oc.getTeacherEmail(); //获取教师邮箱发送邮件
 					String name = oc.getTeacherName();
-					//TODO： 修改测试邮箱
-					email = "yangchao@vipkid.com.cn"; //
+					//email = "yangchao@vipkid.com.cn"; //
 					logger.info("send Email to teacher name= {},email = {} , contentTemplete = {}, titleTemplete = {}",name,email,contentTemplete,titleTemplete);
 					String scheduledDateTime = UADateUtils.format(oc.getScheduledDateTime(), "MM/dd/YYYY") ;
 					scheduledDateTime +=" at "+UADateUtils.format(oc.getScheduledDateTime(), "HH:mm") ;
