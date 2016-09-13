@@ -131,4 +131,11 @@ public class TeacherCommentDao extends MapperDaoTemplate<TeacherComment> {
 
 		return listEntity("batchGetByOnlineClassIds", paramsMap);
 	}
+
+	public List<Map<String, Object>> findLessonSn4PerformanceByStudentAndUnit(long studentId, String lessonSnPrefix) {
+		Map<String, Object> paramsMap = new HashMap<String, Object>();
+		paramsMap.put("studentId", studentId);
+		paramsMap.put("lessonSnPrefix", lessonSnPrefix);
+		return listEntity("findLessonSn4PerformanceByStudentAndUnit", paramsMap);
+	}
 }

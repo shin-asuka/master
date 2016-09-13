@@ -337,4 +337,17 @@
 			#{item}
 		</foreach>
 	</select>
+
+	<select id="findLessonSn4PerformanceByStudentAndUnit" resultType="java.util.HashMap">
+		SELECT
+		l.serial_number, oc.scheduled_date_time
+		FROM
+		teacher_comment tc
+		JOIN online_class oc ON oc.id = tc.online_class_id
+		JOIN lesson l ON l.id = oc.lesson_id
+		WHERE
+		tc.student_id = #{studentId}
+		AND (tc.performance = 1 OR tc.performance = 5)
+		AND l.serial_number LIKE #{lessonSnPrefix}
+	</select>
 </mapper>

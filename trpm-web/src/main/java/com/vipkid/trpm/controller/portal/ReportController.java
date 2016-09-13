@@ -238,10 +238,11 @@ public class ReportController extends AbstractPortalController {
      */
     @RequestMapping("/commentSubmit")
     public String feedbackSubmit(HttpServletRequest request, HttpServletResponse response,
-            TeacherComment teacherComment) {
-        Map<String, Object> paramMap = reportService.submitTeacherComment(teacherComment,
-                indexService.getUser(request));
-        return jsonView(response, paramMap);
+            TeacherComment teacherComment, Model model) {
+        String serialNumber = request.getParameter("serialNumber");
+        String scheduledDateTime = request.getParameter("scheduledDateTime");
+        Map<String, Object> parmMap = reportService.submitTeacherComment(teacherComment, indexService.getUser(request),scheduledDateTime);
+        return jsonView(response, parmMap);
     }
 
     @RequestMapping("/getComment")

@@ -644,7 +644,7 @@
 		JOIN course c ON c.id = u.course_id
 		JOIN teacher t ON t.id = oc.teacher_id
 		where 1=1
-		and c.type NOT LIKE '%OPEN'
+		and c.type NOT LIKE 'OPEN%'
 		and oc.class_type = 0
 		and oc.status in('FINISHED','BOOKED')
 		and (oc.finish_type = 'AS_SCHEDULED' or oc.finish_type is null )
