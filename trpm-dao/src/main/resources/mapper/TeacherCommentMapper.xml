@@ -347,7 +347,7 @@
 		JOIN lesson l ON l.id = oc.lesson_id
 		WHERE
 		tc.student_id = #{studentId}
-		AND (tc.performance = 1 OR tc.performance = 5)
+		AND tc.performance IN (1, 5)
 		AND l.serial_number LIKE #{lessonSnPrefix}
 	</select>
 </mapper>
