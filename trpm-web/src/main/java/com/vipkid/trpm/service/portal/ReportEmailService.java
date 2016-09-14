@@ -83,7 +83,7 @@ public class ReportEmailService {
 
         Map<String, String> emailMap = new TempleteUtils().readTemplete("FeedbackAdjustRemindCLT.html", paramsMap, "FeedbackAdjustRemindCLT-Title.html");
         // TODO: 2016/9/14 replace the email to CTL's
-        new EmailEngine().addMailPool("lilibo@vipkid.com.cn", emailMap, EmailConfig.EmailFormEnum.EDUCATION);
+        new EmailEngine().addMailPool("moyonglin@vipkid.com.cn", emailMap, EmailConfig.EmailFormEnum.EDUCATION);
     }
 
     private String getStudentName(long studentId){
