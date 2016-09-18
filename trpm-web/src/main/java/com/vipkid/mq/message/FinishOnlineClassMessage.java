@@ -83,6 +83,7 @@ public class FinishOnlineClassMessage implements Serializable {
 			lessonMessage.setName(lesson.getName());
 			lessonMessage.setSerialNumber(lesson.getSerialNumber());
 			lessonMessage.setNumber(lesson.getNumber());
+            lessonMessage.setIsUnitAssessment(lesson.getIsUnitAssessment());
 		}
 	}
 

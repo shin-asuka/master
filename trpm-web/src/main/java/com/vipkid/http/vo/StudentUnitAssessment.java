@@ -28,6 +28,7 @@ public class StudentUnitAssessment implements Serializable{
 	private Integer approvalStatus;		// 审核状态{ 1 未审核 2 审核中 3 已审核 4 审核失败}
 	private Long auditorId;		// 审核人
 	private String auditorName;		// 审核人名称
+    private Date createDateTime;//UA创建时间
 	
 	public StudentUnitAssessment() {
 		
@@ -161,5 +162,12 @@ public class StudentUnitAssessment implements Serializable{
 		this.auditorName = auditorName;
 	}
 
-	
+
+    public Date getCreateDateTime() {
+        return createDateTime;
+    }
+
+    public void setCreateDateTime(Date createDateTime) {
+        this.createDateTime = createDateTime;
+    }
 }
