@@ -31,7 +31,7 @@ define(depends, function(personal) {
 			
 			FILE_SIZE:"The file size can not exceed 20M!",
 			
-			UPLOAD_ERROR:"upload error，Please come again ! ",
+			UPLOAD_ERROR:"upload error，Please try again ! ",
 			
 			FILE_FORMAT:"File format only supports:"
 		};
