@@ -224,10 +224,8 @@ public class ReportService {
             logger.info("上传报告发送消息  onlineClassId = {} ", resultReport.getOnlineClassId());
             long ocId = resultReport.getOnlineClassId();
 
-            executor.execute(() -> {
-                payrollMessageService.sendFinishOnlineClassMessage(finalResultReport,ocId,
-                        OperatorType.ADD_UNIT_ASSESSMENT);
-            });
+            executor.execute(() -> payrollMessageService.sendFinishOnlineClassMessage(finalResultReport,ocId,
+                    OperatorType.ADD_UNIT_ASSESSMENT));
         }
 
         return resultMap;
@@ -337,10 +335,8 @@ public class ReportService {
             logger.info("上传报告发送消息  onlineClassId = {} ", resultReport.getOnlineClassId());
             long ocId = resultReport.getOnlineClassId();
 
-            executor.execute(() -> {
-                payrollMessageService.sendFinishOnlineClassMessage(ocId,
-                        OperatorType.ADD_UNIT_ASSESSMENT);
-            });
+            executor.execute(() -> payrollMessageService.sendFinishOnlineClassMessage(ocId,
+                    OperatorType.ADD_UNIT_ASSESSMENT));
         }
 
         return resultMap;
@@ -694,10 +690,8 @@ public class ReportService {
                 && teacherComment.getTeacherFeedback() != null) {
             logger.info("填写评语发送消息  onlineClassId = {} ", onlineClassId);
 
-            executor.execute(() -> {
-                payrollMessageService.sendFinishOnlineClassMessage(teacherComment,onlineClassId,
-                        OperatorType.ADD_TEACHER_COMMENTS);
-            });
+            executor.execute(() -> payrollMessageService.sendFinishOnlineClassMessage(teacherComment,onlineClassId,
+                    OperatorType.ADD_TEACHER_COMMENTS));
         }
 
         return parmMap;
