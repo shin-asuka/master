@@ -56,7 +56,7 @@
 		
 		teacher.contract_type AS teacher_contract_type,
 		teacher.highest_degree AS teacher_highest_degree,
-		teacher.evaluation_bio AS teacher_evaluation_bio,
+		teacher.evaluation_bio AS teacher_evaluation_bio
 	</sql>
 
 	<sql id="teacherWhere">

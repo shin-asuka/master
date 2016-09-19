@@ -81,6 +81,16 @@ define(depends, function(personal) {
 		    $('#introduction-left').html(800-value.length);
 		});
 		
+		/* 初始化输入字符统计 */
+		var initValueBio = $('#evaluationBio').val();
+		//initValue = initValue.replace(/\s/gi,"");
+		$('#evaluationBio-left').html(800-initValueBio.length);
+		$('#evaluationBio').bind('input propertychange', function() {
+			var value = $(this).val();
+			//value = value.replace(/\s/gi,"");
+		    $('#evaluationBio-left').html(800-value.length);
+		});
+		
 		/* 初始化基本信息表单 */
 		setBasicInfoForm();
 		$("#setBasicInfoForm").fadeIn();
