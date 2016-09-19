@@ -15,6 +15,7 @@ import com.vipkid.http.utils.WebUtils;
 import com.vipkid.http.vo.Announcement;
 import com.vipkid.http.vo.OnlineClassVo;
 import com.vipkid.http.vo.StudentUnitAssessment;
+import org.springframework.stereotype.Service;
 
 /**
  * 
@@ -22,6 +23,7 @@ import com.vipkid.http.vo.StudentUnitAssessment;
  * @date 2016年7月15日  下午8:50:17
  *
  */
+@Service
 public class AssessmentHttpService extends HttpBaseService {
 
     private static final Logger logger = LoggerFactory.getLogger(AssessmentHttpService.class);

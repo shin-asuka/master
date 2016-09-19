@@ -625,32 +625,4 @@
 		</if>
 		
     </select>
-    
-    <select id="findMajorCourseListByStartTimeAndEndTime" resultType="java.util.HashMap">
-	    select 
-	    	oc.id as id,
-	    	oc.teacher_id as teacherId,
-	    	oc.scheduled_date_time as scheduledDateTime,
-	    	oc.lesson_id as lessonId,
-	    	t.real_name as teacherName,
-	    	t.email as teacherEmail
-	    from  
-	    	online_class oc 
-	    JOIN lesson l ON l.id = oc.lesson_id
-		JOIN learning_cycle lc ON lc.id = l.learning_cycle_id
-		JOIN unit u ON u.id = lc.unit_id
-		JOIN course c ON c.id = u.course_id
-		JOIN teacher t ON t.id = oc.teacher_id
-		where 1=1
-			and c.type = 'MAJOR'
-			and l.is_unit_assessment = 1
-			and oc.status = 'FINISHED'
-			and oc.finish_type = 'AS_SCHEDULED'
-			and oc.scheduled_date_time BETWEEN #{startTime} and #{endTime}
-		<if test="teacherId != null and teacherId != 0">
-			and oc.teacher_id = #{teacherId}
-		</if>
-		
-    </select>
-    
 </mapper>
