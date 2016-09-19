@@ -38,7 +38,7 @@ public class UaReportMessageConsumer implements MessageListener {
             try {
                 uaReportMessage = (UaReportMessage) JsonMapper.fromJsonString(textMsg.getText(), UaReportMessage.class);
                 checkMessage(uaReportMessage);
-                AssessmentReport assessmentReport = converAssessmentReportFromMessage(uaReportMessage);
+                AssessmentReport assessmentReport = convertAssessmentReportFromMessage(uaReportMessage);
                 if (null != assessmentReport) {
                     payrollMessageService.sendFinishOnlineClassMessage(assessmentReport,
                             assessmentReport.getOnlineClassId(),
@@ -55,19 +55,13 @@ public class UaReportMessageConsumer implements MessageListener {
         Preconditions.checkArgument(message.getOnlineClassId() > 0, "UaReport的OnlineClassId不能为空！");
     }
 
-    private AssessmentReport converAssessmentReportFromMessage(UaReportMessage uaReportMessage) {
+    private AssessmentReport convertAssessmentReportFromMessage(UaReportMessage uaReportMessage) {
         AssessmentReport assessmentReport = null;
         if (null != uaReportMessage) {
             assessmentReport = new AssessmentReport();
-            try {
-                BeanUtils.copyProperties(assessmentReport, uaReportMessage);
-            } catch (IllegalAccessException e) {
-                logger.error("UA Report消息转为UA Report实体时出现异常", uaReportMessage.toString());
-                return null;
-            } catch (InvocationTargetException e) {
-                logger.error("UA Report消息转为UA Report实体时出现异常", uaReportMessage.toString());
-                return null;
-            }
+            assessmentReport.setOnlineClassId(uaReportMessage.getOnlineClassId());
+            assessmentReport.setCreateDateTime(uaReportMessage.getSubmitDateTime());
+            assessmentReport.setHasUnitAssessment(uaReportMessage.getHasUnitAssessment());
         }
         return assessmentReport;
     }
