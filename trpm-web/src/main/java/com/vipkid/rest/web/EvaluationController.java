@@ -18,12 +18,12 @@ import com.google.common.base.Preconditions;
 import com.vipkid.rest.config.RestfulConfig;
 import com.vipkid.trpm.constant.ApplicationConstant.CookieKey;
 import com.vipkid.trpm.entity.User;
-import com.vipkid.trpm.service.rest.AdminQuizService;
+import com.vipkid.trpm.service.rest.EvaluationService;
 import com.vipkid.trpm.service.rest.LoginService;
 
 @RestController
-@RequestMapping("/tag")
-public class TagsController {
+@RequestMapping("/evaluation")
+public class EvaluationController {
     
     private Logger logger = LoggerFactory.getLogger(PersonalInfoRestController.class);
     
@@ -31,7 +31,7 @@ public class TagsController {
     private LoginService loginService;
     
     @Autowired
-    private AdminQuizService adminQuizService;
+    private EvaluationService evaluationService;
     
     @RequestMapping(value = "/getTags", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
     public Map<String,Object> getTags(HttpServletRequest request, HttpServletResponse response){
@@ -46,7 +46,7 @@ public class TagsController {
                 logger.warn("用户不存在，token过期");
                 return result;
             }
-            result = adminQuizService.findTags();
+            result = evaluationService.findTags();
             return result;
         } catch (IllegalArgumentException e) {
             logger.error("内部参数转化异常:"+e.getMessage());

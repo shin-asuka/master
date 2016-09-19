@@ -415,6 +415,7 @@ public class LoginController {
             headsrc = PropertyConfigurer.stringValue("oss.url_preffix") + (headsrc.startsWith("/") ? headsrc:"/"+headsrc);
         }
         result.put("teacherId",teacher.getId());
+        result.put("evaluationBio",teacher.getEvaluationBio());
         result.put("headsrc", headsrc);
         result.put("showName", user.getName());
         result.put("status", RestfulConfig.HttpStatus.STATUS_200);
