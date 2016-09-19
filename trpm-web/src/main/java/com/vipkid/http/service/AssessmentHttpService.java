@@ -31,8 +31,8 @@ public class AssessmentHttpService extends HttpBaseService {
     public OnlineClassVo findUnSubmitonlineClassVo(OnlineClassVo onlineClassVo ) {
 
         String url = new StringBuilder(super.serverAddress)
-                .append("/education/findSubmitedListByOnlineClassIds").toString();
-        logger.info("httpGet findSubmitedListByOnlineClassIds , url= {} ,onlineClassVo = {}", url,JsonUtils.toJSONString(onlineClassVo));
+                .append("/education/findUnSubmitedListByOnlineClassIds").toString();
+        logger.info("httpGet findUnSubmitedListByOnlineClassIds , url= {} ,onlineClassVo = {}", url,JsonUtils.toJSONString(onlineClassVo));
         OnlineClassVo unSubmitSnlineClassVo = null;
         try {
         	String data = WebUtils.postNameValuePair(url, onlineClassVo);
