@@ -29,8 +29,9 @@ public class StudentUnitAssessment implements Serializable{
 	private Long auditorId;		// 审核人
 	private String auditorName;		// 审核人名称
     private Date createDateTime;//UA创建时间
-	
-	public StudentUnitAssessment() {
+    private Date submitDateTime;//UA提交时间
+
+    public StudentUnitAssessment() {
 		
 	}
 
@@ -169,5 +170,12 @@ public class StudentUnitAssessment implements Serializable{
 
     public void setCreateDateTime(Date createDateTime) {
         this.createDateTime = createDateTime;
+    }
+    public Date getSubmitDateTime() {
+        return submitDateTime;
+    }
+
+    public void setSubmitDateTime(Date submitDateTime) {
+        this.submitDateTime = submitDateTime;
     }
 }

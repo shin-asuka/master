@@ -47,8 +47,11 @@ public class AssessmentReportService {
                 assessmentReport.setOnlineClassId(onlineClassId);
                 assessmentReport.setName(lessonSerialNumber);
                 assessmentReport.setStudentId(studentId);
-                assessmentReport.setHasUnitAssessment(1 == studentUnitAssessment.getSubmitStatus());
-                assessmentReport.setCreateDateTime(new Timestamp(studentUnitAssessment.getCreateDateTime().getTime()));
+                assessmentReport.setHasUnitAssessment(false);
+                if (1 == studentUnitAssessment.getSubmitStatus()) {
+                    assessmentReport.setHasUnitAssessment(true);
+                    assessmentReport.setCreateDateTime(new Timestamp(studentUnitAssessment.getCreateDateTime().getTime()));
+                }
                 return assessmentReport;
             }
         }
