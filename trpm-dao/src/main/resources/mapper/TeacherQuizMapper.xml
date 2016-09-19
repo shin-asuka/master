@@ -77,6 +77,11 @@
 		<include refid="TeacherQuizOrder" />
 		<include refid="TeacherQuizLimit" />
 	</select>
+	
+	<select id="findTagsByType" resultType="java.util.Map">
+		SELECT t.id,t.name,parent_id parentId,t.type
+		FROM tags t
+	</select>
 
 	<insert id="saveDao" useGeneratedKeys="true" keyProperty="id">
 		INSERT INTO teacher_quiz
