@@ -3,12 +3,10 @@ package com.vipkid.trpm.service.rest;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.community.tools.JsonTools;
 import org.slf4j.Logger;
@@ -29,7 +27,6 @@ import com.vipkid.trpm.dao.TeacherModuleDao;
 import com.vipkid.trpm.dao.TeacherPageLoginDao;
 import com.vipkid.trpm.dao.UserDao;
 import com.vipkid.trpm.entity.Teacher;
-import com.vipkid.trpm.entity.TeacherModule;
 import com.vipkid.trpm.entity.TeacherPageLogin;
 import com.vipkid.trpm.entity.User;
 import com.vipkid.trpm.proxy.RedisProxy;
@@ -158,23 +155,7 @@ public class LoginService {
         });
         return courseTypes.contains(CourseType.PRACTICUM);
     }
-    
-    /**
-     * 判断User拥有的PES权限
-     * 
-     * @Author:ALong (ZengWeiLong)
-     * @param teacherId
-     * @return boolean
-     * @date 2016年7月4日
-     */
-    public boolean isPes(long teacherId) {
-        List<TeacherModule> modulelist = teacherModuleDao.findByTeacherPe(teacherId);
-        if (modulelist == null || modulelist.isEmpty()) {
-            return false;
-        }
-        return true;
-    }
-    
+        
     /**
      * 判断User拥有的权限
      * 
@@ -184,11 +165,7 @@ public class LoginService {
      * @date 2016年7月4日
      */
     public void findByTeacherModule(long teacherId,Map<String,Object> roles) {
-        String result = ",";
-        List<TeacherModule> modulelist = teacherModuleDao.findByTeacherModule(teacherId);
-        if(CollectionUtils.isNotEmpty(modulelist)){
-            result = modulelist.stream().parallel().map(bean -> (String)bean.getModuleName()).collect(Collectors.joining(",")) + ",";
-        }
+        String result = teacherModuleDao.findByTeacherModule(teacherId);
         if(result.indexOf(","+RoleClass.PE+",") > -1){
             roles.put(RoleClass.PES,true);
         }

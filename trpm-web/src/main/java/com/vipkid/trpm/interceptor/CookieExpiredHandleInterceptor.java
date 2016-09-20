@@ -1,6 +1,7 @@
 package com.vipkid.trpm.interceptor;
 
 import java.io.IOException;
+import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.http.Cookie;
@@ -17,6 +18,7 @@ import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import com.vipkid.http.service.AnnouncementHttpService;
+import com.vipkid.rest.config.RestfulConfig.RoleClass;
 import com.vipkid.trpm.constant.ApplicationConstant;
 import com.vipkid.trpm.constant.ApplicationConstant.CookieKey;
 import com.vipkid.trpm.constant.ApplicationConstant.RedisConstants;
@@ -108,6 +110,30 @@ public class CookieExpiredHandleInterceptor extends HandlerInterceptorAdapter {
 		request.setAttribute("TRPM_COURSE_TYPES", indexService.getCourseType(user.getId()));
 		request.setAttribute("recruitmentUrl", PropertyConfigurer.stringValue("recruitment.www"));
 		request.setAttribute("isPe", indexService.isPe(user.getId()));
+		 Map<String,Object> role = indexService.getAllRole(user.getId());
+		request.setAttribute("isPes",role.get(RoleClass.PES));
+		request.setAttribute("isTe",role.get(RoleClass.TE));
+		request.setAttribute("isTes",role.get(RoleClass.TES));
+		try {
+			// teacher payroll 开关
+			String openFlagInConfig = PropertyConfigurer.stringValue(PAYROLL_OPEN_FLAG);
+			// redis 中的teacher payroll 开关
+			String openFlagInRedis = redisProxy.get(PAYROLL_OPEN_FLAG);
+			// redis 中的 payroll 黑名单
+			//String blackListRedis = redisProxy.get(PAYROLL_BLACK_LIST + user.getId());
+			String whiteListRedis = redisProxy.get(PAYROLL_WHITE_LIST + user.getId());
+			if (openFlagInRedis == null) {
+				redisProxy.setex(PAYROLL_OPEN_FLAG, RedisConstants.PAYROLL_DISPLAY_MAX_NUM_EXCEED_DAY_SEC,
+						openFlagInConfig);
+				openFlagInRedis = redisProxy.get(PAYROLL_OPEN_FLAG);
+			}
+			
+			if (PAYROLL_OPEN_VALUE.equals(openFlagInRedis) || PAYROLL_EXD.equals(whiteListRedis)) {
+				request.setAttribute(IS_DISPLAY_PAYROLL, true);
+			}
+		} catch (Exception e) {
+			logger.error("捕获payroll redis 异常 ，teacher id是{}",user.getId());
+		}
 		
         String clazz = handlerMethod.getBeanType().getCanonicalName();
         if (adminQuizService.findNeedQuiz(user.getId())) {

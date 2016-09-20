@@ -18,6 +18,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 import com.vipkid.http.service.AssessmentHttpService;
 import com.vipkid.http.vo.StudentUnitAssessment;
+import com.vipkid.rest.config.RestfulConfig.RoleClass;
 import com.vipkid.trpm.constant.ApplicationConstant;
 import com.vipkid.trpm.constant.ApplicationConstant.*;
 import com.vipkid.trpm.dao.*;
@@ -152,7 +153,7 @@ public class OnlineClassService {
         }
         this.enterAfter(student, onlineClass);
 
-        List<TeacherModule> teacherModules = teacherModuleDao.findByTeacherPe(student.getId());
+        List<TeacherModule> teacherModules = teacherModuleDao.findByTeacherPes(student.getId(),RoleClass.PE);
         // 判断当前用户是否拥有PE Supervisor权限
         if (CollectionUtils.isNotEmpty(teacherModules)) {
             modelMap.put("PESupervisor", true);
@@ -404,7 +405,7 @@ public class OnlineClassService {
         // 6.然后操作TeacherApllication
         if (ClassStatus.isBooked(onlineClass.getStatus())
                 || ClassStatus.isFinished(onlineClass.getStatus())) {
-            List<TeacherModule> teacherModules = teacherModuleDao.findByTeacherPe(pe.getId());
+            List<TeacherModule> teacherModules = teacherModuleDao.findByTeacherPes(pe.getId(),RoleClass.PE);
             // 判断当前用户是否拥有PE Supervisor权限
             if (CollectionUtils.isNotEmpty(teacherModules)) {
                 currTeacherApplication.setContractUrl("PE-Supervisor");

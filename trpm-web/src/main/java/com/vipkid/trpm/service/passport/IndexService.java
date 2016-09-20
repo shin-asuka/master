@@ -1,6 +1,7 @@
 package com.vipkid.trpm.service.passport;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
@@ -12,7 +13,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.google.api.client.util.Maps;
 import com.google.common.collect.Lists;
+import com.vipkid.rest.config.RestfulConfig.RoleClass;
 import com.vipkid.trpm.constant.ApplicationConstant;
 import com.vipkid.trpm.constant.ApplicationConstant.CookieKey;
 import com.vipkid.trpm.constant.ApplicationConstant.CourseType;
@@ -24,7 +27,6 @@ import com.vipkid.trpm.dao.TeacherPageLoginDao;
 import com.vipkid.trpm.dao.UserDao;
 import com.vipkid.trpm.entity.Staff;
 import com.vipkid.trpm.entity.Teacher;
-import com.vipkid.trpm.entity.TeacherModule;
 import com.vipkid.trpm.entity.TeacherPageLogin;
 import com.vipkid.trpm.entity.User;
 import com.vipkid.trpm.proxy.RedisProxy;
@@ -95,12 +97,22 @@ public class IndexService {
      * @return boolean
      * @date 2016年7月4日
      */
-    public boolean isPe(long teacherId) {
-        List<TeacherModule> modulelist = teacherModuleDao.findByTeacherPe(teacherId);
-        if (modulelist == null || modulelist.isEmpty()) {
-            return false;
+    public Map<String,Object> getAllRole(long teacherId) {
+        String result = teacherModuleDao.findByTeacherModule(teacherId);
+        Map<String,Object> roles = Maps.newHashMap();
+        roles.put(RoleClass.PES, false);
+        roles.put(RoleClass.TE, false);
+        roles.put(RoleClass.TES, false);
+        if(result.indexOf(","+RoleClass.PE+",") > -1){
+            roles.put(RoleClass.PES,true);
         }
-        return true;
+        if(result.indexOf(","+RoleClass.TE+",") > -1){
+            roles.put(RoleClass.TE,true);
+        }
+        if(result.indexOf(","+RoleClass.TES+",") > -1){
+            roles.put(RoleClass.TES,true);
+        }
+        return roles;
     }
 
     /**
