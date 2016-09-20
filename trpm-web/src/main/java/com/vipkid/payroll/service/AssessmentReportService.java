@@ -48,9 +48,9 @@ public class AssessmentReportService {
                 assessmentReport.setName(lessonSerialNumber);
                 assessmentReport.setStudentId(studentId);
                 assessmentReport.setHasUnitAssessment(false);
-                if (1 == studentUnitAssessment.getSubmitStatus()) {
+                if (1 == studentUnitAssessment.getSubmitStatus() && studentUnitAssessment.getSubmitDateTime() != null) {
                     assessmentReport.setHasUnitAssessment(true);
-                    assessmentReport.setCreateDateTime(new Timestamp(studentUnitAssessment.getCreateDateTime().getTime()));
+                    assessmentReport.setCreateDateTime(new Timestamp(studentUnitAssessment.getSubmitDateTime().getTime()));
                 }
                 return assessmentReport;
             }
