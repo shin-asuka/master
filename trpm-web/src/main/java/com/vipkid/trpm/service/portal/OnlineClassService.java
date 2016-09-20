@@ -109,6 +109,7 @@ public class OnlineClassService {
      */
     public Map<String, Object> enterOpen(OnlineClass onlineClass, long studentId, Teacher teacher,
             Lesson lesson) {
+        logger.info("TeacherId:{} Open Course,onlineClassId:{},studentId:{}",teacher.getId(),onlineClass.getId(),studentId);
         Map<String, Object> modelMap = Maps.newHashMap();
         modelMap.putAll(this.enterBefore(onlineClass, studentId, "OPEN"));
         modelMap.put("url",
@@ -134,6 +135,9 @@ public class OnlineClassService {
     public Map<String, Object> enterPracticum(OnlineClass onlineClass, long studentId,
             Teacher student, Lesson lesson) {
         Map<String, Object> modelMap = Maps.newHashMap();
+        
+        logger.info("TeacherId:{} Practicum Course,onlineClassId:{},studentId:{}",student.getId(),onlineClass.getId(),studentId);
+        
         modelMap.putAll(this.enterBefore(onlineClass, studentId, "BOOKED"));
 
         TeacherApplication teacherApplication = teacherApplicationDao
@@ -178,12 +182,14 @@ public class OnlineClassService {
      */
     public Map<String, Object> enterMajor(OnlineClass onlineClass, long studentId, Teacher teacher,
             Lesson lesson) {
+        logger.info("TeacherId:{}, Major Course onlineClassId:{},studentId:{}",teacher.getId(), onlineClass.getId(),
+                studentId);
         Map<String, Object> modelMap = Maps.newHashMap();
         modelMap.putAll(this.enterBefore(onlineClass, studentId, "BOOKED"));
 
         /** 获取teacherComments中的stars字段的值，并存入model */
         int stars = this.findTeacherCommentByOnlineClassId(onlineClass, studentId);
-        logger.info("query stars : {},onlineClassId:{},studentId:{}", stars, onlineClass.getId(),
+        logger.info("TeacherId:{}, Major Course query stars : {},onlineClassId:{},studentId:{}",teacher.getId(), stars, onlineClass.getId(),
                 studentId);
         modelMap.put("stars", stars);
         if (lesson.getSerialNumber().startsWith("A")) {
