@@ -3,6 +3,7 @@ package com.vipkid.mq.service.impl;
 import javax.annotation.Resource;
 import javax.jms.Destination;
 
+import com.vipkid.enums.OnlineClassEnum;
 import net.sf.json.JSONObject;
 
 import org.apache.commons.lang3.StringUtils;
@@ -236,6 +237,11 @@ public class PayrollMessageServiceImpl implements PayrollMessageService {
         }
         try {
             OnlineClass onlineClass = onlineClassDao.findById(onlineClassId);
+            if (null != onlineClass && !StringUtils.equals(OnlineClassEnum.Status.FINISHED.toString(),onlineClass.getStatus())
+                    && !StringUtils.equals(OnlineClassEnum.Status.INVALID.toString(),onlineClass.getStatus())) {
+                logger.info("OnlineClass 状态非Finished或者Invalid，不发送消息，onlineClassId = {}",onlineClassId);
+                return message;
+            }
             Course course = courseDao.findByLessonId(onlineClass.getLessonId());
             Lesson lesson = lessonDao.findById(onlineClass.getLessonId());
             Student student = studentService.getFirstStudentByOnlineClass(onlineClassId);
