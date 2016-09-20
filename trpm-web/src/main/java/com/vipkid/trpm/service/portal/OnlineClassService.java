@@ -153,7 +153,7 @@ public class OnlineClassService {
         }
         this.enterAfter(student, onlineClass);
 
-        List<TeacherModule> teacherModules = teacherModuleDao.findByTeacherPes(student.getId(),RoleClass.PE);
+        List<TeacherModule> teacherModules = teacherModuleDao.findByTeacherModuleName(student.getId(),RoleClass.PE);
         // 判断当前用户是否拥有PE Supervisor权限
         if (CollectionUtils.isNotEmpty(teacherModules)) {
             modelMap.put("PESupervisor", true);
@@ -405,7 +405,7 @@ public class OnlineClassService {
         // 6.然后操作TeacherApllication
         if (ClassStatus.isBooked(onlineClass.getStatus())
                 || ClassStatus.isFinished(onlineClass.getStatus())) {
-            List<TeacherModule> teacherModules = teacherModuleDao.findByTeacherPes(pe.getId(),RoleClass.PE);
+            List<TeacherModule> teacherModules = teacherModuleDao.findByTeacherModuleName(pe.getId(),RoleClass.PE);
             // 判断当前用户是否拥有PE Supervisor权限
             if (CollectionUtils.isNotEmpty(teacherModules)) {
                 currTeacherApplication.setContractUrl("PE-Supervisor");

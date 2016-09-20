@@ -21,13 +21,13 @@ public class TeacherModuleDao extends MapperDaoTemplate<TeacherModule> {
         super(sqlSessionTemplate, TeacherModule.class);
     }
 
-    public List<TeacherModule> findByTeacherPes(long teacherId,String role) {
+    public List<TeacherModule> findByTeacherModuleName(long teacherId,String moduleName) {
         if (teacherId == 0) {
             return null;
         }
         Map<String, Object> paramsMap = Maps.newHashMap();
         paramsMap.put("teacherId", teacherId);
-        paramsMap.put("moduleName", role);
+        paramsMap.put("moduleName", moduleName);
         return super.selectList(new TeacherModule(), paramsMap);
     }
 

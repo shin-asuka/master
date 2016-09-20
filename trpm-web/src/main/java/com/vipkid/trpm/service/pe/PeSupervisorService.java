@@ -316,7 +316,7 @@ public class PeSupervisorService {
             return modelMap;
         }
 
-        List<TeacherModule> teacherModules = teacherModuleDao.findByTeacherPes(pe.getId(),RoleClass.PE);
+        List<TeacherModule> teacherModules = teacherModuleDao.findByTeacherModuleName(pe.getId(),RoleClass.PE);
 
         // 判断当前用户是否拥有PE Supervisor权限
         if (CollectionUtils.isNotEmpty(teacherModules)
