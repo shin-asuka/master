@@ -41,7 +41,7 @@ public class TeacherModuleDao extends MapperDaoTemplate<TeacherModule> {
         logger.info("select list:" + modulelist);
         String result = ",";
         if(CollectionUtils.isNotEmpty(modulelist)){
-            result = modulelist.stream().parallel().map(bean -> (String)bean.getModuleName()).collect(Collectors.joining(",")) + ",";
+            result += modulelist.stream().parallel().map(bean -> (String)bean.getModuleName()).collect(Collectors.joining(",")) + ",";
         }        
         return result;
     }
