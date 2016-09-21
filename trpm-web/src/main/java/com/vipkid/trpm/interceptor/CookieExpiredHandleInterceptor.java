@@ -109,7 +109,7 @@ public class CookieExpiredHandleInterceptor extends HandlerInterceptorAdapter {
 		request.setAttribute("TRPM_USER", user);
 		request.setAttribute("TRPM_COURSE_TYPES", indexService.getCourseType(user.getId()));
 		request.setAttribute("recruitmentUrl", PropertyConfigurer.stringValue("recruitment.www"));
-		request.setAttribute("isPe", indexService.isPe(user.getId()));
+
 		 Map<String,Object> role = indexService.getAllRole(user.getId());
 		request.setAttribute("isPes",role.get(RoleClass.PES));
 		request.setAttribute("isTe",role.get(RoleClass.TE));

@@ -2,9 +2,9 @@ package com.vipkid.trpm.rest;
 
 public class BaseTestCase {
 
-    public static final String URL_PREFIX = "http://localhost:7080/trpm-web";
+    public static final String URL_PREFIX = "http://a11-t.vipkid.com.cn/";
     
     
-    public static final String token = "6024f7d0-83b7-4a45-9f23-cc7b431b73f6";
+    public static final String token = "32bcbd8f-73c3-4447-b3da-822722d1f488";
     
 }

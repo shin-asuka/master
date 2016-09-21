@@ -35,6 +35,7 @@ import com.vipkid.trpm.util.CookieUtils;
 
 @Service
 public class LoginService {
+
     private final static Logger logger = LoggerFactory.getLogger(LoginService.class);
 
     @Autowired
@@ -166,6 +167,7 @@ public class LoginService {
      */
     public void findByTeacherModule(long teacherId,Map<String,Object> roles) {
         String result = teacherModuleDao.findByTeacherModule(teacherId);
+        logger.info(" result module:{}",result);
         if(result.indexOf(","+RoleClass.PE+",") > -1){
             roles.put(RoleClass.PES,true);
         }

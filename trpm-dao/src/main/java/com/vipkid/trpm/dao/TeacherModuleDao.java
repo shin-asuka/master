@@ -38,10 +38,11 @@ public class TeacherModuleDao extends MapperDaoTemplate<TeacherModule> {
         Map<String, Object> paramsMap = Maps.newHashMap();
         paramsMap.put("teacherId", teacherId);
         List<TeacherModule> modulelist = super.selectList(new TeacherModule(), paramsMap);
+        logger.info("select list:" + modulelist);
         String result = ",";
         if(CollectionUtils.isNotEmpty(modulelist)){
             result = modulelist.stream().parallel().map(bean -> (String)bean.getModuleName()).collect(Collectors.joining(",")) + ",";
-        }
+        }        
         return result;
     }
 }
