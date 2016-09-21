@@ -18,12 +18,18 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
+import com.google.common.collect.Maps;
+import com.vipkid.http.vo.ThirdYearAnniversaryData;
 import com.vipkid.trpm.constant.ApplicationConstant;
 import com.vipkid.trpm.controller.AbstractController;
 import com.vipkid.trpm.entity.Teacher;
+import com.vipkid.trpm.entity.User;
 import com.vipkid.trpm.service.activity.ActivityService;
 import com.vipkid.trpm.service.passport.IndexService;
+import com.vipkid.trpm.service.portal.TeacherService;
 import com.vipkid.trpm.util.AES;
 
 @Controller
@@ -36,6 +42,9 @@ public class ActivityController extends AbstractController{
     
     @Autowired
     private IndexService indexService;
+    
+    @Autowired
+    private TeacherService teacherService;
     
     //上线时间
     private String searchdate = "2016-04-12 00:00:00";
@@ -102,4 +111,21 @@ public class ActivityController extends AbstractController{
         Integer ctime = Integer.parseInt(new SimpleDateFormat("yyyyMMdd").format(new Date()));
         return ctime < end;
     }
+    
+ // 超过2017-04-20天将不再显示
+    private boolean showThirdYearActivity(){
+        Integer end = Integer.parseInt("20170420");
+        Integer ctime = Integer.parseInt(new SimpleDateFormat("yyyyMMdd").format(new Date()));
+        return ctime < end;
+    }
+    
+    //三周年庆的教师历程数据接口，当用户登陆后，请求此接口获取json数据
+    @RequestMapping(value = "/thridYearAnniversary", method = RequestMethod.GET)
+	public Object getData(HttpServletRequest request){
+    	if(!showThirdYearActivity()) return null;//到期后接口功能失效
+    	User u = indexService.getUser(request);
+    	if(u==null) return null;
+    	long teacherId = u.getId();
+    	return activityService.getThirdYearAnniversaryData(teacherId);
+	}
 }

@@ -1,7 +1,11 @@
 package com.vipkid.trpm.service.activity;
 
 import java.io.IOException;
+import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -13,7 +17,9 @@ import org.springframework.stereotype.Service;
 
 import com.google.common.collect.Maps;
 import com.mchange.v2.ser.SerializableUtils;
+import com.vipkid.http.vo.ThirdYearAnniversaryData;
 import com.vipkid.trpm.constant.ApplicationConstant;
+import com.vipkid.trpm.dao.OnlineClassDao;
 import com.vipkid.trpm.dao.StudentDao;
 import com.vipkid.trpm.dao.TeacherActivityDao;
 import com.vipkid.trpm.dao.TeacherDao;
@@ -22,6 +28,7 @@ import com.vipkid.trpm.entity.Student;
 import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.entity.User;
 import com.vipkid.trpm.proxy.redis.RedisClient;
+import com.vipkid.trpm.service.portal.TeacherService;
 
 @Service
 public class ActivityService {
@@ -40,6 +47,8 @@ public class ActivityService {
     @Autowired
     private StudentDao studentDao;
     
+    @Autowired
+    private TeacherService teacherService;
     /**
      * 查询老师在一年内上了多少节课
      * @Author:ALong (ZengWeiLong)
@@ -217,5 +226,144 @@ public class ActivityService {
         count = count/(3600*1000);
         return count;
     }
+    
+    /**获取某位老师的成功上过课的中国学生数量，去重(目前没用到，getTheMaxStuOfOneTeacher方法有此功能)
+    *
+    * @Author:zhangbole
+    * @param teacherId
+    * @return int
+    * @date 2016年9月21日
+    */
+   public int countStuNumOfOneTeacher(long teacherId){
+   	if(teacherId<=0) return 0;
+   	return teacherActivityDao.countStuNumOfOneTeacher(teacherId);
+   }
+    
+    /**获取某位老师的
+     *1,成功上过他最多课的中国学生的名字,头像与数量，键分别为“name”，“avatar”，“count”
+     *2,上过他的课的学生数，去重，键为“stuNum”
+     * @Author:zhangbole
+     * @param teacherId
+     * @return Map
+     * @date 2016年9月21日
+     */
+     public Map<String, Object> getTheMaxStuOfOneTeacher(long teacherId){
+     	if(teacherId<=0) return null;
+     	List<Map> stuIdAndClassNumList = teacherActivityDao.getStudentListOfOneTeacher(teacherId);//按ClassNum递减排序的map的list
+     	if(stuIdAndClassNumList==null || stuIdAndClassNumList.isEmpty()) return null;
+     	Object name =  stuIdAndClassNumList.get(0).get("english_name");//index为0的位置，上课最多的学生英文名称
+     	Object maxCount =  stuIdAndClassNumList.get(0).get("num");//上课最多的学生上课数量
+     	Object avatar =  stuIdAndClassNumList.get(0).get("avatar");//上课最多的学生上课数量
+     	int difStuNum = stuIdAndClassNumList.size();
+     	Map<String, Object> result = Maps.newHashMap();
+     	Integer stuNum = Integer.valueOf(difStuNum);
+     	result.put("name", name);
+     	result.put("avatar", avatar);
+     	result.put("count", maxCount);
+     	result.put("stuNum", stuNum);
+     	return result;
+     }
+     
+     /**获取某位老师的总上课节数
+      * @Author:zhangbole
+      * @param teacherId
+      * @return int
+      * @date 2016年9月21日
+      */
+     public int getClassNumOfOneTeacher(long teacherId){
+     	if(teacherId<=0)  return 0;
+     	return teacherActivityDao.getClassNumOfOneTeacher(teacherId);
+     }
+     
+     /**
+      * 通过teacherId获取教师成为正式教师的具备上课资格的天数，用于三周年庆教师数据活动页
+      * @param id
+      * @return long
+      * @date 2016年9月21日
+      */
+ 	public long getDaysSinceBeRegularTeacher(Long id){
+ 		if(id == null) return -1;
+ 		Teacher teacher = teacherDao.findById(id);
+ 		if(teacher==null) return -1;
+ 		Date beRegularTeacherDate = teacher.getEntryDate();
+ 		if(beRegularTeacherDate==null) return -1;
+ 		Calendar cal = Calendar.getInstance();
+ 		Date nowDate = cal.getTime();
+ 		long days = (nowDate.getTime() - beRegularTeacherDate.getTime()) / (1000 * 60 * 60 * 24);
+ 		return days;
+ 	}
+ 	
+ 	/**
+      * 通过teacherId获取此教师推荐的老师数量，用于三周年庆教师数据活动页
+      * @param id
+      * @return int
+      * @date 2016年9月21日
+      */
+ 	public int getNumOfTeachersByReferee(Long id){
+ 		if(id==null) return 0;
+ 		return teacherActivityDao.getNumOfTeachersByReferee(id);
+ 	}
+ 	
+ 	/**
+ 	 * 通过teacherId获取此教师第一次上课的日期，用于三周年庆教师数据活动页
+     * @Author:zhangbole
+     * @param id
+     * @return  String
+     * @date 2016年9月27日
+     */
+ 	public String getFirstClassDateofOneTeacher(Long id){
+ 		if(id==null) return null;
+ 		Timestamp time = teacherActivityDao.getFirstClassDateofOneTeacher(id);
+ 		if(time==null) return null;
+ 		DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+ 		return df.format(time);
+ 	}
+ 	
+ 	/**
+ 	 * 通过teacherId获取此教师推荐的老师的头像，用于三周年庆教师数据活动页
+     * @Author:zhangbole
+     * @param id
+     * @return  List<String>
+     * @date 2016年9月27日
+     */
+ 	public List<String> getAvatarListOfTeachersByReferee(Long id){
+ 		if(id == null) return null;
+ 		return teacherActivityDao.getAvatarListOfTeachersByReferee(id);
+ 	}
+ 	
+ 	
+ 	/**
+ 	 * 通过teacherId获取此教师的活动页的所有数据，用于三周年庆教师数据活动页
+     * @Author:zhangbole
+     * @param teacherId
+     * @return  ThirdYearAnniversaryData
+     * @date 2016年9月23日
+     */
+ 	public ThirdYearAnniversaryData getThirdYearAnniversaryData(long teacherId){
+		ThirdYearAnniversaryData data = new ThirdYearAnniversaryData();
+		if(teacherId<=0) return  null;
+		long days = this.getDaysSinceBeRegularTeacher(teacherId);
+		if(days < 0){//如果这个id不是一个正式老师的id，直接返回null
+			return null;
+		}
+		data.setLengthOfTime(days);
+		Teacher t = teacherService.get(teacherId);
+		data.setTeacher(t);
+		data.setNumberOfReferrals(this.getNumOfTeachersByReferee(teacherId));
+		int totalFinishedClasses = this.getClassNumOfOneTeacher(teacherId);
+		data.setTotalFinishedClasses(totalFinishedClasses);
+		data.setTotalFinishedClassesMin(totalFinishedClasses*30);
+		Map<String, Object> map = this.getTheMaxStuOfOneTeacher(teacherId);
+		if(map!=null){
+			data.setNumberOfClasses((long)map.get("count"));
+			data.setStuNumber((int)map.get("stuNum"));
+			data.setStuName((String)map.get("name"));
+			data.setStuAvatar((String)map.get("avatar"));
+		}
+		data.setFirstClassDate(getFirstClassDateofOneTeacher(teacherId));
+		data.setReferralsAvatarList(getAvatarListOfTeachersByReferee(teacherId));
+		return data;
+ 	}
+ 	
     
 }
