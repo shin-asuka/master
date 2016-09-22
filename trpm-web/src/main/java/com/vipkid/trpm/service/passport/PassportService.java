@@ -347,7 +347,14 @@ public class PassportService {
             if (UserEnum.Dtype.PARTNER.toString().equals(user.getDtype())) {
                 teacher.setPartnerId(user.getId());
             } else if (UserEnum.Dtype.TEACHER.toString().equals(user.getDtype())) {
-                teacher.setReferee(user.getId() + "," + user.getName());
+            	Teacher t = teacherDao.findById(userId);
+            	if(t!=null){
+            		teacher.setReferee(user.getId() + "," + t.getRealName());//Referee存老师的realName
+            	}
+            	else{
+            		logger.warn("找不到id为"+userId+"老师");
+            		teacher.setReferee(user.getId() + ",");
+            	}
             }
         }
         return teacher;
