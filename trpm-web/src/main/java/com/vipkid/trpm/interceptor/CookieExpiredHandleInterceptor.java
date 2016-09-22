@@ -65,6 +65,7 @@ public class CookieExpiredHandleInterceptor extends HandlerInterceptorAdapter {
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
 			throws IOException {
+	    logger.info("IP:{},发起请求:{}",request.getRemoteAddr(),request.getRequestURI());
 		HandlerMethod handlerMethod = (HandlerMethod) handler;
 		PreAuthorize preAuthorize = handlerMethod.getMethodAnnotation(PreAuthorize.class);
 
@@ -104,12 +105,16 @@ public class CookieExpiredHandleInterceptor extends HandlerInterceptorAdapter {
 				request.setAttribute("TRPM_MANAGER_NAME", managerName);
 			}
 		}
+		if(user == null){
+		    logger.info("IP:{},用户为NULL。。。",request.getRemoteAddr());
+            return false; 
+		}
+		logger.info("IP:{},user:{},发起请求:{}",request.getRemoteAddr(),user.getId(),request.getRequestURI());
 		request.setAttribute("locationService", locationService);
 		request.setAttribute("TRPM_TEACHER", teacher);
 		request.setAttribute("TRPM_USER", user);
 		request.setAttribute("TRPM_COURSE_TYPES", indexService.getCourseType(user.getId()));
 		request.setAttribute("recruitmentUrl", PropertyConfigurer.stringValue("recruitment.www"));
-
 		 Map<String,Object> role = indexService.getAllRole(user.getId());
 		request.setAttribute("isPes",role.get(RoleClass.PES));
 		request.setAttribute("isTe",role.get(RoleClass.TE));
