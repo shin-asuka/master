@@ -379,7 +379,7 @@ public class ClassroomsService {
 				if(sua.getSubmitStatus() == 1){
 					lifeCycle = "(submitted)";
 				}else{
-					lifeCycle = "(save)";
+					lifeCycle = "(saved)";
 				}
 			}else{
 				lifeCycle = "(empty)";
