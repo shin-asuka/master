@@ -1,10 +1,8 @@
 package com.vipkid.trpm.controller.portal;
 
-import java.util.Map;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletResponse;
-
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
+import com.vipkid.trpm.service.portal.FileService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -14,7 +12,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
-import com.vipkid.trpm.service.portal.FileService;
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * 文件上传 controller
@@ -26,12 +27,28 @@ import com.vipkid.trpm.service.portal.FileService;
 public class FileController extends AbstractPortalController {
 
     private Logger logger = LoggerFactory.getLogger(FileController.class);
-    
+
     @Resource
     private FileService fileService;
-    
+
+    /**
+     * Bank Info 中 ID证件上传格式限制, 只接受 .doc, .docx, .pdf, .jpg, .jpeg, .png, .bmp
+     */
+    private static Set<String> ACCEPT_CONTENT_TYPES = Sets.newHashSet(
+            "application/msword",
+            "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+            "application/pdf",
+            "image/jpeg",
+            "image/png",
+            "image/bmp");
+
+    //图片上传大小做个限制
+    private static final long UPLOAD_SIZE_LIMIT = 10 * 1024 * 1024; //10M
+
+
     /**
      * 普通的文件上传
+     *
      * @param request
      * @param response
      * @param file
@@ -39,12 +56,27 @@ public class FileController extends AbstractPortalController {
      */
     @RequestMapping(value = "/uploadNormalFile", method = RequestMethod.POST)
     public String uploadFile(MultipartHttpServletRequest request, HttpServletResponse response,
-                                @RequestParam("file") MultipartFile file) {
-        logger.info("uploadFile");
-        
-        Map<String,Object> map = fileService.uploadNormalFile(file);
+                             @RequestParam("file") MultipartFile file) {
 
-        return jsonView(response, map);
+        logger.info("uploadFile");
+        Map<String, Object> resultMap = Maps.newHashMap();
+
+        String contentType = file.getContentType();
+        if(!ACCEPT_CONTENT_TYPES.contains(contentType)) {
+            resultMap.put("result", false);
+            resultMap.put("message", "We only accept .doc, .docx, .pdf, .jpg, .jpeg, .png, .bmp file, thanks!");
+            return jsonView(response, resultMap);
+        }
+
+        long fileSize = file.getSize();
+        if(fileSize > UPLOAD_SIZE_LIMIT) {
+            resultMap.put("result", false);
+            resultMap.put("message", "We only accept file smaller than 10M, please try again!");
+            return jsonView(response, resultMap);
+        }
+
+        resultMap = fileService.uploadNormalFile(file);
+        return jsonView(response, resultMap);
     }
 
 }
