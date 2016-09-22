@@ -60,7 +60,7 @@ public class LoginController {
             @RequestParam(value = "imageCode", required = false) String imageCode) {
         Map<String, Object> result = Maps.newHashMap();
         result.put("status", RestfulConfig.HttpStatus.STATUS_403);
-        logger.info(" 请求参数 email ： " + email + ";password=" + password);
+        logger.info(" 请求参数 email ={},imageCode = {},key = {}",email,imageCode,key);
         if (StringUtils.isBlank(email) || StringUtils.isBlank(password)) {
             logger.warn("email or password is null password:" + password + ";email:" + email);
             result.put("info", ApplicationConstant.AjaxCode.ERROR_CODE);
