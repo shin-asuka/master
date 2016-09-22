@@ -5,6 +5,7 @@ import javax.jms.Message;
 import javax.jms.MessageListener;
 import javax.jms.TextMessage;
 
+import com.alibaba.fastjson.JSON;
 import com.vipkid.mq.message.FinishOnlineClassMessage;
 import com.vipkid.mq.message.UaReportMessage;
 import com.vipkid.mq.service.PayrollMessageService;
@@ -31,12 +32,13 @@ public class UaReportMessageConsumer implements MessageListener {
 
     @Override
     public void onMessage(Message message) {
-        logger.info("调用payrollItemService.createPayrollItemForNewVIPKIDEnroll 创建工资项 ：message = {}", message.toString());
+        logger.info("接收新UA报告消息，message = {}", message.toString());
         if (message != null && message instanceof TextMessage) {
             TextMessage textMsg = (TextMessage) message;
             UaReportMessage uaReportMessage;
             try {
                 uaReportMessage = (UaReportMessage) JsonMapper.fromJsonString(textMsg.getText(), UaReportMessage.class);
+                logger.info("UA报告消息内容，UaReportMessage = {}", JSON.toJSONString(uaReportMessage));
                 checkMessage(uaReportMessage);
                 AssessmentReport assessmentReport = convertAssessmentReportFromMessage(uaReportMessage);
                 if (null != assessmentReport) {
