@@ -90,7 +90,7 @@ public class TeacherQuizDao extends MapperDaoTemplate<TeacherQuiz>{
      */
     public List<Map<String,Object>> findTags(){
         List<Map<String,Object>> list = Lists.newArrayList();
-        list = super.selectEntity("findTagsByType", null);
+        list = super.listEntity("findTagsByType", null);
         return list;
     }
 }
