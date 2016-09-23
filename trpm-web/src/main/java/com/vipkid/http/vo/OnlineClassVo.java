@@ -17,6 +17,7 @@ public class OnlineClassVo implements Serializable{
 	private String teacherName;
 	private String teacherEmail;
 	private Date scheduledDateTime;
+	private String timezone; //时区
 	
 	List<Long> idList = Lists.newArrayList();
 	
@@ -81,6 +82,14 @@ public class OnlineClassVo implements Serializable{
 
 	public void setScheduledDateTime(Date scheduledDateTime) {
 		this.scheduledDateTime = scheduledDateTime;
+	}
+
+	public String getTimezone() {
+		return timezone;
+	}
+
+	public void setTimezone(String timezone) {
+		this.timezone = timezone;
 	}
 
 }

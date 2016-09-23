@@ -606,7 +606,8 @@
 	    	oc.scheduled_date_time as scheduledDateTime,
 	    	oc.lesson_id as lessonId,
 	    	t.real_name as teacherName,
-	    	t.email as teacherEmail
+	    	t.email as teacherEmail,
+	    	t.timezone as timezone
 	    from  
 	    	online_class oc 
 	    JOIN lesson l ON l.id = oc.lesson_id
