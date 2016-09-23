@@ -8,6 +8,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+import java.util.TimeZone;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -54,7 +55,7 @@ public class UADateUtils {
 	}
 	
 	public static String format(Date date, String pattern){
-        return format(date, pattern, null);
+        return format(date, pattern, Locale.getDefault());
     }
 	
 	public static String format(Date date, String pattern, Locale locale) {
@@ -72,5 +73,21 @@ public class UADateUtils {
         }
         return dateStr;
     }
+	
+	public static String format(Date date , String pattern , String timezone){
+		String dateStr = "";
+		Locale locale = Locale.getDefault();
+        if(StringUtils.isBlank(pattern)){
+            pattern = "yyyy-MM-dd HH:mm:ss";
+        }
+        if(date!=null){
+            DateFormat format = new SimpleDateFormat(pattern, locale);
+            if(StringUtils.isNotBlank(timezone)){
+            	 format.setTimeZone(TimeZone.getTimeZone(timezone));
+            }
+            dateStr = format.format(date);
+        }
+        return dateStr;
+	}
 	
 }

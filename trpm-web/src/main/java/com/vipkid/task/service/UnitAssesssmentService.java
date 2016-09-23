@@ -123,10 +123,12 @@ public class UnitAssesssmentService {
 				if(oc!=null && StringUtils.isNoneBlank(oc.getTeacherEmail())){
 					String email = oc.getTeacherEmail(); //获取教师邮箱发送邮件
 					String name = oc.getTeacherName();
+					String timezone = oc.getTimezone();
+					
 					//email = "yangchao@vipkid.com.cn"; //
 					logger.info("send Email to teacher name= {},email = {} , contentTemplete = {}, titleTemplete = {}",name,email,contentTemplete,titleTemplete);
-					String scheduledDateTime = UADateUtils.format(oc.getScheduledDateTime(), "MM/dd/YYYY") ;
-					scheduledDateTime +=" at "+UADateUtils.format(oc.getScheduledDateTime(), "HH:mm") ;
+					String scheduledDateTime = UADateUtils.format(oc.getScheduledDateTime(), "MM/dd/YYYY",timezone) ;
+					scheduledDateTime +=" at "+UADateUtils.format(oc.getScheduledDateTime(), "HH:mm",timezone) ;
 					try {
 	                    Map<String, String> paramsMap = Maps.newHashMap();
 	                    paramsMap.put("scheduledDateTime", scheduledDateTime);
