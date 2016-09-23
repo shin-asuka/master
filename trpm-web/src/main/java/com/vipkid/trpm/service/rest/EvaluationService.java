@@ -29,8 +29,8 @@ public class EvaluationService {
         Map<String,Object> resultMap = Maps.newHashMap();
         List<Map<String,Object>> list = this.teacherQuizDao.findTags();
         if(CollectionUtils.isNotEmpty(list)){
-            List<Map<String,Object>> listGroup = list.stream().parallel().filter(map -> map.get("type").equals("1")).collect(Collectors.toList());
-            List<Map<String,Object>> listTags = list.stream().parallel().filter(map -> map.get("type").equals("2")).collect(Collectors.toList());
+            List<Map<String,Object>> listGroup = list.stream().parallel().filter(map -> map.get("type").equals(1)).collect(Collectors.toList());
+            List<Map<String,Object>> listTags = list.stream().parallel().filter(map -> map.get("type").equals(2)).collect(Collectors.toList());
             resultMap.put("listGroup", listGroup);
             resultMap.put("listTags", listTags);
         }

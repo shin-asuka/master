@@ -80,7 +80,7 @@ public class LoginControllerTest extends BaseTestCase{
     @Test
     public void auth() throws IOException{
         String url = URL_PREFIX + "/api/user/auth";
-        Response response = Jsoup.connect(url).ignoreContentType(true).timeout(60000).header(CookieKey.AUTOKEN, token).method(Method.POST).execute();
+        Response response = Jsoup.connect(url).ignoreContentType(true).timeout(60000).header(CookieKey.AUTOKEN, TOKEN).method(Method.POST).execute();
         String json = response.body();
         logger.info(" auth OK ==> " + json);
         
