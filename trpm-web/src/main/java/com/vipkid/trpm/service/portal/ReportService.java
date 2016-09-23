@@ -617,7 +617,7 @@ public class ReportService {
      * @param teacherComment
      * @date 2015年12月16日
      */
-    public Map<String, Object> submitTeacherComment(TeacherComment teacherComment, User user,
+    public Map<String, Object> submitTeacherComment(TeacherComment teacherComment, User user,String serialNumber,
             String scheduledDateTime) {
         // 如果ID为0 则抛出异常并回滚
         checkArgument(0 != teacherComment.getId(), "Argument teacherComment id equals 0");
@@ -681,7 +681,7 @@ public class ReportService {
                 emailService.sendEmail4Performance2CLT(oldtc.getStudentId(), serialNumber);
             });
         }
-        return parmMap;
+        return paramMap;
     }
 
     /**

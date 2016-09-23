@@ -241,7 +241,7 @@ public class ReportController extends AbstractPortalController {
             TeacherComment teacherComment, Model model) {
         String serialNumber = request.getParameter("serialNumber");
         String scheduledDateTime = request.getParameter("scheduledDateTime");
-        Map<String, Object> parmMap = reportService.submitTeacherComment(teacherComment, indexService.getUser(request),scheduledDateTime);
+        Map<String, Object> parmMap = reportService.submitTeacherComment(teacherComment, indexService.getUser(request),serialNumber,scheduledDateTime);
         return jsonView(response, parmMap);
     }
 
