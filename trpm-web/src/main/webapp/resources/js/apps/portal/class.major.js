@@ -36,7 +36,7 @@ define(["function","jquery-bootstrap","jquery-load","countdown" ], function() {
 			isNewStudent(serverTime, createDateTime);
 		}
 	};
-	
+
 	var initInfoMenu = function(level) {
 		/** 教室页面顶部信息展示效果 */
 		$("div.lessonInfoRow > div.info").hover(function() {
@@ -88,18 +88,17 @@ define(["function","jquery-bootstrap","jquery-load","countdown" ], function() {
 		});
 	};
 
-	
-	/** 退出教室需要判断DemoReoprt或者FeedBack是否填写过,没有填写过的要询问教师是否要推出教室 */
-	var confirmExitClassroom = function(isDemoReport, onlineClassId, studentId) {
-		var isShow = false;
 
+	/** 退出教室需要判断DemoReoprt或者FeedBack是否填写过,没有填写过的要询问教师是否要推出教室 */
+	var confirmExitClassroom = function(isDemoReport, onlineClassId, studentId,isUa) {
+		var isShow = false;
 		/* 判断feedback是否为空 */
 		var url = webPath + "/isEmpty.json";
 		var backsuccess = function(datas, isShow) {
 			if (datas.empty) {
 				isShow = true;
 			}
-			showExitClassroomTips(isShow, onlineClassId);
+			showExitClassroomTips(isShow, onlineClassId,isUa);
 		};
 
 		/* 判断demoReport是否为空 */
@@ -109,10 +108,10 @@ define(["function","jquery-bootstrap","jquery-load","countdown" ], function() {
 				if (datas.lifeCycle === "UNFINISHED" || !datas.lifeCycle) {
 					isShow = true;
 				}
-				showExitClassroomTips(isShow, onlineClassId);
+				showExitClassroomTips(isShow, onlineClassId,isUa);
 			};
 		}
-		
+
 		Portal.loading("open");
 		/* 请求后台取值判断处理，是否以前填写过 */
 		$.ajaxRequest({
@@ -133,12 +132,12 @@ define(["function","jquery-bootstrap","jquery-load","countdown" ], function() {
 	};
 
 	/** 退出教室提示信息函数 */
-	var showExitClassroomTips = function(isShow, onlineClassId) {
+	var showExitClassroomTips = function(isShow, onlineClassId,isUa) {
 		Portal.loading("close");
 		if (isShow) {
 			$.alert("confirm", {
 				title : "Prompt",
-				content : "Please remember to fill in the class feedback!",
+				content : isUa==1?"Please make sure you have saved your form.":"Please remember to fill in the class feedback!",
 				button : "OK",
 				callback : function() {
 					Portal.loading("open");
@@ -149,7 +148,7 @@ define(["function","jquery-bootstrap","jquery-load","countdown" ], function() {
 			Portal.loading("open");
 			window.location.href = webPath + "/exitClassroom.shtml?onlineClassId=" + onlineClassId;
 			/**TODO
-			$.alert("confirm", {
+			 $.alert("confirm", {
 				title : "Prompt",
 				content : "Do you want exit this classroom? ",
 				button : " Yes ",
@@ -158,12 +157,12 @@ define(["function","jquery-bootstrap","jquery-load","countdown" ], function() {
 					window.location.href = webPath + "/exitClassroom.shtml?onlineClassId=" + onlineClassId;
 				}
 			});
-			*/
+			 */
 		}
 	};
-	
+
 	/** 发送在线帮助 */
-		var sendHelp = function(scheduleTime, onlineClassId) {
+	var sendHelp = function(scheduleTime, onlineClassId) {
 		var url = webPath + "/sendHelp.json";
 		Portal.loading("open");
 		$.ajaxRequest({
@@ -195,51 +194,51 @@ define(["function","jquery-bootstrap","jquery-load","countdown" ], function() {
 			}
 		});
 	};
-	
+
 	/** 点击contactFireman按钮 */
 	var  clickHelp = function(scheduleTime, onlineClassId) {
 //		var num = Math.round(30+Math.random()*30);
-		
-		 var url = webPath + "/sendHelp.json";
-			Portal.loading("open");
-			$.ajaxRequest({
-				url : url,
-				dataType : 'json',
-				data : {
-					"scheduleTime" : scheduleTime,
-					"onlineClassId" : onlineClassId
-				},
-				success : function(datas) {
-					Portal.loading("close");
-					if (datas.status) {
-						//成功不弹窗提示,故注释掉
+
+		var url = webPath + "/sendHelp.json";
+		Portal.loading("open");
+		$.ajaxRequest({
+			url : url,
+			dataType : 'json',
+			data : {
+				"scheduleTime" : scheduleTime,
+				"onlineClassId" : onlineClassId
+			},
+			success : function(datas) {
+				Portal.loading("close");
+				if (datas.status) {
+					//成功不弹窗提示,故注释掉
 //						$.alert("info", {
 //							title : "Currently resolving an IT problem.",
 //						});
-						
-						//contactFireman置消失
-						var contactFireman=document.getElementById("contactFireman");
-						contactFireman.style.display="none";
-						
-						//”取消help按钮“和“排队情况提示”可见
-						document.getElementById("contactTheFireman").style.display="";
-						document.getElementById("cancelHelpBtn").style.display="";
-					} else {
-						var content = "You can only ask for help during the class.";
-						if (datas.msg) {
-							content = datas.msg;
-						}
-						$.alert("error", {
-							title : content
-						});
+
+					//contactFireman置消失
+					var contactFireman=document.getElementById("contactFireman");
+					contactFireman.style.display="none";
+
+					//”取消help按钮“和“排队情况提示”可见
+					document.getElementById("contactTheFireman").style.display="";
+					document.getElementById("cancelHelpBtn").style.display="";
+				} else {
+					var content = "You can only ask for help during the class.";
+					if (datas.msg) {
+						content = datas.msg;
 					}
-				},
-				timeout : _timeout,
-				error : function(reponse, status, info) {
-					ajaxErrorfunction(reponse, status, info);
+					$.alert("error", {
+						title : content
+					});
 				}
-			});
-			
+			},
+			timeout : _timeout,
+			error : function(reponse, status, info) {
+				ajaxErrorfunction(reponse, status, info);
+			}
+		});
+
 //			//contactFireman置消失
 //			var contactFireman=document.getElementById("contactFireman");
 //			contactFireman.style.display="none";
@@ -248,7 +247,7 @@ define(["function","jquery-bootstrap","jquery-load","countdown" ], function() {
 //			document.getElementById("contactTheFireman").style.display="";
 //			document.getElementById("cancelHelpBtn").style.display="";
 	};
-	
+
 	/** 点击取消help按钮 */
 	var  clickCancelHelp = function(scheduleTime, onlineClassId) {
 		//helpButton置可用，图片灰色变红色
@@ -262,11 +261,11 @@ define(["function","jquery-bootstrap","jquery-load","countdown" ], function() {
 		var contactFireman=document.getElementById("contactFireman");
 		contactFireman.style.display="";
 	};
-	
+
 	var  clickFAQ = function() {
-		 window.open(webPath+"/faq.shtml");
+		window.open(webPath+"/faq.shtml");
 	};
-	
+
 	/** public 查看INFO */
 	var openInfo = function(studentId,serialNum) {
 		var url = webPath + "/openInfo.shtml";
@@ -292,7 +291,7 @@ define(["function","jquery-bootstrap","jquery-load","countdown" ], function() {
 		});
 
 	};
-	
+
 	return {
 		init : init,
 		openInfo:openInfo,

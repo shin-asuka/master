@@ -111,7 +111,8 @@ public class ClassroomsController extends AbstractPortalController {
 		model.addAttribute("serialNumber", serialNumber);
 		model.addAttribute("onlineClassId", onlineClassId);
 		model.addAttribute("studentId", studentId);
-		
+		model.addAttribute("lessonId",lessonId);
+
 		/*Practicum 报告显示*/
 		if(serialNumber.startsWith("P")){
 			model.addAllAttributes(classroomsService.practicumReport(serialNumber, onlineClassId, lessonId, studentId,scheduledTime));

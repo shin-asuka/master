@@ -18,8 +18,12 @@ public class LessonMessage implements Serializable{
 	private String serialNumber;
 	private String name;
 	private String number;
-	
-	public LessonMessage() {
+    /**
+     * 是否生成UA报告
+     */
+    private Integer isUnitAssessment;
+
+    public LessonMessage() {
 		
 	}
 	
@@ -60,4 +64,11 @@ public class LessonMessage implements Serializable{
 		this.number = number;
 	}
 
+    public Integer getIsUnitAssessment() {
+        return isUnitAssessment;
+    }
+
+    public void setIsUnitAssessment(Integer isUnitAssessment) {
+        this.isUnitAssessment = isUnitAssessment;
+    }
 }

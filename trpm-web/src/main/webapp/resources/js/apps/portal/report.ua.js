@@ -51,15 +51,35 @@ define([ "function", "jquery-bootstrap", "jquery-form", "jquery-load", "tools" ]
 		$(this).next().removeAttr("style");
 	};
 
+	var openShow = function(isRequire) {
+		var obj = $("div." + isRequire);
+		$(obj).addClass("selected").siblings().removeClass("selected");
+		$("div#" + isRequire).show().siblings().hide();
+		$(".divload").show();
+		$("body").addClass("modal-open");
+		var w_height = ($(window).height()-$("div.trailFeedbackContainer").height())/2;
+		w_height = w_height - 10;
+		$("div.trailFeedbackContainer").animate({
+			top:w_height+"px",
+			opacity : 'show'
+		}, 300);
+	};
+	
 	/**页面请求开始*/
-	var showUAReport = function(serialNumber, studentId, onlineClassId) {
+	var showUAReport = function(serialNumber, studentId, onlineClassId,isNewUa) {
+		debugger;
 		Portal.loading("open");
 		var url = webPath + "/uploadPage.shtml";
-
+		//var url = webPath + "/uaReportShow.shtml";
+		if(isNewUa == 1){
+			url = webPath + "/uaReportShow.shtml";
+		}
+		
 		var data = Tools.newMap();
 		data.put("name", serialNumber);
 		data.put("studentId", studentId);
 		data.put("onlineClassId", onlineClassId);
+		data.put("isUa","ua");
 
 		_serialNumber = serialNumber;
 		_studentId = studentId;

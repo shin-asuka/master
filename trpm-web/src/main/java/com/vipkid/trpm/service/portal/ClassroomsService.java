@@ -3,11 +3,15 @@ package com.vipkid.trpm.service.portal;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.google.common.collect.Maps;
+import com.vipkid.http.service.AssessmentHttpService;
+import com.vipkid.http.vo.OnlineClassVo;
+import com.vipkid.http.vo.StudentUnitAssessment;
 import com.vipkid.trpm.constant.ApplicationConstant.CourseType;
 import com.vipkid.trpm.constant.ApplicationConstant.LoginType;
 import com.vipkid.trpm.constant.ApplicationConstant.UaReportStatus;
@@ -68,6 +72,9 @@ public class ClassroomsService {
     @Autowired
     private TeacherApplicationDao teacherApplicationDao;
 
+    @Autowired
+	private AssessmentHttpService assessmentHttpService;
+    
     /**
      * 获取Major classrooms的分页总行数
      *
@@ -106,7 +113,7 @@ public class ClassroomsService {
 
     /**
      * 获取Practicum classrooms的分页总行数
-     *
+     * 
      * @param teacher
      * @param monthOfYear
      * @return Map<String, Object>
@@ -351,15 +358,36 @@ public class ClassroomsService {
         if (DateUtils.isSearchById(schedDateTime)) {
             assessmentReport = assessmentReportDao.findReportByClassId(onlineClassId);
         } else {
-            assessmentReport =
-                    assessmentReportDao.findReportByStudentIdAndName(serialNumber, studentId);
+            assessmentReport = assessmentReportDao.findReportByStudentIdAndName(serialNumber, studentId);
         }
+        Integer isNewUa = 0;
+        String lifeCycle = "";  //旧版UA
         if (null == assessmentReport || StringUtils.isEmpty(assessmentReport.getUrl())) {
-            modelMap.put("lifeCycle", "(empty)");
+            //odelMap.put("lifeCycle", "(empty)");
+            lifeCycle = "(empty)";
         } else if (assessmentReport.getReaded() == UaReportStatus.RESUBMIT) {
-            modelMap.put("lifeCycle", "(Resubmit)");
+            //modelMap.put("lifeCycle", "(Resubmit)");
+            lifeCycle = "(Resubmit)";
         }
-
+        
+        if(null == assessmentReport){ //基于UA系统查询在线课程UA填写情况
+        	OnlineClassVo onlineClassVo = new OnlineClassVo();
+        	onlineClassVo.getIdList().add(onlineClassId);
+			List<StudentUnitAssessment> suaList = assessmentHttpService.findOnlineClassVo(onlineClassVo);
+			if(CollectionUtils.isNotEmpty(suaList)){
+				StudentUnitAssessment sua = suaList.get(0);
+				if(sua.getSubmitStatus() == 1){
+					lifeCycle = "(submitted)";
+				}else{
+					lifeCycle = "(saved)";
+				}
+			}else{
+				lifeCycle = "(empty)";
+			}
+			isNewUa = 1;
+        }
+        modelMap.put("isNewUa", isNewUa);
+        modelMap.put("lifeCycle", lifeCycle);
         return modelMap;
     }
 

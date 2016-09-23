@@ -26,18 +26,26 @@
 					#if($stringUtils.startsWith($!{lesson.serialNumber},'A'))
 						#if($currentReport)
 							#set($isDemoReport = true)
-							<div onclick="require('report-demo').showDemoReport('$lesson.serialNumber','$!onlineClass.id', '$!student.id')">Add Feedback</div>
+##							<div onclick="require('report-demo').showDemoReport('$lesson.serialNumber','$!onlineClass.id', '$!student.id')">Add Feedback</div>
+                            <div class="js-add">Add Feedback</div>
 						#end
+					#elseif($lesson.isUnitAssessment == 1 && $isNewUa == 1)
+						##需要填写单元评估报告的课程  is Unit Assessment
+##						<div onclick="require('feedback').openUnitAssessment('Required','$!onlineClass.id','$!student.id')">Add Feedback</div>
+                        <div class="js-add">Add Feedback</div>
+					##<div onclick="showUADailog('$!onlineClass.id')">Add Feedback</div>
+					
 					#else
 						##否则显示feedback
-						<div onclick="require('feedback').openFeedback('Required','$!onlineClass.id','$!student.id')">Add Feedback</div> 
+						<div onclick="require('feedback').openFeedback('Required','$!onlineClass.id','$!student.id')">Add Feedback</div>
+##                      x<div class="js-add">Add Feedback</div>
 					#end
 					
 					#if(!$isReplay)
 						<div class="lastAction"><a href="http://help.duobeiyun.com/room/test/?result=http://beta-app-proxy.vipkid.com.cn/api/service/public/ittest/callback&amp;lang=en&amp;role=TEACHER&amp;id=$teacher.id" style="color: red;" target="_blank">Test your computer</a></div>
 					#end
 					
-					<div class="lastAction"> <a href="javascript:;" onclick="require('classmajor').confirmExitClassroom($isDemoReport,'$!onlineClass.id', '$!student.id')"  style="color: white;">Exit Classroom</a></div>
+					<div class="lastAction"> <a href="javascript:;" onclick="require('classmajor').confirmExitClassroom($isDemoReport,'$!onlineClass.id', '$!student.id','$lesson.isUnitAssessment')"  style="color: white;">Exit Classroom</a></div>
 		        </div>
 		        
 		        #**3.倒计时显示 *#
@@ -98,20 +106,193 @@
 		##body end
   </div>
 </div>
+
+<style>
+.iframe-score {
+	position:relative;
+	width:100%;
+	height: 300px;
+	padding:0 100px;
+	display:none;
+	background: rgba(194, 197, 188, .5)
+}
+.iframe-score.iframe-fixed{
+	position: fixed;
+	left: 0;
+	bottom: 0;
+    right: 0;
+}
+.iframe-score iframe{
+	background: #FFF;
+}
+.iframe-score span{
+	position:absolute;
+    width: 40px;
+	height: 40px;
+	right: 60px;
+	top:0;
+	font-size:26px;
+	cursor:pointer;
+}
+
+.iframe-score .down{
+    background: url("#styleUrl('/resources/images/portal/down_normal.png')");
+    background-size: 100% 100%;
+}
+
+.iframe-score .down:hover {
+    background: url("#styleUrl('/resources/images/portal/down-hover.png')");
+    background-size: 100% 100%;
+}
+.iframe-score .up {
+    background: url("#styleUrl('/resources/images/portal/up_normal.png')");
+    background-size: 100% 100%;
+}
+.iframe-score .up:hover {
+    background: url("#styleUrl('/resources/images/portal/up_hover.png')");
+    background-size: 100% 100%;
+}
+.iframe-score span:hover {
+	color:#C00;
+}
+	.relative {
+		position:relative;
+	}
+.relative strong {
+	position:absolute;
+	top:20px;
+	right:36px;
+	width:22px;
+	cursor:pointer;
+	height:22px;
+    background: url("#styleUrl('/resources/images/portal/delete.png')");
+}
+</style>
+
+<div class="js-iframe-score iframe-score">
+	<span class="down js-span"></span>
+	<div class="relative">
+	<iframe frameborder="0" scrolling="auto" width="100%" height="300"  style="filter:Chroma(Color=white);" src="/unit_assessment?onlineClassId=${onlineClassId}"></iframe>
+	<strong></strong>
+    </div>
+</div>
+
+
+<script>
+
+		var setIframe = {
+			init : function (){
+				this.iframeState = 1;
+				this.status = true;
+				this.iframe = $('.js-iframe-score');
+				this.el = $('iframe', this.iframe)
+                this.addEvent();
+				this.urls();
+			},
+
+			urls : function (){
+                var url = window.location.href;
+                var ua = url.indexOf('from=ua');
+				if(ua!=-1){
+					this.modifyIframeHeight();
+
+//                    this.iframe.show();
+				}
+			},
+
+			modifyIframeHeight : function (){
+				var bodyHeight = $('body').outerHeight()-35;
+                this.iframe.show();
+                this.iframe.css('height', bodyHeight);
+                this.el.css('height', bodyHeight);
+				this.iframe.addClass('iframe-fixed');
+			},
+
+			showIframe : function (){
+                this.iframe.show();
+                $('.js-span').addClass('down')
+                $('.js-span').removeClass('up');
+				this.iframeState = 1;
+			},
+
+			addEvent : function (){
+				var t = this;
+				$('.js-add').on('click', function (){
+                    t.showIframe();
+					t.modifyIframeHeight();
+				});
+                $('span', this.iframe).on('click', function (){
+					if (t.iframeState === 1) {
+                        t.iframe.removeClass('iframe-fixed');
+                        t.iframe.css('height', '300');
+                        t.el.css('height', '300');
+						$(this).addClass('up')
+						$(this).removeClass('down')
+						$('body').scrollTop($('body').height())
+                        t.iframeState = 0;
+					} else {
+						t.modifyIframeHeight();
+                        $(this).addClass('down')
+                        $(this).removeClass('up')
+                        t.iframeState = 1;
+                        $('body').scrollTop(0)
+					}
+				});
+
+				$('.relative strong').on('click', function (){
+					t.iframe.hide();
+				});
+			}
+		};
+
+		window.onload = function (){
+            setIframe.init();
+		};
+</script>
+<!--<iframe id="iframe-score" frameborder="0" scrolling="auto" width="100%" height="500"
+        src="/unit_assessment?onlineClassId=${onlineClassId}"></iframe>-->
+
+
+
+<!-- Modal -->
+<div  class="modal fade" data-backdrop="false" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div id="modalDialog" class="modal-dialog" role="document" style="width:1200px;">
+        <div class="modal-content" >
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">Unit Assessment Report</h4>
+            </div>
+            <div class="modal-body" >
+               <iframe id="iframepage" frameborder="0" scrolling="auto" width="100%" height="500" 
+    				ng-src="/unit_assessment?onlineClassId=${onlineClassId}"></iframe>
+            </div>
+           <!-- <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+            </div>-->
+        </div>
+    </div>
+</div>
+<div id="dialog" title="Unit Assessment Report" style="display:none;">
+	<iframe id="iframepageua" frameborder="0" scrolling="auto" width="100%" style="min-height:450px;"
+    				##ng-src="http://a12-t.vipkid.com.cn/unit_assessment?onlineClassId=3332241"></iframe>
+					ng-src="/unit_assessment?onlineClassId=${onlineClassId}"></iframe>
+</div>
+<div id="dialogArea" style="height:500px;width:100%;display:none;"></div>
+<link rel="stylesheet" href="#styleUrl('/resources/styles/portal/jquery-ui.min.css')" />
+
 #@requireJs()
     require(['classmajor'], function(classmajor){        	
     	classmajor.init("$!serverTime", "$!scheduleTime","$!studentUser.createDateTime");    
         #if($studentUser.createDateTime)
           classmajor.sendTeacherInClassroom("$!onlineClass.id");
         #end
-
     });
     
     #if($stringUtils.startsWith($!{lesson.serialNumber},'A'))
 	    #if($currentReport)
 	    	 require(['report-demo','room-demo'], function(report,roomdemo){
 	    	 	roomdemo.parentTab();
-	    	 	#if($from)
+	    	 	#if($from && $from!="ua")
 	    	 		roomdemo.openDemoReportRoom("$!lesson.serialNumber","$!onlineClass.id","$!student.id","listening-s");
 	    	 	#end
 	    	 });
@@ -119,7 +300,7 @@
     #else
     	require(['feedback'], function(feedback){
 		 	feedback.parentTab();
-		 	#if($from)
+		 	#if($from && $from!="ua")
 		 		feedback.openFeedback("Required","$!onlineClass.id","$!student.id");
 		 	#end
 		});
@@ -135,5 +316,11 @@
         require(['xdyproxy'], function(xdy){
             xdy.initChannel("$!{TRPM_USER.id}", "$!onlineClass.classroom", true, "$!stars");
         });  
-    #end      
+    #end  
+	
+	##UA 报告 弹出框 拖动效果 依赖类库
+	require(['jquery'], function(){ } );
+	require(['jquery-ui'], function(){ } );
+	
 #end
+

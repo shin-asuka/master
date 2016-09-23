@@ -48,7 +48,7 @@
 		      <a href="javascript:;" ms-click="materials(el.lessonId,el.serialNumber)">Materials</a>
 		      ## 显示Report的链接
 		      <span ms-if="el.finishType != 'TEACHER_NO_SHOW' && !el.serialNumber.startsWith('OPEN') && el.status != 'INVALID'">
-		        <span ms-attr-id="{{el.id}}">{{el|showReport}}</span>
+		        <a ms-attr-id="{{el.id}}">{{el|showReport}}</a>
 		      </span> 
 		    </div>
 		  </td>

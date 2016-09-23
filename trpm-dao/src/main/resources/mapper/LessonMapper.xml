@@ -15,7 +15,8 @@
 		lesson_serial_number, lesson.topic AS
 		lesson_topic, lesson.vocabularies AS lesson_vocabularies,
 		lesson.learning_cycle_id AS lesson_learning_cycle_id, lesson.number AS
-		lesson_number
+		lesson_number,
+		lesson.is_unit_assessment AS lesson_is_unit_assessment
 	</sql>
 
 	<sql id="lessonWhere">
@@ -36,6 +37,7 @@
 			<if test="vocabularies!=null">AND lesson.vocabularies = #{vocabularies}</if>
 			<if test="learningCycleId!=0">AND lesson.learning_cycle_id = #{learningCycleId}</if>
 			<if test="number!=null">AND lesson.number = #{number}</if>
+			<if test="number!=null">AND lesson.is_unit_assessment = #{isUnitAssessment}</if>
 		</trim>
 	</sql>
 
@@ -62,6 +64,7 @@
 		<result column="lesson_vocabularies" property="vocabularies" />
 		<result column="lesson_learning_cycle_id" property="learningCycleId" />
 		<result column="lesson_number" property="number" />
+		<result column="lesson_is_unit_assessment" property="isUnitAssessment" />
 	</resultMap>
 
 	<select id="findDao" resultMap="lessonResultMap" useCache="true">

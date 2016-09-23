@@ -20,7 +20,14 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.google.common.collect.Maps;
 import com.vipkid.enums.OnlineClassEnum;
-import com.vipkid.trpm.entity.*;
+import com.vipkid.http.service.AssessmentHttpService;
+import com.vipkid.http.vo.StudentUnitAssessment;
+import com.vipkid.trpm.entity.AssessmentReport;
+import com.vipkid.trpm.entity.DemoReport;
+import com.vipkid.trpm.entity.Lesson;
+import com.vipkid.trpm.entity.OnlineClass;
+import com.vipkid.trpm.entity.StudentExam;
+import com.vipkid.trpm.entity.TeacherComment;
 import com.vipkid.trpm.service.passport.IndexService;
 import com.vipkid.trpm.service.portal.ReportService;
 import com.vipkid.trpm.util.DateUtils;
@@ -43,7 +50,7 @@ public class ReportController extends AbstractPortalController {
 
     @Autowired
     private IndexService indexService;
-    
+
     /**
      * UA报告上传页面进入
      * 
@@ -58,6 +65,13 @@ public class ReportController extends AbstractPortalController {
     public String uaReport(AssessmentReport report, HttpServletRequest request, Model model) {
         model = this.uploadData(report, request, model, "0");
         return view("ua_report_upload");
+    }
+
+    @RequestMapping("/uaReportShow")
+    public String uaReportShow(AssessmentReport report, Long onlineClassId, HttpServletRequest request, Model model) {
+        model.addAttribute("onlineClassId", onlineClassId);
+
+        return view("ua_report_show");
     }
 
     /**
@@ -116,8 +130,8 @@ public class ReportController extends AbstractPortalController {
             AssessmentReport report, @RequestParam("file") MultipartFile file) {
         String score = request.getParameter("score");
         String onlineClassId = request.getParameter("onlineClassId");
-        Map<String, Object> map = reportService.savePracticumReport(report, file, request.getFile(file.getName())
-                .getSize(), indexService.getUser(request), score, onlineClassId);
+        Map<String, Object> map = reportService.savePracticumReport(report, file,
+                request.getFile(file.getName()).getSize(), indexService.getUser(request), score, onlineClassId);
 
         return jsonView(response, map);
     }
@@ -165,19 +179,14 @@ public class ReportController extends AbstractPortalController {
     /**
      * 保存或提交DemoReport
      * 
-     * @Author:ALong
-     * @Title: reportSubmit
-     * @param response
-     * @param demoReport
-     * @param isSubmited
-     * @return String
-     * @date 2015年12月14日
-     * @throws
+     * @Author:ALong @Title: reportSubmit @param response @param demoReport @param isSubmited @return String @date
+     * 2015年12月14日 @throws
      */
     @RequestMapping("/reportSubmit")
     public String demoReportSubmit(HttpServletRequest request, HttpServletResponse response, DemoReport demoReport,
             boolean isSubmited) {
-        Map<String, Object> map = reportService.saveOrSubmitDemoReport(demoReport, isSubmited, indexService.getUser(request));
+        Map<String, Object> map = reportService.saveOrSubmitDemoReport(demoReport, isSubmited,
+                indexService.getUser(request));
 
         return jsonView(response, map);
     }
@@ -213,37 +222,38 @@ public class ReportController extends AbstractPortalController {
         return view("online_class_feedback");
     }
 
+    @RequestMapping("/unitAssessment")
+    public String unitAssessment(@RequestParam long onlineClassId, HttpServletRequest request,
+            HttpServletResponse response, Model model) {
+
+        model.addAttribute("onlineClassId", onlineClassId);
+        return view("online_class_unitAssessment");
+    }
+
     /**
-     * feedback保存，任何时候都可以保存  2016-5-10 修改feedback 只允许提交一次，因为要通知家长老师有反馈
+     * feedback保存，任何时候都可以保存 2016-5-10 修改feedback 只允许提交一次，因为要通知家长老师有反馈
      * 
-     * @Author:ALong
-     * @Title: commentSubmit
-     * @param request
-     * @param response
-     * @param teacherComment
-     * @param model
-     * @return String
-     * @date 2015年12月16日
-     * @throws
+     * @Author:ALong @Title: commentSubmit @param request @param response @param teacherComment @return String @date
+     * 2015年12月16日 @throws
      */
     @RequestMapping("/commentSubmit")
     public String feedbackSubmit(HttpServletRequest request, HttpServletResponse response,
-            TeacherComment teacherComment, Model model) {
-        String serialNumber = request.getParameter("serialNumber");
-        Map<String, Object> parmMap = reportService.submitTeacherComment(teacherComment, indexService.getUser(request),serialNumber);
-        return jsonView(response, parmMap);
+            TeacherComment teacherComment) {
+        Map<String, Object> paramMap = reportService.submitTeacherComment(teacherComment,
+                indexService.getUser(request));
+        return jsonView(response, paramMap);
     }
-    
+
     @RequestMapping("/getComment")
-    public String getComment(HttpServletRequest request, HttpServletResponse response, @RequestParam long id){
+    public String getComment(HttpServletRequest request, HttpServletResponse response, @RequestParam long id) {
         // 查询FeedBack信息
         TeacherComment teacherComment = reportService.findTeacherCommentById(id);
-        
-        Map<String, Object> parmMap=Maps.newHashMap();
-        if(Objects.nonNull(teacherComment)&&Objects.nonNull(teacherComment.getFirstDateTime())){
+
+        Map<String, Object> parmMap = Maps.newHashMap();
+        if (Objects.nonNull(teacherComment) && Objects.nonNull(teacherComment.getFirstDateTime())) {
             parmMap.put("status", true);
             parmMap.put("teacherComment", teacherComment);
-        }else{
+        } else {
             parmMap.put("status", false);
         }
         return jsonView(response, parmMap);
@@ -252,15 +262,8 @@ public class ReportController extends AbstractPortalController {
     /**
      * info 展示 学生基本信息 / 学生测试信息 / 教师feedback
      * 
-     * @Author:ALong
-     * @Title: openInfo
-     * @param request
-     * @param response
-     * @param studentId
-     * @param model
-     * @return String
-     * @date 2015年12月18日
-     * @throws
+     * @Author:ALong @Title: openInfo @param request @param response @param studentId @param model @return String @date
+     * 2015年12月18日 @throws
      */
     @RequestMapping("/openInfo")
     public String openInfo(HttpServletRequest request, HttpServletResponse response, long studentId, String serialNum,
@@ -370,7 +373,8 @@ public class ReportController extends AbstractPortalController {
         String onlineClassId = request.getParameter("onlineClassId");
         OnlineClass onlineClass = reportService.findOnlineClassById(Long.valueOf(onlineClassId));
         model.addAttribute("onlineClass", onlineClass);
-        if (onlineClass.getScheduledDateTime().before(new Timestamp(System.currentTimeMillis())) && !OnlineClassEnum.Status.INVALID.toString().equals(onlineClass.getStatus())) {
+        if (onlineClass.getScheduledDateTime().before(new Timestamp(System.currentTimeMillis()))
+                && !OnlineClassEnum.Status.INVALID.toString().equals(onlineClass.getStatus())) {
             model.addAttribute("mark", onlineClass.getScheduledDateTime());
         }
 
@@ -379,9 +383,9 @@ public class ReportController extends AbstractPortalController {
         /** 主修课按照student和lessonSN查询 */
         /** 主修课优先按照onlineClass 查询，如果没有则按照student和lessonSN查询 */
         if ("0".equals(classType)) {
-            if(DateUtils.isSearchById(onlineClass.getScheduledDateTime().getTime())){
+            if (DateUtils.isSearchById(onlineClass.getScheduledDateTime().getTime())) {
                 reports = reportService.findReportByClassId(Long.valueOf(onlineClassId));
-            }else{
+            } else {
                 reports = reportService.findReportByStudentIdAndName(report.getName(), report.getStudentId());
             }
             /** Practicum课程按照classId查询 */

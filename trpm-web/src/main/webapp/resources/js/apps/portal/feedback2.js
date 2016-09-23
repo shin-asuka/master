@@ -112,6 +112,43 @@ define([ "jquery-form", "jquery-bootstrap", "jquery-load", "tools" ], function()
 			}
 		});
 	};
+	
+	/** **public 请求页面 */
+	var openUnitAssessment = function(isRequire, onlineClassId, studentId) {
+		
+		var src = $('#iframepageua').attr('ng-src');
+		$('#iframepageua').attr('src',src);
+		
+		/*$("#modalDialog").draggable();//为对话框添加拖拽
+		$("#myModal").css("overflow", "hidden");//禁止对话框的半透明背景滚动
+		$('#myModal').modal('show') ;*/
+		
+		var dialogParent = $('#dialog').parent();  
+		var dialogOwn = $('#dialog').clone(); //克隆弹框里面的内容 
+		dialogOwn.hide();  
+		$( "#dialog" ).dialog({
+			width : 1200
+			,height : 550
+			,modal: false 
+			,open : function(event, ui){
+				//$(".ui-dialog-titlebar-close", $(this).parent()).hide();
+				var closeObj = $(".ui-dialog-titlebar-close", $(this).parent());
+				//closeObj.html('close');
+				var classButton = "ui-button ui-widget ui-state-default ui-corner-all ui-button-icon-only ui-dialog-titlebar-close";
+				var html = '<span class="ui-button-icon-primary ui-icon ui-icon-closethick"></span>'
+				closeObj.html(html);
+				closeObj.addClass(classButton);
+				$("#dialogArea").show();
+			}
+			,close: function(){
+				$("#dialogArea").hide();
+				 dialogOwn.appendTo(dialogParent);  
+			     $(this).dialog("destroy").remove();
+			}
+			
+		});
+		
+	};
 
 	/** *public 提交保存整个feedback表单 */
 	var trailCommentSubmit = function() {
@@ -293,7 +330,11 @@ define([ "jquery-form", "jquery-bootstrap", "jquery-load", "tools" ], function()
 		trailCommentClose : hideFeedBack,
 		parentTab : parentTab,
 		trailCommentSubmit : trailCommentSubmit,
-		openFeedback : openFeedback
+		openFeedback : openFeedback,
+		openUnitAssessment : openUnitAssessment
 	}
 
 });
+
+
+

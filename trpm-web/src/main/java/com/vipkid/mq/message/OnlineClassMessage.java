@@ -18,6 +18,7 @@ public class OnlineClassMessage implements Serializable{
 	private Long scheduledDateTime;
 	private Long createDateTime;
 	private Long studentEnrollmentTime;
+	private Long uaCreateDateTime; //ua报告创建时间
 	private Long uaUpdateDateTime; //ua报告更新时间
 	private Long uaUploadDateTime; //ua报告上传时间
 	private Long tcUpdateDateTime; //tc评语更新时间
@@ -142,4 +143,11 @@ public class OnlineClassMessage implements Serializable{
 		this.shortNotice = shortNotice;
 	}
 
+    public Long getUaCreateDateTime() {
+        return uaCreateDateTime;
+    }
+
+    public void setUaCreateDateTime(Long uaCreateDateTime) {
+        this.uaCreateDateTime = uaCreateDateTime;
+    }
 }

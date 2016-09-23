@@ -8,11 +8,13 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.google.common.collect.Maps;
 import com.vipkid.http.utils.JsonUtils;
+import com.vipkid.task.service.UnitAssesssmentService;
 import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.entity.TeacherAddress;
 import com.vipkid.trpm.entity.TeacherLocation;
@@ -31,6 +33,9 @@ public class PersonalInfoRestController {
 	
 	@Resource
 	private PersonalInfoService personalInfoService;
+	
+	@Autowired
+	private UnitAssesssmentService unitAsusesssmentService;
 	
 	@RequestMapping(value = "/personal/getBankInfoByTeacherId")
 	public Map<String, Object> getBankInfoByTeacherId(Long teacherId,HttpServletRequest request, HttpServletResponse response) {
@@ -70,4 +75,9 @@ public class PersonalInfoRestController {
 		return model;
 	}
 
+	@RequestMapping(value = "/assess/test")
+	public void test(){
+		unitAsusesssmentService.remindTeacherUnitAssessmentFor6Hour();
+		unitAsusesssmentService.remindTeacherUnitAssessmentFor12Hour();
+	}
 }

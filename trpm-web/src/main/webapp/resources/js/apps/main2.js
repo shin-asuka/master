@@ -24,6 +24,8 @@ require.config({
 		"jquery-bootstrap" : "libs/jquery.bootstrap",
 		"select2" : "libs/select2/select2.min",
 		"easemob" : "http://kefu.easemob.com/webim/easemob.js?tenantId=20182&hide=false&sat=false",
+		"jquery-ui" : "libs/jquery-ui.min",
+		
 		/* 模块JS */
 		"index" : "apps/common/index",
 		"schedule" : "apps/portal/schedule",
@@ -121,6 +123,9 @@ require.config({
 			deps : [ "jquery" ]
 		},
 		"select2":{
+			deps : [ "jquery" ]
+		},
+		"jquery-ui":{
 			deps : [ "jquery" ]
 		}
 	}

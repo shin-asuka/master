@@ -37,4 +37,20 @@
         <constructor-arg value="${activemq.queue.payroll.finishOnlineClass}"/>
     </bean>
 
+    <!-- 新UA填写 -->
+    <bean id="finishUaReportDestination" class="org.apache.activemq.command.ActiveMQQueue">
+        <constructor-arg value="${activemq.queue.payroll.finishUaReport}"/>
+    </bean>
+    <!-- UA报告消息监听器 -->
+    <bean id="uaReportMessageListener" class="com.vipkid.mq.consumer.UaReportMessageConsumer"/>
+    <!-- 消息监听容器 -->
+    <bean id="jmsContainer"  class="org.springframework.jms.listener.DefaultMessageListenerContainer">
+        <property name="connectionFactory" ref="cacheConnectionFactory" />
+        <property name="destination" ref="finishUaReportDestination" />
+        <property name="messageListener" ref="uaReportMessageListener" />
+        <property name="concurrentConsumers" value="10"/>
+        <property name="maxConcurrentConsumers" value="10"/>
+    </bean>
+    <!-- end -->
+
 </beans>

@@ -10,4 +10,9 @@
 	<bean id="announcementService" class="com.vipkid.http.service.AnnouncementHttpService">
         <property name="serverAddress" value="${announcement.serverAddress}"/>
     </bean>
+    
+    <bean id="assessmentHttpService" class="com.vipkid.http.service.AssessmentHttpService">
+        <property name="serverAddress" value="${homework.serverAddress}"/>
+    </bean>
+    
 </beans>
