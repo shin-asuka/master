@@ -7,9 +7,13 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.alibaba.fastjson.JSON;
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class CookieUtils {
+    private final static Logger logger = LoggerFactory.getLogger(CookieUtils.class);
 
     /* Cookie过期时间，默认1个月 */
     private static int maxAge = 30 * 24 * 3600;
@@ -34,6 +38,7 @@ public class CookieUtils {
 
     public static void setCookie(HttpServletResponse response, String name, String value,
             String domain) {
+        logger.info("添加Cookie，name = {},value = {},domain ={}",name,value,domain);
         Cookie cookie = new Cookie(name, value);
         cookie.setPath(getPath());
         cookie.setMaxAge(getMaxAge());
@@ -43,9 +48,10 @@ public class CookieUtils {
         }
 
         try {
+            logger.info("Response add cookie,cookie = {}", JSON.toJSONString(cookie));
             response.addCookie(cookie);
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("给Response添加Cookie时出现异常,name = {},value = {}",name,value,e);
         }
     }
 

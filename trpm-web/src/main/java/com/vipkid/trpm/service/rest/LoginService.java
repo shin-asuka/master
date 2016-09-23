@@ -8,6 +8,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
 import org.community.tools.JsonTools;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -32,6 +34,7 @@ import com.vipkid.trpm.util.CookieUtils;
 
 @Service
 public class LoginService {
+    private final static Logger logger = LoggerFactory.getLogger(LoginService.class);
 
     @Autowired
     private UserDao userDao;
@@ -117,6 +120,7 @@ public class LoginService {
 
     public void setLoginCooke(HttpServletResponse response, User user) {
         String token = UUID.randomUUID().toString();
+        logger.info("设置登录Cookie，teacherID = {},token = {}",user.getId(),token);
         redisProxy.set(token, JsonTools.getJson(user), 12 * 60 * 60);
         CookieUtils.setCookie(response, CookieKey.TRPM_TOKEN, token, null);
     }
