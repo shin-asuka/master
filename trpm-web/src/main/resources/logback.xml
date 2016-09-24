@@ -54,6 +54,24 @@
         </rollingPolicy>
     </appender>
 
+    <!-- MQ 特定的日志文件 -->
+    <appender name="FILE_FOR_MQ" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <!--日志文件输出的文件名-->
+        <file>${LOG_HOME}/vipkid-trpm-activemq.log</file>
+        <Append>true</Append>
+        <prudent>false</prudent>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <!--格式化输出：%d表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度%msg：日志消息，%n是换行符-->
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} %line - %msg%n</pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!--归档日志文件名-->
+            <FileNamePattern>${LOG_HOME}/vipkid-trpm-activemq.log.%d{yyyy-MM-dd}</FileNamePattern>
+            <!--日志文件保留个数-->
+            <maxHistory>72</maxHistory>
+        </rollingPolicy>
+    </appender>
+
     <!-- http request 接口特定的日志文件 -->
     <appender name="FILE_FOR_HTTP" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <!--日志文件输出的文件名-->
@@ -72,14 +90,21 @@
         </rollingPolicy>
     </appender>
 
+    <!--额外保留 mq 的日志文件到一个单独的文件中-->
+    <logger name="com.vipkid.mq" level="info">
+        <appender-ref ref="FILE_FOR_MQ"/>
+    </logger>
+
     <!--额外保留 http 的日志文件到一个单独的文件中-->
-    <logger name="com.vipkid.neo.http" level="info">
+    <logger name="com.vipkid.http" level="info">
         <appender-ref ref="FILE_FOR_HTTP"/>
     </logger>
+
 
     <!-- 日志输出级别 -->
     <root level="info">
         <appender-ref ref="FILE"/>
+        <appender-ref ref="STDOUT"/>
         <appender-ref ref="vipkid-trpm-error"/>
     </root>
 </configuration>

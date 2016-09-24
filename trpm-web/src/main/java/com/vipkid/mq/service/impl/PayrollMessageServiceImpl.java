@@ -110,7 +110,11 @@ public class PayrollMessageServiceImpl implements PayrollMessageService {
                 // 是否新生体验课
                 Boolean isTrialOnly = "TRIAL".equals(course.getType());
                 onlineClassMessage.setIsTrialOnly(isTrialOnly);
-                onlineClassMessage.setStudentEnrollmentTime(student.getCreateDateTime().getTime());
+                if (student.getCreateDateTime() != null ) {
+                    onlineClassMessage.setStudentEnrollmentTime(student.getCreateDateTime().getTime());
+                } else {
+                    onlineClassMessage.setStudentEnrollmentTime(null);
+                }
 
                 // 学生是否在约课月内支付
                 Boolean isPaidForTrial;
@@ -150,8 +154,9 @@ public class PayrollMessageServiceImpl implements PayrollMessageService {
                 logger.info("课程信息为空，不发送消息 onlineClassId = {}", onlineClassId);
             }
         } catch (Exception e) {
-            logger.error("PayrollMessageService 更新TeacherComment，消息发送失败   destination={},operatorType={},e={}",
-                    finishOnlineClassDestination, operatorType, e.getMessage());
+            logger.error(
+                    "结束课程，消息发送失败   destination={},operatorType={},onlineClassId = {},e={}",
+                    finishOnlineClassDestination, operatorType, onlineClassId, e);
         }
         return message;
     }
@@ -201,7 +206,11 @@ public class PayrollMessageServiceImpl implements PayrollMessageService {
                 // 是否新生体验课
                 Boolean isTrialOnly = "TRIAL".equals(course.getType());
                 onlineClassMessage.setIsTrialOnly(isTrialOnly);
-                onlineClassMessage.setStudentEnrollmentTime(student.getCreateDateTime().getTime());
+                if (student.getCreateDateTime() != null ) {
+                    onlineClassMessage.setStudentEnrollmentTime(student.getCreateDateTime().getTime());
+                } else {
+                    onlineClassMessage.setStudentEnrollmentTime(null);
+                }
 
                 // 学生是否在约课月内支付
                 Boolean isPaidForTrial;
@@ -218,8 +227,9 @@ public class PayrollMessageServiceImpl implements PayrollMessageService {
                 logger.info("课程信息为空，不发送消息 onlineClassId = {}", onlineClassId);
             }
         } catch (Exception e) {
-            logger.error("PayrollMessageService 更新TeacherComment，消息发送失败   destination={},operatorType={},e={}",
-                    finishOnlineClassDestination, operatorType, e.getMessage());
+            logger.error(
+                    "老师填写Feedback，消息发送失败   destination={},operatorType={},onlineClassId = {},e={}",
+                    finishOnlineClassDestination, operatorType, onlineClassId, e);
         }
         return message;
 
@@ -237,9 +247,10 @@ public class PayrollMessageServiceImpl implements PayrollMessageService {
         }
         try {
             OnlineClass onlineClass = onlineClassDao.findById(onlineClassId);
-            if (null != onlineClass && !StringUtils.equals(OnlineClassEnum.Status.FINISHED.toString(),onlineClass.getStatus())
-                    && !StringUtils.equals(OnlineClassEnum.Status.INVALID.toString(),onlineClass.getStatus())) {
-                logger.info("OnlineClass 状态非Finished或者Invalid，不发送消息，onlineClassId = {}",onlineClassId);
+            if (null != onlineClass
+                    && !StringUtils.equals(OnlineClassEnum.Status.FINISHED.toString(), onlineClass.getStatus())
+                    && !StringUtils.equals(OnlineClassEnum.Status.INVALID.toString(), onlineClass.getStatus())) {
+                logger.info("OnlineClass 状态非Finished或者Invalid，不发送消息，onlineClassId = {}", onlineClassId);
                 return message;
             }
             Course course = courseDao.findByLessonId(onlineClass.getLessonId());
@@ -261,7 +272,11 @@ public class PayrollMessageServiceImpl implements PayrollMessageService {
                 // 是否新生体验课
                 Boolean isTrialOnly = "TRIAL".equals(course.getType());
                 onlineClassMessage.setIsTrialOnly(isTrialOnly);
-                onlineClassMessage.setStudentEnrollmentTime(student.getCreateDateTime().getTime());
+                if (student.getCreateDateTime() != null ) {
+                    onlineClassMessage.setStudentEnrollmentTime(student.getCreateDateTime().getTime());
+                } else {
+                    onlineClassMessage.setStudentEnrollmentTime(null);
+                }
 
                 // 学生是否在约课月内支付
                 Boolean isPaidForTrial;
@@ -299,8 +314,9 @@ public class PayrollMessageServiceImpl implements PayrollMessageService {
                 logger.info("课程信息为空，不发送消息 onlineClassId = {}", onlineClassId);
             }
         } catch (Exception e) {
-            logger.error("PayrollMessageService 更新TeacherComment，消息发送失败   destination={},operatorType={},e={}",
-                    finishOnlineClassDestination, operatorType, e.getMessage());
+            logger.error(
+                    "老师填写UA报告，消息发送失败   destination={},operatorType={},onlineClassId = {},e={}",
+                    finishOnlineClassDestination, operatorType, onlineClassId, e);
         }
         return message;
 
