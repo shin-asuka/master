@@ -129,7 +129,12 @@ public class OnlineClassController extends AbstractPortalController {
             model.addAttribute("info", errorHTML);
             return "error/info";
         }
-
+        String isTrial = "0";
+        if(lesson.getSerialNumber()!=null && lesson.getSerialNumber().startsWith("T1-")){
+        	isTrial = "1"; //区分是否Trial课程
+        }
+        model.addAttribute("isTrial", isTrial);
+        
         model.addAttribute("lesson", lesson);
         if (lesson.getSerialNumber().startsWith("P")) {
             model.addAllAttributes(

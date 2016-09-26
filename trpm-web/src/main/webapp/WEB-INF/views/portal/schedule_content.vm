@@ -80,7 +80,7 @@
         appKey: '513276871#teachertest',
         to: 'vipkid_teacher_portal_web',
         visitor: {         //访客信息，以下参数支持变量
-            trueName: '$!{TRPM_TEACHER.realName}',
+            trueName: '$!{TRPM_TEACHER.realName}(M: $!{TRPM_MANAGER_NAME})',
             qq: '',
             phone: '$!{TRPM_TEACHER.mobile}',
             companyName: 'VIPKID',

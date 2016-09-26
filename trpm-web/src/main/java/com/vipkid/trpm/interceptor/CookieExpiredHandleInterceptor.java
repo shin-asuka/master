@@ -21,6 +21,8 @@ import com.vipkid.trpm.constant.ApplicationConstant;
 import com.vipkid.trpm.constant.ApplicationConstant.CookieKey;
 import com.vipkid.trpm.constant.ApplicationConstant.RedisConstants;
 import com.vipkid.trpm.controller.portal.PersonalInfoController;
+import com.vipkid.trpm.entity.Staff;
+import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.entity.User;
 import com.vipkid.trpm.proxy.RedisProxy;
 import com.vipkid.trpm.service.passport.IndexService;
@@ -90,8 +92,16 @@ public class CookieExpiredHandleInterceptor extends HandlerInterceptorAdapter {
 		}
 
 		User user = indexService.getUser(request);
+		Teacher teacher = indexService.getTeacher(request);
+		Staff manager = null;
+		if(teacher !=null && teacher.getManager()>0){
+			manager = indexService.getStaff(teacher.getManager());
+			String managerName = manager.getEnglishName();
+			//request.setAttribute("TRPM_MANAGER", manager);
+			request.setAttribute("TRPM_MANAGER_NAME", managerName);
+		}
 		request.setAttribute("locationService", locationService);
-		request.setAttribute("TRPM_TEACHER", indexService.getTeacher(request));
+		request.setAttribute("TRPM_TEACHER", teacher);
 		request.setAttribute("TRPM_USER", user);
 		request.setAttribute("TRPM_COURSE_TYPES", indexService.getCourseType(user.getId()));
 		request.setAttribute("recruitmentUrl", PropertyConfigurer.stringValue("recruitment.www"));
