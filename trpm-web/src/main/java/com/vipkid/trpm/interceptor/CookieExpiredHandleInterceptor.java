@@ -96,9 +96,11 @@ public class CookieExpiredHandleInterceptor extends HandlerInterceptorAdapter {
 		Staff manager = null;
 		if(teacher !=null && teacher.getManager()>0){
 			manager = indexService.getStaff(teacher.getManager());
-			String managerName = manager.getEnglishName();
-			//request.setAttribute("TRPM_MANAGER", manager);
-			request.setAttribute("TRPM_MANAGER_NAME", managerName);
+			if(manager!=null){
+				String managerName = manager.getEnglishName();
+				//request.setAttribute("TRPM_MANAGER", manager);
+				request.setAttribute("TRPM_MANAGER_NAME", managerName);
+			}
 		}
 		request.setAttribute("locationService", locationService);
 		request.setAttribute("TRPM_TEACHER", teacher);
