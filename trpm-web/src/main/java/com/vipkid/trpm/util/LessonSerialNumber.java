@@ -45,8 +45,15 @@ public class LessonSerialNumber {
     }
 
     public static Integer getLessonNoFromSn (String lessonSn){
-        String lessonNo = lessonSn.substring(lessonSn.lastIndexOf("-")+1);
-        lessonNo = lessonNo.substring(lessonNo.indexOf("L")+1);
-        return Integer.parseInt(lessonNo);
+        String lessonNoStr = lessonSn.substring(lessonSn.lastIndexOf("-")+1);
+        lessonNoStr = lessonNoStr.substring(lessonNoStr.indexOf("L")+1);
+        Integer lessonNo;
+        try {
+            lessonNo = Integer.parseInt(lessonNoStr);
+        } catch (NumberFormatException e){
+            return null;
+        }
+
+        return lessonNo;
     }
 }

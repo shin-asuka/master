@@ -4,14 +4,16 @@ import java.sql.Timestamp;
 import java.util.Map;
 import java.util.Objects;
 import java.util.TimeZone;
+import java.util.concurrent.TimeUnit;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.alibaba.fastjson.JSON;
+import com.google.common.base.Stopwatch;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.ServletRequestUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -20,8 +22,6 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.google.common.collect.Maps;
 import com.vipkid.enums.OnlineClassEnum;
-import com.vipkid.http.service.AssessmentHttpService;
-import com.vipkid.http.vo.StudentUnitAssessment;
 import com.vipkid.trpm.entity.AssessmentReport;
 import com.vipkid.trpm.entity.DemoReport;
 import com.vipkid.trpm.entity.Lesson;
@@ -63,12 +63,15 @@ public class ReportController extends AbstractPortalController {
      */
     @RequestMapping("/uploadPage")
     public String uaReport(AssessmentReport report, HttpServletRequest request, Model model) {
+        logger.info("ReportController: uaReport() 参数为：AssessmentReport={}", JSON.toJSONString(report));
         model = this.uploadData(report, request, model, "0");
         return view("ua_report_upload");
     }
 
     @RequestMapping("/uaReportShow")
     public String uaReportShow(AssessmentReport report, Long onlineClassId, HttpServletRequest request, Model model) {
+        logger.info("ReportController: uaReportShow() 参数为：AssessmentReport={}, onlineClassId={}", JSON.toJSONString(report), onlineClassId);
+
         model.addAttribute("onlineClassId", onlineClassId);
 
         return view("ua_report_show");
@@ -86,6 +89,7 @@ public class ReportController extends AbstractPortalController {
      */
     @RequestMapping("/uploadPracticum")
     public String practicumReport(AssessmentReport report, HttpServletRequest request, Model model) {
+        logger.info("ReportController: practicumReport() 参数为：AssessmentReport={}", JSON.toJSONString(report));
         model = this.uploadData(report, request, model, "1");
         return view("practicum_report_upload");
     }
@@ -105,6 +109,8 @@ public class ReportController extends AbstractPortalController {
     @RequestMapping(value = "/uploadReport", method = RequestMethod.POST)
     public String uaReportSubmit(MultipartHttpServletRequest request, HttpServletResponse response,
             AssessmentReport report, @RequestParam("file") MultipartFile file) {
+        logger.info("ReportController: uaReportSubmit() 参数为：AssessmentReport={}", JSON.toJSONString(report));
+
         String score = request.getParameter("score");
         String onlineClassId = request.getParameter("onlineClassId");
         Map<String, Object> map = reportService.saveUAReport(report, file, request.getFile(file.getName()).getSize(),
@@ -128,6 +134,8 @@ public class ReportController extends AbstractPortalController {
     @RequestMapping(value = "/uploadPracticumReport", method = RequestMethod.POST)
     public String practicumReportSubmit(MultipartHttpServletRequest request, HttpServletResponse response,
             AssessmentReport report, @RequestParam("file") MultipartFile file) {
+        logger.info("ReportController: practicumReportSubmit() 参数为：AssessmentReport={}", JSON.toJSONString(report));
+
         String score = request.getParameter("score");
         String onlineClassId = request.getParameter("onlineClassId");
         Map<String, Object> map = reportService.savePracticumReport(report, file,
@@ -151,6 +159,8 @@ public class ReportController extends AbstractPortalController {
     @RequestMapping("/demoReport")
     public String demoReport(HttpServletResponse response, String serialNumber, long onlineClassId, long studentId,
             Model model) {
+        logger.info("ReportController: demoReport() 参数为：serialNumber={}, onlineClassId={}, studentId={}", serialNumber, onlineClassId, studentId);
+
         /* 根据参数查询当前的DemoReport */
         initData(response, serialNumber, onlineClassId, studentId, model);
         return view("demo_report_page");
@@ -171,6 +181,8 @@ public class ReportController extends AbstractPortalController {
     @RequestMapping("/demoReportRoom")
     public String demoReportRoom(HttpServletResponse response, String serialNumber, long onlineClassId, long studentId,
             Model model) {
+        logger.info("ReportController: demoReportRoom() 参数为：serialNumber={}, onlineClassId={}, studentId={}", serialNumber, onlineClassId, studentId);
+
         /* 根据参数查询当前的DemoReport */
         initData(response, serialNumber, onlineClassId, studentId, model);
         return view("demo_report_room");
@@ -185,6 +197,8 @@ public class ReportController extends AbstractPortalController {
     @RequestMapping("/reportSubmit")
     public String demoReportSubmit(HttpServletRequest request, HttpServletResponse response, DemoReport demoReport,
             boolean isSubmited) {
+        logger.info("ReportController: demoReportSubmit() 参数为：demoReport={}, isSubmited={}", JSON.toJSONString(demoReport), isSubmited);
+
         Map<String, Object> map = reportService.saveOrSubmitDemoReport(demoReport, isSubmited,
                 indexService.getUser(request));
 
@@ -204,6 +218,8 @@ public class ReportController extends AbstractPortalController {
     @RequestMapping("/feedback")
     public String feedback(HttpServletRequest request, HttpServletResponse response, @RequestParam long onlineClassId,
             @RequestParam long studentId, Model model) {
+        Stopwatch stopwatch = Stopwatch.createStarted();
+        logger.info("ReportController: feedback() 参数为：onlineClassId={}, studentId={}", onlineClassId, studentId);
 
         // 查询课程信息
         OnlineClass onlineClass = reportService.findOnlineClassById(onlineClassId);
@@ -216,8 +232,10 @@ public class ReportController extends AbstractPortalController {
         // 查询FeedBack信息
         TeacherComment teacherComment = reportService.findTectBycIdAndStuId(onlineClassId, studentId);
         model.addAttribute("teacherComment", teacherComment);
-
         model.addAttribute("studentId", studentId);
+
+        long millis =stopwatch.stop().elapsed(TimeUnit.MILLISECONDS);
+        logger.info("执行ReportController: feedback()耗时：{} ", millis);
 
         return view("online_class_feedback");
     }
@@ -225,6 +243,7 @@ public class ReportController extends AbstractPortalController {
     @RequestMapping("/unitAssessment")
     public String unitAssessment(@RequestParam long onlineClassId, HttpServletRequest request,
             HttpServletResponse response, Model model) {
+        logger.info("ReportController: unitAssessment() 参数为：onlineClassId={}", onlineClassId);
 
         model.addAttribute("onlineClassId", onlineClassId);
         return view("online_class_unitAssessment");
@@ -239,14 +258,22 @@ public class ReportController extends AbstractPortalController {
     @RequestMapping("/commentSubmit")
     public String feedbackSubmit(HttpServletRequest request, HttpServletResponse response,
             TeacherComment teacherComment, Model model) {
+        Stopwatch stopwatch = Stopwatch.createStarted();
         String serialNumber = request.getParameter("serialNumber");
         String scheduledDateTime = request.getParameter("scheduledDateTime");
+        logger.info("ReportController: feedbackSubmit() 参数为：serialNumber={}, scheduledDateTime={}, teacherComment={}", serialNumber, scheduledDateTime, JSON.toJSONString(teacherComment));
+
         Map<String, Object> parmMap = reportService.submitTeacherComment(teacherComment, indexService.getUser(request),serialNumber,scheduledDateTime);
+
+        long millis =stopwatch.stop().elapsed(TimeUnit.MILLISECONDS);
+        logger.info("执行ReportController: feedbackSubmit()耗时：{} ", millis);
+
         return jsonView(response, parmMap);
     }
 
     @RequestMapping("/getComment")
     public String getComment(HttpServletRequest request, HttpServletResponse response, @RequestParam long id) {
+        logger.info("ReportController: getComment() 参数为：id={}", id);
         // 查询FeedBack信息
         TeacherComment teacherComment = reportService.findTeacherCommentById(id);
 
@@ -269,6 +296,7 @@ public class ReportController extends AbstractPortalController {
     @RequestMapping("/openInfo")
     public String openInfo(HttpServletRequest request, HttpServletResponse response, long studentId, String serialNum,
             Model model) {
+        logger.info("ReportController: openInfo() 参数为：studentId={}, serialNum={}", studentId, serialNum);
 
         // 查询学生个人信息
         model.addAttribute("student", reportService.findStudentById(studentId));
@@ -309,6 +337,8 @@ public class ReportController extends AbstractPortalController {
      */
     private void initData(HttpServletResponse response, String serialNumber, long onlineClassId, long studentId,
             Model model) {
+        logger.info("ReportController: initData() 参数为：serialNumber={}, onlineClassId={}, studentId={}", serialNumber, onlineClassId, studentId);
+
         DemoReport currentReport = reportService.getDemoReport(studentId, onlineClassId);
         if (currentReport == null)
             currentReport = new DemoReport();
@@ -331,6 +361,8 @@ public class ReportController extends AbstractPortalController {
      * @date 2016年1月12日
      */
     private StudentExam handleExamLevel(StudentExam studentExam, String serialNum) {
+        logger.info("ReportController: handleExamLevel() 参数为：serialNum={}, studentExam={}", serialNum, JSON.toJSONString(studentExam));
+
         // studentExam 不为空则进行替换逻辑
         if (studentExam != null) {
             // ExamLevel 不为空则进行替换逻辑
@@ -369,6 +401,8 @@ public class ReportController extends AbstractPortalController {
     }
 
     private Model uploadData(AssessmentReport report, HttpServletRequest request, Model model, String classType) {
+        logger.info("ReportController: uploadData() 参数为：report={}, classType={}", JSON.toJSONString(report), classType);
+
         model.addAttribute("templete", report);
 
         String onlineClassId = request.getParameter("onlineClassId");

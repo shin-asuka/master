@@ -671,7 +671,7 @@ public class ReportService {
             logger.info("判断PerformanceAdjust给CLT发邮件: studentId = {}, serialNumber = {}, scheduledDateTime = {} ",
                     oldtc.getStudentId(), serialNumber, scheduledDateTime);
             sendEmailExecutor.execute(() -> {
-                emailService.sendEmail4PerformanceAdjust2CLT(oldtc.getStudentId(), serialNumber, scheduledDateTime);
+                emailService.sendEmail4PerformanceAdjust2CLT(oldtc.getStudentId(), serialNumber, scheduledDateTime, teacherComment.getPerformance());
             });
         }
 
