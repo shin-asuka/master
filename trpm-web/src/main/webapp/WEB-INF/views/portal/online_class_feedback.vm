@@ -47,7 +47,7 @@
 					</div>
 				</div>
 				<div style="padding-top:10px;">
-					<input type="checkbox" name="performanceAdjust" value="1" $!elememtDisabled #if($!teacherComment.performanceAdjust == 1) checked #end/>I suggest adjustment to the current student placement
+					<input type="checkbox" name="performanceAdjust" value="1" $!elememtDisabled #if($!teacherComment.performanceAdjust == 1) checked #end/>&nbsp;&nbsp;I suggest adjustment to the current student placement
 				</div>
 					#end
 				#end
