@@ -66,11 +66,11 @@
         appKey: '513276871#teachertest',
         to: 'vipkid_teacher_portal_web',
         visitor: {         //访客信息，以下参数支持变量
-            trueName: '$!{TRPM_TEACHER.realName}(M: $!{TRPM_MANAGER_NAME})',
+            trueName: '$!{TRPM_TEACHER.realName}',
             qq: '',
             phone: '$!{TRPM_TEACHER.mobile}',
             companyName: 'VIPKID',
-            userNickname: '$!{TRPM_TEACHER.realName}',
+            userNickname: '$!{TRPM_TEACHER.realName}(M: $!{TRPM_MANAGER_NAME})',
             description: '老师ID：$!{TRPM_TEACHER.id} , 监控教室Classroom：$!classUrl',
             email: '$!{TRPM_TEACHER.email}'
         },
