@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="StaffMapper">
+
+	<sql id="staffColumns">
+		a.id AS "id",
+		a.email AS "email",
+		a.english_name AS "englishName",
+		a.mobile AS "mobile",
+		a.sales_team_id AS "salesTeamId"
+	</sql>
+
+	<select id="findById" resultType="com.vipkid.trpm.entity.Staff">
+		SELECT 
+			<include refid="staffColumns"/>
+		FROM staff a
+		WHERE a.id = #{id}
+	</select>
+	
+	
+
+</mapper>

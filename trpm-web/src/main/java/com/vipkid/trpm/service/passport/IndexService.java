@@ -17,10 +17,12 @@ import com.vipkid.trpm.constant.ApplicationConstant;
 import com.vipkid.trpm.constant.ApplicationConstant.CookieKey;
 import com.vipkid.trpm.constant.ApplicationConstant.CourseType;
 import com.vipkid.trpm.dao.CourseDao;
+import com.vipkid.trpm.dao.StaffDao;
 import com.vipkid.trpm.dao.TeacherDao;
 import com.vipkid.trpm.dao.TeacherModuleDao;
 import com.vipkid.trpm.dao.TeacherPageLoginDao;
 import com.vipkid.trpm.dao.UserDao;
+import com.vipkid.trpm.entity.Staff;
 import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.entity.TeacherModule;
 import com.vipkid.trpm.entity.TeacherPageLogin;
@@ -50,6 +52,9 @@ public class IndexService {
     @Autowired
     private TeacherModuleDao teacherModuleDao;
 
+    @Autowired
+    private StaffDao staffDao;
+
     /**
      * 获取当前登录的老师
      *
@@ -60,6 +65,14 @@ public class IndexService {
         Teacher teacher = teacherDao.findById(user.getId());
 
         return teacher;
+    }
+    
+    public Staff getStaff(Long id){
+    	Staff staff = null;
+    	if(id!=null){
+    		staff = staffDao.findById(id);
+    	}
+    	return staff;
     }
 
     /**

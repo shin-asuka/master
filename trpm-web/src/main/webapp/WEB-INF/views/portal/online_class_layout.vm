@@ -41,9 +41,13 @@
 <div class="container">
     $screen_content
 </div>
+#set($hx_group = "Fireman")
+#if($isTrial == '1')
+#set($hx_group = "Fireman_Trial")	
+#end
 <div class="icon">
-    <a href='javascript:;' onclick='easemobim.bind({tenantId: 20182})'><img src="#styleUrl('/resources/images/portal/contact_us.png')"></a>
-    <a href='javascript:;' onclick='easemobim.bind({tenantId: 20182})'><img class="contact" src="#styleUrl('/resources/images/portal/contact_us_txt.png')"></a>
+    <a href='javascript:;' onclick='easemobim.bind({tenantId: 20182,emgroup: "$!hx_group"})'><img src="#styleUrl('/resources/images/portal/contact_us.png')"></a>
+    <a href='javascript:;' onclick='easemobim.bind({tenantId: 20182,emgroup: "$!hx_group"})'><img class="contact" src="#styleUrl('/resources/images/portal/contact_us_txt.png')"></a>
 </div>
 <script type="text/javascript">
     require(['checkalive'], function(checkalive){
@@ -54,9 +58,9 @@
 </script>
 #if($onlineClass)
 #set($classUrl="http://management.vipkid.com.cn/operation/classroom/classroom/"+$!onlineClass.id)
-#end
+#end	
 <script type="text/javascript">
-    window.easemobim = window.easemobim || {};
+    window.easemobim = window.easemobim || {}; 
     easemobim.config = {
         hide: true,
         appKey: '513276871#teachertest',
@@ -66,7 +70,7 @@
             qq: '',
             phone: '$!{TRPM_TEACHER.mobile}',
             companyName: 'VIPKID',
-            userNickname: '$!{TRPM_TEACHER.realName}',
+            userNickname: '$!{TRPM_TEACHER.realName}(M: $!{TRPM_MANAGER_NAME})',
             description: '老师ID：$!{TRPM_TEACHER.id} , 监控教室Classroom：$!classUrl',
             email: '$!{TRPM_TEACHER.email}'
         },
