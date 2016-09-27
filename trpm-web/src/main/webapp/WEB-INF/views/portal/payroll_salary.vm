@@ -2,7 +2,7 @@
  #set($activePayrollInfo = "active")
  <style >
     #comments-content .bottom-border {
-        background-color: #F63B00;
+        background-color: #dd4814;
         color: #fff;
         border: 1px solid #ddd;
     }
