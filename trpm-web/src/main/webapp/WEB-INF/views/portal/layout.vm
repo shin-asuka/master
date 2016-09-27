@@ -31,10 +31,9 @@
 		#end        
         ##<li class="$!{activeComments}"><a href="#springUrl('/comments.shtml')">Comments</a></li>
         <li class="$!{activePersonalInfo}"><a href="#springUrl('/personalInfo.shtml')">Personal Info</a></li>
-        ##教师端不展示Payroll模块 2016-06-02
-        #if($isDisplayPayroll == 'true')
+        ##教师端不展示Payroll模块 2016-06-02   
 		<li class="$!{activePayrollInfo}"><a href="#springUrl('/payroll.shtml')">Payroll</a></li>
-         #end
+        
         <li><a href="#springUrl('/logout.shtml')">Quit</a></li>
       </ul>
       <span class="welcome-msg pull-right"> Welcome, <span id="teacherName">${TRPM_USER.name}</span>
