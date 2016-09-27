@@ -43,4 +43,17 @@ public class LessonSerialNumber {
         Matcher matcher = Pattern.compile("^-?\\d+$").matcher(input);
         return matcher.matches();
     }
+
+    public static Integer getLessonNoFromSn (String lessonSn){
+        String lessonNoStr = lessonSn.substring(lessonSn.lastIndexOf("-")+1);
+        lessonNoStr = lessonNoStr.substring(lessonNoStr.indexOf("L")+1);
+        Integer lessonNo;
+        try {
+            lessonNo = Integer.parseInt(lessonNoStr);
+        } catch (NumberFormatException e){
+            return null;
+        }
+
+        return lessonNo;
+    }
 }

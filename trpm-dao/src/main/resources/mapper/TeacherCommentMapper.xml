@@ -26,7 +26,8 @@
 		teacher_comment_tips_for_other_teachers,
 		teacher_comment.urgent AS
 		teacher_comment_urgent, teacher_comment.performance AS
-		teacher_comment_performance, teacher_comment.current_performance AS
+		teacher_comment_performance, teacher_comment.performance_adjust AS
+		teacher_comment_performance_adjust, teacher_comment.current_performance AS
 		teacher_comment_current_performance, teacher_comment.online_class_id
 		AS
 		teacher_comment_online_class_id, teacher_comment.student_id AS
@@ -72,6 +73,7 @@
 			</if>
 			<if test="urgent!=0">AND teacher_comment.urgent = #{urgent}</if>
 			<if test="performance!=0">AND teacher_comment.performance = #{performance}</if>
+			<if test="performanceAdjust!=0">AND teacher_comment.performance_adjust = #{performanceAdjust}</if>
 			<if test="currentPerformance!=null">AND teacher_comment.current_performance =
 				#{currentPerformance}
 			</if>
@@ -111,6 +113,7 @@
 		<result column="teacher_comment_tips_for_other_teachers" property="tipsForOtherTeachers" />
 		<result column="teacher_comment_urgent" property="urgent" />
 		<result column="teacher_comment_performance" property="performance" />
+		<result column="teacher_comment_performance_adjust" property="performanceAdjust" />
 		<result column="teacher_comment_current_performance" property="currentPerformance" />
 		<result column="teacher_comment_online_class_id" property="onlineClassId" />
 		<result column="teacher_comment_student_id" property="studentId" />
@@ -171,6 +174,7 @@
 			<if test="tipsForOtherTeachers!=null">,tips_for_other_teachers</if>
 			<if test="urgent!=0">,urgent</if>
 			<if test="performance!=0">,performance</if>
+			<if test="performanceAdjust!=0">,performance_adjust</if>
 			<if test="currentPerformance!=null">,current_performance</if>
 			<if test="onlineClassId!=0">,online_class_id</if>
 			<if test="studentId!=0">,student_id</if>
@@ -198,6 +202,7 @@
 			<if test="tipsForOtherTeachers!=null">,#{tipsForOtherTeachers}</if>
 			<if test="urgent!=0">,#{urgent}</if>
 			<if test="performance!=0">,#{performance}</if>
+			<if test="performanceAdjust!=0">,#{performanceAdjust}</if>
 			<if test="currentPerformance!=null">,#{currentPerformance}</if>
 			<if test="onlineClassId!=0">,#{onlineClassId}</if>
 			<if test="studentId!=0">,#{studentId}</if>
@@ -231,6 +236,7 @@
 			<if test="tipsForOtherTeachers!=null">,tips_for_other_teachers = #{tipsForOtherTeachers}</if>
 			<if test="urgent!=0">,urgent = #{urgent}</if>
 			<if test="performance!=0">,performance = #{performance}</if>
+			<if test="performanceAdjust!=0">,performance_adjust = #{performanceAdjust}</if>
 			<if test="currentPerformance!=null">,current_performance = #{currentPerformance}</if>
 			<if test="onlineClassId!=0">,online_class_id = #{onlineClassId}</if>
 			<if test="studentId!=0">,student_id = #{studentId}</if>
@@ -303,6 +309,7 @@
 		teacher_comment.spelling_accuracy AS spellingAccuracy,
 		teacher_comment.actively_interaction AS activelyInteraction,
 		teacher_comment.performance AS performance,
+		teacher_comment.performance_adjust AS performanceAdjust,
 		teacher_comment.stars AS stars,
 		teacher_comment.teacher_feedback AS teacherFeedback,
 		teacher_comment.tips_for_other_teachers AS tipsForOtherTeachers,
@@ -324,4 +331,23 @@
         <include refid="teacherCommentLimit" />
 	</select>
 
+	<select id="batchGetByOnlineClassIds" resultMap="teacherCommentResultMap" useCache="false">
+		SELECT <include refid="teacherCommentColumns" /> FROM teacher_comment WHERE teacher_feedback IS NULL AND online_class_id IN
+		<foreach collection="onlineClassIds" item="item" open="(" close=")" separator=",">
+			#{item}
+		</foreach>
+	</select>
+
+	<select id="findLessonSn4PerformanceByStudentAndUnit" resultType="java.util.HashMap">
+		SELECT
+		l.serial_number, oc.scheduled_date_time, tc.performance
+		FROM
+		teacher_comment tc
+		JOIN online_class oc ON oc.id = tc.online_class_id
+		JOIN lesson l ON l.id = oc.lesson_id
+		WHERE
+		tc.student_id = #{studentId}
+		AND tc.performance IN (1, 5)
+		AND l.serial_number LIKE #{lessonSnPrefix}
+	</select>
 </mapper>

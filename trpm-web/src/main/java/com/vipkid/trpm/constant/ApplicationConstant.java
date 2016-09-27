@@ -2,6 +2,9 @@ package com.vipkid.trpm.constant;
 
 import org.community.config.PropertyConfigurer;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public interface ApplicationConstant {
 
     public static String AES_128_KEY = "ShareFaceBook";
@@ -382,5 +385,13 @@ public interface ApplicationConstant {
         public static final int IMAGE_CODE_INVALID_SEC = 120; // 图片验证码失效时间阀值
         public static final int PAYROLL_DISPLAY_MAX_NUM_EXCEED_DAY_SEC = 60 * 60 * 24 * 10 ;//payroll 部分老师可用 10天
     }
+
+    Map<Integer, String> LEVEL_OF_DIFFITULTY = new HashMap<Integer, String>(){{
+        put(1, "Very Difficult");
+        put(2, "Slightly Difficult");
+        put(3, "On Level");
+        put(4, "Slightly Easy");
+        put(5, "Very Easy");
+    }};
 
 }

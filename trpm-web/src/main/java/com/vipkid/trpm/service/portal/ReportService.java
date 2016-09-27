@@ -3,13 +3,19 @@ package com.vipkid.trpm.service.portal;
 import static com.google.common.base.Preconditions.checkArgument;
 
 import java.nio.charset.StandardCharsets;
+import java.sql.Array;
 import java.sql.Timestamp;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
 
 import com.alibaba.fastjson.JSON;
+import com.vipkid.email.EmailEngine;
+import com.vipkid.email.handle.EmailConfig;
+import com.vipkid.email.templete.TempleteUtils;
+import com.vipkid.trpm.dao.*;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.community.tools.JsonTools;
 import org.slf4j.Logger;
@@ -26,14 +32,6 @@ import com.vipkid.trpm.constant.ApplicationConstant;
 import com.vipkid.trpm.constant.ApplicationConstant.MediaType;
 import com.vipkid.trpm.constant.ApplicationConstant.ReportLifeCycle;
 import com.vipkid.trpm.constant.ApplicationConstant.UaReportStatus;
-import com.vipkid.trpm.dao.AssessmentReportDao;
-import com.vipkid.trpm.dao.AuditDao;
-import com.vipkid.trpm.dao.DemoReportDao;
-import com.vipkid.trpm.dao.LessonDao;
-import com.vipkid.trpm.dao.OnlineClassDao;
-import com.vipkid.trpm.dao.StudentDao;
-import com.vipkid.trpm.dao.StudentExamDao;
-import com.vipkid.trpm.dao.TeacherCommentDao;
 import com.vipkid.trpm.entity.AssessmentReport;
 import com.vipkid.trpm.entity.DemoReport;
 import com.vipkid.trpm.entity.Lesson;
@@ -67,9 +65,14 @@ public class ReportService {
 
     private static final Executor executor = Executors.newFixedThreadPool(10);
 
+    private static final Executor sendEmailExecutor = Executors.newFixedThreadPool(10);
+
     private static DemoReports demoReports = null;
 
     private static ReportLevels reportLevels = null;
+
+    @Autowired
+    private ReportEmailService emailService;
 
     @Autowired
     private AbstarctMediaService mediaService;
@@ -614,7 +617,8 @@ public class ReportService {
      * @param teacherComment
      * @date 2015年12月16日
      */
-    public Map<String, Object> submitTeacherComment(TeacherComment teacherComment, User user) {
+    public Map<String, Object> submitTeacherComment(TeacherComment teacherComment, User user,String serialNumber,
+            String scheduledDateTime) {
         // 如果ID为0 则抛出异常并回滚
         checkArgument(0 != teacherComment.getId(), "Argument teacherComment id equals 0");
 
@@ -663,6 +667,20 @@ public class ReportService {
                     OperatorType.ADD_TEACHER_COMMENTS));
         }
 
+        if (teacherComment.getPerformanceAdjust()==1){
+            logger.info("判断PerformanceAdjust给CLT发邮件: studentId = {}, serialNumber = {}, scheduledDateTime = {} ",
+                    oldtc.getStudentId(), serialNumber, scheduledDateTime);
+            sendEmailExecutor.execute(() -> {
+                emailService.sendEmail4PerformanceAdjust2CLT(oldtc.getStudentId(), serialNumber, scheduledDateTime, teacherComment.getPerformance());
+            });
+        }
+
+        if (teacherComment.getPerformance()==1 || teacherComment.getPerformance()==5){
+            logger.info("检查Performance判断是否给CLT发邮件: studentId = {}, serialNumber = {} ", oldtc.getStudentId(), serialNumber);
+            sendEmailExecutor.execute(() -> {
+                emailService.sendEmail4Performance2CLT(oldtc.getStudentId(), serialNumber);
+            });
+        }
         return paramMap;
     }
 

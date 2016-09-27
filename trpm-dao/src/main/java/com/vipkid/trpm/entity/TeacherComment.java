@@ -39,6 +39,8 @@ public class TeacherComment extends Entity implements Serializable {
 	private int urgent;
 	/*  */
 	private int performance;
+	/*  根据performance是否建议调整 1为建议调整*/
+	private int performanceAdjust;
 	/*  */
 	private String currentPerformance;
 	/*  */
@@ -200,6 +202,16 @@ public class TeacherComment extends Entity implements Serializable {
 
 	public TeacherComment setPerformance(int performance) {
 		this.performance = performance;
+		return this;
+	}
+
+
+	public int getPerformanceAdjust() {
+		return this.performanceAdjust;
+	}
+
+	public TeacherComment setPerformanceAdjust(int performanceAdjust) {
+		this.performanceAdjust = performanceAdjust;
 		return this;
 	}
 
