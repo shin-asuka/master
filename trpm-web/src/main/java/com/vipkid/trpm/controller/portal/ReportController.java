@@ -22,6 +22,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.google.common.collect.Maps;
 import com.vipkid.enums.OnlineClassEnum;
+import com.vipkid.trpm.dao.StudentExamDao;
 import com.vipkid.trpm.entity.AssessmentReport;
 import com.vipkid.trpm.entity.DemoReport;
 import com.vipkid.trpm.entity.Lesson;
@@ -51,6 +52,8 @@ public class ReportController extends AbstractPortalController {
     @Autowired
     private IndexService indexService;
 
+    @Autowired
+    private StudentExamDao studentExamDao;
     /**
      * UA报告上传页面进入
      * 
@@ -232,6 +235,10 @@ public class ReportController extends AbstractPortalController {
         // 查询FeedBack信息
         TeacherComment teacherComment = reportService.findTectBycIdAndStuId(onlineClassId, studentId);
         model.addAttribute("teacherComment", teacherComment);
+        //查询StudentExam信息
+        StudentExam studentExam = studentExamDao.findStudentExamByStudentId(studentId);
+        model.addAttribute("studentExam", studentExam);
+
         model.addAttribute("studentId", studentId);
 
         long millis =stopwatch.stop().elapsed(TimeUnit.MILLISECONDS);

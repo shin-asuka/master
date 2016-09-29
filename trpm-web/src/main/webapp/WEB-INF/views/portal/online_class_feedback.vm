@@ -57,11 +57,21 @@
 					<div id="Suggestion">
 	
 						<label Style="margin-top: 20px">Suggest an entry point for this student based on the Student Level Test and in-class assessment. <span style="display:none;" id="result_suggest"></span></label>
-	
-						<div Style="margin: 13px 0px">
-							<input type="radio" name="trialLevelResult" field="$!teacherComment.trialLevelResult"  value="" class="ng-pristine ng-valid" /> <b>No Student Level Test result</b>
-						</div>
-	
+
+						#if($teacherComment.trialLevelResult)
+                        	<div Style="margin: 13px 0px">
+                            	<label>Trial Level result is $!teacherComment.trialLevelResult</label>
+							</div>
+						#elseif($!studentExam.examLevel)
+                            <div Style="margin: 13px 0px">
+                                <b>Level Test result is $!studentExam.examLevel</b>
+                            </div>
+						#else
+                            <div Style="margin: 13px 0px">
+                                <b>No Level Test result</b>
+                            </div>
+						#end
+
 						<div>
 							<a href="javascript:;" name="level2" class="trialLevel ng-hide-feedback">Level2</a>
 							<div>

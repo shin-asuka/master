@@ -28,7 +28,7 @@
             <div class="ng-binding" style="width:100%;">
 	            #if($studentExam.examLevel)
 	              	#if(!$stringUtils.containsIgnoreCase($studentExam.examLevel,'foundation'))  
-		                <span>$!studentExam.examLevel</span>
+		                <span>CT result is $!studentExam.examLevel</span>
 	                #else
 	                	<span>Level 0 Unit 0</span>
 	                #end
