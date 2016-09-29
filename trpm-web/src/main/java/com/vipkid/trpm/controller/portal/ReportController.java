@@ -237,6 +237,7 @@ public class ReportController extends AbstractPortalController {
         model.addAttribute("teacherComment", teacherComment);
         //查询StudentExam信息
         StudentExam studentExam = studentExamDao.findStudentExamByStudentId(studentId);
+        handleExamLevel(studentExam, lesson.getSerialNumber());
         model.addAttribute("studentExam", studentExam);
 
         model.addAttribute("studentId", studentId);
@@ -376,9 +377,9 @@ public class ReportController extends AbstractPortalController {
             if (studentExam.getExamLevel() != null) {
                 String lowerCase = studentExam.getExamLevel().toLowerCase();
                 if ("l1u0".equals(lowerCase)) {
-                    studentExam.setExamLevel("Level 0 Unit 0");
+                    studentExam.setExamLevel("CT result is Level 0 Unit 0");
                 } else if (lowerCase.startsWith("l")) {
-                    studentExam.setExamLevel(lowerCase.replaceAll("l", "Level ").replaceAll("u", " Unit "));
+                    studentExam.setExamLevel("CT result is " + lowerCase.replaceAll("l", "Level ").replaceAll("u", " Unit "));
                 }
             }
         } else {

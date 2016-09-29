@@ -58,7 +58,7 @@
 	
 						<label Style="margin-top: 20px">Suggest an entry point for this student based on the Student Level Test and in-class assessment. <span style="display:none;" id="result_suggest"></span></label>
 
-						#if($teacherComment.trialLevelResult)
+						#if($!teacherComment.trialLevelResult)
                         	<div Style="margin: 13px 0px">
                             	<label>Trial Level result is $!teacherComment.trialLevelResult</label>
 							</div>
