@@ -130,15 +130,17 @@
         $!{TRPM_TEACHER.introduction}
       </div>
     </div>
-    <div class="row form-group">
-      <div align="right" class="col-sm-3 col-md-3">
-        <div class='title-lable'>TE/TES Bio</div>
-      </div>
-      <div class="col-sm-9 col-md-9">
-        #** 必填项 *# 
-        $!{TRPM_TEACHER.evaluationBio}
-      </div>
-    </div>
+    #if($isTes == 'true' || $isTe == 'true')
+	    <div class="row form-group">
+	      <div align="right" class="col-sm-3 col-md-3">
+	        <div class='title-lable'>TE/TES Bio</div>
+	      </div>
+	      <div class="col-sm-9 col-md-9">
+	        #** 必填项 *# 
+	        $!{TRPM_TEACHER.evaluationBio}
+	      </div>
+	    </div>
+    #end
      <div class="row form-group">
       <div align="right" class="col-sm-3 col-md-3">
         <div class='title-lable'>Personal recruitment url</div>

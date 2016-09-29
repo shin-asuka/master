@@ -279,16 +279,18 @@
       </div>
       <div class="col-sm-4 col-md-4"></div>
     </div>
-	<div class="row form-group">
-      <div align="right" class="col-sm-2 col-md-2"></div>
-      <div class="col-sm-6 col-md-6">
-        <div class='title-lable req'>TE/TES Bio</div>
-        <textarea style="height:200px;" id="evaluationBio" name="evaluationBio" placeholder="EvaluationBio" maxlength="800" class="form-control req-string" valid-options='{"req-string":"This field is required!","errorDiv":"#verifyEvaluationBio-tip"}'>$!{TRPM_TEACHER.evaluationBio}</textarea>
-        <p>Characters left: <span id="evaluationBio-left">800</span></p>
-        <p id="verifyEvaluationBio-tip" class="help-block has-error"></p>
-      </div>
-      <div class="col-sm-4 col-md-4"></div>
-    </div>
+    #if($isTes == 'true' || $isTe == 'true')
+		<div class="row form-group">
+	      <div align="right" class="col-sm-2 col-md-2"></div>
+	      <div class="col-sm-6 col-md-6">
+	        <div class='title-lable req'>TE/TES Bio</div>
+	        <textarea style="height:200px;" id="evaluationBio" name="evaluationBio" placeholder="EvaluationBio" maxlength="800" class="form-control req-string" valid-options='{"req-string":"This field is required!","errorDiv":"#verifyEvaluationBio-tip"}'>$!{TRPM_TEACHER.evaluationBio}</textarea>
+	        <p>Characters left: <span id="evaluationBio-left">800</span></p>
+	        <p id="verifyEvaluationBio-tip" class="help-block has-error"></p>
+	      </div>
+	      <div class="col-sm-4 col-md-4"></div>
+	    </div>
+    #end
     <div class="row form-group form-inline" style="margin-top:40px;align:center;"> 
     	<div align="right" class="col-sm-2 col-md-2"></div>
     	<div class="col-sm-6 col-md-6" align="center">
