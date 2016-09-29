@@ -388,6 +388,8 @@
 			<id>a1</id>
 			<properties>
 				<env>a1</env>
+				<masterAddressOfMysql>54.222.182.102:3301</masterAddressOfMysql>
+				<targetHost>10.1.5.11</targetHost>
 				<datasource>local</datasource>
 			</properties>
 			<build>
@@ -400,6 +402,8 @@
 			<id>a2</id>
 			<properties>
 				<env>a2</env>
+				<masterAddressOfMysql>54.222.182.102:3302</masterAddressOfMysql>
+				<targetHost>10.1.5.12</targetHost>
 				<datasource>local</datasource>
 			</properties>
 			<build>
@@ -412,6 +416,8 @@
 			<id>a3</id>
 			<properties>
 				<env>a3</env>
+				<masterAddressOfMysql>54.222.182.102:3303</masterAddressOfMysql>
+				<targetHost>10.1.5.13</targetHost>
 				<datasource>local</datasource>
 			</properties>
 			<build>
@@ -424,6 +430,8 @@
 			<id>a4</id>
 			<properties>
 				<env>a4</env>
+				<masterAddressOfMysql>54.222.182.102:3304</masterAddressOfMysql>
+				<targetHost>10.1.5.14</targetHost>
 				<datasource>local</datasource>
 			</properties>
 			<build>
@@ -436,6 +444,8 @@
 			<id>a5</id>
 			<properties>
 				<env>a5</env>
+				<masterAddressOfMysql>54.222.182.102:3305</masterAddressOfMysql>
+				<targetHost>10.1.5.15</targetHost>
 				<datasource>local</datasource>
 			</properties>
 			<build>
@@ -448,6 +458,8 @@
 			<id>a6</id>
 			<properties>
 				<env>a6</env>
+				<masterAddressOfMysql>54.222.182.102:3306</masterAddressOfMysql>
+				<targetHost>10.1.5.16</targetHost>
 				<datasource>local</datasource>
 			</properties>
 			<build>
@@ -460,6 +472,8 @@
 			<id>a7</id>
 			<properties>
 				<env>a7</env>
+				<masterAddressOfMysql>54.222.182.102:3307</masterAddressOfMysql>
+				<targetHost>10.1.5.17</targetHost>
 				<datasource>local</datasource>
 			</properties>
 			<build>
@@ -472,6 +486,8 @@
 			<id>a8</id>
 			<properties>
 				<env>a8</env>
+				<masterAddressOfMysql>54.222.182.102:3308</masterAddressOfMysql>
+				<targetHost>10.1.5.18</targetHost>
 				<datasource>local</datasource>
 			</properties>
 			<build>
@@ -484,6 +500,8 @@
 			<id>a9</id>
 			<properties>
 				<env>a9</env>
+				<masterAddressOfMysql>54.222.182.102:3309</masterAddressOfMysql>
+				<targetHost>10.1.5.19</targetHost>
 				<datasource>local</datasource>
 			</properties>
 			<build>
@@ -496,6 +514,8 @@
 			<id>a10</id>
 			<properties>
 				<env>a10</env>
+				<masterAddressOfMysql>54.222.182.102:3310</masterAddressOfMysql>
+				<targetHost>10.1.5.20</targetHost>
 				<datasource>local</datasource>
 			</properties>
 			<build>
@@ -508,6 +528,8 @@
 			<id>a11</id>
 			<properties>
 				<env>a11</env>
+				<masterAddressOfMysql>54.222.199.188:3301</masterAddressOfMysql>
+				<targetHost>10.1.5.21</targetHost>
 				<datasource>local</datasource>
 			</properties>
 			<build>
@@ -520,6 +542,8 @@
 			<id>a12</id>
 			<properties>
 				<env>a12</env>
+				<masterAddressOfMysql>54.222.199.188:3302</masterAddressOfMysql>
+				<targetHost>10.1.5.22</targetHost>
 				<datasource>local</datasource>
 			</properties>
 			<build>
@@ -532,6 +556,8 @@
 			<id>a13</id>
 			<properties>
 				<env>a13</env>
+				<masterAddressOfMysql>54.222.199.188:3303</masterAddressOfMysql>
+				<targetHost>10.1.5.23</targetHost>
 				<datasource>local</datasource>
 			</properties>
 			<build>
@@ -544,6 +570,8 @@
 			<id>a14</id>
 			<properties>
 				<env>a14</env>
+				<masterAddressOfMysql>54.222.199.188:3304</masterAddressOfMysql>
+				<targetHost>10.1.5.24</targetHost>
 				<datasource>local</datasource>
 			</properties>
 			<build>
@@ -556,6 +584,8 @@
 			<id>a15</id>
 			<properties>
 				<env>a15</env>
+				<masterAddressOfMysql>54.222.199.188:3305</masterAddressOfMysql>
+				<targetHost>10.1.5.25</targetHost>
 				<datasource>local</datasource>
 			</properties>
 			<build>
@@ -564,42 +594,6 @@
 				</filters>
 			</build>
 		</profile>
-        <profile>
-            <id>a16</id>
-            <properties>
-                <env>a16</env>
-                <datasource>local</datasource>
-            </properties>
-            <build>
-                <filters>
-                    <filter>../profile/a.properties</filter>
-                </filters>
-            </build>
-        </profile>
-        <profile>
-            <id>a17</id>
-            <properties>
-                <env>a17</env>
-                <datasource>local</datasource>
-            </properties>
-            <build>
-                <filters>
-                    <filter>../profile/a.properties</filter>
-                </filters>
-            </build>
-        </profile>
-        <profile>
-            <id>a18</id>
-            <properties>
-                <env>a18</env>
-                <datasource>local</datasource>
-            </properties>
-            <build>
-                <filters>
-                    <filter>../profile/a.properties</filter>
-                </filters>
-            </build>
-        </profile>
 	</profiles>
 
 </project>
