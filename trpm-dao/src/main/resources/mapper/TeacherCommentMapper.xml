@@ -332,7 +332,7 @@
 	</select>
 
 	<select id="batchGetByOnlineClassIds" resultMap="teacherCommentResultMap" useCache="false">
-		SELECT <include refid="teacherCommentColumns" /> FROM teacher_comment WHERE teacher_feedback IS NULL AND online_class_id IN
+		SELECT <include refid="teacherCommentColumns" /> FROM teacher_comment WHERE teacher_feedback IS NOT NULL AND online_class_id IN
 		<foreach collection="onlineClassIds" item="item" open="(" close=")" separator=",">
 			#{item}
 		</foreach>
