@@ -108,7 +108,7 @@ public class LoginController {
             return result;
         }
 
-        logger.info("password Dtype start!");
+        logger.info("user Dtype start!");
         // 非教师在此登陆
         if (!(UserEnum.Dtype.TEACHER.toString()).equals(user.getDtype())) {
             logger.warn(" Username type error!" + email + ";password=" + password);
@@ -117,10 +117,10 @@ public class LoginController {
             return result;
         }
 
-        logger.info("teacher null start!");
+        logger.info("teacher null start,{}",user.getId());
         Teacher teacher = this.passportService.findTeacherById(user.getId());
         if (teacher == null) {
-            logger.warn(" Username teacher error!" + email + ";password=" + password);
+            logger.info(" Username teacher error!" + email + ";password=" + password);
             result.put("info", ApplicationConstant.AjaxCode.ERROR_CODE);
             passportService.addLoginFailedCount(email);
             return result;
