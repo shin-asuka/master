@@ -21,7 +21,6 @@ import com.vipkid.http.service.AnnouncementHttpService;
 import com.vipkid.rest.config.RestfulConfig.RoleClass;
 import com.vipkid.trpm.constant.ApplicationConstant;
 import com.vipkid.trpm.constant.ApplicationConstant.CookieKey;
-import com.vipkid.trpm.constant.ApplicationConstant.RedisConstants;
 import com.vipkid.trpm.controller.portal.PersonalInfoController;
 import com.vipkid.trpm.entity.Staff;
 import com.vipkid.trpm.entity.Teacher;
@@ -33,13 +32,6 @@ import com.vipkid.trpm.service.rest.AdminQuizService;
 import com.vipkid.trpm.util.CookieUtils;
 
 public class CookieExpiredHandleInterceptor extends HandlerInterceptorAdapter {
-
-	private static final String IS_DISPLAY_PAYROLL = "isDisplayPayroll";
-	private static final String PAYROLL_OPEN_FLAG = "payroll_open_for_teacher";
-	private static final String PAYROLL_BLACK_LIST = "payroll_black_list_";
-	private static final String PAYROLL_WHITE_LIST = "payroll_white_list_";
-	private static final String PAYROLL_EXD = "payroll_exd";
-	private static final String PAYROLL_OPEN_VALUE = "1";
 
 	private Logger logger = LoggerFactory.getLogger(CookieExpiredHandleInterceptor.class);
 
@@ -115,31 +107,12 @@ public class CookieExpiredHandleInterceptor extends HandlerInterceptorAdapter {
 		request.setAttribute("TRPM_USER", user);
 		request.setAttribute("TRPM_COURSE_TYPES", indexService.getCourseType(user.getId()));
 		request.setAttribute("recruitmentUrl", PropertyConfigurer.stringValue("recruitment.www"));
-		 Map<String,Object> role = indexService.getAllRole(user.getId());
-		request.setAttribute("isPes",role.get(RoleClass.PES));
-		request.setAttribute("isTe",role.get(RoleClass.TE));
-		request.setAttribute("isTes",role.get(RoleClass.TES));
-		try {
-			// teacher payroll 开关
-			String openFlagInConfig = PropertyConfigurer.stringValue(PAYROLL_OPEN_FLAG);
-			// redis 中的teacher payroll 开关
-			String openFlagInRedis = redisProxy.get(PAYROLL_OPEN_FLAG);
-			// redis 中的 payroll 黑名单
-			//String blackListRedis = redisProxy.get(PAYROLL_BLACK_LIST + user.getId());
-			String whiteListRedis = redisProxy.get(PAYROLL_WHITE_LIST + user.getId());
-			if (openFlagInRedis == null) {
-				redisProxy.setex(PAYROLL_OPEN_FLAG, RedisConstants.PAYROLL_DISPLAY_MAX_NUM_EXCEED_DAY_SEC,
-						openFlagInConfig);
-				openFlagInRedis = redisProxy.get(PAYROLL_OPEN_FLAG);
-			}
-			
-			if (PAYROLL_OPEN_VALUE.equals(openFlagInRedis) || PAYROLL_EXD.equals(whiteListRedis)) {
-				request.setAttribute(IS_DISPLAY_PAYROLL, true);
-			}
-		} catch (Exception e) {
-			logger.error("捕获payroll redis 异常 ，teacher id是{}",user.getId());
-		}
-		
+        Map<String,Object> role = indexService.getAllRole(user.getId());
+        
+        request.setAttribute("isPes",role.get(RoleClass.PES));
+        request.setAttribute("isTe",role.get(RoleClass.TE));
+        request.setAttribute("isTes",role.get(RoleClass.TES));
+        
         String clazz = handlerMethod.getBeanType().getCanonicalName();
         if (adminQuizService.findNeedQuiz(user.getId())) {
             if(!PersonalInfoController.class.getCanonicalName().equals(clazz)){
