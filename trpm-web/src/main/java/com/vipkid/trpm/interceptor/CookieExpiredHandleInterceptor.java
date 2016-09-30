@@ -112,17 +112,23 @@ public class CookieExpiredHandleInterceptor extends HandlerInterceptorAdapter {
         request.setAttribute("isPes",role.get(RoleClass.PES));
         request.setAttribute("isTe",role.get(RoleClass.TE));
         request.setAttribute("isTes",role.get(RoleClass.TES));
-        
-        String clazz = handlerMethod.getBeanType().getCanonicalName();
+
+        //是否需要考试
         if (adminQuizService.findNeedQuiz(user.getId())) {
-            if(!PersonalInfoController.class.getCanonicalName().equals(clazz)){
+            //请求映射的Class
+            String clazz = handlerMethod.getBeanType().getCanonicalName();
+            if(PersonalInfoController.class.getCanonicalName().equals(clazz)){
+                //需要考试，请求的映射在基本信息修改类
+                return true;
+            }else{
+                //需要考试，请求的映射不再基本信息修改则进行跳转
                 logger.info("当前老师 [{}] 未通过考试", user.getName());
                 response.sendRedirect("/training/material");
                 return false;
             }
-            return true;
         }
 		
+        //是否需要密码修改
 		if (!checkChangePasswordUri(request) && checkCookie(request)) {
 			logger.info("拦截检测到需要修改密码进入页面");
 			response.sendRedirect(request.getContextPath() + "/schedule.shtml");
