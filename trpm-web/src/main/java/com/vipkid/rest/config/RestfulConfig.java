@@ -26,20 +26,7 @@ public class RestfulConfig {
         
         public static String TES = "TE-Supervisor";
     }
-    
-    public static final class HttpStatus{
         
-        public static int STATUS_403 = 403;
-        
-        public static int STATUS_200 = 200;
-        
-        public static int STATUS_400 = 400;
-        
-        public static int STATUS_404 = 404;
-        
-        public static int STATUS_500 = 500;
-    }
-    
     public static final class Validate{
         
         public static String EMAIL_REG = "^(([a-zA-Z0-9\\\"_\\-])\\.?)+\\@(([a-zA-Z0-9\\-])+\\.)+([a-zA-Z0-9]{2,4})+$";

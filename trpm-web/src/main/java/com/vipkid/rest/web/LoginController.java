@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.google.common.collect.Maps;
 import com.vipkid.enums.TeacherEnum;
 import com.vipkid.enums.UserEnum;
+import com.vipkid.rest.RestfulController;
 import com.vipkid.rest.config.RestfulConfig;
 import com.vipkid.rest.config.RestfulConfig.RoleClass;
 import com.vipkid.trpm.constant.ApplicationConstant;
@@ -36,7 +37,7 @@ import com.vipkid.trpm.util.IPUtils;
 
 @RestController
 @RequestMapping("/user")
-public class LoginController {
+public class LoginController extends RestfulController {
 
     private static Logger logger = LoggerFactory.getLogger(LoginController.class);
 
@@ -65,7 +66,7 @@ public class LoginController {
             @RequestParam(value = "key", required = false) String key,
             @RequestParam(value = "imageCode", required = false) String imageCode) {
         Map<String, Object> result = Maps.newHashMap();
-        result.put("status", RestfulConfig.HttpStatus.STATUS_403);
+        result.put("status", HttpStatus.FORBIDDEN.value());
         logger.info(" 请求参数 email ={},imageCode = {},key = {}",email,imageCode,key);
         if (StringUtils.isBlank(email) || StringUtils.isBlank(password)) {
             logger.warn("email or password is null password:" + password + ";email:" + email);
@@ -200,7 +201,7 @@ public class LoginController {
                     + AES.encrypt(user.getToken(), AES.getKey(AES.KEY_LENGTH_128, ApplicationConstant.AES_128_KEY)));
         }
         // 处理跳转的页面
-        result.put("status", RestfulConfig.HttpStatus.STATUS_200);
+        result.put("status", HttpStatus.OK.value());
         return result;
     }
 
@@ -237,7 +238,7 @@ public class LoginController {
         if (StringUtils.isBlank(email) || StringUtils.isBlank(password)) {
             logger.warn("email or password is null password:" + password + ";email:" + email);
             result.put("info", ApplicationConstant.AjaxCode.EMAIL_CODE);
-            result.put("status", RestfulConfig.HttpStatus.STATUS_403);
+            result.put("status", HttpStatus.FORBIDDEN.value());
             return result;
             // 2.用户名可用，执行业务，
         }
@@ -246,14 +247,14 @@ public class LoginController {
         if (user != null) {
             logger.warn("Email 已经注册过:" + email);
             result.put("info", ApplicationConstant.AjaxCode.ERROR_CODE);
-            result.put("status", RestfulConfig.HttpStatus.STATUS_403);
+            result.put("status", HttpStatus.FORBIDDEN.value());
             return result;
             // 2.用户名可用，执行业务，
         }
         // 执行业务逻辑
         Map<String, String> doSignUpMap = passportService.doSignUp(email, password, refereeId, partnerId);
         result.putAll(doSignUpMap);
-        result.put("status", RestfulConfig.HttpStatus.STATUS_200);
+        result.put("status", HttpStatus.OK.value());
         return result;
     }
 
@@ -271,7 +272,7 @@ public class LoginController {
     public Map<String, Object> resetPasswordRequest(HttpServletRequest request, HttpServletResponse response,
             @RequestParam String email) {
         Map<String, Object> result = Maps.newHashMap();
-        result.put("status", RestfulConfig.HttpStatus.STATUS_403);
+        result.put("status", HttpStatus.FORBIDDEN.value());
         if (StringUtils.isBlank(email)) {
             logger.warn("email is null");
             result.put("info", ApplicationConstant.AjaxCode.ERROR_CODE);
@@ -330,7 +331,7 @@ public class LoginController {
         }
         logger.info("resetPasswordRequest OK : " + email);
         result.putAll(this.passportService.senEmailForPassword(user));
-        result.put("status", RestfulConfig.HttpStatus.STATUS_200);
+        result.put("status", HttpStatus.OK.value());
         logger.info("send Email finished : " + email);
         return result;
     }
@@ -350,7 +351,7 @@ public class LoginController {
     public Map<String, Object> resetPassword(HttpServletRequest request, HttpServletResponse response,
             @RequestParam String password, @RequestParam String token) {
         Map<String, Object> result = Maps.newHashMap();
-        result.put("status", RestfulConfig.HttpStatus.STATUS_403);
+        result.put("status", HttpStatus.FORBIDDEN.value());
         result.put("info", ApplicationConstant.AjaxCode.ERROR_CODE);
         if (StringUtils.isBlank(password) || StringUtils.isBlank(token)) {
             logger.warn("password or token is null password = " + password + ";token:" + token);
@@ -374,7 +375,7 @@ public class LoginController {
         // 重置密码后模拟登陆
         result.remove("info");
         
-        result.put("status", RestfulConfig.HttpStatus.STATUS_200);
+        result.put("status", HttpStatus.OK.value());
         result.put("portal", RestfulConfig.Port.RECRUITMENT);
         if (TeacherEnum.LifeCycle.REGULAR.toString().equals(teacher.getLifeCycle())) {
             result.put("portal", RestfulConfig.Port.TEACHER);
@@ -387,7 +388,7 @@ public class LoginController {
     public Map<String, Object> auth(HttpServletRequest request, HttpServletResponse response) {
         Map<String, Object> result = Maps.newHashMap();
         String token = request.getHeader(CookieKey.AUTOKEN);
-        result.put("status", RestfulConfig.HttpStatus.STATUS_403);
+        result.put("status", HttpStatus.FORBIDDEN.value());
         if (StringUtils.isBlank(token)) {
             logger.warn("auth : token is null");
             return result;
@@ -426,7 +427,7 @@ public class LoginController {
         result.put("evaluationBio",teacher.getEvaluationBio());
         result.put("headsrc", headsrc);
         result.put("showName", user.getName());
-        result.put("status", RestfulConfig.HttpStatus.STATUS_200);
+        result.put("status", HttpStatus.OK.value());
         return result;
     }
 }
