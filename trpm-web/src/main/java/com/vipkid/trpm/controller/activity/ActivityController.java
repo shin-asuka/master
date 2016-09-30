@@ -107,7 +107,7 @@ public class ActivityController extends AbstractController{
     
     // 超过2016-04-20天将不再显示
     private boolean showActivity(){
-        Integer end = Integer.parseInt("20160420");
+        Integer end = Integer.parseInt("20170420");
         Integer ctime = Integer.parseInt(new SimpleDateFormat("yyyyMMdd").format(new Date()));
         return ctime < end;
     }

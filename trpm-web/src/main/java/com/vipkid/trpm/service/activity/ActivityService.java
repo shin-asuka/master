@@ -27,6 +27,7 @@ import com.vipkid.trpm.dao.UserDao;
 import com.vipkid.trpm.entity.Student;
 import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.entity.User;
+import com.vipkid.trpm.proxy.RedisProxy;
 import com.vipkid.trpm.proxy.redis.RedisClient;
 import com.vipkid.trpm.service.portal.TeacherService;
 
@@ -46,6 +47,9 @@ public class ActivityService {
     
     @Autowired
     private StudentDao studentDao;
+    
+    @Autowired
+    private RedisProxy redisProxy;
     
     @Autowired
     private TeacherService teacherService;
@@ -365,5 +369,38 @@ public class ActivityService {
 		return data;
  	}
  	
+ 	/**
+ 	 * 查看一个老师是不是第一次登陆
+     * @Author:zhangbole
+     * @param teacherId
+     * @return  boolean
+     * @date 2016年9月28日
+     */
+ 	public boolean isFirstTimeSignInDuringThirdYearAnniversary(long teacherId){
+ 		boolean ret = false;
+ 		String rediskey = "zhangbole"+teacherId;
+ 		String redisValue = "hava signed in";
+ 		String sign = redisProxy.get(rediskey);
+ 		if(StringUtils.isNotEmpty(sign)&&equals(redisValue)){
+ 		}
+ 		else{
+ 			redisProxy.set(rediskey, redisValue);
+ 			ret = true;
+ 		}
+ 		
+ 		
+ 		return ret;
+ 	}
+ 	
+ 	/**
+ 	 * 是不是在三周年活动期间
+     * @Author:zhangbole
+     * @return  boolean
+     * @date 2016年9月28日
+     */
+// 	public boolean isDuringThirdYeayAnniversary(){
+// 		boolean ret = false;
+// 	}
+// 	
     
 }
