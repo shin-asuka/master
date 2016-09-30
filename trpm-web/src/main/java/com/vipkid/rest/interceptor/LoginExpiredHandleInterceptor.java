@@ -17,6 +17,13 @@ import com.vipkid.rest.config.RestInterface;
 import com.vipkid.trpm.entity.User;
 import com.vipkid.trpm.service.rest.LoginService;
 
+/**
+ * 登陆Token 拦截器，配合 RestInterface 拦截器一起使用
+ * @author Along(ZengWeiLong)
+ * @ClassName: LoginExpiredHandleInterceptor 
+ * @date 2016年9月30日 下午3:11:32 
+ *
+ */
 public class LoginExpiredHandleInterceptor extends HandlerInterceptorAdapter {
 
 	private Logger logger = LoggerFactory.getLogger(LoginExpiredHandleInterceptor.class);
