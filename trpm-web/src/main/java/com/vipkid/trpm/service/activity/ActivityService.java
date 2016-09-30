@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.community.config.PropertyConfigurer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +20,6 @@ import com.google.common.collect.Maps;
 import com.mchange.v2.ser.SerializableUtils;
 import com.vipkid.http.vo.ThirdYearAnniversaryData;
 import com.vipkid.trpm.constant.ApplicationConstant;
-import com.vipkid.trpm.dao.OnlineClassDao;
 import com.vipkid.trpm.dao.StudentDao;
 import com.vipkid.trpm.dao.TeacherActivityDao;
 import com.vipkid.trpm.dao.TeacherDao;
@@ -370,7 +370,7 @@ public class ActivityService {
  	}
  	
  	/**
- 	 * 查看一个老师是不是第一次登陆
+ 	 * 查看一个老师是不是第一次登陆(如不在活动期间，返回false)
      * @Author:zhangbole
      * @param teacherId
      * @return  boolean
@@ -378,13 +378,16 @@ public class ActivityService {
      */
  	public boolean isFirstTimeSignInDuringThirdYearAnniversary(long teacherId){
  		boolean ret = false;
- 		String rediskey = "zhangbole"+teacherId;
+ 		if(!isDuringThirdYeayAnniversary()){//不在活动期间，返回false
+ 			return ret;
+ 		}
+ 		String rediskey = "zhangbole"+teacherId;//key值应该怎么规范？
  		String redisValue = "hava signed in";
  		String sign = redisProxy.get(rediskey);
  		if(StringUtils.isNotEmpty(sign)&&equals(redisValue)){
  		}
  		else{
- 			redisProxy.set(rediskey, redisValue);
+ 			redisProxy.set(rediskey, redisValue);//set进redis后会保存多久？
  			ret = true;
  		}
  		
@@ -393,14 +396,26 @@ public class ActivityService {
  	}
  	
  	/**
- 	 * 是不是在三周年活动期间
+ 	 * 当前时间是不是在三周年活动期间
      * @Author:zhangbole
      * @return  boolean
      * @date 2016年9月28日
      */
-// 	public boolean isDuringThirdYeayAnniversary(){
-// 		boolean ret = false;
-// 	}
-// 	
+ 	public boolean isDuringThirdYeayAnniversary(){//活动页与对应接口的开关
+ 		boolean ret = false;
+ 		String strStart = PropertyConfigurer.stringValue("third_year_anniversary_start");
+ 		String strEnd = PropertyConfigurer.stringValue("third_year_anniversary_end");
+ 		if(StringUtils.isEmpty(strEnd)||StringUtils.isEmpty(strStart)){//如果配置文件中的两个属性有一个消失，就ren
+ 			return false;
+ 		}
+ 		int now = Integer.parseInt(new SimpleDateFormat("yyyyMMdd").format(new Date()));
+ 		int start = Integer.parseInt(strStart);
+ 		int end = Integer.parseInt(strEnd);
+ 		if(now>=start && now<=end){
+ 			ret = true;
+ 		}
+ 		return ret;
+ 	}
+ 	
     
 }
