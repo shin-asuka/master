@@ -31,7 +31,7 @@ import com.vipkid.trpm.service.rest.TeacherPageLoginService;
 import com.vipkid.trpm.util.CookieUtils;
 
 @RestController
-@RestInterface(true)
+@RestInterface
 @RequestMapping("/quiz")
 public class AdminQuizController {
 
