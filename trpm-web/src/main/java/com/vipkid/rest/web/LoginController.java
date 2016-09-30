@@ -22,6 +22,7 @@ import com.vipkid.enums.UserEnum;
 import com.vipkid.rest.RestfulController;
 import com.vipkid.rest.config.RestfulConfig;
 import com.vipkid.rest.config.RestfulConfig.RoleClass;
+import com.vipkid.rest.interceptor.RestInterface;
 import com.vipkid.trpm.constant.ApplicationConstant;
 import com.vipkid.trpm.constant.ApplicationConstant.CookieKey;
 import com.vipkid.trpm.constant.ApplicationConstant.LoginType;
@@ -385,6 +386,7 @@ public class LoginController extends RestfulController {
     }
 
     @RequestMapping(value = "/auth", method = RequestMethod.POST, produces = RestfulConfig.JSON_UTF_8)
+    @RestInterface(true)
     public Map<String, Object> auth(HttpServletRequest request, HttpServletResponse response) {
         Map<String, Object> result = Maps.newHashMap();
         String token = request.getHeader(CookieKey.AUTOKEN);

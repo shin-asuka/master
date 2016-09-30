@@ -19,6 +19,12 @@
 	</mvc:annotation-driven>
 
 	<mvc:interceptors>
+		<!-- 拦截器配置restful事件处理。-->
+		<mvc:interceptor>
+			<mvc:mapping path="/**"/>
+			<beans:bean class="com.vipkid.rest.interceptor.LoginExpiredHandleInterceptor" />
+		</mvc:interceptor>
+		
 		<mvc:interceptor>
 			<mvc:mapping path="/**/*.shtml" />
 			<mvc:mapping path="/**/*.json" />

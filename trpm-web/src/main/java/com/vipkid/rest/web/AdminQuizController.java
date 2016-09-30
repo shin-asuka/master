@@ -20,6 +20,7 @@ import com.google.api.client.util.Maps;
 import com.google.common.base.Preconditions;
 import com.vipkid.enums.TeacherQuizEnum;
 import com.vipkid.rest.config.RestfulConfig;
+import com.vipkid.rest.interceptor.RestInterface;
 import com.vipkid.trpm.constant.ApplicationConstant.CookieKey;
 import com.vipkid.trpm.constant.ApplicationConstant.LoginType;
 import com.vipkid.trpm.entity.TeacherQuiz;
@@ -30,6 +31,7 @@ import com.vipkid.trpm.service.rest.TeacherPageLoginService;
 import com.vipkid.trpm.util.CookieUtils;
 
 @RestController
+@RestInterface(true)
 @RequestMapping("/quiz")
 public class AdminQuizController {
 
