@@ -24,6 +24,7 @@ import com.vipkid.email.templete.TempleteUtils;
 import com.vipkid.rest.config.RestfulConfig;
 import com.vipkid.trpm.dao.TeacherDao;
 import com.vipkid.trpm.entity.Teacher;
+import com.vipkid.trpm.proxy.RedisProxy;
 
 @RestController
 @RequestMapping("/user")
@@ -31,8 +32,15 @@ public class SendEmailController {
 
     private static Logger logger = LoggerFactory.getLogger(SendEmailController.class);
 
+    private static final String LOGIN_ACTIVATION_EMAIL_KEY = "TRPM_REST_ACTIVATION_EMAIL_KEY:%s";
+
+    private static final int EXPIRED_SECONDS = 30;
+
     @Autowired
     private TeacherDao teacherDao;
+
+    @Autowired
+    private RedisProxy redisProxy;
 
     @RequestMapping(value = "/applyActivationEmail", method = RequestMethod.POST,
             produces = RestfulConfig.JSON_UTF_8)
@@ -40,6 +48,13 @@ public class SendEmailController {
             HttpServletResponse response, @RequestParam(required = true) String email) {
         Map<String, Object> resultMap = Maps.newHashMap();
         if (StringUtils.isBlank(email)) {
+            resultMap.put("status", RestfulConfig.HttpStatus.STATUS_403);
+            return resultMap;
+        }
+
+        String key = String.format(LOGIN_ACTIVATION_EMAIL_KEY, email);
+        if (null != redisProxy.get(key)) {
+            logger.info("The activation email [{}] time is not expire", email);
             resultMap.put("status", RestfulConfig.HttpStatus.STATUS_403);
             return resultMap;
         }
@@ -58,6 +73,7 @@ public class SendEmailController {
                     paramsMap, "VIPKIDAccountActivationLink-Title.html");
             new EmailEngine().addMailPool(email, sendMap, EmailFormEnum.TEACHVIP);
 
+            redisProxy.set(key, "true", EXPIRED_SECONDS);
             logger.info("Apply again activation email [{}] ok", email);
 
             resultMap.put("status", RestfulConfig.HttpStatus.STATUS_200);
