@@ -56,6 +56,7 @@ public class SendEmailController {
         if (null != redisProxy.get(key)) {
             logger.info("The activation email [{}] time is not expire", email);
             resultMap.put("status", RestfulConfig.HttpStatus.STATUS_403);
+            resultMap.put("expire", redisProxy.ttl(key));
             return resultMap;
         }
 
