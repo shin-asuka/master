@@ -7,6 +7,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang3.StringUtils;
 import org.community.config.PropertyConfigurer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,6 +39,10 @@ public class SendEmailController {
     public Map<String, Object> applyActivationEmail(HttpServletRequest request,
             HttpServletResponse response, @RequestParam(required = true) String email) {
         Map<String, Object> resultMap = Maps.newHashMap();
+        if (StringUtils.isBlank(email)) {
+            resultMap.put("status", RestfulConfig.HttpStatus.STATUS_403);
+            return resultMap;
+        }
 
         Teacher teacher = teacherDao.findByEmail(email);
         if (0 == teacher.getId()) {
