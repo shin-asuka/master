@@ -3,9 +3,11 @@ package com.vipkid.http.vo;
 import java.util.List;
 
 import com.vipkid.trpm.entity.Teacher;
+import com.vipkid.trpm.entity.User;
 
 public class ThirdYearAnniversaryData {
 	private Teacher teacher ;//当前登陆的老师
+	private User user ;//当前登陆的老师
 	private long  lengthOfTime;//老师注册成功，通过测试，具备上课资格的天数
 	private int  numberOfReferrals;//推荐成功的老师数量
 	private int  stuNumber;//成功上过课的中国学生数量
@@ -16,6 +18,7 @@ public class ThirdYearAnniversaryData {
 	private long  totalFinishedClassesMin;//该老师上过的课的总的分钟数
 	private String firstClassDate;//该老师第一次上课的日期
 	private List<String> referralsAvatarList;//该老师推荐的老师的头像列表
+	private String token;//教师id的加密token，用于facebook分享链接
 	
 	public long getLengthOfTime() {
 		return lengthOfTime;
@@ -82,5 +85,17 @@ public class ThirdYearAnniversaryData {
 	}
 	public void setStuAvatar(String stuAvatar) {
 		this.stuAvatar = stuAvatar;
+	}
+	public String getToken() {
+		return token;
+	}
+	public void setToken(String token) {
+		this.token = token;
+	}
+	public User getUser() {
+		return user;
+	}
+	public void setUser(User user) {
+		this.user = user;
 	}
 }

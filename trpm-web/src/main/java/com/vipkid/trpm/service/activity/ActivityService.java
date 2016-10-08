@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.google.api.client.util.Lists;
 import com.google.common.collect.Maps;
 import com.mchange.v2.ser.SerializableUtils;
 import com.vipkid.http.vo.ThirdYearAnniversaryData;
@@ -30,6 +31,7 @@ import com.vipkid.trpm.entity.User;
 import com.vipkid.trpm.proxy.RedisProxy;
 import com.vipkid.trpm.proxy.redis.RedisClient;
 import com.vipkid.trpm.service.portal.TeacherService;
+import com.vipkid.trpm.util.AES;
 
 @Service
 public class ActivityService {
@@ -352,7 +354,9 @@ public class ActivityService {
 		}
 		data.setLengthOfTime(days);
 		Teacher t = teacherService.get(teacherId);
-		data.setTeacher(t);
+		data.setTeacher(handleTeacherInfo(t));
+		User u = userDao.findById(teacherId);
+		data.setUser(hideUserInfo(u));
 		data.setNumberOfReferrals(this.getNumOfTeachersByReferee(teacherId));
 		int totalFinishedClasses = this.getClassNumOfOneTeacher(teacherId);
 		data.setTotalFinishedClasses(totalFinishedClasses);
@@ -365,8 +369,54 @@ public class ActivityService {
 			data.setStuAvatar((String)map.get("avatar"));
 		}
 		data.setFirstClassDate(getFirstClassDateofOneTeacher(teacherId));
-		data.setReferralsAvatarList(getAvatarListOfTeachersByReferee(teacherId));
+		List<String> avatarListOrigin = getAvatarListOfTeachersByReferee(teacherId);
+		List<String> avatarList = Lists.newArrayList();
+		for(String eachAvatar : avatarListOrigin){
+			avatarList.add(completeResouceUrl(eachAvatar));
+		}
+		data.setReferralsAvatarList(avatarList);
+		String token = encode(teacherId);
+		data.setToken(token);
 		return data;
+ 	}
+ 	
+ 	private String completeResouceUrl(String urlOrigin){
+ 		if(StringUtils.isEmpty(urlOrigin)) return urlOrigin;//如果参数非法，就不加前缀
+		String urlPreffix = PropertyConfigurer.stringValue("oss.url_preffix");
+		if(StringUtils.isEmpty(urlPreffix)) return urlOrigin;//如果配置文件没有这个属性，就不加前缀
+ 		if(urlOrigin.startsWith("/")){    //数据库里的avatar字段格式不统一，有的不是“/”打头
+			return urlPreffix+urlOrigin;
+		}
+		else{
+			return urlPreffix+"/"+urlOrigin;
+		}
+ 	}
+ 	
+ 	/**
+ 	 * 隐藏部分老师用不到的属性,同时把头像链接补全
+     * @Author:zhangbole
+     * @param teacher
+     * @return  Teacher
+     * @date 2016年10月8日
+     */
+ 	private Teacher handleTeacherInfo(Teacher teacher){
+ 		Teacher ret = new Teacher();
+ 		ret.setRealName(teacher.getRealName());
+ 		ret.setAvatar(teacher.getAvatar());
+ 		return ret;
+ 	}
+ 	/**
+ 	 * 隐藏部分老师用不到的属性
+     * @Author:zhangbole
+     * @param user
+     * @return  User
+     * @date 2016年10月8日
+     */
+ 	private User hideUserInfo(User user){
+ 		User ret = new User();
+ 		ret.setName(user.getName());
+ 		ret.setGender(user.getGender());
+ 		return ret;
  	}
  	
  	/**
@@ -417,5 +467,27 @@ public class ActivityService {
  		return ret;
  	}
  	
+ 	/**
+ 	 * teachenId加密，用于facebook分享链接
+     * @Author:zhangbole
+     * @return  boolean
+     * @date 2016年10月8日
+     */
+ 	private String encode(long teacherId){
+ 		return AES.encrypt(String.valueOf(teacherId), AES.getKey(AES.KEY_LENGTH_128,ApplicationConstant.AES_128_KEY));
+ 	}
+ 	/**
+ 	 * teachenId解密，用于facebook分享链接
+     * @Author:zhangbole
+     * @return  boolean
+     * @date 2016年10月8日
+     */
+ 	private long decode(String token){
+ 		String teacherId =  AES.decrypt(token, AES.getKey(AES.KEY_LENGTH_128,ApplicationConstant.AES_128_KEY));
+ 		if(teacherId.matches("[1-9]\\d+")){
+ 			return Long.parseLong(teacherId);
+ 		}
+ 		return -1;
+ 	}
     
 }

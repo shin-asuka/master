@@ -19,6 +19,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.vipkid.trpm.constant.ApplicationConstant;
 import com.vipkid.trpm.controller.AbstractController;
@@ -117,12 +118,19 @@ public class ActivityController extends AbstractController{
     }
     
     //三周年庆的教师历程数据接口，活动页前端请求此接口获取json数据
-    @RequestMapping(value = "/thridYearAnniversary", method = RequestMethod.GET)
+    @RequestMapping(value = "/getThridYearAnniversaryData", method = RequestMethod.GET)
 	public Object getData(HttpServletRequest request){
     	if(!showThirdYearActivity()) return null;//到期后接口功能失效
     	User u = indexService.getUser(request);
     	if(u==null) return null;
     	long teacherId = u.getId();
+    	return activityService.getThirdYearAnniversaryData(teacherId);
+	}
+    
+  //三周年庆的教师历程数据接口，活动页前端请求此接口获取json数据，此接口要传teacherId作为参数
+    @RequestMapping(value = "/getThridYearAnniversaryDataByTeacherId", method = RequestMethod.GET)
+	public Object getDataByTeacherId(@RequestParam long teacherId){
+    	if(!showThirdYearActivity()) return null;//到期后接口功能失效
     	return activityService.getThirdYearAnniversaryData(teacherId);
 	}
 }
