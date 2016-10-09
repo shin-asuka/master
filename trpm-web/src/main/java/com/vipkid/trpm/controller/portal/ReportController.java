@@ -377,9 +377,9 @@ public class ReportController extends AbstractPortalController {
             if (studentExam.getExamLevel() != null) {
                 String lowerCase = studentExam.getExamLevel().toLowerCase();
                 if ("l1u0".equals(lowerCase)) {
-                    studentExam.setExamLevel("CT result is Level 0 Unit 0");
+                    studentExam.setExamLevel("Level Test result is Level 0 Unit 0");
                 } else if (lowerCase.startsWith("l")) {
-                    studentExam.setExamLevel("CT result is " + lowerCase.replaceAll("l", "Level ").replaceAll("u", " Unit "));
+                    studentExam.setExamLevel("Level Test result is " + lowerCase.replaceAll("l", "Level ").replaceAll("u", " Unit "));
                 }
             }
         } else {

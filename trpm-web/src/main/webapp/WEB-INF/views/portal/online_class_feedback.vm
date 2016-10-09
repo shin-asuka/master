@@ -64,7 +64,7 @@
 							</div>
 						#elseif($!studentExam.examLevel)
                             <div Style="margin: 13px 0px">
-                                <b>Level Test result is $!studentExam.examLevel</b>
+                                <b>$!studentExam.examLevel</b>
                             </div>
 						#else
                             <div Style="margin: 13px 0px">
