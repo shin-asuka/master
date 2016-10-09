@@ -212,6 +212,7 @@ public class LoginController {
             @RequestParam(value = "refereeId", required = false) String refereeId,
             @RequestParam(value = "key", required = true) String key,
             @RequestParam(value = "imageCode", required = true) String imageCode) {
+        email = StringUtils.trim(email);
         logger.info("sign up teacher email = {" + email + "," + password + "}");
         Map<String, Object> result = Maps.newHashMap();
         if (StringUtils.isEmpty(key) || StringUtils.isEmpty(imageCode)) {
