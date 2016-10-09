@@ -299,9 +299,13 @@ public class LoginController {
         if (UserEnum.Status.isLocked(user.getStatus())) {
             // 新注册的需要激活
             if (TeacherEnum.LifeCycle.SIGNUP.toString().equals(teacher.getLifeCycle())) {
-                logger.warn("teacher 未激活  id = " + user.getId());
-                result.put("info", ApplicationConstant.AjaxCode.LOCKED_CODE);
-                return result;
+                if(PropertyConfigurer.booleanValue("signup.send.mail.switch")){
+                    logger.warn("teacher 未激活  id = " + user.getId());
+                    result.put("info", ApplicationConstant.AjaxCode.LOCKED_CODE);
+                    return result;
+                }else{
+                    this.passportService.updateUserStatus(user);
+                }
             } else {
                 // 否则告诉被锁定
                 logger.warn("teacher is 被锁定 id = " + user.getId());
