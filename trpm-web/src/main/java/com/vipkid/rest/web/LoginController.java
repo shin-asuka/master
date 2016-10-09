@@ -149,10 +149,14 @@ public class LoginController {
         if (UserEnum.Status.isLocked(user.getStatus())) {
             // 新注册的需要激活
             if (TeacherEnum.LifeCycle.SIGNUP.toString().equals(teacher.getLifeCycle())) {
-                logger.warn(" Username 没有激活 error!" + email + ";password=" + password);
-                result.put("info", ApplicationConstant.AjaxCode.LOCKED_CODE);
-                passportService.addLoginFailedCount(email);
-                return result;
+                if(PropertyConfigurer.booleanValue("signup.send.mail.switch")){
+                    logger.warn(" Username 没有激活 error!" + email + ";password=" + password);
+                    result.put("info", ApplicationConstant.AjaxCode.LOCKED_CODE);
+                    passportService.addLoginFailedCount(email);
+                    return result;
+                }else{
+                    this.passportService.updateUserStatus(user);
+                }
             } else {
                 // 否则告诉被锁定
                 logger.warn(" Username locked error!" + email + ";password=" + password);
@@ -160,6 +164,7 @@ public class LoginController {
                 passportService.addLoginFailedCount(email);
                 return result;
             }
+            
         }
 
         // 如果招聘Id不存在则set进去
@@ -207,6 +212,7 @@ public class LoginController {
             @RequestParam(value = "refereeId", required = false) String refereeId,
             @RequestParam(value = "key", required = true) String key,
             @RequestParam(value = "imageCode", required = true) String imageCode) {
+        email = StringUtils.trim(email);
         logger.info("sign up teacher email = {" + email + "," + password + "}");
         Map<String, Object> result = Maps.newHashMap();
         if (StringUtils.isEmpty(key) || StringUtils.isEmpty(imageCode)) {
@@ -294,9 +300,13 @@ public class LoginController {
         if (UserEnum.Status.isLocked(user.getStatus())) {
             // 新注册的需要激活
             if (TeacherEnum.LifeCycle.SIGNUP.toString().equals(teacher.getLifeCycle())) {
-                logger.warn("teacher 未激活  id = " + user.getId());
-                result.put("info", ApplicationConstant.AjaxCode.LOCKED_CODE);
-                return result;
+                if(PropertyConfigurer.booleanValue("signup.send.mail.switch")){
+                    logger.warn("teacher 未激活  id = " + user.getId());
+                    result.put("info", ApplicationConstant.AjaxCode.LOCKED_CODE);
+                    return result;
+                }else{
+                    this.passportService.updateUserStatus(user);
+                }
             } else {
                 // 否则告诉被锁定
                 logger.warn("teacher is 被锁定 id = " + user.getId());
