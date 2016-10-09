@@ -21,7 +21,6 @@ import com.vipkid.email.templete.TempleteUtils;
 import com.vipkid.enums.Role;
 import com.vipkid.enums.TeacherEnum;
 import com.vipkid.enums.UserEnum;
-import com.vipkid.rest.config.RestfulConfig;
 import com.vipkid.trpm.constant.ApplicationConstant;
 import com.vipkid.trpm.dao.AppRestfulDao;
 import com.vipkid.trpm.dao.TeacherDao;
@@ -174,7 +173,7 @@ public class PassportService {
                 resultMap.put("uuid", AES.encrypt(teacher.getRecruitmentId(),
                         AES.getKey(AES.KEY_LENGTH_128, ApplicationConstant.AES_128_KEY)));
             }else{
-                resultMap.put("url", RestfulConfig.Port.RECRUITMENT+"/signlogin.shtml?token="
+                resultMap.put("url", "signlogin.shtml?token="
                         + AES.encrypt(user.getToken(), AES.getKey(AES.KEY_LENGTH_128, ApplicationConstant.AES_128_KEY)));
             }
             resultMap.put("info", ApplicationConstant.AjaxCode.SUCCESS_CODE);
