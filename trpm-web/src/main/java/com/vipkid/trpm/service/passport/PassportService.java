@@ -21,6 +21,7 @@ import com.vipkid.email.templete.TempleteUtils;
 import com.vipkid.enums.Role;
 import com.vipkid.enums.TeacherEnum;
 import com.vipkid.enums.UserEnum;
+import com.vipkid.rest.config.RestfulConfig;
 import com.vipkid.trpm.constant.ApplicationConstant;
 import com.vipkid.trpm.dao.AppRestfulDao;
 import com.vipkid.trpm.dao.TeacherDao;
@@ -129,7 +130,11 @@ public class PassportService {
             }
             String strPwd = new String(Base64.getDecoder().decode(password));
             user.setPassword(encoder.encode(strPwd));
-            user.setStatus(UserEnum.Status.LOCKED.toString());
+            if(PropertyConfigurer.booleanValue("signup.send.mail.switch")){
+                user.setStatus(UserEnum.Status.LOCKED.toString());
+            }else{
+                user.setStatus(UserEnum.Status.NORMAL.toString());
+            }
             user.setToken(UUID.randomUUID().toString());
             user.setCreateDateTime(new Timestamp(System.currentTimeMillis()));
             user.setLastEditDateTime(new Timestamp(System.currentTimeMillis()));
@@ -156,17 +161,22 @@ public class PassportService {
             teacher = this.prerefereeId(teacher, reid);
             teacherDao.save(teacher);
             logger.info(" Sign up teacher: " + teacher.getSerialNumber());
-            // 4.发送邮件(带着Recruitment ID)
-            Map<String, String> map = Maps.newHashMap();
-            map.put("teacherName", NEW_TEACHER_NAME);
-            map.put("link", PropertyConfigurer.stringValue("teacher.www") + "activation.shtml?uuid="
-                    + teacher.getRecruitmentId());
-            TempleteUtils templete = new TempleteUtils();
-            Map<String, String> sendMap = templete.readTemplete("VIPKIDAccountActivationLink.html", map,
-                    "VIPKIDAccountActivationLink-Title.html");
-            new EmailEngine().addMailPool(email, sendMap, EmailFormEnum.TEACHVIP);
-            resultMap.put("uuid", AES.encrypt(teacher.getRecruitmentId(),
-                    AES.getKey(AES.KEY_LENGTH_128, ApplicationConstant.AES_128_KEY)));
+            if(PropertyConfigurer.booleanValue("signup.send.mail.switch")){
+                // 4.发送邮件(带着Recruitment ID)
+                Map<String, String> map = Maps.newHashMap();
+                map.put("teacherName", NEW_TEACHER_NAME);
+                map.put("link", PropertyConfigurer.stringValue("teacher.www") + "activation.shtml?uuid="
+                        + teacher.getRecruitmentId());
+                TempleteUtils templete = new TempleteUtils();
+                Map<String, String> sendMap = templete.readTemplete("VIPKIDAccountActivationLink.html", map,
+                        "VIPKIDAccountActivationLink-Title.html");
+                new EmailEngine().addMailPool(email, sendMap, EmailFormEnum.TEACHVIP);
+                resultMap.put("uuid", AES.encrypt(teacher.getRecruitmentId(),
+                        AES.getKey(AES.KEY_LENGTH_128, ApplicationConstant.AES_128_KEY)));
+            }else{
+                resultMap.put("url", RestfulConfig.Port.RECRUITMENT+"/signlogin.shtml?token="
+                        + AES.encrypt(user.getToken(), AES.getKey(AES.KEY_LENGTH_128, ApplicationConstant.AES_128_KEY)));
+            }
             resultMap.put("info", ApplicationConstant.AjaxCode.SUCCESS_CODE);
         } else {
             resultMap.put("info", ApplicationConstant.AjaxCode.ERROR_CODE);
@@ -193,6 +203,11 @@ public class PassportService {
             }
         }
         return null;
+    }
+    
+    public void updateUserStatus(User user){
+        user.setStatus(UserEnum.Status.NORMAL.toString());
+        this.userDao.update(user);
     }
 
     /**
