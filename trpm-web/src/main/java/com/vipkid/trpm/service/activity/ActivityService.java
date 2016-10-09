@@ -458,9 +458,18 @@ public class ActivityService {
  		if(StringUtils.isEmpty(strEnd)||StringUtils.isEmpty(strStart)){//如果配置文件中的两个属性有一个消失，就ren
  			return false;
  		}
- 		int now = Integer.parseInt(new SimpleDateFormat("yyyyMMdd").format(new Date()));
- 		int start = Integer.parseInt(strStart);
- 		int end = Integer.parseInt(strEnd);
+ 		long now = 0;
+ 		long start = 0;
+ 		long end = 0;
+ 		try {
+ 			now = Long.parseLong(new SimpleDateFormat("yyyyMMddHHmmss").format(new Date()));
+ 	 		start = Long.parseLong(strStart);
+ 	 		end = Long.parseLong(strEnd);
+		} catch (NumberFormatException e) {
+			logger.warn("配置文件中third_year_anniversary_start或third_year_anniversary_end的值有误");
+			return false;
+		}
+ 		
  		if(now>=start && now<=end){
  			ret = true;
  		}
