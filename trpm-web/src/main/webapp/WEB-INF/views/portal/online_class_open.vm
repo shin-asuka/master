@@ -19,9 +19,9 @@
 		                
 		        #**2.退出教室*# 
 		        <div class="rightActionBarGroup2">
-		        	#if(!$isReplay)
-		        		<div><a href="http://help.duobeiyun.com/room/test/?result=http://beta-app-proxy.vipkid.com.cn/api/service/public/ittest/callback&amp;lang=en&amp;role=TEACHER&amp;id=$teacher.id" style="color: red;" target="_blank">Test your computer</a></div>
-		        	#end	               
+		        	##if(!$isReplay)
+		        		##<div><a href="http://help.duobeiyun.com/room/test/?result=http://beta-app-proxy.vipkid.com.cn/api/service/public/ittest/callback&amp;lang=en&amp;role=TEACHER&amp;id=$teacher.id" style="color: red;" target="_blank">Test your computer</a></div>
+		        	##end	               
 		            <div class="lastAction"><a href="javascript:;" onclick="require('classopen').endThisClass('$!onlineClass.id');" style="color:white;">End this class</a> </div>
 		        </div>
 		        
