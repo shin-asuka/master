@@ -69,9 +69,10 @@ public class CheckTeacherCommentService {
 			}
 			
 			//调用homework服务查询为完成TeacherComment的课程
-			List<TeacherComment> teacherCommentUnSubmit = teacherCommentDao.batchGetByOnlineClassIds(onlineClassVo.getIdList());
+			List<TeacherComment> teacherCommentSubmit = teacherCommentDao.batchGetByOnlineClassIds(onlineClassVo.getIdList());
 			OnlineClassVo onlineClassVoUnSubmit = new OnlineClassVo();
-			teacherCommentUnSubmit.forEach(x->onlineClassVoUnSubmit.getIdList().add(x.getOnlineClassId()));
+			onlineClassVoUnSubmit.setIdList(onlineClassVo.getIdList());
+			teacherCommentSubmit.forEach(x->onlineClassVoUnSubmit.getIdList().remove(x.getOnlineClassId()));
 			logger.info("Result unSubmit OnlineClass  = {}",JsonUtils.toJSONString(onlineClassVoUnSubmit));
 			sendEmail(onlineClassVoUnSubmit, ocMap,"FeedbackRemindTeacher"+hours+"hour.html","FeedbackRemindTeacher"+hours+"hourTitle.html");
 		}
