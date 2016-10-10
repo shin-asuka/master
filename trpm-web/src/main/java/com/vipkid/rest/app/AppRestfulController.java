@@ -322,9 +322,8 @@ public class AppRestfulController {
         try {
             Preconditions.checkArgument(teacherId != 0);
             Preconditions.checkArgument(0 <= classStatus && classStatus < 3);
-            Preconditions.checkArgument(limit > start);
-            logger.info("查询条数最多只能大于20条限制处理");
-            limit = (limit-start) > 20 ? (start+20) : limit;
+            //查询条数最多只能大于20条限制处理
+            limit = limit > 20 ? 20 : limit;
             List<AppOnlineClass> list = this.appRestfulService.getClassListPage(teacherId,start, limit,order,classStatus,courseTypes);
             result.put("data", list);
             result.putAll(this.appRestfulService.getClassListCount(teacherId, classStatus, courseTypes));
