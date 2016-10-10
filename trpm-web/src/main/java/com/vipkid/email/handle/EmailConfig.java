@@ -44,16 +44,6 @@ public class EmailConfig {
     /**
      * 重试次数
      */
-    public static final int REPLY_COUNT = 5;
-
-    /**
-     * 线程池到达极限值后 需要延迟时间100毫秒 放入
-     */
-    public static Integer WAIT_TIME = 100;
-
-    /**
-     * 线程池活跃线程数 达到200的时候放入延迟 @HE_WAIT_TIME 毫秒
-     */
-    public static Integer THREAD_POOL_LIMIT = 200;
+    public static final int REPLY_COUNT = 10;
 
 }
