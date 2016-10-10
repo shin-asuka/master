@@ -22,6 +22,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.google.common.collect.Maps;
 import com.vipkid.enums.OnlineClassEnum;
+import com.vipkid.trpm.dao.StudentExamDao;
 import com.vipkid.trpm.entity.AssessmentReport;
 import com.vipkid.trpm.entity.DemoReport;
 import com.vipkid.trpm.entity.Lesson;
@@ -51,6 +52,8 @@ public class ReportController extends AbstractPortalController {
     @Autowired
     private IndexService indexService;
 
+    @Autowired
+    private StudentExamDao studentExamDao;
     /**
      * UA报告上传页面进入
      * 
@@ -232,6 +235,11 @@ public class ReportController extends AbstractPortalController {
         // 查询FeedBack信息
         TeacherComment teacherComment = reportService.findTectBycIdAndStuId(onlineClassId, studentId);
         model.addAttribute("teacherComment", teacherComment);
+        //查询StudentExam信息
+        StudentExam studentExam = studentExamDao.findStudentExamByStudentId(studentId);
+        handleExamLevel(studentExam, lesson.getSerialNumber());
+        model.addAttribute("studentExam", studentExam);
+
         model.addAttribute("studentId", studentId);
 
         long millis =stopwatch.stop().elapsed(TimeUnit.MILLISECONDS);
@@ -369,9 +377,9 @@ public class ReportController extends AbstractPortalController {
             if (studentExam.getExamLevel() != null) {
                 String lowerCase = studentExam.getExamLevel().toLowerCase();
                 if ("l1u0".equals(lowerCase)) {
-                    studentExam.setExamLevel("Level 0 Unit 0");
+                    studentExam.setExamLevel("Level Test result is Level 0 Unit 0");
                 } else if (lowerCase.startsWith("l")) {
-                    studentExam.setExamLevel(lowerCase.replaceAll("l", "Level ").replaceAll("u", " Unit "));
+                    studentExam.setExamLevel("Level Test result is " + lowerCase.replaceAll("l", "Level ").replaceAll("u", " Unit "));
                 }
             }
         } else {
