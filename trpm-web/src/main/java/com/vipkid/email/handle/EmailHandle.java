@@ -11,12 +11,15 @@ public class EmailHandle {
 
 
     public static String switchMail(String email, String subject, String content, EmailFormEnum emailForm) {
-        if (emailForm == EmailFormEnum.TEACHVIP) {
-            return sendForTeachvip(email,subject,content);
-        } else if (emailForm == EmailFormEnum.EDUCATION) {
-            return sendForEducation(email,subject,content);
+        switch (emailForm) {
+            case TEACHVIP:
+                return sendForTeachvip(email,subject,content);
+            case EDUCATION:
+                return sendForEducation(email,subject,content);
+            default:
+                logger.info("枚举错误，无法发送邮件，email:{},subject:{},content:{}",email,subject,content);
+                return null;
         }
-        return null;
     }
 
     /**
