@@ -21,9 +21,9 @@
 		        <div class="rightActionBarGroup2">
 	                ##报告不存在的P课程
 	                <div onclick="require('classpracticum').showFeedBackForm('$!classtime')">Add Feedback</div>
-	                #if(!$isReplay)
-						<div class="lastAction"><a href="http://help.duobeiyun.com/room/test/?result=http://app-proxy.vipkid.com.cn/api/service/public/ittest/callback&amp;lang=en&amp;role=TEACHER&amp;id=$teacher.id" style="color: red;" target="_blank">Test your computer</a></div>   
-	                #end
+	                ##if(!$isReplay)
+						##<div class="lastAction"><a href="http://help.duobeiyun.com/room/test/?result=http://app-proxy.vipkid.com.cn/api/service/public/ittest/callback&amp;lang=en&amp;role=TEACHER&amp;id=$teacher.id" style="color: red;" target="_blank">Test your computer</a></div>   
+	                ##end
 		            <div class="lastAction"> <a href="javascript:;" onclick="require('classpracticum').confirmExitClassroom('$!onlineClass.id', '$!student.id')"  style="color: white;">Exit Classroom</a></div> 
 		        </div>
 		        
