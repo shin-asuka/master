@@ -41,8 +41,7 @@ public class EmailEngine {
         logger.info("异步发送邮件：" + toEmail);
         ExecutorService executorService = Executors.newSingleThreadExecutor();
         executorService.submit(() -> {
-            EmailHandle emailHandle = new EmailHandle(toEmail, map.get("title"), map.get("content"), emailForm);
-            emailHandle.sendMail();
+            EmailHandle.switchMail(toEmail,map.get("title"), map.get("content"), emailForm);
             logger.info("异步发送邮件结束：" + toEmail);
         });
         
@@ -61,8 +60,7 @@ public class EmailEngine {
      */
     public void addMail(String toEmail, Map<String, String> map, EmailFormEnum emailForm) {
         logger.info("同步发送邮件：" + toEmail);
-        EmailHandle emailHandle = new EmailHandle(toEmail, map.get("title"), map.get("content"), emailForm);
-        emailHandle.sendMail();
+        EmailHandle.switchMail(toEmail,map.get("title"), map.get("content"), emailForm);
         logger.info("同步发送邮件结束：" + toEmail);
     }
 }

@@ -7,31 +7,16 @@ import com.vipkid.email.handle.EmailConfig.EmailFormEnum;
 
 public class EmailHandle {
 
-    private Logger logger = LoggerFactory.getLogger(EmailHandle.class);
+    private static Logger logger = LoggerFactory.getLogger(EmailHandle.class);
 
-    // 发送目标地址
-    protected String email;
-    // 发送标题
-    protected String subject;
-    // 发送内容
-    protected String content;
-    // 发送人
-    protected EmailFormEnum emailForm;
 
-    public EmailHandle(String email, String subject, String content, EmailFormEnum emailForm) {
-        this.email = email;
-        this.subject = subject;
-        this.content = content;
-        this.emailForm = emailForm;
-    }
-
-    public String sendMail() {
-        if (this.emailForm == EmailFormEnum.TEACHVIP) {
-            return this.sendForTeachvip();
-        } else if (this.emailForm == EmailFormEnum.EDUCATION) {
-            return this.sendForEducation();
+    public static String switchMail(String email, String subject, String content, EmailFormEnum emailForm) {
+        if (emailForm == EmailFormEnum.TEACHVIP) {
+            return sendForTeachvip(email,subject,content);
+        } else if (emailForm == EmailFormEnum.EDUCATION) {
+            return sendForEducation(email,subject,content);
         }
-        return "ERROR!" + email;
+        return null;
     }
 
     /**
@@ -41,7 +26,7 @@ public class EmailHandle {
      * @Author:ALong (ZengWeiLong) void
      * @date 2016年3月7日
      */
-    public String sendForTeachvip() {
+    public static String sendForTeachvip(String email,String subject, String content) {
         EmailEntity reviceEntity = new EmailEntity().setHost(EmailConfig.HOST).setFromMail(EmailConfig.TC_FROM).setMailBody(content).setToMail(email).setMailSubject(subject).setPersonalName(EmailConfig.TC_FROM.split("@")[0]);
         int i = 0;
         int result = 0;
@@ -77,7 +62,7 @@ public class EmailHandle {
      * @Author:ALong (ZengWeiLong) void
      * @date 2016年3月7日
      */
-    public String sendForEducation() {
+    public static String sendForEducation(String email,String subject, String content) {
         EmailEntity reviceEntity = new EmailEntity().setHost(EmailConfig.HOST).setFromMail(EmailConfig.ED_FROM).setMailBody(content).setToMail(email).setMailSubject(subject).setPersonalName(EmailConfig.ED_FROM.split("@")[0]);
         int i = 0;
         int result = 0;
