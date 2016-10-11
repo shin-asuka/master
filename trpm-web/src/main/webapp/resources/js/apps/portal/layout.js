@@ -90,8 +90,8 @@ function closeBanner(obj){
 	jQuery(obj).parent().remove();
 }
 
-function openThirdYearAnniversaryPage(){
-	window.open("http://www.baidu.com");
+function openThirdYearAnniversaryPage(thirdYeayAnniversaryWebpageUrl){
+	window.open(thirdYeayAnniversaryWebpageUrl);
 }
 
 

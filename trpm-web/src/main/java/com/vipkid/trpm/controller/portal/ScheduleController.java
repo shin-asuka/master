@@ -6,6 +6,8 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
+import org.community.config.PropertyConfigurer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -59,8 +61,14 @@ public class ScheduleController extends AbstractPortalController {
 		// 判断是否需要显示24小时提示
 		model.addAttribute("show24HoursInfo", scheduleService.isShow24HourInfo(request, response));
 		
-		// 加一个参数，判断是否处于三周年活动
+		//加入三周年活动参数
 		model.addAttribute("isDuringThirdYeayAnniversary", activityService.isDuringThirdYeayAnniversary());
+		
+		String thirdYeayAnniversaryWebpageUrl = PropertyConfigurer.stringValue("third_year_anniversary_webpage_url");
+		if(StringUtils.isEmpty(thirdYeayAnniversaryWebpageUrl)){
+			thirdYeayAnniversaryWebpageUrl = "t.vipkid.com.cn";
+		}
+		model.addAttribute("thirdYeayAnniversaryWebpageUrl", thirdYeayAnniversaryWebpageUrl);
 
 		return view("schedule");
 	}

@@ -15,10 +15,9 @@
 <body>
 
 ##三周年庆横幅，默认不显示。只有活动期间且tab为schedule时才显示
-  ##if($isDuringThirdYeayAnniversary)
-  #if(true)
-  <div  id = "thirdYearAnniversaryBanner"  style="width:100%;background-color:#1e0235;text-align: center;display:none">
-	  <img onclick="openThirdYearAnniversaryPage()" style="height : 80px;cursor:pointer" src="#styleUrl('/resources/images/activity/thirdYearAnniversaryBanner.png')"/>
+  #if($isDuringThirdYeayAnniversary)
+  <div  id = "thirdYearAnniversaryBanner"  style="width:100%;background-color:#2a0039;text-align: center;display:none">
+	  <img onclick="openThirdYearAnniversaryPage('${thirdYeayAnniversaryWebpageUrl}')" style="height : 80px;cursor:pointer" src="#styleUrl('/resources/images/activity/thirdYearAnniversaryBanner.png')"/>
 	  <span class="closeThirdYearAnniversaryBanner" onclick="closeBanner(this)">&nbsp;
 	  </span>
   </div>

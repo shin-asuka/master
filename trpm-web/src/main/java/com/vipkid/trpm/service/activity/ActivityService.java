@@ -401,7 +401,7 @@ public class ActivityService {
      */
  	private Teacher handleTeacherInfo(Teacher teacher){
  		Teacher ret = new Teacher();
- 		ret.setAvatar(teacher.getAvatar());
+ 		ret.setAvatar(completeResouceUrl(teacher.getAvatar()));
  		return ret;
  	}
  	/**
