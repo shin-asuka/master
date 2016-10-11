@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import com.google.api.client.util.Maps;
 import com.vipkid.trpm.constant.ApplicationConstant.CourseType;
 import com.vipkid.trpm.entity.Teacher;
+import com.vipkid.trpm.service.activity.ActivityService;
 import com.vipkid.trpm.service.passport.IndexService;
 import com.vipkid.trpm.service.portal.ScheduleService;
 
@@ -26,6 +27,9 @@ public class ScheduleController extends AbstractPortalController {
 
 	@Autowired
 	private IndexService indexService;
+	
+	@Autowired
+	private ActivityService activityService;
 
 	@RequestMapping("/schedule")
 	public String schedule(HttpServletRequest request, HttpServletResponse response, Model model) {
@@ -54,6 +58,9 @@ public class ScheduleController extends AbstractPortalController {
 		
 		// 判断是否需要显示24小时提示
 		model.addAttribute("show24HoursInfo", scheduleService.isShow24HourInfo(request, response));
+		
+		// 加一个参数，判断是否处于三周年活动
+		model.addAttribute("isDuringThirdYeayAnniversary", activityService.isDuringThirdYeayAnniversary());
 
 		return view("schedule");
 	}

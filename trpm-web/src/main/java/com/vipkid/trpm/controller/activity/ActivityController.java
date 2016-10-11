@@ -119,18 +119,17 @@ public class ActivityController extends AbstractController{
     
     //三周年庆的教师历程数据接口，活动页前端请求此接口获取json数据
     @RequestMapping(value = "/getThridYearAnniversaryData", method = RequestMethod.GET)
-	public Object getData(HttpServletRequest request){
-    	if(!showThirdYearActivity()) return null;//到期后接口功能失效
-    	User u = indexService.getUser(request);
-    	if(u==null) return null;
-    	long teacherId = u.getId();
-    	return activityService.getThirdYearAnniversaryData(teacherId);
-	}
-    
-  //三周年庆的教师历程数据接口，活动页前端请求此接口获取json数据，此接口要传teacherId作为参数
-    @RequestMapping(value = "/getThridYearAnniversaryDataByTeacherId", method = RequestMethod.GET)
-	public Object getDataByTeacherId(@RequestParam long teacherId){
-    	if(!showThirdYearActivity()) return null;//到期后接口功能失效
+	public Object getData(HttpServletRequest request, @RequestParam( required = false) String token){
+    	if(!activityService.isDuringThirdYeayAnniversary()) return null;//到期后接口功能失效
+    	long teacherId = 0;
+    	if(StringUtils.isEmpty(token)){
+        	User u = indexService.getUser(request);
+        	if(u==null) return null;
+        	teacherId = u.getId();
+    	}
+    	else{
+    		teacherId = activityService.decode(token);
+    	}
     	return activityService.getThirdYearAnniversaryData(teacherId);
 	}
 }

@@ -401,7 +401,6 @@ public class ActivityService {
      */
  	private Teacher handleTeacherInfo(Teacher teacher){
  		Teacher ret = new Teacher();
- 		ret.setRealName(teacher.getRealName());
  		ret.setAvatar(teacher.getAvatar());
  		return ret;
  	}
@@ -437,7 +436,9 @@ public class ActivityService {
  		if(StringUtils.isNotEmpty(sign)&&equals(redisValue)){
  		}
  		else{
- 			redisProxy.set(rediskey, redisValue);//set进redis后会保存多久？
+ 			int days = PropertyConfigurer.intValue("third_year_anniversary_redis_days");
+ 			int expireSecond = days*24*3600;
+ 			redisProxy.set(rediskey, redisValue, expireSecond);
  			ret = true;
  		}
  		
@@ -453,6 +454,10 @@ public class ActivityService {
      */
  	public boolean isDuringThirdYeayAnniversary(){//活动页与对应接口的开关
  		boolean ret = false;
+ 		String masterSwitch = PropertyConfigurer.stringValue("third_year_anniversary_switch");
+ 		if(StringUtils.isEmpty(masterSwitch)||!masterSwitch.equals("on")){//总开关没开，视为不在活动期间
+ 			return false;
+ 		}
  		String strStart = PropertyConfigurer.stringValue("third_year_anniversary_start");
  		String strEnd = PropertyConfigurer.stringValue("third_year_anniversary_end");
  		if(StringUtils.isEmpty(strEnd)||StringUtils.isEmpty(strStart)){//如果配置文件中的两个属性有一个消失，就ren
@@ -491,8 +496,15 @@ public class ActivityService {
      * @return  boolean
      * @date 2016年10月8日
      */
- 	private long decode(String token){
- 		String teacherId =  AES.decrypt(token, AES.getKey(AES.KEY_LENGTH_128,ApplicationConstant.AES_128_KEY));
+ 	public long decode(String token){
+ 		String teacherId = null;
+ 		try {
+ 			teacherId =  AES.decrypt(token, AES.getKey(AES.KEY_LENGTH_128,ApplicationConstant.AES_128_KEY));
+		} catch (Exception e) {
+			logger.warn(token+" 是一个非法的加密字符串，无法解密");
+			return -1;
+		}
+ 		
  		if(teacherId.matches("[1-9]\\d+")){
  			return Long.parseLong(teacherId);
  		}

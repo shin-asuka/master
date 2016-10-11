@@ -42,6 +42,19 @@
         transition: all .3s;
     }
 </style>
+
+#if($isDuringThirdYeayAnniversary)
+  ##if(true)
+<script>
+$("#thirdYearAnniversaryBanner").show();
+		##if($isFirstTimeSignInDuringThirdYeayAnniversary)
+		  #if(true)
+		  //var link = "https://www.baidu.com";
+			//window.open(link);
+		  #end
+</script>
+#end
+
 <div>
     <!-- Nav tabs -->
     <ul class="nav nav-tabs" role="tablist">

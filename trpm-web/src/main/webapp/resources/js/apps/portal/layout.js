@@ -86,6 +86,14 @@ function closeAnnounce(obj){
 	jQuery(obj).parent().remove();
 }
 
+function closeBanner(obj){
+	jQuery(obj).parent().remove();
+}
+
+function openThirdYearAnniversaryPage(){
+	window.open("http://www.baidu.com");
+}
+
 
 
 
