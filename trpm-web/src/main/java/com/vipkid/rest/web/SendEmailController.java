@@ -12,6 +12,7 @@ import org.community.config.PropertyConfigurer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -48,21 +49,21 @@ public class SendEmailController {
             HttpServletResponse response, @RequestParam(required = true) String email) {
         Map<String, Object> resultMap = Maps.newHashMap();
         if (StringUtils.isBlank(email)) {
-            resultMap.put("status", RestfulConfig.HttpStatus.STATUS_403);
+            resultMap.put("status", HttpStatus.FORBIDDEN.value());
             return resultMap;
         }
 
         String key = String.format(LOGIN_ACTIVATION_EMAIL_KEY, email);
         if (null != redisProxy.get(key)) {
             logger.info("The activation email [{}] time is not expire", email);
-            resultMap.put("status", RestfulConfig.HttpStatus.STATUS_403);
+            resultMap.put("status", HttpStatus.FORBIDDEN.value());
             resultMap.put("expire", redisProxy.ttl(key));
             return resultMap;
         }
 
         Teacher teacher = teacherDao.findByEmail(email);
         if (0 == teacher.getId()) {
-            resultMap.put("status", RestfulConfig.HttpStatus.STATUS_403);
+            resultMap.put("status", HttpStatus.FORBIDDEN.value());
             return resultMap;
         } else {
             Map<String, String> paramsMap = Maps.newHashMap();
@@ -77,7 +78,7 @@ public class SendEmailController {
             redisProxy.set(key, "true", EXPIRED_SECONDS);
             logger.info("Apply again activation email [{}] ok", email);
 
-            resultMap.put("status", RestfulConfig.HttpStatus.STATUS_200);
+            resultMap.put("status", HttpStatus.OK.value());
             return resultMap;
         }
     }
