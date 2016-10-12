@@ -29,8 +29,10 @@ public class ClickRateController {//用于统计三周年活动页按钮的点�
 	ActivityService activityService;
 	
 	static{
-		names.add("joinUs");
-		names.add("shareFaceBook");
+		names.add("PC-joinUs");
+		names.add("PC-shareFaceBook");
+		names.add("H5-joinUs");
+		names.add("H5-shareFaceBook");
 	}
 	@RequestMapping(value="thirdYearAnniversaryClickRate", method = RequestMethod.GET)
 	public void clickOneTime(HttpServletRequest request, HttpServletResponse response, @RequestParam String name){
@@ -39,6 +41,7 @@ public class ClickRateController {//用于统计三周年活动页按钮的点�
 		if(!activityService.isDuringThirdYeayAnniversary()) return;//不在三周年活动期间，接口无效
 		String ip = request.getRemoteAddr();
 		insert(name,ip);
+		logger.info("Third year anniversary web page button click, name={}, ip={}",name,ip);
 	}
 	
 	private static Connection getConn() {
@@ -60,6 +63,7 @@ public class ClickRateController {//用于统计三周年活动页按钮的点�
 	
 	private static int insert(String name, String ip) {
 	    Connection conn = getConn();
+	    if(conn==null) return 0;
 	    int i = 0;
 	    String sql = "insert into third_year_anniversary_click_rate (button_name,ip) values(?,?)";
 	    PreparedStatement pstmt;

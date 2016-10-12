@@ -6,15 +6,34 @@ import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.entity.User;
 
 public class ThirdYearAnniversaryData {
-	private Teacher teacher ;//当前登陆的老师
-	private User user ;//当前登陆的老师
+	private String teacherName;//当前登陆的老师的名字
+	private String teacherGender;//当前登陆的老师的性别
+	private String teacherAvatar;//当前登陆的老师的头像
 	private long  lengthOfTime;//老师注册成功，通过测试，具备上课资格的天数
 	private int  numberOfReferrals;//推荐成功的老师数量
 	private int  stuNumber;//成功上过课的中国学生数量
-	private String  stuName;//约课次数最多的学生名字
-	private String  stuAvatar;//约课次数最多的学生头像
-	private String stuGender;//约课次数最多的学生性别
-	private long  numberOfClasses;//约课次数最多的学生上过的课的次数
+	private String  stuName;//上课次数最多的学生名字
+	private String  stuAvatar;//上课次数最多的学生头像
+	private String stuGender;//上课次数最多的学生性别
+	private long  numberOfClasses;//上课次数最多的学生上过的课的次数
+	public String getTeacherName() {
+		return teacherName;
+	}
+	public String getTeacherGender() {
+		return teacherGender;
+	}
+	public String getTeacherAvatar() {
+		return teacherAvatar;
+	}
+	public void setTeacherName(String teacherName) {
+		this.teacherName = teacherName;
+	}
+	public void setTeacherGender(String teacherGender) {
+		this.teacherGender = teacherGender;
+	}
+	public void setTeacherAvatar(String teacherAvatar) {
+		this.teacherAvatar = teacherAvatar;
+	}
 	private long  totalFinishedClasses;//该老师成功上过的的课的次数
 	private long  totalFinishedClassesMin;//该老师上过的课的总的分钟数
 	private String firstClassDate;//该老师第一次上课的日期
@@ -63,12 +82,6 @@ public class ThirdYearAnniversaryData {
 	public void setTotalFinishedClassesMin(long totalFinishedClassesMin) {
 		this.totalFinishedClassesMin = totalFinishedClassesMin;
 	}
-	public Teacher getTeacher() {
-		return teacher;
-	}
-	public void setTeacher(Teacher teacher) {
-		this.teacher = teacher;
-	}
 	public String getFirstClassDate() {
 		return firstClassDate;
 	}
@@ -92,12 +105,6 @@ public class ThirdYearAnniversaryData {
 	}
 	public void setToken(String token) {
 		this.token = token;
-	}
-	public User getUser() {
-		return user;
-	}
-	public void setUser(User user) {
-		this.user = user;
 	}
 	public String getStuGender() {
 		return stuGender;

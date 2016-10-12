@@ -20,6 +20,7 @@ import com.google.api.client.testing.util.SecurityTestUtils;
 import com.google.api.client.util.Lists;
 import com.google.common.collect.Maps;
 import com.mchange.v2.ser.SerializableUtils;
+import com.vipkid.http.utils.JsonUtils;
 import com.vipkid.http.vo.ThirdYearAnniversaryData;
 import com.vipkid.trpm.constant.ApplicationConstant;
 import com.vipkid.trpm.dao.StudentDao;
@@ -357,6 +358,14 @@ public class ActivityService {
      * @date 2016年9月23日
      */
  	public ThirdYearAnniversaryData getThirdYearAnniversaryData(long teacherId){
+ 		if(!isDuringThirdYeayAnniversary()) return null;
+ 		//优先缓存取数据
+ 		String redisKey = "zhangbole-getThirdYearAnniversaryData-,"+teacherId;
+ 		String value = redisProxy.get(redisKey);
+ 		if(StringUtils.isNotEmpty(value)){
+ 			return JsonUtils.toBean(value, ThirdYearAnniversaryData.class);
+ 		}
+ 		//如果缓存没有
 		ThirdYearAnniversaryData data = new ThirdYearAnniversaryData();
 		if(teacherId<=0) return  null;
 		long days = this.getDaysSinceBeRegularTeacher(teacherId);
@@ -365,9 +374,11 @@ public class ActivityService {
 		}
 		data.setLengthOfTime(days);
 		Teacher t = teacherService.get(teacherId);
-		data.setTeacher(handleTeacherInfo(t));
+		String teacherAvatar = t.getAvatar();
+		data.setTeacherAvatar(completeResouceUrl(teacherAvatar));
 		User u = userDao.findById(teacherId);
-		data.setUser(hideUserInfo(u));
+		data.setTeacherName(u.getName());
+		data.setTeacherGender(u.getGender());
 		data.setNumberOfReferrals(this.getNumOfTeachersByReferee(teacherId));
 		int totalFinishedClasses = this.getClassNumOfOneTeacher(teacherId);
 		data.setTotalFinishedClasses(totalFinishedClasses);
@@ -389,6 +400,13 @@ public class ActivityService {
 		data.setReferralsAvatarList(avatarList);
 		String token = encode(teacherId);
 		data.setToken(token);
+		//data加入缓存
+		int redisdays = PropertyConfigurer.intValue("third_year_anniversary_redis_days");
+		if(redisdays!=0){
+			int expireSecond = redisdays*24*3600;
+			String redisValue = JsonUtils.toJSONString(data);
+			redisProxy.set(redisKey, redisValue, expireSecond);
+		}
 		return data;
  	}
  	
@@ -442,7 +460,7 @@ public class ActivityService {
  		if(!isDuringThirdYeayAnniversary()){//不在活动期间，返回false
  			return ret;
  		}
- 		String rediskey = "zhangbole"+teacherId;//key值应该怎么规范？
+ 		String rediskey = "zhangbole-isFirstTimeSignInDuringThirdYearAnniversary-"+teacherId;//key值应该怎么规范？
  		String redisValue = "hava signed in";
  		String sign = redisProxy.get(rediskey);
  		if(StringUtils.isNotEmpty(sign)&&equals(redisValue)){
