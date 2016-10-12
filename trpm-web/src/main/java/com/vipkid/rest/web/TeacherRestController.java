@@ -1,4 +1,4 @@
-package com.vipkid.rest;
+package com.vipkid.rest.web;
 
 import java.util.Map;
 
@@ -39,7 +39,7 @@ public class TeacherRestController {
 			user.setId(userId);
 			resultMap = passportService.senEmailForPassword(user);
 		}
-		logger.info("教师银行信息 userId = {} , resultMap = {}",userId,JsonUtils.toJSONString(resultMap));
+		logger.info("重置教师密码信息 userId = {} , resultMap = {}",userId,JsonUtils.toJSONString(resultMap));
 		
 		return resultMap;
 	}
