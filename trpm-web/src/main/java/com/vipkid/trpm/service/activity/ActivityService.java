@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.google.api.client.testing.util.SecurityTestUtils;
 import com.google.api.client.util.Lists;
 import com.google.common.collect.Maps;
 import com.mchange.v2.ser.SerializableUtils;
@@ -259,7 +260,16 @@ public class ActivityService {
      	if(stuIdAndClassNumList==null || stuIdAndClassNumList.isEmpty()) return null;
      	Object name =  stuIdAndClassNumList.get(0).get("english_name");//index为0的位置，上课最多的学生英文名称
      	Object maxCount =  stuIdAndClassNumList.get(0).get("num");//上课最多的学生上课数量
-     	Object avatar =  stuIdAndClassNumList.get(0).get("avatar");//上课最多的学生上课数量
+     	Object avatar =  stuIdAndClassNumList.get(0).get("avatar");//上课最多的学生头像
+     	Object id =  stuIdAndClassNumList.get(0).get("id");//上课最多的学生id
+     	String gender = "MALE";
+     	User u = userDao.findById((Long)id);
+     	if(u!=null){
+     		String g = u.getGender();
+     		if(StringUtils.isNotEmpty(g)){
+     			gender = g;
+     		}
+     	}
      	int difStuNum = stuIdAndClassNumList.size();
      	Map<String, Object> result = Maps.newHashMap();
      	Integer stuNum = Integer.valueOf(difStuNum);
@@ -267,6 +277,7 @@ public class ActivityService {
      	result.put("avatar", avatar);
      	result.put("count", maxCount);
      	result.put("stuNum", stuNum);
+     	result.put("gender", gender);
      	return result;
      }
      
@@ -367,6 +378,7 @@ public class ActivityService {
 			data.setStuNumber((int)map.get("stuNum"));
 			data.setStuName((String)map.get("name"));
 			data.setStuAvatar((String)map.get("avatar"));
+			data.setStuGender((String)map.get("gender"));
 		}
 		data.setFirstClassDate(getFirstClassDateofOneTeacher(teacherId));
 		List<String> avatarListOrigin = getAvatarListOfTeachersByReferee(teacherId);
@@ -393,7 +405,7 @@ public class ActivityService {
  	}
  	
  	/**
- 	 * 隐藏部分老师用不到的属性,同时把头像链接补全
+ 	 * 隐藏没必要提供的信息,同时把头像链接补全
      * @Author:zhangbole
      * @param teacher
      * @return  Teacher
@@ -405,7 +417,7 @@ public class ActivityService {
  		return ret;
  	}
  	/**
- 	 * 隐藏部分老师用不到的属性
+ 	 * 隐藏没必要提供的信息
      * @Author:zhangbole
      * @param user
      * @return  User
@@ -419,7 +431,7 @@ public class ActivityService {
  	}
  	
  	/**
- 	 * 查看一个老师是不是第一次登陆(如不在活动期间，返回false)
+ 	 * 查看一个老师是不是第一次登陆(如不在活动期间，返回false)此方法没用到，因为弹窗容易被浏览器拦截，产品不要求弹窗
      * @Author:zhangbole
      * @param teacherId
      * @return  boolean

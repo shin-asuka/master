@@ -13,6 +13,7 @@ public class ThirdYearAnniversaryData {
 	private int  stuNumber;//成功上过课的中国学生数量
 	private String  stuName;//约课次数最多的学生名字
 	private String  stuAvatar;//约课次数最多的学生头像
+	private String stuGender;//约课次数最多的学生性别
 	private long  numberOfClasses;//约课次数最多的学生上过的课的次数
 	private long  totalFinishedClasses;//该老师成功上过的的课的次数
 	private long  totalFinishedClassesMin;//该老师上过的课的总的分钟数
@@ -97,5 +98,11 @@ public class ThirdYearAnniversaryData {
 	}
 	public void setUser(User user) {
 		this.user = user;
+	}
+	public String getStuGender() {
+		return stuGender;
+	}
+	public void setStuGender(String stuGender) {
+		this.stuGender = stuGender;
 	}
 }

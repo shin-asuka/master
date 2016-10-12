@@ -45,36 +45,48 @@
 		FROM online_class
 		INNER JOIN online_class_student
 		ON online_class.id=online_class_student.online_class_id
-		WHERE online_class.teacher_id=#{id} and online_class.finish_type = 'AS_SCHEDULED'
+		WHERE online_class.teacher_id=#{id} and status in ('AVAILABLE', 'BOOKED', 'CANCELED', 'EXPIRED', 'FINISHED', 'INVALID', 'OPEN', 'REMOVED')  and online_class.finish_type = 'AS_SCHEDULED'
     </select>
     
     <select id="getStudentListOfOneTeacher" resultType="java.util.HashMap">
-    		SELECT stu.english_name, stu.avatar,COUNT(*) as num
+    		SELECT stu.id,stu.english_name, stu.avatar,COUNT(*) as num
 			FROM online_class oc
 			INNER JOIN online_class_student ocs
 			ON ocs.online_class_id = oc.id
 			INNER JOIN student stu
 			ON ocs.student_id = stu.id
-			WHERE oc.teacher_id=#{id} and oc.finish_type = 'AS_SCHEDULED'
+			WHERE oc.teacher_id=#{id} 
+			and oc.status in ('AVAILABLE', 'BOOKED', 'CANCELED', 'EXPIRED', 'FINISHED', 'INVALID', 'OPEN', 'REMOVED')  
+			and oc.finish_type = 'AS_SCHEDULED'
 			GROUP BY ocs.student_id
 			ORDER BY num DESC
     </select>
     
     <select id="getClassNumOfOneTeacher" resultType="int">
-    	select count(*) from online_class where teacher_id = #{id} and finish_type = 'AS_SCHEDULED'
+    	select count(*) from online_class 
+    	where teacher_id = #{id} 
+    	and status in ('AVAILABLE', 'BOOKED', 'CANCELED', 'EXPIRED', 'FINISHED', 'INVALID', 'OPEN', 'REMOVED')
+    	and finish_type = 'AS_SCHEDULED'
     </select>
     
     <select id="getFirstClassDateofOneTeacher" resultType="java.sql.Timestamp">
-    	select MIN(DISTINCT scheduled_date_time) from online_class where teacher_id = #{id}
+    	select MIN(scheduled_date_time) from online_class where teacher_id = #{id}
     </select>
     
     <select id="getNumOfTeachersByReferee" resultType="int">
-		select count(*) from teacher where referee like #{id}
+		select count(*) from teacher 
+		where life_cycle = 'REGULAR'
+		and referee like #{id}
 	</select>
 	
 	<select id="getAvatarListOfTeachersByReferee" resultType="java.lang.String">
 		 <![CDATA[
-		 	select avatar from teacher where referee like #{id} and avatar is not null and avatar <> '' 
+		 	select avatar from teacher 
+		 	where life_cycle = 'REGULAR'
+		 	and referee like #{id} 
+		 	and avatar is not null 
+		 	and avatar <> '' 
+		 	LIMIT 0,6
 		 ]]>
 	</select>
     

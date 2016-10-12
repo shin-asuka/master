@@ -41,8 +41,6 @@ public class ActivityController extends AbstractController{
     @Autowired
     private IndexService indexService;
     
-    @Autowired
-    private TeacherService teacherService;
     
     //上线时间
     private String searchdate = "2016-04-12 00:00:00";
@@ -105,7 +103,7 @@ public class ActivityController extends AbstractController{
     
     // 超过2016-04-20天将不再显示
     private boolean showActivity(){
-        Integer end = Integer.parseInt("20170420");
+        Integer end = Integer.parseInt("20160420");
         Integer ctime = Integer.parseInt(new SimpleDateFormat("yyyyMMdd").format(new Date()));
         return ctime < end;
     }
@@ -118,12 +116,17 @@ public class ActivityController extends AbstractController{
     }
     
     //三周年庆的教师历程数据接口，活动页前端请求此接口获取json数据
-    @RequestMapping(value = "/getThridYearAnniversaryData", method = RequestMethod.GET)
+    @RequestMapping(value = "/getThirdYearAnniversaryData", method = RequestMethod.GET)
 	public Object getData(HttpServletRequest request, @RequestParam( required = false) String token){
     	if(!activityService.isDuringThirdYeayAnniversary()) return null;//到期后接口功能失效
     	long teacherId = 0;
     	if(StringUtils.isEmpty(token)){
-        	User u = indexService.getUser(request);
+    		User u ;
+    		try {
+				u = indexService.getUser(request);
+			} catch (NullPointerException e) {
+				return null;
+			}
         	if(u==null) return null;
         	teacherId = u.getId();
     	}
