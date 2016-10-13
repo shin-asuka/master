@@ -18,7 +18,7 @@ public class ThirdYearAnniversaryData {
 	private long  numberOfClasses;//上课次数最多的学生上过的课的次数
 	private long  totalFinishedClasses;//该老师成功上过的的课的次数
 	private long  totalFinishedClassesMin;//该老师上过的课的总的分钟数
-	private String becomeRegularDate;//该老师第一次上课的日期
+	private String becomeRegularDate;//该老师成为正式老师的日期
 	private List<String> referralsAvatarList;//该老师推荐的老师的头像列表
 	private String token;//教师id的加密token，用于facebook分享链接
 	private String joinUsUrl;//joinUs按钮链向的url，带有招募渠道的id
