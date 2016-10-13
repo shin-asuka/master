@@ -3,6 +3,7 @@ package com.vipkid.trpm.service.activity;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -451,34 +452,6 @@ public class ActivityService {
  	}
  	
  	/**
- 	 * 查看一个老师是不是第一次登陆(如不在活动期间，返回false)此方法没用到，因为弹窗容易被浏览器拦截，产品不要求弹窗
-     * @Author:zhangbole
-     * @param teacherId
-     * @return  boolean
-     * @date 2016年9月28日
-     */
- 	public boolean isFirstTimeSignInDuringThirdYearAnniversary(long teacherId){
- 		boolean ret = false;
- 		if(!isDuringThirdYeayAnniversary()){//不在活动期间，返回false
- 			return ret;
- 		}
- 		String rediskey = "zhangbole-isFirstTimeSignInDuringThirdYearAnniversary-"+teacherId;//key值应该怎么规范？
- 		String redisValue = "hava signed in";
- 		String sign = redisProxy.get(rediskey);
- 		if(StringUtils.isNotEmpty(sign)&&equals(redisValue)){
- 		}
- 		else{
- 			int days = PropertyConfigurer.intValue("third_year_anniversary_redis_days");
- 			int expireSecond = days*24*3600;
- 			redisProxy.set(rediskey, redisValue, expireSecond);
- 			ret = true;
- 		}
- 		
- 		
- 		return ret;
- 	}
- 	
- 	/**
  	 * 当前时间是不是在三周年活动期间
      * @Author:zhangbole
      * @return  boolean
@@ -495,19 +468,18 @@ public class ActivityService {
  		if(StringUtils.isEmpty(strEnd)||StringUtils.isEmpty(strStart)){//如果配置文件中的两个属性有一个消失，就return
  			return false;
  		}
- 		long now = 0;
- 		long start = 0;
- 		long end = 0;
- 		try {
- 			now = Long.parseLong(new SimpleDateFormat("yyyyMMddHHmmss").format(new Date()));
- 	 		start = Long.parseLong(strStart);
- 	 		end = Long.parseLong(strEnd);
-		} catch (NumberFormatException e) {
-			logger.warn("配置文件中third_year_anniversary_start或third_year_anniversary_end的值有误");
-			return false;
+ 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+ 		Date start = null;
+ 		Date end = null;
+		try {
+			start = sdf.parse(strStart);
+	 		end = sdf.parse(strEnd);
+		} catch (ParseException e) {
+			logger.warn("配置文件中third_year_anniversary_start或third_year_anniversary_end格式错误，应为yyyy-MM-dd HH:mm:ss");
 		}
+ 		Date now = new Date();
  		
- 		if(now>=start && now<=end){
+ 		if(now.after(start) && now.before(end)){
  			ret = true;
  		}
  		return ret;
