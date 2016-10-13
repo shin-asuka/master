@@ -69,8 +69,9 @@ public class FileController extends AbstractPortalController {
 
 		logger.info("uploadFile");
 		Map<String, Object> resultMap = Maps.newHashMap();
-
-		if (isFileTypeValid(file)) {
+		
+		boolean valid = isFileTypeValid(file);
+		if (!valid) {
 			resultMap.put("result", false);
 			resultMap.put("message", "We only accept .doc, .docx, .pdf, .jpg, .jpeg, .png, .bmp file, thanks!");
 			return jsonView(response, resultMap);
