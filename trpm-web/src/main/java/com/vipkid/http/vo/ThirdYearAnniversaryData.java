@@ -16,6 +16,13 @@ public class ThirdYearAnniversaryData {
 	private String  stuAvatar;//上课次数最多的学生头像
 	private String stuGender;//上课次数最多的学生性别
 	private long  numberOfClasses;//上课次数最多的学生上过的课的次数
+	private long  totalFinishedClasses;//该老师成功上过的的课的次数
+	private long  totalFinishedClassesMin;//该老师上过的课的总的分钟数
+	private String becomeRegularDate;//该老师第一次上课的日期
+	private List<String> referralsAvatarList;//该老师推荐的老师的头像列表
+	private String token;//教师id的加密token，用于facebook分享链接
+	private String joinUsUrl;//joinUs按钮链向的url，带有招募渠道的id
+	
 	public String getTeacherName() {
 		return teacherName;
 	}
@@ -34,11 +41,6 @@ public class ThirdYearAnniversaryData {
 	public void setTeacherAvatar(String teacherAvatar) {
 		this.teacherAvatar = teacherAvatar;
 	}
-	private long  totalFinishedClasses;//该老师成功上过的的课的次数
-	private long  totalFinishedClassesMin;//该老师上过的课的总的分钟数
-	private String firstClassDate;//该老师第一次上课的日期
-	private List<String> referralsAvatarList;//该老师推荐的老师的头像列表
-	private String token;//教师id的加密token，用于facebook分享链接
 	
 	public long getLengthOfTime() {
 		return lengthOfTime;
@@ -82,11 +84,11 @@ public class ThirdYearAnniversaryData {
 	public void setTotalFinishedClassesMin(long totalFinishedClassesMin) {
 		this.totalFinishedClassesMin = totalFinishedClassesMin;
 	}
-	public String getFirstClassDate() {
-		return firstClassDate;
+	public String getBecomeRegularDate() {
+		return becomeRegularDate;
 	}
-	public void setFirstClassDate(String firstClassDate) {
-		this.firstClassDate = firstClassDate;
+	public void setBecomeRegularDate(String firstClassDate) {
+		this.becomeRegularDate = firstClassDate;
 	}
 	public List<String> getReferralsAvatarList() {
 		return referralsAvatarList;
@@ -111,5 +113,11 @@ public class ThirdYearAnniversaryData {
 	}
 	public void setStuGender(String stuGender) {
 		this.stuGender = stuGender;
+	}
+	public String getJoinUsUrl() {
+		return joinUsUrl;
+	}
+	public void setJoinUsUrl(String joinUsUrl) {
+		this.joinUsUrl = joinUsUrl;
 	}
 }

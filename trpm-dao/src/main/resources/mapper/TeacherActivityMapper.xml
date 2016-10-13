@@ -40,7 +40,7 @@
 		LIMIT 0,3
 	</select>
 	
-	<select id="countStuNumOfOneTeacher" resultType="int">
+	<select id="queryStudentCountByTeacherId" resultType="int">
     	SELECT COUNT(DISTINCT online_class_student.student_id )
 		FROM online_class
 		INNER JOIN online_class_student
@@ -73,13 +73,13 @@
     	select MIN(scheduled_date_time) from online_class where teacher_id = #{id}
     </select>
     
-    <select id="getNumOfTeachersByReferee" resultType="int">
+    <select id="getNumOfReferalsByTeacherId" resultType="int">
 		select count(*) from teacher 
 		where life_cycle = 'REGULAR'
 		and referee like #{id}
 	</select>
 	
-	<select id="getAvatarListOfTeachersByReferee" resultType="java.lang.String">
+	<select id="getAvatarListOfReferalsByTeacherId" resultType="java.lang.String">
 		 <![CDATA[
 		 	select avatar from teacher 
 		 	where life_cycle = 'REGULAR'

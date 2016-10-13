@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
+import org.community.config.PropertyConfigurer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,9 +47,12 @@ public class ClickRateController {//用于统计三周年活动页按钮的点�
 	
 	private static Connection getConn() {
 	    String driver = "com.mysql.jdbc.Driver";
-	    String url = "jdbc:mysql://54.222.182.102:3304/vipkid";//张觥提供一个专用的数据库
-	    String username = "vipkid";
-	    String password = "Vi1pkidDb_rootZAQ!";
+	    String url = PropertyConfigurer.stringValue("third_year_anniversary_click_rate_db_url");
+	    String username = PropertyConfigurer.stringValue("third_year_anniversary_click_rate_db_username");
+	    String password = PropertyConfigurer.stringValue("third_year_anniversary_click_rate_db_password");
+	    if(StringUtils.isEmpty(url)||StringUtils.isEmpty(username)||StringUtils.isEmpty(password)){
+	    	return null;
+	    }
 	    Connection conn = null;
 	    try {
 	        Class.forName(driver); //classLoader,加载对应驱动

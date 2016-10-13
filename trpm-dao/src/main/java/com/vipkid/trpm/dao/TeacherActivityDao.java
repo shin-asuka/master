@@ -72,20 +72,20 @@ public class TeacherActivityDao extends MapperDaoTemplate<TeacherActivity> {
      * @return int
      * @date 2016年9月20日
      */
-    public int getNumOfTeachersByReferee(long id) {
+    public int getNumOfReferalsByTeacherId(long id) {
 	    if(id <= 0) return 0;
 	    Map<String, Object> paramsMap = Maps.newHashMap();
 	    String s = id+",%";
 	    paramsMap.put("id", s);
-	    return super.selectCount("getNumOfTeachersByReferee", paramsMap);
+	    return super.selectCount("getNumOfReferalsByTeacherId", paramsMap);
 	}
     
-    public List<String> getAvatarListOfTeachersByReferee(long id){
+    public List<String> getAvatarListOfReferalsByTeacherId(long id){
     	if(id <= 0) return null;
     	Map<String, Object> paramsMap = Maps.newHashMap();
 	    String s = id+",%";
 	    paramsMap.put("id", s);
-	    return super.listEntity("getAvatarListOfTeachersByReferee", paramsMap);
+	    return super.listEntity("getAvatarListOfReferalsByTeacherId", paramsMap);
     }
     
     /**
@@ -97,11 +97,11 @@ public class TeacherActivityDao extends MapperDaoTemplate<TeacherActivity> {
 	 * @return int
 	 * @date 2016年9月21日
 	 */
-	public int countStuNumOfOneTeacher(long teacherId){
+	public int queryStudentCountByTeacherId(long teacherId){
 		if(teacherId <= 0)  return 0;
 		Map<String, Object> paramsMap = Maps.newHashMap();
 		paramsMap.put("id", teacherId);
-		return super.selectCount("countStuNumOfOneTeacher", paramsMap);
+		return super.selectCount("queryStudentCountByTeacherId", paramsMap);
 	}
 	
 	/**

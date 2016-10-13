@@ -242,9 +242,9 @@ public class ActivityService {
     * @return int
     * @date 2016年9月21日
     */
-   public int countStuNumOfOneTeacher(long teacherId){
+   public int queryStudentCountByTeacherId(long teacherId){
    	if(teacherId<=0) return 0;
-   	return teacherActivityDao.countStuNumOfOneTeacher(teacherId);
+   	return teacherActivityDao.queryStudentCountByTeacherId(teacherId);
    }
     
     /**获取某位老师的
@@ -256,13 +256,22 @@ public class ActivityService {
      * @date 2016年9月21日
      */
      public Map<String, Object> getTheMaxStuOfOneTeacher(long teacherId){
-     	if(teacherId<=0) return null;
-     	List<Map> stuIdAndClassNumList = teacherActivityDao.getStudentListOfOneTeacher(teacherId);//按ClassNum递减排序的map的list
-     	if(stuIdAndClassNumList==null || stuIdAndClassNumList.isEmpty()) return null;
-     	Object name =  stuIdAndClassNumList.get(0).get("english_name");//index为0的位置，上课最多的学生英文名称
-     	Object maxCount =  stuIdAndClassNumList.get(0).get("num");//上课最多的学生上课数量
-     	Object avatar =  stuIdAndClassNumList.get(0).get("avatar");//上课最多的学生头像
-     	Object id =  stuIdAndClassNumList.get(0).get("id");//上课最多的学生id
+     	if(teacherId<=0) {
+     		return null;
+     	}
+     	List<Map> stuInfoAndClassNumList = teacherActivityDao.getStudentListOfOneTeacher(teacherId);//按ClassNum递减排序的map的list
+     	if(stuInfoAndClassNumList==null || stuInfoAndClassNumList.isEmpty()) 
+     	{
+     		return null;
+     	}
+     	Map stuInfoAndClassNum = stuInfoAndClassNumList.get(0);
+     	if(stuInfoAndClassNum==null){
+     		return null;
+     	}
+     	Object name =  stuInfoAndClassNum.get("english_name");//index为0的位置，上课最多的学生英文名称
+     	Object maxCount =  stuInfoAndClassNum.get("num");//上课最多的学生上课数量
+     	Object avatar =  stuInfoAndClassNum.get("avatar");//上课最多的学生头像
+     	Object id =  stuInfoAndClassNum.get("id");//上课最多的学生id
      	String gender = "MALE";
      	User u = userDao.findById((Long)id);
      	if(u!=null){
@@ -271,7 +280,7 @@ public class ActivityService {
      			gender = g;
      		}
      	}
-     	int difStuNum = stuIdAndClassNumList.size();
+     	int difStuNum = stuInfoAndClassNumList.size();
      	Map<String, Object> result = Maps.newHashMap();
      	Integer stuNum = Integer.valueOf(difStuNum);
      	result.put("name", name);
@@ -300,15 +309,31 @@ public class ActivityService {
       * @date 2016年9月21日
       */
  	public long getDaysSinceBeRegularTeacher(Long id){
- 		if(id == null) return -1;
- 		Teacher teacher = teacherDao.findById(id);
- 		if(teacher==null) return -1;
- 		Date beRegularTeacherDate = teacher.getEntryDate();
- 		if(beRegularTeacherDate==null) return -1;
+ 		Date beRegularTeacherDate = getDateBeRegularTeacher(id);
+ 		if(beRegularTeacherDate == null) {
+ 			return 0;
+ 		}
  		Calendar cal = Calendar.getInstance();
  		Date nowDate = cal.getTime();
  		long days = (nowDate.getTime() - beRegularTeacherDate.getTime()) / (1000 * 60 * 60 * 24);
  		return days;
+ 	}
+ 	
+ 	/**
+     * 通过teacherId获取教师成为正式教师的具备上课资格的日期，用于三周年庆教师数据活动页
+     * @param id
+     * @return Date
+     * @date 2016年10月13日
+     */
+ 	public Date getDateBeRegularTeacher(Long id){
+ 		if(id == null) return null;
+ 		Teacher teacher = teacherDao.findById(id);
+ 		if(teacher==null) return null;
+ 		Date beRegularTeacherDate = teacher.getEntryDate();
+ 		if(beRegularTeacherDate==null) {
+ 			return null;
+ 		}
+ 		return beRegularTeacherDate;
  	}
  	
  	/**
@@ -317,13 +342,14 @@ public class ActivityService {
       * @return int
       * @date 2016年9月21日
       */
- 	public int getNumOfTeachersByReferee(Long id){
+ 	public int getNumOfReferalsByTeacherId(Long id){
  		if(id==null) return 0;
- 		return teacherActivityDao.getNumOfTeachersByReferee(id);
+ 		return teacherActivityDao.getNumOfReferalsByTeacherId(id);
  	}
  	
  	/**
  	 * 通过teacherId获取此教师第一次上课的日期，用于三周年庆教师数据活动页
+ 	 * (需求更改，已不用)
      * @Author:zhangbole
      * @param id
      * @return  String
@@ -344,9 +370,9 @@ public class ActivityService {
      * @return  List<String>
      * @date 2016年9月27日
      */
- 	public List<String> getAvatarListOfTeachersByReferee(Long id){
+ 	public List<String> getAvatarListOfReferalsByTeacherId(Long id){
  		if(id == null) return null;
- 		return teacherActivityDao.getAvatarListOfTeachersByReferee(id);
+ 		return teacherActivityDao.getAvatarListOfReferalsByTeacherId(id);
  	}
  	
  	
@@ -360,7 +386,7 @@ public class ActivityService {
  	public ThirdYearAnniversaryData getThirdYearAnniversaryData(long teacherId){
  		if(!isDuringThirdYeayAnniversary()) return null;
  		//优先缓存取数据
- 		String redisKey = "zhangbole-getThirdYearAnniversaryData-,"+teacherId;
+ 		String redisKey = "get_third_year_anniversary_data-"+teacherId;
  		String value = redisProxy.get(redisKey);
  		if(StringUtils.isNotEmpty(value)){
  			return JsonUtils.toBean(value, ThirdYearAnniversaryData.class);
@@ -375,11 +401,11 @@ public class ActivityService {
 		data.setLengthOfTime(days);
 		Teacher t = teacherService.get(teacherId);
 		String teacherAvatar = t.getAvatar();
-		data.setTeacherAvatar(completeResouceUrl(teacherAvatar));
+		data.setTeacherAvatar(buildCompleteAvatarUrl(teacherAvatar));
 		User u = userDao.findById(teacherId);
 		data.setTeacherName(u.getName());
 		data.setTeacherGender(u.getGender());
-		data.setNumberOfReferrals(this.getNumOfTeachersByReferee(teacherId));
+		data.setNumberOfReferrals(this.getNumOfReferalsByTeacherId(teacherId));
 		int totalFinishedClasses = this.getClassNumOfOneTeacher(teacherId);
 		data.setTotalFinishedClasses(totalFinishedClasses);
 		data.setTotalFinishedClassesMin(totalFinishedClasses*30);
@@ -391,26 +417,28 @@ public class ActivityService {
 			data.setStuAvatar((String)map.get("avatar"));
 			data.setStuGender((String)map.get("gender"));
 		}
-		data.setFirstClassDate(getFirstClassDateofOneTeacher(teacherId));
-		List<String> avatarListOrigin = getAvatarListOfTeachersByReferee(teacherId);
+		Date dateBeRegularTeacher = getDateBeRegularTeacher(teacherId);
+		DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+		data.setBecomeRegularDate(df.format(dateBeRegularTeacher));//变更为成为正式老师的时间
+		List<String> avatarListOrigin = getAvatarListOfReferalsByTeacherId(teacherId);
 		List<String> avatarList = Lists.newArrayList();
 		for(String eachAvatar : avatarListOrigin){
-			avatarList.add(completeResouceUrl(eachAvatar));
+			avatarList.add(buildCompleteAvatarUrl(eachAvatar));
 		}
 		data.setReferralsAvatarList(avatarList);
 		String token = encode(teacherId);
 		data.setToken(token);
+		String joinUsUrl = PropertyConfigurer.stringValue("third_year_anniversary_join_us_url");
+		data.setJoinUsUrl(joinUsUrl);
 		//data加入缓存
-		int redisdays = PropertyConfigurer.intValue("third_year_anniversary_redis_days");
-		if(redisdays!=0){
-			int expireSecond = redisdays*24*3600;
-			String redisValue = JsonUtils.toJSONString(data);
-			redisProxy.set(redisKey, redisValue, expireSecond);
-		}
+		int expireSecond = 600;//缓存600秒
+		String redisValue = JsonUtils.toJSONString(data);
+		redisProxy.set(redisKey, redisValue, expireSecond);
+		
 		return data;
  	}
  	
- 	private String completeResouceUrl(String urlOrigin){
+ 	private String buildCompleteAvatarUrl(String urlOrigin){
  		if(StringUtils.isEmpty(urlOrigin)) return urlOrigin;//如果参数非法，就不加前缀
 		String urlPreffix = PropertyConfigurer.stringValue("oss.url_preffix");
 		if(StringUtils.isEmpty(urlPreffix)) return urlOrigin;//如果配置文件没有这个属性，就不加前缀
@@ -420,32 +448,6 @@ public class ActivityService {
 		else{
 			return urlPreffix+"/"+urlOrigin;
 		}
- 	}
- 	
- 	/**
- 	 * 隐藏没必要提供的信息,同时把头像链接补全
-     * @Author:zhangbole
-     * @param teacher
-     * @return  Teacher
-     * @date 2016年10月8日
-     */
- 	private Teacher handleTeacherInfo(Teacher teacher){
- 		Teacher ret = new Teacher();
- 		ret.setAvatar(completeResouceUrl(teacher.getAvatar()));
- 		return ret;
- 	}
- 	/**
- 	 * 隐藏没必要提供的信息
-     * @Author:zhangbole
-     * @param user
-     * @return  User
-     * @date 2016年10月8日
-     */
- 	private User hideUserInfo(User user){
- 		User ret = new User();
- 		ret.setName(user.getName());
- 		ret.setGender(user.getGender());
- 		return ret;
  	}
  	
  	/**
@@ -490,7 +492,7 @@ public class ActivityService {
  		}
  		String strStart = PropertyConfigurer.stringValue("third_year_anniversary_start");
  		String strEnd = PropertyConfigurer.stringValue("third_year_anniversary_end");
- 		if(StringUtils.isEmpty(strEnd)||StringUtils.isEmpty(strStart)){//如果配置文件中的两个属性有一个消失，就ren
+ 		if(StringUtils.isEmpty(strEnd)||StringUtils.isEmpty(strStart)){//如果配置文件中的两个属性有一个消失，就return
  			return false;
  		}
  		long now = 0;

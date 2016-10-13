@@ -112,7 +112,10 @@ public class ActivityController extends AbstractController{
     
  
     
-    //三周年庆的教师历程数据接口，活动页前端请求此接口获取json数据
+   /**
+    * 三周年庆的教师历程数据接口，活动页前端请求此接口获取json数据
+    * @param token 加密后的teacherId(非必填)
+    */
     @ResponseBody
     @RequestMapping(value = "/getThirdYearAnniversaryData", method = RequestMethod.GET)
 	public Object getData(HttpServletRequest request, @RequestParam( required = false) String token){
@@ -130,6 +133,9 @@ public class ActivityController extends AbstractController{
     	}
     	else{
     		teacherId = activityService.decode(token);
+    	}
+    	if(teacherId<=0) {
+    		return null;
     	}
     	ThirdYearAnniversaryData data = activityService.getThirdYearAnniversaryData(teacherId);
     	return data;
