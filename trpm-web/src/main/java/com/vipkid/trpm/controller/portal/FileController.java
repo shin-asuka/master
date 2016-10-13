@@ -86,7 +86,9 @@ public class FileController extends AbstractPortalController {
 		}
 
 		resultMap = fileService.uploadNormalFile(file);
-		return jsonView(response, resultMap);
+		//for security consideration
+		String contentType = "application/json";
+		return jsonView(response, resultMap, contentType);
 	}
 
 	private static boolean isFileTypeValid(MultipartFile file) {
