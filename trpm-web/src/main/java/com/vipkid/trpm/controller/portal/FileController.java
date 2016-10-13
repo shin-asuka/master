@@ -70,6 +70,7 @@ public class FileController extends AbstractPortalController {
 		logger.info("uploadFile");
 		Map<String, Object> resultMap = Maps.newHashMap();
 		
+		response.setContentType("application/json");
 		boolean valid = isFileTypeValid(file);
 		if (!valid) {
 			resultMap.put("result", false);
@@ -98,7 +99,7 @@ public class FileController extends AbstractPortalController {
 			return false;
 		}
 
-		String fileName = file.getName();
+		String fileName = file.getOriginalFilename();
 		String fileType = getFileExtension(fileName);
 		if (!ACCEPT_FILE_TYPES.contains(fileType)) {
 			return false;
