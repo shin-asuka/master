@@ -1,14 +1,11 @@
 package com.vipkid.clickrate;
 
-import java.sql.DriverManager;
-import java.sql.SQLException;
 import java.util.ArrayList;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
-import org.community.config.PropertyConfigurer;
 import org.community.dao.support.MapperDaoTemplate;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.slf4j.Logger;
@@ -19,8 +16,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.mysql.jdbc.Connection;
-import com.mysql.jdbc.PreparedStatement;
 import com.vipkid.trpm.service.activity.ActivityService;
 
 @Controller

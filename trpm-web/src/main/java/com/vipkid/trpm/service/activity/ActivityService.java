@@ -390,6 +390,7 @@ public class ActivityService {
  		String redisKey = "get_third_year_anniversary_data-"+teacherId;
  		String value = redisProxy.get(redisKey);
  		if(StringUtils.isNotEmpty(value)){
+ 			logger.info("getThirdYearAnniversaryData(), teacherId={}, json={} ,直接从redis中获取",teacherId,value);
  			return JsonUtils.toBean(value, ThirdYearAnniversaryData.class);
  		}
  		//如果缓存没有
@@ -435,7 +436,7 @@ public class ActivityService {
 		int expireSecond = 600;//缓存600秒
 		String redisValue = JsonUtils.toJSONString(data);
 		redisProxy.set(redisKey, redisValue, expireSecond);
-		
+		logger.info("getThirdYearAnniversaryData(), teacherId={}, json={} ,查询数据库获取数据，并存入redis",teacherId,redisValue);
 		return data;
  	}
  	
@@ -461,11 +462,13 @@ public class ActivityService {
  		boolean ret = false;
  		String masterSwitch = PropertyConfigurer.stringValue("third_year_anniversary_switch");
  		if(StringUtils.isEmpty(masterSwitch)||!masterSwitch.equals("on")){//总开关没开，视为不在活动期间
+ 			logger.info("isDuringThirdYeayAnniversary(), 不--在--三周年活动期间。原因：总开关未开");
  			return false;
  		}
  		String strStart = PropertyConfigurer.stringValue("third_year_anniversary_start");
  		String strEnd = PropertyConfigurer.stringValue("third_year_anniversary_end");
- 		if(StringUtils.isEmpty(strEnd)||StringUtils.isEmpty(strStart)){//如果配置文件中的两个属性有一个消失，就return
+ 		if(StringUtils.isEmpty(strEnd)||StringUtils.isEmpty(strStart)){//如果配置文件中的两个属性有一个消失，就return false
+ 			logger.warn("isDuringThirdYeayAnniversary(), 返回false。原因：配置文件中third_year_anniversary_start或third_year_anniversary_end没有值");
  			return false;
  		}
  		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -476,11 +479,16 @@ public class ActivityService {
 	 		end = sdf.parse(strEnd);
 		} catch (ParseException e) {
 			logger.warn("配置文件中third_year_anniversary_start或third_year_anniversary_end格式错误，应为yyyy-MM-dd HH:mm:ss");
+			return false;
 		}
  		Date now = new Date();
  		
  		if(now.after(start) && now.before(end)){
  			ret = true;
+ 			logger.info("isDuringThirdYeayAnniversary(), 在--三周年庆的活动时间");
+ 		}
+ 		else{
+ 			logger.info("isDuringThirdYeayAnniversary(), 不--在--三周年庆的活动时间");
  		}
  		return ret;
  	}
