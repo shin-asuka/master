@@ -6,6 +6,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang3.StringUtils;
 import org.community.config.PropertyConfigurer;
 import org.community.tools.JsonTools;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -37,5 +38,20 @@ public abstract class AbstractController {
 
         return nullView();
     }
+  //add a method for setting customized contentType
+	protected String jsonView(HttpServletResponse response, Map<String, Object> model, String contentType) {
+		try {
+			String jsonString = JsonTools.getJson(model);
 
+			if (StringUtils.isNotBlank(contentType)) {
+				response.setContentType(contentType);
+			}
+			PrintWriter writer = response.getWriter();
+			writer.print(jsonString);
+		} catch (Exception e) {
+			throw new RuntimeException("Writer json string exception.", e);
+		}
+
+		return nullView();
+	}
 }

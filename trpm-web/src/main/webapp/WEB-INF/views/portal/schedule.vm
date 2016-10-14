@@ -42,6 +42,17 @@
         transition: all .3s;
     }
 </style>
+
+#if($isDuringThirdYeayAnniversary)
+<script>
+$("#thirdYearAnniversaryBanner").show();
+		##if($isFirstTimeSignInDuringThirdYeayAnniversary)
+		  #if(true)
+			//window.open(link);
+		  #end
+</script>
+#end
+
 <div>
     <!-- Nav tabs -->
     <ul class="nav nav-tabs" role="tablist">

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -17,11 +18,18 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.google.common.base.Stopwatch;
+import com.vipkid.http.vo.ThirdYearAnniversaryData;
 import com.vipkid.trpm.constant.ApplicationConstant;
 import com.vipkid.trpm.controller.AbstractController;
 import com.vipkid.trpm.entity.Teacher;
+import com.vipkid.trpm.entity.User;
 import com.vipkid.trpm.service.activity.ActivityService;
 import com.vipkid.trpm.service.passport.IndexService;
 import com.vipkid.trpm.util.AES;
@@ -36,6 +44,7 @@ public class ActivityController extends AbstractController{
     
     @Autowired
     private IndexService indexService;
+    
     
     //上线时间
     private String searchdate = "2016-04-12 00:00:00";
@@ -102,4 +111,40 @@ public class ActivityController extends AbstractController{
         Integer ctime = Integer.parseInt(new SimpleDateFormat("yyyyMMdd").format(new Date()));
         return ctime < end;
     }
+    
+ 
+    
+   /**
+    * 三周年庆的教师历程数据接口，活动页前端请求此接口获取json数据
+    * @param token 加密后的teacherId(非必填)
+    */
+    @ResponseBody
+    @RequestMapping(value = "/getThirdYearAnniversaryData", method = RequestMethod.GET)
+	public Object getData(HttpServletRequest request, @RequestParam( required = false) String token){
+
+    	Stopwatch stopwatch = Stopwatch.createStarted();
+    	if(!activityService.isDuringThirdYeayAnniversary()) return null;//到期后接口功能失效
+    	long teacherId = 0;
+    	if(StringUtils.isEmpty(token)){
+    		User u ;
+    		try {
+				u = indexService.getUser(request);
+			} catch (NullPointerException e) {
+				return null;
+			}
+        	if(u==null) return null;
+        	teacherId = u.getId();
+    	}
+    	else{
+    		teacherId = activityService.decode(token);
+    	}
+    	if(teacherId<=0) {
+    		return null;
+    	}
+    	ThirdYearAnniversaryData data = activityService.getThirdYearAnniversaryData(teacherId);
+    	
+    	long millis =stopwatch.stop().elapsed(TimeUnit.MILLISECONDS);
+        logger.info("执行方法getData()耗时：{} ", millis);
+    	return data;
+	}
 }

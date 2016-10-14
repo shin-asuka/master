@@ -6,6 +6,8 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
+import org.community.config.PropertyConfigurer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import com.google.api.client.util.Maps;
 import com.vipkid.trpm.constant.ApplicationConstant.CourseType;
 import com.vipkid.trpm.entity.Teacher;
+import com.vipkid.trpm.service.activity.ActivityService;
 import com.vipkid.trpm.service.passport.IndexService;
 import com.vipkid.trpm.service.portal.ScheduleService;
 
@@ -26,6 +29,9 @@ public class ScheduleController extends AbstractPortalController {
 
 	@Autowired
 	private IndexService indexService;
+	
+	@Autowired
+	private ActivityService activityService;
 
 	@RequestMapping("/schedule")
 	public String schedule(HttpServletRequest request, HttpServletResponse response, Model model) {
@@ -54,6 +60,15 @@ public class ScheduleController extends AbstractPortalController {
 		
 		// 判断是否需要显示24小时提示
 		model.addAttribute("show24HoursInfo", scheduleService.isShow24HourInfo(request, response));
+		
+		//加入三周年活动参数
+		model.addAttribute("isDuringThirdYeayAnniversary", activityService.isDuringThirdYeayAnniversary());
+		
+		String thirdYeayAnniversaryWebpageUrl = PropertyConfigurer.stringValue("third_year_anniversary_webpage_url");
+		if(StringUtils.isEmpty(thirdYeayAnniversaryWebpageUrl)){
+			thirdYeayAnniversaryWebpageUrl = "t.vipkid.com.cn";
+		}
+		model.addAttribute("thirdYeayAnniversaryWebpageUrl", thirdYeayAnniversaryWebpageUrl);
 
 		return view("schedule");
 	}
