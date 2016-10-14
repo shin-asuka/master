@@ -12,6 +12,8 @@ public interface ApplicationConstant {
     public static String NEW_TEACHER_NAME = "new VIPKID teacher";
 
     public static String REFEREEID = "refereeId";
+    
+    public static String PARTNERID = "partnerId";
 
     /** Practicum课程 的finishType更新接口地址 */
     public static final String REQUEST_URL =

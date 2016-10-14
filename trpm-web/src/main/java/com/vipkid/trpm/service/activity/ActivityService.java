@@ -431,6 +431,17 @@ public class ActivityService {
 		String token = encode(teacherId);
 		data.setToken(token);
 		String joinUsUrl = PropertyConfigurer.stringValue("third_year_anniversary_join_us_url");
+		if(StringUtils.isNotEmpty(joinUsUrl) && joinUsUrl.contains("%d")){
+			joinUsUrl = String.format(joinUsUrl, teacherId);
+		}
+		else{
+			logger.error("配置文件中的third_year_anniversary_join_us_url参数值错误");
+			joinUsUrl = PropertyConfigurer.stringValue("teacher.www");
+			if(StringUtils.isEmpty(joinUsUrl)){
+				joinUsUrl="http://t.vipkid.com.cn/";
+			}
+		}
+		
 		data.setJoinUsUrl(joinUsUrl);
 		//data加入缓存
 		int expireSecond = 600;//缓存600秒
