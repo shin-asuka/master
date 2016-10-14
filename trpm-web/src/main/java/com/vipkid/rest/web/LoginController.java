@@ -245,7 +245,8 @@ public class LoginController {
             // 2.用户名可用，执行业务，
         }
         // 执行业务逻辑
-        result.putAll(passportService.doSignUp(email, password, refereeId, partnerId));
+        Map<String, String> doSignUpMap = passportService.doSignUp(email, password, refereeId, partnerId);
+        result.putAll(doSignUpMap);
         result.put("status", RestfulConfig.HttpStatus.STATUS_200);
         return result;
     }
