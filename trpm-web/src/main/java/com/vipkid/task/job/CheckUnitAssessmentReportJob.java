@@ -63,7 +63,7 @@ public class CheckUnitAssessmentReportJob {
 
 	@Vschedule
 	public void do24hourRemindJob(JobContext jobContext) {
-		logger.info("开始检查教师结束课程12小时后是否填写UA报告=======================================");
+		logger.info("开始检查教师结束课程24小时后是否填写UA报告=======================================");
 		Stopwatch stopwatch = Stopwatch.createStarted();
 
 		try {

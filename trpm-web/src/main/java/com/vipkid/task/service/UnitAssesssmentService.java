@@ -117,14 +117,14 @@ public class UnitAssesssmentService {
 
 	public void remindTeacherUnitAssessmentFor24Hour(){
 
-		//查询出12个小时以前已经AS_SCHEDULED的课程
+		//查询出24个小时以前已经AS_SCHEDULED的课程
 		Date startDate = UADateUtils.getDateByBeforeHours(25);
 		Date endDate = UADateUtils.getDateByBeforeHours(24);
 
 		String startTime = UADateUtils.format(startDate, UADateUtils.defaultFormat) ;
 		String endTime = UADateUtils.format(endDate, UADateUtils.defaultFormat) ;
 
-		logger.info("查询出12个小时以前已经AS_SCHEDULED的课程  startTime = {},endTime = {}",startTime,endTime);
+		logger.info("查询出24个小时以前已经AS_SCHEDULED的课程  startTime = {},endTime = {}",startTime,endTime);
 
 		List<Map<String, Object>> list = onlineClassDao.findMajorCourseListByStartTimeAndEndTime(startTime, endTime, null);
 		logger.info("Get unSubmit OnlineClass list = {}",JsonUtils.toJSONString(list));
