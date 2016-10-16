@@ -1,0 +1,14 @@
+    <div class="form-control" placeholder="PDF./JPG./PNG./JEPG."
+		style="width:250px;height:38px;display:inline;background-color:#fff;margin-right:1px;">
+		$fileTypes &nbsp;&nbsp;
+	</div>
+	<input type="button" class="btn btn-primary" style="margin-top: -4px;"
+		value="Upload">
+	<div  class="taxpayerUploadStatus" style="display:inline;padding:15px;border: 0px solid #ddd;">
+		<span style="display:none;" class="taxpayerUploadStatusImg" name="fileUploading">
+		&nbsp;&nbsp;&nbsp;&nbsp;
+		</span>
+	</div>
+
+
+

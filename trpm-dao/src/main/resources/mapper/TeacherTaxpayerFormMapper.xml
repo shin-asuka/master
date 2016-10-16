@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="TeacherTaxpayerFormMapper">
+
+	<sql id="taxpayerFormColumns">
+		a.id AS "id",
+		a.teacher_id AS "teacherId",
+		a.teacher_name AS "teacherName",
+		a.form_type AS "formType",
+		a.uploaded AS "uploaded",
+		a.uploader AS "uploader",
+		a.upload_time AS "uploadTime",
+		a.is_new AS "isNew",
+		a.taxpayer_form_detail_id AS "taxpayerFormDetailId",
+		a.url AS "url",
+		a.create_time AS "createTime",
+		a.create_by AS "createBy",
+		a.update_time AS "updateTime",
+		a.update_by AS "updateBy",
+		a.del_flag AS "delFlag"
+	</sql>
+
+	<select id="findById" resultType="com.vipkid.trpm.entity.TeacherTaxpayerForm">
+		SELECT 
+			<include refid="taxpayerFormColumns"/>
+		FROM teacher_taxpayer_form a
+		WHERE 
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		AND a.id = #{id}
+	</select>
+	
+	<select id="findByTeacherIdAndType" resultType="com.vipkid.trpm.entity.TeacherTaxpayerForm">
+		SELECT 
+			<include refid="taxpayerFormColumns"/>
+		FROM teacher_taxpayer_form a
+		WHERE 
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		AND	a.teacher_id = #{teacherId}
+		AND a.form_type = #{formType}
+	</select>
+	
+	<select id="findList" resultType="com.vipkid.trpm.entity.TeacherTaxpayerForm">
+		SELECT 
+			<include refid="taxpayerFormColumns"/>
+		FROM teacher_taxpayer_form a
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+			<if test="param.teacherId != null">
+				AND a.teacher_id = #{param.teacherId}
+			</if>
+			<if test="param.formType != null">
+				AND a.form_type = #{param.formType}
+			</if>
+		</where>
+		<choose>
+			<otherwise>
+				order by a.update_time desc
+			</otherwise>
+		</choose>
+	</select>
+	
+	
+	<insert id="saveDao" useGeneratedKeys="true" keyProperty="id" flushCache="true">
+		INSERT INTO teacher_taxpayer_form(
+			id,
+			teacher_id,
+			teacher_name,
+			form_type,
+			uploaded,
+			uploader,
+			upload_time,
+			is_new,
+			taxpayer_form_detail_id,
+			url,
+			create_time,
+			create_by,
+			update_time,
+			update_by,
+			del_flag
+		) VALUES (
+			#{id},
+			#{teacherId},
+			#{teacherName},
+			#{formType},
+			#{uploaded},
+			#{uploader},
+			#{uploadTime},
+			#{isNew},
+			#{taxpayerFormDetailId},
+			#{url},
+			#{createTime},
+			#{createBy},
+			#{updateTime},
+			#{updateBy},
+			#{delFlag}
+		)
+	</insert>
+	
+	<update id="updateDao">
+		UPDATE teacher_taxpayer_form SET 	
+			teacher_id = #{teacherId},
+			teacher_name = #{teacherName},
+			form_type = #{formType},
+			uploaded = #{uploaded},
+			uploader = #{uploader},
+			upload_time = #{uploadTime},
+			is_new = #{isNew},
+			taxpayer_form_detail_id = #{taxpayerFormDetailId},
+			url = #{url},
+			create_time = #{createTime},
+			update_time = #{updateTime},
+			update_by = #{updateBy}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE teacher_taxpayer_form SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+	
+
+	<select id="findTaxpayerViewList" resultType="com.vipkid.trpm.entity.TeacherTaxpayerView">
+		SELECT 
+			t.id as 'teacherId'
+			,t.real_name as 'name'
+			,t.type as 'type'
+			,u.gender as 'gender'
+			,t.country as 'nationality'
+			,b.`name` as 'country' 
+			,b.`id` as 'countryId' 
+			,c.`name` as 'state' 
+			,c.`id` as 'stateId' 
+			,d.`name` as 'city' 
+			,d.`id` as 'cityId'
+			,a.id as 'taxpayerId'
+			,e.id as 'taxpayerDetailId'
+			,case when e.id is null THEN 0 else 1 end as  'uploaded' 
+			,e.create_time as 'uploadTime'
+			,e.uploader as 'uploader'
+			,e.form_type as 'formType'
+			,e.is_new as 'isNew'
+			,e.url as 'url'
+		FROM user u 
+		<include refid="teacherTaxpayerViewJoin" />
+		<where>
+			<include refid="teacherTaxpayerViewWhere" />
+		</where>
+		<choose>
+			<otherwise>
+				order by e.create_time desc
+			</otherwise>
+		</choose>
+		<if test="page!=null">
+			limit #{page.firstResult},#{page.pageSize}
+		</if>
+	</select>
+	
+	<select id="getTaxpayerViewCount" resultType="int">
+		SELECT 
+			COUNT(*) 
+		FROM user u
+		<include refid="teacherTaxpayerViewJoin" />
+		<where>
+			<include refid="teacherTaxpayerViewWhere" />
+		</where>
+	</select>
+	
+	<sql id="teacherTaxpayerViewJoin">
+		JOIN teacher t on t.id = u.id
+		LEFT JOIN teacher_address ta on ta.teacher_id = u.id and t.current_address_id = ta.id
+		LEFT JOIN teacher_location b ON b.id = ta.country_id
+		LEFT JOIN teacher_location c ON c.id = ta.state_id
+		LEFT JOIN teacher_location d ON d.id = ta.city
+		LEFT JOIN teacher_taxpayer_form a ON a.teacher_id = t.id
+		LEFT JOIN teacher_taxpayer_form_detail e ON e.taxpayer_form_id = a.id
+	</sql>
+	
+	<sql id="teacherTaxpayerViewWhere">
+		(a.del_flag = #{DEL_FLAG_NORMAL} or a.del_flag is null )
+		and (e.del_flag = #{DEL_FLAG_NORMAL} or e.del_flag is null )
+		and t.life_cycle = 'REGULAR'
+		<if test="param.teacherId != null and param.teacherId != ''">
+			AND a.teacher_id = #{param.teacherId}
+		</if>
+		<if test="param.name != null and param.name != ''">
+			AND t.real_name like CONCAT('%',#{param.name},'%')
+		</if>
+		<if test="param.type != null and param.type != ''">
+			AND t.type = #{param.type}
+		</if>
+		<if test="param.gender != null and param.gender != ''">
+			AND u.gender = #{param.gender}
+		</if>
+		<if test="param.nationality != null and param.nationality != ''">
+			AND t.country = #{param.nationality}
+		</if>
+		<if test="param.countryId != null">
+			AND b.id = #{param.countryId}
+		</if>
+		<if test="param.stateId != null">
+			AND c.id = #{param.stateId}
+		</if>
+		
+		<if test="param.uploaded != null and param.uploaded == 0">
+			AND (e.id is null )
+		</if>
+		<if test="param.uploaded != null and param.uploaded == 1">
+			AND (e.id is not null )
+		</if>
+		<if test="param.formType != null">
+			AND e.form_type = #{param.formType}
+		</if>
+	</sql>
+	
+	<select id="findListByIds" resultType="com.vipkid.trpm.entity.TeacherTaxpayerForm">
+		SELECT 
+			<include refid="taxpayerFormColumns"/>
+		FROM teacher_taxpayer_form a
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+			AND a.id in
+			<foreach item="item" index="index" collection="idList" open="(" separator="," close=")">  
+			  	#{item}  
+			</foreach>
+			
+		</where>
+		<choose>
+			<otherwise>
+				order by a.update_time desc
+			</otherwise>
+		</choose>
+	</select>
+</mapper>

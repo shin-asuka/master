@@ -25,6 +25,7 @@ require.config({
 		"select2" : "libs/select2/select2.min",
 		"easemob" : "http://kefu.easemob.com/webim/easemob.js?tenantId=20182&hide=false&sat=false",
 		"jquery-ui" : "libs/jquery-ui.min",
+		"jquery-ajaxfileupload" : "libs/ajaxfileupload",
 		
 		/* 模块JS */
 		"index" : "apps/common/index",
@@ -35,6 +36,7 @@ require.config({
 		"personal-bankinfo" : "apps/portal/personal/bankinfo",
 		"personal-password" : "apps/portal/personal/password",
 		"personal-location" : "apps/portal/personal/location",
+		"personal-taxpayer" : "apps/portal/personal/taxpayer",
 		"report-ua" : "apps/portal/report.ua",
 		"report-demo" : "apps/portal/report.demo",
 		"room-demo" : "apps/portal/report.demo.room",

@@ -6,8 +6,10 @@
 	    <li url="#springUrl('/personal/bankinfo.shtml')"><a id = "bankInfo"  style="cursor: pointer;">Bank Info<span id="point" style=" position:absolute;margin-left: 5px;width: 10px; height: 10px;background: #ff6600; -moz-border-radius: 5px;-webkit-border-radius: 5px;border-radius: 5px;display="inline"></span></a></li>
 	    <li url="#springUrl('/personal/teaching.shtml')"><a style="cursor: pointer;">Teaching Info</a></li>
 	    <li url="#springUrl('/personal/password.shtml')"><a style="cursor: pointer;">Change Password</a></li>
+		<li url="#springUrl('/personal/taxpayer.shtml')"><a style="cursor: pointer;">Request for Taxpayer</a></li>
+	
 	</ul>
-  	<div id="persion-info" class="tab-content col-md-9 col-sm-9" style="padding-left:0px; padding-right:0px;">
+  	<div id="persion-info" index="$!{index}" class="tab-content col-md-9 col-sm-9" style="padding-left:0px; padding-right:0px;">
 	    #** Basic Info Start *#
 	    #parse("/portal/personal/personal_basicinfo.vm")
 	    #** Basic Info end *#
