@@ -32,7 +32,7 @@ public class TeacherInfo {
     private String showName = "";
     
     private String lifeCycle = "";
-    
+
     private String action = "";
     
     private boolean haveChannel = false;
@@ -109,7 +109,6 @@ public class TeacherInfo {
     public void setHaveChannel(boolean haveChannel) {
         this.haveChannel = haveChannel;
     }
-
     /**
      * 其他信息，头像,bio,lifeCycle,name
      * @Author:ALong (ZengWeiLong)
