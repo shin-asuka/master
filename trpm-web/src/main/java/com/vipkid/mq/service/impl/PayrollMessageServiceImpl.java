@@ -226,7 +226,10 @@ public class PayrollMessageServiceImpl implements PayrollMessageService {
                     onlineClassMessage.setPaidForTrial(isPaidForTrial);
                     List<Map<String, Object>> payList =  studentService.findPaidByStudentIdAndPayDate(studentId, paidDateTime);
 					if (payList.size() > 0) {
-						onlineClassMessage.setTrialPayTime(((Timestamp) payList.get(0).get("paid_date_time")).getTime());
+						Object timestamp = payList.get(0).get("paid_date_time");
+						if (timestamp instanceof Timestamp) {
+							onlineClassMessage.setTrialPayTime(((Timestamp) timestamp).getTime());
+						}
 					}
                 }
 
@@ -296,7 +299,10 @@ public class PayrollMessageServiceImpl implements PayrollMessageService {
                     onlineClassMessage.setPaidForTrial(isPaidForTrial);
                     List<Map<String, Object>> payList =  studentService.findPaidByStudentIdAndPayDate(studentId, paidDateTime);
 					if (payList.size() > 0) {
-						onlineClassMessage.setTrialPayTime(((Timestamp) payList.get(0).get("paid_date_time")).getTime());
+						Object timestamp = payList.get(0).get("paid_date_time");
+						if (timestamp instanceof Timestamp) {
+							onlineClassMessage.setTrialPayTime(((Timestamp) timestamp).getTime());
+						}
 					}
                 }
 
