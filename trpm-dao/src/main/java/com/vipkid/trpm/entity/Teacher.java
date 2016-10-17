@@ -141,7 +141,6 @@ public class Teacher extends Entity implements Serializable {
 	private int beneficiaryAddressId;
 
 	// 2016-05-24 新添加teacher 属性 --end
-	private String evaluationBio;
 
 	public long getId() {
 		return this.id;
@@ -744,12 +743,4 @@ public class Teacher extends Entity implements Serializable {
 		this.highestLevelOfEdu = highestLevelOfEdu;
 	}
 
-    public String getEvaluationBio() {
-        return evaluationBio;
-    }
-
-    public void setEvaluationBio(String evaluationBio) {
-        this.evaluationBio = evaluationBio;
-    }
-	
 }
