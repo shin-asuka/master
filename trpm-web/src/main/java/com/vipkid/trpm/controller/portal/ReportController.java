@@ -234,6 +234,7 @@ public class ReportController extends AbstractPortalController {
 
         // 查询FeedBack信息
         TeacherComment teacherComment = reportService.findTectBycIdAndStuId(onlineClassId, studentId);
+        handleTeacherComment(teacherComment);
         model.addAttribute("teacherComment", teacherComment);
         //查询StudentExam信息
         StudentExam studentExam = studentExamDao.findStudentExamByStudentId(studentId);
@@ -444,6 +445,24 @@ public class ReportController extends AbstractPortalController {
             model.addAttribute("uploadName", complete);
         }
         return model;
+    }
+    
+    //TeacherComment的trialLevelResult, L*U* 换成Level * Unit *
+    private TeacherComment handleTeacherComment(TeacherComment teacherComment) {
+        logger.info("ReportController: handleTeacherComment() 参数为： teacherComment={}", JSON.toJSONString(teacherComment));
+
+        // teacherComment 不为空则进行替换逻辑
+        if (teacherComment != null) {
+            if (teacherComment.getTrialLevelResult() != null) {
+                String lowerCase = teacherComment.getTrialLevelResult().toLowerCase();
+                if ("l1u0".equals(lowerCase)) {
+                	teacherComment.setTrialLevelResult("Level 0 Unit 0");
+                } else if (lowerCase.startsWith("l")) {
+                	teacherComment.setTrialLevelResult(lowerCase.replaceAll("l", "Level ").replaceAll("u", " Unit "));
+                }
+            }
+        } 
+        return teacherComment;
     }
 
 }
