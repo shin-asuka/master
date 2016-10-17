@@ -210,6 +210,7 @@ public class LoginController {
     @RequestMapping(value = "/register", method = RequestMethod.POST, produces = RestfulConfig.JSON_UTF_8)
     public Map<String, Object> register(@RequestParam String email, @RequestParam String password,
             @RequestParam(value = "refereeId", required = false) String refereeId,
+            @RequestParam(value = "partnerId", required = false) String partnerId,
             @RequestParam(value = "key", required = true) String key,
             @RequestParam(value = "imageCode", required = true) String imageCode) {
         email = StringUtils.trim(email);
@@ -244,7 +245,8 @@ public class LoginController {
             // 2.用户名可用，执行业务，
         }
         // 执行业务逻辑
-        result.putAll(passportService.doSignUp(email, password, refereeId));
+        Map<String, String> doSignUpMap = passportService.doSignUp(email, password, refereeId, partnerId);
+        result.putAll(doSignUpMap);
         result.put("status", RestfulConfig.HttpStatus.STATUS_200);
         return result;
     }

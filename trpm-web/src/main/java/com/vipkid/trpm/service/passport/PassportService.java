@@ -114,7 +114,7 @@ public class PassportService {
      * @Author:VIPKID-ZengWeiLong
      * @return 2016年3月3日
      */
-    public Map<String, String> doSignUp(String email, String password, Object reid) {
+    public Map<String, String> doSignUp(String email, String password, Object reid, Object partnerId) {
         Map<String, String> resultMap = Maps.newHashMap();
         User user = this.userDao.findByUsername(email);
         SHA256PasswordEncoder encoder = new SHA256PasswordEncoder();
@@ -157,7 +157,7 @@ public class PassportService {
             teacher.setCurrency(TeacherEnum.Currency.US_DOLLAR.toString());
             teacher.setHide(TeacherEnum.Hide.NONE.toString());
             // 设置推荐人保存字段
-            teacher = this.prerefereeId(teacher, reid);
+            teacher = this.prerefereeId(teacher, reid, partnerId);
             teacherDao.save(teacher);
             logger.info(" Sign up teacher: " + teacher.getSerialNumber());
             if(PropertyConfigurer.booleanValue("signup.send.mail.switch")){
@@ -338,39 +338,59 @@ public class PassportService {
     }
 
     /**
-     * 查询用户 根据用户Dtype判断如果是 Teacher 则保存id,name 到referee字段 Partner 则保存id 到parenerId字段
-     * 
+     * 以前：查询用户 根据用户Dtype判断如果是 Teacher 则保存id,name 到referee字段 Partner 则保存id 到parenerId字段
+     * 三周年庆更改：
+     * refereeId对应用户Dtype判断如果是 Teacher 则保存id,name 到referee字段 Partner 则保存id 到parenerId字段
+     * partnerId对应用户Dtype判断如果是 Partner 则保存id 到parenerId字段，优先级高于refereeId是Partner的情况
      * @Author:ALong (ZengWeiLong)
      * @param teacher
      * @param refereeId
      * @return Teacher
      * @date 2016年3月18日
      */
-    public Teacher prerefereeId(Teacher teacher, Object refereeId) {
-        if (refereeId == null) {
+    public Teacher prerefereeId(Teacher teacher, Object refereeId, Object partnerId) {
+        if (refereeId == null &&partnerId == null) {
             return teacher;
         }
-        String rfid = String.valueOf(refereeId);
-        if (!rfid.matches("[^0][\\d]+")) {
-            return teacher;
-        }
-        long userId = Long.valueOf(rfid);
-        User user = this.findUserById(userId);
+        
+        if(refereeId != null){//三周年庆时有改动，这里的if兼容之前的逻辑
+        	String rfid = String.valueOf(refereeId);
+            if (!rfid.matches("[^0][\\d]+")) {
+                return teacher;
+            }
+            long userId = Long.valueOf(rfid);
+            User user = this.findUserById(userId);
 
-        if (user != null) {
-            if (UserEnum.Dtype.PARTNER.toString().equals(user.getDtype())) {
-                teacher.setPartnerId(user.getId());
-            } else if (UserEnum.Dtype.TEACHER.toString().equals(user.getDtype())) {
-            	Teacher t = teacherDao.findById(userId);
-            	if(t!=null){
-            		teacher.setReferee(user.getId() + "," + t.getRealName());//Referee存老师的realName
-            	}
-            	else{
-            		logger.warn("找不到id为"+userId+"老师");
-            		teacher.setReferee(user.getId() + ",");
-            	}
+            if (user != null) {
+                if (UserEnum.Dtype.PARTNER.toString().equals(user.getDtype())) {
+                    teacher.setPartnerId(user.getId());
+                } else if (UserEnum.Dtype.TEACHER.toString().equals(user.getDtype())) {
+                	Teacher t = teacherDao.findById(userId);
+                	if(t!=null){
+                		teacher.setReferee(user.getId() + "," + t.getRealName());//Referee存老师的realName
+                	}
+                	else{
+                		logger.warn("找不到id为"+userId+"老师");
+                		teacher.setReferee(user.getId() + ",");
+                	}
+                }
             }
         }
+        if(partnerId != null){//三周年庆的需求添加
+        	String ptid = String.valueOf(partnerId);
+            if (!ptid.matches("[^0][\\d]+")) {
+                return teacher;
+            }
+            long userId = Long.valueOf(ptid);
+            User user = this.findUserById(userId);
+
+            if (user != null) {
+                if (UserEnum.Dtype.PARTNER.toString().equals(user.getDtype())) {
+                    teacher.setPartnerId(user.getId());
+                } 
+            }
+        }
+        
         return teacher;
     }
 

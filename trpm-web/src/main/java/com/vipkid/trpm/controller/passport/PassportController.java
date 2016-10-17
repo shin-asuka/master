@@ -186,6 +186,10 @@ public class PassportController extends AbstractController {
 			CookieUtils.setCookie(response, ApplicationConstant.REFEREEID,
                     request.getParameter(ApplicationConstant.REFEREEID), null);
 		}
+		if (!StringUtils.isEmpty(request.getParameter(ApplicationConstant.PARTNERID))) {
+			CookieUtils.setCookie(response, ApplicationConstant.PARTNERID,
+                    request.getParameter(ApplicationConstant.PARTNERID), null);
+		}
 
 		model.addAttribute("tosignin", "button");
 		model.addAttribute("pageName", "Sign Up");
@@ -214,7 +218,8 @@ public class PassportController extends AbstractController {
 		} else {
 			// 执行业务逻辑
 			Object reid = CookieUtils.getValue(request, ApplicationConstant.REFEREEID);
-			model.addAllAttributes(passportService.doSignUp(email, privateCode, reid));
+			Object partnerid = CookieUtils.getValue(request, ApplicationConstant.PARTNERID);
+			model.addAllAttributes(passportService.doSignUp(email, privateCode, reid, partnerid));
 			CookieUtils.removeCookie(response, ApplicationConstant.REFEREEID, null, null);
 		}
 		return jsonView(response, model.asMap());

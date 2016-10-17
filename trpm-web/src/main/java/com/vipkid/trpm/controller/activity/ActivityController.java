@@ -123,7 +123,6 @@ public class ActivityController extends AbstractController{
 	public Object getData(HttpServletRequest request, @RequestParam( required = false) String token){
 
     	Stopwatch stopwatch = Stopwatch.createStarted();
-    	if(!activityService.isDuringThirdYeayAnniversary()) return null;//到期后接口功能失效
     	long teacherId = 0;
     	if(StringUtils.isEmpty(token)){
     		User u ;

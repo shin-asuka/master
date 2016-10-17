@@ -42,7 +42,6 @@ public class ClickRateController extends MapperDaoTemplate<ClickRate> {//用于�
 	public void clickOneTime(HttpServletRequest request, HttpServletResponse response, @RequestParam String name){
 		if(StringUtils.isEmpty(name)) return;
 		if(!names.contains(name)) return;
-		if(!activityService.isDuringThirdYeayAnniversary()) return;//不在三周年活动期间，接口无效
 		String ip = request.getRemoteAddr();
 		ClickRate cr = new ClickRate();
 		cr.setName(name);
