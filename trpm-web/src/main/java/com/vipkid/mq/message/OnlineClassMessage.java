@@ -29,6 +29,8 @@ public class OnlineClassMessage implements Serializable{
 	private Boolean isTrialOnly;
 	
 	private boolean shortNotice; //是否是紧急备用课程
+
+	private Long trialPayTime;
 	
 	public OnlineClassMessage() {
 		
@@ -150,4 +152,11 @@ public class OnlineClassMessage implements Serializable{
     public void setUaCreateDateTime(Long uaCreateDateTime) {
         this.uaCreateDateTime = uaCreateDateTime;
     }
+    public Long getTrialPayTime() {
+		return trialPayTime;
+	}
+
+	public void setTrialPayTime(Long trialPayTime) {
+		this.trialPayTime = trialPayTime;
+	}
 }
