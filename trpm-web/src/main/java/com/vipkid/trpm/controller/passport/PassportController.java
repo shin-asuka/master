@@ -32,7 +32,7 @@ import com.vipkid.trpm.service.passport.PassportService;
 import com.vipkid.trpm.service.passport.RemberService;
 import com.vipkid.trpm.util.AES;
 import com.vipkid.trpm.util.CookieUtils;
-import com.vipkid.trpm.util.IPUtils;
+import com.vipkid.trpm.util.IpUtils;
 
 @Controller
 @PreAuthorize("permitAll")
@@ -71,7 +71,7 @@ public class PassportController extends AbstractController {
 			@RequestParam("remember") boolean remember) {
 		// 对用户名进行解密
 		String _strEmail = new String(Base64.getDecoder().decode(strEmail));
-		logger.info(" 请求参数 email ： " + _strEmail + ";password=" + strPwd + ",IP:" + IPUtils.getRemoteIP());
+		logger.info(" 请求参数 email ： " + _strEmail + ";password=" + strPwd + ",IP:" + IpUtils.getRemoteIP());
 		User user = passportService.findUserByUsername(_strEmail);
 		// 密码解密
 		String _strPwd = new String(Base64.getDecoder().decode(strPwd));

@@ -15,9 +15,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.google.api.client.util.Maps;
 import com.google.common.collect.Lists;
 import com.vipkid.rest.config.RestfulConfig;
 import com.vipkid.rest.config.RestfulConfig.RoleClass;
+import com.vipkid.rest.config.TeacherInfo;
 import com.vipkid.trpm.constant.ApplicationConstant;
 import com.vipkid.trpm.constant.ApplicationConstant.CookieKey;
 import com.vipkid.trpm.constant.ApplicationConstant.CourseType;
@@ -165,8 +167,10 @@ public class LoginService {
      * @return boolean
      * @date 2016年7月4日
      */
-    public void findByTeacherModule(long teacherId,Map<String,Object> roles) {
-        String result = teacherModuleDao.findByTeacherModule(teacherId);
+    public void findByTeacherModule(TeacherInfo teacherinfo) {
+        Map<String,Object> roles = Maps.newHashMap();
+        roles.put(RoleClass.PE, this.isPe(teacherinfo.getTeacherId()));
+        String result = teacherModuleDao.findByTeacherModule(teacherinfo.getTeacherId());
         logger.info(" result module:{}",result);
         if(result.indexOf(","+RoleClass.PE+",") > -1){
             roles.put(RoleClass.PES,true);
@@ -177,6 +181,7 @@ public class LoginService {
         if(result.indexOf(","+RoleClass.TES+",") > -1){
             roles.put(RoleClass.TES,true);
         }
+        teacherinfo.setRoles(roles);
     }  
     
 

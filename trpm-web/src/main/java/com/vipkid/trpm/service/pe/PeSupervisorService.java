@@ -42,7 +42,7 @@ import com.vipkid.trpm.entity.User;
 import com.vipkid.trpm.proxy.ClassroomProxy;
 import com.vipkid.trpm.util.DateUtils;
 import com.vipkid.trpm.util.FilesUtils;
-import com.vipkid.trpm.util.IPUtils;
+import com.vipkid.trpm.util.IpUtils;
 
 @Service
 public class PeSupervisorService {
@@ -209,7 +209,7 @@ public class PeSupervisorService {
             String content = FilesUtils
                     .readLogTemplete(ApplicationConstant.AuditCategory.PRACTICUM_AUDIT, parmMap);
             auditDao.saveAudit(ApplicationConstant.AuditCategory.PRACTICUM_AUDIT, "INFO", content,
-                    peSupervisor.getRealName(), recruitTeacher, IPUtils.getRemoteIP());
+                    peSupervisor.getRealName(), recruitTeacher, IpUtils.getRemoteIP());
 
             if ("true".equals(String.valueOf(modelMap.get("result")))) {
                 this.teacherPeDao.updateTeacherPeComments(teacherPe, result, "");

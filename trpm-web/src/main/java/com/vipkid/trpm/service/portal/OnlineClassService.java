@@ -37,7 +37,7 @@ import com.vipkid.trpm.entity.*;
 import com.vipkid.trpm.proxy.ClassroomProxy;
 import com.vipkid.trpm.util.DateUtils;
 import com.vipkid.trpm.util.FilesUtils;
-import com.vipkid.trpm.util.IPUtils;
+import com.vipkid.trpm.util.IpUtils;
 
 @Service
 public class OnlineClassService {
@@ -270,7 +270,7 @@ public class OnlineClassService {
         String content = FilesUtils
                 .readLogTemplete(ApplicationConstant.AuditCategory.CLASSROOM_ENTER, parmMap);
         auditDao.saveAudit(ApplicationConstant.AuditCategory.CLASSROOM_ENTER, "INFO", content,
-                teacher.getRealName(), teacher, IPUtils.getRemoteIP());
+                teacher.getRealName(), teacher, IpUtils.getRemoteIP());
     }
 
     /**
@@ -294,7 +294,7 @@ public class OnlineClassService {
         String content = FilesUtils
                 .readLogTemplete(ApplicationConstant.AuditCategory.CLASSROOM_EXIT, parmMap);
         auditDao.saveAudit(ApplicationConstant.AuditCategory.CLASSROOM_EXIT, "INFO", content,
-                teacher.getRealName(), teacher, IPUtils.getRemoteIP());
+                teacher.getRealName(), teacher, IpUtils.getRemoteIP());
     }
 
     /**
@@ -436,7 +436,7 @@ public class OnlineClassService {
             String content = FilesUtils
                     .readLogTemplete(ApplicationConstant.AuditCategory.PRACTICUM_AUDIT, parmMap);
             auditDao.saveAudit(ApplicationConstant.AuditCategory.PRACTICUM_AUDIT, "INFO", content,
-                    pe.getRealName(), recruitTeacher, IPUtils.getRemoteIP());
+                    pe.getRealName(), recruitTeacher, IpUtils.getRemoteIP());
             logger.info(
                     "Practicum Online Class[finish] updateAudit,studentId:{},onlineClassId:{},recruitTeacher:{},teacherId:{}",
                     pe.getId(), onlineClass.getId(), recruitTeacher.getId(), pe.getId());
@@ -665,7 +665,7 @@ public class OnlineClassService {
             String content = FilesUtils.readLogTemplete(ApplicationConstant.AuditCategory.STAR_SEND,
                     parmMap);
             auditDao.saveAudit(ApplicationConstant.AuditCategory.STAR_SEND, "INFO", content,
-                    teacher.getRealName(), teacher, IPUtils.getRemoteIP());
+                    teacher.getRealName(), teacher, IpUtils.getRemoteIP());
             logger.info(
                     "Teacher: id={},name={} send star, Student: id={},name={}, onlineClassId: id={},room={}",
                     teacher.getId(), teacher.getRealName(), studentId, student.getEnglishName(),
@@ -674,7 +674,7 @@ public class OnlineClassService {
             String content = FilesUtils
                     .readLogTemplete(ApplicationConstant.AuditCategory.STAR_REMOVE, parmMap);
             auditDao.saveAudit(ApplicationConstant.AuditCategory.STAR_REMOVE, "INFO", content,
-                    teacher.getRealName(), teacher, IPUtils.getRemoteIP());
+                    teacher.getRealName(), teacher, IpUtils.getRemoteIP());
             logger.info(
                     "Teacher: id={},name={} remove star, Student: id={},name={}, onlineClassId: id={},room={}",
                     teacher.getId(), teacher.getRealName(), studentId, student.getEnglishName(),

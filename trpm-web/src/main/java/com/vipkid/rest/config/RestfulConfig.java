@@ -1,11 +1,14 @@
 package com.vipkid.rest.config;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.community.tools.JsonTools;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.vipkid.trpm.constant.ApplicationConstant.TeacherLifeCycle;
 
 public class RestfulConfig {
 
@@ -14,6 +17,8 @@ public class RestfulConfig {
         public static int TEACHER = 1;
         
         public static int RECRUITMENT = 2;
+        
+        public static int NEWRECRUITMENT = 2;
     }
     
     public static final class RoleClass{
@@ -48,4 +53,15 @@ public class RestfulConfig {
         public static final Map<String,Integer> CORRECTANSWERMAP = JsonTools.readValue(RIGHTANSWER,new TypeReference<HashMap<String,Integer>>(){});
     
     }
+    
+    @SuppressWarnings("serial")
+    public static final Set<String> NEWRECRUITMENTSET = new HashSet<String>(){{
+        add(TeacherLifeCycle.SIGNUP);
+        add(TeacherLifeCycle.BASIC_INFO);
+    }};
+    
+    @SuppressWarnings("serial")
+    public static final Set<String> TEACHERPORTSET = new HashSet<String>(){{
+        add(TeacherLifeCycle.REGULAR);
+    }};
 }

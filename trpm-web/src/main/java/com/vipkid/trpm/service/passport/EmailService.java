@@ -22,6 +22,7 @@ import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.entity.User;
 import com.vipkid.trpm.quartz.handle.HandleTools;
 
+@Deprecated
 @Service
 public class EmailService {
 

@@ -158,4 +158,38 @@ public final class DateUtils {
         }
         return false;
     } 
+    
+    /**
+     * 
+     * 计算两个时间之间月份跨度 
+     * @Author:ALong (ZengWeiLong)
+     * @param time1
+     * @param time2
+     * @return    
+     * int
+     * @date 2016年10月17日
+     */
+    public static int countMouth(long time1,long time2){
+        Calendar c1 = Calendar.getInstance();
+        c1.setTimeInMillis(time1);
+        Calendar c2 = Calendar.getInstance();
+        c2.setTimeInMillis(time2);
+        int result = (c2.get(Calendar.MONTH) - c1.get(Calendar.MONTH)) * 12 + c2.get(Calendar.MONTH) - c1.get(Calendar.MONTH) + 1;
+        return result;
+    } 
+    
+    /**
+     * 计算两个日期之间月份跨算后的周数，按照每月4周计算
+     * @Author:ALong (ZengWeiLong)
+     * @param time1
+     * @param time2
+     * @return    
+     * int
+     * @date 2016年10月17日
+     */
+    public static int countWeeks(long time1,long time2){
+        int month = DateUtils.countMouth(time1,time2);
+        int totalWeek = month * 4;
+        return totalWeek;
+    }
 }
