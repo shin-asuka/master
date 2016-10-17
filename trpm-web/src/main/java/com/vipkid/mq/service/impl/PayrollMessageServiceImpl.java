@@ -1,5 +1,6 @@
 package com.vipkid.mq.service.impl;
 
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Map;
 
@@ -225,7 +226,7 @@ public class PayrollMessageServiceImpl implements PayrollMessageService {
                     onlineClassMessage.setPaidForTrial(isPaidForTrial);
                     List<Map<String, Object>> payList =  studentService.findPaidByStudentIdAndPayDate(studentId, paidDateTime);
 					if (payList.size() > 0) {
-						onlineClassMessage.setTrialPayTime((Long) payList.get(0).get("paid_date_time"));
+						onlineClassMessage.setTrialPayTime(((Timestamp) payList.get(0).get("paid_date_time")).getTime());
 					}
                 }
 
@@ -295,7 +296,7 @@ public class PayrollMessageServiceImpl implements PayrollMessageService {
                     onlineClassMessage.setPaidForTrial(isPaidForTrial);
                     List<Map<String, Object>> payList =  studentService.findPaidByStudentIdAndPayDate(studentId, paidDateTime);
 					if (payList.size() > 0) {
-						onlineClassMessage.setTrialPayTime((Long) payList.get(0).get("paid_date_time"));
+						onlineClassMessage.setTrialPayTime(((Timestamp) payList.get(0).get("paid_date_time")).getTime());
 					}
                 }
 
