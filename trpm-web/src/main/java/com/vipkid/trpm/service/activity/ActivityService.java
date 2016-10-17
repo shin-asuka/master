@@ -385,7 +385,6 @@ public class ActivityService {
      * @date 2016年9月23日
      */
  	public ThirdYearAnniversaryData getThirdYearAnniversaryData(long teacherId){
- 		if(!isDuringThirdYeayAnniversary()) return null;
  		//优先缓存取数据
  		String redisKey = "get_third_year_anniversary_data-"+teacherId;
  		String value = redisProxy.get(redisKey);
