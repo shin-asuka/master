@@ -4,6 +4,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.vipkid.email.EmailEngine;
+import com.vipkid.email.handle.EmailConfig;
+import com.vipkid.email.templete.TempleteUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,7 +26,15 @@ public class BasicInfoService {
     
     @Autowired
     private TeacherDao teacherDao;
-    
+
+    private void sendEmail4UndoFail(Teacher teacher) {
+        Map<String, String> paramsMap = new HashMap();
+        paramsMap.put("teacherName", teacher.getRealName());
+
+        Map<String, String> emailMap = new TempleteUtils().readTemplete("BasicInfoUndoFail.html", paramsMap, "BasicInfoUndoFailTitle.html");
+        new EmailEngine().addMailPool(teacher.getEmail(), emailMap, EmailConfig.EmailFormEnum.TEACHVIP);
+    }
+
     public List<Map<String,Object>> getRecruitmentChannelList(){
         Map<String,Object> paramMap = new HashMap<String,Object>();
         paramMap.put("type", "TEACHER_RECRUITMENT");
