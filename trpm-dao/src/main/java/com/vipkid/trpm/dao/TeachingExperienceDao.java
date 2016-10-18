@@ -6,10 +6,12 @@ import java.util.Map;
 import org.community.dao.support.MapperDaoTemplate;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 
 import com.google.common.base.Preconditions;
 import com.vipkid.trpm.entity.TeachingExperience;
 
+@Repository
 public class TeachingExperienceDao extends MapperDaoTemplate<TeachingExperience>{
 
     @Autowired

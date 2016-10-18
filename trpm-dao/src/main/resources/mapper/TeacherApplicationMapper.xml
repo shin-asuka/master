@@ -61,7 +61,8 @@
 		teacher_application_positive, teacher_application.engaged AS
 		teacher_application_engaged, teacher_application.appearance AS
 		teacher_application_appearance, teacher_application.phonics AS
-		teacher_application_phonics</sql>
+		teacher_application_phonics,teacher_application.version AS 
+		teacher_application_version</sql>
 
 	<sql id="teacherApplicationWhere">
 		<trim prefix="WHERE" prefixOverrides="AND">
@@ -126,6 +127,7 @@
 			<if test="engaged!=-1">AND teacher_application.engaged = #{engaged}</if>
 			<if test="appearance!=-1">AND teacher_application.appearance = #{appearance}</if>
 			<if test="phonics!=-1">AND teacher_application.phonics = #{phonics}</if>
+			<if test="version!=-1">AND teacher_application.version = #{version}</if>
 		</trim>
 	</sql>
 
@@ -192,6 +194,7 @@
 		<result column="teacher_application_engaged" property="engaged" />
 		<result column="teacher_application_appearance" property="appearance" />
 		<result column="teacher_application_phonics" property="phonics" />
+		<result column="teacher_application_version" property="version" />
 	</resultMap>
 
 	<select id="findDao" resultMap="teacherApplicationResultMap">
@@ -266,7 +269,7 @@
 			<if test="engaged!=-1">,engaged</if>
 			<if test="appearance!=-1">,appearance</if>
 			<if test="phonics!=-1">,phonics</if>
-			,version
+			<if test="version!=-1">,version</if>
 		</trim>
 		) VALUES
 		<trim prefix="(" prefixOverrides=",">
@@ -308,7 +311,7 @@
 			<if test="engaged!=-1">,#{engaged}</if>
 			<if test="appearance!=-1">,#{appearance}</if>
 			<if test="phonics!=-1">,#{phonics}</if>
-			,2
+			<if test="version!=-1">,#{version}</if>
 		</trim>
 		)
 	</insert>
@@ -364,6 +367,7 @@
 			<if test="engaged!=-1">,engaged = #{engaged}</if>
 			<if test="appearance!=-1">,appearance = #{appearance}</if>
 			<if test="phonics!=-1">,phonics = #{phonics}</if>
+			<if test="version!=-1">,version = #{version}</if>
 		</trim>
 		<trim prefix="WHERE" prefixOverrides="AND">AND id = #{id}</trim>
 	</update>
@@ -373,26 +377,7 @@
 		<trim prefix="WHERE" prefixOverrides="AND">AND id = #{id}</trim>
 	</delete>
 
-	<select id="findCurrentByTeacherId" resultType="java.util.HashMap">
-		teacher_application.id AS teacher_application_id,
-		
-		teacher_application.apply_date_time AS
-		teacher_application_apply_date_time,
-		teacher_application.audit_date_time AS
-		teacher_application_audit_date_time, 
-		teacher_application.failed_reason AS
-		teacher_application_failed_reason,
-		teacher_application.result AS teacher_application_result,
-		teacher_application.status AS teacher_application_status,
-		teacher_application.stduent_id AS teacher_application_stduent_id,
-		teacher_application.teacher_id AS teacher_application_teacher_id,
-		teacher_application.online_class_id AS
-		teacher_application_online_class_id
-		
-		WHERE teacher_application.teacher_id = #{teacher_id}
-		AND teacher_application.current = 0
-	</select>
-	
+
 	<select id="countApplicationByOlineclassId" resultType="int">
 		SELECT COUNT(*) FROM teacher_application
 		WHERE online_class_id = #{onlineClassId} AND auditor_id IS NOT NULL
