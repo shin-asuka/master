@@ -167,6 +167,17 @@ define([ "jquery-form", "jquery-bootstrap", "jquery-load", "tools" ], function()
 					"width" : "400px"
 				}
 			});
+		} else if ($('#performanceAdjust').prop('checked') && $("#performance").val() == 0) {
+			$.alert("confirm", {
+				title : "Prompt",
+				content : "Please select Level of Difficulty before suggest adjustment!",
+				cancel:"OK",
+				cancelClass:"primary",
+				style : {
+					"margin-top" : "10%",
+					"width" : "400px"
+				}
+			});
 		} else {
 			//TODO : 关闭按钮同样需要提示
 			$.alert('confirm', {

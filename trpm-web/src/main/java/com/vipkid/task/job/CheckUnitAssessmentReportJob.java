@@ -60,5 +60,20 @@ public class CheckUnitAssessmentReportJob {
         logger.info("执行方法doJob()耗时：{} ", millis);
 		logger.info("执行检查教师结束课程12小时后是否填写UA报告成功========================================");
 	}
-	
+
+	@Vschedule
+	public void do24hourRemindJob(JobContext jobContext) {
+		logger.info("开始检查教师结束课程24小时后是否填写UA报告=======================================");
+		Stopwatch stopwatch = Stopwatch.createStarted();
+
+		try {
+			unitAssesssmentService.remindTeacherUnitAssessmentFor24Hour();
+		} catch (Exception e) {
+			logger.error("执行检查教师结束课程24小时后是否填写UA报告时 checkTeacherUnitAssessment，出现异常",e);
+		}
+
+		long millis =stopwatch.stop().elapsed(TimeUnit.MILLISECONDS);
+		logger.info("执行方法doJob()耗时：{} ", millis);
+		logger.info("执行检查教师结束课程24小时后是否填写UA报告成功========================================");
+	}
 }

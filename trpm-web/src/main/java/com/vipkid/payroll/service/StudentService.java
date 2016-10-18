@@ -71,4 +71,10 @@ public class StudentService {
 		}
 		return isPaidForTrial;
 	}
+	
+	public List<Map<String, Object>> findPaidByStudentIdAndPayDate(Long studentId, String paidDateTime) {
+
+		List<Map<String, Object>> list = studentDao.findOrderListByStudentIdAndPaidDateTime(studentId, paidDateTime);
+		return list;
+	}
 }

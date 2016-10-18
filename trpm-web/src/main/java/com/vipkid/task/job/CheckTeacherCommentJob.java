@@ -60,5 +60,20 @@ public class CheckTeacherCommentJob {
         logger.info("执行方法doJob()耗时：{} ", millis);
 		logger.info("执行检查教师结束课程12小时后是否填写TeacherComment成功========================================");
 	}
-	
+
+	@Vschedule
+	public void do24hourRemindJob(JobContext jobContext) {
+		logger.info("开始检查教师结束课程24小时后是否填写TeacherComment=======================================");
+		Stopwatch stopwatch = Stopwatch.createStarted();
+
+		try {
+			checkTeacherCommentService.remindTeacherComment(24);
+		} catch (Exception e) {
+			logger.error("执行检查教师结束课程24小时后是否填写TeacherComment时 checkTeacherComment，出现异常",e);
+		}
+
+		long millis =stopwatch.stop().elapsed(TimeUnit.MILLISECONDS);
+		logger.info("执行方法doJob()耗时：{} ", millis);
+		logger.info("执行检查教师结束课程24小时后是否填写TeacherComment成功========================================");
+	}
 }

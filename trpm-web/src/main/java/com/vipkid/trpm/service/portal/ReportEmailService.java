@@ -43,13 +43,12 @@ public class ReportEmailService {
     }
 
     public void sendEmail4Performance2CLT(long studentId, String serialNumber){
-        if (studentId == 0 || StringUtils.isEmpty(serialNumber) ||
-                !((serialNumber.startsWith("C1") || serialNumber.startsWith("MC")) && serialNumber.contains("-U1-"))){
+        if (studentId == 0 || StringUtils.isEmpty(serialNumber)){
             logger.info("sendEmail4Performance2CLT 参数不符 studentId = {}; serialNumber = {} ", studentId, serialNumber);
             return;
         }
-        //一个学生在第一个unit被标记为very difficult 或者 very easy的
-        String lessonSnPrefix = serialNumber.substring(0, serialNumber.indexOf("-U1-") + ("-U1-").length()) + "%";
+        //一个学生在每一个unit被标记为very difficult 或者 very easy的
+        String lessonSnPrefix = serialNumber.substring(0, serialNumber.indexOf("-LC") + 1).concat("%");
         List<Map<String, Object>> lessonSnList = teacherCommentDao.findLessonSn4PerformanceByStudentAndUnit(studentId, lessonSnPrefix);
         logger.info("sendEmail4Performance2CLT findLessonSn4PerformanceByStudentAndUnit lessonSnList = {} ", lessonSnList);
 
@@ -130,8 +129,10 @@ public class ReportEmailService {
         logger.info(LessonSerialNumber.getLessonNoFromSn(serialNumber).toString());
         String scheduledDateTime = "2016-05-13 12:00:00.0";
         logger.info(scheduledDateTime.split("\\.")[0]);
+        logger.info(serialNumber.substring(0, serialNumber.indexOf("-LC") + 1).concat("%"));
         logger.info(serialNumber.substring(0, serialNumber.indexOf("-U1-") + ("-U1-").length()) + "%");
         List<String> lessonSnList =  Arrays.asList(
+                "MC-L2-U6-LC2-11",
             "C1-L1-U1-LC1-2",
             "C1-L1-U1-LC1-10",
             "C1-L1-U1-LC1-3",

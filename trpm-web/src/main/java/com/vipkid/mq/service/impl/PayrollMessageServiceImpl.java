@@ -1,9 +1,15 @@
 package com.vipkid.mq.service.impl;
 
+import java.sql.Timestamp;
+import java.util.List;
+import java.util.Map;
+
 import javax.annotation.Resource;
 import javax.jms.Destination;
 
+import com.alibaba.fastjson.JSON;
 import com.vipkid.enums.OnlineClassEnum;
+
 import net.sf.json.JSONObject;
 
 import org.apache.commons.lang3.StringUtils;
@@ -218,6 +224,13 @@ public class PayrollMessageServiceImpl implements PayrollMessageService {
                     String paidDateTime = DateUtils.formatDate(onlineClass.getScheduledDateTime(), "yyyy-MM");
                     isPaidForTrial = studentService.findIsPaidByStudentIdAndPayDate(studentId, paidDateTime);
                     onlineClassMessage.setPaidForTrial(isPaidForTrial);
+                    List<Map<String, Object>> payList =  studentService.findPaidByStudentIdAndPayDate(studentId, paidDateTime);
+					if (payList.size() > 0) {
+						Object timestamp = payList.get(0).get("paid_date_time");
+						if (timestamp instanceof Timestamp) {
+							onlineClassMessage.setTrialPayTime(((Timestamp) timestamp).getTime());
+						}
+					}
                 }
 
                 logger.info("PayrollMessageService 结束课程，消息发送成功  destination={}, message={} ",
@@ -284,6 +297,13 @@ public class PayrollMessageServiceImpl implements PayrollMessageService {
                     String paidDateTime = DateUtils.formatDate(onlineClass.getScheduledDateTime(), "yyyy-MM");
                     isPaidForTrial = studentService.findIsPaidByStudentIdAndPayDate(studentId, paidDateTime);
                     onlineClassMessage.setPaidForTrial(isPaidForTrial);
+                    List<Map<String, Object>> payList =  studentService.findPaidByStudentIdAndPayDate(studentId, paidDateTime);
+					if (payList.size() > 0) {
+						Object timestamp = payList.get(0).get("paid_date_time");
+						if (timestamp instanceof Timestamp) {
+							onlineClassMessage.setTrialPayTime(((Timestamp) timestamp).getTime());
+						}
+					}
                 }
 
                 // 是否有unitAssessment
@@ -309,6 +329,7 @@ public class PayrollMessageServiceImpl implements PayrollMessageService {
 
                 logger.info("PayrollMessageService 结束课程，消息发送成功  destination={}, message={} ",
                         finishOnlineClassDestination, JSONObject.fromObject(message));
+                logger.info("[onlineClass消息详情]:{}", JSON.toJSONString(onlineClassMessage));
                 producerService.sendJsonMessage(finishOnlineClassDestination, message);
             } else {
                 logger.info("课程信息为空，不发送消息 onlineClassId = {}", onlineClassId);

@@ -29,26 +29,26 @@
 					</div>
 				</div>
 
-				#if($lesson.serialNumber)
-					#if(($stringUtils.startsWith($!lesson.serialNumber,'C1') || $stringUtils.startsWith($!lesson.serialNumber,'MC')) && $stringUtils.contains($!lesson.serialNumber,'-U1-'))
-				<div style="padding-top:10px;">
-					<label>Level of Difficulty</label>
-					<div style="font-weight:normal;color:#666;margin-top:-5px;padding-bottom:5px;">
-						(This helps us with overall lesson performance/ student ability)</div>
-					<div>
-						<select name="performance" field="$!teacherComment.performance" $!elememtDisabled class="ng-pristine ng-valid">
-							<option value="0">Choose From Here</option>
-							<option value="5">Very Easy</option>
-							<option value="4">Slightly Easy</option>
-							<option value="3">On Level</option>
-							<option value="2">Slightly Difficult</option>
-							<option value="1">Very Difficult</option>
-						</select>
+				#if($lesson.serialNumber && ($stringUtils.startsWith($!lesson.serialNumber,'C1') || $stringUtils.startsWith($!lesson.serialNumber,'MC')))
+					<div style="padding-top:10px;">
+						<label>Level of Difficulty</label>
+						<div style="font-weight:normal;color:#666;margin-top:-5px;padding-bottom:5px;">
+							(This helps us with overall lesson performance/ student ability)</div>
+						<div>
+							<select id="performance" name="performance" field="$!teacherComment.performance" $!elememtDisabled class="ng-pristine ng-valid">
+								<option value="0">Choose From Here</option>
+								<option value="5">Very Easy</option>
+								<option value="4">Slightly Easy</option>
+								<option value="3">On Level</option>
+								<option value="2">Slightly Difficult</option>
+								<option value="1">Very Difficult</option>
+							</select>
+						</div>
 					</div>
-				</div>
-				<div style="padding-top:10px;">
-					<input type="checkbox" name="performanceAdjust" value="1" $!elememtDisabled #if($!teacherComment.performanceAdjust == 1) checked #end/>&nbsp;&nbsp;I suggest adjustment to the current student placement
-				</div>
+					#if($stringUtils.contains($!lesson.serialNumber,'-U1-') || $stringUtils.contains($!lesson.serialNumber,'-U4-') || $stringUtils.contains($!lesson.serialNumber,'-U7-') || $stringUtils.contains($!lesson.serialNumber,'-U10-'))
+						<div style="padding-top:10px;">
+							<input type="checkbox" id="performanceAdjust" name="performanceAdjust" value="1" $!elememtDisabled #if($!teacherComment.performanceAdjust == 1) checked #end/>&nbsp;&nbsp;I suggest adjustment to the current student placement
+						</div>
 					#end
 				#end
 

@@ -115,6 +115,39 @@ public class UnitAssesssmentService {
 		
 	}
 
+	public void remindTeacherUnitAssessmentFor24Hour(){
+
+		//查询出24个小时以前已经AS_SCHEDULED的课程
+		Date startDate = UADateUtils.getDateByBeforeHours(25);
+		Date endDate = UADateUtils.getDateByBeforeHours(24);
+
+		String startTime = UADateUtils.format(startDate, UADateUtils.defaultFormat) ;
+		String endTime = UADateUtils.format(endDate, UADateUtils.defaultFormat) ;
+
+		logger.info("查询出24个小时以前已经AS_SCHEDULED的课程  startTime = {},endTime = {}",startTime,endTime);
+
+		List<Map<String, Object>> list = onlineClassDao.findMajorCourseListByStartTimeAndEndTime(startTime, endTime, null);
+		logger.info("Get unSubmit OnlineClass list = {}",JsonUtils.toJSONString(list));
+
+		List<OnlineClassVo> onlineClassVos = getOnlineClassVoList(list);
+
+		OnlineClassVo onlineClassVo = new OnlineClassVo();
+		Map<Long,OnlineClassVo> ocMap = Maps.newHashMap();
+		if(CollectionUtils.isNotEmpty(onlineClassVos)){
+			for (OnlineClassVo oc : onlineClassVos) { //数据格式转换
+				Long id = oc.getId();
+				onlineClassVo.getIdList().add(id);
+				ocMap.put(id, oc);
+			}
+
+			//调用homework服务查询为完成UA报告的课程
+			OnlineClassVo onlineClassVoUnSubmit = assessmentHttpService.findUnSubmitonlineClassVo(onlineClassVo );
+			logger.info("Result unSubmit OnlineClass  = {}",JsonUtils.toJSONString(onlineClassVoUnSubmit));
+			sendEmail(onlineClassVoUnSubmit, ocMap,"UARemindTeacher24hour.html","UARemindTeacher24hourTitle.html");
+		}
+
+	}
+
 	public void sendEmail(OnlineClassVo onlineClassVoUnSubmit,Map<Long,OnlineClassVo> ocMap,String contentTemplete,String titleTemplete){
 		if(onlineClassVoUnSubmit!=null && CollectionUtils.isNotEmpty(onlineClassVoUnSubmit.getIdList())){
 			List<Long> idList = onlineClassVoUnSubmit.getIdList();

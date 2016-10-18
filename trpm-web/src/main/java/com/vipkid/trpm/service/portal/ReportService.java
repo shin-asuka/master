@@ -667,7 +667,7 @@ public class ReportService {
                     OperatorType.ADD_TEACHER_COMMENTS));
         }
 
-        if (teacherComment.getPerformanceAdjust()==1){
+        if (teacherComment.getPerformanceAdjust()==1 && teacherComment.getPerformance()!=0){
             logger.info("判断PerformanceAdjust给CLT发邮件: studentId = {}, serialNumber = {}, scheduledDateTime = {} ",
                     oldtc.getStudentId(), serialNumber, scheduledDateTime);
             sendEmailExecutor.execute(() -> {
