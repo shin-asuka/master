@@ -21,7 +21,6 @@ import com.vipkid.rest.app.BasicInfoBean;
 import com.vipkid.rest.config.RestInterface;
 import com.vipkid.rest.config.RestfulConfig;
 import com.vipkid.trpm.constant.ApplicationConstant.TeacherLifeCycle;
-import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.entity.TeachingExperience;
 import com.vipkid.trpm.entity.User;
 import com.vipkid.trpm.service.recruitment.BasicInfoService;
