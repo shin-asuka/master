@@ -104,7 +104,6 @@ public class BasicInfoService {
         application.setApplyDateTime(new Timestamp(System.currentTimeMillis()));
         application.setStatus(TeacherApplicationDao.Status.BASIC_INFO.toString());
         application = teacherApplicationDao.initApplicationData(application);
-        application.setVersion(3);
         //5.AutoFail Pass TeacherApplication
         Map<String,String>  checkResult = this.autoFail(teacher);
         //自动审核通过
@@ -130,6 +129,7 @@ public class BasicInfoService {
             application.setFailedReason(checkResult.get("failReason"));
             result.put("result", TeacherApplicationDao.Result.FAIL);
         }
+        application.setVersion(3);
         this.teacherApplicationDao.save(application);
         this.teacherDao.update(teacher);
         result.put("id", user.getId());

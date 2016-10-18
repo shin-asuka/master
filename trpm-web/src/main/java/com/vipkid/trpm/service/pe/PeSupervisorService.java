@@ -352,6 +352,7 @@ public class PeSupervisorService {
                     // 开始插入当前Application记录的副本
                     enabledTeacherApplication.setId(0);
                     enabledTeacherApplication.setContractUrl("PE-Supervisor");
+                    enabledTeacherApplication.setVersion(2);
                     teacherApplicationDao.save(enabledTeacherApplication);
 
                     // 更新当前Application记录的结果为TBD
