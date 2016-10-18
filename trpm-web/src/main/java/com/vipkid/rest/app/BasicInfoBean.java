@@ -16,6 +16,18 @@ public class BasicInfoBean implements Serializable {
     
     private Integer cityId;
     
+    private String street;
+    
+    private String zipCode;
+    
+    private String phoneType; //新增字段
+    
+    private String phoneNationCode;
+    
+    private String phoneNationId;
+    
+    private String mobile;
+    
     private String timezone;
     
     private String recruitmentChannel;
@@ -116,6 +128,54 @@ public class BasicInfoBean implements Serializable {
 
     public void setTeachingIds(List<Map<String, Integer>> teachingIds) {
         this.teachingIds = teachingIds;
+    }
+
+    public String getStreet() {
+        return street;
+    }
+
+    public void setStreet(String street) {
+        this.street = street;
+    }
+
+    public String getZipCode() {
+        return zipCode;
+    }
+
+    public void setZipCode(String zipCode) {
+        this.zipCode = zipCode;
+    }
+
+    public String getPhoneType() {
+        return phoneType;
+    }
+
+    public void setPhoneType(String phoneType) {
+        this.phoneType = phoneType;
+    }
+
+    public String getPhoneNationCode() {
+        return phoneNationCode;
+    }
+
+    public void setPhoneNationCode(String phoneNationCode) {
+        this.phoneNationCode = phoneNationCode;
+    }
+
+    public String getPhoneNationId() {
+        return phoneNationId;
+    }
+
+    public void setPhoneNationId(String phoneNationId) {
+        this.phoneNationId = phoneNationId;
+    }
+
+    public String getMobile() {
+        return mobile;
+    }
+
+    public void setMobile(String mobile) {
+        this.mobile = mobile;
     }
 
 }

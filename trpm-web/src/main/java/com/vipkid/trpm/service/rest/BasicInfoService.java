@@ -44,13 +44,13 @@ public class BasicInfoService {
     }
     
     /**
-     * 1.修改User表
-     * 2.插入地址表
-     * 3.招聘渠道逻辑
-     * 4.更新教育经验表
-     * 5.Auto Fail 逻辑 及邮件
-     * 6.国籍替换
-     * 7.修改Teacher表
+     * 1.插入地址表
+     * 2.招聘渠道逻辑
+     * 3.更新教育经验表
+     * 4.Auto Fail 逻辑 及邮件
+     * 5.国籍替换
+     * 6.修改Teacher表
+     * 7.修改User表
      * @Author:ALong (ZengWeiLong)
      * @param bean
      * @param user
