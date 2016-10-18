@@ -4,18 +4,20 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.vipkid.email.EmailEngine;
-import com.vipkid.email.handle.EmailConfig;
-import com.vipkid.email.templete.TempleteUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.google.api.client.util.Maps;
+import com.vipkid.email.EmailEngine;
+import com.vipkid.email.handle.EmailConfig;
+import com.vipkid.email.templete.TempleteUtils;
 import com.vipkid.enums.UserEnum;
 import com.vipkid.rest.app.BasicInfoBean;
 import com.vipkid.trpm.dao.TeacherDao;
 import com.vipkid.trpm.dao.TeachingExperienceDao;
+import com.vipkid.trpm.dao.UserDao;
 import com.vipkid.trpm.entity.Teacher;
+import com.vipkid.trpm.entity.TeachingExperience;
 import com.vipkid.trpm.entity.User;
 
 @Service
@@ -23,6 +25,9 @@ public class BasicInfoService {
 
     @Autowired
     private TeachingExperienceDao teachingExperienceDao;
+    
+    @Autowired
+    private UserDao userDao;
     
     @Autowired
     private TeacherDao teacherDao;
@@ -59,9 +64,16 @@ public class BasicInfoService {
      * Map<String,Object>
      * @date 2016年10月17日
      */
-    public Map<String,Object> submitInfo(BasicInfoBean bean,User user,Teacher teacher){       
+    public Map<String,Object> submitInfo(BasicInfoBean bean,User user){       
         
         return Maps.newHashMap();
     }
     
+    
+    
+    private Teacher autoFail(Teacher teacher){
+        List<TeachingExperience> list = teachingExperienceDao.findTeachingList(teacher.getId());
+        
+        return teacher;
+    }
 }
