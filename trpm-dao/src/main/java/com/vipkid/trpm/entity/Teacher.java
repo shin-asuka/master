@@ -142,6 +142,8 @@ public class Teacher extends Entity implements Serializable {
 
 	// 2016-05-24 新添加teacher 属性 --end
 	private String evaluationBio;
+	
+	private int phoneType; //新增电话类型
 
 	public long getId() {
 		return this.id;
@@ -751,4 +753,13 @@ public class Teacher extends Entity implements Serializable {
     public void setEvaluationBio(String evaluationBio) {
         this.evaluationBio = evaluationBio;
     }
+
+    public int getPhoneType() {
+        return phoneType;
+    }
+
+    public void setPhoneType(int phoneType) {
+        this.phoneType = phoneType;
+    }
+    
 }

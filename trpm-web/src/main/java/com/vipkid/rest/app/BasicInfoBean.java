@@ -1,8 +1,6 @@
 package com.vipkid.rest.app;
 
 import java.io.Serializable;
-import java.util.List;
-import java.util.Map;
 
 public class BasicInfoBean implements Serializable {
 
@@ -16,15 +14,15 @@ public class BasicInfoBean implements Serializable {
     
     private Integer cityId;
     
-    private String street;
+    private String streetAddress;
     
     private String zipCode;
     
-    private String phoneType; //新增字段
+    private Integer phoneType; //新增字段
     
     private String phoneNationCode;
     
-    private String phoneNationId;
+    private Integer phoneNationId;
     
     private String mobile;
     
@@ -38,9 +36,7 @@ public class BasicInfoBean implements Serializable {
     
     private String gender;
     
-    private String highestDegree;
-    
-    private List<Map<String,Integer>> teachingIds;
+    private String highestLevelOfEdu;
 
     public String getFullName() {
         return fullName;
@@ -114,28 +110,12 @@ public class BasicInfoBean implements Serializable {
         this.gender = gender;
     }
 
-    public String getHighestDegree() {
-        return highestDegree;
+    public String getStreetAddress() {
+        return streetAddress;
     }
 
-    public void setHighestDegree(String highestDegree) {
-        this.highestDegree = highestDegree;
-    }
-
-    public List<Map<String, Integer>> getTeachingIds() {
-        return teachingIds;
-    }
-
-    public void setTeachingIds(List<Map<String, Integer>> teachingIds) {
-        this.teachingIds = teachingIds;
-    }
-
-    public String getStreet() {
-        return street;
-    }
-
-    public void setStreet(String street) {
-        this.street = street;
+    public void setStreetAddress(String streetAddress) {
+        this.streetAddress = streetAddress;
     }
 
     public String getZipCode() {
@@ -146,11 +126,11 @@ public class BasicInfoBean implements Serializable {
         this.zipCode = zipCode;
     }
 
-    public String getPhoneType() {
+    public Integer getPhoneType() {
         return phoneType;
     }
 
-    public void setPhoneType(String phoneType) {
+    public void setPhoneType(Integer phoneType) {
         this.phoneType = phoneType;
     }
 
@@ -162,11 +142,11 @@ public class BasicInfoBean implements Serializable {
         this.phoneNationCode = phoneNationCode;
     }
 
-    public String getPhoneNationId() {
+    public Integer getPhoneNationId() {
         return phoneNationId;
     }
 
-    public void setPhoneNationId(String phoneNationId) {
+    public void setPhoneNationId(Integer phoneNationId) {
         this.phoneNationId = phoneNationId;
     }
 
@@ -178,4 +158,11 @@ public class BasicInfoBean implements Serializable {
         this.mobile = mobile;
     }
 
+    public String getHighestLevelOfEdu() {
+        return highestLevelOfEdu;
+    }
+
+    public void setHighestLevelOfEdu(String highestLevelOfEdu) {
+        this.highestLevelOfEdu = highestLevelOfEdu;
+    }
 }
