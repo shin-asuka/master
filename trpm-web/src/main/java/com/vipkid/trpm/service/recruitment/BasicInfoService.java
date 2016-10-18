@@ -1,4 +1,4 @@
-package com.vipkid.trpm.service.rest;
+package com.vipkid.trpm.service.recruitment;
 
 import java.util.HashMap;
 import java.util.List;
@@ -14,6 +14,7 @@ import com.vipkid.email.templete.TempleteUtils;
 import com.vipkid.enums.UserEnum;
 import com.vipkid.rest.app.BasicInfoBean;
 import com.vipkid.trpm.dao.TeacherAddressDao;
+import com.vipkid.trpm.dao.TeacherApplicationDao;
 import com.vipkid.trpm.dao.TeacherDao;
 import com.vipkid.trpm.dao.TeachingExperienceDao;
 import com.vipkid.trpm.dao.UserDao;
@@ -37,15 +38,10 @@ public class BasicInfoService {
     @Autowired
     private TeacherAddressDao teacherAddressDao;
     
+    @Autowired
+    private TeacherApplicationDao teacherApplicationDao;
 
-    private void sendEmail4UndoFail(Teacher teacher) {
-        Map<String, String> paramsMap = new HashMap();
-        paramsMap.put("teacherName", teacher.getRealName());
-
-        Map<String, String> emailMap = new TempleteUtils().readTemplete("BasicInfoUndoFail.html", paramsMap, "BasicInfoUndoFailTitle.html");
-        new EmailEngine().addMailPool(teacher.getEmail(), emailMap, EmailConfig.EmailFormEnum.TEACHVIP);
-    }
-
+    
     public List<Map<String,Object>> getRecruitmentChannelList(){
         Map<String,Object> paramMap = new HashMap<String,Object>();
         paramMap.put("type", "TEACHER_RECRUITMENT");
@@ -100,7 +96,7 @@ public class BasicInfoService {
     /**
      * 1.更新教育经验表
      * 2.Auto Fail 逻辑
-     * 3.邮件 
+     * 3.邮件 PASS FAIL
      * 4.更新TeacherApplication
      * @Author:ALong (ZengWeiLong)
      * @param teacher

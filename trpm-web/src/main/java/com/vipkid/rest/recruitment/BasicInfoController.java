@@ -1,4 +1,4 @@
-package com.vipkid.rest.web;
+package com.vipkid.rest.recruitment;
 
 import java.util.List;
 import java.util.Map;
@@ -24,8 +24,8 @@ import com.vipkid.trpm.constant.ApplicationConstant.TeacherLifeCycle;
 import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.entity.TeachingExperience;
 import com.vipkid.trpm.entity.User;
-import com.vipkid.trpm.service.rest.BasicInfoService;
-import com.vipkid.trpm.service.rest.TeachingExperienceService;
+import com.vipkid.trpm.service.recruitment.BasicInfoService;
+import com.vipkid.trpm.service.recruitment.TeachingExperienceService;
 
 @RestController
 @RestInterface(lifeCycle={TeacherLifeCycle.SIGNUP,TeacherLifeCycle.BASIC_INFO})

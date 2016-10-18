@@ -1,4 +1,4 @@
-package com.vipkid.trpm.service.rest;
+package com.vipkid.trpm.service.recruitment;
 
 import java.sql.Timestamp;
 import java.util.List;
