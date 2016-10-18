@@ -18,7 +18,7 @@ public class RestfulConfig {
         
         public static int RECRUITMENT = 2;
         
-        public static int NEWRECRUITMENT = 2;
+        public static int NEWRECRUITMENT = 3;
     }
     
     public static final class RoleClass{
