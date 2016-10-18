@@ -104,6 +104,7 @@ public class BasicInfoService {
         application.setApplyDateTime(new Timestamp(System.currentTimeMillis()));
         application.setStatus(TeacherApplicationDao.Status.BASIC_INFO.toString());
         application = teacherApplicationDao.initApplicationData(application);
+        application.setVersion(3);
         //5.AutoFail Pass TeacherApplication
         Map<String,String>  checkResult = this.autoFail(teacher);
         //自动审核通过
