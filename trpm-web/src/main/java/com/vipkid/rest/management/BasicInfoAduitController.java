@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.google.api.client.util.Maps;
 import com.vipkid.rest.config.RestfulConfig;
+import com.vipkid.trpm.service.management.BasicInfoAduitService;
 
 @RestController
 @RequestMapping("/management")
@@ -21,11 +23,14 @@ public class BasicInfoAduitController {
 
     private static Logger logger = LoggerFactory.getLogger(BasicInfoAduitController.class);
     
+    @Autowired
+    private BasicInfoAduitService basicInfoAduitService;
+    
     
     @RequestMapping(value = "/basicReview", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
-    public Map<String,Object> basicReview(HttpServletRequest request, HttpServletResponse response){
+    public Map<String,Object> basicReview(HttpServletRequest request, HttpServletResponse response,long teacherId){
         try{
-            
+           
             
             
             return Maps.newHashMap();
@@ -42,7 +47,7 @@ public class BasicInfoAduitController {
     
     @RequestMapping(value = "/changeStatus", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
     public Map<String,Object> changeStatus(HttpServletRequest request, HttpServletResponse response,
-            Integer teacherId,String remark){
+            long teacherId,String remark){
         try{
             
             return Maps.newHashMap();
