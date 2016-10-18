@@ -17,13 +17,13 @@ import com.vipkid.rest.config.RestfulConfig;
 
 @RestController
 @RequestMapping("/management")
-public class TeacherAuditController {
+public class BasicInfoAduitController {
 
-    private static Logger logger = LoggerFactory.getLogger(TeacherAuditController.class);
+    private static Logger logger = LoggerFactory.getLogger(BasicInfoAduitController.class);
     
     
-    @RequestMapping(value = "/teachingExperienceList", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
-    public Map<String,Object> teachingExperienceList(HttpServletRequest request, HttpServletResponse response){
+    @RequestMapping(value = "/basicReview", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
+    public Map<String,Object> basicReview(HttpServletRequest request, HttpServletResponse response){
         try{
             
             
