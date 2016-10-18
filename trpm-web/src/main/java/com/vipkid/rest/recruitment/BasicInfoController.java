@@ -107,7 +107,7 @@ public class BasicInfoController extends RestfulController{
         try{
             long resultRow = 0;
             User user = getUser(request);
-            this.teachingExperienceService.delTeaching(id, user);
+            resultRow = this.teachingExperienceService.delTeaching(id, user);
             Map<String,Object> resultMap = Maps.newHashMap();
             resultMap.put("id", resultRow);
             resultMap.put("status", resultRow > 0 ? true : false);
@@ -126,18 +126,21 @@ public class BasicInfoController extends RestfulController{
     
     @RequestMapping(value = "/submitInfo", method = RequestMethod.POST, produces = RestfulConfig.JSON_UTF_8)
     public Map<String,Object> submitInfo(HttpServletRequest request, HttpServletResponse response,@RequestBody BasicInfoBean bean){
+        Map<String,Object> result = Maps.newHashMap();
         try{
             User user = getUser(request);
-            this.basicInfoService.submitInfo(bean, user);
-            return Maps.newHashMap();
+            result = this.basicInfoService.submitInfo(bean, user);
+            return result;
         } catch (IllegalArgumentException e) {
             logger.error("内部参数转化异常:"+e.getMessage());
             response.setStatus(HttpStatus.BAD_REQUEST.value());
+            result.put("status", false);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            result.put("status", false);
         }
-        return Maps.newHashMap();
+        return result;
     } 
     
     
@@ -145,7 +148,6 @@ public class BasicInfoController extends RestfulController{
     public Map<String,Object> getStatus(HttpServletRequest request, HttpServletResponse response){
         try{
             User user = getUser(request);
-            
             
             return Maps.newHashMap();
         } catch (IllegalArgumentException e) {

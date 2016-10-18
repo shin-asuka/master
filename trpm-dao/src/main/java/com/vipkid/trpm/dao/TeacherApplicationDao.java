@@ -1,7 +1,11 @@
 package com.vipkid.trpm.dao;
 
 import java.sql.Timestamp;
-import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 import org.community.dao.support.MapperDaoTemplate;
 import org.mybatis.spring.SqlSessionTemplate;
@@ -18,6 +22,76 @@ public class TeacherApplicationDao extends MapperDaoTemplate<TeacherApplication>
         super(sqlSessionTemplate, TeacherApplication.class);
     }
 
+    public enum Status {
+        SIGNUP, // 新申请
+        BASIC_INFO, // 2015-08-08 添加basic-info 状态，从signup分离
+        INTERVIEW, //面试
+        SIGN_CONTRACT, //签合同
+        TRAINING, // 教师培训
+        PRACTICUM,//试讲 
+        CANCELED, //已取消
+        FINISHED // 已结束
+        ;
+        public static TeacherApplicationDao.Status prevStatus(Status status) {
+            TeacherApplicationDao.Status [] arr = {Status.SIGNUP, Status.BASIC_INFO, Status.INTERVIEW, Status.SIGN_CONTRACT, Status.TRAINING, Status.PRACTICUM};
+            for (int n = 1; n<arr.length; n++) {
+                //
+                if (status == arr[n]) {
+                    return arr[n-1];
+                }
+            }            
+            return TeacherApplicationDao.Status.SIGNUP;
+        };
+    }
+    
+    public enum Result {
+        PASS, // 通过
+        FAIL, // 失败
+        REAPPLY, //重新申请,继续上PRACTICUM1（由于客观原因没能完成面试）
+        PRACTICUM2, //第一次面试没通过，上PRACTICUM2
+        TBD_FAIL,
+        TBD
+    }
+    
+    /**
+     * TeacherApplication 默认值设置<br/>
+     * @Author:VIPKID-ZengWeiLong
+     * @param application
+     * @return 2015年10月12日
+     */
+    public TeacherApplication initApplicationData(TeacherApplication application){
+        //  默认值设置
+        application.setGrade6TeachingExperience(-1);
+        application.setHighSchoolTeachingExperience(-1);
+        application.setOnlineTeachingExperience(-1);
+        application.setKidTeachingExperience(-1);
+        application.setTeachingCertificate(-1);
+        application.setAbroadTeachingExperience(-1);
+        application.setHomeCountryTeachingExperience(-1);
+        application.setKidUnder12TeachingExperience(-1);
+        application.setTeenagerTeachingExperience(-1);
+        application.setTeflOrToselCertificate(-1);
+        application.setInteractionRapportScore(-1);
+        application.setTeachingMethodScore(-1);
+        application.setStudentOutputScore(-1);
+        application.setPreparationPlanningScore(-1);
+        application.setLessonObjectivesScore(-1);
+        application.setTimeManagementScore(-1);
+        application.setAppearanceScore(-1);
+        application.setEnglishLanguageScore(-1);
+        //  TODO
+        application.setBasePay(0);
+        application.setAccent(0);
+        application.setPhonics(0);
+        application.setPositive(0);
+        application.setEngaged(0);
+        application.setAppearance(0);
+        application.setDelayDays(0);
+        //  当前步骤标识
+        application.setCurrent(1);
+        return application;
+    }
+    
     /**
      * 查找状态为status 和current=1的数据记录
      *

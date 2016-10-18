@@ -11,6 +11,8 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.vipkid.trpm.constant.ApplicationConstant.TeacherLifeCycle;
 
 public class RestfulConfig {
+    
+    public static long SYSTEM_USER_ID = 2;
 
     public static final class Port{
         
