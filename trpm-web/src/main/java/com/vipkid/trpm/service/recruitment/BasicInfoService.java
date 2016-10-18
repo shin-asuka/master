@@ -8,9 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.google.api.client.util.Maps;
-import com.vipkid.email.EmailEngine;
-import com.vipkid.email.handle.EmailConfig;
-import com.vipkid.email.templete.TempleteUtils;
 import com.vipkid.enums.UserEnum;
 import com.vipkid.rest.app.BasicInfoBean;
 import com.vipkid.trpm.dao.TeacherAddressDao;
