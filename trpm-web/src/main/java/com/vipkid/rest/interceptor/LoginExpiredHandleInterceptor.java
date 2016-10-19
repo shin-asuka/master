@@ -44,7 +44,7 @@ public class LoginExpiredHandleInterceptor extends HandlerInterceptorAdapter {
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler){
 	    
-	    logger.info("IP:{},发起请求:{}",request.getRemoteAddr(),request.getRequestURI());
+	    logger.info("IP:{},发起请求:{},请求参数:{}",request.getRemoteAddr(),request.getRequestURI(),JsonTools.getJson(request.getParameterMap()));
 
         HandlerMethod handlerMethod = (HandlerMethod) handler;
         //没有注解RestInterface，不进行拦截
