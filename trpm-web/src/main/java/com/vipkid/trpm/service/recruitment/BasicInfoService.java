@@ -140,10 +140,17 @@ public class BasicInfoService {
         return result;
     }
     
-    
-    public Map<String,Object> getStatus(long id){
+    /**
+     * 获取老师当前LifeCycle状态下的流程结果 
+     * @Author:ALong (ZengWeiLong)
+     * @param teacherId
+     * @return    
+     * Map<String,Object>
+     * @date 2016年10月19日
+     */
+    public Map<String,Object> getStatus(long teacherId){
         Map<String,Object> resultMap = Maps.newHashMap();
-        Teacher teacher = this.teacherDao.findById(id);
+        Teacher teacher = this.teacherDao.findById(teacherId);
         resultMap.put("lifeCycle",teacher.getLifeCycle());
         resultMap.put("result",TeacherApplicationDao.AuditStatus.ToSubmit.toString());
         List<TeacherApplication> list = this.teacherApplicationDao.findCurrentApplication(teacher.getId());
