@@ -19,6 +19,7 @@ import com.vipkid.trpm.entity.TeacherAddress;
 import com.vipkid.trpm.entity.TeacherApplication;
 import com.vipkid.trpm.entity.TeacherLocation;
 import com.vipkid.trpm.util.DateUtils;
+import com.vipkid.trpm.util.EmailUtils;
 
 @Service
 public class BasicInfoAduitService {
@@ -150,6 +151,8 @@ public class BasicInfoAduitService {
         this.teacherDao.update(teacher);
         //插入insert log
         this.teacherDao.insertLifeCycleLog(teacher.getId(), TeacherLifeCycle.BASIC_INFO, TeacherLifeCycle.INTERVIEW, userId);
+        //发送邮件
+        EmailUtils.sendEmail4UndoFail(teacher);
         result.put("status", true);
         return result;
     }

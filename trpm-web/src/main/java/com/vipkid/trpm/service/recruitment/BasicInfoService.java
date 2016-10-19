@@ -27,6 +27,7 @@ import com.vipkid.trpm.entity.TeacherApplication;
 import com.vipkid.trpm.entity.TeachingExperience;
 import com.vipkid.trpm.entity.User;
 import com.vipkid.trpm.util.AES;
+import com.vipkid.trpm.util.EmailUtils;
 
 @Service
 public class BasicInfoService {
@@ -115,8 +116,9 @@ public class BasicInfoService {
             application.setAuditDateTime(new Timestamp(System.currentTimeMillis()));
             application.setAuditorId(RestfulConfig.SYSTEM_USER_ID);
             application.setResult(TeacherApplicationDao.Result.PASS.toString());
-            //发送PASS邮件 TODO
-            
+            this.teacherDao.insertLifeCycleLog(teacher.getId(), TeacherLifeCycle.BASIC_INFO, TeacherLifeCycle.INTERVIEW, RestfulConfig.SYSTEM_USER_ID);
+            //发送邮件
+            EmailUtils.sendEmail4UndoFail(teacher);
             result.put("result", TeacherApplicationDao.Result.PASS);
             result.put("action", "signlogin.shtml?token="+ AES.encrypt(user.getToken(), AES.getKey(AES.KEY_LENGTH_128, ApplicationConstant.AES_128_KEY)));
         }else{
