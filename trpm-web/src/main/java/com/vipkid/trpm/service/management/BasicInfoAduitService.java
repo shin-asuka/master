@@ -51,6 +51,10 @@ public class BasicInfoAduitService {
         Map<String,Object> result = Maps.newHashMap();
         
         TeacherApplication teacherApplication = this.teacherApplicationDao.findApplictionById(teacherApplicationId);
+        if(teacherApplication == null){
+            result.put("changeStatus",false);
+            return result;
+        }
         result.put("list", this.teachingExperienceDao.findTeachingList(teacherApplication.getTeacherId()));
         result.put("changeStatus",false);
         result.put("failReason",teacherApplication.getFailedReason());
