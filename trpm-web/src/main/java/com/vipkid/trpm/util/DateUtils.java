@@ -160,6 +160,22 @@ public final class DateUtils {
     } 
     
     /**
+     * 检查两个时间差是否大于11.5个小时
+     * @Author:ALong (ZengWeiLong)
+     * @param classTime
+     * @return    
+     * long
+     * @date 2016年6月30日
+     */
+    public static boolean count11hrlf(long auditTime){
+        auditTime += 11.5*(3600*1000);
+        if(System.currentTimeMillis() > auditTime){
+            return true;
+        }
+        return false;
+    } 
+    
+    /**
      * 
      * 计算两个时间之间月份跨度 
      * @Author:ALong (ZengWeiLong)

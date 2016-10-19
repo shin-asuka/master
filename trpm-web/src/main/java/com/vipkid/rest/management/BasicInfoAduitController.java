@@ -28,12 +28,9 @@ public class BasicInfoAduitController {
     
     
     @RequestMapping(value = "/basicReview", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
-    public Map<String,Object> basicReview(HttpServletRequest request, HttpServletResponse response,long teacherId){
+    public Map<String,Object> basicReview(HttpServletRequest request, HttpServletResponse response,long teacherApplicationId){
         try{
-           
-            
-            
-            return Maps.newHashMap();
+            return this.basicInfoAduitService.basicReview(teacherApplicationId);
         } catch (IllegalArgumentException e) {
             logger.error("内部参数转化异常:"+e.getMessage());
             response.setStatus(HttpStatus.BAD_REQUEST.value());
@@ -47,7 +44,7 @@ public class BasicInfoAduitController {
     
     @RequestMapping(value = "/changeStatus", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
     public Map<String,Object> changeStatus(HttpServletRequest request, HttpServletResponse response,
-            long teacherId,String remark){
+            long teacherApplicationId,String remark){
         try{
             
             return Maps.newHashMap();
