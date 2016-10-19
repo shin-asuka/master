@@ -44,7 +44,7 @@ public class BasicInfoAduitController {
     
     @RequestMapping(value = "/changeStatus", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
     public Map<String,Object> changeStatus(HttpServletRequest request, HttpServletResponse response,
-            long teacherApplicationId,String remark){
+            long teacherApplicationId,long userId,String remark){
         try{
             
             return Maps.newHashMap();

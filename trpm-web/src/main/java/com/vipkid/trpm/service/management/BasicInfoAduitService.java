@@ -1,5 +1,6 @@
 package com.vipkid.trpm.service.management;
 
+import java.sql.Timestamp;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
@@ -7,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.google.common.collect.Maps;
+import com.vipkid.trpm.constant.ApplicationConstant.TeacherLifeCycle;
 import com.vipkid.trpm.dao.TeacherAddressDao;
 import com.vipkid.trpm.dao.TeacherApplicationDao;
 import com.vipkid.trpm.dao.TeacherDao;
@@ -22,7 +24,7 @@ import com.vipkid.trpm.util.DateUtils;
 public class BasicInfoAduitService {
 
     @Autowired
-    private TeacherApplicationDao teacerApplicationDao;
+    private TeacherApplicationDao teacherApplicationDao;
     
     @Autowired
     private TeacherDao teacherDao;
@@ -47,17 +49,17 @@ public class BasicInfoAduitService {
     public Map<String,Object> basicReview(long teacherApplicationId){
         Map<String,Object> result = Maps.newHashMap();
         
-        TeacherApplication teacherApplication = this.teacerApplicationDao.findApplictionById(teacherApplicationId);
+        TeacherApplication teacherApplication = this.teacherApplicationDao.findApplictionById(teacherApplicationId);
         result.put("list", this.teachingExperienceDao.findTeachingList(teacherApplication.getTeacherId()));
         result.put("changeStatus",false);
         result.put("failReason",teacherApplication.getFailedReason());
         result.put("status",teacherApplication.getStatus());
         result.put("remark",teacherApplication.getComments());
-        long auditTime = teacherApplication.getAuditDateTime().getTime();
         //只有Fail状态的才显示 change fail to pass 按钮
         if(StringUtils.equals(teacherApplication.getResult(), TeacherApplicationDao.Result.FAIL.toString())){
             result.put("changeStatus",true);
-            //超过12小时不能修改
+            //超过11.5小时不能修改
+            long auditTime = teacherApplication.getAuditDateTime().getTime();
             if(DateUtils.count11hrlf(auditTime)){
                 result.put("changeStatus",false);
             }
@@ -71,7 +73,7 @@ public class BasicInfoAduitService {
         teacherMap.put("fullName", teacher.getRealName());
         teacherMap.put("timezone", teacher.getTimezone());
         teacherMap.put("recruitmentChannel", teacher.getTimezone());
-        teacherMap.put("country", teacher.getCountry());
+        teacherMap.put("nationality", teacher.getCountry());
         teacherMap.put("highestLevelOfEdu", teacher.getHighestLevelOfEdu());
         TeacherAddress teacherAddress = teacherAddressDao.getTeacherAddress(teacher.getCurrentAddressId());
         teacherMap.put("currentLocation", this.getAddressString(teacherAddress));
@@ -108,5 +110,44 @@ public class BasicInfoAduitService {
             address.append(" " +teacherAddress.getStreetAddress());
         }
         return address.toString();
+    }
+    
+    public Map<String,Object> changeStatus(long teacherApplicationId,long userId,String remark){
+        Map<String,Object> result =Maps.newHashMap();
+        result.put("id", teacherApplicationId);
+        TeacherApplication teacherApplication = this.teacherApplicationDao.findApplictionById(teacherApplicationId);
+        if(teacherApplication == null){
+            result.put("status", false);
+            return result;
+        }
+        Teacher teacher = this.teacherDao.findById(userId);
+        if(teacher == null){
+            result.put("status", false);
+            return result;
+        }
+        //PASS的不能操作
+        if(StringUtils.equals(teacherApplication.getResult(), TeacherApplicationDao.Result.PASS.toString())){
+            result.put("status",false);
+            return result;
+        }
+        //超过11.5小时不能修改
+        long auditTime = teacherApplication.getAuditDateTime().getTime();
+        if(DateUtils.count11hrlf(auditTime)){
+            result.put("status",false);
+        }
+        //已经修改过不能修改
+        if(StringUtils.isNotBlank(teacherApplication.getComments())){
+            result.put("status",false);
+        }
+        teacherApplication.setResult(TeacherApplicationDao.Result.PASS.toString());
+        teacherApplication.setAuditDateTime(new Timestamp(System.currentTimeMillis()));
+        teacherApplication.setAuditorId(teacher.getId());
+        teacherApplication.setComments(remark);
+        this.teacherApplicationDao.update(teacherApplication); 
+        teacher.setLifeCycle(TeacherLifeCycle.INTERVIEW);
+        this.teacherDao.update(teacher);
+        
+        result.put("status", true);
+        return result;
     }
 }
