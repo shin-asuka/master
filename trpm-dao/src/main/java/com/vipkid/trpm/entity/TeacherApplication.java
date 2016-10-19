@@ -52,7 +52,7 @@ public class TeacherApplication extends Entity implements Serializable {
     private int engaged = -1;
     private int appearance = -1;
     private int phonics = -1;
-    private int version = 1;
+    private int version = -1;
 
     public long getId() {
         return this.id;

@@ -1,6 +1,7 @@
 package com.vipkid.trpm.service.management;
 
 import java.sql.Timestamp;
+import java.util.Date;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
@@ -52,7 +53,11 @@ public class BasicInfoAduitService {
         
         TeacherApplication teacherApplication = this.teacherApplicationDao.findApplictionById(teacherApplicationId);
         if(teacherApplication == null){
-            result.put("changeStatus",false);
+            result.put("status",false);
+            return result;
+        }
+        if(!StringUtils.equals(teacherApplication.getStatus(), TeacherLifeCycle.BASIC_INFO)){
+            result.put("status",false);
             return result;
         }
         result.put("list", this.teachingExperienceDao.findTeachingList(teacherApplication.getTeacherId()));
@@ -64,9 +69,14 @@ public class BasicInfoAduitService {
         if(StringUtils.equals(teacherApplication.getResult(), TeacherApplicationDao.Result.FAIL.toString())){
             result.put("changeStatus",true);
             //超过11.5小时不能修改
-            long auditTime = teacherApplication.getAuditDateTime().getTime();
-            if(DateUtils.count11hrlf(auditTime)){
+            Date auditDate = teacherApplication.getAuditDateTime(); 
+            if(auditDate == null){
                 result.put("changeStatus",false);
+            }else{
+                long auditTime = auditDate.getTime();
+                if(DateUtils.count11hrlf(auditTime)){
+                    result.put("changeStatus",false);
+                }
             }
             //已经修改过不能修改
             if(StringUtils.isNotBlank(teacherApplication.getComments())){
