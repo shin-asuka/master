@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -135,6 +136,38 @@ public class BasicInfoService {
         result.put("id", user.getId());
         result.put("status", true);
         return result;
+    }
+    
+    
+    public Map<String,Object> getStatus(long id){
+        Map<String,Object> resultMap = Maps.newHashMap();
+        Teacher teacher = this.teacherDao.findById(id);
+        resultMap.put("lifeCycle",teacher.getLifeCycle());
+        resultMap.put("result",TeacherApplicationDao.AuditStatus.ToSubmit.toString());
+        List<TeacherApplication> list = this.teacherApplicationDao.findCurrentApplication(teacher.getId());
+        //没有流程则视为待提交
+        if(CollectionUtils.isEmpty(list)){
+            resultMap.put("result",TeacherApplicationDao.AuditStatus.ToSubmit.toString());
+            return resultMap;
+        }
+        TeacherApplication teacherApplication = list.get(0);
+        //当前状态与流程状态不一样,以lifeCycle为准，为待提交
+        if(!StringUtils.equalsIgnoreCase(teacherApplication.getStatus(), teacher.getLifeCycle())){
+            resultMap.put("result",TeacherApplicationDao.AuditStatus.ToSubmit.toString());
+            return resultMap;
+        }
+        //待审核
+        if(StringUtils.isBlank(teacherApplication.getResult())){
+            resultMap.put("result",TeacherApplicationDao.AuditStatus.ToAudit.toString());
+            return resultMap;
+        }
+        //已经审核
+        if(StringUtils.isNotBlank(teacherApplication.getResult())){
+            resultMap.put("result",teacherApplication.getResult());
+            return resultMap;
+        }
+        
+        return resultMap;
     }
     
     

@@ -53,6 +53,11 @@ public class TeacherApplicationDao extends MapperDaoTemplate<TeacherApplication>
         TBD
     }
     
+    public enum AuditStatus {
+        ToAudit, // 待审核
+        ToSubmit // 带提交
+    }
+    
     /**
      * TeacherApplication 默认值设置<br/>
      * @Author:VIPKID-ZengWeiLong
@@ -136,8 +141,7 @@ public class TeacherApplicationDao extends MapperDaoTemplate<TeacherApplication>
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("teacherId", teacherId);
         map.put("status", status);
-        List<TeacherApplication> teacherApplications =
-                super.selectList(new TeacherApplication(), map);
+        List<TeacherApplication> teacherApplications =super.selectList(new TeacherApplication(), map);
         return teacherApplications;
     }
 
@@ -148,17 +152,15 @@ public class TeacherApplicationDao extends MapperDaoTemplate<TeacherApplication>
      * @param teacherId
      * @return 2015年10月22日
      */
-    public List<TeacherApplication> findApplictionNew(long teacherId) {
+    public List<TeacherApplication> findCurrentApplication(long teacherId) {
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("teacherId", teacherId);
         map.put("current", 1);
-        List<TeacherApplication> teacherApplications =
-                super.selectList(new TeacherApplication(), map);
+        List<TeacherApplication> teacherApplications = super.selectList(new TeacherApplication(), map);
         return teacherApplications;
     }
 
     /**
-     * @param teacher
      * @param teacherApplication
      */
     @Override

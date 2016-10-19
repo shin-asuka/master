@@ -95,7 +95,7 @@ public class PeSupervisorService {
     }
 
     public TeacherApplication getTeacherApplication(long teacherId) {
-        return teacherApplicationDao.findApplictionNew(teacherId).stream().findFirst().get();
+        return teacherApplicationDao.findCurrentApplication(teacherId).stream().findFirst().get();
     }
 
     public String getClassRoomUrl(TeacherPe teacherPe) {
@@ -339,7 +339,7 @@ public class PeSupervisorService {
             // 没有PE Supervisor权限
             // 插入当前Application记录的副本
             List<TeacherApplication> currentTeacherApplications =
-                    teacherApplicationDao.findApplictionNew(teacherApplication.getTeacherId());
+                    teacherApplicationDao.findCurrentApplication(teacherApplication.getTeacherId());
             if (CollectionUtils.isEmpty(currentTeacherApplications)) {
                 throw new RuntimeException("Illegal TeacherApplication data for teacher ["
                         + teacherApplication.getTeacherId() + "]");
