@@ -5,6 +5,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.google.api.client.util.Maps;
+import com.google.common.base.Preconditions;
 import com.vipkid.rest.config.RestfulConfig;
 import com.vipkid.trpm.service.management.BasicInfoAduitService;
 
@@ -47,6 +49,7 @@ public class BasicInfoAduitController {
             long teacherApplicationId,long userId,String remark){
         Map<String,Object> result = Maps.newHashMap();
         try{
+            Preconditions.checkArgument(StringUtils.isNotBlank(remark));
             result = this.basicInfoAduitService.changeStatus(teacherApplicationId, userId, remark);
             return result;
         } catch (IllegalArgumentException e) {
