@@ -143,10 +143,13 @@ public class BasicInfoAduitService {
         teacherApplication.setAuditDateTime(new Timestamp(System.currentTimeMillis()));
         teacherApplication.setAuditorId(teacher.getId());
         teacherApplication.setComments(remark);
+        //更新application
         this.teacherApplicationDao.update(teacherApplication); 
         teacher.setLifeCycle(TeacherLifeCycle.INTERVIEW);
+        //更新Teacher
         this.teacherDao.update(teacher);
-        
+        //插入insert log
+        this.teacherDao.insertLifeCycleLog(teacher.getId(), TeacherLifeCycle.BASIC_INFO, TeacherLifeCycle.INTERVIEW, userId);
         result.put("status", true);
         return result;
     }

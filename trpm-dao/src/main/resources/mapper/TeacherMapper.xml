@@ -389,6 +389,11 @@
 		</trim>
 		)
 	</insert>
+	
+	<insert id="insertLifeCycleLog">
+		insert into teacher_lifeCycle_log (teacher_id,create_date_time,from_status,to_status,operator_id) values 
+		(#{teacherId},now(),#{fromStatus},#{toStatus},#{operatorId})
+	</insert>
 
 	<update id="updateDao">
 		UPDATE teacher

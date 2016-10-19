@@ -1,6 +1,7 @@
 package com.vipkid.trpm.dao;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.community.dao.support.MapperDaoTemplate;
@@ -104,4 +105,13 @@ public class TeacherDao extends MapperDaoTemplate<Teacher> {
         }
     }
 
+    public void insertLifeCycleLog(long teacherId,String fromStatus,String toStatus,long operatorId){
+        Map<String,Object> paramMap = Maps.newHashMap();
+        paramMap.put("teacherId", teacherId);
+        paramMap.put("fromStatus", fromStatus);
+        paramMap.put("toStatus", toStatus);
+        paramMap.put("operatorId", operatorId);
+        super.getSqlSession().insert("insertLifeCycleLog", paramMap);
+    }
+    
 }
