@@ -377,10 +377,22 @@
 		<trim prefix="WHERE" prefixOverrides="AND">AND id = #{id}</trim>
 	</delete>
 
-
 	<select id="countApplicationByOlineclassId" resultType="int">
 		SELECT COUNT(*) FROM teacher_application
 		WHERE online_class_id = #{onlineClassId} AND auditor_id IS NOT NULL
 	</select>
 
+
+	<select id="findFailTeachersByAuditTime" resultType="java.util.HashMap">
+		select
+		ta.status as status,
+		t.real_name as teacherName,
+		t.email as teacherEmail
+		from
+		teacher_application ta
+		JOIN teacher t ON t.id = ta.teacher_id
+		where ta.status in ('BASIC_INFO','INTERVIEW')
+		and ta.result = 'FAIL'
+		and ta.audit_date_time BETWEEN #{startTime} and #{endTime}
+	</select>
 </mapper>
