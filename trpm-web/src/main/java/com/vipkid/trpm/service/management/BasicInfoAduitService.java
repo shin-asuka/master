@@ -46,20 +46,25 @@ public class BasicInfoAduitService {
      */
     public Map<String,Object> basicReview(long teacherApplicationId){
         Map<String,Object> result = Maps.newHashMap();
-        result.put("changeStatus",true);
+        
         TeacherApplication teacherApplication = this.teacerApplicationDao.findApplictionById(teacherApplicationId);
         result.put("list", this.teachingExperienceDao.findTeachingList(teacherApplication.getTeacherId()));
+        result.put("changeStatus",false);
         result.put("failReason",teacherApplication.getFailedReason());
         result.put("status",teacherApplication.getStatus());
         result.put("remark",teacherApplication.getComments());
         long auditTime = teacherApplication.getAuditDateTime().getTime();
-        //超过12小时不能修改
-        if(DateUtils.count11hrlf(auditTime)){
-            result.put("changeStatus",false);
-        }
-        //已经修改过不能修改
-        if(StringUtils.isNotBlank(teacherApplication.getComments())){
-            result.put("changeStatus",false);
+        //只有Fail状态的才显示 change fail to pass 按钮
+        if(StringUtils.equals(teacherApplication.getResult(), TeacherApplicationDao.Result.FAIL.toString())){
+            result.put("changeStatus",true);
+            //超过12小时不能修改
+            if(DateUtils.count11hrlf(auditTime)){
+                result.put("changeStatus",false);
+            }
+            //已经修改过不能修改
+            if(StringUtils.isNotBlank(teacherApplication.getComments())){
+                result.put("changeStatus",false);
+            }
         }
         Teacher teacher = this.teacherDao.findById(teacherApplication.getTeacherId());
         Map<String,Object> teacherMap = Maps.newHashMap();
