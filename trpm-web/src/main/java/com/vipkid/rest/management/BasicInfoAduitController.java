@@ -45,16 +45,19 @@ public class BasicInfoAduitController {
     @RequestMapping(value = "/changeStatus", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
     public Map<String,Object> changeStatus(HttpServletRequest request, HttpServletResponse response,
             long teacherApplicationId,long userId,String remark){
+        Map<String,Object> result = Maps.newHashMap();
         try{
-            
-            return Maps.newHashMap();
+            result = this.basicInfoAduitService.changeStatus(teacherApplicationId, userId, remark);
+            return result;
         } catch (IllegalArgumentException e) {
             logger.error("内部参数转化异常:"+e.getMessage());
             response.setStatus(HttpStatus.BAD_REQUEST.value());
+            result.put("status", false);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            result.put("status", false);
         }
-        return Maps.newHashMap();
+        return result;
     }
 }
