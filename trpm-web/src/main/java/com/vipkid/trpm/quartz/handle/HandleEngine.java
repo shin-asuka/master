@@ -19,6 +19,7 @@ import com.vipkid.trpm.proxy.redis.RedisClient;
 import com.vipkid.trpm.proxy.redis.RedisLock;
 import com.vipkid.trpm.quartz.EnginePlugin;
 import com.vipkid.trpm.service.passport.NoticeService;
+import com.vipkid.trpm.util.DateUtils;
 
 @Component
 public class HandleEngine implements EnginePlugin {
@@ -70,7 +71,7 @@ public class HandleEngine implements EnginePlugin {
     public boolean excute() {
         try {
             //从Jedi 获取数据
-            Map<String,String> map = HandleTools.paramMap();
+            Map<String,String> map = DateUtils.yesterdayParamMap();
             onlineClassMap = noticeService.findBookedClass(map.get("startTime"),map.get("endTime"));
             int i = 0;
             while (i < HandleConfig.MAX_LIMIT) {
