@@ -137,6 +137,11 @@ define(depends, function(personal) {
 			flag = false;
 		}
 		
+		if($("input[name=phoneType]:checked").size()==0){
+			$("#phoneType-tip").show();
+			flag = false;
+		}
+		
 		if($("input[name=phoneNationId]").val()==0){
 			$("#mobilePix-tip").show();
 			flag = false;

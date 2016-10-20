@@ -73,12 +73,13 @@
       <div align="right" class="col-sm-2 col-md-2"></div>
       <div class="col-sm-6 col-md-6">
       		<div class='title-lable req'>Nationality</div>
-      	  	<label><input type="radio" name="country" value="American" field="$!{TRPM_TEACHER.country}"/> American </label>&nbsp;
-      	  	<label><input type="radio" name="country" value="Canadian" field="$!{TRPM_TEACHER.country}"/> Canadian </label>
+      	  	<label style="font-weight:normal!important;"><input type="radio" name="country" value="American" field="$!{TRPM_TEACHER.country}"/> American </label>&nbsp;
+      	  	<label style="font-weight:normal!important;"><input type="radio" name="country" value="Canadian" field="$!{TRPM_TEACHER.country}"/> Canadian </label>
       	  	<p id="country-tip" class="help-block has-error">This field is required!</p> 
       </div>
       <div class="col-sm-4 col-md-4"></div>
     </div>
+    #**
     <div class="row form-group">
       <div align="right" class="col-sm-2 col-md-2"></div>
       <div class="col-sm-6 col-md-6">
@@ -175,10 +176,16 @@
       </div>
       <div class="col-sm-4 col-md-4"></div>
     </div>
+    **#
     <div class="row form-group">
       <div align="right" class="col-sm-2 col-md-2"></div>
       <div class="col-sm-6 col-md-6">
-        <div class='title-lable req'>Mobile</div>
+        <div class='title-lable req'>Contact number</div>
+        <div>
+      	  	<label style="font-weight:normal!important;"><input type="radio" name="phoneType" value="1" field="$!{TRPM_TEACHER.phoneType}"/> mobile </label>&nbsp;
+      	  	<label style="font-weight:normal!important;"><input type="radio" name="phoneType" value="2" field="$!{TRPM_TEACHER.phoneType}"/> land Line </label>
+      	  	<p id="phoneType-tip" class="help-block has-error">This field is required!</p> 
+        </div>
         <div class="input-group">
 	      <div id="mobilePix" class="input-group-btn">
 	        <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -209,7 +216,7 @@
     <div class="row form-group">
       <div align="right" class="col-sm-2 col-md-2"></div>
       <div class="col-sm-6 col-md-6">
-        <div class='title-lable req'>Skype</div>
+        <div class='title-lable'>Skype</div>
         <input type="text" id="skype" name="skype" value="$!{TRPM_TEACHER.skype}" maxlength="160" minlength="6" placeholder="skype user name" class="form-control req-string req-regex" regex="/^[\w\W]{6,}$/g" valid-options='{"req-string":"This field is required!","req-regex":"Your skype ID is invalid!","errorDiv":"#verifySkype-tip"}'/>
         <p id="verifySkype-tip" class="help-block has-error"></p>
       </div>
@@ -219,6 +226,9 @@
       <div align="right" class="col-sm-2 col-md-2"></div>
       <div class="col-sm-6 col-md-6">
         <div class='title-lable req'>Your current location</div>
+        <div style="font-size:12px;color:#ccc;">
+        	The country, state & city  you choose will depict your time zone below. Some cities also have multiple time zones. If the current location and time zone don't match please let us know. (Street and zip code are not mandatory.)
+        </div>
         ## 初始化 currentAddressId 的 location
         #location("current-address","countryId","stateId","city",$currentAddress)
         <input type="text" maxlength="200" name="streetAddress" value="#if($!{currentAddress})$!{currentAddress.streetAddress}#else$!{TRPM_TEACHER.address}#end" placeholder="Street" valid-options='{"req-string":"This field is required!","errorDiv":"#verifyAddress-tip"}'  class="form-control" />
@@ -234,6 +244,15 @@
       </div>
       <div class="col-sm-4 col-md-4"></div>
     </div>
+     <div class="row form-group">
+      <div align="right" class="col-sm-2 col-md-2"></div>
+      <div class="col-sm-6 col-md-6">
+      	<div class='title-lable req'>Time zone</div>
+      		<input class="form-control req-string" valid-options='{"req-string":"This field is required!","errorDiv":"#timezone-tip"}' placeholder="UTC-04:00" maxlength="200" name="timezone" value="$!{TRPM_TEACHER.timezone}"/>
+      		<p id="timezone-tip" class="help-block has-error"></p>
+      	</div>
+      <div class="col-sm-4 col-md-4"></div>
+    </div>
     <div class="row form-group">
       <div align="right" class="col-sm-2 col-md-2"></div>
       <div class="col-sm-6 col-md-6">
@@ -247,12 +266,12 @@
       <div class="col-sm-6 col-md-6">
       	<div class='title-lable req'>Hightest level of education</div>
         <select class="js-example-basic-single form-control" id="highestLevelOfEdu" name="highestLevelOfEdu" value="$!{TRPM_TEACHER.highestLevelOfEdu}">
-						<option value =""></option>
-  						<option value ="HIGH_SCHOOL">High School</option>
-  						<option value="ASSOCIATES"> Associate's</option>
-  						<option value ="BACHELORS">Bachelor's</option>
-  						<option value ="MASTERS">Master's</option>
-  						<option value ="PHD">PhD</option>
+				<option value =""></option>
+				<option value ="HIGH_SCHOOL">High School</option>
+				<option value="ASSOCIATES"> Associate's</option>
+				<option value ="BACHELORS">Bachelor's</option>
+				<option value ="MASTERS">Master's</option>
+				<option value ="PHD">PhD</option>
 		</select>
 		<script type="text/javascript">
 		var select = document.getElementById("highestLevelOfEdu");
