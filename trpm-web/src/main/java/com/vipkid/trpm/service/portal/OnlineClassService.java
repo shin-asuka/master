@@ -160,7 +160,7 @@ public class OnlineClassService {
                         ClassroomProxy.ROLE_STUDENT, onlineClass.getSupplierCode()));
         modelMap.put("teacherPe", teacherPeDao.findByOnlineClassId(onlineClass.getId()));
         List<TeacherApplication> list = teacherApplicationDao
-                .findApplictionForPracticum2(teacherApplication.getTeacherId());
+                .findApplictionForStatusResult(teacherApplication.getTeacherId(),TeacherApplicationDao.Status.PRACTICUM.toString(),TeacherApplicationDao.Result.PRACTICUM2.toString());
         if (list != null && list.size() > 0) {
             modelMap.put("practicum2", true);
         } else {
@@ -399,7 +399,7 @@ public class OnlineClassService {
         // 5.practicum2 判断是否存在
         if (ApplicationConstant.RecruitmentResult.PRACTICUM2.equals(result)) {
             List<TeacherApplication> list = teacherApplicationDao
-                    .findApplictionForPracticum2(teacherApplication.getTeacherId());
+                    .findApplictionForStatusResult(teacherApplication.getTeacherId(),TeacherApplicationDao.Status.PRACTICUM.toString(),TeacherApplicationDao.Result.PRACTICUM2.toString());
             if (list != null && list.size() > 0) {
                 logger.info(
                         "The teacher is already in practicum 2., class id is : {},status is {},recruitTeacher:{}",

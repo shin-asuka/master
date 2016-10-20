@@ -7,6 +7,8 @@ import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -31,6 +33,8 @@ import com.vipkid.trpm.util.EmailUtils;
 
 @Service
 public class BasicInfoService {
+    
+    private static Logger logger = LoggerFactory.getLogger(BasicInfoService.class);
     
     @Autowired
     private TeachingExperienceDao teachingExperienceDao;
@@ -80,6 +84,13 @@ public class BasicInfoService {
     public Map<String,Object> submitInfo(BasicInfoBean bean,User user){ 
         Map<String,Object> result = Maps.newHashMap();        
         Teacher teacher = this.teacherDao.findById(user.getId());
+        List<TeacherApplication> applicationList = teacherApplicationDao.findApplictionForStatus(user.getId(),TeacherApplicationDao.Status.BASIC_INFO.toString());
+        if(CollectionUtils.isNotEmpty(applicationList)){
+            result.put("status", false);
+            result.put("info", "You have already submitted data!");
+            logger.warn("已经提交基本信息的用户{}，重复提交被拦截:提交状态{},审核结果{},用户状态:{}",teacher.getId(),applicationList.get(0).getStatus(),applicationList.get(0).getResult(),teacher.getLifeCycle());
+            return result;
+        }
         //1.更新User
         user.setGender(bean.getGender());
         this.userDao.update(user);
@@ -102,10 +113,10 @@ public class BasicInfoService {
         teacher.setHighestLevelOfEdu(bean.getHighestLevelOfEdu());
         //4.新增 TeacherApplication
         TeacherApplication application = new TeacherApplication();
+        application = teacherApplicationDao.initApplicationData(application);
         application.setTeacherId(teacher.getId());//  步骤关联的教师
         application.setApplyDateTime(new Timestamp(System.currentTimeMillis()));
         application.setStatus(TeacherApplicationDao.Status.BASIC_INFO.toString());
-        application = teacherApplicationDao.initApplicationData(application);
         //5.AutoFail Pass TeacherApplication
         Map<String,String>  checkResult = this.autoFail(teacher);
         //自动审核通过

@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import org.apache.commons.lang3.StringUtils;
 import org.community.dao.support.MapperDaoTemplate;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -115,34 +116,38 @@ public class TeacherApplicationDao extends MapperDaoTemplate<TeacherApplication>
     }
 
     /**
-     * 查找RESULT = PRACTICUM2 的teacherApplication即为第二阶段
-     *
+     * 根据状态查询 
+     * @Author:ALong (ZengWeiLong)
+     * @param teacherId
+     * @param status
+     * @return    
+     * List<TeacherApplication>
+     * @date 2016年10月20日
+     */
+    public List<TeacherApplication> findApplictionForStatus(long teacherId,String status) {
+       return findApplictionForStatusResult(teacherId, status, null);
+    }
+    
+    /**
+     * 根据状态结果查询
      * @Author:ALong
      * @param teacherId
      * @return 2015年10月22日
      */
-    public List<TeacherApplication> findApplictionForPracticum2(long teacherId) {
+    public List<TeacherApplication> findApplictionForStatusResult(long teacherId,String status,String result) {
+        
         Map<String, Object> map = new HashMap<String, Object>();
+        
         map.put("teacherId", teacherId);
-        map.put("result", "PRACTICUM2");
-        List<TeacherApplication> teacherApplications =
-                super.selectList(new TeacherApplication(), map);
-        return teacherApplications;
-    }
-
-    /**
-     * 统计状态次数
-     *
-     * @param teacherId
-     * @param status
-     * @return 2015年10月22日
-     */
-    public List<TeacherApplication> countTeacherId(long teacherId, String status) {
-        Map<String, Object> map = new HashMap<String, Object>();
-        map.put("teacherId", teacherId);
-        map.put("status", status);
-        List<TeacherApplication> teacherApplications =super.selectList(new TeacherApplication(), map);
-        return teacherApplications;
+        
+        if(StringUtils.isNotBlank(status)){
+            map.put("status", status);
+        }
+        if(StringUtils.isNotBlank(result)){
+            map.put("result", result);
+        }
+        List<TeacherApplication> list = super.selectList(new TeacherApplication(), map);
+        return list;
     }
 
     /**
