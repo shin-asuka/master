@@ -18,7 +18,6 @@ import redis.clients.jedis.Jedis;
 import com.vipkid.trpm.proxy.redis.RedisClient;
 import com.vipkid.trpm.proxy.redis.RedisLock;
 import com.vipkid.trpm.quartz.EnginePlugin;
-import com.vipkid.trpm.quartz.HandleData;
 import com.vipkid.trpm.service.passport.NoticeService;
 
 @Component
@@ -37,9 +36,6 @@ public class HandleEngine implements EnginePlugin {
     //Email内容处理和发送
     @Autowired
     private NoticeService noticeService;
-    //参数处理类
-    @Autowired
-    private HandleData handleData;
     //Online Class
     private Map<String,List<Map<String,Object>>> onlineClassMap;
     
@@ -79,7 +75,7 @@ public class HandleEngine implements EnginePlugin {
             int i = 0;
             while (i < HandleConfig.MAX_LIMIT) {
                 i++;
-                String teacherId = handleData.findTeacherIdByRedis();
+                String teacherId = HandleData.findTeacherIdByRedis();
                 if (StringUtils.isEmpty(teacherId)) {
                     log.info("Completed!");
                     break;

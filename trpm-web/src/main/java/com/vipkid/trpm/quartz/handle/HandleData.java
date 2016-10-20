@@ -8,14 +8,13 @@ import redis.clients.jedis.Jedis;
 
 import com.vipkid.trpm.proxy.redis.RedisClient;
 import com.vipkid.trpm.proxy.redis.RedisLock;
-import com.vipkid.trpm.quartz.HandleData;
 
 @Component
-public class HandleDataImpl implements HandleData {
+public class HandleData {
 
-    private Logger log = LoggerFactory.getLogger(HandleDataImpl.class);
+    private static Logger log = LoggerFactory.getLogger(HandleData.class);
 
-    public String findTeacherIdByRedis() {
+    public static String findTeacherIdByRedis() {
         Jedis jedis = RedisClient.me().getJedisPool().getResource();
         RedisLock rl = new RedisLock(HandleEngine.redisKey, jedis);
         try {
