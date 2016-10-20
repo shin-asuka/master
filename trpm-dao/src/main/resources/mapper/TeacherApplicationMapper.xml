@@ -395,4 +395,27 @@
 		and ta.result = 'FAIL'
 		and ta.audit_date_time BETWEEN #{startTime} and #{endTime}
 	</select>
+
+	<select id="findByStatusResultAuditTime" resultMap="teacherApplicationResultMap">
+		SELECT
+		<include refid="teacherApplicationColumns" />
+		FROM teacher_application
+		WHERE
+		ta.status = #{status}
+		AND ta.result = #{result}
+		AND ta.audit_date_time BETWEEN #{startTime} AND #{endTime}
+	</select>
+
+	<select id="findByStatusResultTeacherId" resultMap="teacherApplicationResultMap">
+		SELECT
+		<include refid="teacherApplicationColumns" />
+		FROM teacher_application
+		WHERE
+		ta.status = #{status}
+		AND ta.result = #{result}
+		AND teacher_id IN
+		<foreach collection="teacherIds" open="(" close=")" separator="," item="teacherId">
+			#{teacherId}
+		</foreach>
+	</select>
 </mapper>
