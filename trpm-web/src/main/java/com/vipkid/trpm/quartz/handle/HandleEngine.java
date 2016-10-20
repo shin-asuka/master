@@ -6,8 +6,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.FutureTask;
-import java.util.concurrent.ThreadPoolExecutor;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -45,15 +43,11 @@ public class HandleEngine implements EnginePlugin {
     //Online Class
     private Map<String,List<Map<String,Object>>> onlineClassMap;
     
-    private static ExecutorService executorService;
-    // private ThreadPoolExecutor executorService = new ThreadPoolExecutor(HandConfig.COUNT, 1000,10*60,TimeUnit.SECONDS,new LinkedBlockingQueue<Runnable>(20));
-
     public boolean start() {
         //初始化参数
         emialCount = 0;
         sendEmal = new StringBuilder("");
         failEmail = new StringBuilder("");
-        executorService = Executors.newCachedThreadPool();
         //初始化缓存
         redisKey = HandleConfig.KEY + new SimpleDateFormat("-yyyy-MM-dd").format(new Date());
         //2.将预发送的老师放入Redis
@@ -97,18 +91,22 @@ public class HandleEngine implements EnginePlugin {
                     log.info("取数redis据失败：" + i + " == " + teacherId);
                     continue;
                 }
-                int threadCount = ((ThreadPoolExecutor) executorService).getActiveCount();
-                if (threadCount > HandleConfig.THREAD_POOL_LIMIT) {
-                    log.warn("线程池活跃线程数已经超过峰值【" + HandleConfig.THREAD_POOL_LIMIT + "】达到：" + threadCount);
-                    Thread.sleep(HandleConfig.HE_WAIT_TIME);
-                }
                 List<Map<String,Object>> list = onlineClassMap.get(teacherId);
                 if (list != null && list.size() > 0) {
                     emialCount++;
                     log.info("需要发送邮件通知的第"+emialCount+"位老师【"+map.get("startTime")+" - "+map.get("endTime")+"】:" + teacherId);
                     sendEmal.append(teacherId).append(",");
-                    FutureTask<String> futureTask = new FutureTask<String>(new HandleThread(teacherId,noticeService, list));
-                    executorService.submit(futureTask);
+                    ExecutorService executorService = Executors.newSingleThreadExecutor();
+                    executorService.submit(()->{
+                        if (noticeService.emailHandle(teacherId, list)) {
+                            log.info("【第"+emialCount+"位，老师:"+teacherId+"】邮件发送完毕");
+                            return teacherId;
+                        } else {
+                            HandleEngine.failEmail.append("【"+emialCount+"+"+teacherId+"】发送失败:" + teacherId);
+                            log.warn("已经发送失败邮件列表如下：" + HandleEngine.failEmail);
+                            return teacherId + ",ERROR!";
+                        }
+                    });
                 }
                 log.info("已检查了第【"+i+"】位老师【"+teacherId+"】，是否发送邮件");
                 Thread.sleep(HandleConfig.HE_WAIT_TIME/4);
@@ -121,11 +119,9 @@ public class HandleEngine implements EnginePlugin {
         }
     }
 
-    
 
     @Override
     public boolean stop() {
-        executorService.shutdown();
         log.info("一共应发邮件：" + emialCount + "封,发送给："+sendEmal);
         return true;
     }
