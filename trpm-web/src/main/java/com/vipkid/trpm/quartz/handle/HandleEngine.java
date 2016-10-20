@@ -81,7 +81,7 @@ public class HandleEngine implements EnginePlugin {
                     break;
                 }                
                 if (HandleConfig.HE_WAIT_STR.equals(teacherId)) {
-                    Thread.sleep(HandleConfig.HE_WAIT_TIME);
+                    Thread.sleep(HandleConfig.RETRY_WAIT_TIME);
                     //本次计数无效
                     i--;
                     log.info("取数redis据失败：" + i + " == " + teacherId);
@@ -105,7 +105,7 @@ public class HandleEngine implements EnginePlugin {
                     });
                 }
                 log.info("已检查了第【"+i+"】位老师【"+teacherId+"】，是否发送邮件");
-                Thread.sleep(HandleConfig.HE_WAIT_TIME/4);
+                Thread.sleep(HandleConfig.RETRY_WAIT_TIME/4);
             }
             log.info("总共执行记录数：" + (i - 1));
             return true;
