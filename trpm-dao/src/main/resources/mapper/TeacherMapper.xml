@@ -48,6 +48,7 @@
 		teacher.identity_type AS teacher_identity_type,
 		teacher.identity_number AS teacher_identity_number,
 		teacher.issuance_country as teacher_issuance_country,
+		teacher.phone_type as teacher_phone_type,
 		teacher.phone_nation_code as teacher_phone_nation_code,
 		teacher.phone_nation_id as teacher_phone_nation_id,
 		teacher.current_address_id as teacher_current_address_id,
@@ -128,6 +129,7 @@
 			<if test="identityNumber!=null"> AND teacher.identity_number = #{identityNumber}</if>
 			<if test="issuanceCountry!=0">AND teacher.issuance_country = #{issuanceCountry}</if>
 			<if test="phoneNationCode!=null">AND teacher.phone_nation_code = #{phoneNationCode}</if>
+			<if test="phoneType!=0">AND teacher.phone_type = #{phoneType}</if>
 			<if test="phoneNationId!=0">AND teacher.phone_nation_id = #{phoneNationId}</if>
 			<if test="currentAddressId!=0">AND teacher.current_address_id = #{currentAddressId}</if>
 			<if test="beneficiaryBankAddressId">AND teacher.beneficiary_bank_address_id = #{beneficiaryBankAddressId}</if>
@@ -207,6 +209,7 @@
 		<result column="teacher_issuance_country" property="issuanceCountry"/>
 		<result column="teacher_phone_nation_code" property="phoneNationCode"/>
 		<result column="teacher_phone_nation_id" property="phoneNationId"/>
+		<result column="teacher_phone_type" property="phoneType"/>
 		<result column="teacher_current_address_id" property="currentAddressId"/>
 		<result column="teacher_beneficiary_bank_address_id" property="beneficiaryBankAddressId"/>
 		<result column="teacher_beneficiary_address_id" property="beneficiaryAddressId"/>
@@ -316,6 +319,7 @@
 			<if test="beneficiaryBankAddressId">,beneficiary_bank_address_id</if>
 			<if test="beneficiaryAddressId">,beneficiary_address_id</if>
 			<if test="evaluationBio != null">,evaluation_bio</if>
+			<if test="phoneType != null">,phoneType</if>
 		</trim>
 		) VALUES
 		<trim prefix="(" prefixOverrides=",">
@@ -386,6 +390,7 @@
 			<if test="beneficiaryBankAddressId">,#{beneficiaryBankAddressId}</if>
 			<if test="beneficiaryAddressId">,#{beneficiaryAddressId}</if>
 			<if test="evaluationBio != null">,#{evaluationBio}</if>
+			<if test="phoneType != null">,phone_type</if>
 		</trim>
 		)
 	</insert>
@@ -466,7 +471,7 @@
 			<if test="beneficiaryBankAddressId">,beneficiary_bank_address_id=#{beneficiaryBankAddressId}</if>
 			<if test="beneficiaryAddressId">,beneficiary_address_id=#{beneficiaryAddressId}</if>
 			<if test="evaluationBio != null">,evaluation_bio = #{evaluationBio}</if>
-			
+			<if test="phoneType != null">,phone_type = #{phoneType}</if>
 		</trim>
 		<trim prefix="WHERE" prefixOverrides="AND">AND id = #{id}</trim>
 	</update>
