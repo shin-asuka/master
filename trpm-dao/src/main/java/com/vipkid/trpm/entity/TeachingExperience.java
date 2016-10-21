@@ -45,6 +45,20 @@ public class TeachingExperience extends Entity implements Serializable{
     
     @JsonIgnore
     private int status;
+    
+    public TeachingExperience(){
+        
+    }
+    
+    public TeachingExperience(long id,String organisationName,String jobTitle,Timestamp timePeriodStart,Timestamp timePeriodEnd,float hoursWeek,String jobDescription) {
+        this.id = id;
+        this.organisationName = organisationName;
+        this.jobTitle = jobTitle;
+        this.timePeriodStart = timePeriodStart;
+        this.timePeriodEnd = timePeriodEnd;
+        this.hoursWeek = hoursWeek;
+        this.jobDescription = jobDescription;
+    }
 
     public long getId() {
         return id;

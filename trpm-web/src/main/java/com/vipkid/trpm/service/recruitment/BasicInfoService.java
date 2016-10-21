@@ -13,8 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.google.api.client.util.Maps;
+import com.vipkid.enums.BasicInfoBean;
 import com.vipkid.enums.UserEnum;
-import com.vipkid.rest.app.BasicInfoBean;
 import com.vipkid.rest.config.RestfulConfig;
 import com.vipkid.trpm.constant.ApplicationConstant;
 import com.vipkid.trpm.constant.ApplicationConstant.TeacherLifeCycle;
@@ -67,6 +67,42 @@ public class BasicInfoService {
         return this.teachingExperienceDao.findRecruitingChannel(paramMap);
     }
     
+    
+    /**
+     * 1.保存地址表
+     * 4.更新Teacher表
+     * 5.更新User表
+     * @Author:ALong (ZengWeiLong)
+     * @param bean
+     * @param user
+     * @param teacher
+     * @return    
+     * Map<String,Object>
+     * @date 2016年10月17日
+     */
+    public Map<String,Object> saveInfo(BasicInfoBean bean,User user){ 
+        Map<String,Object> result = Maps.newHashMap();        
+        Teacher teacher = this.teacherDao.findById(user.getId());
+        //1.更新User
+        user.setGender(bean.getGender());
+        this.userDao.update(user);
+        //2.更新Address
+        TeacherAddress teacherAddress = new TeacherAddress();
+        teacherAddress.setCountryId(bean.getCountryId());
+        teacherAddress.setStateId(bean.getStateId());
+        teacherAddress.setCity(bean.getCityId());
+        teacherAddress.setStreetAddress(bean.getStreetAddress());
+        teacherAddress.setZipCode(bean.getZipCode());
+        this.teacherAddressDao.updateOrSave(teacherAddress);
+        teacher.setCurrentAddressId(teacherAddress.getId());
+        //3.更新Teacher
+        this.initTeacher(teacher, bean);
+        this.teacherDao.update(teacher);
+        result.put("id", user.getId());
+        result.put("status", true);
+        return result;
+    }
+    
     /**
      * 1.插入地址表
      * 2.招聘渠道逻辑(实体里面)
@@ -95,14 +131,7 @@ public class BasicInfoService {
         user.setGender(bean.getGender());
         this.userDao.update(user);
         //2.更新Address
-        TeacherAddress teacherAddress = new TeacherAddress();
-        teacherAddress.setCountryId(bean.getCountryId());
-        teacherAddress.setStateId(bean.getStateId());
-        teacherAddress.setCity(bean.getCityId());
-        teacherAddress.setStreetAddress(bean.getStreetAddress());
-        teacherAddress.setZipCode(bean.getZipCode());
-        this.teacherAddressDao.updateOrSave(teacherAddress);
-        teacher.setCurrentAddressId(teacherAddress.getId());
+        this.teacherAddressDao.updateOrSaveCurrentAddressId(teacher,bean);
         //3.更新Teacher
         this.initTeacher(teacher, bean);        
         //4.新增 TeacherApplication
@@ -204,8 +233,10 @@ public class BasicInfoService {
                 if(StringUtils.isNumeric(bean.getChannel())){
                     teacher.setPartnerId(Long.valueOf(bean.getChannel()));
                 }
-            }if("OTHER".equals(bean.getRecruitmentChannel())){
-                teacher.setReferee(bean.getChannel());
+            }else if("OTHER".equals(bean.getRecruitmentChannel())){
+                teacher.setOtherChannel(bean.getChannel());
+            }else{
+                teacher.setOtherChannel(bean.getChannel());
             }
         }
     }
