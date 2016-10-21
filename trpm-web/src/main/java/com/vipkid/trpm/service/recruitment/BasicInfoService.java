@@ -133,7 +133,7 @@ public class BasicInfoService {
         //2.更新Address
         this.teacherAddressDao.updateOrSaveCurrentAddressId(teacher,bean);
         //3.更新Teacher
-        this.initTeacher(teacher, bean);        
+        teacher = this.initTeacher(teacher, bean);        
         //4.新增 TeacherApplication
         TeacherApplication application = new TeacherApplication();
         application = teacherApplicationDao.initApplicationData(application);
@@ -213,7 +213,7 @@ public class BasicInfoService {
         return resultMap;
     }
     
-    private void initTeacher(Teacher teacher,BasicInfoBean bean){
+    private Teacher initTeacher(Teacher teacher,BasicInfoBean bean){
         teacher.setExtraClassSalary(0);
         teacher.setRealName(bean.getFullName());
         teacher.setTimezone(bean.getTimezone());
@@ -223,7 +223,10 @@ public class BasicInfoService {
         teacher.setMobile(bean.getMobile());
         teacher.setPhoneType(bean.getPhoneType());
         teacher.setHighestLevelOfEdu(bean.getHighestLevelOfEdu());
-        
+        //已经设置过招聘渠道将不再设置招聘渠道
+        if(StringUtils.isNoneBlank(teacher.getReferee()) || teacher.getPartnerId() > 0 || StringUtils.isNotBlank(teacher.getOtherChannel())){
+            return teacher;
+        }
         //  设置教师招聘渠道
         if(StringUtils.isNotBlank((bean.getRecruitmentChannel()))){
             teacher.setRecruitmentChannel(UserEnum.Dtype.TEACHER.toString());
@@ -239,6 +242,7 @@ public class BasicInfoService {
                 teacher.setOtherChannel(bean.getChannel());
             }
         }
+        return teacher;
     }
     
     
