@@ -7,7 +7,6 @@ import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.vipkid.enums.BasicInfoBean;
 import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.entity.TeacherAddress;
 
@@ -30,16 +29,16 @@ public class TeacherAddressDao extends MapperDaoTemplate<TeacherAddress> {
         return super.selectOne(new TeacherAddress().setId(id));
     }
 
-    public void updateOrSaveCurrentAddressId(Teacher teacher,BasicInfoBean bean){
+    public void updateOrSaveCurrentAddressId(Teacher teacher,int countryId,int stateId,int cityId,String streetAddress,String zipCode){
         TeacherAddress teacherAddress = new TeacherAddress();
         if(teacher.getCurrentAddressId() > 0){
             teacherAddress = this.findById(teacher.getCurrentAddressId());
         }
-        teacherAddress.setCountryId(bean.getCountryId());
-        teacherAddress.setStateId(bean.getStateId());
-        teacherAddress.setCity(bean.getCityId());
-        teacherAddress.setStreetAddress(bean.getStreetAddress());
-        teacherAddress.setZipCode(bean.getZipCode());
+        teacherAddress.setCountryId(countryId);
+        teacherAddress.setStateId(stateId);
+        teacherAddress.setCity(cityId);
+        teacherAddress.setStreetAddress(streetAddress);
+        teacherAddress.setZipCode(zipCode);
         this.updateOrSave(teacherAddress);
         teacher.setCurrentAddressId(teacherAddress.getId());
     }
