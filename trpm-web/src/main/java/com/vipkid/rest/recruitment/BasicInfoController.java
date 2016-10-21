@@ -136,8 +136,8 @@ public class BasicInfoController extends RestfulController{
         }
         return result;
     } 
-    
-    
+    /*
+    @Deprecated
     @RequestMapping(value = "/saveInfo", method = RequestMethod.POST, produces = RestfulConfig.JSON_UTF_8)
     public Map<String,Object> saveInfo(HttpServletRequest request, HttpServletResponse response,
             @RequestParam(required=false,defaultValue="") String fullName,@RequestParam(required=false,defaultValue="0")int countryId,
@@ -163,7 +163,7 @@ public class BasicInfoController extends RestfulController{
             result.put("status", false);
         }
         return result;
-    } 
+    } */
     
     
     @RequestMapping(value = "/submitInfo", method = RequestMethod.POST, produces = RestfulConfig.JSON_UTF_8)
