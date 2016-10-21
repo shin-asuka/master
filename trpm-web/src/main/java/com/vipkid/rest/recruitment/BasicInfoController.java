@@ -84,6 +84,13 @@ public class BasicInfoController extends RestfulController{
         try{
             long resultRow = 0;
             User user = getUser(request);
+            //时间判断
+            if(teachingExperience.getTimePeriodStart().getTime() >= teachingExperience.getTimePeriodEnd().getTime()){
+                response.setStatus(HttpStatus.BAD_REQUEST.value());
+                result.put("status", false);
+                result.put("info", "The time interval is illegal!");
+                return result;
+            }
             if(teachingExperience.getId() > 0){
                 resultRow = this.teachingExperienceService.updateTeaching(teachingExperience, user);
             }else{
@@ -133,6 +140,7 @@ public class BasicInfoController extends RestfulController{
         Map<String,Object> result = Maps.newHashMap();
         try{
             User user = getUser(request);
+            
             return this.basicInfoService.submitInfo(bean, user);
         } catch (IllegalArgumentException e) {
             logger.error("内部参数转化异常:"+e.getMessage());
