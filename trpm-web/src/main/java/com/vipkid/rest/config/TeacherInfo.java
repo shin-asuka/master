@@ -29,6 +29,10 @@ public class TeacherInfo {
     private String showName = "";
     
     private String lifeCycle = "";
+    
+    private String action = "";
+    
+    private boolean haveChannel = false;
 
     public Map<String, Object> getRoles() {
         return roles;
@@ -86,7 +90,23 @@ public class TeacherInfo {
         this.lifeCycle = lifeCycle;
         return this;
     }
+
+    public String getAction() {
+        return action;
+    }
+
+    public void setAction(String action) {
+        this.action = action;
+    }
     
+    public boolean isHaveChannel() {
+        return haveChannel;
+    }
+
+    public void setHaveChannel(boolean haveChannel) {
+        this.haveChannel = haveChannel;
+    }
+
     /**
      * 其他信息，头像,bio,lifeCycle,name
      * @Author:ALong (ZengWeiLong)
@@ -100,6 +120,13 @@ public class TeacherInfo {
         this.setEvaluationBio(teacher.getEvaluationBio());
         this.setLifeCycle(teacher.getLifeCycle());
         this.setShowName(user.getName());
+        Set<String> portSet = RestfulConfig.TEACHERPORTSET;
+        portSet.addAll(RestfulConfig.NEWRECRUITMENTSET);
+        //如果进入招聘端了,需要获取招聘端登陆link
+        if(!portSet.contains(teacher.getLifeCycle())){
+            this.setAction("signlogin.shtml?token="+ AES.encrypt(user.getToken(), AES.getKey(AES.KEY_LENGTH_128, ApplicationConstant.AES_128_KEY)));
+        }
+        this.setHaveChannel(StringUtils.isNoneBlank(teacher.getReferee()) || teacher.getPartnerId() > 0 || StringUtils.isNotBlank(teacher.getOtherChannel()));
     }
    
 }
