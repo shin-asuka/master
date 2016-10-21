@@ -92,7 +92,7 @@ public class BasicInfoController extends RestfulController{
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
                 result.put("status", false);
                 result.put("info", "The time interval is illegal!");
-                logger.warn("参数异常");
+                logger.warn("时间区间不正确");
                 return result;
             }
             if(teachingExperience.getId() > 0){
