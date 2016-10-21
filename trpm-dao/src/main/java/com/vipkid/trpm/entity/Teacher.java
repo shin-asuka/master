@@ -144,6 +144,8 @@ public class Teacher extends Entity implements Serializable {
 	private String evaluationBio;
 	
 	private int phoneType; //新增电话类型
+	
+	private String otherChannel; //新增其他渠道输入
 
 	public long getId() {
 		return this.id;
@@ -761,5 +763,12 @@ public class Teacher extends Entity implements Serializable {
     public void setPhoneType(int phoneType) {
         this.phoneType = phoneType;
     }
-    
+
+    public String getOtherChannel() {
+        return otherChannel;
+    }
+
+    public void setOtherChannel(String otherChannel) {
+        this.otherChannel = otherChannel;
+    }
 }

@@ -57,7 +57,8 @@
 		
 		teacher.contract_type AS teacher_contract_type,
 		teacher.highest_degree AS teacher_highest_degree,
-		teacher.evaluation_bio AS teacher_evaluation_bio
+		teacher.evaluation_bio AS teacher_evaluation_bio,
+		teacher.other_channel AS teacher_other_channel
 	</sql>
 
 	<sql id="teacherWhere">
@@ -135,6 +136,7 @@
 			<if test="beneficiaryBankAddressId">AND teacher.beneficiary_bank_address_id = #{beneficiaryBankAddressId}</if>
 			<if test="beneficiaryAddressId"> AND teacher.beneficiary_address_id = #{beneficiaryAddressId}</if>
 			<if test="evaluationBio != null"> AND teacher.evaluation_bio = #{evaluationBio}</if>
+			<if test="otherChannel != null"> AND teacher.other_channel = #{otherChannel}</if>
 		</trim>
 	</sql>
 
@@ -216,6 +218,7 @@
 		
 		<result column="teacher_contract_type" property="contractType" />
 		<result column="teacher_evaluation_bio" property="evaluationBio" />
+		<result column="teacher_other_channel" property="otherChannel" />
 	</resultMap>
 
 	<select id="findDao" resultMap="teacherResultMap">
@@ -320,6 +323,7 @@
 			<if test="beneficiaryAddressId">,beneficiary_address_id</if>
 			<if test="evaluationBio != null">,evaluation_bio</if>
 			<if test="phoneType != null">,phoneType</if>
+			<if test="otherChannel != null">,otherChannel</if>
 		</trim>
 		) VALUES
 		<trim prefix="(" prefixOverrides=",">
@@ -391,6 +395,7 @@
 			<if test="beneficiaryAddressId">,#{beneficiaryAddressId}</if>
 			<if test="evaluationBio != null">,#{evaluationBio}</if>
 			<if test="phoneType != null">,phone_type</if>
+			<if test="otherChannel != null">,other_channel</if>
 		</trim>
 		)
 	</insert>
@@ -472,6 +477,7 @@
 			<if test="beneficiaryAddressId">,beneficiary_address_id=#{beneficiaryAddressId}</if>
 			<if test="evaluationBio != null">,evaluation_bio = #{evaluationBio}</if>
 			<if test="phoneType != null">,phone_type = #{phoneType}</if>
+			<if test="otherChannel != null">,other_channel = #{otherChannel}</if>
 		</trim>
 		<trim prefix="WHERE" prefixOverrides="AND">AND id = #{id}</trim>
 	</update>

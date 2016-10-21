@@ -197,17 +197,15 @@ public class BasicInfoService {
         
         //  设置教师招聘渠道
         if(StringUtils.isNotBlank((bean.getRecruitmentChannel()))){
-            if("Teacher".equals(bean.getRecruitmentChannel())){
-                teacher.setRecruitmentChannel(UserEnum.Dtype.TEACHER.toString());
+            teacher.setRecruitmentChannel(UserEnum.Dtype.TEACHER.toString());
+            if("TEACHER".equals(bean.getRecruitmentChannel())){
                 teacher.setReferee(bean.getChannel());
-            }else if("Other".equals(bean.getRecruitmentChannel())){
-                teacher.setRecruitmentChannel("OTHER");
-                teacher.setReferee(bean.getChannel());
-            }else{
-                teacher.setRecruitmentChannel(UserEnum.Dtype.PARTNER.toString());
+            }else if("PARTNER".equals(bean.getRecruitmentChannel())){
                 if(StringUtils.isNumeric(bean.getChannel())){
                     teacher.setPartnerId(Long.valueOf(bean.getChannel()));
                 }
+            }if("OTHER".equals(bean.getRecruitmentChannel())){
+                teacher.setReferee(bean.getChannel());
             }
         }
     }
