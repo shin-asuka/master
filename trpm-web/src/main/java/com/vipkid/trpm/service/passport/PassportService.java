@@ -152,8 +152,7 @@ public class PassportService {
             teacher.setLifeCycle(TeacherEnum.LifeCycle.SIGNUP.toString());
             String serialNumber = teacherDao.getSerialNumber();
             teacher.setSerialNumber(serialNumber);
-            teacher.setRecruitmentId(System.currentTimeMillis() + "-"
-                    + encoder.encode(teacher.getSerialNumber() + "kxoucywejl" + teacher.getEmail()));
+            teacher.setRecruitmentId(System.currentTimeMillis() + "-"+ encoder.encode(teacher.getSerialNumber() + "kxoucywejl" + teacher.getEmail()));
             teacher.setCurrency(TeacherEnum.Currency.US_DOLLAR.toString());
             teacher.setHide(TeacherEnum.Hide.NONE.toString());
             // 设置推荐人保存字段
@@ -363,11 +362,13 @@ public class PassportService {
 
             if (user != null) {
                 if (UserEnum.Dtype.PARTNER.toString().equals(user.getDtype())) {
+                    teacher.setRecruitmentChannel(UserEnum.Dtype.PARTNER.toString());
                     teacher.setPartnerId(user.getId());
                 } else if (UserEnum.Dtype.TEACHER.toString().equals(user.getDtype())) {
                 	Teacher t = teacherDao.findById(userId);
                 	if(t!=null){
                 		teacher.setReferee(user.getId() + "," + t.getRealName());//Referee存老师的realName
+                		teacher.setRecruitmentChannel(UserEnum.Dtype.TEACHER.toString());
                 	}
                 	else{
                 		logger.warn("找不到id为"+userId+"老师");
@@ -387,6 +388,7 @@ public class PassportService {
             if (user != null) {
                 if (UserEnum.Dtype.PARTNER.toString().equals(user.getDtype())) {
                     teacher.setPartnerId(user.getId());
+                    teacher.setRecruitmentChannel(UserEnum.Dtype.PARTNER.toString());
                 } 
             }
         }

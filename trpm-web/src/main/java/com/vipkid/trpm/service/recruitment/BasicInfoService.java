@@ -102,15 +102,9 @@ public class BasicInfoService {
         teacherAddress.setStreetAddress(bean.getStreetAddress());
         teacherAddress.setZipCode(bean.getZipCode());
         this.teacherAddressDao.updateOrSave(teacherAddress);
-        //3.更新Teacher
         teacher.setCurrentAddressId(teacherAddress.getId());
-        teacher.setTimezone(bean.getTimezone());
-        teacher.setCountry(bean.getNationality());
-        teacher.setPhoneNationCode(bean.getPhoneNationCode());
-        teacher.setPhoneNationId(bean.getPhoneNationId());
-        teacher.setMobile(bean.getMobile());
-        teacher.setPhoneType(bean.getPhoneType());
-        teacher.setHighestLevelOfEdu(bean.getHighestLevelOfEdu());
+        //3.更新Teacher
+        this.initTeacher(teacher, bean);        
         //4.新增 TeacherApplication
         TeacherApplication application = new TeacherApplication();
         application = teacherApplicationDao.initApplicationData(application);
@@ -188,6 +182,34 @@ public class BasicInfoService {
         }
         
         return resultMap;
+    }
+    
+    private void initTeacher(Teacher teacher,BasicInfoBean bean){
+        teacher.setExtraClassSalary(0);
+        teacher.setRealName(bean.getFullName());
+        teacher.setTimezone(bean.getTimezone());
+        teacher.setCountry(bean.getNationality());
+        teacher.setPhoneNationCode(bean.getPhoneNationCode());
+        teacher.setPhoneNationId(bean.getPhoneNationId());
+        teacher.setMobile(bean.getMobile());
+        teacher.setPhoneType(bean.getPhoneType());
+        teacher.setHighestLevelOfEdu(bean.getHighestLevelOfEdu());
+        
+        //  设置教师招聘渠道
+        if(StringUtils.isNotBlank((bean.getRecruitmentChannel()))){
+            if("Teacher".equals(bean.getRecruitmentChannel())){
+                teacher.setRecruitmentChannel(UserEnum.Dtype.TEACHER.toString());
+                teacher.setReferee(bean.getChannel());
+            }else if("Other".equals(bean.getRecruitmentChannel())){
+                teacher.setRecruitmentChannel("OTHER");
+                teacher.setReferee(bean.getChannel());
+            }else{
+                teacher.setRecruitmentChannel(UserEnum.Dtype.PARTNER.toString());
+                if(StringUtils.isNumeric(bean.getChannel())){
+                    teacher.setPartnerId(Long.valueOf(bean.getChannel()));
+                }
+            }
+        }
     }
     
     
