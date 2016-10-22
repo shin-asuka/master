@@ -1,13 +1,9 @@
 package com.vipkid.rest.dto;
 
-import java.io.Serializable;
-
 import com.vipkid.rest.validation.annotation.Verify;
 
 @Verify
-public class TeacherDto implements Serializable {
-
-    private static final long serialVersionUID = -732744608873189260L;
+public class TeacherDto {
 
     private String fullName;
     
