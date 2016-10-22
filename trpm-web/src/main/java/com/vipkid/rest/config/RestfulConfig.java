@@ -59,5 +59,4 @@ public class RestfulConfig {
     public static final Set<String> NEWRECRUITMENTSET = Sets.newHashSet(TeacherLifeCycle.SIGNUP,TeacherLifeCycle.BASIC_INFO);
     
     public static final Set<String> TEACHERPORTSET = Sets.newHashSet(TeacherLifeCycle.REGULAR);
-
 }

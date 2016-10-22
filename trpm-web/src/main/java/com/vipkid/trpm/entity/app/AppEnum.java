@@ -118,6 +118,16 @@ public class AppEnum {
         } 
     }
     
+    /**学历*/
+    public enum DegreeType{
+        HIGH_SCHOOL,
+        ASSOCIATES,
+        BACHELORS,
+        MASTERS,
+        PHD,
+        OTHER
+    }
+    
     public static <T extends Enum<T>> T valueOf(Class<T> clazz, int ordinal) {  
         return (T)clazz.getEnumConstants()[ordinal];  
     } 
