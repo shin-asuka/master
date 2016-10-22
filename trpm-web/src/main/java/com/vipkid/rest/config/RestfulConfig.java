@@ -1,13 +1,13 @@
 package com.vipkid.rest.config;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
 import org.community.tools.JsonTools;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.google.common.collect.Sets;
 import com.vipkid.trpm.constant.ApplicationConstant.TeacherLifeCycle;
 
 public class RestfulConfig {
@@ -56,14 +56,8 @@ public class RestfulConfig {
     
     }
     
-    @SuppressWarnings("serial")
-    public static final Set<String> NEWRECRUITMENTSET = new HashSet<String>(){{
-        add(TeacherLifeCycle.SIGNUP);
-        add(TeacherLifeCycle.BASIC_INFO);
-    }};
+    public static final Set<String> NEWRECRUITMENTSET = Sets.newHashSet(TeacherLifeCycle.SIGNUP,TeacherLifeCycle.BASIC_INFO);
     
-    @SuppressWarnings("serial")
-    public static final Set<String> TEACHERPORTSET = new HashSet<String>(){{
-        add(TeacherLifeCycle.REGULAR);
-    }};
+    public static final Set<String> TEACHERPORTSET = Sets.newHashSet(TeacherLifeCycle.REGULAR);
+
 }
