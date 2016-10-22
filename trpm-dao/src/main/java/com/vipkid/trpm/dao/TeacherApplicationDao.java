@@ -213,4 +213,20 @@ public class TeacherApplicationDao extends MapperDaoTemplate<TeacherApplication>
         paramsMap.put("endTime", endTime);
         return listEntity("findFailTeachersByAuditTime", paramsMap);
     }
+
+    public List<TeacherApplication> findByAuditTimesStatusResult( List<Map> auditTimes, String status, String result) {
+        Map<String, Object> paramsMap = new HashMap<String, Object>();
+        paramsMap.put("auditTimes", auditTimes);
+        paramsMap.put("status", status);
+        paramsMap.put("result", result);
+        return listEntity("findTAByAuditTimesStatusResult", paramsMap);
+    }
+
+    public List<TeacherApplication> findByTeacherIdsStatusNeResult(List<Long> teacherIds, String status, String result) {
+        Map<String, Object> paramsMap = new HashMap<String, Object>();
+        paramsMap.put("teacherIds", teacherIds);
+        paramsMap.put("status", status);
+        paramsMap.put("result", result);
+        return listEntity("findTAByTeacherIdsStatusNeResult", paramsMap);
+    }
 }

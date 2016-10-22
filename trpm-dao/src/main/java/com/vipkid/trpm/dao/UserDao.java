@@ -7,6 +7,10 @@ import org.springframework.stereotype.Repository;
 
 import com.vipkid.trpm.entity.User;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 @Repository
 public class UserDao extends MapperDaoTemplate<User> {
 
@@ -36,7 +40,7 @@ public class UserDao extends MapperDaoTemplate<User> {
 	/**
 	 * 更新新的密码
 	 * 
-	 * @param user
+	 * @param userId
 	 * @param newPassword
 	 * @return
 	 */
@@ -57,4 +61,12 @@ public class UserDao extends MapperDaoTemplate<User> {
 		return selectOne(new User().setToken(token));
 	}
 
+	public List<User> findTeachersByRegisterTimes(List<Map> registerTimes) {
+		Map<String, Object> paramsMap = new HashMap<String, Object>();
+		paramsMap.put("registerTimes", registerTimes);
+		return listEntity("findTeacherUsersByRegisterTimes", paramsMap);
+	}
+	public int doLock(long userId) {
+		return update(new User().setId(userId), "doLockUser");
+	}
 }

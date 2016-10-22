@@ -4,11 +4,9 @@
 package com.vipkid.task.utils;
 
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Locale;
-import java.util.TimeZone;
+import java.util.*;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -53,7 +51,11 @@ public class UADateUtils {
 		calendar.set(Calendar.HOUR_OF_DAY, hour);
 		return calendar.getTime();
 	}
-	
+
+	public static String format(Date date){
+		return format(date, defaultFormat);
+	}
+
 	public static String format(Date date, String pattern){
         return format(date, pattern, Locale.getDefault());
     }
@@ -89,5 +91,72 @@ public class UADateUtils {
         }
         return dateStr;
 	}
-	
+
+	public static Date parse(String date){
+		return parse(date, defaultFormat);
+	}
+
+	public static Date parse(String date, String pattern){
+		return parse(date, pattern, Locale.getDefault());
+	}
+
+	public static Date parse(String date, String pattern, Locale locale){
+		Date dateVal = null;
+
+		if(locale == null){
+			locale = Locale.getDefault();
+		}
+		if(StringUtils.isBlank(pattern)){
+			pattern = "yyyy-MM-dd HH:mm:ss";
+		}
+		if(date!=null){
+			DateFormat format = new SimpleDateFormat(pattern, locale);
+			try {
+				dateVal = format.parse(date);
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+		}
+		return dateVal;
+	}
+
+	public static Date parse(String date , String pattern , String timezone){
+		Date dateVal = null;
+		Locale locale = Locale.getDefault();
+		if(StringUtils.isBlank(pattern)){
+			pattern = "yyyy-MM-dd HH:mm:ss";
+		}
+		if(date!=null){
+			DateFormat format = new SimpleDateFormat(pattern, locale);
+			if(StringUtils.isNotBlank(timezone)){
+				format.setTimeZone(TimeZone.getTimeZone(timezone));
+			}
+			try {
+				dateVal = format.parse(date);
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+		}
+		return dateVal;
+	}
+
+	public static List<Map> getStartEndTimeMapListByBeforeHours(int... beforeHours){
+		return getStartEndTimeMapListByBeforeHours(new Integer(1), beforeHours);
+	}
+
+	//UADateUtils.getStartEndTimeMapListByBeforeHours(new Integer(1), 24, 48, 72)
+	public static List<Map> getStartEndTimeMapListByBeforeHours(Integer interval, int... beforeHours){
+		List<Map> startEndTimes = new ArrayList<>();
+		for (int i : beforeHours){
+			String startTime = UADateUtils.format(UADateUtils.getDateByBeforeHours(i + interval)) ;
+			String endTime = UADateUtils.format(UADateUtils.getDateByBeforeHours(i)) ;
+
+			Map<String, String> time = new HashMap<>();
+			time.put("startTime",startTime);
+			time.put("endTime",endTime);
+
+			startEndTimes.add(time);
+		}
+		return startEndTimes;
+	}
 }

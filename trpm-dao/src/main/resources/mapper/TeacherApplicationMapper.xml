@@ -396,26 +396,30 @@
 		and ta.audit_date_time BETWEEN #{startTime} and #{endTime}
 	</select>
 
-	<select id="findByStatusResultAuditTime" resultMap="teacherApplicationResultMap">
+	<select id="findTAByAuditTimesStatusResult" resultMap="teacherApplicationResultMap">
 		SELECT
 		<include refid="teacherApplicationColumns" />
 		FROM teacher_application
 		WHERE
-		ta.status = #{status}
+		<foreach collection="auditTimes" open="(" close=")" separator=" OR " item="auditTime">
+			(ta.audit_date_time BETWEEN #{auditTime.startTime} AND #{auditTime.endTime})
+		</foreach>
+		AND ta.status = #{status}
 		AND ta.result = #{result}
-		AND ta.audit_date_time BETWEEN #{startTime} AND #{endTime}
 	</select>
 
-	<select id="findByStatusResultTeacherId" resultMap="teacherApplicationResultMap">
+	<select id="findTAByTeacherIdsStatusNeResult" resultMap="teacherApplicationResultMap">
 		SELECT
 		<include refid="teacherApplicationColumns" />
 		FROM teacher_application
 		WHERE
-		ta.status = #{status}
-		AND ta.result = #{result}
-		AND teacher_id IN
+		teacher_id IN
 		<foreach collection="teacherIds" open="(" close=")" separator="," item="teacherId">
 			#{teacherId}
 		</foreach>
+		AND ta.status = #{status}
+		<if test="result!=null">
+			AND ta.result != #{result}
+		</if>
 	</select>
 </mapper>

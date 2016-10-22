@@ -494,4 +494,17 @@
 	<select id="findAllRegularId" resultType="String">
 		select t.id  from teacher t where t.life_cycle = 'REGULAR'
 	</select>
+
+
+	<select id="findTeachersByIds" resultType="teacherResultMap">
+		SELECT
+		<include refid="teacherColumns" />
+		FROM
+		teacher
+		WHERE
+		id IN
+		<foreach collection="ids" open="(" close=")" separator="," item="id">
+			<if test="id!=0"> #{id} </if>
+		</foreach>
+	</select>
 </mapper>

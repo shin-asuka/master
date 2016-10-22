@@ -191,4 +191,20 @@
 		#{username}
 	</select>
 
+
+	<select id="findTeacherUsersByRegisterTimes" resultMap="teacherApplicationResultMap">
+		SELECT
+		<include refid="userColumns" />
+		FROM user u
+		WHERE
+		<foreach collection="registerTimes" open="(" close=")" separator=" OR " item="registerTime">
+			(u.register_date_time BETWEEN #{registerTime.startTime} AND #{registerTime.endTime})
+		</foreach>
+		AND u.roles = 'TEACHER'
+		AND u.status = 'NORMAL'
+	</select>
+	<!-- 锁住用户 -->
+	<update id="doLockUser">
+		UPDATE user SET status = 'LOCKED' WHERE id = #{id}
+	</update>
 </mapper>

@@ -1,5 +1,6 @@
 package com.vipkid.trpm.dao;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -113,5 +114,10 @@ public class TeacherDao extends MapperDaoTemplate<Teacher> {
         paramMap.put("operatorId", operatorId);
         super.getSqlSession().insert("insertLifeCycleLog", paramMap);
     }
-    
+
+    public List<Teacher> findByIds(List<Long> ids) {
+        Map<String, Object> paramsMap = new HashMap<String, Object>();
+        paramsMap.put("ids", ids);
+        return listEntity("findTeachersByIds", paramsMap);
+    }
 }
