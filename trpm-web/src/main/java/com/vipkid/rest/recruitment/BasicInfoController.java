@@ -24,6 +24,7 @@ import com.vipkid.rest.interceptor.RestInterface;
 import com.vipkid.rest.validation.ValidationUtils;
 import com.vipkid.rest.validation.tools.Result;
 import com.vipkid.trpm.constant.ApplicationConstant.TeacherLifeCycle;
+import com.vipkid.trpm.entity.TeacherNationalityCode;
 import com.vipkid.trpm.entity.TeachingExperience;
 import com.vipkid.trpm.entity.User;
 import com.vipkid.trpm.entity.app.AppEnum;
@@ -225,6 +226,24 @@ public class BasicInfoController extends RestfulController{
             User user = getUser(request);
             logger.info("userId:{}",user.getId());
             List<Map<String,Object>> list = this.basicInfoService.findTeacher();
+            Map<String,Object> result = Maps.newHashMap();
+            result.put("list", list);
+        } catch (IllegalArgumentException e) {
+            logger.error("内部参数转化异常:"+e.getMessage());
+            response.setStatus(HttpStatus.BAD_REQUEST.value());
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+        }
+        return Maps.newHashMap();
+    }
+    
+    @RequestMapping(value = "/findPhoneCode", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
+    public Map<String,Object> findPhoneCode(HttpServletRequest request, HttpServletResponse response){
+        try{
+            User user = getUser(request);
+            logger.info("userId:{}",user.getId());
+            List<TeacherNationalityCode> list = this.basicInfoService.getTeacherNationalityCodes();
             Map<String,Object> result = Maps.newHashMap();
             result.put("list", list);
         } catch (IllegalArgumentException e) {

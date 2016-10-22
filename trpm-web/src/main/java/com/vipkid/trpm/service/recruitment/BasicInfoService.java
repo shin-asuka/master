@@ -23,11 +23,13 @@ import com.vipkid.trpm.constant.ApplicationConstant;
 import com.vipkid.trpm.dao.TeacherAddressDao;
 import com.vipkid.trpm.dao.TeacherApplicationDao;
 import com.vipkid.trpm.dao.TeacherDao;
+import com.vipkid.trpm.dao.TeacherNationalityCodeDao;
 import com.vipkid.trpm.dao.TeachingExperienceDao;
 import com.vipkid.trpm.dao.UserDao;
 import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.entity.TeacherAddress;
 import com.vipkid.trpm.entity.TeacherApplication;
+import com.vipkid.trpm.entity.TeacherNationalityCode;
 import com.vipkid.trpm.entity.TeachingExperience;
 import com.vipkid.trpm.entity.User;
 import com.vipkid.trpm.entity.app.AppEnum;
@@ -52,6 +54,9 @@ public class BasicInfoService {
     
     @Autowired
     private TeacherApplicationDao teacherApplicationDao;
+    
+    @Autowired
+    private TeacherNationalityCodeDao teacherNationalityCode;
 
     /**
      * 查询可用的招聘渠道
@@ -232,6 +237,11 @@ public class BasicInfoService {
         paramMap.put("lifeCycle", TeacherEnum.LifeCycle.REGULAR);
         return teacherDao.findTeacher(paramMap);
     }
+    
+    public List<TeacherNationalityCode> getTeacherNationalityCodes() {
+        return teacherNationalityCode.getTeacherNationalityCodes();
+    }
+
     
     private Teacher initTeacher(Teacher teacher,TeacherDto bean){
         teacher.setExtraClassSalary(0);
