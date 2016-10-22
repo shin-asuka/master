@@ -87,8 +87,9 @@ public class BasicInfoController extends RestfulController{
         try{
             long resultRow = 0;
             User user = getUser(request);
-            Result resultCheck = ValidationUtils.checkoutDto(teachingExperience);
+            Result resultCheck = ValidationUtils.checkForField(teachingExperience);
             if(resultCheck != null && resultCheck.isResult()){
+                response.setStatus(HttpStatus.BAD_REQUEST.value());
                 result.put("status", false);
                 result.put("resultCheck",resultCheck);
                 return result;
@@ -167,8 +168,9 @@ public class BasicInfoController extends RestfulController{
     public Map<String,Object> submitInfo(HttpServletRequest request, HttpServletResponse response,@RequestBody TeacherDto bean){
         Map<String,Object> result = Maps.newHashMap();
         try{
-            Result resultCheck = ValidationUtils.checkoutDto(bean);
+            Result resultCheck = ValidationUtils.checkForField(bean);
             if(resultCheck != null && resultCheck.isResult()){
+                response.setStatus(HttpStatus.BAD_REQUEST.value());
                 result.put("status", false);
                 result.put("resultCheck",resultCheck);
                 return result;

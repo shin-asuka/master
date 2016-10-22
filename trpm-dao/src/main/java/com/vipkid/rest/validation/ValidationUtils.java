@@ -20,7 +20,7 @@ public class ValidationUtils {
     private static Logger logger = LoggerFactory.getLogger(ValidationUtils.class);
     
     /**
-     * 获取属性及验证结果 
+     * 可选择验证结果类型 多个和一个  返回List
      * @Author:ALong (ZengWeiLong)
      * @param bean
      * @param all
@@ -28,7 +28,7 @@ public class ValidationUtils {
      * List<Result>
      * @date 2016年10月21日
      */
-    public static <T> List<Result> checkoutDtoClass(T bean,boolean all){
+    public static <T> List<Result> checkForClass(T bean,boolean all){
         List<Result>  list = Lists.newArrayList();
         Verify verify = bean.getClass().getAnnotation(Verify.class);
         if(verify != null){
@@ -53,14 +53,14 @@ public class ValidationUtils {
     }
     
     /**
-     * 单独验证结果 
+     * 单独验证结果 返回Result
      * @Author:ALong (ZengWeiLong)
      * @param bean
      * @return    
      * Result
      * @date 2016年10月22日
      */
-    public static <T> Result checkoutDto(T bean){
+    public static <T> Result checkForField(T bean){
         Verify verify = bean.getClass().getAnnotation(Verify.class);
         if(verify == null){
             Field[] fields = bean.getClass().getDeclaredFields(); 
@@ -78,7 +78,7 @@ public class ValidationUtils {
                 }
             }
         }else{
-            List<Result> list = checkoutDtoClass(bean,false);
+            List<Result> list = checkForClass(bean,false);
             if(CollectionUtils.isNotEmpty(list)){
                 return list.get(0);
             }

@@ -11,7 +11,7 @@ public class ValidatiionTest {
     public static void main(String[] args) {
         TeachingExperienceDto dto = new TeachingExperienceDto();
         dto.setOrganisationName("");
-        Result result = ValidationUtils.checkoutDto(dto);
+        Result result = ValidationUtils.checkForField(dto);
         if(result != null){
             System.out.println(JsonTools.getJson(result));
         }
