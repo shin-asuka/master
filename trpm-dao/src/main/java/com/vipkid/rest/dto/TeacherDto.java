@@ -1,20 +1,27 @@
 package com.vipkid.rest.dto;
 
+import com.vipkid.rest.validation.annotation.Ignore;
 import com.vipkid.rest.validation.annotation.Verify;
 
 @Verify
 public class TeacherDto {
 
-    private String fullName;
+    private String firstName;
+    
+    private String middleName;
+    
+    private String lastName;
     
     private Integer countryId;    
    
     private Integer stateId;    
    
     private Integer cityId;    
-   
+    
+    @Ignore
     private String streetAddress;    
-   
+    
+    @Ignore
     private String zipCode;    
    
     private Integer phoneType; //新增字段    
@@ -37,12 +44,29 @@ public class TeacherDto {
     
     private String highestLevelOfEdu;
   
-    public String getFullName() {
-        return fullName;
+
+    public String getFirstName() {
+        return firstName;
     }
 
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }   
+
+    public String getMiddleName() {
+        return middleName;
+    }
+
+    public void setMiddleName(String middleName) {
+        this.middleName = middleName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 
     public Integer getCountryId() {

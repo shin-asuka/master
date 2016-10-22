@@ -222,7 +222,11 @@ public class BasicInfoService {
     
     private Teacher initTeacher(Teacher teacher,TeacherDto bean){
         teacher.setExtraClassSalary(0);
-        teacher.setRealName(bean.getFullName());
+        String realName = bean.getFirstName() + " " + bean.getLastName();
+        if(StringUtils.isNotBlank(bean.getMiddleName())){
+            realName = bean.getFirstName() +" " + bean.getMiddleName() + " " + bean.getLastName();
+        }
+        teacher.setRealName(realName);
         teacher.setTimezone(bean.getTimezone());
         teacher.setCountry(bean.getNationality());
         teacher.setPhoneNationCode(bean.getPhoneNationCode());
