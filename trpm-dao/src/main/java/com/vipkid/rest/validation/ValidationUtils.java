@@ -86,6 +86,30 @@ public class ValidationUtils {
         return null;
     }
     
+    
+    /**
+     * 检查指定的某些属性是否为空 
+     * @Author:ALong (ZengWeiLong)
+     * @param bean
+     * @param names
+     * @return    
+     * Result
+     * @date 2016年10月22日
+     */
+    public static <T> Result checkForField(T bean,List<String> names){
+        Field[] fields = bean.getClass().getDeclaredFields();
+        for(Field field : fields){
+            if(names.contains(field.getName())){
+                Object value = ReflectUtils.getFieldValueByName(field.getName(), bean);
+                Result result = isNotNull(field.getName(), field.getType(), value);
+                if(result.isResult()){
+                    return result;
+                }
+            }
+        }
+        return null;
+    }
+    
     /**
      * @Author:ALong (ZengWeiLong)
      * @param type
