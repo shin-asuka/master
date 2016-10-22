@@ -1,8 +1,16 @@
 package com.vipkid.trpm.service.recruitment;
 
 import java.sql.Timestamp;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
 
+import com.google.api.client.util.Maps;
+import com.google.common.collect.Lists;
+import static com.google.common.collect.Lists.*;
+import com.sun.tools.internal.xjc.reader.xmlschema.bindinfo.BIConversion;
+import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import com.google.common.base.Preconditions;
 import com.vipkid.trpm.dao.TeachingExperienceDao;
+import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.entity.TeachingExperience;
 import com.vipkid.trpm.entity.User;
 import com.vipkid.trpm.util.DateUtils;
@@ -74,5 +83,13 @@ public class TeachingExperienceService {
     public List<TeachingExperience> getTeachingList(long teacherId){
         return teachingExperienceDao.findTeachingList(teacherId);
     }
-    
+
+
+    public static void autoFailProcess(Teacher teacher, List<TeachingExperience> experiences) {
+        AutoFailProcessor processor = new AutoFailProcessor(teacher, experiences).process();
+        processor.getFailTypes();
+        processor.getFailReasons();
+        processor.isFailed();
+    }
+
 }
