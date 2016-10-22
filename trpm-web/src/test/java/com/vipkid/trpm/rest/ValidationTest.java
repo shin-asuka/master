@@ -12,7 +12,6 @@ import com.vipkid.trpm.util.AppUtils;
 public class ValidationTest {
 
     public static void main(String[] args) {
-        /*
         TeachingExperienceDto dto = new TeachingExperienceDto();
         dto.setId(123L);
         dto.setOrganisationName("");
@@ -22,7 +21,6 @@ public class ValidationTest {
         }else{
             System.out.println("OK");
         }
-        */
         System.out.println(AppUtils.containsName(AppEnum.Gender.class, "MALE"));
     }
 }
