@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.vipkid.email.EmailUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.community.tools.JsonTools;
@@ -168,7 +169,7 @@ public class BasicInfoService {
             application.setResult(TeacherApplicationDao.Result.PASS.toString());
             this.teacherDao.insertLifeCycleLog(teacher.getId(), TeacherLifeCycle.BASIC_INFO, TeacherLifeCycle.INTERVIEW, RestfulConfig.SYSTEM_USER_ID);
             //发送邮件
-            EmailService.sendEmail4BasicInfoPass(teacher);
+            EmailUtils.sendEmail4BasicInfoPass(teacher);
             result.put("result", TeacherApplicationDao.Result.PASS);
             result.put("action", "signlogin.shtml?token="+ AES.encrypt(user.getToken(), AES.getKey(AES.KEY_LENGTH_128, ApplicationConstant.AES_128_KEY)));
         }

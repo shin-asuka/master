@@ -496,7 +496,7 @@
 	</select>
 
 
-	<select id="findTeachersByIds" resultType="teacherResultMap">
+	<select id="findTeachersByIds" resultMap="teacherResultMap">
 		SELECT
 		<include refid="teacherColumns" />
 		FROM

@@ -4,7 +4,7 @@ import java.sql.Timestamp;
 import java.util.Date;
 import java.util.Map;
 
-import com.vipkid.trpm.service.recruitment.EmailService;
+import com.vipkid.email.EmailUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -166,7 +166,7 @@ public class BasicInfoAduitService {
         //插入insert log
         this.teacherDao.insertLifeCycleLog(teacher.getId(), TeacherLifeCycle.BASIC_INFO, TeacherLifeCycle.INTERVIEW, userId);
         //发送邮件
-        EmailService.sendEmail4BasicInfoPass(teacher);
+        EmailUtils.sendEmail4BasicInfoPass(teacher);
         result.put("status", true);
         return result;
     }

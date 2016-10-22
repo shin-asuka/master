@@ -1,7 +1,7 @@
 package com.vipkid.task.job;
 
 import com.google.common.base.Stopwatch;
-import com.vipkid.trpm.service.recruitment.EmailService;
+import com.vipkid.email.EmailUtils;
 import com.vipkid.enums.TeacherApplicationEnum;
 import com.vipkid.task.utils.UADateUtils;
 import com.vipkid.trpm.dao.UserDao;
@@ -87,7 +87,7 @@ public class SignUpNoFinishRegisterJob {
 		if (registerTime.after(startTime) && registerTime.before(endTime)){
 			userDao.doLock(teacher.getId());
 		} else {
-			EmailService.sendEmail4Recruitment(teacher.getEmail(), teacher.getRealName(), "SignUpNoFinishRegisterTitle.html", "SignUpNoFinishRegister.html");
+			EmailUtils.sendEmail4Recruitment(teacher.getEmail(), teacher.getRealName(), "SignUpNoFinishRegisterTitle.html", "SignUpNoFinishRegister.html");
 		}
 	}
 }

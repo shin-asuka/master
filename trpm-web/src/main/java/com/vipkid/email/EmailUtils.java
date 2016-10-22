@@ -1,10 +1,9 @@
 /**
  * 
  */
-package com.vipkid.trpm.service.recruitment;
+package com.vipkid.email;
 
 import com.google.api.client.util.Maps;
-import com.vipkid.email.EmailEngine;
 import com.vipkid.email.handle.EmailConfig;
 import com.vipkid.email.templete.TempleteUtils;
 import com.vipkid.trpm.entity.Teacher;
@@ -18,9 +17,9 @@ import java.util.*;
  * @date 2016年10月21日  下午6:18:18
  *
  */
-public class EmailService {
+public class EmailUtils {
 
-	private static final Logger logger = LoggerFactory.getLogger(EmailService.class);
+	private static final Logger logger = LoggerFactory.getLogger(EmailUtils.class);
 
 	public static void sendEmail4Recruitment(String email, String name, String titleTemplate, String contentTemplate) {
 		try {

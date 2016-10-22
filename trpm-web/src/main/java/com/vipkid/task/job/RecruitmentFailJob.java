@@ -3,7 +3,7 @@ package com.vipkid.task.job;
 import com.google.common.base.Stopwatch;
 import com.vipkid.enums.TeacherApplicationEnum;
 import com.vipkid.http.utils.JsonUtils;
-import com.vipkid.trpm.service.recruitment.EmailService;
+import com.vipkid.email.EmailUtils;
 import com.vipkid.task.utils.UADateUtils;
 import com.vipkid.trpm.dao.TeacherApplicationDao;
 import com.vipkid.vschedule.client.common.Vschedule;
@@ -79,7 +79,7 @@ public class RecruitmentFailJob {
 					contentTemplate = "InterviewFail.html";
 				}
 
-				EmailService.sendEmail4Recruitment(email, name, titleTemplate, contentTemplate);
+				EmailUtils.sendEmail4Recruitment(email, name, titleTemplate, contentTemplate);
 			}
 		}
 	}
