@@ -6,10 +6,13 @@ import com.google.common.collect.Lists;
 import com.vipkid.rest.dto.TeachingExperienceDto;
 import com.vipkid.rest.validation.ValidationUtils;
 import com.vipkid.rest.validation.tools.Result;
+import com.vipkid.trpm.entity.app.AppEnum;
+import com.vipkid.trpm.util.AppUtils;
 
-public class ValidatiionTest {
+public class ValidationTest {
 
     public static void main(String[] args) {
+        /*
         TeachingExperienceDto dto = new TeachingExperienceDto();
         dto.setId(123L);
         dto.setOrganisationName("");
@@ -19,5 +22,7 @@ public class ValidatiionTest {
         }else{
             System.out.println("OK");
         }
+        */
+        System.out.println(AppUtils.containsName(AppEnum.Gender.class, "MALE"));
     }
 }

@@ -39,7 +39,7 @@ public class AppUtils {
         return classStatuses;
     }
     
-       /**
+     /**
      * 根据课程类型统计
      * @Author:ALong (ZengWeiLong)
      * @param classStatus
@@ -60,6 +60,25 @@ public class AppUtils {
         return classTypes;
     }
     
+    /**
+     * 判断一个枚举类是否包含某个名称 
+     * @Author:ALong (ZengWeiLong)
+     * @param clazz
+     * @param name
+     * @return    
+     * boolean
+     * @date 2016年10月22日
+     */
+   public static <T> boolean containsName(Class<T> clazz,String name){
+       if(StringUtils.isBlank(name)) return false;
+       try{
+           return AppEnum.containsName(clazz,name);
+       }catch(Exception e){
+           logger.error("不存在的课程类型定义：" + name);
+       }
+       return false;
+   }
+   
     
     /**
      * 将一个时间戳转化为指定时区的时间

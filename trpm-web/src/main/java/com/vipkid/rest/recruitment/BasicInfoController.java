@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.google.api.client.util.Lists;
 import com.google.api.client.util.Maps;
 import com.vipkid.rest.RestfulController;
 import com.vipkid.rest.config.RestfulConfig;
@@ -26,8 +27,10 @@ import com.vipkid.rest.validation.tools.Result;
 import com.vipkid.trpm.constant.ApplicationConstant.TeacherLifeCycle;
 import com.vipkid.trpm.entity.TeachingExperience;
 import com.vipkid.trpm.entity.User;
+import com.vipkid.trpm.entity.app.AppEnum;
 import com.vipkid.trpm.service.recruitment.BasicInfoService;
 import com.vipkid.trpm.service.recruitment.TeachingExperienceService;
+import com.vipkid.trpm.util.AppUtils;
 
 @RestController
 @RestInterface(lifeCycle={TeacherLifeCycle.SIGNUP,TeacherLifeCycle.BASIC_INFO})
@@ -175,6 +178,18 @@ public class BasicInfoController extends RestfulController{
                 result.put("resultCheck",resultCheck);
                 return result;
             }
+            if(!AppUtils.containsName(AppEnum.Gender.class, bean.getGender())){
+                response.setStatus(HttpStatus.BAD_REQUEST.value());
+                result.put("status", false);
+                result.put("info", "Gender data is error!");
+                return result;
+            }
+            if(!AppUtils.containsName(AppEnum.DegreeType.class, bean.getHighestLevelOfEdu())){
+                response.setStatus(HttpStatus.BAD_REQUEST.value());
+                result.put("status", false);
+                result.put("info", "Gender data is error!");
+                return result;
+            }
             User user = getUser(request);
             return this.basicInfoService.submitInfo(bean, user);
         } catch (IllegalArgumentException e) {
@@ -190,7 +205,7 @@ public class BasicInfoController extends RestfulController{
     } 
     
     
-    @RequestMapping(value = "/getStatus", method = RequestMethod.POST, produces = RestfulConfig.JSON_UTF_8)
+    @RequestMapping(value = "/getStatus", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
     public Map<String,Object> getStatus(HttpServletRequest request, HttpServletResponse response){
         try{
             User user = getUser(request);
@@ -203,5 +218,21 @@ public class BasicInfoController extends RestfulController{
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
         }
         return Maps.newHashMap();
-    }  
+    } 
+    
+    @RequestMapping(value = "/findTeacher", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
+    public List<Map<String,Object>> findTeacher(HttpServletRequest request, HttpServletResponse response){
+        try{
+            User user = getUser(request);
+            logger.info("userId:{}",user.getId());
+            return this.basicInfoService.findTeacher();
+        } catch (IllegalArgumentException e) {
+            logger.error("内部参数转化异常:"+e.getMessage());
+            response.setStatus(HttpStatus.BAD_REQUEST.value());
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+        }
+        return Lists.newArrayList();
+    }
 }

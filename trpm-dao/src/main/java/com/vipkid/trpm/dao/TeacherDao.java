@@ -33,6 +33,10 @@ public class TeacherDao extends MapperDaoTemplate<Teacher> {
         }
         return teacher;
     }
+    
+    public List<Map<String,Object>> findTeacher(Map<String,Object> paramMap){
+       return super.listEntity("findTeacher",paramMap);
+    }
 
     @Override
     public int update(Teacher teacher) {

@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.vipkid.email.EmailUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.community.tools.JsonTools;
@@ -15,11 +14,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.google.api.client.util.Maps;
+import com.vipkid.email.EmailUtils;
+import com.vipkid.enums.TeacherEnum;
 import com.vipkid.enums.UserEnum;
 import com.vipkid.rest.config.RestfulConfig;
 import com.vipkid.rest.dto.TeacherDto;
 import com.vipkid.trpm.constant.ApplicationConstant;
-import com.vipkid.trpm.constant.ApplicationConstant.TeacherLifeCycle;
 import com.vipkid.trpm.dao.TeacherAddressDao;
 import com.vipkid.trpm.dao.TeacherApplicationDao;
 import com.vipkid.trpm.dao.TeacherDao;
@@ -30,6 +30,7 @@ import com.vipkid.trpm.entity.TeacherAddress;
 import com.vipkid.trpm.entity.TeacherApplication;
 import com.vipkid.trpm.entity.TeachingExperience;
 import com.vipkid.trpm.entity.User;
+import com.vipkid.trpm.entity.app.AppEnum;
 import com.vipkid.trpm.util.AES;
 
 @Service
@@ -121,14 +122,13 @@ public class BasicInfoService {
     public Map<String,Object> submitInfo(TeacherDto bean,User user){ 
         Map<String,Object> result = Maps.newHashMap();        
         Teacher teacher = this.teacherDao.findById(user.getId());
-        List<TeacherApplication> applicationList = teacherApplicationDao.findApplictionForStatus(user.getId(),TeacherApplicationDao.Status.BASIC_INFO.toString());
+        List<TeacherApplication> applicationList = teacherApplicationDao.findApplictionForStatus(user.getId(),AppEnum.LifeCycle.BASIC_INFO.toString());
         if(CollectionUtils.isNotEmpty(applicationList)){
             result.put("status", false);
             result.put("info", "You have already submitted data!");
             logger.error("已经提交基本信息的老师{}，重复提交被拦截:提交状态{},审核结果{},用户状态:{}",teacher.getId(),applicationList.get(0).getStatus(),applicationList.get(0).getResult(),teacher.getLifeCycle());
             return result;
         }
-        //1.更新User
         user.setGender(bean.getGender());
         this.userDao.update(user);
         //2.更新Address
@@ -146,13 +146,13 @@ public class BasicInfoService {
         application = teacherApplicationDao.initApplicationData(application);
         application.setTeacherId(teacher.getId());//  步骤关联的教师
         application.setApplyDateTime(new Timestamp(System.currentTimeMillis()));
-        application.setStatus(TeacherApplicationDao.Status.BASIC_INFO.toString());
+        application.setStatus(AppEnum.LifeCycle.BASIC_INFO.toString());
         //5.AutoFail Pass TeacherApplication
         AutoFailProcessor processor = this.autoFail(teacher,teacherAddress);
         //自动审核通过
         if(processor.isFailed()){
             //自动审核失败
-            teacher.setLifeCycle(TeacherLifeCycle.BASIC_INFO);
+            teacher.setLifeCycle(AppEnum.LifeCycle.BASIC_INFO.toString());
             //Basic审核为FAIIL
             application.setAuditDateTime(new Timestamp(System.currentTimeMillis()));
             application.setAuditorId(RestfulConfig.SYSTEM_USER_ID);
@@ -162,12 +162,12 @@ public class BasicInfoService {
             result.put("result", TeacherApplicationDao.Result.FAIL);
         }else{
             //自动审核通过Basic则自动变LifeCycle为Interview
-            teacher.setLifeCycle(TeacherLifeCycle.INTERVIEW);
+            teacher.setLifeCycle(AppEnum.LifeCycle.INTERVIEW.toString());
             //Basic审核为PASS
             application.setAuditDateTime(new Timestamp(System.currentTimeMillis()));
             application.setAuditorId(RestfulConfig.SYSTEM_USER_ID);
             application.setResult(TeacherApplicationDao.Result.PASS.toString());
-            this.teacherDao.insertLifeCycleLog(teacher.getId(), TeacherLifeCycle.BASIC_INFO, TeacherLifeCycle.INTERVIEW, RestfulConfig.SYSTEM_USER_ID);
+            this.teacherDao.insertLifeCycleLog(teacher.getId(), AppEnum.LifeCycle.BASIC_INFO.toString(),AppEnum.LifeCycle.INTERVIEW.toString(), RestfulConfig.SYSTEM_USER_ID);
             //发送邮件
             EmailUtils.sendEmail4BasicInfoPass(teacher);
             result.put("result", TeacherApplicationDao.Result.PASS);
@@ -218,6 +218,19 @@ public class BasicInfoService {
         }
         
         return resultMap;
+    }
+    
+    /**
+     * 渠道为当前老师的数据初始化<br/>
+     * @Author:VIPKID-ZengWeiLong
+     * @param paramMap
+     * @return 2015年10月12日
+     */
+    public List<Map<String, Object>> findTeacher(){
+        Map<String,Object> paramMap = new HashMap<String,Object>();
+        paramMap.put("type", "PART_TIME");
+        paramMap.put("lifeCycle", TeacherEnum.LifeCycle.REGULAR);
+        return teacherDao.findTeacher(paramMap);
     }
     
     private Teacher initTeacher(Teacher teacher,TeacherDto bean){

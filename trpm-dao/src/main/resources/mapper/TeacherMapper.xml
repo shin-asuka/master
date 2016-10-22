@@ -493,8 +493,21 @@
 	
 	<select id="findAllRegularId" resultType="String">
 		select t.id  from teacher t where t.life_cycle = 'REGULAR'
+		AND t.real_name not like '%test%' 
+		AND t.real_name not like '%测试%'
+		ORDER BY t.real_name
 	</select>
 
+	<select id="findTeacher" resultType="java.util.Map">
+		SELECT DISTINCT t.id as id, t.real_name as name
+		FROM teacher t join user u on u.username = t.email 
+		WHERE u.status = 'NORMAL' 
+		<if test="lifeCycle != null ">AND t.life_cycle = #{lifeCycle}</if> 
+		<if test="type != null ">AND t.type = #{type}</if>
+		AND t.real_name not like '%test%' 
+		AND t.real_name not like '%测试%'
+		ORDER BY t.real_name
+	</select>
 
 	<select id="findTeachersByIds" resultMap="teacherResultMap">
 		SELECT

@@ -1,5 +1,7 @@
 package com.vipkid.trpm.entity.app;
 
+import org.apache.commons.lang3.StringUtils;
+
 public class AppEnum {
 
     public enum CourseType {
@@ -130,5 +132,15 @@ public class AppEnum {
     
     public static <T extends Enum<T>> T valueOf(Class<T> clazz, int ordinal) {  
         return (T)clazz.getEnumConstants()[ordinal];  
+    } 
+    
+    public static <T> boolean containsName(Class<T> clazz, String name) {  
+        T[] ts = clazz.getEnumConstants();
+        for(T t:ts){
+            if(StringUtils.equals(t.toString(), name)){
+                return true;
+            }
+        }
+        return false;
     } 
 }
