@@ -267,6 +267,11 @@ public class BasicInfoService {
         List<TeachingExperience> experiences = teachingExperienceDao.findTeachingList(teacher.getId());
         experiences.stream().parallel().forEach(bean -> {bean.setStatus(TeachingExperienceDao.Status.SUBMIT.val());this.teachingExperienceDao.update(bean);});
         AutoFailProcessor processor = new AutoFailProcessor(teacher, experiences,teacherAddress).process();
+        if(processor.isFailed()){
+            logger.info("Fail Teacher:{},Name:{},Fail:{},FailType:{},FailReasons:{}",teacher.getId(),teacher.getRealName(),processor.isFailed(),processor.getFailTypes(),processor.getFailReasons());
+        }else{
+            logger.info("Pass Teacher:{},Name:{}",teacher.getId(),teacher.getRealName());
+        }
         return processor;
     }
 }
