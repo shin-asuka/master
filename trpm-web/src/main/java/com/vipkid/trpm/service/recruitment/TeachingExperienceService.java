@@ -100,13 +100,4 @@ public class TeachingExperienceService {
     public List<TeachingExperience> getTeachingList(long teacherId){
         return teachingExperienceDao.findTeachingList(teacherId);
     }
-
-
-    public static void autoFailProcess(Teacher teacher, List<TeachingExperience> experiences) {
-        AutoFailProcessor processor = new AutoFailProcessor(teacher, experiences).process();
-        processor.getFailTypes();
-        processor.getFailReasons();
-        processor.isFailed();
-    }
-
 }

@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.community.tools.JsonTools;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -131,7 +132,7 @@ public class BasicInfoService {
         user.setGender(bean.getGender());
         this.userDao.update(user);
         //2.更新Address
-        this.teacherAddressDao.updateOrSaveCurrentAddressId(teacher, bean.getCountryId(), bean.getStateId(), bean.getCityId(), bean.getStreetAddress(), bean.getZipCode());
+        TeacherAddress teacherAddress = this.teacherAddressDao.updateOrSaveCurrentAddressId(teacher, bean.getCountryId(), bean.getStateId(), bean.getCityId(), bean.getStreetAddress(), bean.getZipCode());
         //3.更新Teacher
         teacher = this.initTeacher(teacher, bean);        
         //4.新增 TeacherApplication
@@ -141,9 +142,19 @@ public class BasicInfoService {
         application.setApplyDateTime(new Timestamp(System.currentTimeMillis()));
         application.setStatus(TeacherApplicationDao.Status.BASIC_INFO.toString());
         //5.AutoFail Pass TeacherApplication
-        Map<String,String>  checkResult = this.autoFail(teacher);
+        AutoFailProcessor processor = this.autoFail(teacher,teacherAddress);
         //自动审核通过
-        if(StringUtils.equals(checkResult.get("result"), TeacherApplicationDao.Result.PASS.toString())){
+        if(processor.isFailed()){
+            //自动审核失败
+            teacher.setLifeCycle(TeacherLifeCycle.BASIC_INFO);
+            //Basic审核为FAIIL
+            application.setAuditDateTime(new Timestamp(System.currentTimeMillis()));
+            application.setAuditorId(RestfulConfig.SYSTEM_USER_ID);
+            application.setResult(TeacherApplicationDao.Result.FAIL.toString());
+            //需要写入Fail原因管理端需要展示
+            application.setFailedReason(JsonTools.getJson(processor.getFailReasons()));
+            result.put("result", TeacherApplicationDao.Result.FAIL);
+        }else{
             //自动审核通过Basic则自动变LifeCycle为Interview
             teacher.setLifeCycle(TeacherLifeCycle.INTERVIEW);
             //Basic审核为PASS
@@ -155,16 +166,6 @@ public class BasicInfoService {
             EmailUtils.sendEmail4UndoFail(teacher);
             result.put("result", TeacherApplicationDao.Result.PASS);
             result.put("action", "signlogin.shtml?token="+ AES.encrypt(user.getToken(), AES.getKey(AES.KEY_LENGTH_128, ApplicationConstant.AES_128_KEY)));
-        }else{
-            //自动审核失败
-            teacher.setLifeCycle(TeacherLifeCycle.BASIC_INFO);
-            //Basic审核为FAIIL
-            application.setAuditDateTime(new Timestamp(System.currentTimeMillis()));
-            application.setAuditorId(RestfulConfig.SYSTEM_USER_ID);
-            application.setResult(TeacherApplicationDao.Result.FAIL.toString());
-            //需要写入Fail原因管理端需要展示
-            application.setFailedReason(checkResult.get("failReason"));
-            result.put("result", TeacherApplicationDao.Result.FAIL);
         }
         application.setVersion(3);
         this.teacherApplicationDao.save(application);
@@ -256,26 +257,10 @@ public class BasicInfoService {
      * 失败原因,failReason:List<String>
      * @date 2016年10月18日
      */
-    private <T> T autoFail(Teacher teacher){
-        List<TeachingExperience> list = teachingExperienceDao.findTeachingList(teacher.getId());
-        list.stream().parallel().forEach(bean -> {bean.setStatus(TeachingExperienceDao.Status.SUBMIT.val());this.teachingExperienceDao.update(bean);});
-        boolean isPass = false;
-        //A.合计授课小时 500以上
-        double totalHours = list.stream().parallel().mapToDouble(bean -> bean.getTotalHours()).sum();
-        //B.国籍(Nationality)判断American or Canadian
-        //C.Location
-        /*  1. Africa
-            2. Middle-East Asia
-            3. Russia
-            4. Mongolia
-            5. Myanmar
-            6. Nepal
-            7. Oceania
-            8. South America
-            9. Cambodia
-            */
-        //D.Highest level of education:Bachelors or higher
-        
-        return null;
+    private AutoFailProcessor autoFail(Teacher teacher,TeacherAddress teacherAddress){
+        List<TeachingExperience> experiences = teachingExperienceDao.findTeachingList(teacher.getId());
+        experiences.stream().parallel().forEach(bean -> {bean.setStatus(TeachingExperienceDao.Status.SUBMIT.val());this.teachingExperienceDao.update(bean);});
+        AutoFailProcessor processor = new AutoFailProcessor(teacher, experiences,teacherAddress).process();
+        return processor;
     }
 }

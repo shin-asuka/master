@@ -29,7 +29,7 @@ public class TeacherAddressDao extends MapperDaoTemplate<TeacherAddress> {
         return super.selectOne(new TeacherAddress().setId(id));
     }
 
-    public void updateOrSaveCurrentAddressId(Teacher teacher,int countryId,int stateId,int cityId,String streetAddress,String zipCode){
+    public TeacherAddress updateOrSaveCurrentAddressId(Teacher teacher,int countryId,int stateId,int cityId,String streetAddress,String zipCode){
         TeacherAddress teacherAddress = new TeacherAddress();
         if(teacher.getCurrentAddressId() > 0){
             teacherAddress = this.findById(teacher.getCurrentAddressId());
@@ -41,6 +41,7 @@ public class TeacherAddressDao extends MapperDaoTemplate<TeacherAddress> {
         teacherAddress.setZipCode(zipCode);
         this.updateOrSave(teacherAddress);
         teacher.setCurrentAddressId(teacherAddress.getId());
+        return teacherAddress;
     }
     
     public int updateOrSave(TeacherAddress teacherAddress) {
