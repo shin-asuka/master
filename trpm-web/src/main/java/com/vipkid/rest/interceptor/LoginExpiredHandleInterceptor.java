@@ -15,7 +15,6 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import com.google.common.base.Preconditions;
 import com.vipkid.rest.RestfulController;
-import com.vipkid.rest.config.RestInterface;
 import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.entity.User;
 import com.vipkid.trpm.service.rest.LoginService;

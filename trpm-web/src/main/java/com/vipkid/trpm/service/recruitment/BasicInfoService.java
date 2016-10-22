@@ -13,9 +13,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.google.api.client.util.Maps;
-import com.vipkid.enums.BasicInfoBean;
 import com.vipkid.enums.UserEnum;
 import com.vipkid.rest.config.RestfulConfig;
+import com.vipkid.rest.dto.TeacherDto;
 import com.vipkid.trpm.constant.ApplicationConstant;
 import com.vipkid.trpm.constant.ApplicationConstant.TeacherLifeCycle;
 import com.vipkid.trpm.dao.TeacherAddressDao;
@@ -80,7 +80,7 @@ public class BasicInfoService {
      * Map<String,Object>
      * @date 2016年10月17日
      */
-    public Map<String,Object> saveInfo(BasicInfoBean bean,User user){ 
+    public Map<String,Object> saveInfo(TeacherDto bean,User user){ 
         Map<String,Object> result = Maps.newHashMap();        
         Teacher teacher = this.teacherDao.findById(user.getId());
         //1.更新User
@@ -117,7 +117,7 @@ public class BasicInfoService {
      * Map<String,Object>
      * @date 2016年10月17日
      */
-    public Map<String,Object> submitInfo(BasicInfoBean bean,User user){ 
+    public Map<String,Object> submitInfo(TeacherDto bean,User user){ 
         Map<String,Object> result = Maps.newHashMap();        
         Teacher teacher = this.teacherDao.findById(user.getId());
         List<TeacherApplication> applicationList = teacherApplicationDao.findApplictionForStatus(user.getId(),TeacherApplicationDao.Status.BASIC_INFO.toString());
@@ -131,7 +131,7 @@ public class BasicInfoService {
         user.setGender(bean.getGender());
         this.userDao.update(user);
         //2.更新Address
-        this.teacherAddressDao.updateOrSaveCurrentAddressId(teacher,bean);
+        this.teacherAddressDao.updateOrSaveCurrentAddressId(teacher, bean.getCountryId(), bean.getStateId(), bean.getCityId(), bean.getStreetAddress(), bean.getZipCode());
         //3.更新Teacher
         teacher = this.initTeacher(teacher, bean);        
         //4.新增 TeacherApplication
@@ -213,7 +213,7 @@ public class BasicInfoService {
         return resultMap;
     }
     
-    private Teacher initTeacher(Teacher teacher,BasicInfoBean bean){
+    private Teacher initTeacher(Teacher teacher,TeacherDto bean){
         teacher.setExtraClassSalary(0);
         teacher.setRealName(bean.getFullName());
         teacher.setTimezone(bean.getTimezone());

@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.google.common.base.Preconditions;
+import com.vipkid.rest.dto.TeachingExperienceDto;
 import com.vipkid.trpm.dao.TeachingExperienceDao;
 import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.entity.TeachingExperience;
@@ -39,28 +40,44 @@ public class TeachingExperienceService {
     @Autowired
     private TeachingExperienceDao teachingExperienceDao;
     
-    public long saveTeaching(TeachingExperience teachingExperience,User user){
+    public long saveTeaching(TeachingExperienceDto bean,User user){
+        TeachingExperience teachingExperience = new TeachingExperience();
+        teachingExperience.setOrganisationName(bean.getOrganisationName());
+        teachingExperience.setJobTitle(bean.getJobTitle());
+        teachingExperience.setTimePeriodStart(new Timestamp(bean.getTimePeriodStart()));
+        teachingExperience.setTimePeriodEnd(new Timestamp(bean.getTimePeriodEnd()));
+        teachingExperience.setHoursWeek(bean.getHoursWeek());
+        teachingExperience.setJobDescription(bean.getJobDescription());
         teachingExperience.setCreateId(user.getId());
         teachingExperience.setCreateTime(new Timestamp(System.currentTimeMillis()));
         teachingExperience.setUpdateId(user.getId());
         teachingExperience.setUpdateTime(new Timestamp(System.currentTimeMillis()));
         teachingExperience.setStatus(TeachingExperienceDao.Status.SAVE.val());
-        teachingExperience.setTotalHours(DateUtils.countWeeks(teachingExperience.getTimePeriodStart().getTime(), teachingExperience.getTimePeriodEnd().getTime())*teachingExperience.getHoursWeek());
+        teachingExperience.setTotalHours(DateUtils.countWeeks(bean.getTimePeriodStart(), bean.getTimePeriodEnd())*bean.getHoursWeek());
         if(teachingExperienceDao.save(teachingExperience) > 0 ){
             return teachingExperience.getId();
         }
         return 0L;
     }
     
-    public long updateTeaching(TeachingExperience teachingExperience,User user){
-        Preconditions.checkArgument(teachingExperience.getId() > 0);
-        logger.info("userId is {}, update TeachingExperience,teachingExperienceId is:{}",user.getId(),teachingExperience.getId());
+    public long updateTeaching(TeachingExperienceDto bean,User user){
+        Preconditions.checkArgument(bean.getId() > 0);
+        logger.info("userId is {}, update TeachingExperience,teachingExperienceId is:{}",user.getId(),bean.getId());
+        TeachingExperience teachingExperience = new TeachingExperience();
+        teachingExperience.setId(bean.getId());
+        teachingExperience.setOrganisationName(bean.getOrganisationName());
+        teachingExperience.setJobTitle(bean.getJobTitle());
+        teachingExperience.setTimePeriodStart(new Timestamp(bean.getTimePeriodStart()));
+        teachingExperience.setTimePeriodEnd(new Timestamp(bean.getTimePeriodEnd()));
+        teachingExperience.setHoursWeek(bean.getHoursWeek());
+        teachingExperience.setJobDescription(bean.getJobDescription());
+        
         teachingExperience.setCreateId(user.getId());
         teachingExperience.setCreateTime(new Timestamp(System.currentTimeMillis()));
         teachingExperience.setUpdateId(user.getId());
         teachingExperience.setUpdateTime(new Timestamp(System.currentTimeMillis()));
         teachingExperience.setStatus(TeachingExperienceDao.Status.SAVE.val());
-        teachingExperience.setTotalHours(DateUtils.countWeeks(teachingExperience.getTimePeriodStart().getTime(), teachingExperience.getTimePeriodEnd().getTime())*teachingExperience.getHoursWeek());
+        teachingExperience.setTotalHours(DateUtils.countWeeks(bean.getTimePeriodStart(), bean.getTimePeriodEnd())*bean.getHoursWeek());
         if(teachingExperienceDao.update(teachingExperience) > 0){
             return teachingExperience.getId();
         }

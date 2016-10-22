@@ -1,4 +1,4 @@
-package com.vipkid.rest.config;
+package com.vipkid.rest.interceptor;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
