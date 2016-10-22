@@ -125,7 +125,7 @@ public class BasicInfoService {
         if(CollectionUtils.isNotEmpty(applicationList)){
             result.put("status", false);
             result.put("info", "You have already submitted data!");
-            logger.warn("已经提交基本信息的用户{}，重复提交被拦截:提交状态{},审核结果{},用户状态:{}",teacher.getId(),applicationList.get(0).getStatus(),applicationList.get(0).getResult(),teacher.getLifeCycle());
+            logger.error("已经提交基本信息的老师{}，重复提交被拦截:提交状态{},审核结果{},用户状态:{}",teacher.getId(),applicationList.get(0).getStatus(),applicationList.get(0).getResult(),teacher.getLifeCycle());
             return result;
         }
         //1.更新User
@@ -133,6 +133,12 @@ public class BasicInfoService {
         this.userDao.update(user);
         //2.更新Address
         TeacherAddress teacherAddress = this.teacherAddressDao.updateOrSaveCurrentAddressId(teacher, bean.getCountryId(), bean.getStateId(), bean.getCityId(), bean.getStreetAddress(), bean.getZipCode());
+        if(teacherAddress == null || teacherAddress.getId() <= 0){
+            result.put("status", false);
+            result.put("info", "You have already submitted data!");
+            logger.error("老师:{},地址Id:{},保存有问题.",teacher.getId(),teacherAddress);
+            return result;
+        }
         //3.更新Teacher
         teacher = this.initTeacher(teacher, bean);        
         //4.新增 TeacherApplication
