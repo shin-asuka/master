@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.google.api.client.util.Lists;
 import com.google.api.client.util.Maps;
 import com.vipkid.rest.RestfulController;
 import com.vipkid.rest.config.RestfulConfig;
@@ -221,11 +220,13 @@ public class BasicInfoController extends RestfulController{
     } 
     
     @RequestMapping(value = "/findTeacher", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
-    public List<Map<String,Object>> findTeacher(HttpServletRequest request, HttpServletResponse response){
+    public Map<String,Object> findTeacher(HttpServletRequest request, HttpServletResponse response){
         try{
             User user = getUser(request);
             logger.info("userId:{}",user.getId());
-            return this.basicInfoService.findTeacher();
+            List<Map<String,Object>> list = this.basicInfoService.findTeacher();
+            Map<String,Object> result = Maps.newHashMap();
+            result.put("list", list);
         } catch (IllegalArgumentException e) {
             logger.error("内部参数转化异常:"+e.getMessage());
             response.setStatus(HttpStatus.BAD_REQUEST.value());
@@ -233,6 +234,6 @@ public class BasicInfoController extends RestfulController{
             logger.error(e.getMessage(), e);
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
         }
-        return Lists.newArrayList();
+        return Maps.newHashMap();
     }
 }
