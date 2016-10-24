@@ -1,21 +1,21 @@
 package com.vipkid.rest.validation.tools;
 
-import com.vipkid.rest.validation.tools.ValidateEnum.Message;
+import com.vipkid.rest.validation.tools.ValidateEnum.Type;
 
 public class Result {
 
     public String name;
     
-    public Message messageType;
+    public Type messageType;
     
     public String messages;
     
     public boolean result;
     
-    private Result(String name,Message messageType,boolean result){
+    private Result(String name,Type messageType,boolean result){
         this.name = name;
         this.messageType = messageType;
-        this.messages = messageType.val();
+        this.messages = messageType.message();
         this.result = result;
     }
 
@@ -27,13 +27,13 @@ public class Result {
         this.name = name;
     }
 
-    public Message getMessageType() {
+    public Type getMessageType() {
         return messageType;
     }
 
-    public void setMessageType(Message messageType) {
+    public void setMessageType(Type messageType) {
         this.messageType = messageType;
-        this.messages = messageType.val();
+        this.messages = messageType.message();
     }
 
     public boolean isResult() {
@@ -52,11 +52,11 @@ public class Result {
         this.messages = messages;
     }
 
-    public static Result bulider(String name,Message message,boolean result){
+    public static Result bulider(String name,Type message,boolean result){
         return new Result(name,message,result);
     }
     
     public static Result bulider(){
-        return bulider("", Message.SUCCESS, false);
+        return bulider("", Type.SUCCESS, false);
     }
 }
