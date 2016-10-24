@@ -14,5 +14,7 @@ public @interface Verify {
     Type[] type() default {Type.NOT_NULL};
     
     int maxLength() default 0;
+    
+    int minLength() default 0;
 
 }

@@ -6,7 +6,9 @@ public class ValidationEnum {
 
         NOT_NULL,
         
-        MAX_LENGTH
+        MAX_LENGTH,
+        
+        MIN_LENGTH
       
     }
     
@@ -16,7 +18,9 @@ public class ValidationEnum {
         
         NOT_NULL("The field is required !"),
         
-        MAX_LENGTH("The field length is too long !");
+        MAX_LENGTH("The field length is too long !"),
+        
+        MIN_LENGTH("The field length is too short !");
         
         private String val;
         

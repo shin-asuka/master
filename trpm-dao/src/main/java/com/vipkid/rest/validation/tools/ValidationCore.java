@@ -82,4 +82,40 @@ public class ValidationCore {
         }
         return Result.bulider();
     }
+    
+    
+    public static Result minLength(String name,Class<?> type,Object value,int minLength){
+        logger.info("name:{},type:{},value:{},minLength:{}",name,type.toString(),value,minLength);
+        //如果最大值为0 则验证通过，设置无效
+        if(minLength <= 0){
+            return Result.bulider();
+        }
+        if(String.class == type){
+            if(StringUtils.length((String)value) < minLength){
+                return Result.bulider(name,ValidationEnum.Message.MIN_LENGTH, true);
+            }
+        }else if(Integer.class == type){
+            if((int)value < minLength){
+                return Result.bulider(name,ValidationEnum.Message.MIN_LENGTH, true);
+            }
+        }else if(Long.class == type){
+            if((long)value < minLength){
+                return Result.bulider(name,ValidationEnum.Message.MIN_LENGTH, true);
+            }
+        }else if(Float.class == type){
+            if((float)value < minLength){
+                return Result.bulider(name,ValidationEnum.Message.MIN_LENGTH, true);
+            }
+        }else if(Double.class == type){
+            if((double)value < minLength){
+                return Result.bulider(name,ValidationEnum.Message.MIN_LENGTH, true);
+            }
+        }else{
+            if(StringUtils.length((String)value) < minLength){
+                return Result.bulider(name,ValidationEnum.Message.MIN_LENGTH, true);
+            }
+        }
+        return Result.bulider();
+    }
+    
 }

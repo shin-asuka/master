@@ -104,11 +104,18 @@ public class ValidationUtils {
             Object value = ReflectUtils.getFieldValueByName(field.getName(), bean);
             result = ValidationCore.isNull(field.getName(), field.getType(), value);
         }
-        //length
+        // maxlength
         if(!result.isResult() && Arrays.asList(verify.type()).contains(ValidationEnum.Type.MAX_LENGTH)){
             Object value = ReflectUtils.getFieldValueByName(field.getName(), bean);
             result = ValidationCore.maxLength(field.getName(), field.getType(), value,verify.maxLength());
         }
+        
+        // minlength
+        if(!result.isResult() && Arrays.asList(verify.type()).contains(ValidationEnum.Type.MIN_LENGTH)){
+            Object value = ReflectUtils.getFieldValueByName(field.getName(), bean);
+            result = ValidationCore.minLength(field.getName(), field.getType(), value,verify.minLength());
+        }
+        
         return result;
     }
      
