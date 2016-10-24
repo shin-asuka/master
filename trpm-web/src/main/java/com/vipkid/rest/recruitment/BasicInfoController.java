@@ -21,7 +21,7 @@ import com.vipkid.rest.config.RestfulConfig;
 import com.vipkid.rest.dto.TeacherDto;
 import com.vipkid.rest.dto.TeachingExperienceDto;
 import com.vipkid.rest.interceptor.RestInterface;
-import com.vipkid.rest.validation.ValidationUtils;
+import com.vipkid.rest.validation.ValidateUtils;
 import com.vipkid.rest.validation.tools.Result;
 import com.vipkid.trpm.constant.ApplicationConstant.TeacherLifeCycle;
 import com.vipkid.trpm.entity.TeacherNationalityCode;
@@ -90,7 +90,7 @@ public class BasicInfoController extends RestfulController{
         try{
             long resultRow = 0;
             User user = getUser(request);
-            Result resultCheck = ValidationUtils.checkForField(teachingExperience);
+            Result resultCheck = ValidateUtils.checkForField(teachingExperience);
             if(resultCheck != null && resultCheck.isResult()){
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
                 result.put("status", false);
@@ -171,7 +171,7 @@ public class BasicInfoController extends RestfulController{
     public Map<String,Object> submitInfo(HttpServletRequest request, HttpServletResponse response,@RequestBody TeacherDto bean){
         Map<String,Object> result = Maps.newHashMap();
         try{
-            Result resultCheck = ValidationUtils.checkForField(bean);
+            Result resultCheck = ValidateUtils.checkForField(bean);
             if(resultCheck != null && resultCheck.isResult()){
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
                 result.put("status", false);

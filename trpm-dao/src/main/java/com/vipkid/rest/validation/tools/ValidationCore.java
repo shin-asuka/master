@@ -4,11 +4,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.vipkid.rest.validation.ValidationUtils;
+import com.vipkid.rest.validation.ValidateUtils;
 
 public class ValidationCore {
 
-    private static Logger logger = LoggerFactory.getLogger(ValidationUtils.class);
+    private static Logger logger = LoggerFactory.getLogger(ValidateUtils.class);
     
     /**
      * @Author:ALong (ZengWeiLong)

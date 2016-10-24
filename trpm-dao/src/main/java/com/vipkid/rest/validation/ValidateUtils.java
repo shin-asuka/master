@@ -16,9 +16,9 @@ import com.vipkid.rest.validation.tools.Result;
 import com.vipkid.rest.validation.tools.ValidationEnum;
 import com.vipkid.rest.validation.tools.ValidationCore;
 
-public class ValidationUtils {
+public class ValidateUtils {
     
-    private static Logger logger = LoggerFactory.getLogger(ValidationUtils.class);
+    private static Logger logger = LoggerFactory.getLogger(ValidateUtils.class);
     
     /**
      * 可选择验证结果类型 多个和一个  返回List

@@ -6,7 +6,7 @@ import org.community.tools.JsonTools;
 import org.junit.Test;
 
 import com.vipkid.rest.dto.TeachingExperienceDto;
-import com.vipkid.rest.validation.ValidationUtils;
+import com.vipkid.rest.validation.ValidateUtils;
 import com.vipkid.rest.validation.tools.Result;
 
 public class ValidationTest {
@@ -18,7 +18,7 @@ public class ValidationTest {
         dto.setOrganisationName("伪类");
         dto.setJobDescription("WERTYUIOFGHJKLFGHJKLFGHJ");
         
-        List<Result> list = ValidationUtils.checkForClass(dto, true);
+        List<Result> list = ValidateUtils.checkForClass(dto, true);
         list.stream().parallel().forEach(bean ->{System.out.println("check:"+JsonTools.getJson(bean));});
         
         /*
