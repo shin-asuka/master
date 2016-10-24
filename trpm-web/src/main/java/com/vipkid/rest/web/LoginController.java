@@ -90,7 +90,11 @@ public class LoginController extends RestfulController {
         if (StringUtils.isNotEmpty(ip)) {
             passportService.addLoginCountPerIP(ip);
         }
+        
+        logger.info("user check start email:{}!",email);
+        
         User user = passportService.findUserByUsername(email);
+        
         // 根据email，检查是否有此账号。
         if (null == user) {
             logger.warn(" User is Null " + email + ";password=" + password);
@@ -100,6 +104,7 @@ public class LoginController extends RestfulController {
         }
 
         // token check
+        logger.info("token check start!");
         if (StringUtils.isEmpty(user.getToken())) {
             user = this.passportService.updateUserToken(user);
         }

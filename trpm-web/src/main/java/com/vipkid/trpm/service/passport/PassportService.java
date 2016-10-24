@@ -84,6 +84,7 @@ public class PassportService {
      */
     public User findUserByUsername(String username) {
         if (StringUtils.isBlank(username)) {
+            logger.warn("用户名为空：{}",username);
             return null;
         }
         return this.userDao.findByUsername(username);
