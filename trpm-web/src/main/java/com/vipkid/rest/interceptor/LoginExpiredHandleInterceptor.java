@@ -43,9 +43,12 @@ public class LoginExpiredHandleInterceptor extends HandlerInterceptorAdapter {
 
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler){
-	    
-	    logger.info("IP:{},发起请求:{},请求参数:{}",IpUtils.getIpAddress(request),request.getRequestURI(),JsonTools.getJson(request.getParameterMap()));
-
+	    String uri = request.getRequestURI();
+	    if(StringUtils.endsWith(uri, "user/login")){
+	        logger.info("IP:{},发起请求:{}",IpUtils.getIpAddress(request),request.getRequestURI());
+	    }else{
+	        logger.info("IP:{},发起请求:{},请求参数:{}",IpUtils.getIpAddress(request),request.getRequestURI(),JsonTools.getJson(request.getParameterMap()));
+	    }
         HandlerMethod handlerMethod = (HandlerMethod) handler;
         //没有注解RestInterface，不进行拦截
         RestInterface restInterface = restAnnotation(handlerMethod);
@@ -62,9 +65,11 @@ public class LoginExpiredHandleInterceptor extends HandlerInterceptorAdapter {
                 logger.warn("用户不存在，token过期");
                 return false;
             }
-            
-            logger.info("IP:{},user:{},发起请求:{},参数:{}",IpUtils.getIpAddress(request),user.getId(),request.getRequestURI(),JsonTools.getJson(request.getParameterMap()));
-            
+            if(StringUtils.endsWith(uri, "user/login")){
+                logger.info("IP:{},user:{},发起请求:{}",IpUtils.getIpAddress(request),user.getId(),request.getRequestURI());
+            }else{
+                logger.info("IP:{},user:{},发起请求:{},参数:{}",IpUtils.getIpAddress(request),user.getId(),request.getRequestURI(),JsonTools.getJson(request.getParameterMap()));
+            }
             Teacher teacher = this.loginService.getTeacher(request);
             if(teacher == null){
                 response.setStatus(HttpStatus.NOT_FOUND.value());
