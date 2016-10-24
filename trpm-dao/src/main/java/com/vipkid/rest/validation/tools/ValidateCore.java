@@ -55,7 +55,7 @@ public class ValidateCore {
         logger.info("name:{},type:{},value:{},maxLength:{}",name,classes.toString(),value,maxLength);
         Type type = Type.MAX_LENGTH;
         //如果最大值为0 则验证通过，设置无效
-        if(maxLength <= 0){
+        if(maxLength <= 0 || value == null){
             return Result.bulider();
         }
         if(String.class == classes){
@@ -91,7 +91,7 @@ public class ValidateCore {
         logger.info("name:{},type:{},value:{},minLength:{}",name,classes.toString(),value,minLength);
         Type type = Type.MIN_LENGTH;
         //如果最大值为0 则验证通过，设置无效
-        if(minLength <= 0){
+        if(minLength <= 0 || value == null){
             return Result.bulider();
         }
         if(String.class == classes){
