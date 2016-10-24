@@ -1,5 +1,6 @@
 package com.vipkid.trpm.entity.app;
 
+import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
 
 public class AppEnum {
@@ -130,17 +131,55 @@ public class AppEnum {
         OTHER
     }
     
-    public static <T extends Enum<T>> T valueOf(Class<T> clazz, int ordinal) {  
-        return (T)clazz.getEnumConstants()[ordinal];  
+    /**
+     * 根据index获取枚举
+     * @Author:ALong (ZengWeiLong)
+     * @param clazz
+     * @param ordinal
+     * @return    
+     * E
+     * @date 2016年10月24日
+     */
+    public static <E extends Enum<E>> E valueOf(final Class<E> enumClass, int ordinal) {
+        return (E)enumClass.getEnumConstants()[ordinal];  
     } 
     
-    public static <T> boolean containsName(Class<T> clazz, String name) {  
-        T[] ts = clazz.getEnumConstants();
-        for(T t:ts){
-            if(StringUtils.equals(t.toString(), name)){
+    /**
+     * 根据名称获取枚举 
+     * @Author:ALong (ZengWeiLong)
+     * @param enumClass
+     * @param name
+     * @return    
+     * E
+     * @date 2016年10月24日
+     */
+    public static <E extends Enum<E>> E valueOf(final Class<E> enumClass, String name) {  
+        return EnumUtils.getEnum(enumClass, name);
+    } 
+    
+    /**
+     * 判断枚举类是否包含某个枚举
+     * @Author:ALong (ZengWeiLong)
+     * @param enumClass
+     * @param name
+     * @return    
+     * boolean
+     * @date 2016年10月24日
+     */
+    public static <E extends Enum<E>> boolean containsName(final Class<E> enumClass, String name) {
+        E obj = EnumUtils.getEnum(enumClass, name);
+        if(obj != null) return true;
+        return false;
+    } 
+    
+    @Deprecated
+    public static <T> boolean containsNameold(final Class<T> enumClass, String name) {
+        T[] enums = enumClass.getEnumConstants();
+        for(T obj:enums){
+            if(StringUtils.equals(obj.toString(), name)){
                 return true;
             }
         }
         return false;
-    } 
+    }
 }

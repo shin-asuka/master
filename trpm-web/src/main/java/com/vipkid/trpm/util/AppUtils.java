@@ -2,7 +2,11 @@ package com.vipkid.trpm.util;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.TimeZone;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -69,10 +73,10 @@ public class AppUtils {
      * boolean
      * @date 2016年10月22日
      */
-   public static <T> boolean containsName(Class<T> clazz,String name){
+   public static <E extends Enum<E>> boolean containsName(final Class<E> enumClass,String name){
        if(StringUtils.isBlank(name)) return false;
        try{
-           return AppEnum.containsName(clazz,name);
+           return AppEnum.containsName(enumClass,name);
        }catch(Exception e){
            logger.error("不存在的课程类型定义：" + name);
        }
