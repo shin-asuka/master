@@ -23,12 +23,12 @@ public class ValidationUtils {
      * 可选择验证结果类型 多个和一个  返回List
      * @Author:ALong (ZengWeiLong)
      * @param bean
-     * @param all
+     * @param isAll true,返回所有验证不通过的属性List，false:返回第一个验证不通过的List.get(0)
      * @return    
      * List<Result>
      * @date 2016年10月21日
      */
-    public static <T> List<Result> checkForClass(T bean,boolean all){
+    public static <T> List<Result> checkForClass(T bean,boolean isAll){
         List<Result>  list = Lists.newArrayList();
         Verify verify = bean.getClass().getAnnotation(Verify.class);
         if(verify != null){
@@ -41,7 +41,7 @@ public class ValidationUtils {
                         Result result = isNotNull(field.getName(), field.getType(), value);
                         if(result.isResult()){
                             list.add(result);
-                            if(!all){
+                            if(!isAll){
                                 return list;
                             }
                         }

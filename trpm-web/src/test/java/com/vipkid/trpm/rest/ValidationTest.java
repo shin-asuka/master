@@ -1,5 +1,7 @@
 package com.vipkid.trpm.rest;
 
+import java.util.List;
+
 import org.community.tools.JsonTools;
 
 import com.google.common.collect.Lists;
@@ -13,9 +15,10 @@ public class ValidationTest {
 
     public static void main(String[] args) {
         TeachingExperienceDto dto = new TeachingExperienceDto();
-        dto.setId(123L);
-        dto.setOrganisationName("");
-        Result result = ValidationUtils.checkForField(dto,Lists.newArrayList("id","organisationName","name"));
+        dto.setOrganisationName("伪类");
+        List<Result> list = ValidationUtils.checkForClass(dto, true);
+        list.stream().parallel().forEach(bean ->{System.out.println("check:"+JsonTools.getJson(bean));});
+        Result result = ValidationUtils.checkForField(dto,Lists.newArrayList("id","organisationName","jobDescription"));
         if(result != null){
             System.out.println(JsonTools.getJson(result));
         }else{
