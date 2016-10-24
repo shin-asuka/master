@@ -1,12 +1,22 @@
 package com.vipkid.trpm.rest;
 
+import java.util.List;
+
+import org.community.tools.JsonTools;
+import org.junit.Test;
+
+import com.google.common.collect.Lists;
+import com.vipkid.rest.dto.TeachingExperienceDto;
+import com.vipkid.rest.validation.ValidationUtils;
+import com.vipkid.rest.validation.tools.Result;
 import com.vipkid.trpm.entity.app.AppEnum;
 import com.vipkid.trpm.util.AppUtils;
 
 public class ValidationTest {
 
-    public static void main(String[] args) {
-        /*
+    @Test
+    public void test1() {
+     
         TeachingExperienceDto dto = new TeachingExperienceDto();
         dto.setOrganisationName("伪类");
         dto.setJobDescription("WERTYUIOFGHJKLFGHJKLFGHJ");
@@ -20,7 +30,7 @@ public class ValidationTest {
         }else{
             System.out.println("OK");
         }
-        */
+        
         System.out.println(AppUtils.containsName(AppEnum.Gender.class, "MALE1"));
         
     }
