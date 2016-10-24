@@ -1,6 +1,6 @@
 package com.vipkid.rest.validation.tools;
 
-import com.vipkid.rest.validation.tools.ValidationEnum.Message;
+import com.vipkid.rest.validation.tools.ValidateEnum.Message;
 
 public class Result {
 

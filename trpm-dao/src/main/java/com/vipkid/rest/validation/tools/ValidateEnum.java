@@ -1,6 +1,6 @@
 package com.vipkid.rest.validation.tools;
 
-public class ValidationEnum {
+public class ValidateEnum {
 
     public enum Type {
 

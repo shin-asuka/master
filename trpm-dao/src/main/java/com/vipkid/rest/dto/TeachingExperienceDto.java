@@ -2,7 +2,7 @@ package com.vipkid.rest.dto;
 
 import com.vipkid.rest.validation.annotation.Ignore;
 import com.vipkid.rest.validation.annotation.Verify;
-import com.vipkid.rest.validation.tools.ValidationEnum.Type;
+import com.vipkid.rest.validation.tools.ValidateEnum.Type;
 
 @Verify
 public class TeachingExperienceDto{

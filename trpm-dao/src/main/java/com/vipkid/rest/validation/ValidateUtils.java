@@ -13,8 +13,8 @@ import com.vipkid.rest.validation.annotation.Ignore;
 import com.vipkid.rest.validation.annotation.Verify;
 import com.vipkid.rest.validation.tools.ReflectUtils;
 import com.vipkid.rest.validation.tools.Result;
-import com.vipkid.rest.validation.tools.ValidationEnum;
-import com.vipkid.rest.validation.tools.ValidationCore;
+import com.vipkid.rest.validation.tools.ValidateEnum;
+import com.vipkid.rest.validation.tools.ValidateCore;
 
 public class ValidateUtils {
     
@@ -88,7 +88,7 @@ public class ValidateUtils {
         for(Field field : fields){
             if(names.contains(field.getName())){
                 Object value = ReflectUtils.getFieldValueByName(field.getName(), bean);
-                Result result = ValidationCore.isNull(field.getName(), field.getType(), value);
+                Result result = ValidateCore.isNull(field.getName(), field.getType(), value);
                 if(result.isResult()){
                     return result;
                 }
@@ -100,20 +100,20 @@ public class ValidateUtils {
     private static <T> Result checkHandle(Verify verify,T bean,Field field){
         //null
         Result result = Result.bulider();
-        if(Arrays.asList(verify.type()).contains(ValidationEnum.Type.NOT_NULL)){
+        if(Arrays.asList(verify.type()).contains(ValidateEnum.Type.NOT_NULL)){
             Object value = ReflectUtils.getFieldValueByName(field.getName(), bean);
-            result = ValidationCore.isNull(field.getName(), field.getType(), value);
+            result = ValidateCore.isNull(field.getName(), field.getType(), value);
         }
         // maxlength
-        if(!result.isResult() && Arrays.asList(verify.type()).contains(ValidationEnum.Type.MAX_LENGTH)){
+        if(!result.isResult() && Arrays.asList(verify.type()).contains(ValidateEnum.Type.MAX_LENGTH)){
             Object value = ReflectUtils.getFieldValueByName(field.getName(), bean);
-            result = ValidationCore.maxLength(field.getName(), field.getType(), value,verify.maxLength());
+            result = ValidateCore.maxLength(field.getName(), field.getType(), value,verify.maxLength());
         }
         
         // minlength
-        if(!result.isResult() && Arrays.asList(verify.type()).contains(ValidationEnum.Type.MIN_LENGTH)){
+        if(!result.isResult() && Arrays.asList(verify.type()).contains(ValidateEnum.Type.MIN_LENGTH)){
             Object value = ReflectUtils.getFieldValueByName(field.getName(), bean);
-            result = ValidationCore.minLength(field.getName(), field.getType(), value,verify.minLength());
+            result = ValidateCore.minLength(field.getName(), field.getType(), value,verify.minLength());
         }
         
         return result;
