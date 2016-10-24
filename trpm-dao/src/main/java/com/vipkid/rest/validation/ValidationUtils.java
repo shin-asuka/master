@@ -140,6 +140,10 @@ public class ValidationUtils {
             if(value == null || (double)value == 0){
                 return Result.bulider(name,ValidationEnum.Message.ERROR, true);
             }
+        }else{
+            if(value == null){
+                return Result.bulider(name,ValidationEnum.Message.ERROR, true);
+            }
         }
         return Result.bulider();
     }
