@@ -131,17 +131,18 @@ public class AppEnum {
         OTHER
     }
     
+    
     /**
      * 根据index获取枚举
      * @Author:ALong (ZengWeiLong)
      * @param clazz
-     * @param ordinal
+     * @param index
      * @return    
      * E
      * @date 2016年10月24日
      */
-    public static <E extends Enum<E>> E valueOf(final Class<E> enumClass, int ordinal) {
-        return (E)enumClass.getEnumConstants()[ordinal];  
+    public static <E extends Enum<E>> E getByIndex(final Class<E> enumClass, int index) {
+        return (E)enumClass.getEnumConstants()[index];  
     } 
     
     /**
@@ -153,7 +154,7 @@ public class AppEnum {
      * E
      * @date 2016年10月24日
      */
-    public static <E extends Enum<E>> E valueOf(final Class<E> enumClass, String name) {  
+    public static <E extends Enum<E>> E getByName(final Class<E> enumClass, String name) {  
         return EnumUtils.getEnum(enumClass, name);
     } 
     
@@ -167,11 +168,9 @@ public class AppEnum {
      * @date 2016年10月24日
      */
     public static <E extends Enum<E>> boolean containsName(final Class<E> enumClass, String name) {
-        E obj = EnumUtils.getEnum(enumClass, name);
-        if(obj != null) return true;
-        return false;
+        return EnumUtils.isValidEnum(enumClass, name);
     } 
-    
+
     @Deprecated
     public static <T> boolean containsNameold(final Class<T> enumClass, String name) {
         T[] enums = enumClass.getEnumConstants();

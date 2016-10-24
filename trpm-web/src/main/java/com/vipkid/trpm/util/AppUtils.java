@@ -34,7 +34,7 @@ public class AppUtils {
         String[] classStatuses = classStatus.split(",");
         for(int i = 0 ; i < classStatuses.length;i++){
             try{
-                classStatuses[i] = AppEnum.valueOf(ClassStatus.class, Integer.valueOf(classStatuses[i])).toString();
+                classStatuses[i] = AppEnum.getByIndex(ClassStatus.class, Integer.valueOf(classStatuses[i])).toString();
             }catch(Exception e){
                 logger.error("不存在的课程状态：" + classStatuses[i]);
                 classStatuses[i] = null;
@@ -55,7 +55,7 @@ public class AppUtils {
         String[] classTypes = classType.split(",");
         for(int i = 0 ; i < classTypes.length;i++){
             try{
-                classTypes[i] = AppEnum.valueOf(CourseType.class, Integer.valueOf(classTypes[i])).toString();
+                classTypes[i] = AppEnum.getByIndex(CourseType.class, Integer.valueOf(classTypes[i])).toString();
             }catch(Exception e){
                 logger.error("不存在的课程类型定义：" + classTypes[i]);
                 classTypes[i] = null;
