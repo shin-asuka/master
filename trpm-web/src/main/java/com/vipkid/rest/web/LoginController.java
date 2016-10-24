@@ -247,6 +247,9 @@ public class LoginController extends RestfulController {
             return result;
             // 2.用户名可用，执行业务，
         }
+        
+        logger.info("user check start email:{}!",email);
+        
         User user = passportService.findUserByUsername(email);
         // 1.用户名存在，反馈
         if (user != null) {
@@ -283,6 +286,9 @@ public class LoginController extends RestfulController {
             result.put("info", ApplicationConstant.AjaxCode.ERROR_CODE);
             return result;
         }
+        
+        logger.info("user check start email:{}!",email);
+        
         // 根据email，检查是否有此账号。
         User user = this.passportService.findUserByUsername(email);
         if (null == user) {
