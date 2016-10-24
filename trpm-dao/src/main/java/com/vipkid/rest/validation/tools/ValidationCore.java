@@ -6,7 +6,7 @@ import org.slf4j.LoggerFactory;
 
 import com.vipkid.rest.validation.ValidationUtils;
 
-public class ValidationImpl {
+public class ValidationCore {
 
     private static Logger logger = LoggerFactory.getLogger(ValidationUtils.class);
     

@@ -14,7 +14,7 @@ import com.vipkid.rest.validation.annotation.Verify;
 import com.vipkid.rest.validation.tools.ReflectUtils;
 import com.vipkid.rest.validation.tools.Result;
 import com.vipkid.rest.validation.tools.ValidationEnum;
-import com.vipkid.rest.validation.tools.ValidationImpl;
+import com.vipkid.rest.validation.tools.ValidationCore;
 
 public class ValidationUtils {
     
@@ -88,7 +88,7 @@ public class ValidationUtils {
         for(Field field : fields){
             if(names.contains(field.getName())){
                 Object value = ReflectUtils.getFieldValueByName(field.getName(), bean);
-                Result result = ValidationImpl.isNull(field.getName(), field.getType(), value);
+                Result result = ValidationCore.isNull(field.getName(), field.getType(), value);
                 if(result.isResult()){
                     return result;
                 }
@@ -102,12 +102,12 @@ public class ValidationUtils {
         Result result = Result.bulider();
         if(Arrays.asList(verify.type()).contains(ValidationEnum.Type.NOT_NULL)){
             Object value = ReflectUtils.getFieldValueByName(field.getName(), bean);
-            result = ValidationImpl.isNull(field.getName(), field.getType(), value);
+            result = ValidationCore.isNull(field.getName(), field.getType(), value);
         }
         //length
         if(!result.isResult() && Arrays.asList(verify.type()).contains(ValidationEnum.Type.MAX_LENGTH)){
             Object value = ReflectUtils.getFieldValueByName(field.getName(), bean);
-            result = ValidationImpl.maxLength(field.getName(), field.getType(), value,verify.maxLength());
+            result = ValidationCore.maxLength(field.getName(), field.getType(), value,verify.maxLength());
         }
         return result;
     }
