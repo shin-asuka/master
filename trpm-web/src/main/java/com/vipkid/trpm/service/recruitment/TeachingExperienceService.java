@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.util.HtmlUtils;
 
 import com.google.common.base.Preconditions;
 import com.vipkid.rest.dto.TeachingExperienceDto;
@@ -34,11 +35,11 @@ public class TeachingExperienceService {
     public long saveTeaching(TeachingExperienceDto bean,User user){
         TeachingExperience teachingExperience = new TeachingExperience();
         teachingExperience.setOrganisationName(bean.getOrganisationName());
-        teachingExperience.setJobTitle(bean.getJobTitle());
+        teachingExperience.setJobTitle(HtmlUtils.htmlEscape(bean.getJobTitle()));
         teachingExperience.setTimePeriodStart(new Timestamp(bean.getTimePeriodStart()));
         teachingExperience.setTimePeriodEnd(new Timestamp(bean.getTimePeriodEnd()));
         teachingExperience.setHoursWeek(bean.getHoursWeek());
-        teachingExperience.setJobDescription(bean.getJobDescription());
+        teachingExperience.setJobDescription(HtmlUtils.htmlEscape(bean.getJobDescription()));
         teachingExperience.setCreateId(user.getId());
         teachingExperience.setCreateTime(new Timestamp(System.currentTimeMillis()));
         teachingExperience.setUpdateId(user.getId());
@@ -56,12 +57,12 @@ public class TeachingExperienceService {
         logger.info("userId is {}, update TeachingExperience,teachingExperienceId is:{}",user.getId(),bean.getId());
         TeachingExperience teachingExperience = new TeachingExperience();
         teachingExperience.setId(bean.getId());
-        teachingExperience.setOrganisationName(bean.getOrganisationName());
+        teachingExperience.setOrganisationName(HtmlUtils.htmlEscape(bean.getOrganisationName()));
         teachingExperience.setJobTitle(bean.getJobTitle());
         teachingExperience.setTimePeriodStart(new Timestamp(bean.getTimePeriodStart()));
         teachingExperience.setTimePeriodEnd(new Timestamp(bean.getTimePeriodEnd()));
         teachingExperience.setHoursWeek(bean.getHoursWeek());
-        teachingExperience.setJobDescription(bean.getJobDescription());
+        teachingExperience.setJobDescription(HtmlUtils.htmlEscape(bean.getJobDescription()));
         
         teachingExperience.setCreateId(user.getId());
         teachingExperience.setCreateTime(new Timestamp(System.currentTimeMillis()));
