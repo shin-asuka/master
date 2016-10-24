@@ -20,7 +20,7 @@ public class TeachingExperienceDto{
     
     private Float hoursWeek;
     
-    @Verify(type={Type.NOT_NULL,Type.MAX_LENGTH},maxLength=2000)
+    @Verify(type={Type.NOT_NULL,Type.MAX_LENGTH},maxLength=1500)
     private String jobDescription;
 
     public Long getId() {
