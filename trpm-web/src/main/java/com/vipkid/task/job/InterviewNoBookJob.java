@@ -60,7 +60,7 @@ public class InterviewNoBookJob {
 	void find (Stopwatch stopwatch, int... beforeHours) {
 		List<Long> teacherIds = new ArrayList<>();
 		Map<Long, TeacherApplication> teacherApplicationsMap = new HashedMap();
-		List<Map> times = UADateUtils.getStartEndTimeMapListByBeforeHours(beforeHours);
+		List<Map> times = UADateUtils.getStartEndOclockTimeMapListByBeforeHours(beforeHours);
 
 		List<TeacherApplication> teacherApplications = teacherApplicationDao.findByAuditTimesStatusResult(times, ApplicationConstant.RecruitmentStatus.BASIC_INFO, ApplicationConstant.RecruitmentResult.PASS);
 		logger.info("【JOB.EMAIL.InterviewNoBook】FIND.1: Cost {}ms. Query: times = {}, status = {}, result = {}; Result: users = {}",

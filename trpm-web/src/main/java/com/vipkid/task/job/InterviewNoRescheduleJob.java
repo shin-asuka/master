@@ -60,7 +60,7 @@ public class InterviewNoRescheduleJob {
 	void find (Stopwatch stopwatch, int... beforeHours) {
 		List<Long> teacherIds = new ArrayList<>();
 		Map<Long, TeacherApplication> teacherApplicationsMap = new HashedMap();
-		List<Map> times = UADateUtils.getStartEndTimeMapListByBeforeHours(beforeHours);
+		List<Map> times = UADateUtils.getStartEndOclockTimeMapListByBeforeHours(beforeHours);
 
 		List<TeacherApplication> teacherApplications = teacherApplicationDao.findByAuditTimesStatusResult(times, ApplicationConstant.RecruitmentStatus.INTERVIEW, ApplicationConstant.RecruitmentResult.REAPPLY);
 		logger.info("【JOB.EMAIL.InterviewNoReschedule】FIND.1: Cost {}ms. Query: times = {}, status = {}, result = {}; Result: users = {}",

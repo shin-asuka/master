@@ -192,16 +192,16 @@
 	</select>
 
 
-	<select id="findTeacherUsersByRegisterTimes" resultMap="teacherApplicationResultMap">
+	<select id="findTeacherUsersByRegisterTimes" resultMap="userResultMap">
 		SELECT
 		<include refid="userColumns" />
-		FROM user u
+		FROM user
 		WHERE
 		<foreach collection="registerTimes" open="(" close=")" separator=" OR " item="registerTime">
-			(u.register_date_time BETWEEN #{registerTime.startTime} AND #{registerTime.endTime})
+			(register_date_time BETWEEN #{registerTime.startTime} AND #{registerTime.endTime})
 		</foreach>
-		AND u.roles = 'TEACHER'
-		AND u.status = 'NORMAL'
+		AND roles = 'TEACHER'
+		AND status = 'NORMAL'
 	</select>
 	<!-- 锁住用户 -->
 	<update id="doLockUser">

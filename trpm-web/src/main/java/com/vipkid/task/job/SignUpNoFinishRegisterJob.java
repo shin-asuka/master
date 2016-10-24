@@ -57,7 +57,7 @@ public class SignUpNoFinishRegisterJob {
 	void find (Stopwatch stopwatch, int... beforeHours) {
 		List<Long> teacherIds = new ArrayList<>();
 		Map<Long, User> usersMap = new HashedMap();
-		List<Map> times = UADateUtils.getStartEndTimeMapListByBeforeHours(beforeHours);
+		List<Map> times = UADateUtils.getStartEndOclockTimeMapListByBeforeHours(beforeHours);
 
 		List<User> users = userDao.findTeachersByRegisterTimes(times);
 		logger.info("【JOB.EMAIL.SignUpNoFinishRegister】FIND.1: Cost {}ms. Query: times = {}; Result: users = {}",

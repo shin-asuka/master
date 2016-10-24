@@ -384,16 +384,16 @@
 
 
 	<select id="findFailTeachersByAuditTime" resultType="java.util.HashMap">
-		select
-		ta.status as status,
-		t.real_name as teacherName,
-		t.email as teacherEmail
-		from
+		SELECT
+		ta.status AS status,
+		t.real_name AS teacherName,
+		t.email AS teacherEmail
+		FROM
 		teacher_application ta
 		JOIN teacher t ON t.id = ta.teacher_id
-		where ta.status in ('BASIC_INFO','INTERVIEW')
-		and ta.result = 'FAIL'
-		and ta.audit_date_time BETWEEN #{startTime} and #{endTime}
+		WHERE ta.status IN ('BASIC_INFO','INTERVIEW')
+		AND ta.result = 'FAIL'
+		AND ta.audit_date_time BETWEEN #{startTime} AND #{endTime}
 	</select>
 
 	<select id="findTAByAuditTimesStatusResult" resultMap="teacherApplicationResultMap">
@@ -402,10 +402,10 @@
 		FROM teacher_application
 		WHERE
 		<foreach collection="auditTimes" open="(" close=")" separator=" OR " item="auditTime">
-			(ta.audit_date_time BETWEEN #{auditTime.startTime} AND #{auditTime.endTime})
+			(audit_date_time BETWEEN #{auditTime.startTime} AND #{auditTime.endTime})
 		</foreach>
-		AND ta.status = #{status}
-		AND ta.result = #{result}
+		AND status = #{status}
+		AND result = #{result}
 	</select>
 
 	<select id="findTAByTeacherIdsStatusNeResult" resultMap="teacherApplicationResultMap">
@@ -417,9 +417,9 @@
 		<foreach collection="teacherIds" open="(" close=")" separator="," item="teacherId">
 			#{teacherId}
 		</foreach>
-		AND ta.status = #{status}
+		AND status = #{status}
 		<if test="result!=null">
-			AND ta.result != #{result}
+			AND result != #{result}
 		</if>
 	</select>
 </mapper>

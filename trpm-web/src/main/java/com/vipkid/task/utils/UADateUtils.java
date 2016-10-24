@@ -52,6 +52,16 @@ public class UADateUtils {
 		return calendar.getTime();
 	}
 
+	public static Date getDateOclockByBeforeHours(int interval ){
+		Calendar calendar = Calendar.getInstance();
+		int hour = calendar.get(Calendar.HOUR_OF_DAY)-interval;
+		calendar.set(Calendar.HOUR_OF_DAY, hour);
+		calendar.set(Calendar.MINUTE,0);
+		calendar.set(Calendar.SECOND,0);
+		calendar.set(Calendar.MILLISECOND,0);
+		return calendar.getTime();
+	}
+
 	public static String format(Date date){
 		return format(date, defaultFormat);
 	}
@@ -150,6 +160,26 @@ public class UADateUtils {
 		for (int i : beforeHours){
 			String startTime = UADateUtils.format(UADateUtils.getDateByBeforeHours(i + interval)) ;
 			String endTime = UADateUtils.format(UADateUtils.getDateByBeforeHours(i)) ;
+
+			Map<String, String> time = new HashMap<>();
+			time.put("startTime",startTime);
+			time.put("endTime",endTime);
+
+			startEndTimes.add(time);
+		}
+		return startEndTimes;
+	}
+
+	public static List<Map> getStartEndOclockTimeMapListByBeforeHours(int... beforeHours){
+		return getStartEndOclockTimeMapListByBeforeHours(new Integer(1), beforeHours);
+	}
+
+	//UADateUtils.getStartEndOclockTimeMapListByBeforeHours(new Integer(1), 24, 48, 72)
+	public static List<Map> getStartEndOclockTimeMapListByBeforeHours(Integer interval, int... beforeHours){
+		List<Map> startEndTimes = new ArrayList<>();
+		for (int i : beforeHours){
+			String startTime = UADateUtils.format(UADateUtils.getDateOclockByBeforeHours(i + interval)) ;
+			String endTime = UADateUtils.format(UADateUtils.getDateOclockByBeforeHours(i)) ;
 
 			Map<String, String> time = new HashMap<>();
 			time.put("startTime",startTime);
