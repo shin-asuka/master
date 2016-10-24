@@ -5,7 +5,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,6 +14,7 @@ import com.vipkid.rest.validation.annotation.Verify;
 import com.vipkid.rest.validation.tools.ReflectUtils;
 import com.vipkid.rest.validation.tools.Result;
 import com.vipkid.rest.validation.tools.ValidationEnum;
+import com.vipkid.rest.validation.tools.ValidationImpl;
 
 public class ValidationUtils {
     
@@ -32,22 +32,26 @@ public class ValidationUtils {
     public static <T> List<Result> checkForClass(T bean,boolean isAll){
         List<Result>  list = Lists.newArrayList();
         Verify verify = bean.getClass().getAnnotation(Verify.class);
-        if(verify != null){
-            Field[] fields = bean.getClass().getDeclaredFields(); 
-            for(Field field : fields){
-                Ignore ignore = field.getAnnotation(Ignore.class);
-                if(ignore == null){
-                    if(Arrays.asList(verify.type()).contains(ValidationEnum.Type.NOT_NULL)){
-                        Object value = ReflectUtils.getFieldValueByName(field.getName(), bean);
-                        Result result = isNull(field.getName(), field.getType(), value);
-                        if(result.isResult()){
-                            list.add(result);
-                            if(!isAll){
-                                return list;
-                            }
+        Field[] fields = bean.getClass().getDeclaredFields(); 
+        for(Field field : fields){
+            Ignore ignore = field.getAnnotation(Ignore.class);
+            if(ignore == null){
+                Verify _verify = field.getAnnotation(Verify.class);
+                if(_verify != null) {
+                    verify = _verify;
+                    logger.info("属性{},有局部注解，优先",field.getName());
+                }
+                if(verify != null){
+                    Result result = checkHandle(verify, bean, field);
+                    if(result.isResult()){
+                        list.add(result);
+                        if(!isAll){
+                            return list;
                         }
                     }
                 }
+            }else{
+                logger.info("属性{},有忽略注解，优先",field.getName());
             }
         }
         return list;
@@ -62,34 +66,16 @@ public class ValidationUtils {
      * @date 2016年10月22日
      */
     public static <T> Result checkForField(T bean){
-        Verify verify = bean.getClass().getAnnotation(Verify.class);
-        if(verify == null){
-            Field[] fields = bean.getClass().getDeclaredFields(); 
-            for(Field field : fields){
-                Ignore ignore = field.getAnnotation(Ignore.class);
-                if(ignore == null){
-                    verify = field.getAnnotation(Verify.class);
-                    if(Arrays.asList(verify.type()).contains(ValidationEnum.Type.NOT_NULL)){
-                        Object value = ReflectUtils.getFieldValueByName(field.getName(), bean);
-                        Result result = isNull(field.getName(), field.getType(), value);
-                        if(result.isResult()){
-                            return result;
-                        }
-                    }
-                }
-            }
-        }else{
-            List<Result> list = checkForClass(bean,false);
-            if(CollectionUtils.isNotEmpty(list)){
-                return list.get(0);
-            }
+        List<Result> list = checkForClass(bean,false);
+        if(CollectionUtils.isNotEmpty(list)){
+            return list.get(0);
         }
         return null;
     }
     
     
     /**
-     * 检查指定的某些属性是否为空 
+     * 检查指定的某些属性是否为空,不需要注解
      * @Author:ALong (ZengWeiLong)
      * @param bean
      * @param names 需要要检查的属性名
@@ -102,7 +88,7 @@ public class ValidationUtils {
         for(Field field : fields){
             if(names.contains(field.getName())){
                 Object value = ReflectUtils.getFieldValueByName(field.getName(), bean);
-                Result result = isNull(field.getName(), field.getType(), value);
+                Result result = ValidationImpl.isNull(field.getName(), field.getType(), value);
                 if(result.isResult()){
                     return result;
                 }
@@ -111,42 +97,19 @@ public class ValidationUtils {
         return null;
     }
     
-    /**
-     * @Author:ALong (ZengWeiLong)
-     * @param type
-     * @param o
-     * @return    
-     * Result
-     * @date 2016年10月21日
-     */
-    private static Result isNull(String name,Class<?> type,Object value){
-        logger.info("name:{},type:{},value:{}",name,type.toString(),value);
-        if(String.class == type){
-            if(StringUtils.isBlank((String)value)){
-                return Result.bulider(name,ValidationEnum.Message.NOT_NULL, true);
-            }
-        }else if(Integer.class == type){
-            if(value == null || (int)value == 0){
-                return Result.bulider(name,ValidationEnum.Message.NOT_NULL, true);
-            }
-        }else if(Long.class == type){
-            if(value == null || (long)value == 0){
-                return Result.bulider(name,ValidationEnum.Message.NOT_NULL, true);
-            }
-        }else if(Float.class == type){
-            if(value == null || (float)value == 0){
-                return Result.bulider(name,ValidationEnum.Message.NOT_NULL, true);
-            }
-        }else if(Double.class == type){
-            if(value == null || (double)value == 0){
-                return Result.bulider(name,ValidationEnum.Message.NOT_NULL, true);
-            }
-        }else{
-            if(value == null){
-                return Result.bulider(name,ValidationEnum.Message.NOT_NULL, true);
-            }
+    private static <T> Result checkHandle(Verify verify,T bean,Field field){
+        //null
+        Result result = Result.bulider();
+        if(Arrays.asList(verify.type()).contains(ValidationEnum.Type.NOT_NULL)){
+            Object value = ReflectUtils.getFieldValueByName(field.getName(), bean);
+            result = ValidationImpl.isNull(field.getName(), field.getType(), value);
         }
-        return Result.bulider();
+        //length
+        if(!result.isResult() && Arrays.asList(verify.type()).contains(ValidationEnum.Type.MAX_LENGTH)){
+            Object value = ReflectUtils.getFieldValueByName(field.getName(), bean);
+            result = ValidationImpl.maxLength(field.getName(), field.getType(), value,verify.maxLength());
+        }
+        return result;
     }
      
 }
