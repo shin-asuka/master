@@ -2,8 +2,9 @@ package com.vipkid.task.job;
 
 import com.google.common.base.Stopwatch;
 import com.vipkid.email.EmailUtils;
-import com.vipkid.enums.TeacherApplicationEnum;
+import com.vipkid.http.utils.JsonUtils;
 import com.vipkid.task.utils.UADateUtils;
+import com.vipkid.trpm.constant.ApplicationConstant;
 import com.vipkid.trpm.dao.UserDao;
 import com.vipkid.trpm.dao.TeacherApplicationDao;
 import com.vipkid.trpm.dao.TeacherDao;
@@ -40,54 +41,60 @@ public class SignUpNoFinishRegisterJob {
 
 	@Vschedule
 	public void doJob (JobContext jobContext) {
-		logger.info("开始发邮件给fail掉的老师=======================================");
+		logger.info("【JOB.EMAIL.SignUpNoFinishRegister】START: ==================================================");
 		Stopwatch stopwatch = Stopwatch.createStarted();
 		
 		try {
-			find(24, 48, 72);
+			find(stopwatch, 24, 48, 72);
 		} catch (Exception e) {
-			logger.error("发邮件给fail掉的老师，出现异常{}",e);
+			logger.error("【JOB.EMAIL.SignUpNoFinishRegister】EXCEPTION: Cost {}ms. ", stopwatch.elapsed(TimeUnit.MILLISECONDS), e);
 		}
 		
 		long millis =stopwatch.stop().elapsed(TimeUnit.MILLISECONDS);
-        logger.info("发邮件给fail掉的老师成功，执行方法 doSendFailTeachersJob()耗时：{} ========================================", millis);
+		logger.info("【JOB.EMAIL.SignUpNoFinishRegister】END: Cost {}ms. ==================================================", millis);
 	}
 
-	void find (int... beforeHours) {
-
-		//logger.info("查询出"+hours+"个小时以前fail掉的老师 startTime = {}, endTime = {}",startTime,endTime);
-		//logger.info("fail掉的老师 list = {}", JsonUtils.toJSONString(list));
-
+	void find (Stopwatch stopwatch, int... beforeHours) {
 		List<Long> teacherIds = new ArrayList<>();
 		Map<Long, User> usersMap = new HashedMap();
 		List<Map> times = UADateUtils.getStartEndTimeMapListByBeforeHours(beforeHours);
 
 		List<User> users = userDao.findTeachersByRegisterTimes(times);
+		logger.info("【JOB.EMAIL.SignUpNoFinishRegister】FIND.1: Cost {}ms. Query: times = {}; Result: users = {}",
+				stopwatch.elapsed(TimeUnit.MILLISECONDS), JsonUtils.toJSONString(times), JsonUtils.toJSONString(users));
 		for(User user : users){
 			teacherIds.add(user.getId());
 			usersMap.put(user.getId(),user);
 		}
 
 		if(teacherIds.size() == 0) return;
-		List<TeacherApplication> teacherApplications = teacherApplicationDao.findByTeacherIdsStatusNeResult(teacherIds, TeacherApplicationEnum.Status.BASIC_INFO.toString(), null);
+		List<TeacherApplication> teacherApplications = teacherApplicationDao.findByTeacherIdsStatusNeResult(teacherIds, ApplicationConstant.RecruitmentStatus.BASIC_INFO, null);
+		logger.info("【JOB.EMAIL.SignUpNoFinishRegister】FIND.2: Cost {}ms. Query: teacherIds = {}, status = {}, result = {}; Result: teacherApplications = {}",
+				stopwatch.elapsed(TimeUnit.MILLISECONDS), JsonUtils.toJSONString(teacherIds), ApplicationConstant.RecruitmentStatus.BASIC_INFO, "null", JsonUtils.toJSONString(teacherApplications));
 		teacherApplications.forEach(x -> teacherIds.remove(x.getTeacherId()));
-
 
 		if(teacherIds.size() == 0) return;
 		List<Teacher> teachers = teacherDao.findByIds(teacherIds);
-		teachers.forEach(x -> send(x, usersMap.get(x.getId()).getRegisterDateTime(), times));
-
+		logger.info("【JOB.EMAIL.SignUpNoFinishRegister】FIND.3: Cost {}ms. Query: teacherIds = {}; Result: teachers = {}",
+				stopwatch.elapsed(TimeUnit.MILLISECONDS), JsonUtils.toJSONString(teacherIds), JsonUtils.toJSONString(teachers));
+		teachers.forEach(x -> send(stopwatch, x, usersMap.get(x.getId()).getRegisterDateTime(), times));
 	}
 
-	void send (Teacher teacher, Date registerTime, List<Map> times) {
+	void send (Stopwatch stopwatch, Teacher teacher, Date registerTime, List<Map> times) {
 		Map <String, String> time = times.get(times.size()-1);
 		Date startTime = UADateUtils.parse(time.get("startTime"));
 		Date endTime = UADateUtils.parse(time.get("endTime"));
 
 		if (registerTime.after(startTime) && registerTime.before(endTime)){
 			userDao.doLock(teacher.getId());
+			logger.info("【JOB.EMAIL.SignUpNoFinishRegister】LOCK: Cost {}ms. teacher = {}", stopwatch.elapsed(TimeUnit.MILLISECONDS), JsonUtils.toJSONString(teacher));
 		} else {
-			EmailUtils.sendEmail4Recruitment(teacher.getEmail(), teacher.getRealName(), "SignUpNoFinishRegisterTitle.html", "SignUpNoFinishRegister.html");
+			String email = teacher.getEmail();
+			String name = teacher.getRealName();
+			String titleTemplate = "SignUpNoFinishRegisterTitle.html";
+			String contentTemplate = "SignUpNoFinishRegister.html";
+			EmailUtils.sendEmail4Recruitment(email, name, titleTemplate, contentTemplate);
+			logger.info("【JOB.EMAIL.SignUpNoFinishRegister】SEND: Cost {}ms. email = {}, name = {}, titleTemplate = {}, contentTemplate = {}", stopwatch.elapsed(TimeUnit.MILLISECONDS), email, name, titleTemplate, contentTemplate);
 		}
 	}
 }

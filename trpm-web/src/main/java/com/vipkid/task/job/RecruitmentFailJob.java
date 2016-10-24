@@ -1,10 +1,10 @@
 package com.vipkid.task.job;
 
 import com.google.common.base.Stopwatch;
-import com.vipkid.enums.TeacherApplicationEnum;
 import com.vipkid.http.utils.JsonUtils;
 import com.vipkid.email.EmailUtils;
 import com.vipkid.task.utils.UADateUtils;
+import com.vipkid.trpm.constant.ApplicationConstant;
 import com.vipkid.trpm.dao.TeacherApplicationDao;
 import com.vipkid.vschedule.client.common.Vschedule;
 import com.vipkid.vschedule.client.schedule.JobContext;
@@ -35,33 +35,32 @@ public class RecruitmentFailJob {
 	
 	@Vschedule
 	public void doJob(JobContext jobContext) {
-		logger.info("开始发邮件给fail掉的老师=======================================");
+		logger.info("【JOB.EMAIL.RecruitmentFail】START: ==================================================");
 		Stopwatch stopwatch = Stopwatch.createStarted();
 		
 		try {
-			find(12);
+			find(stopwatch, 12);
 		} catch (Exception e) {
-			logger.error("发邮件给fail掉的老师，出现异常{}",e);
+			logger.error("【JOB.EMAIL.RecruitmentFail】EXCEPTION: Cost {}ms. ", stopwatch.elapsed(TimeUnit.MILLISECONDS), e);
 		}
 		
 		long millis =stopwatch.stop().elapsed(TimeUnit.MILLISECONDS);
-        logger.info("发邮件给fail掉的老师成功，执行方法 doSendFailTeachersJob()耗时：{} ========================================", millis);
+        logger.info("【JOB.EMAIL.RecruitmentFail】END: Cost {}ms. ==================================================", millis);
 	}
 
-	void find(int hours){
+	void find(Stopwatch stopwatch, int hours){
 		//查询出hours个小时以前fail掉的老师
 		Date startDate = UADateUtils.getDateByBeforeHours(hours+1);
 		Date endDate = UADateUtils.getDateByBeforeHours(hours);
 		String startTime = UADateUtils.format(startDate, UADateUtils.defaultFormat) ;
 		String endTime = UADateUtils.format(endDate, UADateUtils.defaultFormat) ;
 
-		logger.info("查询出"+hours+"个小时以前fail掉的老师 startTime = {}, endTime = {}",startTime,endTime);
 		List<Map<String, String>> list = teacherApplicationDao.findFailTeachersByAuditTime(startTime, endTime);
-		logger.info("fail掉的老师 list = {}", JsonUtils.toJSONString(list));
-		list.forEach(x -> send(x));
+		logger.info("【JOB.EMAIL.RecruitmentFail】FIND: Cost {}ms. Query: startTime = {}, endTime = {}; Result: list = {}", stopwatch.elapsed(TimeUnit.MILLISECONDS), startTime, endTime, JsonUtils.toJSONString(list));
+		list.forEach(x -> send(stopwatch, x));
 	}
 
-	void send(Map<String, String> map) {
+	void send(Stopwatch stopwatch, Map<String, String> map) {
 		if(map!=null){
 			String email = map.get("teacherEmail"); //获取教师邮箱发送邮件
 			String name = map.get("teacherName");
@@ -71,15 +70,16 @@ public class RecruitmentFailJob {
 				String titleTemplate = null;
 				String contentTemplate = null;
 
-				if (TeacherApplicationEnum.Status.BASIC_INFO.toString().equals(status)){
+				if (ApplicationConstant.RecruitmentStatus.BASIC_INFO.equals(status)){
 					titleTemplate = "BasicInfoFailTitle.html";
 					contentTemplate = "BasicInfoFail.html";
-				} else if (TeacherApplicationEnum.Status.INTERVIEW.toString().equals(status)){
+				} else if (ApplicationConstant.RecruitmentStatus.INTERVIEW.equals(status)){
 					titleTemplate = "InterviewFailTitle.html";
 					contentTemplate = "InterviewFail.html";
 				}
 
 				EmailUtils.sendEmail4Recruitment(email, name, titleTemplate, contentTemplate);
+				logger.info("【JOB.EMAIL.RecruitmentFail】SEND: Cost {}ms. email = {}, name = {}, titleTemplate = {}, contentTemplate = {}", stopwatch.elapsed(TimeUnit.MILLISECONDS), email, name, titleTemplate, contentTemplate);
 			}
 		}
 	}
