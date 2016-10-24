@@ -5,6 +5,8 @@ public class ValidationEnum {
     public enum Type {
 
         NOT_NULL,
+        
+        MAX_LENGTH
       
     }
     
@@ -12,7 +14,9 @@ public class ValidationEnum {
         
         SUCCESS("Ok!"),
         
-        ERROR("The field is required !");
+        NOT_NULL("The field is required !"),
+        
+        MAX_LENGTH("The field length is too long !");
         
         private String val;
         

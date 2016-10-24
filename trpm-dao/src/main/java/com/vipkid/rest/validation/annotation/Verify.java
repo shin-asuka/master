@@ -11,6 +11,6 @@ import com.vipkid.rest.validation.tools.ValidationEnum.Type;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Verify {
     
-    Type type() default Type.NOT_NULL;
+    Type[] type() default {Type.NOT_NULL};
 
 }

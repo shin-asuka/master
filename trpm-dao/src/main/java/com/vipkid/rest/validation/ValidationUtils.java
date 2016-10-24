@@ -1,6 +1,7 @@
 package com.vipkid.rest.validation;
 
 import java.lang.reflect.Field;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -36,7 +37,7 @@ public class ValidationUtils {
             for(Field field : fields){
                 Ignore ignore = field.getAnnotation(Ignore.class);
                 if(ignore == null){
-                    if(verify.type() == ValidationEnum.Type.NOT_NULL){
+                    if(Arrays.asList(verify.type()).contains(ValidationEnum.Type.NOT_NULL)){
                         Object value = ReflectUtils.getFieldValueByName(field.getName(), bean);
                         Result result = isNotNull(field.getName(), field.getType(), value);
                         if(result.isResult()){
@@ -68,7 +69,7 @@ public class ValidationUtils {
                 Ignore ignore = field.getAnnotation(Ignore.class);
                 if(ignore == null){
                     verify = field.getAnnotation(Verify.class);
-                    if(verify.type() == ValidationEnum.Type.NOT_NULL){
+                    if(Arrays.asList(verify.type()).contains(ValidationEnum.Type.NOT_NULL)){
                         Object value = ReflectUtils.getFieldValueByName(field.getName(), bean);
                         Result result = isNotNull(field.getName(), field.getType(), value);
                         if(result.isResult()){
@@ -91,7 +92,7 @@ public class ValidationUtils {
      * 检查指定的某些属性是否为空 
      * @Author:ALong (ZengWeiLong)
      * @param bean
-     * @param names
+     * @param names 需要要检查的属性名
      * @return    
      * Result
      * @date 2016年10月22日
@@ -122,27 +123,27 @@ public class ValidationUtils {
         logger.info("name:{},type:{},value:{}",name,type.toString(),value);
         if(String.class == type){
             if(StringUtils.isBlank((String)value)){
-                return Result.bulider(name,ValidationEnum.Message.ERROR, true);
+                return Result.bulider(name,ValidationEnum.Message.NOT_NULL, true);
             }
         }else if(Integer.class == type){
             if(value == null || (int)value == 0){
-                return Result.bulider(name,ValidationEnum.Message.ERROR, true);
+                return Result.bulider(name,ValidationEnum.Message.NOT_NULL, true);
             }
         }else if(Long.class == type){
             if(value == null || (long)value == 0){
-                return Result.bulider(name,ValidationEnum.Message.ERROR, true);
+                return Result.bulider(name,ValidationEnum.Message.NOT_NULL, true);
             }
         }else if(Float.class == type){
             if(value == null || (float)value == 0){
-                return Result.bulider(name,ValidationEnum.Message.ERROR, true);
+                return Result.bulider(name,ValidationEnum.Message.NOT_NULL, true);
             }
         }else if(Double.class == type){
             if(value == null || (double)value == 0){
-                return Result.bulider(name,ValidationEnum.Message.ERROR, true);
+                return Result.bulider(name,ValidationEnum.Message.NOT_NULL, true);
             }
         }else{
             if(value == null){
-                return Result.bulider(name,ValidationEnum.Message.ERROR, true);
+                return Result.bulider(name,ValidationEnum.Message.NOT_NULL, true);
             }
         }
         return Result.bulider();
