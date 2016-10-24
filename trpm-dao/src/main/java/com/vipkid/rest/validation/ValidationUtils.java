@@ -39,7 +39,7 @@ public class ValidationUtils {
                 if(ignore == null){
                     if(Arrays.asList(verify.type()).contains(ValidationEnum.Type.NOT_NULL)){
                         Object value = ReflectUtils.getFieldValueByName(field.getName(), bean);
-                        Result result = isNotNull(field.getName(), field.getType(), value);
+                        Result result = isNull(field.getName(), field.getType(), value);
                         if(result.isResult()){
                             list.add(result);
                             if(!isAll){
@@ -71,7 +71,7 @@ public class ValidationUtils {
                     verify = field.getAnnotation(Verify.class);
                     if(Arrays.asList(verify.type()).contains(ValidationEnum.Type.NOT_NULL)){
                         Object value = ReflectUtils.getFieldValueByName(field.getName(), bean);
-                        Result result = isNotNull(field.getName(), field.getType(), value);
+                        Result result = isNull(field.getName(), field.getType(), value);
                         if(result.isResult()){
                             return result;
                         }
@@ -102,7 +102,7 @@ public class ValidationUtils {
         for(Field field : fields){
             if(names.contains(field.getName())){
                 Object value = ReflectUtils.getFieldValueByName(field.getName(), bean);
-                Result result = isNotNull(field.getName(), field.getType(), value);
+                Result result = isNull(field.getName(), field.getType(), value);
                 if(result.isResult()){
                     return result;
                 }
@@ -119,7 +119,7 @@ public class ValidationUtils {
      * Result
      * @date 2016年10月21日
      */
-    private static Result isNotNull(String name,Class<?> type,Object value){
+    private static Result isNull(String name,Class<?> type,Object value){
         logger.info("name:{},type:{},value:{}",name,type.toString(),value);
         if(String.class == type){
             if(StringUtils.isBlank((String)value)){
