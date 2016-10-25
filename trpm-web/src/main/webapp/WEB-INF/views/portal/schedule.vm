@@ -84,13 +84,13 @@ $("#thirdYearAnniversaryBanner").show();
 	</div>
 </div>
 
-<!--  弹出层 -->
+<!-- Evaluation 弹出层 -->
 <div id="evaluation-tips" class="help-tips">
 	<div class="light"></div>
 	<div class="notice-c">
 		<div class="title">NOTICE</div>
 		<div class="close-btn"></div>
-		<div class="content">Evaluation!</div>
+		<div class="content">Hey there! You can now view your monthly evaluation scores right here in the teacher portal. </div>
 		<div class="sure-btn">OK</div>
 	</div>
 </div>
