@@ -29,7 +29,7 @@ define(["jquery-bootstrap"], function() {
 			$("#admin-quiz-tips").find(".light").css({"left":(0-left)+"px","top":(0-top)+"px"});
 		});
 		
-		$("div.sure-btn,div.close-btn").click(function() {
+		$("#admin-quiz-tips div.sure-btn,#admin-quiz-tips div.close-btn").click(function() {
 			$.ajaxRequest({
 				url : webPath + "/disableLayer.json",
 				dataType : "json",
@@ -88,7 +88,7 @@ define(["jquery-bootstrap"], function() {
 			$("#evaluation-tips").find(".light").css({"left":(0-left)+"px","top":(0-top)+"px"});
 		});
 		
-		$("div.sure-btn,div.close-btn").click(function() {
+		$("#evaluation-tips div.sure-btn,#evaluation-tips div.close-btn").click(function() {
 			$.ajaxRequest({
 				url : webPath + "/disableLayer.json",
 				dataType : "json",
