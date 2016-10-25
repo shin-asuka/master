@@ -70,7 +70,7 @@ require.config({
 	waitSeconds : 0,
 
 	/* 更新JS缓存 */
-	urlArgs : "t=201608301426",
+	urlArgs : "t=201608301427",
 
 	/* 加载非AMD规范的JS */
 	shim : {

@@ -20,11 +20,13 @@ define(["jquery-bootstrap"], function() {
 		$("body").addClass("modal-open");
 		
 		var left = $("#admin-quiz-tips").find(".light").width()/2 - $("#quiz-tips").offset().left - 70;
-		$("#admin-quiz-tips").find(".light").css({"left":(0-left)+"px"});
+		var top = $("#admin-quiz-tips").find(".light").width()/2 - $("#quiz-tips").offset().top-10;
+		$("#admin-quiz-tips").find(".light").css({"left":(0-left)+"px","top":(0-top)+"px"});
 		
 		$(window).resize(function(){
 			var left = $("#admin-quiz-tips").find(".light").width()/2 - $("#quiz-tips").offset().left - 70;
-			$("#admin-quiz-tips").find(".light").css({"left":(0-left)+"px"});
+			var top = $("#admin-quiz-tips").find(".light").width()/2 - $("#quiz-tips").offset().top-10;
+			$("#admin-quiz-tips").find(".light").css({"left":(0-left)+"px","top":(0-top)+"px"});
 		});
 		
 		$("div.sure-btn,div.close-btn").click(function() {
@@ -77,11 +79,13 @@ define(["jquery-bootstrap"], function() {
 		$("body").addClass("modal-open");
 		
 		var left = $("#evaluation-tips").find(".light").width()/2 - $("#quiz-tips").offset().left - 390;
-		$("#evaluation-tips").find(".light").css({"left":(0-left)+"px"});
+		var top = $("#evaluation-tips").find(".light").width()/2 - $("#quiz-tips").offset().top-10;
+		$("#evaluation-tips").find(".light").css({"left":(0-left)+"px","top":(0-top)+"px"});
 		
 		$(window).resize(function(){
 			var left = $("#evaluation-tips").find(".light").width()/2 - $("#quiz-tips").offset().left - 390;
-			$("#evaluation-tips").find(".light").css({"left":(0-left)+"px"});
+			var top = $("#evaluation-tips").find(".light").width()/2 - $("#quiz-tips").offset().top-10;
+			$("#evaluation-tips").find(".light").css({"left":(0-left)+"px","top":(0-top)+"px"});
 		});
 		
 		$("div.sure-btn,div.close-btn").click(function() {
