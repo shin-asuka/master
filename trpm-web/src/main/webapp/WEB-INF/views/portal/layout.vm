@@ -36,9 +36,9 @@
 		<li class="$!{material}"><a href="#springUrl('/training/material')">Training Center</a></li>
         <li class="$!{activeSchedule}"><a href="#springUrl('/schedule.shtml')">Schedule</a></li>
         <li class="$!{activeClassrooms}"><a href="#springUrl('/classrooms.shtml')">Classrooms</a></li>
-        #if($isTes == 'false')
+        ##if($isTes == 'false')
         	<li><a href="#springUrl('/evaluation')">Evaluation</a><div class="redPoint">●</div></li>
-        #end
+        ##end
         #if($isTe == 'true' && $isTes == 'false')
         	<li><a href="#springUrl('/evaluation/te')">TE</a></li>
 		#end 
