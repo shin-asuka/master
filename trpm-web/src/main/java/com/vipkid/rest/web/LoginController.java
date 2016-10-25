@@ -23,12 +23,14 @@ import com.vipkid.rest.config.RestfulConfig;
 import com.vipkid.rest.config.RestfulConfig.RoleClass;
 import com.vipkid.trpm.constant.ApplicationConstant;
 import com.vipkid.trpm.constant.ApplicationConstant.CookieKey;
+import com.vipkid.trpm.constant.ApplicationConstant.LoginType;
 import com.vipkid.trpm.constant.ApplicationConstant.TeacherLifeCycle;
 import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.entity.User;
 import com.vipkid.trpm.security.SHA256PasswordEncoder;
 import com.vipkid.trpm.service.passport.PassportService;
 import com.vipkid.trpm.service.rest.LoginService;
+import com.vipkid.trpm.service.rest.TeacherPageLoginService;
 import com.vipkid.trpm.util.AES;
 import com.vipkid.trpm.util.IPUtils;
 
@@ -40,9 +42,13 @@ public class LoginController {
 
     @Autowired
     private PassportService passportService;
+    
+    @Autowired
+    private TeacherPageLoginService teacherPageLoginService;
 
     @Autowired
     private LoginService loginService;
+    
 
     /**
      * 1.用户名，密码认证 2.将用户token写入redis 3.将用户token写入Cookie,由客户端调用
@@ -414,6 +420,7 @@ public class LoginController {
         if(StringUtils.isNotBlank(headsrc)){
             headsrc = PropertyConfigurer.stringValue("oss.url_preffix") + (headsrc.startsWith("/") ? headsrc:"/"+headsrc);
         }
+        result.put("evaluation",teacherPageLoginService.isType(user.getId(),LoginType.EVALUATION));
         result.put("teacherId",teacher.getId());
         result.put("evaluationBio",teacher.getEvaluationBio());
         result.put("headsrc", headsrc);

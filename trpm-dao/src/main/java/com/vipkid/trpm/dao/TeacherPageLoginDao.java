@@ -22,13 +22,35 @@ public class TeacherPageLoginDao extends MapperDaoTemplate<TeacherPageLogin> {
 		super(sqlSessionTemplate, TeacherPageLogin.class);
 	}
 
-	public TeacherPageLogin findByUserIdAndLoginType(long userId, int loginType) {
-		return selectOne(new TeacherPageLogin().setUserId(userId).setLoginType(loginType));
+	/**
+	 * 没有返回true，有返回false 
+	 * @Author:ALong (ZengWeiLong)
+	 * @param userId
+	 * @param loginType
+	 * @return    
+	 * boolean
+	 * @date 2016年10月25日
+	 */
+	public boolean isType(long userId, int loginType) {
+		List<TeacherPageLogin> list = super.selectList(new TeacherPageLogin().setUserId(userId).setLoginType(loginType));
+		if(CollectionUtils.isEmpty(list)){
+    		return true;
+		}
+		return false;
 	}
 	
-	public TeacherPageLogin findByUserId(long userId) {
-        return selectOne(new TeacherPageLogin().setUserId(userId));
-    }
+	/**
+	 * 查询所有 
+	 * @Author:ALong (ZengWeiLong)
+	 * @param userId
+	 * @return    
+	 * List<TeacherPageLogin>
+	 * @date 2016年10月25日
+	 */
+	public List<TeacherPageLogin> findList(long userId){
+	    List<TeacherPageLogin> list = super.selectList(new TeacherPageLogin().setUserId(userId));
+	    return list;
+	}
 
 	public int saveTeacherPageLogin(TeacherPageLogin teacherPageLogin) {
 	    List<TeacherPageLogin> list = this.selectList(teacherPageLogin);

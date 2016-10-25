@@ -11,9 +11,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.vipkid.trpm.constant.ApplicationConstant.CourseType;
+import com.vipkid.trpm.constant.ApplicationConstant.LoginType;
 import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.service.passport.IndexService;
 import com.vipkid.trpm.service.portal.ClassroomsService;
+import com.vipkid.trpm.service.rest.TeacherPageLoginService;
 import com.vipkid.trpm.util.DateUtils;
 
 @Controller
@@ -24,6 +26,9 @@ public class ClassroomsController extends AbstractPortalController {
 	
     @Autowired
     private IndexService indexService;
+    
+    @Autowired
+    private TeacherPageLoginService teacherPageLoginService;
 
 	@RequestMapping("/classrooms")
 	public String classrooms(HttpServletRequest request, HttpServletResponse response, Model model) {
@@ -43,7 +48,7 @@ public class ClassroomsController extends AbstractPortalController {
 
 		// 判断是否能上Practicum类型的课程
 		if (indexService.enabledPracticum(teacher.getId())) {
-			model.addAttribute("showLayer", classroomsService.showClassroomsLayer(teacher));
+			model.addAttribute("showLayer", teacherPageLoginService.isType(teacher.getId(),LoginType.CLASSROOMS));
 		}
 
 		/* 根据不同类型加载不同数据 */

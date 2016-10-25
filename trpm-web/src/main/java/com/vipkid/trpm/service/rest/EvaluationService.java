@@ -9,7 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.google.api.client.util.Maps;
+import com.vipkid.trpm.constant.ApplicationConstant.LoginType;
+import com.vipkid.trpm.dao.TeacherPageLoginDao;
 import com.vipkid.trpm.dao.TeacherQuizDao;
+import com.vipkid.trpm.entity.TeacherPageLogin;
 
 @Service
 public class EvaluationService {
@@ -17,6 +20,9 @@ public class EvaluationService {
     
     @Autowired
     private TeacherQuizDao teacherQuizDao;
+    
+    @Autowired
+    private TeacherPageLoginDao teacherPageLoginDao;
     
     /**
      * 获取所有Tag 
@@ -35,5 +41,20 @@ public class EvaluationService {
             resultMap.put("listTags", listTags);
         }
         return resultMap;
+    }
+    
+    /**
+     * 点击保存 Evaluation 
+     * @Author:ALong (ZengWeiLong)
+     * @param teacerId
+     * @return    
+     * boolean
+     * @date 2016年8月25日
+     */
+    public boolean saveOpenEvaluation(long teacerId){
+        TeacherPageLogin teacherPageLogin = new TeacherPageLogin();
+        teacherPageLogin.setUserId(teacerId);
+        teacherPageLogin.setLoginType(LoginType.EVALUATION);
+        return this.teacherPageLoginDao.saveTeacherPageLogin(teacherPageLogin) == 1 ? true : false;
     }
 }

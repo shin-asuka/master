@@ -56,20 +56,7 @@ public class AdminQuizService {
     
     @Autowired
     private AppRestfulDao appRestfulDao;
-    
-    /**
-     * is first quiz 
-     * @Author:ALong (ZengWeiLong)
-     * @param teacerId
-     * @return    
-     * TeacherPageLogin
-     * @date 2016年8月25日
-     */
-    public boolean openQuiz(long teacerId){
-        TeacherPageLogin teacherPageLogin = this.teacherPageLoginDao.findByUserIdAndLoginType(teacerId, LoginType.ADMINQUIZ);
-        return teacherPageLogin == null ? true : false;
-    }
-    
+ 
     /**
      * 点击保存admin quiz 
      * @Author:ALong (ZengWeiLong)
