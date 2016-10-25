@@ -74,12 +74,23 @@ $("#thirdYearAnniversaryBanner").show();
 </div>
 
 <!-- admin Quiz 弹出层 -->
-<div class="admin-quiz-tips">
+<div id="admin-quiz-tips" class="help-tips">
 	<div class="light"></div>
 	<div class="notice-c">
 		<div class="title">NOTICE</div>
 		<div class="close-btn"></div>
 		<div class="content">You can now access the training materials in your teacher portal. If you think you need to brush up on training, feel free to take a look!</div>
+		<div class="sure-btn">OK</div>
+	</div>
+</div>
+
+<!--  弹出层 -->
+<div id="evaluation-tips" class="help-tips">
+	<div class="light"></div>
+	<div class="notice-c">
+		<div class="title">NOTICE</div>
+		<div class="close-btn"></div>
+		<div class="content">Evaluation!</div>
 		<div class="sure-btn">OK</div>
 	</div>
 </div>
@@ -94,7 +105,7 @@ $("#thirdYearAnniversaryBanner").show();
 <div id="dialog" data="$!{showPracticum},$!{showAdminQuiz}"></div>
 #@requireJs()
     require(["schedule"], function(schedule){
-        schedule.init($!{offsetOfWeek},$!{showPracticum}, $!{showAdminQuiz},$!{show24HoursInfo});
+        schedule.init($!{offsetOfWeek},$!{showPracticum},$!{showAdminQuiz},$!{showEvaluation},$!{show24HoursInfo});
     });
     require(["easemob"]);
 #end

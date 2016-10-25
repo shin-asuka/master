@@ -1,13 +1,11 @@
 package com.vipkid.trpm.controller.portal;
 
 import java.util.Base64;
-import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.community.config.PropertyConfigurer;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +18,6 @@ import com.google.api.client.util.Maps;
 import com.vipkid.trpm.constant.ApplicationConstant.CourseType;
 import com.vipkid.trpm.constant.ApplicationConstant.LoginType;
 import com.vipkid.trpm.entity.Teacher;
-import com.vipkid.trpm.entity.TeacherPageLogin;
 import com.vipkid.trpm.service.activity.ActivityService;
 import com.vipkid.trpm.service.passport.IndexService;
 import com.vipkid.trpm.service.portal.ScheduleService;
@@ -65,20 +62,9 @@ public class ScheduleController extends AbstractPortalController {
 		//判断是否显示AdminQuiz
 		model.addAttribute("showAdminQuiz",teacherPageLoginService.isType(teacher.getId(), LoginType.ADMINQUIZ));
 		
-		List<TeacherPageLogin> loginList = teacherPageLoginService.findList(teacher.getId());
-		if(CollectionUtils.isNotEmpty(loginList)){
-    		for (int i = 0; i < loginList.size(); i++) {
-    		    if (indexService.enabledPracticum(teacher.getId())) {
-        		    if(loginList.get(i).getLoginType() == LoginType.PRACTICUM){
-        		        model.addAttribute("showPracticum",true);
-        		    }
-    		    }
-    		    //判断是否显示adminQuiz
-    		    if(loginList.get(i).getLoginType() == LoginType.ADMINQUIZ){
-                    model.addAttribute("showAdminQuiz",true);
-                }
-            }
-		}
+		//判断是否显示Evaluation
+        model.addAttribute("showEvaluation",teacherPageLoginService.isType(teacher.getId(), LoginType.EVALUATION));
+		
 		// 判断是否需要显示24小时提示
 		model.addAttribute("show24HoursInfo", scheduleService.isShow24HourInfo(request, response));
 		
