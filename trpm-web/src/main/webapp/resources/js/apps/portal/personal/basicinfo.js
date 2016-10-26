@@ -83,6 +83,7 @@ define(depends, function(personal) {
 		
 		/* 初始化输入字符统计 */
 		var initValueBio = $('#evaluationBio').val();
+		if(initValueBio == undefined) initValueBio = "";
 		//initValue = initValue.replace(/\s/gi,"");
 		$('#evaluationBio-left').html(800-initValueBio.length);
 		$('#evaluationBio').bind('input propertychange', function() {

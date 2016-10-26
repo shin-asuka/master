@@ -150,7 +150,7 @@
       <div align="right" class="col-sm-2 col-md-2"></div>
       <div class="col-sm-6 col-md-6">
       	<div class='title-lable req'>Time zone</div>
-      		<input class="form-control req-string" valid-options='{"req-string":"This field is required!","errorDiv":"#timezone-tip"}' placeholder="UTC-04:00" maxlength="200" name="timezone" value="$!{TRPM_TEACHER.timezone}"/>
+      		<input id="timezone" class="form-control req-string" readOnly="readOnly" valid-options='{"req-string":"This field is required!","errorDiv":"#timezone-tip"}' placeholder="UTC-04:00" maxlength="200" name="timezone" value="$!{TRPM_TEACHER.timezone}"/>
       		<p id="timezone-tip" class="help-block has-error"></p>
       	</div>
       <div class="col-sm-4 col-md-4"></div>

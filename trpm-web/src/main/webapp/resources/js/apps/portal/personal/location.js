@@ -80,10 +80,15 @@ define([ "function", "tools", "jquery-bootstrap", "personal-basicinfo","select2"
 			});
 		}
 	};
+	
+	var getTimeZone = function(obj){
+		$("#timezone").val($(obj).attr("timezone"));
+	}
 
 	return {
 		getState : getState,
-		getCity : getCity
+		getCity : getCity,
+		getTimeZone:getTimeZone
 	}
 
 });

@@ -81,13 +81,13 @@
     </select>
   </div>
   <div class="col-xs-4 col-sm-6 col-md-4">
-    <select class="js-example-basic-single form-control select2" name="${cityLabel}" id="${cityLabel}">
+    <select onchange="require('personal-location').getTimeZone(this)" class="js-example-basic-single form-control select2" name="${cityLabel}" id="${cityLabel}">
       <option value="0">City</option>
       #if($!{teacherAddress} && $!{teacherAddress.city} != 0)
         #set($citys = $locationService.getLocationList($!{teacherAddress.stateId},3))
         #if($!{citys})
           #foreach($city in $citys)
-          <option value="${city.id}" #if($!{teacherAddress} && $!{teacherAddress.city} == ${city.id})selected#end>${city.name}</option>
+          <option id="${city.id}" timezone="$!{teacherAddress.timezone}" value="${city.id}" #if($!{teacherAddress} && $!{teacherAddress.city} == ${city.id})selected#end>${city.name}</option>
           #end
         #end
       #end
