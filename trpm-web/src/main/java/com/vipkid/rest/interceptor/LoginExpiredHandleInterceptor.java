@@ -82,7 +82,7 @@ public class LoginExpiredHandleInterceptor extends HandlerInterceptorAdapter {
                 return true;
             }else{
                 response.setStatus(HttpStatus.FORBIDDEN.value());
-                response.getOutputStream().write(("没有权限访问的用户:允许状态"+restInterface.lifeCycle()+",当前状态:"+teacher.getLifeCycle()).getBytes("UTF-8"));
+                response.getOutputStream().write(("You lifeCycle permission is don't match:"+JsonTools.getJson(restInterface.lifeCycle())+",your state:"+teacher.getLifeCycle()).getBytes("UTF-8"));
                 logger.warn("没有权限访问的用户:允许状态{},当前状态:{}",restInterface.lifeCycle(),teacher.getLifeCycle());
                 return false;
             }

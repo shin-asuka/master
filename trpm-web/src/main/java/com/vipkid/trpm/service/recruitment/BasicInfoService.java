@@ -19,7 +19,6 @@ import com.vipkid.enums.TeacherEnum;
 import com.vipkid.enums.UserEnum;
 import com.vipkid.rest.config.RestfulConfig;
 import com.vipkid.rest.dto.TeacherDto;
-import com.vipkid.trpm.constant.ApplicationConstant;
 import com.vipkid.trpm.dao.TeacherAddressDao;
 import com.vipkid.trpm.dao.TeacherApplicationDao;
 import com.vipkid.trpm.dao.TeacherDao;
@@ -33,7 +32,6 @@ import com.vipkid.trpm.entity.TeacherNationalityCode;
 import com.vipkid.trpm.entity.TeachingExperience;
 import com.vipkid.trpm.entity.User;
 import com.vipkid.trpm.entity.app.AppEnum;
-import com.vipkid.trpm.util.AES;
 
 @Service
 public class BasicInfoService {
@@ -176,7 +174,6 @@ public class BasicInfoService {
             //发送邮件
             EmailUtils.sendEmail4BasicInfoPass(teacher);
             result.put("result", TeacherApplicationDao.Result.PASS);
-            result.put("action", "signlogin.shtml?token="+ AES.encrypt(user.getToken(), AES.getKey(AES.KEY_LENGTH_128, ApplicationConstant.AES_128_KEY)));
         }
         application.setVersion(3);
         this.teacherApplicationDao.save(application);
@@ -256,6 +253,7 @@ public class BasicInfoService {
         teacher.setPhoneNationId(bean.getPhoneNationId());
         teacher.setMobile(bean.getMobile());
         teacher.setPhoneType(bean.getPhoneType());
+        teacher.setSkype(bean.getSkype());
         teacher.setHighestLevelOfEdu(bean.getHighestLevelOfEdu());
         //已经设置过招聘渠道将不再设置招聘渠道
         if(StringUtils.isNoneBlank(teacher.getReferee()) || teacher.getPartnerId() > 0 || StringUtils.isNotBlank(teacher.getOtherChannel())){
