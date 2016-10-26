@@ -1,7 +1,5 @@
 package com.vipkid.trpm.service.rest;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,7 +13,7 @@ public class TeacherPageLoginService {
     private TeacherPageLoginDao teacherPageLoginDao;
     
     /**
-     * is first quiz 
+     * 没有返回true，有返回false
      * @Author:ALong (ZengWeiLong)
      * @param teacerId
      * @return    
@@ -24,10 +22,6 @@ public class TeacherPageLoginService {
      */
     public boolean isType(long teacerId,int loginType){
         return this.teacherPageLoginDao.isType(teacerId, loginType);
-    }
-    
-    public List<TeacherPageLogin> findList(long teacherId){
-        return this.teacherPageLoginDao.findList(teacherId);
     }
     
     /**

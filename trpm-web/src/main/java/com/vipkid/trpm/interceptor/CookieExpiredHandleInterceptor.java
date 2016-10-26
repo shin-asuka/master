@@ -21,6 +21,7 @@ import com.vipkid.http.service.AnnouncementHttpService;
 import com.vipkid.rest.config.RestfulConfig.RoleClass;
 import com.vipkid.trpm.constant.ApplicationConstant;
 import com.vipkid.trpm.constant.ApplicationConstant.CookieKey;
+import com.vipkid.trpm.constant.ApplicationConstant.LoginType;
 import com.vipkid.trpm.controller.portal.PersonalInfoController;
 import com.vipkid.trpm.entity.Staff;
 import com.vipkid.trpm.entity.Teacher;
@@ -29,6 +30,7 @@ import com.vipkid.trpm.proxy.RedisProxy;
 import com.vipkid.trpm.service.passport.IndexService;
 import com.vipkid.trpm.service.portal.LocationService;
 import com.vipkid.trpm.service.rest.AdminQuizService;
+import com.vipkid.trpm.service.rest.TeacherPageLoginService;
 import com.vipkid.trpm.util.CookieUtils;
 
 public class CookieExpiredHandleInterceptor extends HandlerInterceptorAdapter {
@@ -53,6 +55,9 @@ public class CookieExpiredHandleInterceptor extends HandlerInterceptorAdapter {
 	
 	@Autowired
 	private AdminQuizService adminQuizService;
+	
+	@Autowired
+	private TeacherPageLoginService teacherPageLoginService;
 	
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
@@ -112,6 +117,7 @@ public class CookieExpiredHandleInterceptor extends HandlerInterceptorAdapter {
         request.setAttribute("isPes",role.get(RoleClass.PES));
         request.setAttribute("isTe",role.get(RoleClass.TE));
         request.setAttribute("isTes",role.get(RoleClass.TES));
+        request.setAttribute("isEval",teacherPageLoginService.isType(user.getId(), LoginType.EVALUATION_CLICK));
 
         //是否需要考试
         if (adminQuizService.findNeedQuiz(user.getId())) {
