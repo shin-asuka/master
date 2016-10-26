@@ -38,14 +38,14 @@ public class TeachingExperienceService {
         teachingExperience.setJobTitle(HtmlUtils.htmlEscape(bean.getJobTitle()));
         teachingExperience.setTimePeriodStart(new Timestamp(bean.getTimePeriodStart()));
         teachingExperience.setTimePeriodEnd(new Timestamp(bean.getTimePeriodEnd()));
-        teachingExperience.setHoursWeek(bean.getHoursWeek());
+        teachingExperience.setHoursWeek(bean.getHoursPerWeek());
         teachingExperience.setJobDescription(HtmlUtils.htmlEscape(bean.getJobDescription()));
         teachingExperience.setCreateId(user.getId());
         teachingExperience.setCreateTime(new Timestamp(System.currentTimeMillis()));
         teachingExperience.setUpdateId(user.getId());
         teachingExperience.setUpdateTime(new Timestamp(System.currentTimeMillis()));
         teachingExperience.setStatus(TeachingExperienceDao.Status.SAVE.val());
-        teachingExperience.setTotalHours(DateUtils.countWeeks(bean.getTimePeriodStart(), bean.getTimePeriodEnd())*bean.getHoursWeek());
+        teachingExperience.setTotalHours(DateUtils.countWeeks(bean.getTimePeriodStart(), bean.getTimePeriodEnd())*bean.getHoursPerWeek());
         if(teachingExperienceDao.save(teachingExperience) > 0 ){
             return teachingExperience.getId();
         }
@@ -61,7 +61,7 @@ public class TeachingExperienceService {
         teachingExperience.setJobTitle(bean.getJobTitle());
         teachingExperience.setTimePeriodStart(new Timestamp(bean.getTimePeriodStart()));
         teachingExperience.setTimePeriodEnd(new Timestamp(bean.getTimePeriodEnd()));
-        teachingExperience.setHoursWeek(bean.getHoursWeek());
+        teachingExperience.setHoursWeek(bean.getHoursPerWeek());
         teachingExperience.setJobDescription(HtmlUtils.htmlEscape(bean.getJobDescription()));
         
         teachingExperience.setCreateId(user.getId());
@@ -69,7 +69,7 @@ public class TeachingExperienceService {
         teachingExperience.setUpdateId(user.getId());
         teachingExperience.setUpdateTime(new Timestamp(System.currentTimeMillis()));
         teachingExperience.setStatus(TeachingExperienceDao.Status.SAVE.val());
-        teachingExperience.setTotalHours(DateUtils.countWeeks(bean.getTimePeriodStart(), bean.getTimePeriodEnd())*bean.getHoursWeek());
+        teachingExperience.setTotalHours(DateUtils.countWeeks(bean.getTimePeriodStart(), bean.getTimePeriodEnd())*bean.getHoursPerWeek());
         if(teachingExperienceDao.update(teachingExperience) > 0){
             return teachingExperience.getId();
         }

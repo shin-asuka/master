@@ -18,7 +18,7 @@ public class TeachingExperienceDto{
     
     private Long timePeriodEnd;
     
-    private Float hoursWeek;
+    private Float hoursPerWeek;
     
     @Verify(type={Type.NOT_NULL,Type.MAX_LENGTH},maxLength=1500)
     private String jobDescription;
@@ -67,14 +67,13 @@ public class TeachingExperienceDto{
         this.timePeriodEnd = timePeriodEnd;
 
     }
-
-    public Float getHoursWeek() {
-        return hoursWeek;
+    
+    public Float getHoursPerWeek() {
+        return hoursPerWeek;
     }
 
-    public void setHoursWeek(Float hoursWeek) {
-        this.hoursWeek = hoursWeek;
-
+    public void setHoursPerWeek(Float hoursPerWeek) {
+        this.hoursPerWeek = hoursPerWeek;
     }
 
     public String getJobDescription() {
