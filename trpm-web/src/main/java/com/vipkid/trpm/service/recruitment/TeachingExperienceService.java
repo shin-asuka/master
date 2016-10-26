@@ -65,8 +65,6 @@ public class TeachingExperienceService {
         teachingExperience.setHoursWeek(bean.getHoursPerWeek());
         teachingExperience.setJobDescription(HtmlUtils.htmlEscape(bean.getJobDescription()));
         
-        teachingExperience.setCreateId(user.getId());
-        teachingExperience.setCreateTime(new Timestamp(System.currentTimeMillis()));
         teachingExperience.setUpdateId(user.getId());
         teachingExperience.setUpdateTime(new Timestamp(System.currentTimeMillis()));
         teachingExperience.setStatus(TeachingExperienceDao.Status.SAVE.val());

@@ -23,7 +23,10 @@ public class TeacherDto {
     private String streetAddress;    
     
     @Ignore
-    private String zipCode;    
+    private String zipCode;  
+    
+    @Ignore
+    private String skype;  
    
     private Integer phoneType; //新增字段    
    
@@ -180,6 +183,14 @@ public class TeacherDto {
 
     public void setMobile(String mobile) {
         this.mobile = mobile;
+    }
+    
+    public String getSkype() {
+        return skype;
+    }
+
+    public void setSkype(String skype) {
+        this.skype = skype;
     }
 
     public String getHighestLevelOfEdu() {
