@@ -168,7 +168,7 @@ public class LoginService {
      * @date 2016年7月4日
      */
     public void findByTeacherModule(TeacherInfo teacherinfo) {
-        Map<String,Object> roles = Maps.newHashMap();
+        Map<String,Object> roles = teacherinfo.getRoles();
         roles.put(RoleClass.PE, this.isPe(teacherinfo.getTeacherId()));
         String result = teacherModuleDao.findByTeacherModule(teacherinfo.getTeacherId());
         logger.info(" result module:{}",result);
