@@ -6,6 +6,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.community.tools.JsonTools;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -99,6 +100,7 @@ public class BasicInfoController extends RestfulController{
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
                 result.put("status", false);
                 result.put("resultCheck",resultCheck);
+                logger.warn("resultCheck:"+JsonTools.getJson(resultCheck));
                 return result;
             }
             //时间判断
