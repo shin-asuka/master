@@ -10,7 +10,6 @@ public class TeachingExperienceDto{
     @Ignore
     private Long id;
     
-    @Verify(type={Type.NOT_NULL,Type.MAX_LENGTH},maxLength=200)
     private String organisationName;
     
     private String jobTitle;
