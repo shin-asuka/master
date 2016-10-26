@@ -4,7 +4,13 @@
 
 	<cache eviction="FIFO" size="102400" readOnly="true" flushInterval="600000" />
     
-    <sql id="teacherLocationColumns">teacher_location.id AS teacher_location_id, teacher_location.parent_id AS teacher_location_parent_id, teacher_location.name AS teacher_location_name, teacher_location.description AS teacher_location_description, teacher_location.sort AS teacher_location_sort, teacher_location.level AS teacher_location_level, teacher_location.comment AS teacher_location_comment</sql>
+    <sql id="teacherLocationColumns">
+    teacher_location.id AS teacher_location_id, teacher_location.parent_id AS teacher_location_parent_id,
+    teacher_location.name AS teacher_location_name, teacher_location.description AS teacher_location_description,
+    teacher_location.sort AS teacher_location_sort, teacher_location.level AS teacher_location_level, 
+    teacher_location.comment AS teacher_location_comment,
+    teacher_location.timezone AS teacher_location_timezone
+    </sql>
     
     <sql id="teacherLocationWhere">
         <trim prefix="WHERE" prefixOverrides="AND">
@@ -15,6 +21,7 @@
             <if test="sort!=0">AND teacher_location.sort = #{sort}</if>
             <if test="level!=0">AND teacher_location.level = #{level}</if>
             <if test="comment!=null">AND teacher_location.comment = #{comment}</if>
+            <if test="timezone!=null">AND teacher_location.timezone = #{timezone}</if>
         </trim>
     </sql>
     
@@ -32,6 +39,7 @@
         <result column="teacher_location_sort" property="sort" />
         <result column="teacher_location_level" property="level" />
         <result column="teacher_location_comment" property="comment" />
+        <result column="teacher_location_timezone" property="timezone" />
     </resultMap>
     
     <select id="findDao" resultMap="teacherLocationResultMap">
@@ -75,6 +83,7 @@
             <if test="sort!=0">,sort</if>
             <if test="level!=0">,level</if>
             <if test="comment!=null">,comment</if>
+            <if test="timezone!=null">,timezone</if>
         </trim>
         ) VALUES
         <trim prefix="(" prefixOverrides=",">
@@ -85,6 +94,7 @@
             <if test="sort!=0">,#{sort}</if>
             <if test="level!=0">,#{level}</if>
             <if test="comment!=null">,#{comment}</if>
+            <if test="timezone!=null">,#{timezone}</if>
         </trim>
         )
     </insert>
@@ -99,6 +109,7 @@
             <if test="sort!=0">,sort = #{sort}</if>
             <if test="level!=0">,level = #{level}</if>
             <if test="comment!=null">,comment = #{comment}</if>
+            <if test="timezone!=null">,timezone = #{timezone}</if>
         </trim>
         <trim prefix="WHERE" prefixOverrides="AND">AND id = #{id}</trim>
     </update>
