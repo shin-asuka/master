@@ -117,7 +117,7 @@ public class CookieExpiredHandleInterceptor extends HandlerInterceptorAdapter {
         request.setAttribute("isPes",role.get(RoleClass.PES));
         request.setAttribute("isTe",role.get(RoleClass.TE));
         request.setAttribute("isTes",role.get(RoleClass.TES));
-        request.setAttribute("isEval",teacherPageLoginService.isType(user.getId(), LoginType.EVALUATION_CLICK));
+        request.setAttribute("isEvalClick",teacherPageLoginService.isType(user.getId(), LoginType.EVALUATION_CLICK));
 
         //是否需要考试
         if (adminQuizService.findNeedQuiz(user.getId())) {

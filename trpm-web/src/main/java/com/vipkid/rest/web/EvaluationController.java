@@ -63,8 +63,8 @@ public class EvaluationController {
         return result;
     }
     
-    @RequestMapping(value = "/saveEvaluatinButton", method = RequestMethod.POST, produces = RestfulConfig.JSON_UTF_8)
-    public Map<String,Object> saveEvaluatinButton(HttpServletRequest request, HttpServletResponse response){
+    @RequestMapping(value = "/saveClick", method = RequestMethod.POST, produces = RestfulConfig.JSON_UTF_8)
+    public Map<String,Object> saveClick(HttpServletRequest request, HttpServletResponse response){
         Map<String,Object> result = Maps.newHashMap();
         result.put("result",false);
         try{
