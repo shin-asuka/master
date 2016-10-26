@@ -35,6 +35,7 @@ public class TeachingExperienceService {
     public long saveTeaching(TeachingExperienceDto bean,User user){
         TeachingExperience teachingExperience = new TeachingExperience();
         teachingExperience.setOrganisationName(bean.getOrganisationName());
+        teachingExperience.setTeacherId(user.getId());
         teachingExperience.setJobTitle(HtmlUtils.htmlEscape(bean.getJobTitle()));
         teachingExperience.setTimePeriodStart(new Timestamp(bean.getTimePeriodStart()));
         teachingExperience.setTimePeriodEnd(new Timestamp(bean.getTimePeriodEnd()));
