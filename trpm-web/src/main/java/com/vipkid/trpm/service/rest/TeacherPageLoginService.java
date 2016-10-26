@@ -26,8 +26,23 @@ public class TeacherPageLoginService {
         return this.teacherPageLoginDao.isType(teacerId, loginType);
     }
     
-    
     public List<TeacherPageLogin> findList(long teacherId){
         return this.teacherPageLoginDao.findList(teacherId);
+    }
+    
+    /**
+     * saveTeacherPageLogin
+     *  
+     * @Author:ALong (ZengWeiLong)
+     * @param teacherId
+     * @param longType
+     * @return int
+     * @date 2016年10月26日
+     */
+    public boolean saveTeacherPageLogin(long teacherId,int longType){
+        TeacherPageLogin teacherPageLogin= new TeacherPageLogin();
+        teacherPageLogin.setUserId(teacherId);
+        teacherPageLogin.setLoginType(longType);
+        return this.teacherPageLoginDao.saveTeacherPageLogin(teacherPageLogin) == 1 ? true : false;
     }
 }

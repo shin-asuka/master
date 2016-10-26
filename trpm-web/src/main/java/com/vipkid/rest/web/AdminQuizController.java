@@ -90,7 +90,7 @@ public class AdminQuizController {
                 logger.warn("用户不存在，token过期");
                 return result;
             }
-            result.put("result",this.adminQuizService.saveOpenQuiz(user.getId()));
+            result.put("result",this.teacherPageLoginService.saveTeacherPageLogin(user.getId(),LoginType.ADMINQUIZ));
             return result;
         } catch (IllegalArgumentException e) {
             logger.error("内部参数转化异常:"+e.getMessage());

@@ -53,12 +53,12 @@ public class TeacherPageLoginDao extends MapperDaoTemplate<TeacherPageLogin> {
 	}
 
 	public int saveTeacherPageLogin(TeacherPageLogin teacherPageLogin) {
-	    List<TeacherPageLogin> list = this.selectList(teacherPageLogin);
-	    if(CollectionUtils.isNotEmpty(list)){
+	    if(this.isType(teacherPageLogin.getUserId(),teacherPageLogin.getLoginType())){
+	        return super.save(teacherPageLogin);
+	    }else{
 	        logger.warn("老师:{},已经点击过loginType:{}",teacherPageLogin.getUserId(),teacherPageLogin.getLoginType());
-	        return 1;
+            return 1;
 	    }
-	    return super.save(teacherPageLogin);
 	}
 
 }
