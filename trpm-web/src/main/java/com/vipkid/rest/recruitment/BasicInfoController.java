@@ -48,39 +48,43 @@ public class BasicInfoController extends RestfulController{
     
     @RequestMapping(value = "/getRecruitmentChannelList", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
     public Map<String,Object> getRecruitmentChannelList(HttpServletRequest request, HttpServletResponse response){
+        Map<String,Object> result = Maps.newHashMap();
         try{
             User user = getUser(request);
             logger.info("user:{},getRecruitmentChannelList",user.getId());
-            Map<String,Object> result = Maps.newHashMap();
             result.put("list", this.basicInfoService.getRecruitmentChannelList());
-            return Maps.newHashMap();
+            return result;
         } catch (IllegalArgumentException e) {
+            result.put("status", false);
             logger.error("内部参数转化异常:"+e.getMessage());
             response.setStatus(HttpStatus.BAD_REQUEST.value());
         } catch (Exception e) {
+            result.put("status", false);
             logger.error(e.getMessage(), e);
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
         }
-        return Maps.newHashMap();
+        return result;
     }
     
     
     @RequestMapping(value = "/getTeachingList", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
     public Map<String,Object> getTeachingList(HttpServletRequest request, HttpServletResponse response){
+        Map<String,Object> result = Maps.newHashMap();
         try{
             User user = getUser(request);
             List<TeachingExperience> list = this.teachingExperienceService.getTeachingList(user.getId());
-            Map<String,Object> result = Maps.newHashMap();
             result.put("list", list);
             return result;
         } catch (IllegalArgumentException e) {
+            result.put("status", false);
             logger.error("内部参数转化异常:"+e.getMessage());
             response.setStatus(HttpStatus.BAD_REQUEST.value());
         } catch (Exception e) {
+            result.put("status", false);
             logger.error(e.getMessage(), e);
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
         }
-        return Maps.newHashMap();
+        return result;
     }
     
     @RequestMapping(value = "/saveOrUpdateTeaching", method = RequestMethod.POST, produces = RestfulConfig.JSON_UTF_8)
@@ -112,6 +116,7 @@ public class BasicInfoController extends RestfulController{
             }
             result.put("id", resultRow);
             result.put("status", resultRow > 0 ? true : false);
+            return result;
         } catch (IllegalArgumentException e) {
             logger.error("内部参数转化异常:"+e.getMessage());
             response.setStatus(HttpStatus.BAD_REQUEST.value());
@@ -191,7 +196,8 @@ public class BasicInfoController extends RestfulController{
                 return result;
             }
             User user = getUser(request);
-            return this.basicInfoService.submitInfo(bean, user);
+            result = this.basicInfoService.submitInfo(bean, user);
+            return result;
         } catch (IllegalArgumentException e) {
             logger.error("内部参数转化异常:"+e.getMessage());
             response.setStatus(HttpStatus.BAD_REQUEST.value());
@@ -207,45 +213,53 @@ public class BasicInfoController extends RestfulController{
     
     @RequestMapping(value = "/getStatus", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
     public Map<String,Object> getStatus(HttpServletRequest request, HttpServletResponse response){
+        Map<String,Object> result = Maps.newHashMap();
         try{
             User user = getUser(request);
-            return this.basicInfoService.getStatus(user.getId());
+            result =  this.basicInfoService.getStatus(user.getId());
+            return result;
         } catch (IllegalArgumentException e) {
+            result.put("status", false);
             logger.error("内部参数转化异常:"+e.getMessage());
             response.setStatus(HttpStatus.BAD_REQUEST.value());
         } catch (Exception e) {
+            result.put("status", false);
             logger.error(e.getMessage(), e);
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
         }
-        return Maps.newHashMap();
+        return result;
     } 
     
     @RequestMapping(value = "/findTeacher", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
     public Map<String,Object> findTeacher(HttpServletRequest request, HttpServletResponse response){
+        Map<String,Object> result = Maps.newHashMap();
         try{
             User user = getUser(request);
             logger.info("userId:{}",user.getId());
             List<Map<String,Object>> list = this.basicInfoService.findTeacher();
-            Map<String,Object> result = Maps.newHashMap();
             result.put("list", list);
+            return result;
         } catch (IllegalArgumentException e) {
+            result.put("status", false);
             logger.error("内部参数转化异常:"+e.getMessage());
             response.setStatus(HttpStatus.BAD_REQUEST.value());
         } catch (Exception e) {
+            result.put("status", false);
             logger.error(e.getMessage(), e);
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
         }
-        return Maps.newHashMap();
+        return result;
     }
     
     @RequestMapping(value = "/findPhoneCode", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
     public Map<String,Object> findPhoneCode(HttpServletRequest request, HttpServletResponse response){
+        Map<String,Object> result = Maps.newHashMap();
         try{
             User user = getUser(request);
             logger.info("userId:{}",user.getId());
             List<TeacherNationalityCode> list = this.basicInfoService.getTeacherNationalityCodes();
-            Map<String,Object> result = Maps.newHashMap();
             result.put("list", list);
+            return result;
         } catch (IllegalArgumentException e) {
             logger.error("内部参数转化异常:"+e.getMessage());
             response.setStatus(HttpStatus.BAD_REQUEST.value());
@@ -253,6 +267,6 @@ public class BasicInfoController extends RestfulController{
             logger.error(e.getMessage(), e);
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
         }
-        return Maps.newHashMap();
+        return result;
     }
 }
