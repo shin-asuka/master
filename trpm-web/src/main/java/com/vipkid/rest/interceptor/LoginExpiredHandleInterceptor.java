@@ -78,12 +78,14 @@ public class LoginExpiredHandleInterceptor extends HandlerInterceptorAdapter {
             }
             //权限判断，符合条件的LifeCycle可以访问控制器
             if(ArrayUtils.contains(restInterface.lifeCycle(), teacher.getLifeCycle())){
+                request.setAttribute(RestfulController.AUTOKEN, user);
+                return true;
+            }else{
                 response.setStatus(HttpStatus.FORBIDDEN.value());
                 logger.warn("没有权限访问的用户:允许状态{},当前状态:{}",restInterface.lifeCycle(),teacher.getLifeCycle());
                 return false;
             }
-    	    request.setAttribute(RestfulController.AUTOKEN, user);
-    		return true;
+            
 	    }catch(IllegalArgumentException e){
             logger.error(e.getMessage(), e);
             response.setStatus(HttpStatus.BAD_REQUEST.value());
