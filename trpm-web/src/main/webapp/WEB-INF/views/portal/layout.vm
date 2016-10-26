@@ -38,7 +38,7 @@
         <li class="$!{activeClassrooms}"><a href="#springUrl('/classrooms.shtml')">Classrooms</a></li>
         ##if($isTes == 'false')
         	<li><a href="#springUrl('/evaluation')">Evaluations</a>
-        		#if($isEval)<div class="redPoint">●</div>#end
+        		#if($isEvalClick)<div class="redPoint">●</div>#end
         	</li>
         ##end
         #if($isTe && !$isTes)
