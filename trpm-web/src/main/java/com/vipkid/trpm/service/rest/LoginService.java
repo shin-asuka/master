@@ -15,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.google.api.client.util.Maps;
 import com.google.common.collect.Lists;
 import com.vipkid.rest.config.RestfulConfig;
 import com.vipkid.rest.config.RestfulConfig.RoleClass;
@@ -122,11 +121,12 @@ public class LoginService {
         return userDao.findByLogin(username);
     }
 
-    public void setLoginCooke(HttpServletResponse response, User user) {
+    public String setLoginCooke(HttpServletResponse response, User user) {
         String token = UUID.randomUUID().toString();
         logger.info("设置登录Cookie，teacherID = {},token = {}",user.getId(),token);
         redisProxy.set(token, JsonTools.getJson(user), 12 * 60 * 60);
         CookieUtils.setCookie(response, CookieKey.TRPM_TOKEN, token, null);
+        return token;
     }
 
     public void removeLoginCooke(HttpServletRequest request, HttpServletResponse response) {
