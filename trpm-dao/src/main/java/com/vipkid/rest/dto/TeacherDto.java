@@ -8,6 +8,7 @@ public class TeacherDto {
 
     private String firstName;
     
+    @Ignore
     private String middleName;
     
     private String lastName;
