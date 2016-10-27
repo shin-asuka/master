@@ -2,9 +2,9 @@ package com.vipkid.trpm.service.recruitment;
 
 import java.util.List;
 
-import com.google.common.collect.Lists;
 import org.apache.commons.collections.CollectionUtils;
 
+import com.google.common.collect.Lists;
 import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.entity.TeacherAddress;
 import com.vipkid.trpm.entity.TeachingExperience;
@@ -50,6 +50,9 @@ public class AutoFailProcessor {
             this.teacher = teacher;
             this.experiences = experiences;
             this.teacherAddress = teacherAddress;
+            failReasons = Lists.newArrayList();
+            failTypes = Lists.newArrayList();
+            
         }
 
         public AutoFailProcessor process() {
