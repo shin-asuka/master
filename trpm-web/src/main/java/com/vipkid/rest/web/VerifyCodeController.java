@@ -29,7 +29,7 @@ public class VerifyCodeController {
      *
      * @throws java.io.IOException
      */
-    @RequestMapping(value = "/user/verifycode", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
+    @RequestMapping(value = "/user/verifycode1", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
     @ResponseBody
     public Object getVerifyCode() throws IOException {
         logger.info("getVerifyCode start");
