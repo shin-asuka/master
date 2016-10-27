@@ -322,7 +322,7 @@
 			<if test="beneficiaryBankAddressId">,beneficiary_bank_address_id</if>
 			<if test="beneficiaryAddressId">,beneficiary_address_id</if>
 			<if test="evaluationBio != null">,evaluation_bio</if>
-			<if test="phoneType != null">,phoneType</if>
+			<if test="phoneType != null">,phone_type</if>
 			<if test="otherChannel != null">,otherChannel</if>
 		</trim>
 		) VALUES
