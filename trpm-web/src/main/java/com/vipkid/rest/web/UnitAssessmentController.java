@@ -2,6 +2,7 @@ package com.vipkid.rest.web;
 
 import com.google.api.client.util.Maps;
 import com.vipkid.http.vo.OnlineClassVo;
+import com.vipkid.rest.config.RestfulConfig;
 import com.vipkid.trpm.service.portal.OnlineClassService;
 import org.community.tools.JsonTools;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +22,7 @@ public class UnitAssessmentController {
     private OnlineClassService onlineClassService;
 
 
-    @RequestMapping(value = "/unfinishedUA", method = RequestMethod.GET)
+    @RequestMapping(value = "/unfinishedUA", method = RequestMethod.GET,produces = RestfulConfig.JSON_UTF_8)
     @ResponseBody
     public Object getUnfinishedUA(@RequestParam(defaultValue = "1") Integer pageNo, @RequestParam(defaultValue = "1") Integer pageSize) {
         ArrayList<OnlineClassVo> onlineClassVos = onlineClassService.getUnfinishUA(pageNo, pageSize);
