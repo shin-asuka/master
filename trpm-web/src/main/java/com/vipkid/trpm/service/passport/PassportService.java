@@ -115,8 +115,8 @@ public class PassportService {
      * @Author:VIPKID-ZengWeiLong
      * @return 2016年3月3日
      */
-    public Map<String, String> saveSignUp(String email, String password, Object reid, Object partnerId) {
-        Map<String, String> resultMap = Maps.newHashMap();
+    public Map<String, Object> saveSignUp(String email, String password, Object reid, Object partnerId) {
+        Map<String, Object> resultMap = Maps.newHashMap();
         User user = this.userDao.findByUsername(email);
         SHA256PasswordEncoder encoder = new SHA256PasswordEncoder();
 
@@ -173,8 +173,11 @@ public class PassportService {
                 resultMap.put("uuid", AES.encrypt(teacher.getRecruitmentId(),
                         AES.getKey(AES.KEY_LENGTH_128, ApplicationConstant.AES_128_KEY)));
             }
+            resultMap.put("user", user);
             resultMap.put("info", ApplicationConstant.AjaxCode.SUCCESS_CODE);
+            resultMap.put("result", true);
         } else {
+            resultMap.put("result", false);
             resultMap.put("info", ApplicationConstant.AjaxCode.ERROR_CODE);
         }
         return resultMap;
