@@ -61,7 +61,7 @@ public class LoginExpiredHandleInterceptor extends HandlerInterceptorAdapter {
     	    Preconditions.checkArgument(StringUtils.isNotBlank(token));
             User user = loginService.getUser(request);
             if(user == null){
-                response.setStatus(HttpStatus.NOT_FOUND.value());
+                response.setStatus(HttpStatus.FORBIDDEN.value());
                 logger.warn("用户不存在，token过期");
                 return false;
             }
