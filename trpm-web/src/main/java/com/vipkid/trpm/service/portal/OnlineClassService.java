@@ -730,31 +730,17 @@ public class OnlineClassService {
         }
     }
 
-    public HashMap<String,Object> getUnfinishUA(HashMap<String,Object> onlineClassVoCond,Integer pageNo,Integer pageSize){
+    public ArrayList<OnlineClassVo> getUnfinishUA(Integer pageNo,Integer pageSize){
 
-        String from = onlineClassVoCond.get("from").toString();
-        String to = onlineClassVoCond.get("to").toString();
-        Date startTime = null;
-        try {
-            startTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(from);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        Date endTime1 = org.apache.commons.lang3.time.DateUtils.addDays(startTime,7);
-        Date endTime2 = org.apache.commons.lang3.time.DateUtils.addHours(org.apache.commons.lang3.time.DateUtils.addMonths(new Date(), -30), -24);
-        Date endTime = null;
-        try {
-            endTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(to);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        Long minEnd = Math.min(Math.min(endTime1.getTime(),endTime2.getTime()),endTime.getTime());
-        endTime = new Date(minEnd);
+        Date startDate = new Date(new Date().getTime() - 7*86400*1000);
+        Date endDate = new Date();
+
+        String startTime = UADateUtils.format(startDate, UADateUtils.defaultFormat) ;
+        String endTime = UADateUtils.format(endDate, UADateUtils.defaultFormat) ;
+
         logger.info("查询出6个小时以前已经AS_SCHEDULED的课程  startTime = {},endTime = {}",startTime,endTime);
 
-        onlineClassVoCond.put("from",startTime);
-        onlineClassVoCond.put("to",endTime);
-        List<Map<String, Object>> list = onlineClassDao.findMajorCourseListByCond(onlineClassVoCond);
+        List<Map<String, Object>> list = onlineClassDao.findMajorCourseListByStartTimeAndEndTime(startTime, endTime ,null);
         logger.info("Get unSubmit OnlineClass list = {}", JsonUtils.toJSONString(list));
 
         ArrayList<OnlineClassVo> onlineClassVos = getOnlineClassVoList(list);
@@ -778,20 +764,18 @@ public class OnlineClassService {
             onlineClassVoList.add(ocMap.get(id));
         }
         Integer offset = (pageNo-1) * pageSize;
-        Integer limit = pageSize;
-        List<OnlineClassVo> ocPage = new ArrayList<OnlineClassVo>();
+
+        Integer limit = pageNo * pageSize;
+        ArrayList<OnlineClassVo> ocPage = new ArrayList<OnlineClassVo>();
         if(onlineClassVoList.size() > 0) {
             if (limit > onlineClassVoList.size()) {
-                limit = onlineClassVoList.size();
+                limit = onlineClassVoList.size() - 1;
             }
-            ocPage =  onlineClassVoList.subList(offset,offset + limit);
+            ocPage = (ArrayList<OnlineClassVo>) onlineClassVoList.subList(offset, limit);
         }else{
             ocPage = Lists.newArrayList();
         }
-        HashMap<String,Object> ret = Maps.newHashMap();
-        ret.put("onlineClassVos",ocPage);
-        ret.put("total",onlineClassVoList.size());
-        return ret;
+        return ocPage;
     }
 
     public ArrayList<OnlineClassVo> getOnlineClassVoList(List<Map<String, Object>> list){
@@ -804,20 +788,11 @@ public class OnlineClassService {
                 Long id = jsonObject.getLong("id");
 
                 onlineClassVo.setId(id);
-                onlineClassVo.setStudentId(jsonObject.getInteger("studentId"));
                 onlineClassVo.setTeacherId(jsonObject.getLong("teacherId"));
-                onlineClassVo.setStudentId(jsonObject.getInteger("studentId"));
                 onlineClassVo.setLessonId(jsonObject.getLong("lessonId"));
                 onlineClassVo.setTeacherName(jsonObject.getString("teacherName"));
                 onlineClassVo.setTeacherEmail(jsonObject.getString("teacherEmail"));
                 onlineClassVo.setScheduledDateTime(jsonObject.getDate("scheduledDateTime"));
-                onlineClassVo.setLessonSn(jsonObject.getString("lessonSn"));
-                onlineClassVo.setCourse(jsonObject.getString("course"));
-                onlineClassVo.setFinishType(jsonObject.getString("finishType"));
-                onlineClassVo.setStudentEnglishName(jsonObject.getString("studentEnglishName"));
-                onlineClassVo.setTimezone(jsonObject.getString("timezone"));
-                onlineClassVo.setAuditorId(jsonObject.getInteger("auditorId"));
-                onlineClassVo.setAuditorName(jsonObject.getString("auditorName"));
                 onlineClassVos.add(onlineClassVo);
             }
         }
