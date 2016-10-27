@@ -172,9 +172,6 @@ public class PassportService {
                 new EmailEngine().addMailPool(email, sendMap, EmailFormEnum.TEACHVIP);
                 resultMap.put("uuid", AES.encrypt(teacher.getRecruitmentId(),
                         AES.getKey(AES.KEY_LENGTH_128, ApplicationConstant.AES_128_KEY)));
-            }else{
-                resultMap.put("url", "signlogin.shtml?token="
-                        + AES.encrypt(user.getToken(), AES.getKey(AES.KEY_LENGTH_128, ApplicationConstant.AES_128_KEY)));
             }
             resultMap.put("info", ApplicationConstant.AjaxCode.SUCCESS_CODE);
         } else {
