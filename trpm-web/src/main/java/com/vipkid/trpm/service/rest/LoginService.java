@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.google.common.collect.Lists;
+import com.vipkid.enums.TeacherEnum.LifeCycle;
 import com.vipkid.rest.config.RestfulConfig;
 import com.vipkid.rest.config.RestfulConfig.RoleClass;
 import com.vipkid.rest.config.TeacherInfo;
@@ -167,21 +168,23 @@ public class LoginService {
      * @return boolean
      * @date 2016年7月4日
      */
-    public void findByTeacherModule(TeacherInfo teacherinfo) {
+    public void findByTeacherModule(TeacherInfo teacherinfo,String lifeCycle) {
         Map<String,Object> roles = teacherinfo.getRoles();
-        roles.put(RoleClass.PE, this.isPe(teacherinfo.getTeacherId()));
-        String result = teacherModuleDao.findByTeacherModule(teacherinfo.getTeacherId());
-        logger.info(" result module:{}",result);
-        if(result.indexOf(","+RoleClass.PE+",") > -1){
-            roles.put(RoleClass.PES,true);
+        if(LifeCycle.REGULAR.toString().equalsIgnoreCase(lifeCycle)){
+            roles.put(RoleClass.PE, this.isPe(teacherinfo.getTeacherId()));
+            String result = teacherModuleDao.findByTeacherModule(teacherinfo.getTeacherId());
+            logger.info(" result module:{}",result);
+            if(result.indexOf(","+RoleClass.PE+",") > -1){
+                roles.put(RoleClass.PES,true);
+            }
+            if(result.indexOf(","+RoleClass.TE+",") > -1){
+                roles.put(RoleClass.TE,true);
+            }
+            if(result.indexOf(","+RoleClass.TES+",") > -1){
+                roles.put(RoleClass.TES,true);
+            }
+            teacherinfo.setRoles(roles);
         }
-        if(result.indexOf(","+RoleClass.TE+",") > -1){
-            roles.put(RoleClass.TE,true);
-        }
-        if(result.indexOf(","+RoleClass.TES+",") > -1){
-            roles.put(RoleClass.TES,true);
-        }
-        teacherinfo.setRoles(roles);
     }  
     
 
