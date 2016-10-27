@@ -115,7 +115,7 @@ public class PassportService {
      * @Author:VIPKID-ZengWeiLong
      * @return 2016年3月3日
      */
-    public Map<String, String> doSignUp(String email, String password, Object reid, Object partnerId) {
+    public Map<String, String> saveSignUp(String email, String password, Object reid, Object partnerId) {
         Map<String, String> resultMap = Maps.newHashMap();
         User user = this.userDao.findByUsername(email);
         SHA256PasswordEncoder encoder = new SHA256PasswordEncoder();

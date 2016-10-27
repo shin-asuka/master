@@ -56,10 +56,12 @@ public class BasicInfoController extends RestfulController{
             result.put("list", this.basicInfoService.getRecruitmentChannelList());
             return result;
         } catch (IllegalArgumentException e) {
+            result.clear();
             result.put("status", false);
             logger.error("内部参数转化异常:"+e.getMessage());
             response.setStatus(HttpStatus.BAD_REQUEST.value());
         } catch (Exception e) {
+            result.clear();
             result.put("status", false);
             logger.error(e.getMessage(), e);
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
@@ -77,10 +79,12 @@ public class BasicInfoController extends RestfulController{
             result.put("list", list);
             return result;
         } catch (IllegalArgumentException e) {
+            result.clear();
             result.put("status", false);
             logger.error("内部参数转化异常:"+e.getMessage());
             response.setStatus(HttpStatus.BAD_REQUEST.value());
         } catch (Exception e) {
+            result.clear();
             result.put("status", false);
             logger.error(e.getMessage(), e);
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
@@ -120,10 +124,12 @@ public class BasicInfoController extends RestfulController{
             result.put("status", resultRow > 0 ? true : false);
             return result;
         } catch (IllegalArgumentException e) {
+            result.clear();
             logger.error("内部参数转化异常:"+e.getMessage());
             response.setStatus(HttpStatus.BAD_REQUEST.value());
             result.put("status", false);
         } catch (Exception e) {
+            result.clear();
             logger.error(e.getMessage(), e);
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
             result.put("status", false);
@@ -143,10 +149,12 @@ public class BasicInfoController extends RestfulController{
             result.put("status", resultRow > 0 ? true : false);
             return result;
         } catch (IllegalArgumentException e) {
+            result.clear();
             logger.error("内部参数转化异常:"+e.getMessage());
             response.setStatus(HttpStatus.BAD_REQUEST.value());
             result.put("status", false);
         } catch (Exception e) {
+            result.clear();
             logger.error(e.getMessage(), e);
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
             result.put("status", false);
@@ -201,10 +209,12 @@ public class BasicInfoController extends RestfulController{
             result = this.basicInfoService.submitInfo(bean, user);
             return result;
         } catch (IllegalArgumentException e) {
+            result.clear();
             logger.error("内部参数转化异常:"+e.getMessage());
             response.setStatus(HttpStatus.BAD_REQUEST.value());
             result.put("status", false);
         } catch (Exception e) {
+            result.clear();
             logger.error(e.getMessage(), e);
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
             result.put("status", false);
@@ -242,10 +252,12 @@ public class BasicInfoController extends RestfulController{
             result.put("list", list);
             return result;
         } catch (IllegalArgumentException e) {
+            result.clear();
             result.put("status", false);
             logger.error("内部参数转化异常:"+e.getMessage());
             response.setStatus(HttpStatus.BAD_REQUEST.value());
         } catch (Exception e) {
+            result.clear();
             result.put("status", false);
             logger.error(e.getMessage(), e);
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
@@ -263,9 +275,11 @@ public class BasicInfoController extends RestfulController{
             result.put("list", list);
             return result;
         } catch (IllegalArgumentException e) {
+            result.clear();
             logger.error("内部参数转化异常:"+e.getMessage());
             response.setStatus(HttpStatus.BAD_REQUEST.value());
         } catch (Exception e) {
+            result.clear();
             logger.error(e.getMessage(), e);
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
         }

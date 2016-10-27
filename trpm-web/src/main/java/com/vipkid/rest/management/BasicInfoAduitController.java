@@ -1,4 +1,4 @@
-package com.vipkid.rest.management;
+/*package com.vipkid.rest.management;
 
 import java.util.Map;
 
@@ -68,3 +68,4 @@ public class BasicInfoAduitController {
         return result;
     }
 }
+*/
