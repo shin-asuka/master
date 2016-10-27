@@ -72,8 +72,8 @@ public class LoginExpiredHandleInterceptor extends HandlerInterceptorAdapter {
             }
             Teacher teacher = this.loginService.getTeacher(request);
             if(teacher == null){
-                response.setStatus(HttpStatus.NOT_FOUND.value());
-                logger.warn("用户老师账号不存在");
+                response.setStatus(HttpStatus.FORBIDDEN.value());
+                logger.warn("用户老师账号不存在,检查数据库或者登陆信息是否有效");
                 return false;
             }
             //权限判断，符合条件的LifeCycle可以访问控制器
