@@ -31,12 +31,16 @@ public class BasicInfoAduitController {
     
     @RequestMapping(value = "/basicReview", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
     public Map<String,Object> basicReview(HttpServletRequest request, HttpServletResponse response,long teacherApplicationId){
+        Map<String,Object> result = Maps.newHashMap();
         try{
-            return this.basicInfoAduitService.basicReview(teacherApplicationId);
+            result = this.basicInfoAduitService.basicReview(teacherApplicationId);
+            return result;
         } catch (IllegalArgumentException e) {
+            result.put("status", false);
             logger.error("内部参数转化异常:"+e.getMessage());
             response.setStatus(HttpStatus.BAD_REQUEST.value());
         } catch (Exception e) {
+            result.put("status", false);
             logger.error(e.getMessage(), e);
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
         }

@@ -4,12 +4,14 @@ import java.sql.Timestamp;
 import java.util.Date;
 import java.util.Map;
 
-import com.vipkid.email.EmailUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.google.common.collect.Maps;
+import com.vipkid.email.EmailUtils;
 import com.vipkid.trpm.constant.ApplicationConstant.TeacherLifeCycle;
 import com.vipkid.trpm.dao.TeacherAddressDao;
 import com.vipkid.trpm.dao.TeacherApplicationDao;
@@ -24,6 +26,8 @@ import com.vipkid.trpm.util.DateUtils;
 
 @Service
 public class BasicInfoAduitService {
+    
+    private static Logger logger = LoggerFactory.getLogger(BasicInfoAduitService.class);
 
     @Autowired
     private TeacherApplicationDao teacherApplicationDao;
@@ -132,26 +136,31 @@ public class BasicInfoAduitService {
         result.put("id", teacherApplicationId);
         TeacherApplication teacherApplication = this.teacherApplicationDao.findApplictionById(teacherApplicationId);
         if(teacherApplication == null){
+            logger.warn("没有找到TeacherApplication,appId:{}",teacherApplicationId);
             result.put("status", false);
             return result;
         }
         Teacher teacher = this.teacherDao.findById(userId);
         if(teacher == null){
+            logger.warn("没有找到Teacher,userId:{}",userId);
             result.put("status", false);
             return result;
         }
         //PASS的不能操作
         if(StringUtils.equals(teacherApplication.getResult(), TeacherApplicationDao.Result.PASS.toString())){
+            logger.warn("PASS的不能操作,TeacherApplication:{}",teacherApplicationId);
             result.put("status",false);
             return result;
         }
         //超过11.5小时不能修改
         long auditTime = teacherApplication.getAuditDateTime().getTime();
         if(DateUtils.count11hrlf(auditTime)){
+            logger.warn("超过11.5小时不能修改,TeacherApplication:{}",teacherApplicationId);
             result.put("status",false);
         }
         //已经修改过不能修改
         if(StringUtils.isNotBlank(teacherApplication.getComments())){
+            logger.warn("已经修改过不能修改,TeacherApplication:{}",teacherApplicationId);
             result.put("status",false);
         }
         teacherApplication.setResult(TeacherApplicationDao.Result.PASS.toString());
