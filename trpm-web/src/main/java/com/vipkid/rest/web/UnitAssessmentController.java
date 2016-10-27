@@ -28,7 +28,7 @@ public class UnitAssessmentController {
         ArrayList<OnlineClassVo> onlineClassVos = onlineClassService.getUnfinishUA(pageNo, pageSize);
         Map<String, Object> result = Maps.newHashMap();
         result.put("status", HttpStatus.OK.value());
-        result.put("info",onlineClassVos);
+        //result.put("info",onlineClassVos);
         return JsonTools.getJson(result);
     }
 }
