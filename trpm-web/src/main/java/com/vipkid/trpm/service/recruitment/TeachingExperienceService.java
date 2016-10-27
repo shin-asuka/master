@@ -84,6 +84,8 @@ public class TeachingExperienceService {
             if(teachingExperienceDao.delete(teachingExperience) > 0){
                 return id;
             }
+        }else{
+            logger.warn("已经提交的数据不能删除id:{}",id);
         }
         return 0L;
     }
