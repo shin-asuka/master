@@ -8,7 +8,7 @@ import com.vipkid.rest.validation.tools.ValidateEnum.Type;
 public class TeachingExperienceDto{
     
     @Ignore
-    private Long id;
+    private long id;
     
     private String organisationName;
     
@@ -23,11 +23,11 @@ public class TeachingExperienceDto{
     @Verify(type={Type.NOT_NULL,Type.MAX_LENGTH},maxLength=1500)
     private String jobDescription;
 
-    public Long getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(long id) {
         this.id = id;
 
     }
