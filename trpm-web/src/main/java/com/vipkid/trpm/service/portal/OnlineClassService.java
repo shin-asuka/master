@@ -4,6 +4,11 @@ import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.*;
 
+import com.alibaba.fastjson.JSONObject;
+import com.google.common.collect.Lists;
+import com.vipkid.http.utils.JsonUtils;
+import com.vipkid.http.vo.OnlineClassVo;
+import com.vipkid.task.utils.UADateUtils;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -75,7 +80,7 @@ public class OnlineClassService {
     
     @Autowired
     private AssessmentReportDao assessmentReportDao;
-    
+
     /**
      * 根据id找online class
      *
@@ -722,4 +727,71 @@ public class OnlineClassService {
         }
     }
 
+    public ArrayList<OnlineClassVo> getUnfinishUA(Integer pageNo,Integer pageSize){
+
+        Date startDate = new Date(new Date().getTime() - 7*86400*1000);
+        Date endDate = new Date();
+
+        String startTime = UADateUtils.format(startDate, UADateUtils.defaultFormat) ;
+        String endTime = UADateUtils.format(endDate, UADateUtils.defaultFormat) ;
+
+        logger.info("查询出6个小时以前已经AS_SCHEDULED的课程  startTime = {},endTime = {}",startTime,endTime);
+
+        List<Map<String, Object>> list = onlineClassDao.findMajorCourseListByStartTimeAndEndTime(startTime, endTime ,null);
+        logger.info("Get unSubmit OnlineClass list = {}", JsonUtils.toJSONString(list));
+
+        ArrayList<OnlineClassVo> onlineClassVos = getOnlineClassVoList(list);
+
+        OnlineClassVo onlineClassVo = new OnlineClassVo();
+        ArrayList<OnlineClassVo> onlineClassVoList = new ArrayList<OnlineClassVo>();
+        Map<Long,OnlineClassVo> ocMap = com.google.api.client.util.Maps.newHashMap();
+        if(CollectionUtils.isNotEmpty(onlineClassVos)){
+            for (OnlineClassVo oc : onlineClassVos) { //数据格式转换
+                Long id = oc.getId();
+                onlineClassVo.getIdList().add(id);
+                ocMap.put(id, oc);
+            }
+
+            //调用homework服务查询为完成UA报告的课程
+            OnlineClassVo onlineClassVoUnSubmit = assessmentHttpService.findUnSubmitonlineClassVo(onlineClassVo );
+            logger.info("Result unSubmit OnlineClass  = {}", JsonUtils.toJSONString(onlineClassVoUnSubmit));
+
+        }
+        for(Long id : onlineClassVo.getIdList()){
+            onlineClassVoList.add(ocMap.get(id));
+        }
+        Integer offset = (pageNo-1) * pageSize;
+        Integer limit = pageNo * pageSize;
+        ArrayList<OnlineClassVo> ocPage = new ArrayList<OnlineClassVo>();
+        if(onlineClassVoList.size() > 0) {
+            if (limit > onlineClassVoList.size()) {
+                limit = onlineClassVoList.size() - 1;
+            }
+            ocPage = (ArrayList<OnlineClassVo>) onlineClassVoList.subList(offset, limit);
+        }else{
+            ocPage = Lists.newArrayList();
+        }
+        return ocPage;
+    }
+
+    public ArrayList<OnlineClassVo> getOnlineClassVoList(List<Map<String, Object>> list){
+        ArrayList<OnlineClassVo> onlineClassVos = Lists.newArrayList();
+        if(CollectionUtils.isNotEmpty(list)){
+            for (Map<String,Object> map : list) {
+                JSONObject jsonObject = (JSONObject) JSONObject.toJSON(map);
+
+                OnlineClassVo onlineClassVo = new OnlineClassVo();
+                Long id = jsonObject.getLong("id");
+
+                onlineClassVo.setId(id);
+                onlineClassVo.setTeacherId(jsonObject.getLong("teacherId"));
+                onlineClassVo.setLessonId(jsonObject.getLong("lessonId"));
+                onlineClassVo.setTeacherName(jsonObject.getString("teacherName"));
+                onlineClassVo.setTeacherEmail(jsonObject.getString("teacherEmail"));
+                onlineClassVo.setScheduledDateTime(jsonObject.getDate("scheduledDateTime"));
+                onlineClassVos.add(onlineClassVo);
+            }
+        }
+        return onlineClassVos;
+    }
 }
