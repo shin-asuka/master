@@ -47,6 +47,8 @@ public class TeacherDto {
     private String gender;    
     
     private String highestLevelOfEdu;
+    
+    private String teachingIds;
   
 
     public String getFirstName() {
@@ -200,4 +202,12 @@ public class TeacherDto {
     public void setHighestLevelOfEdu(String highestLevelOfEdu) {
         this.highestLevelOfEdu = highestLevelOfEdu;
     }
+
+    public String getTeachingIds() {
+        return teachingIds;
+    }
+
+    public void setTeachingIds(String teachingIds) {
+        this.teachingIds = teachingIds;
+    }    
 }
