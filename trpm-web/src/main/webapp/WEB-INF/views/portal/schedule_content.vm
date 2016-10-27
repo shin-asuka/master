@@ -76,7 +76,7 @@
 <script>
     window.easemobim = window.easemobim || {};
     easemobim.config = {
-    	offDutyType: 'chat',    //下班后消息不进入待接入
+    	offDutyType: 'chat',    //下班后消息进入待接入
         hide:true,
         appKey: '513276871#teachertest',
         to: 'vipkid_teacher_portal_web',
