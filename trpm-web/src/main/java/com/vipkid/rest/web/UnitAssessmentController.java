@@ -6,10 +6,7 @@ import com.vipkid.trpm.service.portal.OnlineClassService;
 import org.community.tools.JsonTools;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -25,7 +22,7 @@ public class UnitAssessmentController {
 
 
 
-    @RequestMapping("/unfinishedUA")
+    @RequestMapping(value = "/unfinishedUA", method = RequestMethod.GET)
     @ResponseBody
     public Object getUnfinishedUA(@RequestParam(defaultValue = "1") Integer pageNo, @RequestParam(defaultValue = "1") Integer pageSize) {
         ArrayList<OnlineClassVo> onlineClassVos = onlineClassService.getUnfinishUA(pageNo, pageSize);
