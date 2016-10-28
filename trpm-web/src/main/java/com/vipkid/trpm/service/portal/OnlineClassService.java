@@ -730,7 +730,7 @@ public class OnlineClassService {
         }
     }
 
-    public ArrayList<OnlineClassVo> getUnfinishUA(Integer pageNo,Integer pageSize){
+    public List<OnlineClassVo> getUnfinishUA(Integer pageNo,Integer pageSize){
 
         Date startDate = new Date(new Date().getTime() - 7*86400*1000);
         Date endDate = new Date();
@@ -766,12 +766,12 @@ public class OnlineClassService {
         Integer offset = (pageNo-1) * pageSize;
 
         Integer limit = pageNo * pageSize;
-        ArrayList<OnlineClassVo> ocPage = new ArrayList<OnlineClassVo>();
+        List<OnlineClassVo> ocPage = new ArrayList<OnlineClassVo>();
         if(onlineClassVoList.size() > 0) {
             if (limit > onlineClassVoList.size()) {
                 limit = onlineClassVoList.size() - 1;
             }
-            ocPage = (ArrayList<OnlineClassVo>) onlineClassVoList.subList(offset, limit);
+            ocPage =  onlineClassVoList.subList(offset, limit);
         }else{
             ocPage = Lists.newArrayList();
         }
