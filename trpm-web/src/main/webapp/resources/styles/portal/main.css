@@ -2227,6 +2227,8 @@ ul, li {
 }
 .contactUploadStatus .contactUploadStatusWz{margin-left: 0px;margin-top: 4px;float:left;line-height:36px; display:inline-block; text-align:center; cursor:pointer; }
 .contactUploadStatus .contactUploadStatusImg{float:left;background:url(../../images/common/uploadloading.gif) no-repeat center center; width:45%;height:34px; display:inline-block; margin:0 auto;margin-top: 3px;}
+.taxpayerUploadStatus .taxpayerUploadStatusImg{background:url(../../images/common/uploadloading.gif) no-repeat center center; width:50px;height:34px;}
+
 .line_input{ position:relative; margin-bottom: 20px; }
 .line_input p{margin:0;padding:0;}
 .line_input .error{margin:5px 0 0;}

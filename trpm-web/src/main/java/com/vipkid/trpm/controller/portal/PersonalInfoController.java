@@ -31,6 +31,7 @@ import com.vipkid.trpm.service.passport.IndexService;
 import com.vipkid.trpm.service.passport.RemberService;
 import com.vipkid.trpm.service.portal.PersonalInfoService;
 import com.vipkid.trpm.service.portal.TeacherAddressService;
+import com.vipkid.trpm.service.portal.TeacherTaxpayerFormService;
 import com.vipkid.trpm.util.CookieUtils;
 import com.vipkid.trpm.validator.ChangePasswordValidator;
 
@@ -62,6 +63,9 @@ public class PersonalInfoController extends AbstractPortalController {
 
 	@Autowired
 	private TeacherAddressService teacherAddressService;
+	
+	@Autowired
+	private TeacherTaxpayerFormService teacherTaxpayerFormService;
 
 	@RequestMapping("/personalInfo")
 	public String personalInfo(HttpServletRequest request, HttpServletResponse response, Model model) {
@@ -74,7 +78,8 @@ public class PersonalInfoController extends AbstractPortalController {
 		model.addAttribute("isRemindEditBankInfo", isRemindEditBankInfo);
 		
 		getBasicinfoView(request, response, model);
-				
+		String param = request.getParameter("p");
+		model.addAttribute("index", param);
 		return view("personal_info");
 	}
 

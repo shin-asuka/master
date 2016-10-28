@@ -17,6 +17,14 @@ define(depends, function() {
 	};
 	
 	var init = function(){
+		var index = jQuery('#persion-info').attr('index');
+		if(index == 'taxpayer'){
+			var cUrl = '/personal/taxpayer.shtml';
+			loadingPage(cUrl);
+			jQuery('#persion-info').parent().find('li.active[url]').removeClass('active');
+			jQuery('[url="'+cUrl+'"]').addClass('active');
+		}
+		
 		/* 初始化tab切换 */
 		$("ul.nav-stacked > li").click(function() {
 			parentLoadPage($(this).attr("url"),this);

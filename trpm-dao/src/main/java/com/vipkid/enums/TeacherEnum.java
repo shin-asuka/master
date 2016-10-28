@@ -53,4 +53,107 @@ public class TeacherEnum {
 	public enum PageEnum {
 		SIGNUP,INFOMATION,RESULT
 	}
+	
+
+	public enum FormType{
+		W9(1),
+		T4A(2);
+		
+		private Integer val;   
+		
+        private FormType(Integer val) {
+            this.val = val;
+        }        
+        public Integer val() {
+            return val;
+        }
+        
+	}
+	
+	public static FormType getFormTypeByCode(String code){
+		FormType formType = null;
+		try {
+			formType = FormType.valueOf(code);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return formType;
+	}
+	
+	public static FormType getFormTypeById(Integer id){
+		FormType formType = null;
+		try {
+			FormType[] list = FormType.values();
+			for (FormType e : list) {
+				if(e.val().equals(id)){
+					formType = e;
+					break;
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return formType;
+	}
+	
+	public enum UploadStatus{
+		NOT_NEED_UPLOAD(2),
+		UPLOADED(1),
+		UN_UPLOAD(0);
+		
+		private Integer val;   
+		
+        private UploadStatus(Integer val) {
+            this.val = val;
+        }        
+        public Integer val() {
+            return val;
+        }
+	}
+	
+	public enum ISNew{
+		NEW(1),
+		OLD(0);
+		
+		private Integer val;   
+		
+        private ISNew(Integer val) {
+            this.val = val;
+        }        
+        public Integer val() {
+            return val;
+        }
+	}
+	
+	public static UploadStatus getUploadStatusById(Integer id){
+		UploadStatus status = null;
+		try {
+			UploadStatus[] list = UploadStatus.values();
+			for (UploadStatus e : list) {
+				if(e.val().equals(id)){
+					status = e;
+					break;
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return status;
+	}
+	
+	public static ISNew getNewById(Integer id){
+		ISNew isNew = null;
+		try {
+			ISNew[] list = ISNew.values();
+			for (ISNew e : list) {
+				if(e.val().equals(id)){
+					isNew = e;
+					break;
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return isNew;
+	}
 }

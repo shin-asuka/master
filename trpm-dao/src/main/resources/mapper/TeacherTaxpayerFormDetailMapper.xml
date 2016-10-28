@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="TeacherTaxpayerFormDetailMapper">
+
+	<sql id="taxpayerFormDetailColumns">
+		a.id AS "id",
+		a.taxpayer_form_id AS "taxpayerFormId",
+		a.teacher_id AS "teacherId",
+		a.form_name AS "formName",
+		a.form_type AS "formType",
+		a.uploader_name AS "uploaderName",
+		a.uploader AS "uploader",
+		a.is_new AS "isNew",
+		a.url AS "url",
+		a.create_time AS "createTime",
+		a.create_by AS "createBy",
+		a.del_flag AS "delFlag"
+	</sql>
+    
+	<select id="findById" resultType="com.vipkid.trpm.entity.TeacherTaxpayerFormDetail">
+		SELECT 
+			<include refid="taxpayerFormDetailColumns"/>
+		FROM teacher_taxpayer_form_detail a
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="com.vipkid.trpm.entity.TeacherTaxpayerFormDetail">
+		SELECT 
+			<include refid="taxpayerFormDetailColumns"/>
+		FROM teacher_taxpayer_form_detail a
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+			<if test="taxpayerFormId != null and taxpayerFormId != ''">
+				AND a.taxpayer_form_id = #{taxpayerFormId}
+			</if>
+			<if test="teacherId != null and teacherId != ''">
+				AND a.teacher_id = #{teacherId}
+			</if>
+			<if test="formType != null and formType != ''">
+				AND a.form_type = #{formType}
+			</if>
+			<if test="uploader != null and uploader != ''">
+				AND a.uploader = #{uploader}
+			</if>
+		</where>
+		<choose>
+			<otherwise>
+				order by a.create_time desc
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="saveDao" useGeneratedKeys="true" keyProperty="id" flushCache="true">
+		INSERT INTO teacher_taxpayer_form_detail(
+			id,
+			taxpayer_form_id,
+			teacher_id,
+			form_name,
+			form_type,
+			uploader_name,
+			uploader,
+			is_new,
+			url,
+			create_time,
+			create_by,
+			del_flag
+		) VALUES (
+			#{id},
+			#{taxpayerFormId},
+			#{teacherId},
+			#{formName},
+			#{formType},
+			#{uploaderName},
+			#{uploader},
+			#{isNew},
+			#{url},
+			#{createTime},
+			#{createBy},
+			#{delFlag}
+		)
+	</insert>
+	
+	<update id="updateDao">
+		UPDATE teacher_taxpayer_form_detail SET 	
+			taxpayer_form_id = #{taxpayerFormId},
+			teacher_id = #{teacherId},
+			form_name = #{formName},
+			form_type = #{formType},
+			uploader_name = #{uploaderName},
+			uploader = #{uploader},
+			is_new = #{isNew},
+			url = #{url},
+			create_time = #{createTime}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE teacher_taxpayer_form_detail SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+
+	<select id="findListByIds" resultType="com.vipkid.trpm.entity.TeacherTaxpayerFormDetail">
+		SELECT 
+			<include refid="taxpayerFormDetailColumns"/>
+		FROM teacher_taxpayer_form_detail a
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+			AND a.id in
+			<foreach item="item" index="index" collection="idList" open="(" separator="," close=")">  
+			  	#{item}  
+			</foreach>
+		</where>
+		<choose>
+			<otherwise>
+				order by a.create_time desc
+			</otherwise>
+		</choose>
+	</select>
+</mapper>
