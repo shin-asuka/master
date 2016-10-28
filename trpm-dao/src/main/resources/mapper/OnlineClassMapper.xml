@@ -607,7 +607,11 @@
 	    	oc.lesson_id as lessonId,
 	    	t.real_name as teacherName,
 	    	t.email as teacherEmail,
-	    	t.timezone as timezone
+	    	t.timezone as timezone,
+			l.serial_number as lessonSn,
+			c.type as course,
+			oc.finish_type as finishType,
+			s.english_name as studentEnglishName
 	    from  
 	    	online_class oc 
 	    JOIN lesson l ON l.id = oc.lesson_id
@@ -615,6 +619,8 @@
 		JOIN unit u ON u.id = lc.unit_id
 		JOIN course c ON c.id = u.course_id
 		JOIN teacher t ON t.id = oc.teacher_id
+		JOIN online_class_student ocs ON ocs.online_class_id = oc.id
+		JOIN student s ON s.id = ocs.student_id
 		where 1=1
 			and c.type = 'MAJOR'
 			and l.is_unit_assessment = 1

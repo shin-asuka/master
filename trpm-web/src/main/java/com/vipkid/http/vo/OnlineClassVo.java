@@ -17,6 +17,11 @@ public class OnlineClassVo implements Serializable{
 	private String teacherName;
 	private String teacherEmail;
 	private Date scheduledDateTime;
+	private String lessonSn;
+	private String course;
+	private String finishType;
+	private String studentName;
+	private String studentEnglishName;
 	private String timezone; //时区
 	
 	List<Long> idList = Lists.newArrayList();
@@ -92,4 +97,43 @@ public class OnlineClassVo implements Serializable{
 		this.timezone = timezone;
 	}
 
+	public String getLessonSn() {
+		return lessonSn;
+	}
+
+	public void setLessonSn(String lessonSn) {
+		this.lessonSn = lessonSn;
+	}
+
+	public String getCourse() {
+		return course;
+	}
+
+	public void setCourse(String course) {
+		this.course = course;
+	}
+
+	public String getFinishType() {
+		return finishType;
+	}
+
+	public void setFinishType(String finishType) {
+		this.finishType = finishType;
+	}
+
+	public String getStudentName() {
+		return studentName;
+	}
+
+	public void setStudentName(String studentName) {
+		this.studentName = studentName;
+	}
+
+	public String getStudentEnglishName() {
+		return studentEnglishName;
+	}
+
+	public void setStudentEnglishName(String studentEnglishName) {
+		this.studentEnglishName = studentEnglishName;
+	}
 }
