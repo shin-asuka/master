@@ -14,8 +14,8 @@ public class OnlineClassVo implements Serializable{
 	
 	private Long id;
 	private Long teacherId;
-	private Long lessonId;
 	private Integer studentId;
+	private Long lessonId;
 	private String teacherName;
 	private String teacherEmail;
 	private Date scheduledDateTime;

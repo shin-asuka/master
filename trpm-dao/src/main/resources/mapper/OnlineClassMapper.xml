@@ -613,8 +613,8 @@
 			c.type as course,
 			oc.finish_type as finishType,
 			s.english_name as studentEnglishName
-	    from  
-	    	online_class oc 
+	    from
+	    	online_class oc
 	    JOIN lesson l ON l.id = oc.lesson_id
 		JOIN learning_cycle lc ON lc.id = l.learning_cycle_id
 		JOIN unit u ON u.id = lc.unit_id
@@ -631,13 +631,13 @@
 		<if test="teacherId != null and teacherId != 0">
 			and oc.teacher_id = #{teacherId}
 		</if>
-		<if test="lessonSn != null and lessonSn != '">
+		<if test="lessonSn != null and lessonSn != ''">
 			and l.serial_number = #{lessonSn}
 		</if>
-		<if test="studentEnglishName != null and studentEnglishName != '">
+		<if test="studentEnglishName != null and studentEnglishName != ''">
 			and l.english_name = #{studentEnglishName}
 		</if>
-		<if test="teacherName != null and teacherName != '">
+		<if test="teacherName != null and teacherName != ''">
 			and t.real_name = #{teacherName}
 		</if>
 		<if test="from != null and from != '' or to != null and to != ''">
