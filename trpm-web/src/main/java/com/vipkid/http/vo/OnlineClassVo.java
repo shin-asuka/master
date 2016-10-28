@@ -5,6 +5,7 @@ import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.google.api.client.util.Lists;
 
 public class OnlineClassVo implements Serializable{
@@ -14,17 +15,21 @@ public class OnlineClassVo implements Serializable{
 	private Long id;
 	private Long teacherId;
 	private Long lessonId;
+	private Integer studentId;
 	private String teacherName;
 	private String teacherEmail;
 	private Date scheduledDateTime;
 	private String lessonSn;
 	private String course;
+	private Integer courseId;
 	private String finishType;
 	private String studentName;
 	private String studentEnglishName;
 	private String timezone; //时区
 	private Integer auditorId;
 	private String auditorName;
+	private Long from;
+	private Long to;
 	private String extra;
 	
 	List<Long> idList = Lists.newArrayList();
@@ -84,6 +89,7 @@ public class OnlineClassVo implements Serializable{
 		this.teacherEmail = teacherEmail;
 	}
 
+	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", locale = "zh" , timezone="GMT+8")
 	public Date getScheduledDateTime() {
 		return scheduledDateTime;
 	}
@@ -162,5 +168,37 @@ public class OnlineClassVo implements Serializable{
 
 	public void setExtra(String extra) {
 		this.extra = extra;
+	}
+
+	public Integer getStudentId() {
+		return studentId;
+	}
+
+	public void setStudentId(Integer studentId) {
+		this.studentId = studentId;
+	}
+
+	public Integer getCourseId() {
+		return courseId;
+	}
+
+	public void setCourseId(Integer courseId) {
+		this.courseId = courseId;
+	}
+
+	public Long getFrom() {
+		return from;
+	}
+
+	public void setFrom(Long from) {
+		this.from = from;
+	}
+
+	public Long getTo() {
+		return to;
+	}
+
+	public void setTo(Long to) {
+		this.to = to;
 	}
 }
