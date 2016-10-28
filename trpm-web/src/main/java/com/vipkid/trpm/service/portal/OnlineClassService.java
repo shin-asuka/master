@@ -789,6 +789,11 @@ public class OnlineClassService {
                 onlineClassVo.setTeacherName(jsonObject.getString("teacherName"));
                 onlineClassVo.setTeacherEmail(jsonObject.getString("teacherEmail"));
                 onlineClassVo.setScheduledDateTime(jsonObject.getDate("scheduledDateTime"));
+                onlineClassVo.setLessonSn(jsonObject.getString("lessonSn"));
+                onlineClassVo.setCourse(jsonObject.getString("course"));
+                onlineClassVo.setFinishType(jsonObject.getString("finishType"));
+                onlineClassVo.setStudentEnglishName(jsonObject.getString("studentEnglishName"));
+                onlineClassVo.setTimezone(jsonObject.getString("timezone"));
                 onlineClassVos.add(onlineClassVo);
             }
         }
