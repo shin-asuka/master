@@ -23,6 +23,9 @@ public class OnlineClassVo implements Serializable{
 	private String studentName;
 	private String studentEnglishName;
 	private String timezone; //时区
+	private Integer auditorId;
+	private String auditorName;
+	private String extra;
 	
 	List<Long> idList = Lists.newArrayList();
 	
@@ -135,5 +138,29 @@ public class OnlineClassVo implements Serializable{
 
 	public void setStudentEnglishName(String studentEnglishName) {
 		this.studentEnglishName = studentEnglishName;
+	}
+
+	public Integer getAuditorId() {
+		return auditorId;
+	}
+
+	public void setAuditorId(Integer auditorId) {
+		this.auditorId = auditorId;
+	}
+
+	public String getAuditorName() {
+		return auditorName;
+	}
+
+	public void setAuditorName(String auditorName) {
+		this.auditorName = auditorName;
+	}
+
+	public String getExtra() {
+		return extra;
+	}
+
+	public void setExtra(String extra) {
+		this.extra = extra;
 	}
 }
