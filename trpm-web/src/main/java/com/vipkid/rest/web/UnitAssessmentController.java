@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -25,10 +25,10 @@ public class UnitAssessmentController {
     @RequestMapping(value = "/unfinishedUA", method = RequestMethod.GET,produces = RestfulConfig.JSON_UTF_8)
     @ResponseBody
     public Object getUnfinishedUA(@RequestParam(defaultValue = "1") Integer pageNo, @RequestParam(defaultValue = "1") Integer pageSize) {
-        ArrayList<OnlineClassVo> onlineClassVos = onlineClassService.getUnfinishUA(pageNo, pageSize);
+        List<OnlineClassVo> onlineClassVos = onlineClassService.getUnfinishUA(pageNo, pageSize);
         Map<String, Object> result = Maps.newHashMap();
         result.put("status", HttpStatus.OK.value());
-        //result.put("info",onlineClassVos);
+        result.put("info",onlineClassVos);
         return JsonTools.getJson(result);
     }
 }
