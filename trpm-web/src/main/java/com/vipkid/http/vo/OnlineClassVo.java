@@ -21,21 +21,14 @@ public class OnlineClassVo implements Serializable{
 	private Date scheduledDateTime;
 	private String lessonSn;
 	private String course;
-<<<<<<< 53e29de1714b5d09155610f9c230985f95a20c36
-	private Integer courseId;
-=======
->>>>>>> clt audit
 	private String finishType;
 	private String studentName;
 	private String studentEnglishName;
 	private String timezone; //时区
 	private Integer auditorId;
 	private String auditorName;
-	private String from;
-	private String to;
 	private String extra;
-	private Integer total;
-	
+
 	List<Long> idList = Lists.newArrayList();
 	
 	
@@ -149,7 +142,6 @@ public class OnlineClassVo implements Serializable{
 	public void setStudentEnglishName(String studentEnglishName) {
 		this.studentEnglishName = studentEnglishName;
 	}
-<<<<<<< 53e29de1714b5d09155610f9c230985f95a20c36
 
 	public Integer getAuditorId() {
 		return auditorId;
@@ -175,45 +167,4 @@ public class OnlineClassVo implements Serializable{
 		this.extra = extra;
 	}
 
-	public Integer getStudentId() {
-		return studentId;
-	}
-
-	public void setStudentId(Integer studentId) {
-		this.studentId = studentId;
-	}
-
-	public Integer getCourseId() {
-		return courseId;
-	}
-
-	public void setCourseId(Integer courseId) {
-		this.courseId = courseId;
-	}
-
-	public String getFrom() {
-		return from;
-	}
-
-	public void setFrom(String from) {
-		this.from = from;
-	}
-
-	public String getTo() {
-		return to;
-	}
-
-	public void setTo(String to) {
-		this.to = to;
-	}
-
-	public Integer getTotal() {
-		return total;
-	}
-
-	public void setTotal(Integer total) {
-		this.total = total;
-	}
-=======
->>>>>>> clt audit
 }

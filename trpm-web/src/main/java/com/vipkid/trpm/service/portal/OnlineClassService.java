@@ -798,6 +798,8 @@ public class OnlineClassService {
                 onlineClassVo.setFinishType(jsonObject.getString("finishType"));
                 onlineClassVo.setStudentEnglishName(jsonObject.getString("studentEnglishName"));
                 onlineClassVo.setTimezone(jsonObject.getString("timezone"));
+                onlineClassVo.setAuditorId(jsonObject.getInteger("auditorId"));
+                onlineClassVo.setAuditorName(jsonObject.getString("auditorName"));
                 onlineClassVos.add(onlineClassVo);
             }
         }
