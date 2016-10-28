@@ -14,19 +14,22 @@ public class OnlineClassVo implements Serializable{
 	
 	private Long id;
 	private Long teacherId;
-	private Integer studentId;
 	private Long lessonId;
+	private Integer studentId;
 	private String teacherName;
 	private String teacherEmail;
 	private Date scheduledDateTime;
 	private String lessonSn;
 	private String course;
+	private Integer courseId;
 	private String finishType;
 	private String studentName;
 	private String studentEnglishName;
 	private String timezone; //时区
 	private Integer auditorId;
 	private String auditorName;
+	private Long from;
+	private Long to;
 	private String extra;
 
 	List<Long> idList = Lists.newArrayList();
@@ -167,4 +170,35 @@ public class OnlineClassVo implements Serializable{
 		this.extra = extra;
 	}
 
+	public Integer getStudentId() {
+		return studentId;
+	}
+
+	public void setStudentId(Integer studentId) {
+		this.studentId = studentId;
+	}
+
+	public Integer getCourseId() {
+		return courseId;
+	}
+
+	public void setCourseId(Integer courseId) {
+		this.courseId = courseId;
+	}
+
+	public Long getFrom() {
+		return from;
+	}
+
+	public void setFrom(Long from) {
+		this.from = from;
+	}
+
+	public Long getTo() {
+		return to;
+	}
+
+	public void setTo(Long to) {
+		this.to = to;
+	}
 }

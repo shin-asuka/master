@@ -670,6 +670,21 @@
 		<if test="courseName != null and courseId != ''">
 			AND c.id = #{courseId}
 		</if>
+		<if test="lessonSn != null and lessonSn != '">
+			and l.serial_number = #{lessonSn}
+		</if>
+		<if test="studentEnglishName != null and studentEnglishName != '">
+			and l.english_name = #{studentEnglishName}
+		</if>
+		<if test="teacherName != null and teacherName != '">
+			and t.real_name = #{teacherName}
+		</if>
+		<if test="from != null and from != '' or to != null and to != ''">
+			AND oc.scheduled_date_time BETWEEN from_unixtime(#{from}) AND from_unixtime(#{to})
+		</if>
+		<if test="courseName != null and courseId != ''">
+			AND c.id = #{courseId}
+		</if>
     </select>
 
 

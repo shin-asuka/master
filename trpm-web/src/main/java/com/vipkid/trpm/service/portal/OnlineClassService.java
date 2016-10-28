@@ -789,6 +789,7 @@ public class OnlineClassService {
 
                 onlineClassVo.setId(id);
                 onlineClassVo.setTeacherId(jsonObject.getLong("teacherId"));
+                onlineClassVo.setStudentId(jsonObject.getInteger("studentId"));
                 onlineClassVo.setLessonId(jsonObject.getLong("lessonId"));
                 onlineClassVo.setTeacherName(jsonObject.getString("teacherName"));
                 onlineClassVo.setTeacherEmail(jsonObject.getString("teacherEmail"));
