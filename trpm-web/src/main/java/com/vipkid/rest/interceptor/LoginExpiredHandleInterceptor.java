@@ -58,7 +58,11 @@ public class LoginExpiredHandleInterceptor extends HandlerInterceptorAdapter {
         //有注解RestInterface，则进行拦截下面判断
 	    try{
     	    String token = request.getHeader(RestfulController.AUTOKEN);
-    	    Preconditions.checkArgument(StringUtils.isNotBlank(token));
+    	    if(StringUtils.isBlank(token)){
+    	        response.setStatus(HttpStatus.FORBIDDEN.value());
+    	        logger.warn("Token为Null:{}",token);
+    	        return false;
+    	    }
             User user = loginService.getUser(request);
             if(user == null){
                 response.setStatus(HttpStatus.FORBIDDEN.value());
