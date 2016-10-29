@@ -82,4 +82,20 @@ public class JsonUtils {
     	}
     	return jsonObject;
     }
+    
+    public static JSONObject parseJSONObject(String object){
+    	JSONObject jsonObject = null;
+    	if(object!=null){
+    		jsonObject = JSONObject.parseObject(object);
+    	}
+    	return jsonObject;
+    }
+    
+    public static JSONArray parseJSONArray(String object){
+    	JSONArray jsonObject = null;
+    	if(object!=null){
+    		jsonObject = JSONArray.parseArray(object);
+    	}
+    	return jsonObject;
+    }
 }
