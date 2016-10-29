@@ -1,10 +1,10 @@
 package com.vipkid.rest.dto;
 
 import com.vipkid.rest.validation.annotation.Ignore;
-import com.vipkid.rest.validation.annotation.Verify;
-import com.vipkid.rest.validation.tools.ValidateEnum.Type;
+import com.vipkid.rest.validation.annotation.Length;
+import com.vipkid.rest.validation.annotation.NotNull;
 
-@Verify
+@NotNull
 public class TeachingExperienceDto{
     
     @Ignore
@@ -20,7 +20,7 @@ public class TeachingExperienceDto{
     
     private Float hoursPerWeek;
     
-    @Verify(type={Type.NOT_NULL,Type.MAX_LENGTH},maxLength=1500)
+    @Length(maxLength=1500)
     private String jobDescription;
 
     public long getId() {

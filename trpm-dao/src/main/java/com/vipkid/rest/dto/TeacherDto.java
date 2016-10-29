@@ -1,9 +1,9 @@
 package com.vipkid.rest.dto;
 
 import com.vipkid.rest.validation.annotation.Ignore;
-import com.vipkid.rest.validation.annotation.Verify;
+import com.vipkid.rest.validation.annotation.NotNull;
 
-@Verify
+@NotNull
 public class TeacherDto {
 
     private String firstName;

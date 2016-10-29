@@ -6,6 +6,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.community.tools.JsonTools;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -99,12 +100,12 @@ public class BasicInfoController extends RestfulController{
         try{
             long resultRow = 0;
             User user = getUser(request);
-            Result resultCheck = ValidateUtils.checkForField(teachingExperience);
-            if(resultCheck != null && resultCheck.isResult()){
+            List<Result> list = ValidateUtils.checkBean(teachingExperience,false);
+            if(CollectionUtils.isNotEmpty(list) && list.get(0).isResult()){
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
                 result.put("status", false);
-                result.put("resultCheck",resultCheck);
-                logger.warn("resultCheck:"+JsonTools.getJson(resultCheck));
+                result.put("resultCheck",list);
+                logger.warn("resultCheck:"+JsonTools.getJson(list));
                 return result;
             }
             //时间判断
@@ -186,11 +187,12 @@ public class BasicInfoController extends RestfulController{
     public Map<String,Object> submitInfo(HttpServletRequest request, HttpServletResponse response,@RequestBody TeacherDto bean){
         Map<String,Object> result = Maps.newHashMap();
         try{
-            Result resultCheck = ValidateUtils.checkForField(bean);
-            if(resultCheck != null && resultCheck.isResult()){
+            List<Result> list = ValidateUtils.checkBean(bean,false);
+            if(CollectionUtils.isNotEmpty(list) && list.get(0).isResult()){
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
                 result.put("status", false);
-                result.put("resultCheck",resultCheck);
+                result.put("resultCheck",list);
+                logger.warn("resultCheck:"+JsonTools.getJson(list));
                 return result;
             }
             if(!AppUtils.containsName(AppEnum.Gender.class, bean.getGender())){
