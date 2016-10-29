@@ -730,7 +730,7 @@ public class OnlineClassService {
         }
     }
 
-    public List<OnlineClassVo> getUnfinishUA(Integer pageNo,Integer pageSize){
+    public List<OnlineClassVo> getUnfinishUA(HashMap<String,Object> onlineClassVoCond,Integer pageNo,Integer pageSize){
 
         Date startDate = new Date(new Date().getTime() - 7*86400*1000);
         Date endDate = new Date();
@@ -740,7 +740,9 @@ public class OnlineClassService {
 
         logger.info("查询出6个小时以前已经AS_SCHEDULED的课程  startTime = {},endTime = {}",startTime,endTime);
 
-        List<Map<String, Object>> list = onlineClassDao.findMajorCourseListByStartTimeAndEndTime(startTime, endTime ,null);
+        onlineClassVoCond.put("from",startTime);
+        onlineClassVoCond.put("to",endTime);
+        List<Map<String, Object>> list = onlineClassDao.findMajorCourseListByCond(onlineClassVoCond);
         logger.info("Get unSubmit OnlineClass list = {}", JsonUtils.toJSONString(list));
 
         ArrayList<OnlineClassVo> onlineClassVos = getOnlineClassVoList(list);
@@ -764,14 +766,13 @@ public class OnlineClassService {
             onlineClassVoList.add(ocMap.get(id));
         }
         Integer offset = (pageNo-1) * pageSize;
-
-        Integer limit = pageNo * pageSize;
+        Integer limit = pageSize;
         List<OnlineClassVo> ocPage = new ArrayList<OnlineClassVo>();
         if(onlineClassVoList.size() > 0) {
             if (limit > onlineClassVoList.size()) {
-                limit = onlineClassVoList.size() - 1;
+                limit = onlineClassVoList.size();
             }
-            ocPage =  onlineClassVoList.subList(offset, limit);
+            ocPage =  onlineClassVoList.subList(offset,offset + limit);
         }else{
             ocPage = Lists.newArrayList();
         }
