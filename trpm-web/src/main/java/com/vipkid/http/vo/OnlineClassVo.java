@@ -28,8 +28,8 @@ public class OnlineClassVo implements Serializable{
 	private String timezone; //时区
 	private Integer auditorId;
 	private String auditorName;
-	private Long from;
-	private Long to;
+	private String from;
+	private String to;
 	private String extra;
 	
 	List<Long> idList = Lists.newArrayList();
@@ -186,19 +186,19 @@ public class OnlineClassVo implements Serializable{
 		this.courseId = courseId;
 	}
 
-	public Long getFrom() {
+	public String getFrom() {
 		return from;
 	}
 
-	public void setFrom(Long from) {
+	public void setFrom(String from) {
 		this.from = from;
 	}
 
-	public Long getTo() {
+	public String getTo() {
 		return to;
 	}
 
-	public void setTo(Long to) {
+	public void setTo(String to) {
 		this.to = to;
 	}
 }

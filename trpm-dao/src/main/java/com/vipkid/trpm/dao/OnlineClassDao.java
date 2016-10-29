@@ -7,7 +7,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.community.dao.support.MapperDaoTemplate;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -377,6 +376,10 @@ public class OnlineClassDao extends MapperDaoTemplate<OnlineClass> {
 		paramsMap.put("endTime", endTime);
 		paramsMap.put("teacherId", teacherId);
 		return listEntity("findMajorCourseListByStartTimeAndEndTime", paramsMap);
+	}
+
+	public List<Map<String, Object>> findMajorCourseListByCond(HashMap<String,Object> onlineClassVoCond) {
+		return listEntity("findMajorCourseListByCond", onlineClassVoCond);
 	}
 
 	/**
