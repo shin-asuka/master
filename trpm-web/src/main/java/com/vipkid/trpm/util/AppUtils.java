@@ -65,7 +65,7 @@ public class AppUtils {
     }
     
     /**
-     * 判断一个枚举类是否包含某个名称 
+     * 判断一个枚举类是否包含某个名称 ,当传入为空的时候 则返回True
      * @Author:ALong (ZengWeiLong)
      * @param clazz
      * @param name
@@ -74,7 +74,10 @@ public class AppUtils {
      * @date 2016年10月22日
      */
    public static <E extends Enum<E>> boolean containsName(final Class<E> enumClass,String name){
-       if(StringUtils.isBlank(name)) return false;
+       if(StringUtils.isBlank(name)){
+           logger.warn("传入类型：{}，为空：{}",enumClass,name);
+           return true;
+       }
        try{
            return AppEnum.containsName(enumClass,name);
        }catch(Exception e){

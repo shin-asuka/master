@@ -131,6 +131,13 @@ public class AppEnum {
         OTHER
     }
     
+    /**招募端新增3种渠道分类*/
+    public enum RecruitmentChannel {
+        //2016-11 新增渠道分类
+        TEACHER,
+        PARENT,
+        OTHER // 其他
+    }
     
     /**
      * 根据index获取枚举

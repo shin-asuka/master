@@ -196,13 +196,19 @@ public class BasicInfoController extends RestfulController{
             if(!AppUtils.containsName(AppEnum.Gender.class, bean.getGender())){
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
                 result.put("status", false);
-                result.put("info", "Gender data is error!");
+                result.put("info", "Gender data is error:"+bean.getGender());
                 return result;
             }
             if(!AppUtils.containsName(AppEnum.DegreeType.class, bean.getHighestLevelOfEdu())){
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
                 result.put("status", false);
-                result.put("info", "Gender data is error!");
+                result.put("info", "Gender data is error:"+bean.getHighestLevelOfEdu());
+                return result;
+            }
+            if(!AppUtils.containsName(AppEnum.RecruitmentChannel.class, bean.getRecruitmentChannel())){
+                response.setStatus(HttpStatus.BAD_REQUEST.value());
+                result.put("status", false);
+                result.put("info", "RecruitmentChannel data is error:"+bean.getRecruitmentChannel());
                 return result;
             }
             User user = getUser(request);
