@@ -2,8 +2,11 @@ package com.vipkid.rest.validation;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.util.Date;
 
 import org.apache.commons.lang3.StringUtils;
+
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,23 +55,23 @@ public class ValidateHandle {
             return Result.bulider(field.getName(),Type.NOT_NULL,notNull.message(),true);
         }
         // type
-        if(String.class == field.getType()){
+        if(ClassUtils.isString(field.getType())){
             if(StringUtils.isBlank((String)value)){
                 return Result.bulider(field.getName(),Type.NOT_NULL,notNull.message(),true);
             }
-        }else if(Integer.class == field.getType()){
+        }else if(ClassUtils.isInteger(field.getType())){
             if((int)value == 0){
                 return Result.bulider(field.getName(),Type.NOT_NULL,notNull.message(),true);
             }
-        }else if(Long.class == field.getType()){
+        }else if(ClassUtils.isLong(field.getType())){
             if((long)value == 0){
                 return Result.bulider(field.getName(),Type.NOT_NULL,notNull.message(),true);
             }
-        }else if(Float.class == field.getType()){
+        }else if(ClassUtils.isFloat(field.getType())){
             if((float)value == 0){
                 return Result.bulider(field.getName(),Type.NOT_NULL,notNull.message(),true);
             }
-        }else if(Double.class == field.getType()){
+        }else if(ClassUtils.isDouble(field.getType())){
             if((double)value == 0){
                 return Result.bulider(field.getName(),Type.NOT_NULL,notNull.message(),true);
             }
@@ -86,35 +89,35 @@ public class ValidateHandle {
         if(value == null || (length.maxLength() == 0 && length.minLength() == 0)){
             return Result.bulider();
         }
-        if(String.class == field.getType()){
+        if(ClassUtils.isString(field.getType())){
             if(StringUtils.length((String)value) > length.maxLength()){
                 return Result.bulider(field.getName(),Type.MAXLENGTH,length.message(),true);
             }
             if(StringUtils.length((String)value) < length.minLength()){
                 return Result.bulider(field.getName(),Type.MINLENGTH,length.message(),true);
             }
-        }else if(Integer.class == field.getType()){
+        }else if(ClassUtils.isInteger(field.getType())){
             if((int)value > length.maxLength()){
                 return Result.bulider(field.getName(),Type.MAXLENGTH,length.message(),true);
             }
             if((int)value < length.minLength()){
                 return Result.bulider(field.getName(),Type.MINLENGTH,length.message(),true);
             }
-        }else if(Long.class == field.getType()){
+        }else if(ClassUtils.isLong(field.getType())){
             if((long)value > length.maxLength()){
                 return Result.bulider(field.getName(),Type.MAXLENGTH,length.message(),true);
             }
             if((long)value < length.minLength()){
                 return Result.bulider(field.getName(),Type.MINLENGTH,length.message(),true);
             }
-        }else if(Float.class == field.getType()){
+        }else if(ClassUtils.isFloat(field.getType())){
             if((float)value > length.maxLength()){
                 return Result.bulider(field.getName(),Type.MAXLENGTH,length.message(),true);
             }
             if((float)value < length.minLength()){
                 return Result.bulider(field.getName(),Type.MINLENGTH,length.message(),true);
             }
-        }else if(Double.class == field.getType()){
+        }else if(ClassUtils.isDouble(field.getType())){
             if((double)value > length.maxLength()){
                 return Result.bulider(field.getName(),Type.MAXLENGTH,length.message(),true);
             }
@@ -139,5 +142,71 @@ public class ValidateHandle {
             a = bean.getClass().getAnnotation(annotationClass);
         } 
         return a;
+    }
+    
+   static class ClassUtils{
+        
+        static boolean isString(Class<?> classes){
+            if(String.class == classes){
+                return true;
+            }
+            return false;
+        }
+        
+        static boolean isInteger(Class<?> classes){
+            if(Integer.class == classes || int.class == classes){
+                return true;
+            }
+            return false;
+        }
+        
+        static boolean isDouble(Class<?> classes){
+            if(Double.class == classes || double.class == classes){
+                return true;
+            }
+            return false;
+        }
+        
+        static boolean isFloat(Class<?> classes){
+            if(Float.class == classes || float.class == classes){
+                return true;
+            }
+            return false;
+        }
+        
+        static boolean isLong(Class<?> classes){
+            if(Long.class == classes || long.class == classes){
+                return true;
+            }
+            return false;
+        }
+        
+        static boolean isBoolean(Class<?> classes){
+            if(Boolean.class == classes || boolean.class == classes){
+                return true;
+            }
+            return false;
+        }
+        
+        static boolean isByte(Class<?> classes){
+            if(Byte.class == classes || byte.class == classes){
+                return true;
+            }
+            return false;
+        }
+        
+        static boolean isChar(Class<?> classes){
+            if(Character.class == classes || char.class == classes){
+                return true;
+            }
+            return false;
+        }
+        
+        static boolean isDate(Class<?> classes){
+            if(Date.class == classes){
+                return true;
+            }
+            return false;
+        }
     }
 }
