@@ -217,7 +217,8 @@ public class BasicInfoController extends RestfulController{
                 return result;
             }
             User user = getUser(request);
-            result = this.basicInfoService.submitInfo(bean, user);
+            String token = request.getHeader(RestfulController.AUTOKEN);
+            result = this.basicInfoService.submitInfo(bean, user,token);
             return result;
         } catch (IllegalArgumentException e) {
             result.clear();

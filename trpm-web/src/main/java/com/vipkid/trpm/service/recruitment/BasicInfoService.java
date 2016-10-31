@@ -32,6 +32,7 @@ import com.vipkid.trpm.entity.TeacherNationalityCode;
 import com.vipkid.trpm.entity.TeachingExperience;
 import com.vipkid.trpm.entity.User;
 import com.vipkid.trpm.entity.app.AppEnum;
+import com.vipkid.trpm.proxy.RedisProxy;
 
 @Service
 public class BasicInfoService {
@@ -55,6 +56,9 @@ public class BasicInfoService {
     
     @Autowired
     private TeacherNationalityCodeDao teacherNationalityCode;
+    
+    @Autowired
+    private RedisProxy redisProxy;
 
     /**
      * 查询可用的招聘渠道
@@ -122,7 +126,7 @@ public class BasicInfoService {
      * Map<String,Object>
      * @date 2016年10月17日
      */
-    public Map<String,Object> submitInfo(TeacherDto bean,User user){ 
+    public Map<String,Object> submitInfo(TeacherDto bean,User user,String token){ 
         Map<String,Object> result = Maps.newHashMap();        
         Teacher teacher = this.teacherDao.findById(user.getId());
         List<TeacherApplication> applicationList = teacherApplicationDao.findApplictionForStatus(user.getId(),AppEnum.LifeCycle.BASIC_INFO.toString());
@@ -133,7 +137,11 @@ public class BasicInfoService {
             return result;
         }
         user.setGender(bean.getGender());
+        user.setName(bean.getFirstName() + " " + bean.getLastName().charAt(0));
+        user.setLastEditorId(user.getId());
+        user.setLastEditDateTime(new Timestamp(System.currentTimeMillis()));
         this.userDao.update(user);
+        redisProxy.set(token, JsonTools.getJson(user), 12 * 60 * 60);
         //2.更新Address
         TeacherAddress teacherAddress = this.teacherAddressDao.updateOrSaveCurrentAddressId(teacher, bean.getCountryId(), bean.getStateId(), bean.getCityId(), bean.getStreetAddress(), bean.getZipCode());
         if(teacherAddress == null || teacherAddress.getId() <= 0){
@@ -172,6 +180,7 @@ public class BasicInfoService {
             application.setResult(TeacherApplicationDao.Result.PASS.toString());
             this.teacherDao.insertLifeCycleLog(teacher.getId(), AppEnum.LifeCycle.BASIC_INFO.toString(),AppEnum.LifeCycle.INTERVIEW.toString(), RestfulConfig.SYSTEM_USER_ID);
             //发送邮件
+            logger.info("调用发送邮件程序发送给:{}",user.getUsername());
             EmailUtils.sendEmail4BasicInfoPass(teacher);
             result.put("result", TeacherApplicationDao.Result.PASS);
         }
