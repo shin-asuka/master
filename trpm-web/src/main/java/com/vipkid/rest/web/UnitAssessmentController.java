@@ -35,13 +35,15 @@ public class UnitAssessmentController {
     public Object getUnfinishedUA(OnlineClassVo onlineClassVoCond ,@RequestParam(defaultValue = "1") Integer pageNo, @RequestParam(defaultValue = "10") Integer pageSize) {
         HashMap<String,Object> cond = new HashMap<String,Object>();
         cond.put("lessonSn",onlineClassVoCond.getLessonSn());
-        cond.put("courseId",onlineClassVoCond.getCourseId());
+        cond.put("course",onlineClassVoCond.getCourse());
         cond.put("from",onlineClassVoCond.getFrom());
         cond.put("to",onlineClassVoCond.getTo());
         cond.put("teacherName",onlineClassVoCond.getTeacherName());
         cond.put("studentName",onlineClassVoCond.getStudentName());
 
-        List<OnlineClassVo> onlineClassVos = onlineClassService.getUnfinishUA(cond,pageNo, pageSize);
+        HashMap<String,Object> onlineClassPage = onlineClassService.getUnfinishUA(cond,pageNo, pageSize);
+        List<OnlineClassVo> onlineClassVos = (List<OnlineClassVo>) onlineClassPage.get("onlineClassVos");
+        Integer total = (Integer) onlineClassPage.get("total");
         Map<String, Object> result = Maps.newHashMap();
 
         //获取分页ID
@@ -66,6 +68,7 @@ public class UnitAssessmentController {
         }
         result.put("status", HttpStatus.OK.value());
         result.put("info",onlineClassVos);
+        result.put("total",total);
         return JsonTools.getJson(result);
     }
 }

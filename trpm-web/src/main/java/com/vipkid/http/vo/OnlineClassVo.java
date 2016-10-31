@@ -31,7 +31,7 @@ public class OnlineClassVo implements Serializable{
 	private String from;
 	private String to;
 	private String extra;
-
+	private Integer total;
 	List<Long> idList = Lists.newArrayList();
 	
 	
@@ -200,5 +200,13 @@ public class OnlineClassVo implements Serializable{
 
 	public void setTo(String to) {
 		this.to = to;
+	}
+
+	public Integer getTotal() {
+		return total;
+	}
+
+	public void setTotal(Integer total) {
+		this.total = total;
 	}
 }
