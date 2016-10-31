@@ -1,16 +1,21 @@
 package com.vipkid.rest.dto;
 
+import com.vipkid.rest.validation.annotation.EnumList.Annotaions;
 import com.vipkid.rest.validation.annotation.Ignore;
+import com.vipkid.rest.validation.annotation.Length;
 import com.vipkid.rest.validation.annotation.NotNull;
 
 @NotNull
 public class TeacherDto {
-
+    
+    @Length(maxLength=200)
     private String firstName;
     
-    @Ignore
+    @Ignore(type=Annotaions.NOT_NULL)
+    @Length(maxLength=200)
     private String middleName;
     
+    @Length(maxLength=200)
     private String lastName;
     
     private Integer countryId;    
@@ -19,14 +24,14 @@ public class TeacherDto {
    
     private Integer cityId;    
     
-    @Ignore
+    @Ignore(type=Annotaions.NOT_NULL)
     private String streetAddress;    
     
-    @Ignore
+    @Ignore(type=Annotaions.NOT_NULL)
     private String zipCode;  
     
-    @Ignore
-    private String skype;  
+    @Ignore(type=Annotaions.NOT_NULL)
+    private String skype;
    
     private Integer phoneType; //新增字段    
    
@@ -40,6 +45,7 @@ public class TeacherDto {
    
     private String recruitmentChannel;    
    
+    @Length(maxLength=200)
     private String channel;    
    
     private String nationality;    

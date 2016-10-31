@@ -10,8 +10,10 @@ public class TeachingExperienceDto{
     @Ignore
     private long id;
     
+    @Length(maxLength=200)
     private String organisationName;
     
+    @Length(maxLength=200)
     private String jobTitle;
     
     private Long timePeriodStart;
