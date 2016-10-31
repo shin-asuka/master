@@ -119,7 +119,7 @@
       <div align="right" class="col-sm-2 col-md-2"></div>
       <div class="col-sm-6 col-md-6">
         <div class='title-lable'>Skype</div>
-        <input type="text" id="skype" name="skype" value="$!{TRPM_TEACHER.skype}" maxlength="160" minlength="6" placeholder="skype user name" class="form-control req-string req-regex" regex="/^[\w\W]{6,}$/g" valid-options='{"req-string":"This field is required!","req-regex":"Your skype ID is invalid!","errorDiv":"#verifySkype-tip"}'/>
+        <input type="text" id="skype" name="skype" value="$!{TRPM_TEACHER.skype}" maxlength="160" minlength="6" placeholder="skype user name" class="form-control req-regex" regex="/^[\w\W]{6,}$/g" valid-options='{"req-regex":"Your skype ID is invalid!","errorDiv":"#verifySkype-tip"}'/>
         <p id="verifySkype-tip" class="help-block has-error"></p>
       </div>
       <div class="col-sm-4 col-md-4"></div>
