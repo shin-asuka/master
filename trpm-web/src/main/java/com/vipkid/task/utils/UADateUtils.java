@@ -178,8 +178,8 @@ public class UADateUtils {
 	public static List<Map> getStartEndOclockTimeMapListByBeforeHours(Integer interval, int... beforeHours){
 		List<Map> startEndTimes = new ArrayList<>();
 		for (int i : beforeHours){
-			String startTime = UADateUtils.format(UADateUtils.getDateOclockByBeforeHours(i + interval)) ;
-			String endTime = UADateUtils.format(UADateUtils.getDateOclockByBeforeHours(i)) ;
+			String startTime = UADateUtils.format(UADateUtils.getDateOclockByBeforeHours(i)) ;
+			String endTime = UADateUtils.format(UADateUtils.getDateOclockByBeforeHours(i - interval)) ;
 
 			Map<String, String> time = new HashMap<>();
 			time.put("startTime",startTime);

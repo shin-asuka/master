@@ -50,8 +50,8 @@ public class RecruitmentFailJob {
 
 	void find(Stopwatch stopwatch, int hours){
 		//查询出hours个小时以前fail掉的老师
-		Date startDate = UADateUtils.getDateOclockByBeforeHours(hours+1);
-		Date endDate = UADateUtils.getDateOclockByBeforeHours(hours);
+		Date startDate = UADateUtils.getDateOclockByBeforeHours(hours);
+		Date endDate = UADateUtils.getDateOclockByBeforeHours(hours-1);
 		String startTime = UADateUtils.format(startDate, UADateUtils.defaultFormat) ;
 		String endTime = UADateUtils.format(endDate, UADateUtils.defaultFormat) ;
 
