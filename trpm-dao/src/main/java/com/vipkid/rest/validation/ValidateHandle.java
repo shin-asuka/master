@@ -36,7 +36,7 @@ public class ValidateHandle {
         Result result = Result.bulider();
         if(ignore != null){
             
-            logger.info("属性"+field.getName()+",有Ignore注解 type:"+ignore.type()+"，优先");
+            Arrays.asList(ignore.type()).stream().forEach(_bean->{logger.info("属性"+field.getName()+",有Ignore注解 type:"+_bean.name());});
             
             if(Arrays.asList(ignore.type()).contains(Annotaions.ALL)){
                 return result;
