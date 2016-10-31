@@ -57,6 +57,8 @@ define(depends, function(personal) {
 
 		/* 初始化下拉框样式 */
 		//$("#timezone,.select2").select2();
+		
+		$("#highestLevelOfEdu").val($("#highestLevelOfEdu").attr("value"));
 
 		$("#mobilePix ul li").click(function() {
 			var o = $(this).children("a").clone();
