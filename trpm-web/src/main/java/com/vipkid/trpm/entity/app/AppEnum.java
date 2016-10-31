@@ -135,7 +135,7 @@ public class AppEnum {
     public enum RecruitmentChannel {
         //2016-11 新增渠道分类
         TEACHER,
-        PARENT,
+        PARTNER,
         OTHER // 其他
     }
     
