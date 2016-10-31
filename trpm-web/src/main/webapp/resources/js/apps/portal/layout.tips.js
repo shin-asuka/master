@@ -41,6 +41,10 @@ define(["jquery-bootstrap"], function() {
 					$("body").removeClass("modal-open");
 					if(showPracticum){
 						showPracticumFun(showEvaluation);
+					}else{
+						if(showEvaluation){
+							showEvaluationFun();
+						}
 					}
 					if (undefined !== console) {
 						console.log("disable adminquiz layer.");
