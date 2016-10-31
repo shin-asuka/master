@@ -25,9 +25,11 @@ public class TeacherDto {
     private Integer cityId;    
     
     @Ignore(type=Annotaions.NOT_NULL)
+    @Length(maxLength=255)
     private String streetAddress;    
     
     @Ignore(type=Annotaions.NOT_NULL)
+    @Length(maxLength=60)
     private String zipCode;  
     
     @Ignore(type=Annotaions.NOT_NULL)
