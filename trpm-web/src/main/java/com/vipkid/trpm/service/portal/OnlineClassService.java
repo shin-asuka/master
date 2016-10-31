@@ -727,7 +727,7 @@ public class OnlineClassService {
         }
     }
 
-    public List<OnlineClassVo> getUnfinishUA(HashMap<String,Object> onlineClassVoCond,Integer pageNo,Integer pageSize){
+    public HashMap<String,Object> getUnfinishUA(HashMap<String,Object> onlineClassVoCond,Integer pageNo,Integer pageSize){
 
         Date startDate = new Date(new Date().getTime() - 7*86400*1000);
         Date endDate = new Date();
@@ -773,7 +773,10 @@ public class OnlineClassService {
         }else{
             ocPage = Lists.newArrayList();
         }
-        return ocPage;
+        HashMap<String,Object> ret = Maps.newHashMap();
+        ret.put("onlineClassVos",ocPage);
+        ret.put("total",onlineClassVoList.size());
+        return ret;
     }
 
     public ArrayList<OnlineClassVo> getOnlineClassVoList(List<Map<String, Object>> list){
