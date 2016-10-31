@@ -21,6 +21,7 @@ import com.vipkid.enums.TeacherEnum;
 import com.vipkid.file.model.FileVo;
 import com.vipkid.file.service.AwsFileService;
 import com.vipkid.file.utils.StringUtils;
+import com.vipkid.http.utils.JsonUtils;
 import com.vipkid.rest.exception.ServiceException;
 import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.entity.TeacherTaxpayerForm;
@@ -77,7 +78,7 @@ public class TaxpayerFileController extends AbstractPortalController{
 	
 	@ResponseBody
 	@RequestMapping("/upload")
-	public FileVo taxpayerUpload(Integer formType,Long id, @RequestParam("file") MultipartFile file,HttpServletRequest request, HttpServletResponse response, Model model){
+	public String taxpayerUpload(Integer formType,Long id, @RequestParam("file") MultipartFile file,HttpServletRequest request, HttpServletResponse response, Model model){
 		
 		Teacher teacher = indexService.getTeacher(request);
 		Long teacherId = teacher.getId();
@@ -111,7 +112,7 @@ public class TaxpayerFileController extends AbstractPortalController{
 				fileVo.setUrl(url);
 			}
 		}
-		return fileVo;
+		return JsonUtils.toJSONString(fileVo);
 	}
 	
 	
