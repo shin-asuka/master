@@ -2,18 +2,18 @@ package com.vipkid.rest.validation;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.util.Arrays;
 import java.util.Date;
 
 import org.apache.commons.lang3.StringUtils;
-
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.vipkid.rest.validation.annotation.EnumList.Annotaions;
+import com.vipkid.rest.validation.annotation.EnumList.Type;
 import com.vipkid.rest.validation.annotation.Ignore;
 import com.vipkid.rest.validation.annotation.Length;
 import com.vipkid.rest.validation.annotation.NotNull;
-import com.vipkid.rest.validation.annotation.Type;
 import com.vipkid.rest.validation.tools.ReflectUtils;
 import com.vipkid.rest.validation.tools.Result;
 
@@ -33,13 +33,31 @@ public class ValidateHandle {
      */
     public static <T> Result checkForField(T bean,Field field){
         Ignore ignore = getAnnotation(Ignore.class,bean,field);
+        Result result = Result.bulider();
         if(ignore != null){
-            logger.info("属性"+field.getName()+",有Ignore注解，优先");
-            return Result.bulider();
-        }
-        Result result = checkNotNull(bean, field);
-        if(!result.isResult()){
-            result = checkLength(bean, field);
+            
+            logger.info("属性"+field.getName()+",有Ignore注解 type:"+ignore.type()+"，优先");
+            
+            if(Arrays.asList(ignore.type()).contains(Annotaions.ALL)){
+                return result;
+            }
+            if(Arrays.asList(ignore.type()).contains(Annotaions.LENGTH)){
+                if(!result.isResult()){
+                    result = checkNotNull(bean, field);
+                }
+            }
+            if(Arrays.asList(ignore.type()).contains(Annotaions.NOT_NULL)){
+                if(!result.isResult()){
+                    result = checkLength(bean, field);
+                }
+            }
+        }else{
+            if(!result.isResult()){
+                result = checkNotNull(bean, field);
+            }
+            if(!result.isResult()){
+                result = checkLength(bean, field);
+            }
         }
         return result;
     }
@@ -90,45 +108,45 @@ public class ValidateHandle {
             return Result.bulider();
         }
         if(ClassUtils.isString(field.getType())){
-            if(StringUtils.length((String)value) > length.maxLength()){
+            if(length.maxLength() != 0 && StringUtils.length((String)value) > length.maxLength()){
                 return Result.bulider(field.getName(),Type.MAXLENGTH,length.message(),true);
             }
-            if(StringUtils.length((String)value) < length.minLength()){
+            if(length.minLength() != 0 && StringUtils.length((String)value) < length.minLength()){
                 return Result.bulider(field.getName(),Type.MINLENGTH,length.message(),true);
             }
         }else if(ClassUtils.isInteger(field.getType())){
-            if((int)value > length.maxLength()){
+            if(length.maxLength() != 0 && (int)value > length.maxLength()){
                 return Result.bulider(field.getName(),Type.MAXLENGTH,length.message(),true);
             }
-            if((int)value < length.minLength()){
+            if(length.minLength() != 0 && (int)value < length.minLength()){
                 return Result.bulider(field.getName(),Type.MINLENGTH,length.message(),true);
             }
         }else if(ClassUtils.isLong(field.getType())){
-            if((long)value > length.maxLength()){
+            if(length.maxLength() != 0 && (long)value > length.maxLength()){
                 return Result.bulider(field.getName(),Type.MAXLENGTH,length.message(),true);
             }
-            if((long)value < length.minLength()){
+            if(length.minLength() != 0 && (long)value < length.minLength()){
                 return Result.bulider(field.getName(),Type.MINLENGTH,length.message(),true);
             }
         }else if(ClassUtils.isFloat(field.getType())){
-            if((float)value > length.maxLength()){
+            if(length.maxLength() != 0 && (float)value > length.maxLength()){
                 return Result.bulider(field.getName(),Type.MAXLENGTH,length.message(),true);
             }
-            if((float)value < length.minLength()){
+            if(length.minLength() != 0 && (float)value < length.minLength()){
                 return Result.bulider(field.getName(),Type.MINLENGTH,length.message(),true);
             }
         }else if(ClassUtils.isDouble(field.getType())){
-            if((double)value > length.maxLength()){
+            if(length.maxLength() != 0 && (double)value > length.maxLength()){
                 return Result.bulider(field.getName(),Type.MAXLENGTH,length.message(),true);
             }
-            if((double)value < length.minLength()){
+            if(length.minLength() != 0 && (double)value < length.minLength()){
                 return Result.bulider(field.getName(),Type.MINLENGTH,length.message(),true);
             }
         }else{
-            if(StringUtils.length((String)value) > length.maxLength()){
+            if(length.maxLength() != 0 && StringUtils.length((String)value) > length.maxLength()){
                 return Result.bulider(field.getName(),Type.MAXLENGTH,length.message(),true);
             }
-            if(StringUtils.length((String)value) < length.minLength()){
+            if(length.minLength() != 0 && StringUtils.length((String)value) < length.minLength()){
                 return Result.bulider(field.getName(),Type.MINLENGTH,length.message(),true);
             }
         }

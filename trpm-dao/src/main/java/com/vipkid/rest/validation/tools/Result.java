@@ -1,6 +1,6 @@
 package com.vipkid.rest.validation.tools;
 
-import com.vipkid.rest.validation.annotation.Type;
+import com.vipkid.rest.validation.annotation.EnumList.Type;
 
 
 public class Result {
