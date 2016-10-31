@@ -10,8 +10,10 @@ import org.springframework.stereotype.Service;
 
 import com.google.api.client.util.Maps;
 import com.vipkid.trpm.constant.ApplicationConstant.LoginType;
+import com.vipkid.trpm.dao.TeacherDao;
 import com.vipkid.trpm.dao.TeacherPageLoginDao;
 import com.vipkid.trpm.dao.TeacherQuizDao;
+import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.entity.TeacherPageLogin;
 
 @Service
@@ -23,6 +25,9 @@ public class EvaluationService {
     
     @Autowired
     private TeacherPageLoginDao teacherPageLoginDao;
+    
+    @Autowired
+    private TeacherDao teacherDao;
     
     /**
      * 获取所有Tag 
@@ -39,6 +44,17 @@ public class EvaluationService {
             List<Map<String,Object>> listTags = list.stream().parallel().filter(map -> map.get("type").equals(1)).collect(Collectors.toList());
             resultMap.put("listGroup", listGroup);
             resultMap.put("listTags", listTags);
+        }
+        return resultMap;
+    }
+    
+    public Map<String,Object> findTeacherBio(long teacherId){
+        Map<String,Object> resultMap = Maps.newHashMap();
+        if(teacherId != 0){
+            Teacher teacher = teacherDao.findById(teacherId);
+            if(teacher != null){
+                resultMap.put("bio", teacher.getEvaluationBio());
+            }
         }
         return resultMap;
     }
