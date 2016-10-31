@@ -246,6 +246,9 @@ public class BasicInfoService {
         if(StringUtils.isNotBlank(bean.getMiddleName())){
             realName = bean.getFirstName() +" " + bean.getMiddleName() + " " + bean.getLastName();
         }
+        teacher.setFirstName(bean.getFirstName());
+        teacher.setMiddleName(bean.getMiddleName());
+        teacher.setLastName(bean.getLastName());
         teacher.setRealName(realName);
         teacher.setTimezone(bean.getTimezone());
         teacher.setCountry(bean.getNationality());
@@ -256,7 +259,7 @@ public class BasicInfoService {
         teacher.setSkype(bean.getSkype());
         teacher.setHighestLevelOfEdu(bean.getHighestLevelOfEdu());
         //已经设置过招聘渠道将不再设置招聘渠道
-        if(StringUtils.isNoneBlank(teacher.getReferee()) || teacher.getPartnerId() > 0 || StringUtils.isNotBlank(teacher.getOtherChannel())){
+        if(StringUtils.isNotBlank(teacher.getReferee()) || teacher.getPartnerId() > 0 || StringUtils.isNotBlank(teacher.getOtherChannel())){
             return teacher;
         }
         //  设置教师招聘渠道
