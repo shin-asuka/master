@@ -32,6 +32,7 @@ import com.vipkid.trpm.entity.TeacherNationalityCode;
 import com.vipkid.trpm.entity.TeachingExperience;
 import com.vipkid.trpm.entity.User;
 import com.vipkid.trpm.entity.app.AppEnum;
+import com.vipkid.trpm.entity.app.AppEnum.RecruitmentChannel;
 import com.vipkid.trpm.proxy.RedisProxy;
 
 @Service
@@ -278,16 +279,19 @@ public class BasicInfoService {
         }
         //  设置教师招聘渠道
         if(StringUtils.isNotBlank((bean.getRecruitmentChannel()))){
-            teacher.setRecruitmentChannel(UserEnum.Dtype.TEACHER.toString());
-            if("TEACHER".equals(bean.getRecruitmentChannel())){
+            if(RecruitmentChannel.TEACHER.toString().equals(bean.getRecruitmentChannel())){
+                teacher.setRecruitmentChannel(RecruitmentChannel.TEACHER.toString());
                 teacher.setReferee(bean.getChannel());
-            }else if("PARTNER".equals(bean.getRecruitmentChannel())){
+            }else if(RecruitmentChannel.PARTNER.toString().equals(bean.getRecruitmentChannel())){
                 if(StringUtils.isNumeric(bean.getChannel())){
+                    teacher.setRecruitmentChannel(RecruitmentChannel.PARTNER.toString());
                     teacher.setPartnerId(Long.valueOf(bean.getChannel()));
                 }
-            }else if("OTHER".equals(bean.getRecruitmentChannel())){
+            }else if(RecruitmentChannel.OTHER.toString().equals(bean.getRecruitmentChannel())){
+                teacher.setRecruitmentChannel(RecruitmentChannel.OTHER.toString());
                 teacher.setOtherChannel(bean.getChannel());
             }else{
+                teacher.setRecruitmentChannel(RecruitmentChannel.OTHER.toString());
                 teacher.setOtherChannel(bean.getChannel());
             }
         }
