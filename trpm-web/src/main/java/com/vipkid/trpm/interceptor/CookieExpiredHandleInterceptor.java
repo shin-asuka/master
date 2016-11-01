@@ -32,6 +32,7 @@ import com.vipkid.trpm.service.portal.LocationService;
 import com.vipkid.trpm.service.rest.AdminQuizService;
 import com.vipkid.trpm.service.rest.TeacherPageLoginService;
 import com.vipkid.trpm.util.CookieUtils;
+import com.vipkid.trpm.util.IPUtils;
 
 public class CookieExpiredHandleInterceptor extends HandlerInterceptorAdapter {
 
@@ -62,7 +63,7 @@ public class CookieExpiredHandleInterceptor extends HandlerInterceptorAdapter {
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
 			throws IOException {
-	    logger.info("IP:{},发起请求:{}",request.getRemoteAddr(),request.getRequestURI());
+	    logger.info("IP:{},发起请求:{}",IPUtils.getIpAddress(request),request.getRequestURI());
 		HandlerMethod handlerMethod = (HandlerMethod) handler;
 		PreAuthorize preAuthorize = handlerMethod.getMethodAnnotation(PreAuthorize.class);
 
@@ -103,10 +104,10 @@ public class CookieExpiredHandleInterceptor extends HandlerInterceptorAdapter {
 			}
 		}
 		if(user == null){
-		    logger.info("IP:{},用户为NULL。。。",request.getRemoteAddr());
+		    logger.info("IP:{},用户为NULL。。。",IPUtils.getIpAddress(request));
             return false; 
 		}
-		logger.info("IP:{},user:{},发起请求:{}",request.getRemoteAddr(),user.getId(),request.getRequestURI());
+		logger.info("IP:{},user:{},发起请求:{}",IPUtils.getIpAddress(request),user.getId(),request.getRequestURI());
 		request.setAttribute("locationService", locationService);
 		request.setAttribute("TRPM_TEACHER", teacher);
 		request.setAttribute("TRPM_USER", user);
