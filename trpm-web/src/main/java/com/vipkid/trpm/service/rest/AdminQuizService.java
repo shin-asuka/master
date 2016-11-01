@@ -18,7 +18,6 @@ import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.vipkid.enums.TeacherQuizEnum;
 import com.vipkid.rest.config.RestfulConfig;
-import com.vipkid.trpm.constant.ApplicationConstant.LoginType;
 import com.vipkid.trpm.dao.AppRestfulDao;
 import com.vipkid.trpm.dao.TeacherDao;
 import com.vipkid.trpm.dao.TeacherPageLoginDao;
@@ -26,7 +25,6 @@ import com.vipkid.trpm.dao.TeacherQuizDao;
 import com.vipkid.trpm.dao.TeacherQuizDetailsDao;
 import com.vipkid.trpm.dao.UserDao;
 import com.vipkid.trpm.entity.Teacher;
-import com.vipkid.trpm.entity.TeacherPageLogin;
 import com.vipkid.trpm.entity.TeacherQuiz;
 import com.vipkid.trpm.entity.TeacherQuizDetails;
 import com.vipkid.trpm.entity.User;
@@ -56,35 +54,7 @@ public class AdminQuizService {
     
     @Autowired
     private AppRestfulDao appRestfulDao;
-    
-    /**
-     * is first quiz 
-     * @Author:ALong (ZengWeiLong)
-     * @param teacerId
-     * @return    
-     * TeacherPageLogin
-     * @date 2016年8月25日
-     */
-    public boolean openQuiz(long teacerId){
-        TeacherPageLogin teacherPageLogin = this.teacherPageLoginDao.findByUserIdAndLoginType(teacerId, LoginType.ADMINQUIZ);
-        return teacherPageLogin == null ? true : false;
-    }
-    
-    /**
-     * 点击保存admin quiz 
-     * @Author:ALong (ZengWeiLong)
-     * @param teacerId
-     * @return    
-     * boolean
-     * @date 2016年8月25日
-     */
-    public boolean saveOpenQuiz(long teacerId){
-        TeacherPageLogin teacherPageLogin = new TeacherPageLogin();
-        teacherPageLogin.setUserId(teacerId);
-        teacherPageLogin.setLoginType(LoginType.ADMINQUIZ);
-        return this.teacherPageLoginDao.saveTeacherPageLogin(teacherPageLogin) == 1 ? true : false;
-    }
-    
+   
     /**
      * 查询用户最后一次有结果的考试记录 
      * @Author:ALong (ZengWeiLong)

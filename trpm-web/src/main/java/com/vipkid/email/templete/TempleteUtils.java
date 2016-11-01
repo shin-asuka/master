@@ -35,8 +35,8 @@ public class TempleteUtils {
         String content = "",title = "";
         if(cacheMap == null || cacheMap.size() == 0){
             cacheMap = Maps.newHashMap();
-            cacheMap.put("content", this.readTemplete(contentTemplete).toString());
-            cacheMap.put("title", this.readTemplete(titleTemplete).toString());
+            cacheMap.put("content", readTemplete(contentTemplete).toString());
+            cacheMap.put("title", readTemplete(titleTemplete).toString());
             TempleteChche.getMe().set(contentTemplete,cacheMap);
         }
         content = cacheMap.get("content");

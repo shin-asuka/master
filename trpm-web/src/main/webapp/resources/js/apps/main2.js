@@ -62,14 +62,15 @@ require.config({
 		"privacy":"apps/passport/privacy",
 		"changepwd":"apps/portal/change.password",
 		"payroll":"apps/portal/payroll",
-		"pe":"apps/pe/pe"
+		"pe":"apps/pe/pe",
+		"layout-tips":"apps/portal/layout.tips"
 	},
 
 	/* JS模块加载超时，默认7秒 */
 	waitSeconds : 0,
 
 	/* 更新JS缓存 */
-	urlArgs : "t=201608301424",
+	urlArgs : "t=201608301428",
 
 	/* 加载非AMD规范的JS */
 	shim : {

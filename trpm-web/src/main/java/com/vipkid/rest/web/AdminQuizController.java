@@ -21,10 +21,12 @@ import com.google.common.base.Preconditions;
 import com.vipkid.enums.TeacherQuizEnum;
 import com.vipkid.rest.config.RestfulConfig;
 import com.vipkid.trpm.constant.ApplicationConstant.CookieKey;
+import com.vipkid.trpm.constant.ApplicationConstant.LoginType;
 import com.vipkid.trpm.entity.TeacherQuiz;
 import com.vipkid.trpm.entity.User;
 import com.vipkid.trpm.service.rest.AdminQuizService;
 import com.vipkid.trpm.service.rest.LoginService;
+import com.vipkid.trpm.service.rest.TeacherPageLoginService;
 import com.vipkid.trpm.util.CookieUtils;
 
 @RestController
@@ -38,6 +40,9 @@ public class AdminQuizController {
         
     @Autowired
     private AdminQuizService adminQuizService;
+    
+    @Autowired 
+    private TeacherPageLoginService teacherPageLoginService;
     
     @RequestMapping(value = "/getLastQuiz", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
     public Map<String,Object> getLastQuiz(HttpServletRequest request, HttpServletResponse response){
@@ -60,7 +65,7 @@ public class AdminQuizController {
                 result.put("grade",teacherQuiz.getQuizScore());
                 result.put("count",list.size());
             }
-            result.put("openQuiz",this.adminQuizService.openQuiz(user.getId()));
+            result.put("openQuiz",teacherPageLoginService.isType(user.getId(),LoginType.ADMINQUIZ));
             return result;
         } catch (IllegalArgumentException e) {
             logger.error("内部参数转化异常:"+e.getMessage());
@@ -86,7 +91,7 @@ public class AdminQuizController {
                 logger.warn("用户不存在，token过期");
                 return result;
             }
-            result.put("result",this.adminQuizService.saveOpenQuiz(user.getId()));
+            result.put("result",this.teacherPageLoginService.saveTeacherPageLogin(user.getId(),LoginType.ADMINQUIZ));
             return result;
         } catch (IllegalArgumentException e) {
             logger.error("内部参数转化异常:"+e.getMessage());

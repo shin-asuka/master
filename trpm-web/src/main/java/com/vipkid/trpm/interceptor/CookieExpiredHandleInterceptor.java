@@ -1,6 +1,7 @@
 package com.vipkid.trpm.interceptor;
 
 import java.io.IOException;
+import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.http.Cookie;
@@ -17,9 +18,10 @@ import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import com.vipkid.http.service.AnnouncementHttpService;
+import com.vipkid.rest.config.RestfulConfig.RoleClass;
 import com.vipkid.trpm.constant.ApplicationConstant;
 import com.vipkid.trpm.constant.ApplicationConstant.CookieKey;
-import com.vipkid.trpm.constant.ApplicationConstant.RedisConstants;
+import com.vipkid.trpm.constant.ApplicationConstant.LoginType;
 import com.vipkid.trpm.controller.portal.PersonalInfoController;
 import com.vipkid.trpm.entity.Staff;
 import com.vipkid.trpm.entity.Teacher;
@@ -28,16 +30,11 @@ import com.vipkid.trpm.proxy.RedisProxy;
 import com.vipkid.trpm.service.passport.IndexService;
 import com.vipkid.trpm.service.portal.LocationService;
 import com.vipkid.trpm.service.rest.AdminQuizService;
+import com.vipkid.trpm.service.rest.TeacherPageLoginService;
 import com.vipkid.trpm.util.CookieUtils;
+import com.vipkid.trpm.util.IPUtils;
 
 public class CookieExpiredHandleInterceptor extends HandlerInterceptorAdapter {
-
-	private static final String IS_DISPLAY_PAYROLL = "isDisplayPayroll";
-	private static final String PAYROLL_OPEN_FLAG = "payroll_open_for_teacher";
-	private static final String PAYROLL_BLACK_LIST = "payroll_black_list_";
-	private static final String PAYROLL_WHITE_LIST = "payroll_white_list_";
-	private static final String PAYROLL_EXD = "payroll_exd";
-	private static final String PAYROLL_OPEN_VALUE = "1";
 
 	private Logger logger = LoggerFactory.getLogger(CookieExpiredHandleInterceptor.class);
 
@@ -60,9 +57,13 @@ public class CookieExpiredHandleInterceptor extends HandlerInterceptorAdapter {
 	@Autowired
 	private AdminQuizService adminQuizService;
 	
+	@Autowired
+	private TeacherPageLoginService teacherPageLoginService;
+	
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
 			throws IOException {
+	    logger.info("IP:{},发起请求:{}",IPUtils.getIpAddress(request),request.getRequestURI());
 		HandlerMethod handlerMethod = (HandlerMethod) handler;
 		PreAuthorize preAuthorize = handlerMethod.getMethodAnnotation(PreAuthorize.class);
 
@@ -102,23 +103,39 @@ public class CookieExpiredHandleInterceptor extends HandlerInterceptorAdapter {
 				request.setAttribute("TRPM_MANAGER_NAME", managerName);
 			}
 		}
+		if(user == null){
+		    logger.info("IP:{},用户为NULL。。。",IPUtils.getIpAddress(request));
+            return false; 
+		}
+		logger.info("IP:{},user:{},发起请求:{}",IPUtils.getIpAddress(request),user.getId(),request.getRequestURI());
 		request.setAttribute("locationService", locationService);
 		request.setAttribute("TRPM_TEACHER", teacher);
 		request.setAttribute("TRPM_USER", user);
 		request.setAttribute("TRPM_COURSE_TYPES", indexService.getCourseType(user.getId()));
 		request.setAttribute("recruitmentUrl", PropertyConfigurer.stringValue("recruitment.www"));
-		request.setAttribute("isPe", indexService.isPe(user.getId()));
-		
-        String clazz = handlerMethod.getBeanType().getCanonicalName();
+        Map<String,Object> role = indexService.getAllRole(user.getId());
+        
+        request.setAttribute("isPes",role.get(RoleClass.PES));
+        request.setAttribute("isTe",role.get(RoleClass.TE));
+        request.setAttribute("isTes",role.get(RoleClass.TES));
+        request.setAttribute("isEvalClick",teacherPageLoginService.isType(user.getId(), LoginType.EVALUATION_CLICK));
+
+        //是否需要考试
         if (adminQuizService.findNeedQuiz(user.getId())) {
-            if(!PersonalInfoController.class.getCanonicalName().equals(clazz)){
+            //请求映射的Class
+            String clazz = handlerMethod.getBeanType().getCanonicalName();
+            if(PersonalInfoController.class.getCanonicalName().equals(clazz)){
+                //需要考试，请求的映射在基本信息修改类
+                return true;
+            }else{
+                //需要考试，请求的映射不再基本信息修改则进行跳转
                 logger.info("当前老师 [{}] 未通过考试", user.getName());
                 response.sendRedirect("/training/material");
                 return false;
             }
-            return true;
         }
 		
+        //是否需要密码修改
 		if (!checkChangePasswordUri(request) && checkCookie(request)) {
 			logger.info("拦截检测到需要修改密码进入页面");
 			response.sendRedirect(request.getContextPath() + "/schedule.shtml");

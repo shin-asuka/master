@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 import com.vipkid.enums.TbdResultEnum;
+import com.vipkid.rest.config.RestfulConfig.RoleClass;
 import com.vipkid.trpm.constant.ApplicationConstant;
 import com.vipkid.trpm.constant.ApplicationConstant.ClassStatus;
 import com.vipkid.trpm.constant.ApplicationConstant.RecruitmentResult;
@@ -315,7 +316,7 @@ public class PeSupervisorService {
             return modelMap;
         }
 
-        List<TeacherModule> teacherModules = teacherModuleDao.findByTeacherPe(pe.getId());
+        List<TeacherModule> teacherModules = teacherModuleDao.findByTeacherModuleName(pe.getId(),RoleClass.PE);
 
         // 判断当前用户是否拥有PE Supervisor权限
         if (CollectionUtils.isNotEmpty(teacherModules)

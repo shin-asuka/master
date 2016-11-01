@@ -16,10 +16,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.google.api.client.util.Maps;
 import com.vipkid.trpm.constant.ApplicationConstant.CourseType;
+import com.vipkid.trpm.constant.ApplicationConstant.LoginType;
 import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.service.activity.ActivityService;
 import com.vipkid.trpm.service.passport.IndexService;
 import com.vipkid.trpm.service.portal.ScheduleService;
+import com.vipkid.trpm.service.rest.TeacherPageLoginService;
 
 @Controller
 public class ScheduleController extends AbstractPortalController {
@@ -32,6 +34,9 @@ public class ScheduleController extends AbstractPortalController {
 	
 	@Autowired
 	private ActivityService activityService;
+	
+	@Autowired
+	private TeacherPageLoginService teacherPageLoginService;
 
 	@RequestMapping("/schedule")
 	public String schedule(HttpServletRequest request, HttpServletResponse response, Model model) {
@@ -52,11 +57,13 @@ public class ScheduleController extends AbstractPortalController {
 		// 判断是否能上Practicum类型的课程
 		model.addAttribute("showPracticum", false);
 		if (indexService.enabledPracticum(teacher.getId())) {
-			model.addAttribute("showPracticum", scheduleService.showPracticum(teacher));
+		    model.addAttribute("showPracticum", teacherPageLoginService.isType(teacher.getId(), LoginType.PRACTICUM));
 		}
+		//判断是否显示AdminQuiz
+		model.addAttribute("showAdminQuiz",teacherPageLoginService.isType(teacher.getId(), LoginType.ADMINQUIZ));
 		
-		//判断是否显示adminQuiz
-		model.addAttribute("showAdminQuiz", scheduleService.showAdminQuiz(teacher));
+		//判断是否显示Evaluation
+        model.addAttribute("showEvaluation",teacherPageLoginService.isType(teacher.getId(), LoginType.EVALUATION));
 		
 		// 判断是否需要显示24小时提示
 		model.addAttribute("show24HoursInfo", scheduleService.isShow24HourInfo(request, response));

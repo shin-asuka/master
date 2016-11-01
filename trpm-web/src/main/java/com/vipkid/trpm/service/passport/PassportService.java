@@ -7,7 +7,7 @@ import java.util.Base64;
 import java.util.Map;
 import java.util.UUID;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.community.config.PropertyConfigurer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -354,12 +354,12 @@ public class PassportService {
         }
         
         if(refereeId != null){//三周年庆时有改动，这里的if兼容之前的逻辑
-        	String rfid = String.valueOf(refereeId);
-            if (!rfid.matches("[^0][\\d]+")) {
-                return teacher;
-            }
-            long userId = Long.valueOf(rfid);
-            User user = this.findUserById(userId);
+        String rfid = String.valueOf(refereeId);
+        if (!StringUtils.isNumeric(rfid)) {
+            return teacher;
+        }
+        long userId = Long.valueOf(rfid);
+        User user = this.findUserById(userId);
 
             if (user != null) {
                 if (UserEnum.Dtype.PARTNER.toString().equals(user.getDtype())) {

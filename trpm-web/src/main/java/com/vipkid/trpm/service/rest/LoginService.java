@@ -1,6 +1,7 @@
 package com.vipkid.trpm.service.rest;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.google.common.collect.Lists;
 import com.vipkid.rest.config.RestfulConfig;
+import com.vipkid.rest.config.RestfulConfig.RoleClass;
 import com.vipkid.trpm.constant.ApplicationConstant;
 import com.vipkid.trpm.constant.ApplicationConstant.CookieKey;
 import com.vipkid.trpm.constant.ApplicationConstant.CourseType;
@@ -25,7 +27,6 @@ import com.vipkid.trpm.dao.TeacherModuleDao;
 import com.vipkid.trpm.dao.TeacherPageLoginDao;
 import com.vipkid.trpm.dao.UserDao;
 import com.vipkid.trpm.entity.Teacher;
-import com.vipkid.trpm.entity.TeacherModule;
 import com.vipkid.trpm.entity.TeacherPageLogin;
 import com.vipkid.trpm.entity.User;
 import com.vipkid.trpm.proxy.RedisProxy;
@@ -34,6 +35,7 @@ import com.vipkid.trpm.util.CookieUtils;
 
 @Service
 public class LoginService {
+
     private final static Logger logger = LoggerFactory.getLogger(LoginService.class);
 
     @Autowired
@@ -154,7 +156,7 @@ public class LoginService {
         });
         return courseTypes.contains(CourseType.PRACTICUM);
     }
-    
+        
     /**
      * 判断User拥有的权限
      * 
@@ -163,13 +165,20 @@ public class LoginService {
      * @return boolean
      * @date 2016年7月4日
      */
-    public boolean isPes(long teacherId) {
-        List<TeacherModule> modulelist = teacherModuleDao.findByTeacherPe(teacherId);
-        if (modulelist == null || modulelist.isEmpty()) {
-            return false;
+    public void findByTeacherModule(long teacherId,Map<String,Object> roles) {
+        String result = teacherModuleDao.findByTeacherModule(teacherId);
+        logger.info(" result module:{}",result);
+        if(result.indexOf(","+RoleClass.PE+",") > -1){
+            roles.put(RoleClass.PES,true);
         }
-        return true;
-    }
+        if(result.indexOf(","+RoleClass.TE+",") > -1){
+            roles.put(RoleClass.TE,true);
+        }
+        if(result.indexOf(","+RoleClass.TES+",") > -1){
+            roles.put(RoleClass.TES,true);
+        }
+    }  
+    
 
     public User findUserById(long id) {
         return this.userDao.findById(id);

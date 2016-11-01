@@ -11,6 +11,8 @@ public class BasicInfo {
 	private String gender;
 
 	private String introduction;
+	
+	private String evaluationBio;
 
 	private String mobile;
 
@@ -152,4 +154,12 @@ public class BasicInfo {
 		this.highestLevelOfEdu = highestLevelOfEdu;
 	}
 
+    public String getEvaluationBio() {
+        return evaluationBio;
+    }
+
+    public void setEvaluationBio(String evaluationBio) {
+        this.evaluationBio = evaluationBio;
+    }	
+	
 }

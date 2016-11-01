@@ -137,6 +137,7 @@ public class AppRestfulController {
 
 	@RequestMapping(value = "/app/authByToken", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
 	public @ResponseBody String getTeacherByToken(HttpServletRequest request, HttpServletResponse response, @RequestParam String token) {
+	    logger.info("请求URL:"+request.getRequestURI()+"，参数"+JsonTools.getJson(request.getParameterMap()));
 	    Map<String, Object> result = Maps.newHashMap();
 	    if(StringUtils.isBlank(token)){
             logger.error("token 不能为空！");
@@ -164,6 +165,7 @@ public class AppRestfulController {
 
 	@RequestMapping(value = "/app/authById", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
 	public @ResponseBody String getTeacherById(HttpServletRequest request, HttpServletResponse response, @RequestParam long teacherId) {
+	    logger.info("请求URL:"+request.getRequestURI()+"，参数"+JsonTools.getJson(request.getParameterMap()));
 	    Map<String, Object> result = Maps.newHashMap();
 	    if(teacherId == 0){
             logger.error("teacherId 不能为0！");
@@ -204,6 +206,7 @@ public class AppRestfulController {
 	@RequestMapping(value = "/app/forgetPassword", method = RequestMethod.POST, produces = RestfulConfig.JSON_UTF_8)
     public @ResponseBody String getPassword(HttpServletRequest request, HttpServletResponse response,
             @RequestParam String email) {
+	    logger.info("请求URL:"+request.getRequestURI()+"，参数"+JsonTools.getJson(request.getParameterMap()));
         Map<String, Object> result = Maps.newHashMap();
         if(StringUtils.isBlank(email)){
             logger.error("email 不能为空！");
@@ -252,6 +255,7 @@ public class AppRestfulController {
 	@RequestMapping(value = "/app/classCount", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
     public @ResponseBody String getClassCount(HttpServletRequest request, HttpServletResponse response,
             @RequestParam long teacherId,@RequestParam String classStatuses,@RequestParam(value="courseTypes", required=false) String courseTypes) {
+	    logger.info("请求URL:"+request.getRequestURI()+"，参数"+JsonTools.getJson(request.getParameterMap()));
         Map<String, Object> result = Maps.newHashMap();
         try {
             Preconditions.checkArgument(teacherId != 0);
@@ -295,6 +299,7 @@ public class AppRestfulController {
    public @ResponseBody String getClassList(HttpServletRequest request, HttpServletResponse response,
             @RequestParam long teacherId, @RequestParam long startTime,@RequestParam(value="order", required=false) Integer order,
             @RequestParam long endTime,@RequestParam String classStatuses,@RequestParam(value="courseTypes", required=false) String courseTypes) {
+       logger.info("请求URL:"+request.getRequestURI()+"，参数"+JsonTools.getJson(request.getParameterMap()));
         Map<String, Object> result = Maps.newHashMap();
         try {
             Preconditions.checkArgument(teacherId != 0);
@@ -318,13 +323,13 @@ public class AppRestfulController {
    public @ResponseBody String getClassListByPage(HttpServletRequest request, HttpServletResponse response,
             @RequestParam long teacherId,@RequestParam int classStatus,@RequestParam(value="courseTypes", required=false) String courseTypes,
             @RequestParam long order,@RequestParam long start,@RequestParam long limit) {
+       logger.info("请求URL:"+request.getRequestURI()+"，参数"+JsonTools.getJson(request.getParameterMap()));
         Map<String, Object> result = Maps.newHashMap();
         try {
             Preconditions.checkArgument(teacherId != 0);
             Preconditions.checkArgument(0 <= classStatus && classStatus < 3);
-            Preconditions.checkArgument(limit > start);
-            logger.info("查询条数最多只能大于20条限制处理");
-            limit = (limit-start) > 20 ? (start+20) : limit;
+            //查询条数最多只能大于20条限制处理
+            limit = limit > 20 ? 20 : limit;
             List<AppOnlineClass> list = this.appRestfulService.getClassListPage(teacherId,start, limit,order,classStatus,courseTypes);
             result.put("data", list);
             result.putAll(this.appRestfulService.getClassListCount(teacherId, classStatus, courseTypes));
@@ -343,6 +348,7 @@ public class AppRestfulController {
 	@RequestMapping(value = "/app/studentList", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
 	public @ResponseBody String getStudents(HttpServletRequest request, HttpServletResponse response,
 			@RequestParam String studentIds) {
+	    logger.info("请求URL:"+request.getRequestURI()+"，参数"+JsonTools.getJson(request.getParameterMap()));
 		Map<String, Object> resultMap = Maps.newHashMap();
 
 		try {
@@ -375,6 +381,7 @@ public class AppRestfulController {
 	@RequestMapping(value = "/app/feedback", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
 	public @ResponseBody String getOnlineClassComment(HttpServletRequest request, HttpServletResponse response,
 			@RequestParam long studentId, @RequestParam long onlineClassId, @RequestParam long teacherId) {
+	    logger.info("请求URL:"+request.getRequestURI()+"，参数"+JsonTools.getJson(request.getParameterMap()));
 		Map<String, Object> resultMap = Maps.newHashMap();
 
 		try {

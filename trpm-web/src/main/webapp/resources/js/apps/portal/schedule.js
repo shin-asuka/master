@@ -1,4 +1,4 @@
-define([ "function", "tools", "jquery-bootstrap", "jquery-cookie", "jquery-load" ], function() {
+define([ "layout-tips","function", "tools", "jquery-bootstrap", "jquery-cookie", "jquery-load"], function(layoutTips) {
 
 	var _timeout = 60 * 1000;
 
@@ -43,7 +43,7 @@ define([ "function", "tools", "jquery-bootstrap", "jquery-cookie", "jquery-load"
 		}
 	};
 
-	var init = function(offsetOfWeek, showPracticum,showAdminQuiz,show24HoursInfo) {
+	var init = function(offsetOfWeek, showPracticum,showAdminQuiz,showEvaluation,show24HoursInfo) {
 		$.removeCookie("from", {
 			path : '/'
 		});
@@ -98,70 +98,10 @@ define([ "function", "tools", "jquery-bootstrap", "jquery-cookie", "jquery-load"
 		$("button.prev").bind("click", prevWeek);
 
 		/* 是否显示提示层 */
-		tipsLayer(showAdminQuiz,showPracticum);
+		layoutTips.tipsLayer(showAdminQuiz,showPracticum,showEvaluation);
 	};
 
-	/* 提示层函数 */
-	var tipsLayer = function(showAdminQuiz,showPracticum) {
-		if(showAdminQuiz){
-			showAdminQuizFun(showAdminQuiz,showPracticum);
-		}else{
-			showPracticumFun(showPracticum);
-		}
-	};
 	
-	var showAdminQuizFun = function(showAdminQuiz,showPracticum){
-		if (showAdminQuiz) {
-			$("div.admin-quiz-tips").show();
-			$("body").addClass("modal-open");
-			var left = $(".admin-quiz-tips").find(".light").width()/2 - $("#quiz-tips").offset().left - 70;
-			$(".admin-quiz-tips").find(".light").css({"left":(0-left)+"px"});
-			$(window).resize(function(){
-				var left = $(".admin-quiz-tips").find(".light").width()/2 - $("#quiz-tips").offset().left - 70;
-				$(".admin-quiz-tips").find(".light").css({"left":(0-left)+"px"});
-			});
-			$("div.sure-btn,div.close-btn").click(function() {
-				$.ajaxRequest({
-					url : webPath + "/disableLayer.json",
-					dataType : "json",
-					data : {
-						"loginType" : 2
-					},
-					success : function(datas) {
-						$("div.admin-quiz-tips").hide();
-						$("body").removeClass("modal-open");
-						showPracticumFun(showPracticum);
-						if (undefined !== console) {
-							console.log("disable adminquiz layer.");
-						}
-					}
-				});
-			});
-		}	
-	};
-	
-	var showPracticumFun = function(showPracticum){
-		if (showPracticum) {
-			$("div.schedule-guide").show();
-			$("body").addClass("modal-open");
-			$("div.schedule-guide-img > a").click(function() {
-				$.ajaxRequest({
-					url : webPath + "/disableLayer.json",
-					dataType : "json",
-					data : {
-						"loginType" : 1
-					},
-					success : function(datas) {
-						$("div.schedule-guide").hide();
-						$("body").removeClass("modal-open");
-						if (undefined !== console) {
-							console.log("disable schedule layer.");
-						}
-					}
-				});
-			});
-		}	
-	};
 
 	/* 查找PRACTICUM的单元格 */
 	var getPracticumCell = function(selector) {

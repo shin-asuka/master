@@ -1,9 +1,9 @@
 package com.vipkid.trpm.constant;
 
-import org.community.config.PropertyConfigurer;
-
 import java.util.HashMap;
 import java.util.Map;
+
+import org.community.config.PropertyConfigurer;
 
 public interface ApplicationConstant {
 
@@ -348,6 +348,10 @@ public interface ApplicationConstant {
         public static final int PRACTICUM = 1;
         
         public static final int ADMINQUIZ = 2;
+        
+        public static final int EVALUATION = 3;
+        
+        public static final int EVALUATION_CLICK = 4;
 
     }
 

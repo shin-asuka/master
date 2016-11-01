@@ -18,11 +18,11 @@ public class AdminquizControllerTest extends BaseTestCase{
 
     private static Logger logger = LoggerFactory.getLogger(AdminquizControllerTest.class);
     
-    @Test
+    //@Test
     public void getLastQuiz() throws IOException{
         String url = URL_PREFIX + "/api/quiz/getLastQuiz";
         try{
-            Response response = Jsoup.connect(url).ignoreContentType(true).header(CookieKey.AUTOKEN, "12345").method(Method.GET).execute();
+            Response response = Jsoup.connect(url).ignoreContentType(true).timeout(6000).header(CookieKey.AUTOKEN, TOKEN).method(Method.GET).execute();
             String json = response.body();
             logger.info(" get LastQuiz ==> " + json);
         }catch(HttpStatusException e){
@@ -30,29 +30,53 @@ public class AdminquizControllerTest extends BaseTestCase{
         }
     }
     
-    @Test
+    //@Test
     public void findNeedQuiz() throws IOException{
         String url = URL_PREFIX + "/api/quiz/findNeedQuiz";
         try{
-            Response response = Jsoup.connect(url).ignoreContentType(true).header(CookieKey.AUTOKEN, "12345").method(Method.GET).execute();
+            Response response = Jsoup.connect(url).ignoreContentType(true).timeout(6000).header(CookieKey.AUTOKEN, TOKEN).method(Method.GET).execute();
             String json = response.body();
-            logger.info(" get LastQuiz ==> " + json);
+            logger.info(" get findNeedQuiz ==> " + json);
         }catch(HttpStatusException e){
-            logger.info(" get LastQuiz  status ==> " + e.getStatusCode());
+            logger.info(" get findNeedQuiz  status ==> " + e.getStatusCode());
         }
     }
     
-    @Test
+    //@Test
     public void saveQuizResult() throws IOException{
         String url = URL_PREFIX + "/api/quiz/saveQuizResult";
         try{
             Map<String, String> data = Maps.newHashMap();
-            data.put("grade", "65");
-            Response response = Jsoup.connect(url).ignoreContentType(true).header(CookieKey.AUTOKEN, "12345").data(data).method(Method.POST).execute();
+            data.put("grade","[{\"sn\":\"QP-1-001\",\"teacherAnswer\":2},{\"sn\":\"QP-1-002\",\"teacherAnswer\":1},{\"sn\":\"QP-1-003\",\"teacherAnswer\":2}]");
+            Response response = Jsoup.connect(url).ignoreContentType(true).timeout(60000).header(CookieKey.AUTOKEN, TOKEN).data(data).method(Method.POST).execute();
             String json = response.body();
-            logger.info(" get LastQuiz ==> " + json);
+            logger.info(" get saveQuizResult ==> " + json);
         }catch(HttpStatusException e){
-            logger.info(" get LastQuiz  status ==> " + e.getStatusCode());
+            logger.info(" get saveQuizResult  status ==> " + e.getStatusCode());
+        }
+    }
+    
+    //@Test
+    public void startQuiz() throws IOException{
+        String url = URL_PREFIX + "/api/quiz/startQuiz";
+        try{
+            Response response = Jsoup.connect(url).ignoreContentType(true).timeout(60000).header(CookieKey.AUTOKEN, TOKEN).method(Method.POST).execute();
+            String json = response.body();
+            logger.info(" get startQuiz ==> " + json);
+        }catch(HttpStatusException e){
+            logger.info(" get startQuiz  status ==> " + e.getStatusCode());
+        }
+    }
+    
+    @Test
+    public void getTags() throws IOException{
+        String url = URL_PREFIX + "/api/evaluation/getTags";
+        try{
+            Response response = Jsoup.connect(url).ignoreContentType(true).timeout(60000).header(CookieKey.AUTOKEN, TOKEN).method(Method.GET).execute();
+            String json = response.body();
+            logger.info(" get startQuiz ==> " + json);
+        }catch(HttpStatusException e){
+            logger.info(" get startQuiz  status ==> " + e.getStatusCode());
         }
     }
 }

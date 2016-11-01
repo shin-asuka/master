@@ -11,7 +11,7 @@ public class TeacherPageLogin extends Entity implements Serializable {
 	private long id;
 	/*  */
 	private long userId;
-	/* 0：classrooms，1：schedule */
+	/* 0：classrooms，1：schedule 2:adminQuiz 3:evaluation*/
 	private int loginType = -1;
 
 	public long getId() {

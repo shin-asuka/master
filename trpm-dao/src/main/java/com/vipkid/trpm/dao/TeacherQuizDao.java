@@ -2,6 +2,7 @@ package com.vipkid.trpm.dao;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.community.dao.support.MapperDaoTemplate;
 import org.mybatis.spring.SqlSessionTemplate;
@@ -10,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.google.common.collect.Lists;
 import com.vipkid.enums.TeacherQuizEnum;
 import com.vipkid.trpm.entity.TeacherQuiz;
 
@@ -79,5 +81,16 @@ public class TeacherQuizDao extends MapperDaoTemplate<TeacherQuiz>{
         teacherQuiz.setQuizScore(0);
         return super.save(teacherQuiz);
     }
-    
+    /**
+     * 查询所有Tags 
+     * @Author:ALong (ZengWeiLong)
+     * @return    
+     * List<Map<String,Object>>
+     * @date 2016年9月19日
+     */
+    public List<Map<String,Object>> findTags(){
+        List<Map<String,Object>> list = Lists.newArrayList();
+        list = super.listEntity("findTagsByType", null);
+        return list;
+    }
 }

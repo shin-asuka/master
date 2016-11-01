@@ -1,13 +1,27 @@
 package com.vipkid.trpm.service.portal;
 
-import static com.vipkid.trpm.util.DateUtils.*;
+import static com.vipkid.trpm.util.DateUtils.DAY_OF_WEEK;
+import static com.vipkid.trpm.util.DateUtils.FMT_HMA_US;
+import static com.vipkid.trpm.util.DateUtils.FMT_HMS;
+import static com.vipkid.trpm.util.DateUtils.FMT_YMD_HMS;
+import static com.vipkid.trpm.util.DateUtils.HALFHOUR_OF_DAY;
+import static com.vipkid.trpm.util.DateUtils.MINUTE_OF_HALFHOUR;
+import static com.vipkid.trpm.util.DateUtils.SHANGHAI;
+import static com.vipkid.trpm.util.DateUtils.formatTo;
+import static com.vipkid.trpm.util.DateUtils.parseFrom;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -37,12 +51,23 @@ import org.springframework.stereotype.Service;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.vipkid.trpm.constant.ApplicationConstant;
-import com.vipkid.trpm.constant.ApplicationConstant.*;
-import com.vipkid.trpm.dao.*;
+import com.vipkid.trpm.constant.ApplicationConstant.ClassStatus;
+import com.vipkid.trpm.constant.ApplicationConstant.ClassType;
+import com.vipkid.trpm.constant.ApplicationConstant.CookieKey;
+import com.vipkid.trpm.constant.ApplicationConstant.CourseType;
+import com.vipkid.trpm.constant.ApplicationConstant.FinishType;
+import com.vipkid.trpm.constant.ApplicationConstant.PeakTimeType;
+import com.vipkid.trpm.constant.ApplicationConstant.SlotStyle;
+import com.vipkid.trpm.dao.AuditDao;
+import com.vipkid.trpm.dao.LessonDao;
+import com.vipkid.trpm.dao.OnlineClassDao;
+import com.vipkid.trpm.dao.PeakTimeDao;
+import com.vipkid.trpm.dao.TeacherDao;
+import com.vipkid.trpm.dao.TeacherPageLoginDao;
+import com.vipkid.trpm.dao.UserDao;
 import com.vipkid.trpm.entity.OnlineClass;
 import com.vipkid.trpm.entity.PeakTime;
 import com.vipkid.trpm.entity.Teacher;
-import com.vipkid.trpm.entity.TeacherPageLogin;
 import com.vipkid.trpm.entity.schedule.TimePoint;
 import com.vipkid.trpm.entity.schedule.TimeSlot;
 import com.vipkid.trpm.entity.schedule.ZoneTime;
@@ -779,32 +804,6 @@ public class ScheduleService {
 		return peakTimeDao.countDaoByTeacherIdAndFromWithToTime(startCalendar.getTime(), endCalendar.getTime(),
 				teacherId);
 	}
-
-	/**
-	 * 判断是否显示Practicum
-	 * 
-	 * @author John
-	 *
-	 * @param teacher
-	 * @return boolean
-	 */
-	public boolean showPracticum(Teacher teacher) {
-		TeacherPageLogin pageLogin = teacherLoginTypeDao.findByUserIdAndLoginType(teacher.getId(), LoginType.PRACTICUM);
-		return (null == pageLogin) ? true : false;
-	}
-	
-	/**
-     * 判断显示的内容
-     * 
-     * @author John
-     *
-     * @param teacher
-     * @return boolean
-     */
-    public boolean showAdminQuiz(Teacher teacher) {
-        TeacherPageLogin pageLogin = teacherLoginTypeDao.findByUserIdAndLoginType(teacher.getId(), LoginType.ADMINQUIZ);
-        return (null == pageLogin) ? true : false;
-    }
 
 	public boolean isShow24HourInfo(HttpServletRequest request, HttpServletResponse response) {
 		Cookie cookie = CookieUtils.getCookie(request, CookieKey.TRPM_HOURS_24);

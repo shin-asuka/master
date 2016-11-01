@@ -55,7 +55,8 @@
 		teacher.beneficiary_address_id as teacher_beneficiary_address_id,
 		
 		teacher.contract_type AS teacher_contract_type,
-		teacher.highest_degree AS teacher_highest_degree
+		teacher.highest_degree AS teacher_highest_degree,
+		teacher.evaluation_bio AS teacher_evaluation_bio
 	</sql>
 
 	<sql id="teacherWhere">
@@ -131,6 +132,7 @@
 			<if test="currentAddressId!=0">AND teacher.current_address_id = #{currentAddressId}</if>
 			<if test="beneficiaryBankAddressId">AND teacher.beneficiary_bank_address_id = #{beneficiaryBankAddressId}</if>
 			<if test="beneficiaryAddressId"> AND teacher.beneficiary_address_id = #{beneficiaryAddressId}</if>
+			<if test="evaluationBio != null"> AND teacher.evaluation_bio = #{evaluationBio}</if>
 		</trim>
 	</sql>
 
@@ -210,6 +212,7 @@
 		<result column="teacher_beneficiary_address_id" property="beneficiaryAddressId"/>
 		
 		<result column="teacher_contract_type" property="contractType" />
+		<result column="teacher_evaluation_bio" property="evaluationBio" />
 	</resultMap>
 
 	<select id="findDao" resultMap="teacherResultMap">
@@ -312,7 +315,7 @@
 			<if test="currentAddressId!=0">,current_address_id</if>
 			<if test="beneficiaryBankAddressId">,beneficiary_bank_address_id</if>
 			<if test="beneficiaryAddressId">,beneficiary_address_id</if>
-			
+			<if test="evaluationBio != null">,evaluation_bio</if>
 		</trim>
 		) VALUES
 		<trim prefix="(" prefixOverrides=",">
@@ -382,7 +385,7 @@
 			<if test="currentAddressId!=0">,#{currentAddressId}</if>
 			<if test="beneficiaryBankAddressId">,#{beneficiaryBankAddressId}</if>
 			<if test="beneficiaryAddressId">,#{beneficiaryAddressId}</if>
-			
+			<if test="evaluationBio != null">,#{evaluationBio}</if>
 		</trim>
 		)
 	</insert>
@@ -457,6 +460,7 @@
 			<if test="currentAddressId!=0">,current_address_id=#{currentAddressId}</if>
 			<if test="beneficiaryBankAddressId">,beneficiary_bank_address_id=#{beneficiaryBankAddressId}</if>
 			<if test="beneficiaryAddressId">,beneficiary_address_id=#{beneficiaryAddressId}</if>
+			<if test="evaluationBio != null">,evaluation_bio = #{evaluationBio}</if>
 			
 		</trim>
 		<trim prefix="WHERE" prefixOverrides="AND">AND id = #{id}</trim>

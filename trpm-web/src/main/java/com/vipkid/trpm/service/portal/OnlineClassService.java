@@ -18,6 +18,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 import com.vipkid.http.service.AssessmentHttpService;
 import com.vipkid.http.vo.StudentUnitAssessment;
+import com.vipkid.rest.config.RestfulConfig.RoleClass;
 import com.vipkid.trpm.constant.ApplicationConstant;
 import com.vipkid.trpm.constant.ApplicationConstant.*;
 import com.vipkid.trpm.dao.*;
@@ -108,6 +109,7 @@ public class OnlineClassService {
      */
     public Map<String, Object> enterOpen(OnlineClass onlineClass, long studentId, Teacher teacher,
             Lesson lesson) {
+        logger.info("TeacherId:{} Open Course,onlineClassId:{},studentId:{}",teacher.getId(),onlineClass.getId(),studentId);
         Map<String, Object> modelMap = Maps.newHashMap();
         modelMap.putAll(this.enterBefore(onlineClass, studentId, "OPEN"));
         modelMap.put("url",
@@ -133,6 +135,9 @@ public class OnlineClassService {
     public Map<String, Object> enterPracticum(OnlineClass onlineClass, long studentId,
             Teacher student, Lesson lesson) {
         Map<String, Object> modelMap = Maps.newHashMap();
+        
+        logger.info("TeacherId:{} Practicum Course,onlineClassId:{},studentId:{}",student.getId(),onlineClass.getId(),studentId);
+        
         modelMap.putAll(this.enterBefore(onlineClass, studentId, "BOOKED"));
 
         TeacherApplication teacherApplication = teacherApplicationDao
@@ -152,7 +157,7 @@ public class OnlineClassService {
         }
         this.enterAfter(student, onlineClass);
 
-        List<TeacherModule> teacherModules = teacherModuleDao.findByTeacherPe(student.getId());
+        List<TeacherModule> teacherModules = teacherModuleDao.findByTeacherModuleName(student.getId(),RoleClass.PE);
         // 判断当前用户是否拥有PE Supervisor权限
         if (CollectionUtils.isNotEmpty(teacherModules)) {
             modelMap.put("PESupervisor", true);
@@ -177,12 +182,14 @@ public class OnlineClassService {
      */
     public Map<String, Object> enterMajor(OnlineClass onlineClass, long studentId, Teacher teacher,
             Lesson lesson) {
+        logger.info("TeacherId:{}, Major Course onlineClassId:{},studentId:{}",teacher.getId(), onlineClass.getId(),
+                studentId);
         Map<String, Object> modelMap = Maps.newHashMap();
         modelMap.putAll(this.enterBefore(onlineClass, studentId, "BOOKED"));
 
         /** 获取teacherComments中的stars字段的值，并存入model */
         int stars = this.findTeacherCommentByOnlineClassId(onlineClass, studentId);
-        logger.info("query stars : {},onlineClassId:{},studentId:{}", stars, onlineClass.getId(),
+        logger.info("TeacherId:{}, Major Course query stars : {},onlineClassId:{},studentId:{}",teacher.getId(), stars, onlineClass.getId(),
                 studentId);
         modelMap.put("stars", stars);
         if (lesson.getSerialNumber().startsWith("A")) {
@@ -404,7 +411,7 @@ public class OnlineClassService {
         // 6.然后操作TeacherApllication
         if (ClassStatus.isBooked(onlineClass.getStatus())
                 || ClassStatus.isFinished(onlineClass.getStatus())) {
-            List<TeacherModule> teacherModules = teacherModuleDao.findByTeacherPe(pe.getId());
+            List<TeacherModule> teacherModules = teacherModuleDao.findByTeacherModuleName(pe.getId(),RoleClass.PE);
             // 判断当前用户是否拥有PE Supervisor权限
             if (CollectionUtils.isNotEmpty(teacherModules)) {
                 currTeacherApplication.setContractUrl("PE-Supervisor");

@@ -4,15 +4,24 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.community.config.PropertyConfigurer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Charsets;
+import com.google.common.collect.Maps;
 import com.vipkid.trpm.entity.Student;
 import com.vipkid.trpm.entity.User;
 
 public class MessageTools {
 
 
-    // private static Logger logger = LoggerFactory.getLogger(MessageTools.class);
+    private static Logger logger = LoggerFactory.getLogger(MessageTools.class);
     
     /**
      * 异步发送消息
@@ -20,8 +29,7 @@ public class MessageTools {
      * token 认证，参数openIds和from组合加密后的串<br>
      */
     public void sendFeedbackAsync(String openIds,Student student,User teacherUser,String serialNumber,long onlineClassId) {
-        /*
-        if(StringUtils.isNotBlank(openIds)){
+       /* if(StringUtils.isNotBlank(openIds)){
             Map<String,String> pram = Maps.newHashMap();
             pram.put("teacherName",teacherUser.getName());
             pram.put("studentName",student.getEnglishName());
@@ -35,11 +43,13 @@ public class MessageTools {
             requestParam.put("from", MessageConfig.ENCRYPT_KEY_SUFFIX);
             requestParam.put("token",DigestUtils.md5Hex(MessageConfig.ENCRYPT_KEY_PREFIX + openIds + MessageConfig.ENCRYPT_KEY_SUFFIX));
             logger.info("异步,预备参数:" + requestParam.toString());
-            MessageConfig.EXECUTOR_SERVICE.submit(new MessageThread(requestParam));
+            ExecutorService executorService = Executors.newSingleThreadExecutor();
+            executorService.submit(()->{
+                new MessageHandle().sendMessage(requestParam);
+            });
         }else{
             logger.info("没有获取到家长微信关注公众号信息，不能发送信息给家长微信");
-        }
-        */
+        }*/
     }
     
     /**
@@ -48,8 +58,7 @@ public class MessageTools {
      * token 认证，参数openIds和from组合加密后的串<br>
      */
     public void sendFeedbackSync(String openIds,Student student,User teacherUser,String serialNumber,long onlineClassId) {
-        /*
-        if(StringUtils.isNotBlank(openIds)){
+        /*if(StringUtils.isNotBlank(openIds)){
             Map<String,String> pram = Maps.newHashMap();
             pram.put("teacherName",teacherUser.getName());
             pram.put("studentName",student.getEnglishName());
@@ -64,15 +73,10 @@ public class MessageTools {
             requestParam.put("token",DigestUtils.md5Hex(MessageConfig.ENCRYPT_KEY_PREFIX + openIds + MessageConfig.ENCRYPT_KEY_SUFFIX));
             logger.info("同步,预备参数:" + requestParam.toString());
             MessageHandle mh = new MessageHandle();
-            try {
-                mh.sendMessage(requestParam);
-            } catch (InterruptedException e) {
-                logger.error("同步发送失败:"+e.getMessage()+";参数:"+requestParam, e);
-            }
+            mh.sendMessage(requestParam);
         }else{
             logger.info("没有获取到家长微信关注公众号信息，不能发送信息给家长微信");
-        }
-        */
+        }*/
     }
     
     /**

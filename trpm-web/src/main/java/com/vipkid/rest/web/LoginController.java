@@ -23,12 +23,14 @@ import com.vipkid.rest.config.RestfulConfig;
 import com.vipkid.rest.config.RestfulConfig.RoleClass;
 import com.vipkid.trpm.constant.ApplicationConstant;
 import com.vipkid.trpm.constant.ApplicationConstant.CookieKey;
+import com.vipkid.trpm.constant.ApplicationConstant.LoginType;
 import com.vipkid.trpm.constant.ApplicationConstant.TeacherLifeCycle;
 import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.entity.User;
 import com.vipkid.trpm.security.SHA256PasswordEncoder;
 import com.vipkid.trpm.service.passport.PassportService;
 import com.vipkid.trpm.service.rest.LoginService;
+import com.vipkid.trpm.service.rest.TeacherPageLoginService;
 import com.vipkid.trpm.util.AES;
 import com.vipkid.trpm.util.IPUtils;
 
@@ -40,9 +42,13 @@ public class LoginController {
 
     @Autowired
     private PassportService passportService;
+    
+    @Autowired
+    private TeacherPageLoginService teacherPageLoginService;
 
     @Autowired
     private LoginService loginService;
+    
 
     /**
      * 1.用户名，密码认证 2.将用户token写入redis 3.将用户token写入Cookie,由客户端调用
@@ -102,25 +108,25 @@ public class LoginController {
         SHA256PasswordEncoder encoder = new SHA256PasswordEncoder();
         String mypwd = encoder.encode(password);
         if (!mypwd.equals(user.getPassword())) {
-            logger.warn(" Username or password  error!" + email + ";password=" + password);
+            logger.warn(" Username or password  error!" + email);
             result.put("info", ApplicationConstant.AjaxCode.ERROR_CODE);
             passportService.addLoginFailedCount(email);
             return result;
         }
 
-        logger.info("password Dtype start!");
+        logger.info("user Dtype start!");
         // 非教师在此登陆
         if (!(UserEnum.Dtype.TEACHER.toString()).equals(user.getDtype())) {
-            logger.warn(" Username type error!" + email + ";password=" + password);
+            logger.warn(" Username type error!" + email);
             result.put("info", ApplicationConstant.AjaxCode.TYPE_CODE);
             passportService.addLoginFailedCount(email);
             return result;
         }
 
-        logger.info("teacher null start!");
+        logger.info("teacher null start,{}",user.getId());
         Teacher teacher = this.passportService.findTeacherById(user.getId());
         if (teacher == null) {
-            logger.warn(" Username teacher error!" + email + ";password=" + password);
+            logger.info(" Username teacher error!" + email);
             result.put("info", ApplicationConstant.AjaxCode.ERROR_CODE);
             passportService.addLoginFailedCount(email);
             return result;
@@ -129,7 +135,7 @@ public class LoginController {
         logger.info("登陆  FAIL start !");
         // 检查老师状态是否FAIL
         if (TeacherEnum.LifeCycle.FAIL.toString().equals(teacher.getLifeCycle())) {
-            logger.warn(" Username fail error!" + email + ";password=" + password);
+            logger.warn(" Username fail error!" + email);
             result.put("info", ApplicationConstant.AjaxCode.QUIT_CODE);
             passportService.addLoginFailedCount(email);
             return result;
@@ -138,7 +144,7 @@ public class LoginController {
         logger.info("登陆  QUIT start !");
         // 检查老师状态是否QUIT
         if (TeacherEnum.LifeCycle.QUIT.toString().equals(teacher.getLifeCycle())) {
-            logger.warn(" Username quit error!" + email + ";password=" + password);
+            logger.warn(" Username quit error!" + email);
             result.put("info", ApplicationConstant.AjaxCode.QUIT_CODE);
             passportService.addLoginFailedCount(email);
             return result;
@@ -150,7 +156,7 @@ public class LoginController {
             // 新注册的需要激活
             if (TeacherEnum.LifeCycle.SIGNUP.toString().equals(teacher.getLifeCycle())) {
                 if(PropertyConfigurer.booleanValue("signup.send.mail.switch")){
-                    logger.warn(" Username 没有激活 error!" + email + ";password=" + password);
+                    logger.warn(" Username 没有激活 error!" + email);
                     result.put("info", ApplicationConstant.AjaxCode.LOCKED_CODE);
                     passportService.addLoginFailedCount(email);
                     return result;
@@ -159,7 +165,7 @@ public class LoginController {
                 }
             } else {
                 // 否则告诉被锁定
-                logger.warn(" Username locked error!" + email + ";password=" + password);
+                logger.warn(" Username locked error!" + email);
                 result.put("info", ApplicationConstant.AjaxCode.QUIT_CODE);
                 passportService.addLoginFailedCount(email);
                 return result;
@@ -397,20 +403,27 @@ public class LoginController {
             return result;
         }
         
-        logger.info("check teacher is PE:" + teacher.getId());
-        String role = loginService.isPe(teacher.getId()) ? RoleClass.PE + ",":"";
-        
-        logger.info("check teacher is PES:" + teacher.getId());
-        role += loginService.isPes(teacher.getId()) ? RoleClass.PES + ",":"";
-        
-        logger.info("check result is role:{},teacherId:{}",role,teacher.getId());
-        result.put("role",role);
-        
+        Map<String,Object> roles = Maps.newHashMap();
+        roles.put(RoleClass.PE, false);
+        roles.put(RoleClass.PES, false);
+        roles.put(RoleClass.TE, false);
+        roles.put(RoleClass.TES, false);
+        //权限判断 start
+        logger.info("check module start teacherId:{}",teacher.getId());
+        loginService.findByTeacherModule(teacher.getId(),roles);
+        logger.info("check end module:{},teacher:{}",roles,teacher.getId());
+        roles.put(RoleClass.PE,loginService.isPe(teacher.getId()));
+        logger.info("check pe end module:{},teacher:{}",roles,teacher.getId());
+        result.put("role",roles);
+        //权限判断 end
         String headsrc = teacher.getAvatar();
         if(StringUtils.isNotBlank(headsrc)){
             headsrc = PropertyConfigurer.stringValue("oss.url_preffix") + (headsrc.startsWith("/") ? headsrc:"/"+headsrc);
         }
+        result.put("evaluation",teacherPageLoginService.isType(user.getId(),LoginType.EVALUATION));
+        result.put("evaluationClick",teacherPageLoginService.isType(user.getId(),LoginType.EVALUATION_CLICK));
         result.put("teacherId",teacher.getId());
+        result.put("evaluationBio",teacher.getEvaluationBio());
         result.put("headsrc", headsrc);
         result.put("showName", user.getName());
         result.put("status", RestfulConfig.HttpStatus.STATUS_200);

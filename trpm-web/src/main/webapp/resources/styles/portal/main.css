@@ -2424,7 +2424,7 @@ ul, li {
 }
 
 /* admin-quiz tips */
-.admin-quiz-tips{
+.help-tips{
     width: 100%;
     height: 100%;
     position: fixed;
@@ -2433,7 +2433,7 @@ ul, li {
     z-index: 999;
     display: none;
   }
-.admin-quiz-tips .notice-c{
+.help-tips .notice-c{
 	width: 520px;
 	background: #FFFFFF;
 	margin: 0 auto;
@@ -2442,13 +2442,13 @@ ul, li {
 	border-radius: 5px;
 	padding: 26px 50px;
 }
-.admin-quiz-tips .title{
+.help-tips .title{
 	color: #333333;
 	font-size: 18px;
 	text-align: center;
 	margin-bottom: 16px;
 }
-.admin-quiz-tips .close-btn{
+.help-tips .close-btn{
 	position: absolute;
 	width: 30px;
 	height: 30px;
@@ -2459,14 +2459,14 @@ ul, li {
 	color: #9B9B9B;
 	cursor:pointer;
 }
-.admin-quiz-tips .close-btn:before{
+.help-tips .close-btn:before{
 	content: "\00D7";
 }
-.admin-quiz-tips .content{
+.help-tips .content{
 	font-size: 14px;
 	line-height: 18px;
 }
-.admin-quiz-tips .sure-btn{
+.help-tips .sure-btn{
 	width: 100px;
 	text-align: center;
 	background: #FF6600;
@@ -2479,19 +2479,31 @@ ul, li {
 	margin: 30px auto 0;
 	cursor:pointer;
 }
-.admin-quiz-tips .sure-btn:HOVER{
+.help-tips .sure-btn:HOVER{
 	background:#b83c11;
 }
-.admin-quiz-tips .btn-area{
+.help-tips .btn-area{
 	width: 240px;
 	margin: 30px auto 0;
 	clearfix();
 }
-.admin-quiz-tips .light{
+.help-tips .light{
     width: 4000px;
     height: 4000px;
     position: absolute;
     top: -1903px;
     border-radius: 50%;
     box-shadow: inset 0 0 50px 1930px rgba(0,0,0,.5);
+}
+.redPoint{
+	background: #ff6600;
+    text-align: right;
+    padding-right: 8px;
+    margin-top: -20px;
+    z-index: 65535;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    float: right;
+    position: relative;
 }

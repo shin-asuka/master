@@ -15,8 +15,19 @@ import com.vipkid.http.vo.StudentUnitAssessment;
 import com.vipkid.trpm.constant.ApplicationConstant.CourseType;
 import com.vipkid.trpm.constant.ApplicationConstant.LoginType;
 import com.vipkid.trpm.constant.ApplicationConstant.UaReportStatus;
-import com.vipkid.trpm.dao.*;
-import com.vipkid.trpm.entity.*;
+import com.vipkid.trpm.dao.AssessmentReportDao;
+import com.vipkid.trpm.dao.CourseDao;
+import com.vipkid.trpm.dao.DemoReportDao;
+import com.vipkid.trpm.dao.LessonDao;
+import com.vipkid.trpm.dao.OnlineClassDao;
+import com.vipkid.trpm.dao.TeacherApplicationDao;
+import com.vipkid.trpm.dao.TeacherCommentDao;
+import com.vipkid.trpm.dao.TeacherPageLoginDao;
+import com.vipkid.trpm.entity.AssessmentReport;
+import com.vipkid.trpm.entity.Course;
+import com.vipkid.trpm.entity.DemoReport;
+import com.vipkid.trpm.entity.Teacher;
+import com.vipkid.trpm.entity.TeacherComment;
 import com.vipkid.trpm.util.DateUtils;
 
 /**
@@ -74,6 +85,9 @@ public class ClassroomsService {
 
     @Autowired
 	private AssessmentHttpService assessmentHttpService;
+    
+    @Autowired
+    private TeacherPageLoginDao teacherPageLoginDao;
     
     /**
      * 获取Major classrooms的分页总行数
@@ -434,20 +448,6 @@ public class ClassroomsService {
         }
 
         return modelMap;
-    }
-
-    /**
-     * 判断是否显示ClassroomsLayer
-     *
-     * @author John
-     *
-     * @param teacher
-     * @return boolean
-     */
-    public boolean showClassroomsLayer(Teacher teacher) {
-        TeacherPageLogin pageLogin =
-                teacherLoginTypeDao.findByUserIdAndLoginType(teacher.getId(), LoginType.CLASSROOMS);
-        return (null == pageLogin) ? true : false;
     }
 
 }

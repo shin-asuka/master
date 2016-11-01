@@ -1,8 +1,5 @@
 package com.vipkid.trpm.weixin;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
 import org.community.config.PropertyConfigurer;
 
 
@@ -26,11 +23,6 @@ public class MessageConfig {
      * 请求失败10秒后自动重新请求
      */
     public static final int MILLISECOND = 10000;
-
-    /**
-     * 线程池
-     */
-    public static ExecutorService EXECUTOR_SERVICE = Executors.newCachedThreadPool();
     
     /**
      * 从参数 classroom.url.request.api 中 获取appserver请求路径
