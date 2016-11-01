@@ -108,7 +108,7 @@ public class LoginController {
         SHA256PasswordEncoder encoder = new SHA256PasswordEncoder();
         String mypwd = encoder.encode(password);
         if (!mypwd.equals(user.getPassword())) {
-            logger.warn(" Username or password  error!" + email + ";password=" + password);
+            logger.warn(" Username or password  error!" + email);
             result.put("info", ApplicationConstant.AjaxCode.ERROR_CODE);
             passportService.addLoginFailedCount(email);
             return result;
@@ -117,7 +117,7 @@ public class LoginController {
         logger.info("user Dtype start!");
         // 非教师在此登陆
         if (!(UserEnum.Dtype.TEACHER.toString()).equals(user.getDtype())) {
-            logger.warn(" Username type error!" + email + ";password=" + password);
+            logger.warn(" Username type error!" + email);
             result.put("info", ApplicationConstant.AjaxCode.TYPE_CODE);
             passportService.addLoginFailedCount(email);
             return result;
@@ -126,7 +126,7 @@ public class LoginController {
         logger.info("teacher null start,{}",user.getId());
         Teacher teacher = this.passportService.findTeacherById(user.getId());
         if (teacher == null) {
-            logger.info(" Username teacher error!" + email + ";password=" + password);
+            logger.info(" Username teacher error!" + email);
             result.put("info", ApplicationConstant.AjaxCode.ERROR_CODE);
             passportService.addLoginFailedCount(email);
             return result;
@@ -135,7 +135,7 @@ public class LoginController {
         logger.info("登陆  FAIL start !");
         // 检查老师状态是否FAIL
         if (TeacherEnum.LifeCycle.FAIL.toString().equals(teacher.getLifeCycle())) {
-            logger.warn(" Username fail error!" + email + ";password=" + password);
+            logger.warn(" Username fail error!" + email);
             result.put("info", ApplicationConstant.AjaxCode.QUIT_CODE);
             passportService.addLoginFailedCount(email);
             return result;
@@ -144,7 +144,7 @@ public class LoginController {
         logger.info("登陆  QUIT start !");
         // 检查老师状态是否QUIT
         if (TeacherEnum.LifeCycle.QUIT.toString().equals(teacher.getLifeCycle())) {
-            logger.warn(" Username quit error!" + email + ";password=" + password);
+            logger.warn(" Username quit error!" + email);
             result.put("info", ApplicationConstant.AjaxCode.QUIT_CODE);
             passportService.addLoginFailedCount(email);
             return result;
@@ -156,7 +156,7 @@ public class LoginController {
             // 新注册的需要激活
             if (TeacherEnum.LifeCycle.SIGNUP.toString().equals(teacher.getLifeCycle())) {
                 if(PropertyConfigurer.booleanValue("signup.send.mail.switch")){
-                    logger.warn(" Username 没有激活 error!" + email + ";password=" + password);
+                    logger.warn(" Username 没有激活 error!" + email);
                     result.put("info", ApplicationConstant.AjaxCode.LOCKED_CODE);
                     passportService.addLoginFailedCount(email);
                     return result;
@@ -165,7 +165,7 @@ public class LoginController {
                 }
             } else {
                 // 否则告诉被锁定
-                logger.warn(" Username locked error!" + email + ";password=" + password);
+                logger.warn(" Username locked error!" + email);
                 result.put("info", ApplicationConstant.AjaxCode.QUIT_CODE);
                 passportService.addLoginFailedCount(email);
                 return result;
