@@ -34,6 +34,7 @@ import com.google.common.collect.Lists;
 import com.vipkid.enums.TeacherEnum;
 import com.vipkid.file.model.FileVo;
 import com.vipkid.file.service.AwsFileService;
+import com.vipkid.file.utils.ActionHelp;
 import com.vipkid.file.utils.DateUtils;
 import com.vipkid.file.utils.Encodes;
 import com.vipkid.file.utils.FileUtils;
@@ -164,9 +165,9 @@ public class TaxpayerRestController {
 		return teacherTaxpayerForm;
 	}
 	
-	@ResponseBody
+	//@ResponseBody
 	@RequestMapping("/uploadFile")
-	public FileVo taxpayerUpload(@RequestParam("file") MultipartFile file,Long teacherId,HttpServletRequest request, HttpServletResponse response, Model model){
+	public void taxpayerUpload(@RequestParam("file") MultipartFile file,Long teacherId,HttpServletRequest request, HttpServletResponse response, Model model){
 		logger.info("upload taxpayer file = {}",file);
 		
 		User user = UserUtils.getUser(request);
@@ -174,7 +175,7 @@ public class TaxpayerRestController {
 		if(user.getId() == 0){
 			logger.info("用户身份认证失败!");
 			response.setStatus(HttpStatus.UNAUTHORIZED.value());
-			return null;
+			return ;
 		}
 		
 		FileVo fileVo = null;
@@ -199,8 +200,8 @@ public class TaxpayerRestController {
 				fileVo.setUrl(url);
 			}
 		}
-		
-		return fileVo;
+		ActionHelp.WriteStrToOut(response, fileVo); //解决中文乱码问题
+		//return fileVo;
 	}
 	
 	@RequestMapping(value = { "/batchDown" })
