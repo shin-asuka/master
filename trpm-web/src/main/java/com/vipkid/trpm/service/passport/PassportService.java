@@ -27,6 +27,7 @@ import com.vipkid.trpm.dao.TeacherDao;
 import com.vipkid.trpm.dao.UserDao;
 import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.entity.User;
+import com.vipkid.trpm.entity.app.AppEnum.RecruitmentChannel;
 import com.vipkid.trpm.proxy.RedisProxy;
 import com.vipkid.trpm.security.SHA256PasswordEncoder;
 import com.vipkid.trpm.util.AES;
@@ -363,17 +364,17 @@ public class PassportService {
 
             if (user != null) {
                 if (UserEnum.Dtype.PARTNER.toString().equals(user.getDtype())) {
-                    teacher.setRecruitmentChannel(UserEnum.Dtype.PARTNER.toString());
+                    teacher.setRecruitmentChannel(RecruitmentChannel.PARTNER.toString());
                     teacher.setPartnerId(user.getId());
                 } else if (UserEnum.Dtype.TEACHER.toString().equals(user.getDtype())) {
                 	Teacher t = teacherDao.findById(userId);
                 	if(t!=null){
+                	    teacher.setRecruitmentChannel(RecruitmentChannel.TEACHER.toString());
                 		teacher.setReferee(user.getId() + "," + t.getRealName());//Referee存老师的realName
-                		teacher.setRecruitmentChannel(UserEnum.Dtype.TEACHER.toString());
-                	}
-                	else{
+                	}else{
+                	    teacher.setRecruitmentChannel(RecruitmentChannel.OTHER.toString());
+                	    teacher.setReferee(user.getId() + ",");
                 		logger.warn("找不到id为"+userId+"老师");
-                		teacher.setReferee(user.getId() + ",");
                 	}
                 }
             }

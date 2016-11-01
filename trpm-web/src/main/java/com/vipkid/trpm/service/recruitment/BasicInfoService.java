@@ -169,7 +169,12 @@ public class BasicInfoService {
             application.setAuditorId(RestfulConfig.SYSTEM_USER_ID);
             application.setResult(TeacherApplicationDao.Result.FAIL.toString());
             //需要写入Fail原因管理端需要展示
-            application.setFailedReason(JsonTools.getJson(processor.getFailReasons()));
+            List<String> list = processor.getFailReasons();
+            Map<String,Object> maps = Maps.newHashMap();
+            if(CollectionUtils.isNotEmpty(list)){
+                list.stream().parallel().forEach(reasons -> {maps.put("text", reasons);});
+            }
+            application.setFailedReason(JsonTools.getJson(maps));
             result.put("result", TeacherApplicationDao.Result.FAIL);
         }else{
             //自动审核通过Basic则自动变LifeCycle为Interview
