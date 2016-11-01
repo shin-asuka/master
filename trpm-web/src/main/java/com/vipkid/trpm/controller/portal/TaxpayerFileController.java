@@ -13,15 +13,14 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.google.common.base.Preconditions;
 import com.vipkid.enums.TeacherEnum;
 import com.vipkid.file.model.FileVo;
 import com.vipkid.file.service.AwsFileService;
+import com.vipkid.file.utils.ActionHelp;
 import com.vipkid.file.utils.StringUtils;
-import com.vipkid.http.utils.JsonUtils;
 import com.vipkid.rest.exception.ServiceException;
 import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.entity.TeacherTaxpayerForm;
@@ -76,9 +75,9 @@ public class TaxpayerFileController extends AbstractPortalController{
 		return view("personal/personal_taxpayer");
 	}
 	
-	@ResponseBody
+	//@ResponseBody
 	@RequestMapping("/upload")
-	public String taxpayerUpload(Integer formType,Long id, @RequestParam("file") MultipartFile file,HttpServletRequest request, HttpServletResponse response, Model model){
+	public void taxpayerUpload(Integer formType,Long id, @RequestParam("file") MultipartFile file,HttpServletRequest request, HttpServletResponse response, Model model){
 		
 		Teacher teacher = indexService.getTeacher(request);
 		Long teacherId = teacher.getId();
@@ -112,7 +111,7 @@ public class TaxpayerFileController extends AbstractPortalController{
 				fileVo.setUrl(url);
 			}
 		}
-		return JsonUtils.toJSONString(fileVo);
+		ActionHelp.WriteStrToOut(response, fileVo); //解决中文乱码问题
 	}
 	
 	
