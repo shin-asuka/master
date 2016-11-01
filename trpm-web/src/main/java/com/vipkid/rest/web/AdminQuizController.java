@@ -41,6 +41,7 @@ public class AdminQuizController {
     @Autowired
     private AdminQuizService adminQuizService;
     
+    @Autowired 
     private TeacherPageLoginService teacherPageLoginService;
     
     @RequestMapping(value = "/getLastQuiz", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
