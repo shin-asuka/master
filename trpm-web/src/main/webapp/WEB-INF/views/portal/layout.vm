@@ -38,17 +38,17 @@
         <li class="$!{activeClassrooms}"><a href="#springUrl('/classrooms.shtml')">Classrooms</a></li>
         ##if($isTes == 'false')
         	<li><a href="#springUrl('/evaluation')">Evaluations</a>
-        		#if($isEvalClick)<div class="redPoint">●</div>#end
+        		#if($isEvalClick)<div class="redPoint"></div>#end
         	</li>
         ##end
         #if($isTe && !$isTes)
         	<li><a href="#springUrl('/evaluation/te')">TE</a></li>
 		#end 
 		#if($isTes)
-			<li><a href="#springUrl('/evaluation/tes')">TE Supervisor</a></li>		
+			<li><a href="#springUrl('/evaluation/tes')">TES</a></li>		
 		#end
         #if($isPes)
-        	<li class="$!{activeClassroomsPe}"><a href="#springUrl('/pesupervisor.shtml')">PE Supervisor</a></li>
+        	<li class="$!{activeClassroomsPe}"><a href="#springUrl('/pesupervisor.shtml')">PES</a></li>
 		#end        
         ##<li class="$!{activeComments}"><a href="#springUrl('/comments.shtml')">Comments</a></li>
         <li class="$!{activePersonalInfo}"><a href="#springUrl('/personalInfo.shtml')">Personal Info</a></li>
