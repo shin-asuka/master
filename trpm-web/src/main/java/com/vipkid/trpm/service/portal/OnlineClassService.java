@@ -1,6 +1,8 @@
 package com.vipkid.trpm.service.portal;
 
 import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.util.*;
 
@@ -12,6 +14,7 @@ import com.vipkid.task.utils.UADateUtils;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.time.DateFormatUtils;
 import org.community.config.PropertyConfigurer;
 import org.community.http.client.HttpClientProxy;
 import org.slf4j.Logger;
@@ -729,12 +732,24 @@ public class OnlineClassService {
 
     public HashMap<String,Object> getUnfinishUA(HashMap<String,Object> onlineClassVoCond,Integer pageNo,Integer pageSize){
 
-        Date startDate = new Date(new Date().getTime() - 7*86400*1000);
-        Date endDate = new Date();
-
-        String startTime = UADateUtils.format(startDate, UADateUtils.defaultFormat) ;
-        String endTime = UADateUtils.format(endDate, UADateUtils.defaultFormat) ;
-
+        String from = onlineClassVoCond.get("from").toString();
+        String to = onlineClassVoCond.get("to").toString();
+        Date startTime = null;
+        try {
+            startTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(from);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        Date endTime1 = org.apache.commons.lang3.time.DateUtils.addDays(startTime,7);
+        Date endTime2 = org.apache.commons.lang3.time.DateUtils.addHours(org.apache.commons.lang3.time.DateUtils.addMonths(new Date(), -30), -24);
+        Date endTime = null;
+        try {
+            endTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(to);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        Long minEnd = Math.min(Math.min(endTime1.getTime(),endTime2.getTime()),endTime.getTime());
+        endTime = new Date(minEnd);
         logger.info("查询出6个小时以前已经AS_SCHEDULED的课程  startTime = {},endTime = {}",startTime,endTime);
 
         onlineClassVoCond.put("from",startTime);
