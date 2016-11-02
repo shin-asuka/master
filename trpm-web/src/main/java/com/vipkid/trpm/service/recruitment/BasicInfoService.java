@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.google.api.client.util.Lists;
 import com.google.api.client.util.Maps;
 import com.vipkid.email.EmailUtils;
 import com.vipkid.enums.TeacherEnum;
@@ -171,11 +172,15 @@ public class BasicInfoService {
             application.setResult(TeacherApplicationDao.Result.FAIL.toString());
             //需要写入Fail原因管理端需要展示
             List<String> list = processor.getFailReasons();
-            Map<String,Object> maps = Maps.newHashMap();
+            List<Map<String,Object>> _list = Lists.newArrayList();
             if(CollectionUtils.isNotEmpty(list)){
-                list.stream().parallel().forEach(reasons -> {maps.put("text", reasons);});
+                list.stream().parallel().forEach(reasons -> {
+                    Map<String,Object> maps = Maps.newHashMap();
+                    maps.put("text", reasons);
+                    _list.add(maps);
+                });
             }
-            application.setFailedReason(JsonTools.getJson(maps));
+            application.setFailedReason(JsonTools.getJson(_list));
             result.put("result", TeacherApplicationDao.Result.FAIL);
         }else{
             //自动审核通过Basic则自动变LifeCycle为Interview
