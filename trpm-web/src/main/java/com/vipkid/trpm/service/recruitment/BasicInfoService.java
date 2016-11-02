@@ -149,7 +149,7 @@ public class BasicInfoService {
         if(teacherAddress == null || teacherAddress.getId() <= 0){
             result.put("status", false);
             result.put("info", "You have already submitted data!");
-            logger.error("老师:{},地址Id:{},保存有问题.",teacher.getId(),teacherAddress);
+            logger.error("老师:{},地址信息:{},保存有问题.",teacher.getId(),JsonTools.getJson(teacherAddress));
             return result;
         }
         //3.更新Teacher
