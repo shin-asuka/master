@@ -27,21 +27,9 @@ public class AutoFailProcessor {
             "BACHELORS"
     );
 
-    private static final List<String> BAD_LOCATIONS = Lists.newArrayList(
-            "Africa",
-            "Middle-East Asia",
-            "Russia",
-            "Mongolia",
-            "Myanmar",
-            "Nepal",
-            "Oceania",
-            "South America",
-            "Cambodia"
-    );
-
     private static final List<String> PREFERRED_NATIONALITY = Lists.newArrayList(
-            "American",
-            "Canadian");
+            "United States",
+            "Canada");
 
     public AutoFailProcessor(Teacher teacher, List<TeachingExperience> experiences, TeacherAddress teacherAddress) {
         this.teacher = teacher;
