@@ -640,7 +640,8 @@
 			l.serial_number as lessonSn,
 			c.type as course,
 			oc.finish_type as finishType,
-			s.english_name as studentEnglishName
+			s.english_name as studentEnglishName,
+			us.name as studentName
 	    from
 	    	online_class oc
 	    JOIN lesson l ON l.id = oc.lesson_id
@@ -650,6 +651,7 @@
 		JOIN teacher t ON t.id = oc.teacher_id
 		JOIN online_class_student ocs ON ocs.online_class_id = oc.id
 		JOIN student s ON s.id = ocs.student_id
+		JOIN user us ON us.id = s.id
 		where 1=1
 			and c.type = 'MAJOR'
 			and l.is_unit_assessment = 1
@@ -659,7 +661,7 @@
 			and l.serial_number = #{lessonSn}
 		</if>
 		<if test="studentEnglishName != null and studentEnglishName != ''">
-			and l.english_name like '%${studentEnglishName}%'
+			and (l.english_name like '%${studentEnglishName}%' or us.name like '%${studentEnglishName}%')
 		</if>
 		<if test="teacherName != null and teacherName != ''">
 			and t.real_name like '%${teacherName}%'
