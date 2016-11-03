@@ -736,12 +736,16 @@ public class OnlineClassService {
         String to = onlineClassVoCond.get("to").toString();
         Date startTime = null;
         try {
-            startTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(from);
+            if(StringUtils.isNotEmpty(from)) {
+                startTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(from);
+            }else{
+                startTime = new Date();
+            }
         } catch (ParseException e) {
             e.printStackTrace();
         }
         Date endTime1 = org.apache.commons.lang3.time.DateUtils.addDays(startTime,7);
-        Date endTime2 = org.apache.commons.lang3.time.DateUtils.addHours(org.apache.commons.lang3.time.DateUtils.addMonths(new Date(), -30), -24);
+        Date endTime2 = org.apache.commons.lang3.time.DateUtils.addHours(org.apache.commons.lang3.time.DateUtils.addMinutes(new Date(), -30), -24);
         Date endTime = null;
         try {
             endTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(to);
@@ -752,8 +756,8 @@ public class OnlineClassService {
         endTime = new Date(minEnd);
         logger.info("查询出6个小时以前已经AS_SCHEDULED的课程  startTime = {},endTime = {}",startTime,endTime);
 
-        onlineClassVoCond.put("from",startTime);
-        onlineClassVoCond.put("to",endTime);
+        onlineClassVoCond.put("from",DateFormatUtils.format(startTime,"yyyy-MM-dd HH:mm:ss"));
+        onlineClassVoCond.put("to",DateFormatUtils.format(endTime,"yyyy-MM-dd HH:mm:ss"));
         List<Map<String, Object>> list = onlineClassDao.findMajorCourseListByCond(onlineClassVoCond);
         logger.info("Get unSubmit OnlineClass list = {}", JsonUtils.toJSONString(list));
 

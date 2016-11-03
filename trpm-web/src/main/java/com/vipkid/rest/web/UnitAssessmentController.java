@@ -8,6 +8,7 @@ import com.vipkid.rest.config.RestfulConfig;
 import com.vipkid.task.utils.UADateUtils;
 import com.vipkid.trpm.entity.Student;
 import com.vipkid.trpm.service.portal.OnlineClassService;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.community.tools.JsonTools;
@@ -16,6 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -36,8 +38,16 @@ public class UnitAssessmentController {
         HashMap<String,Object> cond = new HashMap<String,Object>();
         cond.put("lessonSn",onlineClassVoCond.getLessonSn());
         cond.put("course",onlineClassVoCond.getCourse());
-        cond.put("from",onlineClassVoCond.getFrom());
-        cond.put("to",onlineClassVoCond.getTo());
+        if(StringUtils.isNotEmpty(onlineClassVoCond.getFrom())) {
+            cond.put("from", onlineClassVoCond.getFrom());
+        }else{
+            cond.put("from", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+        }
+        if(StringUtils.isNotEmpty(onlineClassVoCond.getFrom())) {
+            cond.put("to",onlineClassVoCond.getTo());
+        }else{
+            cond.put("to", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+        }
         cond.put("teacherName",onlineClassVoCond.getTeacherName());
         cond.put("studentName",onlineClassVoCond.getStudentName());
 
