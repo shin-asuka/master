@@ -1,5 +1,6 @@
 package com.vipkid.rest.web;
 
+import com.amazonaws.util.NumberUtils;
 import com.google.api.client.util.Maps;
 import com.vipkid.http.service.AssessmentHttpService;
 import com.vipkid.http.vo.OnlineClassVo;
@@ -38,16 +39,8 @@ public class UnitAssessmentController {
         HashMap<String,Object> cond = new HashMap<String,Object>();
         cond.put("lessonSn",onlineClassVoCond.getLessonSn());
         cond.put("course",onlineClassVoCond.getCourse());
-        if(StringUtils.isNotEmpty(onlineClassVoCond.getFrom())) {
-            cond.put("from", onlineClassVoCond.getFrom());
-        }else{
-            cond.put("from", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
-        }
-        if(StringUtils.isNotEmpty(onlineClassVoCond.getFrom())) {
-            cond.put("to",onlineClassVoCond.getTo());
-        }else{
-            cond.put("to", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
-        }
+        cond.put("from", org.apache.commons.lang3.math.NumberUtils.toLong(onlineClassVoCond.getFrom()));
+        cond.put("to", org.apache.commons.lang3.math.NumberUtils.toLong(onlineClassVoCond.getTo()));
         cond.put("teacherName",onlineClassVoCond.getTeacherName());
         cond.put("studentName",onlineClassVoCond.getStudentName());
 

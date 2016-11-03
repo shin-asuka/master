@@ -732,32 +732,15 @@ public class OnlineClassService {
 
     public HashMap<String,Object> getUnfinishUA(HashMap<String,Object> onlineClassVoCond,Integer pageNo,Integer pageSize){
 
-        String from = onlineClassVoCond.get("from").toString();
-        String to = onlineClassVoCond.get("to").toString();
-        Date startTime = null;
-        try {
-            if(StringUtils.isNotEmpty(from)) {
-                startTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(from);
-            }else{
-                startTime = new Date();
-            }
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        Date endTime1 = org.apache.commons.lang3.time.DateUtils.addDays(startTime,7);
-        Date endTime2 = org.apache.commons.lang3.time.DateUtils.addHours(org.apache.commons.lang3.time.DateUtils.addMinutes(new Date(), -30), -24);
-        Date endTime = null;
-        try {
-            endTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(to);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        Long minEnd = Math.min(Math.min(endTime1.getTime(),endTime2.getTime()),endTime.getTime());
-        endTime = new Date(minEnd);
-        logger.info("查询出6个小时以前已经AS_SCHEDULED的课程  startTime = {},endTime = {}",startTime,endTime);
+        Long from = (Long)onlineClassVoCond.get("from");
+        Long to = (Long)onlineClassVoCond.get("to");
+        Long endTime1 = from + 7*86400*1000;
+        Long endTime2 = new Date().getTime() - new Double(24.5 * 3600 * 1000).longValue();
+        Long endTime = to;
+        Long minEnd = Math.min(Math.min(endTime1,endTime2),endTime);
 
-        onlineClassVoCond.put("from",DateFormatUtils.format(startTime,"yyyy-MM-dd HH:mm:ss"));
-        onlineClassVoCond.put("to",DateFormatUtils.format(endTime,"yyyy-MM-dd HH:mm:ss"));
+        onlineClassVoCond.put("from",DateFormatUtils.format(new Date(from),"yyyy-MM-dd HH:mm:ss"));
+        onlineClassVoCond.put("to",DateFormatUtils.format(new Date(minEnd),"yyyy-MM-dd HH:mm:ss"));
         List<Map<String, Object>> list = onlineClassDao.findMajorCourseListByCond(onlineClassVoCond);
         logger.info("Get unSubmit OnlineClass list = {}", JsonUtils.toJSONString(list));
 
