@@ -401,11 +401,11 @@
 		<include refid="teacherApplicationColumns" />
 		FROM teacher_application
 		WHERE
-		<foreach collection="auditTimes" open="(" close=")" separator=" OR " item="auditTime">
+		status = #{status}
+		AND result = #{result}
+		<foreach collection="auditTimes" open="AND (" close=")" separator=" OR " item="auditTime">
 			(audit_date_time BETWEEN #{auditTime.startTime} AND #{auditTime.endTime})
 		</foreach>
-		AND status = #{status}
-		AND result = #{result}
 	</select>
 
 	<select id="findTAByTeacherIdsStatusNeResult" resultMap="teacherApplicationResultMap">
