@@ -46,4 +46,8 @@ public class EmailConfig {
      */
     public static final int REPLY_COUNT = 10;
 
+    /* 邮件服务发送设置 */
+    public static final String APP_KEY = "TP";
+    public static final String APP_SECRECT = "3ngdww5l995t";
+
 }

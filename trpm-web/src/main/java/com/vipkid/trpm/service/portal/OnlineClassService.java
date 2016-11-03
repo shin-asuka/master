@@ -532,7 +532,8 @@ public class OnlineClassService {
             Map<String, String> requestHeader = new HashMap<String, String>();
             requestHeader.put("Authorization", t + " " + DigestUtils.md5Hex(t));
 
-            String content = HttpClientProxy.post(ApplicationConstant.HELP_URL, requestParams,
+            // Change HTTP POST to Get 2016-11-03
+            String content = HttpClientProxy.get(ApplicationConstant.HELP_URL, requestParams,
                     requestHeader);
             logger.info("### Request help return content: {}", content);
             if (!StringUtils.isEmpty(content)) {
