@@ -129,7 +129,12 @@ public class BasicInfoService {
      * @date 2016年10月17日
      */
     public Map<String,Object> submitInfo(TeacherDto bean,User user,String token){ 
-        Map<String,Object> result = Maps.newHashMap();        
+        Map<String,Object> result = Maps.newHashMap();
+        
+        bean.setFirstName(upperStr(bean.getFirstName()));
+        bean.setMiddleName(upperStr(bean.getMiddleName()));
+        bean.setLastName(upperStr(bean.getLastName()));
+        
         Teacher teacher = this.teacherDao.findById(user.getId());
         List<TeacherApplication> applicationList = teacherApplicationDao.findApplictionForStatus(user.getId(),AppEnum.LifeCycle.BASIC_INFO.toString());
         if(CollectionUtils.isNotEmpty(applicationList)){
@@ -324,5 +329,12 @@ public class BasicInfoService {
             logger.info("Pass Teacher:{},Name:{}",teacher.getId(),teacher.getRealName());
         }
         return processor;
+    }
+    
+    public static String upperStr(String str){
+        if(StringUtils.isNotBlank(str)){
+            return str.replaceFirst(str.substring(0, 1),str.substring(0, 1).toUpperCase()) ;
+        }
+        return str;
     }
 }
