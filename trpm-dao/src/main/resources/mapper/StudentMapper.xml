@@ -260,31 +260,16 @@
     <!-- 根据学生ID和日期查询订单信息列表 -->
     <select id="findOrderListByStudentIdAndPaidDateTime" resultType="java.util.HashMap">
         select 
-        	a.id,a.student_id,a.real_total_price ,b.paid_date_time 
+        	a.id,a.student_id,a.real_total_price ,b.confirm_date_time
         from pack_order a 
 		join pay_order b on b.pack_order_id=a.id 
 		where 1= 1 
 			and b.status='PAY_CONFIRMED' 
 			and a.real_total_price is not null and a.real_total_price>500
 			and a.student_id=#{studentId}
-			and b.paid_date_time like concat(#{paidDateTime},'%')
+			and b.confirm_date_time like concat(#{paidConfirmDateTime},'%')
     </select>
-    
-    <select id="findOldOrderListByStudentIdAndPaidDateTime" resultType="java.util.HashMap">
-        select 
-        	c.id, c.student_id ,c.paid_date_time,c.real_total_price 
-        from (
-			select a.id , a.student_id ,sum(b.price) as real_total_price , a.paid_date_time FROM `order` a
-			LEFT JOIN order_item b on b.order_id = a.id
-			where 1=1 and a.status = 'PAY_CONFIRMED'
-			and b.price is not null and b.price >0
-			and a.paid_date_time like concat(#{paidDateTime},'%')
-			and a.student_id=#{studentId}
-			GROUP BY a.id
-		) c
-		where c.real_total_price > 500
-    </select>
-    
+
     <select id="findStudentsByIds" resultType="java.util.HashMap">
     	SELECT 
 		  student.id AS id,

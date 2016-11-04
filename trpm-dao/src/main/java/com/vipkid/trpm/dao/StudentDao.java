@@ -37,10 +37,10 @@ public class StudentDao extends MapperDaoTemplate<Student> {
 		return listEntity("findStudentByOnlineClassId", paramsMap);
 	}
 
-	public List<Map<String, Object>> findOrderListByStudentIdAndPaidDateTime(Long studentId, String paidDateTime) {
+	public List<Map<String, Object>> findOrderListByStudentIdAndPaidDateTime(Long studentId, String paidConfirmDateTime) {
 		Map<String, Object> paramsMap = new HashMap<String, Object>();
 		paramsMap.put("studentId", studentId);
-		paramsMap.put("paidDateTime", paidDateTime);
+		paramsMap.put("paidConfirmDateTime", paidConfirmDateTime);
 
 		return listEntity("findOrderListByStudentIdAndPaidDateTime", paramsMap);
 	}
@@ -49,14 +49,6 @@ public class StudentDao extends MapperDaoTemplate<Student> {
 		Map<String, Object> paramsMap = Maps.newHashMap();
 		paramsMap.put("studentId", studentId);
 		return listEntity("findWechatBystudentId", paramsMap);
-	}
-
-	public List<Map<String, Object>> findOldOrderListByStudentIdAndPaidDateTime(Long studentId, String paidDateTime) {
-		Map<String, Object> paramsMap = new HashMap<String, Object>();
-		paramsMap.put("studentId", studentId);
-		paramsMap.put("paidDateTime", paidDateTime);
-
-		return listEntity("findOldOrderListByStudentIdAndPaidDateTime", paramsMap);
 	}
 
 	public List<Map<String, Object>> findStudentsBy(String[] ids) {
