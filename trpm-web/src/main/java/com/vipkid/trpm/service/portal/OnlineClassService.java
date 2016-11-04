@@ -768,8 +768,8 @@ public class OnlineClassService {
         Integer limit = pageSize;
         List<OnlineClassVo> ocPage = new ArrayList<OnlineClassVo>();
         if(onlineClassVoList.size() > 0) {
-            if (limit > onlineClassVoList.size()) {
-                limit = onlineClassVoList.size();
+            if (offset + limit > onlineClassVoList.size()) {
+                limit = onlineClassVoList.size() % pageSize;
             }
             ocPage =  onlineClassVoList.subList(offset,offset + limit);
         }else{
