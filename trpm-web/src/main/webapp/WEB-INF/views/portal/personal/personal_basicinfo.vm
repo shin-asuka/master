@@ -73,7 +73,7 @@
     </div>
     <div class="row form-group">
       <div align="right" class="col-sm-3 col-md-3">
-        <div class='title-lable'>Your current location</div>
+        <div class='title-lable'>Your current address</div>
       </div>
       <div class="col-sm-9 col-md-9" style="line-height:30px;">
       	#if($currentAddress)
