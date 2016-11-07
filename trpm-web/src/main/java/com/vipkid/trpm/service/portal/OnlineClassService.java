@@ -748,7 +748,7 @@ public class OnlineClassService {
 
         OnlineClassVo onlineClassVo = new OnlineClassVo();
         ArrayList<OnlineClassVo> onlineClassVoList = new ArrayList<OnlineClassVo>();
-        Map<Long,OnlineClassVo> ocMap = com.google.api.client.util.Maps.newHashMap();
+        Map<Long,OnlineClassVo> ocMap = Maps.newHashMap();
         if(CollectionUtils.isNotEmpty(onlineClassVos)){
             for (OnlineClassVo oc : onlineClassVos) { //数据格式转换
                 Long id = oc.getId();
@@ -757,13 +757,17 @@ public class OnlineClassService {
             }
 
             //调用homework服务查询为完成UA报告的课程
-            OnlineClassVo onlineClassVoUnSubmit = assessmentHttpService.findUnSubmitonlineClassVo(onlineClassVo );
+            OnlineClassVo onlineClassVoUnSubmit = assessmentHttpService.findUnSubmitonlineClassVo(onlineClassVo);
             logger.info("Result unSubmit OnlineClass  = {}", JsonUtils.toJSONString(onlineClassVoUnSubmit));
+            for(Long id : onlineClassVoUnSubmit.getIdList()){
+                OnlineClassVo curOnlineClassVo = ocMap.get(id);
+                if(onlineClassVoUnSubmit.getRefillinUaIds().contains(id)){
+                    curOnlineClassVo.setHasAudited(1);
+                }
+                onlineClassVoList.add(curOnlineClassVo);
+            }
+        }
 
-        }
-        for(Long id : onlineClassVo.getIdList()){
-            onlineClassVoList.add(ocMap.get(id));
-        }
         Integer offset = (pageNo-1) * pageSize;
         Integer limit = pageSize;
         List<OnlineClassVo> ocPage = new ArrayList<OnlineClassVo>();

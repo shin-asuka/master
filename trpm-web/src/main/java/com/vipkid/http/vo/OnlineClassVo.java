@@ -32,8 +32,10 @@ public class OnlineClassVo implements Serializable{
 	private String to;
 	private String extra;
 	private Integer total;
-	List<Long> idList = Lists.newArrayList();
+	private Integer hasAudited;
 	
+	List<Long> idList = Lists.newArrayList();
+	List<Integer> refillinUaIds = Lists.newArrayList();
 	
 	public OnlineClassVo() {
 	}
@@ -47,6 +49,14 @@ public class OnlineClassVo implements Serializable{
 
 	public void setIdList(List<Long> idList) {
 		this.idList = idList;
+	}
+
+	public List<Integer> getRefillinUaIds() {
+		return refillinUaIds;
+	}
+
+	public void setRefillinUaIds(List<Integer> refillinUaIds) {
+		this.refillinUaIds = refillinUaIds;
 	}
 
 	public Long getId() {
@@ -208,5 +218,13 @@ public class OnlineClassVo implements Serializable{
 
 	public void setTotal(Integer total) {
 		this.total = total;
+	}
+
+	public Integer getHasAudited() {
+		return hasAudited;
+	}
+
+	public void setHasAudited(Integer hasAudited) {
+		this.hasAudited = hasAudited;
 	}
 }
