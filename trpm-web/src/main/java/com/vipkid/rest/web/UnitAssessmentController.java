@@ -71,6 +71,7 @@ public class UnitAssessmentController {
         }
         result.put("status", HttpStatus.OK.value());
         result.put("info",onlineClassVos);
+        result.put("now",new Date().getTime());
         result.put("total",total);
         return JsonTools.getJson(result);
     }
