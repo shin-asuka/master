@@ -41,7 +41,7 @@ public class NationalityTransfer {
         String strNation = strNationality;
         try {
             String strResult = NATION_MAP_TO_DB.get(strNationality);
-            return null != strResult ? strResult : strNation;
+            return strResult == null ? strNation:strResult;
         } catch (Exception e) {
             
         }
@@ -52,7 +52,7 @@ public class NationalityTransfer {
         String strNation = strNationality;
         try {
             String strResult = NATION_MAP_FROM_DB.get(strNationality);
-            return null != strResult ? strResult : strNation;
+            return strResult == null ? strNation : strResult;
         } catch (Exception e) {
             
         }
