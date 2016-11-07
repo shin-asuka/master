@@ -81,8 +81,12 @@ public class TeachingExperienceService {
         TeachingExperience teachingExperience = teachingExperienceDao.findById(id);
         //仅仅保存状态可以删除
         if(teachingExperience.getStatus() == TeachingExperienceDao.Status.SAVE.val()){
-            if(teachingExperienceDao.delete(teachingExperience) > 0){
-                return id;
+            if(teachingExperience.getTeacherId() == user.getId()){
+                if(teachingExperienceDao.delete(teachingExperience) > 0){
+                    return id;
+                }
+            }else{
+                logger.warn("不能删除非自己的教育经验teacherId:{},id:{}",user.getId(),id);    
             }
         }else{
             logger.warn("已经提交的数据不能删除id:{}",id);
