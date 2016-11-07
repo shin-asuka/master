@@ -38,7 +38,7 @@ public class NationalityTransfer {
     };
     
     public static String nationalityToDB(String strNationality) {
-        String strNation = "USA";
+        String strNation = strNationality;
         try {
             String strResult = NATION_MAP_TO_DB.get(strNationality);
             return null != strResult ? strResult : strNation;
@@ -49,7 +49,7 @@ public class NationalityTransfer {
     }
     
     public static String nationalityFromDB(String strNationality) {
-        String strNation = "American";
+        String strNation = strNationality;
         try {
             String strResult = NATION_MAP_FROM_DB.get(strNationality);
             return null != strResult ? strResult : strNation;
