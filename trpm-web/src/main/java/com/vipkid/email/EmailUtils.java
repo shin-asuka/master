@@ -23,19 +23,23 @@ public class EmailUtils {
 
 	public static void sendEmail4Recruitment(String email, String name, String titleTemplate, String contentTemplate) {
 		try {
+			email="lilibo@vipkid.com.cn";
 			Map<String, String> paramsMap = Maps.newHashMap();
+			if (name != null)
 			paramsMap.put("teacherName", name);
-			logger.info("send Email to teacher name= {},email = {} , contentTemplete = {}, titleTemplete = {}",name,email,contentTemplate,titleTemplate);
+			logger.info("send Email to teacher name = {}, email = {}, contentTemplate = {}, titleTemplate = {}",name,email,contentTemplate,titleTemplate);
 			Map<String, String> emailMap = new TempleteUtils().readTemplete(contentTemplate, paramsMap, titleTemplate);
 			new EmailEngine().addMailPool(email, emailMap, EmailConfig.EmailFormEnum.TEACHVIP);
-			logger.info("send Email success! teacher = {},email = {},contentTemplete = {}, titleTemplete = {}",name,email,contentTemplate,titleTemplate);
+			logger.info("send Email success! teacher name = {}, email = {}, contentTemplate = {}, titleTemplate = {}",name,email,contentTemplate,titleTemplate);
 		} catch (Exception e) {
 			logger.error("Send mail error: {}", e);
 		}
 	}
 
 	public static void sendEmail4BasicInfoPass(Teacher teacher) {
+		teacher.setEmail("lilibo@vipkid.com.cn");
 		Map<String, String> paramsMap = Maps.newHashMap();
+		if (teacher.getRealName() != null)
 		paramsMap.put("teacherName", teacher.getRealName());
 		Map<String, String> emailMap = new TempleteUtils().readTemplete("BasicInfoPass.html", paramsMap, "BasicInfoPassTitle.html");
 		new EmailEngine().addMailPool(teacher.getEmail(), emailMap, EmailConfig.EmailFormEnum.TEACHVIP);
