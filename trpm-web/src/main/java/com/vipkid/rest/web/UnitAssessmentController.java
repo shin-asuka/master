@@ -64,6 +64,7 @@ public class UnitAssessmentController {
         for(OnlineClassVo oc :onlineClassVos){
             for(StudentUnitAssessment stuUa : stuUaList){
                 if(oc.getId().equals(stuUa.getOnlineClassId().longValue())){
+                    oc.setSubmitDateTime(stuUa.getSubmitDateTime());
                     oc.setAuditorId(stuUa.getAuditorId().intValue());
                     oc.setAuditorName(stuUa.getAuditorName());
                 }
