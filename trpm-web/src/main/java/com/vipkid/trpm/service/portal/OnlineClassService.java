@@ -1,5 +1,6 @@
 package com.vipkid.trpm.service.portal;
 
+import java.net.URLDecoder;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -8,6 +9,8 @@ import java.util.*;
 
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Lists;
+import com.sun.tools.internal.ws.wsdl.document.http.HTTPUrlEncoded;
+import com.vipkid.file.utils.Encodes;
 import com.vipkid.http.utils.JsonUtils;
 import com.vipkid.http.vo.OnlineClassVo;
 import com.vipkid.task.utils.UADateUtils;
@@ -806,6 +809,7 @@ public class OnlineClassService {
                 onlineClassVo.setCourse(jsonObject.getString("course"));
                 onlineClassVo.setFinishType(jsonObject.getString("finishType"));
                 onlineClassVo.setStudentEnglishName(jsonObject.getString("studentEnglishName"));
+                onlineClassVo.setStudentName(jsonObject.getString("studentName"));
                 onlineClassVo.setTimezone(jsonObject.getString("timezone"));
                 onlineClassVo.setAuditorId(jsonObject.getInteger("auditorId"));
                 onlineClassVo.setAuditorName(jsonObject.getString("auditorName"));
