@@ -805,6 +805,7 @@ public class OnlineClassService {
                 onlineClassVo.setTeacherName(jsonObject.getString("teacherName"));
                 onlineClassVo.setTeacherEmail(jsonObject.getString("teacherEmail"));
                 onlineClassVo.setScheduledDateTime(jsonObject.getDate("scheduledDateTime"));
+                onlineClassVo.setSubmitDateTime(jsonObject.getDate("submitDateTime"));
                 onlineClassVo.setLessonSn(jsonObject.getString("lessonSn"));
                 String course = jsonObject.getString("course");
                 String lessonSn = jsonObject.getString("lessonSn");

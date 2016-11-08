@@ -71,7 +71,7 @@ public class AssessmentHttpService extends HttpBaseService {
     	
     	OnlineClassVo onlineClassVo = new OnlineClassVo();
     	onlineClassVo.getIdList().add(onlineClassId);
-		List<StudentUnitAssessment> list = findOnlineClassVo(onlineClassVo);
+		List<StudentUnitAssessment> list = findOnlineClassVo(onlineClassVo );
 		if(CollectionUtils.isNotEmpty(list)){
 			studentUnitAssessment = list.get(0);
 		}

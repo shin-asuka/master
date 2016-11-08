@@ -19,6 +19,7 @@ public class OnlineClassVo implements Serializable{
 	private String teacherName;
 	private String teacherEmail;
 	private Date scheduledDateTime;
+	private Date submitDateTime;
 	private String lessonSn;
 	private String course;
 	private Integer courseId;
@@ -37,7 +38,7 @@ public class OnlineClassVo implements Serializable{
 	
 	List<Long> idList = Lists.newArrayList();
 	List<Integer> refillinUaIds = Lists.newArrayList();
-	
+
 	public OnlineClassVo() {
 	}
 
@@ -53,6 +54,9 @@ public class OnlineClassVo implements Serializable{
 	}
 
 	public List<Integer> getRefillinUaIds() {
+		if(refillinUaIds == null){
+			refillinUaIds = Lists.newArrayList();
+		}
 		return refillinUaIds;
 	}
 
@@ -235,5 +239,13 @@ public class OnlineClassVo implements Serializable{
 
 	public void setAuditTime(Date auditTime) {
 		this.auditTime = auditTime;
+	}
+
+	public Date getSubmitDateTime() {
+		return submitDateTime;
+	}
+
+	public void setSubmitDateTime(Date submitDateTime) {
+		this.submitDateTime = submitDateTime;
 	}
 }
