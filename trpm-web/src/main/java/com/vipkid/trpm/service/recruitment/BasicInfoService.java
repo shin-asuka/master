@@ -243,7 +243,7 @@ public class BasicInfoService {
         if(StringUtils.equalsIgnoreCase(TeacherApplicationEnum.Status.BASIC_INFO.toString(),teacherApplication.getStatus())){
             if(StringUtils.equalsIgnoreCase(TeacherApplicationEnum.Result.FAIL.toString(),teacherApplication.getResult())){
                 Date auditDate = teacherApplication.getAuditDateTime(); 
-                if(DateUtils.count11hrlf(auditDate.getTime())){
+                if(!DateUtils.count11hrlf(auditDate.getTime())){
                     resultMap.put("result",TeacherApplicationDao.AuditStatus.ToAudit.toString());
                     return resultMap;
                 }
