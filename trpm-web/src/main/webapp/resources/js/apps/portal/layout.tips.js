@@ -79,6 +79,7 @@ define(["jquery-bootstrap"], function() {
 	};
 	
 	var showEvaluationFun = function(){
+		/*
 		$("div#evaluation-tips").show();
 		$("body").addClass("modal-open");
 		
@@ -108,6 +109,7 @@ define(["jquery-bootstrap"], function() {
 				}
 			});
 		});
+		*/
 	};
 	
 	return {

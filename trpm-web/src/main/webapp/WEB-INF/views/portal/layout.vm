@@ -36,11 +36,11 @@
 		<li class="$!{material}"><a href="#springUrl('/training/material')">Training Center</a></li>
         <li class="$!{activeSchedule}"><a href="#springUrl('/schedule.shtml')">Schedule</a></li>
         <li class="$!{activeClassrooms}"><a href="#springUrl('/classrooms.shtml')">Classrooms</a></li>
-        ##if($isTes == 'false')
+        #**
         	<li><a href="#springUrl('/evaluations')">Evaluations</a>
         		#if($isEvalClick)<div class="redPoint"></div>#end
         	</li>
-        ##end
+        *#
         #if($isTe && !$isTes)
         	<li><a href="#springUrl('/te')">TE</a></li>
 		#end 
