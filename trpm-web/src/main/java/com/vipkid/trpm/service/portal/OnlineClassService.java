@@ -806,7 +806,12 @@ public class OnlineClassService {
                 onlineClassVo.setTeacherEmail(jsonObject.getString("teacherEmail"));
                 onlineClassVo.setScheduledDateTime(jsonObject.getDate("scheduledDateTime"));
                 onlineClassVo.setLessonSn(jsonObject.getString("lessonSn"));
-                onlineClassVo.setCourse(jsonObject.getString("course"));
+                String course = jsonObject.getString("course");
+                String lessonSn = jsonObject.getString("lessonSn");
+                if(lessonSn.startsWith("MC")){
+                    course = course + " 2016";
+                }
+                onlineClassVo.setCourse(course);
                 onlineClassVo.setFinishType(jsonObject.getString("finishType"));
                 onlineClassVo.setStudentEnglishName(jsonObject.getString("studentEnglishName"));
                 onlineClassVo.setStudentName(jsonObject.getString("studentName"));

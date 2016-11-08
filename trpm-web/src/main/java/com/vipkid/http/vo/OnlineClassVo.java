@@ -28,6 +28,7 @@ public class OnlineClassVo implements Serializable{
 	private String timezone; //时区
 	private Integer auditorId;
 	private String auditorName;
+	private Date auditTime;
 	private String from;
 	private String to;
 	private String extra;
@@ -226,5 +227,13 @@ public class OnlineClassVo implements Serializable{
 
 	public void setHasAudited(Integer hasAudited) {
 		this.hasAudited = hasAudited;
+	}
+
+	public Date getAuditTime() {
+		return auditTime;
+	}
+
+	public void setAuditTime(Date auditTime) {
+		this.auditTime = auditTime;
 	}
 }
