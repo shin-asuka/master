@@ -660,7 +660,7 @@
 			and oc.status in( 'FINISHED','BOOKED')
 			and (oc.finish_type = 'AS_SCHEDULED' or oc.finish_type is null )
 		<if test="lessonSn != null and lessonSn != ''">
-			and l.serial_number = #{lessonSn}
+			and l.serial_number like '%${lessonSn}%'
 		</if>
 		<if test="studentName != null and studentName != ''">
 			and (s.english_name like '%${studentName}%' or us.name like '%${studentName}%')

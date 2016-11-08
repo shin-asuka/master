@@ -738,7 +738,7 @@ public class OnlineClassService {
         Long from = (Long)onlineClassVoCond.get("from");
         Long to = (Long)onlineClassVoCond.get("to");
         Long endTime1 = from + 7*86400*1000;
-        Long endTime2 = new Date().getTime() - new Double(24.5 * 3600 * 1000).longValue();
+        Long endTime2 = new Date().getTime() - new Double(48 * 3600 * 1000).longValue();
         Long endTime = to;
         Long minEnd = Math.min(Math.min(endTime1,endTime2),endTime);
 
