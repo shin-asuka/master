@@ -41,7 +41,6 @@ public class EvaluationController {
     @RequestMapping(value = "/getTags", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
     public Map<String,Object> getTags(HttpServletRequest request, HttpServletResponse response){
         Map<String,Object> result = Maps.newHashMap();
-        result.put("status", false);
         try{
             String token = request.getHeader(CookieKey.AUTOKEN);
             Preconditions.checkArgument(StringUtils.isNotBlank(token));
@@ -49,14 +48,20 @@ public class EvaluationController {
             if(user == null){
                 response.setStatus(RestfulConfig.HttpStatus.STATUS_404);
                 logger.warn("用户不存在，token过期");
+                result.put("info","用户不存在，token过期");
+                result.put("status", false);
                 return result;
             }
             result = evaluationService.findTags();
             return result;
         } catch (IllegalArgumentException e) {
+            result.put("info",e.getMessage());
+            result.put("status", false);
             logger.error("内部参数转化异常:"+e.getMessage());
             response.setStatus(RestfulConfig.HttpStatus.STATUS_400);
         } catch (Exception e) {
+            result.put("info",e.getMessage());
+            result.put("status", false);
             logger.error(e.getMessage(), e);
             response.setStatus(RestfulConfig.HttpStatus.STATUS_500);
         }        
@@ -67,7 +72,6 @@ public class EvaluationController {
     @RequestMapping(value = "/getTeacherBio", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
     public Map<String,Object> getTeacherBio(HttpServletRequest request, HttpServletResponse response, long teacherId){
         Map<String,Object> result = Maps.newHashMap();
-        result.put("status", false);
         try{
             String token = request.getHeader(CookieKey.AUTOKEN);
             Preconditions.checkArgument(StringUtils.isNotBlank(token));
@@ -75,14 +79,20 @@ public class EvaluationController {
             if(user == null){
                 response.setStatus(RestfulConfig.HttpStatus.STATUS_404);
                 logger.warn("用户不存在，token过期");
+                result.put("info","用户不存在，token过期");
+                result.put("status", false);
                 return result;
             }
             result = evaluationService.findTeacherBio(teacherId);
             return result;
         } catch (IllegalArgumentException e) {
+            result.put("info",e.getMessage());
+            result.put("status", false);
             logger.error("内部参数转化异常:"+e.getMessage());
             response.setStatus(RestfulConfig.HttpStatus.STATUS_400);
         } catch (Exception e) {
+            result.put("info",e.getMessage());
+            result.put("status", false);
             logger.error(e.getMessage(), e);
             response.setStatus(RestfulConfig.HttpStatus.STATUS_500);
         }        
@@ -92,7 +102,6 @@ public class EvaluationController {
     @RequestMapping(value = "/saveClick", method = RequestMethod.POST, produces = RestfulConfig.JSON_UTF_8)
     public Map<String,Object> saveClick(HttpServletRequest request, HttpServletResponse response){
         Map<String,Object> result = Maps.newHashMap();
-        result.put("result",false);
         try{
             String token = request.getHeader(CookieKey.AUTOKEN);
             Preconditions.checkArgument(StringUtils.isNotBlank(token));
@@ -100,14 +109,20 @@ public class EvaluationController {
             if(user == null){
                 response.setStatus(RestfulConfig.HttpStatus.STATUS_404);
                 logger.warn("用户不存在，token过期");
+                result.put("info","用户不存在，token过期");
+                result.put("status", false);
                 return result;
             }
             result.put("result",this.teacherPageLoginService.saveTeacherPageLogin(user.getId(),LoginType.EVALUATION_CLICK));
             return result;
         } catch (IllegalArgumentException e) {
+            result.put("info",e.getMessage());
+            result.put("status", false);
             logger.error("内部参数转化异常:"+e.getMessage());
             response.setStatus(RestfulConfig.HttpStatus.STATUS_400);
         } catch (Exception e) {
+            result.put("info",e.getMessage());
+            result.put("status", false);
             logger.error(e.getMessage(), e);
             response.setStatus(RestfulConfig.HttpStatus.STATUS_500);
         }
