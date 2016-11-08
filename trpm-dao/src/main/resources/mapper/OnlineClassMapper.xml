@@ -641,7 +641,8 @@
 			c.type as course,
 			oc.finish_type as finishType,
 			s.english_name as studentEnglishName,
-			us.name as studentName
+			us.name as studentName,
+			us2.name as teacherName
 	    from
 	    	online_class oc
 	    JOIN lesson l ON l.id = oc.lesson_id
@@ -652,6 +653,7 @@
 		JOIN online_class_student ocs ON ocs.online_class_id = oc.id
 		JOIN student s ON s.id = ocs.student_id
 		JOIN user us ON us.id = s.id
+		JOIN user us2 ON us2.id = t.id
 		where 1=1
 			and c.type = 'MAJOR'
 			and l.is_unit_assessment = 1
