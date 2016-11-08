@@ -209,8 +209,8 @@
 			<if test="teacherId!=0">,#{teacherId}</if>
 			<if test="operatorId!=0">,#{operatorId}</if>
 			<if test="trialLevelResult!=null">,#{trialLevelResult}</if>
-			<if test="firstDateTime!=null">,firstDateTime</if>
-			<if test="lastDateTime!=null">,lastDateTime</if>
+			<if test="firstDateTime!=null">,#{firstDateTime}</if>
+			<if test="lastDateTime!=null">,#{lastDateTime}</if>
 		</trim>
 		)
 	</insert>
