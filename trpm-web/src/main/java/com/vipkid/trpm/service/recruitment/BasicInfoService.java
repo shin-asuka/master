@@ -189,7 +189,7 @@ public class BasicInfoService {
                 });
             }
             application.setFailedReason(JsonTools.getJson(_list));
-            result.put("result", TeacherApplicationDao.Result.FAIL);
+            result.put("result",TeacherApplicationDao.AuditStatus.ToAudit.toString());
         }else{
             //自动审核通过Basic则自动变LifeCycle为Interview
             teacher.setLifeCycle(AppEnum.LifeCycle.INTERVIEW.toString());
