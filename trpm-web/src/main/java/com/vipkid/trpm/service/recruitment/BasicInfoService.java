@@ -146,8 +146,15 @@ public class BasicInfoService {
             logger.error("已经提交基本信息的老师{}，重复提交被拦截:提交状态{},审核结果{},用户状态:{}",teacher.getId(),applicationList.get(0).getStatus(),applicationList.get(0).getResult(),teacher.getLifeCycle());
             return result;
         }
+        //3.更新Teacher
+        teacher = this.initTeacher(teacher, bean);     
+        String name = teacher.getRealName();
+        //  如果名字里面含有空格，则取到空格后的第一个字符作为User的Name
+        if(name.indexOf(" ") > -1){
+            name = name.substring(0,name.indexOf(" ")+2);
+        }
+        user.setName(name);
         user.setGender(bean.getGender());
-        user.setName(bean.getFirstName() + " " + bean.getLastName().charAt(0));
         user.setLastEditorId(user.getId());
         user.setLastEditDateTime(new Timestamp(System.currentTimeMillis()));
         this.userDao.update(user);
@@ -160,8 +167,7 @@ public class BasicInfoService {
             logger.error("老师:{},地址信息:{},保存有问题.",teacher.getId(),JsonTools.getJson(teacherAddress));
             return result;
         }
-        //3.更新Teacher
-        teacher = this.initTeacher(teacher, bean);        
+   
         //4.新增 TeacherApplication
         TeacherApplication application = new TeacherApplication();
         application = teacherApplicationDao.initApplicationData(application);
@@ -284,10 +290,12 @@ public class BasicInfoService {
     
     private Teacher initTeacher(Teacher teacher,TeacherDto bean){
         teacher.setExtraClassSalary(0);
+        
         String realName = bean.getFirstName() + " " + bean.getLastName();
         if(StringUtils.isNotBlank(bean.getMiddleName())){
             realName = bean.getFirstName() +" " + bean.getMiddleName() + " " + bean.getLastName();
         }
+        
         teacher.setFirstName(bean.getFirstName());
         teacher.setMiddleName(bean.getMiddleName());
         teacher.setLastName(bean.getLastName());
