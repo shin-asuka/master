@@ -39,8 +39,20 @@ public class UnitAssessmentController {
         HashMap<String,Object> cond = new HashMap<String,Object>();
         cond.put("lessonSn",onlineClassVoCond.getLessonSn());
         cond.put("course",onlineClassVoCond.getCourse());
-        cond.put("from", org.apache.commons.lang3.math.NumberUtils.toLong(onlineClassVoCond.getFrom()));
-        cond.put("to", org.apache.commons.lang3.math.NumberUtils.toLong(onlineClassVoCond.getTo()));
+        Long from = 0l;
+        Long to = 0l;
+        if(onlineClassVoCond.getFrom()!=null){
+            from = org.apache.commons.lang3.math.NumberUtils.toLong(onlineClassVoCond.getFrom());
+        }else{
+            from = new Date().getTime() - 7*86400*1000;
+        }
+        if(onlineClassVoCond.getTo()!=null){
+            to = org.apache.commons.lang3.math.NumberUtils.toLong(onlineClassVoCond.getTo());
+        }else{
+            to = new Date().getTime();
+        }
+        cond.put("from",from);
+        cond.put("to",to);
         cond.put("teacherName",onlineClassVoCond.getTeacherName());
         cond.put("studentName",onlineClassVoCond.getStudentName());
 
