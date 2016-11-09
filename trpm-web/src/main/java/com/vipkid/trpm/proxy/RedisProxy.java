@@ -1,9 +1,9 @@
 package com.vipkid.trpm.proxy;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
+import com.vipkid.trpm.proxy.redis.RedisException;
 import org.community.config.PropertyConfigurer;
 import org.community.tools.JsonTools;
 import org.slf4j.Logger;
@@ -12,15 +12,13 @@ import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
-import com.vipkid.trpm.proxy.redis.RedisException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Component
 public class RedisProxy implements InitializingBean, DisposableBean {
@@ -218,6 +216,22 @@ public class RedisProxy implements InitializingBean, DisposableBean {
             jedis.close();
         }
         return ret;
+    }
+
+    public boolean lock(String key, int expireSeconds) {
+        Jedis jedis = jedisPool.getResource();
+        try {
+            long result = jedis.setnx(key, "true");
+            if (0 != expireSeconds) {
+                jedis.expire(key, expireSeconds);
+            }
+            return (1 == result) ? true : false;
+        } catch (Exception e) {
+            logger.error("RedisCache setnx: [" + key + "] failed", e);
+            return false;
+        } finally {
+            jedis.close();
+        }
     }
 
     /**
