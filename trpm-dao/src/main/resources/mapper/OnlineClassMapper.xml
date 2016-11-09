@@ -665,7 +665,7 @@
 			and (s.english_name like '%${studentName}%' or us.name like '%${studentName}%')
 		</if>
 		<if test="teacherName != null and teacherName != ''">
-			and t.real_name like '%${teacherName}%'
+			and us2.name like '%${teacherName}%'
 		</if>
 		<if test="from != null and from != '' or to != null and to != ''">
 			AND oc.scheduled_date_time BETWEEN #{from} AND #{to}
