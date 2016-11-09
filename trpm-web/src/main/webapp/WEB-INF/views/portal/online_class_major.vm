@@ -200,7 +200,10 @@
 				}
 			},
 			modifyIframeHeight : function (){
-				debugger;
+				console.log(new Date($(this).attr("time")).getTime() > new Date().getTime() - 2*86400000);
+                console.log(new Date($(this).attr("time")).getTime() );
+                console.log(new Date().getTime() - 2*86400000);
+
                 if(new Date($(this).attr("time")).getTime() > new Date().getTime() - 2*86400000) {
                     var bodyHeight = $('body').outerHeight() - 35;
                     this.iframe.show();
@@ -211,7 +214,6 @@
 			},
 
 			showIframe : function (){
-				debugger;
                 if(new Date($(this).attr("time")> new Date().getTime() - 2*86400000) {
                     this.iframe.show();
                     $('.js-span').addClass('down')
