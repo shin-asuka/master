@@ -37,11 +37,10 @@ public class EmailUtils {
 	}
 
 	public static void sendEmail4BasicInfoPass(Teacher teacher) {
-		teacher.setEmail("lilibo@vipkid.com.cn");
 		Map<String, String> paramsMap = Maps.newHashMap();
 		if (teacher.getRealName() != null)
 		paramsMap.put("teacherName", teacher.getRealName());
 		Map<String, String> emailMap = new TempleteUtils().readTemplete("BasicInfoPass.html", paramsMap, "BasicInfoPassTitle.html");
-		new EmailEngine().addMailPool(teacher.getEmail(), emailMap, EmailConfig.EmailFormEnum.TEACHVIP);
+		new EmailEngine().addMailPool("lilibo@vipkid.com.cn", emailMap, EmailConfig.EmailFormEnum.TEACHVIP);
 	}
 }
