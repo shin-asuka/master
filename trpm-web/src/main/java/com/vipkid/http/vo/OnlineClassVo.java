@@ -241,6 +241,7 @@ public class OnlineClassVo implements Serializable{
 		this.auditTime = auditTime;
 	}
 
+	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", locale = "zh" , timezone="GMT+8")
 	public Date getSubmitDateTime() {
 		return submitDateTime;
 	}
