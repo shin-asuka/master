@@ -37,9 +37,6 @@ import com.vipkid.trpm.service.portal.ReportService;
 
 @Controller
 public class PayrollController extends AbstractPortalController {
-
-	
-
 	@Autowired
 	private IndexService indexService;
 
@@ -48,15 +45,6 @@ public class PayrollController extends AbstractPortalController {
 	@Resource
 	private NeoClient neoClient;
 
-	@Autowired
-    private ReportService reportService;
-	
-	@Autowired
-	private PayrollMessageService payrollMessageService;
-	
-	@Autowired
-	private StudentService studentService;
-	 
 	@RequestMapping("/payroll")
 	public String payroll(HttpServletRequest request, HttpServletResponse response, Model model) {
 		int offsetOfMonth = ServletRequestUtils.getIntParameter(request, "offsetOfMonth", 0);
@@ -267,48 +255,4 @@ public class PayrollController extends AbstractPortalController {
 		}
 		return jsonView();
 	}
-//
-//	 @ResponseBody
-//	 @RequestMapping("/doComment")
-//	 public String doComment(HttpServletRequest request){
-//		TeacherComment teacherComment = new TeacherComment();
-//		teacherComment.setId(51003L);
-//		teacherComment.setFeedbackTranslation("test comment");
-//		reportService.submitTeacherComment( teacherComment , getUser(request));
-//		return "success";
-//	 }
-//	 
-//	 @ResponseBody
-//	 @RequestMapping("/doua")
-//	 public String doua(HttpServletRequest request){
-//		Long onlineClassId = 1526947L;
-//		payrollMessageService.sendFinishOnlineClassMessage(onlineClassId, OperatorType.ADD_UNIT_ASSESSMENT);
-//		
-//		return "success";
-//	 }
-//	 
-//	 @ResponseBody
-//	 @RequestMapping("/doTrial")
-//	 public String doTrial(HttpServletRequest request){
-//		Long onlineClassId = 2577268L;
-//		onlineClassId = 2577503L; //ua
-//		payrollMessageService.sendFinishOnlineClassMessage(onlineClassId, OperatorType.ADD_UNIT_ASSESSMENT);
-//		
-//		return "success";
-//	 }
-//	 
-//	 @ResponseBody
-//	 @RequestMapping("/isPaid")
-//	 public String isPaid(HttpServletRequest request){
-//		Long studentId = 329L;
-//		studentId = 11525191L;
-////		studentId = 1599758L;
-//		String paidDateTime = "2015-03";
-//		paidDateTime = "2016-02";
-////		paidDateTime = "2016-05";
-//		
-//		Boolean flag = studentService.findIsPaidByStudentIdAndPayDate(studentId, paidDateTime);
-//		System.out.println("isPaid : " +flag);
-//		return "res : "+flag;
-//	 }
 }

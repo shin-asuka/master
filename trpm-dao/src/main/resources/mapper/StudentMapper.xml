@@ -250,9 +250,10 @@
     <!-- 根据课程id查询学生 -->
 	<select id="findStudentByOnlineClassId" resultMap="studentResultMap">
         SELECT
-        	<include refid="studentColumns" />
+        	<include refid="studentColumns" />,user.name as name
         FROM student
-        	JOIN online_class_student  ON online_class_student.student_id = student.id 
+        	JOIN online_class_student  ON online_class_student.student_id = student.id
+            JOIN user ON (student.id = user.id)
         where 
        		online_class_student.online_class_id = #{onlineClassId}
     </select>
