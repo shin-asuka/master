@@ -324,6 +324,7 @@ public class BasicInfoService {
                 }
             }else if(RecruitmentChannel.OTHER.toString().equals(bean.getRecruitmentChannel())){
                 teacher.setRecruitmentChannel(RecruitmentChannel.PARTNER.toString());
+                //历史遗留问题将Other归属为PARTNER，其ID为：1060753
                 teacher.setPartnerId(1060753);
                 teacher.setOtherChannel(bean.getChannel());
             }else{
