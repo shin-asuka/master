@@ -30,6 +30,7 @@ public class StudentUnitAssessment implements Serializable{
 	private String auditorName;		// 审核人名称
     private Date createDateTime;//UA创建时间
     private Date submitDateTime;//UA提交时间
+	private Integer isRefillin;
 
     public StudentUnitAssessment() {
 		
@@ -178,4 +179,12 @@ public class StudentUnitAssessment implements Serializable{
     public void setSubmitDateTime(Date submitDateTime) {
         this.submitDateTime = submitDateTime;
     }
+
+	public Integer getIsRefillin() {
+		return isRefillin;
+	}
+
+	public void setIsRefillin(Integer isRefillin) {
+		this.isRefillin = isRefillin;
+	}
 }
