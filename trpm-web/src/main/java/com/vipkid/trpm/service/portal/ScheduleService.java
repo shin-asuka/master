@@ -1,27 +1,13 @@
 package com.vipkid.trpm.service.portal;
 
-import static com.vipkid.trpm.util.DateUtils.DAY_OF_WEEK;
-import static com.vipkid.trpm.util.DateUtils.FMT_HMA_US;
-import static com.vipkid.trpm.util.DateUtils.FMT_HMS;
-import static com.vipkid.trpm.util.DateUtils.FMT_YMD_HMS;
-import static com.vipkid.trpm.util.DateUtils.HALFHOUR_OF_DAY;
-import static com.vipkid.trpm.util.DateUtils.MINUTE_OF_HALFHOUR;
-import static com.vipkid.trpm.util.DateUtils.SHANGHAI;
-import static com.vipkid.trpm.util.DateUtils.formatTo;
-import static com.vipkid.trpm.util.DateUtils.parseFrom;
+import static com.vipkid.trpm.util.DateUtils.*;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -51,26 +37,15 @@ import org.springframework.stereotype.Service;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.vipkid.trpm.constant.ApplicationConstant;
-import com.vipkid.trpm.constant.ApplicationConstant.ClassStatus;
-import com.vipkid.trpm.constant.ApplicationConstant.ClassType;
-import com.vipkid.trpm.constant.ApplicationConstant.CookieKey;
-import com.vipkid.trpm.constant.ApplicationConstant.CourseType;
-import com.vipkid.trpm.constant.ApplicationConstant.FinishType;
-import com.vipkid.trpm.constant.ApplicationConstant.PeakTimeType;
-import com.vipkid.trpm.constant.ApplicationConstant.SlotStyle;
-import com.vipkid.trpm.dao.AuditDao;
-import com.vipkid.trpm.dao.LessonDao;
-import com.vipkid.trpm.dao.OnlineClassDao;
-import com.vipkid.trpm.dao.PeakTimeDao;
-import com.vipkid.trpm.dao.TeacherDao;
-import com.vipkid.trpm.dao.TeacherPageLoginDao;
-import com.vipkid.trpm.dao.UserDao;
+import com.vipkid.trpm.constant.ApplicationConstant.*;
+import com.vipkid.trpm.dao.*;
 import com.vipkid.trpm.entity.OnlineClass;
 import com.vipkid.trpm.entity.PeakTime;
 import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.entity.schedule.TimePoint;
 import com.vipkid.trpm.entity.schedule.TimeSlot;
 import com.vipkid.trpm.entity.schedule.ZoneTime;
+import com.vipkid.trpm.proxy.RedisProxy;
 import com.vipkid.trpm.util.CookieUtils;
 import com.vipkid.trpm.util.DateUtils;
 import com.vipkid.trpm.util.FilesUtils;
@@ -83,6 +58,8 @@ public class ScheduleService {
 
 	/* 老师默认PeakTime的TimeSolt数量 */
 	private static final int PEAKTIME_TIMESLOT_DEFAULT_COUNT = 15;
+
+	private static final int LOCK_TIMESLOT_EXPIRED = 30;
 
 	/* 早九点的索引数 */
 	private static final int NINE_OF_AM = 17;
@@ -124,6 +101,9 @@ public class ScheduleService {
 
 	@Autowired
 	private UserDao userDao;
+
+	@Autowired
+	private RedisProxy redisProxy;
 
 	/**
 	 * 计算一天中的所有TimePoint，每半小时为一个单位
@@ -644,7 +624,11 @@ public class ScheduleService {
 									|| ClassStatus.isAvailable(o.getStatus())).count();
 
 					if (canSetSchedule(teacher.getId(), plusHour) && 0 == count) {
-						onlineClassDao.save(onlineClass);
+						if (!saveTimeslotWithLock(onlineClass)) {
+							modelMap.put("action", false);
+							modelMap.put("disabledPlaceErr", true);
+							return modelMap;
+						}
 					} else {
 						modelMap.put("action", false);
 						modelMap.put("disabledPlaceErr", true);
@@ -662,7 +646,11 @@ public class ScheduleService {
 						.count();
 
 				if (0 == count) {
-					onlineClassDao.save(onlineClass);
+					if (!saveTimeslotWithLock(onlineClass)) {
+						modelMap.put("action", false);
+						modelMap.put("disabledPlaceErr", true);
+						return modelMap;
+					}
 				} else {
 					modelMap.put("action", false);
 					modelMap.put("disabledPlaceErr", true);
@@ -696,6 +684,16 @@ public class ScheduleService {
 		}
 
 		return modelMap;
+	}
+
+	private boolean saveTimeslotWithLock(OnlineClass onlineClass) {
+		String key = "TP:LOCK:" + onlineClass.getTeacherId() + ":" + onlineClass.getScheduledDateTime().getTime();
+		if (redisProxy.lock(key, LOCK_TIMESLOT_EXPIRED)) {
+			onlineClassDao.save(onlineClass);
+			redisProxy.del(key);
+			return true;
+		}
+		return false;
 	}
 
 	/**
