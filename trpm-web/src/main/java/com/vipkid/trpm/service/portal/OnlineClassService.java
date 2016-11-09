@@ -808,10 +808,6 @@ public class OnlineClassService {
                 onlineClassVo.setSubmitDateTime(jsonObject.getDate("submitDateTime"));
                 onlineClassVo.setLessonSn(jsonObject.getString("lessonSn"));
                 String course = jsonObject.getString("course");
-                String lessonSn = jsonObject.getString("lessonSn");
-                if(lessonSn.startsWith("MC")){
-                    course = course + " 2016";
-                }
                 onlineClassVo.setCourse(course);
                 onlineClassVo.setFinishType(jsonObject.getString("finishType"));
                 onlineClassVo.setStudentEnglishName(jsonObject.getString("studentEnglishName"));
