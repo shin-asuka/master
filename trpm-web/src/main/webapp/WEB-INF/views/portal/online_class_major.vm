@@ -200,7 +200,7 @@
 				}
 			},
 			modifyIframeHeight : function (){
-                var str = $(this).attr("time"); // 日期字符串
+                var str = $(this).attr("time").toString(); // 日期字符串
                 str = str.replace(/-/g,'/'); // 将-替换成/，因为下面这个构造函数只支持/分隔的日期字符串
                 var date = new Date(str); // 构造一个日期型数据，值为传入的字符串
 				console.log(date> new Date().getTime() - 2*86400000);
@@ -217,7 +217,10 @@
 			},
 
 			showIframe : function (){
-                if(new Date($(this).attr("time"))> new Date().getTime() - 2*86400000) {
+                var str = $(this).attr("time"); // 日期字符串
+                str = str.replace(/-/g,'/'); // 将-替换成/，因为下面这个构造函数只支持/分隔的日期字符串
+                var date = new Date(str); // 构造一个日期型数据，值为传入的字符串
+                if(date > new Date().getTime() - 2*86400000) {
                     this.iframe.show();
                     $('.js-span').addClass('down')
                     $('.js-span').removeClass('up');
