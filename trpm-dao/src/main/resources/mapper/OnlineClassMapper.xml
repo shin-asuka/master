@@ -670,8 +670,8 @@
 		<if test="from != null and from != '' or to != null and to != ''">
 			AND oc.scheduled_date_time BETWEEN #{from} AND #{to}
 		</if>
-		<if test="courseName != null and courseId != ''">
-			AND c.id = #{courseId}
+		<if test="courseName != null and courseName != ''">
+			AND c.name = #{courseName}
 		</if>
     </select>
 
