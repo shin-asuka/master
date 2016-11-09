@@ -314,15 +314,15 @@ public class BasicInfoService {
         }
         //  设置教师招聘渠道
         if(StringUtils.isNotBlank((bean.getRecruitmentChannel()))){
-            if(RecruitmentChannel.TEACHER.toString().equals(bean.getRecruitmentChannel())){
+            if(RecruitmentChannel.TEACHER.toString().equalsIgnoreCase(bean.getRecruitmentChannel())){
                 teacher.setRecruitmentChannel(RecruitmentChannel.TEACHER.toString());
                 teacher.setReferee(bean.getChannel());
-            }else if(RecruitmentChannel.PARTNER.toString().equals(bean.getRecruitmentChannel())){
+            }else if(RecruitmentChannel.PARTNER.toString().equalsIgnoreCase(bean.getRecruitmentChannel())){
                 if(StringUtils.isNumeric(bean.getChannel())){
                     teacher.setRecruitmentChannel(RecruitmentChannel.PARTNER.toString());
                     teacher.setPartnerId(Long.valueOf(bean.getChannel()));
                 }
-            }else if(RecruitmentChannel.OTHER.toString().equals(bean.getRecruitmentChannel())){
+            }else if(RecruitmentChannel.OTHER.toString().equalsIgnoreCase(bean.getRecruitmentChannel())){
                 teacher.setRecruitmentChannel(RecruitmentChannel.PARTNER.toString());
                 //历史遗留问题将Other归属为PARTNER，其ID为：1060753
                 teacher.setPartnerId(1060753);
