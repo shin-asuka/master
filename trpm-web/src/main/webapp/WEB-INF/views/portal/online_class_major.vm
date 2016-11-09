@@ -214,7 +214,7 @@
 			},
 
 			showIframe : function (){
-                if(new Date($(this).attr("time")> new Date().getTime() - 2*86400000) {
+                if(new Date($(this).attr("time"))> new Date().getTime() - 2*86400000) {
                     this.iframe.show();
                     $('.js-span').addClass('down')
                     $('.js-span').removeClass('up');
