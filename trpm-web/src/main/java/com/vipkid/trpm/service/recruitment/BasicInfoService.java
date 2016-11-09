@@ -315,7 +315,8 @@ public class BasicInfoService {
                     teacher.setPartnerId(Long.valueOf(bean.getChannel()));
                 }
             }else if(RecruitmentChannel.OTHER.toString().equals(bean.getRecruitmentChannel())){
-                teacher.setRecruitmentChannel(RecruitmentChannel.OTHER.toString());
+                teacher.setRecruitmentChannel(RecruitmentChannel.PARTNER.toString());
+                teacher.setPartnerId(1060753);
                 teacher.setOtherChannel(bean.getChannel());
             }else{
                 teacher.setRecruitmentChannel(RecruitmentChannel.OTHER.toString());
