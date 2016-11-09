@@ -673,6 +673,7 @@
 		<if test="courseName != null and courseName != ''">
 			AND c.name = #{courseName}
 		</if>
+		order by oc.scheduled_date_time desc
     </select>
 
 
