@@ -174,8 +174,12 @@ public class BasicInfoService {
         application.setTeacherId(teacher.getId());//  步骤关联的教师
         application.setApplyDateTime(new Timestamp(System.currentTimeMillis()));
         application.setStatus(AppEnum.LifeCycle.BASIC_INFO.toString());
+        application.setVersion(3);
+        
+        Teacher _teacher = new Teacher();
+        _teacher = teacher;
         //5.AutoFail Pass TeacherApplication
-        AutoFailProcessor processor = this.autoFail(teacher,teacherAddress);
+        AutoFailProcessor processor = this.autoFail(_teacher,teacherAddress);
         //自动审核通过
         if(processor.isFailed()){
             //自动审核失败
@@ -206,10 +210,9 @@ public class BasicInfoService {
             this.teacherDao.insertLifeCycleLog(teacher.getId(), AppEnum.LifeCycle.BASIC_INFO.toString(),AppEnum.LifeCycle.INTERVIEW.toString(), RestfulConfig.SYSTEM_USER_ID);
             //发送邮件
             logger.info("调用发送邮件程序发送给:{}",user.getUsername());
-            EmailUtils.sendEmail4BasicInfoPass(teacher);
+            EmailUtils.sendEmail4BasicInfoPass(_teacher);
             result.put("result", TeacherApplicationDao.Result.PASS);
         }
-        application.setVersion(3);
         this.teacherApplicationDao.save(application);
         this.teacherDao.update(teacher);
         result.put("id", user.getId());
