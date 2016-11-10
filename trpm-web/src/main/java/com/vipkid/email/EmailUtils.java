@@ -37,6 +37,7 @@ public class EmailUtils {
 
 	public static void sendEmail4BasicInfoPass(Teacher teacher) {
 		try {
+			teacher.setEmail("lilibo@vipkid.com.cn");
 			Map<String, String> paramsMap = Maps.newHashMap();
 			if (teacher.getRealName() != null)
 			paramsMap.put("teacherName", teacher.getRealName());
