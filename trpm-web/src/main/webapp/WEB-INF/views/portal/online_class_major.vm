@@ -97,7 +97,7 @@
 					</div>
 				</div>
 				##----课堂
-				<input type="hidden" id="time" value ="$!onlineClass.scheduledDateTime"/>
+				<input type="hidden" id="time" value ="$!onlineClass.scheduledDateTime" submitStatus ="$!submitStatus"/>
 				<iframe id="xuedianyun" name="xuedianyun" width="1300" height="580" frameborder="0" scrolling="no" src="$!url" style="top:200px;"></iframe>
 
 				##feedback
