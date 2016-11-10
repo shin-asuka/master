@@ -28,7 +28,13 @@ public class EmailServer {
 
     private static final String REQUEST_URL = PropertyConfigurer.stringValue("mail.service.url");
 
+    private static final boolean ENABLE_EMAIL = PropertyConfigurer.booleanValue("email.enable");
+
     private static int sendMessage(String from, Session _session, EmailEntity reviceEntity) {
+        if (!ENABLE_EMAIL){
+            logger.info("Email send skip ====>：");
+            return 1;
+        }
         try {
             logger.info("Email send start ====>：");
             int result = sendMail(reviceEntity);
