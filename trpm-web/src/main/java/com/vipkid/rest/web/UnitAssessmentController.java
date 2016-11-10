@@ -38,7 +38,7 @@ public class UnitAssessmentController {
     public Object getUnfinishedUA(OnlineClassVo onlineClassVoCond ,@RequestParam(defaultValue = "1") Integer pageNo, @RequestParam(defaultValue = "10") Integer pageSize) {
         HashMap<String,Object> cond = new HashMap<String,Object>();
         cond.put("lessonSn",onlineClassVoCond.getLessonSn());
-        cond.put("course",onlineClassVoCond.getCourse());
+        cond.put("course",StringUtils.trim(onlineClassVoCond.getCourseName()));
         Long from = 0l;
         Long to = 0l;
         if(onlineClassVoCond.getFrom()!=null){

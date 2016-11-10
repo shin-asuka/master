@@ -22,6 +22,7 @@ public class OnlineClassVo implements Serializable{
 	private Date submitDateTime;
 	private String lessonSn;
 	private String course;
+	private String courseName;
 	private Integer courseId;
 	private String finishType;
 	private String studentName;
@@ -248,5 +249,13 @@ public class OnlineClassVo implements Serializable{
 
 	public void setSubmitDateTime(Date submitDateTime) {
 		this.submitDateTime = submitDateTime;
+	}
+
+	public String getCourseName() {
+		return courseName;
+	}
+
+	public void setCourseName(String courseName) {
+		this.courseName = courseName;
 	}
 }
