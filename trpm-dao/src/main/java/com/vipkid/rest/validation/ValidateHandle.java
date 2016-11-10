@@ -78,19 +78,19 @@ public class ValidateHandle {
                 return Result.bulider(field.getName(),Type.NOT_NULL,notNull.message(),true);
             }
         }else if(ClassUtils.isInteger(field.getType())){
-            if((int)value == 0){
+            if((int)value < 0){
                 return Result.bulider(field.getName(),Type.NOT_NULL,notNull.message(),true);
             }
         }else if(ClassUtils.isLong(field.getType())){
-            if((long)value == 0){
+            if((long)value < 0){
                 return Result.bulider(field.getName(),Type.NOT_NULL,notNull.message(),true);
             }
         }else if(ClassUtils.isFloat(field.getType())){
-            if((float)value == 0){
+            if((float)value < 0){
                 return Result.bulider(field.getName(),Type.NOT_NULL,notNull.message(),true);
             }
         }else if(ClassUtils.isDouble(field.getType())){
-            if((double)value == 0){
+            if((double)value < 0){
                 return Result.bulider(field.getName(),Type.NOT_NULL,notNull.message(),true);
             }
         }

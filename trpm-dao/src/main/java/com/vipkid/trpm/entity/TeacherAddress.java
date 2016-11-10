@@ -10,7 +10,7 @@ public class TeacherAddress extends Entity implements Serializable {
 	/*  */
 	private int id;
 	/* teacher id */
-	private int teacherId;
+	private long teacherId;
 	/* 国家id */
 	private int countryId;
 	/* state id */
@@ -35,11 +35,11 @@ public class TeacherAddress extends Entity implements Serializable {
 		return this;
 	}
 
-	public int getTeacherId() {
+	public long getTeacherId() {
 		return this.teacherId;
 	}
 
-	public TeacherAddress setTeacherId(int teacherId) {
+	public TeacherAddress setTeacherId(long teacherId) {
 		this.teacherId = teacherId;
 		return this;
 	}
