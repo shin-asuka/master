@@ -66,7 +66,7 @@ public class OnlineClassController extends AbstractPortalController {
     @RequestMapping("/classroom/{onlineClassId}-{studentId}-{lessonId}")
     public String classroom(HttpServletRequest request, HttpServletResponse response,
             @PathVariable long onlineClassId, @PathVariable long studentId,
-            @PathVariable long lessonId, Model model) throws IOException {
+            @PathVariable long lessonId,Integer submitStatus, Model model) throws IOException {
         Teacher teacher = indexService.getTeacher(request);
         User user = indexService.getUser(request);
 
@@ -151,6 +151,7 @@ public class OnlineClassController extends AbstractPortalController {
             }
             model.addAllAttributes(
                     onlineclassService.enterMajor(onlineClass, studentId, teacher, lesson));
+            model.addAttribute("submitStatus",submitStatus);
             return view("online_class_major");
         }
     }
