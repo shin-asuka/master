@@ -383,7 +383,7 @@ public class ClassroomsService {
             //modelMap.put("lifeCycle", "(Resubmit)");
             lifeCycle = "(Resubmit)";
         }
-        
+        //UAstatus
         if(null == assessmentReport){ //基于UA系统查询在线课程UA填写情况
         	OnlineClassVo onlineClassVo = new OnlineClassVo();
         	onlineClassVo.getIdList().add(onlineClassId);
