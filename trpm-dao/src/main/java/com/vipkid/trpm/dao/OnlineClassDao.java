@@ -378,7 +378,7 @@ public class OnlineClassDao extends MapperDaoTemplate<OnlineClass> {
 		return listEntity("findMajorCourseListByStartTimeAndEndTime", paramsMap);
 	}
 
-	//unfinished uaSql
+
 	public List<Map<String, Object>> findMajorCourseListByCond(HashMap<String,Object> onlineClassVoCond) {
 		return listEntity("findMajorCourseListByCond", onlineClassVoCond);
 	}
