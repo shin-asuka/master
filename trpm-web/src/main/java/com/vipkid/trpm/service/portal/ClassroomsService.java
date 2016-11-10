@@ -390,7 +390,8 @@ public class ClassroomsService {
 			List<StudentUnitAssessment> suaList = assessmentHttpService.findOnlineClassVo(onlineClassVo);
 			if(CollectionUtils.isNotEmpty(suaList)){
 				StudentUnitAssessment sua = suaList.get(0);
-				if(sua.getSubmitStatus() == 1){
+                modelMap.put("submitStatus",sua.getSubmitStatus());
+                if(sua.getSubmitStatus() == 1){
 					lifeCycle = "(submitted)";
 				}else if(sua.getIsRefillin()==1){
                     lifeCycle = "(empty)";
@@ -438,7 +439,6 @@ public class ClassroomsService {
      * 处理显示materials逻辑
      *
      * @param lessonId
-     * @param courseId
      * @return Map<String, Object>
      */
     public Map<String, Object> doShowMaterials(long lessonId) {

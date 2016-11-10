@@ -113,11 +113,11 @@ public class ClassroomsController extends AbstractPortalController {
 		long onlineClassId = ServletRequestUtils.getLongParameter(request, "onlineClassId", 0);
 		long lessonId = ServletRequestUtils.getLongParameter(request, "lessonId", 0);
 		long studentId = ServletRequestUtils.getLongParameter(request, "studentId", 0);
+
 		model.addAttribute("serialNumber", serialNumber);
 		model.addAttribute("onlineClassId", onlineClassId);
 		model.addAttribute("studentId", studentId);
 		model.addAttribute("lessonId",lessonId);
-
 		/*Practicum 报告显示*/
 		if(serialNumber.startsWith("P")){
 			model.addAllAttributes(classroomsService.practicumReport(serialNumber, onlineClassId, lessonId, studentId,scheduledTime));
