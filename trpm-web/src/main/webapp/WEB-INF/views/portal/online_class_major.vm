@@ -216,7 +216,7 @@
                     this.el.css('height', bodyHeight);
                     this.iframe.addClass('iframe-fixed');
                 }else{
-					alert("You cannot submit the form after 24 hours of the scheduled class time. ");
+					alert("You cannot submit the form after 48 hours of the scheduled class time. ");
 				}
 			},
 
