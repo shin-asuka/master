@@ -2,13 +2,16 @@ package com.vipkid.rest.config;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.community.config.PropertyConfigurer;
 
 import com.vipkid.rest.config.RestfulConfig.RoleClass;
+import com.vipkid.trpm.constant.ApplicationConstant;
 import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.entity.User;
+import com.vipkid.trpm.util.AES;
 
 public class TeacherInfo {
 

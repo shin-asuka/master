@@ -39,6 +39,10 @@ public class TeacherPageLoginDao extends MapperDaoTemplate<TeacherPageLogin> {
 		return false;
 	}
 	
+    public TeacherPageLogin findByUserIdAndLoginType(long userId, int loginType) {
+        return selectOne(new TeacherPageLogin().setUserId(userId).setLoginType(loginType));
+    }
+    
 	/**
 	 * 查询所有 
 	 * @Author:ALong (ZengWeiLong)

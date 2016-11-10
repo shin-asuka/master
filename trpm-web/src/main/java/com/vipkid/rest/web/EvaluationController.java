@@ -5,27 +5,29 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.google.api.client.util.Maps;
-import com.google.common.base.Preconditions;
+import com.vipkid.rest.RestfulController;
 import com.vipkid.rest.config.RestfulConfig;
-import com.vipkid.trpm.constant.ApplicationConstant.CookieKey;
+import com.vipkid.rest.interceptor.RestInterface;
 import com.vipkid.trpm.constant.ApplicationConstant.LoginType;
+import com.vipkid.trpm.constant.ApplicationConstant.TeacherLifeCycle;
 import com.vipkid.trpm.entity.User;
 import com.vipkid.trpm.service.rest.EvaluationService;
 import com.vipkid.trpm.service.rest.LoginService;
 import com.vipkid.trpm.service.rest.TeacherPageLoginService;
 
 @RestController
+@RestInterface(lifeCycle=TeacherLifeCycle.REGULAR)
 @RequestMapping("/evaluation")
-public class EvaluationController {
+public class EvaluationController extends RestfulController{
     
     private Logger logger = LoggerFactory.getLogger(PersonalInfoRestController.class);
     
@@ -41,30 +43,23 @@ public class EvaluationController {
     @RequestMapping(value = "/getTags", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
     public Map<String,Object> getTags(HttpServletRequest request, HttpServletResponse response){
         Map<String,Object> result = Maps.newHashMap();
+        result.put("status", false);
         try{
-            String token = request.getHeader(CookieKey.AUTOKEN);
-            Preconditions.checkArgument(StringUtils.isNotBlank(token));
-            User user = loginService.getUser(request);
-            if(user == null){
-                response.setStatus(RestfulConfig.HttpStatus.STATUS_404);
-                logger.warn("用户不存在，token过期");
-                result.put("info","用户不存在，token过期");
-                result.put("status", false);
-                return result;
-            }
+            User user = getUser(request);
+            logger.info("userId:" + user.getId());
             result = evaluationService.findTags();
             return result;
         } catch (IllegalArgumentException e) {
             result.put("info",e.getMessage());
             result.put("status", false);
             logger.error("内部参数转化异常:"+e.getMessage());
-            response.setStatus(RestfulConfig.HttpStatus.STATUS_400);
+            response.setStatus(HttpStatus.BAD_REQUEST.value());
         } catch (Exception e) {
             result.put("info",e.getMessage());
             result.put("status", false);
             logger.error(e.getMessage(), e);
-            response.setStatus(RestfulConfig.HttpStatus.STATUS_500);
-        }        
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+        }  
         return result;
     }
     
@@ -73,28 +68,20 @@ public class EvaluationController {
     public Map<String,Object> getTeacherBio(HttpServletRequest request, HttpServletResponse response, long teacherId){
         Map<String,Object> result = Maps.newHashMap();
         try{
-            String token = request.getHeader(CookieKey.AUTOKEN);
-            Preconditions.checkArgument(StringUtils.isNotBlank(token));
-            User user = loginService.getUser(request);
-            if(user == null){
-                response.setStatus(RestfulConfig.HttpStatus.STATUS_404);
-                logger.warn("用户不存在，token过期");
-                result.put("info","用户不存在，token过期");
-                result.put("status", false);
-                return result;
-            }
+            User user = getUser(request);
+            logger.info("userId:" + user.getId());
             result = evaluationService.findTeacherBio(teacherId);
             return result;
         } catch (IllegalArgumentException e) {
             result.put("info",e.getMessage());
             result.put("status", false);
             logger.error("内部参数转化异常:"+e.getMessage());
-            response.setStatus(RestfulConfig.HttpStatus.STATUS_400);
+            response.setStatus(HttpStatus.BAD_REQUEST.value());
         } catch (Exception e) {
             result.put("info",e.getMessage());
             result.put("status", false);
             logger.error(e.getMessage(), e);
-            response.setStatus(RestfulConfig.HttpStatus.STATUS_500);
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
         }        
         return result;
     }
@@ -103,29 +90,21 @@ public class EvaluationController {
     public Map<String,Object> saveClick(HttpServletRequest request, HttpServletResponse response){
         Map<String,Object> result = Maps.newHashMap();
         try{
-            String token = request.getHeader(CookieKey.AUTOKEN);
-            Preconditions.checkArgument(StringUtils.isNotBlank(token));
-            User user = loginService.getUser(request);
-            if(user == null){
-                response.setStatus(RestfulConfig.HttpStatus.STATUS_404);
-                logger.warn("用户不存在，token过期");
-                result.put("info","用户不存在，token过期");
-                result.put("status", false);
-                return result;
-            }
+            User user = getUser(request);
+            logger.info("userId:" + user.getId());
             result.put("result",this.teacherPageLoginService.saveTeacherPageLogin(user.getId(),LoginType.EVALUATION_CLICK));
             return result;
         } catch (IllegalArgumentException e) {
             result.put("info",e.getMessage());
             result.put("status", false);
             logger.error("内部参数转化异常:"+e.getMessage());
-            response.setStatus(RestfulConfig.HttpStatus.STATUS_400);
+            response.setStatus(HttpStatus.BAD_REQUEST.value());
         } catch (Exception e) {
             result.put("info",e.getMessage());
             result.put("status", false);
             logger.error(e.getMessage(), e);
-            response.setStatus(RestfulConfig.HttpStatus.STATUS_500);
-        }
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+        }  
         return result;
     }
 }
