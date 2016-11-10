@@ -234,26 +234,7 @@ public class BasicInfoController extends RestfulController{
         return result;
     } 
     
-    
-    @RequestMapping(value = "/getStatus", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
-    public Map<String,Object> getStatus(HttpServletRequest request, HttpServletResponse response){
-        Map<String,Object> result = Maps.newHashMap();
-        try{
-            User user = getUser(request);
-            result =  this.basicInfoService.getStatus(user.getId());
-            return result;
-        } catch (IllegalArgumentException e) {
-            result.put("status", false);
-            logger.error("内部参数转化异常:"+e.getMessage());
-            response.setStatus(HttpStatus.BAD_REQUEST.value());
-        } catch (Exception e) {
-            result.put("status", false);
-            logger.error(e.getMessage(), e);
-            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-        }
-        return result;
-    } 
-    
+        
     @RequestMapping(value = "/findTeacher", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
     public Map<String,Object> findTeacher(HttpServletRequest request, HttpServletResponse response){
         Map<String,Object> result = Maps.newHashMap();
