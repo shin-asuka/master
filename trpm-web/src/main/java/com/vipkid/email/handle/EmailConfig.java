@@ -1,5 +1,7 @@
 package com.vipkid.email.handle;
 
+import org.community.config.PropertyConfigurer;
+
 public class EmailConfig {
 
     public enum EmailFormEnum {
@@ -47,7 +49,7 @@ public class EmailConfig {
     public static final int REPLY_COUNT = 10;
 
     /* 邮件服务发送设置 */
-    public static final String APP_KEY = "TP";
-    public static final String APP_SECRECT = "3ngdww5l995t";
+    public static final String APP_KEY = PropertyConfigurer.stringValue("mail.appkey");
+    public static final String APP_SECRECT = PropertyConfigurer.stringValue("mail.appsecret");
 
 }
