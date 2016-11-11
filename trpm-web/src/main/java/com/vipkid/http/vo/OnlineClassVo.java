@@ -38,6 +38,7 @@ public class OnlineClassVo implements Serializable{
 	private String extra;
 	private Integer total;
 	private Integer hasAudited;
+	private Date updateTime;
 	
 	List<Long> idList = Lists.newArrayList();
 	List<Integer> refillinUaIds = Lists.newArrayList();
@@ -275,5 +276,13 @@ public class OnlineClassVo implements Serializable{
 
 	public void setRefillinOpName(String refillinOpName) {
 		this.refillinOpName = refillinOpName;
+	}
+
+	public Date getUpdateTime() {
+		return updateTime;
+	}
+
+	public void setUpdateTime(Date updateTime) {
+		this.updateTime = updateTime;
 	}
 }

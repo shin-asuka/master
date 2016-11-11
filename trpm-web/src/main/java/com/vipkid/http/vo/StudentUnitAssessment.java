@@ -31,6 +31,7 @@ public class StudentUnitAssessment implements Serializable{
 	private Integer refillinOpId;   //补填人
 	private String  refillinOpName; //补填人姓名
     private Date createDateTime;//UA创建时间
+	private Date updateTime;
     private Date submitDateTime;//UA提交时间
 	private Integer isRefillin;
 
@@ -204,5 +205,13 @@ public class StudentUnitAssessment implements Serializable{
 
 	public void setRefillinOpName(String refillinOpName) {
 		this.refillinOpName = refillinOpName;
+	}
+
+	public Date getUpdateTime() {
+		return updateTime;
+	}
+
+	public void setUpdateTime(Date updateTime) {
+		this.updateTime = updateTime;
 	}
 }

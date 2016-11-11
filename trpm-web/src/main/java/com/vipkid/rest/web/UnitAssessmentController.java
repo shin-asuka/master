@@ -82,6 +82,7 @@ public class UnitAssessmentController {
                     oc.setAuditorName(stuUa.getAuditorName());
                     oc.setRefillinOpId(stuUa.getRefillinOpId());
                     oc.setRefillinOpName(stuUa.getRefillinOpName());
+                    oc.setUpdateTime(stuUa.getUpdateTime());
                 }
             }
         }
