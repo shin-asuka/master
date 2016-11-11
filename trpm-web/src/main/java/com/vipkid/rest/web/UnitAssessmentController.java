@@ -71,7 +71,9 @@ public class UnitAssessmentController {
         OnlineClassVo onlineClassVo = new OnlineClassVo();
         onlineClassVo.setIdList(ids);
         List<StudentUnitAssessment> stuUaList = assessmentHttpService.findOnlineClassVo(onlineClassVo);
-
+        for(StudentUnitAssessment studentUnitAssessment : stuUaList){
+            studentUnitAssessment.setUpdateTime(studentUnitAssessment.getUpdateTime1());
+        }
         //跨库join
         for(OnlineClassVo oc :onlineClassVos){
             for(StudentUnitAssessment stuUa : stuUaList){
