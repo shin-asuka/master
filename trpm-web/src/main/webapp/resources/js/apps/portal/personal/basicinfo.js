@@ -58,7 +58,7 @@ define(depends, function(personal) {
 		/* 初始化下拉框样式 */
 		//$("#timezone,.select2").select2();
 		
-		$("#highestLevelOfEdu").val($("#highestLevelOfEdu").attr("value"));
+		$("#highestLevelOfEdu").val($("#highestLevelOfEdu").attr("fieldValue"));
 
 		$("#mobilePix ul li").click(function() {
 			var o = $(this).children("a").clone();
@@ -148,7 +148,12 @@ define(depends, function(personal) {
 		if($("#timezone option:selected").val() == undefined){
 			$("#timezone-tip").show();
 			flag = false;
-		}		
+		}	
+		
+		if($("#highestLevelOfEdu").val() == ""){
+			$("#highestLevelOfEdu-tip").show();
+			flag = false;
+		}
 		
 		if($("input[name=phoneNationId]").val()==0){
 			$("#mobilePix-tip").show();

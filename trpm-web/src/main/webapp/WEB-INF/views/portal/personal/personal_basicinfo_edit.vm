@@ -255,7 +255,7 @@
       <div align="right" class="col-sm-2 col-md-2"></div>
       <div class="col-sm-6 col-md-6">
       	<div class='title-lable req'>Hightest level of education</div>
-        <select class="js-example-basic-single form-control" id="highestLevelOfEdu" name="highestLevelOfEdu" value="$!{TRPM_TEACHER.highestLevelOfEdu}">
+        <select class="js-example-basic-single form-control" id="highestLevelOfEdu" name="highestLevelOfEdu" fieldValue="$!{TRPM_TEACHER.highestLevelOfEdu}">
 				<option value =""></option>
 				<option value ="HIGH_SCHOOL">High School</option>
 				<option value ="ASSOCIATES"> Associate's</option>
@@ -264,6 +264,7 @@
 				<option value ="PHD">PhD</option>
 				<option value ="OTHER">Other</option>
 		</select>
+		<p id="highestLevelOfEdu-tip" class="help-block has-error">This field is required!</p>
       </div>
       <div class="col-sm-4 col-md-4"></div>
     </div>
