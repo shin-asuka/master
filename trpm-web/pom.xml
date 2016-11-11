@@ -601,6 +601,76 @@
 				</filters>
 			</build>
 		</profile>
+		<profile>
+			<id>a16</id>
+			<properties>
+				<env>a16</env>
+				<masterAddressOfMysql>54.222.199.188:3306</masterAddressOfMysql>
+				<targetHost>10.1.5.26</targetHost>
+				<datasource>local</datasource>
+			</properties>
+			<build>
+				<filters>
+					<filter>../profile/a.properties</filter>
+				</filters>
+			</build>
+		</profile>
+		<profile>
+			<id>a17</id>
+			<properties>
+				<env>a17</env>
+				<masterAddressOfMysql>54.222.199.188:3307</masterAddressOfMysql>
+				<targetHost>10.1.5.27</targetHost>
+				<datasource>local</datasource>
+			</properties>
+			<build>
+				<filters>
+					<filter>../profile/a.properties</filter>
+				</filters>
+			</build>
+		</profile>
+		<profile>
+			<id>a18</id>
+			<properties>
+				<env>a18</env>
+				<masterAddressOfMysql>54.222.199.188:3308</masterAddressOfMysql>
+				<targetHost>10.1.5.28</targetHost>
+				<datasource>local</datasource>
+			</properties>
+			<build>
+				<filters>
+					<filter>../profile/a.properties</filter>
+				</filters>
+			</build>
+		</profile>
+		<profile>
+			<id>a19</id>
+			<properties>
+				<env>a19</env>
+				<masterAddressOfMysql>54.222.199.188:3309</masterAddressOfMysql>
+				<targetHost>10.1.5.29</targetHost>
+				<datasource>local</datasource>
+			</properties>
+			<build>
+				<filters>
+					<filter>../profile/a.properties</filter>
+				</filters>
+			</build>
+		</profile>
+		<profile>
+			<id>a20</id>
+			<properties>
+				<env>a20</env>
+				<masterAddressOfMysql>54.222.199.188:3310</masterAddressOfMysql>
+				<targetHost>10.1.5.30</targetHost>
+				<datasource>local</datasource>
+			</properties>
+			<build>
+				<filters>
+					<filter>../profile/a.properties</filter>
+				</filters>
+			</build>
+		</profile>
 	</profiles>
 
 </project>
