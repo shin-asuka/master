@@ -76,9 +76,16 @@ public class TeachingExperienceService {
     }
 
     public long delTeaching(long id,User user){
-        Preconditions.checkArgument(id > 0);
         logger.info("userId is {}, delete TeachingExperience,teachingExperienceId is:{}",user.getId(),id);
+        if(id == 0){
+            logger.warn("1.删除失败,不存在的的id:{}",id);
+            return 0L; 
+        }
         TeachingExperience teachingExperience = teachingExperienceDao.findById(id);
+        if(teachingExperience == null){
+            logger.warn("2.删除失败,不存在的的id:{}",id);
+            return 0L;
+        }
         //仅仅保存状态可以删除
         if(teachingExperience.getStatus() == TeachingExperienceDao.Status.SAVE.val()){
             if(teachingExperience.getTeacherId() == user.getId()){

@@ -25,7 +25,7 @@ public class TeacherDao extends MapperDaoTemplate<Teacher> {
         if (id == 0)
             return null;
         Teacher teacher = selectOne(new Teacher().setId(id));
-        teacher.setCountry(NationalityTransfer.getNationality(teacher.getCountry()));
+        teacher.setCountry(NationalityTransfer.getRestoreNationality(teacher.getCountry()));
         return teacher;
     }
     

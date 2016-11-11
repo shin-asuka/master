@@ -8,6 +8,7 @@ package com.vipkid.trpm.dao;
 
 public class NationalityTransfer {
     
+    /**转化国籍*/
     public static String getNationality(String country){
         if("United States".equals(country)){
             country = Country.USA.toString();
@@ -27,7 +28,29 @@ public class NationalityTransfer {
             country = Country.UK.toString();
         }
         return country;
-    } 
+    }
+    
+    /**还原国籍*/
+    public static String getRestoreNationality(String country){
+        if(Country.USA.toString().equals(country)){
+            country = "United States";
+        }else if(Country.CANADA.toString().equals(country)){
+            country = "Canada";
+        }else if(Country.ESTONIA.toString().equals(country)){
+            country = "Estonia";
+        }else if(Country.AUSTRALIA.toString().equals(country)){
+            country = "Australia";
+        }else if(Country.NEW_ZEALAND.toString().equals(country)){
+            country = "New Zealand";
+        }else if(Country.JAMAICA.toString().equals(country)){
+            country = "Jamaica";
+        }else if(Country.THE_DOMINICAN_REPUBLIC.toString().equals(country)){
+            country = "Dominican Republic";
+        }else if(Country.UK.toString().equals(country)){
+            country = "United Kingdom";
+        }
+        return country;
+    }
     
     public enum Country {
         USA, // 美国
