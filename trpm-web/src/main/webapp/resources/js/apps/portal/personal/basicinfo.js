@@ -145,6 +145,11 @@ define(depends, function(personal) {
 			flag = false;
 		}
 		
+		if($("#timezone option:selected").val() == undefined){
+			$("#timezone-tip").show();
+			flag = false;
+		}		
+		
 		if($("input[name=phoneNationId]").val()==0){
 			$("#mobilePix-tip").show();
 			flag = false;

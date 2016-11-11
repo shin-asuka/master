@@ -150,7 +150,7 @@
       <div align="right" class="col-sm-2 col-md-2"></div>
       <div class="col-sm-6 col-md-6">
       	<div class='title-lable req'>Time zone</div>
-			<select  class="js-example-basic-single  form-control" value="$!{TRPM_TEACHER.timezone}"  name="timezone"  id="timezone">
+			<select  class="js-example-basic-single  form-control"  name="timezone"  id="timezone">
 				<option  value="America/Adak">America/Adak</option>
 				<option  value="America/Anchorage">America/Anchorage</option>
 				<option  value="America/Los_Angeles">America/Los_Angeles</option>
@@ -239,7 +239,7 @@
 				
 				<option value="UTC">UTC</option>
 			</select>
-      		<p id="timezone-tip" class="help-block has-error"></p>
+      		<p id="timezone-tip" class="help-block has-error">This field is required!</p>
       	</div>
       <div class="col-sm-4 col-md-4"></div>
     </div>
