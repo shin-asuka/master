@@ -138,6 +138,9 @@ define(["function","jquery-bootstrap","jquery-load","countdown" ], function() {
 		var temp = str.split('.')[0];
 		str = temp.replace(/-/g,'/'); // 将-替换成/，因为下面这个构造函数只支持/分隔的日期字符串
 		var date = new Date(str); // 构造一个日期型数据，值为传入的字符串
+		console.log(date> new Date().getTime() - 2*86400000);
+		console.log(date);
+		console.log(new Date().getTime() - 2*86400000);
 		if (isShow || date.getTime() > new Date().getTime() - 2*86400000) {
 			$.alert("confirm", {
 				title : "Prompt",
