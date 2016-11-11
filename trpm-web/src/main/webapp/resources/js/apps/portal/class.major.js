@@ -141,7 +141,7 @@ define(["function","jquery-bootstrap","jquery-load","countdown" ], function() {
 		console.log(date> new Date().getTime() - 2*86400000);
 		console.log(date);
 		console.log(new Date().getTime() - 2*86400000);
-		if (isShow || date.getTime() > new Date().getTime() - 2*86400000) {
+		if (isShow && date.getTime() > new Date().getTime() - 2*86400000) {
 			$.alert("confirm", {
 				title : "Prompt",
 				content : isUa==1?"Please make sure you have saved your form.":"Please remember to fill in the class feedback!",
