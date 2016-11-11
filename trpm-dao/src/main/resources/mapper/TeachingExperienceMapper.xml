@@ -27,8 +27,8 @@
 			<if test="jobTitle!=null">AND teaching_experience.job_title = #{jobTitle}</if>
 			<if test="timePeriodStart!=null">AND teaching_experience.time_period_start = #{timePeriodStart}</if>
 			<if test="timePeriodEnd!=null">AND teaching_experience.time_period_end = #{timePeriodEnd}</if>
-			<if test="hoursWeek!=-1">AND teaching_experience.hours_week = #{hoursWeek}</if>
-			<if test="totalHours!=-1">AND teaching_experience.total_hours = #{totalHours}</if>
+			<if test="hoursWeek!=0">AND teaching_experience.hours_week = #{hoursWeek}</if>
+			<if test="totalHours!=0">AND teaching_experience.total_hours = #{totalHours}</if>
 			<if test="jobDescription!=null">AND teaching_experience.job_description = #{jobDescription}</if>
 			<if test="createTime!=null">AND teaching_experience.create_time = #{createTime}</if>
 			<if test="updateTime!=null">AND teaching_experience.update_time = #{updateTime}</if>
@@ -101,8 +101,8 @@
 			<if test="jobTitle!=null">,job_title</if>
 			<if test="timePeriodStart!=null">,time_period_start</if>
 			<if test="timePeriodEnd!=null">,time_period_end</if>
-			<if test="hoursWeek!=0">,hours_week</if>
-			<if test="totalHours!=0">,total_hours</if>
+			<if test="hoursWeek!=-1">,hours_week</if>
+			<if test="totalHours!=-1">,total_hours</if>
 			<if test="jobDescription!=null">,job_description</if>
 			<if test="createTime!=null">,create_time</if>
 			<if test="updateTime!=null">,update_time</if>
@@ -118,8 +118,8 @@
 			<if test="jobTitle!=null">,#{jobTitle}</if>
 			<if test="timePeriodStart!=null">,#{timePeriodStart}</if>
 			<if test="timePeriodEnd!=null">,#{timePeriodEnd}</if>
-			<if test="hoursWeek!=0">,#{hoursWeek}</if>
-			<if test="totalHours!=0">,#{totalHours}</if>
+			<if test="hoursWeek!=-1">,#{hoursWeek}</if>
+			<if test="totalHours!=-1">,#{totalHours}</if>
 			<if test="jobDescription!=null">,#{jobDescription}</if>
 			<if test="createTime!=null">,#{createTime}</if>
 			<if test="updateTime!=null">,#{updateTime}</if>
@@ -139,8 +139,8 @@
 			<if test="jobTitle!=null">,job_title = #{jobTitle}</if>
 			<if test="timePeriodStart!=null">,time_period_start = #{timePeriodStart}</if>
 			<if test="timePeriodEnd!=null">,time_period_end = #{timePeriodEnd}</if>
-			<if test="hoursWeek!=0">,hours_week = #{hoursWeek}</if>
-			<if test="totalHours!=0">,total_hours = #{totalHours}</if>
+			<if test="hoursWeek!=-1">,hours_week = #{hoursWeek}</if>
+			<if test="totalHours!=-1">,total_hours = #{totalHours}</if>
 			<if test="jobDescription!=null">,job_description = #{jobDescription}</if>
 			<if test="createTime!=null">,create_time = #{createTime}</if>
 			<if test="updateTime!=null">,update_time = #{updateTime}</if>
