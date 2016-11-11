@@ -31,6 +31,8 @@ public class OnlineClassVo implements Serializable{
 	private Integer auditorId;
 	private String auditorName;
 	private Date auditTime;
+	private Integer refillinOpId;
+	private String refillinOpName;
 	private String from;
 	private String to;
 	private String extra;
@@ -257,5 +259,21 @@ public class OnlineClassVo implements Serializable{
 
 	public void setCourseName(String courseName) {
 		this.courseName = courseName;
+	}
+
+	public Integer getRefillinOpId() {
+		return refillinOpId;
+	}
+
+	public void setRefillinOpId(Integer refillinOpId) {
+		this.refillinOpId = refillinOpId;
+	}
+
+	public String getRefillinOpName() {
+		return refillinOpName;
+	}
+
+	public void setRefillinOpName(String refillinOpName) {
+		this.refillinOpName = refillinOpName;
 	}
 }

@@ -80,6 +80,8 @@ public class UnitAssessmentController {
                     oc.setSubmitDateTime(stuUa.getSubmitDateTime());
                     oc.setAuditorId(stuUa.getAuditorId().intValue());
                     oc.setAuditorName(stuUa.getAuditorName());
+                    oc.setRefillinOpId(stuUa.getRefillinOpId());
+                    oc.setRefillinOpName(stuUa.getRefillinOpName());
                 }
             }
         }

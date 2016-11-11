@@ -1,5 +1,5 @@
 #if($isNewUa==1)
-    <span>|</span>&nbsp;<a isNewUa="${isNewUa}" href="classroom/${onlineClassId}-${studentId}-${lessonId}.shtml?from=ua&isNewUa=${isNewUa}&isUa=ua&submitStatus=${submitStatus}">UA Report$!{lifeCycle}</a>
+    <span>|</span>&nbsp;<a isNewUa="${isNewUa}" href="classroom/${onlineClassId}-${studentId}-${lessonId}.shtml?from=ua&isNewUa=${isNewUa}&isUa=ua&submitStatus=$!{submitStatus}">UA Report$!{lifeCycle}</a>
 #else
     <span>|</span>&nbsp;<a isNewUa="${isNewUa}"onclick="require('report-ua').showUAReport('${serialNumber}', ${studentId}, ${onlineClassId},${isNewUa});" href="javascript:;">UA Report$!{lifeCycle}</a>
 #end

@@ -28,6 +28,8 @@ public class StudentUnitAssessment implements Serializable{
 	private Integer approvalStatus;		// 审核状态{ 1 未审核 2 审核中 3 已审核 4 审核失败}
 	private Long auditorId;		// 审核人
 	private String auditorName;		// 审核人名称
+	private Integer refillinOpId;   //补填人
+	private String  refillinOpName; //补填人姓名
     private Date createDateTime;//UA创建时间
     private Date submitDateTime;//UA提交时间
 	private Integer isRefillin;
@@ -186,5 +188,21 @@ public class StudentUnitAssessment implements Serializable{
 
 	public void setIsRefillin(Integer isRefillin) {
 		this.isRefillin = isRefillin;
+	}
+
+	public Integer getRefillinOpId() {
+		return refillinOpId;
+	}
+
+	public void setRefillinOpId(Integer refillinOpId) {
+		this.refillinOpId = refillinOpId;
+	}
+
+	public String getRefillinOpName() {
+		return refillinOpName;
+	}
+
+	public void setRefillinOpName(String refillinOpName) {
+		this.refillinOpName = refillinOpName;
 	}
 }
