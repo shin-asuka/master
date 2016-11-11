@@ -73,8 +73,8 @@
       <div align="right" class="col-sm-2 col-md-2"></div>
       <div class="col-sm-6 col-md-6">
       		<div class='title-lable req'>Nationality</div>
-      	  	<label style="font-weight:normal!important;"><input type="radio" name="country" value="American" field="$!{TRPM_TEACHER.country}"/> American </label>&nbsp;
-      	  	<label style="font-weight:normal!important;"><input type="radio" name="country" value="Canadian" field="$!{TRPM_TEACHER.country}"/> Canadian </label>
+      	  	<label style="font-weight:normal!important;"><input type="radio" name="country" value="USA" field="$!{TRPM_TEACHER.country}"/> American </label>&nbsp;
+      	  	<label style="font-weight:normal!important;"><input type="radio" name="country" value="CANADA" field="$!{TRPM_TEACHER.country}"/> Canadian </label>
       	  	<p id="country-tip" class="help-block has-error">This field is required!</p> 
       </div>
       <div class="col-sm-4 col-md-4"></div>

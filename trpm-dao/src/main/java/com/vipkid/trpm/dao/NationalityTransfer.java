@@ -1,7 +1,5 @@
 package com.vipkid.trpm.dao;
 
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * 在国籍中处理转换 
@@ -10,53 +8,37 @@ import java.util.Map;
 
 public class NationalityTransfer {
     
-    private static Map<String,String> NATION_MAP_FROM_DB = new HashMap<String, String>() {
-        
-        /**
-         * 
-         */
-        private static final long serialVersionUID = 6528083946235930844L;
-
-        //
-        {
-            put("CANADA","Canadian");
-            put("USA","American");
+    public static String getNationality(String country){
+        if("United States".equals(country)){
+            country = Country.USA.toString();
+        }else if("Canada".equals(country)){
+            country = Country.CANADA.toString();
+        }else if("Estonia".equals(country)){
+            country = Country.ESTONIA.toString();
+        }else if("Australia".equals(country)){
+            country = Country.AUSTRALIA.toString();
+        }else if("New Zealand".equals(country)){
+            country = Country.NEW_ZEALAND.toString();
+        }else if("Jamaica".equals(country)){
+            country = Country.JAMAICA.toString();
+        }else if("Dominican Republic".equals(country)){
+            country = Country.THE_DOMINICAN_REPUBLIC.toString();
+        }else if("United Kingdom".equals(country)){
+            country = Country.UK.toString();
         }
-    };
+        return country;
+    } 
     
-    private static Map<String,String> NATION_MAP_TO_DB = new HashMap<String, String>() {
-        /**
-         * 
-         */
-        private static final long serialVersionUID = 2909018804526386204L;
-
-        //
-        {
-            put("Canadian","CANADA");
-            put("American","USA");
-        }
-    };
-    
-    public static String nationalityToDB(String strNationality) {
-        String strNation = strNationality;
-        try {
-            String strResult = NATION_MAP_TO_DB.get(strNationality);
-            return strResult == null ? strNation:strResult;
-        } catch (Exception e) {
-            
-        }
-        return strNation;
-    }
-    
-    public static String nationalityFromDB(String strNationality) {
-        String strNation = strNationality;
-        try {
-            String strResult = NATION_MAP_FROM_DB.get(strNationality);
-            return strResult == null ? strNation : strResult;
-        } catch (Exception e) {
-            
-        }
-        return strNation;
+    public enum Country {
+        USA, // 美国
+        CANADA, // 加拿大
+        ESTONIA, // 爱莎尼亚
+        AUSTRALIA, // 澳大利亚
+        NEW_ZEALAND, // 新西兰
+        JAMAICA, // 牙买加
+        THE_DOMINICAN_REPUBLIC, // 多米尼加共和国
+        UK, //英国
+        OTHER // 其他
     }
     
 }

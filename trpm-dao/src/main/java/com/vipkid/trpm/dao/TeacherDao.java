@@ -25,12 +25,7 @@ public class TeacherDao extends MapperDaoTemplate<Teacher> {
         if (id == 0)
             return null;
         Teacher teacher = selectOne(new Teacher().setId(id));
-        if (teacher != null) {
-            // 2016-05-25 为兼容新旧Natioality数据，做转换
-            String strCountry = teacher.getCountry();
-            String strNationality = NationalityTransfer.nationalityFromDB(strCountry);
-            teacher.setCountry(strNationality);
-        }
+        teacher.setCountry(NationalityTransfer.getNationality(teacher.getCountry()));
         return teacher;
     }
     
@@ -40,17 +35,13 @@ public class TeacherDao extends MapperDaoTemplate<Teacher> {
 
     @Override
     public int update(Teacher teacher) {
-
-        // 2016-05-25 为兼容新旧Natioality数据，做转换
-        String strCountry = teacher.getCountry();
-        String strNationality = NationalityTransfer.nationalityToDB(strCountry);
-        teacher.setCountry(strNationality);
-
+        teacher.setCountry(NationalityTransfer.getNationality(teacher.getCountry()));
         return super.update(teacher);
     }
 
     @Override
     public int save(Teacher teacher) {
+        teacher.setCountry(NationalityTransfer.getNationality(teacher.getCountry()));
         return super.save(teacher);
     }
 
