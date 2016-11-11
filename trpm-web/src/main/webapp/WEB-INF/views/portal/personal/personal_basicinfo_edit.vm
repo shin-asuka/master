@@ -108,7 +108,7 @@
 	      </div>
 	      <input type="hidden" name="phoneNationId" value="$!{TRPM_TEACHER.phoneNationId}" />
 	      <input type="hidden" name="phoneNationCode" value="$!{TRPM_TEACHER.phoneNationCode}" />
-	      <input type="text" id="mobile" name="mobile" value="$!{TRPM_TEACHER.mobile}" class="form-control req-string req-regex" regex="/^[\d]{6,}$/g" valid-options='{"req-string":"This field is required!","req-regex":"Your mobile phone number is invalid!","errorDiv":"#phoneNumber-tip"}' placeholder="Mobile Number(Currently, only mainland Chinese mobile phone numbers are supported.)" />
+	      <input type="text" id="mobile" name="mobile" value="$!{TRPM_TEACHER.mobile}" class="form-control req-string req-regex" regex="/^[\d]{6,}$/g" valid-options='{"req-string":"This field is required!","req-regex":"Your mobile phone number is invalid!","errorDiv":"#phoneNumber-tip"}' placeholder="Phone number" />
 	    </div>	    
         <p id="phoneNumber-tip" class="help-block has-error"></p>
         <p id="mobilePix-tip" class="help-block has-error">This field is required!</p> 
