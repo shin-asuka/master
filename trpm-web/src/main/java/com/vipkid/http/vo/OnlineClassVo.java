@@ -278,6 +278,7 @@ public class OnlineClassVo implements Serializable{
 		this.refillinOpName = refillinOpName;
 	}
 
+	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", locale = "zh" , timezone="GMT+8")
 	public Date getUpdateTime() {
 		return updateTime;
 	}
