@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RestInterface(lifeCycle={ApplicationConstant.TeacherLifeCycle.PRACTICUM})
-@RequestMapping("/recuitment/practicum")
+@RequestMapping("/recruitment/practicum")
 public class PracticumController extends RestfulController {
 
     private static Logger logger = LoggerFactory.getLogger(PracticumController.class);

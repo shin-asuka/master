@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RestInterface(lifeCycle={ApplicationConstant.TeacherLifeCycle.INTERVIEW})
-@RequestMapping("/recuitment/interview")
+@RequestMapping("/recruitment/interview")
 public class InterviewController extends RestfulController {
 
     private static Logger logger = LoggerFactory.getLogger(InterviewController.class);
