@@ -1,9 +1,19 @@
 package com.vipkid.recruitment.training.controller;
 
+import com.google.common.collect.Maps;
+import com.vipkid.enums.TeacherEnum;
+import com.vipkid.enums.TeacherQuizEnum;
 import com.vipkid.recruitment.interceptor.RestInterface;
+import com.vipkid.recruitment.training.service.TrainingService;
 import com.vipkid.rest.RestfulController;
+import com.vipkid.rest.config.RestfulConfig;
 import com.vipkid.trpm.constant.ApplicationConstant;
 
+import com.vipkid.trpm.entity.Teacher;
+import com.vipkid.trpm.entity.TeacherQuiz;
+import com.vipkid.trpm.entity.User;
+import com.vipkid.trpm.service.rest.AdminQuizService;
+import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -151,7 +161,7 @@ public class TrainingController extends RestfulController {
      */
     @RequestMapping(value = "/toPracticum", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
     public  Map<String,Object> toPracticum(HttpServletRequest request,HttpServletResponse response){
-        Teacher teacher = getUser(request);
+        Teacher teacher = getTeacher(request);
         teacher = this.trainingService.toPracticum(teacher);
 
         Map<String,Object> recMap = new HashMap<String,Object>();
