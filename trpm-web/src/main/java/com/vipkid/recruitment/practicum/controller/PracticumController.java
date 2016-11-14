@@ -3,9 +3,9 @@ package com.vipkid.recruitment.practicum.controller;
 import com.vipkid.enums.OnlineClassEnum;
 import com.vipkid.enums.TeacherApplicationEnum;
 import com.vipkid.recruitment.utils.DateTools;
+import com.vipkid.recruitment.interceptor.RestInterface;
 import com.vipkid.recruitment.practicum.service.PracticumService;
 import com.vipkid.rest.RestfulController;
-import com.vipkid.rest.interceptor.RestInterface;
 import com.vipkid.trpm.constant.ApplicationConstant;
 import com.vipkid.trpm.dao.OnlineClassDao;
 import com.vipkid.trpm.dao.TeacherDao;
@@ -14,6 +14,7 @@ import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.entity.TeacherApplication;
 import com.vipkid.utils.DateUtil;
 import com.vipkid.utils.StringUtil;
+
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.slf4j.Logger;
@@ -26,6 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import java.text.SimpleDateFormat;
 import java.util.*;
 

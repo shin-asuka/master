@@ -1,4 +1,4 @@
-package com.vipkid.rest.interceptor;
+package com.vipkid.recruitment.interceptor;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

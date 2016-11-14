@@ -14,9 +14,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.google.api.client.util.Maps;
+import com.vipkid.recruitment.interceptor.RestInterface;
 import com.vipkid.rest.RestfulController;
 import com.vipkid.rest.config.RestfulConfig;
-import com.vipkid.rest.interceptor.RestInterface;
 import com.vipkid.trpm.constant.ApplicationConstant.LoginType;
 import com.vipkid.trpm.constant.ApplicationConstant.TeacherLifeCycle;
 import com.vipkid.trpm.entity.User;
