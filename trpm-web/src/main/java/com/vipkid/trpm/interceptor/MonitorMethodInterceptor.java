@@ -28,6 +28,7 @@ public class MonitorMethodInterceptor implements MethodInterceptor {
             Object result = invocation.proceed();
             return result;
         } catch (Exception e) {
+			e.printStackTrace();
             throw new RuntimeException(e);
         } finally {
             long endTime = System.nanoTime();
