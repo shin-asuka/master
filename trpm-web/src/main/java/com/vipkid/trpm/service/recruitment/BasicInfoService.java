@@ -363,6 +363,7 @@ public class BasicInfoService {
     }
     
     public static String upperStr(String str){
+        str = StringUtils.trim(str);
         if(StringUtils.isNotBlank(str)){
             return str.replaceFirst(str.substring(0, 1),str.substring(0, 1).toUpperCase()) ;
         }
