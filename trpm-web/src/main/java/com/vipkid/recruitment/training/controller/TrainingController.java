@@ -78,8 +78,8 @@ public class TrainingController extends RestfulController {
         Map<String,Object> result = Maps.newHashMap();
         result.put("quizToken", 0);
         try{
-            logger.info("开始考试");
             User user = getUser(request);
+            logger.info("用户{}开始考试",user.getId());
             result.put("quizToken",this.adminQuizService.startQuiz(user.getId()));
             return result;
         } catch (IllegalArgumentException e) {
@@ -106,8 +106,8 @@ public class TrainingController extends RestfulController {
         Map<String,Object> result = Maps.newHashMap();
         result.put("result", false);
         try{
-            logger.info("提交分数:{}",grade);
             User user = getUser(request);
+            logger.info("用户{}提交分数:{}",user.getId(),grade);
             result.put("result",this.adminQuizService.saveQuizResult(user.getId(), grade,quizToken));
             return result;
         } catch (IllegalArgumentException e) {
@@ -131,6 +131,7 @@ public class TrainingController extends RestfulController {
         Map<String,Object> result = Maps.newHashMap();
         try{
             User user = getUser(request);
+            logger.info("用户{}查询最后一次考试记录:{}",user.getId());
             //查询用户最后一次考试记录
             List<TeacherQuiz> list = adminQuizService.getLastQuiz(user.getId());
             if(CollectionUtils.isNotEmpty(list)){
@@ -151,19 +152,15 @@ public class TrainingController extends RestfulController {
     }
 
     /**
-     * 下一步将执行的操作<br/>
-     * a.前台自动请求该方法，然后获取状态自动跳转<br/>
-     * b.该步骤以后将由管理端执行。
-     * @Author:ALong
+     * 跳转到Practicum改变用户的LifeCycle
      * @param request
      * @param response
-     * @return 2015年10月16日
      */
     @RequestMapping(value = "/toPracticum", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
     public  Map<String,Object> toPracticum(HttpServletRequest request,HttpServletResponse response){
         Teacher teacher = getTeacher(request);
         teacher = this.trainingService.toPracticum(teacher);
-
+        logger.info("用户{}跳转到Practicum:{}",teacher.getId());
         Map<String,Object> recMap = new HashMap<String,Object>();
         if(TeacherEnum.LifeCycle.PRACTICUM.toString().equals(teacher.getLifeCycle())){
             recMap.put("info", true);
