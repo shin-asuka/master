@@ -19,7 +19,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.vipkid.rest.utils.UserUtils.getUser;
 
 @RestController
 @RestInterface(lifeCycle={ApplicationConstant.TeacherLifeCycle.TRAINING})
@@ -142,7 +141,7 @@ public class TrainingController extends RestfulController {
     }
 
     /**
-     * 3.下一步将执行的操作<br/>
+     * 下一步将执行的操作<br/>
      * a.前台自动请求该方法，然后获取状态自动跳转<br/>
      * b.该步骤以后将由管理端执行。
      * @Author:ALong
