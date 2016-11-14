@@ -51,7 +51,7 @@ public class UaOnlineClassController extends AbstractPortalController {
         Teacher loginTeacher = AppContext.getTeacher();
         User user = AppContext.getUser();
         if (null == loginTeacher || null == user || null == onlineClass) {
-            result.put("status", HttpStatus.OK.value());
+            result.put("status", HttpStatus.NOT_FOUND.value());
             result.put("data", null);
             response.setStatus(HttpStatus.NOT_FOUND.value());
             return JsonTools.getJson(result);
@@ -60,7 +60,7 @@ public class UaOnlineClassController extends AbstractPortalController {
         Student student = onlineClassService.fetchStudentByOnlineClassId(onlineClassId);
         if (null == onlineClassTeacher || null == student
                 || NumberUtils.compare((double) onlineClassTeacher.getId(), (double) loginTeacher.getId()) != 0) {
-            result.put("status", HttpStatus.OK.value());
+            result.put("status", HttpStatus.FORBIDDEN.value());
             result.put("data", null);
             response.setStatus(HttpStatus.FORBIDDEN.value());
             return JsonTools.getJson(result);
