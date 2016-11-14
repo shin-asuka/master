@@ -175,7 +175,7 @@ public class TeacherApplicationDao extends MapperDaoTemplate<TeacherApplication>
     }
 
     /**
-     * @param onlineclassid 通过onlinclass 查teacher application；
+     * @param auditorId 通过onlinclass 查teacher application；
      */
     public TeacherApplication findApplictionByOlineclassId(long onlineClassId, long auditorId) {
         TeacherApplication teacherApplication = new TeacherApplication();
