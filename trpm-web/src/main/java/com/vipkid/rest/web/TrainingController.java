@@ -40,11 +40,9 @@ public class TrainingController {
     @Autowired
     private TeacherPageLoginService teacherPageLoginService;
 
-   /* @RequestMapping(value = "/training", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
+    @RequestMapping(value = "/training", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
     public Map<String, Object> training(HttpServletRequest request, HttpServletResponse response) {
         Map<String, Object> result = Maps.newHashMap();
-        result.put("result", false);
-        try {
             String token = request.getHeader(ApplicationConstant.CookieKey.AUTOKEN);
             Preconditions.checkArgument(StringUtils.isNotBlank(token));
             User user = loginService.getUser(request);
@@ -55,12 +53,12 @@ public class TrainingController {
             }
             TeacherApplication application = trainingService.findAppliction(user.getId());
             if (application != null) {
-                if (TeacherApplicationEnum.Status.TRAINING.toString().equals(application.getStatus()) && application.getResult() == null) {
-                    application.setResult(TeacherApplicationEnum.Result.AUDITING.toString());
+                if (ApplicationConstant.TeacherLifeCycle.TRAINING.toString().equals(application.getStatus()) && application.getResult() == null) {
+                    application.setResult(ApplicationConstant.RecruitmentResult.AUDITING.toString());
                 }
             }
-
-            result.put("result", );
-        }
-    }*/
+            result.put("result", true);
+            result.put("teacher",user);
+        return result;
+    }
 }
