@@ -23,7 +23,6 @@ public class EmailUtils {
 
 	public static void sendEmail4Recruitment(String email, String name, String titleTemplate, String contentTemplate) {
 		try {
-			email="lilibo@vipkid.com.cn";
 			Map<String, String> paramsMap = Maps.newHashMap();
 			if (name != null)
 			paramsMap.put("teacherName", name);
@@ -38,13 +37,12 @@ public class EmailUtils {
 
 	public static void sendEmail4BasicInfoPass(Teacher teacher) {
 		try {
-			String email="lilibo@vipkid.com.cn";
 			Map<String, String> paramsMap = Maps.newHashMap();
 			if (teacher.getRealName() != null)
 			paramsMap.put("teacherName", teacher.getRealName());
 			logger.info("【EMAIL.sendEmail4BasicInfoPass】toAddMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",teacher.getRealName(),teacher.getEmail(),"BasicInfoPassTitle.html","BasicInfoPass.html");
 			Map<String, String> emailMap = new TempleteUtils().readTemplete("BasicInfoPass.html", paramsMap, "BasicInfoPassTitle.html");
-			new EmailEngine().addMailPool(email, emailMap, EmailConfig.EmailFormEnum.TEACHVIP);
+			new EmailEngine().addMailPool(teacher.getEmail(), emailMap, EmailConfig.EmailFormEnum.TEACHVIP);
 			logger.info("【EMAIL.sendEmail4BasicInfoPass】addedMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",teacher.getRealName(),teacher.getEmail(),"BasicInfoPassTitle.html","BasicInfoPass.html");
 		} catch (Exception e) {
 			logger.error("【EMAIL.sendEmail4BasicInfoPass】ERROR: {}", e);
