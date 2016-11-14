@@ -1,19 +1,5 @@
 package com.vipkid.trpm.controller.portal;
 
-import java.util.Base64;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.lang.StringUtils;
-import org.community.config.PropertyConfigurer;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.ServletRequestUtils;
-import org.springframework.web.bind.annotation.RequestMapping;
-
 import com.google.api.client.util.Maps;
 import com.vipkid.trpm.constant.ApplicationConstant.CourseType;
 import com.vipkid.trpm.constant.ApplicationConstant.LoginType;
@@ -22,6 +8,18 @@ import com.vipkid.trpm.service.activity.ActivityService;
 import com.vipkid.trpm.service.passport.IndexService;
 import com.vipkid.trpm.service.portal.ScheduleService;
 import com.vipkid.trpm.service.rest.TeacherPageLoginService;
+import org.apache.commons.lang.StringUtils;
+import org.community.config.PropertyConfigurer;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.ServletRequestUtils;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.Base64;
+import java.util.Map;
 
 @Controller
 public class ScheduleController extends AbstractPortalController {
@@ -87,7 +85,7 @@ public class ScheduleController extends AbstractPortalController {
 		String scheduleTime = ServletRequestUtils.getStringParameter(request, "scheduleTime", null);
 
 		return jsonView(response,
-				scheduleService.doCreateTimeSlot(indexService.getTeacher(request), scheduleTime, courseType));
+				scheduleService.doCreateTimeSlotWithLock(indexService.getTeacher(request), scheduleTime, courseType));
 	}
 
 	@RequestMapping("/cancelTimeSlot")
