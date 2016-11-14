@@ -1,3 +1,4 @@
+/*
 package com.vipkid.rest.web;
 
 import java.util.List;
@@ -170,3 +171,4 @@ public class AdminQuizController extends RestfulController {
     }
     
 }
+*/
