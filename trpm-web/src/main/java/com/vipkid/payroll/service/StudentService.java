@@ -1,9 +1,13 @@
 package com.vipkid.payroll.service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import com.alibaba.fastjson.JSON;
+import com.vipkid.payroll.utils.DateUtils;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.time.DateFormatUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,9 +61,13 @@ public class StudentService {
         return student;
     }
 
-    public List<Map<String, Object>> findPaidByStudentIdAndPayDate(Long studentId, String paidConfirmDateTime) {
-        List<Map<String, Object>> list = studentDao.findOrderListByStudentIdAndPaidDateTime(studentId,
-                paidConfirmDateTime);
+    public List<Map<String, Object>> findPaidByStudentIdAndScheduleDateTime(Long studentId, Date scheduleDateTime) {
+        String startDate = DateUtils.getFirstDayOfMonth(scheduleDateTime);
+        String endDate = DateFormatUtils.format(new Date(), "yyyy-MM-dd");
+        logger.info("查询学生的订单，开始日期 = {}，结束日期 = {}，StudentId = {}", startDate, endDate, studentId);
+        List<Map<String, Object>> list = studentDao.findOrderListByStudentIdAndPaidDateTime(studentId, startDate,
+                endDate);
+        logger.info("学生的订单信息为，StudentId = {}，orderList = {}", studentId, JSON.toJSONString(list));
         return list;
     }
 }

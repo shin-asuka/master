@@ -122,9 +122,8 @@ public class PayrollMessageServiceImpl implements PayrollMessageService {
                 // 学生是否在约课月内支付
                 Boolean isPaidForTrial = false;
                 if (isTrialOnly == true) {
-                    String paidDateTime = DateUtils.formatDate(onlineClass.getScheduledDateTime(), "yyyy-MM");
-                    List<Map<String, Object>> payList = studentService.findPaidByStudentIdAndPayDate(studentId,
-                            paidDateTime);
+                    List<Map<String, Object>> payList = studentService.findPaidByStudentIdAndScheduleDateTime(studentId,
+                            onlineClass.getScheduledDateTime());
                     if (payList.size() > 0) {
                         Object timestamp = payList.get(0).get("confirm_date_time");
                         if (null != timestamp) {
@@ -197,9 +196,8 @@ public class PayrollMessageServiceImpl implements PayrollMessageService {
                 // 学生是否在约课月内支付
                 Boolean isPaidForTrial = false;
                 if (isTrialOnly == true) {
-                    String paidDateTime = DateUtils.formatDate(onlineClass.getScheduledDateTime(), "yyyy-MM");
-                    List<Map<String, Object>> payList = studentService.findPaidByStudentIdAndPayDate(studentId,
-                            paidDateTime);
+                    List<Map<String, Object>> payList = studentService.findPaidByStudentIdAndScheduleDateTime(studentId,
+                            onlineClass.getScheduledDateTime());
                     if (payList.size() > 0) {
                         Object timestamp = payList.get(0).get("confirm_date_time");
                         if (null != timestamp) {
