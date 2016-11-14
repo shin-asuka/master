@@ -135,10 +135,12 @@ define(depends, function(personal) {
 			flag =  false;
 		}
 		
+		/**
 		if($("input[name=country]:checked").size()==0){
 			$("#country-tip").show();
 			flag = false;
 		}
+		**/
 		
 		if($("input[name=phoneType]:checked").size()==0){
 			$("#phoneType-tip").show();
