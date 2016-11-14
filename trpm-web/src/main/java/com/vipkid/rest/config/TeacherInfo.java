@@ -2,16 +2,13 @@ package com.vipkid.rest.config;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.community.config.PropertyConfigurer;
 
 import com.vipkid.rest.config.RestfulConfig.RoleClass;
-import com.vipkid.trpm.constant.ApplicationConstant;
 import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.entity.User;
-import com.vipkid.trpm.util.AES;
 
 public class TeacherInfo {
 
@@ -122,13 +119,8 @@ public class TeacherInfo {
         this.setEvaluationBio(teacher.getEvaluationBio());
         this.setLifeCycle(teacher.getLifeCycle());
         this.setShowName(user.getName());
-        Set<String> portSet = RestfulConfig.TEACHERPORTSET;
-        portSet.addAll(RestfulConfig.NEWRECRUITMENTSET);
-        //如果进入招聘端了,需要获取招聘端登陆link
-        if(!portSet.contains(teacher.getLifeCycle())){
-            this.setAction("signlogin.shtml?token="+ AES.encrypt(user.getToken(), AES.getKey(AES.KEY_LENGTH_128, ApplicationConstant.AES_128_KEY)));
-        }
         this.setHaveChannel(StringUtils.isNoneBlank(teacher.getReferee()) || teacher.getPartnerId() > 0 || StringUtils.isNotBlank(teacher.getOtherChannel()));
+
     }
    
 }

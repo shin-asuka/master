@@ -5,19 +5,21 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.google.api.client.util.Maps;
-import com.vipkid.recruitment.interceptor.RestInterface;
-import com.vipkid.rest.RestfulController;
-import com.vipkid.rest.config.RestfulConfig;
-import com.vipkid.trpm.constant.ApplicationConstant;
-import com.vipkid.trpm.entity.User;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.google.api.client.util.Maps;
+import com.vipkid.recruitment.interceptor.RestInterface;
+import com.vipkid.recruitment.interview.service.InterviewService;
+import com.vipkid.rest.RestfulController;
+import com.vipkid.rest.config.RestfulConfig;
+import com.vipkid.trpm.constant.ApplicationConstant;
+import com.vipkid.trpm.entity.User;
 
 @RestController
 @RestInterface(lifeCycle={ApplicationConstant.TeacherLifeCycle.INTERVIEW})
@@ -25,13 +27,16 @@ import org.springframework.web.bind.annotation.RestController;
 public class InterviewController extends RestfulController {
 
     private static Logger logger = LoggerFactory.getLogger(InterviewController.class);
+
+    @Autowired
+    private InterviewService interviewService;
     
     @RequestMapping(value = "/list", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
     public Map<String,Object> list(HttpServletRequest request, HttpServletResponse response){
         Map<String,Object> result = Maps.newHashMap();
         try{
             User user = getUser(request);
-            logger.info("user:{},getRecruitmentChannelList",user.getId());
+            logger.info("user:{},list",user.getId());
             result.put("list", "[]");
             result.put("status", true);
             return result;
