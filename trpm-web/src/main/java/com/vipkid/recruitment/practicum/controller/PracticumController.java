@@ -49,11 +49,11 @@ public class PracticumController extends RestfulController {
 
     @RequestMapping("/practicum")
     public String practicum(HttpServletRequest request, HttpServletResponse response, Model model) {
-        Teacher teacher = null;//SessionUtil.getAttribute(request, ApplicationConstant.SESSION_TR_TEACHER);
+        Teacher teacher = getTeacher(request);
         teacher = teacherDao.findById(teacher.getId());
         model.addAttribute("teacher", teacher);
         //查询当前Teacher的当前TeacherApplication
-        TeacherApplication application = null;//practicumService.findAppliction(teacher.getId());
+        TeacherApplication application = practicumService.findAppliction(teacher.getId());
         if(application != null){
             if(TeacherApplicationEnum.Status.PRACTICUM.toString().equals(application.getStatus()) && application.getResult() == null){application.setResult(TeacherApplicationEnum.Result.AUDITING.toString());}
             model.addAttribute("application", application);
@@ -69,7 +69,7 @@ public class PracticumController extends RestfulController {
                 boolean a = TeacherApplicationEnum.Status.TRAINING.toString().equals(application.getStatus());
                 //2.当应用状态为PRACTICUM并且RESULT为PRACTICUM2 第一次实习不满意，需要约第二次实习
                 boolean b = (TeacherApplicationEnum.Status.PRACTICUM.toString().equals(application.getStatus()) && TeacherApplicationEnum.Result.PRACTICUM2.toString().equals(application.getResult()));
-                TeacherApplication app2 = null;//practicumService.findAppByPracticum2(teacher.getId());
+                TeacherApplication app2 = practicumService.findAppByPracticum2(teacher.getId());
                 boolean newb = app2 == null ? false:true;
                 //3.当应用状态为PRACTICUM并且RESULT为REAPPLY 第一次面试由于客观原因没能完成实习，重新约实习
                 boolean c = (TeacherApplicationEnum.Status.PRACTICUM.toString().equals(application.getStatus()) && TeacherApplicationEnum.Result.REAPPLY.toString().equals(application.getResult()));
@@ -110,7 +110,7 @@ public class PracticumController extends RestfulController {
                     model.addAttribute("toTime", toTime);
 
                     String timezone = teacher.getTimezone();
-                    Map<String, Map<String, Object>> availableScheduled = null;//practicumService.getAvailableScheduled(fromTime, toTime, timezone);
+                    Map<String, Map<String, Object>> availableScheduled = practicumService.getAvailableScheduled(fromTime, toTime, timezone);
                     model.addAttribute("availableScheduled", availableScheduled);
 
                     DateTime currDate = DateTime.now(DateTimeZone.forID(timezone));
