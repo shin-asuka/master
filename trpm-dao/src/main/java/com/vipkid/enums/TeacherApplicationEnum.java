@@ -17,6 +17,7 @@ public class TeacherApplicationEnum {
 		REAPPLY, //重新申请,继续上PRACTICUM1（由于客观原因没能完成面试）
 		PRACTICUM2, //第一次面试没通过，上PRACTICUM2
 		TBD_FAIL,
-		TBD
+		TBD,
+		AUDITING
 	}
 }
