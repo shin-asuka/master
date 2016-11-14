@@ -1,7 +1,6 @@
-package com.vipkid.trpm.service.recruitment;
+package com.vipkid.recruitment.basicinfo.service;
 
 import java.sql.Timestamp;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,7 +16,6 @@ import org.springframework.stereotype.Service;
 import com.google.api.client.util.Lists;
 import com.google.api.client.util.Maps;
 import com.vipkid.email.EmailUtils;
-import com.vipkid.enums.TeacherApplicationEnum;
 import com.vipkid.enums.TeacherEnum;
 import com.vipkid.enums.UserEnum;
 import com.vipkid.rest.config.RestfulConfig;
@@ -39,7 +37,6 @@ import com.vipkid.trpm.entity.app.AppEnum;
 import com.vipkid.trpm.entity.app.AppEnum.RecruitmentChannel;
 import com.vipkid.trpm.proxy.RedisProxy;
 import com.vipkid.trpm.util.AES;
-import com.vipkid.trpm.util.DateUtils;
 
 @Service
 public class BasicInfoService {
@@ -220,60 +217,7 @@ public class BasicInfoService {
         result.put("status", true);
         return result;
     }
-    
-    /**
-     * 获取老师当前LifeCycle状态下的流程结果 
-     * @Author:ALong (ZengWeiLong)
-     * @param teacherId
-     * @return    
-     * Map<String,Object>
-     * @date 2016年10月19日
-     */
-    public Map<String,Object> getStatus(long teacherId){
-        Map<String,Object> resultMap = Maps.newHashMap();
-        Teacher teacher = this.teacherDao.findById(teacherId);
-        resultMap.put("lifeCycle",teacher.getLifeCycle());
-        resultMap.put("result",TeacherApplicationDao.AuditStatus.ToSubmit.toString());
-        List<TeacherApplication> list = this.teacherApplicationDao.findCurrentApplication(teacher.getId());
-        
-        //没有流程则视为待提交
-        if(CollectionUtils.isEmpty(list)){
-            resultMap.put("result",TeacherApplicationDao.AuditStatus.ToSubmit.toString());
-            return resultMap;
-        }
-        TeacherApplication teacherApplication = list.get(0);
-        
-        //当前状态与流程状态不一样,以lifeCycle为准，为待提交
-        if(!StringUtils.equalsIgnoreCase(teacherApplication.getStatus(), teacher.getLifeCycle())){
-            resultMap.put("result",TeacherApplicationDao.AuditStatus.ToSubmit.toString());
-            return resultMap;
-        }
-        
-        //BASIC_INFO 11.5小时之内如果状态是FAIL 为待审核
-        if(StringUtils.equalsIgnoreCase(TeacherApplicationEnum.Status.BASIC_INFO.toString(),teacherApplication.getStatus())){
-            if(StringUtils.equalsIgnoreCase(TeacherApplicationEnum.Result.FAIL.toString(),teacherApplication.getResult())){
-                Date auditDate = teacherApplication.getAuditDateTime(); 
-                if(!DateUtils.count11hrlf(auditDate.getTime())){
-                    resultMap.put("result",TeacherApplicationDao.AuditStatus.ToAudit.toString());
-                    return resultMap;
-                }
-            }
-        }
-        
-        //待审核
-        if(StringUtils.isBlank(teacherApplication.getResult())){
-            resultMap.put("result",TeacherApplicationDao.AuditStatus.ToAudit.toString());
-            return resultMap;
-        }
-        //已经审核
-        if(StringUtils.isNotBlank(teacherApplication.getResult())){
-            resultMap.put("result",teacherApplication.getResult());
-            return resultMap;
-        }
-        
-        return resultMap;
-    }
-    
+   
     /**
      * 渠道为当前老师的数据初始化<br/>
      * @Author:VIPKID-ZengWeiLong

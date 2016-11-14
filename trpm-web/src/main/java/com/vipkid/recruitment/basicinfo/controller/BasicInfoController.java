@@ -1,4 +1,4 @@
-package com.vipkid.rest.recruitment;
+package com.vipkid.recruitment.basicinfo.controller;
 
 import java.util.List;
 import java.util.Map;
@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.google.api.client.util.Maps;
+import com.vipkid.recruitment.basicinfo.service.BasicInfoService;
+import com.vipkid.recruitment.basicinfo.service.TeachingExperienceService;
 import com.vipkid.rest.RestfulController;
 import com.vipkid.rest.config.RestfulConfig;
 import com.vipkid.rest.dto.TeacherDto;
@@ -30,13 +32,11 @@ import com.vipkid.trpm.entity.TeacherNationalityCode;
 import com.vipkid.trpm.entity.TeachingExperience;
 import com.vipkid.trpm.entity.User;
 import com.vipkid.trpm.entity.app.AppEnum;
-import com.vipkid.trpm.service.recruitment.BasicInfoService;
-import com.vipkid.trpm.service.recruitment.TeachingExperienceService;
 import com.vipkid.trpm.util.AppUtils;
 
 @RestController
 @RestInterface(lifeCycle={TeacherLifeCycle.SIGNUP,TeacherLifeCycle.BASIC_INFO})
-@RequestMapping("/basicinfo")
+@RequestMapping("/recruitment/basicinfo")
 public class BasicInfoController extends RestfulController{
  
     private static Logger logger = LoggerFactory.getLogger(BasicInfoController.class);

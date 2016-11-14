@@ -1,4 +1,4 @@
-package com.vipkid.trpm.service.recruitment;
+package com.vipkid.recruitment.basicinfo.service;
 
 import java.sql.Timestamp;
 import java.util.List;

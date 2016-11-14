@@ -1,4 +1,4 @@
-package com.vipkid.trpm.service.recruitment;
+package com.vipkid.recruitment.basicinfo.service;
 
 public enum AutoFailType {
     WORK_HOUR_LIMIT(2, "not enough work experience"),
