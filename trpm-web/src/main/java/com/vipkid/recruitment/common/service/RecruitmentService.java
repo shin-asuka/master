@@ -11,9 +11,11 @@ import org.springframework.stereotype.Service;
 
 import com.google.api.client.util.Maps;
 import com.vipkid.enums.TeacherApplicationEnum;
+import com.vipkid.trpm.dao.TeacherAddressDao;
 import com.vipkid.trpm.dao.TeacherApplicationDao;
 import com.vipkid.trpm.dao.TeacherDao;
 import com.vipkid.trpm.entity.Teacher;
+import com.vipkid.trpm.entity.TeacherAddress;
 import com.vipkid.trpm.entity.TeacherApplication;
 import com.vipkid.trpm.util.DateUtils;
 
@@ -25,6 +27,9 @@ public class RecruitmentService {
     
     @Autowired
     private TeacherApplicationDao teacherApplicationDao;
+    
+    @Autowired
+    private TeacherAddressDao teacherAddressDao;
 
     /**
      * 获取老师当前LifeCycle状态下的流程结果 
@@ -77,5 +82,14 @@ public class RecruitmentService {
         }
         
         return resultMap;
+    }
+    
+    
+    public TeacherAddress getTeacherAddress(int teacherAddressId){
+        if(teacherAddressId == 0){
+            return null;
+        }
+        TeacherAddress ta = teacherAddressDao.findById(teacherAddressId);
+        return ta;
     }
 }
