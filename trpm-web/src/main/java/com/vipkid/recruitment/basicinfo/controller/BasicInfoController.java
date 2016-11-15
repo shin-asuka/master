@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
 import org.community.tools.JsonTools;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,7 +21,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.google.api.client.util.Maps;
 import com.vipkid.recruitment.basicinfo.service.BasicInfoService;
 import com.vipkid.recruitment.basicinfo.service.TeachingExperienceService;
-import com.vipkid.recruitment.entity.TeachingExperience;
 import com.vipkid.recruitment.interceptor.RestInterface;
 import com.vipkid.rest.RestfulController;
 import com.vipkid.rest.config.RestfulConfig;
@@ -54,6 +54,7 @@ public class BasicInfoController extends RestfulController{
         try{
             User user = getUser(request);
             logger.info("user:{},getRecruitmentChannelList",user.getId());
+            result.put("status", true);
             result.put("list", this.basicInfoService.getRecruitmentChannelList());
             return result;
         } catch (IllegalArgumentException e) {
@@ -76,8 +77,8 @@ public class BasicInfoController extends RestfulController{
         Map<String,Object> result = Maps.newHashMap();
         try{
             User user = getUser(request);
-            List<TeachingExperience> list = this.teachingExperienceService.getTeachingList(user.getId());
-            result.put("list", list);
+            result.put("status", true);
+            result.put("list", this.teachingExperienceService.getTeachingList(user.getId()));
             return result;
         } catch (IllegalArgumentException e) {
             result.clear();
@@ -102,9 +103,10 @@ public class BasicInfoController extends RestfulController{
             User user = getUser(request);
             List<Result> list = ValidateUtils.checkBean(teachingExperience,false);
             if(CollectionUtils.isNotEmpty(list) && list.get(0).isResult()){
+                result.clear();
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
                 result.put("status", false);
-                result.put("resultCheck",list);
+                result.put("info",list.get(0).getName() + "," + list.get(0).getMessages());
                 logger.warn("resultCheck:"+JsonTools.getJson(list));
                 return result;
             }
@@ -123,6 +125,13 @@ public class BasicInfoController extends RestfulController{
             }
             result.put("id", resultRow);
             result.put("status", resultRow > 0 ? true : false);
+            if(!MapUtils.getBooleanValue(result, "status")){
+                result.clear();
+                response.setStatus(HttpStatus.BAD_REQUEST.value());
+                result.put("status", false);
+                result.put("info", "Save or Update fail");
+                return result;
+            }
             return result;
         } catch (IllegalArgumentException e) {
             result.clear();
@@ -148,6 +157,13 @@ public class BasicInfoController extends RestfulController{
             resultRow = this.teachingExperienceService.delTeaching(id, user);
             result.put("id", resultRow);
             result.put("status", resultRow > 0 ? true : false);
+            if(!MapUtils.getBooleanValue(result, "status")){
+                result.clear();
+                response.setStatus(HttpStatus.BAD_REQUEST.value());
+                result.put("status", false);
+                result.put("info", "Update fail");
+                return result;
+            }
             return result;
         } catch (IllegalArgumentException e) {
             result.clear();
@@ -191,7 +207,7 @@ public class BasicInfoController extends RestfulController{
             if(CollectionUtils.isNotEmpty(list) && list.get(0).isResult()){
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
                 result.put("status", false);
-                result.put("resultCheck",list);
+                result.put("info",list.get(0).getName() + "," + list.get(0).getMessages());
                 logger.warn("resultCheck:"+JsonTools.getJson(list));
                 return result;
             }
