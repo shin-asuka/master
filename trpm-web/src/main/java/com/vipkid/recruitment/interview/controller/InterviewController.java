@@ -18,11 +18,11 @@ import com.vipkid.recruitment.interceptor.RestInterface;
 import com.vipkid.recruitment.interview.service.InterviewService;
 import com.vipkid.rest.RestfulController;
 import com.vipkid.rest.config.RestfulConfig;
-import com.vipkid.trpm.constant.ApplicationConstant;
+import com.vipkid.trpm.constant.ApplicationConstant.TeacherLifeCycle;
 import com.vipkid.trpm.entity.User;
 
 @RestController
-@RestInterface(lifeCycle={ApplicationConstant.TeacherLifeCycle.INTERVIEW})
+@RestInterface(lifeCycle={TeacherLifeCycle.INTERVIEW,TeacherLifeCycle.REGULAR})
 @RequestMapping("/recruitment/interview")
 public class InterviewController extends RestfulController {
 

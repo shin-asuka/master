@@ -6,13 +6,11 @@
 	 <select id="listByInterview" resultType="java.util.HashMap">
 		SELECT
 				online_class.id AS online_class_id,
-				online_class.lesson_id AS lesson_id,
-				online_class.scheduled_date_time AS scheduled_date_time,
-				online_class.status AS status
+				online_class.scheduled_date_time AS scheduledDateTime
 		FROM online_class	
 		WHERE online_class.status = 'OPEN'
 				AND online_class.lesson_id = 211705
-				AND online_class.scheduled_date_time BETWEEN #{fromTime} and #{endTime}
+				AND online_class.scheduled_date_time BETWEEN #{fromTime} and #{toTime}
 				ORDER By scheduled_date_time DESC
 	</select>
 	
