@@ -1,12 +1,23 @@
 package com.vipkid.trpm.service.portal;
 
+import java.net.URLDecoder;
 import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.util.*;
 
+import com.alibaba.fastjson.JSONObject;
+import com.google.common.collect.Lists;
+import com.sun.tools.internal.ws.wsdl.document.http.HTTPUrlEncoded;
+import com.vipkid.file.utils.Encodes;
+import com.vipkid.http.utils.JsonUtils;
+import com.vipkid.http.vo.OnlineClassVo;
+import com.vipkid.task.utils.UADateUtils;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.time.DateFormatUtils;
 import org.community.config.PropertyConfigurer;
 import org.community.http.client.HttpClientProxy;
 import org.slf4j.Logger;
@@ -75,7 +86,7 @@ public class OnlineClassService {
     
     @Autowired
     private AssessmentReportDao assessmentReportDao;
-    
+
     /**
      * 根据id找online class
      *
@@ -722,4 +733,91 @@ public class OnlineClassService {
         }
     }
 
+    public HashMap<String,Object> getUnfinishUA(HashMap<String,Object> onlineClassVoCond,Integer pageNo,Integer pageSize){
+
+        Long from = (Long)onlineClassVoCond.get("from");
+        Long to = (Long)onlineClassVoCond.get("to");
+        Long endTime1 = from + 7*86400*1000;
+        Long endTime2 = new Date().getTime() - new Double(48 * 3600 * 1000).longValue();
+        Long endTime = to;
+        Long minEnd = Math.min(Math.min(endTime1,endTime2),endTime);
+
+        onlineClassVoCond.put("from",DateFormatUtils.format(new Date(from),"yyyy-MM-dd HH:mm:ss"));
+        onlineClassVoCond.put("to",DateFormatUtils.format(new Date(minEnd),"yyyy-MM-dd HH:mm:ss"));
+        List<Map<String, Object>> list = onlineClassDao.findMajorCourseListByCond(onlineClassVoCond);
+        logger.info("Get unSubmit OnlineClass list = {}", JsonUtils.toJSONString(list));
+
+        ArrayList<OnlineClassVo> onlineClassVos = getOnlineClassVoList(list);
+
+        OnlineClassVo onlineClassVo = new OnlineClassVo();
+        ArrayList<OnlineClassVo> onlineClassVoList = new ArrayList<OnlineClassVo>();
+        Map<Long,OnlineClassVo> ocMap = Maps.newHashMap();
+        if(CollectionUtils.isNotEmpty(onlineClassVos)){
+            for (OnlineClassVo oc : onlineClassVos) { //数据格式转换
+                Long id = oc.getId();
+                onlineClassVo.getIdList().add(id);
+                ocMap.put(id, oc);
+            }
+
+            //调用homework服务查询为完成UA报告的课程
+            OnlineClassVo onlineClassVoUnSubmit = assessmentHttpService.findUnSubmitonlineClassVo(onlineClassVo);
+            logger.info("Result unSubmit OnlineClass  = {}", JsonUtils.toJSONString(onlineClassVoUnSubmit));
+            for(Long id : onlineClassVoUnSubmit.getIdList()){
+                OnlineClassVo curOnlineClassVo = ocMap.get(id);
+                if(onlineClassVoUnSubmit.getRefillinUaIds().contains(id)){
+                    curOnlineClassVo.setHasAudited(1);
+                }
+                onlineClassVoList.add(curOnlineClassVo);
+            }
+        }
+
+        Integer offset = (pageNo-1) * pageSize;
+        Integer limit = pageSize;
+        List<OnlineClassVo> ocPage = new ArrayList<OnlineClassVo>();
+        if(onlineClassVoList.size() > 0) {
+            if (offset + limit > onlineClassVoList.size()) {
+                limit = onlineClassVoList.size() % pageSize;
+            }
+            ocPage =  onlineClassVoList.subList(offset,offset + limit);
+        }else{
+            ocPage = Lists.newArrayList();
+        }
+        HashMap<String,Object> ret = Maps.newHashMap();
+        ret.put("onlineClassVos",ocPage);
+        ret.put("total",onlineClassVoList.size());
+        return ret;
+    }
+
+    public ArrayList<OnlineClassVo> getOnlineClassVoList(List<Map<String, Object>> list){
+        ArrayList<OnlineClassVo> onlineClassVos = Lists.newArrayList();
+        if(CollectionUtils.isNotEmpty(list)){
+            for (Map<String,Object> map : list) {
+                JSONObject jsonObject = (JSONObject) JSONObject.toJSON(map);
+
+                OnlineClassVo onlineClassVo = new OnlineClassVo();
+                Long id = jsonObject.getLong("id");
+
+                onlineClassVo.setId(id);
+                onlineClassVo.setStudentId(jsonObject.getInteger("studentId"));
+                onlineClassVo.setTeacherId(jsonObject.getLong("teacherId"));
+                onlineClassVo.setStudentId(jsonObject.getInteger("studentId"));
+                onlineClassVo.setLessonId(jsonObject.getLong("lessonId"));
+                onlineClassVo.setTeacherName(jsonObject.getString("teacherName"));
+                onlineClassVo.setTeacherEmail(jsonObject.getString("teacherEmail"));
+                onlineClassVo.setScheduledDateTime(jsonObject.getDate("scheduledDateTime"));
+                onlineClassVo.setSubmitDateTime(jsonObject.getDate("submitDateTime"));
+                onlineClassVo.setLessonSn(jsonObject.getString("lessonSn"));
+                String course = jsonObject.getString("course");
+                onlineClassVo.setCourse(course);
+                onlineClassVo.setFinishType(jsonObject.getString("finishType"));
+                onlineClassVo.setStudentEnglishName(jsonObject.getString("studentEnglishName"));
+                onlineClassVo.setStudentName(jsonObject.getString("studentName"));
+                onlineClassVo.setTimezone(jsonObject.getString("timezone"));
+                onlineClassVo.setAuditorId(jsonObject.getInteger("auditorId"));
+                onlineClassVo.setAuditorName(jsonObject.getString("auditorName"));
+                onlineClassVos.add(onlineClassVo);
+            }
+        }
+        return onlineClassVos;
+    }
 }

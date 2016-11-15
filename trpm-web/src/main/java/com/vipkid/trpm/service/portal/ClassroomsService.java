@@ -383,16 +383,19 @@ public class ClassroomsService {
             //modelMap.put("lifeCycle", "(Resubmit)");
             lifeCycle = "(Resubmit)";
         }
-        
+        //UAstatus
         if(null == assessmentReport){ //基于UA系统查询在线课程UA填写情况
         	OnlineClassVo onlineClassVo = new OnlineClassVo();
         	onlineClassVo.getIdList().add(onlineClassId);
 			List<StudentUnitAssessment> suaList = assessmentHttpService.findOnlineClassVo(onlineClassVo);
 			if(CollectionUtils.isNotEmpty(suaList)){
 				StudentUnitAssessment sua = suaList.get(0);
-				if(sua.getSubmitStatus() == 1){
+                modelMap.put("submitStatus",sua.getSubmitStatus());
+                if(sua.getSubmitStatus() == 1){
 					lifeCycle = "(submitted)";
-				}else{
+				}else if(sua.getIsRefillin()==1){
+                    lifeCycle = "(empty)";
+                }else{
 					lifeCycle = "(saved)";
 				}
 			}else{
@@ -436,7 +439,6 @@ public class ClassroomsService {
      * 处理显示materials逻辑
      *
      * @param lessonId
-     * @param courseId
      * @return Map<String, Object>
      */
     public Map<String, Object> doShowMaterials(long lessonId) {

@@ -134,7 +134,14 @@ define(["function","jquery-bootstrap","jquery-load","countdown" ], function() {
 	/** 退出教室提示信息函数 */
 	var showExitClassroomTips = function(isShow, onlineClassId,isUa) {
 		Portal.loading("close");
-		if (isShow) {
+		var str = $("#time").attr("value") + ""; // 日期字符串
+		var temp = str.split('.')[0];
+		str = temp.replace(/-/g,'/'); // 将-替换成/，因为下面这个构造函数只支持/分隔的日期字符串
+		var date = new Date(str); // 构造一个日期型数据，值为传入的字符串
+		console.log(date> new Date().getTime() - 2*86400000);
+		console.log(date);
+		console.log(new Date().getTime() - 2*86400000);
+		if (isShow && date.getTime() > new Date().getTime() - 2*86400000) {
 			$.alert("confirm", {
 				title : "Prompt",
 				content : isUa==1?"Please make sure you have saved your form.":"Please remember to fill in the class feedback!",
