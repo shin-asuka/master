@@ -39,7 +39,7 @@ import com.vipkid.trpm.entity.TeacherApplication;
 import com.vipkid.trpm.entity.TeacherModule;
 import com.vipkid.trpm.entity.TeacherPe;
 import com.vipkid.trpm.entity.User;
-import com.vipkid.trpm.proxy.ClassroomProxy;
+import com.vipkid.trpm.proxy.OnlineClassProxy;
 import com.vipkid.trpm.util.DateUtils;
 import com.vipkid.trpm.util.FilesUtils;
 import com.vipkid.trpm.util.IpUtils;
@@ -100,8 +100,8 @@ public class PeSupervisorService {
 
     public String getClassRoomUrl(TeacherPe teacherPe) {
         OnlineClass onlineClass = onlineClassDao.findById(teacherPe.getOnlineClassId());
-        Map<String,Object> result = ClassroomProxy.generateRoomEnterUrl(String.valueOf(teacherPe.getStudentId()),
-                teacherPe.getStudentName(), onlineClass.getClassroom(), ClassroomProxy.RoomRole.STUDENT,
+        Map<String,Object> result = OnlineClassProxy.generateRoomEnterUrl(String.valueOf(teacherPe.getStudentId()),
+                teacherPe.getStudentName(), onlineClass.getClassroom(), OnlineClassProxy.RoomRole.STUDENT,
                 onlineClass.getSupplierCode());
         return result.get("url")+"";
     }

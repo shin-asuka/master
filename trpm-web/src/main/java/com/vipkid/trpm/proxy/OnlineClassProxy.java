@@ -14,10 +14,15 @@ import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.collect.Maps;
 
-public class ClassroomProxy {
+public class OnlineClassProxy {
 
-    private static final Logger logger = LoggerFactory.getLogger(ClassroomProxy.class);
+    private static final Logger logger = LoggerFactory.getLogger(OnlineClassProxy.class);
     
+    /**
+     * TEACHER,STUDENT
+     * @author Along 
+     *
+     */
     public enum RoomRole{
         TEACHER,
         STUDENT
@@ -32,9 +37,9 @@ public class ClassroomProxy {
      * @param userId  从teacher中获取id
      * @param realName 从Teacher中获取
      * @param roomId 从onlineClass对象中获取
-     * @param userRole Teacher,Student 招聘端
+     * @param userRole {@link RoomRole} Teacher,Student 招聘端
      * @param supplierCode 1 多贝 , 2 学点 从onlineClass对象中获取
-     * @return   Map<String,Object>  教室URL
+     * @return   Map&lt;String,Object&gt;  教室URL
      */
     public static Map<String,Object> generateRoomEnterUrl(String userId, String realName, String roomId,RoomRole userRole,String supplierCode) {
         Map<String,Object> resultMap = Maps.newHashMap();
@@ -51,7 +56,7 @@ public class ClassroomProxy {
         if (roomId == null) {
             resultMap.put("status", false);
             resultMap.put("info", "fail to get url: classroom ,the classroom is empty");
-            logger.warn("fail to get url: classroom ,the classroom is empty");
+            logger.error(resultMap.get("info")+"");
             return resultMap;
         }
         String requestUrl = getHttpUrl() + "/api/service/private/supplier/getOnlineClassRoomURL";
@@ -61,24 +66,24 @@ public class ClassroomProxy {
         if (StringUtils.isBlank(responseBody)) {
             resultMap.put("status", false);
             resultMap.put("info", "Failed to get classroom "+roomId+"'s url");
-            logger.error("Failed to get classroom {}'s url", roomId);
+            logger.error(resultMap.get("info")+"");
             return resultMap;
         }
-        JsonNode result = null;
+        JsonNode resultJson = null;
         try{
-            result = JsonTools.readValue(responseBody);
+            resultJson = JsonTools.readValue(responseBody);
         }catch(Exception ex){
             resultMap.put("status", false); 
             resultMap.put("info", responseBody);
             logger.error(ex.getMessage());
             return resultMap;
         }
-        logger.info("Request after =" + JsonTools.getJson(result));
-        JsonNode jsonURL = result.get("url");
+        logger.info("Request after =" + JsonTools.getJson(resultJson));
+        JsonNode jsonURL = resultJson.get("url");
         if (jsonURL == null) {
             resultMap.put("status", false);
             resultMap.put("info", "Not have class room url,you should checke request param ok!");
-            logger.error("Not have class room url,you should checke request param ok!");
+            logger.error(resultMap.get("info")+"");
             return resultMap;
         }
         resultMap.put("status", true);
@@ -90,10 +95,10 @@ public class ClassroomProxy {
      * BOOK ClASS
      * @param userId
      * @param onlineClassId
-     * @param type
+     * @param type TEACHER_RECRUITMENT/PRACTICUM
      * @param scheduledDateTime
      * @return    
-     * Map<String,Object>
+     * Map&lt;String,Object&gt;
      */
     public static Map<String,Object> doBookRecruitment(long userId,long onlineClassId,String type,String scheduledDateTime){
         Map<String,Object> result = Maps.newHashMap();
@@ -113,11 +118,54 @@ public class ClassroomProxy {
         if (StringUtils.isBlank(responseBody)) {
             result.put("status", false);
             result.put("info", "Request failed, please try again later !");
+            logger.error(result.get("info")+"");
         } else if (responseBody.indexOf("Success") > 0) {
             result.put("status", true);
         } else {
             result.put("status", false);
             result.put("info", "Request failed, Please try again later!");
+            logger.error(result.get("info")+"");
+        }
+        return result;
+    }
+    
+    /**
+     * CANCEL ClASS
+     * @param userId
+     * @param onlineClassId
+     * @param type TEACHER_RECRUITMENT/PRACTICUM
+     * @return    
+     * Map&lt;String,Object&gt;
+     */
+    public static Map<String,Object> doCancelRecruitement(long userId,long onlineClassId,String type){
+        Map<String,Object> result = Maps.newHashMap();
+        Map<String, String> requestParams = new HashMap<String, String>();
+        requestParams.put("onlineClassId", String.valueOf(onlineClassId));
+        requestParams.put("courseType", type);
+        requestParams.put("teacherId", String.valueOf(userId));
+        Map<String, String> requestHeader = new HashMap<String, String>();
+        
+        String author = "TEACHER " + userId;
+        requestHeader.put("Authorization", author + " " + DigestUtils.md5Hex(author));
+        
+        String requestUrl = getHttpUrl() + "/recruitment/cancelOnlineClassforRecruitment";
+        String responseBody = HttpClientProxy.post(requestUrl, requestParams, requestHeader);
+        
+        logger.info("CANCEL CLASS MESSAGE : " + responseBody);
+        if (StringUtils.isBlank(responseBody)) {
+            result.put("status", false);
+            result.put("info", "Request failed, Please try again later !");
+            logger.error(result.get("info")+"");
+        } else if (responseBody.indexOf("Success") > 0) {
+            result.put("status", true);
+        } else if (responseBody.indexOf("628") > 0) {
+            result.put("status", false);
+            result.put("info", "Sorry, you can't cancel again within 5 minutes. Try again later!");
+            logger.error(result.get("info")+"");
+        } else {
+            result.put("status", false);
+            result.put("info", "Request failed, Please try again later!");
+            logger.error(result.get("info")+"");
         }
         return result;
     }

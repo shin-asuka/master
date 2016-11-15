@@ -14,7 +14,7 @@ import com.vipkid.recruitment.dao.InterviewDao;
 import com.vipkid.trpm.dao.OnlineClassDao;
 import com.vipkid.trpm.entity.OnlineClass;
 import com.vipkid.trpm.entity.Teacher;
-import com.vipkid.trpm.proxy.ClassroomProxy;
+import com.vipkid.trpm.proxy.OnlineClassProxy;
 import com.vipkid.trpm.util.DateUtils;
 
 @Service
@@ -56,7 +56,7 @@ public class InterviewService {
     public Map<String,Object> getClassRoomUrl(long onlineClassId,Teacher teacher){
        Map<String,Object> result = Maps.newHashMap();
        OnlineClass onlineClass = this.onlineClassDao.findById(onlineClassId);
-       result = ClassroomProxy.generateRoomEnterUrl(teacher.getId()+"", teacher.getRealName(),onlineClass.getClassroom(), ClassroomProxy.RoomRole.TEACHER, onlineClass.getSupplierCode());
+       result = OnlineClassProxy.generateRoomEnterUrl(teacher.getId()+"", teacher.getRealName(),onlineClass.getClassroom(), OnlineClassProxy.RoomRole.TEACHER, onlineClass.getSupplierCode());
        return result;
     }
     
