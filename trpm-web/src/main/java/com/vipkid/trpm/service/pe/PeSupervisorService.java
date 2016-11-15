@@ -71,7 +71,7 @@ public class PeSupervisorService {
 
     @Autowired
     private TeacherModuleDao teacherModuleDao;
-    
+
     @Autowired
     private TeacherQuizDao teacherQuizDao;
 
@@ -119,7 +119,7 @@ public class PeSupervisorService {
      * @date 2016年1月11日
      */
     public Map<String, Object> updateAudit(Teacher peSupervisor,
-            TeacherApplication currTeacherApplication, String result, String finishType, int peId) {
+                                           TeacherApplication currTeacherApplication, String result, String finishType, int peId) {
         // 默认操作状态
         Map<String, Object> modelMap = Maps.newHashMap();
         modelMap.put("result", false);
@@ -248,7 +248,7 @@ public class PeSupervisorService {
      * @date 2016年1月14日
      */
     private Map<String, Object> updateTeacherApplication(Teacher recruitTeacher, Teacher pes,
-            String result, String comments, TeacherApplication teacherApplication) {
+                                                         String result, String comments, TeacherApplication teacherApplication) {
 
         Map<String, Object> modelMap = Maps.newHashMap();
 
@@ -296,7 +296,7 @@ public class PeSupervisorService {
      * @return
      */
     public Map<String, Object> doPracticumForPE(Teacher pe, TeacherApplication teacherApplication,
-            String result) {
+                                                String result) {
         Preconditions.checkArgument(0 != teacherApplication.getId());
         Preconditions.checkArgument(StringUtils.isNotEmpty(result));
 
