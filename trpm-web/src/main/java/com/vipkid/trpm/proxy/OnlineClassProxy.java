@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.collect.Maps;
+import com.vipkid.recruitment.utils.ResponseUtils;
 
 public class OnlineClassProxy {
 
@@ -54,7 +55,6 @@ public class OnlineClassProxy {
      * @return   Map&lt;String,Object&gt;  教室URL
      */
     public static Map<String,Object> generateRoomEnterUrl(String userId, String realName, String roomId,RoomRole userRole,String supplierCode) {
-        Map<String,Object> resultMap = Maps.newHashMap();
         Map<String, String> params = Maps.newHashMap();
         params.put("userId", userId);
         params.put("name", realName);
@@ -65,42 +65,31 @@ public class OnlineClassProxy {
         Map<String, String> header = new HashMap<String, String>();
         String author = "TEACHER " + userId;
         header.put("Authorization", author + " " + DigestUtils.md5Hex(author));
-        if (roomId == null) {
-            resultMap.put("status", false);
-            resultMap.put("info", "fail to get url: classroom ,the classroom is empty");
-            logger.error(resultMap.get("info")+"");
-            return resultMap;
+        if (StringUtils.isBlank(roomId)) {
+            return ResponseUtils.responseFail("fail to get url: classroom ,the classroom is empty", OnlineClassProxy.class);
         }
         String requestUrl = getHttpUrl() + "/api/service/private/supplier/getOnlineClassRoomURL";
         logger.info("Request before: URL:{}; params:{},roomId:{}",requestUrl,JsonTools.getJson(params),roomId);
         String responseBody = HttpClientProxy.get(requestUrl, params, header);
         logger.info("Request after: responseBody=" + responseBody);
         if (StringUtils.isBlank(responseBody)) {
-            resultMap.put("status", false);
-            resultMap.put("info", "Failed to get classroom "+roomId+"'s url");
-            logger.error(resultMap.get("info")+"");
-            return resultMap;
+            return ResponseUtils.responseFail("Failed to get classroom "+roomId+"'s url", OnlineClassProxy.class);
         }
         JsonNode resultJson = null;
         try{
             resultJson = JsonTools.readValue(responseBody);
         }catch(Exception ex){
-            resultMap.put("status", false); 
-            resultMap.put("info", responseBody);
             logger.error(ex.getMessage());
-            return resultMap;
+            return ResponseUtils.responseFail(responseBody, OnlineClassProxy.class);
         }
         logger.info("Request after =" + JsonTools.getJson(resultJson));
         JsonNode jsonURL = resultJson.get("url");
         if (jsonURL == null) {
-            resultMap.put("status", false);
-            resultMap.put("info", "Not have class room url,you should checke request param ok!");
-            logger.error(resultMap.get("info")+"");
-            return resultMap;
+            return ResponseUtils.responseFail("Not have class room url,you should checke request param ok!", OnlineClassProxy.class);
         }
-        resultMap.put("status", true);
+        Map<String,Object> resultMap = Maps.newHashMap();
         resultMap.put("url", jsonURL.asText());
-        return resultMap;
+        return ResponseUtils.responseSuccess(resultMap);
     }
     
     /**
@@ -113,7 +102,6 @@ public class OnlineClassProxy {
      * Map&lt;String,Object&gt;
      */
     public static Map<String,Object> doBookRecruitment(long userId,long onlineClassId,ClassType type,String scheduledDateTime){
-        Map<String,Object> result = Maps.newHashMap();
         Map<String, String> requestParams = Maps.newHashMap();             
         requestParams.put("onlineClassId", String.valueOf(onlineClassId));
         requestParams.put("courseType", type.toString());
@@ -128,17 +116,12 @@ public class OnlineClassProxy {
         String responseBody = HttpClientProxy.post(requestUrl, requestParams, requestHeader);
         logger.info("BOOK CLASS MESSAGE : " + responseBody);
         if (StringUtils.isBlank(responseBody)) {
-            result.put("status", false);
-            result.put("info", "Request failed, please try again later !");
-            logger.error(result.get("info")+"");
+            return ResponseUtils.responseFail("Request failed, please try again later !", OnlineClassProxy.class);
         } else if (responseBody.indexOf("Success") > 0) {
-            result.put("status", true);
+            return ResponseUtils.responseSuccess();
         } else {
-            result.put("status", false);
-            result.put("info", "Request failed, Please try again later!");
-            logger.error(result.get("info")+"");
+            return ResponseUtils.responseFail("Request failed, Please try again later!", OnlineClassProxy.class);
         }
-        return result;
     }
     
     /**
@@ -150,7 +133,6 @@ public class OnlineClassProxy {
      * Map&lt;String,Object&gt;
      */
     public static Map<String,Object> doCancelRecruitement(long userId,long onlineClassId,ClassType type){
-        Map<String,Object> result = Maps.newHashMap();
         Map<String, String> requestParams = new HashMap<String, String>();
         requestParams.put("onlineClassId", String.valueOf(onlineClassId));
         requestParams.put("courseType", type.toString());
@@ -165,21 +147,14 @@ public class OnlineClassProxy {
         
         logger.info("CANCEL CLASS MESSAGE : " + responseBody);
         if (StringUtils.isBlank(responseBody)) {
-            result.put("status", false);
-            result.put("info", "Request failed, Please try again later !");
-            logger.error(result.get("info")+"");
+            return ResponseUtils.responseFail("Request failed, Please try again later !",OnlineClassProxy.class);
         } else if (responseBody.indexOf("Success") > 0) {
-            result.put("status", true);
+            return ResponseUtils.responseSuccess();
         } else if (responseBody.indexOf("628") > 0) {
-            result.put("status", false);
-            result.put("info", "Sorry, you can't cancel again within 5 minutes. Try again later!");
-            logger.error(result.get("info")+"");
+            return ResponseUtils.responseFail("Sorry, you can't cancel again within 5 minutes. Try again later!",OnlineClassProxy.class);
         } else {
-            result.put("status", false);
-            result.put("info", "Request failed, Please try again later!");
-            logger.error(result.get("info")+"");
+            return ResponseUtils.responseFail("Request failed, Please try again later!",OnlineClassProxy.class);
         }
-        return result;
     }
 
 }

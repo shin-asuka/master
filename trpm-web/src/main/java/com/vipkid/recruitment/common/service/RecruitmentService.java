@@ -73,14 +73,13 @@ public class RecruitmentService {
             _result = getInterviewStatus(teacher, teacherApplication);
         //待审核
         }else if(StringUtils.equalsIgnoreCase(TeacherApplicationEnum.Status.PRACTICUM.toString(),teacherApplication.getStatus())){
-            //
+            //PRACTICUM2
         }
         if(_result != null){
             resultMap.putAll(_result);
             return resultMap;
         }
-        
-        //其他情况 待经审核 结果【FAIL,PASS,REPLAY】
+        //其他情况 待经审核
         if(StringUtils.isBlank(teacherApplication.getResult())){
             resultMap.put("result",TeacherApplicationDao.AuditStatus.ToAudit.toString());
             return resultMap;
@@ -118,9 +117,9 @@ public class RecruitmentService {
                 OnlineClass onlineClass = this.onlineClassDao.findById(teacherApplication.getOnlineClassId());
                 //处于book状态的onlineClass 应该处于倒计时页面
                 if(OnlineClassEnum.Status.BOOKED.toString().equals(onlineClass.getStatus())){
-                    //小于1个小时 可进入onlineClass
                     result.put("serverTime",System.currentTimeMillis());
                     result.put("scheduledDateTime",onlineClass.getScheduledDateTime().getTime());
+                    //小于1个小时 可进入onlineClass
                     if(!DateUtils.count1h(onlineClass.getScheduledDateTime().getTime())){
                         result.put("result",TeacherApplicationDao.AuditStatus.goToClass.toString());
                         return result;

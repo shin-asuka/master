@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.google.api.client.util.Maps;
 import com.vipkid.recruitment.interceptor.RestInterface;
 import com.vipkid.recruitment.interview.service.InterviewService;
+import com.vipkid.recruitment.utils.ResponseUtils;
 import com.vipkid.rest.RestfulController;
 import com.vipkid.rest.config.RestfulConfig;
 import com.vipkid.trpm.constant.ApplicationConstant.TeacherLifeCycle;
@@ -34,106 +35,74 @@ public class InterviewController extends RestfulController {
     
     @RequestMapping(value = "/list", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
     public Map<String,Object> list(HttpServletRequest request, HttpServletResponse response){
-        Map<String,Object> result = Maps.newHashMap();
         try{
-            User user = getUser(request);
-            logger.info("user:{},list",user.getId());
+            Map<String,Object> result = Maps.newHashMap();
             result.put("list", this.interviewService.findlistByInterview());
-            result.put("status", true);
-            return result;
+            return ResponseUtils.responseSuccess(result);
         } catch (IllegalArgumentException e) {
-            result.clear();
-            result.put("status", false);
-            logger.error("内部参数转化异常:"+e.getMessage());
             response.setStatus(HttpStatus.BAD_REQUEST.value());
+            return ResponseUtils.responseFail(e.getMessage(), this);
         } catch (Exception e) {
-            result.clear();
-            result.put("status", false);
-            logger.error(e.getMessage(), e);
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            return ResponseUtils.responseFail(e.getMessage(), this);
         }
-        return result;
     }
     
     
     @RequestMapping(value = "/bookClass", method = RequestMethod.POST, produces = RestfulConfig.JSON_UTF_8)
     public Map<String,Object> bookClass(HttpServletRequest request, HttpServletResponse response,long onlineClassId){
-        Map<String,Object> result = Maps.newHashMap();
         try{
-            User user = getUser(request);
-            logger.info("user:{},bookClass",user.getId());
-            result = this.interviewService.bookInterviewClass(onlineClassId, getTeacher(request));
+            Map<String,Object> result = this.interviewService.bookInterviewClass(onlineClassId, getTeacher(request));
             if(!MapUtils.getBooleanValue(result, "status")){
                 result.put("info", "The class room url not exis.");
                 response.setStatus(HttpStatus.FORBIDDEN.value()); ;  
             }
             return result;
         } catch (IllegalArgumentException e) {
-            result.clear();
-            result.put("status", false);
-            logger.error("内部参数转化异常:"+e.getMessage());
             response.setStatus(HttpStatus.BAD_REQUEST.value());
+            return ResponseUtils.responseFail(e.getMessage(), this);
         } catch (Exception e) {
-            result.clear();
-            result.put("status", false);
-            logger.error(e.getMessage(), e);
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            return ResponseUtils.responseFail(e.getMessage(), this);
         }
-        return result;
     } 
     
     
     @RequestMapping(value = "/reschedule", method = RequestMethod.POST, produces = RestfulConfig.JSON_UTF_8)
     public Map<String,Object> reschedule(HttpServletRequest request, HttpServletResponse response,long onlineClassId){
-        Map<String,Object> result = Maps.newHashMap();
         try{
-            User user = getUser(request);
-            logger.info("user:{},reschedule",user.getId());
-            result = this.interviewService.cancelInterviewClass(onlineClassId, getTeacher(request));
+            Map<String,Object> result = this.interviewService.cancelInterviewClass(onlineClassId, getTeacher(request));
             if(!MapUtils.getBooleanValue(result, "status")){
                 result.put("info", "The class room url not exis.");
                 response.setStatus(HttpStatus.FORBIDDEN.value());  
             }
             return result;
         } catch (IllegalArgumentException e) {
-            result.clear();
-            result.put("status", false);
-            logger.error("内部参数转化异常:"+e.getMessage());
             response.setStatus(HttpStatus.BAD_REQUEST.value());
+            return ResponseUtils.responseFail(e.getMessage(), this);
         } catch (Exception e) {
-            result.clear();
-            result.put("status", false);
-            logger.error(e.getMessage(), e);
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            return ResponseUtils.responseFail(e.getMessage(), this);
         }
-        return result;
     } 
     
     
     @RequestMapping(value = "/getClassRoomUrl", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
     public Map<String,Object> getClassRoomUrl(HttpServletRequest request, HttpServletResponse response,long onlineClassId){
-        Map<String,Object> result = Maps.newHashMap();
         try{
-            User user = getUser(request);
-            logger.info("user:{},getClassRoomUrl",user.getId());
-            result = this.interviewService.getClassRoomUrl(onlineClassId, getTeacher(request));
+            Map<String,Object> result = this.interviewService.getClassRoomUrl(onlineClassId, getTeacher(request));
             if(!MapUtils.getBooleanValue(result, "status")){
                 result.put("info", "The class room url not exis.");
                 response.setStatus(HttpStatus.FORBIDDEN.value()); ;  
             }
             return result;
         } catch (IllegalArgumentException e) {
-            result.clear();
-            result.put("status", false);
-            logger.error("内部参数转化异常:"+e.getMessage());
             response.setStatus(HttpStatus.BAD_REQUEST.value());
+            return ResponseUtils.responseFail(e.getMessage(), this);
         } catch (Exception e) {
-            result.clear();
-            result.put("status", false);
-            logger.error(e.getMessage(), e);
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            return ResponseUtils.responseFail(e.getMessage(), this);
         }
-        return result;
     } 
     
     

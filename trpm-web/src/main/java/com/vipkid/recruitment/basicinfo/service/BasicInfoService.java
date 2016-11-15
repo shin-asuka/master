@@ -20,6 +20,7 @@ import com.vipkid.enums.TeacherEnum;
 import com.vipkid.enums.UserEnum;
 import com.vipkid.recruitment.dao.TeachingExperienceDao;
 import com.vipkid.recruitment.entity.TeachingExperience;
+import com.vipkid.recruitment.utils.ResponseUtils;
 import com.vipkid.rest.config.RestfulConfig;
 import com.vipkid.rest.dto.TeacherDto;
 import com.vipkid.trpm.constant.ApplicationConstant;
@@ -140,10 +141,8 @@ public class BasicInfoService {
         Teacher teacher = this.teacherDao.findById(user.getId());
         List<TeacherApplication> applicationList = teacherApplicationDao.findApplictionForStatus(user.getId(),AppEnum.LifeCycle.BASIC_INFO.toString());
         if(CollectionUtils.isNotEmpty(applicationList)){
-            result.put("status", false);
-            result.put("info", "You have already submitted data!");
             logger.error("已经提交基本信息的老师{}，重复提交被拦截:提交状态{},审核结果{},用户状态:{}",teacher.getId(),applicationList.get(0).getStatus(),applicationList.get(0).getResult(),teacher.getLifeCycle());
-            return result;
+            return ResponseUtils.responseFail("You have already submitted data!", this);
         }
         //3.更新Teacher
         teacher = this.initTeacher(teacher, bean);     
@@ -161,10 +160,8 @@ public class BasicInfoService {
         //2.更新Address
         TeacherAddress teacherAddress = this.teacherAddressDao.updateOrSaveCurrentAddressId(teacher, bean.getCountryId(), bean.getStateId(), bean.getCityId(), bean.getStreetAddress(), bean.getZipCode());
         if(teacherAddress == null || teacherAddress.getId() <= 0){
-            result.put("status", false);
-            result.put("info", "You have already submitted data!");
             logger.error("老师:{},地址信息:{},保存有问题.",teacher.getId(),JsonTools.getJson(teacherAddress));
-            return result;
+            return ResponseUtils.responseFail("You address save error data!", this);
         }
    
         //4.新增 TeacherApplication
@@ -214,8 +211,7 @@ public class BasicInfoService {
         this.teacherApplicationDao.save(application);
         this.teacherDao.update(teacher);
         result.put("id", user.getId());
-        result.put("status", true);
-        return result;
+        return ResponseUtils.responseSuccess(result);
     }
    
     /**

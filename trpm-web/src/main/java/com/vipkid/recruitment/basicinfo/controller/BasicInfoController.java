@@ -8,7 +8,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
-import org.community.tools.JsonTools;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +21,7 @@ import com.google.api.client.util.Maps;
 import com.vipkid.recruitment.basicinfo.service.BasicInfoService;
 import com.vipkid.recruitment.basicinfo.service.TeachingExperienceService;
 import com.vipkid.recruitment.interceptor.RestInterface;
+import com.vipkid.recruitment.utils.ResponseUtils;
 import com.vipkid.rest.RestfulController;
 import com.vipkid.rest.config.RestfulConfig;
 import com.vipkid.rest.dto.TeacherDto;
@@ -50,101 +50,72 @@ public class BasicInfoController extends RestfulController{
     
     @RequestMapping(value = "/getRecruitmentChannelList", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
     public Map<String,Object> getRecruitmentChannelList(HttpServletRequest request, HttpServletResponse response){
-        Map<String,Object> result = Maps.newHashMap();
         try{
-            User user = getUser(request);
-            logger.info("user:{},getRecruitmentChannelList",user.getId());
-            result.put("status", true);
+            Map<String,Object> result = Maps.newHashMap();
             result.put("list", this.basicInfoService.getRecruitmentChannelList());
-            return result;
+            return ResponseUtils.responseSuccess(result);
         } catch (IllegalArgumentException e) {
-            result.clear();
-            result.put("status", false);
-            logger.error("内部参数转化异常:"+e.getMessage());
             response.setStatus(HttpStatus.BAD_REQUEST.value());
+            return ResponseUtils.responseFail(e.getMessage(), this);
         } catch (Exception e) {
-            result.clear();
-            result.put("status", false);
-            logger.error(e.getMessage(), e);
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            return ResponseUtils.responseFail(e.getMessage(), this);
         }
-        return result;
     }
     
     
     @RequestMapping(value = "/getTeachingList", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
     public Map<String,Object> getTeachingList(HttpServletRequest request, HttpServletResponse response){
-        Map<String,Object> result = Maps.newHashMap();
         try{
             User user = getUser(request);
-            result.put("status", true);
+            Map<String,Object> result = Maps.newHashMap();
             result.put("list", this.teachingExperienceService.getTeachingList(user.getId()));
-            return result;
+            return ResponseUtils.responseSuccess(result);
         } catch (IllegalArgumentException e) {
-            result.clear();
-            result.put("status", false);
-            logger.error("内部参数转化异常:"+e.getMessage());
             response.setStatus(HttpStatus.BAD_REQUEST.value());
+            return ResponseUtils.responseFail(e.getMessage(), this);
         } catch (Exception e) {
-            result.clear();
-            result.put("status", false);
-            logger.error(e.getMessage(), e);
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            return ResponseUtils.responseFail(e.getMessage(), this);
         }
-        return result;
     }
     
     @RequestMapping(value = "/saveOrUpdateTeaching", method = RequestMethod.POST, produces = RestfulConfig.JSON_UTF_8)
     public Map<String,Object> saveOrUpdateTeaching(HttpServletRequest request, HttpServletResponse response,
             @RequestBody TeachingExperienceDto teachingExperience){
-        Map<String,Object> result = Maps.newHashMap();
         try{
             long resultRow = 0;
             User user = getUser(request);
             List<Result> list = ValidateUtils.checkBean(teachingExperience,false);
             if(CollectionUtils.isNotEmpty(list) && list.get(0).isResult()){
-                result.clear();
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
-                result.put("status", false);
-                result.put("info",list.get(0).getName() + "," + list.get(0).getMessages());
-                logger.warn("resultCheck:"+JsonTools.getJson(list));
-                return result;
+                return ResponseUtils.responseFail(list.get(0).getName() + "," + list.get(0).getMessages(), this);
             }
             //时间判断
             if(teachingExperience.getTimePeriodStart() >= teachingExperience.getTimePeriodEnd()){
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
-                result.put("status", false);
-                result.put("info", "The time interval is illegal!");
-                logger.warn("时间区间不正确");
-                return result;
+                return ResponseUtils.responseFail("The time interval is illegal!", this);
             }
             if(teachingExperience.getId() > 0){
                 resultRow = this.teachingExperienceService.updateTeaching(teachingExperience, user);
             }else{
                 resultRow = this.teachingExperienceService.saveTeaching(teachingExperience, user);
             }
+            Map<String,Object> result = Maps.newHashMap();
             result.put("id", resultRow);
             result.put("status", resultRow > 0 ? true : false);
             if(!MapUtils.getBooleanValue(result, "status")){
-                result.clear();
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
-                result.put("status", false);
-                result.put("info", "Save or Update fail");
-                return result;
+                return ResponseUtils.responseFail("Save or Update fail", this);
             }
             return result;
         } catch (IllegalArgumentException e) {
-            result.clear();
-            logger.error("内部参数转化异常:"+e.getMessage());
             response.setStatus(HttpStatus.BAD_REQUEST.value());
-            result.put("status", false);
+            return ResponseUtils.responseFail(e.getMessage(), this);
         } catch (Exception e) {
-            result.clear();
-            logger.error(e.getMessage(), e);
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            result.put("status", false);
+            return ResponseUtils.responseFail(e.getMessage(), this);
         }
-        return result;
     } 
     
     
@@ -158,25 +129,17 @@ public class BasicInfoController extends RestfulController{
             result.put("id", resultRow);
             result.put("status", resultRow > 0 ? true : false);
             if(!MapUtils.getBooleanValue(result, "status")){
-                result.clear();
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
-                result.put("status", false);
-                result.put("info", "Update fail");
-                return result;
+                return ResponseUtils.responseFail("Save or Update fail", this);
             }
             return result;
         } catch (IllegalArgumentException e) {
-            result.clear();
-            logger.error("内部参数转化异常:"+e.getMessage());
             response.setStatus(HttpStatus.BAD_REQUEST.value());
-            result.put("status", false);
+            return ResponseUtils.responseFail(e.getMessage(), this);
         } catch (Exception e) {
-            result.clear();
-            logger.error(e.getMessage(), e);
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            result.put("status", false);
+            return ResponseUtils.responseFail(e.getMessage(), this);
         }
-        return result;
     } 
     /*
     @Deprecated
@@ -206,48 +169,35 @@ public class BasicInfoController extends RestfulController{
             List<Result> list = ValidateUtils.checkBean(bean,false);
             if(CollectionUtils.isNotEmpty(list) && list.get(0).isResult()){
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
-                result.put("status", false);
-                result.put("info",list.get(0).getName() + "," + list.get(0).getMessages());
-                logger.warn("resultCheck:"+JsonTools.getJson(list));
-                return result;
+                return ResponseUtils.responseFail(list.get(0).getName() + "," + list.get(0).getMessages(), this);
             }
             if(!AppUtils.containsName(AppEnum.Gender.class, bean.getGender())){
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
-                result.put("status", false);
-                result.put("info", "Gender data is error:"+bean.getGender());
-                logger.warn("warn:{}",result.get("info"));
-                return result;
+                return ResponseUtils.responseFail("Gender data is error:"+bean.getGender(), this);
             }
             if(!AppUtils.containsName(AppEnum.DegreeType.class, bean.getHighestLevelOfEdu())){
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
-                result.put("status", false);
-                result.put("info", "Gender data is error:"+bean.getHighestLevelOfEdu());
-                logger.warn("warn:{}",result.get("info"));
-                return result;
+                return ResponseUtils.responseFail("HighestLevelOfEdu data is error:"+bean.getHighestLevelOfEdu(), this);
             }
             if(!AppUtils.containsName(AppEnum.RecruitmentChannel.class, bean.getRecruitmentChannel())){
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
-                result.put("status", false);
-                result.put("info", "RecruitmentChannel data is error:"+bean.getRecruitmentChannel());
-                logger.warn("warn:{}",result.get("info"));
-                return result;
+                return ResponseUtils.responseFail("RecruitmentChannel data is error:"+bean.getRecruitmentChannel(), this);
             }
             User user = getUser(request);
             String token = request.getHeader(RestfulController.AUTOKEN);
-            result = this.basicInfoService.submitInfo(bean, user,token);
+            result = this.basicInfoService.submitInfo(bean,user,token);
+            if(!MapUtils.getBooleanValue(result, "status")){
+                response.setStatus(HttpStatus.BAD_REQUEST.value());
+                return ResponseUtils.responseFail(result.get("info")+"", this);
+            }
             return result;
         } catch (IllegalArgumentException e) {
-            result.clear();
-            logger.error("内部参数转化异常:"+e.getMessage());
             response.setStatus(HttpStatus.BAD_REQUEST.value());
-            result.put("status", false);
+            return ResponseUtils.responseFail(e.getMessage(), this);
         } catch (Exception e) {
-            result.clear();
-            logger.error(e.getMessage(), e);
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            result.put("status", false);
+            return ResponseUtils.responseFail(e.getMessage(), this);
         }
-        return result;
     } 
     
         
