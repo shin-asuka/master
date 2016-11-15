@@ -126,10 +126,9 @@ public class PayrollMessageServiceImpl implements PayrollMessageService {
                             onlineClass.getScheduledDateTime());
                     if (payList.size() > 0) {
                         Object timestamp = payList.get(0).get("confirm_date_time");
-                        if (null != timestamp) {
+                        logger.info("学生Trail课订单确认时间为：{}，studentId = {}",timestamp,studentId);
+                        if (null != timestamp && timestamp instanceof Timestamp) {
                             isPaidForTrial = true;
-                        }
-                        if (timestamp instanceof Timestamp) {
                             onlineClassMessage.setTrialPayTime(((Timestamp) timestamp).getTime());
                         }
                     }
@@ -200,10 +199,9 @@ public class PayrollMessageServiceImpl implements PayrollMessageService {
                             onlineClass.getScheduledDateTime());
                     if (payList.size() > 0) {
                         Object timestamp = payList.get(0).get("confirm_date_time");
-                        if (null != timestamp) {
+                        logger.info("学生Trail课订单确认时间为：{}，studentId = {}",timestamp,studentId);
+                        if (null != timestamp && timestamp instanceof Timestamp) {
                             isPaidForTrial = true;
-                        }
-                        if (timestamp instanceof Timestamp) {
                             onlineClassMessage.setTrialPayTime(((Timestamp) timestamp).getTime());
                         }
                     }
