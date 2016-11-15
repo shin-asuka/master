@@ -21,6 +21,7 @@ import com.vipkid.trpm.service.passport.PassportService;
 import com.vipkid.trpm.service.rest.LoginService;
 import com.vipkid.trpm.util.IpUtils;
 
+@Deprecated
 @Controller
 public class EmailController extends AbstractController {
     

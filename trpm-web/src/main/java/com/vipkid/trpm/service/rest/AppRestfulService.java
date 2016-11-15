@@ -21,6 +21,7 @@ import com.vipkid.trpm.entity.app.AppTeacher;
 import com.vipkid.trpm.util.AppUtils;
 import com.vipkid.trpm.util.DateUtils;
 
+@Deprecated
 @Service
 public class AppRestfulService {
 

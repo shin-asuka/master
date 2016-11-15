@@ -36,6 +36,7 @@ import com.vipkid.trpm.security.SHA256PasswordEncoder;
 import com.vipkid.trpm.service.passport.PassportService;
 import com.vipkid.trpm.service.rest.AppRestfulService;
 
+@Deprecated
 @Controller
 @RequestMapping("/app")
 public class AppRestfulController {

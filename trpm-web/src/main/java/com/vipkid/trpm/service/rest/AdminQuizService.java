@@ -32,6 +32,7 @@ import com.vipkid.trpm.entity.TeacherQuizDetails;
 import com.vipkid.trpm.entity.User;
 import com.vipkid.trpm.security.SHA256PasswordEncoder;
 
+@Deprecated
 @Service
 public class AdminQuizService {
 
