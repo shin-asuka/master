@@ -62,8 +62,11 @@ public class InterviewController extends RestfulController {
         try{
             User user = getUser(request);
             logger.info("user:{},bookClass",user.getId());
-
-            result.put("status", true);
+            result = this.interviewService.bookInterviewClass(onlineClassId, getTeacher(request));
+            if(!MapUtils.getBooleanValue(result, "status")){
+                result.put("info", "The class room url not exis.");
+                response.setStatus(HttpStatus.FORBIDDEN.value()); ;  
+            }
             return result;
         } catch (IllegalArgumentException e) {
             result.clear();
@@ -86,8 +89,11 @@ public class InterviewController extends RestfulController {
         try{
             User user = getUser(request);
             logger.info("user:{},reschedule",user.getId());
-
-            result.put("status", true);
+            result = this.interviewService.cancelInterviewClass(onlineClassId, getTeacher(request));
+            if(!MapUtils.getBooleanValue(result, "status")){
+                result.put("info", "The class room url not exis.");
+                response.setStatus(HttpStatus.FORBIDDEN.value());  
+            }
             return result;
         } catch (IllegalArgumentException e) {
             result.clear();
@@ -113,7 +119,7 @@ public class InterviewController extends RestfulController {
             result = this.interviewService.getClassRoomUrl(onlineClassId, getTeacher(request));
             if(!MapUtils.getBooleanValue(result, "status")){
                 result.put("info", "The class room url not exis.");
-                response.setStatus(HttpStatus.BAD_REQUEST.value());  
+                response.setStatus(HttpStatus.FORBIDDEN.value()); ;  
             }
             return result;
         } catch (IllegalArgumentException e) {

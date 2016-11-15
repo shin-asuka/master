@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.time.DateFormatUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,7 @@ import com.vipkid.trpm.dao.OnlineClassDao;
 import com.vipkid.trpm.entity.OnlineClass;
 import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.proxy.OnlineClassProxy;
+import com.vipkid.trpm.proxy.OnlineClassProxy.ClassType;
 import com.vipkid.trpm.util.DateUtils;
 
 @Service
@@ -58,6 +60,42 @@ public class InterviewService {
        OnlineClass onlineClass = this.onlineClassDao.findById(onlineClassId);
        result = OnlineClassProxy.generateRoomEnterUrl(teacher.getId()+"", teacher.getRealName(),onlineClass.getClassroom(), OnlineClassProxy.RoomRole.TEACHER, onlineClass.getSupplierCode());
        return result;
+    }
+    
+    /***
+     * BOOK INTERVIEW 
+     * TODO
+     * 1.onlineClassId 必须是AVAILABLE 课
+     * 2.约课老师必须是INTERVIEW的待约课老师
+     * 3.book的课程在开课前1小时之内不允许book
+     * 4.cancel次数小于3次
+     * @param onlineClassId
+     * @param teacher
+     * @return    
+     * Map&lt;String,Object&gt;
+     */
+    public Map<String,Object> bookInterviewClass(long onlineClassId,Teacher teacher){
+        OnlineClass onlineClass = this.onlineClassDao.findById(onlineClassId);
+        String dateTime = DateFormatUtils.format(onlineClass.getScheduledDateTime(),"yyyy-MM-dd HH:mm:ss");
+        return OnlineClassProxy.doBookRecruitment(teacher.getId(), onlineClass.getId(), ClassType.TEACHER_RECRUITMENT,dateTime);
+    }
+    
+    /***
+     * CANCEL INTERVIEW 
+     * TODO
+     * 1.onlineClassId 必须是AVAILABLE 课
+     * 2.约课老师必须是INTERVIEW的待约课老师
+     * 3.book的课程在开课前1小时之内不允许book
+     * 4.cancel次数小于3次
+     * @param onlineClassId
+     * @param teacher
+     * @return    
+     * Map&lt;String,Object&gt;
+     */
+    public Map<String,Object> cancelInterviewClass(long onlineClassId,Teacher teacher){
+        OnlineClass onlineClass = this.onlineClassDao.findById(onlineClassId);
+        //TODO
+        return OnlineClassProxy.doCancelRecruitement(teacher.getId(), onlineClass.getId(), ClassType.TEACHER_RECRUITMENT);
     }
     
 }

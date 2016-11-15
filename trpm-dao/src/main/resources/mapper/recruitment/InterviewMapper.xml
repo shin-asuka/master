@@ -5,13 +5,13 @@
 	 <!-- Interview list  -->
 	 <select id="listByInterview" resultType="java.util.HashMap">
 		SELECT
-				online_class.id AS id,
-				online_class.scheduled_date_time AS scheduledDateTime
-		FROM online_class	
+			  online_class.id AS id,
+			  online_class.scheduled_date_time AS scheduledDateTime
+		FROM  online_class	
 		WHERE online_class.status = 'OPEN'
-				AND online_class.lesson_id = 211705
-				AND online_class.scheduled_date_time BETWEEN #{fromTime} and #{toTime}
-				ORDER By scheduled_date_time DESC
+			  AND online_class.lesson_id = 211705
+			  AND online_class.scheduled_date_time BETWEEN #{fromTime} and #{toTime}
+			  ORDER By scheduled_date_time DESC
 	</select>
 	
 </mapper>

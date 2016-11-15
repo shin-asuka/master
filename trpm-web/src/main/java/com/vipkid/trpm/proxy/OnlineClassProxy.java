@@ -19,13 +19,25 @@ public class OnlineClassProxy {
     private static final Logger logger = LoggerFactory.getLogger(OnlineClassProxy.class);
     
     /**
-     * TEACHER,STUDENT
+     * TEACHER:以老师的角色进入教室<br/>
+     * STUDENT:以学生的角色进入教室
      * @author Along 
      *
      */
     public enum RoomRole{
         TEACHER,
         STUDENT
+    }
+    
+    /**
+     * TEACHER_RECRUITMENT:面试课程<br/>
+     * PRACTICUM:实习课程
+     * @author Along 
+     *
+     */
+    public enum ClassType{
+        TEACHER_RECRUITMENT,
+        PRACTICUM
     }
 
     private static String getHttpUrl(){     
@@ -95,16 +107,16 @@ public class OnlineClassProxy {
      * BOOK ClASS
      * @param userId
      * @param onlineClassId
-     * @param type TEACHER_RECRUITMENT/PRACTICUM
+     * @param {@link ClassType} type TEACHER_RECRUITMENT/PRACTICUM
      * @param scheduledDateTime
      * @return    
      * Map&lt;String,Object&gt;
      */
-    public static Map<String,Object> doBookRecruitment(long userId,long onlineClassId,String type,String scheduledDateTime){
+    public static Map<String,Object> doBookRecruitment(long userId,long onlineClassId,ClassType type,String scheduledDateTime){
         Map<String,Object> result = Maps.newHashMap();
         Map<String, String> requestParams = Maps.newHashMap();             
         requestParams.put("onlineClassId", String.valueOf(onlineClassId));
-        requestParams.put("courseType", type);
+        requestParams.put("courseType", type.toString());
         requestParams.put("teacherId", String.valueOf(userId));
         requestParams.put("scheduleDateTime", scheduledDateTime);
         
@@ -133,15 +145,15 @@ public class OnlineClassProxy {
      * CANCEL ClASS
      * @param userId
      * @param onlineClassId
-     * @param type TEACHER_RECRUITMENT/PRACTICUM
+     * @param {@link ClassType} type TEACHER_RECRUITMENT/PRACTICUM
      * @return    
      * Map&lt;String,Object&gt;
      */
-    public static Map<String,Object> doCancelRecruitement(long userId,long onlineClassId,String type){
+    public static Map<String,Object> doCancelRecruitement(long userId,long onlineClassId,ClassType type){
         Map<String,Object> result = Maps.newHashMap();
         Map<String, String> requestParams = new HashMap<String, String>();
         requestParams.put("onlineClassId", String.valueOf(onlineClassId));
-        requestParams.put("courseType", type);
+        requestParams.put("courseType", type.toString());
         requestParams.put("teacherId", String.valueOf(userId));
         Map<String, String> requestHeader = new HashMap<String, String>();
         
