@@ -93,4 +93,10 @@ public class RecruitmentService {
         return ta;
     }
     
+    
+    public boolean updateTimezone(String timezone,Teacher teacher){
+        teacher.setTimezone(timezone);
+        this.teacherDao.update(teacher);
+        return true;
+    }
 }

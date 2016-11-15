@@ -74,13 +74,13 @@ public class RecruitmentController extends RestfulController{
     } 
     
     @RequestMapping(value = "/timezone", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
-    public Map<String,Object> timezone(HttpServletRequest request, HttpServletResponse response){
+    public Map<String,Object> timezone(HttpServletRequest request, HttpServletResponse response,String timezone){
         Map<String,Object> result = Maps.newHashMap();
         try{
-            User user = getUser(request);
-            logger.info("user:{},timezone",user.getId());
-            
-            result.put("status", true);
+            Teacher teacher = getTeacher(request);
+            logger.info("user:{},timezone",teacher.getId());
+            boolean resultBol = this.recruitmentService.updateTimezone(timezone, teacher);
+            result.put("status", resultBol);
             return result;
         } catch (IllegalArgumentException e) {
             result.clear();
