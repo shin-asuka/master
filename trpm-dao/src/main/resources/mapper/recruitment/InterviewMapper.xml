@@ -5,7 +5,7 @@
 	 <!-- Interview list  -->
 	 <select id="listByInterview" resultType="java.util.HashMap">
 		SELECT
-				online_class.id AS online_class_id,
+				online_class.id AS id,
 				online_class.scheduled_date_time AS scheduledDateTime
 		FROM online_class	
 		WHERE online_class.status = 'OPEN'
