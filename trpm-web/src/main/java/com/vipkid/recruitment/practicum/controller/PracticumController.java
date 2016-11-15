@@ -17,6 +17,7 @@ import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.entity.TeacherApplication;
 import com.vipkid.trpm.entity.User;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.collections.MapUtils;
 import org.community.http.client.HttpClientProxy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,12 +46,25 @@ public class PracticumController extends RestfulController {
     @Autowired
     private OnlineClassDao onlineClassDao;
 
-    @RequestMapping(value = "/init", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
-    public Map<String,Object> init(HttpServletRequest request, HttpServletResponse response) {
+    @RequestMapping(value = "/getStatus", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
+    public Map<String,Object> getStatus(HttpServletRequest request, HttpServletResponse response){
+        Map<String,Object> result = com.google.common.collect.Maps.newHashMap();
+        try{
+            User user = getUser(request);
+            result =  this.recruitmentService.getStatus(user.getId());
+            return result;
+        } catch (IllegalArgumentException e) {
+            result.put("status", false);
+            logger.error("内部参数转化异常:"+e.getMessage());
+            response.setStatus(HttpStatus.BAD_REQUEST.value());
+        } catch (Exception e) {
+            result.put("status", false);
+            logger.error(e.getMessage(), e);
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+        }
+        return result;
         Map<String,Object> result = Maps.newHashMap();
         Teacher teacher = getTeacher(request);
-        teacher = teacherDao.findById(teacher.getId());
-        result.put("teacher", teacher);
         //查询当前Teacher的当前TeacherApplication
         TeacherApplication application = practicumService.findAppliction(teacher.getId());
         if(application != null){
@@ -69,8 +83,6 @@ public class PracticumController extends RestfulController {
                 boolean a = TeacherApplicationEnum.Status.TRAINING.toString().equals(application.getStatus());
                 //2.当应用状态为PRACTICUM并且RESULT为PRACTICUM2 第一次实习不满意，需要约第二次实习
                 boolean b = (TeacherApplicationEnum.Status.PRACTICUM.toString().equals(application.getStatus()) && TeacherApplicationEnum.Result.PRACTICUM2.toString().equals(application.getResult()));
-                TeacherApplication app2 = practicumService.findAppByPracticum2(teacher.getId());
-                boolean newb = app2 == null ? false:true;
                 //3.当应用状态为PRACTICUM并且RESULT为REAPPLY 第一次面试由于客观原因没能完成实习，重新约实习
                 boolean c = (TeacherApplicationEnum.Status.PRACTICUM.toString().equals(application.getStatus()) && TeacherApplicationEnum.Result.REAPPLY.toString().equals(application.getResult()));
                 //4.当应用状态为PRACTICUM并且RESULT为PASS 实习通过
@@ -84,25 +96,15 @@ public class PracticumController extends RestfulController {
                 boolean g = (TeacherApplicationEnum.Status.PRACTICUM.toString().equals(application.getStatus()) && TeacherApplicationEnum.Result.AUDITING.toString().equals(application.getResult()) && application.getOnlineClassId() == 0);
 
 
-                //第二阶段显示
-                if(newb){
-                    result.put("practicumNo", 2);
-                } else {
-                    result.put("practicumNo", 1);
-                }
-                result.put("serverTimeMillis", System.currentTimeMillis());
-
-
                 if (a || b || c || g) { //约第一次实习、需要进行第二次实习、重新约实习、取消实习上课 都进入约课页面
-                    //Map<String, Map<String, Object>> availableScheduled = practicumService.getAvailableScheduled(fromTime, toTime, timezone);
-                    result.put("availableTimeSlots", null);
+
+
                     result.put("pageStatus", "showSchedule");
                     if(c){
                         result.put("pageStatus", "isReapply");
                     }
                 }else if(f) { //约好实习，等待上课页面
-                    OnlineClass onlineClass = onlineClassDao.findById(application.getOnlineClassId());
-                    result.put("scheduledTimeMillis", onlineClass.getScheduledDateTime().getTime());
+
                     result.put("pageStatus", "isBooked");
                     //9.OnlineClass的status为FINISHED 已经完成上课 等待结果
                     boolean finished = (new Date().getTime() - onlineClass.getScheduledDateTime().getTime()) >= 60*60*1000;
@@ -120,6 +122,58 @@ public class PracticumController extends RestfulController {
         }
         return result;
     }
+
+    @RequestMapping(value = "/list", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
+    public Map<String,Object> list(HttpServletRequest request, HttpServletResponse response) {
+        Map<String,Object> result = Maps.newHashMap();
+        try{
+            //"showSchedule"
+            User user = getUser(request);
+            logger.info("user:{},list",user.getId());
+            result.put("list", this.practicumService.findListByPracticum());
+            result.put("status", true);
+            return result;
+        } catch (IllegalArgumentException e) {
+            result.clear();
+            result.put("status", false);
+            logger.error("内部参数转化异常:"+e.getMessage());
+            response.setStatus(HttpStatus.BAD_REQUEST.value());
+        } catch (Exception e) {
+            result.clear();
+            result.put("status", false);
+            logger.error(e.getMessage(), e);
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+        }
+        return result;
+    }
+
+    @RequestMapping(value = "/get", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
+    public Map<String,Object> get(HttpServletRequest request, HttpServletResponse response) {
+        //"isBooked"
+
+        Map<String,Object> result = Maps.newHashMap();
+        try{
+            //"showSchedule"
+            Teacher teacher = getTeacher(request);
+            TeacherApplication application = practicumService.findAppliction(teacher.getId());
+            OnlineClass onlineClass = onlineClassDao.findById(application.getOnlineClassId());
+            result.put("scheduledTimeMillis", onlineClass.getScheduledDateTime().getTime());
+            result.put("status", true);
+            return result;
+        } catch (IllegalArgumentException e) {
+            result.clear();
+            result.put("status", false);
+            logger.error("内部参数转化异常:"+e.getMessage());
+            response.setStatus(HttpStatus.BAD_REQUEST.value());
+        } catch (Exception e) {
+            result.clear();
+            result.put("status", false);
+            logger.error(e.getMessage(), e);
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+        }
+        return result;
+    }
+
     @RequestMapping(value = "/bookClass", method = RequestMethod.POST, produces = RestfulConfig.JSON_UTF_8)
     public Map<String,Object> bookClass(HttpServletRequest request, HttpServletResponse response,long onlineClassId){
         Map<String,Object> result = Maps.newHashMap();
@@ -256,9 +310,11 @@ String msg = null;
         try{
             User user = getUser(request);
             logger.info("user:{},getClassRoomUrl",user.getId());
-            result.put("status", true);
-            result.put("url", "http://www.baidu.com");
-            result.put("lessonName", "Recruitment Class");
+            result = this.interviewService.getClassRoomUrl(onlineClassId, getTeacher(request));
+            if(!MapUtils.getBooleanValue(result, "status")){
+                result.put("info", "The class room url not exis.");
+                response.setStatus(HttpStatus.FORBIDDEN.value()); ;
+            }
             return result;
         } catch (IllegalArgumentException e) {
             result.clear();
