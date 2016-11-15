@@ -26,9 +26,9 @@ public class ClassroomProxy {
     
     /**
      * 用于从管理端获取教室URL
-     * @param userId 
-     * @param realName
-     * @param roomId
+     * @param userId  从teacher中获取id
+     * @param realName 从Teacher中获取
+     * @param roomId 从onlineClass对象中获取
      * @param userRole Teacher,Student 招聘端
      * @param supplierCode 1 多贝 , 2 学点 从onlineClass对象中获取
      * @return   String
