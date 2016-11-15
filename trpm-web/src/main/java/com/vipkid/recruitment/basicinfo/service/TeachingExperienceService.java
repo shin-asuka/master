@@ -10,9 +10,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.util.HtmlUtils;
 
 import com.google.common.base.Preconditions;
+import com.vipkid.recruitment.dao.TeachingExperienceDao;
+import com.vipkid.recruitment.entity.TeachingExperience;
 import com.vipkid.rest.dto.TeachingExperienceDto;
-import com.vipkid.trpm.dao.TeachingExperienceDao;
-import com.vipkid.trpm.entity.TeachingExperience;
 import com.vipkid.trpm.entity.User;
 import com.vipkid.trpm.util.DateUtils;
 

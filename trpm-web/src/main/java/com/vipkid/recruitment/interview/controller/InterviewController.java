@@ -37,7 +37,7 @@ public class InterviewController extends RestfulController {
         try{
             User user = getUser(request);
             logger.info("user:{},list",user.getId());
-            result.put("list", "[]");
+            result.put("list", this.interviewService.findlistByInterview());
             result.put("status", true);
             return result;
         } catch (IllegalArgumentException e) {

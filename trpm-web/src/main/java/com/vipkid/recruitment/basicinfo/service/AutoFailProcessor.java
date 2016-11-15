@@ -5,10 +5,9 @@ import java.util.List;
 import org.apache.commons.collections.CollectionUtils;
 
 import com.google.common.collect.Lists;
-
+import com.vipkid.recruitment.entity.TeachingExperience;
 import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.entity.TeacherAddress;
-import com.vipkid.trpm.entity.TeachingExperience;
 
 public class AutoFailProcessor {
 

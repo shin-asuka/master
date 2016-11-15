@@ -44,7 +44,7 @@
 
 	<sql id="TeachingExperienceLimit">LIMIT #{startLine},#{limitLine}</sql>
 
-	<resultMap type="com.vipkid.trpm.entity.TeachingExperience" id="TeachingExperienceResultMap">
+	<resultMap type="com.vipkid.recruitment.entity.TeachingExperience" id="TeachingExperienceResultMap">
 		<id column="teaching_experience_id" property="id" />
 		<result column="teaching_experience_teacher_id" property="teacherId" />
 		<result column="teaching_experience_organisation_name" property="organisationName" />
