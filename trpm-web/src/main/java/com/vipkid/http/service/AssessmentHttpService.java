@@ -32,7 +32,6 @@ public class AssessmentHttpService extends HttpBaseService {
 
         String url = new StringBuilder(super.serverAddress)
                 .append("/education/findUnSubmitedListByOnlineClassIds").toString();
-        logger.info("httpGet findUnSubmitedListByOnlineClassIds , url= {} ,onlineClassVo = {}", url,JsonUtils.toJSONString(onlineClassVo));
         OnlineClassVo unSubmitSnlineClassVo = null;
         try {
         	String data = WebUtils.postNameValuePair(url, onlineClassVo);
@@ -51,7 +50,6 @@ public class AssessmentHttpService extends HttpBaseService {
 
         String url = new StringBuilder(super.serverAddress)
                 .append("/education/findUAListByOnlineClassIds").toString();
-        logger.info("httpGet findUAListByOnlineClassIds , url= {} ,onlineClassVo = {}", url,JsonUtils.toJSONString(onlineClassVo));
         List<StudentUnitAssessment> list = null;
         try {
         	String data = WebUtils.postNameValuePair(url, onlineClassVo);

@@ -745,7 +745,6 @@ public class OnlineClassService {
         onlineClassVoCond.put("from",DateFormatUtils.format(new Date(from),"yyyy-MM-dd HH:mm:ss"));
         onlineClassVoCond.put("to",DateFormatUtils.format(new Date(minEnd),"yyyy-MM-dd HH:mm:ss"));
         List<Map<String, Object>> list = onlineClassDao.findMajorCourseListByCond(onlineClassVoCond);
-        logger.info("Get unSubmit OnlineClass list = {}", JsonUtils.toJSONString(list));
 
         ArrayList<OnlineClassVo> onlineClassVos = getOnlineClassVoList(list);
 
