@@ -3,15 +3,15 @@
 <mapper namespace="InterviewMapper">
 	 
 	 <!-- Interview list  -->
-	 <select id="listByPracticum" resultType="java.util.HashMap">
+	 <select id="findTimeListByPracticum" resultType="java.util.HashMap">
 		SELECT
-				online_class.id AS id,
-				online_class.scheduled_date_time AS scheduledDateTime
-		FROM online_class	
+			  online_class.id AS id,
+			  online_class.scheduled_date_time AS scheduledDateTime
+		FROM  online_class
 		WHERE online_class.class_type = 1
-				AND online_class.`status` = 'AVAILABLE'
-				AND online_class.scheduled_date_time BETWEEN #{fromTime} and #{toTime}
-				ORDER By scheduled_date_time DESC
+			  AND online_class.`status` = 'AVAILABLE'
+			  AND online_class.scheduled_date_time BETWEEN #{fromTime} and #{toTime}
+			  ORDER By scheduled_date_time DESC
 	</select>
 	
 </mapper>

@@ -18,10 +18,10 @@ public class PracticumDao extends MapperDaoTemplate<Practicum> {
         super(sqlSessionTemplate, Practicum.class);
     }  
   
-    public List<Map<String,Object>> findlistByPracticum(String fromTime,String toTime){
+    public List<Map<String,Object>> findTimeList(String fromTime,String toTime){
         Map<String,Object> paramsMap = Maps.newHashMap();
         paramsMap.put("fromTime", fromTime);
         paramsMap.put("toTime", toTime);
-        return listEntity("listByPracticum", paramsMap);
+        return listEntity("findTimeListByPracticum", paramsMap);
     }
 }
