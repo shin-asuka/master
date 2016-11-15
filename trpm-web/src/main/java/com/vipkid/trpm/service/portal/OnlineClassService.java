@@ -1,19 +1,10 @@
 package com.vipkid.trpm.service.portal;
 
-import java.net.URLDecoder;
 import java.sql.Timestamp;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.util.*;
 
-import com.alibaba.fastjson.JSONObject;
-import com.google.common.collect.Lists;
-import com.sun.tools.internal.ws.wsdl.document.http.HTTPUrlEncoded;
-import com.vipkid.file.utils.Encodes;
-import com.vipkid.http.utils.JsonUtils;
-import com.vipkid.http.vo.OnlineClassVo;
-import com.vipkid.task.utils.UADateUtils;
+import com.alibaba.fastjson.JSON;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -25,9 +16,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.vipkid.http.service.AssessmentHttpService;
+import com.vipkid.http.utils.JsonUtils;
+import com.vipkid.http.vo.OnlineClassVo;
 import com.vipkid.http.vo.StudentUnitAssessment;
 import com.vipkid.rest.config.RestfulConfig.RoleClass;
 import com.vipkid.trpm.constant.ApplicationConstant;
