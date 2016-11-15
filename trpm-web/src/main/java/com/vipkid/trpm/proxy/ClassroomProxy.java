@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.community.config.PropertyConfigurer;
 import org.community.http.client.HttpClientProxy;
 import org.community.tools.JsonTools;
@@ -22,7 +23,9 @@ public class ClassroomProxy {
         STUDENT
     }
 
-    private static final String REQUEST_URL = PropertyConfigurer.stringValue("classroom.url.request.api");
+    private static String getHttpUrl(){     
+        return PropertyConfigurer.stringValue("http.appServer");
+    }
     
     /**
      * 用于从管理端获取教室URL
@@ -31,10 +34,10 @@ public class ClassroomProxy {
      * @param roomId 从onlineClass对象中获取
      * @param userRole Teacher,Student 招聘端
      * @param supplierCode 1 多贝 , 2 学点 从onlineClass对象中获取
-     * @return   String
-     *              教室URL
+     * @return   Map<String,Object>  教室URL
      */
-    public static String generateRoomEnterUrl(String userId, String realName, String roomId,RoomRole userRole,String supplierCode) {
+    public static Map<String,Object> generateRoomEnterUrl(String userId, String realName, String roomId,RoomRole userRole,String supplierCode) {
+        Map<String,Object> resultMap = Maps.newHashMap();
         Map<String, String> params = Maps.newHashMap();
         params.put("userId", userId);
         params.put("name", realName);
@@ -46,24 +49,77 @@ public class ClassroomProxy {
         String author = "TEACHER " + userId;
         header.put("Authorization", author + " " + DigestUtils.md5Hex(author));
         if (roomId == null) {
-            logger.error("fail to get url: classroom ,the classroom is empty");
-            return "";
+            resultMap.put("status", false);
+            resultMap.put("info", "fail to get url: classroom ,the classroom is empty");
+            logger.warn("fail to get url: classroom ,the classroom is empty");
+            return resultMap;
         }
-        logger.info("Request before: URL:{}; params:{},roomId:{}",REQUEST_URL,JsonTools.getJson(params),roomId);
-        String responseBody = HttpClientProxy.get(REQUEST_URL, params, header);
+        String requestUrl = getHttpUrl() + "/api/service/private/supplier/getOnlineClassRoomURL";
+        logger.info("Request before: URL:{}; params:{},roomId:{}",requestUrl,JsonTools.getJson(params),roomId);
+        String responseBody = HttpClientProxy.get(requestUrl, params, header);
         logger.info("Request after: responseBody=" + responseBody);
-        if (null == responseBody || "".equals(responseBody)) {
+        if (StringUtils.isBlank(responseBody)) {
+            resultMap.put("status", false);
+            resultMap.put("info", "Failed to get classroom "+roomId+"'s url");
             logger.error("Failed to get classroom {}'s url", roomId);
-            return "";
+            return resultMap;
         }
-        JsonNode result = JsonTools.readValue(responseBody);
+        JsonNode result = null;
+        try{
+            result = JsonTools.readValue(responseBody);
+        }catch(Exception ex){
+            resultMap.put("status", false); 
+            resultMap.put("info", responseBody);
+            logger.error(ex.getMessage());
+            return resultMap;
+        }
         logger.info("Request after =" + JsonTools.getJson(result));
         JsonNode jsonURL = result.get("url");
         if (jsonURL == null) {
-            logger.error("没有获取到教室url,检查请求地址及参数是否正常");
-            return "";
+            resultMap.put("status", false);
+            resultMap.put("info", "Not have class room url,you should checke request param ok!");
+            logger.error("Not have class room url,you should checke request param ok!");
+            return resultMap;
         }
-        return jsonURL.asText();
+        resultMap.put("status", true);
+        resultMap.put("url", jsonURL.asText());
+        return resultMap;
+    }
+    
+    /**
+     * BOOK ClASS
+     * @param userId
+     * @param onlineClassId
+     * @param type
+     * @param scheduledDateTime
+     * @return    
+     * Map<String,Object>
+     */
+    public static Map<String,Object> doBookRecruitment(long userId,long onlineClassId,String type,String scheduledDateTime){
+        Map<String,Object> result = Maps.newHashMap();
+        Map<String, String> requestParams = Maps.newHashMap();             
+        requestParams.put("onlineClassId", String.valueOf(onlineClassId));
+        requestParams.put("courseType", type);
+        requestParams.put("teacherId", String.valueOf(userId));
+        requestParams.put("scheduleDateTime", scheduledDateTime);
+        
+        Map<String, String>requestHeader = new HashMap<String, String>();
+        String author = "TEACHER " + userId;
+        requestHeader.put("Authorization", author + " " + DigestUtils.md5Hex(author));
+        
+        String requestUrl=getHttpUrl()+"/recruitment/bookOnlineClassforRecruitment";        
+        String responseBody = HttpClientProxy.post(requestUrl, requestParams, requestHeader);
+        logger.info("BOOK CLASS MESSAGE : " + responseBody);
+        if (StringUtils.isBlank(responseBody)) {
+            result.put("status", false);
+            result.put("info", "Request failed, please try again later !");
+        } else if (responseBody.indexOf("Success") > 0) {
+            result.put("status", true);
+        } else {
+            result.put("status", false);
+            result.put("info", "Request failed, Please try again later!");
+        }
+        return result;
     }
 
 }

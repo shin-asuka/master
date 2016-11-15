@@ -100,10 +100,10 @@ public class PeSupervisorService {
 
     public String getClassRoomUrl(TeacherPe teacherPe) {
         OnlineClass onlineClass = onlineClassDao.findById(teacherPe.getOnlineClassId());
-        String url = ClassroomProxy.generateRoomEnterUrl(String.valueOf(teacherPe.getStudentId()),
+        Map<String,Object> result = ClassroomProxy.generateRoomEnterUrl(String.valueOf(teacherPe.getStudentId()),
                 teacherPe.getStudentName(), onlineClass.getClassroom(), ClassroomProxy.RoomRole.STUDENT,
                 onlineClass.getSupplierCode());
-        return url;
+        return result.get("url")+"";
     }
 
     /**
