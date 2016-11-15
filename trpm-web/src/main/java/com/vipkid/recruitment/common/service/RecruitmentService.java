@@ -119,6 +119,8 @@ public class RecruitmentService {
                 //处于book状态的onlineClass 应该处于倒计时页面
                 if(OnlineClassEnum.Status.BOOKED.toString().equals(onlineClass.getStatus())){
                     //小于1个小时 可进入onlineClass
+                    result.put("serverTime",System.currentTimeMillis());
+                    result.put("scheduledDateTime",onlineClass.getScheduledDateTime().getTime());
                     if(!DateUtils.count1h(onlineClass.getScheduledDateTime().getTime())){
                         result.put("result",TeacherApplicationDao.AuditStatus.goToClass.toString());
                         return result;
