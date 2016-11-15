@@ -5,6 +5,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.collections.MapUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -109,9 +110,11 @@ public class InterviewController extends RestfulController {
         try{
             User user = getUser(request);
             logger.info("user:{},getClassRoomUrl",user.getId());
-            result.put("status", true);
-            result.put("url", "http://www.baidu.com");
-            result.put("lessonName", "Recruitment Class");
+            result = this.interviewService.getClassRoomUrl(onlineClassId, getTeacher(request));
+            if(!MapUtils.getBooleanValue(result, "status")){
+                result.put("info", "The class room url not exis.");
+                response.setStatus(HttpStatus.BAD_REQUEST.value());  
+            }
             return result;
         } catch (IllegalArgumentException e) {
             result.clear();
@@ -133,7 +136,7 @@ public class InterviewController extends RestfulController {
         Map<String,Object> result = Maps.newHashMap();
         try{
             User user = getUser(request);
-            logger.info("user:{},getClassRoomUrl",user.getId());
+            logger.info("user:{},getReschedule",user.getId());
             result.put("count", 1);
             result.put("status", true);
             return result;
