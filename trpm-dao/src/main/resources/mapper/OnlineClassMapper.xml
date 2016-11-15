@@ -675,6 +675,7 @@
 			AND c.name = #{course}
 		</if>
 		order by oc.scheduled_date_time desc
+		limit 500
     </select>
 
 
