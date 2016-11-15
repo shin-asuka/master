@@ -1,11 +1,13 @@
 package com.vipkid.recruitment.practicum.service;
 
 import com.vipkid.enums.TeacherApplicationEnum;
+import com.vipkid.recruitment.dao.PracticumDao;
 import com.vipkid.trpm.dao.OnlineClassDao;
 import com.vipkid.trpm.dao.TeacherApplicationDao;
 import com.vipkid.trpm.dao.TeacherDao;
 import com.vipkid.trpm.entity.OnlineClass;
 import com.vipkid.trpm.entity.TeacherApplication;
+import com.vipkid.trpm.util.DateUtils;
 import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -15,13 +17,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
 public class PracticumService {
     
     private static Logger logger = LoggerFactory.getLogger(PracticumService.class);
-
+    @Autowired
+    private PracticumDao practicumDao;
     @Autowired
     private TeacherApplicationDao teacherApplicationDao;
 
@@ -68,34 +72,10 @@ public class PracticumService {
         return null;
     }
 
-    public Map<String, Map<String, Object>> getAvailableScheduled(Date fromTime, Date toTime,
-                                                                  String timezone) {
-        Map<String, Object> paramMap = new HashMap<String, Object>();
-        paramMap.put("fromTime", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(fromTime));
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(toTime);
-        calendar.add(Calendar.DATE, 2);
-        paramMap.put("toTime", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(calendar.getTime()));
-        paramMap.put("toTZOffset", timezone);
-
-        List<Map<String, Object>> availableScheduledList = null;//onlineClassDao.selectMaps(new OnlineClass(), "findPracticumRecruitment", paramMap);
-
-        if(availableScheduledList != null){
-
-            Collections.shuffle(availableScheduledList);
-
-
-        }
-
-        Map<String, Map<String, Object>> availableScheduled = new HashMap<String, Map<String, Object>>();
-
-        DateTimeFormatter fromatter = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
-        for (Map<String, Object> map : availableScheduledList) {
-            Date date = (Date) map.get("scheduled_date_time");
-            availableScheduled.put(
-                    fromatter.withZone(DateTimeZone.forID(timezone)).print(date.getTime()), map);
-        }
-
-        return availableScheduled;
+    public List<Map<String,Object>> findListByPracticum(){
+        String fromTime = LocalDateTime.now().plusHours(1).format(DateUtils.FMT_YMD_HMS);
+        String toTime = LocalDateTime.now().plusDays(2).withHour(23).withMinute(59).withSecond(59).format(DateUtils.FMT_YMD_HMS);
+        logger.info("findListByPracticum parameter fromTime:{}, toTime:{}",fromTime, toTime);
+        return practicumDao.findlistByPracticum(fromTime, toTime);
     }
 }

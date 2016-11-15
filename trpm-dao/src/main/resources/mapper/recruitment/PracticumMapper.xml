@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="InterviewMapper">
+	 
+	 <!-- Interview list  -->
+	 <select id="listByPracticum" resultType="java.util.HashMap">
+		SELECT
+				online_class.id AS id,
+				online_class.scheduled_date_time AS scheduledDateTime
+		FROM online_class	
+		WHERE online_class.class_type = 1
+				AND online_class.`status` = 'AVAILABLE'
+				AND online_class.scheduled_date_time BETWEEN #{fromTime} and #{toTime}
+				ORDER By scheduled_date_time DESC
+	</select>
+	
+</mapper>
