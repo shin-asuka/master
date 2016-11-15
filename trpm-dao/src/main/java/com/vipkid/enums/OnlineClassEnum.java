@@ -5,10 +5,9 @@ public class OnlineClassEnum {
     public enum Status{
         
         INVALID,
-        
-        FINISHED,
-        
-        BOOKED
-        
+        BOOKED,
+        REMOVED,
+        FINISHED
+
     }
 }
