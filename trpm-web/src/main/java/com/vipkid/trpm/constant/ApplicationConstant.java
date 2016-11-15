@@ -28,7 +28,7 @@ public interface ApplicationConstant {
 
     /** 教师24小时放课口地址 */
     public static final String TEACHER_24HOUR_URL =
-            PropertyConfigurer.stringValue("teacher.24hour.url");
+            PropertyConfigurer.stringValue("http.appServer");
 
     public static Integer UA_FOR_CLASS_ID = 20160420;
 
