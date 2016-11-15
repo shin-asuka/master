@@ -1,34 +1,26 @@
 package com.vipkid.recruitment.practicum.controller;
 
+import com.google.api.client.util.Maps;
 import com.vipkid.enums.OnlineClassEnum;
 import com.vipkid.enums.TeacherApplicationEnum;
-import com.vipkid.recruitment.utils.DateTools;
 import com.vipkid.recruitment.interceptor.RestInterface;
 import com.vipkid.recruitment.practicum.service.PracticumService;
 import com.vipkid.rest.RestfulController;
+import com.vipkid.rest.config.RestfulConfig;
 import com.vipkid.trpm.constant.ApplicationConstant;
 import com.vipkid.trpm.dao.OnlineClassDao;
 import com.vipkid.trpm.dao.TeacherDao;
 import com.vipkid.trpm.entity.OnlineClass;
 import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.entity.TeacherApplication;
-import com.vipkid.utils.DateUtil;
-import com.vipkid.utils.StringUtil;
-
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.ServletRequestUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 @RestController
@@ -47,22 +39,24 @@ public class PracticumController extends RestfulController {
     @Autowired
     private OnlineClassDao onlineClassDao;
 
-    @RequestMapping("/practicum")
-    public String practicum(HttpServletRequest request, HttpServletResponse response, Model model) {
+    @RequestMapping(value = "/init", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
+    public Map<String,Object> init(HttpServletRequest request, HttpServletResponse response) {
+        Map<String,Object> result = Maps.newHashMap();
         Teacher teacher = getTeacher(request);
         teacher = teacherDao.findById(teacher.getId());
-        model.addAttribute("teacher", teacher);
+        result.put("teacher", teacher);
         //查询当前Teacher的当前TeacherApplication
         TeacherApplication application = practicumService.findAppliction(teacher.getId());
         if(application != null){
             if(TeacherApplicationEnum.Status.PRACTICUM.toString().equals(application.getStatus()) && application.getResult() == null){application.setResult(TeacherApplicationEnum.Result.AUDITING.toString());}
-            model.addAttribute("application", application);
+            result.put("application", application);
             Date audit = application.getAuditDateTime();
             long  countTime = 0;
             if(audit != null){
                 countTime = (new Date().getTime() - audit.getTime())/1000;
             }
             long  weekTime = 54 * 7 * 24 * 3600;
+
             //最后一次申请时间离现在小于54周可进行以下展示
             if(countTime <= weekTime){
                 //1.当应用状态为TRAINING 约第一次实习，
@@ -83,73 +77,41 @@ public class PracticumController extends RestfulController {
                 //7.当应用状态为PRACTICUM并且RESULT为AUDITING已经约好实习，但老师已经取消实习上课
                 boolean g = (TeacherApplicationEnum.Status.PRACTICUM.toString().equals(application.getStatus()) && TeacherApplicationEnum.Result.AUDITING.toString().equals(application.getResult()) && application.getOnlineClassId() == 0);
 
+
                 //第二阶段显示
                 if(newb){
-                    model.addAttribute("practicum2", "PRACTICUM2");
+                    result.put("practicumNo", 2);
+                } else {
+                    result.put("practicumNo", 1);
                 }
+                result.put("serverTimeMillis", System.currentTimeMillis());
+
 
                 if (a || b || c || g) { //约第一次实习、需要进行第二次实习、重新约实习、取消实习上课 都进入约课页面
-                    int weekOffset = ServletRequestUtils.getIntParameter(request, "curPage", 1);
-                    model.addAttribute("curPage", weekOffset);
-                    Calendar calendar = Calendar.getInstance();
-                    //if(audit==null){audit = new Date();}
-                    //calendar.setTime(audit);
-                    calendar.add(Calendar.DATE, 7 * (weekOffset-1));
-                    audit = calendar.getTime();
-                    List<Date> scheduledWeeks = null;
-                    if(weekOffset < 2){//第一页从24小时后
-                        scheduledWeeks = DateTools.weeksForPracticumStart(audit);
-                    }else{//大于第二页从0点开始
-                        scheduledWeeks = DateTools.weeksForPracticumNext(audit);
-                    }
-                    model.addAttribute("scheduledWeeks", scheduledWeeks);
-                    model.addAttribute("scheduled", DateTools.getScheduled(scheduledWeeks));
-
-                    Date fromTime = scheduledWeeks.get(0), toTime = scheduledWeeks.get(6);
-                    model.addAttribute("fromTime", fromTime);
-                    model.addAttribute("toTime", toTime);
-
-                    String timezone = teacher.getTimezone();
-                    Map<String, Map<String, Object>> availableScheduled = practicumService.getAvailableScheduled(fromTime, toTime, timezone);
-                    model.addAttribute("availableScheduled", availableScheduled);
-
-                    DateTime currDate = DateTime.now(DateTimeZone.forID(timezone));
-                    model.addAttribute("serverMills", currDate.getMillis());
-                    model.addAttribute("pageStatus", "showSchedule");
-                    model.addAttribute("converTimeZone", TimeZone.getTimeZone(timezone));
-
+                    //Map<String, Map<String, Object>> availableScheduled = practicumService.getAvailableScheduled(fromTime, toTime, timezone);
+                    result.put("availableTimeSlots", null);
+                    result.put("pageStatus", "showSchedule");
                     if(c){
-                        model.addAttribute("result", "isReapply");
+                        result.put("pageStatus", "isReapply");
                     }
                 }else if(f) { //约好实习，等待上课页面
                     OnlineClass onlineClass = onlineClassDao.findById(application.getOnlineClassId());
-                    model.addAttribute("onlineClassId", application.getOnlineClassId());
-                    model.addAttribute("teacherId", teacher.getId());
-                    model.addAttribute("serverTime", DateUtil.format(new Date(),new SimpleDateFormat(DateUtil.YYYY_MM_DD_HH_MM_SS_DASH)));
-                    localoutputFormat.setTimeZone(TimeZone.getTimeZone(teacher.getTimezone()));
-                    model.addAttribute("scheduledTime", DateUtil.format(onlineClass.getScheduledDateTime(),new SimpleDateFormat(DateUtil.YYYY_MM_DD_HH_MM_SS_DASH)));
-                    String str = localoutputFormat.format(onlineClass.getScheduledDateTime());
-                    for(int i = 0; i <= 31 ; i++){
-                        str = str.replace(" "+i+",",dateStr[i]);
-                    }
-                    str = StringUtil.firstUpper(str);
-                    model.addAttribute("scheduledDateTime", str);
-                    model.addAttribute("pageStatus", "hasBooked");
+                    result.put("scheduledTimeMillis", onlineClass.getScheduledDateTime().getTime());
+                    result.put("pageStatus", "isBooked");
                     //9.OnlineClass的status为FINISHED 已经完成上课 等待结果
                     boolean finished = (new Date().getTime() - onlineClass.getScheduledDateTime().getTime()) >= 60*60*1000;
                     if(OnlineClassEnum.Status.FINISHED.toString().equals(onlineClass.getStatus()) && finished){
-                        model.addAttribute("pageStatus", "isChecking");
+                        result.put("pageStatus", "isChecking");
                     }
                 }else if(d || pass){ //已经实习，通过
-                    model.addAttribute("result", "isPass");
+                    result.put("pageStatus", "isPass");
                 }else if(e){ //已经实习，未通过
-                    model.addAttribute("result", "isFial");
+                    result.put("pageStatus", "isFail");
                 }
             }else{
-                model.addAttribute("pageStatus", "hasTimeOut");
+                result.put("pageStatus", "isTimeOut");
             }
         }
-        return "recruitment/practicum";
-
+        return result;
     }
 }
