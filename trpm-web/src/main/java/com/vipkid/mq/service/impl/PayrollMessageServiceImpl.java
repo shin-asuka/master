@@ -132,7 +132,7 @@ public class PayrollMessageServiceImpl implements PayrollMessageService {
                             onlineClassMessage.setTrialPayTime(((Timestamp) timestamp).getTime());
                         }
                     }
-                    onlineClassMessage.setIsTrialOnly(isPaidForTrial);
+                    onlineClassMessage.setPaidForTrial(isPaidForTrial);
                 }
 
                 logger.info("PayrollMessageService 结束课程，消息发送成功  destination={}, message={} ",
