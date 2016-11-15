@@ -1,6 +1,5 @@
 package com.vipkid.recruitment.common.service;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -10,10 +9,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.google.api.client.util.Maps;
+import com.vipkid.enums.OnlineClassEnum;
 import com.vipkid.enums.TeacherApplicationEnum;
+import com.vipkid.trpm.dao.OnlineClassDao;
 import com.vipkid.trpm.dao.TeacherAddressDao;
 import com.vipkid.trpm.dao.TeacherApplicationDao;
 import com.vipkid.trpm.dao.TeacherDao;
+import com.vipkid.trpm.entity.OnlineClass;
 import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.entity.TeacherAddress;
 import com.vipkid.trpm.entity.TeacherApplication;
@@ -30,6 +32,9 @@ public class RecruitmentService {
     
     @Autowired
     private TeacherAddressDao teacherAddressDao;
+    
+    @Autowired
+    private OnlineClassDao onlineClassDao;
 
     /**
      * 获取老师当前LifeCycle状态下的流程结果 
@@ -43,39 +48,44 @@ public class RecruitmentService {
         Map<String,Object> resultMap = Maps.newHashMap();
         Teacher teacher = this.teacherDao.findById(teacherId);
         resultMap.put("lifeCycle",teacher.getLifeCycle());
-        resultMap.put("result",TeacherApplicationDao.AuditStatus.ToSubmit.toString());
+        
         List<TeacherApplication> list = this.teacherApplicationDao.findCurrentApplication(teacher.getId());
         
-        //没有流程则视为待提交
+        //【待提交】没有流程则视为
         if(CollectionUtils.isEmpty(list)){
             resultMap.put("result",TeacherApplicationDao.AuditStatus.ToSubmit.toString());
             return resultMap;
         }
         TeacherApplication teacherApplication = list.get(0);
         
-        //当前状态与流程状态不一样,以lifeCycle为准，为待提交
+        //【待提交】当前状态与流程状态不一样,以lifeCycle为准
         if(!StringUtils.equalsIgnoreCase(teacherApplication.getStatus(), teacher.getLifeCycle())){
             resultMap.put("result",TeacherApplicationDao.AuditStatus.ToSubmit.toString());
             return resultMap;
         }
         
+        Map<String,Object> _result = null;
         //BASIC_INFO 11.5小时之内如果状态是FAIL 为待审核
         if(StringUtils.equalsIgnoreCase(TeacherApplicationEnum.Status.BASIC_INFO.toString(),teacherApplication.getStatus())){
-            if(StringUtils.equalsIgnoreCase(TeacherApplicationEnum.Result.FAIL.toString(),teacherApplication.getResult())){
-                Date auditDate = teacherApplication.getAuditDateTime(); 
-                if(!DateUtils.count11hrlf(auditDate.getTime())){
-                    resultMap.put("result",TeacherApplicationDao.AuditStatus.ToAudit.toString());
-                    return resultMap;
-                }
-            }
+            _result = getBasicInfoStatus(teacher, teacherApplication);
+        //INTERVIEW 待审核 待约课
+        }else if(StringUtils.equalsIgnoreCase(TeacherApplicationEnum.Status.INTERVIEW.toString(),teacherApplication.getStatus())){
+            _result = getInterviewStatus(teacher, teacherApplication);
+        //待审核
+        }else if(StringUtils.equalsIgnoreCase(TeacherApplicationEnum.Status.PRACTICUM.toString(),teacherApplication.getStatus())){
+            //
+        }
+        if(_result != null){
+            resultMap.putAll(_result);
+            return resultMap;
         }
         
-        //待审核
+        //其他情况 待经审核 结果【FAIL,PASS,REPLAY】
         if(StringUtils.isBlank(teacherApplication.getResult())){
             resultMap.put("result",TeacherApplicationDao.AuditStatus.ToAudit.toString());
             return resultMap;
         }
-        //已经审核
+        //已经审核 结果【FAIL,PASS,REPLAY】
         if(StringUtils.isNotBlank(teacherApplication.getResult())){
             resultMap.put("result",teacherApplication.getResult());
             return resultMap;
@@ -85,6 +95,55 @@ public class RecruitmentService {
     }
     
     
+    private Map<String,Object> getBasicInfoStatus(Teacher teacher,TeacherApplication teacherApplication){
+        Map<String,Object> result = Maps.newHashMap();
+        if(StringUtils.equalsIgnoreCase(TeacherApplicationEnum.Result.FAIL.toString(),teacherApplication.getResult())){
+            if(!DateUtils.count11hrlf(teacherApplication.getAuditDateTime().getTime())){
+                result.put("result",TeacherApplicationDao.AuditStatus.ToAudit.toString());
+                return result;
+            }
+        }
+        return null;
+    }
+    
+    private Map<String,Object> getInterviewStatus(Teacher teacher,TeacherApplication teacherApplication){
+        Map<String,Object> result = Maps.newHashMap();
+        if(StringUtils.isBlank(teacherApplication.getResult())){
+            if(teacherApplication.getOnlineClassId() == 0){
+                //待约课
+                result.put("result",TeacherApplicationDao.AuditStatus.ToSubmit.toString());
+                return result;
+            }else{
+                //倒计时
+                OnlineClass onlineClass = this.onlineClassDao.findById(teacherApplication.getOnlineClassId());
+                //处于book状态的onlineClass 应该处于倒计时页面
+                if(OnlineClassEnum.Status.BOOKED.toString().equals(onlineClass.getStatus())){
+                    //小于1个小时 可进入onlineClass
+                    if(!DateUtils.count1h(onlineClass.getScheduledDateTime().getTime())){
+                        result.put("result",TeacherApplicationDao.AuditStatus.goToClass.toString());
+                        return result;
+                    //小于54周 处于审核中
+                    }else if(!DateUtils.count54week(onlineClass.getScheduledDateTime().getTime())){
+                        result.put("result",TeacherApplicationDao.AuditStatus.ToAudit.toString());
+                        return result;
+                    //大于54周超时
+                    }else{    
+                        result.put("result",TeacherApplicationDao.AuditStatus.hasTimeOut.toString());
+                        return result;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+    
+    /**
+     * 获取地址信息
+     * @param timezone
+     * @param teacher
+     * @return    
+     * boolean
+     */
     public TeacherAddress getTeacherAddress(int teacherAddressId){
         if(teacherAddressId == 0){
             return null;
@@ -93,7 +152,13 @@ public class RecruitmentService {
         return ta;
     }
     
-    
+    /**
+     * 更新timezone
+     * @param timezone
+     * @param teacher
+     * @return    
+     * boolean
+     */
     public boolean updateTimezone(String timezone,Teacher teacher){
         teacher.setTimezone(timezone);
         this.teacherDao.update(teacher);

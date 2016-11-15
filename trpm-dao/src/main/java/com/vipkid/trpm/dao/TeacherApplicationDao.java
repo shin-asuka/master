@@ -56,7 +56,10 @@ public class TeacherApplicationDao extends MapperDaoTemplate<TeacherApplication>
     
     public enum AuditStatus {
         ToAudit, // 待审核
-        ToSubmit // 带提交
+        ToSubmit, // 待提交
+        goToClass, // 待上课
+        hasTimeOut //过期
+        
     }
     
     /**

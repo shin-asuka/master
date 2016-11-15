@@ -6,7 +6,9 @@ public class OnlineClassEnum {
         
         INVALID,
         
-        FINISHED
+        FINISHED,
+        
+        BOOKED
         
     }
 }
