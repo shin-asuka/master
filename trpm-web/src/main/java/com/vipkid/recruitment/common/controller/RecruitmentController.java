@@ -81,25 +81,4 @@ public class RecruitmentController extends RestfulController{
             return ResponseUtils.responseFail(e.getMessage(), this);
         }
     }
-
-    @RequestMapping(value = "/serverTimeMillis", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
-    public Map<String,Object> serverTimeMillis(HttpServletRequest request, HttpServletResponse response){
-        Map<String,Object> result = Maps.newHashMap();
-        try{
-            result.put("serverTimeMillis", System.currentTimeMillis());
-            result.put("status", true);
-            return result;
-        } catch (IllegalArgumentException e) {
-            result.clear();
-            result.put("status", false);
-            logger.error("内部参数转化异常:"+e.getMessage());
-            response.setStatus(HttpStatus.BAD_REQUEST.value());
-        } catch (Exception e) {
-            result.clear();
-            result.put("status", false);
-            logger.error(e.getMessage(), e);
-            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-        }
-        return result;
-    }
 }

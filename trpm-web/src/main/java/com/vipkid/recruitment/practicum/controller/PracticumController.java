@@ -46,82 +46,6 @@ public class PracticumController extends RestfulController {
     @Autowired
     private OnlineClassDao onlineClassDao;
 
-    @RequestMapping(value = "/getStatus", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
-    public Map<String,Object> getStatus(HttpServletRequest request, HttpServletResponse response){
-        Map<String,Object> result = com.google.common.collect.Maps.newHashMap();
-        try{
-            User user = getUser(request);
-            result =  this.recruitmentService.getStatus(user.getId());
-            return result;
-        } catch (IllegalArgumentException e) {
-            result.put("status", false);
-            logger.error("内部参数转化异常:"+e.getMessage());
-            response.setStatus(HttpStatus.BAD_REQUEST.value());
-        } catch (Exception e) {
-            result.put("status", false);
-            logger.error(e.getMessage(), e);
-            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-        }
-        return result;
-        Map<String,Object> result = Maps.newHashMap();
-        Teacher teacher = getTeacher(request);
-        //查询当前Teacher的当前TeacherApplication
-        TeacherApplication application = practicumService.findAppliction(teacher.getId());
-        if(application != null){
-            if(TeacherApplicationEnum.Status.PRACTICUM.toString().equals(application.getStatus()) && application.getResult() == null){application.setResult(TeacherApplicationEnum.Result.AUDITING.toString());}
-            result.put("application", application);
-            Date audit = application.getAuditDateTime();
-            long  countTime = 0;
-            if(audit != null){
-                countTime = (new Date().getTime() - audit.getTime())/1000;
-            }
-            long  weekTime = 54 * 7 * 24 * 3600;
-
-            //最后一次申请时间离现在小于54周可进行以下展示
-            if(countTime <= weekTime){
-                //1.当应用状态为TRAINING 约第一次实习，
-                boolean a = TeacherApplicationEnum.Status.TRAINING.toString().equals(application.getStatus());
-                //2.当应用状态为PRACTICUM并且RESULT为PRACTICUM2 第一次实习不满意，需要约第二次实习
-                boolean b = (TeacherApplicationEnum.Status.PRACTICUM.toString().equals(application.getStatus()) && TeacherApplicationEnum.Result.PRACTICUM2.toString().equals(application.getResult()));
-                //3.当应用状态为PRACTICUM并且RESULT为REAPPLY 第一次面试由于客观原因没能完成实习，重新约实习
-                boolean c = (TeacherApplicationEnum.Status.PRACTICUM.toString().equals(application.getStatus()) && TeacherApplicationEnum.Result.REAPPLY.toString().equals(application.getResult()));
-                //4.当应用状态为PRACTICUM并且RESULT为PASS 实习通过
-                boolean d = (TeacherApplicationEnum.Status.PRACTICUM.toString().equals(application.getStatus()) && TeacherApplicationEnum.Result.PASS.toString().equals(application.getResult()));
-                boolean pass = TeacherApplicationEnum.Status.FINISHED.toString().equals(application.getStatus());
-                //5.当应用状态为PRACTICUM并且RESULT为FAIL 实习未通过
-                boolean e = (TeacherApplicationEnum.Status.PRACTICUM.toString().equals(application.getStatus()) && TeacherApplicationEnum.Result.FAIL.toString().equals(application.getResult()));
-                //6.当应用状态为PRACTICUM并且RESULT为AUDITING已经约好实习，等待实习上课
-                boolean f = (TeacherApplicationEnum.Status.PRACTICUM.toString().equals(application.getStatus()) && TeacherApplicationEnum.Result.AUDITING.toString().equals(application.getResult()) && application.getOnlineClassId() != 0 );
-                //7.当应用状态为PRACTICUM并且RESULT为AUDITING已经约好实习，但老师已经取消实习上课
-                boolean g = (TeacherApplicationEnum.Status.PRACTICUM.toString().equals(application.getStatus()) && TeacherApplicationEnum.Result.AUDITING.toString().equals(application.getResult()) && application.getOnlineClassId() == 0);
-
-
-                if (a || b || c || g) { //约第一次实习、需要进行第二次实习、重新约实习、取消实习上课 都进入约课页面
-
-
-                    result.put("pageStatus", "showSchedule");
-                    if(c){
-                        result.put("pageStatus", "isReapply");
-                    }
-                }else if(f) { //约好实习，等待上课页面
-
-                    result.put("pageStatus", "isBooked");
-                    //9.OnlineClass的status为FINISHED 已经完成上课 等待结果
-                    boolean finished = (new Date().getTime() - onlineClass.getScheduledDateTime().getTime()) >= 60*60*1000;
-                    if(OnlineClassEnum.Status.FINISHED.toString().equals(onlineClass.getStatus()) && finished){
-                        result.put("pageStatus", "isChecking");
-                    }
-                }else if(d || pass){ //已经实习，通过
-                    result.put("pageStatus", "isPass");
-                }else if(e){ //已经实习，未通过
-                    result.put("pageStatus", "isFail");
-                }
-            }else{
-                result.put("pageStatus", "isTimeOut");
-            }
-        }
-        return result;
-    }
 
     @RequestMapping(value = "/list", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
     public Map<String,Object> list(HttpServletRequest request, HttpServletResponse response) {
@@ -153,7 +77,6 @@ public class PracticumController extends RestfulController {
 
         Map<String,Object> result = Maps.newHashMap();
         try{
-            //"showSchedule"
             Teacher teacher = getTeacher(request);
             TeacherApplication application = practicumService.findAppliction(teacher.getId());
             OnlineClass onlineClass = onlineClassDao.findById(application.getOnlineClassId());
@@ -310,7 +233,7 @@ String msg = null;
         try{
             User user = getUser(request);
             logger.info("user:{},getClassRoomUrl",user.getId());
-            result = this.interviewService.getClassRoomUrl(onlineClassId, getTeacher(request));
+            //result = this.interviewService.getClassRoomUrl(onlineClassId, getTeacher(request));
             if(!MapUtils.getBooleanValue(result, "status")){
                 result.put("info", "The class room url not exis.");
                 response.setStatus(HttpStatus.FORBIDDEN.value()); ;

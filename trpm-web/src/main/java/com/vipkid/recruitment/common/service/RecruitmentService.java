@@ -73,7 +73,7 @@ public class RecruitmentService {
             _result = getInterviewStatus(teacher, teacherApplication);
         //待审核
         }else if(StringUtils.equalsIgnoreCase(TeacherApplicationEnum.Status.PRACTICUM.toString(),teacherApplication.getStatus())){
-            //PRACTICUM2
+            _result = getPracticumStatus(teacher, teacherApplication);
         }
         if(_result != null){
             resultMap.putAll(_result);
@@ -137,11 +137,24 @@ public class RecruitmentService {
         }
         return null;
     }
-    
+
+    private Map<String,Object> getPracticumStatus(Teacher teacher,TeacherApplication teacherApplication){
+        Map<String,Object> result = this.getInterviewStatus( teacher, teacherApplication);
+        if(TeacherApplicationEnum.Result.PRACTICUM2.toString().equals(teacherApplication.getResult())){
+            result.put("result",TeacherApplicationDao.AuditStatus.ToSubmit.toString());
+        }
+        List<TeacherApplication> list = teacherApplicationDao.findApplictionForStatusResult(teacher.getId(), null, TeacherApplicationEnum.Result.PRACTICUM2.name());
+        if(CollectionUtils.isNotEmpty(list)){
+            result.put("practicumNo", 2);
+        } else {
+            result.put("practicumNo", 1);
+        }
+        return result;
+    }
+
     /**
      * 获取地址信息
-     * @param timezone
-     * @param teacher
+     * @param teacherAddressId
      * @return    
      * boolean
      */
