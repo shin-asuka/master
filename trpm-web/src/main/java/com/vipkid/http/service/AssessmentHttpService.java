@@ -5,6 +5,7 @@ package com.vipkid.http.service;
 
 import java.util.List;
 
+import com.vipkid.file.utils.StringUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,6 +34,7 @@ public class AssessmentHttpService extends HttpBaseService {
         String url = new StringBuilder(super.serverAddress)
                 .append("/education/findUnSubmitedListByOnlineClassIds").toString();
         OnlineClassVo unSubmitSnlineClassVo = null;
+        onlineClassVo.setIdListStr(StringUtils.join(onlineClassVo.getIdList(),","));
         try {
         	String data = WebUtils.postNameValuePair(url, onlineClassVo);
             if (data!=null) {

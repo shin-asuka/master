@@ -42,7 +42,7 @@ public class OnlineClassVo implements Serializable{
 	
 	List<Long> idList = Lists.newArrayList();
 	List<Integer> refillinUaIds = Lists.newArrayList();
-
+	String idListStr = "";
 	public OnlineClassVo() {
 	}
 
@@ -285,5 +285,13 @@ public class OnlineClassVo implements Serializable{
 
 	public void setUpdateTime(Date updateTime) {
 		this.updateTime = updateTime;
+	}
+
+	public String getIdListStr() {
+		return idListStr;
+	}
+
+	public void setIdListStr(String idListStr) {
+		this.idListStr = idListStr;
 	}
 }
