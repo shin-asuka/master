@@ -5,6 +5,7 @@ package com.vipkid.http.service;
 
 import java.util.List;
 
+import com.vipkid.file.utils.StringUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
