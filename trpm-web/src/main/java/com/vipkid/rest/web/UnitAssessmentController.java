@@ -44,7 +44,7 @@ public class UnitAssessmentController {
         if(onlineClassVoCond.getFrom()!=null){
             from = org.apache.commons.lang3.math.NumberUtils.toLong(onlineClassVoCond.getFrom());
         }else{
-            from = new Date().getTime() - 7*86400*1000;
+            from = new Date().getTime() - 7*86400*1000l;
         }
         if(onlineClassVoCond.getTo()!=null){
             to = org.apache.commons.lang3.math.NumberUtils.toLong(onlineClassVoCond.getTo());
@@ -75,6 +75,12 @@ public class UnitAssessmentController {
             studentUnitAssessment.setUpdateTime(studentUnitAssessment.getUpdateTime1());
         }
         //跨库join
+        if(onlineClassVos == null){
+            onlineClassVos = new ArrayList<OnlineClassVo>();
+        }
+        if(stuUaList == null){
+            stuUaList = new ArrayList<StudentUnitAssessment>();
+        }
         for(OnlineClassVo oc :onlineClassVos){
             for(StudentUnitAssessment stuUa : stuUaList){
                 if(oc.getId().equals(stuUa.getOnlineClassId().longValue())){
