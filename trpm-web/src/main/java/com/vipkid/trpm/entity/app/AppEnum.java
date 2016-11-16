@@ -60,7 +60,8 @@ public class AppEnum {
         TEACHER_CANCELLATION_24H(7),
         TEACHER_IT_PROBLEM(8),
         TEACHER_NO_SHOW(9),
-        TEACHER_NO_SHOW_2H(10);
+        TEACHER_NO_SHOW_2H(10),
+        STUDENT_CANCELLATION(11);
         
         private Integer val;        
         private StatusInfo(Integer val) {

@@ -227,7 +227,7 @@ public interface ApplicationConstant {
         public static final String SYSTEM_PROBLEM = "SYSTEM_PROBLEM"; // 系统问题
         public static final String TEACHER_CANCELLATION_24H = "TEACHER_CANCELLATION_24H"; // 在2小时之外24小时之内取消
         public static final String TEACHER_NO_SHOW_2H = "TEACHER_NO_SHOW_2H"; // 教师2小时之内取消
-
+        public static final String STUDENT_CANCELLATION = "STUDENT_CANCELLATION"; // 老师申请取消
         public static boolean isStudentNoShow(String finishType) {
             return STUDENT_NO_SHOW.equals(finishType);
         }

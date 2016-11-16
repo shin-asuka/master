@@ -69,8 +69,12 @@
                 <div class="modal-body form-horizontal">
                     <select id="finishType" name="finishType" class="form-control">
                         <option value="">-Finish Type-</option>
+                        #if(!$!{isStarted})
+                        <option value="STUDENT_CANCELLATION">CANDIDATE_CANCELLATION</option>
+                        #else
                         <option value="STUDENT_NO_SHOW">CANDIDATE_NO_SHOW</option>
                         <option value="STUDENT_IT_PROBLEM">CANDIDATE_IT_PROBLEM</option>
+                        #end
                         <option value="SYSTEM_PROBLEM">SYSTEM_PROBLEM</option>
                     </select>
                 </div>

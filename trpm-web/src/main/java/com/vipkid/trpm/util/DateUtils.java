@@ -30,10 +30,10 @@ public final class DateUtils {
 	public static DateTimeFormatter FMT_YMD_US = DateTimeFormatter.ofPattern("yyyy-MM-dd").withLocale(Locale.US);
 	public static DateTimeFormatter FMT_YMD = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
-	public static DateTimeFormatter FMT_YMD_HMA_US = DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm a").withLocale(
-			Locale.US);
+	public static DateTimeFormatter FMT_YMD_HMA_US = DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm a").withLocale(Locale.US);
 
 	public static DateTimeFormatter FMT_YMD_HMS = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+	public static DateTimeFormatter FMT_YMD_HM = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm").withLocale(Locale.getDefault());
 
 	public static DateTimeFormatter FMT_MMM_YYYY = DateTimeFormatter.ofPattern("MMM yyyy");
 	public static DateTimeFormatter FMT_MMM_YYYY_US = DateTimeFormatter.ofPattern("MMM yyyy").withLocale(Locale.US);

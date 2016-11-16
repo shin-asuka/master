@@ -142,6 +142,12 @@ public class OnlineClassController extends AbstractPortalController {
         logger.info("TeacherId:{},成功进入教室(INTO),onlineClassId:{},studentId:{}",user.getId(),onlineClassId,studentId);
 
         model.addAttribute("lesson", lesson);
+        //是否已经开始上课
+        if(System.currentTimeMillis() > onlineClass.getScheduledDateTime().getTime()){
+            model.addAttribute("isStarted", true);
+        } else {
+            model.addAttribute("isStarted", false);
+        }
         if (lesson.getSerialNumber().startsWith("P")) {
             model.addAllAttributes(
                     onlineclassService.enterPracticum(onlineClass, studentId, teacher, lesson));

@@ -44,8 +44,10 @@ public class TempleteUtils {
         title = cacheMap.get("title");
         if(map != null && map.size() > 0){
             for (Map.Entry<String, String> entry : map.entrySet()) {
-                content = content.replace("{{" + entry.getKey().trim() + "}}", entry.getValue());
-                title = title.replace("{{" + entry.getKey().trim() + "}}", entry.getValue());
+                if (entry != null && entry.getValue() != null) {
+                    content = content.replace("{{" + entry.getKey().trim() + "}}", entry.getValue());
+                    title = title.replace("{{" + entry.getKey().trim() + "}}", entry.getValue());
+                }
             }
         }
         Map<String, String> resultMap = Maps.newHashMap();
