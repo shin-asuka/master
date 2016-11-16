@@ -36,6 +36,7 @@ public class UnitAssessmentController {
     @RequestMapping(value = "/unfinishedUA", method = RequestMethod.GET,produces = RestfulConfig.JSON_UTF_8)
     @ResponseBody
     public Object getUnfinishedUA(OnlineClassVo onlineClassVoCond ,@RequestParam(defaultValue = "1") Integer pageNo, @RequestParam(defaultValue = "10") Integer pageSize) {
+        try{
         HashMap<String,Object> cond = new HashMap<String,Object>();
         cond.put("lessonSn",onlineClassVoCond.getLessonSn());
         cond.put("course",StringUtils.trim(onlineClassVoCond.getCourseName()));
@@ -101,5 +102,9 @@ public class UnitAssessmentController {
         result.put("to",onlineClassVoCond.getTo());
         result.put("total",total);
         return JsonTools.getJson(result);
+        }catch (Exception e){
+            e.printStackTrace();
+            return new Object();
+        }
     }
 }
