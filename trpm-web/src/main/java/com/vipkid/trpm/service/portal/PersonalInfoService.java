@@ -160,6 +160,7 @@ public class PersonalInfoService {
 		teacher.setGraduatedFrom(basicInfo.getGraduatedFrom());
 		teacher.setHighestLevelOfEdu(basicInfo.getHighestLevelOfEdu());
 		teacher.setEvaluationBio(basicInfo.getEvaluationBio());
+		teacher.setPhoneType(basicInfo.getPhoneType());
 
 		if (!StringUtils.isEmpty(basicInfo.getBirthday())) {
 			LocalDate localDate = LocalDate.parse(basicInfo.getBirthday(), FMT_YMD);

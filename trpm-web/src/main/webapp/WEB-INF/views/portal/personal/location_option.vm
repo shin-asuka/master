@@ -1,6 +1,6 @@
 #if($!{locationList} && !${locationList.isEmpty()})
-<option value="0">${title}</option>
+<option  id="0" timezone="" value="0">${title}</option>
 #foreach($location in $locationList)
-<option value="${location.id}">${location.name}</option>
+<option id="$!{location.id}" timezone="$!{location.timezone}" value="${location.id}">${location.name}</option>
 #end
 #end

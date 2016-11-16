@@ -32,7 +32,7 @@ import com.vipkid.trpm.service.portal.LocationService;
 import com.vipkid.trpm.service.rest.AdminQuizService;
 import com.vipkid.trpm.service.rest.TeacherPageLoginService;
 import com.vipkid.trpm.util.CookieUtils;
-import com.vipkid.trpm.util.IPUtils;
+import com.vipkid.trpm.util.IpUtils;
 
 public class CookieExpiredHandleInterceptor extends HandlerInterceptorAdapter {
 
@@ -63,17 +63,13 @@ public class CookieExpiredHandleInterceptor extends HandlerInterceptorAdapter {
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
 			throws IOException {
-	    logger.info("IP:{},发起请求:{}",IPUtils.getIpAddress(request),request.getRequestURI());
-		HandlerMethod handlerMethod = (HandlerMethod) handler;
-		PreAuthorize preAuthorize = handlerMethod.getMethodAnnotation(PreAuthorize.class);
-
-		if (null == preAuthorize) {
-			preAuthorize = handlerMethod.getBeanType().getAnnotation(PreAuthorize.class);
-		}
-
-		if (null == preAuthorize || AUTHORIZE.equals(preAuthorize.value())) {
-			return true;
-		}
+	    logger.info("IP:{},发起请求:{}",IpUtils.getIpAddress(request),request.getRequestURI());
+        HandlerMethod handlerMethod = (HandlerMethod) handler;
+        //1.有注解PreAuthorize，不进行拦截
+        PreAuthorize preAuthorize = preAnnotation(handlerMethod);
+        if (null == preAuthorize || AUTHORIZE.equals(preAuthorize.value())) {
+            return true;
+        }
 
 		String token = CookieUtils.getValue(request, CookieKey.TRPM_TOKEN);
 		String xRequestedWith = request.getHeader("X-Requested-With");
@@ -92,29 +88,36 @@ public class CookieExpiredHandleInterceptor extends HandlerInterceptorAdapter {
 			return false;
 		}
 
-		User user = indexService.getUser(request);
-		Teacher teacher = indexService.getTeacher(request);
+        User user = indexService.getUser(request);
+        if(user == null){
+            logger.info("IP:{},用户为NULL。。。",IpUtils.getIpAddress(request));
+            return false; 
+        }
+        
+        logger.info("IP:{},user:{},发起请求:{}",IpUtils.getIpAddress(request),user.getId(),request.getRequestURI());
+        
+        Teacher teacher = indexService.getTeacher(request);
+        if(teacher == null){
+            logger.info("IP:{},Teacher is NULL。。。",request.getRemoteAddr());
+            return false; 
+        }
+        
 		Staff manager = null;
 		if(teacher !=null && teacher.getManager()>0){
 			manager = indexService.getStaff(teacher.getManager());
 			if(manager!=null){
 				String managerName = manager.getEnglishName();
-				//request.setAttribute("TRPM_MANAGER", manager);
 				request.setAttribute("TRPM_MANAGER_NAME", managerName);
 			}
 		}
-		if(user == null){
-		    logger.info("IP:{},用户为NULL。。。",IPUtils.getIpAddress(request));
-            return false; 
-		}
-		logger.info("IP:{},user:{},发起请求:{}",IPUtils.getIpAddress(request),user.getId(),request.getRequestURI());
+        
 		request.setAttribute("locationService", locationService);
 		request.setAttribute("TRPM_TEACHER", teacher);
 		request.setAttribute("TRPM_USER", user);
 		request.setAttribute("TRPM_COURSE_TYPES", indexService.getCourseType(user.getId()));
 		request.setAttribute("recruitmentUrl", PropertyConfigurer.stringValue("recruitment.www"));
+		
         Map<String,Object> role = indexService.getAllRole(user.getId());
-        
         request.setAttribute("isPes",role.get(RoleClass.PES));
         request.setAttribute("isTe",role.get(RoleClass.TE));
         request.setAttribute("isTes",role.get(RoleClass.TES));
@@ -142,16 +145,18 @@ public class CookieExpiredHandleInterceptor extends HandlerInterceptorAdapter {
 			return false;
 		}
 		logger.info("通过拦截");
-		
-		
-		//拦截器配置,执行portal公共事件处理
-//		logger.info("Get Anouncements");
-//		List<Announcement> announcements = announcementHttpService.findAnnouncementList();
-//		request.setAttribute("announcements", announcements);
-//		logger.info("Get announcements = "+announcements);
 		return true;
 	}
 
+	
+	private PreAuthorize preAnnotation(HandlerMethod handlerMethod){
+       PreAuthorize preAuthorize = handlerMethod.getMethodAnnotation(PreAuthorize.class);
+       //是否公开LINK
+       if (null == preAuthorize) {
+           preAuthorize = handlerMethod.getBeanType().getAnnotation(PreAuthorize.class);
+       }
+        return preAuthorize;
+    }
 	
 	/**
 	 * 检查修改密码的Cookie是否存在，存在:true 不存在 false

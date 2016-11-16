@@ -1,6 +1,7 @@
 package com.vipkid.email.templete;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Map;
@@ -61,7 +62,7 @@ public class TempleteUtils {
      * @return 2015年11月5日
      */
     private StringBuilder readTemplete(String templeteName) {
-        InputStream is = this.getClass().getResourceAsStream(templeteName);
+        InputStream is = this.getClass().getClassLoader().getResourceAsStream("template" + File.separator + templeteName);
         StringBuilder result = new StringBuilder("");
         try {
             BufferedReader br = new BufferedReader(new InputStreamReader(is,Charsets.UTF_8));// 构造一个BufferedReader类来读取文件

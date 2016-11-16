@@ -4,6 +4,13 @@ import java.io.Serializable;
 
 import org.community.dao.support.Entity;
 
+/**
+ * 版本排序 默认1(旧版本) 0.INTERVIEW 2.RACTICUM新版使用  3.BasicInfo新版使用
+ * @author Along(ZengWeiLong)
+ * @ClassName: TeacherApplication 
+ * @date 2016年10月18日 下午5:55:55 
+ *
+ */
 public class TeacherApplication extends Entity implements Serializable {
 
     private static final long serialVersionUID = 1139367434501991471L;
@@ -45,6 +52,7 @@ public class TeacherApplication extends Entity implements Serializable {
     private int engaged = -1;
     private int appearance = -1;
     private int phonics = -1;
+    private int version = -1;
 
     public long getId() {
         return this.id;
@@ -386,6 +394,14 @@ public class TeacherApplication extends Entity implements Serializable {
     public TeacherApplication setPhonics(int phonics) {
         this.phonics = phonics;
         return this;
+    }
+
+    public int getVersion() {
+        return version;
+    }
+
+    public void setVersion(int version) {
+        this.version = version;
     }
 
 }

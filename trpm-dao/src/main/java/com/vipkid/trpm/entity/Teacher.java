@@ -142,6 +142,16 @@ public class Teacher extends Entity implements Serializable {
 
 	// 2016-05-24 新添加teacher 属性 --end
 	private String evaluationBio;
+	
+	private int phoneType; //新增电话类型
+	
+	private String otherChannel; //新增其他渠道输入
+	
+	private String firstName;
+	
+	private String middleName;
+	
+	private String lastName;
 
 	public long getId() {
 		return this.id;
@@ -743,13 +753,52 @@ public class Teacher extends Entity implements Serializable {
 	public void setHighestLevelOfEdu(String highestLevelOfEdu) {
 		this.highestLevelOfEdu = highestLevelOfEdu;
 	}
-
+	
     public String getEvaluationBio() {
         return evaluationBio;
     }
-
+    
     public void setEvaluationBio(String evaluationBio) {
         this.evaluationBio = evaluationBio;
     }
-	
+
+    public int getPhoneType() {
+        return phoneType;
+    }
+
+    public void setPhoneType(int phoneType) {
+        this.phoneType = phoneType;
+    }
+
+    public String getOtherChannel() {
+        return otherChannel;
+    }
+
+    public void setOtherChannel(String otherChannel) {
+        this.otherChannel = otherChannel;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getMiddleName() {
+        return middleName;
+    }
+
+    public void setMiddleName(String middleName) {
+        this.middleName = middleName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
 }

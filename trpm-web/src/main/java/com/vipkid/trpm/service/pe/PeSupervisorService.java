@@ -42,7 +42,7 @@ import com.vipkid.trpm.entity.User;
 import com.vipkid.trpm.proxy.ClassroomProxy;
 import com.vipkid.trpm.util.DateUtils;
 import com.vipkid.trpm.util.FilesUtils;
-import com.vipkid.trpm.util.IPUtils;
+import com.vipkid.trpm.util.IpUtils;
 
 @Service
 public class PeSupervisorService {
@@ -95,7 +95,7 @@ public class PeSupervisorService {
     }
 
     public TeacherApplication getTeacherApplication(long teacherId) {
-        return teacherApplicationDao.findApplictionNew(teacherId).stream().findFirst().get();
+        return teacherApplicationDao.findCurrentApplication(teacherId).stream().findFirst().get();
     }
 
     public String getClassRoomUrl(TeacherPe teacherPe) {
@@ -179,7 +179,7 @@ public class PeSupervisorService {
         // 5.practicum2 判断是否存在
         if (ApplicationConstant.RecruitmentResult.PRACTICUM2.equals(result)) {
             List<TeacherApplication> list = teacherApplicationDao
-                    .findApplictionForPracticum2(teacherApplication.getTeacherId());
+                    .findApplictionForStatusResult(teacherApplication.getTeacherId(),TeacherApplicationDao.Status.PRACTICUM.toString(),TeacherApplicationDao.Result.PRACTICUM2.toString());
             if (list != null && list.size() > 0) {
                 logger.info(
                         "The teacher is already in practicum 2., class id is : {},status is {},recruitTeacher:{}",
@@ -209,7 +209,7 @@ public class PeSupervisorService {
             String content = FilesUtils
                     .readLogTemplete(ApplicationConstant.AuditCategory.PRACTICUM_AUDIT, parmMap);
             auditDao.saveAudit(ApplicationConstant.AuditCategory.PRACTICUM_AUDIT, "INFO", content,
-                    peSupervisor.getRealName(), recruitTeacher, IPUtils.getRemoteIP());
+                    peSupervisor.getRealName(), recruitTeacher, IpUtils.getRemoteIP());
 
             if ("true".equals(String.valueOf(modelMap.get("result")))) {
                 this.teacherPeDao.updateTeacherPeComments(teacherPe, result, "");
@@ -339,7 +339,7 @@ public class PeSupervisorService {
             // 没有PE Supervisor权限
             // 插入当前Application记录的副本
             List<TeacherApplication> currentTeacherApplications =
-                    teacherApplicationDao.findApplictionNew(teacherApplication.getTeacherId());
+                    teacherApplicationDao.findCurrentApplication(teacherApplication.getTeacherId());
             if (CollectionUtils.isEmpty(currentTeacherApplications)) {
                 throw new RuntimeException("Illegal TeacherApplication data for teacher ["
                         + teacherApplication.getTeacherId() + "]");
@@ -352,6 +352,7 @@ public class PeSupervisorService {
                     // 开始插入当前Application记录的副本
                     enabledTeacherApplication.setId(0);
                     enabledTeacherApplication.setContractUrl("PE-Supervisor");
+                    enabledTeacherApplication.setVersion(2);
                     teacherApplicationDao.save(enabledTeacherApplication);
 
                     // 更新当前Application记录的结果为TBD

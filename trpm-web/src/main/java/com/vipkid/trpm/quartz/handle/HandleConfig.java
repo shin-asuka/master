@@ -43,14 +43,4 @@ public interface HandleConfig {
      */
     public static String HE_WAIT_STR = "WAIT";
     
-    /**
-     * 线程池到达极限值后 需要延迟时间100毫秒 放入
-     */
-    public static Integer HE_WAIT_TIME = 100;
-    
-    /**
-     * 线程池活跃线程数 达到200的时候放入延迟  @HE_WAIT_TIME 毫秒
-     */
-    public static Integer THREAD_POOL_LIMIT = 200; 
-
 }

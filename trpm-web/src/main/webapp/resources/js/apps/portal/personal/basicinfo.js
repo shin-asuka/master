@@ -57,6 +57,8 @@ define(depends, function(personal) {
 
 		/* 初始化下拉框样式 */
 		//$("#timezone,.select2").select2();
+		
+		$("#highestLevelOfEdu").val($("#highestLevelOfEdu").attr("fieldValue"));
 
 		$("#mobilePix ul li").click(function() {
 			var o = $(this).children("a").clone();
@@ -83,6 +85,7 @@ define(depends, function(personal) {
 		
 		/* 初始化输入字符统计 */
 		var initValueBio = $('#evaluationBio').val();
+		if(initValueBio == undefined) initValueBio = "";
 		//initValue = initValue.replace(/\s/gi,"");
 		$('#evaluationBio-left').html(800-initValueBio.length);
 		$('#evaluationBio').bind('input propertychange', function() {
@@ -132,8 +135,25 @@ define(depends, function(personal) {
 			flag =  false;
 		}
 		
+		/**
 		if($("input[name=country]:checked").size()==0){
 			$("#country-tip").show();
+			flag = false;
+		}
+		**/
+		
+		if($("input[name=phoneType]:checked").size()==0){
+			$("#phoneType-tip").show();
+			flag = false;
+		}
+		
+		if($("#timezone option:selected").val() == undefined){
+			$("#timezone-tip").show();
+			flag = false;
+		}	
+		
+		if($("#highestLevelOfEdu").val() == ""){
+			$("#highestLevelOfEdu-tip").show();
 			flag = false;
 		}
 		

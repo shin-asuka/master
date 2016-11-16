@@ -1,6 +1,7 @@
 define([ "function", "tools", "jquery-bootstrap", "personal-basicinfo","select2" ], function() {
 
 	var getState = function(countryLabel, stateLabel) {
+		$("#timezone").val("");
 		var url = webPath + "/location/getWithParent.shtml";
 		var parentId = $(countryLabel).children("select option:selected").val();
 
@@ -43,6 +44,7 @@ define([ "function", "tools", "jquery-bootstrap", "personal-basicinfo","select2"
 	};
 
 	var getCity = function(stateLabel, cityLabel) {
+		$("#timezone").val("");
 		var url = webPath + "/location/getWithParent.shtml";
 		var parentId = $(stateLabel).children("select option:selected").val();
 
@@ -80,10 +82,15 @@ define([ "function", "tools", "jquery-bootstrap", "personal-basicinfo","select2"
 			});
 		}
 	};
+	
+	var getTimeZone = function(obj){
+		$("#timezone").val($("#"+$(obj).val()).attr("timezone"));
+	}
 
 	return {
 		getState : getState,
-		getCity : getCity
+		getCity : getCity,
+		getTimeZone:getTimeZone
 	}
 
 });

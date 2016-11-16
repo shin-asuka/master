@@ -53,7 +53,6 @@ public class TeacherEnum {
 	public enum PageEnum {
 		SIGNUP,INFOMATION,RESULT
 	}
-	
 
 	public enum FormType{
 		W9(1),

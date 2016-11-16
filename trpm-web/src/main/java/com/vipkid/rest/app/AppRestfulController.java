@@ -11,6 +11,7 @@ import org.community.tools.JsonTools;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -36,6 +37,7 @@ import com.vipkid.trpm.service.portal.CommentsService;
 import com.vipkid.trpm.service.rest.AppRestfulService;
 
 @Controller
+@RequestMapping("/app")
 public class AppRestfulController {
 
 	private static Logger logger = LoggerFactory.getLogger(AppRestfulController.class);
@@ -49,14 +51,14 @@ public class AppRestfulController {
 	@Autowired
 	private CommentsService commentsService;
 
-	@RequestMapping(value = "/app/login", method = RequestMethod.POST, produces = RestfulConfig.JSON_UTF_8)
+	@RequestMapping(value = "/login", method = RequestMethod.POST, produces = RestfulConfig.JSON_UTF_8)
 	public @ResponseBody String login(HttpServletRequest request, HttpServletResponse response, @RequestParam String email,
 	        @RequestParam String password) {
 		Map<String, Object> result = Maps.newHashMap();
 		
 		if(StringUtils.isBlank(email) || StringUtils.isBlank(password)){
 		    logger.error("Email OR password 不能为空！");
-		    response.setStatus(RestfulConfig.HttpStatus.STATUS_400);
+		    response.setStatus(HttpStatus.BAD_REQUEST.value());
 		    return JsonTools.getJson(result);
 		}
 		
@@ -68,7 +70,7 @@ public class AppRestfulController {
 			// 根据email，检查是否有此账号。
 			if (null == user) {
 				logger.error(" User is Null 404 " + email);
-				response.setStatus(RestfulConfig.HttpStatus.STATUS_404);
+				response.setStatus(HttpStatus.NOT_FOUND.value());
 				return JsonTools.getJson(result);
 			}
 			logger.info("password check start!");
@@ -76,7 +78,7 @@ public class AppRestfulController {
 			SHA256PasswordEncoder encoder = new SHA256PasswordEncoder();
 			if (!(encoder.encode(password)).equals(user.getPassword())) {
 				logger.error(" Username or password  error 404 !" + email);
-				response.setStatus(RestfulConfig.HttpStatus.STATUS_404);
+				response.setStatus(HttpStatus.NOT_FOUND.value());
 				return JsonTools.getJson(result);
 			}
 
@@ -84,7 +86,7 @@ public class AppRestfulController {
 			// 非教师在此登陆
 			if (!UserEnum.Dtype.TEACHER.toString().equals(user.getDtype())) {
 				logger.error(" Username type error 404 !" + email);
-				response.setStatus(RestfulConfig.HttpStatus.STATUS_404);
+				response.setStatus(HttpStatus.NOT_FOUND.value());
 				return JsonTools.getJson(result);
 			}
 
@@ -92,7 +94,7 @@ public class AppRestfulController {
 			Teacher teacher = this.passportService.findTeacherById(user.getId());
 			if (teacher == null) {
 				logger.error(" Username teacher error 404 !" + email);
-				response.setStatus(RestfulConfig.HttpStatus.STATUS_404);
+				response.setStatus(HttpStatus.NOT_FOUND.value());
 				return JsonTools.getJson(result);
 			}
 
@@ -127,49 +129,49 @@ public class AppRestfulController {
 			}
         } catch (IllegalArgumentException e) {
             logger.error("内部参数转化异常:"+e.getMessage());
-            response.setStatus(RestfulConfig.HttpStatus.STATUS_400);
+            response.setStatus(HttpStatus.BAD_REQUEST.value());
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
-            response.setStatus(RestfulConfig.HttpStatus.STATUS_500);
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
         }
 		return JsonTools.getJson(result);
 	}
 
-	@RequestMapping(value = "/app/authByToken", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
+	@RequestMapping(value = "/authByToken", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
 	public @ResponseBody String getTeacherByToken(HttpServletRequest request, HttpServletResponse response, @RequestParam String token) {
 	    logger.info("请求URL:"+request.getRequestURI()+"，参数"+JsonTools.getJson(request.getParameterMap()));
 	    Map<String, Object> result = Maps.newHashMap();
 	    if(StringUtils.isBlank(token)){
             logger.error("token 不能为空！");
-            response.setStatus(RestfulConfig.HttpStatus.STATUS_400);
+            response.setStatus(HttpStatus.BAD_REQUEST.value());
             return JsonTools.getJson(result);
         }
 		try {
 		    Preconditions.checkArgument(StringUtils.isNotBlank(token));
 			String teacherId = this.appRestfulService.getUserIdByToken(token);
 			if(StringUtils.isBlank(teacherId)){
-			    response.setStatus(RestfulConfig.HttpStatus.STATUS_404);
+			    response.setStatus(HttpStatus.NOT_FOUND.value());
 			    return JsonTools.getJson(result);
 			}
 			long teacher = Long.valueOf(teacherId);
 			return getTeacherById(request, response, teacher);
         } catch (IllegalArgumentException e) {
             logger.error("内部参数转化异常:"+e.getMessage());
-            response.setStatus(RestfulConfig.HttpStatus.STATUS_400);
+            response.setStatus(HttpStatus.BAD_REQUEST.value());
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
-            response.setStatus(RestfulConfig.HttpStatus.STATUS_500);
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
         }
 		return JsonTools.getJson(result);
 	}
 
-	@RequestMapping(value = "/app/authById", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
+	@RequestMapping(value = "/authById", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
 	public @ResponseBody String getTeacherById(HttpServletRequest request, HttpServletResponse response, @RequestParam long teacherId) {
 	    logger.info("请求URL:"+request.getRequestURI()+"，参数"+JsonTools.getJson(request.getParameterMap()));
 	    Map<String, Object> result = Maps.newHashMap();
 	    if(teacherId == 0){
             logger.error("teacherId 不能为0！");
-            response.setStatus(RestfulConfig.HttpStatus.STATUS_400);
+            response.setStatus(HttpStatus.BAD_REQUEST.value());
             return JsonTools.getJson(result);
         }
 		try {
@@ -177,7 +179,7 @@ public class AppRestfulController {
 			Teacher teacher = this.passportService.findTeacherById(teacherId);
             if(teacher == null){
                 logger.error("teacher is null！");
-                response.setStatus(RestfulConfig.HttpStatus.STATUS_400);
+                response.setStatus(HttpStatus.BAD_REQUEST.value());
                 return JsonTools.getJson(result);
            }
 			String rsultStr = this.checkUser(teacher, result);
@@ -190,27 +192,27 @@ public class AppRestfulController {
                 result.put("data", ateacher);
                 return JsonTools.getJson(result);
 			}else{
-			    response.setStatus(RestfulConfig.HttpStatus.STATUS_404);
+			    response.setStatus(HttpStatus.NOT_FOUND.value());
 			}
         } catch (IllegalArgumentException e) {
             logger.error("内部参数转化异常:"+e.getMessage());
-            response.setStatus(RestfulConfig.HttpStatus.STATUS_400);
+            response.setStatus(HttpStatus.BAD_REQUEST.value());
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
-            response.setStatus(RestfulConfig.HttpStatus.STATUS_500);
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
         }
 		return JsonTools.getJson(result);
 	}
 	
 	
-	@RequestMapping(value = "/app/forgetPassword", method = RequestMethod.POST, produces = RestfulConfig.JSON_UTF_8)
+	@RequestMapping(value = "/forgetPassword", method = RequestMethod.POST, produces = RestfulConfig.JSON_UTF_8)
     public @ResponseBody String getPassword(HttpServletRequest request, HttpServletResponse response,
             @RequestParam String email) {
 	    logger.info("请求URL:"+request.getRequestURI()+"，参数"+JsonTools.getJson(request.getParameterMap()));
         Map<String, Object> result = Maps.newHashMap();
         if(StringUtils.isBlank(email)){
             logger.error("email 不能为空！");
-            response.setStatus(RestfulConfig.HttpStatus.STATUS_400);
+            response.setStatus(HttpStatus.BAD_REQUEST.value());
             return JsonTools.getJson(result);
         }
         try {
@@ -218,18 +220,18 @@ public class AppRestfulController {
             // 根据email，检查是否有此账号。
             User user = this.passportService.findUserByUsername(email);
             if (null == user) {
-                response.setStatus(RestfulConfig.HttpStatus.STATUS_404);
+                response.setStatus(HttpStatus.NOT_FOUND.value());
                 return JsonTools.getJson(result);
             }
             // 检查用户类型
             if (!UserEnum.Dtype.TEACHER.toString().equals(user.getDtype())) {
-                response.setStatus(RestfulConfig.HttpStatus.STATUS_404);
+                response.setStatus(HttpStatus.NOT_FOUND.value());
                 return JsonTools.getJson(result);
             }
             //teacher 判断
             Teacher teacher = this.passportService.findTeacherById(user.getId());
             if (teacher == null) {
-                response.setStatus(RestfulConfig.HttpStatus.STATUS_404);
+                response.setStatus(HttpStatus.NOT_FOUND.value());
                 return JsonTools.getJson(result);
             }
             String resultStr = this.checkUser(teacher, result);
@@ -244,15 +246,15 @@ public class AppRestfulController {
             }            
         } catch (IllegalArgumentException e) {
             logger.error("内部参数转化异常:"+e.getMessage());
-            response.setStatus(RestfulConfig.HttpStatus.STATUS_400);
+            response.setStatus(HttpStatus.BAD_REQUEST.value());
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
-            response.setStatus(RestfulConfig.HttpStatus.STATUS_500);
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
         }
         return JsonTools.getJson(result);
     }
 	
-	@RequestMapping(value = "/app/classCount", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
+	@RequestMapping(value = "/classCount", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
     public @ResponseBody String getClassCount(HttpServletRequest request, HttpServletResponse response,
             @RequestParam long teacherId,@RequestParam String classStatuses,@RequestParam(value="courseTypes", required=false) String courseTypes) {
 	    logger.info("请求URL:"+request.getRequestURI()+"，参数"+JsonTools.getJson(request.getParameterMap()));
@@ -265,10 +267,10 @@ public class AppRestfulController {
             return JsonTools.getJson(result);
         } catch (IllegalArgumentException e) {
             logger.error("参数不合法:"+e.getMessage());
-            response.setStatus(RestfulConfig.HttpStatus.STATUS_400);
+            response.setStatus(HttpStatus.BAD_REQUEST.value());
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
-            response.setStatus(RestfulConfig.HttpStatus.STATUS_500);
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
         }
         return JsonTools.getJson(result);
 	    
@@ -286,16 +288,16 @@ public class AppRestfulController {
             return JsonTools.getJson(result);
         } catch (IllegalArgumentException e) {
             logger.error("参数不合法:"+e.getMessage());
-            response.setStatus(RestfulConfig.HttpStatus.STATUS_400);
+            response.setStatus(HttpStatus.BAD_REQUEST.value());
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
-            response.setStatus(RestfulConfig.HttpStatus.STATUS_500);
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
         }
         return JsonTools.getJson(result);
     }
     */
 	
-   @RequestMapping(value = "/app/classList", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
+   @RequestMapping(value = "/classList", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
    public @ResponseBody String getClassList(HttpServletRequest request, HttpServletResponse response,
             @RequestParam long teacherId, @RequestParam long startTime,@RequestParam(value="order", required=false) Integer order,
             @RequestParam long endTime,@RequestParam String classStatuses,@RequestParam(value="courseTypes", required=false) String courseTypes) {
@@ -311,15 +313,15 @@ public class AppRestfulController {
             return JsonTools.getJson(result);
         } catch (IllegalArgumentException e) {
             logger.error("参数不合法:"+e.getMessage());
-            response.setStatus(RestfulConfig.HttpStatus.STATUS_400);
+            response.setStatus(HttpStatus.BAD_REQUEST.value());
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
-            response.setStatus(RestfulConfig.HttpStatus.STATUS_500);
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
         }
         return JsonTools.getJson(result);
     }
    
-   @RequestMapping(value = "/app/classListPage", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
+   @RequestMapping(value = "/classListPage", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
    public @ResponseBody String getClassListByPage(HttpServletRequest request, HttpServletResponse response,
             @RequestParam long teacherId,@RequestParam int classStatus,@RequestParam(value="courseTypes", required=false) String courseTypes,
             @RequestParam long order,@RequestParam long start,@RequestParam long limit) {
@@ -336,16 +338,16 @@ public class AppRestfulController {
             return JsonTools.getJson(result);
         } catch (IllegalArgumentException e) {
             logger.error("参数不合法:"+e.getMessage());
-            response.setStatus(RestfulConfig.HttpStatus.STATUS_400);
+            response.setStatus(HttpStatus.BAD_REQUEST.value());
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
-            response.setStatus(RestfulConfig.HttpStatus.STATUS_500);
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
         }
         return JsonTools.getJson(result);
     }
 	
 
-	@RequestMapping(value = "/app/studentList", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
+	@RequestMapping(value = "/studentList", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
 	public @ResponseBody String getStudents(HttpServletRequest request, HttpServletResponse response,
 			@RequestParam String studentIds) {
 	    logger.info("请求URL:"+request.getRequestURI()+"，参数"+JsonTools.getJson(request.getParameterMap()));
@@ -369,16 +371,16 @@ public class AppRestfulController {
 			resultMap.put("data", dataMap);
 		} catch (IllegalArgumentException e) {
 		    logger.error("参数不合法:"+e.getMessage());
-			response.setStatus(RestfulConfig.HttpStatus.STATUS_400);
+			response.setStatus(HttpStatus.BAD_REQUEST.value());
 		} catch (Exception e) {
 		    logger.error(e.getMessage(), e);
-			response.setStatus(RestfulConfig.HttpStatus.STATUS_500);
+			response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
 		}
 
 		return JsonTools.getJson(resultMap);
 	}
 
-	@RequestMapping(value = "/app/feedback", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
+	@RequestMapping(value = "/feedback", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
 	public @ResponseBody String getOnlineClassComment(HttpServletRequest request, HttpServletResponse response,
 			@RequestParam long studentId, @RequestParam long onlineClassId, @RequestParam long teacherId) {
 	    logger.info("请求URL:"+request.getRequestURI()+"，参数"+JsonTools.getJson(request.getParameterMap()));
@@ -399,14 +401,14 @@ public class AppRestfulController {
 				resultMap.put("createTime", teacherComment.getCreateDateTime().getTime());
 				resultMap.put("stars", teacherComment.getStars());
 			} else {
-				response.setStatus(RestfulConfig.HttpStatus.STATUS_404);
+				response.setStatus(HttpStatus.NOT_FOUND.value());
 			}
 		} catch (IllegalArgumentException e) {
 		    logger.error("参数不合法:"+e.getMessage());
-			response.setStatus(RestfulConfig.HttpStatus.STATUS_400);
+			response.setStatus(HttpStatus.BAD_REQUEST.value());
 		} catch (Exception e) {
 		    logger.error(e.getMessage(), e);
-			response.setStatus(RestfulConfig.HttpStatus.STATUS_500);
+			response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
 		}
 
 		return JsonTools.getJson(resultMap);

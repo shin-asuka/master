@@ -15,7 +15,8 @@ import com.vipkid.trpm.proxy.RedisProxy;
 import com.vipkid.trpm.util.CookieUtils;
 import com.vipkid.trpm.util.DateUtils;
 import com.vipkid.trpm.util.FilesUtils;
-import com.vipkid.trpm.util.IPUtils;
+import com.vipkid.trpm.util.IpUtils;
+
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -561,7 +562,7 @@ public class ScheduleService {
     /**
      * 处理TimeSlot创建逻辑
      * 
-     * @param teacherId
+     * @param teacher
      * @param scheduleTime
      * @param courseType
      * @return Map<String,Object>
@@ -658,7 +659,7 @@ public class ScheduleService {
             String content = FilesUtils.readLogTemplete(ApplicationConstant.AuditCategory.ONLINE_CLASS_CREATE,
                             replaceMap);
             auditDao.saveAudit(ApplicationConstant.AuditCategory.ONLINE_CLASS_CREATE, "INFO", content,
-                            teacher.getRealName(), onlineClassDao, IPUtils.getRemoteIP());
+                            teacher.getRealName(), onlineClassDao, IpUtils.getRemoteIP());
 
             /* 返回结果 */
             String timePoint = formatTo(scheduleDateTime.toInstant(), teacher.getTimezone(), FMT_HMA_US);
@@ -756,7 +757,7 @@ public class ScheduleService {
             String content = FilesUtils.readLogTemplete(ApplicationConstant.AuditCategory.ONLINE_CLASS_DELETE,
                             replaceMap);
             auditDao.saveAudit(ApplicationConstant.AuditCategory.ONLINE_CLASS_DELETE, "INFO", content,
-                            teacher.getRealName(), onlineClassDao, IPUtils.getRemoteIP());
+                            teacher.getRealName(), onlineClassDao, IpUtils.getRemoteIP());
 
             modelMap.put("action", true);
         } else {

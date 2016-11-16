@@ -28,6 +28,8 @@ public class BasicInfo {
 
 	private String name;
 
+	private int phoneType;
+	
 	private String phoneNationCode;
 
 	private int phoneNationId;
@@ -160,6 +162,14 @@ public class BasicInfo {
 
     public void setEvaluationBio(String evaluationBio) {
         this.evaluationBio = evaluationBio;
+    }
+
+    public int getPhoneType() {
+        return phoneType;
+    }
+
+    public void setPhoneType(int phoneType) {
+        this.phoneType = phoneType;
     }	
 	
 }

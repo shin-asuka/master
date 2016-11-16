@@ -46,7 +46,7 @@ import com.vipkid.trpm.entity.report.ReportLevels;
 import com.vipkid.trpm.service.media.AbstarctMediaService;
 import com.vipkid.trpm.util.DateUtils;
 import com.vipkid.trpm.util.FilesUtils;
-import com.vipkid.trpm.util.IPUtils;
+import com.vipkid.trpm.util.IpUtils;
 import com.vipkid.trpm.util.LessonSerialNumber;
 import com.vipkid.trpm.weixin.MessageTools;
 
@@ -182,7 +182,7 @@ public class ReportService {
             // 日志记录
             String content = FilesUtils.readLogTemplete(ApplicationConstant.AuditCategory.REPORT_UA_CREATE, parmMap);
             auditDao.saveAudit(ApplicationConstant.AuditCategory.REPORT_UA_CREATE, "INFO", content, user.getName(),
-                    resultReport, IPUtils.getRemoteIP());
+                    resultReport, IpUtils.getRemoteIP());
 
             resultMap.put("result", true);
             resultMap.put("msg", "Upload Successful");
@@ -196,7 +196,7 @@ public class ReportService {
                         parmMap);
                 content += "【" + resultReport.getUrl() + " Update to " + upload.getUrl() + "】";
                 auditDao.saveAudit(ApplicationConstant.AuditCategory.REPORT_UA_UPDATE, "INFO", content, user.getName(),
-                        resultReport, IPUtils.getRemoteIP());
+                        resultReport, IpUtils.getRemoteIP());
                 resultReport.setUrl(upload.getUrl());
                 resultReport.setReaded(UaReportStatus.NEWADD);
                 resultReport.setOnlineClassId(Long.valueOf(onlineClassId));
@@ -293,7 +293,7 @@ public class ReportService {
             String content = FilesUtils.readLogTemplete(ApplicationConstant.AuditCategory.PRACTICUM_REPORT_CREATE,
                     parmMap);
             auditDao.saveAudit(ApplicationConstant.AuditCategory.PRACTICUM_REPORT_CREATE, "INFO", content,
-                    user.getName(), resultReport, IPUtils.getRemoteIP());
+                    user.getName(), resultReport, IpUtils.getRemoteIP());
 
             resultMap.put("result", true);
             resultMap.put("msg", "Upload Successful");
@@ -307,7 +307,7 @@ public class ReportService {
                         parmMap);
                 content += "【" + resultReport.getUrl() + " Update to " + upload.getUrl() + "】";
                 auditDao.saveAudit(ApplicationConstant.AuditCategory.PRACTICUM_REPORT_UPDATE, "INFO", content,
-                        user.getName(), resultReport, IPUtils.getRemoteIP());
+                        user.getName(), resultReport, IpUtils.getRemoteIP());
                 resultReport.setCreateDateTime(new Timestamp(System.currentTimeMillis()));
                 resultReport.setUrl(upload.getUrl());
                 resultReport.setReaded(UaReportStatus.NEWADD);
@@ -525,10 +525,10 @@ public class ReportService {
         // 日志记录
         if (isSubmited) {
             auditDao.saveAudit(ApplicationConstant.AuditCategory.REPORT_DEMO_SUBMIT, INFO, content, user.getName(),
-                    demoReport, IPUtils.getRemoteIP());
+                    demoReport, IpUtils.getRemoteIP());
         } else {
             auditDao.saveAudit(ApplicationConstant.AuditCategory.REPORT_DEMO_SAVE, INFO, content, user.getName(),
-                    demoReport, IPUtils.getRemoteIP());
+                    demoReport, IpUtils.getRemoteIP());
         }
 
         return resultMap;

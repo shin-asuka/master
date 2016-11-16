@@ -54,7 +54,7 @@ public class EmailHandle {
             return "ERROR!" + email;
         }
         logger.info(
-                "TEACHVIP 最终这个Email[" + email + "] 的发送结果:[" + result + "],内容:[" + content + "]");
+                "TEACHVIP 最终这个Email[" + email + "] 的发送结果:[" + result + "],这是标题:[" + subject + "],内容:[" + content + "]");
         return "SUCCESS!";
     }
 
@@ -85,7 +85,7 @@ public class EmailHandle {
             return "ERROR!" + email;
         }
         logger.info(
-                "EDUCATION 最终这个Email[" + email + "] 的发送结果:[" + result + "],这是内容:[" + content + "]");
+                "EDUCATION 最终这个Email[" + email + "] 的发送结果:[" + result + "],这是标题:[" + subject + "],这是内容:[" + content + "]");
         return "SUCCESS!";
     }
 }

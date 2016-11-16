@@ -21,7 +21,7 @@ import com.vipkid.trpm.proxy.RedisProxy;
 import com.vipkid.trpm.security.SHA256PasswordEncoder;
 import com.vipkid.trpm.util.CacheUtils;
 import com.vipkid.trpm.util.CookieUtils;
-import com.vipkid.trpm.util.IPUtils;
+import com.vipkid.trpm.util.IpUtils;
 
 @Service
 public class RemberService {
@@ -177,7 +177,7 @@ public class RemberService {
      * @date 2016年1月6日
      */
     public String getRemortIP() {
-        String ip = IPUtils.getRemoteIP();
+        String ip = IpUtils.getRemoteIP();
         return ip = ip.replace(",","-").replace(" ","").replace(".","-");
     }
 }

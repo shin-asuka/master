@@ -1,5 +1,8 @@
 package com.vipkid.trpm.entity.app;
 
+import org.apache.commons.lang3.EnumUtils;
+import org.apache.commons.lang3.StringUtils;
+
 public class AppEnum {
 
     public enum CourseType {
@@ -118,7 +121,71 @@ public class AppEnum {
         } 
     }
     
-    public static <T extends Enum<T>> T valueOf(Class<T> clazz, int ordinal) {  
-        return (T)clazz.getEnumConstants()[ordinal];  
+    /**学历*/
+    public enum DegreeType{
+        HIGH_SCHOOL,
+        ASSOCIATES,
+        BACHELORS,
+        MASTERS,
+        PHD,
+        OTHER
+    }
+    
+    /**招募端新增3种渠道分类*/
+    public enum RecruitmentChannel {
+        //2016-11 新增渠道分类
+        TEACHER,
+        PARTNER,
+        OTHER // 其他
+    }
+    
+    /**
+     * 根据index获取枚举
+     * @Author:ALong (ZengWeiLong)
+     * @param clazz
+     * @param index
+     * @return    
+     * E
+     * @date 2016年10月24日
+     */
+    public static <E extends Enum<E>> E getByIndex(final Class<E> enumClass, int index) {
+        return (E)enumClass.getEnumConstants()[index];  
     } 
+    
+    /**
+     * 根据名称获取枚举 
+     * @Author:ALong (ZengWeiLong)
+     * @param enumClass
+     * @param name
+     * @return    
+     * E
+     * @date 2016年10月24日
+     */
+    public static <E extends Enum<E>> E getByName(final Class<E> enumClass, String name) {  
+        return EnumUtils.getEnum(enumClass, name);
+    } 
+    
+    /**
+     * 判断枚举类是否包含某个枚举
+     * @Author:ALong (ZengWeiLong)
+     * @param enumClass
+     * @param name
+     * @return    
+     * boolean
+     * @date 2016年10月24日
+     */
+    public static <E extends Enum<E>> boolean containsName(final Class<E> enumClass, String name) {
+        return EnumUtils.isValidEnum(enumClass, name);
+    } 
+
+    @Deprecated
+    public static <T> boolean containsNameold(final Class<T> enumClass, String name) {
+        T[] enums = enumClass.getEnumConstants();
+        for(T obj:enums){
+            if(StringUtils.equals(obj.toString(), name)){
+                return true;
+            }
+        }
+        return false;
+    }
 }

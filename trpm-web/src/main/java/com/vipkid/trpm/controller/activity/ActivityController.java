@@ -49,7 +49,7 @@ public class ActivityController extends AbstractController{
     //上线时间
     private String searchdate = "2016-04-12 00:00:00";
 
-    
+    @Deprecated
     @RequestMapping("activity")
     public String index(HttpServletRequest request, HttpServletResponse response, Model model){
         if(!this.showActivity()){
@@ -74,6 +74,7 @@ public class ActivityController extends AbstractController{
         return "activity/errormessage";
     }
     
+    @Deprecated
     @RequestMapping("share/{token}")
     @PreAuthorize("permitAll")
     public String facebook(HttpServletRequest request, HttpServletResponse response, Model model,@PathVariable String token){

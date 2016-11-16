@@ -27,6 +27,7 @@ import com.vipkid.trpm.dao.TeacherDao;
 import com.vipkid.trpm.dao.UserDao;
 import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.entity.User;
+import com.vipkid.trpm.entity.app.AppEnum.RecruitmentChannel;
 import com.vipkid.trpm.proxy.RedisProxy;
 import com.vipkid.trpm.security.SHA256PasswordEncoder;
 import com.vipkid.trpm.util.AES;
@@ -84,6 +85,7 @@ public class PassportService {
      */
     public User findUserByUsername(String username) {
         if (StringUtils.isBlank(username)) {
+            logger.warn("用户名为空：{}",username);
             return null;
         }
         return this.userDao.findByUsername(username);
@@ -114,8 +116,8 @@ public class PassportService {
      * @Author:VIPKID-ZengWeiLong
      * @return 2016年3月3日
      */
-    public Map<String, String> doSignUp(String email, String password, Object reid, Object partnerId) {
-        Map<String, String> resultMap = Maps.newHashMap();
+    public Map<String, Object> saveSignUp(String email, String password, Object reid, Object partnerId) {
+        Map<String, Object> resultMap = Maps.newHashMap();
         User user = this.userDao.findByUsername(email);
         SHA256PasswordEncoder encoder = new SHA256PasswordEncoder();
 
@@ -152,8 +154,7 @@ public class PassportService {
             teacher.setLifeCycle(TeacherEnum.LifeCycle.SIGNUP.toString());
             String serialNumber = teacherDao.getSerialNumber();
             teacher.setSerialNumber(serialNumber);
-            teacher.setRecruitmentId(System.currentTimeMillis() + "-"
-                    + encoder.encode(teacher.getSerialNumber() + "kxoucywejl" + teacher.getEmail()));
+            teacher.setRecruitmentId(System.currentTimeMillis() + "-"+ encoder.encode(teacher.getSerialNumber() + "kxoucywejl" + teacher.getEmail()));
             teacher.setCurrency(TeacherEnum.Currency.US_DOLLAR.toString());
             teacher.setHide(TeacherEnum.Hide.NONE.toString());
             // 设置推荐人保存字段
@@ -172,12 +173,12 @@ public class PassportService {
                 new EmailEngine().addMailPool(email, sendMap, EmailFormEnum.TEACHVIP);
                 resultMap.put("uuid", AES.encrypt(teacher.getRecruitmentId(),
                         AES.getKey(AES.KEY_LENGTH_128, ApplicationConstant.AES_128_KEY)));
-            }else{
-                resultMap.put("url", "signlogin.shtml?token="
-                        + AES.encrypt(user.getToken(), AES.getKey(AES.KEY_LENGTH_128, ApplicationConstant.AES_128_KEY)));
             }
+            resultMap.put("user", user);
             resultMap.put("info", ApplicationConstant.AjaxCode.SUCCESS_CODE);
+            resultMap.put("result", true);
         } else {
+            resultMap.put("result", false);
             resultMap.put("info", ApplicationConstant.AjaxCode.ERROR_CODE);
         }
         return resultMap;
@@ -363,15 +364,17 @@ public class PassportService {
 
             if (user != null) {
                 if (UserEnum.Dtype.PARTNER.toString().equals(user.getDtype())) {
+                    teacher.setRecruitmentChannel(RecruitmentChannel.PARTNER.toString());
                     teacher.setPartnerId(user.getId());
                 } else if (UserEnum.Dtype.TEACHER.toString().equals(user.getDtype())) {
                 	Teacher t = teacherDao.findById(userId);
                 	if(t!=null){
+                	    teacher.setRecruitmentChannel(RecruitmentChannel.TEACHER.toString());
                 		teacher.setReferee(user.getId() + "," + t.getRealName());//Referee存老师的realName
-                	}
-                	else{
+                	}else{
+                	    teacher.setRecruitmentChannel(RecruitmentChannel.OTHER.toString());
+                	    teacher.setReferee(user.getId() + ",");
                 		logger.warn("找不到id为"+userId+"老师");
-                		teacher.setReferee(user.getId() + ",");
                 	}
                 }
             }
@@ -387,6 +390,7 @@ public class PassportService {
             if (user != null) {
                 if (UserEnum.Dtype.PARTNER.toString().equals(user.getDtype())) {
                     teacher.setPartnerId(user.getId());
+                    teacher.setRecruitmentChannel(UserEnum.Dtype.PARTNER.toString());
                 } 
             }
         }

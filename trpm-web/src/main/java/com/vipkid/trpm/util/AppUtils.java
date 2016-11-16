@@ -2,7 +2,11 @@ package com.vipkid.trpm.util;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.TimeZone;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -30,7 +34,7 @@ public class AppUtils {
         String[] classStatuses = classStatus.split(",");
         for(int i = 0 ; i < classStatuses.length;i++){
             try{
-                classStatuses[i] = AppEnum.valueOf(ClassStatus.class, Integer.valueOf(classStatuses[i])).toString();
+                classStatuses[i] = AppEnum.getByIndex(ClassStatus.class, Integer.valueOf(classStatuses[i])).toString();
             }catch(Exception e){
                 logger.error("不存在的课程状态：" + classStatuses[i]);
                 classStatuses[i] = null;
@@ -39,7 +43,7 @@ public class AppUtils {
         return classStatuses;
     }
     
-       /**
+     /**
      * 根据课程类型统计
      * @Author:ALong (ZengWeiLong)
      * @param classStatus
@@ -51,7 +55,7 @@ public class AppUtils {
         String[] classTypes = classType.split(",");
         for(int i = 0 ; i < classTypes.length;i++){
             try{
-                classTypes[i] = AppEnum.valueOf(CourseType.class, Integer.valueOf(classTypes[i])).toString();
+                classTypes[i] = AppEnum.getByIndex(CourseType.class, Integer.valueOf(classTypes[i])).toString();
             }catch(Exception e){
                 logger.error("不存在的课程类型定义：" + classTypes[i]);
                 classTypes[i] = null;
@@ -60,6 +64,28 @@ public class AppUtils {
         return classTypes;
     }
     
+    /**
+     * 判断一个枚举类是否包含某个名称 ,当传入为空的时候 则返回True
+     * @Author:ALong (ZengWeiLong)
+     * @param clazz
+     * @param name
+     * @return    
+     * boolean
+     * @date 2016年10月22日
+     */
+   public static <E extends Enum<E>> boolean containsName(final Class<E> enumClass,String name){
+       if(StringUtils.isBlank(name)){
+           logger.warn("传入类型：{}，为空：{}",enumClass,name);
+           return true;
+       }
+       try{
+           return AppEnum.containsName(enumClass,name);
+       }catch(Exception e){
+           logger.error("不存在的课程类型定义：" + name);
+       }
+       return false;
+   }
+   
     
     /**
      * 将一个时间戳转化为指定时区的时间

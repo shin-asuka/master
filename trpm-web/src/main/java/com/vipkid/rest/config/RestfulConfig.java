@@ -2,18 +2,25 @@ package com.vipkid.rest.config;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import org.community.tools.JsonTools;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.google.common.collect.Sets;
+import com.vipkid.trpm.constant.ApplicationConstant.TeacherLifeCycle;
 
 public class RestfulConfig {
+    
+    public static long SYSTEM_USER_ID = 2;
 
     public static final class Port{
         
         public static int TEACHER = 1;
         
         public static int RECRUITMENT = 2;
+        
+        public static int NEWRECRUITMENT = 3;
     }
     
     public static final class RoleClass{
@@ -26,20 +33,7 @@ public class RestfulConfig {
         
         public static String TES = "TE-Supervisor";
     }
-    
-    public static final class HttpStatus{
         
-        public static int STATUS_403 = 403;
-        
-        public static int STATUS_200 = 200;
-        
-        public static int STATUS_400 = 400;
-        
-        public static int STATUS_404 = 404;
-        
-        public static int STATUS_500 = 500;
-    }
-    
     public static final class Validate{
         
         public static String EMAIL_REG = "^(([a-zA-Z0-9\\\"_\\-])\\.?)+\\@(([a-zA-Z0-9\\-])+\\.)+([a-zA-Z0-9]{2,4})+$";
@@ -61,4 +55,8 @@ public class RestfulConfig {
         public static final Map<String,Integer> CORRECTANSWERMAP = JsonTools.readValue(RIGHTANSWER,new TypeReference<HashMap<String,Integer>>(){});
     
     }
+    
+    public static final Set<String> NEWRECRUITMENTSET = Sets.newHashSet(TeacherLifeCycle.SIGNUP,TeacherLifeCycle.BASIC_INFO);
+    
+    public static final Set<String> TEACHERPORTSET = Sets.newHashSet(TeacherLifeCycle.REGULAR);
 }

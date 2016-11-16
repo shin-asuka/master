@@ -16,8 +16,10 @@ import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.google.common.collect.Lists;
+import com.vipkid.enums.TeacherEnum.LifeCycle;
 import com.vipkid.rest.config.RestfulConfig;
 import com.vipkid.rest.config.RestfulConfig.RoleClass;
+import com.vipkid.rest.config.TeacherInfo;
 import com.vipkid.trpm.constant.ApplicationConstant;
 import com.vipkid.trpm.constant.ApplicationConstant.CookieKey;
 import com.vipkid.trpm.constant.ApplicationConstant.CourseType;
@@ -120,11 +122,12 @@ public class LoginService {
         return userDao.findByLogin(username);
     }
 
-    public void setLoginCooke(HttpServletResponse response, User user) {
+    public String setLoginCooke(HttpServletResponse response, User user) {
         String token = UUID.randomUUID().toString();
         logger.info("设置登录Cookie，teacherID = {},token = {}",user.getId(),token);
         redisProxy.set(token, JsonTools.getJson(user), 12 * 60 * 60);
         CookieUtils.setCookie(response, CookieKey.TRPM_TOKEN, token, null);
+        return token;
     }
 
     public void removeLoginCooke(HttpServletRequest request, HttpServletResponse response) {
@@ -165,17 +168,22 @@ public class LoginService {
      * @return boolean
      * @date 2016年7月4日
      */
-    public void findByTeacherModule(long teacherId,Map<String,Object> roles) {
-        String result = teacherModuleDao.findByTeacherModule(teacherId);
-        logger.info(" result module:{}",result);
-        if(result.indexOf(","+RoleClass.PE+",") > -1){
-            roles.put(RoleClass.PES,true);
-        }
-        if(result.indexOf(","+RoleClass.TE+",") > -1){
-            roles.put(RoleClass.TE,true);
-        }
-        if(result.indexOf(","+RoleClass.TES+",") > -1){
-            roles.put(RoleClass.TES,true);
+    public void findByTeacherModule(TeacherInfo teacherinfo,String lifeCycle) {
+        Map<String,Object> roles = teacherinfo.getRoles();
+        if(LifeCycle.REGULAR.toString().equalsIgnoreCase(lifeCycle)){
+            roles.put(RoleClass.PE, this.isPe(teacherinfo.getTeacherId()));
+            String result = teacherModuleDao.findByTeacherModule(teacherinfo.getTeacherId());
+            logger.info(" result module:{}",result);
+            if(result.indexOf(","+RoleClass.PE+",") > -1){
+                roles.put(RoleClass.PES,true);
+            }
+            if(result.indexOf(","+RoleClass.TE+",") > -1){
+                roles.put(RoleClass.TE,true);
+            }
+            if(result.indexOf(","+RoleClass.TES+",") > -1){
+                roles.put(RoleClass.TES,true);
+            }
+            teacherinfo.setRoles(roles);
         }
     }  
     

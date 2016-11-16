@@ -26,7 +26,7 @@ public class TeacherLocationDao extends MapperDaoTemplate<TeacherLocation> {
 		teacherLocation.setOrderString("name ASC");
 		return super.selectList(teacherLocation);
 	}
-
+	
 	public TeacherLocation findById(int id) {
 		Preconditions.checkArgument(0 != id);
 		return super.selectOne(new TeacherLocation().setId(id));

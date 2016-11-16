@@ -20,8 +20,9 @@ import com.vipkid.email.templete.TempleteUtils;
 import com.vipkid.trpm.constant.ApplicationConstant;
 import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.entity.User;
-import com.vipkid.trpm.quartz.handle.HandleTools;
+import com.vipkid.trpm.util.DateUtils;
 
+@Deprecated
 @Service
 public class EmailService {
 
@@ -57,7 +58,7 @@ public class EmailService {
 
     private Map<String, String> sendClassNote(Teacher teacher) {
         Map<String, String> resultMap = Maps.newHashMap();
-        Map<String, String> timeMap = HandleTools.paramMap();
+        Map<String, String> timeMap = DateUtils.yesterdayParamMap();
         log.info("检查老师明天是否有BOOK的课，参数:" + timeMap);
         try {
             Map<String, List<Map<String, Object>>> list = noticeService.findBookedClass(

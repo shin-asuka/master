@@ -18,22 +18,24 @@ public class LoginControllerTest extends BaseTestCase{
     
     private static Logger logger = LoggerFactory.getLogger(LoginControllerTest.class);
 
-    //@Test
+    @Test
     public void login() throws IOException{
         String url = URL_PREFIX + "/api/user/login";
         Map<String, String> data = Maps.newHashMap();
-        data.put("email", "baoyuxiao1@vipkid.com.cn");
-        data.put("password", "vipkid2");
+        data.put("email", "zengweilong@gmail.com");
+        data.put("password", "vipkid1");
         Response response = Jsoup.connect(url).ignoreContentType(true).timeout(60000).data(data).method(Method.POST).execute();
         String json = response.body();
-        logger.info(" login ERROR ==> " + json);
+        logger.info(" login OK ==> " + json);
         
+        /*        
         data = Maps.newHashMap();
         data.put("email", "baoyuxiao1@vipkid.com.cn");
         data.put("password", "vipkid1");
         response = Jsoup.connect(url).ignoreContentType(true).timeout(60000).data(data).method(Method.POST).execute();
         json = response.body();
         logger.info(" login OK ==> " + json);
+        */
     }
     
     //@Test
@@ -77,7 +79,7 @@ public class LoginControllerTest extends BaseTestCase{
         logger.info(" resetPassword ERROR ==> " + json);
     }
     
-    @Test
+    //@Test
     public void auth() throws IOException{
         String url = URL_PREFIX + "/api/user/auth";
         Response response = Jsoup.connect(url).ignoreContentType(true).timeout(60000).header(CookieKey.AUTOKEN, TOKEN).method(Method.POST).execute();

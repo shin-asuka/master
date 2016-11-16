@@ -7,8 +7,13 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Locale;
+import java.util.Map;
 
+import org.apache.commons.lang.time.DateFormatUtils;
+
+import com.google.common.collect.Maps;
 import com.vipkid.trpm.constant.ApplicationConstant;
 
 /**
@@ -158,4 +163,70 @@ public final class DateUtils {
         }
         return false;
     } 
+    
+    /**
+     * 检查两个时间差是否大于11.5个小时
+     * @Author:ALong (ZengWeiLong)
+     * @param classTime
+     * @return    
+     * long
+     * @date 2016年6月30日
+     */
+    public static boolean count11hrlf(long auditTime){
+        auditTime += 11.5*(3600*1000);
+        if(System.currentTimeMillis() > auditTime){
+            return true;
+        }
+        return false;
+    } 
+    
+    /**
+     * 
+     * 计算两个时间之间月份跨度 
+     * @Author:ALong (ZengWeiLong)
+     * @param start 开始时间
+     * @param end 结束时间
+     * @return    
+     * int
+     * @date 2016年10月17日
+     */
+    public static int countMouth(long start,long end){
+        Calendar c1 = Calendar.getInstance();
+        c1.setTimeInMillis(start);
+        Calendar c2 = Calendar.getInstance();
+        c2.setTimeInMillis(end);
+        int result = (c2.get(Calendar.YEAR) - c1.get(Calendar.YEAR)) * 12 + c2.get(Calendar.MONTH) - c1.get(Calendar.MONTH) + 1;
+        return result;
+    } 
+    
+    /**
+     * 计算两个日期之间月份跨算后的周数，按照每月4周计算
+     * @Author:ALong (ZengWeiLong)
+     * @param start 开始时间
+     * @param end 结束时间
+     * @return    
+     * int
+     * @date 2016年10月17日
+     */
+    public static int countWeeks(long start,long end){
+        int month = DateUtils.countMouth(start,end);
+        int totalWeek = month * 4;
+        return totalWeek;
+    }
+    
+    public static Map<String,String> yesterdayParamMap() {
+        Map<String, String> resultMap = Maps.newHashMap();
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(new Date());
+        cal.set(Calendar.DATE, cal.get(Calendar.DATE) + 1);
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        Date startTime = cal.getTime();
+        cal.set(Calendar.DATE, cal.get(Calendar.DATE) + 1);
+        Date endTime = cal.getTime();
+        resultMap.put("startTime", DateFormatUtils.format(startTime, "yyyy-MM-dd HH:mm:ss"));
+        resultMap.put("endTime", DateFormatUtils.format(endTime, "yyyy-MM-dd HH:mm:ss"));
+        return resultMap;
+    }
 }

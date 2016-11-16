@@ -21,6 +21,8 @@ public class TeacherLocation extends Entity implements Serializable {
 	private int level;
 	/* 备注说明 */
 	private String comment;
+	
+	private String timezone;
 
 	public int getId() {
 		return this.id;
@@ -84,5 +86,14 @@ public class TeacherLocation extends Entity implements Serializable {
 		this.comment = comment;
 		return this;
 	}
+
+    public String getTimezone() {
+        return timezone;
+    }
+
+    public TeacherLocation setTimezone(String timezone) {
+        this.timezone = timezone;
+        return this;
+    }
 
 }

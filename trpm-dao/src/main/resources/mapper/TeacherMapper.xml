@@ -48,6 +48,7 @@
 		teacher.identity_type AS teacher_identity_type,
 		teacher.identity_number AS teacher_identity_number,
 		teacher.issuance_country as teacher_issuance_country,
+		teacher.phone_type as teacher_phone_type,
 		teacher.phone_nation_code as teacher_phone_nation_code,
 		teacher.phone_nation_id as teacher_phone_nation_id,
 		teacher.current_address_id as teacher_current_address_id,
@@ -56,7 +57,11 @@
 		
 		teacher.contract_type AS teacher_contract_type,
 		teacher.highest_degree AS teacher_highest_degree,
-		teacher.evaluation_bio AS teacher_evaluation_bio
+		teacher.evaluation_bio AS teacher_evaluation_bio,
+		teacher.other_channel AS teacher_other_channel,
+		teacher.first_name AS teacher_first_name,
+		teacher.middle_name AS teacher_middle_name,
+		teacher.last_name AS teacher_last_name
 	</sql>
 
 	<sql id="teacherWhere">
@@ -128,11 +133,17 @@
 			<if test="identityNumber!=null"> AND teacher.identity_number = #{identityNumber}</if>
 			<if test="issuanceCountry!=0">AND teacher.issuance_country = #{issuanceCountry}</if>
 			<if test="phoneNationCode!=null">AND teacher.phone_nation_code = #{phoneNationCode}</if>
+			<if test="phoneType!=0">AND teacher.phone_type = #{phoneType}</if>
 			<if test="phoneNationId!=0">AND teacher.phone_nation_id = #{phoneNationId}</if>
 			<if test="currentAddressId!=0">AND teacher.current_address_id = #{currentAddressId}</if>
 			<if test="beneficiaryBankAddressId">AND teacher.beneficiary_bank_address_id = #{beneficiaryBankAddressId}</if>
 			<if test="beneficiaryAddressId"> AND teacher.beneficiary_address_id = #{beneficiaryAddressId}</if>
 			<if test="evaluationBio != null"> AND teacher.evaluation_bio = #{evaluationBio}</if>
+			<if test="otherChannel != null"> AND teacher.other_channel = #{otherChannel}</if>
+			
+			<if test="firstName != null"> AND teacher.first_name = #{firstName}</if>
+			<if test="middleName != null"> AND teacher.middle_name = #{middleName}</if>
+			<if test="lastName != null"> AND teacher.last_name = #{lastName}</if>
 		</trim>
 	</sql>
 
@@ -207,12 +218,18 @@
 		<result column="teacher_issuance_country" property="issuanceCountry"/>
 		<result column="teacher_phone_nation_code" property="phoneNationCode"/>
 		<result column="teacher_phone_nation_id" property="phoneNationId"/>
+		<result column="teacher_phone_type" property="phoneType"/>
 		<result column="teacher_current_address_id" property="currentAddressId"/>
 		<result column="teacher_beneficiary_bank_address_id" property="beneficiaryBankAddressId"/>
 		<result column="teacher_beneficiary_address_id" property="beneficiaryAddressId"/>
 		
 		<result column="teacher_contract_type" property="contractType" />
 		<result column="teacher_evaluation_bio" property="evaluationBio" />
+		<result column="teacher_other_channel" property="otherChannel" />
+		
+		<result column="teacher_first_name" property="firstName" />
+		<result column="teacher_middle_name" property="middleName" />
+		<result column="teacher_last_name" property="lastName" />
 	</resultMap>
 
 	<select id="findDao" resultMap="teacherResultMap">
@@ -316,6 +333,12 @@
 			<if test="beneficiaryBankAddressId">,beneficiary_bank_address_id</if>
 			<if test="beneficiaryAddressId">,beneficiary_address_id</if>
 			<if test="evaluationBio != null">,evaluation_bio</if>
+			
+			<if test="phoneType != null">,phone_type</if>
+			<if test="otherChannel != null">,other_channel</if>			
+			<if test="firstName != null">,first_name</if>
+			<if test="middleName != null">,middle_name</if>
+			<if test="lastName != null">,last_name</if>
 		</trim>
 		) VALUES
 		<trim prefix="(" prefixOverrides=",">
@@ -386,8 +409,19 @@
 			<if test="beneficiaryBankAddressId">,#{beneficiaryBankAddressId}</if>
 			<if test="beneficiaryAddressId">,#{beneficiaryAddressId}</if>
 			<if test="evaluationBio != null">,#{evaluationBio}</if>
+			
+			<if test="phoneType != null">,#{phoneType}</if>
+			<if test="otherChannel != null">,#{otherChannel}</if>
+			<if test="firstName != null">,#{firstName}</if>
+			<if test="middleName != null">,#{middleName}</if>
+			<if test="lastName != null">,#{lastName}</if>
 		</trim>
 		)
+	</insert>
+	
+	<insert id="insertLifeCycleLog">
+		insert into teacher_lifeCycle_log (teacher_id,create_date_time,from_status,to_status,operator_id) values 
+		(#{teacherId},now(),#{fromStatus},#{toStatus},#{operatorId})
 	</insert>
 
 	<update id="updateDao">
@@ -461,7 +495,12 @@
 			<if test="beneficiaryBankAddressId">,beneficiary_bank_address_id=#{beneficiaryBankAddressId}</if>
 			<if test="beneficiaryAddressId">,beneficiary_address_id=#{beneficiaryAddressId}</if>
 			<if test="evaluationBio != null">,evaluation_bio = #{evaluationBio}</if>
-			
+	
+			<if test="firstName != null">,first_name = #{firstName}</if>
+			<if test="middleName != null">,middle_name = #{middleName}</if>
+			<if test="lastName != null">,last_name = #{lastName}</if>
+			<if test="phoneType != null">,phone_type = #{phoneType}</if>
+			<if test="otherChannel != null">,other_channel = #{otherChannel}</if>
 		</trim>
 		<trim prefix="WHERE" prefixOverrides="AND">AND id = #{id}</trim>
 	</update>
@@ -477,5 +516,31 @@
 	
 	<select id="findAllRegularId" resultType="String">
 		select t.id  from teacher t where t.life_cycle = 'REGULAR'
+		AND t.real_name not like '%test%' 
+		AND t.real_name not like '%测试%'
+		ORDER BY t.real_name
+	</select>
+
+	<select id="findTeacher" resultType="java.util.Map">
+		SELECT DISTINCT t.id as id, t.real_name as name
+		FROM teacher t join user u on u.username = t.email 
+		WHERE u.status = 'NORMAL' 
+		<if test="lifeCycle != null ">AND t.life_cycle = #{lifeCycle}</if> 
+		<if test="type != null ">AND t.type = #{type}</if>
+		AND t.real_name not like '%test%' 
+		AND t.real_name not like '%测试%'
+		ORDER BY t.real_name
+	</select>
+
+	<select id="findTeachersByIds" resultMap="teacherResultMap">
+		SELECT
+		<include refid="teacherColumns" />
+		FROM
+		teacher
+		WHERE
+		id IN
+		<foreach collection="ids" open="(" close=")" separator="," item="id">
+			<if test="id!=0"> #{id} </if>
+		</foreach>
 	</select>
 </mapper>
