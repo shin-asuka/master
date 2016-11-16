@@ -85,6 +85,7 @@ public class FileUtils {
     	if(StringUtils.isNotBlank(fileName)){
     		try {
     			type = fileName.substring(fileName.lastIndexOf(".")+1);
+    			type = type.toLowerCase(); //类型小写
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
