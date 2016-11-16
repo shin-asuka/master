@@ -1,10 +1,11 @@
 package com.vipkid.recruitment.training.service;
 
 import com.vipkid.enums.TeacherEnum;
-import com.vipkid.trpm.dao.TeacherApplicationDao;
+import com.vipkid.recruitment.dao.TeacherApplicationDao;
+import com.vipkid.recruitment.entity.TeacherApplication;
 import com.vipkid.trpm.dao.TeacherDao;
 import com.vipkid.trpm.entity.Teacher;
-import com.vipkid.trpm.entity.TeacherApplication;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

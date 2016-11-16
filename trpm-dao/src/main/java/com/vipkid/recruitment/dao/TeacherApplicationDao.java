@@ -1,4 +1,4 @@
-package com.vipkid.trpm.dao;
+package com.vipkid.recruitment.dao;
 
 import java.sql.Timestamp;
 import java.util.Date;
@@ -13,7 +13,7 @@ import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.vipkid.trpm.entity.TeacherApplication;
+import com.vipkid.recruitment.entity.TeacherApplication;
 
 @Repository
 public class TeacherApplicationDao extends MapperDaoTemplate<TeacherApplication> {
@@ -217,7 +217,7 @@ public class TeacherApplicationDao extends MapperDaoTemplate<TeacherApplication>
         return listEntity("findFailTeachersByAuditTime", paramsMap);
     }
 
-    public List<TeacherApplication> findByAuditTimesStatusResult( List<Map> auditTimes, String status, String result) {
+    public List<TeacherApplication> findByAuditTimesStatusResult(List<Map> auditTimes, String status, String result) {
         Map<String, Object> paramsMap = new HashMap<String, Object>();
         paramsMap.put("auditTimes", auditTimes);
         paramsMap.put("status", status);

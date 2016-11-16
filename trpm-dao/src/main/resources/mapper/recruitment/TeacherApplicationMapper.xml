@@ -137,7 +137,7 @@
 
 	<sql id="teacherApplicationLimit">LIMIT #{startLine},#{limitLine}</sql>
 
-	<resultMap type="com.vipkid.trpm.entity.TeacherApplication"
+	<resultMap type="com.vipkid.recruitment.entity.TeacherApplication"
 		id="teacherApplicationResultMap">
 		<id column="teacher_application_id" property="id" />
 		<result column="teacher_application_abroad_teaching_experience"

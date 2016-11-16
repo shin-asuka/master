@@ -8,6 +8,8 @@ import com.google.common.collect.Maps;
 import com.vipkid.http.service.AssessmentHttpService;
 import com.vipkid.http.vo.OnlineClassVo;
 import com.vipkid.http.vo.StudentUnitAssessment;
+import com.vipkid.recruitment.dao.TeacherApplicationDao;
+import com.vipkid.recruitment.entity.TeacherApplication;
 import com.vipkid.rest.config.RestfulConfig.RoleClass;
 import com.vipkid.trpm.constant.ApplicationConstant;
 import com.vipkid.trpm.constant.ApplicationConstant.*;

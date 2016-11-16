@@ -16,10 +16,10 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.ServletRequestUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.vipkid.recruitment.dao.TeacherApplicationDao;
+import com.vipkid.recruitment.entity.TeacherApplication;
 import com.vipkid.trpm.constant.ApplicationConstant.FinishType;
-import com.vipkid.trpm.dao.TeacherApplicationDao;
 import com.vipkid.trpm.entity.Teacher;
-import com.vipkid.trpm.entity.TeacherApplication;
 import com.vipkid.trpm.entity.TeacherPe;
 import com.vipkid.trpm.service.passport.IndexService;
 import com.vipkid.trpm.service.pe.AppserverPracticumService;

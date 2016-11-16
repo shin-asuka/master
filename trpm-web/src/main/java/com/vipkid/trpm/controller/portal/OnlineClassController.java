@@ -21,13 +21,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.google.common.collect.Maps;
 import com.vipkid.enums.OnlineClassEnum;
+import com.vipkid.recruitment.entity.TeacherApplication;
 import com.vipkid.trpm.constant.ApplicationConstant.FinishType;
 import com.vipkid.trpm.constant.ApplicationConstant.RecruitmentResult;
 import com.vipkid.trpm.entity.DemoReport;
 import com.vipkid.trpm.entity.Lesson;
 import com.vipkid.trpm.entity.OnlineClass;
 import com.vipkid.trpm.entity.Teacher;
-import com.vipkid.trpm.entity.TeacherApplication;
 import com.vipkid.trpm.entity.User;
 import com.vipkid.trpm.service.passport.IndexService;
 import com.vipkid.trpm.service.pe.AppserverPracticumService;

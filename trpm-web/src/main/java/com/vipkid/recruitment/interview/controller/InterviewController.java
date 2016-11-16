@@ -107,7 +107,7 @@ public class InterviewController extends RestfulController {
     
     
     @RequestMapping(value = "/getReschedule", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
-    public Map<String,Object> getReschedule(HttpServletRequest request, HttpServletResponse response,long onlineClassId){
+    public Map<String,Object> getReschedule(HttpServletRequest request, HttpServletResponse response){
         Map<String,Object> result = Maps.newHashMap();
         try{
             User user = getUser(request);

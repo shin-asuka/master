@@ -12,15 +12,15 @@ import org.springframework.stereotype.Service;
 
 import com.google.common.collect.Maps;
 import com.vipkid.email.EmailUtils;
+import com.vipkid.recruitment.dao.TeacherApplicationDao;
 import com.vipkid.recruitment.dao.TeachingExperienceDao;
+import com.vipkid.recruitment.entity.TeacherApplication;
 import com.vipkid.trpm.constant.ApplicationConstant.TeacherLifeCycle;
 import com.vipkid.trpm.dao.TeacherAddressDao;
-import com.vipkid.trpm.dao.TeacherApplicationDao;
 import com.vipkid.trpm.dao.TeacherDao;
 import com.vipkid.trpm.dao.TeacherLocationDao;
 import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.entity.TeacherAddress;
-import com.vipkid.trpm.entity.TeacherApplication;
 import com.vipkid.trpm.entity.TeacherLocation;
 import com.vipkid.trpm.util.DateUtils;
 

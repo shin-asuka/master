@@ -1,4 +1,4 @@
-package com.vipkid.trpm.entity;
+package com.vipkid.recruitment.entity;
 
 import java.io.Serializable;
 
