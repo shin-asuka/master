@@ -207,9 +207,11 @@
             line-height:20px;
             text-decoration:none;
             padding:0 20px;
-            color:#333
+            color:#333;
+            line-height: 42px;
         }
         .header-wrapper .nav li a:hover {
+            background: transparent;
             color:#333
         }
         .header-wrapper .nav li:after {
@@ -230,9 +232,10 @@
             display:none
         }
         .header-wrapper .nav li.it-test:hover {
-            background:inherit
+            background: transparent;
         }
         .header-wrapper .nav li.it-test a {
+            display: inline-block;
             padding:0
         }
         .header-wrapper .nav li.it-test a:hover {
@@ -331,11 +334,11 @@
                     <div class="download-app">App Download
                         <div class="QR-code">
                             <div class="app">
-                                <img src="#springUrl('/resources/images/nav//app.png')">
+                                <img src="#springUrl('/resources/images/nav/app.png')">
                                 <div class="text">APP Store</div>
                             </div>
                             <div class="google">
-                                <img src="#springUrl('/resources/images/nav//google.png')">
+                                <img src="#springUrl('/resources/images/nav/google.png')">
                                 <div class="text">GooglePlay</div>
                             </div>
                         </div>
@@ -357,7 +360,7 @@
                 </div>
                 <div class="clear"></div>
             </div>
-            <ul class="nav">
+            <ul class="nav" id="quiz-tips">
                 <li class="$!{material}">
                     <a href="#springUrl('/training/material')">Training Center</a>
                 </li>
@@ -387,7 +390,7 @@
                     <a href="#springUrl('/payroll.shtml')">Payroll</a>
                 </li>
                 <li class="it-test">
-                    <img src="./test-computer-icon.png">
+                    <img src="#springUrl('/resources/images/nav/test-computer-icon.png')">
                     <a target="_blank" href="http://help.duobeiyun.com/room/test/?result=http://app-proxy.vipkid.com.cn/api/service/public/ittest/callback&amp;lang=en&amp;role=TEACHER&amp;id=$!{TRPM_TEACHER.id}">Test Your Computer</a>
                 </li>
             </ul>
