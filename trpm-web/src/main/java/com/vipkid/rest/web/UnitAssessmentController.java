@@ -75,6 +75,12 @@ public class UnitAssessmentController {
             studentUnitAssessment.setUpdateTime(studentUnitAssessment.getUpdateTime1());
         }
         //跨库join
+        if(onlineClassVos == null){
+            onlineClassVos = new ArrayList<OnlineClassVo>();
+        }
+        if(stuUaList == null){
+            stuUaList = new ArrayList<StudentUnitAssessment>();
+        }
         for(OnlineClassVo oc :onlineClassVos){
             for(StudentUnitAssessment stuUa : stuUaList){
                 if(oc.getId().equals(stuUa.getOnlineClassId().longValue())){
