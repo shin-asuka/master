@@ -8,6 +8,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.vipkid.rest.security.AppContext;
 import org.apache.commons.lang3.StringUtils;
 import org.community.config.PropertyConfigurer;
 import org.slf4j.Logger;
@@ -15,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.method.HandlerMethod;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import com.vipkid.http.service.AnnouncementHttpService;
@@ -93,6 +95,7 @@ public class CookieExpiredHandleInterceptor extends HandlerInterceptorAdapter {
             logger.info("IP:{},用户为NULL。。。",IpUtils.getIpAddress(request));
             return false; 
         }
+        AppContext.setUser(user);
         
         logger.info("IP:{},user:{},发起请求:{}",IpUtils.getIpAddress(request),user.getId(),request.getRequestURI());
         
@@ -109,6 +112,7 @@ public class CookieExpiredHandleInterceptor extends HandlerInterceptorAdapter {
 				String managerName = manager.getEnglishName();
 				request.setAttribute("TRPM_MANAGER_NAME", managerName);
 			}
+            AppContext.setTeacher(teacher);
 		}
         
 		request.setAttribute("locationService", locationService);
@@ -148,6 +152,12 @@ public class CookieExpiredHandleInterceptor extends HandlerInterceptorAdapter {
 		return true;
 	}
 
+    @Override
+    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,
+                           ModelAndView modelAndView) throws Exception {
+        AppContext.releaseContext();
+        super.postHandle(request, response, handler, modelAndView);
+    }
 	
 	private PreAuthorize preAnnotation(HandlerMethod handlerMethod){
        PreAuthorize preAuthorize = handlerMethod.getMethodAnnotation(PreAuthorize.class);
