@@ -1,15 +1,16 @@
- #set($layout = "/portal/layout.vm")
- #set($activePayrollInfo = "active")
- <style >
-    #comments-content .bottom-border {
-        background-color: #dd4814;
-        color: #fff;
-        border: 1px solid #ddd;
-    }
-    #comments-content .salary-details-warpper{
-        border: 1px solid #ddd;
-    }
-    #comments-content .payrollDetails {
+ #set($layout = "/portal/layout.vm") #set($activePayrollInfo = "active")
+<style>
+#comments-content .bottom-border {
+    background-color: #dd4814;
+    color: #fff;
+    border: 1px solid #ddd;
+}
+
+#comments-content .salary-details-warpper {
+    border: 1px solid #ddd;
+}
+
+#comments-content .payrollDetails {
     hdisplay: none;
     position: absolute;
     width: 280px;
@@ -22,35 +23,30 @@
     -moz-opacity: 0.85; /* Moz + FF */
     opacity: 0.85;
     background: lightgray;
-     }
-     
-     
-        .popWindow { 
-		background-color:#9D9D9D; 
-		width: 100%; 
-		height: 100%; 
-		left: 0; 
-		top: 0; 
-		filter: alpha(opacity=50); 
-		opacity: 0.5; 
-		z-index: 1; 
-		position: fixed; 
-		
-		} 
-		.maskLayer { 
-		background-color:#f9f8f8; 
-		width: 450px; 
-		
-		
-		left: 47%; 
-		top: 40%; 
-		color:#fff; 
-		z-index: 2; 
-		position: fixed; 
-		text-align:center; 
-		} 
-    
-    
+}
+
+.popWindow {
+    background-color: #9D9D9D;
+    width: 100%;
+    height: 100%;
+    left: 0;
+    top: 0;
+    filter: alpha(opacity = 50);
+    opacity: 0.5;
+    z-index: 1;
+    position: fixed;
+}
+
+.maskLayer {
+    background-color: #f9f8f8;
+    width: 450px;
+    left: 47%;
+    top: 40%;
+    color: #fff;
+    z-index: 2;
+    position: fixed;
+    text-align: center;
+}
 </style>
 <div class="tab-pane active ng-scope" id="comments" style="border: 0px;" layout:fragment="content">
     <div class="row form-group form-inline" style="margin-top: 15px; margin-right: 0px;">
@@ -59,7 +55,7 @@
         <button class="btn btn-primary btn-sm prev" style="float: right; margin-right: 30px; width: 180px;">PREV MONTH</button>
     </div>
     <div id="yearMonthTitle" align="center" style="background-color: #AEA79F; border: 1px solid #DDDDDD; border-bottom: 0px;" class="ng-binding">$!{monthOfYear}</div>
-    <div id="comments-content" style="background-color:#fff;">
+    <div id="comments-content" style="background-color: #fff;">
         <div class="container-fluid salary-details-warpper">
             <div class="row">
                 <div class="col-xs-8">
@@ -70,106 +66,92 @@
                 </div>
             </div>
             <br>
-            <div class="row bottom-border total-title-warpper" style=" ">
+            <div class="row bottom-border total-title-warpper" style="">
                 <div class="col-xs-6 text-left">
                     <h4>Total Salary:</h4>
                 </div>
                 <div class="col-xs-6 text-right">
-                      #if($payroll.status==0)
-                        This month&acute;s salary will be displayed on the 6th of next month, Beijing time.
-	                   #end
-	                   #if($payroll.totalSalaryFinal>$payroll.totalSalary)
-	                       #set($payTo=$payroll.totalSalaryFinal /100.00)
-	                    #end 
-	                    #if($payroll.totalSalaryFinal<=$payroll.totalSalary)
-	                       #set($payTo=$payroll.totalSalary /100.00)
-	                    #end 
-	                   
-	                    #if($payTo<0)
-	                       #set($payTo="N/A")
-	                    #end   
-	                    #if($payTo>=0)   
-	                        #set($payTo=$numberTool.format('#0.00',$payTo))
-	                    #end
-	                    <h3 style= "display: inline-block;"class="title">$ $!{payTo}</h3>
+                    #if($payroll.status==0) This month&acute;s salary will be displayed on the 6th of next month, Beijing time. #end #if($payroll.totalSalaryFinal>$payroll.totalSalary)
+                       #set($payTo=$payroll.totalSalaryFinal /100.00) 
+                    #end 
+                    #if($payroll.totalSalaryFinal<=$payroll.totalSalary) 
+                       #set($payTo=$payroll.totalSalary /100.00) 
+                    #end 
+                    #if($payTo<0) 
+                        #set($payTo="N/A")
+                    #end
+                    #if($payTo>=0)
+                       #set($payTo=$numberTool.format('#0.00',$payTo))
+                     #end
+                    <h3 style="display: inline-block;" class="title">$ $!{payTo}</h3>
                 </div>
-                
+
             </div>
             <div class="col-xs-12 text-left">
-                    <h4 style="color: #a94442;">Your total amount may differ by $12 depending on the payment method we use.</h4>
-             </div>
+                <h4 style="color: #a94442;">Your total amount may differ by $12 depending on the payment method we use.</h4>
+            </div>
 
-            <div class="row total-courses-warpper" style="margin-top:10px;">
+            <div class="row total-courses-warpper" style="margin-top: 10px;">
                 <div class="col-xs-6 dropdown text-left">
                     <p class="dropdown-toggle" data-toggle="collapse" href="#courses">
                         Courses<b class="downCaret"></b>
                     </p>
                 </div>
-                #set($cousTo=$courses.totalSalary/100.00)
+                #set($cousTo=$courses.totalSalary/100.00) 
                 #set($cousTo=$numberTool.format('#0.00',$cousTo))
-                <div class="col-xs-6 text-right">$ $!{cousTo}</div>                 
+                <div class="col-xs-6 text-right">$ $!{cousTo}</div>
             </div>
             <div class="row panel-collapse collapse f9f9f9" id="courses">
                 #foreach($course in $courses.list)
-                <div class="col-xs-6  text-left">
-                    $!{course.courseName}
-                </div>
-                <div class="col-xs-6  text-right">
-                   #set($couTo=$course.totalSalary /100.00)
-                    #set($couTo=$numberTool.format('#0.00',$couTo))
-                    $ $!{couTo}
-                </div>
+	                <div class="col-xs-6  text-left">$!{course.courseName}</div>
+	                <div class="col-xs-6  text-right">
+	                #set($couTo=$course.totalSalary /100.00) 
+	                #set($couTo=$numberTool.format('#0.00',$couTo)) $ $!{couTo}</div>
                 #end
             </div>
             <br> 
-            #if(  $is2VersionContactType == true)   
+            #if( $is2VersionContactType == true)
             <div class="row total-attendance-warpper">
                 <div class="col-xs-6 dropdown text-left">
                     <p class="dropdown-toggle" data-toggle="collapse" href="#attendance-bonus">
                         Attendance Bonus<b class="downCaret"></b>
                     </p>
                 </div>
-                #set($attendance_couTo=$attendance.totalSalary /100.00)
-                 #set($attendance_couTo=$numberTool.format('#0.00',$attendance_couTo))
+                #set($attendance_couTo=$attendance.totalSalary /100.00) 
+                #set($attendance_couTo=$numberTool.format('#0.00',$attendance_couTo))
                 <div class="col-xs-6 text-right">$ $!{attendance_couTo}</div>
             </div>
             <div class="row panel-collapse collapse f9f9f9" id="attendance-bonus">
-               #foreach($attendanceBonus in $attendance.list)
-                <div class="col-xs-6  text-left">
-                    $!{attendanceBonus.name}
-                </div>
+                #foreach($attendanceBonus in $attendance.list)
+                <div class="col-xs-6  text-left">$!{attendanceBonus.name}</div>
                 <div class="col-xs-6  text-right">
-                    #set($attTo=$attendanceBonus.totalSalary /100.00)
-                     #set($attTo=$numberTool.format('#0.00',$attTo))
-                    <span> $ $!{attTo}</span>
+                    #set($attTo=$attendanceBonus.totalSalary /100.00) 
+                    #set($attTo=$numberTool.format('#0.00',$attTo)) <span> $ $!{attTo}</span>
                 </div>
                 #end
             </div>
             #end
-            <br>
+             <br>
             <div class="row total-other-warpper">
                 <div class="col-xs-6 dropdown text-left">
                     <p class="dropdown-toggle" data-toggle="collapse" href="#other-bonus">
                         Other Bonus<b class="downCaret"></b>
                     </p>
                 </div>
-                 #set($othsTo=$other.totalSalary /100.00)
-                  #set($othsTo=$numberTool.format('#0.00',$othsTo))
+                #set($othsTo=$other.totalSalary /100.00) 
+                #set($othsTo=$numberTool.format('#0.00',$othsTo))
                 <div class="col-xs-6 text-right">$ $!{othsTo}</div>
             </div>
             <div class="row panel-collapse collapse f9f9f9" id="other-bonus">
-               #foreach($otherBonus in $other.list)
-                <div class="col-xs-6  text-left">
-                    $!{otherBonus.name}
-                </div>
+                #foreach($otherBonus in $other.list)
+                <div class="col-xs-6  text-left">$!{otherBonus.name}</div>
                 <div class="col-xs-6  text-right">
-                    #set($othTo=$otherBonus.totalSalary /100.00)
-                     #set($othTo=$numberTool.format('#0.00',$othTo))
-                     <span> $ $!{othTo}</span>
+                     #set($othTo=$otherBonus.totalSalary /100.00)
+                     #set($othTo=$numberTool.format('#0.00',$othTo)) <span> $ $!{othTo}</span>
                 </div>
                 #end
             </div>
-            
+
             <br>
             <div class="row total-adjustment-warpper">
                 <div class="col-xs-6 dropdown text-left">
@@ -177,133 +159,128 @@
                         Adjustments<b class="downCaret"></b>
                     </p>
                 </div>
-                #set($adjustmentsTo=$adjustments.totalSalary /100.00)
+                #set($adjustmentsTo=$adjustments.totalSalary /100.00) 
                 #set($adjustmentsTo=$numberTool.format('#0.00',$adjustmentsTo))
                 <div class="col-xs-6 text-right">$ $!{adjustmentsTo}</div>
             </div>
             <div class="row panel-collapse collapse f9f9f9" id="adjustments">
-                #if($adjustments.selectList.size()>0)
-                    #foreach($adjRows in $adjustments.selectList)
-                    <div class="col-xs-6  text-left">
-                        $!{adjRows.ruleName}
-                    </div>
-                    <div class="col-xs-6  text-right">
-                        #set($adjRowsTo=$adjRows.totalSalary /100.00)
-                          #set($adjRowsTo=$numberTool.format('#0.00',$adjRowsTo))
-                        <span> $ $!{adjRowsTo}</span>
-                    </div>
-                    #end
+                #if($adjustments.selectList.size()>0) #foreach($adjRows in $adjustments.selectList)
+                <div class="col-xs-6  text-left">$!{adjRows.ruleName}</div>
+                <div class="col-xs-6  text-right">
+                    #set($adjRowsTo=$adjRows.totalSalary /100.00) 
+                    #set($adjRowsTo=$numberTool.format('#0.00',$adjRowsTo)) <span> $ $!{adjRowsTo}</span>
+                </div>
+                #end 
                 #else
-                    <div class="col-xs-6  text-left">
-                        Addition
-                    </div>
-                    <div class="col-xs-6  text-right">
-                        <span> $ 0.00</span>
-                    </div>
-                    <div class="col-xs-6  text-left">
-                        Deducition
-                    </div>
-                    <div class="col-xs-6  text-right">
-                        <span> $ 0.00</span>
-                    </div>
-                #end    
+                <div class="col-xs-6  text-left">Addition</div>
+                <div class="col-xs-6  text-right">
+                    <span> $ 0.00</span>
+                </div>
+                <div class="col-xs-6  text-left">Deducition</div>
+                <div class="col-xs-6  text-right">
+                    <span> $ 0.00</span>
+                </div>
+                #end
             </div>
-            
+
             <br>
             <div class="coureses-warpper">
-                <div class="row bottom-border top-border" style="">
-                    <div class="col-xs-8">
+                <div class="row bottom-border top-border dropdown text-left">
+                    <div class="dropdown-toggle" data-toggle="collapse" href="#courses_table_wapper">
                         <h5 class="text-left">Courses</h5>
+                        <b class="downCaret"></b>
                     </div>
                     <div class="col-xs-4">
-                        #set($courTo=$courses.totalSalary /100.00)
-                         #set($courTo=$numberTool.format('#0.00',$courTo))
+                        #set($courTo=$courses.totalSalary /100.00) 
+                        #set($courTo=$numberTool.format('#0.00',$courTo))
                         <h5 class="text-right">$ $!{courTo}</h5>
                     </div>
                 </div>
+
+
                 <br>
-                <table id="courses_table_id" class="table table-bordered table-striped"  align="center">
-                    <thead>
-                        <tr class="info">
-                            <td class="text-center">Scheduled Time</td>
-                            <td class="text-center">Lesson SN</td>
-                            <td class="text-center">Lesson Type</td>
-                            <td class="text-center">Finish Type</td>
-                            <td class="text-center">Short Notice</td>
-                            <td class="text-center">Amount($)</td>
-                        </tr>
-                    </thead>
-                    <tbody id="coursesList" ms-controller="course-list-controller">
-                        <tr class="rowscss ng-scope" ms-repeat="dataList">
-                            <td>
-                                <div name="scheduledTime" class="lessonInfoContentPayroll ng-binding">{{el.scheduledTime}}</div>
-                            </td>
-                            <td>
-                                <div class="lessonInfoContentPayroll ng-binding">{{el.lessonSn}}</div>
-                            </td>
-                            <td>
-                                <div class="lessonInfoContentPayroll ng-binding">{{el.lessonType}}</div>
-                            </td> 
-                            <td>
-                                <div class="lessonInfoContentPayroll ng-binding">{{el.finishType}}</div>
-                            </td>
-                            <td>
-                                <div class="lessonInfoContentPayroll ng-binding">{{el.shortNotice}}</div>
-                            </td>
-                            <td>
-                                <div class="lessonInfoContentPayroll ng-binding">{{el.totalSalary.toFixed(2)}}</div>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                <div id="courses_table_wapper" class="panel-collapse collapse f9f9f9">
+                    <table id="courses_table_id" class="table table-bordered table-striped row " align="center">
+                        <thead>
+                            <tr class="info">
+                                <td class="text-center">Scheduled Time</td>
+                                <td class="text-center">Lesson SN</td>
+                                <td class="text-center">Lesson Type</td>
+                                <td class="text-center">Finish Type</td>
+                                <td class="text-center">Short Notice</td>
+                                <td class="text-center">Amount($)</td>
+                            </tr>
+                        </thead>
+                        <tbody id="coursesList" ms-controller="course-list-controller">
+                            <tr class="rowscss ng-scope" ms-repeat="dataList">
+                                <td>
+                                    <div name="scheduledTime" class="lessonInfoContentPayroll ng-binding">{{el.scheduledTime}}</div>
+                                </td>
+                                <td>
+                                    <div class="lessonInfoContentPayroll ng-binding">{{el.lessonSn}}</div>
+                                </td>
+                                <td>
+                                    <div class="lessonInfoContentPayroll ng-binding">{{el.lessonType}}</div>
+                                </td>
+                                <td>
+                                    <div class="lessonInfoContentPayroll ng-binding">{{el.finishType}}</div>
+                                </td>
+                                <td>
+                                    <div class="lessonInfoContentPayroll ng-binding">{{el.shortNotice}}</div>
+                                </td>
+                                <td>
+                                    <div class="lessonInfoContentPayroll ng-binding">{{el.totalSalary.toFixed(2)}}</div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
 
-                <div>
-                    <nav style="float: right; margin-right: 30px;">
-                        <ul class="pagination paginationCo" >
-                        </ul>
-                    </nav>
-                </div>
+                    <div>
+                        <nav style="float: right; margin-right: 30px;">
+                            <ul class="pagination paginationCo">
+                            </ul>
+                        </nav>
+                    </div>
 
-                <div class="row">
-                    <div class="col-xs-4"></div>
-                    <div class="col-xs-8">
-                        <div class="mr-top-20">
-                            <span class="">Total records: <strong id="courses_records_id" class="ng-binding">0</strong></span>
+                    <div class="row">
+                        <div class="col-xs-4"></div>
+                        <div class="col-xs-8">
+                            <div class="mr-top-20">
+                                <span class="">Total records: <strong id="courses_records_id" class="ng-binding">0</strong></span>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <br>
-            #if(  $is2VersionContactType == true)      
+            <br> #if( $is2VersionContactType == true)
             <div class="attendance-warpper">
                 <div class="row bottom-border top-border">
                     <div class="col-xs-6">
                         <h5 class="text-left">Attendance Bonus</h5>
                     </div>
                     <div class="col-xs-6">
-                         #set($attTo=$attendance.totalSalary /100.00)
-                          #set($attTo=$numberTool.format('#0.00',$attTo))
+                        #set($attTo=$attendance.totalSalary /100.00) 
+                        #set($attTo=$numberTool.format('#0.00',$attTo))
                         <h5 class="text-right">$ $!{attTo}</h5>
                     </div>
                 </div>
-                
-                #if(  $is2VersionContactType == true)
-                <br>
+
+                #if( $is2VersionContactType == true) <br>
                 <table class="table table-bordered table-striped">
                     <thead>
                         <tr class="active">
-                            <td class="text-left" style="border-right:0;">Attendance</td>
+                            <td class="text-left" style="border-right: 0;">Attendance</td> 
                             #set($attendance_tr_totalSalary = 0)
-                            #if($attendance.attendanceList.size()>0)
-                                #foreach($attendanceRow in $attendance.attendanceList)
-                                    #set($attendance_tr_totalSalary = ${attendanceRow.unitPrice} /100.00*${attendance.attendanceList[0].quantity}+$attendance_tr_totalSalary)
-                                    #set($attendance_tr_totalSalary=$numberTool.format('#0.00',$attendance_tr_totalSalary))
-                                #end
+                                  #if($attendance.attendanceList.size()>0)
+                                    #foreach($attendanceRow in $attendance.attendanceList)
+                                        #set($attendance_tr_totalSalary = ${attendanceRow.unitPrice} /100.00*${attendance.attendanceList[0].quantity}+$attendance_tr_totalSalary)
+                                        #set($attendance_tr_totalSalary=$numberTool.format('#0.00',$attendance_tr_totalSalary))
+                                     #end 
+                                  #end
+                            #if($attendance.attendanceList.size()==0)
+                                #set($attendance_tr_totalSalary=$numberTool.format('#0.00',$attendance_tr_totalSalary)) 
                             #end
-                             #if($attendance.attendanceList.size()==0)
-                                 #set($attendance_tr_totalSalary=$numberTool.format('#0.00',$attendance_tr_totalSalary))
-                             #end
-                            <td class="text-right" style="border-left:0;">$ $!{attendance_tr_totalSalary}</td>
+                            <td class="text-right" style="border-left: 0;">$ $!{attendance_tr_totalSalary}</td>
                         </tr>
                     </thead>
                     <tbody>
@@ -311,38 +288,31 @@
                             <td class="text-center">Unit Price ($)</td>
                             <td class="text-center">Quantity</td>
                         </tr>
-                        
-                        #if($attendance.attendanceList.size()>0)
-                            #foreach($attendanceRow in $attendance.attendanceList)
-                            <tr class="rowscss">
-                                #set($attendanceRow_unitPrice=$attendanceRow.unitPrice /100.00 )
-                                 #set($attendanceRow_unitPrice=$numberTool.format('#0.00',$attendanceRow_unitPrice))
-                                <td class="text-center">$ $!{attendanceRow_unitPrice}</td>
-                                <td class="text-center">$!{attendance.attendanceList[0].quantity}</td>
-                            </tr>
-                            #end
+
+                        #if($attendance.attendanceList.size()>0) #foreach($attendanceRow in $attendance.attendanceList)
+                        <tr class="rowscss">
+                            #set($attendanceRow_unitPrice=$attendanceRow.unitPrice /100.00 ) 
+                            #set($attendanceRow_unitPrice=$numberTool.format('#0.00',$attendanceRow_unitPrice))
+                            <td class="text-center">$ $!{attendanceRow_unitPrice}</td>
+                            <td class="text-center">$!{attendance.attendanceList[0].quantity}</td>
+                        </tr>
+                        #end 
                         #else
-                            <tr class="rowscss">
-                                <td class="text-center">$ 0</td>
-                                <td class="text-center">0</td>
-                            </tr>
+                        <tr class="rowscss">
+                            <td class="text-center">$ 0</td>
+                            <td class="text-center">0</td>
+                        </tr>
                         #end
                     </tbody>
                 </table>
-                #end
-                
-                <br>
+                #end <br>
                 <table class="table table-bordered table-striped">
                     <thead>
                         <tr class="active">
-                            <td colspan="4" class="text-left" style="border-right:0;">
-                                 Course Deductions
-                            </td>
+                            <td colspan="4" class="text-left" style="border-right: 0;">Course Deductions</td> 
                             #set($deductions_totalSalary=$attendance.totalSalaryMap.dedduction /100.00)
-                             #set($deductions_totalSalary=$numberTool.format('#0.00',$deductions_totalSalary))
-                            <td colspan="1" class="text-right" style="border-left:0;">
-                                 $ $!{deductions_totalSalary}
-                            </td>
+                            #set($deductions_totalSalary=$numberTool.format('#0.00',$deductions_totalSalary))
+                            <td colspan="1" class="text-right" style="border-left: 0;">$ $!{deductions_totalSalary}</td>
                         </tr>
                         <tr class="info">
                             <td class="text-center">Scheduled Time</td>
@@ -373,7 +343,7 @@
                     </tbody>
                 </table>
                 ##
-                 <div>
+                <div>
                     <nav style="float: right; margin-right: 30px;">
                         <ul class="pagination paginationDe">
                         </ul>
@@ -389,34 +359,25 @@
                     </div>
                 </div>
             </div>
-           #end 
-            <br>
+            #end <br>
             <div class="attendance-warpper">
                 <div class="row bottom-border top-border">
                     <div class="col-xs-6">
                         <h5 class="text-left">Other Bonus</h5>
                     </div>
                     <div class="col-xs-6">
-                      #set($otherTo=$other.totalSalary /100.00)
-                      #set($otherTo=$numberTool.format('#0.00',$otherTo))
+                        #set($otherTo=$other.totalSalary /100.00) 
+                        #set($otherTo=$numberTool.format('#0.00',$otherTo))
                         <h5 class="text-right">$ $!{otherTo}</h5>
                     </div>
                 </div>
-                <br>
-
-                
-               #*<br>
-               2016.08.23 不显示referall bonus
+                <br> 
+                #*<br> 2016.08.23 不显示referall bonus
                 <table class="table table-bordered">
                     <thead>
                         <tr class="active">
-                            <td colspan="3" class="text-left" style="border-right:0;">
-                                 Teacher Referral Fee
-                            </td>
-                            #set($othTRF=$otherTeacherReferralFee.totalSalary /100.0)
-                            <td colspan="1" class="text-right" style="border-left:0;">
-                                 $ $!{othTRF}
-                            </td>
+                            <td colspan="3" class="text-left" style="border-right: 0;">Teacher Referral Fee</td> #set($othTRF=$otherTeacherReferralFee.totalSalary /100.0)
+                            <td colspan="1" class="text-right" style="border-left: 0;">$ $!{othTRF}</td>
                         </tr>
                         <tr class="info">
                             <td class="text-center">Signing Date</td>
@@ -424,36 +385,28 @@
                             <td class="text-center">Teacher Name</td>
                             <td class="text-center">Price ($)</td>
                         </tr>
-                         #foreach($referal in $otherTeacherReferralFee.list)
-                         <tr class="rowscss">
+                        #foreach($referal in $otherTeacherReferralFee.list)
+                        <tr class="rowscss">
                             <td class="text-center" showType="date" value="${referal.signingTime}">$referal.signingTime</td>
-                            <td class="text-center" showType="date" value="${referal.registerDate}">$referal.registerDate</td>
-                            ##set($st = $referal.signingTime*1000)
-                            ## <td class="text-center">$!{dateTool.format($referal.signingTime)}</td>
-                             ##<td class="text-center">$!{dateTool.format($referal.registerDate)}</td>
-                             <td class="text-center">$referal.teacherName</td>
-                            #set($refe=$referal.totalSalary /100.0)
-                            <td class="text-center">$!{refe}</td> 
-                         </tr>
-                         #end
+                            <td class="text-center" showType="date" value="${referal.registerDate}">$referal.registerDate</td> ##set($st = $referal.signingTime*1000) ##
+                            <td class="text-center">$!{dateTool.format($referal.signingTime)}</td> ##
+                            <td class="text-center">$!{dateTool.format($referal.registerDate)}</td>
+                            <td class="text-center">$referal.teacherName</td> #set($refe=$referal.totalSalary /100.0)
+                            <td class="text-center">$!{refe}</td>
+                        </tr>
+                        #end
                     </thead>
                     <tbody>
                     </tbody>
                 </table>
-                *#          
-                
+                *# 
                 <br>
                 <table id="otherNewVipkid_table_id" class="table table-bordered">
                     <thead>
                         <tr class="active">
-                            <td colspan="3" class="text-left" style="border-right:0;">
-                                 New VIPKID Enrollment
-                            </td>
-                            #set($otherNewVipkid_totalSalary=$otherNewVipkid.totalSalary /100.00)
-                             #set($otherNewVipkid_totalSalary=$numberTool.format('#0.00',$otherNewVipkid_totalSalary))
-                            <td colspan="1" class="text-right" style="border-left:0;">
-                                 $ $!{otherNewVipkid_totalSalary}
-                            </td>
+                            <td colspan="3" class="text-left" style="border-right: 0;">New VIPKID Enrollment</td> #set($otherNewVipkid_totalSalary=$otherNewVipkid.totalSalary /100.00)
+                            #set($otherNewVipkid_totalSalary=$numberTool.format('#0.00',$otherNewVipkid_totalSalary))
+                            <td colspan="1" class="text-right" style="border-left: 0;">$ $!{otherNewVipkid_totalSalary}</td>
                         </tr>
                         <tr class="info">
                             <td class="text-center">Enrollment Time</td>
@@ -463,12 +416,12 @@
                         </tr>
                         #foreach($vipSet in $otherNewVipkid.list)
                         <tr class="rowscss">
-                             #set($reg=$vipSet.registerDate*1000)  
-                            <td class="text-center" showType="date" value="$vipSet.registerDate">$!{dateTool.format($reg)}</td>      
-                            <td class="text-center" showType="date" value="$vipSet.scheduledTime">$!{dateTool.format($vipSet.scheduledTime)}</td>             
+                            #set($reg=$vipSet.registerDate*1000)
+                            <td class="text-center" showType="date" value="$vipSet.registerDate">$!{dateTool.format($reg)}</td>
+                            <td class="text-center" showType="date" value="$vipSet.scheduledTime">$!{dateTool.format($vipSet.scheduledTime)}</td>
                             <td class="text-center">$vipSet.studentName</td>
-                            #set($vipSetTo=$vipSet.totalSalary /100.00)
-                              #set($vipSetTo=$numberTool.format('#0.00',$vipSetTo))
+                             #set($vipSetTo=$vipSet.totalSalary /100.00) 
+                             #set($vipSetTo=$numberTool.format('#0.00',$vipSetTo))
                             <td class="text-center">$vipSetTo</td>
                         </tr>
                         #end
@@ -478,22 +431,13 @@
                     </tbody>
                 </table>
             </div>
-            <br>
-            
-            #if(  $is2VersionContactType == false)      
-            <br> 
+            <br> #if( $is2VersionContactType == false) <br>
             <table id="finishClass_table_id" class="table table-bordered">
                 <thead>
                     <tr class="active">
-                        <td colspan="2" class="text-left" style="border-right:0;">
-                         Monthly Evaluation
-                        </td>
-                         #set($omeT=0.00)
-                        #set($omeT=$otherMonthlyEvaluation.totalSalary /100.00)
+                        <td colspan="2" class="text-left" style="border-right: 0;">Monthly Evaluation</td> #set($omeT=0.00) #set($omeT=$otherMonthlyEvaluation.totalSalary /100.00)
                         #set($omeT=$numberTool.format('#0.00',$omeT))
-                        <td colspan="1" class="text-right" style="border-left:0;">
-                             $ $!{omeT}
-                        </td>
+                        <td colspan="1" class="text-right" style="border-left: 0;">$ $!{omeT}</td>
                     </tr>
                     <tr class="info">
                         <td class="text-center">Percentage(%)</td>
@@ -503,31 +447,25 @@
                 </thead>
                 <tbody>
                     #foreach($row in $otherMonthlyEvaluation.list)
-                     <tr class="rowscss">
-                        #set($row_ome_unitPrice=$row.unitPrice /100.00)
-                         #set($row_ome_unitPrice=$numberTool.format('#0.00',$row_ome_unitPrice))
+                    <tr class="rowscss">
+                        #set($row_ome_unitPrice=$row.unitPrice /100.00) 
+                        #set($row_ome_unitPrice=$numberTool.format('#0.00',$row_ome_unitPrice))
                         <td class="text-center">$!{row.percentage}</td>
                         <td class="text-center">$!{row_ome_unitPrice}</td>
                         <td class="text-center">$!{row.quantity}</td>
                     </tr>
                     #end
                 </tbody>
-            </table>    
-            #end
-                
-            #if(  $is2VersionContactType == true)
-            <br>
+            </table>
+            #end 
+            #if( $is2VersionContactType == true) <br>
             <table id="finishClass_table_id" class="table table-bordered">
                 <thead>
                     <tr class="active">
-                        <td colspan="1" class="text-left" style="border-right:0;">
-                         Finished Classes
-                        </td>
+                        <td colspan="1" class="text-left" style="border-right: 0;">Finished Classes</td> 
                         #set($othFC=$otherFinishedClasses.totalSalary /100.00)
-                          #set($othFC=$numberTool.format('#0.00',$othFC))
-                        <td colspan="1" class="text-right" style="border-left:0;">
-                             $ $!{othFC}
-                        </td>
+                         #set($othFC=$numberTool.format('#0.00',$othFC))
+                        <td colspan="1" class="text-right" style="border-left: 0;">$ $!{othFC}</td>
                     </tr>
                     <tr class="info">
                         <td class="text-center">Unit Price ($)</td>
@@ -536,9 +474,9 @@
                 </thead>
                 <tbody>
                     #foreach($finishClassRow in $otherFinishedClasses.list)
-                     <tr class="rowscss">
-                        #set($finishClassRow_unitPrice=$finishClassRow.unitPrice /100.00)
-                           #set($finishClassRow_unitPrice=$numberTool.format('#0.00',$finishClassRow_unitPrice))
+                    <tr class="rowscss">
+                        #set($finishClassRow_unitPrice=$finishClassRow.unitPrice /100.00) 
+                        #set($finishClassRow_unitPrice=$numberTool.format('#0.00',$finishClassRow_unitPrice))
                         <td class="text-center">$!{finishClassRow_unitPrice}</td>
                         <td class="text-center">$!{finishClassRow.quantity}</td>
                     </tr>
@@ -546,7 +484,7 @@
                 </tbody>
             </table>
             #end
-                
+
             <div class="attendance-warpper">
                 <div class="row bottom-border top-border">
                     <div class="col-xs-6">
@@ -554,7 +492,7 @@
                     </div>
                     <div class="col-xs-6">
                         #set($adjs=$adjustments.totalSalary /100.00)
-                        #set($adjs=$numberTool.format('#0.00',$adjs))
+                         #set($adjs=$numberTool.format('#0.00',$adjs))
                         <h5 class="text-right">$ $!{adjs}</h5>
                     </div>
                 </div>
@@ -563,64 +501,55 @@
                 <table class="table table-bordered table-striped">
                     <thead>
                         <tr class="info">
-                            <td class="text-center">Item</th>
-                            <td class="text-center">Description</th>
-                            <td class="text-center">Unit Price ($)</th>
+                            <td class="text-center">Item
+                            </th>
+                            <td class="text-center">Description
+                            </th>
+                            <td class="text-center">Unit Price ($)
+                            </th>
                             <td class="text-center">Details</td>
                         </tr>
                     </thead>
                     <tbody>
-                        #if($adjustments.list.size()>0)
-                            #foreach($adjust in $adjustments.list)
-                            <tr class="rowscss">
-                                <td class="text-center" value="$adjust.itemId">$adjust.itemName</td>
-                                <td class="text-center" value="$adjust.descriptionId">$adjust.descriptionName</td>
-                                #set($adj=$adjust.unitPrice /100.00)
-                                #set($adj=$numberTool.format('#0.00',$adj))
-                                <td class="text-center">$!{adj}</td>
-                                <td class="text-center">
-                                   <a href="javascript:;" content="${adjust.details}" onclick="require('payroll').showDetials(this)">view</a>
-                                </td>
-                            </tr>
-                            #end
-                        #end
+                        #if($adjustments.list.size()>0) #foreach($adjust in $adjustments.list)
+                        <tr class="rowscss">
+                            <td class="text-center" value="$adjust.itemId">$adjust.itemName</td>
+                            <td class="text-center" value="$adjust.descriptionId">$adjust.descriptionName</td> #set($adj=$adjust.unitPrice /100.00) #set($adj=$numberTool.format('#0.00',$adj))
+                            <td class="text-center">$!{adj}</td>
+                            <td class="text-center"><a href="javascript:;" content="${adjust.details}" onclick="require('payroll').showDetials(this)">view</a></td>
+                        </tr>
+                        #end #end
                     </tbody>
                 </table>
-            <br>
-             <div id="popWindow" class="popWindow" style="display: none;"> 
-              
-              </div> 
-		    <div id="maskLayer" class="maskLayer" style="display: none;-moz-border-radius: 15px;-webkit-border-radius: 15px;"> 
-		        ##<button type="button" class="close"  style="padding:15px"onclick="require('payroll').closeDetials();">×</button>
-		           <div class="container-fluid">
-				        <button type="button" class="close" aria-label="Close"onclick="require('payroll').closeDetials();"><span aria-hidden="true">×</span></button>
-				    </div> 
-			       <div>
-			        <div style="margin-top: 20px;margin-bottom: 20px;color: black;font-size:20px" >Details</div>
-			      </div>
-			      
-			      <div style="color:#000000;height:auto"  class="detailInfo">Details</div>
-			      <div style="margin-top: 20px;    margin-right: -15px; margin-left: -15px; margin-bottom :20px">
-			        <button type="button" style="border:1px solid red; left: 40%;background-color: #F63B00;width:20%"  data-dismiss="modal" onclick="require('payroll').closeDetials();">OK</button>
-			      </div>
-		    </div> 
-            
+                <br>
+                <div id="popWindow" class="popWindow" style="display: none;"></div>
+                <div id="maskLayer" class="maskLayer" style="display: none; -moz-border-radius: 15px; -webkit-border-radius: 15px;">
+                    ##
+                    <button type="button" class="close" style="padding: 15px" onclick="require('payroll').closeDetials();">×</button>
+                    <div class="container-fluid">
+                        <button type="button" class="close" aria-label="Close" onclick="require('payroll').closeDetials();">
+                            <span aria-hidden="true">×</span>
+                        </button>
+                    </div>
+                    <div>
+                        <div style="margin-top: 20px; margin-bottom: 20px; color: black; font-size: 20px">Details</div>
+                    </div>
+
+                    <div style="color: #000000; height: auto" class="detailInfo">Details</div>
+                    <div style="margin-top: 20px; margin-right: -15px; margin-left: -15px; margin-bottom: 20px">
+                        <button type="button" style="border: 1px solid red; left: 40%; background-color: #F63B00; width: 20%" data-dismiss="modal" onclick="require('payroll').closeDetials();">OK</button>
+                    </div>
+                </div>
+
+            </div>
+
         </div>
-         
+
+
+
     </div>
-    
-   
-  
-</div> 
-  
+
 
 </div>
-#@requireJs()
-    require(["payroll"], function(payroll){
-        payroll.init("$!{TRPM_TEACHER.timezone}", $!{offsetOfMonth});
-        
-        Portal.paging(".paginationCo",15,15, function(page){
-            payroll.preSalaryList(page);
-        });
-    });
-#end
+#@requireJs() require(["payroll"], function(payroll){ payroll.init("$!{TRPM_TEACHER.timezone}", $!{offsetOfMonth}); Portal.paging(".paginationCo",15,15, function(page){ payroll.preSalaryList(page);
+}); }); #end
