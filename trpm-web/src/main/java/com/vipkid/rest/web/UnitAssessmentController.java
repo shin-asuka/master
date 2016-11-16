@@ -44,7 +44,7 @@ public class UnitAssessmentController {
         if(onlineClassVoCond.getFrom()!=null){
             from = org.apache.commons.lang3.math.NumberUtils.toLong(onlineClassVoCond.getFrom());
         }else{
-            from = new Date().getTime() - 7*86400*1000;
+            from = new Date().getTime() - 7*86400*1000l;
         }
         if(onlineClassVoCond.getTo()!=null){
             to = org.apache.commons.lang3.math.NumberUtils.toLong(onlineClassVoCond.getTo());
