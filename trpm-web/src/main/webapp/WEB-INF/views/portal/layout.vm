@@ -11,6 +11,258 @@
   <script src="#styleUrl('/resources/js/apps/activity/jquery-1.8.3.min.js')"></script>
 	
   <script src="#styleUrl('/resources/js/apps/portal/layout.js')"></script>
+    <style type="text/css">
+        body{
+            margin: 0
+        }
+        * {
+            box-sizing: border-box;
+        }
+        .header-wrapper {
+            width:100%;
+            height:120px;
+            min-width:1280px
+        }
+        .header-wrapper .vipkid-info-area {
+            width:100%
+        }
+        .header-wrapper .vipkid-info-area .vipkid-logo-img {
+            float:left;
+            display:block;
+            height:42px;
+            width:154px;
+            background:url(#springUrl('/resources/images/nav/logo.png')) no-repeat;
+            background-size:contain;
+            margin:16px 0 16px 42px
+        }
+        .header-wrapper .vipkid-info-area .vipkid-user-info {
+            display:block;
+            float:right;
+            display:table;
+            margin:16px 42px 16px 0;
+            font-size:14px
+        }
+        .header-wrapper .vipkid-info-area .vipkid-user-info .download-app {
+            float:right;
+            line-height:42px;
+            padding-right:68px;
+            position:relative;
+            cursor:pointer
+        }
+        .header-wrapper .vipkid-info-area .vipkid-user-info .download-app .QR-code {
+            display:none
+        }
+        .header-wrapper .vipkid-info-area .vipkid-user-info .download-app:before {
+            content:'|';
+            font-size:16px;
+            position:absolute;
+            top:0;
+            right:32px;
+            opacity:.2
+        }
+        .header-wrapper .vipkid-info-area .vipkid-user-info .download-app:hover .QR-code {
+            position:absolute;
+            width:346px;
+            height:224px;
+            display:block;
+            background:#fff;
+            z-index:5;
+            right:60px;
+            border:1px solid #73ba00;
+            padding:30px 40px 20px;
+            border-radius:3px
+        }
+        .header-wrapper .vipkid-info-area .vipkid-user-info .download-app:hover .QR-code:after {
+            content:'';
+            position:absolute;
+            top:-8px;
+            right:36px;
+            width:15px;
+            height:15px;
+            font-size:0;
+            background:#fff;
+            border:solid #73ba00;
+            border-width:1px 0 0 1px;
+            transform:rotate(45deg)
+        }
+        .header-wrapper .vipkid-info-area .vipkid-user-info .download-app:hover .QR-code .app {
+            width:106px;
+            float:left
+        }
+        .header-wrapper .vipkid-info-area .vipkid-user-info .download-app:hover .QR-code .app img {
+            border:1px solid #d5d5d5;
+            float:left;
+            width:106px;
+            height:106px;
+            padding:2px
+        }
+        .header-wrapper .vipkid-info-area .vipkid-user-info .download-app:hover .QR-code .app .text {
+            font-size:12px;
+            text-align:center;
+            width:100%;
+            padding-top:30px;
+            background-image:url(#springUrl('/resources/images/nav//app-store.png'));
+            background-size:20px 22px;
+            background-repeat:no-repeat;
+            background-position:40px 12px;
+            clear:both
+        }
+        .header-wrapper .vipkid-info-area .vipkid-user-info .download-app:hover .QR-code .google {
+            width:106px;
+            float:right
+        }
+        .header-wrapper .vipkid-info-area .vipkid-user-info .download-app:hover .QR-code .google img {
+            border:1px solid #d5d5d5;
+            float:right;
+            width:106px;
+            height:106px;
+            padding:2px
+        }
+        .header-wrapper .vipkid-info-area .vipkid-user-info .download-app:hover .QR-code .google .text {
+            font-size:12px;
+            text-align:center;
+            width:100%;
+            padding-top:30px;
+            background-image:url(#springUrl('/resources/images/nav//google-play.png'));
+            background-size:20px 24px;
+            background-repeat:no-repeat;
+            background-position:40px 12px;
+            clear:both
+        }
+        .header-wrapper .vipkid-info-area .vipkid-user-info .personal-info {
+            float:right;
+            line-height:42px;
+            padding-left:20px
+        }
+        .header-wrapper .vipkid-info-area .vipkid-user-info .personal-info a {
+            font-size:14px;
+            color:#000;
+            text-decoration:none
+        }
+        .header-wrapper .vipkid-info-area .vipkid-user-info .personal-info a:hover {
+            color:#f60
+        }
+        .header-wrapper .vipkid-info-area .vipkid-user-info .quit {
+            float:right;
+            line-height:42px;
+            padding-left:16px
+        }
+        .header-wrapper .vipkid-info-area .vipkid-user-info .quit a {
+            font-size:14px;
+            color:#000;
+            text-decoration:none
+        }
+        .header-wrapper .vipkid-info-area .vipkid-user-info .quit a:hover {
+            color:#f60
+        }
+        .header-wrapper .vipkid-info-area .vipkid-user-info .user-name {
+            display:table-cell;
+            vertical-align:middle;
+            padding-left:10px;
+            opacity:.4
+        }
+        .header-wrapper .vipkid-info-area .vipkid-user-info .user-image {
+            display:table-cell;
+            overflow:hidden
+        }
+        .header-wrapper .vipkid-info-area .vipkid-user-info .user-image img {
+            display:block;
+            width:40px;
+            height:40px;
+            border-radius:50%
+        }
+        .header-wrapper .quiz {
+            margin-top:40px;
+            margin-right:80px
+        }
+        .header-wrapper .nav {
+            width:100%;
+            border-top:1px solid rgba(169, 194, 90, .4);
+            border-bottom:1px solid #a9c25a;
+            height:44px;
+            padding:0 42px 0 0;
+            float:left;
+            font-size:16px;
+            box-shadow:0 2px 8px -2px rgba(0, 0, 0, .2);
+            list-style: none;
+            margin: 0
+        }
+        .header-wrapper .nav li {
+            float:left;
+            border-radius:5px;
+            line-height:42px;
+            position:relative;
+            min-width:90px;
+            text-align:center;
+            margin-left:1px
+        }
+        .header-wrapper .nav li:first-child a {
+            padding:0 20px 0 42px
+        }
+        .header-wrapper .nav li:hover {
+            background:#e9eed3;
+            border-radius:0
+        }
+        .header-wrapper .nav li a {
+            line-height:20px;
+            text-decoration:none;
+            padding:0 20px;
+            color:#333
+        }
+        .header-wrapper .nav li a:hover {
+            color:#333
+        }
+        .header-wrapper .nav li:after {
+            content:'';
+            position:absolute;
+            top:7px;
+            right:-1px;
+            width:1px;
+            height:30px;
+            background:rgba(169, 194, 90, .4)
+        }
+        .header-wrapper .nav li.it-test {
+            float:right;
+            padding:0;
+            font-size:12px
+        }
+        .header-wrapper .nav li.it-test:after {
+            display:none
+        }
+        .header-wrapper .nav li.it-test:hover {
+            background:inherit
+        }
+        .header-wrapper .nav li.it-test a {
+            padding:0
+        }
+        .header-wrapper .nav li.it-test a:hover {
+            color:#f60
+        }
+        .header-wrapper .nav li.it-test img {
+            width:24px;
+            height:21px;
+            margin-right:10px;
+            display:block;
+            margin-top:10px;
+            float:left
+        }
+        .header-wrapper .nav li.active, .header-wrapper .nav li.active a {
+            color:#f60
+        }
+        .header-wrapper .nav .no-click {
+            position:relative
+        }
+        .header-wrapper .nav .no-click:after {
+            position:absolute;
+            content:'';
+            width:8px;
+            height:8px;
+            border-radius:50%;
+            background:#f60;
+            top:-4px;
+            right:0
+        }
+    </style>
 </head>
 <body>
 
@@ -24,6 +276,7 @@
   #end	
 
 <div class="container">
+    #**
   <div class="vk-logo"></div>
   <div class="vk-nav-info">
     <div class="vk-sub-title"> 
@@ -36,11 +289,11 @@
 		<li class="$!{material}"><a href="#springUrl('/training/material')">Training Center</a></li>
         <li class="$!{activeSchedule}"><a href="#springUrl('/schedule.shtml')">Schedule</a></li>
         <li class="$!{activeClassrooms}"><a href="#springUrl('/classrooms.shtml')">Classrooms</a></li>
-        #**
+
         	<li><a href="#springUrl('/evaluations')">Evaluations</a>
         		#if($isEvalClick)<div class="redPoint"></div>#end
         	</li>
-        *#
+
         #if($isTe && !$isTes)
         	<li><a href="#springUrl('/te')">TE</a></li>
 		#end 
@@ -70,8 +323,77 @@
 			<a id="activityurl" href="#springUrl('/activity.shtml')" target="_blank" style="position: absolute;z-index: 999;top:6px;left: 470px;"><img style="width:94px" src="#styleUrl('/resources/images/activity/icon.png')"/></a>
     	#end
     </div>
-  </div>
-  </div>
+  </div>**#
+        <div class="header-wrapper">
+            <div class="vipkid-info-area">
+                <div class="vipkid-logo-img"></div>
+                <div class="vipkid-user-info">
+                    <div class="download-app">App Download
+                        <div class="QR-code">
+                            <div class="app">
+                                <img src="#springUrl('/resources/images/nav//app.png')">
+                                <div class="text">APP Store</div>
+                            </div>
+                            <div class="google">
+                                <img src="#springUrl('/resources/images/nav//google.png')">
+                                <div class="text">GooglePlay</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="user-image">
+                        #if($stringUtils.contains($!{TRPM_TEACHER.avatar}, 'http://'))
+                            <img src="$!{TRPM_TEACHER.avatar}" onerror="javascript:this.src='${resourceTool.oss.url_preffix}/static/images/teacher_portal/default_avatar.png';this.onerror=null;" />
+                        #else
+                            <img src="#if($!{TRPM_TEACHER.avatar})${resourceTool.oss.url_preffix}/$!{TRPM_TEACHER.avatar}#end" onerror="javascript:this.src='${resourceTool.oss.url_preffix}/static/images/teacher_portal/default_avatar.png';this.onerror=null;" />
+                        #end
+                    </div>
+                    <div class="user-name">Welcome, ${TRPM_USER.name}</div>
+                    <div class="quit">
+                        <a href="#springUrl('/logout.shtml')">Quit</a>
+                    </div>
+                    <div class="personal-info">
+                        <a href="#springUrl('/personalInfo.shtml')">Personal Info</a>
+                    </div>
+                </div>
+                <div class="clear"></div>
+            </div>
+            <ul class="nav">
+                <li class="$!{material}">
+                    <a href="#springUrl('/training/material')">Training Center</a>
+                </li>
+                <li class="$!{activeSchedule}">
+                    <a href="#springUrl('/schedule.shtml')">Schedule</a>
+                </li>
+                <li class="$!{activeClassrooms}">
+                    <a href="#springUrl('/classrooms.shtml')">Classrooms</a>
+                </li>
+                #**
+                <li><a href="#springUrl('/evaluations')">Evaluations</a>
+                    #if($isEvalClick)<div class="redPoint"></div>#end
+                </li>
+                **#
+                #if($isTe && !$isTes)
+                    <li><a href="#springUrl('/te')">TE</a></li>
+                #end
+                #if($isTes)
+                    <li><a href="#springUrl('/te-supervisor')">TES</a></li>
+                #end
+                #if($isPes)
+                    <li class="$!{activeClassroomsPe}">
+                        <a href="#springUrl('/pesupervisor.shtml')">PES</a>
+                    </li>
+                #end
+                <li class="$!{activePayrollInfo}">
+                    <a href="#springUrl('/payroll.shtml')">Payroll</a>
+                </li>
+                <li class="it-test">
+                    <img src="./test-computer-icon.png">
+                    <a target="_blank" href="http://help.duobeiyun.com/room/test/?result=http://app-proxy.vipkid.com.cn/api/service/public/ittest/callback&amp;lang=en&amp;role=TEACHER&amp;id=$!{TRPM_TEACHER.id}">Test Your Computer</a>
+                </li>
+            </ul>
+        </div>
+
+</div>
   #if($announcements.size()>0)
   <div class="scrollContentcss">
 		<span class="closeSpancss" onclick="closeAnnounce(this)">&nbsp;
