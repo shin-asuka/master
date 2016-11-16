@@ -762,7 +762,6 @@ public class OnlineClassService {
             onlineClassVo.setIdListStr(StringUtils.join(onlineClassVo.getIdList(), ","));
             onlineClassVo.getIdList().clear();
             OnlineClassVo onlineClassVoUnSubmit = assessmentHttpService.findUnSubmitonlineClassVo(onlineClassVo);
-            logger.info("Result unSubmit OnlineClass  = {}", JsonUtils.toJSONString(onlineClassVoUnSubmit));
             for(Long id : onlineClassVoUnSubmit.getIdList()){
                 OnlineClassVo curOnlineClassVo = ocMap.get(id);
                 if(onlineClassVoUnSubmit.getRefillinUaIds().contains(id)){
