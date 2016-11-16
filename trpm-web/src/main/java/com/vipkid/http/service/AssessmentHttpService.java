@@ -34,7 +34,6 @@ public class AssessmentHttpService extends HttpBaseService {
         String url = new StringBuilder(super.serverAddress)
                 .append("/education/findUnSubmitedListByOnlineClassIds").toString();
         OnlineClassVo unSubmitSnlineClassVo = null;
-        onlineClassVo.setIdListStr(StringUtils.join(onlineClassVo.getIdList(),","));
         try {
         	String data = WebUtils.postNameValuePair(url, onlineClassVo);
             if (data!=null) {

@@ -759,6 +759,8 @@ public class OnlineClassService {
             }
 
             //调用homework服务查询为完成UA报告的课程
+            onlineClassVo.setIdListStr(StringUtils.join(onlineClassVo.getIdList(), ","));
+            onlineClassVo.getIdList().clear();
             OnlineClassVo onlineClassVoUnSubmit = assessmentHttpService.findUnSubmitonlineClassVo(onlineClassVo);
             logger.info("Result unSubmit OnlineClass  = {}", JsonUtils.toJSONString(onlineClassVoUnSubmit));
             for(Long id : onlineClassVoUnSubmit.getIdList()){
