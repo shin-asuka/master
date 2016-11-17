@@ -1,19 +1,10 @@
 package com.vipkid.trpm.service.portal;
 
-import java.net.URLDecoder;
 import java.sql.Timestamp;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.util.*;
 
-import com.alibaba.fastjson.JSONObject;
-import com.google.common.collect.Lists;
-import com.sun.tools.internal.ws.wsdl.document.http.HTTPUrlEncoded;
-import com.vipkid.file.utils.Encodes;
-import com.vipkid.http.utils.JsonUtils;
-import com.vipkid.http.vo.OnlineClassVo;
-import com.vipkid.task.utils.UADateUtils;
+import com.alibaba.fastjson.JSON;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -25,9 +16,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.vipkid.http.service.AssessmentHttpService;
+import com.vipkid.http.utils.JsonUtils;
+import com.vipkid.http.vo.OnlineClassVo;
 import com.vipkid.http.vo.StudentUnitAssessment;
 import com.vipkid.rest.config.RestfulConfig.RoleClass;
 import com.vipkid.trpm.constant.ApplicationConstant;
@@ -77,13 +72,12 @@ public class OnlineClassService {
     @Autowired
     private TeacherModuleDao teacherModuleDao;
 
-
     @Autowired
     private TeacherQuizDao teacherQuizDao;
 
     @Autowired
-	private AssessmentHttpService assessmentHttpService;
-    
+    private AssessmentHttpService assessmentHttpService;
+
     @Autowired
     private AssessmentReportDao assessmentReportDao;
 
@@ -111,22 +105,19 @@ public class OnlineClassService {
      * 进入Open课程 逻辑
      *
      * @Title: enterOpen
-     * @param onlineClassId
      * @param studentId
      * @param teacher
      * @param lesson
      * @return Map<String,Object>
      * @date 2016年1月15日
      */
-    public Map<String, Object> enterOpen(OnlineClass onlineClass, long studentId, Teacher teacher,
-            Lesson lesson) {
-        logger.info("TeacherId:{} Open Course,onlineClassId:{},studentId:{}",teacher.getId(),onlineClass.getId(),studentId);
+    public Map<String, Object> enterOpen(OnlineClass onlineClass, long studentId, Teacher teacher, Lesson lesson) {
+        logger.info("TeacherId:{} Open Course,onlineClassId:{},studentId:{}", teacher.getId(), onlineClass.getId(),
+                studentId);
         Map<String, Object> modelMap = Maps.newHashMap();
         modelMap.putAll(this.enterBefore(onlineClass, studentId, "OPEN"));
-        modelMap.put("url",
-                ClassroomProxy.generateRoomEnterUrl(String.valueOf(teacher.getId()),
-                        teacher.getRealName(), onlineClass.getClassroom(),
-                        ClassroomProxy.ROLE_TEACHER, onlineClass.getSupplierCode()));
+        modelMap.put("url", ClassroomProxy.generateRoomEnterUrl(String.valueOf(teacher.getId()), teacher.getRealName(),
+                onlineClass.getClassroom(), ClassroomProxy.ROLE_TEACHER, onlineClass.getSupplierCode()));
 
         this.enterAfter(teacher, onlineClass);
         return modelMap;
@@ -136,28 +127,24 @@ public class OnlineClassService {
      * 进入Practicum 逻辑
      *
      * @Title: enterPracticum
-     * @param onlineClassId
      * @param studentId
-     * @param teacher
      * @param lesson
      * @return Map<String,Object>
      * @date 2016年1月15日
      */
-    public Map<String, Object> enterPracticum(OnlineClass onlineClass, long studentId,
-            Teacher student, Lesson lesson) {
+    public Map<String, Object> enterPracticum(OnlineClass onlineClass, long studentId, Teacher student, Lesson lesson) {
         Map<String, Object> modelMap = Maps.newHashMap();
-        
-        logger.info("TeacherId:{} Practicum Course,onlineClassId:{},studentId:{}",student.getId(),onlineClass.getId(),studentId);
-        
+
+        logger.info("TeacherId:{} Practicum Course,onlineClassId:{},studentId:{}", student.getId(), onlineClass.getId(),
+                studentId);
+
         modelMap.putAll(this.enterBefore(onlineClass, studentId, "BOOKED"));
 
-        TeacherApplication teacherApplication = teacherApplicationDao
-                .findApplictionByOlineclassId(onlineClass.getId(), student.getId());
+        TeacherApplication teacherApplication = teacherApplicationDao.findApplictionByOlineclassId(onlineClass.getId(),
+                student.getId());
         modelMap.put("teacherApplication", teacherApplication);
-        modelMap.put("url",
-                ClassroomProxy.generateRoomEnterUrl(String.valueOf(student.getId()),
-                        student.getRealName(), onlineClass.getClassroom(),
-                        ClassroomProxy.ROLE_STUDENT, onlineClass.getSupplierCode()));
+        modelMap.put("url", ClassroomProxy.generateRoomEnterUrl(String.valueOf(student.getId()), student.getRealName(),
+                onlineClass.getClassroom(), ClassroomProxy.ROLE_STUDENT, onlineClass.getSupplierCode()));
         modelMap.put("teacherPe", teacherPeDao.findByOnlineClassId(onlineClass.getId()));
         List<TeacherApplication> list = teacherApplicationDao
                 .findApplictionForStatusResult(teacherApplication.getTeacherId(),TeacherApplicationDao.Status.PRACTICUM.toString(),TeacherApplicationDao.Result.PRACTICUM2.toString());
@@ -168,7 +155,7 @@ public class OnlineClassService {
         }
         this.enterAfter(student, onlineClass);
 
-        List<TeacherModule> teacherModules = teacherModuleDao.findByTeacherModuleName(student.getId(),RoleClass.PE);
+        List<TeacherModule> teacherModules = teacherModuleDao.findByTeacherModuleName(student.getId(), RoleClass.PE);
         // 判断当前用户是否拥有PE Supervisor权限
         if (CollectionUtils.isNotEmpty(teacherModules)) {
             modelMap.put("PESupervisor", true);
@@ -184,57 +171,51 @@ public class OnlineClassService {
      * 主修课分为:Aessement课和非Aessement课程
      *
      * @Title: enterMajor
-     * @param onlineClassId
      * @param studentId
      * @param teacher
      * @param lesson
      * @return Map<String,Object>
      * @date 2016年1月15日
      */
-    public Map<String, Object> enterMajor(OnlineClass onlineClass, long studentId, Teacher teacher,
-            Lesson lesson) {
-        logger.info("TeacherId:{}, Major Course onlineClassId:{},studentId:{}",teacher.getId(), onlineClass.getId(),
+    public Map<String, Object> enterMajor(OnlineClass onlineClass, long studentId, Teacher teacher, Lesson lesson) {
+        logger.info("TeacherId:{}, Major Course onlineClassId:{},studentId:{}", teacher.getId(), onlineClass.getId(),
                 studentId);
         Map<String, Object> modelMap = Maps.newHashMap();
         modelMap.putAll(this.enterBefore(onlineClass, studentId, "BOOKED"));
 
         /** 获取teacherComments中的stars字段的值，并存入model */
         int stars = this.findTeacherCommentByOnlineClassId(onlineClass, studentId);
-        logger.info("TeacherId:{}, Major Course query stars : {},onlineClassId:{},studentId:{}",teacher.getId(), stars, onlineClass.getId(),
-                studentId);
+        logger.info("TeacherId:{}, Major Course query stars : {},onlineClassId:{},studentId:{}", teacher.getId(), stars,
+                onlineClass.getId(), studentId);
         modelMap.put("stars", stars);
         if (lesson.getSerialNumber().startsWith("A")) {
-            DemoReport currentReport =
-                    demoReportDao.findByStudentIdAndOnlineClassId(studentId, onlineClass.getId());
+            DemoReport currentReport = demoReportDao.findByStudentIdAndOnlineClassId(studentId, onlineClass.getId());
             modelMap.put("currentReport", currentReport);
         }
-        modelMap.put("url",
-                ClassroomProxy.generateRoomEnterUrl(String.valueOf(teacher.getId()),
-                        teacher.getRealName(), onlineClass.getClassroom(),
-                        ClassroomProxy.ROLE_TEACHER, onlineClass.getSupplierCode()));
+        modelMap.put("url", ClassroomProxy.generateRoomEnterUrl(String.valueOf(teacher.getId()), teacher.getRealName(),
+                onlineClass.getClassroom(), ClassroomProxy.ROLE_TEACHER, onlineClass.getSupplierCode()));
 
         this.enterAfter(teacher, onlineClass);
-        
-        //查询是否旧版UA报告
+
+        // 查询是否旧版UA报告
         AssessmentReport assessmentReport = null;
         String serialNumber = lesson.getSerialNumber();
         Long onlineClassId = onlineClass.getId();
         long schedDateTime = onlineClass.getScheduledDateTime().getTime();
-        
+
         if (DateUtils.isSearchById(schedDateTime)) {
             assessmentReport = assessmentReportDao.findReportByClassId(onlineClassId);
         } else {
             assessmentReport = assessmentReportDao.findReportByStudentIdAndName(serialNumber, studentId);
         }
-        modelMap.put("isNewUa", assessmentReport == null ? 1: 0);
+        modelMap.put("isNewUa", assessmentReport == null ? 1 : 0);
         return modelMap;
     }
 
     /**
      * 进入教室前基本数据 1.查询学生信息 2.更新教师进入教室时间 3.判断是否进入回放页面
      **/
-    private Map<String, Object> enterBefore(OnlineClass onlineClass, long studentId,
-            String status) {
+    private Map<String, Object> enterBefore(OnlineClass onlineClass, long studentId, String status) {
         Map<String, Object> modelMap = Maps.newHashMap();
         this.modifyTeacherEnterTime(onlineClass.getId());
         modelMap.put("onlineClass", onlineClass);
@@ -303,8 +284,8 @@ public class OnlineClassService {
      * @param onlineClassId
      */
     public void exitOpenclass(long onlineClassId) {
-        onlineClassDao.updateEntity(new OnlineClass().setId(onlineClassId).setStatus("FINISHED")
-                .setFinishType("AS_SCHEDULED"));
+        onlineClassDao.updateEntity(
+                new OnlineClass().setId(onlineClassId).setStatus("FINISHED").setFinishType("AS_SCHEDULED"));
     }
 
     /**
@@ -318,8 +299,7 @@ public class OnlineClassService {
     private void modifyTeacherEnterTime(long onlineClassId) {
         OnlineClass onlineClass = onlineClassDao.findById((onlineClassId));
         if (null != onlineClass && null == onlineClass.getTeacherEnterClassroomDateTime()) {
-            onlineClassDao.updateEnterClassTime(onlineClassId,
-                    new Timestamp(System.currentTimeMillis()));
+            onlineClassDao.updateEnterClassTime(onlineClassId, new Timestamp(System.currentTimeMillis()));
         }
     }
 
@@ -338,17 +318,14 @@ public class OnlineClassService {
      * 结束Practicum课操作
      *
      * @Author:ALong
-     * @param teacher 操作老师(学生角色)
-     * @param onlineClassId 上课Id
+     * @param pe 操作老师(学生角色)
      * @param result 结果
-     * @param studentId 学生Id
-     * @param comments 备注
      * @param finishType 完成类型
      * @return Map<String,Object>
      * @date 2016年1月11日
      */
-    public Map<String, Object> updateAudit(Teacher pe, TeacherApplication currTeacherApplication,
-            String result, String finishType) {
+    public Map<String, Object> updateAudit(Teacher pe, TeacherApplication currTeacherApplication, String result,
+            String finishType) {
         // 默认操作状态
         Map<String, Object> modelMap = Maps.newHashMap();
         modelMap.put("result", false);
@@ -362,12 +339,11 @@ public class OnlineClassService {
 
         // 2.验证 teacherApplications 是否为空
         long onlineClassId = currTeacherApplication.getOnlineClassId();
-        TeacherApplication teacherApplication = teacherApplicationDao
-                .findApplictionByOlineclassId(onlineClassId, currTeacherApplication.getTeacherId());
+        TeacherApplication teacherApplication = teacherApplicationDao.findApplictionByOlineclassId(onlineClassId,
+                currTeacherApplication.getTeacherId());
         if (teacherApplication == null) {
             modelMap.put("msg", "Not exis the online-class recruitment info ！");
-            logger.info(" TeacherApplication is null onlineClassId:{} , status is PRACTICUM ",
-                    onlineClassId);
+            logger.info(" TeacherApplication is null onlineClassId:{} , status is PRACTICUM ", onlineClassId);
             return modelMap;
         }
 
@@ -375,8 +351,7 @@ public class OnlineClassService {
         Teacher recruitTeacher = teacherDao.findById(teacherApplication.getTeacherId());
         if (recruitTeacher == null) {
             modelMap.put("msg", "System error！");
-            logger.info(" Recruitment Teacher is null , teacher id is {}",
-                    teacherApplication.getTeacherId());
+            logger.info(" Recruitment Teacher is null , teacher id is {}", teacherApplication.getTeacherId());
             return modelMap;
         }
 
@@ -401,8 +376,7 @@ public class OnlineClassService {
             List<TeacherApplication> list = teacherApplicationDao
                     .findApplictionForStatusResult(teacherApplication.getTeacherId(),TeacherApplicationDao.Status.PRACTICUM.toString(),TeacherApplicationDao.Result.PRACTICUM2.toString());
             if (list != null && list.size() > 0) {
-                logger.info(
-                        "The teacher is already in practicum 2., class id is : {},status is {},recruitTeacher:{}",
+                logger.info("The teacher is already in practicum 2., class id is : {},status is {},recruitTeacher:{}",
                         onlineClass.getId(), onlineClass.getStatus(), recruitTeacher.getId());
                 modelMap.put("msg", "The teacher is already in practicum 2.");
                 return modelMap;
@@ -420,9 +394,8 @@ public class OnlineClassService {
         parmMap.put("finishType", finishType);
 
         // 6.然后操作TeacherApllication
-        if (ClassStatus.isBooked(onlineClass.getStatus())
-                || ClassStatus.isFinished(onlineClass.getStatus())) {
-            List<TeacherModule> teacherModules = teacherModuleDao.findByTeacherModuleName(pe.getId(),RoleClass.PE);
+        if (ClassStatus.isBooked(onlineClass.getStatus()) || ClassStatus.isFinished(onlineClass.getStatus())) {
+            List<TeacherModule> teacherModules = teacherModuleDao.findByTeacherModuleName(pe.getId(), RoleClass.PE);
             // 判断当前用户是否拥有PE Supervisor权限
             if (CollectionUtils.isNotEmpty(teacherModules)) {
                 currTeacherApplication.setContractUrl("PE-Supervisor");
@@ -430,8 +403,7 @@ public class OnlineClassService {
                 currTeacherApplication.setContractUrl("PE");
             }
             // 如果课程已经结束
-            modelMap = this.updateTeacherApplication(recruitTeacher, pe, result, "",
-                    currTeacherApplication);
+            modelMap = this.updateTeacherApplication(recruitTeacher, pe, result, "", currTeacherApplication);
             // 日志 2
             String content = FilesUtils
                     .readLogTemplete(ApplicationConstant.AuditCategory.PRACTICUM_AUDIT, parmMap);
@@ -443,13 +415,11 @@ public class OnlineClassService {
 
             // 设置调用接口的参数
             modelMap.put("teacherApplicationId", currTeacherApplication.getId());
-            modelMap.put("recruitTeacher",
-                    teacherDao.findById(currTeacherApplication.getTeacherId()));
+            modelMap.put("recruitTeacher", teacherDao.findById(currTeacherApplication.getTeacherId()));
 
             return modelMap;
         } else {
-            logger.error("online class status not is booked or finish status,online class Id:{}",
-                    onlineClass.getId());
+            logger.error("online class status not is booked or finish status,online class Id:{}", onlineClass.getId());
             modelMap.put("msg", "System error！");
         }
         return modelMap;
@@ -470,8 +440,8 @@ public class OnlineClassService {
      * @return Map<String,Object>
      * @date 2016年1月14日
      */
-    private Map<String, Object> updateTeacherApplication(Teacher recruitTeacher, Teacher pe,
-            String result, String comments, TeacherApplication teacherApplication) {
+    private Map<String, Object> updateTeacherApplication(Teacher recruitTeacher, Teacher pe, String result,
+            String comments, TeacherApplication teacherApplication) {
         Map<String, Object> modelMap = Maps.newHashMap();
 
         // 设置审核结果
@@ -567,20 +537,19 @@ public class OnlineClassService {
      * @return Map<String,Object>
      * @date 2016年1月11日
      */
-    public Map<String, Object> sendTeacherInClassroom(Map<String, String> requestParams,
-            Teacher teacher) {
+    public Map<String, Object> sendTeacherInClassroom(Map<String, String> requestParams, Teacher teacher) {
         Map<String, Object> modelMap = Maps.newHashMap();
         modelMap.put("status", false);
 
         String t = "TEACHER " + teacher.getId();
         Map<String, String> requestHeader = new HashMap<String, String>();
         requestHeader.put("Authorization", t + " " + DigestUtils.md5Hex(t));
-        String content = HttpClientProxy.get(ApplicationConstant.TEACHER_IN_CLASSROOM_URL,
-                requestParams, requestHeader);
+        String content = HttpClientProxy.get(ApplicationConstant.TEACHER_IN_CLASSROOM_URL, requestParams,
+                requestHeader);
 
         logger.info("### Mark that teacher enter classroom: {}", content);
-        logger.info("### Sent get request to {} with params {}",
-                ApplicationConstant.TEACHER_IN_CLASSROOM_URL, requestParams.get("onlineClassId"));
+        logger.info("### Sent get request to {} with params {}", ApplicationConstant.TEACHER_IN_CLASSROOM_URL,
+                requestParams.get("onlineClassId"));
         if (!StringUtils.isNotEmpty(content)) {
             modelMap.put("status", true);
         } else {
@@ -610,15 +579,15 @@ public class OnlineClassService {
         }
 
         /* 判断当前课程是否显示退出教室提示 */
-        TeacherComment teacherComment =
-                teacherCommentDao.findByStudentIdAndOnlineClassId(studentId, onlineClassId);
+        TeacherComment teacherComment = teacherCommentDao.findByStudentIdAndOnlineClassId(studentId, onlineClassId);
         if (null == teacherComment || StringUtils.isBlank(teacherComment.getTeacherFeedback())) {
             modelMap.put("empty", true);
-            
-            //查询UA是否已经填写
-            StudentUnitAssessment studentUnitAssessment = assessmentHttpService.findStudentUnitAssessmentByOnlineClassId(onlineClassId);
-            if(studentUnitAssessment !=null){
-            	modelMap.put("empty", false);
+
+            // 查询UA是否已经填写
+            StudentUnitAssessment studentUnitAssessment = assessmentHttpService
+                    .findStudentUnitAssessmentByOnlineClassId(onlineClassId);
+            if (studentUnitAssessment != null) {
+                modelMap.put("empty", false);
             }
         } else {
             modelMap.put("empty", false);
@@ -692,8 +661,7 @@ public class OnlineClassService {
      * @date 2016年1月9日
      */
     private int findTeacherCommentByOnlineClassId(OnlineClass onlineclass, long studentId) {
-        TeacherComment bean =
-                teacherCommentDao.findByStudentIdAndOnlineClassId(studentId, onlineclass.getId());
+        TeacherComment bean = teacherCommentDao.findByStudentIdAndOnlineClassId(studentId, onlineclass.getId());
         if (bean != null) {
             return bean.getStars();
         }
@@ -710,8 +678,7 @@ public class OnlineClassService {
      * @date 2016年5月14日
      */
     public boolean checkStudentIdClassId(long onlineClassId, long studentId) {
-        List<Map<String, Object>> list =
-                onlineClassDao.findOnlineClassIdAndStudentId(onlineClassId, studentId);
+        List<Map<String, Object>> list = onlineClassDao.findOnlineClassIdAndStudentId(onlineClassId, studentId);
         if (list != null && !list.isEmpty()) {
             return true;
         }
@@ -730,6 +697,17 @@ public class OnlineClassService {
             }
             onlineClass.setStatus(ClassStatus.FINISHED);
             onlineClassDao.updateEntity(onlineClass);
+        }
+    }
+
+    public Student fetchStudentByOnlineClassId(long onlineClassId) {
+        logger.info("根据OnlineClassId获取上课学生，onlineClassId = {}", onlineClassId);
+        List<Student> studentList = studentDao.findStudentByOnlineClassId(onlineClassId);
+        logger.info("onlineClassId = {},学生列表 = {}", onlineClassId, JSON.toJSONString(studentList));
+        if (CollectionUtils.isNotEmpty(studentList)) {
+            return studentList.get(0);
+        } else {
+            return null;
         }
     }
 

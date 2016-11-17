@@ -7,6 +7,7 @@ import java.text.ParseException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
@@ -212,6 +213,21 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
 			return LocalDateTime.now(SHANGHAI).plusMonths(offsetOfMonth).format(formatter);
 		}
 	}
+    /**
+     *
+     * 得到某个月的第一天
+     *
+     * @author warship
+     * @created 2013年11月10日 上午12:55:02
+     *
+     * @return 以"年年年年-月月-日日"格式返回当某个月第一天的日期
+     */
+    public static String getFirstDayOfMonth(Date date) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMinimum(Calendar.DAY_OF_MONTH));
+        return formatDate(calendar.getTime());
+    }
 	
     /**
      * @param args
@@ -222,5 +238,10 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
         // System.out.println(getDate("yyyy年MM月dd日 E"));
         // long time = new Date().getTime()-parseDate("2012-11-19").getTime();
         // System.out.println(time/(24*60*60*1000));
+        String firstDate = DateUtils.getFirstDayOfMonth(new Date());
+        System.out.println(firstDate);
+        String endDate = org.apache.commons.lang.time.DateFormatUtils.format(new Date(), "yyyy-MM-dd");
+        System.out.println(endDate);
+
     }
 }

@@ -24,15 +24,6 @@ public interface PayrollMessageService {
 	 * @param operatorType
 	 * @return
 	 */
-	public FinishOnlineClassMessage sendFinishOnlineClassMessage(Long onlineClassId, OperatorType operatorType);
-	
-	/**
-	 * 结束课程发送消息
-	 * 
-	 * @param onlineClassId
-	 * @param operatorType
-	 * @return
-	 */
 	public FinishOnlineClassMessage sendFinishOnlineClassMessage(TeacherComment teacherComment ,Long onlineClassId, OperatorType operatorType);
 
 	

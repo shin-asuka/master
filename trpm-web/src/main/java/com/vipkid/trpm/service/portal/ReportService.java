@@ -330,10 +330,6 @@ public class ReportService {
         if (resultReport != null && resultReport.getReaded() == UaReportStatus.REVIEWED
                 && resultReport.getOnlineClassId() > 0) {
             logger.info("上传报告发送消息  onlineClassId = {} ", resultReport.getOnlineClassId());
-            long ocId = resultReport.getOnlineClassId();
-
-            executor.execute(
-                    () -> payrollMessageService.sendFinishOnlineClassMessage(ocId, OperatorType.ADD_UNIT_ASSESSMENT));
         }
 
         return resultMap;
