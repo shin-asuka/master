@@ -5,9 +5,12 @@ package com.vipkid.http.service;
 
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Lists;
 import com.vipkid.http.utils.JsonUtils;
 import com.vipkid.http.utils.WebUtils;
@@ -34,7 +37,8 @@ public class TeacherAppService extends HttpBaseService {
         try {
         	String data = WebUtils.simpleGet(url);
             if (data!=null) {
-            	list = JsonUtils.toBeanList(data, TeacherNationalityCode.class);
+            	String datas = getData(data);
+            	list = JsonUtils.toBeanList(datas, TeacherNationalityCode.class);
             }
 		} catch (Exception e) {
 			logger.error("getAllNationCodes error ",e);
@@ -55,7 +59,8 @@ public class TeacherAppService extends HttpBaseService {
         try {
         	String data = WebUtils.simpleGet(url);
             if (data!=null) {
-            	list = JsonUtils.toBeanList(data, TeacherLocation.class);
+            	String datas = getData(data);
+            	list = JsonUtils.toBeanList(datas, TeacherLocation.class);
             }
 		} catch (Exception e) {
 			logger.error("getCountryList error",e);
@@ -77,7 +82,8 @@ public class TeacherAppService extends HttpBaseService {
         try {
         	String data = WebUtils.simpleGet(url);
             if (data!=null) {
-            	list = JsonUtils.toBeanList(data, TeacherLocation.class);
+            	String datas = getData(data);
+            	list = JsonUtils.toBeanList(datas, TeacherLocation.class);
             }
 		} catch (Exception e) {
 			logger.error("getStateList error",e);
@@ -99,7 +105,8 @@ public class TeacherAppService extends HttpBaseService {
         try {
         	String data = WebUtils.simpleGet(url);
             if (data!=null) {
-            	list = JsonUtils.toBeanList(data, TeacherLocation.class);
+            	String datas = getData(data);
+            	list = JsonUtils.toBeanList(datas, TeacherLocation.class);
             }
 		} catch (Exception e) {
 			logger.error("getCityList error",e);
@@ -109,6 +116,20 @@ public class TeacherAppService extends HttpBaseService {
         	list = Lists.newArrayList();
         }
         return list;
+	}
+	
+	public String getData(String respone){
+		String data = null;
+		if(StringUtils.isNotBlank(respone)){
+			JSONObject json = JsonUtils.parseToJSONObject(respone);
+			if(json!=null){
+				JSON dataObj = (JSON) json.get("data");
+				if(dataObj != null ){
+					data = dataObj.toJSONString();
+				}
+			}
+		}
+		return data;
 	}
    
 }
