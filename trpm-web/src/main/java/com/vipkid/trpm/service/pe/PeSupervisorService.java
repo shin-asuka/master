@@ -151,7 +151,7 @@ public class PeSupervisorService {
         TeacherApplication teacherApplication = teacherApplicationDao
                 .findApplictionByOlineclassId(onlineClassId, peSupervisor.getId());
         if (teacherApplication == null) {
-            modelMap.put("msg", "Not exis the online-class recruitment info ！");
+            modelMap.put("msg", "Not exist the online-class recruitment info ！");
             logger.info(" TeacherApplication is null onlineClassId:{} , status is PRACTICUM ",
                     onlineClassId);
             return modelMap;

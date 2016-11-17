@@ -163,7 +163,7 @@ public class InterviewService {
         
         //课程没有找到，无法取消
         if(onlineClass == null){
-            return ResponseUtils.responseFail("The online class not exis:"+onlineClassId,this);
+            return ResponseUtils.responseFail("The online class doesn't exist:"+onlineClassId,this);
         }
         
         //book的课程在开课前1小时之内不允许cancel

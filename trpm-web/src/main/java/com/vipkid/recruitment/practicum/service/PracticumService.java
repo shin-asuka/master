@@ -35,7 +35,7 @@ public class PracticumService {
 
     public List<Map<String,Object>> findTimeList(){
         String fromTime = LocalDateTime.now().plusHours(1).format(DateUtils.FMT_YMD_HMS);
-        String toTime = LocalDateTime.now().plusDays(2).withHour(23).withMinute(59).withSecond(59).format(DateUtils.FMT_YMD_HMS);
+        String toTime = LocalDateTime.now().plusDays(3).withHour(23).withMinute(59).withSecond(59).format(DateUtils.FMT_YMD_HMS);
         logger.info("findTimeListByPracticum parameter fromTime:{}, toTime:{}",fromTime, toTime);
         return practicumDao.findTimeList(fromTime, toTime);
     }
