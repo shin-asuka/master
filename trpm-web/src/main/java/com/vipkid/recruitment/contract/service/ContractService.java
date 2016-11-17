@@ -2,19 +2,18 @@ package com.vipkid.recruitment.contract.service;
 
 import com.vipkid.enums.TeacherApplicationEnum;
 import com.vipkid.enums.TeacherEnum;
-import com.vipkid.trpm.dao.TeacherApplicationDao;
+import com.vipkid.recruitment.dao.TeacherApplicationDao;
+import com.vipkid.recruitment.entity.TeacherApplication;
 import com.vipkid.trpm.dao.TeacherDao;
 import com.vipkid.trpm.dao.TeacherOtherDegreesDao;
 import com.vipkid.trpm.entity.ContractFile;
 import com.vipkid.trpm.entity.Teacher;
-import com.vipkid.trpm.entity.TeacherApplication;
 import com.vipkid.trpm.entity.TeacherOtherDegrees;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.sql.Timestamp;
 import java.util.List;
 
