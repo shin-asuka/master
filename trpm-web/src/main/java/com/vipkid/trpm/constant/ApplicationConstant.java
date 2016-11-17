@@ -302,12 +302,12 @@ public interface ApplicationConstant {
         public static final String BASIC_INFO = "BASIC_INFO"; // 添加basic-info状态，从signup分离
         public static final String INTERVIEW = "INTERVIEW"; // 面试
 
-        public static final String SIGN_CONTRACT = "SIGN_CONTRACT"; // 签合同
+        public static final String SIGN_CONTRACT = "SIGN_CONTRACT"; // 签合同（旧）
         public static final String TRAINING = "TRAINING"; // 教师培训
         public static final String PRACTICUM = "PRACTICUM";// 试讲
 
-        public static final String SEND_DOCS="SEND_DOCS";
-        public static final String CONTRACT="CONTRACT"; //合同页面
+        public static final String SEND_DOCS="SEND_DOCS";//（新）
+        public static final String CONTRACT="CONTRACT"; //（新）合同页面
         public static final String REGULAR = "REGULAR"; // 成为正式老师Ø
         public static final String QUIT = "QUIT"; // 离职
         public static final String FAIL = "FAIL"; // 被剔除的老师，永不录用的那种

@@ -21,7 +21,9 @@ import com.vipkid.recruitment.entity.TeacherApplication;
 import com.vipkid.recruitment.interview.ConstantInterview;
 import com.vipkid.recruitment.utils.ResponseUtils;
 import com.vipkid.rest.config.RestfulConfig;
+import com.vipkid.trpm.constant.ApplicationConstant.TeacherLifeCycle;
 import com.vipkid.trpm.dao.OnlineClassDao;
+import com.vipkid.trpm.dao.TeacherDao;
 import com.vipkid.trpm.entity.OnlineClass;
 import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.proxy.OnlineClassProxy;
@@ -36,6 +38,9 @@ public class InterviewService {
     
     @Autowired
     private OnlineClassDao onlineClassDao;
+    
+    @Autowired
+    private TeacherDao teacherDao;
     
     @Autowired
     private TeacherApplicationDao teacherApplicationDao;
@@ -216,8 +221,13 @@ public class InterviewService {
         if(CollectionUtils.isEmpty(listEntity)){
             return ResponseUtils.responseFail("You have no legal power into the next phase !",this);
         }
+        //执行逻辑 只有在INTERVIEW的PASS状态才能进入
         if(TeacherApplicationDao.Status.INTERVIEW.toString().equals(listEntity.get(0).getStatus()) 
                 && TeacherApplicationDao.Result.PASS.toString().equals(listEntity.get(0).getResult())){
+            //按照新流程 该步骤将老师的LifeCycle改变为Interview -to-Training
+            teacher.setLifeCycle(TeacherLifeCycle.TRAINING);
+            this.teacherDao.insertLifeCycleLog(teacher.getId(), TeacherLifeCycle.INTERVIEW, TeacherLifeCycle.TRAINING, teacher.getId());
+            this.teacherDao.update(teacher);
             return ResponseUtils.responseSuccess();
         }
         return ResponseUtils.responseFail("You have no legal power into the next phase !",this);
