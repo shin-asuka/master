@@ -133,8 +133,8 @@ public class InterviewService {
                 return ResponseUtils.responseFail("You have booked a class already. Please refresh your page !"+onlineClassId, this);
             }
         }
-        //cancel次数必须最多CANCEL2次
-        if(this.teacherApplicationLogDao.getCancelNum(teacher.getId(),TeacherApplicationDao.Status.INTERVIEW,TeacherApplicationDao.Result.CANCEL) > ConstantInterview.CANCEL_NUM){
+        //cancel次数最多2次，如果已经cancel 3次了说明这个老师已经Fail了不允许book
+        if(getCancelNum(teacher) > ConstantInterview.CANCEL_NUM){
             return ResponseUtils.responseFail("You cancel the course number has finished can't book the class !", this);
         }
         //执行BOOK逻辑
@@ -181,7 +181,15 @@ public class InterviewService {
         }
         
         //Cancel次数已经CANCEL2次了 则直接将老师Fail
-        if(this.teacherApplicationLogDao.getCancelNum(teacher.getId(),TeacherApplicationDao.Status.INTERVIEW,TeacherApplicationDao.Result.CANCEL) >= ConstantInterview.CANCEL_NUM){
+        int count = getCancelNum(teacher);
+        
+        //如果cancel 次数已经等于3次或者4次等...当然不可能
+        if( count > ConstantInterview.CANCEL_NUM){
+            return ResponseUtils.responseFail("You cancel too many times !",this);
+        }
+        
+        //如果cancel次数已经等于2次将无法cancel
+        if(count == ConstantInterview.CANCEL_NUM){
             TeacherApplication teacherApplication = listEntity.get(0);
             teacherApplication.setResult(TeacherApplicationDao.Result.FAIL.toString());
             teacherApplication.setAuditDateTime(new Timestamp(System.currentTimeMillis()));
@@ -190,7 +198,8 @@ public class InterviewService {
         }
         
         //保存cancel记录
-        this.teacherApplicationLogDao.saveCancel(teacher.getId(), listEntity.get(0).getId(), TeacherApplicationDao.Status.INTERVIEW, TeacherApplicationDao.Result.CANCEL, onlineClass);
+        this.teacherApplicationLogDao.saveCancel(teacher.getId(), listEntity.get(0).getId(), TeacherApplicationDao.Status.INTERVIEW,
+                TeacherApplicationDao.Result.CANCEL, onlineClass);
         
         //执行Cancel逻辑
         Map<String,Object> result = OnlineClassProxy.doCancelRecruitement(teacher.getId(), onlineClass.getId(), ClassType.TEACHER_RECRUITMENT);
@@ -198,6 +207,7 @@ public class InterviewService {
             //一旦失败，抛出异常回滚
             throw new RuntimeException("The a cancel class result is fail ! "+result.get("info"));
         }
+        result.put("count", ConstantInterview.CANCEL_NUM - (count+1));
         return result;
     }
     
@@ -207,7 +217,8 @@ public class InterviewService {
      * @return int
      */
     public int getCancelNum(Teacher teacher){
-        return this.teacherApplicationLogDao.getCancelNum(teacher.getId(),TeacherApplicationDao.Status.INTERVIEW,TeacherApplicationDao.Result.CANCEL);
+        return this.teacherApplicationLogDao.getCancelNum(teacher.getId(),TeacherApplicationDao.Status.INTERVIEW,
+                TeacherApplicationDao.Result.CANCEL);
     }
     
     /**
@@ -221,6 +232,7 @@ public class InterviewService {
         if(CollectionUtils.isEmpty(listEntity)){
             return ResponseUtils.responseFail("You have no legal power into the next phase !",this);
         }
+        
         //执行逻辑 只有在INTERVIEW的PASS状态才能进入
         if(TeacherApplicationDao.Status.INTERVIEW.toString().equals(listEntity.get(0).getStatus()) 
                 && TeacherApplicationDao.Result.PASS.toString().equals(listEntity.get(0).getResult())){

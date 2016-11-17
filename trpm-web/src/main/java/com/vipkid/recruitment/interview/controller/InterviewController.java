@@ -101,24 +101,6 @@ public class InterviewController extends RestfulController {
         }
     } 
     
-    
-    @RequestMapping(value = "/getReschedule", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
-    public Map<String,Object> getReschedule(HttpServletRequest request, HttpServletResponse response){
-        try{
-            Teacher teacher = getTeacher(request);
-            logger.info("user:{},getReschedule",teacher.getId());
-            Map<String,Object> result = Maps.newHashMap();
-            result.put("count", this.interviewService.getCancelNum(teacher));
-            return ResponseUtils.responseSuccess(result); 
-        } catch (IllegalArgumentException e) {
-            response.setStatus(HttpStatus.BAD_REQUEST.value());
-            return ResponseUtils.responseFail(e.getMessage(), this);
-        } catch (Exception e) {
-            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            return ResponseUtils.responseFail(e.getMessage(), this);
-        }
-    } 
-    
 
     @RequestMapping(value = "/toTraining", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
     public Map<String,Object> toTraining(HttpServletRequest request, HttpServletResponse response){
