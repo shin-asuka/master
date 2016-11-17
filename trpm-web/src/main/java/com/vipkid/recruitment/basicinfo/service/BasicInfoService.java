@@ -155,6 +155,7 @@ public class BasicInfoService {
         user.setLastEditorId(user.getId());
         user.setLastEditDateTime(new Timestamp(System.currentTimeMillis()));
         this.userDao.update(user);
+        //更新缓存中的用户信息
         redisProxy.set(token, JsonTools.getJson(user), 12 * 60 * 60);
         //2.更新Address
         TeacherAddress teacherAddress = this.teacherAddressDao.updateOrSaveCurrentAddressId(teacher, bean.getCountryId(), bean.getStateId(), bean.getCityId(), bean.getStreetAddress(), bean.getZipCode());
