@@ -191,7 +191,7 @@ public class InterviewService {
         Map<String,Object> result = OnlineClassProxy.doCancelRecruitement(teacher.getId(), onlineClass.getId(), ClassType.TEACHER_RECRUITMENT);
         if(ResponseUtils.isFail(result)){
             //一旦失败，抛出异常回滚
-            throw new RuntimeException("The a cancel class result is fail!"+result.get("info"));
+            throw new RuntimeException("The a cancel class result is fail ! "+result.get("info"));
         }
         return result;
     }
@@ -203,6 +203,24 @@ public class InterviewService {
      */
     public int getCancelNum(Teacher teacher){
         return this.teacherApplicationLogDao.getCancelNum(teacher.getId(),TeacherApplicationDao.Status.INTERVIEW,TeacherApplicationDao.Result.CANCEL);
+    }
+    
+    /**
+     * 进入下一步骤
+     * @param teacher
+     * @return    
+     * Map&lt;String,Object&gt;
+     */
+    public Map<String,Object> toTraining(Teacher teacher){
+        List<TeacherApplication> listEntity = teacherApplicationDao.findCurrentApplication(teacher.getId());
+        if(CollectionUtils.isEmpty(listEntity)){
+            return ResponseUtils.responseFail("You have no legal power into the next phase !",this);
+        }
+        if(TeacherApplicationDao.Status.INTERVIEW.toString().equals(listEntity.get(0).getStatus()) 
+                && TeacherApplicationDao.Result.PASS.toString().equals(listEntity.get(0).getResult())){
+            return ResponseUtils.responseSuccess();
+        }
+        return ResponseUtils.responseFail("You have no legal power into the next phase !",this);
     }
     
     

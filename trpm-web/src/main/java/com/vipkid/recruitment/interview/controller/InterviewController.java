@@ -5,7 +5,6 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.collections.MapUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,9 +52,8 @@ public class InterviewController extends RestfulController {
     public Map<String,Object> bookClass(HttpServletRequest request, HttpServletResponse response,long onlineClassId){
         try{
             Map<String,Object> result = this.interviewService.bookInterviewClass(onlineClassId, getTeacher(request));
-            if(!MapUtils.getBooleanValue(result, "status")){
-                result.put("info", "The class room url not exis.");
-                response.setStatus(HttpStatus.FORBIDDEN.value()); ;  
+            if(ResponseUtils.isFail(result)){
+                response.setStatus(HttpStatus.FORBIDDEN.value());
             }
             return result;
         } catch (IllegalArgumentException e) {
@@ -72,9 +70,8 @@ public class InterviewController extends RestfulController {
     public Map<String,Object> reschedule(HttpServletRequest request, HttpServletResponse response,long onlineClassId){
         try{
             Map<String,Object> result = this.interviewService.cancelInterviewClass(onlineClassId, getTeacher(request));
-            if(!MapUtils.getBooleanValue(result, "status")){
-                result.put("info", "The class room url not exis.");
-                response.setStatus(HttpStatus.FORBIDDEN.value());  
+            if(ResponseUtils.isFail(result)){
+                response.setStatus(HttpStatus.FORBIDDEN.value());
             }
             return result;
         } catch (IllegalArgumentException e) {
@@ -91,9 +88,8 @@ public class InterviewController extends RestfulController {
     public Map<String,Object> getClassRoomUrl(HttpServletRequest request, HttpServletResponse response,long onlineClassId){
         try{
             Map<String,Object> result = this.interviewService.getClassRoomUrl(onlineClassId, getTeacher(request));
-            if(!MapUtils.getBooleanValue(result, "status")){
-                result.put("info", "The class room url not exis.");
-                response.setStatus(HttpStatus.FORBIDDEN.value()); ;  
+            if(ResponseUtils.isFail(result)){
+                response.setStatus(HttpStatus.FORBIDDEN.value());
             }
             return result;
         } catch (IllegalArgumentException e) {
@@ -122,5 +118,26 @@ public class InterviewController extends RestfulController {
             return ResponseUtils.responseFail(e.getMessage(), this);
         }
     } 
+    
+
+    @RequestMapping(value = "/toTraining", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
+    public Map<String,Object> toTraining(HttpServletRequest request, HttpServletResponse response){
+        try{
+            Teacher teacher = getTeacher(request);
+            logger.info("user:{},getReschedule",teacher.getId());
+            Map<String,Object> result = this.interviewService.toTraining(teacher);
+            if(ResponseUtils.isFail(result)){
+                response.setStatus(HttpStatus.FORBIDDEN.value());
+            }
+            return result;
+        } catch (IllegalArgumentException e) {
+            response.setStatus(HttpStatus.BAD_REQUEST.value());
+            return ResponseUtils.responseFail(e.getMessage(), this);
+        } catch (Exception e) {
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            return ResponseUtils.responseFail(e.getMessage(), this);
+        }
+    } 
+    
 
 }
