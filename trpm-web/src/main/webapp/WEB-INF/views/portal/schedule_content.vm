@@ -2,7 +2,7 @@
   #if($courseType.equals("MAJOR"))
   <div class="row">
     <div class="col-md-12">
-      <p style="line-height: 36px; font-size: 16px; color: #dd4814;"><span class="glyphicon glyphicon-bullhorn"></span> You can make a timeslot available to be booked within 24 hours now! <a href="#springUrl('/faq#booking')" target="_blank" style="color: #009fda;">Learn more...</a></p>
+      <p style="line-height: 36px; font-size: 16px; color: #dd4814;"><span class="glyphicon glyphicon-bullhorn"></span> You can make a timeslot available to be booked within 24 hours now! <a href="#springUrl('/faq/booking_course')" target="_blank" style="color: #009fda;">Learn more...</a></p>
     </div>
   </div>
   #end
