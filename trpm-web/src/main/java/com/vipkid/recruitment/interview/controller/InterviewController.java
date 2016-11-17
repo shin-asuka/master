@@ -21,7 +21,7 @@ import com.vipkid.recruitment.utils.ResponseUtils;
 import com.vipkid.rest.RestfulController;
 import com.vipkid.rest.config.RestfulConfig;
 import com.vipkid.trpm.constant.ApplicationConstant.TeacherLifeCycle;
-import com.vipkid.trpm.entity.User;
+import com.vipkid.trpm.entity.Teacher;
 
 @RestController
 @RestInterface(lifeCycle={TeacherLifeCycle.INTERVIEW,TeacherLifeCycle.REGULAR})
@@ -108,25 +108,19 @@ public class InterviewController extends RestfulController {
     
     @RequestMapping(value = "/getReschedule", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
     public Map<String,Object> getReschedule(HttpServletRequest request, HttpServletResponse response){
-        Map<String,Object> result = Maps.newHashMap();
         try{
-            User user = getUser(request);
-            logger.info("user:{},getReschedule",user.getId());
-            result.put("count", 1);
-            result.put("status", true);
-            return result;
+            Teacher teacher = getTeacher(request);
+            logger.info("user:{},getReschedule",teacher.getId());
+            Map<String,Object> result = Maps.newHashMap();
+            result.put("count", this.interviewService.getCancelNum(teacher));
+            return ResponseUtils.responseSuccess(result); 
         } catch (IllegalArgumentException e) {
-            result.clear();
-            result.put("status", false);
-            logger.error("内部参数转化异常:"+e.getMessage());
             response.setStatus(HttpStatus.BAD_REQUEST.value());
+            return ResponseUtils.responseFail(e.getMessage(), this);
         } catch (Exception e) {
-            result.clear();
-            result.put("status", false);
-            logger.error(e.getMessage(), e);
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            return ResponseUtils.responseFail(e.getMessage(), this);
         }
-        return result;
     } 
 
 }

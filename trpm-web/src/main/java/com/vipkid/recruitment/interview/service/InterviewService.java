@@ -1,5 +1,6 @@
 package com.vipkid.recruitment.interview.service;
 
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -12,15 +13,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.google.api.client.util.Maps;
 import com.vipkid.enums.OnlineClassEnum;
 import com.vipkid.recruitment.dao.InterviewDao;
 import com.vipkid.recruitment.dao.TeacherApplicationDao;
 import com.vipkid.recruitment.dao.TeacherApplicationLogDao;
 import com.vipkid.recruitment.entity.TeacherApplication;
-import com.vipkid.recruitment.entity.TeacherApplicationLog;
 import com.vipkid.recruitment.interview.ConstantInterview;
 import com.vipkid.recruitment.utils.ResponseUtils;
+import com.vipkid.rest.config.RestfulConfig;
 import com.vipkid.trpm.dao.OnlineClassDao;
 import com.vipkid.trpm.entity.OnlineClass;
 import com.vipkid.trpm.entity.Teacher;
@@ -61,19 +61,35 @@ public class InterviewService {
     
     /**
      * 用户interview进教室
-     * TODO
-     * 1.开课前1小时以后可以获取教室URL
+     * 1.课程合法性验证
      * 2.必须是处于Interview的待上课的老师可以获取URL
-     * 3.课程合法性验证
      * @param onlineClassId
      * @param teacher
      * @return    
      * Map&lt;String,Object&gt;
      */
     public Map<String,Object> getClassRoomUrl(long onlineClassId,Teacher teacher){
-       Map<String,Object> result = Maps.newHashMap();
-       OnlineClass onlineClass = this.onlineClassDao.findById(onlineClassId);
-       result = OnlineClassProxy.generateRoomEnterUrl(teacher.getId()+"", teacher.getRealName(),onlineClass.getClassroom(), OnlineClassProxy.RoomRole.TEACHER, onlineClass.getSupplierCode());
+        OnlineClass onlineClass = this.onlineClassDao.findById(onlineClassId);
+        
+       //课程没有找到，无法book
+       if(onlineClass == null){
+           return ResponseUtils.responseFail("The online class not exis:"+onlineClassId,this);
+       }
+       //判断教室是否创建好
+       if(StringUtils.isBlank(onlineClass.getClassroom())){
+           return ResponseUtils.responseFail("The classroom is null:"+onlineClassId,this);
+       }
+       //课程必须是当前步骤中的数据
+       List<TeacherApplication> listEntity = this.teacherApplicationDao.findCurrentApplication(teacher.getId());  
+       if(CollectionUtils.isEmpty(listEntity)){
+           return ResponseUtils.responseFail("You cannot enter this classroom!",this);
+       }
+       //进教室权限判断    
+       if(listEntity.get(0).getOnlineClassId() != onlineClassId){
+           return ResponseUtils.responseFail("You cannot enter this classroom!",this);
+       }
+       
+       Map<String,Object> result = OnlineClassProxy.generateRoomEnterUrl(teacher.getId()+"", teacher.getRealName(),onlineClass.getClassroom(), OnlineClassProxy.RoomRole.TEACHER, onlineClass.getSupplierCode());
        return result;
     }
     
@@ -90,8 +106,14 @@ public class InterviewService {
      */
     public Map<String,Object> bookInterviewClass(long onlineClassId,Teacher teacher){
         OnlineClass onlineClass = this.onlineClassDao.findById(onlineClassId);
+        
+        //课程没有找到，无法book
+        if(onlineClass == null){
+            return ResponseUtils.responseFail("The online class not exis:"+onlineClassId,this);
+        }
+        
         //onlineClassId 必须是OPEN 课
-        if(onlineClass == null || OnlineClassEnum.Status.OPEN.toString().equalsIgnoreCase(onlineClass.getStatus())){
+        if(OnlineClassEnum.Status.OPEN.toString().equalsIgnoreCase(onlineClass.getStatus())){
             return ResponseUtils.responseFail("This class("+onlineClassId+") is empty or anyone else has been booked !", this);
         }
         //book的课程在开课前1小时之内不允许book
@@ -106,19 +128,15 @@ public class InterviewService {
                 return ResponseUtils.responseFail("You have booked a class already. Please refresh your page !"+onlineClassId, this);
             }
         }
-        //cancel次数必须小于3次
-        TeacherApplicationLog bean = new TeacherApplicationLog();
-        bean.setTeacherId(teacher.getId());
-        bean.setStatus(TeacherApplicationDao.Status.INTERVIEW.toString());
-        bean.setResult(TeacherApplicationDao.Result.REAPPLY.toString());
-        List<TeacherApplicationLog> listLog = teacherApplicationLogDao.selectList(bean);
-        if(CollectionUtils.isNotEmpty(listLog) && listLog.size() > ConstantInterview.CANCEL_NUM){
+        //cancel次数必须最多CANCEL2次
+        if(this.teacherApplicationLogDao.getCancelNum(teacher.getId(),TeacherApplicationDao.Status.INTERVIEW,TeacherApplicationDao.Result.CANCEL) > ConstantInterview.CANCEL_NUM){
             return ResponseUtils.responseFail("You cancel the course number has finished can't book the class !", this);
         }
         //执行BOOK逻辑
         String dateTime = DateFormatUtils.format(onlineClass.getScheduledDateTime(),"yyyy-MM-dd HH:mm:ss");
         Map<String,Object> result = OnlineClassProxy.doBookRecruitment(teacher.getId(), onlineClass.getId(), ClassType.TEACHER_RECRUITMENT,dateTime);
         if(ResponseUtils.isFail(result)){
+           //一旦失败，抛出异常回滚
            throw new RuntimeException("The a book class result is fail!"+result.get("info"));
         }
         return result;
@@ -126,7 +144,6 @@ public class InterviewService {
     
     /***
      * CANCEL INTERVIEW 
-     * TODO
      * 1.课程合法性验证
      * 2.开课前1小时不允许取消课程
      * 3.必须是处于Interview的带上课的老师可以取消课程
@@ -138,23 +155,55 @@ public class InterviewService {
      */
     public Map<String,Object> cancelInterviewClass(long onlineClassId,Teacher teacher){
         OnlineClass onlineClass = this.onlineClassDao.findById(onlineClassId);
+        
         //课程没有找到，无法取消
         if(onlineClass == null){
             return ResponseUtils.responseFail("The online class not exis:"+onlineClassId,this);
         }
-        //离上课时间不到1小时,不能取消课程
-        if(System.currentTimeMillis() > onlineClass.getScheduledDateTime().getTime() - 60*60*1000){
+        
+        //book的课程在开课前1小时之内不允许cancel
+        if(System.currentTimeMillis() + ConstantInterview.CANCEL_TIME > onlineClass.getScheduledDateTime().getTime()){
             return ResponseUtils.responseFail("The online class will begin,can't rescheduled"+onlineClassId,this);
         }
+        
         //课程必须是当前步骤中的数据
         List<TeacherApplication> listEntity = this.teacherApplicationDao.findCurrentApplication(teacher.getId());       
         if(listEntity != null && listEntity.size() > 0){
             TeacherApplication teacherApplication = listEntity.get(0);
-            if(onlineClassId != teacherApplication.getOnlineClassId()){     
-                return ResponseUtils.responseFail("You have already cancelled this class. Please refresh your page.",this);
+            if(teacherApplication.getOnlineClassId() == 0){     
+                return ResponseUtils.responseFail("You have already cancelled this class. Please refresh your page !",this);
             }
         }
-        return OnlineClassProxy.doCancelRecruitement(teacher.getId(), onlineClass.getId(), ClassType.TEACHER_RECRUITMENT);
+        
+        //Cancel次数已经CANCEL2次了 则直接将老师Fail
+        if(this.teacherApplicationLogDao.getCancelNum(teacher.getId(),TeacherApplicationDao.Status.INTERVIEW,TeacherApplicationDao.Result.CANCEL) >= ConstantInterview.CANCEL_NUM){
+            TeacherApplication teacherApplication = listEntity.get(0);
+            teacherApplication.setResult(TeacherApplicationDao.Result.FAIL.toString());
+            teacherApplication.setAuditDateTime(new Timestamp(System.currentTimeMillis()));
+            teacherApplication.setAuditorId(RestfulConfig.SYSTEM_USER_ID);
+            teacherApplication.setFailedReason("Cancel too many times !");
+        }
+        
+        //保存cancel记录
+        this.teacherApplicationLogDao.saveCancel(teacher.getId(), listEntity.get(0).getId(), TeacherApplicationDao.Status.INTERVIEW, TeacherApplicationDao.Result.CANCEL, onlineClass);
+        
+        //执行Cancel逻辑
+        Map<String,Object> result = OnlineClassProxy.doCancelRecruitement(teacher.getId(), onlineClass.getId(), ClassType.TEACHER_RECRUITMENT);
+        if(ResponseUtils.isFail(result)){
+            //一旦失败，抛出异常回滚
+            throw new RuntimeException("The a cancel class result is fail!"+result.get("info"));
+        }
+        return result;
     }
+    
+    /**
+     * 获取老师对Interview 课程的Cancel 次数
+     * @param teacher
+     * @return int
+     */
+    public int getCancelNum(Teacher teacher){
+        return this.teacherApplicationLogDao.getCancelNum(teacher.getId(),TeacherApplicationDao.Status.INTERVIEW,TeacherApplicationDao.Result.CANCEL);
+    }
+    
     
 }

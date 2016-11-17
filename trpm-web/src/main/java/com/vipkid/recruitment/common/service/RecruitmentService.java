@@ -13,6 +13,7 @@ import com.vipkid.enums.OnlineClassEnum;
 import com.vipkid.enums.TeacherApplicationEnum;
 import com.vipkid.recruitment.dao.TeacherApplicationDao;
 import com.vipkid.recruitment.entity.TeacherApplication;
+import com.vipkid.rest.dto.TimezoneDto;
 import com.vipkid.trpm.dao.OnlineClassDao;
 import com.vipkid.trpm.dao.TeacherAddressDao;
 import com.vipkid.trpm.dao.TeacherDao;
@@ -173,9 +174,10 @@ public class RecruitmentService {
      * @return    
      * boolean
      */
-    public boolean updateTimezone(String timezone,Teacher teacher){
-        teacher.setTimezone(timezone);
+    public boolean updateTimezone(TimezoneDto bean,Teacher teacher){
+        teacher.setTimezone(bean.getTimezone());
         this.teacherDao.update(teacher);
+        //是否需要更新TeacherAddress ?
         return true;
     }
 }

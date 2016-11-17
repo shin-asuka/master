@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -19,6 +20,7 @@ import com.vipkid.recruitment.interceptor.RestInterface;
 import com.vipkid.recruitment.utils.ResponseUtils;
 import com.vipkid.rest.RestfulController;
 import com.vipkid.rest.config.RestfulConfig;
+import com.vipkid.rest.dto.TimezoneDto;
 import com.vipkid.rest.web.LoginController;
 import com.vipkid.trpm.constant.ApplicationConstant.TeacherLifeCycle;
 import com.vipkid.trpm.entity.Teacher;
@@ -66,8 +68,8 @@ public class RecruitmentController extends RestfulController{
         }
     } 
     
-    @RequestMapping(value = "/timezone", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
-    public Map<String,Object> timezone(HttpServletRequest request, HttpServletResponse response,String timezone){
+    @RequestMapping(value = "/timezone", method = RequestMethod.POST, produces = RestfulConfig.JSON_UTF_8)
+    public Map<String,Object> timezone(HttpServletRequest request, HttpServletResponse response,@RequestBody TimezoneDto timezone){
         try{
             Teacher teacher = getTeacher(request);
             logger.info("user:{},timezone",teacher.getId());
