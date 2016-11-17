@@ -101,12 +101,12 @@ public class BasicInfoController extends RestfulController{
                 resultRow = this.teachingExperienceService.saveTeaching(teachingExperience, user);
             }
             Map<String,Object> result = Maps.newHashMap();
-            result.put("id", resultRow);
             result.put("status", resultRow > 0 ? true : false);
             if(ResponseUtils.isFail(result)){
                 response.setStatus(HttpStatus.FORBIDDEN.value());
                 return ResponseUtils.responseFail("Save or Update fail",result,this);
             }
+            result.put("id", resultRow);
             return result;
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
@@ -125,12 +125,12 @@ public class BasicInfoController extends RestfulController{
             long resultRow = 0;
             User user = getUser(request);
             resultRow = this.teachingExperienceService.delTeaching(id, user);
-            result.put("id", resultRow);
             result.put("status", resultRow > 0 ? true : false);
             if(ResponseUtils.isFail(result)){
                 response.setStatus(HttpStatus.FORBIDDEN.value());
                 return ResponseUtils.responseFail("Save or Update fail",result,this);
             }
+            result.put("id", resultRow);
             return result;
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
