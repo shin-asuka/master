@@ -43,4 +43,13 @@ public class ResponseUtils {
         }
         return prames;
     }
+    
+    public static boolean isSuccess(Map<String,Object> map){
+        return MapUtils.getBooleanValue(map,"status");
+    }
+    
+    public static boolean isFail(Map<String,Object> map){
+        return !isSuccess(map);
+    }
+    
 }
