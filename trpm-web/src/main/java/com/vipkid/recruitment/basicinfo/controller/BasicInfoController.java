@@ -7,7 +7,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.MapUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -104,9 +103,9 @@ public class BasicInfoController extends RestfulController{
             Map<String,Object> result = Maps.newHashMap();
             result.put("id", resultRow);
             result.put("status", resultRow > 0 ? true : false);
-            if(!MapUtils.getBooleanValue(result, "status")){
-                response.setStatus(HttpStatus.BAD_REQUEST.value());
-                return ResponseUtils.responseFail("Save or Update fail", this);
+            if(ResponseUtils.isFail(result)){
+                response.setStatus(HttpStatus.FORBIDDEN.value());
+                return ResponseUtils.responseFail("Save or Update fail",result,this);
             }
             return result;
         } catch (IllegalArgumentException e) {
@@ -128,9 +127,9 @@ public class BasicInfoController extends RestfulController{
             resultRow = this.teachingExperienceService.delTeaching(id, user);
             result.put("id", resultRow);
             result.put("status", resultRow > 0 ? true : false);
-            if(!MapUtils.getBooleanValue(result, "status")){
-                response.setStatus(HttpStatus.BAD_REQUEST.value());
-                return ResponseUtils.responseFail("Save or Update fail", this);
+            if(ResponseUtils.isFail(result)){
+                response.setStatus(HttpStatus.FORBIDDEN.value());
+                return ResponseUtils.responseFail("Save or Update fail",result,this);
             }
             return result;
         } catch (IllegalArgumentException e) {
@@ -145,27 +144,23 @@ public class BasicInfoController extends RestfulController{
     @Deprecated
     @RequestMapping(value = "/saveInfo", method = RequestMethod.POST, produces = RestfulConfig.JSON_UTF_8)
     public Map<String,Object> saveInfo(HttpServletRequest request, HttpServletResponse response,@RequestBody BasicInfoBean bean){
-        Map<String,Object> result = Maps.newHashMap();
         try{
             User user = getUser(request);
-            return this.basicInfoService.saveInfo(bean, user);
+            Map<String,Object> result = this.basicInfoService.saveInfo(bean, user);
         } catch (IllegalArgumentException e) {
-            logger.error("内部参数转化异常:"+e.getMessage());
             response.setStatus(HttpStatus.BAD_REQUEST.value());
-            result.put("status", false);
+            return ResponseUtils.responseFail(e.getMessage(), this);
         } catch (Exception e) {
-            logger.error(e.getMessage(), e);
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            result.put("status", false);
+            return ResponseUtils.responseFail(e.getMessage(), this);
         }
-        return result;
     } */
     
     
     @RequestMapping(value = "/submitInfo", method = RequestMethod.POST, produces = RestfulConfig.JSON_UTF_8)
     public Map<String,Object> submitInfo(HttpServletRequest request, HttpServletResponse response,@RequestBody TeacherDto bean){
-        Map<String,Object> result = Maps.newHashMap();
         try{
+            Map<String,Object> result = Maps.newHashMap();
             List<Result> list = ValidateUtils.checkBean(bean,false);
             if(CollectionUtils.isNotEmpty(list) && list.get(0).isResult()){
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
@@ -186,9 +181,8 @@ public class BasicInfoController extends RestfulController{
             User user = getUser(request);
             String token = request.getHeader(RestfulController.AUTOKEN);
             result = this.basicInfoService.submitInfo(bean,user,token);
-            if(!MapUtils.getBooleanValue(result, "status")){
+            if(ResponseUtils.isFail(result)){
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
-                return ResponseUtils.responseFail(result.get("info")+"", this);
             }
             return result;
         } catch (IllegalArgumentException e) {
@@ -203,45 +197,36 @@ public class BasicInfoController extends RestfulController{
         
     @RequestMapping(value = "/findTeacher", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
     public Map<String,Object> findTeacher(HttpServletRequest request, HttpServletResponse response){
-        Map<String,Object> result = Maps.newHashMap();
         try{
+            Map<String,Object> result = Maps.newHashMap();
             User user = getUser(request);
             logger.info("userId:{}",user.getId());
-            List<Map<String,Object>> list = this.basicInfoService.findTeacher();
-            result.put("list", list);
-            return result;
+            result.put("list", this.basicInfoService.findTeacher());
+            return ResponseUtils.responseSuccess(result);
         } catch (IllegalArgumentException e) {
-            result.clear();
-            result.put("status", false);
-            logger.error("内部参数转化异常:"+e.getMessage());
             response.setStatus(HttpStatus.BAD_REQUEST.value());
+            return ResponseUtils.responseFail(e.getMessage(), this);
         } catch (Exception e) {
-            result.clear();
-            result.put("status", false);
-            logger.error(e.getMessage(), e);
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            return ResponseUtils.responseFail(e.getMessage(), this);
         }
-        return result;
     }
     
     @RequestMapping(value = "/findPhoneCode", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
     public Map<String,Object> findPhoneCode(HttpServletRequest request, HttpServletResponse response){
-        Map<String,Object> result = Maps.newHashMap();
         try{
+            Map<String,Object> result = Maps.newHashMap();
             User user = getUser(request);
             logger.info("userId:{}",user.getId());
             List<TeacherNationalityCode> list = this.basicInfoService.getTeacherNationalityCodes();
             result.put("list", list);
-            return result;
+            return ResponseUtils.responseSuccess(result);
         } catch (IllegalArgumentException e) {
-            result.clear();
-            logger.error("内部参数转化异常:"+e.getMessage());
             response.setStatus(HttpStatus.BAD_REQUEST.value());
+            return ResponseUtils.responseFail(e.getMessage(), this);
         } catch (Exception e) {
-            result.clear();
-            logger.error(e.getMessage(), e);
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            return ResponseUtils.responseFail(e.getMessage(), this);
         }
-        return result;
     }
 }

@@ -113,8 +113,7 @@ public class BasicInfoService {
         this.initTeacher(teacher, bean);
         this.teacherDao.update(teacher);
         result.put("id", user.getId());
-        result.put("status", true);
-        return result;
+        return ResponseUtils.responseSuccess(result);
     }
     
     /**

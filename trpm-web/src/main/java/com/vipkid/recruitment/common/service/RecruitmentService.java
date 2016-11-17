@@ -88,9 +88,15 @@ public class RecruitmentService {
         //已经审核 结果【FAIL,PASS,REPLAY】
         if(StringUtils.isNotBlank(teacherApplication.getResult())){
             resultMap.put("result",teacherApplication.getResult());
+            if(StringUtils.equalsIgnoreCase(TeacherApplicationDao.Result.FAIL.toString(),teacherApplication.getResult())
+                    || StringUtils.equalsIgnoreCase(TeacherApplicationDao.Result.REAPPLY.toString(),teacherApplication.getResult())){
+                //失败原因
+                resultMap.put("failedReason",teacherApplication.getFailedReason());
+                //重来备注
+                resultMap.put("comments",teacherApplication.getComments());
+            }
             return resultMap;
-        }
-        
+        }        
         return resultMap;
     }
     
@@ -120,6 +126,7 @@ public class RecruitmentService {
                 if(OnlineClassEnum.Status.BOOKED.toString().equals(onlineClass.getStatus())){
                     result.put("serverTime",System.currentTimeMillis());
                     result.put("scheduledDateTime",onlineClass.getScheduledDateTime().getTime());
+                    result.put("onlineClassId", onlineClass.getId());
                     //小于1个小时 可进入onlineClass
                     if(!DateUtils.count1h(onlineClass.getScheduledDateTime().getTime())){
                         result.put("result",TeacherApplicationDao.AuditStatus.goToClass.toString());
