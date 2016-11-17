@@ -15,4 +15,8 @@
         <property name="serverAddress" value="${homework.serverAddress}"/>
     </bean>
     
+    <bean id="teacherAppService" class="com.vipkid.http.service.TeacherAppService">
+        <property name="serverAddress" value="${teacherApp.serverAddress}"/>
+    </bean>
+    
 </beans>
