@@ -1,10 +1,12 @@
 package com.vipkid.recruitment.common.controller;
 
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +23,8 @@ import com.vipkid.recruitment.utils.ResponseUtils;
 import com.vipkid.rest.RestfulController;
 import com.vipkid.rest.config.RestfulConfig;
 import com.vipkid.rest.dto.TimezoneDto;
+import com.vipkid.rest.validation.ValidateUtils;
+import com.vipkid.rest.validation.tools.Result;
 import com.vipkid.rest.web.LoginController;
 import com.vipkid.trpm.constant.ApplicationConstant.TeacherLifeCycle;
 import com.vipkid.trpm.entity.Teacher;
@@ -72,6 +76,11 @@ public class RecruitmentController extends RestfulController{
     public Map<String,Object> timezone(HttpServletRequest request, HttpServletResponse response,@RequestBody TimezoneDto timezone){
         try{
             Teacher teacher = getTeacher(request);
+            List<Result> list = ValidateUtils.checkBean(timezone,false);
+            if(CollectionUtils.isNotEmpty(list) && list.get(0).isResult()){
+                response.setStatus(HttpStatus.BAD_REQUEST.value());
+                return ResponseUtils.responseFail(list.get(0).getName() + "," + list.get(0).getMessages(), this);
+            }
             logger.info("user:{},timezone",teacher.getId());
             this.recruitmentService.updateTimezone(timezone, teacher);
             return ResponseUtils.responseSuccess();
