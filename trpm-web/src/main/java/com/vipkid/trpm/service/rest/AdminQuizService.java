@@ -57,8 +57,7 @@ public class AdminQuizService {
     
     @Autowired
     private AppRestfulDao appRestfulDao;
-    
-    
+
     /**
      * is first quiz 
      * @Author:ALong (ZengWeiLong)

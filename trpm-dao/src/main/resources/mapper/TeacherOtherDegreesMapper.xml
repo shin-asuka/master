@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="TeacherOtherDegreesMapper">
+
+    <insert id="saveDao" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO teacher_other_degrees
+        <trim prefix="(" prefixOverrides=",">
+            <if test="id!=0">,id</if>
+            <if test="teacherId!=0">,teacher_id</if>
+            <if test="degrees!=null">,teacher_other_degrees</if>
+            <if test="createTime!=null">,create_time</if>
+            <if test="updateTime!=null">,update_time</if>
+            <if test="createId!=null">,create_id</if>
+            <if test="updateId!=null">,update_id</if>
+        </trim>
+        ) VALUES
+        <trim prefix="(" prefixOverrides=",">
+            <if test="id!=0">,#{id{}</if>
+            <if test="teacherId!=0">,#{teacherId}</if>
+            <if test="degrees!=null">,#{degrees}</if>
+            <if test="createTime!=null">,#{createTime}</if>
+            <if test="updateTime!=null">,#{updateTime}</if>
+            <if test="createId!=null">,#{createId}</if>
+            <if test="updateId!=null">,#{updateId}</if>
+        </trim>
+        )
+    </insert>
+
+</mapper>

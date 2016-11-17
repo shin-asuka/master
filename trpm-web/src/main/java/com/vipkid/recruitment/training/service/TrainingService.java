@@ -20,36 +20,20 @@ public class TrainingService {
 
     @Autowired
     private TeacherDao teacherDao;
-    private TeacherApplicationDao teacherApplicationDao;
     /**
      * Next --> 更新步骤<br/>
-     * @Author:ALong
      * @param teacher
-     * @return 2015年10月14日
+     * @return
      */
     public Teacher toPracticum(Teacher teacher){
         // 如果当前为第4步 则状态变更为第5步骤，否则不做任何变更
         teacher = teacherDao.findById(teacher.getId());
         if(TeacherEnum.LifeCycle.TRAINING.toString().equals(teacher.getLifeCycle())){
+            logger.info("用户{}转变到Practicum",teacher.getId());
             teacher.setLifeCycle(TeacherEnum.LifeCycle.PRACTICUM.toString());
             this.teacherDao.update(teacher);
         }
         return teacher;
-    }
-
-    /**
-     * 查询  该教师 Current = 1 的步骤记录<br/>
-     * @Author:ALong
-     * @param teacherId
-     * @return 2015年10月13日
-     */
-    public TeacherApplication findAppliction(long teacherId){
-        //List<TeacherApplication> list = teacherApplicationDao.findByTeacherId(teacherId,TeacherApplicationEnum.Status.TRAINING.toString());
-        List<TeacherApplication> list = teacherApplicationDao.findCurrentApplication(teacherId);
-        if(list != null && list.size() > 0){
-            return list.get(0);
-        }
-        return null;
     }
 
 }

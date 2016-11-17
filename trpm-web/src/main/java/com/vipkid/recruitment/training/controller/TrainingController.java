@@ -1,5 +1,4 @@
 package com.vipkid.recruitment.training.controller;
-
 import com.google.common.collect.Maps;
 import com.vipkid.enums.TeacherEnum;
 import com.vipkid.enums.TeacherQuizEnum;
@@ -8,7 +7,6 @@ import com.vipkid.recruitment.training.service.TrainingService;
 import com.vipkid.rest.RestfulController;
 import com.vipkid.rest.config.RestfulConfig;
 import com.vipkid.trpm.constant.ApplicationConstant;
-
 import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.entity.TeacherQuiz;
 import com.vipkid.trpm.entity.User;
@@ -22,7 +20,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
@@ -44,6 +41,7 @@ public class TrainingController extends RestfulController {
     private TrainingService trainingService;
 
     /**
+     * @author zhangzhaojun
      * 查找用户是否存在待考记录
      * @param request
      * @param response
@@ -54,7 +52,7 @@ public class TrainingController extends RestfulController {
         Map<String,Object> result = Maps.newHashMap();
         result.put("need",false);
         try{
-            User user = getUser(request);
+           User user = getUser(request);
             result.put("need",this.adminQuizService.findNeedQuiz(user.getId()));
             return result;
         } catch (IllegalArgumentException e) {
@@ -73,7 +71,7 @@ public class TrainingController extends RestfulController {
      * @param response
      * @return result
      */
-    @RequestMapping(value = "/startQuiz", method = RequestMethod.POST, produces = RestfulConfig.JSON_UTF_8)
+    @RequestMapping(value = "/startQuiz", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
     public Map<String,Object> startQuiz(HttpServletRequest request, HttpServletResponse response){
         Map<String,Object> result = Maps.newHashMap();
         result.put("quizToken", 0);
@@ -107,7 +105,7 @@ public class TrainingController extends RestfulController {
         result.put("result", false);
         try{
             User user = getUser(request);
-            logger.info("用户{}提交分数:{}",user.getId(),grade);
+            logger.info("用户{}提交grade:{}",user.getId(),grade);
             result.put("result",this.adminQuizService.saveQuizResult(user.getId(), grade,quizToken));
             return result;
         } catch (IllegalArgumentException e) {
@@ -131,7 +129,7 @@ public class TrainingController extends RestfulController {
         Map<String,Object> result = Maps.newHashMap();
         try{
             User user = getUser(request);
-            logger.info("用户{}查询最后一次考试记录:{}",user.getId());
+            logger.info("用户{}查询最后一次考试记录",user.getId());
             //查询用户最后一次考试记录
             List<TeacherQuiz> list = adminQuizService.getLastQuiz(user.getId());
             if(CollectionUtils.isNotEmpty(list)){
@@ -160,7 +158,7 @@ public class TrainingController extends RestfulController {
     public  Map<String,Object> toPracticum(HttpServletRequest request,HttpServletResponse response){
         Teacher teacher = getTeacher(request);
         teacher = this.trainingService.toPracticum(teacher);
-        logger.info("用户{}跳转到Practicum:{}",teacher.getId());
+        logger.info("用户{}跳转到Practicum",teacher.getId());
         Map<String,Object> recMap = new HashMap<String,Object>();
         if(TeacherEnum.LifeCycle.PRACTICUM.toString().equals(teacher.getLifeCycle())){
             recMap.put("info", true);
