@@ -8,7 +8,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.api.client.util.Maps;
-
+/**
+ * 定义返回Map status 必须 
+ * @author Along 
+ *
+ */
 public class ResponseUtils {
 
     public static Map<String,Object> responseFail(String info,Class<?> c){
