@@ -21,6 +21,7 @@ import com.vipkid.email.templete.TempleteUtils;
 import com.vipkid.enums.Role;
 import com.vipkid.enums.TeacherEnum;
 import com.vipkid.enums.UserEnum;
+import com.vipkid.recruitment.utils.ResponseUtils;
 import com.vipkid.trpm.constant.ApplicationConstant;
 import com.vipkid.trpm.dao.AppRestfulDao;
 import com.vipkid.trpm.dao.TeacherDao;
@@ -175,13 +176,10 @@ public class PassportService {
                         AES.getKey(AES.KEY_LENGTH_128, ApplicationConstant.AES_128_KEY)));
             }
             resultMap.put("user", user);
-            resultMap.put("info", ApplicationConstant.AjaxCode.SUCCESS_CODE);
-            resultMap.put("result", true);
+            return ResponseUtils.responseSuccess(resultMap);
         } else {
-            resultMap.put("result", false);
-            resultMap.put("info", ApplicationConstant.AjaxCode.ERROR_CODE);
+            return ResponseUtils.responseFail(ApplicationConstant.AjaxCode.ERROR_CODE, this);
         }
-        return resultMap;
     }
 
     /**
@@ -218,7 +216,7 @@ public class PassportService {
      * @return String
      * @date 2016年3月3日
      */
-    public Map<String, String> senEmailForPassword(User user) {
+    public Map<String, Object> senEmailForPassword(User user) {
         Teacher teacher = this.findTeacherById(user.getId());
         teacher.setRecruitmentId(this.updateRecruitmentId(teacher));
         TempleteUtils templete = new TempleteUtils();
@@ -233,9 +231,7 @@ public class PassportService {
         Map<String, String> sendMap = templete.readTemplete("VIPKIDPasswordResetLink.html", map,
                 "VIPKIDPasswordResetLink-Title.html");
         new EmailEngine().addMailPool(teacher.getEmail(), sendMap, EmailFormEnum.TEACHVIP);
-        Map<String, String> resultMap = Maps.newHashMap();
-        resultMap.put("info", ApplicationConstant.AjaxCode.SUCCESS_CODE);
-        return resultMap;
+        return ResponseUtils.responseSuccess();
     }
 
     /**
