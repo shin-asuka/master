@@ -379,11 +379,11 @@
                     <li><a href="#springUrl('/te')">TE</a></li>
                 #end
                 #if($isTes)
-                    <li><a href="#springUrl('/te-supervisor')">TES</a></li>
+                    <li><a href="#springUrl('/te-supervisor')">TE Supervisor</a></li>
                 #end
                 #if($isPes)
                     <li class="$!{activeClassroomsPe}">
-                        <a href="#springUrl('/pesupervisor.shtml')">PES</a>
+                        <a href="#springUrl('/pesupervisor.shtml')">PE Supervisor</a>
                     </li>
                 #end
                 <li class="$!{activePayrollInfo}">
