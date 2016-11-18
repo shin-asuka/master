@@ -11,16 +11,6 @@ public class RestfulConfig {
     
     public static long SYSTEM_USER_ID = 2;
 
-
-    public static final class Port{
-        
-        public static int TEACHER = 1;
-        
-        public static int RECRUITMENT = 2;
-        
-        public static int NEWRECRUITMENT = 3;
-    }
-    
     public static final class RoleClass{
         
         public static String PE = "PE";
