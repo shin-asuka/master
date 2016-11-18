@@ -96,9 +96,10 @@ public class PracticumService {
         }
         //约课老师必须是Practicum的待约课老师
         List<TeacherApplication> listEntity = teacherApplicationDao.findCurrentApplication(teacher.getId());
-        if(listEntity != null && listEntity.size() > 0){
+        if(CollectionUtils.isNotEmpty(listEntity)){
             TeacherApplication teacherApplication = listEntity.get(0);
-            if(teacherApplication.getOnlineClassId() > 0 && StringUtils.isBlank(teacherApplication.getResult())){
+            //存在步骤，但步骤中已经存在待审核的课程 不允许继续book
+            if(teacherApplication.getOnlineClassId() != 0 && StringUtils.isNotBlank(teacherApplication.getResult())){
                 return ResponseUtils.responseFail("You have booked a class already. Please refresh your page! "+onlineClassId, this);
             }
         }
@@ -127,15 +128,23 @@ public class PracticumService {
 
         //book的课程在开课前1小时之内不允许cancel
         if(System.currentTimeMillis() + PracticumConstant.CANCEL_TIME > onlineClass.getScheduledDateTime().getTime()){
-            return ResponseUtils.responseFail("The online class will begin, can't be rescheduled "+onlineClassId,this);
+            return ResponseUtils.responseFail("The online class will begin, can't be rescheduled: "+onlineClassId,this);
         }
 
-        //课程必须是当前步骤中的数据
         List<TeacherApplication> listEntity = this.teacherApplicationDao.findCurrentApplication(teacher.getId());
-        if(listEntity != null && listEntity.size() > 0){
+        //如果步骤中无数据则不允许cancel
+        if(CollectionUtils.isEmpty(listEntity)){
+            return ResponseUtils.responseFail("You don't have permission to cancel this course: "+onlineClassId,this);
+        }else{
             TeacherApplication teacherApplication = listEntity.get(0);
-            if(teacherApplication.getOnlineClassId() != onlineClassId){
+            //如果步骤中有数据并且数据不是本次cancel的课程 则不允许cancel
+            if(teacherApplication.getOnlineClassId() != onlineClass.getId()){
                 return ResponseUtils.responseFail("You have already cancelled this class. Please refresh your page!",this);
+            }else{
+                //如果步骤中有数据并且数据不是本次cancel的课程 但管理端已经审核，不允许cancel
+                if(StringUtils.isNotBlank(teacherApplication.getResult())){
+                    return ResponseUtils.responseFail("This class is already audited. Please refresh your page!",this);
+                }
             }
         }
 
@@ -189,7 +198,7 @@ public class PracticumService {
     public Map<String,Object> toContract(Teacher teacher){
         List<TeacherApplication> listEntity = teacherApplicationDao.findCurrentApplication(teacher.getId());
         if(CollectionUtils.isEmpty(listEntity)){
-            return ResponseUtils.responseFail("You are not authorized to enter into next phase!",this);
+            return ResponseUtils.responseFail("You don't have permission to enter into next phase!",this);
         }
 
         //执行逻辑 只有在Practicum的PASS状态才能进入
@@ -201,7 +210,7 @@ public class PracticumService {
             this.teacherDao.update(teacher);
             return ResponseUtils.responseSuccess();
         }
-        return ResponseUtils.responseFail("You are not authorized to enter into next phase!",this);
+        return ResponseUtils.responseFail("You don't have permission to enter into next phase!",this);
     }
 
 }
