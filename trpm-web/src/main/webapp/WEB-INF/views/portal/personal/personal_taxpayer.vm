@@ -24,7 +24,7 @@
 		grow as a global leader in online education. 
         </p><p>
         For all queries related to the tax forms, please find our 
-		<a target="_blank"  href="/faq#taxes-timing" style="color:#red;">FAQs here</a>.
+		<a target="_blank"  href="#springUrl('/faq/taxes')" style="color:#red;">FAQs here</a>.
 		 For information on how to upload your information,
 		<a target="_blank" download="download" href="http://teacher-data.vipkid.com.cn/teacher/taxpayer/doc/UploadDemo.pdf" style="color:#red;">click here</a>.
         </p><p>
