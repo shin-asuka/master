@@ -3,35 +3,47 @@ package com.vipkid.recruitment.practicum.service;
 import com.vipkid.enums.OnlineClassEnum;
 import com.vipkid.recruitment.dao.PracticumDao;
 import com.vipkid.recruitment.dao.TeacherApplicationDao;
+import com.vipkid.recruitment.dao.TeacherApplicationLogDao;
 import com.vipkid.recruitment.entity.TeacherApplication;
+import com.vipkid.recruitment.practicum.PracticumConstant;
 import com.vipkid.recruitment.utils.ResponseUtils;
+import com.vipkid.rest.config.RestfulConfig;
+import com.vipkid.trpm.constant.ApplicationConstant.TeacherLifeCycle;
 import com.vipkid.trpm.dao.OnlineClassDao;
+import com.vipkid.trpm.dao.TeacherDao;
 import com.vipkid.trpm.entity.OnlineClass;
 import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.proxy.OnlineClassProxy;
 import com.vipkid.trpm.proxy.OnlineClassProxy.ClassType;
 import com.vipkid.trpm.util.DateUtils;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
 public class PracticumService {
-    
-    private static Logger logger = LoggerFactory.getLogger(PracticumService.class);
     @Autowired
     private PracticumDao practicumDao;
     @Autowired
+    private OnlineClassDao onlineClassDao;
+    @Autowired
+    private TeacherDao teacherDao;
+    @Autowired
     private TeacherApplicationDao teacherApplicationDao;
     @Autowired
-    private OnlineClassDao onlineClassDao;
+    private TeacherApplicationLogDao teacherApplicationLogDao;
+
+    private static Logger logger = LoggerFactory.getLogger(PracticumService.class);
 
     public List<Map<String,Object>> findTimeList(){
         String fromTime = LocalDateTime.now().plusHours(1).format(DateUtils.FMT_YMD_HMS);
@@ -43,55 +55,153 @@ public class PracticumService {
 
     public Map<String,Object> getClassRoomUrl(long onlineClassId,Teacher teacher){
         OnlineClass onlineClass = this.onlineClassDao.findById(onlineClassId);
+
+        //课程没有找到，无法book
+        if(onlineClass == null){
+            return ResponseUtils.responseFail("The online class doesn't exist: "+onlineClassId,this);
+        }
+        //判断教室是否创建好
+        if(StringUtils.isBlank(onlineClass.getClassroom())){
+            return ResponseUtils.responseFail("The classroom is empty: "+onlineClassId,this);
+        }
+        //课程必须是当前步骤中的数据
+        List<TeacherApplication> listEntity = this.teacherApplicationDao.findCurrentApplication(teacher.getId());
+        if(CollectionUtils.isEmpty(listEntity)){
+            return ResponseUtils.responseFail("You can't enter this classroom!",this);
+        }
+        //进教室权限判断
+        if(listEntity.get(0).getOnlineClassId() != onlineClassId){
+            return ResponseUtils.responseFail("You can't enter this classroom!",this);
+        }
+
         Map<String,Object> result = OnlineClassProxy.generateRoomEnterUrl(teacher.getId()+"", teacher.getRealName(),onlineClass.getClassroom(), OnlineClassProxy.RoomRole.TEACHER, onlineClass.getSupplierCode());
         return result;
     }
 
-
     public Map<String,Object> bookClass(long onlineClassId,Teacher teacher){
         OnlineClass onlineClass = this.onlineClassDao.findById(onlineClassId);
-        //课程没有找到，无法取消
-        if(onlineClass == null || OnlineClassEnum.Status.REMOVED.toString().equals(onlineClass.getStatus())){
-            return ResponseUtils.responseFail("The online class doesn't exist: "+onlineClassId+". Please refresh your page.",this);
+
+        //课程没有找到，无法book
+        if(onlineClass == null){
+            return ResponseUtils.responseFail("The online class doesn't exist: "+onlineClassId,this);
         }
-        //上课时间
-        long sTime = onlineClass.getScheduledDateTime().getTime();
-        long cTime = System.currentTimeMillis();
-        long count = sTime - cTime;
-        if(count < 3600000){
-            return ResponseUtils.responseFail("The online class is expired (1h). Please refresh your page.",this);
+
+        //onlineClassId 必须是AVAILABLE课
+        if(OnlineClassEnum.Status.AVAILABLE.toString().equalsIgnoreCase(onlineClass.getStatus())){
+            return ResponseUtils.responseFail("This class ("+onlineClassId+") is empty or has been booked by anyone else!", this);
         }
-        //teacherApplication判断，是否已经booked
-        List<TeacherApplication> teacherApplications = this.teacherApplicationDao.findCurrentApplication(teacher.getId());
-        if(teacherApplications != null && teacherApplications.size() > 0){
-            TeacherApplication teacherApplication = teacherApplications.get(0);
-            if(teacherApplication.getOnlineClassId() > 0 && StringUtils.isEmpty(teacherApplication.getResult())){
-                return ResponseUtils.responseFail("You have booked a class already. Please refresh your page.",this);
+        //book的课程在开课前1小时之内不允许book
+        if(System.currentTimeMillis() + PracticumConstant.CANCEL_TIME > onlineClass.getScheduledDateTime().getTime()){
+            return ResponseUtils.responseFail("Class is too close to start and not allowed to book!", this);
+        }
+        //约课老师必须是Practicum的待约课老师
+        List<TeacherApplication> listEntity = teacherApplicationDao.findCurrentApplication(teacher.getId());
+        if(listEntity != null && listEntity.size() > 0){
+            TeacherApplication teacherApplication = listEntity.get(0);
+            if(teacherApplication.getOnlineClassId() > 0 && StringUtils.isBlank(teacherApplication.getResult())){
+                return ResponseUtils.responseFail("You have booked a class already. Please refresh your page! "+onlineClassId, this);
             }
         }
-
+        //cancel次数最多3次，如果已经cancel 4次了说明这个老师已经Fail了不允许book
+        if(getCancelNum(teacher) > PracticumConstant.CANCEL_NUM){
+            return ResponseUtils.responseFail("You have canceled classes too much and can't book class again!", this);
+        }
+        //执行BOOK逻辑
         String dateTime = DateFormatUtils.format(onlineClass.getScheduledDateTime(),"yyyy-MM-dd HH:mm:ss");
-        return OnlineClassProxy.doBookRecruitment(teacher.getId(), onlineClass.getId(), ClassType.TEACHER_RECRUITMENT,dateTime);
+        Map<String,Object> result = OnlineClassProxy.doBookRecruitment(teacher.getId(), onlineClass.getId(), ClassType.TEACHER_RECRUITMENT,dateTime);
+        if(ResponseUtils.isFail(result)){
+            //一旦失败，抛出异常回滚
+            throw new RuntimeException("Class booking is fail!" + result.get("info"));
+        }
+        return result;
     }
 
+    @Transactional
     public Map<String,Object> cancelClass(long onlineClassId,Teacher teacher){
         OnlineClass onlineClass = this.onlineClassDao.findById(onlineClassId);
+
         //课程没有找到，无法取消
         if(onlineClass == null){
-            return ResponseUtils.responseFail("The online class doesn't exist:"+onlineClassId,this);
+            return ResponseUtils.responseFail("The online class doesn't exist: "+onlineClassId,this);
         }
-        //离上课时间不到1小时,不能取消课程
-        if(System.currentTimeMillis() > onlineClass.getScheduledDateTime().getTime() - 60*60*1000){
-            return ResponseUtils.responseFail("The online class will begin, can't rescheduled"+onlineClassId,this);
+
+        //book的课程在开课前1小时之内不允许cancel
+        if(System.currentTimeMillis() + PracticumConstant.CANCEL_TIME > onlineClass.getScheduledDateTime().getTime()){
+            return ResponseUtils.responseFail("The online class will begin, can't be rescheduled "+onlineClassId,this);
         }
+
         //课程必须是当前步骤中的数据
-        List<TeacherApplication> teacherApplications = this.teacherApplicationDao.findCurrentApplication(teacher.getId());
-        if(teacherApplications != null && teacherApplications.size() > 0){
-            TeacherApplication teacherApplication = teacherApplications.get(0);
-            if(onlineClassId != teacherApplication.getOnlineClassId()){
-                return ResponseUtils.responseFail("You have already cancelled this class. Please refresh your page.",this);
+        List<TeacherApplication> listEntity = this.teacherApplicationDao.findCurrentApplication(teacher.getId());
+        if(listEntity != null && listEntity.size() > 0){
+            TeacherApplication teacherApplication = listEntity.get(0);
+            if(teacherApplication.getOnlineClassId() != onlineClassId){
+                return ResponseUtils.responseFail("You have already cancelled this class. Please refresh your page!",this);
             }
         }
-        return OnlineClassProxy.doCancelRecruitement(teacher.getId(), onlineClass.getId(), ClassType.TEACHER_RECRUITMENT);
+
+        //Cancel次数已经CANCEL2次了 则直接将老师Fail
+        int count = getCancelNum(teacher);
+
+        //如果cancel 次数已经等于3次或者4次等...当然不可能
+        if( count > PracticumConstant.CANCEL_NUM){
+            return ResponseUtils.responseFail("You have canceled too many times!",this);
+        }
+
+        //如果cancel次数已经等于2次将无法cancel
+        if(count == PracticumConstant.CANCEL_NUM){
+            TeacherApplication teacherApplication = listEntity.get(0);
+            teacherApplication.setResult(TeacherApplicationDao.Result.FAIL.toString());
+            teacherApplication.setAuditDateTime(new Timestamp(System.currentTimeMillis()));
+            teacherApplication.setAuditorId(RestfulConfig.SYSTEM_USER_ID);
+            teacherApplication.setFailedReason("Cancel too many times!");
+        }
+
+        //保存cancel记录
+        this.teacherApplicationLogDao.saveCancel(teacher.getId(), listEntity.get(0).getId(), TeacherApplicationDao.Status.PRACTICUM,
+                TeacherApplicationDao.Result.CANCEL, onlineClass);
+
+        //执行Cancel逻辑
+        Map<String,Object> result = OnlineClassProxy.doCancelRecruitement(teacher.getId(), onlineClass.getId(), ClassType.TEACHER_RECRUITMENT);
+        if(ResponseUtils.isFail(result)){
+            //一旦失败，抛出异常回滚
+            throw new RuntimeException("Class canceling is fail! "+result.get("info"));
+        }
+        result.put("count", PracticumConstant.CANCEL_NUM - (count+1));
+        return result;
     }
+
+    /**
+     * 获取老师对Practicum 课程的Cancel 次数
+     * @param teacher
+     * @return int
+     */
+    public int getCancelNum(Teacher teacher){
+        return this.teacherApplicationLogDao.getCancelNum(teacher.getId(),TeacherApplicationDao.Status.PRACTICUM,
+                TeacherApplicationDao.Result.CANCEL);
+    }
+
+    /**
+     * 进入下一步骤
+     * @param teacher
+     * @return
+     * Map<String,Object>
+     */
+    public Map<String,Object> toContract(Teacher teacher){
+        List<TeacherApplication> listEntity = teacherApplicationDao.findCurrentApplication(teacher.getId());
+        if(CollectionUtils.isEmpty(listEntity)){
+            return ResponseUtils.responseFail("You are not authorized to enter into next phase!",this);
+        }
+
+        //执行逻辑 只有在Practicum的PASS状态才能进入
+        if(TeacherApplicationDao.Status.PRACTICUM.toString().equals(listEntity.get(0).getStatus())
+                && TeacherApplicationDao.Result.PASS.toString().equals(listEntity.get(0).getResult())){
+            //按照新流程 该步骤将老师的LifeCycle改变为Practicum -to-Contract
+            teacher.setLifeCycle(TeacherLifeCycle.CONTRACT);
+            this.teacherDao.insertLifeCycleLog(teacher.getId(), TeacherLifeCycle.PRACTICUM, TeacherLifeCycle.CONTRACT, teacher.getId());
+            this.teacherDao.update(teacher);
+            return ResponseUtils.responseSuccess();
+        }
+        return ResponseUtils.responseFail("You are not authorized to enter into next phase!",this);
+    }
+
 }

@@ -4,6 +4,7 @@ import com.vipkid.enums.TeacherApplicationEnum;
 import com.vipkid.enums.TeacherEnum;
 import com.vipkid.recruitment.dao.TeacherApplicationDao;
 import com.vipkid.recruitment.entity.TeacherApplication;
+import com.vipkid.trpm.constant.ApplicationConstant.TeacherLifeCycle;
 import com.vipkid.trpm.dao.TeacherDao;
 import com.vipkid.trpm.dao.TeacherOtherDegreesDao;
 import com.vipkid.trpm.entity.ContractFile;
@@ -84,6 +85,8 @@ public class ContractService {
         if(TeacherEnum.LifeCycle.CONTRACT.toString().equals(teacher.getLifeCycle())){
             logger.info("用户{}转变到SENT_DOCS",teacher.getId());
             teacher.setLifeCycle(TeacherEnum.LifeCycle.SENT_DOCS.toString());
+            //SENT_DOCS or SEND_DOCS ???
+            //this.teacherDao.insertLifeCycleLog(teacher.getId(), TeacherLifeCycle.CONTRACT, TeacherLifeCycle.SENT_DOCS, teacher.getId());
             this.teacherDao.update(teacher);
         }
         return teacher;

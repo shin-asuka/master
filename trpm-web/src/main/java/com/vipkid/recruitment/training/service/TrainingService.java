@@ -3,6 +3,7 @@ package com.vipkid.recruitment.training.service;
 import com.vipkid.enums.TeacherEnum;
 import com.vipkid.recruitment.dao.TeacherApplicationDao;
 import com.vipkid.recruitment.entity.TeacherApplication;
+import com.vipkid.trpm.constant.ApplicationConstant.TeacherLifeCycle;
 import com.vipkid.trpm.dao.TeacherDao;
 import com.vipkid.trpm.entity.Teacher;
 
@@ -31,6 +32,7 @@ public class TrainingService {
         if(TeacherEnum.LifeCycle.TRAINING.toString().equals(teacher.getLifeCycle())){
             logger.info("用户{}转变到Practicum",teacher.getId());
             teacher.setLifeCycle(TeacherEnum.LifeCycle.PRACTICUM.toString());
+            this.teacherDao.insertLifeCycleLog(teacher.getId(), TeacherLifeCycle.TRAINING, TeacherLifeCycle.PRACTICUM, teacher.getId());
             this.teacherDao.update(teacher);
         }
         return teacher;

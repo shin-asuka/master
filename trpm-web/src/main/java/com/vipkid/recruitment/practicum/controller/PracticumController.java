@@ -101,7 +101,7 @@ public class PracticumController extends RestfulController {
         try{
             Teacher teacher = getTeacher(request);
             logger.info("user:{},getReschedule",teacher.getId());
-            Map<String,Object> result = null;//this.interviewService.toTraining(teacher);
+            Map<String,Object> result = practicumService.toContract(teacher);
             if(ResponseUtils.isFail(result)){
                 response.setStatus(HttpStatus.FORBIDDEN.value());
             }
