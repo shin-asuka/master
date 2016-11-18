@@ -19,13 +19,13 @@ define(["jquery-bootstrap"], function() {
 		$("div#admin-quiz-tips").show();
 		$("body").addClass("modal-open");
 		
-		var left = $("#admin-quiz-tips").find(".light").width()/2 - $("#quiz-tips").offset().left - 70;
-		var top = $("#admin-quiz-tips").find(".light").width()/2 - $("#quiz-tips").offset().top-10;
+		var left = $("#admin-quiz-tips").find(".light").width()/2 - $("#quiz-tips").offset().left - 98;
+		var top = $("#admin-quiz-tips").find(".light").width()/2 - $("#quiz-tips").offset().top - 14;
 		$("#admin-quiz-tips").find(".light").css({"left":(0-left)+"px","top":(0-top)+"px"});
 		
 		$(window).resize(function(){
-			var left = $("#admin-quiz-tips").find(".light").width()/2 - $("#quiz-tips").offset().left - 70;
-			var top = $("#admin-quiz-tips").find(".light").width()/2 - $("#quiz-tips").offset().top-10;
+			var left = $("#admin-quiz-tips").find(".light").width()/2 - $("#quiz-tips").offset().left - 98;
+			var top = $("#admin-quiz-tips").find(".light").width()/2 - $("#quiz-tips").offset().top - 14;
 			$("#admin-quiz-tips").find(".light").css({"left":(0-left)+"px","top":(0-top)+"px"});
 		});
 		
