@@ -2,6 +2,7 @@ package com.vipkid.recruitment.interview.service;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -61,7 +62,11 @@ public class InterviewService {
         String fromTime = LocalDateTime.now().plusHours(1).format(DateUtils.FMT_YMD_HMS);
         String toTime = LocalDateTime.now().plusDays(2).withHour(23).withMinute(59).withSecond(59).format(DateUtils.FMT_YMD_HMS);
         logger.info("findlistByInterview parameter fromTime:{}, toTime:{}",fromTime, toTime);
-        return interviewDao.findlistByInterview(fromTime, toTime);
+        List<Map<String,Object>> list = interviewDao.findlistByInterview(fromTime, toTime);
+        if(CollectionUtils.isNotEmpty(list)){
+            Collections.shuffle(list);
+        }
+        return list;
     }
     
     /**
