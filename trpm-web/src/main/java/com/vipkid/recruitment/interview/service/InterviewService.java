@@ -121,21 +121,23 @@ public class InterviewService {
         if(OnlineClassEnum.Status.OPEN.toString().equalsIgnoreCase(onlineClass.getStatus())){
             return ResponseUtils.responseFail("This class("+onlineClassId+") is empty or anyone else has been booked !", this);
         }
+        
         //book的课程在开课前1小时之内不允许book
         if(System.currentTimeMillis() + ConstantInterview.CANCEL_TIME > onlineClass.getScheduledDateTime().getTime()){
             return ResponseUtils.responseFail("Class is about to start is not allowed to book !", this);
         }
         //约课老师必须是INTERVIEW的待约课老师
         List<TeacherApplication> listEntity = teacherApplicationDao.findCurrentApplication(teacher.getId());
-        if(listEntity != null && listEntity.size() > 0){
+        if(CollectionUtils.isNotEmpty(listEntity)){
             TeacherApplication teacherApplication = listEntity.get(0);
-            if(teacherApplication.getOnlineClassId() > 0 && StringUtils.isBlank(teacherApplication.getResult())){
+            //存在步骤，但步骤中已经存在待审核的课程 不允许继续book
+            if(teacherApplication.getOnlineClassId() != 0 && StringUtils.isNotBlank(teacherApplication.getResult())){
                 return ResponseUtils.responseFail("You have booked a class already. Please refresh your page !"+onlineClassId, this);
             }
         }
         //cancel次数最多2次，如果已经cancel 3次了说明这个老师已经Fail了不允许book
         if(getCancelNum(teacher) > ConstantInterview.CANCEL_NUM){
-            return ResponseUtils.responseFail("You cancel the course number has finished can't book the class !", this);
+            return ResponseUtils.responseFail("You cancel too many times, can't book the class !", this);
         }
         //执行BOOK逻辑
         String dateTime = DateFormatUtils.format(onlineClass.getScheduledDateTime(),"yyyy-MM-dd HH:mm:ss");
@@ -168,15 +170,23 @@ public class InterviewService {
         
         //book的课程在开课前1小时之内不允许cancel
         if(System.currentTimeMillis() + ConstantInterview.CANCEL_TIME > onlineClass.getScheduledDateTime().getTime()){
-            return ResponseUtils.responseFail("The online class will begin,can't rescheduled"+onlineClassId,this);
+            return ResponseUtils.responseFail("The online class will begin,can't rescheduled:"+onlineClassId,this);
         }
         
-        //课程必须是当前步骤中的数据
-        List<TeacherApplication> listEntity = this.teacherApplicationDao.findCurrentApplication(teacher.getId());       
-        if(listEntity != null && listEntity.size() > 0){
+        List<TeacherApplication> listEntity = this.teacherApplicationDao.findCurrentApplication(teacher.getId());
+        //如果步骤中无数据则不允许cancel
+        if(CollectionUtils.isEmpty(listEntity)){
+            return ResponseUtils.responseFail("You do not have permission to cancel this course:"+onlineClassId,this);
+        }else{
             TeacherApplication teacherApplication = listEntity.get(0);
-            if(teacherApplication.getOnlineClassId() == 0){     
+            //如果步骤中有数据并且数据不是本次cancel的课程 则不允许cancel
+            if(teacherApplication.getOnlineClassId() != onlineClass.getId()){     
                 return ResponseUtils.responseFail("You have already cancelled this class. Please refresh your page !",this);
+            }else{
+                //果步骤中有数据并且数据不是本次cancel的课程 但管理端已经审核，不允许cancel
+                if(StringUtils.isNotBlank(teacherApplication.getResult())){     
+                    return ResponseUtils.responseFail("This class already audited. Please refresh your page !",this);
+                }
             }
         }
         
