@@ -3,7 +3,6 @@ package com.vipkid.rest.web;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -11,7 +10,6 @@ import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -38,10 +36,8 @@ import com.vipkid.file.service.AwsFileService;
 import com.vipkid.file.utils.ActionHelp;
 import com.vipkid.file.utils.DateUtils;
 import com.vipkid.file.utils.Encodes;
-import com.vipkid.file.utils.FileUtils;
 import com.vipkid.file.utils.StringUtils;
 import com.vipkid.http.utils.JsonUtils;
-import com.vipkid.rest.exception.UserAuthException;
 import com.vipkid.rest.utils.UserUtils;
 import com.vipkid.trpm.entity.Page;
 import com.vipkid.trpm.entity.TeacherLocation;
@@ -51,7 +47,6 @@ import com.vipkid.trpm.entity.TeacherTaxpayerView;
 import com.vipkid.trpm.entity.User;
 import com.vipkid.trpm.service.passport.IndexService;
 import com.vipkid.trpm.service.portal.LocationService;
-import com.vipkid.trpm.service.portal.PersonalInfoService;
 import com.vipkid.trpm.service.portal.TeacherTaxpayerFormService;
 import com.vipkid.trpm.util.AwsFileUtils;
 

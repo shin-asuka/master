@@ -176,7 +176,7 @@ public class RecruitmentService {
 
     /**
      * 更新timezone
-     * @param timezone
+     * @param bean
      * @param teacher
      * @return
      * boolean
