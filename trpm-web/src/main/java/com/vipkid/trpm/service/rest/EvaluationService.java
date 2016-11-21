@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.google.api.client.util.Maps;
-import com.vipkid.trpm.constant.ApplicationConstant.LoginType;
+import com.vipkid.enums.TeacherPageLoginEnum.LoginType;
 import com.vipkid.trpm.dao.TeacherDao;
 import com.vipkid.trpm.dao.TeacherPageLoginDao;
 import com.vipkid.trpm.dao.TeacherQuizDao;
@@ -70,7 +70,7 @@ public class EvaluationService {
     public boolean saveOpenEvaluation(long teacerId){
         TeacherPageLogin teacherPageLogin = new TeacherPageLogin();
         teacherPageLogin.setUserId(teacerId);
-        teacherPageLogin.setLoginType(LoginType.EVALUATION);
+        teacherPageLogin.setLoginType(LoginType.EVALUATION.val());
         return this.teacherPageLoginDao.saveTeacherPageLogin(teacherPageLogin) == 1 ? true : false;
     }
 }

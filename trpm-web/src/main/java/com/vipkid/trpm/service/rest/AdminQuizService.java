@@ -16,9 +16,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.vipkid.enums.TeacherPageLoginEnum.LoginType;
 import com.vipkid.enums.TeacherQuizEnum;
 import com.vipkid.rest.config.RestfulConfig;
-import com.vipkid.trpm.constant.ApplicationConstant.LoginType;
 import com.vipkid.trpm.dao.AppRestfulDao;
 import com.vipkid.trpm.dao.TeacherDao;
 import com.vipkid.trpm.dao.TeacherPageLoginDao;
@@ -67,7 +67,7 @@ public class AdminQuizService {
      * @date 2016年8月25日
      */
     public boolean openQuiz(long teacerId){
-        TeacherPageLogin teacherPageLogin = this.teacherPageLoginDao.findByUserIdAndLoginType(teacerId, LoginType.ADMINQUIZ);
+        TeacherPageLogin teacherPageLogin = this.teacherPageLoginDao.findByUserIdAndLoginType(teacerId, LoginType.ADMINQUIZ.val());
         return teacherPageLogin == null ? true : false;
     }
     
@@ -83,7 +83,7 @@ public class AdminQuizService {
     public boolean saveOpenQuiz(long teacerId){
         TeacherPageLogin teacherPageLogin = new TeacherPageLogin();
         teacherPageLogin.setUserId(teacerId);
-        teacherPageLogin.setLoginType(LoginType.ADMINQUIZ);
+        teacherPageLogin.setLoginType(LoginType.ADMINQUIZ.val());
         return this.teacherPageLoginDao.saveTeacherPageLogin(teacherPageLogin) == 1 ? true : false;
     }
    

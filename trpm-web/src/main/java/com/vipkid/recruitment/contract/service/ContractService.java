@@ -1,22 +1,23 @@
 package com.vipkid.recruitment.contract.service;
 
-import com.vipkid.enums.TeacherApplicationEnum;
-import com.vipkid.enums.TeacherEnum;
-import com.vipkid.recruitment.dao.TeacherApplicationDao;
-import com.vipkid.recruitment.entity.TeacherApplication;
-import com.vipkid.trpm.constant.ApplicationConstant.TeacherLifeCycle;
-import com.vipkid.trpm.dao.TeacherDao;
-import com.vipkid.trpm.dao.TeacherOtherDegreesDao;
-import com.vipkid.trpm.entity.ContractFile;
-import com.vipkid.trpm.entity.Teacher;
-import com.vipkid.trpm.entity.TeacherOtherDegrees;
+import java.sql.Timestamp;
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import java.sql.Timestamp;
-import java.util.List;
+
+import com.vipkid.enums.TeacherApplicationEnum;
+import com.vipkid.enums.TeacherEnum;
+import com.vipkid.recruitment.dao.TeacherApplicationDao;
+import com.vipkid.recruitment.entity.TeacherApplication;
+import com.vipkid.trpm.dao.TeacherDao;
+import com.vipkid.trpm.dao.TeacherOtherDegreesDao;
+import com.vipkid.trpm.entity.ContractFile;
+import com.vipkid.trpm.entity.Teacher;
+import com.vipkid.trpm.entity.TeacherOtherDegrees;
 
 /**
  * Created by zhangzhaojun on 2016/11/14.

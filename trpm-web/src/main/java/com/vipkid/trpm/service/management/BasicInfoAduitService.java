@@ -12,10 +12,10 @@ import org.springframework.stereotype.Service;
 
 import com.google.common.collect.Maps;
 import com.vipkid.email.EmailUtils;
+import com.vipkid.enums.TeacherEnum.LifeCycle;
 import com.vipkid.recruitment.dao.TeacherApplicationDao;
 import com.vipkid.recruitment.dao.TeachingExperienceDao;
 import com.vipkid.recruitment.entity.TeacherApplication;
-import com.vipkid.trpm.constant.ApplicationConstant.TeacherLifeCycle;
 import com.vipkid.trpm.dao.TeacherAddressDao;
 import com.vipkid.trpm.dao.TeacherDao;
 import com.vipkid.trpm.dao.TeacherLocationDao;
@@ -60,7 +60,7 @@ public class BasicInfoAduitService {
             result.put("status",false);
             return result;
         }
-        if(!StringUtils.equals(teacherApplication.getStatus(), TeacherLifeCycle.BASIC_INFO)){
+        if(!StringUtils.equals(teacherApplication.getStatus(), LifeCycle.BASIC_INFO.toString())){
             result.put("status",false);
             return result;
         }
@@ -169,11 +169,11 @@ public class BasicInfoAduitService {
         teacherApplication.setComments(remark);
         //更新application
         this.teacherApplicationDao.update(teacherApplication); 
-        teacher.setLifeCycle(TeacherLifeCycle.INTERVIEW);
+        teacher.setLifeCycle(LifeCycle.INTERVIEW.toString());
         //更新Teacher
         this.teacherDao.update(teacher);
         //插入insert log
-        this.teacherDao.insertLifeCycleLog(teacher.getId(), TeacherLifeCycle.BASIC_INFO, TeacherLifeCycle.INTERVIEW, userId);
+        this.teacherDao.insertLifeCycleLog(teacher.getId(), LifeCycle.BASIC_INFO, LifeCycle.INTERVIEW, userId);
         //发送邮件
         EmailUtils.sendEmail4BasicInfoPass(teacher);
         result.put("status", true);

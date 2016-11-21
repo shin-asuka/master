@@ -17,6 +17,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.google.api.client.util.Maps;
+import com.vipkid.enums.AppUtils;
+import com.vipkid.enums.TeacherEnum.DegreeType;
+import com.vipkid.enums.TeacherEnum.LifeCycle;
+import com.vipkid.enums.TeacherEnum.RecruitmentChannel;
+import com.vipkid.enums.UserEnum.Gender;
 import com.vipkid.recruitment.basicinfo.service.BasicInfoService;
 import com.vipkid.recruitment.basicinfo.service.TeachingExperienceService;
 import com.vipkid.recruitment.interceptor.RestInterface;
@@ -27,14 +32,11 @@ import com.vipkid.rest.dto.TeacherDto;
 import com.vipkid.rest.dto.TeachingExperienceDto;
 import com.vipkid.rest.validation.ValidateUtils;
 import com.vipkid.rest.validation.tools.Result;
-import com.vipkid.trpm.constant.ApplicationConstant.TeacherLifeCycle;
 import com.vipkid.trpm.entity.TeacherNationalityCode;
 import com.vipkid.trpm.entity.User;
-import com.vipkid.trpm.entity.app.AppEnum;
-import com.vipkid.trpm.util.AppUtils;
 
 @RestController
-@RestInterface(lifeCycle={TeacherLifeCycle.SIGNUP,TeacherLifeCycle.BASIC_INFO})
+@RestInterface(lifeCycle={LifeCycle.SIGNUP,LifeCycle.BASIC_INFO})
 @RequestMapping("/recruitment/basicinfo")
 public class BasicInfoController extends RestfulController{
  
@@ -166,15 +168,15 @@ public class BasicInfoController extends RestfulController{
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
                 return ResponseUtils.responseFail(list.get(0).getName() + "," + list.get(0).getMessages(), this);
             }
-            if(!AppUtils.containsName(AppEnum.Gender.class, bean.getGender())){
+            if(!AppUtils.containsName(Gender.class, bean.getGender())){
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
                 return ResponseUtils.responseFail("Gender data is error:"+bean.getGender(), this);
             }
-            if(!AppUtils.containsName(AppEnum.DegreeType.class, bean.getHighestLevelOfEdu())){
+            if(!AppUtils.containsName(DegreeType.class, bean.getHighestLevelOfEdu())){
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
                 return ResponseUtils.responseFail("HighestLevelOfEdu data is error:"+bean.getHighestLevelOfEdu(), this);
             }
-            if(!AppUtils.containsName(AppEnum.RecruitmentChannel.class, bean.getRecruitmentChannel())){
+            if(!AppUtils.containsName(RecruitmentChannel.class, bean.getRecruitmentChannel())){
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
                 return ResponseUtils.responseFail("RecruitmentChannel data is error:"+bean.getRecruitmentChannel(), this);
             }

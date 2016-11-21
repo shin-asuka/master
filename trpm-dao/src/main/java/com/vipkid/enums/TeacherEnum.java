@@ -18,8 +18,17 @@ public class TeacherEnum {
 		PART_TIME, // 兼职
 		TEST // test
 	}
+	
+    /**招募端新增3种渠道分类*/
+    public enum RecruitmentChannel {
+        //2016-11 新增渠道分类
+        TEACHER,
+        PARTNER,
+        OTHER // 其他
+    }
 
 	public enum LifeCycle {
+	    ALL,
 		SIGNUP, // 注册 + 收集基本信息
 		BASIC_INFO, // 2015-08-08 添加basic-info 状态，从signup分离
 		INTERVIEW, // 面试
@@ -32,20 +41,6 @@ public class TeacherEnum {
 		QUIT, // 离职
 		FAIL // 被剔除的老师，永不录用的那种
 
-	}
-
-	public enum RecruitmentChannel {
-		CHEGG, // Chegg渠道
-		STAFF_REFERAL, // 员工推荐
-		TEACHER_REFERAL, // 老师推荐
-		SELF_REFERAL, // 自荐
-		PARTNER_JON, // Partner：Jon
-		PARTNER_RAYMOND, // Partner：Raymond
-		PARTNER_JOY_XU, // Partner：Joy Xu
-		PARTNER_RYAN_TAN, // Partner：Ryan Tan
-		PARTNER_HELEN, // Partner：Helen
-		PARTNER_NEISSA, // Partner：Neissa
-		OTHER // 其他
 	}
 
 	public enum Hide {
@@ -70,6 +65,16 @@ public class TeacherEnum {
         }
         
 	}
+	
+    /**学历*/
+    public enum DegreeType{
+        HIGH_SCHOOL,
+        ASSOCIATES,
+        BACHELORS,
+        MASTERS,
+        PHD,
+        OTHER
+    }
 	
 	public static FormType getFormTypeByCode(String code){
 		FormType formType = null;

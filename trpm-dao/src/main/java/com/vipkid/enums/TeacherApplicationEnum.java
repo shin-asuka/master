@@ -1,6 +1,7 @@
 package com.vipkid.enums;
 
 public class TeacherApplicationEnum {
+    
 	public enum Status {
 		SIGNUP, // 新申请
 		BASIC_INFO,	// 2015-08-08 添加basic-info 状态，从signup分离
@@ -11,6 +12,7 @@ public class TeacherApplicationEnum {
 		CANCELED, //已取消
 		FINISHED // 已结束
 	}
+	
 	public enum Result {
 		PASS, // 通过
 		FAIL, // 失败

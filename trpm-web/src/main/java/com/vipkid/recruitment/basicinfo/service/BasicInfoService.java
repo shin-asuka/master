@@ -17,6 +17,8 @@ import com.google.api.client.util.Lists;
 import com.google.api.client.util.Maps;
 import com.vipkid.email.EmailUtils;
 import com.vipkid.enums.TeacherEnum;
+import com.vipkid.enums.TeacherEnum.LifeCycle;
+import com.vipkid.enums.TeacherEnum.RecruitmentChannel;
 import com.vipkid.enums.UserEnum;
 import com.vipkid.recruitment.dao.TeacherApplicationDao;
 import com.vipkid.recruitment.dao.TeachingExperienceDao;
@@ -34,8 +36,6 @@ import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.entity.TeacherAddress;
 import com.vipkid.trpm.entity.TeacherNationalityCode;
 import com.vipkid.trpm.entity.User;
-import com.vipkid.trpm.entity.app.AppEnum;
-import com.vipkid.trpm.entity.app.AppEnum.RecruitmentChannel;
 import com.vipkid.trpm.proxy.RedisProxy;
 import com.vipkid.trpm.util.AES;
 
@@ -138,7 +138,7 @@ public class BasicInfoService {
         bean.setLastName(upperStr(bean.getLastName()));
         
         Teacher teacher = this.teacherDao.findById(user.getId());
-        List<TeacherApplication> applicationList = teacherApplicationDao.findApplictionForStatus(user.getId(),AppEnum.LifeCycle.BASIC_INFO.toString());
+        List<TeacherApplication> applicationList = teacherApplicationDao.findApplictionForStatus(user.getId(),LifeCycle.BASIC_INFO.toString());
         if(CollectionUtils.isNotEmpty(applicationList)){
             logger.error("已经提交基本信息的老师{}，重复提交被拦截:提交状态{},审核结果{},用户状态:{}",teacher.getId(),applicationList.get(0).getStatus(),applicationList.get(0).getResult(),teacher.getLifeCycle());
             return ResponseUtils.responseFail("You have already submitted data!", this);
@@ -169,14 +169,14 @@ public class BasicInfoService {
         application = teacherApplicationDao.initApplicationData(application);
         application.setTeacherId(teacher.getId());//  步骤关联的教师
         application.setApplyDateTime(new Timestamp(System.currentTimeMillis()));
-        application.setStatus(AppEnum.LifeCycle.BASIC_INFO.toString());
+        application.setStatus(LifeCycle.BASIC_INFO.toString());
         application.setVersion(3);
         //5.AutoFail Pass TeacherApplication
         AutoFailProcessor processor = this.autoFail(teacher,teacherAddress);
         //自动审核通过
         if(processor.isFailed()){
             //自动审核失败
-            teacher.setLifeCycle(AppEnum.LifeCycle.BASIC_INFO.toString());
+            teacher.setLifeCycle(LifeCycle.BASIC_INFO.toString());
             //Basic审核为FAIIL
             application.setAuditDateTime(new Timestamp(System.currentTimeMillis()));
             application.setAuditorId(RestfulConfig.SYSTEM_USER_ID);
@@ -195,12 +195,12 @@ public class BasicInfoService {
             result.put("result",TeacherApplicationDao.AuditStatus.ToAudit.toString());
         }else{
             //自动审核通过Basic则自动变LifeCycle为Interview
-            teacher.setLifeCycle(AppEnum.LifeCycle.INTERVIEW.toString());
+            teacher.setLifeCycle(LifeCycle.INTERVIEW.toString());
             //Basic审核为PASS
             application.setAuditDateTime(new Timestamp(System.currentTimeMillis()));
             application.setAuditorId(RestfulConfig.SYSTEM_USER_ID);
             application.setResult(TeacherApplicationDao.Result.PASS.toString());
-            this.teacherDao.insertLifeCycleLog(teacher.getId(), AppEnum.LifeCycle.BASIC_INFO.toString(),AppEnum.LifeCycle.INTERVIEW.toString(), RestfulConfig.SYSTEM_USER_ID);
+            this.teacherDao.insertLifeCycleLog(teacher.getId(), LifeCycle.BASIC_INFO,LifeCycle.INTERVIEW, RestfulConfig.SYSTEM_USER_ID);
             //发送邮件
             logger.info("调用发送邮件程序发送给:{}",user.getUsername());
             EmailUtils.sendEmail4BasicInfoPass(teacher);

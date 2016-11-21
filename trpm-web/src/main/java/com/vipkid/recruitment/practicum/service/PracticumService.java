@@ -1,21 +1,10 @@
 package com.vipkid.recruitment.practicum.service;
 
-import com.vipkid.enums.OnlineClassEnum;
-import com.vipkid.recruitment.dao.PracticumDao;
-import com.vipkid.recruitment.dao.TeacherApplicationDao;
-import com.vipkid.recruitment.dao.TeacherApplicationLogDao;
-import com.vipkid.recruitment.entity.TeacherApplication;
-import com.vipkid.recruitment.practicum.PracticumConstant;
-import com.vipkid.recruitment.utils.ResponseUtils;
-import com.vipkid.rest.config.RestfulConfig;
-import com.vipkid.trpm.constant.ApplicationConstant.TeacherLifeCycle;
-import com.vipkid.trpm.dao.OnlineClassDao;
-import com.vipkid.trpm.dao.TeacherDao;
-import com.vipkid.trpm.entity.OnlineClass;
-import com.vipkid.trpm.entity.Teacher;
-import com.vipkid.trpm.proxy.OnlineClassProxy;
-import com.vipkid.trpm.proxy.OnlineClassProxy.ClassType;
-import com.vipkid.trpm.util.DateUtils;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -26,9 +15,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
-import java.util.*;
+import com.vipkid.enums.OnlineClassEnum;
+import com.vipkid.enums.TeacherEnum.LifeCycle;
+import com.vipkid.recruitment.dao.PracticumDao;
+import com.vipkid.recruitment.dao.TeacherApplicationDao;
+import com.vipkid.recruitment.dao.TeacherApplicationLogDao;
+import com.vipkid.recruitment.entity.TeacherApplication;
+import com.vipkid.recruitment.practicum.PracticumConstant;
+import com.vipkid.recruitment.utils.ResponseUtils;
+import com.vipkid.rest.config.RestfulConfig;
+import com.vipkid.trpm.dao.OnlineClassDao;
+import com.vipkid.trpm.dao.TeacherDao;
+import com.vipkid.trpm.entity.OnlineClass;
+import com.vipkid.trpm.entity.Teacher;
+import com.vipkid.trpm.proxy.OnlineClassProxy;
+import com.vipkid.trpm.proxy.OnlineClassProxy.ClassType;
+import com.vipkid.trpm.util.DateUtils;
 
 @Service
 public class PracticumService {
@@ -91,7 +93,7 @@ public class PracticumService {
         }
 
         //onlineClassId 必须是AVAILABLE课
-        if(OnlineClassEnum.Status.AVAILABLE.toString().equalsIgnoreCase(onlineClass.getStatus())){
+        if(OnlineClassEnum.ClassStatus.AVAILABLE.toString().equalsIgnoreCase(onlineClass.getStatus())){
             return ResponseUtils.responseFail("This class ("+onlineClassId+") is empty or has been booked by anyone else!", this);
         }
         //book的课程在开课前1小时之内不允许book
@@ -209,8 +211,8 @@ public class PracticumService {
         if(TeacherApplicationDao.Status.PRACTICUM.toString().equals(listEntity.get(0).getStatus())
                 && TeacherApplicationDao.Result.PASS.toString().equals(listEntity.get(0).getResult())){
             //按照新流程 该步骤将老师的LifeCycle改变为Practicum -to-Contract
-            teacher.setLifeCycle(TeacherLifeCycle.CONTRACT);
-            this.teacherDao.insertLifeCycleLog(teacher.getId(), TeacherLifeCycle.PRACTICUM, TeacherLifeCycle.CONTRACT, teacher.getId());
+            teacher.setLifeCycle(LifeCycle.CONTRACT.toString());
+            this.teacherDao.insertLifeCycleLog(teacher.getId(),LifeCycle.PRACTICUM,LifeCycle.CONTRACT, teacher.getId());
             this.teacherDao.update(teacher);
             return ResponseUtils.responseSuccess();
         }

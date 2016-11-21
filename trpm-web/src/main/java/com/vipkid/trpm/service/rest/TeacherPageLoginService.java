@@ -3,6 +3,7 @@ package com.vipkid.trpm.service.rest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.vipkid.enums.TeacherPageLoginEnum.LoginType;
 import com.vipkid.trpm.dao.TeacherPageLoginDao;
 import com.vipkid.trpm.entity.TeacherPageLogin;
 
@@ -20,8 +21,8 @@ public class TeacherPageLoginService {
      * TeacherPageLogin
      * @date 2016年8月25日
      */
-    public boolean isType(long teacerId,int loginType){
-        return this.teacherPageLoginDao.isType(teacerId, loginType);
+    public boolean isType(long teacerId,LoginType loginType){
+        return this.teacherPageLoginDao.isType(teacerId, loginType.val());
     }
     
     /**
@@ -33,10 +34,10 @@ public class TeacherPageLoginService {
      * @return int
      * @date 2016年10月26日
      */
-    public boolean saveTeacherPageLogin(long teacherId,int longType){
+    public boolean saveTeacherPageLogin(long teacherId,LoginType longType){
         TeacherPageLogin teacherPageLogin= new TeacherPageLogin();
         teacherPageLogin.setUserId(teacherId);
-        teacherPageLogin.setLoginType(longType);
+        teacherPageLogin.setLoginType(longType.val());
         return this.teacherPageLoginDao.saveTeacherPageLogin(teacherPageLogin) == 1 ? true : false;
     }
 }

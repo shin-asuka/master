@@ -1,32 +1,35 @@
 package com.vipkid.recruitment.contract.controller;
-import com.vipkid.enums.TeacherEnum;
-import com.vipkid.recruitment.contract.service.ContractService;
-import com.vipkid.recruitment.interceptor.RestInterface;
-import com.vipkid.rest.RestfulController;
-import com.vipkid.rest.config.RestfulConfig;
-import com.vipkid.trpm.constant.ApplicationConstant;
-import com.vipkid.trpm.entity.ContractFile;
-import com.vipkid.trpm.entity.Teacher;
-import com.vipkid.trpm.entity.TeacherTaxpayerForm;
-import com.vipkid.trpm.entity.TeacherTaxpayerFormDetail;
-import com.vipkid.trpm.service.portal.TeacherTaxpayerFormService;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+
+import com.vipkid.enums.TeacherEnum;
+import com.vipkid.enums.TeacherEnum.LifeCycle;
+import com.vipkid.recruitment.contract.service.ContractService;
+import com.vipkid.recruitment.interceptor.RestInterface;
+import com.vipkid.rest.RestfulController;
+import com.vipkid.rest.config.RestfulConfig;
+import com.vipkid.trpm.entity.ContractFile;
+import com.vipkid.trpm.entity.Teacher;
+import com.vipkid.trpm.entity.TeacherTaxpayerForm;
+import com.vipkid.trpm.entity.TeacherTaxpayerFormDetail;
+import com.vipkid.trpm.service.portal.TeacherTaxpayerFormService;
 
 /**
  * Created by zhangzhaojun on 2016/11/14.
  */
 @RestController
-@RestInterface(lifeCycle={ApplicationConstant.TeacherLifeCycle.CONTRACT,ApplicationConstant.TeacherLifeCycle.REGULAR})
+@RestInterface(lifeCycle={LifeCycle.CONTRACT})
 
 @RequestMapping("/recruitment/contract")
 public class ContractController extends RestfulController {

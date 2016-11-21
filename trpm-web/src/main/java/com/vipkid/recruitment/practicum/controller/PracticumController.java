@@ -1,14 +1,10 @@
 package com.vipkid.recruitment.practicum.controller;
 
-import com.google.api.client.util.Maps;
-import com.vipkid.recruitment.interceptor.RestInterface;
-import com.vipkid.recruitment.practicum.service.PracticumService;
-import com.vipkid.recruitment.utils.ResponseUtils;
-import com.vipkid.rest.RestfulController;
-import com.vipkid.rest.config.RestfulConfig;
-import com.vipkid.trpm.constant.ApplicationConstant;
-import com.vipkid.trpm.entity.Teacher;
-import org.apache.commons.collections.MapUtils;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,12 +12,18 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.util.*;
+
+import com.google.api.client.util.Maps;
+import com.vipkid.enums.TeacherEnum.LifeCycle;
+import com.vipkid.recruitment.interceptor.RestInterface;
+import com.vipkid.recruitment.practicum.service.PracticumService;
+import com.vipkid.recruitment.utils.ResponseUtils;
+import com.vipkid.rest.RestfulController;
+import com.vipkid.rest.config.RestfulConfig;
+import com.vipkid.trpm.entity.Teacher;
 
 @RestController
-@RestInterface(lifeCycle={ApplicationConstant.TeacherLifeCycle.PRACTICUM})
+@RestInterface(lifeCycle={LifeCycle.PRACTICUM})
 @RequestMapping("/recruitment/practicum")
 public class PracticumController extends RestfulController {
 

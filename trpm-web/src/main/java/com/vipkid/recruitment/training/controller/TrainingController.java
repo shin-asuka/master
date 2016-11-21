@@ -1,16 +1,11 @@
 package com.vipkid.recruitment.training.controller;
-import com.google.common.collect.Maps;
-import com.vipkid.enums.TeacherEnum;
-import com.vipkid.enums.TeacherQuizEnum;
-import com.vipkid.recruitment.interceptor.RestInterface;
-import com.vipkid.recruitment.training.service.TrainingService;
-import com.vipkid.rest.RestfulController;
-import com.vipkid.rest.config.RestfulConfig;
-import com.vipkid.trpm.constant.ApplicationConstant;
-import com.vipkid.trpm.entity.Teacher;
-import com.vipkid.trpm.entity.TeacherQuiz;
-import com.vipkid.trpm.entity.User;
-import com.vipkid.trpm.service.rest.AdminQuizService;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,15 +15,23 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+
+import com.google.common.collect.Maps;
+import com.vipkid.enums.TeacherEnum;
+import com.vipkid.enums.TeacherEnum.LifeCycle;
+import com.vipkid.enums.TeacherQuizEnum;
+import com.vipkid.recruitment.interceptor.RestInterface;
+import com.vipkid.recruitment.training.service.TrainingService;
+import com.vipkid.rest.RestfulController;
+import com.vipkid.rest.config.RestfulConfig;
+import com.vipkid.trpm.entity.Teacher;
+import com.vipkid.trpm.entity.TeacherQuiz;
+import com.vipkid.trpm.entity.User;
+import com.vipkid.trpm.service.rest.AdminQuizService;
 
 
 @RestController
-@RestInterface(lifeCycle={ApplicationConstant.TeacherLifeCycle.TRAINING})
+@RestInterface(lifeCycle={LifeCycle.TRAINING})
 @RequestMapping("/recruitment/training")
 public class TrainingController extends RestfulController {
 

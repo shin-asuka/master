@@ -123,7 +123,7 @@ public class RecruitmentService {
                 //倒计时
                 OnlineClass onlineClass = this.onlineClassDao.findById(teacherApplication.getOnlineClassId());
                 //处于book状态的onlineClass 应该处于倒计时页面
-                if(OnlineClassEnum.Status.BOOKED.toString().equals(onlineClass.getStatus())){
+                if(OnlineClassEnum.ClassStatus.BOOKED.toString().equals(onlineClass.getStatus())){
                     result.put("serverTime",System.currentTimeMillis());
                     result.put("scheduledDateTime",onlineClass.getScheduledDateTime().getTime());
                     result.put("onlineClassId", onlineClass.getId());

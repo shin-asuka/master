@@ -4,6 +4,7 @@ import java.util.Map;
 
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.community.tools.JsonTools;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,6 +15,8 @@ import com.google.api.client.util.Maps;
  *
  */
 public class ResponseUtils {
+    
+    public static Logger logger = LoggerFactory.getLogger(ResponseUtils.class);
 
     public static Map<String,Object> responseFail(String info,Map<String,Object> map,Class<?> c){
         Logger logger = LoggerFactory.getLogger(c);
@@ -68,6 +71,7 @@ public class ResponseUtils {
         if(MapUtils.isNotEmpty(map)){
             prames.putAll(map);
         }
+        logger.info("result value:{}",JsonTools.getJson(prames));
         return prames;
     }
     

@@ -15,16 +15,15 @@ import org.springframework.stereotype.Service;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
+import com.vipkid.enums.OnlineClassEnum.ClassStatus;
 import com.vipkid.enums.TbdResultEnum;
+import com.vipkid.enums.TeacherApplicationEnum;
+import com.vipkid.enums.TeacherEnum;
+import com.vipkid.enums.TeacherEnum.LifeCycle;
 import com.vipkid.recruitment.dao.TeacherApplicationDao;
 import com.vipkid.recruitment.entity.TeacherApplication;
 import com.vipkid.rest.config.RestfulConfig.RoleClass;
 import com.vipkid.trpm.constant.ApplicationConstant;
-import com.vipkid.trpm.constant.ApplicationConstant.ClassStatus;
-import com.vipkid.trpm.constant.ApplicationConstant.RecruitmentResult;
-import com.vipkid.trpm.constant.ApplicationConstant.RecruitmentStatus;
-import com.vipkid.trpm.constant.ApplicationConstant.TeacherLifeCycle;
-import com.vipkid.trpm.constant.ApplicationConstant.TeacherType;
 import com.vipkid.trpm.dao.AuditDao;
 import com.vipkid.trpm.dao.LessonDao;
 import com.vipkid.trpm.dao.OnlineClassDao;
@@ -177,7 +176,7 @@ public class PeSupervisorService {
         }
 
         // 5.practicum2 判断是否存在
-        if (ApplicationConstant.RecruitmentResult.PRACTICUM2.equals(result)) {
+        if (TeacherApplicationEnum.Result.PRACTICUM2.toString().equals(result)) {
             List<TeacherApplication> list = teacherApplicationDao
                     .findApplictionForStatusResult(teacherApplication.getTeacherId(),TeacherApplicationDao.Status.PRACTICUM.toString(),TeacherApplicationDao.Result.PRACTICUM2.toString());
             if (list != null && list.size() > 0) {
@@ -263,13 +262,13 @@ public class PeSupervisorService {
         teacherApplication.setTeacherId(recruitTeacher.getId());
         teacherApplication.setCurrent(1);
         // 如果是PASS操作，则ta状态修改为FINISH，教师状态修改为REGULAR
-        if (RecruitmentResult.PASS.equals(result)) {
-            teacherApplication.setStatus(RecruitmentStatus.FINISHED);
+        if (TeacherApplicationEnum.Result.PASS.toString().equals(result)) {
+            teacherApplication.setStatus(TeacherApplicationEnum.Status.FINISHED.toString());
             // 2.教师状态更新
-            recruitTeacher.setLifeCycle(TeacherLifeCycle.REGULAR);
+            recruitTeacher.setLifeCycle(LifeCycle.REGULAR.toString());
             // 3.新增教师入职时间
             recruitTeacher.setEntryDate(new Date());
-            recruitTeacher.setType(TeacherType.PART_TIME);
+            recruitTeacher.setType(TeacherEnum.Type.PART_TIME.toString());
             this.teacherDao.update(recruitTeacher);
             // 增加quiz的考试记录
             teacherQuizDao.insertQuiz(recruitTeacher.getId(),pes.getId());
@@ -320,10 +319,10 @@ public class PeSupervisorService {
 
         // 判断当前用户是否拥有PE Supervisor权限
         if (CollectionUtils.isNotEmpty(teacherModules)
-                && RecruitmentResult.TBD_FAIL.equals(result)) {
+                && TeacherApplicationEnum.Result.TBD_FAIL.toString().equals(result)) {
             // 拥有PE Supervisor权限
             // 更新当前Application记录的结果为FAIL
-            teacherApplication.setResult(RecruitmentResult.FAIL);
+            teacherApplication.setResult(TeacherApplicationEnum.Result.FAIL.toString());
             teacherApplication.setAuditorId(pe.getId());
             teacherApplication.setAuditDateTime(new Timestamp(System.currentTimeMillis()));
             teacherApplication.setContractUrl("PE-Supervisor");
@@ -348,7 +347,7 @@ public class PeSupervisorService {
                         currentTeacherApplications.stream().findFirst();
                 TeacherApplication enabledTeacherApplication = optionalTeacherApplication.get();
 
-                if (RecruitmentStatus.PRACTICUM.equals(enabledTeacherApplication.getStatus())) {
+                if (TeacherApplicationEnum.Status.PRACTICUM.toString().equals(enabledTeacherApplication.getStatus())) {
                     // 开始插入当前Application记录的副本
                     enabledTeacherApplication.setId(0);
                     enabledTeacherApplication.setContractUrl("PE-Supervisor");

@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.vipkid.enums.OnlineClassEnum;
+import com.vipkid.enums.TeacherEnum.LifeCycle;
 import com.vipkid.recruitment.dao.InterviewDao;
 import com.vipkid.recruitment.dao.TeacherApplicationDao;
 import com.vipkid.recruitment.dao.TeacherApplicationLogDao;
@@ -22,7 +23,6 @@ import com.vipkid.recruitment.entity.TeacherApplication;
 import com.vipkid.recruitment.interview.ConstantInterview;
 import com.vipkid.recruitment.utils.ResponseUtils;
 import com.vipkid.rest.config.RestfulConfig;
-import com.vipkid.trpm.constant.ApplicationConstant.TeacherLifeCycle;
 import com.vipkid.trpm.dao.OnlineClassDao;
 import com.vipkid.trpm.dao.TeacherDao;
 import com.vipkid.trpm.entity.OnlineClass;
@@ -123,7 +123,7 @@ public class InterviewService {
         }
         
         //onlineClassId 必须是OPEN 课
-        if(OnlineClassEnum.Status.OPEN.toString().equalsIgnoreCase(onlineClass.getStatus())){
+        if(OnlineClassEnum.ClassStatus.OPEN.toString().equalsIgnoreCase(onlineClass.getStatus())){
             return ResponseUtils.responseFail("This class("+onlineClassId+") is empty or anyone else has been booked !", this);
         }
         
@@ -252,8 +252,8 @@ public class InterviewService {
         if(TeacherApplicationDao.Status.INTERVIEW.toString().equals(listEntity.get(0).getStatus()) 
                 && TeacherApplicationDao.Result.PASS.toString().equals(listEntity.get(0).getResult())){
             //按照新流程 该步骤将老师的LifeCycle改变为Interview -to-Training
-            teacher.setLifeCycle(TeacherLifeCycle.TRAINING);
-            this.teacherDao.insertLifeCycleLog(teacher.getId(), TeacherLifeCycle.INTERVIEW, TeacherLifeCycle.TRAINING, teacher.getId());
+            teacher.setLifeCycle(LifeCycle.TRAINING.toString());
+            this.teacherDao.insertLifeCycleLog(teacher.getId(),LifeCycle.INTERVIEW,LifeCycle.TRAINING, teacher.getId());
             this.teacherDao.update(teacher);
             return ResponseUtils.responseSuccess();
         }

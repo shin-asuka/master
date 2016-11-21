@@ -14,16 +14,16 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.google.api.client.util.Maps;
+import com.vipkid.enums.TeacherEnum.LifeCycle;
 import com.vipkid.recruitment.interceptor.RestInterface;
 import com.vipkid.recruitment.interview.service.InterviewService;
 import com.vipkid.recruitment.utils.ResponseUtils;
 import com.vipkid.rest.RestfulController;
 import com.vipkid.rest.config.RestfulConfig;
-import com.vipkid.trpm.constant.ApplicationConstant.TeacherLifeCycle;
 import com.vipkid.trpm.entity.Teacher;
 
 @RestController
-@RestInterface(lifeCycle={TeacherLifeCycle.INTERVIEW})
+@RestInterface(lifeCycle={LifeCycle.INTERVIEW})
 @RequestMapping("/recruitment/interview")
 public class InterviewController extends RestfulController {
 
