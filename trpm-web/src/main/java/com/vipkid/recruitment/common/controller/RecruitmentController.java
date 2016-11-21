@@ -28,6 +28,7 @@ import com.vipkid.rest.validation.ValidateUtils;
 import com.vipkid.rest.validation.tools.Result;
 import com.vipkid.rest.web.LoginController;
 import com.vipkid.trpm.entity.Teacher;
+import com.vipkid.trpm.entity.TeacherAddress;
 import com.vipkid.trpm.entity.User;
 
 @RestController
@@ -60,8 +61,13 @@ public class RecruitmentController extends RestfulController{
         try{
             Teacher teacher = getTeacher(request);
             Map<String,Object> result = Maps.newHashMap();
-            result.put("teacher", teacher);
-            result.put("teacherAddress", this.recruitmentService.getTeacherAddress(teacher.getCurrentAddressId()));
+            result.put("timezone", teacher.getTimezone());
+            TeacherAddress ta = this.recruitmentService.getTeacherAddress(teacher.getCurrentAddressId());
+            if(ta != null){
+                result.put("countryId",ta.getCountryId());
+                result.put("stateId", ta.getStateId());
+                result.put("city",ta.getCity());
+            }
             return ResponseUtils.responseSuccess(result);
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
