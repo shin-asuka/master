@@ -1,4 +1,4 @@
-package com.vipkid.enums;
+package com.vipkid.rest.utils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

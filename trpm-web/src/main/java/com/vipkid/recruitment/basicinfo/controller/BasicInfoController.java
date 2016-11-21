@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.google.api.client.util.Maps;
 import com.vipkid.enums.AppEnum;
-import com.vipkid.enums.AppUtils;
 import com.vipkid.enums.TeacherEnum.DegreeType;
 import com.vipkid.enums.TeacherEnum.LifeCycle;
 import com.vipkid.enums.TeacherEnum.RecruitmentChannel;
