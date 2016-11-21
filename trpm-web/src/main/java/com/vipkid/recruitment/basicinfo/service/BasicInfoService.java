@@ -34,7 +34,6 @@ import com.vipkid.trpm.dao.TeacherNationalityCodeDao;
 import com.vipkid.trpm.dao.UserDao;
 import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.entity.TeacherAddress;
-import com.vipkid.trpm.entity.TeacherNationalityCode;
 import com.vipkid.trpm.entity.User;
 import com.vipkid.trpm.proxy.RedisProxy;
 import com.vipkid.trpm.util.AES;
@@ -226,12 +225,7 @@ public class BasicInfoService {
         paramMap.put("lifeCycle", TeacherEnum.LifeCycle.REGULAR);
         return teacherDao.findTeacher(paramMap);
     }
-    
-    public List<TeacherNationalityCode> getTeacherNationalityCodes() {
-        return teacherNationalityCode.getTeacherNationalityCodes();
-    }
-
-    
+        
     private Teacher initTeacher(Teacher teacher,TeacherDto bean){
         teacher.setExtraClassSalary(0);
         

@@ -32,7 +32,6 @@ import com.vipkid.rest.dto.TeacherDto;
 import com.vipkid.rest.dto.TeachingExperienceDto;
 import com.vipkid.rest.validation.ValidateUtils;
 import com.vipkid.rest.validation.tools.Result;
-import com.vipkid.trpm.entity.TeacherNationalityCode;
 import com.vipkid.trpm.entity.User;
 
 @RestController
@@ -142,6 +141,7 @@ public class BasicInfoController extends RestfulController{
             return ResponseUtils.responseFail(e.getMessage(), this);
         }
     } 
+    
     /*
     @Deprecated
     @RequestMapping(value = "/saveInfo", method = RequestMethod.POST, produces = RestfulConfig.JSON_UTF_8)
@@ -213,22 +213,5 @@ public class BasicInfoController extends RestfulController{
             return ResponseUtils.responseFail(e.getMessage(), this);
         }
     }
-    
-    @RequestMapping(value = "/findPhoneCode", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
-    public Map<String,Object> findPhoneCode(HttpServletRequest request, HttpServletResponse response){
-        try{
-            Map<String,Object> result = Maps.newHashMap();
-            User user = getUser(request);
-            logger.info("userId:{}",user.getId());
-            List<TeacherNationalityCode> list = this.basicInfoService.getTeacherNationalityCodes();
-            result.put("list", list);
-            return ResponseUtils.responseSuccess(result);
-        } catch (IllegalArgumentException e) {
-            response.setStatus(HttpStatus.BAD_REQUEST.value());
-            return ResponseUtils.responseFail(e.getMessage(), this);
-        } catch (Exception e) {
-            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            return ResponseUtils.responseFail(e.getMessage(), this);
-        }
-    }
+
 }
