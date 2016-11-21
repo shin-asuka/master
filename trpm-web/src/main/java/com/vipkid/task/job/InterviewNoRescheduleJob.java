@@ -2,9 +2,9 @@ package com.vipkid.task.job;
 
 import com.google.common.base.Stopwatch;
 import com.vipkid.email.EmailUtils;
+import com.vipkid.enums.TeacherApplicationEnum;
 import com.vipkid.http.utils.JsonUtils;
 import com.vipkid.task.utils.UADateUtils;
-import com.vipkid.trpm.constant.ApplicationConstant;
 import com.vipkid.trpm.dao.TeacherApplicationDao;
 import com.vipkid.trpm.dao.TeacherDao;
 import com.vipkid.trpm.dao.UserDao;
@@ -62,24 +62,24 @@ public class InterviewNoRescheduleJob {
 		Map<Long, TeacherApplication> teacherApplicationsMap = new HashedMap();
 		List<Map> times = UADateUtils.getStartEndOclockTimeMapListByBeforeHours(beforeHours);
 
-		List<TeacherApplication> teacherApplications = teacherApplicationDao.findByAuditTimesStatusResult(times, ApplicationConstant.RecruitmentStatus.INTERVIEW, ApplicationConstant.RecruitmentResult.REAPPLY);
-		logger.info("【JOB.EMAIL.InterviewNoReschedule】FIND.1: Cost {}ms. Query: times = {}, status = {}, result = {}; Result: users = {}",
-				stopwatch.elapsed(TimeUnit.MILLISECONDS), JsonUtils.toJSONString(times), ApplicationConstant.RecruitmentStatus.INTERVIEW, ApplicationConstant.RecruitmentResult.REAPPLY, JsonUtils.toJSONString(teacherApplications));
+		List<TeacherApplication> teacherApplications = teacherApplicationDao.findByAuditTimesStatusResult(times, TeacherApplicationEnum.Status.INTERVIEW.toString(), TeacherApplicationEnum.Result.REAPPLY.toString());
+		logger.info("【JOB.EMAIL.InterviewNoReschedule】FIND.1: Cost {}ms. Query: times = {}, status = {}, result = {}; Result: users = ",
+				stopwatch.elapsed(TimeUnit.MILLISECONDS), JsonUtils.toJSONString(times), TeacherApplicationEnum.Status.INTERVIEW.toString(), TeacherApplicationEnum.Result.REAPPLY.toString());
 		for(TeacherApplication ta : teacherApplications){
 			teacherIds.add(ta.getTeacherId());
 			teacherApplicationsMap.put(ta.getTeacherId(), ta);
 		}
 
 		if(teacherIds.size() == 0) return;
-		List<TeacherApplication> teacherApplicationsToRemove = teacherApplicationDao.findByTeacherIdsStatusNeResult(teacherIds, ApplicationConstant.RecruitmentStatus.INTERVIEW, ApplicationConstant.RecruitmentResult.REAPPLY);
-		logger.info("【JOB.EMAIL.InterviewNoReschedule】FIND.2: Cost {}ms. Query: teacherIds = {}, status = {}, result = {}; Result: teacherApplications = {}",
-				stopwatch.elapsed(TimeUnit.MILLISECONDS), JsonUtils.toJSONString(teacherIds), ApplicationConstant.RecruitmentStatus.INTERVIEW, ApplicationConstant.RecruitmentResult.REAPPLY, JsonUtils.toJSONString(teacherApplicationsToRemove));
+		List<TeacherApplication> teacherApplicationsToRemove = teacherApplicationDao.findByTeacherIdsStatusNeResult(teacherIds, TeacherApplicationEnum.Status.INTERVIEW.toString(), TeacherApplicationEnum.Result.REAPPLY.toString());
+		logger.info("【JOB.EMAIL.InterviewNoReschedule】FIND.2: Cost {}ms. Query: teacherIds = {}, status = {}, result = {}; Result: teacherApplications = ",
+				stopwatch.elapsed(TimeUnit.MILLISECONDS), JsonUtils.toJSONString(teacherIds), TeacherApplicationEnum.Status.INTERVIEW.toString(), TeacherApplicationEnum.Result.REAPPLY.toString());
 		teacherApplicationsToRemove.forEach(x -> teacherIds.remove(x.getTeacherId()));
 
 		if(teacherIds.size() == 0) return;
 		List<Teacher> teachers = teacherDao.findByIds(teacherIds);
-		logger.info("【JOB.EMAIL.InterviewNoReschedule】FIND.3: Cost {}ms. Query: teacherIds = {}; Result: teachers = {}",
-				stopwatch.elapsed(TimeUnit.MILLISECONDS), JsonUtils.toJSONString(teacherIds), JsonUtils.toJSONString(teachers));
+		logger.info("【JOB.EMAIL.InterviewNoReschedule】FIND.3: Cost {}ms. Query: teacherIds = {}; Result: teachers = ",
+				stopwatch.elapsed(TimeUnit.MILLISECONDS), JsonUtils.toJSONString(teacherIds));
 		teachers.forEach(x -> send(stopwatch, x, teacherApplicationsMap.get(x.getId()).getAuditDateTime(), times));
 
 	}
@@ -91,7 +91,7 @@ public class InterviewNoRescheduleJob {
 
 		if (auditTime.after(startTime) && auditTime.before(endTime)){
 			userDao.doLock(teacher.getId());
-			logger.info("【JOB.EMAIL.InterviewNoReschedule】LOCK: Cost {}ms. teacher = {}", stopwatch.elapsed(TimeUnit.MILLISECONDS), JsonUtils.toJSONString(teacher));
+			logger.info("【JOB.EMAIL.InterviewNoReschedule】LOCK: Cost {}ms. teacherId = {}, teacherEmail = {}", stopwatch.elapsed(TimeUnit.MILLISECONDS), teacher.getId(), teacher.getEmail());
 		} else {
 			String email = teacher.getEmail();
 			String name = teacher.getRealName();

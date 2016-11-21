@@ -2,9 +2,9 @@ package com.vipkid.task.job;
 
 import com.google.common.base.Stopwatch;
 import com.vipkid.email.EmailUtils;
+import com.vipkid.enums.TeacherApplicationEnum;
 import com.vipkid.http.utils.JsonUtils;
 import com.vipkid.task.utils.UADateUtils;
-import com.vipkid.trpm.constant.ApplicationConstant;
 import com.vipkid.trpm.dao.TeacherApplicationDao;
 import com.vipkid.trpm.dao.TeacherDao;
 import com.vipkid.trpm.dao.UserDao;
@@ -62,24 +62,24 @@ public class InterviewNoBookJob {
 		Map<Long, TeacherApplication> teacherApplicationsMap = new HashedMap();
 		List<Map> times = UADateUtils.getStartEndOclockTimeMapListByBeforeHours(beforeHours);
 
-		List<TeacherApplication> teacherApplications = teacherApplicationDao.findByAuditTimesStatusResult(times, ApplicationConstant.RecruitmentStatus.BASIC_INFO, ApplicationConstant.RecruitmentResult.PASS);
-		logger.info("【JOB.EMAIL.InterviewNoBook】FIND.1: Cost {}ms. Query: times = {}, status = {}, result = {}; Result: users = {}",
-				stopwatch.elapsed(TimeUnit.MILLISECONDS), JsonUtils.toJSONString(times), ApplicationConstant.RecruitmentStatus.BASIC_INFO, ApplicationConstant.RecruitmentResult.PASS, JsonUtils.toJSONString(teacherApplications));
+		List<TeacherApplication> teacherApplications = teacherApplicationDao.findByAuditTimesStatusResult(times, TeacherApplicationEnum.Status.BASIC_INFO.toString(), TeacherApplicationEnum.Result.PASS.toString());
+		logger.info("【JOB.EMAIL.InterviewNoBook】FIND.1: Cost {}ms. Query: times = {}, status = {}, result = {}; Result: users = ",
+				stopwatch.elapsed(TimeUnit.MILLISECONDS), JsonUtils.toJSONString(times), TeacherApplicationEnum.Status.BASIC_INFO.toString(), TeacherApplicationEnum.Result.PASS.toString());
 		for(TeacherApplication ta : teacherApplications){
 			teacherIds.add(ta.getTeacherId());
 			teacherApplicationsMap.put(ta.getTeacherId(), ta);
 		}
 
 		if(teacherIds.size() == 0) return;
-		List<TeacherApplication> teacherApplicationsToRemove = teacherApplicationDao.findByTeacherIdsStatusNeResult(teacherIds, ApplicationConstant.RecruitmentStatus.INTERVIEW, null);
-		logger.info("【JOB.EMAIL.InterviewNoBook】FIND.2: Cost {}ms. Query: teacherIds = {}, status = {}, result = {}; Result: teacherApplications = {}",
-				stopwatch.elapsed(TimeUnit.MILLISECONDS), JsonUtils.toJSONString(teacherIds), ApplicationConstant.RecruitmentStatus.INTERVIEW, "null", JsonUtils.toJSONString(teacherApplicationsToRemove));
+		List<TeacherApplication> teacherApplicationsToRemove = teacherApplicationDao.findByTeacherIdsStatusNeResult(teacherIds, TeacherApplicationEnum.Status.INTERVIEW.toString(), null);
+		logger.info("【JOB.EMAIL.InterviewNoBook】FIND.2: Cost {}ms. Query: teacherIds = {}, status = {}, result = {}; Result: teacherApplications = ",
+				stopwatch.elapsed(TimeUnit.MILLISECONDS), JsonUtils.toJSONString(teacherIds), TeacherApplicationEnum.Status.INTERVIEW.toString(), "null");
 		teacherApplicationsToRemove.forEach(x -> teacherIds.remove(x.getTeacherId()));
 
 		if(teacherIds.size() == 0) return;
 		List<Teacher> teachers = teacherDao.findByIds(teacherIds);
-		logger.info("【JOB.EMAIL.InterviewNoBook】FIND.3: Cost {}ms. Query: teacherIds = {}; Result: teachers = {}",
-				stopwatch.elapsed(TimeUnit.MILLISECONDS), JsonUtils.toJSONString(teacherIds), JsonUtils.toJSONString(teachers));
+		logger.info("【JOB.EMAIL.InterviewNoBook】FIND.3: Cost {}ms. Query: teacherIds = {}; Result: teachers = ",
+				stopwatch.elapsed(TimeUnit.MILLISECONDS), JsonUtils.toJSONString(teacherIds));
 		teachers.forEach(x -> send(stopwatch, x, teacherApplicationsMap.get(x.getId()).getAuditDateTime(), times));
 
 	}
@@ -91,7 +91,7 @@ public class InterviewNoBookJob {
 
 		if (auditTime.after(startTime) && auditTime.before(endTime)){
 			userDao.doLock(teacher.getId());
-			logger.info("【JOB.EMAIL.InterviewNoBook】LOCK: Cost {}ms. teacher = {}", stopwatch.elapsed(TimeUnit.MILLISECONDS), JsonUtils.toJSONString(teacher));
+			logger.info("【JOB.EMAIL.InterviewNoBook】LOCK: Cost {}ms. teacherId = {}, teacherEmail = {}", stopwatch.elapsed(TimeUnit.MILLISECONDS), teacher.getId(), teacher.getEmail());
 		} else {
 			String email = teacher.getEmail();
 			String name = teacher.getRealName();
