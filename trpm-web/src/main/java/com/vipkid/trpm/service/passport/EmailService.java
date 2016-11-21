@@ -50,7 +50,7 @@ public class EmailService {
             return this.sendClassNote(teacher);
         } else {
             Map<String, String> resultMap = Maps.newHashMap();
-            resultMap.put("info", ApplicationConstant.AjaxCode.ERROR_CODE);
+            resultMap.put("info", ApplicationConstant.AjaxCode.USER_ERROR);
             return resultMap;
         }
 
@@ -101,7 +101,7 @@ public class EmailService {
                 "VIPKIDAccountActivationLink-Title.html");
 
         new EmailEngine().addMail(user.getUsername(), tmpMap, EmailFormEnum.TEACHVIP);
-        resultMap.put("info", ApplicationConstant.AjaxCode.SUCCESS_CODE);
+        resultMap.put("info", "OK");
 
         return resultMap;
     }
@@ -129,7 +129,7 @@ public class EmailService {
                 templete.readTemplete("Step2Apply.html", map, "Step2Apply-Title.html");
 
         new EmailEngine().addMail(user.getUsername(), tmpMap, EmailFormEnum.TEACHVIP);
-        resultMap.put("info", ApplicationConstant.AjaxCode.SUCCESS_CODE);
+        resultMap.put("info", "OK");
 
         return resultMap;
     }

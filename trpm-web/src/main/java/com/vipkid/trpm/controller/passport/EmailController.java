@@ -56,18 +56,18 @@ public class EmailController extends AbstractController {
 		// 根据email，检查是否有此账号。
 		User user = this.passportService.findUserByUsername(email);
 		if (null == user) {
-			model.addAttribute("info", ApplicationConstant.AjaxCode.ERROR_CODE);
+			model.addAttribute("info", ApplicationConstant.AjaxCode.USER_NULL);
 			return jsonView(response, model.asMap());
 		}
 		// 检查用户类型
 		if (!UserEnum.Dtype.TEACHER.toString().equals(user.getDtype())) {
-			model.addAttribute("info", ApplicationConstant.AjaxCode.TYPE_CODE);
+			model.addAttribute("info", ApplicationConstant.AjaxCode.DTYPE_ERROR);
 			return jsonView(response, model.asMap());
 		}
 
 		Teacher teacher = this.passportService.findTeacherById(user.getId());
 		if (teacher == null) {
-			model.addAttribute("info", ApplicationConstant.AjaxCode.ERROR_CODE);
+			model.addAttribute("info", ApplicationConstant.AjaxCode.TEACHER_NULL);
 			return jsonView(response, model.asMap());
 		} else {
 		    log.info("用户名为："+loginService.getUser().getUsername() + "的老师从IP为:【"+ IpUtils.getRemoteIP()+"】的客户端，给老师【"+user.getUsername()+"】发送类型是:【"+type+"】的邮件！");

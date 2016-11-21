@@ -178,7 +178,7 @@ public class PassportService {
             resultMap.put("user", user);
             return ResponseUtils.responseSuccess(resultMap);
         } else {
-            return ResponseUtils.responseFail(ApplicationConstant.AjaxCode.ERROR_CODE, this);
+            return ResponseUtils.responseFail(ApplicationConstant.AjaxCode.USER_EXITS, this);
         }
     }
 
