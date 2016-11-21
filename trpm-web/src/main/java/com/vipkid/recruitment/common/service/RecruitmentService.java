@@ -69,10 +69,10 @@ public class RecruitmentService {
         //BASIC_INFO 11.5小时之内如果状态是FAIL 为待审核
         if(StringUtils.equalsIgnoreCase(TeacherApplicationEnum.Status.BASIC_INFO.toString(),teacherApplication.getStatus())){
             _result = getBasicInfoStatus(teacher, teacherApplication);
-            //INTERVIEW 待审核 待约课
+        //INTERVIEW 待审核 待约课
         }else if(StringUtils.equalsIgnoreCase(TeacherApplicationEnum.Status.INTERVIEW.toString(),teacherApplication.getStatus())){
             _result = getInterviewStatus(teacher, teacherApplication);
-            //待审核
+        //待审核
         }else if(StringUtils.equalsIgnoreCase(TeacherApplicationEnum.Status.PRACTICUM.toString(),teacherApplication.getStatus())){
             _result = getPracticumStatus(teacher, teacherApplication);
         }
@@ -131,11 +131,11 @@ public class RecruitmentService {
                     if(!DateUtils.count1h(onlineClass.getScheduledDateTime().getTime())){
                         result.put("result",TeacherApplicationDao.AuditStatus.goToClass.toString());
                         return result;
-                        //小于54周 处于审核中
+                    //小于54周 处于审核中
                     }else if(!DateUtils.count54week(onlineClass.getScheduledDateTime().getTime())){
                         result.put("result",TeacherApplicationDao.AuditStatus.ToAudit.toString());
                         return result;
-                        //大于54周超时
+                    //大于54周超时
                     }else{
                         result.put("result",TeacherApplicationDao.AuditStatus.hasTimeOut.toString());
                         return result;
