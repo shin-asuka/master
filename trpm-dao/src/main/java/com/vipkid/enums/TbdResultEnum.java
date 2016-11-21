@@ -3,6 +3,10 @@ package com.vipkid.enums;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * TBD  专门为PES 功能实现的对应关系
+ *
+ */
 public class TbdResultEnum {
 
     private static Logger logger = LoggerFactory.getLogger(TbdResultEnum.class);

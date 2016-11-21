@@ -142,7 +142,7 @@ public class PassportService {
             user.setLastEditDateTime(new Timestamp(System.currentTimeMillis()));
             user.setRegisterDateTime(new Timestamp(System.currentTimeMillis()));
             user.setRoles(Role.TEACHER.toString());
-            user.setDtype("Teacher");
+            user.setDtype(UserEnum.Dtype.TEACHER.val());
             userDao.save(user);
             user.setLastEditorId(user.getId());
             user.setCreaterId(user.getId());

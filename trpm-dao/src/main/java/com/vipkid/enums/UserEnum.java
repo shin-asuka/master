@@ -69,7 +69,7 @@ public class UserEnum {
             this.value = value;
         }
 
-        public String toString() {
+        public String val() {
             return this.value;
         }
     }
