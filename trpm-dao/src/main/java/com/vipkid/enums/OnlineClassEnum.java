@@ -56,4 +56,22 @@ public class OnlineClassEnum {
         }
 
     }
+    
+    
+
+    /* 课程类型定义 */
+    public enum CourseType {
+
+        PRACTICUM,
+        MAJOR;
+
+        public static boolean isPracticum(String courseType) {
+            return PRACTICUM.toString().equals(courseType);
+        }
+
+        public static boolean isMajor(String courseType) {
+            return MAJOR.toString().equals(courseType);
+        }
+
+    }
 }

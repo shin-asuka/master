@@ -10,17 +10,6 @@ import com.fasterxml.jackson.core.type.TypeReference;
 public class RestfulConfig {
     
     public static long SYSTEM_USER_ID = 2;
-
-    public static final class RoleClass{
-        
-        public static String PE = "PE";
-        
-        public static String PES = "PE-Supervisor";
-        
-        public static String TE = "TE";
-        
-        public static String TES = "TE-Supervisor";
-    }
         
     public static final class Validate{
         

@@ -6,7 +6,7 @@ import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.community.config.PropertyConfigurer;
 
-import com.vipkid.rest.config.RestfulConfig.RoleClass;
+import com.vipkid.enums.TeacherModuleEnum.RoleClass;
 import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.entity.User;
 
