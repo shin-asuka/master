@@ -31,7 +31,7 @@ import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.entity.User;
 
 @RestController
-@RestInterface(lifeCycle={TeacherLifeCycle.SIGNUP,TeacherLifeCycle.BASIC_INFO,TeacherLifeCycle.INTERVIEW,TeacherLifeCycle.SIGN_CONTRACT,TeacherLifeCycle.TRAINING,TeacherLifeCycle.PRACTICUM,TeacherLifeCycle.REGULAR})
+@RestInterface(lifeCycle={TeacherLifeCycle.ALL})
 @RequestMapping("/recruitment")
 public class RecruitmentController extends RestfulController{
     
