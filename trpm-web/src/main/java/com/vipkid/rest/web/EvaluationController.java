@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.google.api.client.util.Maps;
 import com.vipkid.recruitment.interceptor.RestInterface;
+import com.vipkid.recruitment.utils.ResponseUtils;
 import com.vipkid.rest.RestfulController;
 import com.vipkid.rest.config.RestfulConfig;
 import com.vipkid.trpm.constant.ApplicationConstant.LoginType;
@@ -42,69 +43,49 @@ public class EvaluationController extends RestfulController{
     
     @RequestMapping(value = "/getTags", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
     public Map<String,Object> getTags(HttpServletRequest request, HttpServletResponse response){
-        Map<String,Object> result = Maps.newHashMap();
-        result.put("status", false);
         try{
             User user = getUser(request);
             logger.info("userId:" + user.getId());
-            result = evaluationService.findTags();
-            return result;
+            return ResponseUtils.responseSuccess(evaluationService.findTags());
         } catch (IllegalArgumentException e) {
-            result.put("info",e.getMessage());
-            result.put("status", false);
-            logger.error("内部参数转化异常:"+e.getMessage());
             response.setStatus(HttpStatus.BAD_REQUEST.value());
+            return ResponseUtils.responseFail(e.getMessage(), this);
         } catch (Exception e) {
-            result.put("info",e.getMessage());
-            result.put("status", false);
-            logger.error(e.getMessage(), e);
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-        }  
-        return result;
+            return ResponseUtils.responseFail(e.getMessage(), this);
+        }
     }
     
     
     @RequestMapping(value = "/getTeacherBio", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
     public Map<String,Object> getTeacherBio(HttpServletRequest request, HttpServletResponse response, long teacherId){
-        Map<String,Object> result = Maps.newHashMap();
         try{
             User user = getUser(request);
             logger.info("userId:" + user.getId());
-            result = evaluationService.findTeacherBio(teacherId);
-            return result;
+            return ResponseUtils.responseSuccess(evaluationService.findTeacherBio(teacherId));
         } catch (IllegalArgumentException e) {
-            result.put("info",e.getMessage());
-            result.put("status", false);
-            logger.error("内部参数转化异常:"+e.getMessage());
             response.setStatus(HttpStatus.BAD_REQUEST.value());
+            return ResponseUtils.responseFail(e.getMessage(), this);
         } catch (Exception e) {
-            result.put("info",e.getMessage());
-            result.put("status", false);
-            logger.error(e.getMessage(), e);
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-        }        
-        return result;
+            return ResponseUtils.responseFail(e.getMessage(), this);
+        }
     }
     
     @RequestMapping(value = "/saveClick", method = RequestMethod.POST, produces = RestfulConfig.JSON_UTF_8)
     public Map<String,Object> saveClick(HttpServletRequest request, HttpServletResponse response){
-        Map<String,Object> result = Maps.newHashMap();
         try{
             User user = getUser(request);
             logger.info("userId:" + user.getId());
+            Map<String,Object> result = Maps.newHashMap();
             result.put("result",this.teacherPageLoginService.saveTeacherPageLogin(user.getId(),LoginType.EVALUATION_CLICK));
-            return result;
+            return ResponseUtils.responseSuccess(result);
         } catch (IllegalArgumentException e) {
-            result.put("info",e.getMessage());
-            result.put("status", false);
-            logger.error("内部参数转化异常:"+e.getMessage());
             response.setStatus(HttpStatus.BAD_REQUEST.value());
+            return ResponseUtils.responseFail(e.getMessage(), this);
         } catch (Exception e) {
-            result.put("info",e.getMessage());
-            result.put("status", false);
-            logger.error(e.getMessage(), e);
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-        }  
-        return result;
+            return ResponseUtils.responseFail(e.getMessage(), this);
+        }
     }
 }
