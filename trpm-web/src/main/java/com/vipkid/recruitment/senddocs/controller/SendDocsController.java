@@ -6,6 +6,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.google.api.client.util.Maps;
 import com.google.common.base.Preconditions;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.community.config.PropertyConfigurer;
 import org.slf4j.Logger;
@@ -24,6 +25,7 @@ import com.vipkid.file.model.FileUploadStatus;
 import com.vipkid.file.model.FileVo;
 import com.vipkid.file.service.AwsFileService;
 import com.vipkid.http.service.FileHttpService;
+import com.vipkid.recruitment.common.service.RecruitmentService;
 import com.vipkid.recruitment.interceptor.RestInterface;
 import com.vipkid.recruitment.senddocs.service.SendDocsService;
 import com.vipkid.recruitment.utils.ResponseUtils;
@@ -60,6 +62,54 @@ public class SendDocsController extends RestfulController {
     @Autowired
     private SendDocsService sendDocsService;
 
+    @Autowired
+    private RecruitmentService recruitmentService;
+
+
+    /**
+     * 进入 PersonalInfo 状态之前, 先查出之前是否有上传资料,
+     * @param teacherId
+     * @param request
+     * @param response
+     * @return
+     */
+    @RequestMapping(value = "/queryPersonalInfo", method = RequestMethod.POST, produces = RestfulConfig.JSON_UTF_8)
+    public Map<String, Object> queryPersonalInfo(Long teacherId, HttpServletRequest request, HttpServletResponse response) {
+        if (null == teacherId) {
+            return ResponseUtils.responseFail("Teacher's id is empty!", this);
+        }
+
+        Map<String, Object> result = Maps.newHashMap();
+        try {
+            Teacher teacher = teacherService.get(teacherId);
+            if (null == teacher) {
+                response.setStatus(HttpStatus.NOT_FOUND.value());
+                return ResponseUtils.responseFail("Teacher doesn't exist", this);
+            }
+
+            //检查老师的头像/照片/视频是都都上传了? 从 TIS 获取数据
+            Map<String, Object> teacherFiles = Maps.newHashMap();
+            teacherFiles = fileHttpService.queryTeacherFiles(teacherId);
+            String avatarUrl = (String) teacherFiles.get("avatarUrl");
+            String lifePictures = (String) teacherFiles.get("lifePictures");
+            String shortVideoUrl = (String) teacherFiles.get("shortVideo");
+            String shortVideoStatus = (String) teacherFiles.get("shortVideoStatus");
+
+            Map<String,Object> status = recruitmentService.getStatus(teacherId);
+            if(status != null && status.size() > 0) {
+                String failedReasonJson = (String) status.get("failedReason");
+            }
+
+        } catch (IllegalArgumentException e) {
+            response.setStatus(HttpStatus.BAD_REQUEST.value());
+            return ResponseUtils.responseFail(e.getMessage(), this);
+        } catch (Exception e) {
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            return ResponseUtils.responseFail(e.getMessage(), this);
+        }
+
+        return ResponseUtils.responseFail("Failed to submit teacher bio", this);
+    }
 
     /**
      * only change teacher's introduction
@@ -71,7 +121,7 @@ public class SendDocsController extends RestfulController {
      * @return
      */
     @RequestMapping(value = "/submit", method = RequestMethod.POST, produces = RestfulConfig.JSON_UTF_8)
-    public Map<String, Object> submitPersonalInfo(Long teacherId, String bio, HttpServletRequest request, HttpServletResponse response) {
+      public Map<String, Object> submitPersonalInfo(Long teacherId, String bio, HttpServletRequest request, HttpServletResponse response) {
         if (null == teacherId || StringUtils.isEmpty(bio)) {
             return ResponseUtils.responseFail("Teacher's id and/or bio is empty!", this);
         }
@@ -162,8 +212,8 @@ public class SendDocsController extends RestfulController {
             String key = AwsFileUtils.getLifePictureKey(fileName);
             Long fileSize = file.getSize();
 
-            Preconditions.checkArgument(AwsFileUtils.checkAvatarFileType(fileName), "文件类型不正确，支持类型为" + AwsFileUtils.LIFE_PICTURE_FILE_TYPE);
-            Preconditions.checkArgument(AwsFileUtils.checkAvatarFileSize(fileSize), "文件太大，maxSize = " + AwsFileUtils.LIFE_PICTURE_MAX_SIZE);
+            Preconditions.checkArgument(AwsFileUtils.checkLifePicFileType(fileName), "文件类型不正确，支持类型为" + AwsFileUtils.LIFE_PICTURE_FILE_TYPE);
+            Preconditions.checkArgument(AwsFileUtils.checkLifePicFileSize(fileSize), "文件太大，maxSize = " + AwsFileUtils.LIFE_PICTURE_MAX_SIZE);
 
             try {
                 FileVo fileVo = awsFileService.upload(bucketName, key, file.getInputStream(), fileSize);
@@ -198,8 +248,8 @@ public class SendDocsController extends RestfulController {
             String key = AwsFileUtils.getShortVideoKey(fileName);
             Long fileSize = file.getSize();
 
-            Preconditions.checkArgument(AwsFileUtils.checkAvatarFileType(fileName), "文件类型不正确，支持类型为" + AwsFileUtils.SHORT_VIDEO_FILE_TYPE);
-            Preconditions.checkArgument(AwsFileUtils.checkAvatarFileSize(fileSize), "文件太大，maxSize = " + AwsFileUtils.SHORT_VIDEO_MAX_SIZE);
+            Preconditions.checkArgument(AwsFileUtils.checkShortVideoFileType(fileName), "文件类型不正确，支持类型为" + AwsFileUtils.SHORT_VIDEO_FILE_TYPE);
+            Preconditions.checkArgument(AwsFileUtils.checkShortVideoFileSize(fileSize), "文件太大，maxSize = " + AwsFileUtils.SHORT_VIDEO_MAX_SIZE);
 
             try {
                 FileVo fileVo = awsFileService.upload(bucketName, key, file.getInputStream(), fileSize);

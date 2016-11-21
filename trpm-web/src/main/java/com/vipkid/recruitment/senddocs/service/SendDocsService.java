@@ -6,6 +6,7 @@ import com.amazonaws.services.iot.model.S3Action;
 import org.omg.CORBA.PRIVATE_MEMBER;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 
 import com.vipkid.trpm.dao.TeacherDao;
 import com.vipkid.trpm.entity.Teacher;
@@ -14,6 +15,7 @@ import com.vipkid.trpm.service.portal.FileService;
 /**
  * @author Austin.Cao  Date: 19/11/2016
  */
+@Service
 public class SendDocsService {
 
     Logger logger = LoggerFactory.getLogger(SendDocsService.class);
