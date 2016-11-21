@@ -23,7 +23,7 @@ import com.vipkid.trpm.constant.ApplicationConstant.TeacherLifeCycle;
 import com.vipkid.trpm.entity.Teacher;
 
 @RestController
-@RestInterface(lifeCycle={TeacherLifeCycle.INTERVIEW,TeacherLifeCycle.REGULAR})
+@RestInterface(lifeCycle={TeacherLifeCycle.INTERVIEW})
 @RequestMapping("/recruitment/interview")
 public class InterviewController extends RestfulController {
 
