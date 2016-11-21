@@ -41,8 +41,13 @@ public class AppEnum {
      * @date 2016年10月24日
      */
     public static <E extends Enum<E>> boolean containsName(final Class<E> enumClass, String name) {
+        if(StringUtils.isBlank(name)){
+            return true;
+        }
         return EnumUtils.isValidEnum(enumClass, name);
     } 
+    
+    
     @Deprecated
     public static <T> boolean containsNameold(final Class<T> enumClass, String name) {
         T[] enums = enumClass.getEnumConstants();

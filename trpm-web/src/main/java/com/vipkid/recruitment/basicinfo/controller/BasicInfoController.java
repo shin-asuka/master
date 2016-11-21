@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.google.api.client.util.Maps;
+import com.vipkid.enums.AppEnum;
 import com.vipkid.enums.AppUtils;
 import com.vipkid.enums.TeacherEnum.DegreeType;
 import com.vipkid.enums.TeacherEnum.LifeCycle;
@@ -168,15 +169,15 @@ public class BasicInfoController extends RestfulController{
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
                 return ResponseUtils.responseFail(list.get(0).getName() + "," + list.get(0).getMessages(), this);
             }
-            if(!AppUtils.containsName(Gender.class, bean.getGender())){
+            if(!AppEnum.containsName(Gender.class, bean.getGender())){
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
                 return ResponseUtils.responseFail("Gender data is error:"+bean.getGender(), this);
             }
-            if(!AppUtils.containsName(DegreeType.class, bean.getHighestLevelOfEdu())){
+            if(!AppEnum.containsName(DegreeType.class, bean.getHighestLevelOfEdu())){
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
                 return ResponseUtils.responseFail("HighestLevelOfEdu data is error:"+bean.getHighestLevelOfEdu(), this);
             }
-            if(!AppUtils.containsName(RecruitmentChannel.class, bean.getRecruitmentChannel())){
+            if(!AppEnum.containsName(RecruitmentChannel.class, bean.getRecruitmentChannel())){
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
                 return ResponseUtils.responseFail("RecruitmentChannel data is error:"+bean.getRecruitmentChannel(), this);
             }

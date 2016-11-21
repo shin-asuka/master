@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
 
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,30 +17,7 @@ import com.google.common.collect.Maps;
 public class AppUtils {
 
     private static Logger logger = LoggerFactory.getLogger(AppUtils.class);
-    
-    /**
-     * 判断一个枚举类是否包含某个名称 ,当传入为空的时候 则返回True
-     * @Author:ALong (ZengWeiLong)
-     * @param clazz
-     * @param name
-     * @return    
-     * boolean
-     * @date 2016年10月22日
-     */
-   public static <E extends Enum<E>> boolean containsName(final Class<E> enumClass,String name){
-       if(StringUtils.isBlank(name)){
-           logger.warn("传入类型：{}，为空：{}",enumClass,name);
-           return true;
-       }
-       try{
-           return AppEnum.containsName(enumClass,name);
-       }catch(Exception e){
-           logger.error("不存在的课程类型定义：" + name);
-       }
-       return false;
-   }
-   
-    
+        
     /**
      * 将一个时间戳转化为指定时区的时间
      * @Author:ALong (ZengWeiLong)
