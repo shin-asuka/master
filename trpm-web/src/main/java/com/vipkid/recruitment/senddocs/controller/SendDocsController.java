@@ -1,6 +1,5 @@
-package com.vipkid.recruitment.interview.controller;
+package com.vipkid.recruitment.senddocs.controller;
 
-import java.io.IOException;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -13,7 +12,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -21,21 +19,17 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.vipkid.enums.TeacherEnum;
 import com.vipkid.file.model.FileUploadStatus;
 import com.vipkid.file.model.FileVo;
 import com.vipkid.file.service.AwsFileService;
-import com.vipkid.file.utils.ActionHelp;
 import com.vipkid.http.service.FileHttpService;
 import com.vipkid.recruitment.interceptor.RestInterface;
 import com.vipkid.recruitment.senddocs.service.SendDocsService;
 import com.vipkid.recruitment.utils.ResponseUtils;
 import com.vipkid.rest.RestfulController;
 import com.vipkid.rest.config.RestfulConfig;
-import com.vipkid.rest.utils.UserUtils;
-import com.vipkid.trpm.constant.ApplicationConstant;
 import com.vipkid.trpm.entity.Teacher;
-import com.vipkid.trpm.entity.User;
-import com.vipkid.trpm.service.portal.PersonalInfoService;
 import com.vipkid.trpm.service.portal.TeacherService;
 import com.vipkid.trpm.util.AwsFileUtils;
 
@@ -48,7 +42,7 @@ import com.vipkid.trpm.util.AwsFileUtils;
  * @author Austin.Cao  Date: 18/11/2016
  */
 @RestController
-@RestInterface(lifeCycle = {ApplicationConstant.TeacherLifeCycle.SEND_DOCS, ApplicationConstant.TeacherLifeCycle.REGULAR})
+@RestInterface(lifeCycle={TeacherEnum.LifeCycle.SENT_DOCS})
 @RequestMapping("/recruitment/personalinfo")
 public class SendDocsController extends RestfulController {
 
