@@ -1,5 +1,7 @@
 package com.vipkid.trpm.dao;
 
+import java.util.List;
+
 import org.apache.commons.lang3.StringUtils;
 import org.community.dao.support.MapperDaoTemplate;
 import org.mybatis.spring.SqlSessionTemplate;
@@ -15,6 +17,10 @@ public class TeacherNationalityCodeDao extends MapperDaoTemplate<TeacherNational
 	public TeacherNationalityCodeDao(SqlSessionTemplate sqlSessionTemplate) {
 		super(sqlSessionTemplate, TeacherNationalityCode.class);
 	}
+	
+	public List<TeacherNationalityCode> getTeacherNationalityCodes() {
+        return super.selectList(new TeacherNationalityCode());
+    }
 
 	public TeacherNationalityCode getTeacherNationalityCode(int id, String code) {
 		if (StringUtils.isEmpty(code) || 0 == id) {
