@@ -96,4 +96,11 @@ public class TeacherLocation extends Entity implements Serializable {
         return this;
     }
 
+    public String getTimeZone() {
+		return timezone;
+	}
+
+	public void setTimeZone(String timeZone) {
+		this.timezone = timeZone;
+	}
 }
