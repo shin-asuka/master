@@ -1,5 +1,4 @@
 package com.vipkid.recruitment.contract.controller;
-import java.io.File;
 import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
@@ -13,7 +12,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Preconditions;
 import com.vipkid.file.model.FileVo;
 import com.vipkid.file.service.AwsFileService;
-import com.vipkid.file.utils.ActionHelp;
+
 import com.vipkid.recruitment.utils.ResponseUtils;
 import com.vipkid.trpm.util.AwsFileUtils;
 import org.community.config.PropertyConfigurer;
@@ -91,8 +90,8 @@ public class ContractController extends RestfulController {
             String key = AwsFileUtils.getTaxpayerkey(teacherId + "-" + name);
             Long size = file.getSize();
 
-            Preconditions.checkArgument(AwsFileUtils.checkFileType(name), "文件类型不正确，支持类型为" + AwsFileUtils.TAPXPAYER_FILE_TYPE);
-            Preconditions.checkArgument(AwsFileUtils.checkFileSize(size), "文件太大，maxSize = " + AwsFileUtils.TAPXPAYER_FILE_MAX_SIZE);
+            Preconditions.checkArgument(AwsFileUtils.checkTaxPayerFileType(name), "文件类型不正确，支持类型为" + AwsFileUtils.TAPXPAYER_FILE_TYPE);
+            Preconditions.checkArgument(AwsFileUtils.checkTaxPayerFileSize(size), "文件太大，maxSize = " + AwsFileUtils.TAPXPAYER_FILE_MAX_SIZE);
 
             try {
                 logger.info("文件:{}上传",name);
