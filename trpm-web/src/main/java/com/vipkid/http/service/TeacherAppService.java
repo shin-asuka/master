@@ -75,6 +75,8 @@ public class TeacherAppService extends HttpBaseService {
 	public List<TeacherLocation> getStateList(Integer countryId) {
 		String url = new StringBuilder(super.serverAddress)
                 .append("/api/app/info/states").toString();
+		//url = new StringBuilder("http://a6-teacher-rest.vipkid.com.cn").append("/api/app/info/states").toString();
+                
 		url +="?countryId="+countryId;
 		
         logger.info("httpGet getStateList ,  url = {}", url);
@@ -98,6 +100,8 @@ public class TeacherAppService extends HttpBaseService {
 	public List<TeacherLocation> getCityList(Integer stateId) {
 		String url = new StringBuilder(super.serverAddress)
                 .append("/api/app/info/cities").toString();
+		//url = new StringBuilder("http://a6-teacher-rest.vipkid.com.cn").append("/api/app/info/cities").toString();
+		
 		url +="?stateId="+stateId;
 		
         logger.info("httpGet getCityList ,  url = {}", url);

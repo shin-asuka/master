@@ -103,6 +103,7 @@
 
     <!-- 日志输出级别 -->
     <root level="info">
+    	${logback.console.out}
         <appender-ref ref="FILE"/>
         <appender-ref ref="vipkid-trpm-error"/>
     </root>

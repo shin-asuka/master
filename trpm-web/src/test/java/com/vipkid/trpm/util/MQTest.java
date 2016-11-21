@@ -23,6 +23,6 @@ public class MQTest {
 
     @Test
     public void testMonthOfYear() {
-        payrollMessageService.sendFinishOnlineClassMessage(4089565l, FinishOnlineClassMessage.OperatorType.ADD_UNIT_ASSESSMENT);
+        //payrollMessageService.sendFinishOnlineClassMessage(4089565l, FinishOnlineClassMessage.OperatorType.ADD_UNIT_ASSESSMENT);
     }
 }
