@@ -24,10 +24,10 @@ import com.vipkid.recruitment.interceptor.RestInterface;
 import com.vipkid.recruitment.training.service.TrainingService;
 import com.vipkid.rest.RestfulController;
 import com.vipkid.rest.config.RestfulConfig;
+import com.vipkid.rest.service.AdminQuizService;
 import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.entity.TeacherQuiz;
 import com.vipkid.trpm.entity.User;
-import com.vipkid.trpm.service.rest.AdminQuizService;
 
 
 @RestController

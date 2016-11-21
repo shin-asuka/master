@@ -1,4 +1,4 @@
-package com.vipkid.trpm.service.rest;
+package com.vipkid.rest.service;
 
 import java.sql.Timestamp;
 import java.util.Base64;

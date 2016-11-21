@@ -1,4 +1,4 @@
-package com.vipkid.trpm.service.rest;
+package com.vipkid.rest.service;
 
 import java.util.List;
 import java.util.Map;

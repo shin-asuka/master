@@ -20,10 +20,10 @@ import com.vipkid.recruitment.interceptor.RestInterface;
 import com.vipkid.recruitment.utils.ResponseUtils;
 import com.vipkid.rest.RestfulController;
 import com.vipkid.rest.config.RestfulConfig;
+import com.vipkid.rest.service.EvaluationService;
+import com.vipkid.rest.service.LoginService;
+import com.vipkid.rest.service.TeacherPageLoginService;
 import com.vipkid.trpm.entity.User;
-import com.vipkid.trpm.service.rest.EvaluationService;
-import com.vipkid.trpm.service.rest.LoginService;
-import com.vipkid.trpm.service.rest.TeacherPageLoginService;
 
 @RestController
 @RestInterface(lifeCycle=LifeCycle.REGULAR)
