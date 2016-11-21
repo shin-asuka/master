@@ -1,4 +1,4 @@
-package com.vipkid.trpm.entity;
+package com.vipkid.recruitment.entity;
 
 /**
  * Created by zhangzhaojun on 2016/11/15.

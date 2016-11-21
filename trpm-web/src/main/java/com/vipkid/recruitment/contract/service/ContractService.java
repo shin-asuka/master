@@ -14,10 +14,10 @@ import com.vipkid.enums.TeacherEnum;
 import com.vipkid.recruitment.dao.TeacherApplicationDao;
 import com.vipkid.recruitment.entity.TeacherApplication;
 import com.vipkid.trpm.dao.TeacherDao;
-import com.vipkid.trpm.dao.TeacherOtherDegreesDao;
-import com.vipkid.trpm.entity.ContractFile;
+import com.vipkid.recruitment.dao.TeacherOtherDegreesDao;
+import com.vipkid.recruitment.entity.ContractFile;
 import com.vipkid.trpm.entity.Teacher;
-import com.vipkid.trpm.entity.TeacherOtherDegrees;
+import com.vipkid.recruitment.entity.TeacherOtherDegrees;
 
 /**
  * Created by zhangzhaojun on 2016/11/14.
@@ -38,12 +38,16 @@ public class ContractService {
      * 1.更新教师信息<br/>
      * 2.更新TeacherApplication信息<br/>
      * 3.新增一条审核信息TeacherApplication并审核
-     * @param contractFile
+     * @param teacher
      */
     @Transactional
-    public Teacher updateTeacher(ContractFile contractFile,long teacherId){
+    public int  updateTeacher(Teacher teacher){
+        return this.teacherDao.update(teacher);
+
+
+
         //  1.更新教师
-        Teacher pageTeacher = teacherDao.findById(teacherId);
+        /*Teacher pageTeacher = teacherDao.findById(teacherId);
         logger.info("根据用户：{}的ID查询用户的详细信息",teacherId);
         pageTeacher.setHighestLevelOfEdu(contractFile.getDiploma());
         pageTeacher.setCertificates(contractFile.getCertification());
@@ -73,10 +77,10 @@ public class ContractService {
         application.setStatus(TeacherApplicationEnum.Status.SIGN_CONTRACT.toString());
         application = teacherApplicationDao.initApplicationData(application);
         this.teacherApplicationDao.save(application);
-        logger.info("用户：{}，update table TeacherApplication Column Current = 0,  add table TeacherApplication row Current = 1",teacherId);
+        logger.info("用户：{}，update table TeacherApplication Column Current = 0,  add table TeacherApplication row Current = 1",teacherId);*/
 
 
-        return pageTeacher;
+      //  return pageTeacher;
     }
 
 

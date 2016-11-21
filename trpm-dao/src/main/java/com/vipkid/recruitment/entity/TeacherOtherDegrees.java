@@ -1,4 +1,4 @@
-package com.vipkid.trpm.entity;
+package com.vipkid.recruitment.entity;
 
 import org.community.dao.support.Entity;
 

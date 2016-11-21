@@ -1,9 +1,9 @@
-package com.vipkid.trpm.dao;
+package com.vipkid.recruitment.dao;
 import org.community.dao.support.MapperDaoTemplate;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import com.vipkid.trpm.entity.TeacherOtherDegrees;
+import com.vipkid.recruitment.entity.TeacherOtherDegrees;
 import java.sql.Timestamp;
 /**
  * Created by zhangzhaojun on 2016/11/15.
@@ -23,6 +23,12 @@ public class TeacherOtherDegreesDao extends MapperDaoTemplate<TeacherOtherDegree
 
         return super.save(teacherOtherDegrees);
     }
+    public TeacherOtherDegrees findByTeacherId(long teacherId){
+        TeacherOtherDegrees teacherOtherDegrees =new TeacherOtherDegrees();
+        teacherOtherDegrees.setTeacherId(teacherId);
+        return super.selectEntity( teacherOtherDegrees,"findByTeacherId");
+    }
+
 
 }
 
