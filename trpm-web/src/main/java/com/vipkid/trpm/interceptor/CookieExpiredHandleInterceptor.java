@@ -75,7 +75,8 @@ public class CookieExpiredHandleInterceptor extends HandlerInterceptorAdapter {
 
 		String token = CookieUtils.getValue(request, CookieKey.TRPM_TOKEN);
 		String xRequestedWith = request.getHeader("X-Requested-With");
-
+		logger.info("preHandleRequest 用户  request token = {} , url = {} ",token ,request.getRequestURL());
+		
 		if (null == token && StringUtils.contains(xRequestedWith, "XMLHttpRequest")) {
 			response.setStatus(COOKIE_EXPIRED_CODE);
 			logger.info("COOKIE 无效 ajax");
@@ -91,6 +92,7 @@ public class CookieExpiredHandleInterceptor extends HandlerInterceptorAdapter {
 		}
 
         User user = indexService.getUser(request);
+        logger.info("preHandleUserInfo token = {} ,user = {}, url = {} ",token ,user==null?null:(user.getId()+"|"+user.getUsername()),request.getRequestURL());
         if(user == null){
             logger.info("IP:{},用户为NULL。。。",IpUtils.getIpAddress(request));
             return false; 
