@@ -42,7 +42,7 @@ public class TeacherAddressDao extends MapperDaoTemplate<TeacherAddress> {
         if(StringUtils.isNotBlank(streetAddress)){
             teacherAddress.setStreetAddress(streetAddress);
         }
-        if(StringUtils.isNoneBlank(zipCode)){
+        if(StringUtils.isNotBlank(zipCode)){
             teacherAddress.setZipCode(zipCode);
         }
         this.updateOrSave(teacherAddress);
