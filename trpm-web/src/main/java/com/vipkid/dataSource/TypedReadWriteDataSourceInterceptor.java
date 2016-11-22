@@ -11,17 +11,17 @@ import java.lang.reflect.Method;
 /**
  * Created by liuguanqing on 16/5/10.
  */
-public class TypedReadWriteDataSourceInterceptor implements MethodInterceptor{
+public class TypedReadWriteDataSourceInterceptor implements MethodInterceptor {
 
     @Override
     public Object invoke(MethodInvocation invocation) throws Throwable {
         Method method = invocation.getMethod();
 
         Annotation annotation = method.getAnnotation(Master.class);
-        if(annotation == null) {
+        if (annotation == null) {
             annotation = method.getAnnotation(Slave.class);
         }
-        if(annotation != null) {
+        if (annotation != null) {
             TypedReadWriteDataSourceRouter.DataSourceHolder.set(annotation);
         }
         try {

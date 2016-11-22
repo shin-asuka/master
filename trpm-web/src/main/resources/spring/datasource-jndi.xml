@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
-	xmlns:beans="http://www.springframework.org/schema/beans" xmlns:tx="http://www.springframework.org/schema/tx"
-	xmlns:aop="http://www.springframework.org/schema/aop"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:beans="http://www.springframework.org/schema/beans" xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
         http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd
         http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.0.xsd
         http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.0.xsd">
@@ -20,6 +21,24 @@
         </property>
     </bean>
 
+    <bean id="slaveDataSource2" class="org.springframework.jndi.JndiObjectFactoryBean">
+        <property name="jndiName">
+            <value>java:comp/env/jdbc/vipkidSlaveDB2</value>
+        </property>
+    </bean>
+
+    <bean id="slaveDataSource3" class="org.springframework.jndi.JndiObjectFactoryBean">
+        <property name="jndiName">
+            <value>java:comp/env/jdbc/vipkidSlaveDB3</value>
+        </property>
+    </bean>
+
+    <bean id="slaveDataSource4" class="org.springframework.jndi.JndiObjectFactoryBean">
+        <property name="jndiName">
+            <value>java:comp/env/jdbc/vipkidSlaveDB4</value>
+        </property>
+    </bean>
+
     <bean id="dataSource" class="com.vipkid.dataSource.TypedReadWriteDataSourceRouter">
         <!--<property name="slaves" value="5"/>-->
         <property name="slaves" value="4"/>
@@ -27,7 +46,10 @@
             <map key-type="java.lang.String">
                 <entry key="WRITE" value-ref="masterDataSource"/>
                 <!-- slave占用80%的流量 -->
-                <entry key="READ_0" value-ref="slaveDataSource" />
+                <entry key="READ_0" value-ref="slaveDataSource"/>
+                <entry key="READ_1" value-ref="slaveDataSource2"/>
+                <entry key="READ_2" value-ref="slaveDataSource3"/>
+                <entry key="READ_3" value-ref="slaveDataSource4"/>
             </map>
         </property>
         <property name="defaultTargetDataSource" ref="masterDataSource"/>

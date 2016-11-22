@@ -28,7 +28,7 @@ public class TypedReadWriteDataSourceRouter extends AbstractRoutingDataSource {
             return "WRITE";
         }
         logger.info("TypedReadWriteDataSourceRouter set datasource [salve]");
-        
+
         ThreadLocalRandom random = ThreadLocalRandom.current();
         return "READ_" + random.nextInt(slaves);
     }
@@ -48,4 +48,5 @@ public class TypedReadWriteDataSourceRouter extends AbstractRoutingDataSource {
             holder.remove();
         }
     }
+
 }
