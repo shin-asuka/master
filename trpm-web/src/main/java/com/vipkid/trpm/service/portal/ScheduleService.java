@@ -948,8 +948,7 @@ public class ScheduleService {
         return (count >= PEAKTIME_TIMESLOT_DEFAULT_COUNT) ? true : false;
     }
 
-    public boolean checkInOneHour(long onlineClassId) {
-        OnlineClass onlineClass = onlineClassDao.findById(onlineClassId);
+    public boolean checkInOneHour(OnlineClass onlineClass) {
         if (null != onlineClass && (onlineClass.getScheduledDateTime().getTime() - System.currentTimeMillis()) > 1 * 60
                         * 60 * 1000) {
             return false;

@@ -164,7 +164,7 @@
       #** 设置时间提示 *# 
       #timeInfo(${zoneTime})
       
-      <span>${timePoint.name}#if(!${onlineClass.isPracticum})&nbsp;<input type="checkbox" class="24hours" value="${onlineClass.id}" #if(${onlineClass.is24Hour})checked#end />#end</span>
+      <span>${timePoint.name}&nbsp;<input type="checkbox" class="24hours" value="${onlineClass.id}" #if(${onlineClass.is24Hour})checked#end /></span>
     </div>
     #end
 #end
@@ -225,7 +225,7 @@
     <div class="available readSlot $!{style}" data-toggle="tooltip" data-html="true" data-placement="#dataPlacement(${timeSlotIndex})">
       #** 设置提示信息 *# 
       #messageInfo($title)
-      <span>${timePoint.name}#if(!${onlineClass.isPracticum})&nbsp;<input type="checkbox" class="24hours" disabled value="${onlineClass.id}" #if(${onlineClass.is24Hour})checked#end />#end</span>
+      <span>${timePoint.name}&nbsp;<input type="checkbox" class="24hours" disabled value="${onlineClass.id}" #if(${onlineClass.is24Hour})checked#end /></span>
     </div>
     #end
 #end
