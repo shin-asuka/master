@@ -20,9 +20,11 @@ import com.vipkid.rest.dto.TimezoneDto;
 import com.vipkid.trpm.dao.OnlineClassDao;
 import com.vipkid.trpm.dao.TeacherAddressDao;
 import com.vipkid.trpm.dao.TeacherDao;
+import com.vipkid.trpm.dao.TeacherLocationDao;
 import com.vipkid.trpm.entity.OnlineClass;
 import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.entity.TeacherAddress;
+import com.vipkid.trpm.entity.TeacherLocation;
 import com.vipkid.trpm.util.DateUtils;
 
 @Service
@@ -40,6 +42,9 @@ public class RecruitmentService {
     @Autowired
     private TeacherAddressDao teacherAddressDao;
 
+    @Autowired
+    private TeacherLocationDao teacherLocationDao;
+    
     @Autowired
     private OnlineClassDao onlineClassDao;
 
@@ -178,6 +183,20 @@ public class RecruitmentService {
         }
         TeacherAddress ta = teacherAddressDao.findById(teacherAddressId);
         return ta;
+    }
+    
+    /**
+     * 获取地址信息
+     * @param teacherAddressId
+     * @return
+     * boolean
+     */
+    public TeacherLocation getTeacherLocation(int id){
+        if(id == 0){
+            return null;
+        }
+        TeacherLocation teacherLocation = teacherLocationDao.findById(id);
+        return teacherLocation;
     }
 
     /**

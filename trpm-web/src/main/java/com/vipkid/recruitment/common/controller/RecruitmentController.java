@@ -29,6 +29,7 @@ import com.vipkid.rest.validation.tools.Result;
 import com.vipkid.rest.web.LoginController;
 import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.entity.TeacherAddress;
+import com.vipkid.trpm.entity.TeacherLocation;
 import com.vipkid.trpm.entity.User;
 
 @RestController
@@ -62,11 +63,29 @@ public class RecruitmentController extends RestfulController{
             Teacher teacher = getTeacher(request);
             Map<String,Object> result = Maps.newHashMap();
             result.put("timezone", teacher.getTimezone());
+            result.put("countryId","");
+            result.put("countryName","");
+            result.put("stateId","");
+            result.put("stateName","");
+            result.put("city","");
+            result.put("cityName","");
             TeacherAddress ta = this.recruitmentService.getTeacherAddress(teacher.getCurrentAddressId());
             if(ta != null){
                 result.put("countryId",ta.getCountryId());
+                TeacherLocation country = this.recruitmentService.getTeacherLocation(ta.getCountryId());
+                if(country != null){
+                    result.put("countryName",country.getName());
+                }
                 result.put("stateId", ta.getStateId());
+                TeacherLocation state = this.recruitmentService.getTeacherLocation(ta.getStateId());
+                if(state != null){
+                    result.put("stateName",state.getName());
+                }
                 result.put("city",ta.getCity());
+                TeacherLocation city = this.recruitmentService.getTeacherLocation(ta.getCity());
+                if(city != null){
+                    result.put("cityName",city.getName());
+                }
             }
             return ResponseUtils.responseSuccess(result);
         } catch (IllegalArgumentException e) {
