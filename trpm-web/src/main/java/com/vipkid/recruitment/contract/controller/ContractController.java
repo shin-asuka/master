@@ -1,24 +1,15 @@
 package com.vipkid.recruitment.contract.controller;
-import java.io.BufferedInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.api.client.util.Maps;
 import com.google.common.base.Preconditions;
 import com.vipkid.file.model.FileVo;
 import com.vipkid.file.service.AwsFileService;
-
-import com.vipkid.file.utils.StringUtils;
 import com.vipkid.recruitment.entity.ContractFile;
 import com.vipkid.recruitment.entity.TeacherOtherDegrees;
 import com.vipkid.recruitment.utils.ResponseUtils;
@@ -32,7 +23,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
 import com.vipkid.enums.TeacherEnum;
 import com.vipkid.enums.TeacherEnum.LifeCycle;
 import com.vipkid.recruitment.contract.service.ContractService;
@@ -49,7 +39,7 @@ import org.springframework.web.multipart.MultipartFile;
  * Created by zhangzhaojun on 2016/11/14.
  */
 @RestController
-@RestInterface(lifeCycle={LifeCycle.CONTRACT,LifeCycle.REGULAR})
+@RestInterface(lifeCycle={LifeCycle.CONTRACT})
 
 @RequestMapping("/recruitment/contract")
 public class ContractController extends RestfulController {
@@ -458,6 +448,34 @@ public class ContractController extends RestfulController {
              }else{
                  return ResponseUtils.responseFail("Failed to delete Diploma.", this);
              }
+
+        } catch (IllegalArgumentException e) {
+            response.setStatus(HttpStatus.BAD_REQUEST.value());
+            return ResponseUtils.responseFail(e.getMessage(), this);
+        } catch (Exception e) {
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            return ResponseUtils.responseFail(e.getMessage(), this);
+        }
+    }
+
+
+    /**
+     * 删除Contract
+     * @param request
+     * @param response
+     * @return
+     */
+    @RequestMapping("/remoteContract")
+    public Map<String,Object> remoteContract(HttpServletRequest request,HttpServletResponse response){
+        Teacher teacher = new Teacher().setId(getTeacher(request).getId());
+        logger.info("用户:{},Delete Contract",teacher.getId());
+        teacher.setContract("");
+        try {
+            if(contractService.updateTeacher(teacher)!=0){
+                return ResponseUtils.responseSuccess("Successful to delete Contract.", null);
+            }else{
+                return ResponseUtils.responseFail("Failed to delete Contract.", this);
+            }
 
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
