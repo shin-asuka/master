@@ -1,6 +1,6 @@
 package com.vipkid.recruitment.entity;
 
-import java.util.List;
+import java.util.Map;
 
 /**
  * Created by zhangzhaojun on 2016/11/15.
@@ -13,11 +13,10 @@ public class ContractFile{
     //Teacher最高学历 highestLevelOfEdu
     private String diploma;
 
-    //Teacher教师证明  certificates
-    private List<String> certification;
+    private Map<Integer,String> certification;
 
     //其他证明  新建一个表
-    private List<String> degrees;
+    private Map<Integer,String> degrees;
     //w9税收
     private String tax;
     //Teacher表contract
@@ -47,19 +46,19 @@ public class ContractFile{
         this.diploma = diploma;
     }
 
-    public List<String> getCertification() {
+    public Map<Integer, String> getCertification() {
         return certification;
     }
 
-    public void setCertification(List<String> certification) {
+    public void setCertification(Map<Integer, String> certification) {
         this.certification = certification;
     }
 
-    public List<String> getDegrees() {
+    public Map<Integer, String> getDegrees() {
         return degrees;
     }
 
-    public void setDegrees(List<String> degrees) {
+    public void setDegrees(Map<Integer, String> degrees) {
         this.degrees = degrees;
     }
 

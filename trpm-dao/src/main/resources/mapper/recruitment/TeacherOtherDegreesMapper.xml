@@ -4,15 +4,14 @@
 
 
     <sql id="teacherOtherDegreesColumns">
-        teacher_other_degrees.id AS "id",
-        teacher_other_degrees.teacher_id AS "teacherId",
-        teacher_other_degrees.teacher_other_degrees AS "degrees",
-        teacher_other_degrees.filetype AS "fileType",
-        teacher_other_degrees.create_time AS "createTime",
-        teacher_other_degrees.update_time AS "updateTime",
-        teacher_other_degrees.create_id AS "createId",
-        teacher_other_degrees.update_id AS "updateId",
-
+        teacher_other_degrees.id AS id,
+        teacher_other_degrees.teacher_id AS teacherId,
+        teacher_other_degrees.teacher_other_degrees AS degrees,
+        teacher_other_degrees.filetype AS fileType,
+        teacher_other_degrees.create_time AS createTime,
+        teacher_other_degrees.update_time AS updateTime,
+        teacher_other_degrees.create_id AS createId,
+        teacher_other_degrees.update_id AS updateId
     </sql>
     <insert id="saveDao" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO teacher_other_degrees
@@ -45,7 +44,7 @@
         <include refid="teacherOtherDegreesColumns"/>
         FROM teacher_other_degrees
         WHERE
-        teacher_other_degrees.teacher_id = #{teacherId}
+        teacher_other_degrees.teacher_id =#{teacherId}
     </select>
 
 

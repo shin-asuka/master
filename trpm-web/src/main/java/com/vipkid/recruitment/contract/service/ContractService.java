@@ -2,7 +2,9 @@ package com.vipkid.recruitment.contract.service;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.vipkid.trpm.dao.TeacherTaxpayerFormDao;
 import com.vipkid.trpm.entity.TeacherTaxpayerForm;
@@ -40,15 +42,19 @@ public class ContractService {
     private TeacherTaxpayerFormDao teacherTaxpayerFormDao;
 
     /**
-     * 1.更新教师信息<br/>
-     * 2.更新TeacherApplication信息<br/>
-     * 3.新增一条审核信息TeacherApplication并审核
+     * 更新Teacher表中的Url
      * @param teacher
+     * @return
      */
     public int  updateTeacher(Teacher teacher){
         return this.teacherDao.update(teacher);
     }
 
+    /**
+     * 在TeacherApplication中加入一条带审核数据
+     * @param teacher
+     * @return
+     */
     public Teacher  updateTeacherApplication(Teacher teacher){
         List<TeacherApplication> list = teacherApplicationDao.findCurrentApplication(teacher.getId());
         for (int i = 0; i < list.size(); i++) {
@@ -69,16 +75,29 @@ public class ContractService {
          return teacher;
        }
 
-
+    /**
+     * 插入teacherOtherDegrees里的文件
+     * @param teacherOtherDegrees
+     * @return
+     */
     public  int save(TeacherOtherDegrees teacherOtherDegrees){
            return teacherOtherDegreesDao.save(teacherOtherDegrees);
        }
 
+    /**
+     * 删除teacherOtherDegrees里的文件
+     * @param teacherOtherDegrees
+     * @return
+     */
     public  int delete(TeacherOtherDegrees teacherOtherDegrees){
             return teacherOtherDegreesDao.delete(teacherOtherDegrees);
         }
 
-
+    /**
+     * 更改老师的lifeCycle
+     * @param teacher
+     * @return
+     */
     public Teacher toSendDocs(Teacher teacher){
         // 如果当前为第4步 则状态变更为第5步骤，否则不做任何变更
         teacher = teacherDao.findById(teacher.getId());
@@ -92,18 +111,11 @@ public class ContractService {
         return teacher;
     }
 
-
-    public Boolean deleteFileUrl(Teacher teacher){
-
-        int n=teacherDao.update(teacher);
-        if(n<=0){
-            return false;
-        }else{
-            return true;
-        }
-
-    }
-
+    /**
+     * 查询老师上传过的文件
+     * @param t
+     * @return
+     */
     public ContractFile findContract(Teacher t){
         ContractFile contractFile = new ContractFile();
         Teacher teacher =  teacherDao.findById(t.getId());
@@ -114,24 +126,27 @@ public class ContractService {
         contractFile.setTax(teacherTaxpayerForm.getUrl());
 
         List<TeacherOtherDegrees>  TeacherOtherDegreeses =   teacherOtherDegreesDao.findByTeacherId(teacher.getId());
-        List<String>  degrees;
-        List<String> certification;
-        if(TeacherOtherDegreeses!=null) {
-            degrees = new ArrayList<String>();
-            certification = new ArrayList<String>();
+        Map<Integer,String>  degrees;
+        Map<Integer,String> certification;
+
+        if(TeacherOtherDegreeses.size()!=0) {
+            degrees = new HashMap<Integer,String>();
+            certification = new HashMap<Integer,String>();
             TeacherOtherDegreeses.forEach(obj -> {
                 if (obj.getFileType() == 1) {
-                    degrees.add(obj.getDegrees());
+                    degrees.put(obj.getId(),obj.getDegrees());
                 } else if (obj.getFileType() == 2) {
-                    certification.add(obj.getDegrees());
+                    certification.put(obj.getId(),obj.getDegrees());
                 }
 
             });
+
             contractFile.setCertification(certification);
             contractFile.setDegrees(degrees);
         }
 
-        return contractFile;
+            return contractFile;
+
     }
 
 }

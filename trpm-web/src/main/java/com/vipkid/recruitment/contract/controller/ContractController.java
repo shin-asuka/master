@@ -308,13 +308,14 @@ public class ContractController extends RestfulController {
         }
         try{
             TeacherOtherDegrees teacherOtherDegrees = new TeacherOtherDegrees();
+            teacherOtherDegrees.setTeacherId(teacher.getId());
             teacherOtherDegrees.setDegrees(fileVo.getUrl());
             teacherOtherDegrees.setFileType(2);
-            int id =  contractService.save(teacherOtherDegrees);
+            contractService.save(teacherOtherDegrees);
             String info = toJSONString(fileVo);
             result.put("file",info);
             result.put("status",true);
-            result.put("id",id);
+            result.put("id",teacherOtherDegrees.getId());
             return ResponseUtils.responseSuccess(result);
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
@@ -346,13 +347,14 @@ public class ContractController extends RestfulController {
         }
         try{
             TeacherOtherDegrees teacherOtherDegrees = new TeacherOtherDegrees();
+            teacherOtherDegrees.setTeacherId(teacher.getId());
             teacherOtherDegrees.setDegrees(fileVo.getUrl());
             teacherOtherDegrees.setFileType(1);
-            int id =  contractService.save(teacherOtherDegrees);
+            contractService.save(teacherOtherDegrees);
             String info = toJSONString(fileVo);
             result.put("file",info);
             result.put("status",true);
-            result.put("id",id);
+            result.put("id",teacherOtherDegrees.getId());
             return ResponseUtils.responseSuccess(result);
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
@@ -391,7 +393,12 @@ public class ContractController extends RestfulController {
         }
     }
 
-
+    /**
+     * 查询用户所提交的文件URL
+     * @param request
+     * @param response
+     * @return
+     */
 
     @RequestMapping(value = "/contract", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
     public Map<String,Object>  contract(HttpServletRequest request,HttpServletResponse response){
@@ -400,7 +407,7 @@ public class ContractController extends RestfulController {
         logger.info("保存用户：{}查询上传过的文件",teacher.getId());
         try {
             ContractFile contractFile =  contractService.findContract(teacher);
-            result.put("filename",contractFile);
+            result.put("fileUrl",contractFile);
             result.put("status",true);
             return ResponseUtils.responseSuccess(result);
         } catch (IllegalArgumentException e) {
@@ -424,70 +431,15 @@ public class ContractController extends RestfulController {
         logger.info("用户{}跳转到SEND_DOCS",teacher.getId());
         Map<String,Object> recMap = new HashMap<String,Object>();
         if(TeacherEnum.LifeCycle.SENT_DOCS.toString().equals(teacher.getLifeCycle())){
-            recMap.put("info", true);
+            recMap.put("status", true);
         }else{
-            recMap.put("info", false);
+            recMap.put("status", false);
         }
         logger.info("toSendDocs Status :" + teacher.getLifeCycle());
         return recMap;
     }
 
 
-
-    @RequestMapping(value = "/downFile", method = RequestMethod.POST, produces = RestfulConfig.JSON_UTF_8)
-            public Map<String,Object> downFile(@RequestParam("fileVo")FileVo fileVo,HttpServletRequest request,HttpServletResponse response){
-                Map<String,Object> result = Maps.newHashMap();
-                String bucketName = null;
-                String key = null;
-                if(fileVo.getPath().contains("/")){
-                    Integer index = fileVo.getPath().indexOf("/");
-                    bucketName = fileVo.getPath().substring(0, index);
-                    key = fileVo.getPath().substring(index + 1);
-                }
-                if(StringUtils.isBlank(bucketName) || StringUtils.isBlank(key)){
-                    logger.info("文件信息为空  bucketName = {}, key = {}",bucketName,key);
-                    response.setStatus(HttpStatus.FORBIDDEN.value());
-                    return ResponseUtils.responseFail("Down File Fail",result,this);
-
-                }
-                fileVo = awsFileService.down(bucketName, key);
-                if(fileVo == null){
-                    logger.info("文件不存在  bucketName = {}, key = {}",bucketName,key);
-                    response.setStatus(HttpStatus.FORBIDDEN.value());
-                    return ResponseUtils.responseFail("Down File Fail",result,this);
-                }
-                ZipOutputStream zos = null;
-                BufferedInputStream bis = null;
-                byte[] bufs = new byte[1024 * 10];
-
-                String name = fileVo.getName();
-                InputStream inputStream = null;
-                try {
-                    inputStream = fileVo.getInputStream();
-                    if(inputStream == null){
-                        response.setStatus(HttpStatus.FORBIDDEN.value());
-                        return ResponseUtils.responseFail("Down File Fail",result,this);
-                    }
-            ZipEntry zipEntry = new ZipEntry(name);
-            zos.putNextEntry(zipEntry);
-            bis = new BufferedInputStream(inputStream, 1024 * 10);
-            int read = 0;
-            while ((read = bis.read(bufs, 0, 1024 * 10)) != -1) {
-                zos.write(bufs, 0, read);
-            }
-        } catch (Exception e) {
-            logger.error("压缩文件失败", e);
-        } finally {
-            try {
-                if (inputStream != null) {
-                    inputStream.close();
-                }
-            } catch (Exception e2) {
-                e2.printStackTrace();
-            }
-        }
-        return ResponseUtils.responseSuccess("Successful to down File.",result);
-    }
 
     /**
      * 删除DiplomaFile
@@ -501,7 +453,7 @@ public class ContractController extends RestfulController {
         logger.info("用户:{},Delete DiplomaFile",teacher.getId());
         teacher.setHighestLevelOfEdu("");
         try {
-             if(contractService.deleteFileUrl(teacher)){
+             if(contractService.updateTeacher(teacher)!=0){
                  return ResponseUtils.responseSuccess("Successful to delete Diploma.", null);
              }else{
                  return ResponseUtils.responseFail("Failed to delete Diploma.", this);
@@ -529,7 +481,7 @@ public class ContractController extends RestfulController {
         logger.info("用户:{},Delete remoteIdentification",teacher.getId());
         teacher.setPassport("");
         try {
-            if(contractService.deleteFileUrl(teacher)){
+            if(contractService.updateTeacher(teacher)!=0){
                 return ResponseUtils.responseSuccess("Successful to delete remoteIdentification.", null);
             }else{
                 return ResponseUtils.responseFail("Failed to delete remoteIdentification.", this);
