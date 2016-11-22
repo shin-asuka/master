@@ -1,18 +1,26 @@
 package com.vipkid.recruitment.contract.controller;
+import java.io.BufferedInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.api.client.util.Maps;
 import com.google.common.base.Preconditions;
 import com.vipkid.file.model.FileVo;
 import com.vipkid.file.service.AwsFileService;
 
+import com.vipkid.file.utils.StringUtils;
+import com.vipkid.recruitment.entity.ContractFile;
+import com.vipkid.recruitment.entity.TeacherOtherDegrees;
 import com.vipkid.recruitment.utils.ResponseUtils;
 import com.vipkid.trpm.util.AwsFileUtils;
 import org.community.config.PropertyConfigurer;
@@ -31,7 +39,6 @@ import com.vipkid.recruitment.contract.service.ContractService;
 import com.vipkid.recruitment.interceptor.RestInterface;
 import com.vipkid.rest.RestfulController;
 import com.vipkid.rest.config.RestfulConfig;
-import com.vipkid.recruitment.entity.ContractFile;
 import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.entity.TeacherTaxpayerForm;
 import com.vipkid.trpm.entity.TeacherTaxpayerFormDetail;
@@ -54,31 +61,37 @@ public class ContractController extends RestfulController {
     private TeacherTaxpayerFormService teacherTaxpayerFormService;
     @Autowired
     private AwsFileService awsFileService;
+
     /**
-     * 提交并保存合同信息
+     * 提交用户上传文件的信息
      * @param request
      * @param response
-     * @param contractFile
      * @return
      */
     @RequestMapping(value = "/submit", method = RequestMethod.POST, produces = RestfulConfig.JSON_UTF_8)
-    public  Map<String,Object> submitsTeacher(HttpServletRequest request,HttpServletResponse response,ContractFile contractFile){
+    public  Map<String,Object> submitsTeacher(HttpServletRequest request,HttpServletResponse response){
         Teacher teacher = getTeacher(request);
-
-        /*logger.info("保存用户：{}上传的合同等文件URL",teacher.getId());
-        teacher = this.contractService.updateTeacher(contractFile,teacher.getId());
-        //更新w9-tax
-        TeacherTaxpayerForm teacherTaxpayerForm = new TeacherTaxpayerForm();
-        logger.info("保存用户：{}上传的合W9-TAX文件url",teacher.getId());
-        teacherTaxpayerForm.setUrl(contractFile.getTax());
-        teacherTaxpayerForm.setFormType(TeacherEnum.FormType.W9.val());
-        setTeacherTaxpayerFormInfo(teacherTaxpayerForm, request);
-        teacherTaxpayerFormService.saveTeacherTaxpayerForm(teacherTaxpayerForm );*/
-        Map<String,Object> map = new HashMap<String,Object>();
-        map.put("info", true);
-        return map;
+        Map<String,Object> result = new HashMap<String,Object>();
+        logger.info("保存用户：{}TeacherApplication",teacher.getId());
+        try{
+            contractService.updateTeacherApplication(teacher);
+            result.put("status",true);
+            return ResponseUtils.responseSuccess(result);
+        } catch (IllegalArgumentException e) {
+            response.setStatus(HttpStatus.BAD_REQUEST.value());
+            return ResponseUtils.responseFail(e.getMessage(), this);
+        } catch (Exception e) {
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            return ResponseUtils.responseFail(e.getMessage(), this);
+        }
     }
 
+    /**
+     * 文件上传功能
+     * @param file
+     * @param teacherId
+     * @return
+     */
     public FileVo AwsUpload(MultipartFile file, Long teacherId) {
         logger.info("teacher id = {} ", teacherId);
         FileVo fileVo = null;
@@ -107,12 +120,20 @@ public class ContractController extends RestfulController {
         return fileVo;
     }
 
+
+    /**
+     * 上传老师的身份证明
+     * @param file
+     * @param request
+     * @param response
+     * @return
+     */
     @RequestMapping("/uploadIdentification")
     public Map<String,Object> uploadIdentification(@RequestParam("file") MultipartFile file,HttpServletRequest request, HttpServletResponse response){
-        logger.info("upload Identification file = {}",file);
         Map<String,Object> result = new HashMap<String,Object>();
 
         Teacher teacher = new Teacher().setId(getTeacher(request).getId());
+        logger.info("用户：{}，upload Identification file = {}",teacher.getId(),file);
 
         FileVo fileVo  = AwsUpload(file,teacher.getId());
         if(fileVo==null){
@@ -141,13 +162,20 @@ public class ContractController extends RestfulController {
     }
 
 
+    /**
+     * 上传老师的最高学历
+     * @param file
+     * @param request
+     * @param response
+     * @return
+     */
     @RequestMapping("/uploadDiploma")
     public Map<String,Object> uploadDiploma(@RequestParam("file") MultipartFile file,HttpServletRequest request, HttpServletResponse response){
-        logger.info("upload uploadDiploma file = {}",file);
+
         Map<String,Object> result = new HashMap<String,Object>();
 
         Teacher teacher = new Teacher().setId(getTeacher(request).getId());
-
+        logger.info("用户 :{},upload uploadDiploma file = {}",teacher.getId(),file);
         FileVo fileVo  = AwsUpload(file,teacher.getId());
         if(fileVo==null){
             response.setStatus(HttpStatus.BAD_REQUEST.value());
@@ -173,21 +201,30 @@ public class ContractController extends RestfulController {
             return ResponseUtils.responseFail(e.getMessage(), this);
         }
     }
-    @RequestMapping("/uploadCertification ")
-    public Map<String,Object> uploadCertification (@RequestParam("file") MultipartFile file,HttpServletRequest request, HttpServletResponse response){
-        logger.info("upload uploadCertification file = {}",file);
+
+
+    /**
+     * 上传老师的合同
+     * @param file
+     * @param request
+     * @param response
+     * @return
+     */
+    @RequestMapping("/uploadContract")
+    public Map<String,Object> uploadContract(@RequestParam("file") MultipartFile file,HttpServletRequest request, HttpServletResponse response){
+
         Map<String,Object> result = new HashMap<String,Object>();
 
         Teacher teacher = new Teacher().setId(getTeacher(request).getId());
-
+        logger.info("用户 :{},upload uploadContract file = {}",teacher.getId(),file);
         FileVo fileVo  = AwsUpload(file,teacher.getId());
         if(fileVo==null){
             response.setStatus(HttpStatus.BAD_REQUEST.value());
             return ResponseUtils.responseFail("upload file is fail",this);
         }
+
         try{
-           /* contractService.
-            teacher.setHighestLevelOfEdu(fileVo.getUrl());
+            teacher.setContract(fileVo.getUrl());
             int n = this.contractService.updateTeacher(teacher);
             if(n<=0){
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
@@ -195,7 +232,7 @@ public class ContractController extends RestfulController {
             }
             String info = toJSONString(fileVo);
             result.put("file",info);
-            result.put("status",true);*/
+            result.put("status",true);
             return ResponseUtils.responseSuccess(result);
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
@@ -207,18 +244,172 @@ public class ContractController extends RestfulController {
     }
 
 
+    /**
+     * 上传W9-TAX文件
+     * @param file
+     * @param request
+     * @param response
+     * @return
+     */
+    @RequestMapping("/uploadW9Tax")
+    public Map<String,Object> uploadW9Tax(@RequestParam("file") MultipartFile file,HttpServletRequest request, HttpServletResponse response){
+
+        Map<String,Object> result = new HashMap<String,Object>();
+
+        Teacher teacher = new Teacher().setId(getTeacher(request).getId());
+        logger.info("用户 :{},upload uploadW9Tax file = {}",teacher.getId(),file);
+        FileVo fileVo  = AwsUpload(file,teacher.getId());
+        if(fileVo==null){
+            response.setStatus(HttpStatus.BAD_REQUEST.value());
+            return ResponseUtils.responseFail("upload file is fail",this);
+        }
+
+        try{
+            //更新w9-tax
+            TeacherTaxpayerForm teacherTaxpayerForm = new TeacherTaxpayerForm();
+            logger.info("保存用户：{}上传的合W9-TAX文件url",teacher.getId());
+            teacherTaxpayerForm.setTeacherId(teacher.getId());
+            teacherTaxpayerForm.setUrl(fileVo.getUrl());
+            teacherTaxpayerForm.setFormType(TeacherEnum.FormType.W9.val());
+            setTeacherTaxpayerFormInfo(teacherTaxpayerForm, request);
+            teacherTaxpayerFormService.saveTeacherTaxpayerForm(teacherTaxpayerForm );
+            String info = toJSONString(fileVo);
+            result.put("file",info);
+            result.put("status",true);
+            return ResponseUtils.responseSuccess(result);
+        } catch (IllegalArgumentException e) {
+            response.setStatus(HttpStatus.BAD_REQUEST.value());
+            return ResponseUtils.responseFail(e.getMessage(), this);
+        } catch (Exception e) {
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            return ResponseUtils.responseFail(e.getMessage(), this);
+        }
+    }
 
 
+    /**
+     * 上传Certification文件
+     * @param file
+     * @param request
+     * @param response
+     * @return
+     */
+    @RequestMapping("/uploadCertification ")
+    public Map<String,Object> uploadCertification (@RequestParam("file") MultipartFile file,HttpServletRequest request, HttpServletResponse response){
+
+        Map<String,Object> result = new HashMap<String,Object>();
+
+        Teacher teacher = new Teacher().setId(getTeacher(request).getId());
+        logger.info("用户 :{},upload uploadCertification file = {}",teacher.getId(),file);
+        FileVo fileVo  = AwsUpload(file,teacher.getId());
+        if(fileVo==null){
+            response.setStatus(HttpStatus.BAD_REQUEST.value());
+            return ResponseUtils.responseFail("upload file is fail",this);
+        }
+        try{
+            TeacherOtherDegrees teacherOtherDegrees = new TeacherOtherDegrees();
+            teacherOtherDegrees.setDegrees(fileVo.getUrl());
+            teacherOtherDegrees.setFileType(2);
+            int id =  contractService.save(teacherOtherDegrees);
+            String info = toJSONString(fileVo);
+            result.put("file",info);
+            result.put("status",true);
+            result.put("id",id);
+            return ResponseUtils.responseSuccess(result);
+        } catch (IllegalArgumentException e) {
+            response.setStatus(HttpStatus.BAD_REQUEST.value());
+            return ResponseUtils.responseFail(e.getMessage(), this);
+        } catch (Exception e) {
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            return ResponseUtils.responseFail(e.getMessage(), this);
+        }
+    }
+
+    /**
+     * 上传Degrees文件
+     * @param file
+     * @param request
+     * @param response
+     * @return
+     */
+    @RequestMapping("/uploadDegrees ")
+    public Map<String,Object> uploadDegrees (@RequestParam("file") MultipartFile file,HttpServletRequest request, HttpServletResponse response){
+
+        Map<String,Object> result = new HashMap<String,Object>();
+
+        Teacher teacher = new Teacher().setId(getTeacher(request).getId());
+        logger.info("用户 :{},upload uploadDegrees file = {}",teacher.getId(),file);
+        FileVo fileVo  = AwsUpload(file,teacher.getId());
+        if(fileVo==null){
+            response.setStatus(HttpStatus.BAD_REQUEST.value());
+            return ResponseUtils.responseFail("upload file is fail",this);
+        }
+        try{
+            TeacherOtherDegrees teacherOtherDegrees = new TeacherOtherDegrees();
+            teacherOtherDegrees.setDegrees(fileVo.getUrl());
+            teacherOtherDegrees.setFileType(1);
+            int id =  contractService.save(teacherOtherDegrees);
+            String info = toJSONString(fileVo);
+            result.put("file",info);
+            result.put("status",true);
+            result.put("id",id);
+            return ResponseUtils.responseSuccess(result);
+        } catch (IllegalArgumentException e) {
+            response.setStatus(HttpStatus.BAD_REQUEST.value());
+            return ResponseUtils.responseFail(e.getMessage(), this);
+        } catch (Exception e) {
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            return ResponseUtils.responseFail(e.getMessage(), this);
+        }
+    }
 
 
+    /**
+     * 根据文件的id来删除文件
+     * @param id
+     * @param request
+     * @param response
+     * @return
+     */
+    @RequestMapping("/remoteDegrees ")
+    public Map<String,Object> remoteDegrees (int id,HttpServletRequest request, HttpServletResponse response){
+        Map<String,Object> result = new HashMap<String,Object>();
+        Teacher teacher = new Teacher().setId(getTeacher(request).getId());
+        logger.info("用户：{}， upload remoteDegrees fileID = {}",teacher.getId(),id);
+        try{
+            TeacherOtherDegrees teacherOtherDegrees = new TeacherOtherDegrees();
+           teacherOtherDegrees.setId(id);
+           contractService.delete(teacherOtherDegrees);
+            result.put("status",true);
+           return ResponseUtils.responseSuccess(result);
+        } catch (IllegalArgumentException e) {
+            response.setStatus(HttpStatus.BAD_REQUEST.value());
+            return ResponseUtils.responseFail(e.getMessage(), this);
+        } catch (Exception e) {
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            return ResponseUtils.responseFail(e.getMessage(), this);
+        }
+    }
 
 
 
     @RequestMapping(value = "/contract", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
     public Map<String,Object>  contract(HttpServletRequest request,HttpServletResponse response){
         Teacher teacher = getTeacher(request);
+        Map<String,Object> result = new HashMap<String,Object>();
         logger.info("保存用户：{}查询上传过的文件",teacher.getId());
-        return null;
+        try {
+            ContractFile contractFile =  contractService.findContract(teacher);
+            result.put("filename",contractFile);
+            result.put("status",true);
+            return ResponseUtils.responseSuccess(result);
+        } catch (IllegalArgumentException e) {
+            response.setStatus(HttpStatus.BAD_REQUEST.value());
+            return ResponseUtils.responseFail(e.getMessage(), this);
+        } catch (Exception e) {
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            return ResponseUtils.responseFail(e.getMessage(), this);
+        }
     }
 
     /**
@@ -239,6 +430,118 @@ public class ContractController extends RestfulController {
         }
         logger.info("toSendDocs Status :" + teacher.getLifeCycle());
         return recMap;
+    }
+
+
+
+    @RequestMapping(value = "/downFile", method = RequestMethod.POST, produces = RestfulConfig.JSON_UTF_8)
+            public Map<String,Object> downFile(@RequestParam("fileVo")FileVo fileVo,HttpServletRequest request,HttpServletResponse response){
+                Map<String,Object> result = Maps.newHashMap();
+                String bucketName = null;
+                String key = null;
+                if(fileVo.getPath().contains("/")){
+                    Integer index = fileVo.getPath().indexOf("/");
+                    bucketName = fileVo.getPath().substring(0, index);
+                    key = fileVo.getPath().substring(index + 1);
+                }
+                if(StringUtils.isBlank(bucketName) || StringUtils.isBlank(key)){
+                    logger.info("文件信息为空  bucketName = {}, key = {}",bucketName,key);
+                    response.setStatus(HttpStatus.FORBIDDEN.value());
+                    return ResponseUtils.responseFail("Down File Fail",result,this);
+
+                }
+                fileVo = awsFileService.down(bucketName, key);
+                if(fileVo == null){
+                    logger.info("文件不存在  bucketName = {}, key = {}",bucketName,key);
+                    response.setStatus(HttpStatus.FORBIDDEN.value());
+                    return ResponseUtils.responseFail("Down File Fail",result,this);
+                }
+                ZipOutputStream zos = null;
+                BufferedInputStream bis = null;
+                byte[] bufs = new byte[1024 * 10];
+
+                String name = fileVo.getName();
+                InputStream inputStream = null;
+                try {
+                    inputStream = fileVo.getInputStream();
+                    if(inputStream == null){
+                        response.setStatus(HttpStatus.FORBIDDEN.value());
+                        return ResponseUtils.responseFail("Down File Fail",result,this);
+                    }
+            ZipEntry zipEntry = new ZipEntry(name);
+            zos.putNextEntry(zipEntry);
+            bis = new BufferedInputStream(inputStream, 1024 * 10);
+            int read = 0;
+            while ((read = bis.read(bufs, 0, 1024 * 10)) != -1) {
+                zos.write(bufs, 0, read);
+            }
+        } catch (Exception e) {
+            logger.error("压缩文件失败", e);
+        } finally {
+            try {
+                if (inputStream != null) {
+                    inputStream.close();
+                }
+            } catch (Exception e2) {
+                e2.printStackTrace();
+            }
+        }
+        return ResponseUtils.responseSuccess("Successful to down File.",result);
+    }
+
+    /**
+     * 删除DiplomaFile
+     * @param request
+     * @param response
+     * @return
+     */
+    @RequestMapping("/remoteDiplomaFile")
+    public Map<String,Object> remoteFile(HttpServletRequest request,HttpServletResponse response){
+        Teacher teacher = new Teacher().setId(getTeacher(request).getId());
+        logger.info("用户:{},Delete DiplomaFile",teacher.getId());
+        teacher.setHighestLevelOfEdu("");
+        try {
+             if(contractService.deleteFileUrl(teacher)){
+                 return ResponseUtils.responseSuccess("Successful to delete Diploma.", null);
+             }else{
+                 return ResponseUtils.responseFail("Failed to delete Diploma.", this);
+             }
+
+        } catch (IllegalArgumentException e) {
+            response.setStatus(HttpStatus.BAD_REQUEST.value());
+            return ResponseUtils.responseFail(e.getMessage(), this);
+        } catch (Exception e) {
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            return ResponseUtils.responseFail(e.getMessage(), this);
+        }
+    }
+
+
+    /**
+     * 删除Identification
+     * @param request
+     * @param response
+     * @return
+     */
+    @RequestMapping("/remoteIdentification")
+    public Map<String,Object> remoteIdentification(HttpServletRequest request,HttpServletResponse response){
+        Teacher teacher = new Teacher().setId(getTeacher(request).getId());
+        logger.info("用户:{},Delete remoteIdentification",teacher.getId());
+        teacher.setPassport("");
+        try {
+            if(contractService.deleteFileUrl(teacher)){
+                return ResponseUtils.responseSuccess("Successful to delete remoteIdentification.", null);
+            }else{
+                return ResponseUtils.responseFail("Failed to delete remoteIdentification.", this);
+            }
+
+        } catch (IllegalArgumentException e) {
+            response.setStatus(HttpStatus.BAD_REQUEST.value());
+            return ResponseUtils.responseFail(e.getMessage(), this);
+        } catch (Exception e) {
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            return ResponseUtils.responseFail(e.getMessage(), this);
+        }
     }
 
 

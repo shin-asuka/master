@@ -1,5 +1,7 @@
 package com.vipkid.recruitment.entity;
 
+import java.util.List;
+
 /**
  * Created by zhangzhaojun on 2016/11/15.
  */
@@ -12,10 +14,10 @@ public class ContractFile{
     private String diploma;
 
     //Teacher教师证明  certificates
-    private String certification;
+    private List<String> certification;
 
     //其他证明  新建一个表
-    private String degrees;
+    private List<String> degrees;
     //w9税收
     private String tax;
     //Teacher表contract
@@ -45,19 +47,19 @@ public class ContractFile{
         this.diploma = diploma;
     }
 
-    public String getCertification() {
+    public List<String> getCertification() {
         return certification;
     }
 
-    public void setCertification(String certification) {
+    public void setCertification(List<String> certification) {
         this.certification = certification;
     }
 
-    public String getDegrees() {
+    public List<String> getDegrees() {
         return degrees;
     }
 
-    public void setDegrees(String degrees) {
+    public void setDegrees(List<String> degrees) {
         this.degrees = degrees;
     }
 

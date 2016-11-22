@@ -5,6 +5,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import com.vipkid.recruitment.entity.TeacherOtherDegrees;
 import java.sql.Timestamp;
+import java.util.List;
+
 /**
  * Created by zhangzhaojun on 2016/11/15.
  */
@@ -23,13 +25,20 @@ public class TeacherOtherDegreesDao extends MapperDaoTemplate<TeacherOtherDegree
 
         return super.save(teacherOtherDegrees);
     }
-    public TeacherOtherDegrees findByTeacherId(long teacherId){
+    public List<TeacherOtherDegrees> findByTeacherId(long teacherId){
         TeacherOtherDegrees teacherOtherDegrees =new TeacherOtherDegrees();
         teacherOtherDegrees.setTeacherId(teacherId);
-        return super.selectEntity( teacherOtherDegrees,"findByTeacherId");
+        return super.selectList( teacherOtherDegrees,"findByTeacherId");
+    }
+    public int  delete(TeacherOtherDegrees teacherOtherDegrees){
+        return super.delete(teacherOtherDegrees);
     }
 
-
+    public int  update(TeacherOtherDegrees teacherOtherDegrees){
+        teacherOtherDegrees.setUpdateId(teacherOtherDegrees.getTeacherId());
+        teacherOtherDegrees.setUpdateTime(new Timestamp(System.currentTimeMillis()));
+        return super.update(teacherOtherDegrees);
+    }
 }
 
 
