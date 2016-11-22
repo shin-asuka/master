@@ -2,6 +2,7 @@ package com.vipkid.trpm.dao;
 
 import java.sql.Timestamp;
 
+import org.apache.commons.lang3.StringUtils;
 import org.community.dao.support.MapperDaoTemplate;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,8 +39,12 @@ public class TeacherAddressDao extends MapperDaoTemplate<TeacherAddress> {
         teacherAddress.setCountryId(countryId);
         teacherAddress.setStateId(stateId);
         teacherAddress.setCity(cityId);
-        teacherAddress.setStreetAddress(streetAddress);
-        teacherAddress.setZipCode(zipCode);
+        if(StringUtils.isNotBlank(streetAddress)){
+            teacherAddress.setStreetAddress(streetAddress);
+        }
+        if(StringUtils.isNoneBlank(zipCode)){
+            teacherAddress.setZipCode(zipCode);
+        }
         this.updateOrSave(teacherAddress);
         teacher.setCurrentAddressId(teacherAddress.getId());
         return teacherAddress;

@@ -5,6 +5,9 @@ import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.community.tools.JsonTools;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,6 +27,9 @@ import com.vipkid.trpm.util.DateUtils;
 
 @Service
 public class RecruitmentService {
+    
+    
+    private static Logger logger = LoggerFactory.getLogger(RecruitmentService.class);
 
     @Autowired
     private TeacherDao teacherDao;
@@ -183,8 +189,13 @@ public class RecruitmentService {
      */
     public boolean updateTimezone(TimezoneDto bean,Teacher teacher){
         teacher.setTimezone(bean.getTimezone());
+        //2.更新Address
+        TeacherAddress teacherAddress = this.teacherAddressDao.updateOrSaveCurrentAddressId(teacher, bean.getCountryId(), bean.getStateId(), bean.getCityId(),null,null);
+        if(teacherAddress == null || teacherAddress.getId() <= 0){
+            logger.error("老师:{},地址信息:{},保存有问题.",teacher.getId(),JsonTools.getJson(teacherAddress));
+            return false;
+        }
         this.teacherDao.update(teacher);
-        //是否需要更新TeacherAddress ?
         return true;
     }
 }
