@@ -39,6 +39,10 @@
 	<aop:config proxy-target-class="true">
 		<aop:advisor advice-ref="txAdvice"
 			pointcut="execution(* com.vipkid.trpm.service.**.*Service.*(..))" />
+		<aop:advisor advice-ref="rwDataSourceInterceptor"
+		    pointcut="execution(* com.vipkid.trpm.controller.**.*Controller.*(..))" />
 	</aop:config>
+
+	<bean id="rwDataSourceInterceptor" class="com.vipkid.dataSource.TypedReadWriteDataSourceInterceptor"></bean>
 
 </beans>
