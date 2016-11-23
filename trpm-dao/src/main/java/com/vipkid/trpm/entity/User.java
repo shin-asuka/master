@@ -44,6 +44,8 @@ public class User extends Entity implements Serializable {
 	/* 是否第一次登录 */
 	private String isfirstlogin;
 
+	private String ip; //用户当前所在区域ip
+	
 	public long getId() {
 		return this.id;
 	}
@@ -204,6 +206,14 @@ public class User extends Entity implements Serializable {
 	public User setIsfirstlogin(String isfirstlogin) {
 		this.isfirstlogin = isfirstlogin;
 		return this;
+	}
+
+	public String getIp() {
+		return ip;
+	}
+
+	public void setIp(String ip) {
+		this.ip = ip;
 	}
 
 }

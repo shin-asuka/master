@@ -176,6 +176,27 @@ public class OnlineClassController extends AbstractPortalController {
         return "redirect:/classrooms.shtml";
     }
 
+    @RequestMapping("/exitClassroomPage")
+    public String exitClassroomPage(HttpServletRequest request, HttpServletResponse response,
+            @RequestParam("onlineClassId") Long onlineClassId) {
+    	logger.info("教师退出在线教室 exitClassroomPage onlineClassId = {}",onlineClassId);
+    	Map<String, Object> modelMap = Maps.newHashMap();
+    	Integer status = 0;
+    	String message = "";
+    	try {
+    		Teacher teacher = indexService.getTeacher(request);
+            onlineclassService.exitclassroom(onlineClassId, teacher);
+            status = 1;
+		} catch (Exception e) {
+			status = 0;
+			message = "退出在线教室失败";
+			logger.error("退出在线教室失败",e);
+		}
+        modelMap.put("status", status);      
+        modelMap.put("message", message); 
+        return jsonView(response, modelMap);
+    }
+    
     /**
      * 退出OPEN课程教室
      *

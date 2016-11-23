@@ -33,6 +33,7 @@ import com.vipkid.trpm.service.passport.IndexService;
 import com.vipkid.trpm.service.portal.LocationService;
 import com.vipkid.trpm.service.rest.AdminQuizService;
 import com.vipkid.trpm.service.rest.TeacherPageLoginService;
+import com.vipkid.trpm.util.CacheUtils;
 import com.vipkid.trpm.util.CookieUtils;
 import com.vipkid.trpm.util.IpUtils;
 
@@ -74,6 +75,8 @@ public class CookieExpiredHandleInterceptor extends HandlerInterceptorAdapter {
         }
 
 		String token = CookieUtils.getValue(request, CookieKey.TRPM_TOKEN);
+		String key = CacheUtils.getUserTokenKey(token);
+		
 		String xRequestedWith = request.getHeader("X-Requested-With");
 		logger.info("preHandleRequest 用户  request token = {} , url = {} ",token ,request.getRequestURL());
 		
@@ -85,7 +88,7 @@ public class CookieExpiredHandleInterceptor extends HandlerInterceptorAdapter {
 			response.sendRedirect(request.getContextPath() + "/index.shtml");
 			logger.info("TOKEN 无效");
 			return false;
-		} else if (null != token && null == redisProxy.get(token)) {
+		} else if (null != token && null == redisProxy.get(key)) {
 			response.sendRedirect(request.getContextPath() + "/index.shtml");
 			logger.info("TOKEN 无效");
 			return false;
@@ -95,6 +98,7 @@ public class CookieExpiredHandleInterceptor extends HandlerInterceptorAdapter {
         logger.info("preHandleUserInfo token = {} ,user = {}, url = {} ",token ,user==null?null:(user.getId()+"|"+user.getUsername()),request.getRequestURL());
         if(user == null){
             logger.info("IP:{},用户为NULL。。。",IpUtils.getIpAddress(request));
+            response.sendRedirect(request.getContextPath() + "/index.shtml");
             return false; 
         }
         AppContext.setUser(user);
