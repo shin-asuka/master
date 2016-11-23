@@ -155,6 +155,10 @@ public class RecruitmentService {
                     }
                 }
             }
+        }else if(StringUtils.equalsIgnoreCase(Result.PASS.toString(),teacherApplication.getResult())){
+            result.put("result",teacherApplication.getResult());
+            result.put("basePay",teacherApplication.getBasePay());
+            return result;
         }
         return null;
     }
