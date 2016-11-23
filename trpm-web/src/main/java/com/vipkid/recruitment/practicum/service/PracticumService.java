@@ -16,6 +16,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.vipkid.enums.OnlineClassEnum;
+import com.vipkid.enums.TeacherApplicationEnum.Result;
+import com.vipkid.enums.TeacherApplicationEnum.Status;
 import com.vipkid.enums.TeacherEnum.LifeCycle;
 import com.vipkid.recruitment.dao.PracticumDao;
 import com.vipkid.recruitment.dao.TeacherApplicationDao;
@@ -165,15 +167,15 @@ public class PracticumService {
         //如果cancel次数已经等于2次将无法cancel
         if(count == PracticumConstant.CANCEL_NUM){
             TeacherApplication teacherApplication = listEntity.get(0);
-            teacherApplication.setResult(TeacherApplicationDao.Result.FAIL.toString());
+            teacherApplication.setResult(Result.FAIL.toString());
             teacherApplication.setAuditDateTime(new Timestamp(System.currentTimeMillis()));
             teacherApplication.setAuditorId(RestfulConfig.SYSTEM_USER_ID);
             teacherApplication.setFailedReason("Cancel too many times!");
         }
 
         //保存cancel记录
-        this.teacherApplicationLogDao.saveCancel(teacher.getId(), listEntity.get(0).getId(), TeacherApplicationDao.Status.PRACTICUM,
-                TeacherApplicationDao.Result.CANCEL, onlineClass);
+        this.teacherApplicationLogDao.saveCancel(teacher.getId(), listEntity.get(0).getId(), Status.PRACTICUM,
+                Result.CANCEL, onlineClass);
 
         //执行Cancel逻辑
         Map<String,Object> result = OnlineClassProxy.doCancelRecruitement(teacher.getId(), onlineClass.getId(), ClassType.TEACHER_RECRUITMENT);
@@ -191,8 +193,7 @@ public class PracticumService {
      * @return int
      */
     public int getCancelNum(Teacher teacher){
-        return this.teacherApplicationLogDao.getCancelNum(teacher.getId(),TeacherApplicationDao.Status.PRACTICUM,
-                TeacherApplicationDao.Result.CANCEL);
+        return this.teacherApplicationLogDao.getCancelNum(teacher.getId(),Status.PRACTICUM,Result.CANCEL);
     }
 
     /**
@@ -208,8 +209,8 @@ public class PracticumService {
         }
 
         //执行逻辑 只有在Practicum的PASS状态才能进入
-        if(TeacherApplicationDao.Status.PRACTICUM.toString().equals(listEntity.get(0).getStatus())
-                && TeacherApplicationDao.Result.PASS.toString().equals(listEntity.get(0).getResult())){
+        if(Status.PRACTICUM.toString().equals(listEntity.get(0).getStatus())
+                && Result.PASS.toString().equals(listEntity.get(0).getResult())){
             //按照新流程 该步骤将老师的LifeCycle改变为Practicum -to-Contract
             teacher.setLifeCycle(LifeCycle.CONTRACT.toString());
             this.teacherDao.insertLifeCycleLog(teacher.getId(),LifeCycle.PRACTICUM,LifeCycle.CONTRACT, teacher.getId());

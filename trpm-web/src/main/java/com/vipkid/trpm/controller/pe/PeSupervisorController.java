@@ -16,6 +16,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.ServletRequestUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.vipkid.enums.TeacherApplicationEnum.Result;
+import com.vipkid.enums.TeacherApplicationEnum.Status;
 import com.vipkid.recruitment.dao.TeacherApplicationDao;
 import com.vipkid.recruitment.entity.TeacherApplication;
 import com.vipkid.trpm.constant.ApplicationConstant.FinishType;
@@ -90,7 +92,7 @@ public class PeSupervisorController extends AbstractPeController {
             }
 
             List<TeacherApplication> list = teacherApplicationDao
-                    .findApplictionForStatusResult(teacherApplication.getTeacherId(),TeacherApplicationDao.Status.PRACTICUM.toString(),TeacherApplicationDao.Result.PRACTICUM2.toString());
+                    .findApplictionForStatusResult(teacherApplication.getTeacherId(),Status.PRACTICUM.toString(),Result.PRACTICUM2.toString());
             if (list != null && list.size() > 0) {
                 model.addAttribute("practicum2", true);
             } else {

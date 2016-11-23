@@ -22,46 +22,6 @@ public class TeacherApplicationDao extends MapperDaoTemplate<TeacherApplication>
     public TeacherApplicationDao(SqlSessionTemplate sqlSessionTemplate) {
         super(sqlSessionTemplate, TeacherApplication.class);
     }
-
-    public enum Status {
-        SIGNUP, // 新申请
-        BASIC_INFO, // 2015-08-08 添加basic-info 状态，从signup分离
-        INTERVIEW, //面试
-        SIGN_CONTRACT, //签合同
-        TRAINING, // 教师培训
-        PRACTICUM,//试讲 
-        CANCELED, //已取消
-        FINISHED // 已结束
-        ;
-        public static TeacherApplicationDao.Status prevStatus(Status status) {
-            TeacherApplicationDao.Status [] arr = {Status.SIGNUP, Status.BASIC_INFO, Status.INTERVIEW, Status.SIGN_CONTRACT, Status.TRAINING, Status.PRACTICUM};
-            for (int n = 1; n<arr.length; n++) {
-                //
-                if (status == arr[n]) {
-                    return arr[n-1];
-                }
-            }            
-            return TeacherApplicationDao.Status.SIGNUP;
-        };
-    }
-    
-    public enum Result {
-        PASS, // 通过
-        FAIL, // 失败
-        REAPPLY, //重新申请,继续上PRACTICUM1（由于客观原因没能完成面试）
-        PRACTICUM2, //第一次面试没通过，上PRACTICUM2
-        TBD_FAIL,
-        TBD,
-        CANCEL
-    }
-    
-    public enum AuditStatus {
-        ToAudit, // 待审核
-        ToSubmit, // 待提交
-        goToClass, // 待上课
-        hasTimeOut //过期
-        
-    }
     
     /**
      * TeacherApplication 默认值设置<br/>

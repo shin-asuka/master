@@ -9,8 +9,8 @@ import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.vipkid.recruitment.dao.TeacherApplicationDao.Result;
-import com.vipkid.recruitment.dao.TeacherApplicationDao.Status;
+import com.vipkid.enums.TeacherApplicationEnum.Result;
+import com.vipkid.enums.TeacherApplicationEnum.Status;
 import com.vipkid.recruitment.entity.TeacherApplicationLog;
 import com.vipkid.trpm.entity.OnlineClass;
 

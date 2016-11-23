@@ -16,6 +16,8 @@ import org.springframework.stereotype.Service;
 import com.google.api.client.util.Lists;
 import com.google.api.client.util.Maps;
 import com.vipkid.email.EmailUtils;
+import com.vipkid.enums.TeacherApplicationEnum.AuditStatus;
+import com.vipkid.enums.TeacherApplicationEnum.Result;
 import com.vipkid.enums.TeacherEnum;
 import com.vipkid.enums.TeacherEnum.LifeCycle;
 import com.vipkid.enums.TeacherEnum.RecruitmentChannel;
@@ -179,7 +181,7 @@ public class BasicInfoService {
             //Basic审核为FAIIL
             application.setAuditDateTime(new Timestamp(System.currentTimeMillis()));
             application.setAuditorId(RestfulConfig.SYSTEM_USER_ID);
-            application.setResult(TeacherApplicationDao.Result.FAIL.toString());
+            application.setResult(Result.FAIL.toString());
             //需要写入Fail原因管理端需要展示
             List<String> list = processor.getFailReasons();
             List<Map<String,Object>> _list = Lists.newArrayList();
@@ -191,19 +193,19 @@ public class BasicInfoService {
                 });
             }
             application.setFailedReason(JsonTools.getJson(_list));
-            result.put("result",TeacherApplicationDao.AuditStatus.ToAudit.toString());
+            result.put("result",AuditStatus.ToAudit.toString());
         }else{
             //自动审核通过Basic则自动变LifeCycle为Interview
             teacher.setLifeCycle(LifeCycle.INTERVIEW.toString());
             //Basic审核为PASS
             application.setAuditDateTime(new Timestamp(System.currentTimeMillis()));
             application.setAuditorId(RestfulConfig.SYSTEM_USER_ID);
-            application.setResult(TeacherApplicationDao.Result.PASS.toString());
+            application.setResult(Result.PASS.toString());
             this.teacherDao.insertLifeCycleLog(teacher.getId(), LifeCycle.BASIC_INFO,LifeCycle.INTERVIEW, RestfulConfig.SYSTEM_USER_ID);
             //发送邮件
             logger.info("调用发送邮件程序发送给:{}",user.getUsername());
             EmailUtils.sendEmail4BasicInfoPass(teacher);
-            result.put("result", TeacherApplicationDao.Result.PASS);
+            result.put("result", Result.PASS);
             result.put("action","signlogin.shtml?token="+ AES.encrypt(user.getToken(), AES.getKey(AES.KEY_LENGTH_128, ApplicationConstant.AES_128_KEY)));
             
         }

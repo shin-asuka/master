@@ -18,6 +18,8 @@ import com.google.common.collect.Maps;
 import com.vipkid.enums.OnlineClassEnum.ClassStatus;
 import com.vipkid.enums.TbdResultEnum;
 import com.vipkid.enums.TeacherApplicationEnum;
+import com.vipkid.enums.TeacherApplicationEnum.Result;
+import com.vipkid.enums.TeacherApplicationEnum.Status;
 import com.vipkid.enums.TeacherEnum;
 import com.vipkid.enums.TeacherEnum.LifeCycle;
 import com.vipkid.enums.TeacherModuleEnum.RoleClass;
@@ -178,7 +180,7 @@ public class PeSupervisorService {
         // 5.practicum2 判断是否存在
         if (TeacherApplicationEnum.Result.PRACTICUM2.toString().equals(result)) {
             List<TeacherApplication> list = teacherApplicationDao
-                    .findApplictionForStatusResult(teacherApplication.getTeacherId(),TeacherApplicationDao.Status.PRACTICUM.toString(),TeacherApplicationDao.Result.PRACTICUM2.toString());
+                    .findApplictionForStatusResult(teacherApplication.getTeacherId(),Status.PRACTICUM.toString(),Result.PRACTICUM2.toString());
             if (list != null && list.size() > 0) {
                 logger.info(
                         "The teacher is already in practicum 2., class id is : {},status is {},recruitTeacher:{}",
