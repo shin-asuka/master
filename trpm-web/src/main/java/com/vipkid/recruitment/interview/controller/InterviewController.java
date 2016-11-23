@@ -5,10 +5,12 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -49,13 +51,19 @@ public class InterviewController extends RestfulController {
     
     
     @RequestMapping(value = "/bookClass", method = RequestMethod.POST, produces = RestfulConfig.JSON_UTF_8)
-    public Map<String,Object> bookClass(HttpServletRequest request, HttpServletResponse response,long onlineClassId){
+    public Map<String,Object> bookClass(HttpServletRequest request, HttpServletResponse response,@RequestBody Map<String,Object> pramMap){
         try{
-            Map<String,Object> result = this.interviewService.bookInterviewClass(onlineClassId, getTeacher(request));
+            Object onlineClassId = pramMap.get("onlineClassId");
+            if(onlineClassId == null || !StringUtils.isNumeric(onlineClassId+"")){
+                response.setStatus(HttpStatus.FORBIDDEN.value());
+                return ResponseUtils.responseFail("onlineClassId is error !", this);
+            }
+            //
+            Map<String,Object> result = this.interviewService.bookInterviewClass(Long.valueOf(onlineClassId+""), getTeacher(request));
             if(ResponseUtils.isFail(result)){
                 response.setStatus(HttpStatus.FORBIDDEN.value());
             }
-            return result;
+            return result;   
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
             return ResponseUtils.responseFail(e.getMessage(), this);
@@ -67,9 +75,14 @@ public class InterviewController extends RestfulController {
     
     
     @RequestMapping(value = "/reschedule", method = RequestMethod.POST, produces = RestfulConfig.JSON_UTF_8)
-    public Map<String,Object> reschedule(HttpServletRequest request, HttpServletResponse response,long onlineClassId){
+    public Map<String,Object> reschedule(HttpServletRequest request, HttpServletResponse response,@RequestBody Map<String,Object> pramMap){
         try{
-            Map<String,Object> result = this.interviewService.cancelInterviewClass(onlineClassId, getTeacher(request));
+            Object onlineClassId = pramMap.get("onlineClassId");
+            if(onlineClassId == null || !StringUtils.isNumeric(onlineClassId+"")){
+                response.setStatus(HttpStatus.FORBIDDEN.value());
+                return ResponseUtils.responseFail("onlineClassId is error !", this);
+            }
+            Map<String,Object> result = this.interviewService.cancelInterviewClass(Long.valueOf(onlineClassId+""), getTeacher(request));
             if(ResponseUtils.isFail(result)){
                 response.setStatus(HttpStatus.FORBIDDEN.value());
             }
