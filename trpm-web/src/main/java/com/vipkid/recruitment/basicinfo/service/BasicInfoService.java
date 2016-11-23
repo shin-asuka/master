@@ -146,7 +146,9 @@ public class BasicInfoService {
             return ResponseUtils.responseFail("You have already submitted data!", this);
         }
         //3.更新Teacher
-        teacher = this.initTeacher(teacher, bean);     
+        teacher = this.initTeacher(teacher, bean);   
+        //提交后为BASIC_INFO
+        teacher.setLifeCycle(LifeCycle.BASIC_INFO.toString());
         String name = teacher.getRealName();
         //  如果名字里面含有空格，则取到空格后的第一个字符作为User的Name
         if(name.indexOf(" ") > -1){
@@ -177,8 +179,6 @@ public class BasicInfoService {
         AutoFailProcessor processor = this.autoFail(teacher,teacherAddress);
         //自动审核通过
         if(processor.isFailed()){
-            //自动审核失败
-            teacher.setLifeCycle(LifeCycle.BASIC_INFO.toString());
             //Basic审核为FAIIL
             application.setAuditDateTime(new Timestamp(System.currentTimeMillis()));
             application.setAuditorId(RestfulConfig.SYSTEM_USER_ID);
