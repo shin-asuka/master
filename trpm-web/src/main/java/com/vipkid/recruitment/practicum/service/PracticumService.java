@@ -2,11 +2,13 @@ package com.vipkid.recruitment.practicum.service;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.slf4j.Logger;
@@ -49,11 +51,34 @@ public class PracticumService {
 
     private static Logger logger = LoggerFactory.getLogger(PracticumService.class);
 
-    public List<Map<String,Object>> findTimeList(){
-        String fromTime = LocalDateTime.now().plusHours(1).format(DateUtils.FMT_YMD_HMS);
-        String toTime = LocalDateTime.now().plusDays(3).withHour(23).withMinute(59).withSecond(59).format(DateUtils.FMT_YMD_HMS);
-        logger.info("findTimeListByPracticum parameter fromTime:{}, toTime:{}",fromTime, toTime);
+    public List<Map<String,Object>> findTimeList(Teacher teacher){
+        LocalDateTime now = LocalDateTime.now();
+        String fromTime24 = now.plusHours(1).format(DateUtils.FMT_YMD_HMS);
+        String toTime24 = now.plusDays(1).format(DateUtils.FMT_YMD_HMS);
+        String fromTime = now.plusDays(1).plusSeconds(1).format(DateUtils.FMT_YMD_HMS);
+        String toTime = now.plusDays(3).withHour(23).withMinute(59).withSecond(59).format(DateUtils.FMT_YMD_HMS);
+        logger.info("findTimeListByPracticum parameter fromTime:{}, toTime:{}",fromTime24, toTime);
+
+        //1. 查24小时内
+        List<Map<String,Object>> list24 = practicumDao.findTimeList(fromTime24, toTime24);
+        List<String> ids24 = new ArrayList<>();
+        Map<String,Object> idsTimes24 = new HashedMap();
+        list24.forEach(x -> {
+            String id = x.get("id").toString();
+            ids24.add(id);
+            idsTimes24.put(id, x.get("scheduledDateTime"));
+        });
+        //2. 查24小时可用
+        List<String> ids24Available = OnlineClassProxy.get24HourClass(teacher.getId(), ids24);
+        //3. 查24小时以外
         List<Map<String,Object>> list = practicumDao.findTimeList(fromTime, toTime);
+        ids24Available.forEach(x -> {
+            Map<String,Object> map = new HashedMap();
+            map.put("id", x);
+            map.put("scheduledDateTime", idsTimes24.get(x));
+            list.add(map);
+        });
+
         if(CollectionUtils.isNotEmpty(list)){
             Collections.shuffle(list);
         }
@@ -122,6 +147,12 @@ public class PracticumService {
             //一旦失败，抛出异常回滚
             throw new RuntimeException("Class booking is fail!" + result.get("info"));
         }
+
+        List<TeacherApplication> list = teacherApplicationDao.findApplictionForStatusResult(teacher.getId(), Status.TRAINING.toString(), Result.PASS.toString());
+        if (CollectionUtils.isNotEmpty(list)){
+            result.put("trainingPassTime", list.get(0).getAuditDateTime().getTime());
+        }
+
         return result;
     }
 

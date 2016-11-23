@@ -38,7 +38,7 @@ public class PracticumController extends RestfulController {
     public Map<String,Object> list(HttpServletRequest request, HttpServletResponse response) {
         try{
             Map<String,Object> result = Maps.newHashMap();
-            result.put("list", this.practicumService.findTimeList());
+            result.put("list", this.practicumService.findTimeList(getTeacher(request)));
             return ResponseUtils.responseSuccess(result);
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());

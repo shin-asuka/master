@@ -1,13 +1,19 @@
 package com.vipkid.trpm.proxy;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
+import com.google.common.collect.Lists;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.community.config.PropertyConfigurer;
 import org.community.http.client.HttpClientProxy;
 import org.community.tools.JsonTools;
+import org.community.tools.StringTools;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -157,4 +163,28 @@ public class OnlineClassProxy {
         }
     }
 
+    public static List<String> get24HourClass (long teacherId, List<String> onlineClassIds) {
+        Map<String, String> requestHeader = get24HourClassRequestHeader(teacherId);
+        //logger.info("Get 24Hour Request Header: {}",requestHeader.get("Authorization"));
+        try {
+            Map<String, String> requestParams = Maps.newHashMap();
+            String value = onlineClassIds.stream().collect(Collectors.joining(","));
+            requestParams.put("classIds", value);
+            String requestUrl = getHttpUrl() + "/api/service/public/24HourClass/filterByClass";
+            //logger.info("Get 24Hour Request Url: {}", requestUrl);
+            String responseBody = HttpClientProxy.get(requestUrl, requestParams, requestHeader);
+            responseBody = StringTools.matchString(responseBody, "\\[(.*?)\\]", Pattern.CASE_INSENSITIVE, 1);
+            return Arrays.asList(StringUtils.split(responseBody, ","));
+        } catch (Exception e) {
+            logger.error("HttpClientProxy err: {}", e);
+            return Lists.newArrayList();
+        }
+    }
+
+    private static Map<String, String> get24HourClassRequestHeader(long teacherId) {
+        String t = "TEACHER " + teacherId;
+        Map<String, String> requestHeader = new HashMap<String, String>();
+        requestHeader.put("Authorization", t + " " + org.apache.commons.codec.binary.Base64.encodeBase64String(DigestUtils.md5(t)));
+        return requestHeader;
+    }
 }
