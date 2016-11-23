@@ -265,15 +265,15 @@ public class PeSupervisorService {
         teacherApplication.setCurrent(1);
         // 如果是PASS操作，则ta状态修改为FINISH，教师状态修改为REGULAR
         if (TeacherApplicationEnum.Result.PASS.toString().equals(result)) {
-            teacherApplication.setStatus(TeacherApplicationEnum.Status.FINISHED.toString());
+            //teacherApplication.setStatus(TeacherApplicationEnum.Status.FINISHED.toString());
             // 2.教师状态更新
-            recruitTeacher.setLifeCycle(LifeCycle.REGULAR.toString());
+            //recruitTeacher.setLifeCycle(LifeCycle.REGULAR.toString());
             // 3.新增教师入职时间
-            recruitTeacher.setEntryDate(new Date());
-            recruitTeacher.setType(TeacherEnum.Type.PART_TIME.toString());
-            this.teacherDao.update(recruitTeacher);
+            //recruitTeacher.setEntryDate(new Date());
+            //recruitTeacher.setType(TeacherEnum.Type.PART_TIME.toString());
+            //this.teacherDao.update(recruitTeacher);
             // 增加quiz的考试记录
-            teacherQuizDao.insertQuiz(recruitTeacher.getId(),pes.getId());
+            //teacherQuizDao.insertQuiz(recruitTeacher.getId(),pes.getId());
         }
         // 3.更新teacherApplication
         this.teacherApplicationDao.update(teacherApplication);

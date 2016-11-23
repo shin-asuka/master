@@ -95,7 +95,7 @@ public class PracticumService {
         }
 
         //onlineClassId 必须是AVAILABLE课
-        if(OnlineClassEnum.ClassStatus.AVAILABLE.toString().equalsIgnoreCase(onlineClass.getStatus())){
+        if(!OnlineClassEnum.ClassStatus.AVAILABLE.toString().equalsIgnoreCase(onlineClass.getStatus())){
             return ResponseUtils.responseFail("This class ("+onlineClassId+") is empty or has been booked by anyone else!", this);
         }
         //book的课程在开课前1小时之内不允许book
@@ -212,8 +212,14 @@ public class PracticumService {
         if(Status.PRACTICUM.toString().equals(listEntity.get(0).getStatus())
                 && Result.PASS.toString().equals(listEntity.get(0).getResult())){
             //按照新流程 该步骤将老师的LifeCycle改变为Practicum -to-Contract
-            teacher.setLifeCycle(LifeCycle.CONTRACT.toString());
-            this.teacherDao.insertLifeCycleLog(teacher.getId(),LifeCycle.PRACTICUM,LifeCycle.CONTRACT, teacher.getId());
+            List<TeacherApplication> list = teacherApplicationDao.findApplictionForStatusResult(teacher.getId(),Status.SIGN_CONTRACT.toString(), Result.PASS.toString());
+            if(CollectionUtils.isNotEmpty(list)){
+                teacher.setLifeCycle(LifeCycle.REGULAR.toString());
+            } else {
+                teacher.setLifeCycle(LifeCycle.CONTRACT.toString());
+            }
+
+            this.teacherDao.insertLifeCycleLog(teacher.getId(), LifeCycle.PRACTICUM, LifeCycle.valueOf(teacher.getLifeCycle()), teacher.getId());
             this.teacherDao.update(teacher);
             return ResponseUtils.responseSuccess();
         }
