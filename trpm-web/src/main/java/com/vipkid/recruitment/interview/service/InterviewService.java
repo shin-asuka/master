@@ -123,7 +123,7 @@ public class InterviewService {
         }
 
         //onlineClassId 必须是OPEN 课
-        if(OnlineClassEnum.ClassStatus.OPEN.toString().equalsIgnoreCase(onlineClass.getStatus())){
+        if(!OnlineClassEnum.ClassStatus.OPEN.toString().equalsIgnoreCase(onlineClass.getStatus())){
             return ResponseUtils.responseFail("This class("+onlineClassId+") is empty or anyone else has been booked !", this);
         }
 
