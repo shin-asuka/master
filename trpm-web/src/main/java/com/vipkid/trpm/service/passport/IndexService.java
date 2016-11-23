@@ -101,7 +101,7 @@ public class IndexService {
             //logger.info("检测用户IP地址  getUserIP user = {}, redisIp = {}, currentIp = {}",user.getId()+"|"+user.getUsername(),redisIp,ip);
             Boolean isIpChange = CacheUtils.checkUserIpChange(user);
             if(isIpChange){
-            	logger.info("用户IP地址发生变化  getUser userIPChange user = {}, redisIp = {}, currentIp = {}",user.getId()+"|"+user.getUsername(),redisIp,ip);
+            	logger.info("用户IP地址发生变化  getUser userIPChange token = {},user = {}, redisIp = {}, currentIp = {}",token,user.getId()+"|"+user.getUsername(),redisIp,ip);
             	user = null;
             }else{
             	user = userDao.findById(user.getId());
