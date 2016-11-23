@@ -32,6 +32,7 @@ import com.vipkid.rest.dto.TeacherDto;
 import com.vipkid.rest.dto.TeachingExperienceDto;
 import com.vipkid.rest.validation.ValidateUtils;
 import com.vipkid.rest.validation.tools.Result;
+import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.entity.User;
 
 @RestController
@@ -196,6 +197,25 @@ public class BasicInfoController extends RestfulController{
         }
     } 
     
+    
+    @RequestMapping(value = "/toInterview", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
+    public Map<String,Object> toInterview(HttpServletRequest request, HttpServletResponse response){
+        try{
+            Teacher teacher = getTeacher(request);
+            logger.info("user:{},getReschedule",teacher.getId());
+            Map<String,Object> result = this.basicInfoService.toInterview(teacher);
+            if(ResponseUtils.isFail(result)){
+                response.setStatus(HttpStatus.FORBIDDEN.value());
+            }
+            return result;
+        } catch (IllegalArgumentException e) {
+            response.setStatus(HttpStatus.BAD_REQUEST.value());
+            return ResponseUtils.responseFail(e.getMessage(), this);
+        } catch (Exception e) {
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            return ResponseUtils.responseFail(e.getMessage(), this);
+        }
+    } 
         
     @RequestMapping(value = "/findTeacher", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
     public Map<String,Object> findTeacher(HttpServletRequest request, HttpServletResponse response){

@@ -18,6 +18,7 @@ import com.google.api.client.util.Maps;
 import com.vipkid.email.EmailUtils;
 import com.vipkid.enums.TeacherApplicationEnum.AuditStatus;
 import com.vipkid.enums.TeacherApplicationEnum.Result;
+import com.vipkid.enums.TeacherApplicationEnum.Status;
 import com.vipkid.enums.TeacherEnum;
 import com.vipkid.enums.TeacherEnum.LifeCycle;
 import com.vipkid.enums.TeacherEnum.RecruitmentChannel;
@@ -195,13 +196,10 @@ public class BasicInfoService {
             application.setFailedReason(JsonTools.getJson(_list));
             result.put("result",AuditStatus.ToAudit.toString());
         }else{
-            //自动审核通过Basic则自动变LifeCycle为Interview
-            teacher.setLifeCycle(LifeCycle.INTERVIEW.toString());
             //Basic审核为PASS
             application.setAuditDateTime(new Timestamp(System.currentTimeMillis()));
             application.setAuditorId(RestfulConfig.SYSTEM_USER_ID);
             application.setResult(Result.PASS.toString());
-            this.teacherDao.insertLifeCycleLog(teacher.getId(), LifeCycle.BASIC_INFO,LifeCycle.INTERVIEW, RestfulConfig.SYSTEM_USER_ID);
             //发送邮件
             logger.info("调用发送邮件程序发送给:{}",user.getUsername());
             EmailUtils.sendEmail4BasicInfoPass(teacher);
@@ -275,6 +273,28 @@ public class BasicInfoService {
         return teacher;
     }
     
+    /**
+     * 进入下一步骤
+     * @param teacher
+     * @return
+     * Map&lt;String,Object&gt;
+     */
+    public Map<String,Object> toInterview(Teacher teacher){
+        List<TeacherApplication> listEntity = teacherApplicationDao.findCurrentApplication(teacher.getId());
+        if(CollectionUtils.isEmpty(listEntity)){
+            return ResponseUtils.responseFail("You have no legal power into the next phase !",this);
+        }
+        //执行逻辑 只有在INTERVIEW的PASS状态才能进入
+        if(Status.BASIC_INFO.toString().equals(listEntity.get(0).getStatus())
+                && Result.PASS.toString().equals(listEntity.get(0).getResult())){
+            //按照新流程 该步骤将老师的LifeCycle改变为basicinfo -> Interview
+            teacher.setLifeCycle(LifeCycle.INTERVIEW.toString());
+            this.teacherDao.insertLifeCycleLog(teacher.getId(),LifeCycle.BASIC_INFO,LifeCycle.INTERVIEW, teacher.getId());
+            this.teacherDao.update(teacher);
+            return ResponseUtils.responseSuccess();
+        }
+        return ResponseUtils.responseFail("You have no legal power into the next phase !",this);
+    }
     
     /**
      * 1.更新教育经验表
