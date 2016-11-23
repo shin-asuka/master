@@ -83,7 +83,10 @@ public interface ApplicationConstant {
         public static final String PRACTICUM_REPORT_CREATE = "PRACTICUM_REPORT_CREATE";
         /** 记录Practicum课程报告更新日志 */
         public static final String PRACTICUM_REPORT_UPDATE = "PRACTICUM_REPORT_UPDATE";
-
+        // 锁定教师
+        public static final String TEACHER_LOCK = "TEACHER_LOCK";
+        // 解锁教师
+        public static final String TEACHER_UNLOCK = "TEACHER_UNLOCK";
     }
 
     /* 多媒体类型定义 */
