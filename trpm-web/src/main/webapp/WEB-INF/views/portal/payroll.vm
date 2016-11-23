@@ -23,7 +23,7 @@ li[role] a {
 	.rowsDisableCss {background-color: #F5F5F5;}
 </style>
 
-<div id="payroll"> 
+<div id="payroll" style="width: 1400px;overflow-x: auto"> 
   <!-- Nav tabs -->
   <ul class="nav nav-tabs" role="tablist">
     <li role="presentation" #tabActive($payrollType, "SALARY")>
@@ -40,8 +40,8 @@ li[role] a {
   </ul>
  
   <!-- Tab panes -->
-  <div class="tab-content">
-    <div role="tabpanel" class="tab-pane active panel-body">
+  <div class="tab-content" >
+    <div role="tabpanel" class="tab-pane active panel-body" >
     #if($payrollType.equals("SALARY"))  
       #parse("/portal/payroll_salary.vm")
     #elseif($payrollType.equals("PRICELIST"))
