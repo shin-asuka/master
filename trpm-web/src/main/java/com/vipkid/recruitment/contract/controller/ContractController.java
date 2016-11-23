@@ -414,19 +414,23 @@ public class ContractController extends RestfulController {
      * @param request
      * @param response
      */
-    @RequestMapping(value = "/toSendDocs", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
-    public  Map<String,Object> toSendDocs(HttpServletRequest request,HttpServletResponse response){
-        Teacher teacher = getTeacher(request);
-        teacher = this.contractService.toSendDocs(teacher);
-        logger.info("用户{}跳转到SEND_DOCS",teacher.getId());
-        Map<String,Object> recMap = new HashMap<String,Object>();
-        if(TeacherEnum.LifeCycle.SENT_DOCS.toString().equals(teacher.getLifeCycle())){
-            recMap.put("status", true);
-        }else{
-            recMap.put("status", false);
+    @RequestMapping(value = "/toPublic", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
+    public Map<String,Object> toPublic(HttpServletRequest request, HttpServletResponse response){
+        try{
+            Teacher teacher = getTeacher(request);
+            logger.info("user:{},getReschedule",teacher.getId());
+            Map<String,Object> result = this.contractService.toPublic(teacher);
+            if(ResponseUtils.isFail(result)){
+                response.setStatus(HttpStatus.FORBIDDEN.value());
+            }
+            return result;
+        } catch (IllegalArgumentException e) {
+            response.setStatus(HttpStatus.BAD_REQUEST.value());
+            return ResponseUtils.responseFail(e.getMessage(), this);
+        } catch (Exception e) {
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            return ResponseUtils.responseFail(e.getMessage(), this);
         }
-        logger.info("toSendDocs Status :" + teacher.getLifeCycle());
-        return recMap;
     }
 
 

@@ -6,8 +6,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.vipkid.recruitment.utils.ResponseUtils;
 import com.vipkid.trpm.dao.TeacherTaxpayerFormDao;
 import com.vipkid.trpm.entity.TeacherTaxpayerForm;
+import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,11 +68,10 @@ public class ContractService {
         TeacherApplication application = new TeacherApplication();
         application.setTeacherId(teacher.getId());//  步骤关联的教师
         application.setApplyDateTime(new Timestamp(System.currentTimeMillis()));
-        application.setStatus(TeacherApplicationEnum.Status.SIGN_CONTRACT.toString());
+        application.setStatus(TeacherApplicationEnum.Status.CONTRACT.toString());
         application = teacherApplicationDao.initApplicationData(application);
         this.teacherApplicationDao.save(application);
         logger.info("用户：{}，update table TeacherApplication Column Current = 0,  add table TeacherApplication row Current = 1",teacher.getId());
-
 
          return teacher;
        }
@@ -103,12 +104,31 @@ public class ContractService {
         teacher = teacherDao.findById(teacher.getId());
         if(TeacherEnum.LifeCycle.CONTRACT.toString().equals(teacher.getLifeCycle())){
             logger.info("用户{}转变到SENT_DOCS",teacher.getId());
-            teacher.setLifeCycle(TeacherEnum.LifeCycle.SENT_DOCS.toString());
-            //SENT_DOCS or SEND_DOCS ???
-            //this.teacherDao.insertLifeCycleLog(teacher.getId(), TeacherLifeCycle.CONTRACT, TeacherLifeCycle.SENT_DOCS, teacher.getId());
+            teacher.setLifeCycle(TeacherEnum.LifeCycle.PUBLICITY_INFO.toString());
+
+            this.teacherDao.insertLifeCycleLog(teacher.getId(), TeacherEnum.LifeCycle.CONTRACT, TeacherEnum.LifeCycle.PUBLICITY_INFO, teacher.getId());
             this.teacherDao.update(teacher);
         }
         return teacher;
+    }
+
+
+    public Map<String,Object> toPublic(Teacher teacher){
+        List<TeacherApplication> listEntity = teacherApplicationDao.findCurrentApplication(teacher.getId());
+        if(CollectionUtils.isEmpty(listEntity)){
+            return ResponseUtils.responseFail("You have no legal power into the next phase !",this);
+        }
+
+
+        if(TeacherApplicationEnum.Status.CONTRACT.toString().equals(listEntity.get(0).getStatus())
+                && TeacherApplicationEnum.Result.PASS.toString().equals(listEntity.get(0).getResult())){
+            //按照新流程 该步骤将老师的LifeCycle改变为Interview -to-Training
+            teacher.setLifeCycle(TeacherEnum.LifeCycle.PUBLICITY_INFO.toString());
+            this.teacherDao.insertLifeCycleLog(teacher.getId(), TeacherEnum.LifeCycle.CONTRACT, TeacherEnum.LifeCycle.PUBLICITY_INFO, teacher.getId());
+            this.teacherDao.update(teacher);
+            return ResponseUtils.responseSuccess();
+        }
+        return ResponseUtils.responseFail("You have no legal power into the next phase !",this);
     }
 
     /**

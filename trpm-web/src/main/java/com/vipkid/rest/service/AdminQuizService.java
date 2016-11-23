@@ -7,6 +7,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import com.vipkid.enums.TeacherApplicationEnum;
+import com.vipkid.recruitment.dao.TeacherApplicationDao;
+import com.vipkid.recruitment.entity.TeacherApplication;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.community.tools.JsonTools;
@@ -56,6 +59,9 @@ public class AdminQuizService {
     
     @Autowired
     private AppRestfulDao appRestfulDao;
+
+    @Autowired
+    private TeacherApplicationDao teacherApplicationDao;
 
     /**
      * is first quiz 
@@ -118,7 +124,7 @@ public class AdminQuizService {
      * // 小于60分则更新当前数据，并插入新的考试记录
      * @Author:ALong (ZengWeiLong)
      * @param teacherId
-     * @param quizScore
+     * @param quizToken
      * @return    
      * boolean
      * @date 2016年8月18日
@@ -144,6 +150,16 @@ public class AdminQuizService {
                     logger.info("teacehrId:{},提交考试结果，quizId:{} 没通过,新增一条考试记录",teacherId,teacherQuiz.getId(),teacherQuiz.getStatus());
                     this.teacherQuizDao.insertQuiz(teacherId,teacherId);
                 }
+                if(quizScore > RestfulConfig.Quiz.QUIZ_PASS_SCORE){
+                    TeacherApplication application = new TeacherApplication();
+                    application.setTeacherId(teacherId);//  步骤关联的教师
+                    application.setApplyDateTime(new Timestamp(System.currentTimeMillis()));
+                    application.setResult(TeacherApplicationEnum.Result.PASS.toString());
+                    application.setStatus(TeacherApplicationEnum.Status.TRAINING.toString());
+                    application = teacherApplicationDao.initApplicationData(application);
+                    this.teacherApplicationDao.save(application);
+                }
+
                 logger.info("teacehrId:{},提交考试结果，quizId:{},result:{} ",teacherId,teacherQuiz.getId(),teacherQuiz.getStatus());
                 return true;
             }else{
@@ -158,7 +174,7 @@ public class AdminQuizService {
      * 修改密码 
      * @Author:ALong (ZengWeiLong)
      * @param teacherId
-     * @param grade
+     * @param password
      * @return    
      * boolean
      * @date 2016年8月27日

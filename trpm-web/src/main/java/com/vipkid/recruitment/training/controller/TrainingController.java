@@ -1,11 +1,11 @@
 package com.vipkid.recruitment.training.controller;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.vipkid.recruitment.utils.ResponseUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.google.common.collect.Maps;
-import com.vipkid.enums.TeacherEnum;
 import com.vipkid.enums.TeacherEnum.LifeCycle;
 import com.vipkid.enums.TeacherQuizEnum;
 import com.vipkid.recruitment.interceptor.RestInterface;
@@ -56,6 +55,7 @@ public class TrainingController extends RestfulController {
         result.put("need",false);
         try{
            User user = getUser(request);
+            logger.info("用户：{}查询他是否存在待考记录",user.getId());
             result.put("need",this.adminQuizService.findNeedQuiz(user.getId()));
             return result;
         } catch (IllegalArgumentException e) {
@@ -136,6 +136,7 @@ public class TrainingController extends RestfulController {
             //查询用户最后一次考试记录
             List<TeacherQuiz> list = adminQuizService.getLastQuiz(user.getId());
             if(CollectionUtils.isNotEmpty(list)){
+                logger.info("用户:{}的考试记录：{}",user.getId(),list);
                 TeacherQuiz teacherQuiz = list.get(0);
                 result.put("isPass",(teacherQuiz.getStatus() == TeacherQuizEnum.Status.PASS.val()));
                 result.put("grade",teacherQuiz.getQuizScore());
@@ -158,18 +159,24 @@ public class TrainingController extends RestfulController {
      * @param response
      */
     @RequestMapping(value = "/toPracticum", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
-    public  Map<String,Object> toPracticum(HttpServletRequest request,HttpServletResponse response){
-        Teacher teacher = getTeacher(request);
-        teacher = this.trainingService.toPracticum(teacher);
-        logger.info("用户{}跳转到Practicum",teacher.getId());
-        Map<String,Object> recMap = new HashMap<String,Object>();
-        if(TeacherEnum.LifeCycle.PRACTICUM.toString().equals(teacher.getLifeCycle())){
-            recMap.put("info", true);
-        }else{
-            recMap.put("info", false);
+    public Map<String,Object> toPracticum(HttpServletRequest request, HttpServletResponse response){
+        try{
+            Teacher teacher = getTeacher(request);
+            logger.info("user:{},getReschedule",teacher.getId());
+            Map<String,Object> result = this.trainingService.toPracticum(teacher);
+            if(ResponseUtils.isFail(result)){
+                response.setStatus(HttpStatus.FORBIDDEN.value());
+            }
+            return result;
+        } catch (IllegalArgumentException e) {
+            response.setStatus(HttpStatus.BAD_REQUEST.value());
+            return ResponseUtils.responseFail(e.getMessage(), this);
+        } catch (Exception e) {
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            return ResponseUtils.responseFail(e.getMessage(), this);
         }
-        logger.info("toPracticum Status " + teacher.getLifeCycle());
-        return recMap;
     }
+
+
 
 }

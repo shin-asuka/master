@@ -35,7 +35,7 @@ public class TeacherEnum {
 		SIGN_CONTRACT, // 签合同
 		TRAINING, // 教师培训
 		PRACTICUM, // 试讲
-		SENT_DOCS,
+		PUBLICITY_INFO,
 		CONTRACT,//合同
 		REGULAR, // 成为正式老师Ø
 		QUIT, // 离职
