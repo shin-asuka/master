@@ -2,7 +2,6 @@ package com.vipkid.trpm.service.rest;
 
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -34,6 +33,7 @@ import com.vipkid.trpm.entity.User;
 import com.vipkid.trpm.proxy.RedisProxy;
 import com.vipkid.trpm.util.CacheUtils;
 import com.vipkid.trpm.util.CookieUtils;
+import com.vipkid.trpm.util.IpUtils;
 
 @Service
 public class LoginService {
@@ -76,11 +76,19 @@ public class LoginService {
      */
     public User getUser(HttpServletRequest request) {
         String token = request.getHeader(CookieKey.AUTOKEN);
-        String json = redisProxy.get(token);
+        String key = CacheUtils.getUserTokenKey(token);
+        String json = redisProxy.get(key);
         if(StringUtils.isBlank(json)){
             return null;
         }
         User user = JsonTools.readValue(json, User.class);
+        
+        //判断当前用户所在地区的ip是否变化，如果变化。则返回空用户，用户重新登陆
+        Boolean isIpChange = CacheUtils.checkUserIpChange(user);
+        if(isIpChange){
+        	logger.info("用户IP地址发生变化, userIPChange user = {}",user.getId()+"|"+user.getUsername());
+        	return null;
+        }
         return userDao.findById(user.getId());
     }
 
@@ -123,17 +131,25 @@ public class LoginService {
     }
 
     public String setLoginCooke(HttpServletResponse response, User user) {
-        String token = UUID.randomUUID().toString();
-        logger.info("设置登录Cookie，teacherID = {},token = {}",user.getId(),token);
-        redisProxy.set(token, JsonTools.getJson(user), 12 * 60 * 60);
+        String token = CacheUtils.getTokenId();
+        String key = CacheUtils.getUserTokenKey(token);
+        
+        if(StringUtils.isNotBlank(key) && user!=null){
+        	String ip = IpUtils.getRequestRemoteIP();
+        	user.setIp(ip); //注入远程请求ip地址
+        	logger.info("setLoginCooke 设置登录Redis ,user = {} , key = {},ip = {}",user.getId()+"|"+user.getUsername(),key,ip);
+        	redisProxy.set(key, JsonTools.getJson(user), 12 * 60 * 60);
+        }
+        logger.info("setLoginCooke 设置登录Cookie ,teacherID = {},token = {} , key = {}",user.getId(),token,key);
         CookieUtils.setCookie(response, CookieKey.TRPM_TOKEN, token, null);
         return token;
     }
 
     public void removeLoginCooke(HttpServletRequest request, HttpServletResponse response) {
         String token = CookieUtils.getValue(request, CookieKey.TRPM_TOKEN);
-        if (token != null) {
-            redisProxy.del(token);
+        String key = CacheUtils.getUserTokenKey(token);
+        if(StringUtils.isNotBlank(key)){
+            redisProxy.del(key);
         }
         CookieUtils.removeCookie(response, CookieKey.TRPM_TOKEN, null, null);
     }

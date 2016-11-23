@@ -69,6 +69,9 @@ public class IpUtils {
             ip = request.getRemoteAddr();
         }
 
+        if(ip!=null && ip.equals("0:0:0:0:0:0:0:1")){
+        	ip =  "127.0.0.1";
+        }
         if (ip != null && isIP(ip)) {
             return ip;
         }
@@ -91,4 +94,20 @@ public class IpUtils {
 
         return ipAddress;
     }
+    
+    /**
+     * 获取用户真实IP地址
+     * 
+     * @return
+     */
+    public static String getRequestRemoteIP(){
+		String ip = "";
+		try {
+			HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+			ip = IpUtils.getIpAddress(request );
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return ip;
+	}
 }

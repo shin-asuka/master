@@ -376,6 +376,8 @@ public interface ApplicationConstant {
 
     public static final class RedisConstants {
 
+    	public static final String TEACHER_TOKEN = "TEACHER_TOKEN"; // 教师redis缓存key前缀
+    	
         public static final String IMAGE_CODE_KEY = "TRPM_REST_IMAGE_CODE:%s"; // 图片验证码
         public static final String LOGIN_PASSWORD_FAILED_DAY_KEY =
                 "TRPM_REST_LOGIN_PASSWORD_FAILD_KEY:%s"; // 一天内登录失败次数key
