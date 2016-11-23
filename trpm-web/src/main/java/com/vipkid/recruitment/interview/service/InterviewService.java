@@ -27,6 +27,7 @@ import com.vipkid.recruitment.utils.ResponseUtils;
 import com.vipkid.rest.config.RestfulConfig;
 import com.vipkid.trpm.dao.OnlineClassDao;
 import com.vipkid.trpm.dao.TeacherDao;
+import com.vipkid.trpm.dao.TeacherQuizDao;
 import com.vipkid.trpm.entity.OnlineClass;
 import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.proxy.OnlineClassProxy;
@@ -50,6 +51,9 @@ public class InterviewService {
 
     @Autowired
     private TeacherApplicationLogDao teacherApplicationLogDao;
+    
+    @Autowired
+    private TeacherQuizDao teacherQuizDao;
 
     private static Logger logger = LoggerFactory.getLogger(InterviewService.class);
 
@@ -257,6 +261,8 @@ public class InterviewService {
             teacher.setLifeCycle(LifeCycle.TRAINING.toString());
             this.teacherDao.insertLifeCycleLog(teacher.getId(),LifeCycle.INTERVIEW,LifeCycle.TRAINING, teacher.getId());
             this.teacherDao.update(teacher);
+            // 增加quiz的考试记录
+            teacherQuizDao.insertQuiz(teacher.getId(),teacher.getId());
             return ResponseUtils.responseSuccess();
         }
         return ResponseUtils.responseFail("You have no legal power into the next phase !",this);
