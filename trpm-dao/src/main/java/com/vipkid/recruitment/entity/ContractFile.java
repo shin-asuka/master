@@ -10,7 +10,7 @@ public class ContractFile{
     //Teacherpassport
     private String identification;
 
-    //Teacher最高学历 highestLevelOfEdu
+    //Teacher最高学历 bachelorDiploma
     private String diploma;
 
     private Map<Integer,String> certification;

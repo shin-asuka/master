@@ -61,12 +61,13 @@ public class ContractController extends RestfulController {
     @RequestMapping(value = "/submit", method = RequestMethod.POST, produces = RestfulConfig.JSON_UTF_8)
     public  Map<String,Object> submitsTeacher(HttpServletRequest request,HttpServletResponse response){
         Teacher teacher = getTeacher(request);
-        Map<String,Object> result = new HashMap<String,Object>();
         logger.info("保存用户：{}TeacherApplication",teacher.getId());
         try{
-            contractService.updateTeacherApplication(teacher);
-            result.put("status",true);
-            return ResponseUtils.responseSuccess(result);
+            Map<String,Object> result = contractService.updateTeacherApplication(teacher);
+            if(ResponseUtils.isFail(result)){
+                response.setStatus(HttpStatus.FORBIDDEN.value());
+            }
+            return result;
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
             return ResponseUtils.responseFail(e.getMessage(), this);
@@ -173,7 +174,7 @@ public class ContractController extends RestfulController {
         }
 
         try{
-            teacher.setHighestLevelOfEdu(fileVo.getUrl());
+            teacher.setBachelorDiploma(fileVo.getUrl());
             int n = this.contractService.updateTeacher(teacher);
             if(n<=0){
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
@@ -445,7 +446,7 @@ public class ContractController extends RestfulController {
     public Map<String,Object> remoteFile(HttpServletRequest request,HttpServletResponse response){
         Teacher teacher = new Teacher().setId(getTeacher(request).getId());
         logger.info("用户:{},Delete DiplomaFile",teacher.getId());
-        teacher.setHighestLevelOfEdu("");
+        teacher.setBachelorDiploma("");
         try {
              if(contractService.updateTeacher(teacher)!=0){
                  return ResponseUtils.responseSuccess("Successful to delete Diploma.", null);

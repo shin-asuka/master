@@ -55,7 +55,11 @@ public class ContractService {
      * @param teacher
      * @return
      */
-    public Teacher  updateTeacherApplication(Teacher teacher){
+    public Map<String,Object>  updateTeacherApplication(Teacher teacher){
+        TeacherTaxpayerForm teacherTaxpayerForm = teacherTaxpayerFormDao.findByTeacherIdAndType(teacher.getId(), TeacherEnum.FormType.W9.val());
+        if(teacherTaxpayerForm==null){
+            return ResponseUtils.responseFail("Your W9 file is not uploaded. !",this);
+        }
         List<TeacherApplication> list = teacherApplicationDao.findCurrentApplication(teacher.getId());
         for (int i = 0; i < list.size(); i++) {
             TeacherApplication application = list.get(i);
@@ -71,7 +75,7 @@ public class ContractService {
         this.teacherApplicationDao.save(application);
         logger.info("用户：{}，update table TeacherApplication Column Current = 0,  add table TeacherApplication row Current = 1",teacher.getId());
 
-         return teacher;
+        return ResponseUtils.responseFail(" Your W9 file is uploaded successfully!",this);
        }
 
     /**
@@ -123,7 +127,7 @@ public class ContractService {
         ContractFile contractFile = new ContractFile();
         Teacher teacher =  teacherDao.findById(t.getId());
         contractFile.setContract(teacher.getContract());
-        contractFile.setDiploma(teacher.getHighestLevelOfEdu());
+        contractFile.setDiploma(teacher.getBachelorDiploma());
         contractFile.setIdentification(teacher.getPassport());
         TeacherTaxpayerForm teacherTaxpayerForm = teacherTaxpayerFormDao.findByTeacherIdAndType(teacher.getId(), TeacherEnum.FormType.W9.val());
         contractFile.setTax(teacherTaxpayerForm.getUrl());
