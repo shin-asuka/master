@@ -452,7 +452,6 @@
                 <br>
                 <div id="popWindow" class="popWindow" style="display: none;"></div>
                 <div id="maskLayer" class="maskLayer" style="display: none; -moz-border-radius: 15px; -webkit-border-radius: 15px;">
-                    <button type="button" class="close" style="padding: 15px" onclick="require('payroll').closeDetials();">×</button>
                     <div class="container-fluid">
                         <button type="button" class="close" aria-label="Close" onclick="require('payroll').closeDetials();">
                             <span aria-hidden="true">×</span>
