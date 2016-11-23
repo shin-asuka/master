@@ -42,13 +42,53 @@ public class ContractService {
     private TeacherTaxpayerFormDao teacherTaxpayerFormDao;
 
     /**
-     * 更新Teacher表中的Url
+     * 更新teacher表
      * @param teacher
      * @return
      */
-    public int  updateTeacher(Teacher teacher){
-        return this.teacherDao.update(teacher);
+     public int  updateTeacher(Teacher teacher){
+         return teacherDao.update(teacher);
+     }
+    /**
+     * 更新Teacher表中的DiplomaUrl
+     * @param teacher
+     * @return
+     */
+    public Map<String,Object>  updateDiplomaUrl(Teacher teacher){
+        Teacher t = teacherDao.findById(teacher.getId());
+        if(t.getBachelorDiploma().length()<1){
+            return ResponseUtils.responseFail("Your DiplomaUrl file is Empty . !",this);
+        }
+        this.teacherDao.update(teacher);
+        return ResponseUtils.responseSuccess();
     }
+    /**
+     * 更新Teacher表中的ContractUrl
+     * @param teacher
+     * @return
+     */
+     public Map<String,Object>  updateContract(Teacher teacher){
+        Teacher t = teacherDao.findById(teacher.getId());
+        if(t.getContract().length()<1){
+            return ResponseUtils.responseFail("Your ContractUrl file is Empty . !",this);
+        }
+        this.teacherDao.update(teacher);
+        return ResponseUtils.responseSuccess();
+    }
+    /**
+     * 更新Teacher表中的IdentificationUrl
+     * @param teacher
+     * @return
+     */
+    public Map<String,Object>  updateIdentification(Teacher teacher){
+        Teacher t = teacherDao.findById(teacher.getId());
+        if(t.getPassport().length()<1){
+            return ResponseUtils.responseFail("Your IdentificationUrl file is Empty . !",this);
+        }
+        this.teacherDao.update(teacher);
+        return ResponseUtils.responseSuccess();
+    }
+
 
     /**
      * 在TeacherApplication中加入一条带审核数据
@@ -75,7 +115,7 @@ public class ContractService {
         this.teacherApplicationDao.save(application);
         logger.info("用户：{}，update table TeacherApplication Column Current = 0,  add table TeacherApplication row Current = 1",teacher.getId());
 
-        return ResponseUtils.responseFail(" Your W9 file is uploaded successfully!",this);
+        return ResponseUtils.responseSuccess();
        }
 
     /**

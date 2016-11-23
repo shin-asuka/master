@@ -39,7 +39,7 @@ import org.springframework.web.multipart.MultipartFile;
  * Created by zhangzhaojun on 2016/11/14.
  */
 @RestController
-@RestInterface(lifeCycle={LifeCycle.CONTRACT})
+@RestInterface(lifeCycle={LifeCycle.CONTRACT,LifeCycle.REGULAR})
 
 @RequestMapping("/recruitment/contract")
 public class ContractController extends RestfulController {
@@ -58,7 +58,7 @@ public class ContractController extends RestfulController {
      * @param response
      * @return
      */
-    @RequestMapping(value = "/submit", method = RequestMethod.POST, produces = RestfulConfig.JSON_UTF_8)
+    @RequestMapping(value = "/submit", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
     public  Map<String,Object> submitsTeacher(HttpServletRequest request,HttpServletResponse response){
         Teacher teacher = getTeacher(request);
         logger.info("保存用户：{}TeacherApplication",teacher.getId());
@@ -443,16 +443,16 @@ public class ContractController extends RestfulController {
      * @return
      */
     @RequestMapping("/remoteDiplomaFile")
-    public Map<String,Object> remoteFile(HttpServletRequest request,HttpServletResponse response){
+    public Map<String,Object> remoteDiplomaFile(HttpServletRequest request,HttpServletResponse response){
         Teacher teacher = new Teacher().setId(getTeacher(request).getId());
         logger.info("用户:{},Delete DiplomaFile",teacher.getId());
         teacher.setBachelorDiploma("");
         try {
-             if(contractService.updateTeacher(teacher)!=0){
-                 return ResponseUtils.responseSuccess("Successful to delete Diploma.", null);
-             }else{
-                 return ResponseUtils.responseFail("Failed to delete Diploma.", this);
-             }
+            Map<String,Object> result =  contractService.updateDiplomaUrl(teacher);
+            if(ResponseUtils.isFail(result)){
+                response.setStatus(HttpStatus.FORBIDDEN.value());
+            }
+            return result;
 
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
@@ -476,11 +476,11 @@ public class ContractController extends RestfulController {
         logger.info("用户:{},Delete Contract",teacher.getId());
         teacher.setContract("");
         try {
-            if(contractService.updateTeacher(teacher)!=0){
-                return ResponseUtils.responseSuccess("Successful to delete Contract.", null);
-            }else{
-                return ResponseUtils.responseFail("Failed to delete Contract.", this);
+            Map<String,Object> result =  contractService.updateContract(teacher);
+            if(ResponseUtils.isFail(result)){
+                response.setStatus(HttpStatus.FORBIDDEN.value());
             }
+            return result;
 
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
@@ -504,11 +504,11 @@ public class ContractController extends RestfulController {
         logger.info("用户:{},Delete remoteIdentification",teacher.getId());
         teacher.setPassport("");
         try {
-            if(contractService.updateTeacher(teacher)!=0){
-                return ResponseUtils.responseSuccess("Successful to delete remoteIdentification.", null);
-            }else{
-                return ResponseUtils.responseFail("Failed to delete remoteIdentification.", this);
+            Map<String,Object> result =  contractService.updateIdentification(teacher);
+            if(ResponseUtils.isFail(result)){
+                response.setStatus(HttpStatus.FORBIDDEN.value());
             }
+            return result;
 
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
