@@ -74,9 +74,10 @@ public class CookieExpiredHandleInterceptor extends HandlerInterceptorAdapter {
 
 		String token = CookieUtils.getValue(request, CookieKey.TRPM_TOKEN);
 		String key = CacheUtils.getUserTokenKey(token);
+		String ip = IpUtils.getRequestRemoteIP();
 		
 		String xRequestedWith = request.getHeader("X-Requested-With");
-		logger.info("preHandleRequest 用户  request token = {} , url = {} ",token ,request.getRequestURL());
+		logger.info("preHandleRequest 用户  request token = {} ,ip = {}, url = {} ",token ,ip,request.getRequestURL());
 		
 		if (null == token && StringUtils.contains(xRequestedWith, "XMLHttpRequest")) {
 			response.setStatus(COOKIE_EXPIRED_CODE);
@@ -93,7 +94,7 @@ public class CookieExpiredHandleInterceptor extends HandlerInterceptorAdapter {
 		}
 
         User user = indexService.getUser(request);
-        logger.info("preHandleUserInfo token = {} ,user = {}, url = {} ",token ,user==null?null:(user.getId()+"|"+user.getUsername()),request.getRequestURL());
+        logger.info("preHandleUserInfo token = {} ,ip,user = {}, url = {} ",token ,ip,user==null?null:(user.getId()+"|"+user.getUsername()),request.getRequestURL());
         if(user == null){
             logger.info("IP:{},用户为NULL。。。",IpUtils.getIpAddress(request));
             response.sendRedirect(request.getContextPath() + "/index.shtml");
