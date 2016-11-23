@@ -1,12 +1,10 @@
 package com.vipkid.recruitment.senddocs.controller;
 
 import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.google.api.client.util.Maps;
-import com.google.common.base.Preconditions;
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.community.config.PropertyConfigurer;
 import org.slf4j.Logger;
@@ -20,6 +18,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.google.api.client.util.Maps;
+import com.google.common.base.Preconditions;
 import com.vipkid.enums.TeacherEnum;
 import com.vipkid.file.model.FileUploadStatus;
 import com.vipkid.file.model.FileVo;
@@ -44,7 +44,7 @@ import com.vipkid.trpm.util.AwsFileUtils;
  * @author Austin.Cao  Date: 18/11/2016
  */
 @RestController
-@RestInterface(lifeCycle={TeacherEnum.LifeCycle.SENT_DOCS})
+@RestInterface(lifeCycle={TeacherEnum.LifeCycle.PUBLICITY_INFO})
 @RequestMapping("/recruitment/personalinfo")
 public class SendDocsController extends RestfulController {
 
