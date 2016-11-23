@@ -142,7 +142,7 @@ public class RecruitmentService {
                     result.put("onlineClassId", onlineClass.getId());
                     //小于1个小时 可进入onlineClass
                     if(!DateUtils.count1h(onlineClass.getScheduledDateTime().getTime())){
-                        result.put("result",AuditStatus.goToClass.toString());
+                        result.put("result",AuditStatus.GoToClass.toString());
                         return result;
                     //小于54周 处于审核中
                     }else if(!DateUtils.count54week(onlineClass.getScheduledDateTime().getTime())){
@@ -150,7 +150,7 @@ public class RecruitmentService {
                         return result;
                     //大于54周超时
                     }else{
-                        result.put("result",AuditStatus.hasTimeOut.toString());
+                        result.put("result",AuditStatus.HasTimeOut.toString());
                         return result;
                     }
                 }

@@ -21,15 +21,13 @@ public class TeacherApplicationEnum {
         REAPPLY, //重新申请,继续上PRACTICUM1（由于客观原因没能完成面试）
         PRACTICUM2, //第一次面试没通过，上PRACTICUM2
         TBD_FAIL,
-        TBD,
         CANCEL
 	}
 	
     public enum AuditStatus {
         ToAudit, // 待审核
         ToSubmit, // 待提交
-        goToClass, // 待上课
-        hasTimeOut //过期
-        
+        GoToClass, // 待上课
+        HasTimeOut //过期
     }
 }
