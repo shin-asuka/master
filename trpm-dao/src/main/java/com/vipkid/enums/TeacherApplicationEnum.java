@@ -8,7 +8,6 @@ public class TeacherApplicationEnum {
 		INTERVIEW, //面试
 		SIGN_CONTRACT, //签合同
 		TRAINING, // 教师培训
-		CONTRACT,//合同
 		PRACTICUM,//试讲
 		PUBLICITY_INFO, //新增
 		CONTRACT, //新增

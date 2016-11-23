@@ -33,14 +33,14 @@ public class TrainingService {
      * @return
      */
     public Map<String,Object> toPracticum(Teacher teacher){
-        // 如果当前为第4步 则状态变更为第5步骤，否则不做任何变更
+
         logger.info("用户：{}，更改LifeCycle",teacher.getId());
         List<TeacherApplication> listEntity = teacherApplicationDao.findCurrentApplication(teacher.getId());
         if(CollectionUtils.isEmpty(listEntity)){
             return ResponseUtils.responseFail("You have no legal power into the next phase !",this);
         }
 
-        //执行逻辑 只有在INTERVIEW的PASS状态才能进入
+        //执行逻辑 只有在TRAINING的PASS状态才能进入
         if(TeacherApplicationEnum.Status.TRAINING.toString().equals(listEntity.get(0).getStatus())
                 && TeacherApplicationEnum.Result.PASS.toString().equals(listEntity.get(0).getResult())){
             teacher.setLifeCycle(LifeCycle.PRACTICUM.toString());

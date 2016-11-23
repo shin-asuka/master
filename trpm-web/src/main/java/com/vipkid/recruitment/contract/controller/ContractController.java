@@ -410,7 +410,7 @@ public class ContractController extends RestfulController {
     }
 
     /**
-     * 跳转到SEND_DOCS改变用户的LifeCycle
+     * 跳转到PUBLICITY_INFO改变用户的LifeCycle
      * @param request
      * @param response
      */

@@ -1,7 +1,7 @@
 package com.vipkid.recruitment.contract.service;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,8 +14,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.vipkid.enums.TeacherApplicationEnum;
 import com.vipkid.enums.TeacherEnum;
 import com.vipkid.recruitment.dao.TeacherApplicationDao;
@@ -99,30 +97,15 @@ public class ContractService {
      * @param teacher
      * @return
      */
-    public Teacher toSendDocs(Teacher teacher){
-        // 如果当前为第4步 则状态变更为第5步骤，否则不做任何变更
-        teacher = teacherDao.findById(teacher.getId());
-        if(TeacherEnum.LifeCycle.CONTRACT.toString().equals(teacher.getLifeCycle())){
-            logger.info("用户{}转变到SENT_DOCS",teacher.getId());
-            teacher.setLifeCycle(TeacherEnum.LifeCycle.PUBLICITY_INFO.toString());
-
-            this.teacherDao.insertLifeCycleLog(teacher.getId(), TeacherEnum.LifeCycle.CONTRACT, TeacherEnum.LifeCycle.PUBLICITY_INFO, teacher.getId());
-            this.teacherDao.update(teacher);
-        }
-        return teacher;
-    }
-
-
     public Map<String,Object> toPublic(Teacher teacher){
         List<TeacherApplication> listEntity = teacherApplicationDao.findCurrentApplication(teacher.getId());
         if(CollectionUtils.isEmpty(listEntity)){
             return ResponseUtils.responseFail("You have no legal power into the next phase !",this);
         }
-
-
         if(TeacherApplicationEnum.Status.CONTRACT.toString().equals(listEntity.get(0).getStatus())
                 && TeacherApplicationEnum.Result.PASS.toString().equals(listEntity.get(0).getResult())){
-            //按照新流程 该步骤将老师的LifeCycle改变为Interview -to-Training
+
+
             teacher.setLifeCycle(TeacherEnum.LifeCycle.PUBLICITY_INFO.toString());
             this.teacherDao.insertLifeCycleLog(teacher.getId(), TeacherEnum.LifeCycle.CONTRACT, TeacherEnum.LifeCycle.PUBLICITY_INFO, teacher.getId());
             this.teacherDao.update(teacher);
