@@ -100,7 +100,7 @@ public class ContractService {
     public Map<String,Object>  updateTeacherApplication(Teacher teacher){
         Teacher t = teacherDao.findById(teacher.getId());
         TeacherTaxpayerForm teacherTaxpayerForm = teacherTaxpayerFormDao.findByTeacherIdAndType(teacher.getId(), TeacherEnum.FormType.W9.val());
-        if(teacherTaxpayerForm!=null){
+        if(teacherTaxpayerForm==null){
             if(teacher.getCountry().equals("USA")) {
                 return ResponseUtils.responseFail("Your W9 file is not uploaded. !", this);
             }else {
