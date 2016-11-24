@@ -1,171 +1,155 @@
 <div class="tab-pane active" id="taxpayer" style="border: 0px;">
-	<div class="row form-group">
-      <div class="col-sm-1 col-md-1"></div>
-      <div class="col-sm-11 col-md-10">
-        <h4>Explanation and description of W-9 ##and T4A
-		</h4>
-		
-      </div>
-    </div>
-    
     <div class="row form-group">
-      <div class="col-sm-1 col-md-1"></div>
-      <div class="col-xs-10 col-sm-10 col-md-11">
-        <p>
-			Dear Teachers
-		</p><p>		
-		Beginning with the 2016 taxable year (January 1, 2016 – December 31, 2016), 
-		VIPKID will be issuing official tax forms for all US nationals and US tax residents.  
-		Therefore, we will require every applicable teacher to submit their tax identification 
-		information (W-9 Form) in the Teacher Portal by
-		<span style="font-weight: bold;color:#000;">November 23, 2016</span>.
-        </p><p> 
-		This marks an important step for VIPKID as we continue to 
-		grow as a global leader in online education. 
-        </p><p>
-        For all queries related to the tax forms, please find our 
-		<a target="_blank"  href="#springUrl('/faq/taxes')" style="color:#red;">FAQs here</a>.
-		 For information on how to upload your information,
-		<a target="_blank" download="download" href="http://teacher-data.vipkid.com.cn/teacher/taxpayer/doc/UploadDemo.pdf" style="color:#red;">click here</a>.
-        </p><p>
-        We look forward to a simple and stress free 2017 tax season for everyone! 
-        </p>
-      </div>
-      <div class="col-sm-1 col-sm-1 col-md-6"></div>
+        <div class="col-sm-1 col-md-1"></div>
+        <div class="col-sm-11 col-md-10"></div>
     </div>
-    
-	#set($fileTypes = 'PDF./JPG./PNG./JPEG.')
-	<br>
     <div class="row form-group">
-      <div class="col-sm-1 col-md-1"></div>
-      <div class="col-xs-10 col-sm-10 col-md-11">
-        <p>
-			If you want to give us your W9 form, 
-			you can download your 
-			<span style="color:#000;font-weight: bold;">W-9 Fillable Form</span>
-			from  our website.
-        	<a download="download" target="_blank" href="http://teacher-data.vipkid.com.cn/teacher/taxpayer/doc/W9FillableForm.pdf" style="font-weight: bold;color: #4ED94D;">Download</a>
-        </p>
-		<p>&nbsp;</p>
-        <p>
-        	Please upload your 
-			<span style="color:#000;font-weight: bold;">W-9 Fillable Form</span>
-			after you finish
-        </p>
-		
-		<br>
-        <div name="fileInputArea">
-			#set($formUrl = $taxpayerView.formW9.url)
-			#if(${formUrl})
-				#set($displayCssSpan = '')
-				#set($displayCssInput = 'none')
-			#else
-				#set($displayCssSpan = 'none')
-				#set($displayCssInput = '')
-			#end
-			<input type="hidden" name="fileUrl" value='$!{formUrl}'>
-			<div>
-			<input style="display:none;" formType="1" type="file" name="file" id="fileW9"/>
-    		<div>
-			<div name="spanDiv" style="display: $displayCssSpan;" >
-				
-				<a target="_blank" name="fileShowUrl" href="$!{formUrl}" style="color:#000;">
-					$!{taxpayerView.formW9.fileName}</a>
+        <div class="col-sm-1 col-md-1"></div>
+        <div class="col-xs-10 col-sm-10 col-md-11">
+            <p><h4>Explanation and description of W-9</h4></p>
+            <p>
+                Dear Teachers
+            </p>
+            <p>
+                In accordance with US tax law and requirements set out by the IRS, VIPKID issues a Form 1099 for all US
+                nationals and US tax residents. In order to contract and teach with VIPKID, we require every applicable
+                teacher to submit their W-9 Form here.
+            </p>
+            <p>
+                Your <strong>W-9 Fillable Form</strong> may be downloaded here: 
+                <a target="_blank" download="download"
+                   href="http://teacher-data.vipkid.com.cn/teacher/taxpayer/doc/W9FillableForm.pdf"
+                   style="font-weight: bold;color: #4ED94D;">Download</a>.
+            </p>
+            <p>
+                For more information please visit: <a style="font-weight: bold;color: #4ED94D;" href="https://www.irs.gov/">www.irs.gov</a>.
+            </p>
+            <p>
+                Please upload your completed <strong>W-9 Form</strong> here.
+            </p>
+        </div>
+        <div class="col-sm-1 col-sm-1 col-md-6"></div>
+    </div>
+#set($fileTypes = 'PDF./JPG./PNG./JPEG.')<br>
+<div class="row form-group">
+    <div class="col-sm-1 col-md-1"></div>
+<div class="col-xs-10 col-sm-10 col-md-11">
+    <div name="fileInputArea">
+        #set($formUrl = $taxpayerView.formW9.url)
+        #if(${formUrl})
+            #set($displayCssSpan = '')
+            #set($displayCssInput = 'none')
+        #else
+            #set($displayCssSpan = 'none')
+            #set($displayCssInput = '')
+        #end
+        <input type="hidden" name="fileUrl" value='$!{formUrl}'>
+        <div>
+            <input style="display:none;" formType="1" type="file" name="file" id="fileW9"/>
+            <div>
+                <div name="spanDiv" style="display: $displayCssSpan;">
+
+                    <a target="_blank" name="fileShowUrl" href="$!{formUrl}" style="color:#000;">
+                        $!{taxpayerView.formW9.fileName}</a>
 					
     			<span> &nbsp;&nbsp;
-					##<a href="javascript:" style="color:#000;"name="deleteFile" title="Renew">Renew</a>
+                ##<a href="javascript:" style="color:#000;"name="deleteFile" title="Renew">Renew</a>
 					<input type="button" class="btn btn-primary" name="deleteFile" style="margin-top: -4px;"
-    				 value="Renew">
+                           value="Renew">
     			</span>
-    		</div>
-			
-			<div name="inputDiv" style="display: $displayCssInput;cursor:pointer;" > 
+                </div>
+
+                <div name="inputDiv" style="display: $displayCssInput;cursor:pointer;">
 				<span onclick="jQuery('#fileW9').click();">
 				<div class="form-control"
-					style="width:250px;height:38px;display:inline;background-color:#fff;margin-right:1px;">
-					$fileTypes &nbsp;&nbsp;
-				</div>
-    			<input type="button" class="btn btn-primary" refId="fileW9" name="uploadButton" style="margin-top: -4px;"
-    				 value="Upload">
+                     style="width:250px;height:38px;display:inline;background-color:#fff;margin-right:1px;">
+                    $fileTypes &nbsp;&nbsp;
+                </div>
+    			<input type="button" class="btn btn-primary" refId="fileW9" name="uploadButton"
+                       style="margin-top: -4px;"
+                       value="Upload">
 				</span>
-				<div  class="taxpayerUploadStatus" style="display:inline;padding:15px;border: 0px solid #ddd;">
+                    <div class="taxpayerUploadStatus" style="display:inline;padding:15px;border: 0px solid #ddd;">
     				<span style="display:none;" class="taxpayerUploadStatusImg" name="fileUploading">
 					&nbsp;&nbsp;&nbsp;&nbsp;
 					</span>
-    			</div>
-				
-			</div>
-			<br>
-		</div>
-      </div>
-      <div class="col-sm-1 col-sm-1 col-md-6"></div>
+                    </div>
+
+                </div>
+                <br>
+            </div>
+        </div>
+        <p>&bull; Please ensure your file type is: png/jpg/jpeg/pdf and not larger than 20mb in size.</p>
+        <p>&bull; If uploaded successfully the "upload" button will change to "renew".</p>
+        <div class="col-sm-1 col-sm-1 col-md-6"></div>
     </div>
-	<div class="row form-group" style="display:none;">
-      <div class="col-sm-1 col-md-1"></div>
-      <div class="col-xs-10 col-sm-10 col-md-10">
+<div class="row form-group" style="display:none;">
+    <div class="col-sm-1 col-md-1"></div>
+    <div class="col-xs-10 col-sm-10 col-md-10">
         <p>
-			If you want to give us your T4A form, 
-			you can download your 
-			<span style="color:#000;font-weight: bold;">T4A Fillable Form</span>
-			from the <a href="" style="font-weight: bold;color: #4ED94D;">US Govermment</a>
-			or just download from our website.
-        	&nbsp;&nbsp;<a href="" style="font-weight: bold;color: #4ED94D;">Download</a>
+            If you want to give us your T4A form,
+            you can download your
+            <span style="color:#000;font-weight: bold;">T4A Fillable Form</span>
+            from the <a href="" style="font-weight: bold;color: #4ED94D;">US Govermment</a>
+            or just download from our website.
+            &nbsp;&nbsp;<a href="" style="font-weight: bold;color: #4ED94D;">Download</a>
         </p>
-		<p>&nbsp;</p>
+        <p>&nbsp;</p>
         <p>
-        	Please upload your 
-			<span style="color:#FD1616;font-weight: bold;">T4A Fillable Form</span>
-			after you finish
+            Please upload your
+            <span style="color:#FD1616;font-weight: bold;">T4A Fillable Form</span>
+            after you finish
         </p>
-        
-		<div name="fileInputArea">
-			#set($formUrl = $taxpayerView.formT4A.url)
-			#if(${formUrl})
-				#set($displayCssSpan = '')
-				#set($displayCssInput = 'none')
-			#else
-				#set($displayCssSpan = 'none')
-				#set($displayCssInput = '')
-			#end
-			<input type="hidden" name="fileUrl" value='$!{formUrl}'>
-			<div>
-			<input style="display:none;" formType="2" type="file" name="file" id="fileT4A"/>
-			<div>	
-			<div name="spanDiv" style="display: $displayCssSpan;" >
-				<a target="_blank" name="fileShowUrl" href="$!{formUrl}" style="color:#000;">
-					$!{taxpayerView.formT4A.fileName}</a>
+
+        <div name="fileInputArea">
+            #set($formUrl = $taxpayerView.formT4A.url)
+            #if(${formUrl})
+                #set($displayCssSpan = '')
+                #set($displayCssInput = 'none')
+            #else
+                #set($displayCssSpan = 'none')
+                #set($displayCssInput = '')
+            #end
+            <input type="hidden" name="fileUrl" value='$!{formUrl}'>
+            <div>
+                <input style="display:none;" formType="2" type="file" name="file" id="fileT4A"/>
+                <div>
+                    <div name="spanDiv" style="display: $displayCssSpan;">
+                        <a target="_blank" name="fileShowUrl" href="$!{formUrl}" style="color:#000;">
+                            $!{taxpayerView.formT4A.fileName}</a>
     			<span> &nbsp;&nbsp;
-					##<a href="javascript:" style="color:#000;"name="deleteFile" title="Renew">Renew</a>
+                ##<a href="javascript:" style="color:#000;"name="deleteFile" title="Renew">Renew</a>
 					<input type="button" class="btn btn-primary" name="deleteFile" style="margin-top: -4px;"
-    				 value="Renew">
+                           value="Renew">
     			</span>
-    		</div>
-			
-			<div name="inputDiv" style="display: $displayCssInput;cursor:pointer;" onclick="jQuery('#fileT4A').click();" > 
-				<div class="form-control" placeholder="PDF./JPG./PNG./JEPG."
-					style="width:250px;height:38px;display:inline;background-color:#fff;margin-right:1px;">
-					$fileTypes &nbsp;&nbsp;
-				</div>
-    			<input type="button" class="btn btn-primary" style="margin-top: -4px;"
-    				value="Upload">
-				<div  class="taxpayerUploadStatus" style="display:inline;padding:15px;border: 0px solid #ddd;">
+                    </div>
+
+                    <div name="inputDiv" style="display: $displayCssInput;cursor:pointer;"
+                         onclick="jQuery('#fileT4A').click();">
+                        <div class="form-control" placeholder="PDF./JPG./PNG./JEPG."
+                             style="width:250px;height:38px;display:inline;background-color:#fff;margin-right:1px;">
+                            $fileTypes &nbsp;&nbsp;
+                        </div>
+                        <input type="button" class="btn btn-primary" style="margin-top: -4px;"
+                               value="Upload">
+                        <div class="taxpayerUploadStatus" style="display:inline;padding:15px;border: 0px solid #ddd;">
     				<span style="display:none;" class="taxpayerUploadStatusImg" name="fileUploading">
 					&nbsp;&nbsp;&nbsp;&nbsp;
 					</span>
-    			</div>
-			</div>
-			<br>
-		</div>
-      </div>
-      <div class="col-sm-1 col-sm-1 col-md-6"></div>
+                        </div>
+                    </div>
+                    <br>
+                </div>
+            </div>
+            <div class="col-sm-1 col-sm-1 col-md-6"></div>
+        </div>
+
+        <br><br><br>
     </div>
-    
-	 <br><br><br>     
-</div>
-	
+
 #@requireJs()
     require(['personal-taxpayer','jquery-ajaxfileupload'], function(taxpayer){
-	
-		taxpayer.init();
+
+    taxpayer.init();
     });
 #end

@@ -1,15 +1,6 @@
 package com.vipkid.trpm.controller.portal;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.ServletRequestUtils;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-
+import com.vipkid.dataSource.annotation.Slave;
 import com.vipkid.trpm.constant.ApplicationConstant.CourseType;
 import com.vipkid.trpm.constant.ApplicationConstant.LoginType;
 import com.vipkid.trpm.entity.Teacher;
@@ -17,6 +8,15 @@ import com.vipkid.trpm.service.passport.IndexService;
 import com.vipkid.trpm.service.portal.ClassroomsService;
 import com.vipkid.trpm.service.rest.TeacherPageLoginService;
 import com.vipkid.trpm.util.DateUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.ServletRequestUtils;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 @Controller
 public class ClassroomsController extends AbstractPortalController {
@@ -30,6 +30,7 @@ public class ClassroomsController extends AbstractPortalController {
     @Autowired
     private TeacherPageLoginService teacherPageLoginService;
 
+	@Slave
 	@RequestMapping("/classrooms")
 	public String classrooms(HttpServletRequest request, HttpServletResponse response, Model model) {
 		/* 月份偏移量 */
@@ -58,6 +59,7 @@ public class ClassroomsController extends AbstractPortalController {
 		return view("classrooms");
 	}
 
+	@Slave
 	@RequestMapping("/majorList")
 	public String majorList(HttpServletRequest request, HttpServletResponse response, Model model) {
 		int curPage = ServletRequestUtils.getIntParameter(request, "curPage", 1);
@@ -77,6 +79,7 @@ public class ClassroomsController extends AbstractPortalController {
 		return jsonView();
 	}
 
+	@Slave
 	@RequestMapping("/practicumList")
 	public String practicumList(HttpServletRequest request, HttpServletResponse response, Model model) {
 		int curPage = ServletRequestUtils.getIntParameter(request, "curPage", 1);

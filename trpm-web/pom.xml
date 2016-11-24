@@ -397,6 +397,7 @@
 			<properties>
 				<env>a1</env>
 				<masterAddressOfMysql>54.222.182.102:3301</masterAddressOfMysql>
+				<slaveAddressOfMysql>54.222.182.102:3301</slaveAddressOfMysql>
 				<targetHost>10.1.5.11</targetHost>
 				<datasource>local</datasource>
 			</properties>
@@ -411,6 +412,7 @@
 			<properties>
 				<env>a2</env>
 				<masterAddressOfMysql>54.222.182.102:3302</masterAddressOfMysql>
+				<slaveAddressOfMysql>54.222.182.102:3302</slaveAddressOfMysql>
 				<targetHost>10.1.5.12</targetHost>
 				<datasource>local</datasource>
 			</properties>
@@ -425,6 +427,7 @@
 			<properties>
 				<env>a3</env>
 				<masterAddressOfMysql>54.222.182.102:3303</masterAddressOfMysql>
+				<slaveAddressOfMysql>54.222.182.102:3303</slaveAddressOfMysql>
 				<targetHost>10.1.5.13</targetHost>
 				<datasource>local</datasource>
 			</properties>
@@ -439,6 +442,7 @@
 			<properties>
 				<env>a4</env>
 				<masterAddressOfMysql>54.222.182.102:3304</masterAddressOfMysql>
+				<slaveAddressOfMysql>54.222.182.102:3304</slaveAddressOfMysql>
 				<targetHost>10.1.5.14</targetHost>
 				<datasource>local</datasource>
 			</properties>
@@ -453,6 +457,7 @@
 			<properties>
 				<env>a5</env>
 				<masterAddressOfMysql>54.222.182.102:3305</masterAddressOfMysql>
+				<slaveAddressOfMysql>54.222.182.102:3305</slaveAddressOfMysql>
 				<targetHost>10.1.5.15</targetHost>
 				<datasource>local</datasource>
 			</properties>
@@ -467,6 +472,7 @@
 			<properties>
 				<env>a6</env>
 				<masterAddressOfMysql>54.222.182.102:3306</masterAddressOfMysql>
+				<slaveAddressOfMysql>54.222.182.102:3306</slaveAddressOfMysql>
 				<targetHost>10.1.5.16</targetHost>
 				<datasource>local</datasource>
 			</properties>
@@ -481,6 +487,7 @@
 			<properties>
 				<env>a7</env>
 				<masterAddressOfMysql>54.222.182.102:3307</masterAddressOfMysql>
+				<slaveAddressOfMysql>54.222.182.102:3307</slaveAddressOfMysql>
 				<targetHost>10.1.5.17</targetHost>
 				<datasource>local</datasource>
 			</properties>
@@ -495,6 +502,7 @@
 			<properties>
 				<env>a8</env>
 				<masterAddressOfMysql>54.222.182.102:3308</masterAddressOfMysql>
+				<slaveAddressOfMysql>54.222.182.102:3308</slaveAddressOfMysql>
 				<targetHost>10.1.5.18</targetHost>
 				<datasource>local</datasource>
 			</properties>
@@ -509,6 +517,7 @@
 			<properties>
 				<env>a9</env>
 				<masterAddressOfMysql>54.222.182.102:3309</masterAddressOfMysql>
+				<slaveAddressOfMysql>54.222.182.102:3309</slaveAddressOfMysql>
 				<targetHost>10.1.5.19</targetHost>
 				<datasource>local</datasource>
 			</properties>
@@ -523,6 +532,7 @@
 			<properties>
 				<env>a10</env>
 				<masterAddressOfMysql>54.222.182.102:3310</masterAddressOfMysql>
+				<slaveAddressOfMysql>54.222.182.102:3310</slaveAddressOfMysql>
 				<targetHost>10.1.5.20</targetHost>
 				<datasource>local</datasource>
 			</properties>
@@ -537,6 +547,7 @@
 			<properties>
 				<env>a11</env>
 				<masterAddressOfMysql>54.222.199.188:3301</masterAddressOfMysql>
+				<slaveAddressOfMysql>54.222.199.188:3301</slaveAddressOfMysql>
 				<targetHost>10.1.5.21</targetHost>
 				<datasource>local</datasource>
 			</properties>
@@ -551,6 +562,7 @@
 			<properties>
 				<env>a12</env>
 				<masterAddressOfMysql>54.222.199.188:3302</masterAddressOfMysql>
+				<slaveAddressOfMysql>54.222.199.188:3302</slaveAddressOfMysql>
 				<targetHost>10.1.5.22</targetHost>
 				<datasource>local</datasource>
 			</properties>
@@ -565,6 +577,7 @@
 			<properties>
 				<env>a13</env>
 				<masterAddressOfMysql>54.222.199.188:3303</masterAddressOfMysql>
+				<slaveAddressOfMysql>54.222.199.188:3303</slaveAddressOfMysql>
 				<targetHost>10.1.5.23</targetHost>
 				<datasource>local</datasource>
 			</properties>
@@ -579,6 +592,7 @@
 			<properties>
 				<env>a14</env>
 				<masterAddressOfMysql>54.222.199.188:3304</masterAddressOfMysql>
+				<slaveAddressOfMysql>54.222.199.188:3304</slaveAddressOfMysql>
 				<targetHost>10.1.5.24</targetHost>
 				<datasource>local</datasource>
 			</properties>
@@ -593,6 +607,7 @@
 			<properties>
 				<env>a15</env>
 				<masterAddressOfMysql>54.222.199.188:3305</masterAddressOfMysql>
+				<slaveAddressOfMysql>54.222.199.188:3305</slaveAddressOfMysql>
 				<targetHost>10.1.5.25</targetHost>
 				<datasource>local</datasource>
 			</properties>
@@ -607,6 +622,7 @@
 			<properties>
 				<env>a16</env>
 				<masterAddressOfMysql>54.222.199.188:3306</masterAddressOfMysql>
+				<slaveAddressOfMysql>54.222.199.188:3306</slaveAddressOfMysql>
 				<targetHost>10.1.5.26</targetHost>
 				<datasource>local</datasource>
 			</properties>
@@ -621,6 +637,7 @@
 			<properties>
 				<env>a17</env>
 				<masterAddressOfMysql>54.222.199.188:3307</masterAddressOfMysql>
+				<slaveAddressOfMysql>54.222.199.188:3307</slaveAddressOfMysql>
 				<targetHost>10.1.5.27</targetHost>
 				<datasource>local</datasource>
 			</properties>
@@ -635,6 +652,7 @@
 			<properties>
 				<env>a18</env>
 				<masterAddressOfMysql>54.222.199.188:3308</masterAddressOfMysql>
+				<slaveAddressOfMysql>54.222.199.188:3308</slaveAddressOfMysql>
 				<targetHost>10.1.5.28</targetHost>
 				<datasource>local</datasource>
 			</properties>
@@ -649,6 +667,7 @@
 			<properties>
 				<env>a19</env>
 				<masterAddressOfMysql>54.222.199.188:3309</masterAddressOfMysql>
+				<slaveAddressOfMysql>54.222.199.188:3309</slaveAddressOfMysql>
 				<targetHost>10.1.5.29</targetHost>
 				<datasource>local</datasource>
 			</properties>
@@ -663,6 +682,7 @@
 			<properties>
 				<env>a20</env>
 				<masterAddressOfMysql>54.222.199.188:3310</masterAddressOfMysql>
+				<slaveAddressOfMysql>54.222.199.188:3310</slaveAddressOfMysql>
 				<targetHost>10.1.5.30</targetHost>
 				<datasource>local</datasource>
 			</properties>
