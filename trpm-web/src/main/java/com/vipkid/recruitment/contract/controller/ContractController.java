@@ -60,6 +60,9 @@ public class ContractController extends RestfulController {
     public  Map<String,Object> submitsTeacher(Map<String,Object> pramMap, HttpServletRequest request, HttpServletResponse response){
         Object id = pramMap.get("id");
         logger.info("用户id........:{}",id);
+        if(id==null){
+            return ResponseUtils.responseFail("You don't have to upload the file", this);
+        }
         String ids = String.valueOf(id);
         String[] fileId = ids.split(",");
         List<Integer> idList = new ArrayList<Integer>();
