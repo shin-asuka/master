@@ -1,6 +1,8 @@
 package com.vipkid.recruitment.senddocs.controller;
 
+import java.util.List;
 import java.util.Map;
+import java.util.function.BinaryOperator;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -21,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.google.api.client.util.Maps;
 import com.google.common.base.Preconditions;
 import com.vipkid.enums.TeacherEnum;
+import com.vipkid.file.model.AppLifePicture;
 import com.vipkid.file.model.FileUploadStatus;
 import com.vipkid.file.model.FileVo;
 import com.vipkid.file.service.AwsFileService;
@@ -91,14 +94,23 @@ public class SendDocsController extends RestfulController {
             Map<String, Object> teacherFiles = Maps.newHashMap();
             teacherFiles = fileHttpService.queryTeacherFiles(teacherId);
             String avatarUrl = (String) teacherFiles.get("avatarUrl");
-            String lifePictures = (String) teacherFiles.get("lifePictures");
+            List<AppLifePicture> lifePictures = (List<AppLifePicture>) teacherFiles.get("lifePictures");
             String shortVideoUrl = (String) teacherFiles.get("shortVideo");
-            String shortVideoStatus = (String) teacherFiles.get("shortVideoStatus");
+            Integer shortVideoStatus = (Integer) teacherFiles.get("shortVideoStatus");
+            FileUploadStatus fileUploadStatus = new FileUploadStatus();
+            fileUploadStatus.setStatus(shortVideoStatus);
+            fileUploadStatus.setUrl(shortVideoUrl);
+
+            result.put("avatar", avatarUrl);
+            result.put("video", fileUploadStatus);
+            result.put("lifePics", lifePictures);
 
             Map<String,Object> status = recruitmentService.getStatus(teacherId);
             if(status != null && status.size() > 0) {
                 String failedReasonJson = (String) status.get("failedReason");
+                result.put("failedReason", failedReasonJson);
             }
+            result.put("bio", teacher.getIntroduction());
 
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
@@ -108,7 +120,7 @@ public class SendDocsController extends RestfulController {
             return ResponseUtils.responseFail(e.getMessage(), this);
         }
 
-        return ResponseUtils.responseFail("Failed to submit teacher bio", this);
+        return ResponseUtils.responseSuccess(result);
     }
 
     /**
@@ -184,7 +196,7 @@ public class SendDocsController extends RestfulController {
 
                 if (fileVo != null) {
                     String url = "http://" + bucketName + "/" + key;
-                    FileUploadStatus fileUploadStatus = fileHttpService.uploadAvatar(teacherId, url);
+                    FileUploadStatus fileUploadStatus = fileHttpService.uploadAvatar(teacherId, key);
                     result.put("url", fileUploadStatus.getUrl());
                     result.put("status", fileUploadStatus.getStatus());
                     return ResponseUtils.responseSuccess(result);
@@ -220,7 +232,7 @@ public class SendDocsController extends RestfulController {
 
                 if (fileVo != null) {
                     String url = "http://" + bucketName + "/" + key;
-                    FileUploadStatus fileUploadStatus = fileHttpService.uploadLifePicture(teacherId, url);
+                    FileUploadStatus fileUploadStatus = fileHttpService.uploadLifePicture(teacherId, key);
                     result.put("url", fileUploadStatus.getUrl());
                     result.put("status", fileUploadStatus.getStatus());
                     return ResponseUtils.responseSuccess(result);
@@ -256,7 +268,7 @@ public class SendDocsController extends RestfulController {
 
                 if (fileVo != null) {
                     String url = "http://" + bucketName + "/" + key;
-                    FileUploadStatus fileUploadStatus = fileHttpService.uploadShortVideo(teacherId, url);
+                    FileUploadStatus fileUploadStatus = fileHttpService.uploadShortVideo(teacherId, key);
                     result.put("url", fileUploadStatus.getUrl());
                     result.put("status", fileUploadStatus.getStatus());
                     return ResponseUtils.responseSuccess(result);
