@@ -16,7 +16,7 @@
                 teacher to submit their W-9 Form here.
             </p>
             <p>
-                Your W-9 Fillable Form may be downloaded here: 
+                Your <strong>W-9 Fillable Form</strong> may be downloaded here: 
                 <a target="_blank" download="download"
                    href="http://teacher-data.vipkid.com.cn/teacher/taxpayer/doc/W9FillableForm.pdf"
                    style="font-weight: bold;color: #4ED94D;">Download</a>.
@@ -25,7 +25,7 @@
                 For more information please visit: <a style="font-weight: bold;color: #4ED94D;" href="https://www.irs.gov/">www.irs.gov</a>.
             </p>
             <p>
-                Please upload your completed W-9 Form here.
+                Please upload your completed <strong>W-9 Form</strong> here.
             </p>
         </div>
         <div class="col-sm-1 col-sm-1 col-md-6"></div>
@@ -79,12 +79,8 @@
                 <br>
             </div>
         </div>
-        <p>
-        <ul>
-            <li>&bull; Please ensure your file type is: png/jpg/jpeg/pdf and not larger than 20mb in size.</li>
-            <li>&bull; If uploaded successfully the "submit" button will change to "renew".</li>
-        </ul>
-        </p>
+        <p>&bull; Please ensure your file type is: png/jpg/jpeg/pdf and not larger than 20mb in size.</p>
+        <p>&bull; If uploaded successfully the "upload" button will change to "renew".</p>
         <div class="col-sm-1 col-sm-1 col-md-6"></div>
     </div>
 <div class="row form-group" style="display:none;">
