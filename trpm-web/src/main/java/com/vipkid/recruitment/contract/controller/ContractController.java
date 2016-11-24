@@ -59,6 +59,7 @@ public class ContractController extends RestfulController {
     @RequestMapping(value = "/submit", method = RequestMethod.POST, produces = RestfulConfig.JSON_UTF_8)
     public  Map<String,Object> submitsTeacher(Map<String,Object> pramMap, HttpServletRequest request, HttpServletResponse response){
         Object id = pramMap.get("id");
+        logger.info("用户id........:{}",id);
         String ids = String.valueOf(id);
         String[] fileId = ids.split(",");
         List<Integer> idList = new ArrayList<Integer>();
@@ -344,8 +345,7 @@ public class ContractController extends RestfulController {
             teacherOtherDegrees.setDegrees(fileVo.getUrl());
             teacherOtherDegrees.setFileType(1);
             contractService.save(teacherOtherDegrees);
-            String info = toJSONString(fileVo);
-            result.put("file",info);
+            result.put("file",fileVo.getUrl());
             result.put("status",true);
             result.put("id",teacherOtherDegrees.getId());
             return ResponseUtils.responseSuccess(result);
@@ -442,15 +442,4 @@ public class ContractController extends RestfulController {
 
     }
 
-
-    public static String toJSONString(Object object) {
-        String str = null;
-        ObjectMapper mapper = new ObjectMapper();
-        try {
-            str = mapper.writeValueAsString(object);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
-        return str;
-    }
 }
