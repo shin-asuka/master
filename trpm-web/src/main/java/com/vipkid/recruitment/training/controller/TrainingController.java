@@ -98,18 +98,18 @@ public class TrainingController extends RestfulController {
      * 进行判题，算出分数，更新考试信息
      * @param request
      * @param response
-     * @param grade
-     * @param quizToken
      * @return
      */
     @RequestMapping(value = "/saveQuizResult", method = RequestMethod.POST, produces = RestfulConfig.JSON_UTF_8)
-    public Map<String,Object> saveQuizResult(HttpServletRequest request, HttpServletResponse response, @RequestParam(value="grade") String grade, @RequestParam(value="quizToken") long quizToken){
+    public Map<String,Object> saveQuizResult(HttpServletRequest request, HttpServletResponse response,Map<String,Object> pramMap){
         Map<String,Object> result = Maps.newHashMap();
         result.put("result", false);
+        Object grade = pramMap.get("grade");
+        Object quizToken = pramMap.get("quizToken");
         try{
             User user = getUser(request);
-            logger.info("用户{}提交grade:{}",user.getId(),grade);
-            result.put("result",this.adminQuizService.saveQuizResult(user.getId(), grade,quizToken));
+            logger.info("用户{}提交grade:{}",user.getId(),String.valueOf(grade));
+            result.put("result",this.adminQuizService.saveQuizResult(user.getId(), String.valueOf(grade),Long.valueOf(quizToken+"")));
             return result;
         } catch (IllegalArgumentException e) {
             logger.error("内部参数转化异常:"+e.getMessage());

@@ -25,10 +25,11 @@ public class TeacherOtherDegreesDao extends MapperDaoTemplate<TeacherOtherDegree
 
         return super.save(teacherOtherDegrees);
     }
-    public List<TeacherOtherDegrees> findByTeacherId(long teacherId){
+    public List<TeacherOtherDegrees> findByTeacherIdAndTeacherApplicationId(long teacherId,long teacherApplicationId){
         TeacherOtherDegrees teacherOtherDegrees =new TeacherOtherDegrees();
         teacherOtherDegrees.setTeacherId(teacherId);
-        return super.selectList( teacherOtherDegrees,"findByTeacherId");
+        teacherOtherDegrees.setTeacherApplicationId(teacherApplicationId);
+        return super.selectList( teacherOtherDegrees,"findByTeacherIdAndTeacherApplicationId");
     }
     public int  delete(TeacherOtherDegrees teacherOtherDegrees){
         return super.delete(teacherOtherDegrees);
@@ -39,6 +40,10 @@ public class TeacherOtherDegreesDao extends MapperDaoTemplate<TeacherOtherDegree
         teacherOtherDegrees.setUpdateTime(new Timestamp(System.currentTimeMillis()));
         return super.update(teacherOtherDegrees);
     }
+
+   public void  updateBatch(List<TeacherOtherDegrees> teacherOtherDegrees){
+       super.updateBatch(teacherOtherDegrees);
+   }
 }
 
 

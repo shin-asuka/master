@@ -1,5 +1,6 @@
 package com.vipkid.recruitment.contract.service;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -97,7 +98,7 @@ public class ContractService {
      * @param teacher
      * @return
      */
-    public Map<String,Object>  updateTeacherApplication(Teacher teacher){
+    public Map<String,Object>  updateTeacherApplication(Teacher teacher,List<Integer> ids){
         Teacher t = teacherDao.findById(teacher.getId());
         TeacherTaxpayerForm teacherTaxpayerForm = teacherTaxpayerFormDao.findByTeacherIdAndType(teacher.getId(), TeacherEnum.FormType.W9.val());
         if(teacherTaxpayerForm==null){
@@ -113,9 +114,7 @@ public class ContractService {
             }
 
         }
-        if(t.getPassport().equals("")||t.getContract().equals("")||t.getBachelorDiploma().equals("")){
-            return ResponseUtils.responseFail("Your  file is not uploaded. !", this);
-        }
+
         List<TeacherApplication> list = teacherApplicationDao.findCurrentApplication(teacher.getId());
         for (int i = 0; i < list.size(); i++) {
             TeacherApplication application = list.get(i);
@@ -130,7 +129,36 @@ public class ContractService {
         application = teacherApplicationDao.initApplicationData(application);
         this.teacherApplicationDao.save(application);
         logger.info("用户：{}，update table TeacherApplication Column Current = 0,  add table TeacherApplication row Current = 1",teacher.getId());
+        TeacherOtherDegrees teacherOtherDegrees;
+        List<TeacherOtherDegrees> ts = new ArrayList<TeacherOtherDegrees>();
+        for(Integer id:ids){
+            teacherOtherDegrees =new TeacherOtherDegrees();
+            teacherOtherDegrees.setId(id);
+            teacherOtherDegrees.setTeacherApplicationId(application.getId());
+            ts.add(teacherOtherDegrees);
+        }
+        logger.info("用户：{}批量更新文件的TeacherApplicationId:{}",teacher.getId(),application.getId());
+        teacherOtherDegreesDao.updateBatch(ts);
+        //查询
+        List<TeacherOtherDegrees> files =  teacherOtherDegreesDao.findByTeacherIdAndTeacherApplicationId(teacher.getId(),application.getId());
+        int Identification  =0;
+        int Diploma = 0;
+        int Contract = 0;
+        for(TeacherOtherDegrees file:files){
+            if(file.getFileType()==3){
+                Identification++;
+            }
+            if(file.getFileType()==4){
+                Diploma++;
+            }
+            if(file.getFileType()==5){
+                Contract++;
+            }
+        }
 
+        if(Identification==0||Diploma==0||Contract==0){
+            return ResponseUtils.responseFail("Your file is not uploaded. !", this);
+        }
         return ResponseUtils.responseSuccess();
        }
 
@@ -182,31 +210,57 @@ public class ContractService {
     public ContractFile findContract(Teacher t){
         ContractFile contractFile = new ContractFile();
         Teacher teacher =  teacherDao.findById(t.getId());
-        contractFile.setContract(teacher.getContract());
-        contractFile.setDiploma(teacher.getBachelorDiploma());
-        contractFile.setIdentification(teacher.getPassport());
+         logger.info("用户：{}查询上传文件",teacher.getId());
         TeacherTaxpayerForm teacherTaxpayerForm = teacherTaxpayerFormDao.findByTeacherIdAndType(teacher.getId(), TeacherEnum.FormType.W9.val());
-        contractFile.setTax(teacherTaxpayerForm.getUrl());
-
-        List<TeacherOtherDegrees>  TeacherOtherDegreeses =   teacherOtherDegreesDao.findByTeacherId(teacher.getId());
-        Map<Integer,String>  degrees;
-        Map<Integer,String> certification;
-
-        if(TeacherOtherDegreeses.size()!=0) {
-            degrees = new HashMap<Integer,String>();
-            certification = new HashMap<Integer,String>();
-            TeacherOtherDegreeses.forEach(obj -> {
-                if (obj.getFileType() == 1) {
-                    degrees.put(obj.getId(),obj.getDegrees());
-                } else if (obj.getFileType() == 2) {
-                    certification.put(obj.getId(),obj.getDegrees());
-                }
-
-            });
-
-            contractFile.setCertification(certification);
-            contractFile.setDegrees(degrees);
+        logger.info("用户：{}查询W9上传文件",teacher.getId());
+        if(teacherTaxpayerForm!=null) {
+            contractFile.setTax(teacherTaxpayerForm.getUrl());
         }
+        List<TeacherApplication> listEntity = teacherApplicationDao.findCurrentApplication(teacher.getId());
+        logger.info("用户：{}查询TeacherApplication",teacher.getId());
+        if(CollectionUtils.isNotEmpty(listEntity)) {
+            TeacherApplication teacherApplication = listEntity.get(0);
+            List<TeacherOtherDegrees>  TeacherOtherDegreeses =   teacherOtherDegreesDao.findByTeacherIdAndTeacherApplicationId(teacher.getId(),teacherApplication.getId());
+            Map<Integer,String>  degrees;
+            Map<Integer,String> certification;
+            Map<Integer,String>  identification;
+            Map<Integer,String> diploma;
+            Map<Integer,String> contract;
+
+            if(TeacherOtherDegreeses.size()!=0) {
+                degrees = new HashMap<Integer,String>();
+                contract = new HashMap<Integer,String>();
+                identification = new HashMap<Integer,String>();
+                diploma = new HashMap<Integer,String>();
+                certification = new HashMap<Integer,String>();
+                TeacherOtherDegreeses.forEach(obj -> {
+                    if (obj.getFileType() == 1) {
+                        degrees.put(obj.getId(),obj.getDegrees());
+                    }
+                    if (obj.getFileType() == 2) {
+                        certification.put(obj.getId(),obj.getDegrees());
+                    }
+                    if (obj.getFileType() == 3) {
+                        identification.put(obj.getId(),obj.getDegrees());
+                    }
+                    if (obj.getFileType() == 4) {
+                        diploma.put(obj.getId(),obj.getDegrees());
+                    }
+                    if (obj.getFileType() == 5) {
+                        contract.put(obj.getId(),obj.getDegrees());
+                    }
+
+                });
+                contractFile.setContract(contract);
+                contractFile.setDegrees(diploma);
+                contractFile.setIdentification(identification);
+                contractFile.setCertification(certification);
+                contractFile.setDegrees(degrees);
+
+            }
+        }
+
+
 
             return contractFile;
 

@@ -1,8 +1,6 @@
 package com.vipkid.recruitment.contract.controller;
 import java.io.IOException;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -58,12 +56,19 @@ public class ContractController extends RestfulController {
      * @param response
      * @return
      */
-    @RequestMapping(value = "/submit", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
-    public  Map<String,Object> submitsTeacher(HttpServletRequest request,HttpServletResponse response){
+    @RequestMapping(value = "/submit", method = RequestMethod.POST, produces = RestfulConfig.JSON_UTF_8)
+    public  Map<String,Object> submitsTeacher(Map<String,Object> pramMap, HttpServletRequest request, HttpServletResponse response){
+        Object id = pramMap.get("id");
+        String ids = String.valueOf(id);
+        String[] fileId = ids.split(",");
+        List<Integer> idList = new ArrayList<Integer>();
+        for(int i=0;i<fileId.length;i++){
+            idList.add(Integer.parseInt(fileId[i]));
+        }
         Teacher teacher = getTeacher(request);
         logger.info("保存用户：{}TeacherApplication",teacher.getId());
         try{
-            Map<String,Object> result = contractService.updateTeacherApplication(teacher);
+            Map<String,Object> result = contractService.updateTeacherApplication(teacher,idList);
             if(ResponseUtils.isFail(result)){
                 response.setStatus(HttpStatus.FORBIDDEN.value());
             }
@@ -133,16 +138,15 @@ public class ContractController extends RestfulController {
         }
 
         try{
-            teacher.setPassport(fileVo.getUrl());
-            int n = this.contractService.updateTeacher(teacher);
-            if(n<=0){
-                response.setStatus(HttpStatus.BAD_REQUEST.value());
-                return ResponseUtils.responseFail("upload file is fail",this);
-            }
-           String info = toJSONString(fileVo);
-            result.put("file",info);
+            TeacherOtherDegrees teacherOtherDegrees = new TeacherOtherDegrees();
+            teacherOtherDegrees.setTeacherId(teacher.getId());
+            teacherOtherDegrees.setDegrees(fileVo.getUrl());
+            teacherOtherDegrees.setFileType(3);
+            contractService.save(teacherOtherDegrees);
+            result.put("file",fileVo.getUrl());
             result.put("status",true);
-           return ResponseUtils.responseSuccess(result);
+            result.put("id",teacherOtherDegrees.getId());
+            return ResponseUtils.responseSuccess(result);
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
             return ResponseUtils.responseFail(e.getMessage(), this);
@@ -174,15 +178,14 @@ public class ContractController extends RestfulController {
         }
 
         try{
-            teacher.setBachelorDiploma(fileVo.getUrl());
-            int n = this.contractService.updateTeacher(teacher);
-            if(n<=0){
-                response.setStatus(HttpStatus.BAD_REQUEST.value());
-                return ResponseUtils.responseFail("upload file is fail",this);
-            }
-            String info = toJSONString(fileVo);
-            result.put("file",info);
+            TeacherOtherDegrees teacherOtherDegrees = new TeacherOtherDegrees();
+            teacherOtherDegrees.setTeacherId(teacher.getId());
+            teacherOtherDegrees.setDegrees(fileVo.getUrl());
+            teacherOtherDegrees.setFileType(4);
+            contractService.save(teacherOtherDegrees);
+            result.put("file",fileVo.getUrl());
             result.put("status",true);
+            result.put("id",teacherOtherDegrees.getId());
             return ResponseUtils.responseSuccess(result);
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
@@ -215,15 +218,15 @@ public class ContractController extends RestfulController {
         }
 
         try{
-            teacher.setContract(fileVo.getUrl());
-            int n = this.contractService.updateTeacher(teacher);
-            if(n<=0){
-                response.setStatus(HttpStatus.BAD_REQUEST.value());
-                return ResponseUtils.responseFail("upload file is fail",this);
-            }
-            String info = toJSONString(fileVo);
-            result.put("file",info);
+            TeacherOtherDegrees teacherOtherDegrees = new TeacherOtherDegrees();
+            teacherOtherDegrees.setTeacherId(teacher.getId());
+            teacherOtherDegrees.setDegrees(fileVo.getUrl());
+            teacherOtherDegrees.setFileType(5);
+            contractService.save(teacherOtherDegrees);
+
+            result.put("file",fileVo.getUrl());
             result.put("status",true);
+            result.put("id",teacherOtherDegrees.getId());
             return ResponseUtils.responseSuccess(result);
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
@@ -264,8 +267,8 @@ public class ContractController extends RestfulController {
             teacherTaxpayerForm.setFormType(TeacherEnum.FormType.W9.val());
             setTeacherTaxpayerFormInfo(teacherTaxpayerForm, request);
             teacherTaxpayerFormService.saveTeacherTaxpayerForm(teacherTaxpayerForm );
-            String info = toJSONString(fileVo);
-            result.put("file",info);
+
+            result.put("file",fileVo.getUrl());
             result.put("status",true);
             return ResponseUtils.responseSuccess(result);
         } catch (IllegalArgumentException e) {
@@ -303,8 +306,7 @@ public class ContractController extends RestfulController {
             teacherOtherDegrees.setDegrees(fileVo.getUrl());
             teacherOtherDegrees.setFileType(2);
             contractService.save(teacherOtherDegrees);
-            String info = toJSONString(fileVo);
-            result.put("file",info);
+            result.put("file",fileVo.getUrl());
             result.put("status",true);
             result.put("id",teacherOtherDegrees.getId());
             return ResponseUtils.responseSuccess(result);
@@ -357,32 +359,6 @@ public class ContractController extends RestfulController {
     }
 
 
-    /**
-     * 根据文件的id来删除文件
-     * @param id
-     * @param request
-     * @param response
-     * @return
-     */
-    @RequestMapping("/remoteDegrees ")
-    public Map<String,Object> remoteDegrees (int id,HttpServletRequest request, HttpServletResponse response){
-        Map<String,Object> result = new HashMap<String,Object>();
-        Teacher teacher = new Teacher().setId(getTeacher(request).getId());
-        logger.info("用户：{}， upload remoteDegrees fileID = {}",teacher.getId(),id);
-        try{
-            TeacherOtherDegrees teacherOtherDegrees = new TeacherOtherDegrees();
-           teacherOtherDegrees.setId(id);
-           contractService.delete(teacherOtherDegrees);
-            result.put("status",true);
-           return ResponseUtils.responseSuccess(result);
-        } catch (IllegalArgumentException e) {
-            response.setStatus(HttpStatus.BAD_REQUEST.value());
-            return ResponseUtils.responseFail(e.getMessage(), this);
-        } catch (Exception e) {
-            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            return ResponseUtils.responseFail(e.getMessage(), this);
-        }
-    }
 
     /**
      * 查询用户所提交的文件URL
@@ -436,88 +412,10 @@ public class ContractController extends RestfulController {
 
 
 
-    /**
-     * 删除DiplomaFile
-     * @param request
-     * @param response
-     * @return
-     */
-    @RequestMapping("/remoteDiplomaFile")
-    public Map<String,Object> remoteDiplomaFile(HttpServletRequest request,HttpServletResponse response){
-        Teacher teacher = new Teacher().setId(getTeacher(request).getId());
-        logger.info("用户:{},Delete DiplomaFile",teacher.getId());
-        teacher.setBachelorDiploma("");
-        try {
-            Map<String,Object> result =  contractService.updateDiplomaUrl(teacher);
-            if(ResponseUtils.isFail(result)){
-                response.setStatus(HttpStatus.FORBIDDEN.value());
-            }
-            return result;
-
-        } catch (IllegalArgumentException e) {
-            response.setStatus(HttpStatus.BAD_REQUEST.value());
-            return ResponseUtils.responseFail(e.getMessage(), this);
-        } catch (Exception e) {
-            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            return ResponseUtils.responseFail(e.getMessage(), this);
-        }
-    }
 
 
-    /**
-     * 删除Contract
-     * @param request
-     * @param response
-     * @return
-     */
-    @RequestMapping("/remoteContract")
-    public Map<String,Object> remoteContract(HttpServletRequest request,HttpServletResponse response){
-        Teacher teacher = new Teacher().setId(getTeacher(request).getId());
-        logger.info("用户:{},Delete Contract",teacher.getId());
-        teacher.setContract("");
-        try {
-            Map<String,Object> result =  contractService.updateContract(teacher);
-            if(ResponseUtils.isFail(result)){
-                response.setStatus(HttpStatus.FORBIDDEN.value());
-            }
-            return result;
-
-        } catch (IllegalArgumentException e) {
-            response.setStatus(HttpStatus.BAD_REQUEST.value());
-            return ResponseUtils.responseFail(e.getMessage(), this);
-        } catch (Exception e) {
-            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            return ResponseUtils.responseFail(e.getMessage(), this);
-        }
-    }
 
 
-    /**
-     * 删除Identification
-     * @param request
-     * @param response
-     * @return
-     */
-    @RequestMapping("/remoteIdentification")
-    public Map<String,Object> remoteIdentification(HttpServletRequest request,HttpServletResponse response){
-        Teacher teacher = new Teacher().setId(getTeacher(request).getId());
-        logger.info("用户:{},Delete remoteIdentification",teacher.getId());
-        teacher.setPassport("");
-        try {
-            Map<String,Object> result =  contractService.updateIdentification(teacher);
-            if(ResponseUtils.isFail(result)){
-                response.setStatus(HttpStatus.FORBIDDEN.value());
-            }
-            return result;
-
-        } catch (IllegalArgumentException e) {
-            response.setStatus(HttpStatus.BAD_REQUEST.value());
-            return ResponseUtils.responseFail(e.getMessage(), this);
-        } catch (Exception e) {
-            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            return ResponseUtils.responseFail(e.getMessage(), this);
-        }
-    }
 
 
 

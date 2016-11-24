@@ -8,10 +8,10 @@ import java.util.Map;
 public class ContractFile{
 
     //Teacherpassport
-    private String identification;
+    private Map<Integer,String> identification;
 
     //Teacher最高学历 bachelorDiploma
-    private String diploma;
+    private Map<Integer,String> diploma;
 
     private Map<Integer,String> certification;
 
@@ -20,29 +20,21 @@ public class ContractFile{
     //w9税收
     private String tax;
     //Teacher表contract
-    private String contract;
+    private Map<Integer,String> contract;
 
-    public String getIdentification() {
+    public Map<Integer, String> getIdentification() {
         return identification;
     }
 
-    public void setIdentification(String identification) {
+    public void setIdentification(Map<Integer, String> identification) {
         this.identification = identification;
     }
 
-    public String getDiploma() {
+    public Map<Integer, String> getDiploma() {
         return diploma;
     }
 
-    public String getContract() {
-        return contract;
-    }
-
-    public void setContract(String contract) {
-        this.contract = contract;
-    }
-
-    public void setDiploma(String diploma) {
+    public void setDiploma(Map<Integer, String> diploma) {
         this.diploma = diploma;
     }
 
@@ -70,6 +62,11 @@ public class ContractFile{
         this.tax = tax;
     }
 
+    public Map<Integer, String> getContract() {
+        return contract;
+    }
 
-
+    public void setContract(Map<Integer, String> contract) {
+        this.contract = contract;
+    }
 }

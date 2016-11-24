@@ -22,6 +22,8 @@ public class TeacherOtherDegrees extends Entity implements Serializable {
     private Timestamp updateTime;
     private long createId;
     private long updateId;
+    private long teacherApplicationId;
+    private String failReason;
 
     public int getId() {
         return id;
@@ -73,6 +75,22 @@ public class TeacherOtherDegrees extends Entity implements Serializable {
 
     public long getUpdateId() {
         return updateId;
+    }
+
+    public long getTeacherApplicationId() {
+        return teacherApplicationId;
+    }
+
+    public void setTeacherApplicationId(long teacherApplicationId) {
+        this.teacherApplicationId = teacherApplicationId;
+    }
+
+    public String getFailReason() {
+        return failReason;
+    }
+
+    public void setFailReason(String failReason) {
+        this.failReason = failReason;
     }
 
     public void setUpdateId(long updateId) {
