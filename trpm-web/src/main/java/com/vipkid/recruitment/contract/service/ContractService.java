@@ -1,13 +1,14 @@
 package com.vipkid.recruitment.contract.service;
-
 import java.sql.Timestamp;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import com.vipkid.recruitment.utils.ResponseUtils;
+import com.vipkid.trpm.dao.TeacherAddressDao;
+import com.vipkid.trpm.dao.TeacherLocationDao;
 import com.vipkid.trpm.dao.TeacherTaxpayerFormDao;
+import com.vipkid.trpm.entity.TeacherAddress;
+import com.vipkid.trpm.entity.TeacherLocation;
 import com.vipkid.trpm.entity.TeacherTaxpayerForm;
 import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
@@ -40,6 +41,9 @@ public class ContractService {
     private TeacherApplicationDao teacherApplicationDao;
     @Autowired
     private TeacherTaxpayerFormDao teacherTaxpayerFormDao;
+
+    @Autowired
+    private TeacherAddressDao teacherAddressDao;
 
     /**
      * 更新teacher表
@@ -96,9 +100,23 @@ public class ContractService {
      * @return
      */
     public Map<String,Object>  updateTeacherApplication(Teacher teacher){
+        Teacher t = teacherDao.findById(teacher.getId());
         TeacherTaxpayerForm teacherTaxpayerForm = teacherTaxpayerFormDao.findByTeacherIdAndType(teacher.getId(), TeacherEnum.FormType.W9.val());
-        if(teacherTaxpayerForm==null){
-            return ResponseUtils.responseFail("Your W9 file is not uploaded. !",this);
+        if(teacherTaxpayerForm!=null){
+            if(teacher.getCountry().equals("USA")) {
+                return ResponseUtils.responseFail("Your W9 file is not uploaded. !", this);
+            }else {
+                //查询教师的Location id
+                  TeacherAddress teacherAddress = teacherAddressDao.findById(t.getCurrentAddressId());
+                //  2497273 = 老师location 为   United States
+                if(teacherAddress!=null&&teacherAddress.getCountryId()==2497273){
+                    return ResponseUtils.responseFail("Your W9 file is not uploaded. !", this);
+                }
+            }
+
+        }
+        if(t.getPassport().equals("")||t.getContract().equals("")||t.getBachelorDiploma().equals("")){
+            return ResponseUtils.responseFail("Your  file is not uploaded. !", this);
         }
         List<TeacherApplication> list = teacherApplicationDao.findCurrentApplication(teacher.getId());
         for (int i = 0; i < list.size(); i++) {

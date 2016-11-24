@@ -39,7 +39,7 @@ import org.springframework.web.multipart.MultipartFile;
  * Created by zhangzhaojun on 2016/11/14.
  */
 @RestController
-@RestInterface(lifeCycle={LifeCycle.CONTRACT,LifeCycle.REGULAR})
+@RestInterface(lifeCycle={LifeCycle.CONTRACT})
 
 @RequestMapping("/recruitment/contract")
 public class ContractController extends RestfulController {
