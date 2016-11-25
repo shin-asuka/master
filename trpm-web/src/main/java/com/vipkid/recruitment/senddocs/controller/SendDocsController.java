@@ -2,7 +2,6 @@ package com.vipkid.recruitment.senddocs.controller;
 
 import java.util.List;
 import java.util.Map;
-import java.util.function.BinaryOperator;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -35,8 +34,6 @@ import com.vipkid.recruitment.utils.ResponseUtils;
 import com.vipkid.rest.RestfulController;
 import com.vipkid.rest.config.RestfulConfig;
 import com.vipkid.trpm.entity.Teacher;
-import com.vipkid.trpm.entity.User;
-import com.vipkid.trpm.service.portal.TeacherService;
 import com.vipkid.trpm.util.AwsFileUtils;
 
 /**
@@ -92,10 +89,12 @@ public class SendDocsController extends RestfulController {
             List<AppLifePicture> lifePictures = (List<AppLifePicture>) teacherFiles.get("lifePictures");
             String shortVideoUrl = (String) teacherFiles.get("shortVideo");
             Integer shortVideoStatus = (Integer) teacherFiles.get("shortVideoStatus");
-            FileUploadStatus fileUploadStatus = new FileUploadStatus();
-            fileUploadStatus.setStatus(shortVideoStatus);
-            fileUploadStatus.setUrl(shortVideoUrl);
 
+            FileUploadStatus fileUploadStatus = new FileUploadStatus();
+            if(shortVideoStatus != null && shortVideoUrl != null) {
+                fileUploadStatus.setStatus(shortVideoStatus);
+                fileUploadStatus.setUrl(shortVideoUrl);
+            }
             result.put("avatar", avatarUrl);
             result.put("video", fileUploadStatus);
             result.put("lifePics", lifePictures);
