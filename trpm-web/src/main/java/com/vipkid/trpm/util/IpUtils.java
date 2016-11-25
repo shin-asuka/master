@@ -1,15 +1,38 @@
 package com.vipkid.trpm.util;
 
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.community.config.PropertyConfigurer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+import com.google.common.collect.Lists;
+import com.maxmind.geoip2.record.City;
+import com.maxmind.geoip2.record.Country;
+import com.vipkid.http.service.GeoIPService;
+import com.vipkid.rest.utils.SpringContextHolder;
+import com.vipkid.trpm.entity.User;
+
 public class IpUtils {
+	
+	private final static Logger logger = LoggerFactory.getLogger(IpUtils.class);
+	private static GeoIPService geoIPService = SpringContextHolder.getBean(GeoIPService.class);
+	
+	/**
+	 * 泰国 iso_code = "TH"  geoname_id = 1605651, namae = Thailand 
+	 */
+	public final static String THAILAND = "TH"; //泰国 iso_code 1605651 Thailand
+	public final static List<String> CHECK_CONTRYS = Lists.newArrayList(THAILAND); 
+	public final static String COUNTRY_NAME_ZHCN = "zh-CN"; //语言
+	
     /**
      * 客户端IP
      * 
@@ -110,4 +133,89 @@ public class IpUtils {
 		}
 		return ip;
 	}
+    
+    /**
+	 * 检查用户IP是否变化
+	 * @param user
+	 * @return
+	 */
+	public static Boolean checkUserIpChange(User user){
+		if(!PropertyConfigurer.booleanValue("signup.checkIP")){
+			return false; //跳过ip检查
+		}
+		
+		Boolean isChange = true;
+		if(user != null && StringUtils.isNotBlank(user.getIp())){
+			String ip = IpUtils.getRequestRemoteIP();
+			
+			Country country = geoIPService.getCountryName(ip);
+			
+			//校验ip所在国家，对需要检查国家进行校验
+			String countryName = country==null ?null:country.getNames().get(IpUtils.COUNTRY_NAME_ZHCN);
+			City city = geoIPService.getCity(ip);
+        	String cityName = city==null?null:city.getNames().get(IpUtils.COUNTRY_NAME_ZHCN);
+        	String countryIsoCode = country==null ?null : country.getIsoCode();
+        	
+			logger.info("RequestUserIP user = {}, currentIp = {},IsoCode = {},countryName = {} , cityName = {}",
+					user.getId()+"|"+user.getUsername(),ip,countryIsoCode,countryName,cityName);
+			Boolean isCheckedCountry = isNeedCheckCountry(countryIsoCode);
+			if(!isCheckedCountry){
+				return false; //国家 不在检测范围类， 跳过ip检查
+			}
+			
+			//针对退出在线教室进行校验
+			HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+			String uri = request.getRequestURI();
+			Boolean isChecked = isNeedCheckUrl(uri);
+			if(!isChecked){
+				return false;
+			}
+			
+			//验证IP地址是否发生改变
+	        String redisIp = user.getIp();
+	        logger.info("检测用户IP地址  getUserIP user = {}, redisIp = {}, currentIp = {}, uri = {}",user.getId()+"|"+user.getUsername(),redisIp,ip,uri);
+	        if(StringUtils.isNotBlank(ip) && ip.equals(redisIp)){
+	        	isChange = false;
+	        }else{
+	        	Country countryOld = geoIPService.getCountryName(redisIp);
+	        	String countryOldName = countryOld==null ?null:countryOld.getNames().get(IpUtils.COUNTRY_NAME_ZHCN);
+	        	City cityOld = geoIPService.getCity(redisIp);
+	        	String cityOldName = cityOld==null ?null:cityOld.getNames().get(IpUtils.COUNTRY_NAME_ZHCN);
+	        	
+	        	logger.info("用户IP地址发生变化, userIPChange user = {}, redisIp = {}, currentIp = {},countryName = {},cityName = {},countryOldName = {},cityName = {}, cityOldName = {}",
+	        			user.getId()+"|"+user.getUsername(),redisIp,ip,countryName,cityName,countryOldName,cityOldName);
+	        
+	        }
+		}
+		return isChange;
+	}
+	
+	public static Boolean isNeedCheckCountry(String countryIsoCode){
+		Boolean isChecked = false;
+		if(StringUtils.isNotBlank(countryIsoCode)){
+			String checkCountry = PropertyConfigurer.stringValue("signup.checkCountrys");
+			checkCountry = checkCountry.toUpperCase();
+			List<String> checkCountrys = Lists.newArrayList(checkCountry.split(","));
+			if( CollectionUtils.isNotEmpty(checkCountrys) 
+					&& checkCountrys.contains(countryIsoCode.toUpperCase())){
+				isChecked = true; //url 在检测范围类， 进行ip检查
+			}
+		}
+		return isChecked;
+	}
+	
+	public static Boolean isNeedCheckUrl(String uri){
+		Boolean isChecked = false;
+		String checkUrl = PropertyConfigurer.stringValue("signup.checkUrls");
+		List<String> checkUrls = Lists.newArrayList(checkUrl.split(","));
+		String uriReq = uri;
+		if(uri.lastIndexOf(".")>-1){
+			uriReq = uri.substring(0,uri.lastIndexOf("."));
+		}
+		if(CollectionUtils.isNotEmpty(checkUrls) && checkUrls.contains(uriReq)){
+			isChecked = true; //url 在检测范围类， 进行ip检查
+		}
+		return isChecked;
+	}
+    
 }

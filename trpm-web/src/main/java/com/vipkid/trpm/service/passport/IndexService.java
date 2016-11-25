@@ -99,7 +99,7 @@ public class IndexService {
             String ip = IpUtils.getRequestRemoteIP();
             String redisIp = user.getIp();
             //logger.info("检测用户IP地址  getUserIP user = {}, redisIp = {}, currentIp = {}",user.getId()+"|"+user.getUsername(),redisIp,ip);
-            Boolean isIpChange = CacheUtils.checkUserIpChange(user);
+            Boolean isIpChange = IpUtils.checkUserIpChange(user);
             if(isIpChange){
             	logger.info("用户IP地址发生变化  getUser userIPChange token = {},user = {}, redisIp = {}, currentIp = {}",token,user.getId()+"|"+user.getUsername(),redisIp,ip);
             	user = null;
