@@ -1,8 +1,12 @@
 package com.vipkid.recruitment.common.service;
 
+import java.sql.Array;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import com.vipkid.trpm.constant.ApplicationConstant.FinishType;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.community.tools.JsonTools;
@@ -16,6 +20,7 @@ import com.vipkid.enums.OnlineClassEnum;
 import com.vipkid.enums.TeacherApplicationEnum;
 import com.vipkid.enums.TeacherApplicationEnum.AuditStatus;
 import com.vipkid.enums.TeacherApplicationEnum.Result;
+import com.vipkid.enums.TeacherApplicationEnum.Status;
 import com.vipkid.recruitment.dao.TeacherApplicationDao;
 import com.vipkid.recruitment.entity.TeacherApplication;
 import com.vipkid.rest.dto.TimezoneDto;
@@ -222,5 +227,77 @@ public class RecruitmentService {
         }
         this.teacherDao.update(teacher);
         return true;
+    }
+
+
+    public int getInterviewRemainRescheduleTimes(int teacherId, String type){
+        //type: cancelNum, CancelNoShow, ITProblem
+        int remainTimes = 0;
+        int lockTimes = getInterviewLockTimes(teacherId);
+        int reapplyTimesByITProblem = getInterviewReapplyTimesByITProblem(teacherId);
+        int reapplyTimesByCancelNoShow = getInterviewReapplyTimesByCancelNoShow(teacherId);
+        int cancelNum = 0;//getCancelNum(teacherId);
+        if (lockTimes > 0){
+            if(reapplyTimesByITProblem + reapplyTimesByCancelNoShow + cancelNum <= 5 + lockTimes){
+                remainTimes = 1;
+            }
+        } else {
+            if (FinishType.STUDENT_CANCELLATION.equals(type) || FinishType.STUDENT_NO_SHOW.equals(type) || Result.CANCEL.toString().equals(type)){
+                remainTimes = 3 - reapplyTimesByCancelNoShow - cancelNum;
+            } else if (FinishType.STUDENT_IT_PROBLEM.equals(type)){
+                remainTimes = 2 - reapplyTimesByITProblem;
+            }
+        }
+        return remainTimes;
+    }
+
+    private int getInterviewLockTimes(int teacherId){
+        return 0;
+    }
+
+    private int getInterviewReapplyTimesByCancelNoShow(int teacherId){
+        List<String> finishTypes = Arrays.asList(FinishType.STUDENT_CANCELLATION, FinishType.STUDENT_NO_SHOW);
+        return teacherApplicationDao.countByTeacherIdStatusFinishType(teacherId, Status.INTERVIEW.toString(), finishTypes);
+    }
+
+    private int getInterviewReapplyTimesByITProblem(int teacherId){
+        List<String> finishTypes = Arrays.asList(FinishType.STUDENT_IT_PROBLEM);
+        return teacherApplicationDao.countByTeacherIdStatusFinishType(teacherId, Status.INTERVIEW.toString(), finishTypes);
+    }
+
+
+    public int getPracticumRemainRescheduleTimes(int teacherId, String type){
+        //type: cancelNum, CancelNoShow, ITProblem
+        int remainTimes = 0;
+        int lockTimes = getPracticumLockTimes(teacherId);
+        int reapplyTimesByITProblem = getPracticumReapplyTimesByITProblem(teacherId);
+        int reapplyTimesByCancelNoShow = getPracticumReapplyTimesByCancelNoShow(teacherId);
+        int cancelNum = 0;//getCancelNum(teacherId);
+        if (lockTimes > 0){
+            if(reapplyTimesByITProblem + reapplyTimesByCancelNoShow + cancelNum <= 5 + lockTimes){
+                remainTimes = 1;
+            }
+        } else {
+            if (FinishType.STUDENT_CANCELLATION.equals(type) || FinishType.STUDENT_NO_SHOW.equals(type) || Result.CANCEL.toString().equals(type)){
+                remainTimes = 3 - reapplyTimesByCancelNoShow - cancelNum;
+            } else if (FinishType.STUDENT_IT_PROBLEM.equals(type)){
+                remainTimes = 2 - reapplyTimesByITProblem;
+            }
+        }
+        return remainTimes;
+    }
+
+    private int getPracticumLockTimes(int teacherId){
+        return 0;
+    }
+
+    private int getPracticumReapplyTimesByCancelNoShow(int teacherId){
+        List<String> finishTypes = Arrays.asList(FinishType.STUDENT_CANCELLATION, FinishType.STUDENT_NO_SHOW);
+        return teacherApplicationDao.countByTeacherIdStatusFinishType(teacherId, Status.PRACTICUM.toString(), finishTypes);
+    }
+
+    private int getPracticumReapplyTimesByITProblem(int teacherId){
+        List<String> finishTypes = Arrays.asList(FinishType.STUDENT_IT_PROBLEM);
+        return teacherApplicationDao.countByTeacherIdStatusFinishType(teacherId, Status.PRACTICUM.toString(), finishTypes);
     }
 }

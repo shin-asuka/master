@@ -423,4 +423,14 @@
 			AND result != #{result}
 		</if>
 	</select>
+
+	<select id="countReapplyTAByTeacherIdStatusFinishType" resultMap="int">
+		SELECT COUNT(*) FROM teacher_application ta
+		JOIN online_class oc ON oc.id = ta.online_class_id
+		WHERE ta.teacher_id = #{teacherId} AND `status` = #{status} AND result = 'REAPPLY' AND
+		oc.finish_type IN
+		<foreach collection="finishTypes" open="(" close=")" separator="," item="finishType">
+			#{finishType}
+		</foreach>
+	</select>
 </mapper>
