@@ -11,10 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.google.common.collect.Maps;
 import com.vipkid.enums.TeacherEnum.LifeCycle;
@@ -101,7 +98,7 @@ public class TrainingController extends RestfulController {
      * @return
      */
     @RequestMapping(value = "/saveQuizResult", method = RequestMethod.POST, produces = RestfulConfig.JSON_UTF_8)
-    public Map<String,Object> saveQuizResult(HttpServletRequest request, HttpServletResponse response,Map<String,Object> pramMap){
+    public Map<String,Object> saveQuizResult(HttpServletRequest request, HttpServletResponse response,@RequestBody Map<String,Object> pramMap){
         Map<String,Object> result = Maps.newHashMap();
         result.put("result", false);
         Object grade = pramMap.get("grade");
