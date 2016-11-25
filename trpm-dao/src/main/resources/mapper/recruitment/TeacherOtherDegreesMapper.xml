@@ -50,7 +50,7 @@
         <include refid="teacherOtherDegreesColumns"/>
         FROM teacher_other_degrees
         WHERE
-        teacher_other_degrees.teacher_id =#{teacherId} AND teacher_other_degrees.teacher_application_id
+        teacher_other_degrees.teacher_id =#{teacherId} AND teacher_other_degrees.teacher_application_id=#{teacherApplicationId}
     </select>
 
 
