@@ -89,6 +89,8 @@ public class LoginService {
         	logger.info("用户IP地址发生变化, userIPChange user = {}",user.getId()+"|"+user.getUsername());
         	return null;
         }
+        Integer timeout = CacheUtils.getLoginTimeout();
+        redisProxy.expire(key, timeout); //延长有效期
         return userDao.findById(user.getId());
     }
 

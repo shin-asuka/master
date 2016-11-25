@@ -105,6 +105,8 @@ public class IndexService {
             	user = null;
             }else{
             	user = userDao.findById(user.getId());
+//            	Integer timeout = CacheUtils.getLoginTimeout();
+//                redisProxy.expire(key, timeout); //延长有效期
             }
         }
         return user;

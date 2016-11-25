@@ -39,4 +39,19 @@ public class CacheUtils {
 		return key;
 	}
 	
+	/**
+	 * 获取用户在线信息redis缓存时间
+	 * @return
+	 */
+	public static Integer getLoginTimeout(){
+		Integer timeout = 3600;
+		try {
+			String ts = PropertyConfigurer.stringValue("signup.redis.timeout");
+			timeout = Integer.valueOf(ts);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return timeout;
+	}
+	
 }
