@@ -155,19 +155,22 @@ public class IpUtils {
 			City city = geoIPService.getCity(ip);
         	String cityName = city==null?null:city.getNames().get(IpUtils.COUNTRY_NAME_ZHCN);
         	String countryIsoCode = country==null ?null : country.getIsoCode();
-        	
-			logger.info("RequestUserIP user = {}, currentIp = {},IsoCode = {},countryName = {} , cityName = {}",
-					user.getId()+"|"+user.getUsername(),ip,countryIsoCode,countryName,cityName);
 			Boolean isCheckedCountry = isNeedCheckCountry(countryIsoCode);
+			
+			logger.info("RequestUserIP isNeedCheckCountry = {},user = {}, currentIp = {},IsoCode = {},countryName = {} , cityName = {}",
+					isCheckedCountry,user.getId()+"|"+user.getUsername(),ip,countryIsoCode,countryName,cityName);
 			if(!isCheckedCountry){
+				logger.info("");
 				return false; //国家 不在检测范围类， 跳过ip检查
 			}
 			
 			//针对退出在线教室进行校验
 			HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
 			String uri = request.getRequestURI();
-			Boolean isChecked = isNeedCheckUrl(uri);
-			if(!isChecked){
+			Boolean isNeedCheckedUrl = isNeedCheckUrl(uri);
+			logger.info("RequestUserUri isNeedCheckedUrl = {},user = {}, uri = {},IsoCode = {},countryName = {} , cityName = {}",
+					isNeedCheckedUrl,user.getId()+"|"+user.getUsername(),uri,countryIsoCode,countryName,cityName);
+			if(!isNeedCheckedUrl){
 				return false;
 			}
 			
@@ -193,12 +196,16 @@ public class IpUtils {
 	public static Boolean isNeedCheckCountry(String countryIsoCode){
 		Boolean isChecked = false;
 		if(StringUtils.isNotBlank(countryIsoCode)){
-			String checkCountry = PropertyConfigurer.stringValue("signup.checkCountrys");
-			checkCountry = checkCountry.toUpperCase();
-			List<String> checkCountrys = Lists.newArrayList(checkCountry.split(","));
-			if( CollectionUtils.isNotEmpty(checkCountrys) 
-					&& checkCountrys.contains(countryIsoCode.toUpperCase())){
-				isChecked = true; //url 在检测范围类， 进行ip检查
+			try {
+				String checkCountry = PropertyConfigurer.stringValue("signup.checkCountrys");
+				checkCountry = checkCountry.toUpperCase();
+				List<String> checkCountrys = Lists.newArrayList(checkCountry.split(","));
+				if( CollectionUtils.isNotEmpty(checkCountrys) 
+						&& checkCountrys.contains(countryIsoCode.toUpperCase())){
+					isChecked = true; //url 在检测范围类， 进行ip检查
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
 		}
 		return isChecked;
@@ -206,14 +213,20 @@ public class IpUtils {
 	
 	public static Boolean isNeedCheckUrl(String uri){
 		Boolean isChecked = false;
-		String checkUrl = PropertyConfigurer.stringValue("signup.checkUrls");
-		List<String> checkUrls = Lists.newArrayList(checkUrl.split(","));
-		String uriReq = uri;
-		if(uri.lastIndexOf(".")>-1){
-			uriReq = uri.substring(0,uri.lastIndexOf("."));
-		}
-		if(CollectionUtils.isNotEmpty(checkUrls) && checkUrls.contains(uriReq)){
-			isChecked = true; //url 在检测范围类， 进行ip检查
+		if(StringUtils.isNotBlank(uri)){
+			try {
+				String checkUrl = PropertyConfigurer.stringValue("signup.checkUrls");
+				List<String> checkUrls = Lists.newArrayList(checkUrl.split(","));
+				String uriReq = uri;
+				if(uri.lastIndexOf(".")>-1){
+					uriReq = uri.substring(0,uri.lastIndexOf("."));
+				}
+				if(CollectionUtils.isNotEmpty(checkUrls) && checkUrls.contains(uriReq)){
+					isChecked = true; //url 在检测范围类， 进行ip检查
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 		return isChecked;
 	}
