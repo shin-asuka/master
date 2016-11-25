@@ -24,6 +24,7 @@ public class TeacherOtherDegrees extends Entity implements Serializable {
     private long updateId;
     private long teacherApplicationId;
     private String failReason;
+    private String result;
 
     public int getId() {
         return id;
@@ -103,5 +104,13 @@ public class TeacherOtherDegrees extends Entity implements Serializable {
 
     public void setFileType(int fileType) {
         this.fileType = fileType;
+    }
+
+    public String getResult() {
+        return result;
+    }
+
+    public void setResult(String result) {
+        this.result = result;
     }
 }

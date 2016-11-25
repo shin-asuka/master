@@ -234,30 +234,36 @@ public class ContractService {
             List<TeacherOtherDegrees> diploma;
             List<TeacherOtherDegrees> contract;
 
+
             if(CollectionUtils.isNotEmpty(TeacherOtherDegreeses)) {
                 degrees = new ArrayList<TeacherOtherDegrees>();
                 contract = new ArrayList<TeacherOtherDegrees>();
                 identification = new ArrayList<TeacherOtherDegrees>();
                 diploma = new ArrayList<TeacherOtherDegrees>();
                 certification = new ArrayList<TeacherOtherDegrees>();
-                TeacherOtherDegreeses.forEach(obj -> {
-                    if (obj.getFileType() == 1) {
-                        degrees.add(obj);
-                    }
-                    if (obj.getFileType() == 2) {
-                        certification.add(obj);
-                    }
-                    if (obj.getFileType() == 3) {
-                        identification.add(obj);
-                    }
-                    if (obj.getFileType() == 4) {
-                        diploma.add(obj);
-                    }
-                    if (obj.getFileType() == 5) {
-                        contract.add(obj);
-                    }
+                String result="";
+              for(TeacherOtherDegrees obj:TeacherOtherDegreeses) {
+                  if (obj.getFileType() == 1) {
+                      degrees.add(obj);
+                  }
+                  if (obj.getFileType() == 2) {
+                      certification.add(obj);
+                  }
+                  if (obj.getFileType() == 3) {
+                      identification.add(obj);
+                  }
+                  if (obj.getFileType() == 4) {
+                      diploma.add(obj);
+                  }
+                  if (obj.getFileType() == 5) {
+                      contract.add(obj);
+                  }
+                  if (obj.getResult().equals("FAIL")) {
+                       result = "FAIL";
+                  }
 
-                });
+              }
+                contractFile.setResult(result);
                 contractFile.setContract(contract);
                 contractFile.setDiploma(diploma);
                 contractFile.setIdentification(identification);

@@ -23,6 +23,8 @@ public class ContractFile{
     //Teacher表contract
     private List<TeacherOtherDegrees> contract;
 
+    private String result;
+
     public List<TeacherOtherDegrees> getIdentification() {
         return identification;
     }
@@ -69,5 +71,13 @@ public class ContractFile{
 
     public void setContract(List<TeacherOtherDegrees> contract) {
         this.contract = contract;
+    }
+
+    public String getResult() {
+        return result;
+    }
+
+    public void setResult(String result) {
+        this.result = result;
     }
 }

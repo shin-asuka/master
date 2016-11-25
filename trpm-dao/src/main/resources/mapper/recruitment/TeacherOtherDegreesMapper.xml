@@ -13,7 +13,8 @@
         teacher_other_degrees.create_id AS createId,
         teacher_other_degrees.update_id AS updateId,
         teacher_other_degrees.teacher_application_id AS teacherApplicationId,
-        teacher_other_degrees.fail_reason AS failReason
+        teacher_other_degrees.fail_reason AS failReason,
+        teacher_other_degrees.result AS result
     </sql>
     <insert id="saveDao" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO teacher_other_degrees
@@ -28,6 +29,7 @@
             <if test="updateId!=null">,update_id</if>
             <if test="teacherApplicationId!=0">,teacher_application_id</if>
             <if test="failReason!=null">,fail_reason</if>
+            <if test="result!=null">,result</if>
         </trim>
         ) VALUES
         <trim prefix="(" prefixOverrides=",">
@@ -41,6 +43,7 @@
             <if test="updateId!=null">,#{updateId}</if>
             <if test="teacherApplicationId!=0">,#{teacherApplicationId}</if>
             <if test="failReason!=null">,#{failReason}</if>
+            <if test="result!=null">,#{result}</if>
         </trim>
         )
     </insert>
@@ -76,6 +79,7 @@
                 <if test="updateId!=null">,update_id = #{updateId}</if>
                 <if test="teacherApplicationId!=0">,teacher_application_id = #{teacherApplicationId}</if>
                 <if test="failReason!=null">,fail_reason = #{failReason}</if>
+                <if test="result!=null">,result = #{result}</if>
             </trim>
         <trim prefix="WHERE" prefixOverrides="AND">AND id = #{id}</trim>
     </update>
