@@ -48,8 +48,7 @@ public class TeacherOtherDegreesDao extends MapperDaoTemplate<TeacherOtherDegree
    public TeacherOtherDegrees findById(int id){
        TeacherOtherDegrees teacherOtherDegrees =new TeacherOtherDegrees();
        teacherOtherDegrees.setId(id);
-       return super.selectEntity(teacherOtherDegrees,"findById");
-
+       return super.selectOne(teacherOtherDegrees,"findById");
    }
 }
 
