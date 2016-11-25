@@ -157,7 +157,7 @@ public class IpUtils {
         	String countryIsoCode = country==null ?null : country.getIsoCode();
 			Boolean isCheckedCountry = isNeedCheckCountry(countryIsoCode);
 			
-			logger.info("RequestUserIP isNeedCheckCountry = {},user = {}, currentIp = {},IsoCode = {},countryName = {} , cityName = {}",
+			logger.info("RequestUserCountry isNeedCheckCountry = {},user = {}, currentIp = {},IsoCode = {},countryName = {} , cityName = {}",
 					isCheckedCountry,user.getId()+"|"+user.getUsername(),ip,countryIsoCode,countryName,cityName);
 			if(!isCheckedCountry){
 				logger.info("");
@@ -176,18 +176,17 @@ public class IpUtils {
 			
 			//验证IP地址是否发生改变
 	        String redisIp = user.getIp();
-	        logger.info("检测用户IP地址  getUserIP user = {}, redisIp = {}, currentIp = {}, uri = {}",user.getId()+"|"+user.getUsername(),redisIp,ip,uri);
-	        if(StringUtils.isNotBlank(ip) && ip.equals(redisIp)){
-	        	isChange = false;
-	        }else{
+	        isChange = StringUtils.isNotBlank(ip) && ip.equals(redisIp);
+	        logger.info("检测用户IP地址 RequestUserIP isChange={} user = {}, redisIp = {}, currentIp = {}, uri = {}",isChange,user.getId()+"|"+user.getUsername(),redisIp,ip,uri);
+	        
+	        if(isChange){
 	        	Country countryOld = geoIPService.getCountryName(redisIp);
 	        	String countryOldName = countryOld==null ?null:countryOld.getNames().get(IpUtils.COUNTRY_NAME_ZHCN);
 	        	City cityOld = geoIPService.getCity(redisIp);
 	        	String cityOldName = cityOld==null ?null:cityOld.getNames().get(IpUtils.COUNTRY_NAME_ZHCN);
 	        	
-	        	logger.info("用户IP地址发生变化, userIPChange user = {}, redisIp = {}, currentIp = {},countryName = {},cityName = {},countryOldName = {},cityName = {}, cityOldName = {}",
+	        	logger.info("RequestUser 用户IP地址发生变化, userIPChange user = {}, redisIp = {}, currentIp = {},countryName = {},cityName = {},countryOldName = {},cityName = {}, cityOldName = {}",
 	        			user.getId()+"|"+user.getUsername(),redisIp,ip,countryName,cityName,countryOldName,cityOldName);
-	        
 	        }
 		}
 		return isChange;
