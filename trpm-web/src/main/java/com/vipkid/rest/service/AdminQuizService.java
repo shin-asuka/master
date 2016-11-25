@@ -7,9 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import com.vipkid.enums.TeacherApplicationEnum;
-import com.vipkid.recruitment.dao.TeacherApplicationDao;
-import com.vipkid.recruitment.entity.TeacherApplication;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.community.tools.JsonTools;
@@ -19,8 +16,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.vipkid.enums.TeacherApplicationEnum;
 import com.vipkid.enums.TeacherPageLoginEnum.LoginType;
 import com.vipkid.enums.TeacherQuizEnum;
+import com.vipkid.recruitment.dao.TeacherApplicationDao;
+import com.vipkid.recruitment.entity.TeacherApplication;
 import com.vipkid.rest.config.RestfulConfig;
 import com.vipkid.trpm.dao.AppRestfulDao;
 import com.vipkid.trpm.dao.TeacherDao;
@@ -106,6 +106,20 @@ public class AdminQuizService {
     }
     
     /**
+     *  检查老师是否有考试记录
+     *  没有则插入一条新的待考记录
+     * @param teacherId    
+     * void
+     */
+    public void updateCheckQuiz(long teacherId){
+        List<TeacherQuiz> list = this.teacherQuizDao.findAllQuiz(teacherId);
+        logger.info("check quiz reslult count:" + list);
+        if(CollectionUtils.isEmpty(list)){
+            teacherQuizDao.insertQuiz(teacherId,teacherId);
+        }
+    }
+    
+    /**
      * 查询用户是否存在待考记录
      * @Author:ALong (ZengWeiLong)
      * @param teacherId
@@ -115,10 +129,6 @@ public class AdminQuizService {
      */
     public boolean findNeedQuiz(long teacherId){
         logger.info("select need quiz list for teacherId is " + teacherId);
-        List<TeacherQuiz> list = this.teacherQuizDao.findAllQuiz(teacherId);
-        if(CollectionUtils.isEmpty(list)){
-            teacherQuizDao.insertQuiz(teacherId,teacherId);
-        }
         List<TeacherQuiz> teacherQuiz = teacherQuizDao.findNeedQuiz(teacherId);
         return CollectionUtils.isNotEmpty(teacherQuiz);
     }

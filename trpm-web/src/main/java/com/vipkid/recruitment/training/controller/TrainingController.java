@@ -53,6 +53,7 @@ public class TrainingController extends RestfulController {
         try{
            User user = getUser(request);
             logger.info("用户：{}查询他是否存在待考记录",user.getId());
+            this.adminQuizService.updateCheckQuiz(user.getId());
             result.put("need",this.adminQuizService.findNeedQuiz(user.getId()));
             return result;
         } catch (IllegalArgumentException e) {
