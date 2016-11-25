@@ -131,8 +131,7 @@ public class ContractService {
         TeacherOtherDegrees teacherOtherDegrees;
         List<TeacherOtherDegrees> ts = new ArrayList<TeacherOtherDegrees>();
         for(Integer id:ids){
-            teacherOtherDegrees =new TeacherOtherDegrees();
-            teacherOtherDegrees.setId(id);
+            teacherOtherDegrees =teacherOtherDegreesDao.findById(id);
             teacherOtherDegrees.setTeacherApplicationId(application.getId());
             ts.add(teacherOtherDegrees);
         }

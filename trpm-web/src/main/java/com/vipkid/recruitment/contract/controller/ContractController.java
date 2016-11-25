@@ -54,7 +54,7 @@ public class ContractController extends RestfulController {
     @RequestMapping(value = "/submit", method = RequestMethod.POST, produces = RestfulConfig.JSON_UTF_8)
     public  Map<String,Object> submitsTeacher(@RequestBody Map<String,Object> pramMap, HttpServletRequest request, HttpServletResponse response){
         Object id = pramMap.get("id");
-        logger.info("用户id........:{}",id);
+        logger.info("文件id........:{}",id);
         if(id==null){
             return ResponseUtils.responseFail("You don't have to upload the file", this);
         }

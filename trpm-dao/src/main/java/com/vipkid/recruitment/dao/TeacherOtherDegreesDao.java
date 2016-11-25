@@ -44,6 +44,13 @@ public class TeacherOtherDegreesDao extends MapperDaoTemplate<TeacherOtherDegree
    public void  updateBatch(List<TeacherOtherDegrees> teacherOtherDegrees){
        super.updateBatch(teacherOtherDegrees);
    }
+
+   public TeacherOtherDegrees findById(int id){
+       TeacherOtherDegrees teacherOtherDegrees =new TeacherOtherDegrees();
+       teacherOtherDegrees.setId(id);
+       return super.selectEntity(teacherOtherDegrees,"findById");
+
+   }
 }
 
 

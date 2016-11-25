@@ -54,6 +54,15 @@
     </select>
 
 
+    <select id="findById"  resultType="com.vipkid.recruitment.entity.TeacherOtherDegrees" >
+        SELECT
+        <include refid="teacherOtherDegreesColumns"/>
+        FROM teacher_other_degrees
+        WHERE
+        teacher_other_degrees.id =#{id}
+    </select>
+
+
     <update id="updateDao">
         UPDATE teacher_other_degrees
         <trim prefix="SET" prefixOverrides=",">
