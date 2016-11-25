@@ -221,33 +221,34 @@ public class ContractService {
         if(CollectionUtils.isNotEmpty(listEntity)) {
             TeacherApplication teacherApplication = listEntity.get(0);
             List<TeacherOtherDegrees>  TeacherOtherDegreeses =   teacherOtherDegreesDao.findByTeacherIdAndTeacherApplicationId(teacher.getId(),teacherApplication.getId());
-            Map<Integer,String>  degrees;
-            Map<Integer,String> certification;
-            Map<Integer,String>  identification;
-            Map<Integer,String> diploma;
-            Map<Integer,String> contract;
+
+            List<TeacherOtherDegrees>  degrees;
+            List<TeacherOtherDegrees> certification;
+            List<TeacherOtherDegrees>  identification;
+            List<TeacherOtherDegrees> diploma;
+            List<TeacherOtherDegrees> contract;
 
             if(TeacherOtherDegreeses.size()!=0) {
-                degrees = new HashMap<Integer,String>();
-                contract = new HashMap<Integer,String>();
-                identification = new HashMap<Integer,String>();
-                diploma = new HashMap<Integer,String>();
-                certification = new HashMap<Integer,String>();
+                degrees = new ArrayList<TeacherOtherDegrees>();
+                contract = new ArrayList<TeacherOtherDegrees>();
+                identification = new ArrayList<TeacherOtherDegrees>();
+                diploma = new ArrayList<TeacherOtherDegrees>();
+                certification = new ArrayList<TeacherOtherDegrees>();
                 TeacherOtherDegreeses.forEach(obj -> {
                     if (obj.getFileType() == 1) {
-                        degrees.put(obj.getId(),obj.getDegrees());
+                        degrees.add(obj);
                     }
                     if (obj.getFileType() == 2) {
-                        certification.put(obj.getId(),obj.getDegrees());
+                        certification.add(obj);
                     }
                     if (obj.getFileType() == 3) {
-                        identification.put(obj.getId(),obj.getDegrees());
+                        identification.add(obj);
                     }
                     if (obj.getFileType() == 4) {
-                        diploma.put(obj.getId(),obj.getDegrees());
+                        diploma.add(obj);
                     }
                     if (obj.getFileType() == 5) {
-                        contract.put(obj.getId(),obj.getDegrees());
+                        contract.add(obj);
                     }
 
                 });
@@ -256,7 +257,6 @@ public class ContractService {
                 contractFile.setIdentification(identification);
                 contractFile.setCertification(certification);
                 contractFile.setDegrees(degrees);
-
             }
         }
 

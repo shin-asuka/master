@@ -1,5 +1,6 @@
 package com.vipkid.recruitment.entity;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -8,49 +9,49 @@ import java.util.Map;
 public class ContractFile{
 
     //Teacherpassport
-    private Map<Integer,String> identification;
+    private List<TeacherOtherDegrees> identification;
 
     //Teacher最高学历 bachelorDiploma
-    private Map<Integer,String> diploma;
+    private List<TeacherOtherDegrees> diploma;
 
-    private Map<Integer,String> certification;
+    private List<TeacherOtherDegrees> certification;
 
     //其他证明  新建一个表
-    private Map<Integer,String> degrees;
+    private List<TeacherOtherDegrees> degrees;
     //w9税收
     private String tax;
     //Teacher表contract
-    private Map<Integer,String> contract;
+    private List<TeacherOtherDegrees> contract;
 
-    public Map<Integer, String> getIdentification() {
+    public List<TeacherOtherDegrees> getIdentification() {
         return identification;
     }
 
-    public void setIdentification(Map<Integer, String> identification) {
+    public void setIdentification(List<TeacherOtherDegrees> identification) {
         this.identification = identification;
     }
 
-    public Map<Integer, String> getDiploma() {
+    public List<TeacherOtherDegrees> getDiploma() {
         return diploma;
     }
 
-    public void setDiploma(Map<Integer, String> diploma) {
+    public void setDiploma(List<TeacherOtherDegrees> diploma) {
         this.diploma = diploma;
     }
 
-    public Map<Integer, String> getCertification() {
+    public List<TeacherOtherDegrees> getCertification() {
         return certification;
     }
 
-    public void setCertification(Map<Integer, String> certification) {
+    public void setCertification(List<TeacherOtherDegrees> certification) {
         this.certification = certification;
     }
 
-    public Map<Integer, String> getDegrees() {
+    public List<TeacherOtherDegrees> getDegrees() {
         return degrees;
     }
 
-    public void setDegrees(Map<Integer, String> degrees) {
+    public void setDegrees(List<TeacherOtherDegrees> degrees) {
         this.degrees = degrees;
     }
 
@@ -62,11 +63,11 @@ public class ContractFile{
         this.tax = tax;
     }
 
-    public Map<Integer, String> getContract() {
+    public List<TeacherOtherDegrees> getContract() {
         return contract;
     }
 
-    public void setContract(Map<Integer, String> contract) {
+    public void setContract(List<TeacherOtherDegrees> contract) {
         this.contract = contract;
     }
 }

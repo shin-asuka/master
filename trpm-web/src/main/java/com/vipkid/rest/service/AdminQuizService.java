@@ -116,6 +116,11 @@ public class AdminQuizService {
     public boolean findNeedQuiz(long teacherId){
         logger.info("select need quiz list for teacherId is " + teacherId);
         List<TeacherQuiz> list = this.teacherQuizDao.findNeedQuiz(teacherId);
+        if(CollectionUtils.isEmpty(list)){
+        teacherQuizDao.insertQuiz(teacherId,teacherId);
+            List<TeacherQuiz> teacherQuiz = teacherQuizDao.findNeedQuiz(teacherId);
+            return CollectionUtils.isNotEmpty(teacherQuiz);
+        }
         return CollectionUtils.isNotEmpty(list);
     }
     
