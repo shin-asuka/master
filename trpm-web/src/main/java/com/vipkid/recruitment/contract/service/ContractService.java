@@ -115,11 +115,12 @@ public class ContractService {
         }
 
         List<TeacherApplication> list = teacherApplicationDao.findCurrentApplication(teacher.getId());
-        for (int i = 0; i < list.size(); i++) {
-            TeacherApplication application = list.get(i);
-            System.out.println(application.getId());
-            application.setCurrent(0);
-            this.teacherApplicationDao.update(application);
+        if(CollectionUtils.isNotEmpty(list)) {
+            for (int i = 0; i < list.size(); i++) {
+                TeacherApplication application = list.get(i);
+                application.setCurrent(0);
+                this.teacherApplicationDao.update(application);
+            }
         }
         TeacherApplication application = new TeacherApplication();
         application.setTeacherId(teacher.getId());//  步骤关联的教师

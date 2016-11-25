@@ -115,7 +115,7 @@ public class AdminQuizService {
      */
     public boolean findNeedQuiz(long teacherId){
         logger.info("select need quiz list for teacherId is " + teacherId);
-        List<TeacherQuiz> list = this.teacherQuizDao.findNeedQuiz(teacherId);
+        List<TeacherQuiz> list = this.teacherQuizDao.findAllQuiz(teacherId);
         if(CollectionUtils.isEmpty(list)){
         teacherQuizDao.insertQuiz(teacherId,teacherId);
             List<TeacherQuiz> teacherQuiz = teacherQuizDao.findNeedQuiz(teacherId);
@@ -156,6 +156,15 @@ public class AdminQuizService {
                     this.teacherQuizDao.insertQuiz(teacherId,teacherId);
                 }
                 if(quizScore > RestfulConfig.Quiz.QUIZ_PASS_SCORE){
+                    List<TeacherApplication> old_teacherlist = teacherApplicationDao.findCurrentApplication(teacherId);
+                    if(CollectionUtils.isNotEmpty(old_teacherlist)) {
+                        logger.info("用户：{}执行teacherApplicationDao.update操作",teacherId);
+                        for (int i = 0; i < old_teacherlist.size(); i++) {
+                            TeacherApplication application = old_teacherlist.get(i);
+                            application.setCurrent(0);
+                            this.teacherApplicationDao.update(application);
+                        }
+                    }
                     TeacherApplication application = new TeacherApplication();
                     application.setTeacherId(teacherId);//  步骤关联的教师
                     application.setApplyDateTime(new Timestamp(System.currentTimeMillis()));

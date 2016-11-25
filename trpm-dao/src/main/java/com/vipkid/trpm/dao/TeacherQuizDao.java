@@ -40,7 +40,21 @@ public class TeacherQuizDao extends MapperDaoTemplate<TeacherQuiz>{
         teacherQuiz.setOrderString(" id DESC ");
         return super.selectList(teacherQuiz);
     }
-    
+
+    /**
+     * 查询是否有需要考试的记录
+     * @Author:ALong (ZengWeiLong)
+     * @param teacherId
+     * @return
+     * List<TeacherQuiz>
+     * @date 2016年8月18日
+     */
+    public List<TeacherQuiz> findAllQuiz(long teacherId){
+        TeacherQuiz teacherQuiz = new TeacherQuiz();
+        teacherQuiz.setTeacherId(teacherId);
+        return super.selectList(teacherQuiz);
+    }
+
     /**
      * 查询是否有需要考试的记录
      * @Author:ALong (ZengWeiLong)
