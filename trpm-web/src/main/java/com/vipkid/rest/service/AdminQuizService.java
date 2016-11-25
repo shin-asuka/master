@@ -117,11 +117,10 @@ public class AdminQuizService {
         logger.info("select need quiz list for teacherId is " + teacherId);
         List<TeacherQuiz> list = this.teacherQuizDao.findAllQuiz(teacherId);
         if(CollectionUtils.isEmpty(list)){
-        teacherQuizDao.insertQuiz(teacherId,teacherId);
-            List<TeacherQuiz> teacherQuiz = teacherQuizDao.findNeedQuiz(teacherId);
-            return CollectionUtils.isNotEmpty(teacherQuiz);
+            teacherQuizDao.insertQuiz(teacherId,teacherId);
         }
-        return CollectionUtils.isNotEmpty(list);
+        List<TeacherQuiz> teacherQuiz = teacherQuizDao.findNeedQuiz(teacherId);
+        return CollectionUtils.isNotEmpty(teacherQuiz);
     }
     
     /**
