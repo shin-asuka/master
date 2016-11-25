@@ -142,7 +142,7 @@ public class InterviewService {
         if(CollectionUtils.isNotEmpty(listEntity)){
             TeacherApplication teacherApplication = listEntity.get(0);
             //存在步骤，但步骤中已经存在待审核的课程 不允许继续book
-            if(teacherApplication.getOnlineClassId() != 0 && StringUtils.isNotBlank(teacherApplication.getResult())){
+            if(teacherApplication.getOnlineClassId() != 0 && StringUtils.isBlank(teacherApplication.getResult())){
                 return ResponseUtils.responseFail("You have booked a class already. Please refresh your page !"+onlineClassId, this);
             }
         }
