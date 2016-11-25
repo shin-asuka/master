@@ -31,7 +31,7 @@
         </trim>
         ) VALUES
         <trim prefix="(" prefixOverrides=",">
-            <if test="id!=0">,#{id{}</if>
+            <if test="id!=0">,#{id}</if>
             <if test="teacherId!=0">,#{teacherId}</if>
             <if test="degrees!=null">,#{degrees}</if>
             <if test="fileType!=null">,#{fileType}</if>
@@ -58,7 +58,7 @@
         UPDATE teacher_other_degrees
         <trim prefix="SET" prefixOverrides=",">
             <trim prefix="(" prefixOverrides=",">
-                <if test="id!=0">,id=#{id{}</if>
+                <if test="id!=0">,id=#{id}</if>
                 <if test="teacherId!=0">,teacher_id = #{teacherId}</if>
                 <if test="degrees!=null">,teacher_other_degrees=#{degrees}</if>
                 <if test="fileType!=null">,file_type=#{fileType}</if>
