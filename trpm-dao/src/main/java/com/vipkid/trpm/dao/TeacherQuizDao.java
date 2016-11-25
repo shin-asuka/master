@@ -52,6 +52,7 @@ public class TeacherQuizDao extends MapperDaoTemplate<TeacherQuiz>{
     public List<TeacherQuiz> findAllQuiz(long teacherId){
         TeacherQuiz teacherQuiz = new TeacherQuiz();
         teacherQuiz.setTeacherId(teacherId);
+        teacherQuiz.setStatus(-1);
         return super.selectList(teacherQuiz);
     }
 
