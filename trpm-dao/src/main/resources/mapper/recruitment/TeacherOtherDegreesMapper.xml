@@ -57,7 +57,6 @@
     <update id="updateDao">
         UPDATE teacher_other_degrees
         <trim prefix="SET" prefixOverrides=",">
-            <trim prefix="(" prefixOverrides=",">
                 <if test="id!=0">,id=#{id}</if>
                 <if test="teacherId!=0">,teacher_id = #{teacherId}</if>
                 <if test="degrees!=null">,teacher_other_degrees=#{degrees}</if>
@@ -69,9 +68,9 @@
                 <if test="teacherApplicationId!=0">,teacher_application_id = #{teacherApplicationId}</if>
                 <if test="failReason!=null">,fail_reason = #{failReason}</if>
             </trim>
-        </trim>
         <trim prefix="WHERE" prefixOverrides="AND">AND id = #{id}</trim>
     </update>
+
 
     <delete id="deleteDao">
         DELETE FROM teacher_other_degrees

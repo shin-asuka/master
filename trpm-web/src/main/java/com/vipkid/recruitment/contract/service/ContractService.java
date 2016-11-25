@@ -1,7 +1,6 @@
 package com.vipkid.recruitment.contract.service;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import com.vipkid.recruitment.utils.ResponseUtils;
@@ -141,25 +140,30 @@ public class ContractService {
         teacherOtherDegreesDao.updateBatch(ts);
         //查询
         List<TeacherOtherDegrees> files =  teacherOtherDegreesDao.findByTeacherIdAndTeacherApplicationId(teacher.getId(),application.getId());
-        int Identification  =0;
-        int Diploma = 0;
-        int Contract = 0;
-        for(TeacherOtherDegrees file:files){
-            if(file.getFileType()==3){
-                Identification++;
+        if(CollectionUtils.isNotEmpty(files)) {
+            int Identification = 0;
+            int Diploma = 0;
+            int Contract = 0;
+            for (TeacherOtherDegrees file : files) {
+                if (file.getFileType() == 3) {
+                    Identification++;
+                }
+                if (file.getFileType() == 4) {
+                    Diploma++;
+                }
+                if (file.getFileType() == 5) {
+                    Contract++;
+                }
             }
-            if(file.getFileType()==4){
-                Diploma++;
-            }
-            if(file.getFileType()==5){
-                Contract++;
-            }
-        }
 
-        if(Identification==0||Diploma==0||Contract==0){
+            if (Identification == 0 || Diploma == 0 || Contract == 0) {
+                return ResponseUtils.responseFail("Your file is not uploaded. !", this);
+            }
+            return ResponseUtils.responseSuccess();
+        }else{
             return ResponseUtils.responseFail("Your file is not uploaded. !", this);
         }
-        return ResponseUtils.responseSuccess();
+
        }
 
     /**
@@ -228,7 +232,7 @@ public class ContractService {
             List<TeacherOtherDegrees> diploma;
             List<TeacherOtherDegrees> contract;
 
-            if(TeacherOtherDegreeses.size()!=0) {
+            if(CollectionUtils.isNotEmpty(TeacherOtherDegreeses)) {
                 degrees = new ArrayList<TeacherOtherDegrees>();
                 contract = new ArrayList<TeacherOtherDegrees>();
                 identification = new ArrayList<TeacherOtherDegrees>();
