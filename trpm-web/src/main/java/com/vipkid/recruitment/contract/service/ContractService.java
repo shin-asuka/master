@@ -258,7 +258,7 @@ public class ContractService {
 
                 });
                 contractFile.setContract(contract);
-                contractFile.setDegrees(diploma);
+                contractFile.setDiploma(diploma);
                 contractFile.setIdentification(identification);
                 contractFile.setCertification(certification);
                 contractFile.setDegrees(degrees);
