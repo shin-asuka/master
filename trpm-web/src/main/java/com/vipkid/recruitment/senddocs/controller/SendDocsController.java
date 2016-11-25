@@ -35,6 +35,7 @@ import com.vipkid.recruitment.utils.ResponseUtils;
 import com.vipkid.rest.RestfulController;
 import com.vipkid.rest.config.RestfulConfig;
 import com.vipkid.trpm.entity.Teacher;
+import com.vipkid.trpm.entity.User;
 import com.vipkid.trpm.service.portal.TeacherService;
 import com.vipkid.trpm.util.AwsFileUtils;
 
@@ -54,9 +55,6 @@ public class SendDocsController extends RestfulController {
     private static Logger logger = LoggerFactory.getLogger(SendDocsController.class);
 
     @Autowired
-    private TeacherService teacherService;
-
-    @Autowired
     private AwsFileService awsFileService;
 
     @Autowired
@@ -70,29 +68,26 @@ public class SendDocsController extends RestfulController {
 
 
     /**
-     * 进入 PersonalInfo 状态之前, 先查出之前是否有上传资料,
-     * @param teacherId
+     * 进入 PersonalInfo 状态之前, 先查出之前是否有上传资料
+     *
      * @param request
      * @param response
      * @return
      */
-    @RequestMapping(value = "/queryPersonalInfo", method = RequestMethod.POST, produces = RestfulConfig.JSON_UTF_8)
-    public Map<String, Object> queryPersonalInfo(Long teacherId, HttpServletRequest request, HttpServletResponse response) {
-        if (null == teacherId) {
-            return ResponseUtils.responseFail("Teacher's id is empty!", this);
-        }
+    @RequestMapping(value = "/queryPersonalInfo", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
+    public Map<String, Object> queryPersonalInfo(HttpServletRequest request, HttpServletResponse response) {
 
         Map<String, Object> result = Maps.newHashMap();
         try {
-            Teacher teacher = teacherService.get(teacherId);
+            Teacher teacher = getTeacher(request);
             if (null == teacher) {
                 response.setStatus(HttpStatus.NOT_FOUND.value());
                 return ResponseUtils.responseFail("Teacher doesn't exist", this);
             }
+            Long teacherId = teacher.getId();
+            //从 TIS 获取数据, 检查老师的头像/照片/视频是都都上传了?
 
-            //检查老师的头像/照片/视频是都都上传了? 从 TIS 获取数据
-            Map<String, Object> teacherFiles = Maps.newHashMap();
-            teacherFiles = fileHttpService.queryTeacherFiles(teacherId);
+            Map<String, Object> teacherFiles = fileHttpService.queryTeacherFiles(teacherId);
             String avatarUrl = (String) teacherFiles.get("avatarUrl");
             List<AppLifePicture> lifePictures = (List<AppLifePicture>) teacherFiles.get("lifePictures");
             String shortVideoUrl = (String) teacherFiles.get("shortVideo");
@@ -133,18 +128,19 @@ public class SendDocsController extends RestfulController {
      * @return
      */
     @RequestMapping(value = "/submit", method = RequestMethod.POST, produces = RestfulConfig.JSON_UTF_8)
-      public Map<String, Object> submitPersonalInfo(Long teacherId, String bio, HttpServletRequest request, HttpServletResponse response) {
-        if (null == teacherId || StringUtils.isEmpty(bio)) {
-            return ResponseUtils.responseFail("Teacher's id and/or bio is empty!", this);
+      public Map<String, Object> submitPersonalInfo(String bio, HttpServletRequest request, HttpServletResponse response) {
+        if ( StringUtils.isEmpty(bio)) {
+            return ResponseUtils.responseFail("bio is empty!", this);
         }
 
         Map<String, Object> result = Maps.newHashMap();
         try {
-            Teacher teacher = teacherService.get(teacherId);
+            Teacher teacher = getTeacher(request);
             if (null == teacher) {
                 response.setStatus(HttpStatus.NOT_FOUND.value());
                 return ResponseUtils.responseFail("Teacher doesn't exist", this);
             }
+            Long teacherId = teacher.getId();
 
             //检查老师的头像/照片/视频是都都上传了? 从 TIS 获取数据
             Map<String, Object> teacherFiles = Maps.newHashMap();
@@ -178,7 +174,7 @@ public class SendDocsController extends RestfulController {
 
     @ResponseBody
     @RequestMapping("/uploadAvatar")
-    public Object uploadAvatar(Long teacherId, @RequestParam("file") MultipartFile file,
+    public Object uploadAvatar(@RequestParam("file") MultipartFile file,
                                HttpServletRequest request, HttpServletResponse response) {
 
         Map<String, Object> result = Maps.newHashMap();
@@ -192,6 +188,13 @@ public class SendDocsController extends RestfulController {
             Preconditions.checkArgument(AwsFileUtils.checkAvatarFileSize(fileSize), "文件太大，maxSize = " + AwsFileUtils.AVATAR_MAX_SIZE);
 
             try {
+                Teacher teacher = getTeacher(request);
+                if (null == teacher) {
+                    response.setStatus(HttpStatus.NOT_FOUND.value());
+                    return ResponseUtils.responseFail("Teacher doesn't exist", this);
+                }
+                Long teacherId = teacher.getId();
+
                 FileVo fileVo = awsFileService.upload(bucketName, key, file.getInputStream(), fileSize);
 
                 if (fileVo != null) {
@@ -203,6 +206,9 @@ public class SendDocsController extends RestfulController {
                 } else {
                     return ResponseUtils.responseFail("Failed to upload avatar to AWS.", this);
                 }
+            } catch (IllegalArgumentException e) {
+                response.setStatus(HttpStatus.BAD_REQUEST.value());
+                return ResponseUtils.responseFail(e.getMessage(), this);
             } catch (Exception e) {
                 response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
                 return ResponseUtils.responseFail(e.getMessage(), this);
@@ -214,7 +220,7 @@ public class SendDocsController extends RestfulController {
 
     @ResponseBody
     @RequestMapping("/uploadLifePic")
-    public Object uploadLifePic(Long teacherId, @RequestParam("file") MultipartFile file,
+    public Object uploadLifePic(@RequestParam("file") MultipartFile file,
                                 HttpServletRequest request, HttpServletResponse response) {
 
         Map<String, Object> result = Maps.newHashMap();
@@ -228,6 +234,13 @@ public class SendDocsController extends RestfulController {
             Preconditions.checkArgument(AwsFileUtils.checkLifePicFileSize(fileSize), "文件太大，maxSize = " + AwsFileUtils.LIFE_PICTURE_MAX_SIZE);
 
             try {
+                Teacher teacher = getTeacher(request);
+                if (null == teacher) {
+                    response.setStatus(HttpStatus.NOT_FOUND.value());
+                    return ResponseUtils.responseFail("Teacher doesn't exist", this);
+                }
+                Long teacherId = teacher.getId();
+
                 FileVo fileVo = awsFileService.upload(bucketName, key, file.getInputStream(), fileSize);
 
                 if (fileVo != null) {
@@ -239,6 +252,9 @@ public class SendDocsController extends RestfulController {
                 } else {
                     return ResponseUtils.responseFail("Failed to upload life picture to AWS.", this);
                 }
+            } catch (IllegalArgumentException e) {
+                response.setStatus(HttpStatus.BAD_REQUEST.value());
+                return ResponseUtils.responseFail(e.getMessage(), this);
             } catch (Exception e) {
                 response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
                 return ResponseUtils.responseFail(e.getMessage(), this);
@@ -250,7 +266,7 @@ public class SendDocsController extends RestfulController {
 
     @ResponseBody
     @RequestMapping("/uploadVideo")
-    public Object uploadVideo(Long teacherId, @RequestParam("file") MultipartFile file,
+    public Object uploadVideo(@RequestParam("file") MultipartFile file,
                               HttpServletRequest request, HttpServletResponse response) {
 
         Map<String, Object> result = Maps.newHashMap();
@@ -264,6 +280,13 @@ public class SendDocsController extends RestfulController {
             Preconditions.checkArgument(AwsFileUtils.checkShortVideoFileSize(fileSize), "文件太大，maxSize = " + AwsFileUtils.SHORT_VIDEO_MAX_SIZE);
 
             try {
+                Teacher teacher = getTeacher(request);
+                if (null == teacher) {
+                    response.setStatus(HttpStatus.NOT_FOUND.value());
+                    return ResponseUtils.responseFail("Teacher doesn't exist", this);
+                }
+                Long teacherId = teacher.getId();
+
                 FileVo fileVo = awsFileService.upload(bucketName, key, file.getInputStream(), fileSize);
 
                 if (fileVo != null) {
@@ -275,6 +298,9 @@ public class SendDocsController extends RestfulController {
                 } else {
                     return ResponseUtils.responseFail("Failed to upload short video to AWS.", this);
                 }
+            } catch (IllegalArgumentException e) {
+                response.setStatus(HttpStatus.BAD_REQUEST.value());
+                return ResponseUtils.responseFail(e.getMessage(), this);
             } catch (Exception e) {
                 response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
                 return ResponseUtils.responseFail(e.getMessage(), this);
@@ -286,49 +312,92 @@ public class SendDocsController extends RestfulController {
 
     @ResponseBody
     @RequestMapping("/deleteAvatar")
-    public Object deleteAvatar(Long teacherId, HttpServletRequest request, HttpServletResponse response) {
+    public Object deleteAvatar(HttpServletRequest request, HttpServletResponse response) {
 
-        if (null == teacherId) {
-            return ResponseUtils.responseFail("Teacher id is null, failed to deleteAvatar", this);
+        Teacher teacher = getTeacher(request);
+        if (null == teacher) {
+            response.setStatus(HttpStatus.NOT_FOUND.value());
+            return ResponseUtils.responseFail("Teacher doesn't exist", this);
         }
+        Long teacherId = teacher.getId();
 
-        boolean ret = fileHttpService.deleteAvatar(teacherId);
-        if (ret) {
-            return ResponseUtils.responseSuccess("Successful to delete avatar.", null);
-        } else {
-            return ResponseUtils.responseFail("Failed to delete avatar.", this);
+        try {
+            boolean ret = fileHttpService.deleteAvatar(teacherId);
+            if (ret) {
+                return ResponseUtils.responseSuccess("Successful to delete avatar.", null);
+            } else {
+                return ResponseUtils.responseFail("Failed to delete avatar.", this);
+            }
+        } catch (Exception e) {
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            return ResponseUtils.responseFail(e.getMessage(), this);
         }
     }
 
     @ResponseBody
     @RequestMapping("/deleteLifePic")
-    public Object deleteAvatar(Long teacherId, Long lifePicId, HttpServletRequest request, HttpServletResponse response) {
+    public Object deleteAvatar(Long lifePicId, HttpServletRequest request, HttpServletResponse response) {
 
-        if (null == teacherId) {
-            return ResponseUtils.responseFail("Teacher id is null, failed to deleteLifePic", this);
+        Teacher teacher = getTeacher(request);
+        if (null == teacher) {
+            response.setStatus(HttpStatus.NOT_FOUND.value());
+            return ResponseUtils.responseFail("Teacher doesn't exist", this);
         }
+        Long teacherId = teacher.getId();
 
-        boolean ret = fileHttpService.deleteLifePicture(teacherId, lifePicId);
-        if (ret) {
-            return ResponseUtils.responseSuccess("Successful to delete life picture.", null);
-        } else {
-            return ResponseUtils.responseFail("Failed to delete life picture.", this);
+        try {
+            boolean ret = fileHttpService.deleteLifePicture(teacherId, lifePicId);
+            if (ret) {
+                return ResponseUtils.responseSuccess("Successful to delete life picture.", null);
+            } else {
+                return ResponseUtils.responseFail("Failed to delete life picture.", this);
+            }
+        } catch (Exception e) {
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            return ResponseUtils.responseFail(e.getMessage(), this);
         }
     }
 
     @ResponseBody
     @RequestMapping("/deleteVideo")
-    public Object deleteVideo(Long teacherId, HttpServletRequest request, HttpServletResponse response) {
+    public Object deleteVideo(HttpServletRequest request, HttpServletResponse response) {
 
-        if (null == teacherId) {
-            return ResponseUtils.responseFail("Teacher id is null, failed to deleteVideo", this);
+        Teacher teacher = getTeacher(request);
+        if (null == teacher) {
+            response.setStatus(HttpStatus.NOT_FOUND.value());
+            return ResponseUtils.responseFail("Teacher doesn't exist", this);
         }
+        Long teacherId = teacher.getId();
 
-        boolean ret = fileHttpService.deleteShortVideo(teacherId);
-        if (ret) {
-            return ResponseUtils.responseSuccess("Successful to delete short video.", null);
-        } else {
-            return ResponseUtils.responseFail("Failed to delete short video.", this);
+        try {
+            boolean ret = fileHttpService.deleteShortVideo(teacherId);
+            if (ret) {
+                return ResponseUtils.responseSuccess("Successful to delete short video.", null);
+            } else {
+                return ResponseUtils.responseFail("Failed to delete short video.", this);
+            }
+        } catch (Exception e) {
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            return ResponseUtils.responseFail(e.getMessage(), this);
+        }
+    }
+
+    @RequestMapping(value = "/toRegular", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
+    public Map<String,Object> toPublic(HttpServletRequest request, HttpServletResponse response){
+        try{
+            Teacher teacher = getTeacher(request);
+            logger.info("Teacher:{} toPublic",teacher.getId());
+            Map<String,Object> result = this.sendDocsService.toRegular(teacher);
+            if(ResponseUtils.isFail(result)){
+                response.setStatus(HttpStatus.FORBIDDEN.value());
+            }
+            return result;
+        } catch (IllegalArgumentException e) {
+            response.setStatus(HttpStatus.BAD_REQUEST.value());
+            return ResponseUtils.responseFail(e.getMessage(), this);
+        } catch (Exception e) {
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            return ResponseUtils.responseFail(e.getMessage(), this);
         }
     }
 
