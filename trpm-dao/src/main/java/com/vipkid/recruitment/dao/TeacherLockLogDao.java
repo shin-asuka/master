@@ -14,4 +14,12 @@ public class TeacherLockLogDao extends MapperDaoTemplate<TeacherLockLog>{
         super(sqlSessionTemplate, TeacherLockLog.class);
     }
 
+    @Override
+    public int save(TeacherLockLog teacherLockLog) {
+        return super.save(teacherLockLog);
+    }
+
+    public int count(TeacherLockLog teacherLockLog){
+        return super.selectCount(teacherLockLog);
+    }
 }

@@ -1,12 +1,13 @@
 package com.vipkid.recruitment.practicum.service;
 
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
+import com.vipkid.enums.TeacherLockLogEnum.Reason;
+import com.vipkid.recruitment.common.service.RecruitmentService;
+import com.vipkid.recruitment.dao.TeacherLockLogDao;
+import com.vipkid.recruitment.entity.TeacherLockLog;
+import com.vipkid.trpm.dao.UserDao;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang3.StringUtils;
@@ -27,7 +28,6 @@ import com.vipkid.recruitment.dao.TeacherApplicationLogDao;
 import com.vipkid.recruitment.entity.TeacherApplication;
 import com.vipkid.recruitment.practicum.PracticumConstant;
 import com.vipkid.recruitment.utils.ResponseUtils;
-import com.vipkid.rest.config.RestfulConfig;
 import com.vipkid.trpm.dao.OnlineClassDao;
 import com.vipkid.trpm.dao.TeacherDao;
 import com.vipkid.trpm.entity.OnlineClass;
@@ -45,9 +45,15 @@ public class PracticumService {
     @Autowired
     private TeacherDao teacherDao;
     @Autowired
+    private UserDao userDao;
+    @Autowired
     private TeacherApplicationDao teacherApplicationDao;
     @Autowired
     private TeacherApplicationLogDao teacherApplicationLogDao;
+    @Autowired
+    private TeacherLockLogDao teacherLockLogDao;
+    @Autowired
+    private RecruitmentService recruitmentService;
 
     private static Logger logger = LoggerFactory.getLogger(PracticumService.class);
 
@@ -137,7 +143,7 @@ public class PracticumService {
             }
         }
         //cancel次数最多3次，如果已经cancel 4次了说明这个老师已经Fail了不允许book
-        if(getCancelNum(teacher) > PracticumConstant.CANCEL_NUM){
+        if(recruitmentService.getRemainRescheduleTimes(teacher, Status.PRACTICUM.toString(), Result.CANCEL.toString()) <= 0){
             return ResponseUtils.responseFail("You have canceled classes too much and can't book class again!", this);
         }
         //执行BOOK逻辑
@@ -187,21 +193,15 @@ public class PracticumService {
             }
         }
 
-        //Cancel次数已经CANCEL2次了 则直接将老师Fail
-        int count = getCancelNum(teacher);
+        int count = recruitmentService.getRemainRescheduleTimes(teacher, Status.PRACTICUM.toString(), Result.CANCEL.toString());
 
-        //如果cancel 次数已经等于3次或者4次等...当然不可能
-        if( count > PracticumConstant.CANCEL_NUM){
+        if(count <= 0){
             return ResponseUtils.responseFail("You have canceled too many times!",this);
         }
 
-        //如果cancel次数已经等于2次将无法cancel
-        if(count == PracticumConstant.CANCEL_NUM){
-            TeacherApplication teacherApplication = listEntity.get(0);
-            teacherApplication.setResult(Result.FAIL.toString());
-            teacherApplication.setAuditDateTime(new Timestamp(System.currentTimeMillis()));
-            teacherApplication.setAuditorId(RestfulConfig.SYSTEM_USER_ID);
-            teacherApplication.setFailedReason("Cancel too many times!");
+        if(count == 0){
+            userDao.doLock(teacher.getId());
+            teacherLockLogDao.save(new TeacherLockLog(teacher.getId(), Reason.RESCHEDULE.toString(), LifeCycle.PRACTICUM.toString()));
         }
 
         //保存cancel记录
@@ -216,15 +216,6 @@ public class PracticumService {
         }
         result.put("count", PracticumConstant.CANCEL_NUM - (count+1));
         return result;
-    }
-
-    /**
-     * 获取老师对Practicum 课程的Cancel 次数
-     * @param teacher
-     * @return int
-     */
-    public int getCancelNum(Teacher teacher){
-        return this.teacherApplicationLogDao.getCancelNum(teacher.getId(),Status.PRACTICUM,Result.CANCEL);
     }
 
     /**

@@ -5,6 +5,10 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.vipkid.enums.TeacherApplicationEnum.Status;
+import com.vipkid.enums.TeacherApplicationEnum.Result;
+import com.vipkid.recruitment.common.service.RecruitmentService;
+import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,7 +37,9 @@ public class InterviewController extends RestfulController {
 
     @Autowired
     private InterviewService interviewService;
-    
+    @Autowired
+    private RecruitmentService recruitmentService;
+
     @RequestMapping(value = "/list", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
     public Map<String,Object> list(HttpServletRequest request, HttpServletResponse response){
         try{
@@ -132,7 +138,24 @@ public class InterviewController extends RestfulController {
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
             return ResponseUtils.responseFail(e.getMessage(), this);
         }
-    } 
-    
+    }
 
+    @RequestMapping(value = "/getRemainRescheduleTimes", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
+    public Map<String,Object> getRemainRescheduleTimes(HttpServletRequest request, HttpServletResponse response){
+        try{
+            int count = this.recruitmentService.getRemainRescheduleTimes(getTeacher(request), Status.INTERVIEW.toString(), Result.CANCEL.toString());
+            Map<String,Object> result = new HashedMap();
+            result.put("count",count);
+            if(ResponseUtils.isFail(result)){
+                response.setStatus(HttpStatus.FORBIDDEN.value());
+            }
+            return ResponseUtils.responseSuccess(result);
+        } catch (IllegalArgumentException e) {
+            response.setStatus(HttpStatus.BAD_REQUEST.value());
+            return ResponseUtils.responseFail(e.getMessage(), this);
+        } catch (Exception e) {
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            return ResponseUtils.responseFail(e.getMessage(), this);
+        }
+    }
 }

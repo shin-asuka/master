@@ -1,11 +1,15 @@
 package com.vipkid.recruitment.interview.service;
 
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import com.vipkid.enums.TeacherLockLogEnum.Reason;
+import com.vipkid.recruitment.common.service.RecruitmentService;
+import com.vipkid.recruitment.dao.TeacherLockLogDao;
+import com.vipkid.recruitment.entity.TeacherLockLog;
+import com.vipkid.trpm.dao.UserDao;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
@@ -24,7 +28,6 @@ import com.vipkid.recruitment.dao.TeacherApplicationLogDao;
 import com.vipkid.recruitment.entity.TeacherApplication;
 import com.vipkid.recruitment.interview.ConstantInterview;
 import com.vipkid.recruitment.utils.ResponseUtils;
-import com.vipkid.rest.config.RestfulConfig;
 import com.vipkid.trpm.dao.OnlineClassDao;
 import com.vipkid.trpm.dao.TeacherDao;
 import com.vipkid.trpm.dao.TeacherQuizDao;
@@ -47,13 +50,22 @@ public class InterviewService {
     private TeacherDao teacherDao;
 
     @Autowired
+    private UserDao userDao;
+
+    @Autowired
     private TeacherApplicationDao teacherApplicationDao;
 
     @Autowired
-    private TeacherApplicationLogDao teacherApplicationLogDao;
-    
-    @Autowired
     private TeacherQuizDao teacherQuizDao;
+
+    @Autowired
+    private TeacherApplicationLogDao teacherApplicationLogDao;
+
+    @Autowired
+    private RecruitmentService recruitmentService;
+
+    @Autowired
+    private TeacherLockLogDao teacherLockLogDao;
 
     private static Logger logger = LoggerFactory.getLogger(InterviewService.class);
 
@@ -147,7 +159,7 @@ public class InterviewService {
             }
         }
         //cancel次数最多2次，如果已经cancel 3次了说明这个老师已经Fail了不允许book
-        if(getCancelNum(teacher) > ConstantInterview.CANCEL_NUM){
+        if(recruitmentService.getRemainRescheduleTimes(teacher, Status.INTERVIEW.toString(), Result.CANCEL.toString()) <= 0){
             return ResponseUtils.responseFail("You cancel too many times, can't book the class !", this);
         }
         //执行BOOK逻辑
@@ -201,21 +213,15 @@ public class InterviewService {
             }
         }
 
-        //Cancel次数已经CANCEL2次了 则直接将老师Fail
-        int count = getCancelNum(teacher);
+        int count = recruitmentService.getRemainRescheduleTimes(teacher, Status.INTERVIEW.toString(), Result.CANCEL.toString());
 
-        //如果cancel 次数已经等于3次或者4次等...当然不可能
-        if( count > ConstantInterview.CANCEL_NUM){
+        if(count <= 0){
             return ResponseUtils.responseFail("You cancel too many times !",this);
         }
 
-        //如果cancel次数已经等于2次将无法cancel
-        if(count == ConstantInterview.CANCEL_NUM){
-            TeacherApplication teacherApplication = listEntity.get(0);
-            teacherApplication.setResult(Result.FAIL.toString());
-            teacherApplication.setAuditDateTime(new Timestamp(System.currentTimeMillis()));
-            teacherApplication.setAuditorId(RestfulConfig.SYSTEM_USER_ID);
-            teacherApplication.setFailedReason("Cancel too many times !");
+        if(count == 0){
+            userDao.doLock(teacher.getId());
+            teacherLockLogDao.save(new TeacherLockLog(teacher.getId(), Reason.RESCHEDULE.toString(), LifeCycle.INTERVIEW.toString()));
         }
 
         //保存cancel记录
@@ -230,16 +236,6 @@ public class InterviewService {
         }
         result.put("count", ConstantInterview.CANCEL_NUM - (count+1));
         return result;
-    }
-
-    /**
-     * 获取老师对Interview 课程的Cancel 次数
-     * @param teacher
-     * @return int
-     */
-    public int getCancelNum(Teacher teacher){
-        return this.teacherApplicationLogDao.getCancelNum(teacher.getId(),Status.INTERVIEW,
-                Result.CANCEL);
     }
 
     /**
@@ -267,6 +263,4 @@ public class InterviewService {
         }
         return ResponseUtils.responseFail("You have no legal power into the next phase !",this);
     }
-
-
 }

@@ -26,10 +26,10 @@ public class TeacherApplicationLogDao extends MapperDaoTemplate<TeacherApplicati
         return super.selectList(bean);
     }
     
-    public int getCancelNum(long teacherId,Status status,Result result){
+    public int getCancelNum(long teacherId,String status,Result result){
         TeacherApplicationLog bean = new TeacherApplicationLog();
         bean.setTeacherId(teacherId);
-        bean.setStatus(status.toString());
+        bean.setStatus(status);
         bean.setResult(result.toString());
         List<TeacherApplicationLog> listLog = this.selectList(bean);
         if(CollectionUtils.isNotEmpty(listLog)){
