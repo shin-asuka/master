@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.community.tools.JsonTools;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -271,7 +272,23 @@ public class PersonalInfoService {
 	 * @return
 	 */
 	public List<TeacherLocation> getCountrys() {
-		return teacherLocationDao.getCountrys();
+		List<TeacherLocation> result = teacherLocationDao.getCountrys();
+		if (CollectionUtils.isNotEmpty(result)) {
+			StringBuffer sb = new StringBuffer();
+			for (TeacherLocation one : result) {
+				sb.append("countryId=");
+				sb.append(one.getId());
+				sb.append(",");
+				sb.append("name=");
+				sb.append(one.getName());
+				sb.append(";");
+			}
+			logger.info("teacherLocationDao#getCountrys:" + sb.toString());
+		} else {
+			logger.info("teacherLocationDao#getCountrys: none");
+		}
+		return result;
+		//return teacherLocationDao.getCountrys();
 	}
 
 	public TeacherLocation getLocationById(int id) {

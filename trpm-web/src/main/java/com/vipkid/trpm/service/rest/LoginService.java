@@ -84,7 +84,7 @@ public class LoginService {
         User user = JsonTools.readValue(json, User.class);
         
         //判断当前用户所在地区的ip是否变化，如果变化。则返回空用户，用户重新登陆
-        Boolean isIpChange = CacheUtils.checkUserIpChange(user);
+        Boolean isIpChange = IpUtils.checkUserIpChange(user);
         if(isIpChange){
         	logger.info("用户IP地址发生变化, userIPChange user = {}",user.getId()+"|"+user.getUsername());
         	return null;

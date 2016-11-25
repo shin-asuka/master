@@ -300,6 +300,14 @@
             <version>1.11.33</version>
         </dependency>
         
+        <!-- geoip start -->
+		<dependency>
+            <groupId>com.maxmind.geoip2</groupId>
+            <artifactId>geoip2</artifactId>
+            <version>2.3.1</version>
+        </dependency>
+        <!-- geoip end -->
+        
 	</dependencies>
 
 	<build>
