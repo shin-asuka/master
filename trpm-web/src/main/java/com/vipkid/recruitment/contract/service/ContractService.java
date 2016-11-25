@@ -131,8 +131,10 @@ public class ContractService {
         TeacherOtherDegrees teacherOtherDegrees;
         List<TeacherOtherDegrees> ts = new ArrayList<TeacherOtherDegrees>();
         for(Integer id:ids){
+            logger.info("查询文件id:{}",id);
             teacherOtherDegrees =teacherOtherDegreesDao.findById(id);
             teacherOtherDegrees.setTeacherApplicationId(application.getId());
+            logger.info("applicationId:{}",application.getId());
             ts.add(teacherOtherDegrees);
         }
         logger.info("用户：{}批量更新文件的TeacherApplicationId:{}",teacher.getId(),application.getId());
