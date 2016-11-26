@@ -31,6 +31,7 @@ import com.vipkid.trpm.entity.StudentExam;
 import com.vipkid.trpm.entity.TeacherComment;
 import com.vipkid.trpm.service.passport.IndexService;
 import com.vipkid.trpm.service.portal.ReportService;
+import com.vipkid.trpm.service.rest.LoginService;
 import com.vipkid.trpm.util.DateUtils;
 
 /**
@@ -54,6 +55,10 @@ public class ReportController extends AbstractPortalController {
 
     @Autowired
     private StudentExamDao studentExamDao;
+    
+    @Autowired
+    private LoginService loginService;
+    
     /**
      * UA报告上传页面进入
      * 
@@ -117,7 +122,7 @@ public class ReportController extends AbstractPortalController {
         String score = request.getParameter("score");
         String onlineClassId = request.getParameter("onlineClassId");
         Map<String, Object> map = reportService.saveUAReport(report, file, request.getFile(file.getName()).getSize(),
-                indexService.getUser(request), score, onlineClassId);
+        		loginService.getUser(), score, onlineClassId);
 
         return jsonView(response, map);
     }
@@ -142,7 +147,7 @@ public class ReportController extends AbstractPortalController {
         String score = request.getParameter("score");
         String onlineClassId = request.getParameter("onlineClassId");
         Map<String, Object> map = reportService.savePracticumReport(report, file,
-                request.getFile(file.getName()).getSize(), indexService.getUser(request), score, onlineClassId);
+                request.getFile(file.getName()).getSize(), loginService.getUser(), score, onlineClassId);
 
         return jsonView(response, map);
     }
@@ -203,7 +208,7 @@ public class ReportController extends AbstractPortalController {
         logger.info("ReportController: demoReportSubmit() 参数为：demoReport={}, isSubmited={}", JSON.toJSONString(demoReport), isSubmited);
 
         Map<String, Object> map = reportService.saveOrSubmitDemoReport(demoReport, isSubmited,
-                indexService.getUser(request));
+        		loginService.getUser());
 
         return jsonView(response, map);
     }
@@ -272,7 +277,7 @@ public class ReportController extends AbstractPortalController {
         String scheduledDateTime = request.getParameter("scheduledDateTime");
         logger.info("ReportController: feedbackSubmit() 参数为：serialNumber={}, scheduledDateTime={}, teacherComment={}", serialNumber, scheduledDateTime, JSON.toJSONString(teacherComment));
 
-        Map<String, Object> parmMap = reportService.submitTeacherComment(teacherComment, indexService.getUser(request),serialNumber,scheduledDateTime);
+        Map<String, Object> parmMap = reportService.submitTeacherComment(teacherComment, loginService.getUser(),serialNumber,scheduledDateTime);
 
         long millis =stopwatch.stop().elapsed(TimeUnit.MILLISECONDS);
         logger.info("执行ReportController: feedbackSubmit()耗时：{} ", millis);

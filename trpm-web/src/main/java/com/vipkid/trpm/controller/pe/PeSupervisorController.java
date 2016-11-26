@@ -25,6 +25,7 @@ import com.vipkid.trpm.service.passport.IndexService;
 import com.vipkid.trpm.service.pe.AppserverPracticumService;
 import com.vipkid.trpm.service.pe.PeSupervisorService;
 import com.vipkid.trpm.service.portal.OnlineClassService;
+import com.vipkid.trpm.service.rest.LoginService;
 
 @Controller
 public class PeSupervisorController extends AbstractPeController {
@@ -46,11 +47,14 @@ public class PeSupervisorController extends AbstractPeController {
     @Autowired
     private AppserverPracticumService appserverPracticumService;
 
+    @Autowired
+    private LoginService loginService;
+    
     @RequestMapping("/pesupervisor")
     public String peSupervisor(HttpServletRequest request, HttpServletResponse response,
             Model model) {
         model.addAttribute("linePerPage", LINE_PER_PAGE);
-        Teacher teacher = indexService.getTeacher(request);
+        Teacher teacher = loginService.getTeacher();
         model.addAttribute("totalLine", peSupervisorService.totalPe(teacher.getId()));
         return view("classrooms_pe");
     }
@@ -58,7 +62,7 @@ public class PeSupervisorController extends AbstractPeController {
     @RequestMapping("/pe/classList")
     public String classList(HttpServletRequest request, HttpServletResponse response, Model model) {
         int curPage = ServletRequestUtils.getIntParameter(request, "curPage", 1);
-        Teacher teacher = indexService.getTeacher(request);
+        Teacher teacher = loginService.getTeacher();
         model.addAllAttributes(
                 peSupervisorService.classList(teacher.getId(), curPage, LINE_PER_PAGE));
         return jsonView();
@@ -66,7 +70,7 @@ public class PeSupervisorController extends AbstractPeController {
 
     @RequestMapping("/pereview")
     public String peReview(HttpServletRequest request, HttpServletResponse response, Model model) {
-        Teacher teacher = this.indexService.getTeacher(request);
+        Teacher teacher = this.loginService.getTeacher();
         int id = ServletRequestUtils.getIntParameter(request, "id", 0);
         long onlineClassId = ServletRequestUtils.getLongParameter(request, "classId", 0);
         TeacherPe teacherPe = this.peSupervisorService.getTeacherPe(id);
@@ -118,7 +122,7 @@ public class PeSupervisorController extends AbstractPeController {
     @RequestMapping("/pe/doAudit")
     public String peDoAudit(HttpServletRequest request, HttpServletResponse response,
             TeacherApplication teacherApplication, Model model) {
-        Teacher peSupervisor = indexService.getTeacher(request);
+        Teacher peSupervisor = loginService.getTeacher();
         int peId = ServletRequestUtils.getIntParameter(request, "peId", -1);
         String type = ServletRequestUtils.getStringParameter(request, "type", "");
         String finishType = ServletRequestUtils.getStringParameter(request, "finishType", "");

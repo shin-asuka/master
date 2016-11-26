@@ -46,7 +46,7 @@ public class CacheUtils {
 	public static Integer getLoginTimeout(){
 		Integer timeout = 3600;
 		try {
-			String ts = PropertyConfigurer.stringValue("signup.redis.timeout");
+			String ts = PropertyConfigurer.stringValue("user.redis.timeout");
 			timeout = Integer.valueOf(ts);
 		} catch (Exception e) {
 			e.printStackTrace();

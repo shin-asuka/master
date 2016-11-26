@@ -32,6 +32,7 @@ import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.entity.User;
 import com.vipkid.trpm.service.activity.ActivityService;
 import com.vipkid.trpm.service.passport.IndexService;
+import com.vipkid.trpm.service.rest.LoginService;
 import com.vipkid.trpm.util.AES;
 
 @Controller
@@ -45,6 +46,8 @@ public class ActivityController extends AbstractController{
     @Autowired
     private IndexService indexService;
     
+    @Autowired
+    private LoginService loginService;
     
     //上线时间
     private String searchdate = "2016-04-12 00:00:00";
@@ -55,12 +58,12 @@ public class ActivityController extends AbstractController{
         if(!this.showActivity()){
             return "passport/sign_in";
         }
-        String token = AES.encrypt(String.valueOf(indexService.getUser(request).getId()), AES.getKey(AES.KEY_LENGTH_128,ApplicationConstant.AES_128_KEY));
+        String token = AES.encrypt(String.valueOf(loginService.getUser().getId()), AES.getKey(AES.KEY_LENGTH_128,ApplicationConstant.AES_128_KEY));
         String shareUrl = PropertyConfigurer.stringValue("teacher.www")+"share/"+token+".shtml";
         model.addAttribute("shareUrl",shareUrl);
         model.addAttribute("www",PropertyConfigurer.stringValue("teacher.www"));
         try {
-            Teacher teacher = this.activityService.findTeacherById(indexService.getUser(request).getId());
+            Teacher teacher = this.activityService.findTeacherById(loginService.getUser().getId());
             if( teacher != null){
                 Map<String,Object> map = this.activityService.readInfo(teacher, searchdate);
                 if("1".equals(map.get("info"))){
@@ -128,7 +131,7 @@ public class ActivityController extends AbstractController{
     	if(StringUtils.isEmpty(token)){
     		User u ;
     		try {
-				u = indexService.getUser(request);
+				u = loginService.getUser();
 			} catch (NullPointerException e) {
 				return null;
 			}

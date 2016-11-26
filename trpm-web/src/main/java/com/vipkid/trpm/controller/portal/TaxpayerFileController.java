@@ -28,6 +28,7 @@ import com.vipkid.trpm.entity.TeacherTaxpayerFormDetail;
 import com.vipkid.trpm.entity.personal.TaxpayerView;
 import com.vipkid.trpm.service.passport.IndexService;
 import com.vipkid.trpm.service.portal.TeacherTaxpayerFormService;
+import com.vipkid.trpm.service.rest.LoginService;
 import com.vipkid.trpm.util.AwsFileUtils;
 
 /**
@@ -50,6 +51,9 @@ public class TaxpayerFileController extends AbstractPortalController{
 	@Autowired
 	private TeacherTaxpayerFormService teacherTaxpayerFormService;
 	
+	@Autowired
+    private LoginService loginService;
+	
 	/**
 	 * 老师的Taxpayer页面
 	 * 
@@ -60,7 +64,7 @@ public class TaxpayerFileController extends AbstractPortalController{
 	 */
 	@RequestMapping("")
 	public String taxpayer(HttpServletRequest request, HttpServletResponse response, Model model) {
-		Teacher teacher = indexService.getTeacher(request);
+		Teacher teacher = loginService.getTeacher();
 		Long teacherId = teacher.getId();
 		
 		logger.info("进入 Taxpayer 页面  teacherId = {} , realName = {}",teacherId, teacher.getRealName());
@@ -79,7 +83,7 @@ public class TaxpayerFileController extends AbstractPortalController{
 	@RequestMapping("/upload")
 	public void taxpayerUpload(Integer formType,Long id, @RequestParam("file") MultipartFile file,HttpServletRequest request, HttpServletResponse response, Model model){
 		
-		Teacher teacher = indexService.getTeacher(request);
+		Teacher teacher = loginService.getTeacher();
 		Long teacherId = teacher.getId();
 		String teacherName = teacher.getRealName();
 		
@@ -146,7 +150,7 @@ public class TaxpayerFileController extends AbstractPortalController{
 	}
 
 	public void setTeacherTaxpayerFormInfo(TeacherTaxpayerForm teacherTaxpayerForm,HttpServletRequest request){
-		Teacher teacher = indexService.getTeacher(request);
+		Teacher teacher = loginService.getTeacher();
 		Long teacherId = teacher.getId();
 		String teacherName = teacher.getRealName();
 		
