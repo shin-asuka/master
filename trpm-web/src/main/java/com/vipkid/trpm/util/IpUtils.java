@@ -179,7 +179,7 @@ public class IpUtils {
 			}
 			
 			//验证IP地址是否发生改变
-	        if((StringUtils.isNotBlank(ip) && ip.equals(redisIp))){
+	        if(StringUtils.isNotBlank(ip) && !ip.equals(redisIp)){
 	        	isChange = true;
 	        }
 	        
