@@ -229,8 +229,10 @@ public class ContractService {
         if(CollectionUtils.isNotEmpty(listEntity)) {
             TeacherApplication teacherApplication = listEntity.get(0);
            TeacherOtherDegreeses = teacherOtherDegreesDao.findByTeacherIdAndTeacherApplicationId(teacher.getId(), teacherApplication.getId());
-        }else {
+        }else{
+            logger.info("用户{}",teacher.getId());
             TeacherOtherDegreeses = teacherOtherDegreesDao.findByTeacherId(teacher.getId());
+            logger.info("teacherOtherDegreesDao{}",teacherOtherDegreesDao);
         }
             List<TeacherOtherDegrees>  degrees;
             List<TeacherOtherDegrees> certification;

@@ -29,13 +29,13 @@ public class TeacherOtherDegreesDao extends MapperDaoTemplate<TeacherOtherDegree
         TeacherOtherDegrees teacherOtherDegrees =new TeacherOtherDegrees();
         teacherOtherDegrees.setTeacherId(teacherId);
         teacherOtherDegrees.setTeacherApplicationId(teacherApplicationId);
-        return super.selectList( teacherOtherDegrees,"findByTeacherIdAndTeacherApplicationId");
+        return super.listEntity( teacherOtherDegrees,"findByTeacherIdAndTeacherApplicationId");
     }
 
     public List<TeacherOtherDegrees> findByTeacherId(long teacherId){
         TeacherOtherDegrees teacherOtherDegrees =new TeacherOtherDegrees();
         teacherOtherDegrees.setTeacherId(teacherId);
-        return super.selectList( teacherOtherDegrees,"findByTeacherId");
+        return super.listEntity( teacherOtherDegrees,"findByTeacherId");
     }
 
 
