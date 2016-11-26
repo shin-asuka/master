@@ -259,31 +259,24 @@ public class ContractService {
                 List<TeacherOtherDegrees>  certification = new ArrayList<TeacherOtherDegrees>();
                 teacherOtherDegreeses.forEach(obj->{
                   if (obj.getFileType() == 1) {
-                      logger.info("TeacherOtherDegrees{}", obj.getDegrees());
                       degrees.add(obj);
                   }
                   if (obj.getFileType() == 2) {
-                      logger.info("TeacherOtherDegrees{}", obj.getDegrees());
                       certification.add(obj);
                   }
                   if (obj.getFileType() == 3) {
-                      logger.info("TeacherOtherDegrees{}", obj.getDegrees());
                       identification.put("identity",obj);
                   }
                   if (obj.getFileType() == 6) {
-                      logger.info("TeacherOtherDegrees{}", obj.getDegrees());
                       identification.put("passport",obj);
                   }
                   if (obj.getFileType() == 7) {
-                      logger.info("TeacherOtherDegrees{}", obj.getDegrees());
                       identification.put("driver",obj);
                   }
                   if (obj.getFileType() == 4) {
-                      logger.info("TeacherOtherDegrees{}", obj.getDegrees());
                       diploma.add(obj);
                   }
                   if (obj.getFileType() == 5) {
-                      logger.info("TeacherOtherDegrees{}", obj.getDegrees());
                       contract.add(obj);
                   }
                 });

@@ -13,7 +13,7 @@ public class TeacherOtherDegrees extends Entity implements Serializable {
     private int id;
     private long teacherId;
     //教师证书
-    private String degrees;
+    private String url;
     //教师证书的类型  文件类型1-other_degrees  2-certificationFiles   3-Identification  4-Diploma 5-Contract  6-Passport   7-Driver's license
     private int fileType;
 
@@ -42,12 +42,12 @@ public class TeacherOtherDegrees extends Entity implements Serializable {
         this.teacherId = teacherId;
     }
 
-    public String getDegrees() {
-        return degrees;
+    public String getUrl() {
+        return url;
     }
 
-    public void setDegrees(String degrees) {
-        this.degrees = degrees;
+    public void setUrl(String url) {
+        this.url = url;
     }
 
     public Timestamp getCreateTime() {

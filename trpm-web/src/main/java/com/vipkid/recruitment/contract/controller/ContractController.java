@@ -170,7 +170,7 @@ public class ContractController extends RestfulController {
         try{
             TeacherOtherDegrees teacherOtherDegrees = new TeacherOtherDegrees();
             teacherOtherDegrees.setTeacherId(teacher.getId());
-            teacherOtherDegrees.setDegrees(fileVo.getUrl());
+            teacherOtherDegrees.setUrl(fileVo.getUrl());
             //文件类型1-other_degrees  2-certificationFiles   3-Identification  4-Diploma 5-Contract  6-Passport   7-Driver's license
             if(filetype.equals("passport")){
                 teacherOtherDegrees.setFileType(6);
@@ -220,7 +220,7 @@ public class ContractController extends RestfulController {
         try{
             TeacherOtherDegrees teacherOtherDegrees = new TeacherOtherDegrees();
             teacherOtherDegrees.setTeacherId(teacher.getId());
-            teacherOtherDegrees.setDegrees(fileVo.getUrl());
+            teacherOtherDegrees.setUrl(fileVo.getUrl());
             teacherOtherDegrees.setFileType(4);
             contractService.save(teacherOtherDegrees);
             result.put("file",fileVo.getUrl());
@@ -260,7 +260,7 @@ public class ContractController extends RestfulController {
         try{
             TeacherOtherDegrees teacherOtherDegrees = new TeacherOtherDegrees();
             teacherOtherDegrees.setTeacherId(teacher.getId());
-            teacherOtherDegrees.setDegrees(fileVo.getUrl());
+            teacherOtherDegrees.setUrl(fileVo.getUrl());
             teacherOtherDegrees.setFileType(5);
             contractService.save(teacherOtherDegrees);
 
@@ -346,7 +346,7 @@ public class ContractController extends RestfulController {
         try{
             TeacherOtherDegrees teacherOtherDegrees = new TeacherOtherDegrees();
             teacherOtherDegrees.setTeacherId(teacher.getId());
-            teacherOtherDegrees.setDegrees(fileVo.getUrl());
+            teacherOtherDegrees.setUrl(fileVo.getUrl());
             teacherOtherDegrees.setFileType(2);
             contractService.save(teacherOtherDegrees);
             result.put("file",fileVo.getUrl());
@@ -384,7 +384,7 @@ public class ContractController extends RestfulController {
         try{
             TeacherOtherDegrees teacherOtherDegrees = new TeacherOtherDegrees();
             teacherOtherDegrees.setTeacherId(teacher.getId());
-            teacherOtherDegrees.setDegrees(fileVo.getUrl());
+            teacherOtherDegrees.setUrl(fileVo.getUrl());
             teacherOtherDegrees.setFileType(1);
             contractService.save(teacherOtherDegrees);
             result.put("file",fileVo.getUrl());

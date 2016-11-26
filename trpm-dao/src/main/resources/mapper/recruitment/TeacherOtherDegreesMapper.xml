@@ -6,7 +6,7 @@
     <sql id="teacherOtherDegreesColumns">
         teacher_other_degrees.id AS id,
         teacher_other_degrees.teacher_id AS teacherId,
-        teacher_other_degrees.teacher_other_degrees AS degrees,
+        teacher_other_degrees.teacher_other_degrees AS url,
         teacher_other_degrees.file_type AS fileType,
         teacher_other_degrees.create_time AS createTime,
         teacher_other_degrees.update_time AS updateTime,
@@ -21,7 +21,7 @@
         <trim prefix="(" prefixOverrides=",">
             <if test="id!=0">,id</if>
             <if test="teacherId!=0">,teacher_id</if>
-            <if test="degrees!=null">,teacher_other_degrees</if>
+            <if test="url!=null">,teacher_other_degrees</if>
             <if test="fileType!=null">,file_type</if>
             <if test="createTime!=null">,create_time</if>
             <if test="updateTime!=null">,update_time</if>
@@ -35,7 +35,7 @@
         <trim prefix="(" prefixOverrides=",">
             <if test="id!=0">,#{id}</if>
             <if test="teacherId!=0">,#{teacherId}</if>
-            <if test="degrees!=null">,#{degrees}</if>
+            <if test="url!=null">,#{url}</if>
             <if test="fileType!=null">,#{fileType}</if>
             <if test="createTime!=null">,#{createTime}</if>
             <if test="updateTime!=null">,#{updateTime}</if>
