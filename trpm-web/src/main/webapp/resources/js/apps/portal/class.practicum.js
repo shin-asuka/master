@@ -233,7 +233,8 @@ define([ "function", "jquery-form", "jquery-bootstrap", "jquery-load","countdown
 	/** 退出教室需要判断DemoReoprt或者FeedBack是否填写过,没有填写过的要询问教师是否要推出教室 */
 	var confirmExitClassroom = function(onlineClassId, studentId) {
 		Portal.loading("open");
-		window.location.href = webPath + "/exitClassroom.shtml?onlineClassId=" + onlineClassId;
+		//window.location.href = webPath + "/exitClassroom.shtml?onlineClassId=" + onlineClassId;
+		exitClassroomToClassrooms(onlineClassId);
 		/** TODO
 		$.alert("confirm", {
 			title : "Prompt",
@@ -246,6 +247,35 @@ define([ "function", "jquery-form", "jquery-bootstrap", "jquery-load","countdown
 		});
 		*/
 	};
+	
+	var exitClassroomToClassrooms = function(onlineClassId){
+		var url = webPath + "/exitClassroomPage.json";
+		$.ajaxRequest({
+			url : url,
+			dataType : 'json',
+			data : {
+				"onlineClassId" : onlineClassId
+			},
+			success : function(data) {
+				//Portal.loading("close");
+				if(data!=null && data.status == 1){
+					window.location.href = webPath + "/classrooms.shtml";
+				}else{
+					Portal.loading("close");
+				}
+			},
+			timeout : _timeout,
+			error : function(reponse, status, info) {
+				if(reponse!=null ){
+					if(reponse.status == 401){ //无权限进入登录界面
+						window.location.href = webPath + "/index.shtml";
+						return ;
+					}
+				}
+				ajaxErrorfunction(reponse, status, info);
+			}
+		});
+	}
 	
 	var openSessionStorage = function(onlineClassId){
 		if(window.sessionStorage){

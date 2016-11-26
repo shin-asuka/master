@@ -21,6 +21,7 @@ import com.vipkid.trpm.entity.TeacherPageLogin;
 import com.vipkid.trpm.service.passport.IndexService;
 import com.vipkid.trpm.service.passport.PassportService;
 import com.vipkid.trpm.service.passport.RemberService;
+import com.vipkid.trpm.service.rest.LoginService;
 import com.vipkid.trpm.util.AES;
 import com.vipkid.trpm.util.CookieUtils;
 
@@ -28,15 +29,18 @@ import com.vipkid.trpm.util.CookieUtils;
 @PreAuthorize("permitAll")
 public class IndexController extends AbstractController {
 
-	@Autowired
+	/*@Autowired
 	private IndexService indexService;
-
+*/
 	@Autowired
 	private PassportService passportService;
 
 	@Autowired
 	private RemberService remberService;
 
+	@Autowired
+    private LoginService loginService;
+	
 	@RequestMapping("/index")
 	@Deprecated
 	public String index(HttpServletRequest request, HttpServletResponse response, Model model) {
@@ -48,13 +52,13 @@ public class IndexController extends AbstractController {
 		}
 
 		String token_value = AES.decrypt(token, AES.getKey(AES.KEY_LENGTH_128, ApplicationConstant.AES_128_KEY));
-		com.vipkid.trpm.entity.User user = this.indexService.findUserByToken(token_value);
+		com.vipkid.trpm.entity.User user = this.loginService.findUserByToken(token_value);
 		if (user == null || !UserEnum.Dtype.TEACHER.toString().equals(user.getDtype())) {
 			model.addAttribute("pageName", "Sign In");
 			return "passport/sign_in";
 		}
 
-		Teacher teacher = this.indexService.findTeacherById(user.getId());
+		Teacher teacher = this.loginService.findTeacherById(user.getId());
 		if (teacher == null) {
 			model.addAttribute("pageName", "Sign In");
 			return "passport/sign_in";
@@ -62,9 +66,9 @@ public class IndexController extends AbstractController {
 
 		/* 判断老师的LifeCycle，进行项目跳转 */
 		if (TeacherLifeCycle.REGULAR.toString().equals(teacher.getLifeCycle())) {
-			indexService.setLoginCooke(response, user);
+			loginService.setLoginCooke(response, user);
 			/* 设置老师能教的课程类型列表 */
-			indexService.setCourseTypes(user.getId(), indexService.getCourseType(user.getId()));
+			loginService.setCourseTypes(user.getId(), loginService.getCourseType(user.getId()));
 			Cookie cookie = CookieUtils.getCookie(request, "from");
 			if (cookie != null && "facebook".equals(cookie.getValue())) {
 				return "redirect:/activity.shtml";
@@ -80,7 +84,7 @@ public class IndexController extends AbstractController {
 
 	@RequestMapping("/logout")
 	public String logout(HttpServletRequest request, HttpServletResponse response, Model model) {
-		indexService.removeLoginCooke(request, response);
+		loginService.removeLoginCooke(request, response);
 		return "redirect:/";
 	}
 
@@ -94,9 +98,9 @@ public class IndexController extends AbstractController {
 	@PreAuthorize("fullyAuthenticated")
 	public String disableLayer(HttpServletRequest request, HttpServletResponse response, Model model,
 			TeacherPageLogin pageLogin) {
-		Teacher teacher = indexService.getTeacher(request);
+		Teacher teacher = loginService.getTeacher();
 		pageLogin.setUserId(teacher.getId());
-		indexService.doDisableLayer(pageLogin);
+		loginService.doDisableLayer(pageLogin);
 		return jsonView();
 	}
 

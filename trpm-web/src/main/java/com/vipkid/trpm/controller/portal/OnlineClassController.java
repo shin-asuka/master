@@ -33,6 +33,7 @@ import com.vipkid.trpm.service.passport.IndexService;
 import com.vipkid.trpm.service.pe.AppserverPracticumService;
 import com.vipkid.trpm.service.pe.PeSupervisorService;
 import com.vipkid.trpm.service.portal.OnlineClassService;
+import com.vipkid.trpm.service.rest.LoginService;
 
 @Controller
 public class OnlineClassController extends AbstractPortalController {
@@ -50,6 +51,9 @@ public class OnlineClassController extends AbstractPortalController {
 
     @Autowired
     private AppserverPracticumService appserverPracticumService;
+    
+    @Autowired
+    private LoginService loginService;
 
     /**
      * 进入教室
@@ -68,8 +72,8 @@ public class OnlineClassController extends AbstractPortalController {
             @PathVariable long onlineClassId, @PathVariable long studentId,
             @PathVariable long lessonId,Integer submitStatus, Model model) throws IOException {
         model.addAttribute("submitStatus",submitStatus);
-        Teacher teacher = indexService.getTeacher(request);
-        User user = indexService.getUser(request);
+        Teacher teacher = loginService.getTeacher();
+        User user = loginService.getUser();
 
         String errorHTML = "You cannot enter this classroom!";
         // 登陆判断
@@ -170,12 +174,33 @@ public class OnlineClassController extends AbstractPortalController {
     @RequestMapping("/exitClassroom")
     public String exitClassroom(HttpServletRequest request, HttpServletResponse response,
             long onlineClassId) {
-        Teacher teacher = indexService.getTeacher(request);
+        Teacher teacher = loginService.getTeacher();
         onlineclassService.exitclassroom(onlineClassId, teacher);
 
         return "redirect:/classrooms.shtml";
     }
 
+    @RequestMapping("/exitClassroomPage")
+    public String exitClassroomPage(HttpServletRequest request, HttpServletResponse response,
+            @RequestParam("onlineClassId") Long onlineClassId) {
+    	logger.info("教师退出在线教室 exitClassroomPage onlineClassId = {}",onlineClassId);
+    	Map<String, Object> modelMap = Maps.newHashMap();
+    	Integer status = 0;
+    	String message = "";
+    	try {
+    		Teacher teacher = loginService.getTeacher();
+            onlineclassService.exitclassroom(onlineClassId, teacher);
+            status = 1;
+		} catch (Exception e) {
+			status = 0;
+			message = "退出在线教室失败";
+			logger.error("退出在线教室失败",e);
+		}
+        modelMap.put("status", status);      
+        modelMap.put("message", message); 
+        return jsonView(response, modelMap);
+    }
+    
     /**
      * 退出OPEN课程教室
      *
@@ -206,7 +231,7 @@ public class OnlineClassController extends AbstractPortalController {
             @RequestParam("onlineClassId") long onlineClassId, Model model) {
         Map<String, String> requestParams = new HashMap<String, String>();
         requestParams.put("onlineClassId", String.valueOf(onlineClassId));
-        Teacher teacher = indexService.getTeacher(request);
+        Teacher teacher = loginService.getTeacher();
         if (teacher != null) {
             logger.info("teacher : " + teacher.getId() + ",into classroomId:" + onlineClassId);
         }
@@ -232,7 +257,7 @@ public class OnlineClassController extends AbstractPortalController {
     @RequestMapping("/doAudit")
     public String doAudit(HttpServletRequest request, HttpServletResponse response,
             TeacherApplication teacherApplication, Model model) {
-        Teacher pe = indexService.getTeacher(request);
+        Teacher pe = loginService.getTeacher();
         String type = ServletRequestUtils.getStringParameter(request, "type", "");
         String finishType = ServletRequestUtils.getStringParameter(request, "finishType", "");
 
@@ -316,7 +341,7 @@ public class OnlineClassController extends AbstractPortalController {
     public String sendHelp(HttpServletRequest request, HttpServletResponse response,
             @RequestParam String scheduleTime, @RequestParam long onlineClassId, Model model) {
         /* 计算服务器时间毫秒 */
-        Teacher teacher = indexService.getTeacher(request);
+        Teacher teacher = loginService.getTeacher();
         Map<String, Object> modelMap =
                 onlineclassService.sendHelp(scheduleTime, onlineClassId, teacher);
         model.addAllAttributes(modelMap);
@@ -335,7 +360,7 @@ public class OnlineClassController extends AbstractPortalController {
     public String sendStarLogs(HttpServletRequest request, HttpServletResponse response,
             @RequestParam boolean send, @RequestParam long studentId,
             @RequestParam long onlineClassId, Model model) {
-        Teacher teacher = indexService.getTeacher(request);
+        Teacher teacher = loginService.getTeacher();
         onlineclassService.sendStarlogs(send, studentId, onlineClassId, teacher);
         return jsonView();
     }

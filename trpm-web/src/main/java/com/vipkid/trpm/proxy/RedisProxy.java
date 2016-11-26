@@ -72,6 +72,26 @@ public class RedisProxy implements InitializingBean, DisposableBean {
     }
 
     /**
+     * 设置key有效时间
+     * @param key
+     * @param expireSecond
+     * @return
+     */
+    public boolean expire(String key, int expireSecond) {
+        Preconditions.checkNotNull(key);
+        Jedis jedis = jedisPool.getResource();
+        try {
+            jedis.expire(key, expireSecond);
+            return true;
+        } catch (Exception e) {
+            logger.error("Redis expire key: [" + key + "] expireSecond: [" + expireSecond + "] failed", e);
+            return false;
+        } finally {
+            jedis.close();
+        }
+    }
+    
+    /**
      * 缓存字符串
      * 
      * @author John

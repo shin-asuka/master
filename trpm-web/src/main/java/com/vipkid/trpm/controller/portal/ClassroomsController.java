@@ -6,6 +6,7 @@ import com.vipkid.trpm.constant.ApplicationConstant.LoginType;
 import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.service.passport.IndexService;
 import com.vipkid.trpm.service.portal.ClassroomsService;
+import com.vipkid.trpm.service.rest.LoginService;
 import com.vipkid.trpm.service.rest.TeacherPageLoginService;
 import com.vipkid.trpm.util.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,11 +25,14 @@ public class ClassroomsController extends AbstractPortalController {
 	@Autowired
 	private ClassroomsService classroomsService;
 	
-    @Autowired
-    private IndexService indexService;
+    /*@Autowired
+    private IndexService indexService;*/
     
     @Autowired
     private TeacherPageLoginService teacherPageLoginService;
+
+    @Autowired
+    private LoginService loginService;
 
 	@Slave
 	@RequestMapping("/classrooms")
@@ -45,10 +49,10 @@ public class ClassroomsController extends AbstractPortalController {
 		model.addAttribute("courseType", courseType);
 		model.addAttribute("linePerPage", LINE_PER_PAGE);
 
-		Teacher teacher = indexService.getTeacher(request);
+		Teacher teacher = loginService.getTeacher();
 
 		// 判断是否能上Practicum类型的课程
-		if (indexService.enabledPracticum(teacher.getId())) {
+		if (loginService.enabledPracticum(teacher.getId())) {
 			model.addAttribute("showLayer", teacherPageLoginService.isType(teacher.getId(),LoginType.CLASSROOMS));
 		}
 
@@ -70,7 +74,7 @@ public class ClassroomsController extends AbstractPortalController {
 		/* 用于显示的月份 */
 		model.addAttribute("monthOfYear", DateUtils.monthOfYear(offsetOfMonth, DateUtils.FMT_MMM_YYYY_US));
 
-		Teacher teacher = indexService.getTeacher(request);
+		Teacher teacher = loginService.getTeacher();
 
 		/* 计算日期 */
 		String monthOfYear = DateUtils.monthOfYear(offsetOfMonth, DateUtils.FMT_YM);
@@ -90,7 +94,7 @@ public class ClassroomsController extends AbstractPortalController {
 		/* 用于显示的月份 */
 		model.addAttribute("monthOfYear", DateUtils.monthOfYear(offsetOfMonth, DateUtils.FMT_MMM_YYYY_US));
 
-		Teacher teacher = indexService.getTeacher(request);
+		Teacher teacher = loginService.getTeacher();
 
 		/* 计算日期 */
 		String monthOfYear = DateUtils.monthOfYear(offsetOfMonth, DateUtils.FMT_YM);

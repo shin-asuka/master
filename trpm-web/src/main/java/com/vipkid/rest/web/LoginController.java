@@ -70,22 +70,22 @@ public class LoginController extends RestfulController {
         Map<String, Object> result = Maps.newHashMap();
         try{
             result.put("status", HttpStatus.FORBIDDEN.value());
-            logger.info(" 请求参数 email ={},imageCode = {},key = {}",email,imageCode,key);
+            logger.info("restLogin 请求参数 email ={},imageCode = {},key = {}",email,imageCode,key);
             if (StringUtils.isBlank(email) || StringUtils.isBlank(password)) {
-                logger.warn("email or password is null password:" + password + ";email:" + email);
+                logger.warn("restLogin FAIL  email：{} or password is null " ,email);
                 result.put("info", ApplicationConstant.AjaxCode.ERROR_CODE);
                 return result;
             }
             String ip = IpUtils.getIpAddress(request);
-            logger.info("客户端IP：{}",ip);
+            logger.info("restLogin email ：{},客户端IP：{}",email,ip);
             if (StringUtils.isEmpty(ip) || passportService.isExceedMaxLoginPerIP(ip)
                     || passportService.isExceedMaxLoginFailed(email)) {
                 if (StringUtils.isEmpty(key) || StringUtils.isEmpty(imageCode)) {
-                    logger.warn("同一IP超过最大登录次数，或登录失败次数超限，需要添加验证码,userName = {}", email);
+                    logger.warn("restLogin 同一IP超过最大登录次数，或登录失败次数超限，需要添加验证码,email ：{},客户端IP：{}", email,ip);
                     result.put("info", ApplicationConstant.AjaxCode.VERIFY_CODE);
                     return result;
                 } else if (!passportService.checkVerifyCode(key, imageCode)) {
-                    logger.warn("验证码错误，key = {},imageCode = {}", key, imageCode);
+                    logger.warn("restLogin 验证码错误，key = {},imageCode = {}", key, imageCode);
                     result.put("info", ApplicationConstant.AjaxCode.VERIFY_CODE_ERROR);
                     return result;
                 }
@@ -94,78 +94,78 @@ public class LoginController extends RestfulController {
                 passportService.addLoginCountPerIP(ip);
             }
             
-            logger.info("user check start email:{}!",email);
+            logger.info("restLogin user check start email:{}!",email);
             
             User user = passportService.findUserByUsername(email);
             
             // 根据email，检查是否有此账号。
             if (null == user) {
-                logger.warn(" User is Null " + email + ";password=" + password);
+                logger.warn("restLogin User is Null email ：{},客户端IP：{}" + email,ip);
                 result.put("info", ApplicationConstant.AjaxCode.ERROR_CODE);
                 passportService.addLoginFailedCount(email);
                 return result;
             }
     
             // token check
-            logger.info("token check start!");
+            logger.info("restLogin token check start!");
             if (StringUtils.isEmpty(user.getToken())) {
                 user = this.passportService.updateUserToken(user);
             }
     
-            logger.info("password check start!");
+            logger.info("restLogin password check start!");
             // 密码验证
             SHA256PasswordEncoder encoder = new SHA256PasswordEncoder();
             String mypwd = encoder.encode(password);
             if (!mypwd.equals(user.getPassword())) {
-                logger.warn(" Username or password  error!" + email + ";password=" + password);
+                logger.warn("restLogin FAIL Username or password  error! email ：{},客户端IP：{}，用户ID：{}" + email,ip,user.getId());
                 result.put("info", ApplicationConstant.AjaxCode.ERROR_CODE);
                 passportService.addLoginFailedCount(email);
                 return result;
             }
     
-            logger.info("user Dtype start:{}!",user.getDtype());
+            logger.info("restLogin user Dtype start:{}!",user.getDtype());
             // 非教师在此登陆
             if (!(UserEnum.Dtype.TEACHER.toString()).equals(user.getDtype())) {
-                logger.warn(" Username type error!" + email + ";password=" + password);
+                logger.warn("restLogin FAIL Username type error! email ：{},客户端IP：{}，用户ID：{}" +  email,ip,user.getId());
                 result.put("info", ApplicationConstant.AjaxCode.TYPE_CODE);
                 passportService.addLoginFailedCount(email);
                 return result;
             }
     
-            logger.info("teacher null start,{}",user.getId());
+            logger.info("restLogin teacher null start,{}",user.getId());
             Teacher teacher = this.passportService.findTeacherById(user.getId());
             if (teacher == null) {
-                logger.info(" Username teacher error!" + email + ";password=" + password);
+                logger.info("restLogin FAIL Username teacher error! email ：{},客户端IP：{}，用户ID：{}" +  email,ip,user.getId());
                 result.put("info", ApplicationConstant.AjaxCode.ERROR_CODE);
                 passportService.addLoginFailedCount(email);
                 return result;
             }
     
-            logger.info("登陆  FAIL start:{} !",teacher.getLifeCycle());
+            logger.info("restLogin 登陆  FAIL start:{} !",teacher.getLifeCycle());
             // 检查老师状态是否FAIL
             if (TeacherEnum.LifeCycle.FAIL.toString().equals(teacher.getLifeCycle())) {
-                logger.warn(" Username fail error!" + email + ";password=" + password);
+                logger.warn("restLogin FAIL Username FAIL error! email ：{},客户端IP：{}，教师ID：{}" +  email,ip,teacher.getId());
                 result.put("info", ApplicationConstant.AjaxCode.QUIT_CODE);
                 passportService.addLoginFailedCount(email);
                 return result;
             }
     
-            logger.info("登陆  QUIT start !");
+            logger.info("restLogin 登陆  QUIT start !");
             // 检查老师状态是否QUIT
             if (TeacherEnum.LifeCycle.QUIT.toString().equals(teacher.getLifeCycle())) {
-                logger.warn(" Username quit error!" + email + ";password=" + password);
+                logger.warn("restLogin FAIL Username quit error! email ：{},客户端IP：{}，教师ID：{}" +  email,ip,teacher.getId());
                 result.put("info", ApplicationConstant.AjaxCode.QUIT_CODE);
                 passportService.addLoginFailedCount(email);
                 return result;
             }
     
             // 检查用户状态是否锁住
-            logger.info("登陆  isLocked start :{} !",user.getStatus());
+            logger.info("restLogin 登陆  isLocked start :{} !",user.getStatus());
             if (UserEnum.Status.isLocked(user.getStatus())) {
                 // 新注册的需要激活
                 if (TeacherEnum.LifeCycle.SIGNUP.toString().equals(teacher.getLifeCycle())) {
                     if(PropertyConfigurer.booleanValue("signup.send.mail.switch")){
-                        logger.warn(" Username 没有激活 error!" + email + ";password=" + password);
+                        logger.warn("restLogin FAIL Username 没有激活 error! email ：{},客户端IP：{}，教师ID：{}" +  email,ip,teacher.getId());
                         result.put("info", ApplicationConstant.AjaxCode.LOCKED_CODE);
                         passportService.addLoginFailedCount(email);
                         return result;
@@ -174,7 +174,7 @@ public class LoginController extends RestfulController {
                     }
                 } else {
                     // 否则告诉被锁定
-                    logger.warn(" Username locked error!" + email + ";password=" + password);
+                    logger.warn("restLogin FAIL Username locked error! email ：{},客户端IP：{}，教师ID：{}" +  email,ip,teacher.getId());
                     result.put("info", ApplicationConstant.AjaxCode.QUIT_CODE);
                     passportService.addLoginFailedCount(email);
                     return result;
@@ -186,10 +186,10 @@ public class LoginController extends RestfulController {
                 teacher.setRecruitmentId(this.passportService.updateRecruitmentId(teacher));
             }
     
-            logger.info("登陆  LifeCycle check:{}!",teacher.getLifeCycle());
+            logger.info("restLogin 登陆  LifeCycle check:{}!",teacher.getLifeCycle());
             //1.教师端
             if(RestfulConfig.TEACHERPORTSET.contains(teacher.getLifeCycle())){
-                logger.info("to teacher !");
+                logger.info("restLogin Successfully email ：{},客户端IP：{},教师ID：{} to teacher !"+email,ip,teacher.getId());
                 //模拟登陆logger
                 String loginToken = loginService.setLoginCooke(response, user);
                 result.put("loginToken", loginToken);
@@ -202,7 +202,7 @@ public class LoginController extends RestfulController {
                 result.put("LifeCycle", teacher.getLifeCycle());
             //2.新招聘
             } else if(RestfulConfig.NEWRECRUITMENTSET.contains(teacher.getLifeCycle())){
-                logger.info("to new recruitment !");
+                logger.info("restLogin Successfully email ：{},客户端IP：{},教师ID：{} to new recruitment !"+email,ip,teacher.getId());
                 //模拟登陆logger
                 String loginToken = loginService.setLoginCooke(response, user);
                 result.put("loginToken", loginToken);
@@ -210,7 +210,9 @@ public class LoginController extends RestfulController {
                 result.put("LifeCycle", teacher.getLifeCycle());
             //3.老招聘,其他lifeCyc
             }else{
-                logger.info("to recruitment !");
+                logger.info("restLogin Successfully email ：{},客户端IP：{},教师ID：{} to recruitment !"+email,ip,teacher.getId());
+                String loginToken = loginService.setLoginCooke(response, user);
+                result.put("loginToken", loginToken);
                 result.put("portal", RestfulConfig.Port.RECRUITMENT);
                 result.put("LifeCycle", teacher.getLifeCycle());
                 result.put("action", "signlogin.shtml?token="+ AES.encrypt(user.getToken(), AES.getKey(AES.KEY_LENGTH_128, ApplicationConstant.AES_128_KEY)));
@@ -219,11 +221,11 @@ public class LoginController extends RestfulController {
             result.put("status", HttpStatus.OK.value());
         }catch(IllegalArgumentException e){
             result.put("status", HttpStatus.BAD_REQUEST.value());
-            logger.error(e.getMessage(), e);
+            logger.error("restLogin IllegalArgumentException ", e);
             response.setStatus(HttpStatus.BAD_REQUEST.value());
         } catch (Exception e) {
             result.put("status", HttpStatus.INTERNAL_SERVER_ERROR.value());
-            logger.error(e.getMessage(), e);
+            logger.error("restLogin Exception", e);
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
         }
         return result;
@@ -447,13 +449,13 @@ public class LoginController extends RestfulController {
                 logger.warn("auth : token is null");
                 return result;
             }
-            User user = loginService.getUser(request);
+            User user = loginService.getUser();
             if (user == null) {
                 logger.warn("check auth user is null " + user);
                 return result;
             }
             
-            Teacher teacher = loginService.getTeacher(request);
+            Teacher teacher = loginService.getTeacher();
             if (teacher == null) {
                 logger.warn("check auth teacher is null " + teacher);
                 return result;

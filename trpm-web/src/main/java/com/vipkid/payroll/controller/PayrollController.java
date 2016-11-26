@@ -7,8 +7,6 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import net.sf.json.JSONObject;
-
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,11 +18,9 @@ import org.springframework.web.bind.ServletRequestUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.google.common.collect.Maps;
-import com.vipkid.mq.service.PayrollMessageService;
 import com.vipkid.neo.client.NeoClient;
 import com.vipkid.payroll.model.Page;
 import com.vipkid.payroll.model.Result;
-import com.vipkid.payroll.service.StudentService;
 import com.vipkid.payroll.utils.DateUtils;
 import com.vipkid.payroll.utils.ProtoUtils;
 import com.vipkid.service.neo.grpc.FindPayrollItemByTypeWithPageResponse;
@@ -32,23 +28,25 @@ import com.vipkid.service.neo.grpc.FindRuleResponse;
 import com.vipkid.service.neo.grpc.PayrollItemResponse;
 import com.vipkid.trpm.controller.portal.AbstractPortalController;
 import com.vipkid.trpm.entity.Teacher;
-import com.vipkid.trpm.service.passport.IndexService;
-import com.vipkid.trpm.service.portal.ReportService;
+import com.vipkid.trpm.service.rest.LoginService;
+
+import net.sf.json.JSONObject;
 
 @Controller
 public class PayrollController extends AbstractPortalController {
-	@Autowired
-	private IndexService indexService;
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(PayrollController.class);
 
 	@Resource
 	private NeoClient neoClient;
+	
+	@Autowired
+    private LoginService loginService;
 
 	@RequestMapping("/payroll")
 	public String payroll(HttpServletRequest request, HttpServletResponse response, Model model) {
 		int offsetOfMonth = ServletRequestUtils.getIntParameter(request, "offsetOfMonth", 0);
-		Teacher teacher = indexService.getTeacher(request);
+		Teacher teacher = loginService.getTeacher();
 		model.addAttribute("offsetOfMonth", offsetOfMonth);
 		LocalDateTime monthOfYear = DateUtils.monthOfYear(offsetOfMonth);
 		int month = monthOfYear.getYear() * 100 + monthOfYear.getMonthValue();
@@ -108,7 +106,7 @@ public class PayrollController extends AbstractPortalController {
 	 @RequestMapping("/priceList")
 	public String priceList(HttpServletRequest request, HttpServletResponse response, Model model, String payrollType) {
 		int offsetOfMonth = ServletRequestUtils.getIntParameter(request, "offsetOfMonth", 0);
-		Teacher teacher = indexService.getTeacher(request);
+		Teacher teacher = loginService.getTeacher();
 		model.addAttribute("offsetOfMonth", offsetOfMonth);
 		LocalDateTime monthOfYear = DateUtils.monthOfYear(offsetOfMonth);
 		int month = monthOfYear.getYear() * 100 + monthOfYear.getMonthValue() ;
@@ -153,7 +151,7 @@ public class PayrollController extends AbstractPortalController {
 		Page dePage = null;
 		String message = "";
 		Integer status = HttpStatus.OK.value();
-		Teacher teacher = indexService.getTeacher(request);
+		Teacher teacher = loginService.getTeacher();
 		Integer allTotalSalary = 0;
 		Integer deAllTotalSalary = 0;
 		int teacherId = new Long(teacher.getId()).intValue();

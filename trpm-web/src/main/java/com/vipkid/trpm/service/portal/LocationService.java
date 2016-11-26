@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -19,9 +20,24 @@ public class LocationService {
 	private com.vipkid.trpm.dao.TeacherLocationDao TeacherLocationDao;
 
 	public List<TeacherLocation> getLocationList(int parentId, int level) {
-		logger.info("getLocationList by parent id:{}", parentId);
+		logger.info("getLocationList by parent id = {}, level = {}", parentId, level );
 
 		List<TeacherLocation> locations = TeacherLocationDao.findByParentId(parentId, level);
+		if (CollectionUtils.isNotEmpty(locations)) {
+			StringBuffer sb = new StringBuffer();
+			for (TeacherLocation one : locations) {
+				sb.append("locationId=");
+				sb.append(one.getId());
+				sb.append(",");
+				sb.append("name=");
+				sb.append(one.getName());
+				sb.append(";");
+			}
+			logger.info("teacherLocationDao#findByParentId:" + sb.toString());
+		} else {
+			logger.info("teacherLocationDao#findByParentId: none");
+		}
+		
 		return locations;
 	}
 

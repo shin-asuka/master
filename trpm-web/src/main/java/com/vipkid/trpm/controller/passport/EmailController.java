@@ -18,6 +18,7 @@ import com.vipkid.trpm.entity.User;
 import com.vipkid.trpm.service.passport.EmailService;
 import com.vipkid.trpm.service.passport.IndexService;
 import com.vipkid.trpm.service.passport.PassportService;
+import com.vipkid.trpm.service.rest.LoginService;
 import com.vipkid.trpm.util.IpUtils;
 
 @Controller
@@ -34,10 +35,13 @@ public class EmailController extends AbstractController {
 	@Autowired
 	private IndexService indexService;
 
+	@Autowired
+    private LoginService loginService;
+	
 	@Deprecated
 	@RequestMapping("/sendemail")
 	public String inPage(HttpServletRequest request, Integer userId) {
-		if (userId != null && indexService.getUser(request).getId() == userId) {
+		if (userId != null && loginService.getUser().getId() == userId) {
 		    log.info("ID为："+userId + "的老师从IP为:【"+ IpUtils.getRemoteIP()+"】的客户端进入邮件发送页面!");
 			return "passport/email";
 		}
@@ -65,7 +69,7 @@ public class EmailController extends AbstractController {
 			model.addAttribute("info", ApplicationConstant.AjaxCode.ERROR_CODE);
 			return jsonView(response, model.asMap());
 		} else {
-		    log.info("用户名为："+indexService.getUser(request).getUsername() + "的老师从IP为:【"+ IpUtils.getRemoteIP()+"】的客户端，给老师【"+user.getUsername()+"】发送类型是:【"+type+"】的邮件！");
+		    log.info("用户名为："+loginService.getUser().getUsername() + "的老师从IP为:【"+ IpUtils.getRemoteIP()+"】的客户端，给老师【"+user.getUsername()+"】发送类型是:【"+type+"】的邮件！");
 			model.addAllAttributes(this.emailService.senEmail(user, teacher, type));
 			return jsonView(response, model.asMap());
 		}

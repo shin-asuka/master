@@ -4,6 +4,12 @@ define(["function","jquery-bootstrap","jquery-load","countdown" ], function() {
 
 	var ajaxErrorfunction = function(reponse, status, info) {
 		Portal.loading("close");
+		/*if(reponse!=null){
+			if(reponse.status == 401){
+				window.location.href = webPath + "/index.shtml";
+				return ;
+			}
+		}*/
 		if (reponse.statusText == "timeout") {
 			$.alert("error", {
 				title : "Server request timed out."
@@ -148,12 +154,14 @@ define(["function","jquery-bootstrap","jquery-load","countdown" ], function() {
 				button : "OK",
 				callback : function() {
 					Portal.loading("open");
-					window.location.href = webPath + "/exitClassroom.shtml?onlineClassId="+ onlineClassId;
+					//window.location.href = webPath + "/exitClassroom.shtml?onlineClassId="+ onlineClassId;
+					exitClassroomToClassrooms(onlineClassId);
 				}
 			});
 		} else {
 			Portal.loading("open");
-			window.location.href = webPath + "/exitClassroom.shtml?onlineClassId=" + onlineClassId;
+			//window.location.href = webPath + "/exitClassroom.shtml?onlineClassId=" + onlineClassId;
+			exitClassroomToClassrooms(onlineClassId);
 			/**TODO
 			 $.alert("confirm", {
 				title : "Prompt",
@@ -168,6 +176,35 @@ define(["function","jquery-bootstrap","jquery-load","countdown" ], function() {
 		}
 	};
 
+	var exitClassroomToClassrooms = function(onlineClassId){
+		var url = webPath + "/exitClassroomPage.json";
+		$.ajaxRequest({
+			url : url,
+			dataType : 'json',
+			data : {
+				"onlineClassId" : onlineClassId
+			},
+			success : function(data) {
+				//Portal.loading("close");
+				if(data!=null && data.status == 1){
+					window.location.href = webPath + "/classrooms.shtml";
+				}else{
+					Portal.loading("close");
+				}
+			},
+			timeout : _timeout,
+			error : function(reponse, status, info) {
+				if(reponse!=null ){
+					if(reponse.status == 401){ //无权限进入登录界面
+						window.location.href = webPath + "/index.shtml";
+						return ;
+					}
+				}
+				ajaxErrorfunction(reponse, status, info);
+			}
+		});
+	}
+	
 	/** 发送在线帮助 */
 	var sendHelp = function(scheduleTime, onlineClassId) {
 		var url = webPath + "/sendHelp.json";

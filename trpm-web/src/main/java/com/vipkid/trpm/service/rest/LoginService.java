@@ -2,7 +2,6 @@ package com.vipkid.trpm.service.rest;
 
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -13,8 +12,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.google.api.client.util.Maps;
 import com.google.common.collect.Lists;
 import com.vipkid.enums.TeacherEnum.LifeCycle;
 import com.vipkid.rest.config.RestfulConfig;
@@ -24,16 +26,19 @@ import com.vipkid.trpm.constant.ApplicationConstant;
 import com.vipkid.trpm.constant.ApplicationConstant.CookieKey;
 import com.vipkid.trpm.constant.ApplicationConstant.CourseType;
 import com.vipkid.trpm.dao.CourseDao;
+import com.vipkid.trpm.dao.StaffDao;
 import com.vipkid.trpm.dao.TeacherDao;
 import com.vipkid.trpm.dao.TeacherModuleDao;
 import com.vipkid.trpm.dao.TeacherPageLoginDao;
 import com.vipkid.trpm.dao.UserDao;
+import com.vipkid.trpm.entity.Staff;
 import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.entity.TeacherPageLogin;
 import com.vipkid.trpm.entity.User;
 import com.vipkid.trpm.proxy.RedisProxy;
 import com.vipkid.trpm.util.CacheUtils;
 import com.vipkid.trpm.util.CookieUtils;
+import com.vipkid.trpm.util.IpUtils;
 
 @Service
 public class LoginService {
@@ -58,32 +63,117 @@ public class LoginService {
     @Autowired
     private TeacherModuleDao teacherModuleDao;
     
+    @Autowired
+    private StaffDao staffDao;
+    
+    /**
+     * 判断User是否有PE权限
+     * 
+     * @Author:ALong (ZengWeiLong)
+     * @param teacherId
+     * @return boolean
+     * @date 2016年7月4日
+     */
+    public Map<String,Object> getAllRole(long teacherId) {
+        String result = teacherModuleDao.findByTeacherModule(teacherId);
+        Map<String,Object> roles = Maps.newHashMap();
+        roles.put(RoleClass.PES, false);
+        roles.put(RoleClass.TE, false);
+        roles.put(RoleClass.TES, false);
+        if(result.indexOf(","+RoleClass.PE+",") > -1){
+            roles.put(RoleClass.PES,true);
+        }
+        if(result.indexOf(","+RoleClass.TE+",") > -1){
+            roles.put(RoleClass.TE,true);
+        }
+        if(result.indexOf(","+RoleClass.TES+",") > -1){
+            roles.put(RoleClass.TES,true);
+        }
+        return roles;
+    }
+    
+    public Staff getStaff(Long id){
+    	Staff staff = null;
+    	if(id!=null){
+    		staff = staffDao.findById(id);
+    	}
+    	return staff;
+    }
+
     /**
      * 获取当前登录的老师
      * 
      * @return Teacher
      */
-    public Teacher getTeacher(HttpServletRequest request) {
-        User user = getUser(request);
-        Teacher teacher = teacherDao.findById(user.getId());        
+    public Teacher getTeacher() {
+    	Teacher teacher = null;
+    	User user = getPreUserByRedis();
+    	if(user != null){
+    		teacher = teacherDao.findById(user.getId());  
+    	}
         return teacher; 
     }
-
+    
     /**
      * 获取当前登录用户
      * 
      * @return User
      */
-    public User getUser(HttpServletRequest request) {
-        String token = request.getHeader(CookieKey.AUTOKEN);
-        String json = redisProxy.get(token);
-        if(StringUtils.isBlank(json)){
-            return null;
+    public User getUser() {
+    	User currentUser = null;
+        User user = getPreUserByRedis();
+        if(user != null){
+        	currentUser = userDao.findById(user.getId());
+        	if(currentUser !=null){
+        		currentUser.setIp(user.getIp());
+        	}
         }
-        User user = JsonTools.readValue(json, User.class);
-        return userDao.findById(user.getId());
+        return currentUser;
+    }
+    
+    /**
+     * 从redis中获取用户ID
+     * 
+     * @return
+     */
+    private User getPreUserByRedis(){
+    	User user = null;
+    	String token = getToken();
+    	String key = CacheUtils.getUserTokenKey(token);
+    	if(StringUtils.isNotBlank(key)){
+    		String json = redisProxy.get(key);
+    		if(StringUtils.isNotBlank(json)){
+    			user = JsonTools.readValue(json, User.class);
+            }
+    	}
+    	if(user!=null){
+    		Integer timeout = CacheUtils.getLoginTimeout();
+            redisProxy.expire(key, timeout); //延长有效期
+    	}
+    	return user;
+    }
+    
+    public String getToken(){
+    	String token = null;
+    	try {
+    		HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+    		token = request.getHeader(CookieKey.AUTOKEN);
+    		if(StringUtils.isBlank(token)){
+    			token = CookieUtils.getValue(request, CookieKey.TRPM_TOKEN);
+    		}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+    	return token;
     }
 
+    public boolean enabledPracticum(long userId) {
+        String key = CacheUtils.getCoursesKey(userId);
+        String json = redisProxy.get(key);
+        List<String> courseTypes = JsonTools.readValue(json, new TypeReference<List<String>>() {});
+        return courseTypes.contains(CourseType.PRACTICUM);
+    }
+    
     /**
      * 查询老师可以教的课程类型列表
      * 
@@ -123,19 +213,33 @@ public class LoginService {
     }
 
     public String setLoginCooke(HttpServletResponse response, User user) {
-        String token = UUID.randomUUID().toString();
-        logger.info("设置登录Cookie，teacherID = {},token = {}",user.getId(),token);
-        redisProxy.set(token, JsonTools.getJson(user), 12 * 60 * 60);
+        String token = CacheUtils.getTokenId();
+        String key = CacheUtils.getUserTokenKey(token);
+        
+        if(StringUtils.isNotBlank(key) && user!=null){
+        	String ip = IpUtils.getRequestRemoteIP();
+        	user.setIp(ip); //注入远程请求ip地址
+        	
+        	Integer timeout = CacheUtils.getLoginTimeout();
+        	logger.info("setLoginCooke 设置登录Redis ,user = {} , key = {},ip = {},timeout = {} (second)",user.getId()+"|"+user.getUsername(),key,ip,timeout);
+        	//redisProxy.set(key, JsonTools.getJson(user), 12 * 60 * 60);
+        	redisProxy.set(key, JsonTools.getJson(user), timeout);
+        }
+        logger.info("setLoginCooke 设置登录Cookie ,teacherID = {},token = {} , key = {}",user.getId(),token,key);
         CookieUtils.setCookie(response, CookieKey.TRPM_TOKEN, token, null);
         return token;
     }
 
     public void removeLoginCooke(HttpServletRequest request, HttpServletResponse response) {
         String token = CookieUtils.getValue(request, CookieKey.TRPM_TOKEN);
-        if (token != null) {
-            redisProxy.del(token);
+        //String token = getToken();
+        if(StringUtils.isNotBlank(token)){
+        	String key = CacheUtils.getUserTokenKey(token);
+            if(StringUtils.isNotBlank(key)){
+                redisProxy.del(key);
+            }
+            CookieUtils.removeCookie(response, CookieKey.TRPM_TOKEN, null, null);
         }
-        CookieUtils.removeCookie(response, CookieKey.TRPM_TOKEN, null, null);
     }
 
     public void setCourseTypes(long userId, List<String> courseTypes) {

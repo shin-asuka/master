@@ -7,6 +7,7 @@ import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.service.activity.ActivityService;
 import com.vipkid.trpm.service.passport.IndexService;
 import com.vipkid.trpm.service.portal.ScheduleService;
+import com.vipkid.trpm.service.rest.LoginService;
 import com.vipkid.trpm.service.rest.TeacherPageLoginService;
 import org.apache.commons.lang.StringUtils;
 import org.community.config.PropertyConfigurer;
@@ -35,6 +36,9 @@ public class ScheduleController extends AbstractPortalController {
 	
 	@Autowired
 	private TeacherPageLoginService teacherPageLoginService;
+	
+	@Autowired
+    private LoginService loginService;
 
 	@RequestMapping("/schedule")
 	public String schedule(HttpServletRequest request, HttpServletResponse response, Model model) {
@@ -47,14 +51,14 @@ public class ScheduleController extends AbstractPortalController {
 		model.addAttribute("offsetOfWeek", offsetOfWeek);
 
 		/* 获取当前登录的老师信息 */
-		Teacher teacher = indexService.getTeacher(request);
+		Teacher teacher = loginService.getTeacher();
 
 		model.addAllAttributes(scheduleService.doSchedule(offsetOfWeek, teacher.getId(), teacher.getTimezone(),
 				courseType));
 
 		// 判断是否能上Practicum类型的课程
 		model.addAttribute("showPracticum", false);
-		if (indexService.enabledPracticum(teacher.getId())) {
+		if (loginService.enabledPracticum(teacher.getId())) {
 		    model.addAttribute("showPracticum", teacherPageLoginService.isType(teacher.getId(), LoginType.PRACTICUM));
 		}
 		//判断是否显示AdminQuiz
@@ -85,7 +89,7 @@ public class ScheduleController extends AbstractPortalController {
 		String scheduleTime = ServletRequestUtils.getStringParameter(request, "scheduleTime", null);
 
 		return jsonView(response,
-				scheduleService.doCreateTimeSlotWithLock(indexService.getTeacher(request), scheduleTime, courseType));
+				scheduleService.doCreateTimeSlotWithLock(loginService.getTeacher(), scheduleTime, courseType));
 	}
 
 	@RequestMapping("/cancelTimeSlot")
@@ -96,7 +100,7 @@ public class ScheduleController extends AbstractPortalController {
 		String scheduleTime = ServletRequestUtils.getStringParameter(request, "scheduleTime", null);
 		long onlineClassId = ServletRequestUtils.getIntParameter(request, "onlineClassId", -1);
 
-		return jsonView(response, scheduleService.doCancelTimeSlot(indexService.getTeacher(request), onlineClassId,
+		return jsonView(response, scheduleService.doCancelTimeSlot(loginService.getTeacher(), onlineClassId,
 				scheduleTime, courseType));
 	}
 
@@ -104,7 +108,7 @@ public class ScheduleController extends AbstractPortalController {
 	@RequestMapping("/changePassword")
 	public String changePassword(HttpServletRequest request, HttpServletResponse response, Model model) {
 		model.addAttribute("token",
-				new String(Base64.getEncoder().encode(indexService.getUser(request).getPassword().getBytes())));
+				new String(Base64.getEncoder().encode(loginService.getUser().getPassword().getBytes())));
 		return "portal/change_password";
 	}
 
@@ -113,7 +117,7 @@ public class ScheduleController extends AbstractPortalController {
 		int onlineClassId = ServletRequestUtils.getIntParameter(request, "onlineClassId", -1);
 		int offsetOfWeek = ServletRequestUtils.getIntParameter(request, "offsetOfWeek", 0);
 		/* 获取当前登录的老师信息 */
-		Teacher teacher = indexService.getTeacher(request);
+		Teacher teacher = loginService.getTeacher();
 
 		Map<String, Object> resultMap = Maps.newHashMap();
 		if (scheduleService.checkInOneHour(onlineClassId)) {
@@ -134,7 +138,7 @@ public class ScheduleController extends AbstractPortalController {
 	public String delete24Hour(HttpServletRequest request, HttpServletResponse response, Model model) {
 		int onlineClassId = ServletRequestUtils.getIntParameter(request, "onlineClassId", -1);
 		/* 获取当前登录的老师信息 */
-		Teacher teacher = indexService.getTeacher(request);
+		Teacher teacher = loginService.getTeacher();
 
 		Map<String, Object> resultMap = Maps.newHashMap();
 		resultMap.put("result", scheduleService.delete24HourClass(teacher.getId(), onlineClassId));
