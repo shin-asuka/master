@@ -225,14 +225,15 @@ public class ContractService {
         }
         List<TeacherApplication> listEntity = teacherApplicationDao.findCurrentApplication(teacher.getId());
         logger.info("用户：{}查询TeacherApplication",teacher.getId());
-        List<TeacherOtherDegrees> TeacherOtherDegreeses;
+        List<TeacherOtherDegrees> TeacherOtherDegreeses=null;
         if(CollectionUtils.isNotEmpty(listEntity)) {
             TeacherApplication teacherApplication = listEntity.get(0);
            TeacherOtherDegreeses = teacherOtherDegreesDao.findByTeacherIdAndTeacherApplicationId(teacher.getId(), teacherApplication.getId());
-        }else{
-            logger.info("用户{}",teacher.getId());
+        }
+        if(CollectionUtils.isEmpty(TeacherOtherDegreeses)) {
+            logger.info("用户{}", teacher.getId());
             TeacherOtherDegreeses = teacherOtherDegreesDao.findByTeacherId(teacher.getId());
-            logger.info("teacherOtherDegreesDao{}",teacherOtherDegreesDao);
+            logger.info("TeacherOtherDegreeses{}", TeacherOtherDegreeses);
         }
             List<TeacherOtherDegrees>  degrees;
             List<TeacherOtherDegrees> certification;
