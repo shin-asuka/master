@@ -162,7 +162,7 @@ public class IpUtils {
 		String redisIp = user.getIp();
 		if(StringUtils.isNotBlank(redisIp)){
 			
-			String ip = IpUtils.getRequestRemoteIP();
+			String ip = IpUtils.getRequestRemoteIP(); //ip = "106.38.84.19";
 			Country country = geoIPService.getCountryName(ip);
 			
 			//校验ip所在国家，对需要检查国家进行校验

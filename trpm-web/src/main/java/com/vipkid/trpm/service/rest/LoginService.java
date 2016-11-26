@@ -219,8 +219,11 @@ public class LoginService {
         if(StringUtils.isNotBlank(key) && user!=null){
         	String ip = IpUtils.getRequestRemoteIP();
         	user.setIp(ip); //注入远程请求ip地址
-        	logger.info("setLoginCooke 设置登录Redis ,user = {} , key = {},ip = {}",user.getId()+"|"+user.getUsername(),key,ip);
-        	redisProxy.set(key, JsonTools.getJson(user), 12 * 60 * 60);
+        	
+        	Integer timeout = CacheUtils.getLoginTimeout();
+        	logger.info("setLoginCooke 设置登录Redis ,user = {} , key = {},ip = {},timeout = {} (second)",user.getId()+"|"+user.getUsername(),key,ip,timeout);
+        	//redisProxy.set(key, JsonTools.getJson(user), 12 * 60 * 60);
+        	redisProxy.set(key, JsonTools.getJson(user), timeout);
         }
         logger.info("setLoginCooke 设置登录Cookie ,teacherID = {},token = {} , key = {}",user.getId(),token,key);
         CookieUtils.setCookie(response, CookieKey.TRPM_TOKEN, token, null);
