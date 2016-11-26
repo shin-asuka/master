@@ -103,7 +103,6 @@ public class TrainingController extends RestfulController {
         Map<String,Object> result = Maps.newHashMap();
         result.put("result", false);
         Object grade = pramMap.get("grade");
-        logger.info("grade：：：：",grade);
         Object quizToken = pramMap.get("quizToken");
         try{
             User user = getUser(request);
