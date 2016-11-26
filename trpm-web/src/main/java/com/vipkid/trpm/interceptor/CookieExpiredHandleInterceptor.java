@@ -116,11 +116,13 @@ public class CookieExpiredHandleInterceptor extends HandlerInterceptorAdapter {
         	String uri = request.getRequestURI();
         	String redisIp = user.getIp();
         	logger.info("用户IP地址发生变化  getUser userIPChange token = {},uri={},user = {}, redisIp = {}, currentIp = {}",token,uri,user.getId()+"|"+user.getUsername(),redisIp,currentIp);
+        	CookieUtils.removeCookie(response, CookieKey.TRPM_TOKEN, null, null);
         	if( StringUtils.contains(xRequestedWith, "XMLHttpRequest")){
         		response.setStatus(HttpStatus.UNAUTHORIZED.value());
         	}else{
         		response.sendRedirect(request.getContextPath() + "/");
         	}
+        	
         	return false;
         }
         
