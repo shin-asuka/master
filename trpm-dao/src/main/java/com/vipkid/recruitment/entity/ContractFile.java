@@ -8,8 +8,8 @@ import java.util.Map;
  */
 public class ContractFile{
 
-    //Teacherpassport
-    private List<TeacherOtherDegrees> identification;
+    //Teacherpassport  文件类型1-other_degrees  2-certificationFiles   3-Identification  4-Diploma 5-Contract  6-Passport   7-Driver's license
+    private  Map<String,TeacherOtherDegrees> identification;
 
     //Teacher最高学历 bachelorDiploma
     private List<TeacherOtherDegrees> diploma;
@@ -25,11 +25,11 @@ public class ContractFile{
 
     private String result;
 
-    public List<TeacherOtherDegrees> getIdentification() {
+    public Map<String, TeacherOtherDegrees> getIdentification() {
         return identification;
     }
 
-    public void setIdentification(List<TeacherOtherDegrees> identification) {
+    public void setIdentification(Map<String, TeacherOtherDegrees> identification) {
         this.identification = identification;
     }
 

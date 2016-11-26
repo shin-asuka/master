@@ -14,7 +14,7 @@ public class TeacherOtherDegrees extends Entity implements Serializable {
     private long teacherId;
     //教师证书
     private String degrees;
-    //教师证书的类型
+    //教师证书的类型  文件类型1-other_degrees  2-certificationFiles   3-Identification  4-Diploma 5-Contract  6-Passport   7-Driver's license
     private int fileType;
 
 

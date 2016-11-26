@@ -1,6 +1,7 @@
 package com.vipkid.recruitment.contract.service;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import com.vipkid.recruitment.utils.ResponseUtils;
@@ -230,7 +231,7 @@ public class ContractService {
 
             List<TeacherOtherDegrees>  degrees;
             List<TeacherOtherDegrees> certification;
-            List<TeacherOtherDegrees>  identification;
+            Map<String,TeacherOtherDegrees> identification;
             List<TeacherOtherDegrees> diploma;
             List<TeacherOtherDegrees> contract;
 
@@ -238,7 +239,7 @@ public class ContractService {
             if(CollectionUtils.isNotEmpty(TeacherOtherDegreeses)) {
                 degrees = new ArrayList<TeacherOtherDegrees>();
                 contract = new ArrayList<TeacherOtherDegrees>();
-                identification = new ArrayList<TeacherOtherDegrees>();
+                identification = new HashMap<String,TeacherOtherDegrees>();
                 diploma = new ArrayList<TeacherOtherDegrees>();
                 certification = new ArrayList<TeacherOtherDegrees>();
                 String result="";
@@ -250,7 +251,13 @@ public class ContractService {
                       certification.add(obj);
                   }
                   if (obj.getFileType() == 3) {
-                      identification.add(obj);
+                      identification.put("identity",obj);
+                  }
+                  if (obj.getFileType() == 6) {
+                      identification.put("passport",obj);
+                  }
+                  if (obj.getFileType() == 7) {
+                      identification.put("driver",obj);
                   }
                   if (obj.getFileType() == 4) {
                       diploma.add(obj);
