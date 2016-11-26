@@ -110,6 +110,7 @@ public class CookieExpiredHandleInterceptor extends HandlerInterceptorAdapter {
         
         //判断当前用户所在地区的ip是否变化，如果变化。则返回空用户，用户重新登陆
         Boolean isIpChange = IpUtils.checkUserIpChange(user);
+        //isIpChange = true;
         if(isIpChange){
         	String currentIp = IpUtils.getRequestRemoteIP();
         	String uri = request.getRequestURI();
@@ -118,7 +119,7 @@ public class CookieExpiredHandleInterceptor extends HandlerInterceptorAdapter {
         	if( StringUtils.contains(xRequestedWith, "XMLHttpRequest")){
         		response.setStatus(HttpStatus.UNAUTHORIZED.value());
         	}else{
-        		response.sendRedirect(request.getContextPath() + "/index.shtml");
+        		response.sendRedirect(request.getContextPath() + "/");
         	}
         	return false;
         }
