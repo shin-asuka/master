@@ -15,9 +15,11 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import com.google.common.base.Preconditions;
 import com.vipkid.rest.RestfulController;
+import com.vipkid.trpm.constant.ApplicationConstant.CookieKey;
 import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.entity.User;
 import com.vipkid.trpm.service.rest.LoginService;
+import com.vipkid.trpm.util.CookieUtils;
 import com.vipkid.trpm.util.IpUtils;
 
 /**
@@ -76,6 +78,7 @@ public class LoginExpiredHandleInterceptor extends HandlerInterceptorAdapter {
             	String redisIp = user.getIp();
             	logger.info("用户IP地址发生变化  getUser userIPChange token = {},uri={},user = {}, redisIp = {}, currentIp = {}",token,uri,user.getId()+"|"+user.getUsername(),redisIp,ip);
             	response.setStatus(HttpStatus.UNAUTHORIZED.value());
+            	CookieUtils.removeCookie(response, CookieKey.TRPM_TOKEN, null, null);
             	return false;
             }
             if(StringUtils.endsWith(uri, "user/login")){
