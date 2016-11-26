@@ -384,6 +384,7 @@ public class ContractController extends RestfulController {
         logger.info("保存用户：{}查询上传过的文件",teacher.getId());
         try {
             ContractFile contractFile =  contractService.findContract(teacher);
+            logger.info("保存用户：{}查询上传过的文件{}",teacher.getId(),contractFile);
             result.put("file",contractFile);
             result.put("status",true);
             return ResponseUtils.responseSuccess(result);

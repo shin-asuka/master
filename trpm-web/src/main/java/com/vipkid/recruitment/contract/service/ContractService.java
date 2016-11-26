@@ -244,6 +244,7 @@ public class ContractService {
                 certification = new ArrayList<TeacherOtherDegrees>();
                 String result="";
               for(TeacherOtherDegrees obj:TeacherOtherDegreeses) {
+                  logger.info("文件的Url",obj.getDegrees());
                   if (obj.getFileType() == 1) {
                       degrees.add(obj);
                   }
