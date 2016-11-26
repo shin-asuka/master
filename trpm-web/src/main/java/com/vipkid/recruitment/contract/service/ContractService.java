@@ -246,8 +246,7 @@ public class ContractService {
                 Map<String,TeacherOtherDegrees>  identification = new HashMap<String,TeacherOtherDegrees>();
                 List<TeacherOtherDegrees>  diploma = new ArrayList<TeacherOtherDegrees>();
                 List<TeacherOtherDegrees>  certification = new ArrayList<TeacherOtherDegrees>();
-                String result="";
-              for(TeacherOtherDegrees obj:teacherOtherDegreeses) {
+                teacherOtherDegreeses.forEach(obj->{
                   if (obj.getFileType() == 1) {
                       logger.info("TeacherOtherDegrees{}", obj.getDegrees());
                       degrees.add(obj);
@@ -276,13 +275,7 @@ public class ContractService {
                       logger.info("TeacherOtherDegrees{}", obj.getDegrees());
                       contract.add(obj);
                   }
-                  if (obj.getResult().equals("FAIL")) {
-                      logger.info("TeacherOtherDegrees{}", obj.getDegrees());
-                       result = "FAIL";
-                  }
-
-              }
-                contractFile.setResult(result);
+                });
                 contractFile.setContract(contract);
                 contractFile.setDiploma(diploma);
                 contractFile.setIdentification(identification);
