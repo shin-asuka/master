@@ -187,6 +187,20 @@ public class ContractService {
             return teacherOtherDegreesDao.delete(teacherOtherDegrees);
         }
 
+        public Map<String,Object> reomteFile(int fileId,Teacher teacher){
+           TeacherOtherDegrees teacherOtherDegrees =  teacherOtherDegreesDao.findById(fileId);
+            if(teacherOtherDegrees.getTeacherId()!=teacher.getId()){
+                return ResponseUtils.responseFail("You can't delete the file !",this);
+            }else {
+                if (teacherOtherDegrees.getTeacherApplicationId() == 0) {
+                    teacherOtherDegreesDao.delete(teacherOtherDegrees);
+                    return ResponseUtils.responseSuccess();
+                } else {
+                    return ResponseUtils.responseSuccess();
+                }
+            }
+        }
+
     /**
      * 更改老师的lifeCycle
      * @param teacher
@@ -208,6 +222,8 @@ public class ContractService {
         }
         return ResponseUtils.responseFail("You have no legal power into the next phase !",this);
     }
+
+
 
     /**
      * 查询老师上传过的文件
@@ -235,11 +251,6 @@ public class ContractService {
             teacherOtherDegreeses = teacherOtherDegreesDao.findByTeacherId(teacher.getId());
             logger.info("TeacherOtherDegreeses{}", teacherOtherDegreeses);
         }
-
-
-
-
-
             if(CollectionUtils.isNotEmpty(teacherOtherDegreeses)) {
                 List<TeacherOtherDegrees>  degrees = new ArrayList<TeacherOtherDegrees>();
                 List<TeacherOtherDegrees>  contract = new ArrayList<TeacherOtherDegrees>();
@@ -276,12 +287,11 @@ public class ContractService {
                       contract.add(obj);
                   }
                 });
-                contractFile.setContract(contract);
-                contractFile.setDiploma(diploma);
+                contractFile.setContract(contract.get(contract.size()-1));
+                contractFile.setDiploma(diploma.get(diploma.size()-1));
                 contractFile.setIdentification(identification);
                 contractFile.setCertification(certification);
                 contractFile.setDegrees(degrees);
-
         }
 
 

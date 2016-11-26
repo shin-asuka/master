@@ -54,7 +54,6 @@ public class ContractController extends RestfulController {
     @RequestMapping(value = "/submit", method = RequestMethod.POST, produces = RestfulConfig.JSON_UTF_8)
     public  Map<String,Object> submitsTeacher(@RequestBody Map<String,Object> pramMap, HttpServletRequest request, HttpServletResponse response){
         Object id = pramMap.get("id");
-        logger.info("文件id........:{}",id);
         if(id.equals("")||id==null){
             return ResponseUtils.responseFail("You don't have to upload the file", this);
         }
@@ -80,6 +79,41 @@ public class ContractController extends RestfulController {
             return ResponseUtils.responseFail(e.getMessage(), this);
         }
     }
+
+
+
+    @RequestMapping("/remoteFile")
+    public Map<String,Object> remoteFile(@RequestBody Map<String,Object> pramMap,HttpServletRequest request, HttpServletResponse response){
+        Object id = pramMap.get("id");
+        int fileId =Integer.parseInt(String.valueOf(id));
+        Teacher teacher = getTeacher(request);
+        try{
+            logger.info("删除文件id........:{}",fileId);
+            Map<String,Object> result = contractService.reomteFile(fileId,teacher);
+            if(ResponseUtils.isFail(result)){
+                response.setStatus(HttpStatus.FORBIDDEN.value());
+            }
+            return result;
+        } catch (IllegalArgumentException e) {
+            response.setStatus(HttpStatus.BAD_REQUEST.value());
+            return ResponseUtils.responseFail(e.getMessage(), this);
+        } catch (Exception e) {
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            return ResponseUtils.responseFail(e.getMessage(), this);
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
 
     /**
      * 文件上传功能
@@ -292,6 +326,9 @@ public class ContractController extends RestfulController {
     }
 
 
+
+
+
     /**
      * 上传Certification文件
      * @param file
@@ -384,6 +421,7 @@ public class ContractController extends RestfulController {
         logger.info("保存用户：{}查询上传过的文件",teacher.getId());
         try {
             ContractFile contractFile =  contractService.findContract(teacher);
+            logger.info("保存用户：{}查询上传过的文件{}",teacher.getId(),contractFile);
             result.put("file",contractFile);
             result.put("status",true);
             return ResponseUtils.responseSuccess(result);
@@ -419,15 +457,6 @@ public class ContractController extends RestfulController {
             return ResponseUtils.responseFail(e.getMessage(), this);
         }
     }
-
-
-
-
-
-
-
-
-
 
 
   public void setTeacherTaxpayerFormInfo(TeacherTaxpayerForm teacherTaxpayerForm, HttpServletRequest request){

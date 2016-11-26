@@ -12,7 +12,7 @@ public class ContractFile{
     private  Map<String,TeacherOtherDegrees> identification;
 
     //Teacher最高学历 bachelorDiploma
-    private List<TeacherOtherDegrees> diploma;
+    private TeacherOtherDegrees diploma;
 
     private List<TeacherOtherDegrees> certification;
 
@@ -21,7 +21,7 @@ public class ContractFile{
     //w9税收
     private String tax;
     //Teacher表contract
-    private List<TeacherOtherDegrees> contract;
+    private TeacherOtherDegrees contract;
 
 
     public Map<String, TeacherOtherDegrees> getIdentification() {
@@ -32,13 +32,7 @@ public class ContractFile{
         this.identification = identification;
     }
 
-    public List<TeacherOtherDegrees> getDiploma() {
-        return diploma;
-    }
 
-    public void setDiploma(List<TeacherOtherDegrees> diploma) {
-        this.diploma = diploma;
-    }
 
     public List<TeacherOtherDegrees> getCertification() {
         return certification;
@@ -64,12 +58,19 @@ public class ContractFile{
         this.tax = tax;
     }
 
-    public List<TeacherOtherDegrees> getContract() {
+    public TeacherOtherDegrees getDiploma() {
+        return diploma;
+    }
+
+    public void setDiploma(TeacherOtherDegrees diploma) {
+        this.diploma = diploma;
+    }
+
+    public TeacherOtherDegrees getContract() {
         return contract;
     }
 
-    public void setContract(List<TeacherOtherDegrees> contract) {
+    public void setContract(TeacherOtherDegrees contract) {
         this.contract = contract;
     }
-
 }
