@@ -213,20 +213,15 @@ public class InterviewService {
             }
         }
 
-        int count = recruitmentService.getRemainRescheduleTimes(teacher, Status.INTERVIEW.toString(), Result.CANCEL.toString());
+        //保存cancel记录
+        this.teacherApplicationLogDao.saveCancel(teacher.getId(), listEntity.get(0).getId(), Status.INTERVIEW, Result.CANCEL, onlineClass);
 
-        if(count <= 0){
-            return ResponseUtils.responseFail("You cancel too many times !",this);
-        }
+        int count = recruitmentService.getRemainRescheduleTimes(teacher, Status.INTERVIEW.toString(), Result.CANCEL.toString());
 
         if(count == 0){
             userDao.doLock(teacher.getId());
             teacherLockLogDao.save(new TeacherLockLog(teacher.getId(), Reason.RESCHEDULE.toString(), LifeCycle.INTERVIEW.toString()));
         }
-
-        //保存cancel记录
-        this.teacherApplicationLogDao.saveCancel(teacher.getId(), listEntity.get(0).getId(), Status.INTERVIEW,
-                Result.CANCEL, onlineClass);
 
         //执行Cancel逻辑
         Map<String,Object> result = OnlineClassProxy.doCancelRecruitement(teacher.getId(), onlineClass.getId(), ClassType.TEACHER_RECRUITMENT);

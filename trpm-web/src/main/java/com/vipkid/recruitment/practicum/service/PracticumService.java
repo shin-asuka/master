@@ -193,20 +193,15 @@ public class PracticumService {
             }
         }
 
-        int count = recruitmentService.getRemainRescheduleTimes(teacher, Status.PRACTICUM.toString(), Result.CANCEL.toString());
+        //保存cancel记录
+        this.teacherApplicationLogDao.saveCancel(teacher.getId(), listEntity.get(0).getId(), Status.PRACTICUM, Result.CANCEL, onlineClass);
 
-        if(count <= 0){
-            return ResponseUtils.responseFail("You have canceled too many times!",this);
-        }
+        int count = recruitmentService.getRemainRescheduleTimes(teacher, Status.PRACTICUM.toString(), Result.CANCEL.toString());
 
         if(count == 0){
             userDao.doLock(teacher.getId());
             teacherLockLogDao.save(new TeacherLockLog(teacher.getId(), Reason.RESCHEDULE.toString(), LifeCycle.PRACTICUM.toString()));
         }
-
-        //保存cancel记录
-        this.teacherApplicationLogDao.saveCancel(teacher.getId(), listEntity.get(0).getId(), Status.PRACTICUM,
-                Result.CANCEL, onlineClass);
 
         //执行Cancel逻辑
         Map<String,Object> result = OnlineClassProxy.doCancelRecruitement(teacher.getId(), onlineClass.getId(), ClassType.TEACHER_RECRUITMENT);

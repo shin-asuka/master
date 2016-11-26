@@ -253,6 +253,8 @@ public class RecruitmentService {
                 remainTimes = 3 - reapplyTimesByCancelNoShow - cancelNum;
             } else if (FinishType.STUDENT_IT_PROBLEM.equals(type)){
                 remainTimes = 2 - reapplyTimesByITProblem;
+            } else {
+                remainTimes = 99;
             }
         }
         return remainTimes;
