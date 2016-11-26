@@ -225,15 +225,15 @@ public class ContractService {
         }
         List<TeacherApplication> listEntity = teacherApplicationDao.findCurrentApplication(teacher.getId());
         logger.info("用户：{}查询TeacherApplication",teacher.getId());
-        List<TeacherOtherDegrees> TeacherOtherDegreeses = new ArrayList<>();
+        List<TeacherOtherDegrees> teacherOtherDegreeses = new ArrayList<>();
         if(CollectionUtils.isNotEmpty(listEntity)) {
             TeacherApplication teacherApplication = listEntity.get(0);
-           TeacherOtherDegreeses = teacherOtherDegreesDao.findByTeacherIdAndTeacherApplicationId(teacher.getId(), teacherApplication.getId());
+           teacherOtherDegreeses = teacherOtherDegreesDao.findByTeacherIdAndTeacherApplicationId(teacher.getId(), teacherApplication.getId());
         }
-        if(CollectionUtils.isEmpty(TeacherOtherDegreeses)) {
+        if(CollectionUtils.isEmpty(teacherOtherDegreeses)) {
             logger.info("用户{}", teacher.getId());
-            TeacherOtherDegreeses = teacherOtherDegreesDao.findByTeacherId(teacher.getId());
-            logger.info("TeacherOtherDegreeses{}", TeacherOtherDegreeses);
+            teacherOtherDegreeses = teacherOtherDegreesDao.findByTeacherId(teacher.getId());
+            logger.info("TeacherOtherDegreeses{}", teacherOtherDegreeses);
         }
             List<TeacherOtherDegrees>  degrees;
             List<TeacherOtherDegrees> certification;
@@ -242,44 +242,44 @@ public class ContractService {
             List<TeacherOtherDegrees> contract;
 
 
-            if(CollectionUtils.isNotEmpty(TeacherOtherDegreeses)) {
+            if(CollectionUtils.isNotEmpty(teacherOtherDegreeses)) {
                 degrees = new ArrayList<TeacherOtherDegrees>();
                 contract = new ArrayList<TeacherOtherDegrees>();
                 identification = new HashMap<String,TeacherOtherDegrees>();
                 diploma = new ArrayList<TeacherOtherDegrees>();
                 certification = new ArrayList<TeacherOtherDegrees>();
                 String result="";
-              for(TeacherOtherDegrees obj:TeacherOtherDegreeses) {
+              for(TeacherOtherDegrees obj:teacherOtherDegreeses) {
                   if (obj.getFileType() == 1) {
-                      logger.info("TeacherOtherDegrees{}", obj);
+                      logger.info("TeacherOtherDegrees{}", obj.getDegrees());
                       degrees.add(obj);
                   }
                   if (obj.getFileType() == 2) {
-                      logger.info("TeacherOtherDegrees}", obj);
+                      logger.info("TeacherOtherDegrees{}", obj.getDegrees());
                       certification.add(obj);
                   }
                   if (obj.getFileType() == 3) {
-                      logger.info("TeacherOtherDegrees{}", obj);
+                      logger.info("TeacherOtherDegrees{}", obj.getDegrees());
                       identification.put("identity",obj);
                   }
                   if (obj.getFileType() == 6) {
-                      logger.info("TeacherOtherDegrees{}", obj);
+                      logger.info("TeacherOtherDegrees{}", obj.getDegrees());
                       identification.put("passport",obj);
                   }
                   if (obj.getFileType() == 7) {
-                      logger.info("TeacherOtherDegrees{}", obj);
+                      logger.info("TeacherOtherDegrees{}", obj.getDegrees());
                       identification.put("driver",obj);
                   }
                   if (obj.getFileType() == 4) {
-                      logger.info("TeacherOtherDegrees{}", obj);
+                      logger.info("TeacherOtherDegrees{}", obj.getDegrees());
                       diploma.add(obj);
                   }
                   if (obj.getFileType() == 5) {
-                      logger.info("TeacherOtherDegrees{}", obj);
+                      logger.info("TeacherOtherDegrees{}", obj.getDegrees());
                       contract.add(obj);
                   }
                   if (obj.getResult().equals("FAIL")) {
-                      logger.info("TeacherOtherDegrees{}", obj);
+                      logger.info("TeacherOtherDegrees{}", obj.getDegrees());
                        result = "FAIL";
                   }
 
