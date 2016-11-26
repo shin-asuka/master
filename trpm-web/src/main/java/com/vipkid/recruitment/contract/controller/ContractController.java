@@ -124,11 +124,9 @@ public class ContractController extends RestfulController {
      * @return
      */
     @RequestMapping("/uploadIdentification")
-    public Map<String,Object> uploadIdentification(@RequestParam("file") MultipartFile file,@RequestBody Map<String,Object> pramMap,HttpServletRequest request, HttpServletResponse response){
+    public Map<String,Object> uploadIdentification(@RequestParam("file") MultipartFile file,String filetype,HttpServletRequest request, HttpServletResponse response){
         Map<String,Object> result = new HashMap<String,Object>();
-        Object fileType = pramMap.get("fileType");
-        String FileType = String.valueOf(fileType);
-        if(FileType.equals("")||FileType==null){
+        if(filetype.equals("")||filetype==null){
             return ResponseUtils.responseFail("There is no type of file upload", this);
         }
         Teacher teacher = new Teacher().setId(getTeacher(request).getId());
@@ -145,13 +143,13 @@ public class ContractController extends RestfulController {
             teacherOtherDegrees.setTeacherId(teacher.getId());
             teacherOtherDegrees.setDegrees(fileVo.getUrl());
             //文件类型1-other_degrees  2-certificationFiles   3-Identification  4-Diploma 5-Contract  6-Passport   7-Driver's license
-            if(FileType.equals("passport")){
+            if(filetype.equals("passport")){
                 teacherOtherDegrees.setFileType(6);
             }
-            if(FileType.equals("driver")){
+            if(filetype.equals("driver")){
                 teacherOtherDegrees.setFileType(7);
             }
-            if(FileType.equals("identity")){
+            if(filetype.equals("identity")){
                 teacherOtherDegrees.setFileType(3);
             }
 
