@@ -81,7 +81,14 @@ public class ContractController extends RestfulController {
     }
 
 
-
+    /**
+     *
+     * 删除文件
+     * @param pramMap
+     * @param request
+     * @param response
+     * @return
+     */
     @RequestMapping("/remoteFile")
     public Map<String,Object> remoteFile(@RequestBody Map<String,Object> pramMap,HttpServletRequest request, HttpServletResponse response){
         Object id = pramMap.get("id");
@@ -102,18 +109,6 @@ public class ContractController extends RestfulController {
             return ResponseUtils.responseFail(e.getMessage(), this);
         }
     }
-
-
-
-
-
-
-
-
-
-
-
-
 
     /**
      * 文件上传功能

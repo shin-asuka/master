@@ -287,8 +287,13 @@ public class ContractService {
                       contract.add(obj);
                   }
                 });
-                contractFile.setContract(contract.get(contract.size()-1));
-                contractFile.setDiploma(diploma.get(diploma.size()-1));
+                if(CollectionUtils.isNotEmpty(contract)) {
+                    contractFile.setContract(contract.get(contract.size()-1));
+                }
+                if(CollectionUtils.isNotEmpty(diploma)){
+                    contractFile.setDiploma(diploma.get(contract.size()-1));
+                }
+
                 contractFile.setIdentification(identification);
                 contractFile.setCertification(certification);
                 contractFile.setDegrees(degrees);
