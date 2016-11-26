@@ -235,19 +235,17 @@ public class ContractService {
             teacherOtherDegreeses = teacherOtherDegreesDao.findByTeacherId(teacher.getId());
             logger.info("TeacherOtherDegreeses{}", teacherOtherDegreeses);
         }
-            List<TeacherOtherDegrees>  degrees;
-            List<TeacherOtherDegrees> certification;
-            Map<String,TeacherOtherDegrees> identification;
-            List<TeacherOtherDegrees> diploma;
-            List<TeacherOtherDegrees> contract;
+
+
+
 
 
             if(CollectionUtils.isNotEmpty(teacherOtherDegreeses)) {
-                degrees = new ArrayList<TeacherOtherDegrees>();
-                contract = new ArrayList<TeacherOtherDegrees>();
-                identification = new HashMap<String,TeacherOtherDegrees>();
-                diploma = new ArrayList<TeacherOtherDegrees>();
-                certification = new ArrayList<TeacherOtherDegrees>();
+                List<TeacherOtherDegrees>  degrees = new ArrayList<TeacherOtherDegrees>();
+                List<TeacherOtherDegrees>  contract = new ArrayList<TeacherOtherDegrees>();
+                Map<String,TeacherOtherDegrees>  identification = new HashMap<String,TeacherOtherDegrees>();
+                List<TeacherOtherDegrees>  diploma = new ArrayList<TeacherOtherDegrees>();
+                List<TeacherOtherDegrees>  certification = new ArrayList<TeacherOtherDegrees>();
                 String result="";
               for(TeacherOtherDegrees obj:teacherOtherDegreeses) {
                   if (obj.getFileType() == 1) {
