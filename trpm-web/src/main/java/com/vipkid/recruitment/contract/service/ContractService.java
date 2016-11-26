@@ -254,6 +254,7 @@ public class ContractService {
             if(CollectionUtils.isNotEmpty(teacherOtherDegreeses)) {
                 List<TeacherOtherDegrees>  degrees = new ArrayList<TeacherOtherDegrees>();
                 List<TeacherOtherDegrees>  contract = new ArrayList<TeacherOtherDegrees>();
+                List<String>  res = new ArrayList<String>();
                 Map<String,TeacherOtherDegrees>  identification = new HashMap<String,TeacherOtherDegrees>();
                 List<TeacherOtherDegrees>  diploma = new ArrayList<TeacherOtherDegrees>();
                 List<TeacherOtherDegrees>  certification = new ArrayList<TeacherOtherDegrees>();
@@ -279,7 +280,13 @@ public class ContractService {
                   if (obj.getFileType() == 5) {
                       contract.add(obj);
                   }
+                  if(obj.getResult()!=null&&obj.getResult().equals("")) {
+                      res.add(obj.getResult());
+                  }
+
                 });
+
+
                 if(CollectionUtils.isNotEmpty(contract)) {
                     contractFile.setContract(contract.get(contract.size()-1));
                 }
@@ -287,6 +294,7 @@ public class ContractService {
                     contractFile.setDiploma(diploma.get(contract.size()-1));
                 }
 
+                contractFile.setResult(isPass(res));
                 contractFile.setIdentification(identification);
                 contractFile.setCertification(certification);
                 contractFile.setDegrees(degrees);
@@ -296,6 +304,19 @@ public class ContractService {
 
             return contractFile;
 
+    }
+
+    public String isPass(List<String> res){
+        if(CollectionUtils.isEmpty(res)){
+            return String.valueOf(TeacherApplicationEnum.Result.FAIL);
+        }
+
+        for(String result:res){
+            if(result.equals("FAIL")){
+                return String.valueOf(TeacherApplicationEnum.Result.FAIL);
+            }
+        }
+        return String.valueOf(TeacherApplicationEnum.Result.PASS);
     }
 
 }
