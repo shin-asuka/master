@@ -31,6 +31,14 @@ public class TeacherOtherDegreesDao extends MapperDaoTemplate<TeacherOtherDegree
         teacherOtherDegrees.setTeacherApplicationId(teacherApplicationId);
         return super.selectList( teacherOtherDegrees,"findByTeacherIdAndTeacherApplicationId");
     }
+
+    public List<TeacherOtherDegrees> findByTeacherId(long teacherId){
+        TeacherOtherDegrees teacherOtherDegrees =new TeacherOtherDegrees();
+        teacherOtherDegrees.setTeacherId(teacherId);
+        return super.selectList( teacherOtherDegrees,"findByTeacherId");
+    }
+
+
     public int  delete(TeacherOtherDegrees teacherOtherDegrees){
         return super.delete(teacherOtherDegrees);
     }

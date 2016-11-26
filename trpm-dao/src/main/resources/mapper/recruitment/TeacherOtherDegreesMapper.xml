@@ -57,6 +57,15 @@
     </select>
 
 
+    <select id="findByTeacherId"  resultType="com.vipkid.recruitment.entity.TeacherOtherDegrees" >
+        SELECT
+        <include refid="teacherOtherDegreesColumns"/>
+        FROM teacher_other_degrees
+        WHERE
+        teacher_other_degrees.teacher_id =#{teacherId}
+    </select>
+
+
     <select id="findById"  resultType="com.vipkid.recruitment.entity.TeacherOtherDegrees" >
         SELECT
         <include refid="teacherOtherDegreesColumns"/>

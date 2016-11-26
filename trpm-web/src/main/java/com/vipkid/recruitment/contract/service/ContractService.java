@@ -225,10 +225,13 @@ public class ContractService {
         }
         List<TeacherApplication> listEntity = teacherApplicationDao.findCurrentApplication(teacher.getId());
         logger.info("用户：{}查询TeacherApplication",teacher.getId());
+        List<TeacherOtherDegrees> TeacherOtherDegreeses;
         if(CollectionUtils.isNotEmpty(listEntity)) {
             TeacherApplication teacherApplication = listEntity.get(0);
-            List<TeacherOtherDegrees>  TeacherOtherDegreeses =   teacherOtherDegreesDao.findByTeacherIdAndTeacherApplicationId(teacher.getId(),teacherApplication.getId());
-
+           TeacherOtherDegreeses = teacherOtherDegreesDao.findByTeacherIdAndTeacherApplicationId(teacher.getId(), teacherApplication.getId());
+        }else {
+            TeacherOtherDegreeses = teacherOtherDegreesDao.findByTeacherId(teacher.getId());
+        }
             List<TeacherOtherDegrees>  degrees;
             List<TeacherOtherDegrees> certification;
             Map<String,TeacherOtherDegrees> identification;
@@ -244,7 +247,6 @@ public class ContractService {
                 certification = new ArrayList<TeacherOtherDegrees>();
                 String result="";
               for(TeacherOtherDegrees obj:TeacherOtherDegreeses) {
-                  logger.info("文件的Url",obj.getDegrees());
                   if (obj.getFileType() == 1) {
                       degrees.add(obj);
                   }
@@ -277,7 +279,7 @@ public class ContractService {
                 contractFile.setIdentification(identification);
                 contractFile.setCertification(certification);
                 contractFile.setDegrees(degrees);
-            }
+
         }
 
 
