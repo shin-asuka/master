@@ -32,6 +32,7 @@ import com.vipkid.trpm.service.passport.RemberService;
 import com.vipkid.trpm.service.portal.PersonalInfoService;
 import com.vipkid.trpm.service.portal.TeacherAddressService;
 import com.vipkid.trpm.service.portal.TeacherTaxpayerFormService;
+import com.vipkid.trpm.service.rest.LoginService;
 import com.vipkid.trpm.util.CookieUtils;
 import com.vipkid.trpm.validator.ChangePasswordValidator;
 
@@ -66,13 +67,17 @@ public class PersonalInfoController extends AbstractPortalController {
 	
 	@Autowired
 	private TeacherTaxpayerFormService teacherTaxpayerFormService;
+	
+	@Autowired
+    private LoginService loginService;
+	
 
 	@RequestMapping("/personalInfo")
 	public String personalInfo(HttpServletRequest request, HttpServletResponse response, Model model) {
 		logger.info("页面初始化");
 		
 		//传一个参数给前端，让前端判断是否提醒用户填写bank信息
-		Teacher teacher = indexService.getTeacher(request);
+		Teacher teacher = loginService.getTeacher();
 		String bankCardNumber = teacher.getBankCardNumber();
 		boolean isRemindEditBankInfo = bankCardNumber==null||bankCardNumber.isEmpty();//如果没有银行卡号，就提醒
 		model.addAttribute("isRemindEditBankInfo", isRemindEditBankInfo);
@@ -102,7 +107,7 @@ public class PersonalInfoController extends AbstractPortalController {
 		logger.info("页面初始化：子页面name = bankinfo_edit");
 
 		/* 获取当前登录的老师信息 */
-		Teacher teacher = indexService.getTeacher(request);
+		Teacher teacher = loginService.getTeacher();
 
 		// 查询国家信息
 		model.addAttribute("countrys", personalInfoService.getCountrys());
@@ -123,14 +128,14 @@ public class PersonalInfoController extends AbstractPortalController {
 	public String getTeaching(HttpServletRequest request, HttpServletResponse response, Model model) {
 		logger.info("页面初始化：子页面name = teaching");
 		/* 获取当前登录的老师信息 */
-		Teacher teacher = indexService.getTeacher(request);
+		Teacher teacher = loginService.getTeacher();
 		model.addAllAttributes(personalInfoService.personalTeaching(teacher.getId()));
 		return view("personal/personal_teaching");
 	}
 
 	@RequestMapping("/personal/basicinfo")
 	public String getBasicinfoView(HttpServletRequest request, HttpServletResponse response, Model model) {
-		Teacher teacher = indexService.getTeacher(request);
+		Teacher teacher = loginService.getTeacher();
 		TeacherAddress currentAddress = personalInfoService.getTeacherAddress(teacher.getCurrentAddressId());
 		if (currentAddress != null) {
 			TeacherLocation currentCountry = personalInfoService.getLocationById(currentAddress.getCountryId());
@@ -150,7 +155,7 @@ public class PersonalInfoController extends AbstractPortalController {
 		logger.info("页面初始化：子页面name = basicinfo_edit");
 
 		/* 获取当前登录的老师信息 */
-		Teacher teacher = indexService.getTeacher(request);
+		Teacher teacher = loginService.getTeacher();
 
 		// 查询国家代码
 		model.addAttribute("teacherNationalityCodes", personalInfoService.getTeacherNationalityCodes());
@@ -179,7 +184,7 @@ public class PersonalInfoController extends AbstractPortalController {
 		logger.info("页面初始化：子页面name = bankinfo");
 
 		/* 获取当前登录的老师信息 */
-		Teacher teacher = indexService.getTeacher(request);
+		Teacher teacher = loginService.getTeacher();
 		TeacherAddress beneficiaryAddress = personalInfoService.getTeacherAddress(teacher.getBeneficiaryAddressId());
 		if (null != beneficiaryAddress) {
 			TeacherLocation beneficiaryCountry = personalInfoService.getLocationById(beneficiaryAddress.getCountryId());
@@ -220,12 +225,12 @@ public class PersonalInfoController extends AbstractPortalController {
 	@RequestMapping(value = "/setBasicInfoAction", method = RequestMethod.POST)
 	public String setBasicInfoAction(HttpServletRequest request, HttpServletResponse response, BasicInfo basicInfo,
 			TeacherAddress teacherAddress) {
-		Teacher teacher = indexService.getTeacher(request);
+		Teacher teacher = loginService.getTeacher();
 		teacherAddress.setTeacherId((int) teacher.getId());
 		Map<String, Object> modelMap = personalInfoService.doSetBasicInfo(teacher, basicInfo, teacherAddress);
 		
-		User user = (User) indexService.getUser(request);
-		indexService.setLoginCooke(response, user);
+		User user = (User) loginService.getUser();
+		loginService.setLoginCooke(response, user);
 		return jsonView(response, modelMap);
 	}
 
@@ -252,12 +257,12 @@ public class PersonalInfoController extends AbstractPortalController {
 		// 验证用户密码
 		String encodedPassword = mSHA256PasswordEncoder.encode(changePassword.getOriginalPassword());
 		//新密码不相等
-		boolean a = StringUtils.equals(encodedPassword, indexService.getUser(request).getPassword());
+		boolean a = StringUtils.equals(encodedPassword, loginService.getUser().getPassword());
 		//获取的旧密码解密后与
 		boolean b = false;
 		try{
 		    //前面强制修改密码处理比较
-		    b = new String(Base64.getDecoder().decode(changePassword.getOriginalPassword())).equals(indexService.getUser(request).getPassword());
+		    b = new String(Base64.getDecoder().decode(changePassword.getOriginalPassword())).equals(loginService.getUser().getPassword());
 		}catch(Exception e){
 		   logger.error("changePasswordAction error",e);
 		}
@@ -266,7 +271,7 @@ public class PersonalInfoController extends AbstractPortalController {
 			return jsonView(response, modelMap);
 		}
 
-		Teacher teacher = indexService.getTeacher(request);
+		Teacher teacher = loginService.getTeacher();
 
 		// 执行密码修改操作
 		String encodedNewPassword = mSHA256PasswordEncoder.encode(changePassword.getUserpassword());
@@ -289,7 +294,7 @@ public class PersonalInfoController extends AbstractPortalController {
 	@RequestMapping(value = "/setBankInfoAction", method = RequestMethod.POST)
 	public String setBankInfoAction(HttpServletRequest request, HttpServletResponse response, TeacherBankVO bankInfo) {
 		logger.info("setBankInfoAction");
-		Teacher teacher = indexService.getTeacher(request);
+		Teacher teacher = loginService.getTeacher();
 		Map<String, Object> modelMap = personalInfoService.doSetBankInfo(teacher, bankInfo);
 		return jsonView(response, modelMap);
 	}
@@ -317,7 +322,7 @@ public class PersonalInfoController extends AbstractPortalController {
 	@RequestMapping(value = "/uploadImage", method = RequestMethod.POST)
 	public String upload(MultipartHttpServletRequest request, HttpServletResponse response,
 			@RequestParam("file") MultipartFile file) {
-		Teacher teacher = indexService.getTeacher(request);
+		Teacher teacher = loginService.getTeacher();
 		Map<String, Object> modelMap = personalInfoService.doUploadImage(file, teacher.getId());
 		return jsonView(response, modelMap);
 	}

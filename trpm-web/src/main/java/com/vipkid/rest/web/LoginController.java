@@ -449,13 +449,13 @@ public class LoginController extends RestfulController {
                 logger.warn("auth : token is null");
                 return result;
             }
-            User user = loginService.getUser(request);
+            User user = loginService.getUser();
             if (user == null) {
                 logger.warn("check auth user is null " + user);
                 return result;
             }
             
-            Teacher teacher = loginService.getTeacher(request);
+            Teacher teacher = loginService.getTeacher();
             if (teacher == null) {
                 logger.warn("check auth teacher is null " + teacher);
                 return result;

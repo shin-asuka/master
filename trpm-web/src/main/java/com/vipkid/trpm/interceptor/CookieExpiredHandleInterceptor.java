@@ -1,5 +1,25 @@
 package com.vipkid.trpm.interceptor;
 
+
+import java.io.IOException;
+import java.util.Map;
+
+import javax.annotation.Resource;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.lang3.StringUtils;
+import org.community.config.PropertyConfigurer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.method.HandlerMethod;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
+
 import com.vipkid.http.service.AnnouncementHttpService;
 import com.vipkid.rest.config.RestfulConfig.RoleClass;
 import com.vipkid.rest.security.AppContext;
@@ -11,29 +31,13 @@ import com.vipkid.trpm.entity.Staff;
 import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.entity.User;
 import com.vipkid.trpm.proxy.RedisProxy;
-import com.vipkid.trpm.service.passport.IndexService;
 import com.vipkid.trpm.service.portal.LocationService;
 import com.vipkid.trpm.service.rest.AdminQuizService;
+import com.vipkid.trpm.service.rest.LoginService;
 import com.vipkid.trpm.service.rest.TeacherPageLoginService;
 import com.vipkid.trpm.util.CacheUtils;
 import com.vipkid.trpm.util.CookieUtils;
 import com.vipkid.trpm.util.IpUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.community.config.PropertyConfigurer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.method.HandlerMethod;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
-
-import javax.annotation.Resource;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.Map;
 
 public class CookieExpiredHandleInterceptor extends HandlerInterceptorAdapter {
 
@@ -46,9 +50,12 @@ public class CookieExpiredHandleInterceptor extends HandlerInterceptorAdapter {
 	@Autowired
 	private RedisProxy redisProxy;
 
-	@Autowired
-	private IndexService indexService;
+	/*@Autowired
+	private IndexService indexService;*/
 
+	@Autowired
+    private LoginService loginService;
+	
 	@Autowired
 	private LocationService locationService;
 
@@ -93,18 +100,34 @@ public class CookieExpiredHandleInterceptor extends HandlerInterceptorAdapter {
 			return false;
 		}
 
-        User user = indexService.getUser(request);
+        User user = loginService.getUser();
         logger.info("preHandleUserInfo token = {} ,ip,user = {}, url = {} ",token ,ip,user==null?null:(user.getId()+"|"+user.getUsername()),request.getRequestURL());
         if(user == null){
             logger.info("IP:{},用户为NULL。。。",IpUtils.getIpAddress(request));
-            response.sendRedirect(request.getContextPath() + "/index.shtml");
+            //response.sendRedirect(request.getContextPath() + "/index.shtml");
             return false; 
         }
+        
+        //判断当前用户所在地区的ip是否变化，如果变化。则返回空用户，用户重新登陆
+        Boolean isIpChange = IpUtils.checkUserIpChange(user);
+        if(isIpChange){
+        	String currentIp = IpUtils.getRequestRemoteIP();
+        	String uri = request.getRequestURI();
+        	String redisIp = user.getIp();
+        	logger.info("用户IP地址发生变化  getUser userIPChange token = {},uri={},user = {}, redisIp = {}, currentIp = {}",token,uri,user.getId()+"|"+user.getUsername(),redisIp,currentIp);
+        	if( StringUtils.contains(xRequestedWith, "XMLHttpRequest")){
+        		response.setStatus(HttpStatus.UNAUTHORIZED.value());
+        	}else{
+        		response.sendRedirect(request.getContextPath() + "/index.shtml");
+        	}
+        	return false;
+        }
+        
         AppContext.setUser(user);
         
         logger.info("IP:{},user:{},发起请求:{}",IpUtils.getIpAddress(request),user.getId(),request.getRequestURI());
         
-        Teacher teacher = indexService.getTeacher(request);
+        Teacher teacher = loginService.getTeacher();
         if(teacher == null){
             logger.info("IP:{},Teacher is NULL。。。",request.getRemoteAddr());
             return false; 
@@ -112,7 +135,7 @@ public class CookieExpiredHandleInterceptor extends HandlerInterceptorAdapter {
         
 		Staff manager = null;
 		if(teacher !=null && teacher.getManager()>0){
-			manager = indexService.getStaff(teacher.getManager());
+			manager = loginService.getStaff(teacher.getManager());
 			if(manager!=null){
 				String managerName = manager.getEnglishName();
 				request.setAttribute("TRPM_MANAGER_NAME", managerName);
@@ -123,10 +146,10 @@ public class CookieExpiredHandleInterceptor extends HandlerInterceptorAdapter {
 		request.setAttribute("locationService", locationService);
 		request.setAttribute("TRPM_TEACHER", teacher);
 		request.setAttribute("TRPM_USER", user);
-		request.setAttribute("TRPM_COURSE_TYPES", indexService.getCourseType(user.getId()));
+		request.setAttribute("TRPM_COURSE_TYPES", loginService.getCourseType(user.getId()));
 		request.setAttribute("recruitmentUrl", PropertyConfigurer.stringValue("recruitment.www"));
 		
-        Map<String,Object> role = indexService.getAllRole(user.getId());
+        Map<String,Object> role = loginService.getAllRole(user.getId());
         request.setAttribute("isPes",role.get(RoleClass.PES));
         request.setAttribute("isTe",role.get(RoleClass.TE));
         request.setAttribute("isTes",role.get(RoleClass.TES));

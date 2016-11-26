@@ -11,6 +11,7 @@ import com.vipkid.trpm.security.SHA256PasswordEncoder;
 import com.vipkid.trpm.service.passport.IndexService;
 import com.vipkid.trpm.service.passport.PassportService;
 import com.vipkid.trpm.service.passport.RemberService;
+import com.vipkid.trpm.service.rest.LoginService;
 import com.vipkid.trpm.util.AES;
 import com.vipkid.trpm.util.CookieUtils;
 import com.vipkid.trpm.util.IpUtils;
@@ -44,12 +45,15 @@ public class PassportController extends AbstractController {
 	@Autowired
 	private PassportService passportService;
 
-	@Autowired
-	private IndexService indexService;
+	/*@Autowired
+	private IndexService indexService;*/
 
 	@Autowired
 	private RemberService remberService;
 
+	@Autowired
+    private LoginService loginService;
+	
 	/**
 	 * 登陆入口
 	 * 
@@ -145,7 +149,7 @@ public class PassportController extends AbstractController {
 		// 只有教师端老师登陆后才做强制修改密码判断
 		logger.info("登陆  REGULAR start !");
 		if (TeacherEnum.LifeCycle.REGULAR.toString().equals(teacher.getLifeCycle())) {
-			indexService.changePasswordNotice(response, _strPwd);
+			loginService.changePasswordNotice(response, _strPwd);
 		}
 
 		// 如果招聘Id不存在则set进去
@@ -419,9 +423,9 @@ public class PassportController extends AbstractController {
 			if (teacher != null && TeacherEnum.LifeCycle.REGULAR.toString().equals(teacher.getLifeCycle())) {
 				this.passportService.updateRecruitmentId(teacher);
 
-				indexService.setLoginCooke(response, user);
+				loginService.setLoginCooke(response, user);
 				/* 设置老师能教的课程类型列表 */
-				indexService.setCourseTypes(user.getId(), indexService.getCourseType(user.getId()));
+				loginService.setCourseTypes(user.getId(), loginService.getCourseType(user.getId()));
 
 				return "redirect:/bookings.shtml";
 			}

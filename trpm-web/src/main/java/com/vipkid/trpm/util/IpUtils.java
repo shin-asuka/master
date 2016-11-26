@@ -140,14 +140,29 @@ public class IpUtils {
 	 * @return
 	 */
 	public static Boolean checkUserIpChange(User user){
-		if(!PropertyConfigurer.booleanValue("signup.checkIP")){
+		if(user == null){
 			return false; //跳过ip检查
 		}
 		
-		Boolean isChange = true;
-		if(user != null && StringUtils.isNotBlank(user.getIp())){
-			String ip = IpUtils.getRequestRemoteIP();
+		if(!PropertyConfigurer.booleanValue("user.checkIP")){
+			return false; //跳过ip检查
+		}
+		
+		//针对退出在线教室进行校验
+		HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+		String uri = request.getRequestURI();
+		Boolean isNeedCheckedUrl = isNeedCheckUrl(uri);
+		logger.info("RequestUserUri isNeedCheckedUrl = {}, uri = {}, user = {}",
+				isNeedCheckedUrl,uri,user.getId()+"|"+user.getUsername());
+		if(!isNeedCheckedUrl){
+			return false;
+		}
+		
+		Boolean isChange = false;
+		String redisIp = user.getIp();
+		if(StringUtils.isNotBlank(redisIp)){
 			
+			String ip = IpUtils.getRequestRemoteIP();
 			Country country = geoIPService.getCountryName(ip);
 			
 			//校验ip所在国家，对需要检查国家进行校验
@@ -160,25 +175,15 @@ public class IpUtils {
 			logger.info("RequestUserCountry isNeedCheckCountry = {},user = {}, currentIp = {},IsoCode = {},countryName = {} , cityName = {}",
 					isCheckedCountry,user.getId()+"|"+user.getUsername(),ip,countryIsoCode,countryName,cityName);
 			if(!isCheckedCountry){
-				logger.info("");
 				return false; //国家 不在检测范围类， 跳过ip检查
 			}
 			
-			//针对退出在线教室进行校验
-			HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
-			String uri = request.getRequestURI();
-			Boolean isNeedCheckedUrl = isNeedCheckUrl(uri);
-			logger.info("RequestUserUri isNeedCheckedUrl = {},user = {}, uri = {},IsoCode = {},countryName = {} , cityName = {}",
-					isNeedCheckedUrl,user.getId()+"|"+user.getUsername(),uri,countryIsoCode,countryName,cityName);
-			if(!isNeedCheckedUrl){
-				return false;
-			}
-			
 			//验证IP地址是否发生改变
-	        String redisIp = user.getIp();
-	        isChange = StringUtils.isNotBlank(ip) && ip.equals(redisIp);
-	        logger.info("检测用户IP地址 RequestUserIP isChange={} user = {}, redisIp = {}, currentIp = {}, uri = {}",isChange,user.getId()+"|"+user.getUsername(),redisIp,ip,uri);
+	        if((StringUtils.isNotBlank(ip) && ip.equals(redisIp))){
+	        	isChange = true;
+	        }
 	        
+	        logger.info("检测用户IP地址 RequestUserIP isChange={} user = {}, redisIp = {}, currentIp = {}, uri = {}",isChange,user.getId()+"|"+user.getUsername(),redisIp,ip,uri);
 	        if(isChange){
 	        	Country countryOld = geoIPService.getCountryName(redisIp);
 	        	String countryOldName = countryOld==null ?null:countryOld.getNames().get(IpUtils.COUNTRY_NAME_ZHCN);
@@ -196,7 +201,7 @@ public class IpUtils {
 		Boolean isChecked = false;
 		if(StringUtils.isNotBlank(countryIsoCode)){
 			try {
-				String checkCountry = PropertyConfigurer.stringValue("signup.checkCountrys");
+				String checkCountry = PropertyConfigurer.stringValue("user.checkCountrys");
 				checkCountry = checkCountry.toUpperCase();
 				List<String> checkCountrys = Lists.newArrayList(checkCountry.split(","));
 				if( CollectionUtils.isNotEmpty(checkCountrys) 
@@ -214,14 +219,21 @@ public class IpUtils {
 		Boolean isChecked = false;
 		if(StringUtils.isNotBlank(uri)){
 			try {
-				String checkUrl = PropertyConfigurer.stringValue("signup.checkUrls");
+				String checkUrl = PropertyConfigurer.stringValue("user.checkUrls");
 				List<String> checkUrls = Lists.newArrayList(checkUrl.split(","));
 				String uriReq = uri;
+				/*String ext = "";
 				if(uri.lastIndexOf(".")>-1){
 					uriReq = uri.substring(0,uri.lastIndexOf("."));
-				}
+					ext = uri.substring(uri.lastIndexOf("."));
+				}*/
 				if(CollectionUtils.isNotEmpty(checkUrls) && checkUrls.contains(uriReq)){
-					isChecked = true; //url 在检测范围类， 进行ip检查
+					for (String url : checkUrls) {
+						if(uriReq.equalsIgnoreCase(url)){
+							isChecked = true; //url 在检测范围类， 进行ip检查
+							break;
+						}
+					}
 				}
 			} catch (Exception e) {
 				e.printStackTrace();

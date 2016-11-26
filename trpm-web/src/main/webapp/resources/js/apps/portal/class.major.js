@@ -4,6 +4,12 @@ define(["function","jquery-bootstrap","jquery-load","countdown" ], function() {
 
 	var ajaxErrorfunction = function(reponse, status, info) {
 		Portal.loading("close");
+		/*if(reponse!=null){
+			if(reponse.status == 401){
+				window.location.href = webPath + "/index.shtml";
+				return ;
+			}
+		}*/
 		if (reponse.statusText == "timeout") {
 			$.alert("error", {
 				title : "Server request timed out."
@@ -188,6 +194,12 @@ define(["function","jquery-bootstrap","jquery-load","countdown" ], function() {
 			},
 			timeout : _timeout,
 			error : function(reponse, status, info) {
+				if(reponse!=null ){
+					if(reponse.status == 401){ //无权限进入登录界面
+						window.location.href = webPath + "/index.shtml";
+						return ;
+					}
+				}
 				ajaxErrorfunction(reponse, status, info);
 			}
 		});

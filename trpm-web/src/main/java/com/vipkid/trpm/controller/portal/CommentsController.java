@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.service.passport.IndexService;
 import com.vipkid.trpm.service.portal.CommentsService;
+import com.vipkid.trpm.service.rest.LoginService;
 import com.vipkid.trpm.util.DateUtils;
 
 @Controller
@@ -22,6 +23,10 @@ public class CommentsController extends AbstractPortalController {
 
     @Autowired
     private IndexService indexService;
+    
+    @Autowired
+    private LoginService loginService;
+    
 	/**
 	 * 老师的Comments首页面
 	 * 
@@ -42,7 +47,7 @@ public class CommentsController extends AbstractPortalController {
 		model.addAttribute("linePerPage", LINE_PER_PAGE);
 
 		String monthOfYear = DateUtils.monthOfYear(offsetOfMonth, DateUtils.FMT_YM);
-		Teacher teacher = indexService.getTeacher(request);
+		Teacher teacher = loginService.getTeacher();
 		model.addAllAttributes(commentsService.doComments(teacher.getId(), monthOfYear,
 				teacher.getTimezone()));
 
@@ -65,7 +70,7 @@ public class CommentsController extends AbstractPortalController {
 		int offsetOfMonth = ServletRequestUtils.getIntParameter(request, "offsetOfMonth", 0);
 		String monthOfYear = DateUtils.monthOfYear(offsetOfMonth, DateUtils.FMT_YM);
 
-		Teacher teacher = indexService.getTeacher(request);
+		Teacher teacher = loginService.getTeacher();
 		model.addAllAttributes(commentsService.doCommentsList(teacher.getId(), monthOfYear,
 				teacher.getTimezone(), curPage, LINE_PER_PAGE));
 
