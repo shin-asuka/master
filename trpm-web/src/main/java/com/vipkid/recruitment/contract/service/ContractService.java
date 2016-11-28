@@ -230,7 +230,7 @@ public class ContractService {
      * @param t
      * @return
      */
-    public ContractFile findContract(Teacher t){
+    public Map<String,ContractFile> findContract(Teacher t){
         ContractFile contractFile = new ContractFile();
         Teacher teacher =  teacherDao.findById(t.getId());
          logger.info("用户：{}查询上传文件",teacher.getId());
@@ -246,6 +246,8 @@ public class ContractService {
             logger.info("用户{}查询未提交的文件", teacher.getId());
             teacherOtherDegreeses = teacherOtherDegreesDao.findByTeacherId(teacher.getId());
         }
+        Map<String,ContractFile>  map = new HashMap<String,ContractFile>();
+
             if(CollectionUtils.isNotEmpty(teacherOtherDegreeses)) {
                 List<TeacherOtherDegrees>  degrees = new ArrayList<TeacherOtherDegrees>();
                 List<TeacherOtherDegrees>  contract = new ArrayList<TeacherOtherDegrees>();
@@ -301,14 +303,12 @@ public class ContractService {
                 if(CollectionUtils.isNotEmpty(identification)){
                     contractFile.setIdentification(identification.get(identification.size()-1));
                 }
-                contractFile.setResult(isPass(res));
+                String result =  isPass(res);
                 contractFile.setCertification(certification);
                 contractFile.setDegrees(degrees);
+                map.put(result,contractFile);
         }
-
-
-
-            return contractFile;
+            return map;
 
     }
 

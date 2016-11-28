@@ -23,8 +23,6 @@ public class ContractFile{
     //Teacher表contract
     private TeacherOtherDegrees contract;
 
-    //返回结果
-    private String result;
 
     public TeacherOtherDegrees getIdentification() {
         return identification;
@@ -74,11 +72,4 @@ public class ContractFile{
         this.contract = contract;
     }
 
-    public String getResult() {
-        return result;
-    }
-
-    public void setResult(String result) {
-        this.result = result;
-    }
 }

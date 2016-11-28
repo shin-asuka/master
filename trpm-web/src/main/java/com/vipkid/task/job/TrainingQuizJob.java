@@ -8,8 +8,10 @@ import com.vipkid.recruitment.dao.TeacherApplicationDao;
 import com.vipkid.recruitment.entity.TeacherApplication;
 import com.vipkid.task.utils.UADateUtils;
 import com.vipkid.trpm.dao.TeacherDao;
+import com.vipkid.trpm.dao.TeacherQuizDao;
 import com.vipkid.trpm.dao.UserDao;
 import com.vipkid.trpm.entity.Teacher;
+import com.vipkid.trpm.entity.TeacherQuiz;
 import com.vipkid.vschedule.client.common.Vschedule;
 import com.vipkid.vschedule.client.schedule.JobContext;
 import org.apache.commons.collections.map.HashedMap;
@@ -35,6 +37,8 @@ public class TrainingQuizJob {
     private TeacherApplicationDao teacherApplicationDao;
     @Autowired
     private TeacherDao teacherDao;
+    @Autowired
+    private TeacherQuizDao teacherQuizDao;
 
     @Vschedule
     public void doJob (JobContext jobContext) {
@@ -56,7 +60,11 @@ public class TrainingQuizJob {
         Map<Long, TeacherApplication> teacherApplicationsMap = new HashedMap();
         List<Map> times = UADateUtils.getStartEndOclockTimeMapListByBeforeHours(beforeHours);
 
-        List<TeacherApplication> teacherApplications = teacherApplicationDao.findByAuditTimesStatusResult(times, TeacherApplicationEnum.Status.BASIC_INFO.toString(), TeacherApplicationEnum.Result.PASS.toString());
+
+
+
+
+        /*List<TeacherApplication> teacherApplications = teacherApplicationDao.findByAuditTimesStatusResult(times, TeacherApplicationEnum.Status.BASIC_INFO.toString(), TeacherApplicationEnum.Result.PASS.toString());
         logger.info("【JOB.EMAIL.TrainingQuiz】FIND.1: Cost {}ms. Query: times = {}, status = {}, result = {}; Result: users = ",
                 stopwatch.elapsed(TimeUnit.MILLISECONDS), JsonUtils.toJSONString(times), TeacherApplicationEnum.Status.BASIC_INFO.toString(), TeacherApplicationEnum.Result.PASS.toString());
         for(TeacherApplication ta : teacherApplications){
@@ -68,7 +76,7 @@ public class TrainingQuizJob {
         List<TeacherApplication> teacherApplicationsToRemove = teacherApplicationDao.findByTeacherIdsStatusNeResult(teacherIds, TeacherApplicationEnum.Status.INTERVIEW.toString(), null);
         logger.info("【JOB.EMAIL.TrainingQuiz】FIND.2: Cost {}ms. Query: teacherIds = {}, status = {}, result = {}; Result: teacherApplications = ",
                 stopwatch.elapsed(TimeUnit.MILLISECONDS), JsonUtils.toJSONString(teacherIds), TeacherApplicationEnum.Status.INTERVIEW.toString(), "null");
-        teacherApplicationsToRemove.forEach(x -> teacherIds.remove(x.getTeacherId()));
+        teacherApplicationsToRemove.forEach(x -> teacherIds.remove(x.getTeacherId()));*/
 
         if(teacherIds.size() == 0) return;
         List<Teacher> teachers = teacherDao.findByIds(teacherIds);

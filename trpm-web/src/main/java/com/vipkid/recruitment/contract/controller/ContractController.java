@@ -423,10 +423,17 @@ public class ContractController extends RestfulController {
         Map<String,Object> result = new HashMap<String,Object>();
         logger.info("保存用户：{}查询上传过的文件",teacher.getId());
         try {
-            ContractFile contractFile =  contractService.findContract(teacher);
-            logger.info("保存用户：{}查询上传过的文件{}",teacher.getId(),contractFile);
+            Map<String, ContractFile> map = contractService.findContract(teacher);
+            Iterator it = map.entrySet().iterator();
+            while (it.hasNext()) {
+                Map.Entry entry = (java.util.Map.Entry) it.next();
+                String re = (String) entry.getKey();
+                ContractFile contractFile = (ContractFile) entry.getValue();
+            logger.info("保存用户：{}查询上传过的文件{}", teacher.getId(), contractFile);
             result.put("file",contractFile);
-            result.put("status",true);
+            result.put("result", re);
+            result.put("status", true);
+            }
             return ResponseUtils.responseSuccess(result);
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
