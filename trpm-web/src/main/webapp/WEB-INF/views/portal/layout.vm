@@ -339,7 +339,7 @@
                     </li>
                 #end
                 <li class="$!{activePayrollInfo}">
-                    <a href="#springUrl('/payroll.shtml')">Payment</a>
+                    <a href="#springUrl('/payment.shtml')">Payment</a>
                 </li>
                 <li class="it-test">
                     <img src="#springUrl('/resources/images/nav/test-computer-icon.png')">
