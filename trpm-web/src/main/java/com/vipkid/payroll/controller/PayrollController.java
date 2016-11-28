@@ -94,7 +94,7 @@ public class PayrollController extends AbstractPortalController {
 		}
 		model.addAttribute("payrollType", payrollType);
 		model.addAttribute("linePerPage", LINE_PER_PAGE);
-		return view("payment");
+		return view("payroll");
 	}
 	
 	private boolean isTypeOneContract(String contract) {
@@ -141,7 +141,7 @@ public class PayrollController extends AbstractPortalController {
 				DateUtils.monthOfYear(offsetOfMonth, DateUtils.FMT_MMM_YYYY_US));
 		model.addAttribute("payrollType", payrollType);
 		model.addAttribute("message", message);
-		return view("payment");
+		return view("payroll");
 	}
 	 @RequestMapping("/salaryList")
 	public String salaryList(HttpServletRequest request, HttpServletResponse response, Model model) {
