@@ -60,7 +60,9 @@ public class TrainingQuizJob {
         Map<Long, TeacherApplication> teacherApplicationsMap = new HashedMap();
         List<Map> times = UADateUtils.getStartEndOclockTimeMapListByBeforeHours(beforeHours);
 
-
+        List<TeacherQuiz> teacherQuizs = teacherQuizDao.findByStatus();
+        logger.info("【JOB.EMAIL.TrainingQuiz】FIND.1: Cost {}ms. Query: times = {}, status = {}, result = {}; Result: users = ",
+                stopwatch.elapsed(TimeUnit.MILLISECONDS), JsonUtils.toJSONString(times), TeacherApplicationEnum.Status.TRAINING.toString(), TeacherApplicationEnum.Result.FAIL.toString());
 
 
 

@@ -89,8 +89,8 @@ public class ContractController extends RestfulController {
      * @param response
      * @return
      */
-    @RequestMapping("/remoteFile")
-    public Map<String,Object> remoteFile(@RequestBody Map<String,Object> pramMap,HttpServletRequest request, HttpServletResponse response){
+    @RequestMapping("/deleteFile")
+    public Map<String,Object> deleteFile(@RequestBody Map<String,Object> pramMap,HttpServletRequest request, HttpServletResponse response){
         Object id = pramMap.get("id");
         int fileId =Integer.parseInt(String.valueOf(id));
         Teacher teacher = getTeacher(request);

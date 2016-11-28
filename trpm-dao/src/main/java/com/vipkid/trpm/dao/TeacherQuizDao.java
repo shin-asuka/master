@@ -108,4 +108,10 @@ public class TeacherQuizDao extends MapperDaoTemplate<TeacherQuiz>{
         list = super.listEntity("findTagsByType", null);
         return list;
     }
+
+    public List<TeacherQuiz> findByStatus(){
+        TeacherQuiz teacherQuiz = new TeacherQuiz();
+        teacherQuiz.setStatus(TeacherQuizEnum.Status.NOQUIZ.val());
+        return super.selectList(teacherQuiz);
+    }
 }
