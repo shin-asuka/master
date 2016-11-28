@@ -49,7 +49,7 @@ li[role] a {
     #end
     </div>
   </div>
-   <form id="payrollForm" style="display: none;" method="post" action="#springUrl('/payroll.shtml')">
+   <form id="payrollForm" style="display: none;" method="post" action="#springUrl('/payment.shtml')">
     <input type="hidden" id="offsetOfMonth" name="offsetOfMonth" value="$!{offsetOfMonth}" />
     <input type="hidden" id="payrollType" name="payrollType" value="$!{payrollType}" />
     <input type="submit" />

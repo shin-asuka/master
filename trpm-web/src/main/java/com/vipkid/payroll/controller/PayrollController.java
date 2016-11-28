@@ -61,8 +61,7 @@ public class PayrollController extends AbstractPortalController {
 	    if(payrollType!=null&&payrollType.contains("PRICE")){
 	    	return priceList(request, response, model,payrollType);
 	    }
-		
-		
+			
 		try {
 
 			PayrollItemResponse payrollRpc = neoClient.getPayrollItemByTeacherAndMonth(teacherId, month);
@@ -95,7 +94,7 @@ public class PayrollController extends AbstractPortalController {
 		}
 		model.addAttribute("payrollType", payrollType);
 		model.addAttribute("linePerPage", LINE_PER_PAGE);
-		return view("payroll");
+		return view("payment");
 	}
 	
 	private boolean isTypeOneContract(String contract) {
@@ -142,7 +141,7 @@ public class PayrollController extends AbstractPortalController {
 				DateUtils.monthOfYear(offsetOfMonth, DateUtils.FMT_MMM_YYYY_US));
 		model.addAttribute("payrollType", payrollType);
 		model.addAttribute("message", message);
-		return view("payroll");
+		return view("payment");
 	}
 	 @RequestMapping("/salaryList")
 	public String salaryList(HttpServletRequest request, HttpServletResponse response, Model model) {
@@ -160,11 +159,6 @@ public class PayrollController extends AbstractPortalController {
 		int month = monthOfYear.getYear() * 100 + monthOfYear.getMonthValue() ;
 		itemType = ServletRequestUtils.getIntParameter(request, "itemType",
 				Result.SLALARY_TYPE_COURSE_ALL_RULE);
-		//Date..formatTo(instant, formatter)
-		
-//		teacherId = 1167406;
-//		month = 201605;
-		
 		model.addAttribute("offsetOfMonth", offsetOfMonth);
 		
 		try {
