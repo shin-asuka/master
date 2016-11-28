@@ -1,26 +1,8 @@
 package com.vipkid.trpm.interceptor;
 
-import java.io.IOException;
-import java.util.Map;
-
-import javax.annotation.Resource;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import com.vipkid.rest.security.AppContext;
-import org.apache.commons.lang3.StringUtils;
-import org.community.config.PropertyConfigurer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.method.HandlerMethod;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
-
 import com.vipkid.http.service.AnnouncementHttpService;
 import com.vipkid.rest.config.RestfulConfig.RoleClass;
+import com.vipkid.rest.security.AppContext;
 import com.vipkid.trpm.constant.ApplicationConstant;
 import com.vipkid.trpm.constant.ApplicationConstant.CookieKey;
 import com.vipkid.trpm.constant.ApplicationConstant.LoginType;
@@ -35,6 +17,22 @@ import com.vipkid.trpm.service.rest.AdminQuizService;
 import com.vipkid.trpm.service.rest.TeacherPageLoginService;
 import com.vipkid.trpm.util.CookieUtils;
 import com.vipkid.trpm.util.IpUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.community.config.PropertyConfigurer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.method.HandlerMethod;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
+
+import javax.annotation.Resource;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.Map;
 
 public class CookieExpiredHandleInterceptor extends HandlerInterceptorAdapter {
 
@@ -139,7 +137,7 @@ public class CookieExpiredHandleInterceptor extends HandlerInterceptorAdapter {
             }else{
                 //需要考试，请求的映射不再基本信息修改则进行跳转
                 logger.info("当前老师 [{}] 未通过考试", user.getName());
-                response.sendRedirect("/training/material");
+                response.sendRedirect("/teaching/material");
                 return false;
             }
         }
@@ -147,7 +145,7 @@ public class CookieExpiredHandleInterceptor extends HandlerInterceptorAdapter {
         //是否需要密码修改
 		if (!checkChangePasswordUri(request) && checkCookie(request)) {
 			logger.info("拦截检测到需要修改密码进入页面");
-			response.sendRedirect(request.getContextPath() + "/schedule.shtml");
+			response.sendRedirect(request.getContextPath() + "/bookings.shtml");
 			return false;
 		}
 		logger.info("通过拦截");
@@ -180,10 +178,7 @@ public class CookieExpiredHandleInterceptor extends HandlerInterceptorAdapter {
 	 */
 	private boolean checkCookie(HttpServletRequest request) {
 		Cookie cookie = CookieUtils.getCookie(request, ApplicationConstant.CookieKey.TRPM_CHANGE_WINDOW);
-		if (cookie != null && CookieKey.TRPM_CHANGE_WINDOW.equals(cookie.getValue())) {
-			return true;
-		}
-		return false;
+		return cookie != null && CookieKey.TRPM_CHANGE_WINDOW.equals(cookie.getValue());
 	}
 
 	/**

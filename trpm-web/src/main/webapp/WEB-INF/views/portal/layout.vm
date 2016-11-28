@@ -314,10 +314,10 @@
             </div>
             <ul class="nav" id="quiz-tips">
                 <li class="$!{material}">
-                    <a href="#springUrl('/training/material')">Teaching Center</a>
+                    <a href="#springUrl('/teaching/material')">Teaching Center</a>
                 </li>
                 <li class="$!{activeSchedule}">
-                    <a href="#springUrl('/schedule.shtml')">Bookings</a>
+                    <a href="#springUrl('/bookings.shtml')">Bookings</a>
                 </li>
                 <li class="$!{activeClassrooms}">
                     <a href="#springUrl('/classrooms.shtml')">Classrooms</a>

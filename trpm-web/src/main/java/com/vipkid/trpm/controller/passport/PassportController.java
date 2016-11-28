@@ -1,24 +1,5 @@
 package com.vipkid.trpm.controller.passport;
 
-import java.io.IOException;
-import java.util.Base64;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.lang.StringUtils;
-import org.community.config.PropertyConfigurer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.ServletRequestUtils;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-
 import com.vipkid.enums.TeacherEnum;
 import com.vipkid.enums.UserEnum;
 import com.vipkid.trpm.constant.ApplicationConstant;
@@ -33,6 +14,23 @@ import com.vipkid.trpm.service.passport.RemberService;
 import com.vipkid.trpm.util.AES;
 import com.vipkid.trpm.util.CookieUtils;
 import com.vipkid.trpm.util.IpUtils;
+import org.apache.commons.lang.StringUtils;
+import org.community.config.PropertyConfigurer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.ServletRequestUtils;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.Base64;
 
 @Controller
 @PreAuthorize("permitAll")
@@ -425,7 +423,7 @@ public class PassportController extends AbstractController {
 				/* 设置老师能教的课程类型列表 */
 				indexService.setCourseTypes(user.getId(), indexService.getCourseType(user.getId()));
 
-				return "redirect:/schedule.shtml";
+				return "redirect:/bookings.shtml";
 			}
 		}
 		return "redirect:/index.shtml";

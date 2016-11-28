@@ -36,7 +36,7 @@ public class ScheduleController extends AbstractPortalController {
 	@Autowired
 	private TeacherPageLoginService teacherPageLoginService;
 
-	@RequestMapping("/schedule")
+	@RequestMapping("/bookings")
 	public String schedule(HttpServletRequest request, HttpServletResponse response, Model model) {
 		/* 当前显示的课程类型 */
 		String courseType = ServletRequestUtils.getStringParameter(request, "courseType", CourseType.MAJOR);

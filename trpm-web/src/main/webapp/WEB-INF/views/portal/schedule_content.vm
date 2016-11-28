@@ -19,7 +19,7 @@
     <div class="col-md-2">
       <button type="button" class="btn btn-primary btn-sm next" style="float: right; margin-right:30px; width:180px;">Next Week &gt;</button>
     </div>
-    <form id="scheduleForm" style="display: none;" method="post" action="#springUrl('/schedule.shtml')">
+    <form id="scheduleForm" style="display: none;" method="post" action="#springUrl('/bookings.shtml')">
       <input type="hidden" id="offsetOfWeek" name="offsetOfWeek" value="$!{offsetOfWeek}" />
       <input type="hidden" id="courseType" name="courseType" value="$!{courseType}" />
       <input type="submit" />

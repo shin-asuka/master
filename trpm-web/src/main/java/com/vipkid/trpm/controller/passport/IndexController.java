@@ -1,17 +1,5 @@
 package com.vipkid.trpm.controller.passport;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.lang.StringUtils;
-import org.community.config.PropertyConfigurer;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestMapping;
-
 import com.vipkid.enums.UserEnum;
 import com.vipkid.trpm.constant.ApplicationConstant;
 import com.vipkid.trpm.constant.ApplicationConstant.TeacherLifeCycle;
@@ -23,6 +11,17 @@ import com.vipkid.trpm.service.passport.PassportService;
 import com.vipkid.trpm.service.passport.RemberService;
 import com.vipkid.trpm.util.AES;
 import com.vipkid.trpm.util.CookieUtils;
+import org.apache.commons.lang.StringUtils;
+import org.community.config.PropertyConfigurer;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 @Controller
 @PreAuthorize("permitAll")
@@ -69,7 +68,7 @@ public class IndexController extends AbstractController {
 			if (cookie != null && "facebook".equals(cookie.getValue())) {
 				return "redirect:/activity.shtml";
 			}
-			return "redirect:/schedule.shtml";
+			return "redirect:/bookings.shtml";
 		} else {
 			String recruitmentUrl = PropertyConfigurer.stringValue("recruitment.www");
 			model.addAttribute("token", token);
