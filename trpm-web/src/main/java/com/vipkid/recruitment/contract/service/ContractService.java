@@ -296,11 +296,12 @@ public class ContractService {
                     contractFile.setContract(contract.get(contract.size()-1));
                 }
                 if(CollectionUtils.isNotEmpty(diploma)){
-                    contractFile.setDiploma(diploma.get(contract.size()-1));
+                    contractFile.setDiploma(diploma.get(diploma.size()-1));
                 }
-
+                if(CollectionUtils.isNotEmpty(identification)){
+                    contractFile.setIdentification(identification.get(identification.size()-1));
+                }
                 contractFile.setResult(isPass(res));
-                contractFile.setIdentification(identification);
                 contractFile.setCertification(certification);
                 contractFile.setDegrees(degrees);
         }

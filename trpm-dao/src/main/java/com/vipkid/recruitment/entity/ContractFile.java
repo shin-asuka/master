@@ -9,7 +9,7 @@ import java.util.Map;
 public class ContractFile{
 
     //Teacherpassport  文件类型1-other_degrees  2-certificationFiles   3-Identification  4-Diploma 5-Contract  6-Passport   7-Driver's license
-    private  List<TeacherOtherDegrees> identification;
+    private  TeacherOtherDegrees identification;
 
     //Teacher最高学历 bachelorDiploma
     private TeacherOtherDegrees diploma;
@@ -26,11 +26,11 @@ public class ContractFile{
     //返回结果
     private String result;
 
-    public List<TeacherOtherDegrees> getIdentification() {
+    public TeacherOtherDegrees getIdentification() {
         return identification;
     }
 
-    public void setIdentification(List<TeacherOtherDegrees> identification) {
+    public void setIdentification(TeacherOtherDegrees identification) {
         this.identification = identification;
     }
 
