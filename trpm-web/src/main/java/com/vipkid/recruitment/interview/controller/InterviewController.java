@@ -5,10 +5,6 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.vipkid.enums.TeacherApplicationEnum.Status;
-import com.vipkid.enums.TeacherApplicationEnum.Result;
-import com.vipkid.recruitment.common.service.RecruitmentService;
-import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,7 +16,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.google.api.client.util.Maps;
+import com.vipkid.enums.TeacherApplicationEnum.Result;
+import com.vipkid.enums.TeacherApplicationEnum.Status;
 import com.vipkid.enums.TeacherEnum.LifeCycle;
+import com.vipkid.recruitment.common.service.RecruitmentService;
 import com.vipkid.recruitment.interceptor.RestInterface;
 import com.vipkid.recruitment.interview.service.InterviewService;
 import com.vipkid.recruitment.utils.ResponseUtils;
@@ -144,7 +143,7 @@ public class InterviewController extends RestfulController {
     public Map<String,Object> getRemainRescheduleTimes(HttpServletRequest request, HttpServletResponse response){
         try{
             int count = this.recruitmentService.getRemainRescheduleTimes(getTeacher(request), Status.INTERVIEW.toString(), Result.CANCEL.toString());
-            Map<String,Object> result = new HashedMap();
+            Map<String,Object> result = Maps.newHashMap();
             result.put("count",count);
             if(ResponseUtils.isFail(result)){
                 response.setStatus(HttpStatus.FORBIDDEN.value());
