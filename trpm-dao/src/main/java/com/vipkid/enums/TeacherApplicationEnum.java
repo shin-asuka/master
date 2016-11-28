@@ -9,8 +9,7 @@ public class TeacherApplicationEnum {
 		SIGN_CONTRACT, //签合同
 		TRAINING, // 教师培训
 		PRACTICUM,//试讲
-		PUBLICITY_INFO, //新增
-		CONTRACT, //新增
+		CONTRACT_INFO, //新增
 		CANCELED, //已取消
 		FINISHED // 已结束
 	}

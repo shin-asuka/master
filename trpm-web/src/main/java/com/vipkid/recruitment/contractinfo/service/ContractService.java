@@ -1,4 +1,4 @@
-package com.vipkid.recruitment.contract.service;
+package com.vipkid.recruitment.contractinfo.service;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -9,6 +9,9 @@ import com.vipkid.trpm.dao.TeacherAddressDao;
 import com.vipkid.trpm.dao.TeacherTaxpayerFormDao;
 import com.vipkid.trpm.entity.TeacherAddress;
 import com.vipkid.trpm.entity.TeacherTaxpayerForm;
+
+import com.google.api.client.util.Maps;
+import com.google.common.collect.Lists;
 import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -126,7 +129,7 @@ public class ContractService {
         TeacherApplication application = new TeacherApplication();
         application.setTeacherId(teacher.getId());//  步骤关联的教师
         application.setApplyDateTime(new Timestamp(System.currentTimeMillis()));
-        application.setStatus(TeacherApplicationEnum.Status.CONTRACT.toString());
+        application.setStatus(TeacherApplicationEnum.Status.CONTRACT_INFO.toString());
         application = teacherApplicationDao.initApplicationData(application);
         this.teacherApplicationDao.save(application);
         logger.info("用户：{}，update table TeacherApplication Column Current = 0,  add table TeacherApplication row Current = 1",teacher.getId());
@@ -202,30 +205,6 @@ public class ContractService {
         }
 
     /**
-     * 更改老师的lifeCycle
-     * @param teacher
-     * @return
-     */
-    public Map<String,Object> toPublic(Teacher teacher){
-        List<TeacherApplication> listEntity = teacherApplicationDao.findCurrentApplication(teacher.getId());
-        if(CollectionUtils.isEmpty(listEntity)){
-            return ResponseUtils.responseFail("You have no legal power into the next phase !",this);
-        }
-        if(TeacherApplicationEnum.Status.CONTRACT.toString().equals(listEntity.get(0).getStatus())
-                && TeacherApplicationEnum.Result.PASS.toString().equals(listEntity.get(0).getResult())){
-
-
-            teacher.setLifeCycle(TeacherEnum.LifeCycle.PUBLICITY_INFO.toString());
-            this.teacherDao.insertLifeCycleLog(teacher.getId(), TeacherEnum.LifeCycle.CONTRACT, TeacherEnum.LifeCycle.PUBLICITY_INFO, teacher.getId());
-            this.teacherDao.update(teacher);
-            return ResponseUtils.responseSuccess();
-        }
-        return ResponseUtils.responseFail("You have no legal power into the next phase !",this);
-    }
-
-
-
-    /**
      * 查询老师上传过的文件
      * @param t
      * @return
@@ -237,57 +216,57 @@ public class ContractService {
 
         List<TeacherApplication> listEntity = teacherApplicationDao.findCurrentApplication(teacher.getId());
         logger.info("用户：{}查询TeacherApplication",teacher.getId());
-        List<TeacherOtherDegrees> teacherOtherDegreeses = new ArrayList<>();
+        List<TeacherOtherDegrees> teacherOtherDegrees = Lists.newArrayList();
         if(CollectionUtils.isNotEmpty(listEntity)) {
             TeacherApplication teacherApplication = listEntity.get(0);
-           teacherOtherDegreeses = teacherOtherDegreesDao.findByTeacherIdAndTeacherApplicationId(teacher.getId(), teacherApplication.getId());
+           teacherOtherDegrees = teacherOtherDegreesDao.findByTeacherIdAndTeacherApplicationId(teacher.getId(), teacherApplication.getId());
         }
-        if(CollectionUtils.isEmpty(teacherOtherDegreeses)) {
+        if(CollectionUtils.isEmpty(teacherOtherDegrees)) {
             logger.info("用户{}查询未提交的文件", teacher.getId());
-            teacherOtherDegreeses = teacherOtherDegreesDao.findByTeacherId(teacher.getId());
+            teacherOtherDegrees = teacherOtherDegreesDao.findByTeacherId(teacher.getId());
         }
-        Map<String,ContractFile>  map = new HashMap<String,ContractFile>();
+        Map<String,ContractFile>  map = Maps.newHashMap();
 
-            if(CollectionUtils.isNotEmpty(teacherOtherDegreeses)) {
-                List<TeacherOtherDegrees>  degrees = new ArrayList<TeacherOtherDegrees>();
-                List<TeacherOtherDegrees>  contract = new ArrayList<TeacherOtherDegrees>();
-                List<String>  res = new ArrayList<String>();
-                List<TeacherOtherDegrees>  identification = new ArrayList<TeacherOtherDegrees>();
-                List<TeacherOtherDegrees>  diploma = new ArrayList<TeacherOtherDegrees>();
-                List<TeacherOtherDegrees>  tax = new ArrayList<TeacherOtherDegrees>();
-                List<TeacherOtherDegrees>  certification = new ArrayList<TeacherOtherDegrees>();
-                teacherOtherDegreeses.forEach(obj->{
-                  if (obj.getFileType() == 1) {
-                      degrees.add(obj);
-                  }
-                  if (obj.getFileType() == 2) {
-                      certification.add(obj);
-                  }
-                  if (obj.getFileType() == 3) {
-                      obj.setTypeName("identity");
-                      identification.add(obj);
-                  }
-                  if (obj.getFileType() == 6) {
-                      obj.setTypeName("passport");
-                      identification.add(obj);
-
-                  }
-                  if (obj.getFileType() == 7) {
-                      obj.setTypeName("driver");
-                      identification.add(obj);
-                  }
-                  if (obj.getFileType() == 4) {
-                      diploma.add(obj);
-                  }
-                  if (obj.getFileType() == 5) {
-                      contract.add(obj);
-                  }
-                  if (obj.getFileType() == 8) {
-                      tax.add(obj);
+            if(CollectionUtils.isNotEmpty(teacherOtherDegrees)) {
+                List<TeacherOtherDegrees>  degrees = Lists.newArrayList();
+                List<TeacherOtherDegrees>  contract = Lists.newArrayList();
+                List<String>  res = Lists.newArrayList();
+                List<TeacherOtherDegrees>  identification = Lists.newArrayList();
+                List<TeacherOtherDegrees>  diploma = Lists.newArrayList();
+                List<TeacherOtherDegrees>  tax = Lists.newArrayList();
+                List<TeacherOtherDegrees>  certification = Lists.newArrayList();
+                teacherOtherDegrees.forEach(obj -> {
+                    if (obj.getFileType() == 1) {
+                        degrees.add(obj);
                     }
-                  if(obj.getResult()!=null&&obj.getResult().equals("")) {
-                      res.add(obj.getResult());
-                  }
+                    if (obj.getFileType() == 2) {
+                        certification.add(obj);
+                    }
+                    if (obj.getFileType() == 3) {
+                        obj.setTypeName("identity");
+                        identification.add(obj);
+                    }
+                    if (obj.getFileType() == 6) {
+                        obj.setTypeName("passport");
+                        identification.add(obj);
+
+                    }
+                    if (obj.getFileType() == 7) {
+                        obj.setTypeName("driver");
+                        identification.add(obj);
+                    }
+                    if (obj.getFileType() == 4) {
+                        diploma.add(obj);
+                    }
+                    if (obj.getFileType() == 5) {
+                        contract.add(obj);
+                    }
+                    if (obj.getFileType() == 8) {
+                        tax.add(obj);
+                    }
+                    if (obj.getResult() != null && obj.getResult().equals("")) {
+                        res.add(obj.getResult());
+                    }
 
                 });
                 if(CollectionUtils.isNotEmpty(tax)) {
@@ -298,15 +277,15 @@ public class ContractService {
                     contractFile.setContract(contract.get(contract.size()-1));
                 }
                 if(CollectionUtils.isNotEmpty(diploma)){
-                    contractFile.setDiploma(diploma.get(diploma.size()-1));
+                    contractFile.setDiploma(diploma.get(diploma.size() - 1));
                 }
                 if(CollectionUtils.isNotEmpty(identification)){
-                    contractFile.setIdentification(identification.get(identification.size()-1));
+                    contractFile.setIdentification(identification.get(identification.size() - 1));
                 }
                 String result =  isPass(res);
                 contractFile.setCertification(certification);
                 contractFile.setDegrees(degrees);
-                map.put(result,contractFile);
+                map.put(result, contractFile);
         }
             return map;
 

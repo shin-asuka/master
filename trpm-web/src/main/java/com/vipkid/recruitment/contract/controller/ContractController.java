@@ -18,7 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import com.vipkid.enums.TeacherEnum;
 import com.vipkid.enums.TeacherEnum.LifeCycle;
-import com.vipkid.recruitment.contract.service.ContractService;
+import com.vipkid.recruitment.contractinfo.service.ContractService;
 import com.vipkid.recruitment.interceptor.RestInterface;
 import com.vipkid.rest.RestfulController;
 import com.vipkid.rest.config.RestfulConfig;
@@ -32,8 +32,6 @@ import org.springframework.web.multipart.MultipartFile;
  * Created by zhangzhaojun on 2016/11/14.
  */
 @RestController
-@RestInterface(lifeCycle={LifeCycle.CONTRACT})
-
 @RequestMapping("/recruitment/contract")
 public class ContractController extends RestfulController {
 
@@ -444,29 +442,6 @@ public class ContractController extends RestfulController {
         }
     }
 
-    /**
-     * 跳转到PUBLICITY_INFO改变用户的LifeCycle
-     * @param request
-     * @param response
-     */
-    @RequestMapping(value = "/toPublic", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
-    public Map<String,Object> toPublic(HttpServletRequest request, HttpServletResponse response){
-        try{
-            Teacher teacher = getTeacher(request);
-            logger.info("user:{},getReschedule",teacher.getId());
-            Map<String,Object> result = this.contractService.toPublic(teacher);
-            if(ResponseUtils.isFail(result)){
-                response.setStatus(HttpStatus.FORBIDDEN.value());
-            }
-            return result;
-        } catch (IllegalArgumentException e) {
-            response.setStatus(HttpStatus.BAD_REQUEST.value());
-            return ResponseUtils.responseFail(e.getMessage(), this);
-        } catch (Exception e) {
-            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            return ResponseUtils.responseFail(e.getMessage(), this);
-        }
-    }
 
 
   public void setTeacherTaxpayerFormInfo(TeacherTaxpayerForm teacherTaxpayerForm, HttpServletRequest request){

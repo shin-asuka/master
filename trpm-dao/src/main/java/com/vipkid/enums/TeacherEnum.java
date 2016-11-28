@@ -35,8 +35,7 @@ public class TeacherEnum {
 		SIGN_CONTRACT, // 签合同
 		TRAINING, // 教师培训
 		PRACTICUM, // 试讲
-		PUBLICITY_INFO,
-		CONTRACT,//合同
+		CONTRACT_INFO, //合同 + 个人信息 (头像, 生活照)
 		REGULAR, // 成为正式老师Ø
 		QUIT, // 离职
 		FAIL // 被剔除的老师，永不录用的那种

@@ -26,7 +26,9 @@ import com.vipkid.vschedule.client.common.Vschedule;
 import com.vipkid.vschedule.client.schedule.JobContext;
 
 /**
- * Get into Contract LC but has not submitted any items
+ * Contract Files audit failed and remind the teacher to upload again, only correct the failed ones
+ *
+ * Contract 阶段审核失败, 提醒教师去上传正确的资料
  *
  * @author Austin
  * @date 2016年11月26日  下午5:24:23
@@ -34,9 +36,9 @@ import com.vipkid.vschedule.client.schedule.JobContext;
  */
 @Component
 @Vschedule
-public class ContractUploadReminderJob {
+public class ContractInfoFailAndUploadReminderJob {
 
-	private static final Logger logger = LoggerFactory.getLogger(ContractUploadReminderJob.class);
+	private static final Logger logger = LoggerFactory.getLogger(ContractInfoFailAndUploadReminderJob.class);
 
 	@Autowired
 	private UserDao userDao;
@@ -49,17 +51,17 @@ public class ContractUploadReminderJob {
 
 	@Vschedule
 	public void doJob (JobContext jobContext) {
-		logger.info("【JOB.EMAIL.ContractUploadReminderJob】START: ==================================================");
+		logger.info("【JOB.EMAIL.ContractInfoFailAndUploadReminderJob】START: ==================================================");
 		Stopwatch stopwatch = Stopwatch.createStarted();
 		
 		try {
-			find(stopwatch, 24, 48, 72);
+			find(stopwatch, 24, 48);
 		} catch (Exception e) {
-			logger.error("【JOB.EMAIL.ContractUploadReminderJob】EXCEPTION: Cost {}ms. ", stopwatch.elapsed(TimeUnit.MILLISECONDS), e);
+			logger.error("【JOB.EMAIL.ContractInfoFailAndUploadReminderJob】EXCEPTION: Cost {}ms. ", stopwatch.elapsed(TimeUnit.MILLISECONDS), e);
 		}
 		
 		long millis =stopwatch.stop().elapsed(TimeUnit.MILLISECONDS);
-		logger.info("【JOB.EMAIL.ContractUploadReminderJob】END: Cost {}ms. ==================================================", millis);
+		logger.info("【JOB.EMAIL.ContractInfoFailAndUploadReminderJob】END: Cost {}ms. ==================================================", millis);
 	}
 
 	void find (Stopwatch stopwatch, int... beforeHours) {
@@ -67,19 +69,18 @@ public class ContractUploadReminderJob {
 		Map<Long, TeacherApplication> teacherApplicationsMap = new HashedMap();
 		List<Map> times = UADateUtils.getStartEndOclockTimeMapListByBeforeHours(beforeHours);
 
-		//practicum pass, but has no file uploaded
 		List<TeacherApplication> teacherApplications = teacherApplicationDao.findByAuditTimesStatusResult(
-				times, TeacherApplicationEnum.Status.PRACTICUM.toString(), TeacherApplicationEnum.Result.PASS.toString());
-		logger.info("【JOB.EMAIL.ContractUploadReminderJob】FIND.1: Cost {}ms. Query: times = {}, status = {}, result = {}; Result: users = ",
+				times, TeacherApplicationEnum.Status.CONTRACT_INFO.toString(), TeacherApplicationEnum.Result.REAPPLY.toString());
+		logger.info("【JOB.EMAIL.ContractInfoFailAndUploadReminderJob】FIND.1: Cost {}ms. Query: times = {}, status = {}, result = {}; Result: users = ",
 				stopwatch.elapsed(TimeUnit.MILLISECONDS), JsonUtils.toJSONString(times), TeacherApplicationEnum.Status.INTERVIEW.toString(), TeacherApplicationEnum.Result.REAPPLY.toString());
 		for(TeacherApplication ta : teacherApplications){
 			teacherIds.add(ta.getTeacherId());
 			teacherApplicationsMap.put(ta.getTeacherId(), ta);
 		}
-		if(teacherIds.size() == 0) return;
 
+		if(teacherIds.size() == 0) return;
 		List<Teacher> teachers = teacherDao.findByIds(teacherIds);
-		logger.info("【JOB.EMAIL.ContractUploadReminderJob】FIND.3: Cost {}ms. Query: teacherIds = {}; Result: teachers = ",
+		logger.info("【JOB.EMAIL.ContractInfoFailAndUploadReminderJob】FIND.3: Cost {}ms. Query: teacherIds = {}; Result: teachers = ",
 				stopwatch.elapsed(TimeUnit.MILLISECONDS), JsonUtils.toJSONString(teacherIds));
 		teachers.forEach(x -> send(stopwatch, x, teacherApplicationsMap.get(x.getId()).getAuditDateTime(), times));
 
@@ -92,14 +93,14 @@ public class ContractUploadReminderJob {
 
 		if (auditTime.after(startTime) && auditTime.before(endTime)){
 			userDao.doLock(teacher.getId());
-			logger.info("【JOB.EMAIL.ContractUploadReminderJob】LOCK: Cost {}ms. teacherId = {}, teacherEmail = {}", stopwatch.elapsed(TimeUnit.MILLISECONDS), teacher.getId(), teacher.getEmail());
+			logger.info("【JOB.EMAIL.ContractInfoFailAndUploadReminderJob】LOCK: Cost {}ms. teacherId = {}, teacherEmail = {}", stopwatch.elapsed(TimeUnit.MILLISECONDS), teacher.getId(), teacher.getEmail());
 		} else {
 			String email = teacher.getEmail();
 			String name = teacher.getRealName();
-			String titleTemplate = "ContractUploadReminderJobTitle.html";
-			String contentTemplate = "ContractUploadReminderJob.html";
+			String titleTemplate = "ContractInfoFailAndUploadReminderJobTitle.html";
+			String contentTemplate = "ContractInfoFailAndUploadReminderJob.html";
 			EmailUtils.sendEmail4Recruitment(email, name, titleTemplate, contentTemplate);
-			logger.info("【JOB.EMAIL.ContractUploadReminderJob】SEND: Cost {}ms. email = {}, name = {}, titleTemplate = {}, contentTemplate = {}", stopwatch.elapsed(TimeUnit.MILLISECONDS), email, name, titleTemplate, contentTemplate);
+			logger.info("【JOB.EMAIL.ContractInfoFailAndUploadReminderJob】SEND: Cost {}ms. email = {}, name = {}, titleTemplate = {}, contentTemplate = {}", stopwatch.elapsed(TimeUnit.MILLISECONDS), email, name, titleTemplate, contentTemplate);
 		}
 	}
 

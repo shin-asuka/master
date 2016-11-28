@@ -233,7 +233,7 @@ public class PracticumService {
             if(CollectionUtils.isNotEmpty(list)){
                 teacher.setLifeCycle(LifeCycle.REGULAR.toString());
             } else {
-                teacher.setLifeCycle(LifeCycle.CONTRACT.toString());
+                teacher.setLifeCycle(LifeCycle.CONTRACT_INFO.toString());
             }
 
             this.teacherDao.insertLifeCycleLog(teacher.getId(), LifeCycle.PRACTICUM, LifeCycle.valueOf(teacher.getLifeCycle()), teacher.getId());
