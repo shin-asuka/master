@@ -234,11 +234,7 @@ public class ContractService {
         ContractFile contractFile = new ContractFile();
         Teacher teacher =  teacherDao.findById(t.getId());
          logger.info("用户：{}查询上传文件",teacher.getId());
-        TeacherTaxpayerForm teacherTaxpayerForm = teacherTaxpayerFormDao.findByTeacherIdAndType(teacher.getId(), TeacherEnum.FormType.W9.val());
-        logger.info("用户：{}查询W9上传文件",teacher.getId());
-        if(teacherTaxpayerForm!=null) {
-            contractFile.setTax(teacherTaxpayerForm.getUrl());
-        }
+
         List<TeacherApplication> listEntity = teacherApplicationDao.findCurrentApplication(teacher.getId());
         logger.info("用户：{}查询TeacherApplication",teacher.getId());
         List<TeacherOtherDegrees> teacherOtherDegreeses = new ArrayList<>();
@@ -247,16 +243,16 @@ public class ContractService {
            teacherOtherDegreeses = teacherOtherDegreesDao.findByTeacherIdAndTeacherApplicationId(teacher.getId(), teacherApplication.getId());
         }
         if(CollectionUtils.isEmpty(teacherOtherDegreeses)) {
-            logger.info("用户{}", teacher.getId());
+            logger.info("用户{}查询未提交的文件", teacher.getId());
             teacherOtherDegreeses = teacherOtherDegreesDao.findByTeacherId(teacher.getId());
-            logger.info("TeacherOtherDegreeses{}", teacherOtherDegreeses);
         }
             if(CollectionUtils.isNotEmpty(teacherOtherDegreeses)) {
                 List<TeacherOtherDegrees>  degrees = new ArrayList<TeacherOtherDegrees>();
                 List<TeacherOtherDegrees>  contract = new ArrayList<TeacherOtherDegrees>();
                 List<String>  res = new ArrayList<String>();
-                Map<String,TeacherOtherDegrees>  identification = new HashMap<String,TeacherOtherDegrees>();
+                List<TeacherOtherDegrees>  identification = new ArrayList<TeacherOtherDegrees>();
                 List<TeacherOtherDegrees>  diploma = new ArrayList<TeacherOtherDegrees>();
+                List<TeacherOtherDegrees>  tax = new ArrayList<TeacherOtherDegrees>();
                 List<TeacherOtherDegrees>  certification = new ArrayList<TeacherOtherDegrees>();
                 teacherOtherDegreeses.forEach(obj->{
                   if (obj.getFileType() == 1) {
@@ -266,13 +262,17 @@ public class ContractService {
                       certification.add(obj);
                   }
                   if (obj.getFileType() == 3) {
-                      identification.put("identity",obj);
+                      obj.setTypeName("identity");
+                      identification.add(obj);
                   }
                   if (obj.getFileType() == 6) {
-                      identification.put("passport",obj);
+                      obj.setTypeName("passport");
+                      identification.add(obj);
+
                   }
                   if (obj.getFileType() == 7) {
-                      identification.put("driver",obj);
+                      obj.setTypeName("driver");
+                      identification.add(obj);
                   }
                   if (obj.getFileType() == 4) {
                       diploma.add(obj);
@@ -280,12 +280,17 @@ public class ContractService {
                   if (obj.getFileType() == 5) {
                       contract.add(obj);
                   }
+                  if (obj.getFileType() == 8) {
+                      tax.add(obj);
+                    }
                   if(obj.getResult()!=null&&obj.getResult().equals("")) {
                       res.add(obj.getResult());
                   }
 
                 });
-
+                if(CollectionUtils.isNotEmpty(tax)) {
+                    contractFile.setTax(tax.get(tax.size()-1));
+                }
 
                 if(CollectionUtils.isNotEmpty(contract)) {
                     contractFile.setContract(contract.get(contract.size()-1));

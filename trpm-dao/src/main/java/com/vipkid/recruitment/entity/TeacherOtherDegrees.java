@@ -18,6 +18,7 @@ public class TeacherOtherDegrees extends Entity implements Serializable {
     private int fileType;
 
 
+    private String typeName;
     private Timestamp createTime;
     private Timestamp updateTime;
     private long createId;
@@ -112,5 +113,13 @@ public class TeacherOtherDegrees extends Entity implements Serializable {
 
     public void setResult(String result) {
         this.result = result;
+    }
+
+    public String getTypeName() {
+        return typeName;
+    }
+
+    public void setTypeName(String typeName) {
+        this.typeName = typeName;
     }
 }

@@ -308,6 +308,13 @@ public class ContractController extends RestfulController {
             setTeacherTaxpayerFormInfo(teacherTaxpayerForm, request);
             teacherTaxpayerFormService.saveTeacherTaxpayerForm(teacherTaxpayerForm );
 
+            TeacherOtherDegrees teacherOtherDegrees = new TeacherOtherDegrees();
+            logger.info("保存用户：{}上传的合W9-TAX文件url到teacher_other_degrees",teacher.getId());
+            teacherOtherDegrees.setTeacherId(teacher.getId());
+            teacherOtherDegrees.setUrl(fileVo.getUrl());
+            teacherOtherDegrees.setFileType(8);
+            contractService.save(teacherOtherDegrees);
+
             result.put("file",fileVo.getUrl());
             result.put("status",true);
             return ResponseUtils.responseSuccess(result);

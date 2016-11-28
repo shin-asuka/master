@@ -9,7 +9,7 @@ import java.util.Map;
 public class ContractFile{
 
     //Teacherpassport  文件类型1-other_degrees  2-certificationFiles   3-Identification  4-Diploma 5-Contract  6-Passport   7-Driver's license
-    private  Map<String,TeacherOtherDegrees> identification;
+    private  List<TeacherOtherDegrees> identification;
 
     //Teacher最高学历 bachelorDiploma
     private TeacherOtherDegrees diploma;
@@ -19,22 +19,20 @@ public class ContractFile{
     //其他证明  新建一个表
     private List<TeacherOtherDegrees> degrees;
     //w9税收
-    private String tax;
+    private  TeacherOtherDegrees tax;
     //Teacher表contract
     private TeacherOtherDegrees contract;
 
     //返回结果
     private String result;
 
-    public Map<String, TeacherOtherDegrees> getIdentification() {
+    public List<TeacherOtherDegrees> getIdentification() {
         return identification;
     }
 
-    public void setIdentification(Map<String, TeacherOtherDegrees> identification) {
+    public void setIdentification(List<TeacherOtherDegrees> identification) {
         this.identification = identification;
     }
-
-
 
     public List<TeacherOtherDegrees> getCertification() {
         return certification;
@@ -52,11 +50,11 @@ public class ContractFile{
         this.degrees = degrees;
     }
 
-    public String getTax() {
+    public TeacherOtherDegrees getTax() {
         return tax;
     }
 
-    public void setTax(String tax) {
+    public void setTax(TeacherOtherDegrees tax) {
         this.tax = tax;
     }
 
