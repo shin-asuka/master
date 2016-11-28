@@ -120,7 +120,7 @@ public class InterviewController extends RestfulController {
     } 
     
 
-    @RequestMapping(value = "/toTraining", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
+    @RequestMapping(value = "/toTraining", method = RequestMethod.POST, produces = RestfulConfig.JSON_UTF_8)
     public Map<String,Object> toTraining(HttpServletRequest request, HttpServletResponse response){
         try{
             Teacher teacher = getTeacher(request);

@@ -173,6 +173,9 @@ public class OnlineClassProxy {
             String requestUrl = getHttpUrl() + "/api/service/public/24HourClass/filterByClass";
             //logger.info("Get 24Hour Request Url: {}", requestUrl);
             String responseBody = HttpClientProxy.get(requestUrl, requestParams, requestHeader);
+            if (StringUtils.isBlank(responseBody)) {
+                return Lists.newArrayList();
+            }
             responseBody = StringTools.matchString(responseBody, "\\[(.*?)\\]", Pattern.CASE_INSENSITIVE, 1);
             return Arrays.asList(StringUtils.split(responseBody, ","));
         } catch (Exception e) {

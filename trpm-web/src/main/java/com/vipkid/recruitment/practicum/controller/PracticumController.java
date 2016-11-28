@@ -116,7 +116,7 @@ public class PracticumController extends RestfulController {
         }
     }
 
-    @RequestMapping(value = "/toContract", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
+    @RequestMapping(value = "/toContract", method = RequestMethod.POST, produces = RestfulConfig.JSON_UTF_8)
     public Map<String,Object> toContract(HttpServletRequest request, HttpServletResponse response){
         try{
             Teacher teacher = getTeacher(request);

@@ -19,6 +19,9 @@ public class TeacherLockLog extends Entity implements Serializable{
 
     private Timestamp createDateTime;
 
+    public TeacherLockLog() {
+    }
+
     public TeacherLockLog(long teacherId, String reason, String lifeCycle) {
         this.teacherId = teacherId;
         this.reason = reason;
