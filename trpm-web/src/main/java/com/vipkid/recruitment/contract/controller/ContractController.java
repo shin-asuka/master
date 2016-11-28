@@ -316,6 +316,7 @@ public class ContractController extends RestfulController {
             contractService.save(teacherOtherDegrees);
 
             result.put("file",fileVo.getUrl());
+            result.put("id",teacherOtherDegrees.getId());
             result.put("status",true);
             return ResponseUtils.responseSuccess(result);
         } catch (IllegalArgumentException e) {
