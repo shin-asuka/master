@@ -270,7 +270,7 @@
                 <div class="row bottom-border top-border dropdown text-left">
                     <div class="col-xs-6 dropdown text-left">
                         <p class="dropdown-toggle" data-toggle="collapse" href="#attendance_table_container">
-                            Participation Bonus<b class="downCaret"></b>
+                            Participation Incentives<b class="downCaret"></b>
                         </p>
                     </div>
                     <div class="col-xs-6">
