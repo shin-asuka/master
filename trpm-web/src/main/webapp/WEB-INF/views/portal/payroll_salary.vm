@@ -379,11 +379,11 @@
             <div class="attendance-warpper">
                 <div class="row bottom-border top-border">
                     <!-- <div class="col-xs-6">
-                        <h5 class="text-left">Other Bonus</h5>
+                        <h5 class="text-left">Other Incentives</h5>
                     </div> -->
                     <div class="col-xs-6 dropdown text-left">
                         <p class="dropdown-toggle" data-toggle="collapse" href="#other_bonus_container">
-                            Other Bonus<b class="downCaret"></b>
+                            Other Incentives<b class="downCaret"></b>
                         </p>
                     </div>
                     <div class="col-xs-6">
