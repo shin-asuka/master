@@ -409,6 +409,22 @@
 		</foreach>
 	</select>
 
+		<select id="findTAByAuditTimeCurrentStatusResult" resultMap="teacherApplicationResultMap">
+		SELECT
+		<include refid="teacherApplicationColumns" />
+		FROM teacher_application
+		WHERE
+		status = #{status}
+		AND current = 1
+		AND result = #{result}
+		<foreach collection="auditTimes" open="AND (" close=")" separator=" OR " item="auditTime">
+			(audit_date_time BETWEEN #{auditTime.startTime} AND #{auditTime.endTime})
+		</foreach>
+	</select>
+
+
+
+
 	<select id="findTAByTeacherIdsStatusNeResult" resultMap="teacherApplicationResultMap">
 		SELECT
 		<include refid="teacherApplicationColumns" />
