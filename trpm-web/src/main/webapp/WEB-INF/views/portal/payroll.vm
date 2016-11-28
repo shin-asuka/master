@@ -27,7 +27,7 @@ li[role] a {
   <!-- Nav tabs -->
   <ul class="nav nav-tabs" role="tablist">
     <li role="presentation" #tabActive($payrollType, "SALARY")>
-      <a href="javascript:;" id="salary">Salary</a>
+      <a href="javascript:;" id="salary">Monthly Payment</a>
     </li>
     <li role="presentation" #tabActive($payrollType, "PRICELIST")>
       <a href="javascript:;" id="priceList">Price list</a>

@@ -43,7 +43,7 @@ public class PayrollController extends AbstractPortalController {
 	@Autowired
     private LoginService loginService;
 
-	@RequestMapping("/payroll")
+	@RequestMapping("/payment")
 	public String payroll(HttpServletRequest request, HttpServletResponse response, Model model) {
 		int offsetOfMonth = ServletRequestUtils.getIntParameter(request, "offsetOfMonth", 0);
 		Teacher teacher = loginService.getTeacher();

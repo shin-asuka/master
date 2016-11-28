@@ -43,50 +43,12 @@
             </table>
         </div>
         ##正常结束类型pirce结束
-        <br>
-        #*
-        ##adjustment类型
-        /#<div class="center-block">
-            <div class="table-title clearfix">
-                <div class="pull-left">
-                    <h4>Adjustments Price List</h4>
-                </div>
-                
-            </div>
-            <table class="table table-bordered">
-                <thead>
-                    <tr class="info">
-                        <th class="text-center">Item</th>
-                        <th class="text-center">Description</th>
-                        <th class="text-center">Unit Price ($)</th>
-                        <th class="text-center">Date Effective</th>
-                    </tr>
-                </thead>
-                <tbody>
-                #foreach($adjustmentRule in $adjustment_rule.ruleList)
-                    <tr class="rowscss #if($adjustmentRule.visible==false) rowsDisableCss #end">
-                        <td class="text-center">$!{adjustmentRule.attributes.ruleName}</td>
-                        <td class="text-center">$!{adjustmentRule.attributes.description}</td>
-						#set($adjustmentRule_unitPrice = $adjustmentRule.attributes.unitPrice/100.0)
-                        <td class="text-center">$!{adjustmentRule_unitPrice}</td>
-						<td class="text-center">
-                            <span name="effectiveDateFrom" showType="date" format="yyyy-MM-dd" value="$!{adjustmentRule.effectiveDateFrom}"></span>
-							--
-							<span name="effectiveDateTo" showType="date" format="yyyy-MM-dd" value="$!{adjustmentRule.effectiveDateTo}"></span>
-						</td>
-                    </tr>
-                 #end 
-                </tbody>
-            </table>
-        </div>
-        ##adjustment类型结束
-       *#
-        <br>
+        <br>      
         ##bonus类型
         <div class="center-block">
             <div class="table-title clearfix">
                 <div class="pull-left">
-                    <h4>Bonus Price List</h4>
+                    <h4>Incentive Payment list</h4>
                 </div>
             </div>
             <table class="table table-bordered">
@@ -196,10 +158,6 @@
 #@requireJs()
     require(["payroll"], function(payroll){
         payroll.init("$!{TRPM_TEACHER.timezone}", $!{offsetOfMonth});
-        
-       ## Portal.paging(".pagination", 100,${linePerPage}, function(page){
-        ##    payroll.priceList(page);
-      ## });
     });
 #end
 <style >
