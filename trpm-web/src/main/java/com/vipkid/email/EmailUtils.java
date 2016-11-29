@@ -8,6 +8,7 @@ import static com.vipkid.trpm.constant.ApplicationConstant.NEW_TEACHER_NAME;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.community.config.PropertyConfigurer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -72,6 +73,12 @@ public class EmailUtils {
 		}
 	}
 	
+	/**
+	 * 用户激活邮件 
+	 * 2016年11月29日 下午3:48:20
+	 * @param teacher    
+	 * void
+	 */
 	public static void sendActivationEmail(Teacher teacher){
 	    try {
             Map<String, String> paramsMap = Maps.newHashMap();
@@ -84,5 +91,27 @@ public class EmailUtils {
             logger.error("【EMAIL.sendActivationEmail】ERROR: {}", e);
         }
 	} 
-
+	
+	/**
+	 * 重置密码邮件
+	 * 2016年11月29日 下午3:48:10
+	 * @param teacher    
+	 * void
+	 */
+	public static void sendRestPasswordEmail(Teacher teacher){
+	    try {
+            Map<String, String> map = Maps.newHashMap();
+            if (StringUtils.isEmpty(teacher.getRealName())) {
+                map.put("teacherName", NEW_TEACHER_NAME);
+            } else {
+                map.put("teacherName", teacher.getRealName());
+            }
+            map.put("link", PropertyConfigurer.stringValue("teacher.www") + "modifyPassword.shtml?validate_token="+ teacher.getRecruitmentId());
+            Map<String, String> sendMap = TempleteUtils.readTemplete("VIPKIDPasswordResetLink.html", map,"VIPKIDPasswordResetLink-Title.html");
+            EmailEngine.addMailPool(teacher.getEmail(), sendMap, EmailFormEnum.TEACHVIP);
+            logger.error("【EMAIL.sendActivationEmail】OK: {}", teacher.getEmail());
+        } catch (Exception e) {
+            logger.error("【EMAIL.sendActivationEmail】ERROR: {}", e);
+        }
+	}
 }

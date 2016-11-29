@@ -1,7 +1,5 @@
 package com.vipkid.trpm.service.passport;
 
-import static com.vipkid.trpm.constant.ApplicationConstant.NEW_TEACHER_NAME;
-
 import java.sql.Timestamp;
 import java.util.Base64;
 import java.util.Map;
@@ -16,10 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.google.common.collect.Maps;
-import com.vipkid.email.EmailEngine;
 import com.vipkid.email.EmailUtils;
-import com.vipkid.email.handle.EmailConfig.EmailFormEnum;
-import com.vipkid.email.templete.TempleteUtils;
 import com.vipkid.enums.Role;
 import com.vipkid.enums.TeacherEnum;
 import com.vipkid.enums.TeacherEnum.RecruitmentChannel;
@@ -216,17 +211,7 @@ public class PassportService {
             return ResponseUtils.responseFail("The is a not exits teacher!", this);
         }
         teacher.setRecruitmentId(this.updateRecruitmentId(teacher));
-        Map<String, String> map = Maps.newHashMap();
-        if (StringUtils.isEmpty(teacher.getRealName())) {
-            map.put("teacherName", NEW_TEACHER_NAME);
-        } else {
-            map.put("teacherName", teacher.getRealName());
-        }
-        
-        map.put("link", PropertyConfigurer.stringValue("teacher.www") + "modifyPassword.shtml?validate_token="+ teacher.getRecruitmentId());
-        Map<String, String> sendMap = TempleteUtils.readTemplete("VIPKIDPasswordResetLink.html", map,"VIPKIDPasswordResetLink-Title.html");
-        EmailEngine.addMailPool(teacher.getEmail(), sendMap, EmailFormEnum.TEACHVIP);
-        
+        EmailUtils.sendRestPasswordEmail(teacher);
         return ResponseUtils.responseSuccess();
     }
 
