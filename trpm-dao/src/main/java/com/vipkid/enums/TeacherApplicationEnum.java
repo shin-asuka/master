@@ -29,4 +29,8 @@ public class TeacherApplicationEnum {
         TO_CLASS, // 待上课
         HAS_TIMEOUT //过期
     }
+
+	public enum ContractFileType {
+		//TODO for zhaojun
+	}
 }

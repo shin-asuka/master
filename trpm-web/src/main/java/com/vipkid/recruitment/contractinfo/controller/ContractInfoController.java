@@ -1,15 +1,22 @@
 package com.vipkid.recruitment.contractinfo.controller;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.google.common.base.Function;
+import com.google.common.base.Splitter;
+import com.google.common.collect.Lists;
+import com.sun.xml.internal.ws.message.StringHeader;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.community.config.PropertyConfigurer;
 import org.slf4j.Logger;
@@ -35,6 +42,7 @@ import com.vipkid.http.service.FileHttpService;
 import com.vipkid.recruitment.common.service.RecruitmentService;
 import com.vipkid.recruitment.contractinfo.service.ContractService;
 import com.vipkid.recruitment.entity.ContractFile;
+import com.vipkid.recruitment.entity.TeacherApplication;
 import com.vipkid.recruitment.entity.TeacherOtherDegrees;
 import com.vipkid.recruitment.interceptor.RestInterface;
 import com.vipkid.recruitment.contractinfo.service.ContractInfoService;
@@ -135,46 +143,57 @@ public class ContractInfoController extends RestfulController {
     }
 
     /**
-     * only change teacher's introduction
-     * 要不要检查
-     *
-     * @param bio      教师的 bio
+     * 提交用户上传文件的信息
      * @param request
      * @param response
      * @return
      */
     @RequestMapping(value = "/submit", method = RequestMethod.POST, produces = RestfulConfig.JSON_UTF_8)
-      public Map<String, Object> submitPersonalInfo(String bio, HttpServletRequest request, HttpServletResponse response) {
-        if ( StringUtils.isEmpty(bio)) {
-            return ResponseUtils.responseFail("bio is empty!", this);
+    public  Map<String,Object> submitsContractInfo(@RequestBody Map<String,Object> paramMap, HttpServletRequest request, HttpServletResponse response){
+        String fileIds = (String) paramMap.get("id");
+        String bio = (String) paramMap.get("bio");
+
+        if(StringUtils.isBlank(fileIds)){
+            return ResponseUtils.responseFail("You don't have to upload the file", this);
         }
 
-        Map<String, Object> result = Maps.newHashMap();
+        //ID (3 TYPES), DIPLOMA, DEGREE, CERTIFICATE, W9, CONTRACT,
+        List<String> idLists = Splitter.on(",").splitToList(fileIds);
+        List<Integer> idList = new ArrayList<>();
+        for(int i=0;i<idLists.size();i++){
+            idList.add(Integer.parseInt(idLists.get(i)));
+        }
         try {
             Teacher teacher = getTeacher(request);
+            Long teacherId = teacher.getId();
+
             if (null == teacher) {
                 response.setStatus(HttpStatus.NOT_FOUND.value());
                 return ResponseUtils.responseFail("Teacher doesn't exist", this);
             }
-            Long teacherId = teacher.getId();
 
-            //检查老师的头像/照片/视频是都都上传了? 从 TIS 获取数据
-            Map<String, Object> teacherFiles = Maps.newHashMap();
-            teacherFiles = fileHttpService.queryTeacherFiles(teacherId);
-            String avatarUrl = (String) teacherFiles.get("avatarUrl");
-            String lifePictures = (String) teacherFiles.get("lifePictures");
-            String shortVideoUrl = (String) teacherFiles.get("shortVideo");
-            String shortVideoStatus = (String) teacherFiles.get("shortVideoStatus");
+            //check contract files
+            boolean isContractFileValid = checkContractFile(teacherId,idList);
+            if(!isContractFileValid) {
+                return ResponseUtils.responseFail("Teacher's contract files do NOT exists, failed to submit", this);
 
-            if (StringUtils.isEmpty(avatarUrl) || StringUtils.isEmpty(lifePictures)
-                    || StringUtils.isEmpty(shortVideoUrl) || StringUtils.isEmpty(shortVideoStatus)) {
-                return ResponseUtils.responseFail("Teacher's files do NOT exists, failed to update bio", this);
+            }
+            //check personal info
+            boolean isPersonalInfoValid = checkPersonInfo(teacherId);
+            if(!isPersonalInfoValid) {
+                return ResponseUtils.responseFail("Teacher's personal files do NOT exists, failed to update bio", this);
             }
 
+            //update teacher's bio
             teacher.setIntroduction(bio);
-            boolean ret = contractInfoService.updateTeacher(teacher);
-            if (ret) {
-                return ResponseUtils.responseSuccess("Modify introduction successfully!", teacherFiles);
+            boolean bioUpdated = contractInfoService.updateTeacher(teacher);
+            if(!bioUpdated) {
+                return ResponseUtils.responseFail("Failed to submit teacher bio", this);
+            }
+
+            boolean result = contractService.updateTeacherApplication(teacher,idList);
+            if(result){
+                return ResponseUtils.responseSuccess();
             }
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
@@ -184,7 +203,62 @@ public class ContractInfoController extends RestfulController {
             return ResponseUtils.responseFail(e.getMessage(), this);
         }
 
-        return ResponseUtils.responseFail("Failed to submit teacher bio", this);
+        return ResponseUtils.responseFail("Failed to submitsContractInfo!", this);
+    }
+
+    private boolean checkPersonInfo (Long teacherId) {
+        //检查老师的头像/照片/视频是都都上传了? 从 TIS 获取数据
+        Map<String, Object> teacherFiles = Maps.newHashMap();
+        teacherFiles = fileHttpService.queryTeacherFiles(teacherId);
+        String avatarUrl = (String) teacherFiles.get("avatarUrl");
+        String lifePictures = (String) teacherFiles.get("lifePictures");
+        String shortVideoUrl = (String) teacherFiles.get("shortVideo");
+        String shortVideoStatus = (String) teacherFiles.get("shortVideoStatus");
+
+        if (StringUtils.isEmpty(avatarUrl) || StringUtils.isEmpty(lifePictures)
+                || StringUtils.isEmpty(shortVideoUrl) || StringUtils.isEmpty(shortVideoStatus)) {
+            logger.warn("Teacher's files do NOT exists, failed to update bio");
+            return false;
+        }
+
+        return true;
+    }
+
+    private boolean checkContractFile(Long teacherId,List<Integer> fileIds) {
+        boolean isFileValid = false;
+        List<TeacherOtherDegrees> files= contractService.findTeacherOtherDegrees(teacherId);
+        List<Integer> idList = Lists.transform(files, new Function<TeacherOtherDegrees, Integer>() {
+            @Nullable
+            @Override
+            public Integer apply(TeacherOtherDegrees input) {
+                return input.getId();
+            }
+        });
+
+        if(CollectionUtils.isNotEmpty(files)) {
+            boolean hasIdCard = false;
+            boolean hasDiploma = false;
+            boolean hasContract = false;
+            for (TeacherOtherDegrees file : files) {
+                //TODO for zhaojun, add Enum
+                if (file.getFileType() == 3) {
+                    hasIdCard = true;
+                }
+                if (file.getFileType() == 4) {
+                    hasDiploma = true;
+                }
+                if (file.getFileType() == 5) {
+                    hasContract = true;
+                }
+                idList.add(file.getId());
+            }
+
+            if (hasIdCard && hasDiploma && hasContract && idList.containsAll(fileIds)) {
+                isFileValid = true;
+            }
+        }
+
+        return isFileValid;
     }
 
 

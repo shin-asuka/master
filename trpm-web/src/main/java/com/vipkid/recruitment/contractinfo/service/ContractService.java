@@ -49,47 +49,54 @@ public class ContractService {
 
     /**
      * 更新teacher表
+     *
      * @param teacher
      * @return
      */
-     public int  updateTeacher(Teacher teacher){
-         return teacherDao.update(teacher);
-     }
+    public int updateTeacher(Teacher teacher) {
+        return teacherDao.update(teacher);
+    }
+
     /**
      * 更新Teacher表中的DiplomaUrl
+     *
      * @param teacher
      * @return
      */
-    public Map<String,Object>  updateDiplomaUrl(Teacher teacher){
+    public Map<String, Object> updateDiplomaUrl(Teacher teacher) {
         Teacher t = teacherDao.findById(teacher.getId());
-        if(t.getBachelorDiploma().length()<1){
-            return ResponseUtils.responseFail("Your DiplomaUrl file is Empty . !",this);
+        if (t.getBachelorDiploma().length() < 1) {
+            return ResponseUtils.responseFail("Your DiplomaUrl file is Empty . !", this);
         }
         this.teacherDao.update(teacher);
         return ResponseUtils.responseSuccess();
     }
+
     /**
      * 更新Teacher表中的ContractUrl
+     *
      * @param teacher
      * @return
      */
-     public Map<String,Object>  updateContract(Teacher teacher){
+    public Map<String, Object> updateContract(Teacher teacher) {
         Teacher t = teacherDao.findById(teacher.getId());
-        if(t.getContract().length()<1){
-            return ResponseUtils.responseFail("Your ContractUrl file is Empty . !",this);
+        if (t.getContract().length() < 1) {
+            return ResponseUtils.responseFail("Your ContractUrl file is Empty . !", this);
         }
         this.teacherDao.update(teacher);
         return ResponseUtils.responseSuccess();
     }
+
     /**
      * 更新Teacher表中的IdentificationUrl
+     *
      * @param teacher
      * @return
      */
-    public Map<String,Object>  updateIdentification(Teacher teacher){
+    public Map<String, Object> updateIdentification(Teacher teacher) {
         Teacher t = teacherDao.findById(teacher.getId());
-        if(t.getPassport().length()<1){
-            return ResponseUtils.responseFail("Your IdentificationUrl file is Empty . !",this);
+        if (t.getPassport().length() < 1) {
+            return ResponseUtils.responseFail("Your IdentificationUrl file is Empty . !", this);
         }
         this.teacherDao.update(teacher);
         return ResponseUtils.responseSuccess();
@@ -98,210 +105,219 @@ public class ContractService {
 
     /**
      * 在TeacherApplication中加入一条带审核数据
+     *
      * @param teacher
      * @return
      */
-    public Map<String,Object>  updateTeacherApplication(Teacher teacher,List<Integer> ids){
-        Teacher t = teacherDao.findById(teacher.getId());
-        TeacherTaxpayerForm teacherTaxpayerForm = teacherTaxpayerFormDao.findByTeacherIdAndType(teacher.getId(), TeacherEnum.FormType.W9.val());
-        if(teacherTaxpayerForm==null){
-            if(teacher.getCountry().equals("USA")) {
-                return ResponseUtils.responseFail("Your W9 file is not uploaded. !", this);
-            }else {
-                //查询教师的Location id
-                  TeacherAddress teacherAddress = teacherAddressDao.findById(t.getCurrentAddressId());
-                //  2497273 = 老师location 为   United States
-                if(teacherAddress!=null&&teacherAddress.getCountryId()==2497273){
-                    return ResponseUtils.responseFail("Your W9 file is not uploaded. !", this);
+    public boolean updateTeacherApplication(Teacher teacher, List<Integer> ids) {
+        try{
+            TeacherTaxpayerForm teacherTaxpayerForm = teacherTaxpayerFormDao.findByTeacherIdAndType(teacher.getId(), TeacherEnum.FormType.W9.val());
+            if (teacherTaxpayerForm == null) {
+                if (teacher.getCountry().equals("USA")) {
+                    logger.warn("{} teacher's country is USA but W9 file is not uploaded!", teacher.getId());
+                    return false;
+                } else {
+                    //查询教师的Location id
+                    TeacherAddress teacherAddress = teacherAddressDao.findById(teacher.getCurrentAddressId());
+                    //  2497273 = 老师location 为   United States
+                    if (teacherAddress != null && teacherAddress.getCountryId() == 2497273) {
+                        logger.warn("{} teacher's address's country id is 2497273 (USA) but W9 file is not uploaded!", teacher.getId());
+                        return false;
+                    }
                 }
             }
 
-        }
-
-        List<TeacherApplication> list = teacherApplicationDao.findCurrentApplication(teacher.getId());
-        if(CollectionUtils.isNotEmpty(list)) {
-            for (int i = 0; i < list.size(); i++) {
-                TeacherApplication application = list.get(i);
-                application.setCurrent(0);
-                this.teacherApplicationDao.update(application);
-            }
-        }
-        TeacherApplication application = new TeacherApplication();
-        application.setTeacherId(teacher.getId());//  步骤关联的教师
-        application.setApplyDateTime(new Timestamp(System.currentTimeMillis()));
-        application.setStatus(TeacherApplicationEnum.Status.CONTRACT_INFO.toString());
-        application = teacherApplicationDao.initApplicationData(application);
-        this.teacherApplicationDao.save(application);
-        logger.info("用户：{}，update table TeacherApplication Column Current = 0,  add table TeacherApplication row Current = 1",teacher.getId());
-        TeacherOtherDegrees teacherOtherDegrees;
-        List<TeacherOtherDegrees> ts = new ArrayList<TeacherOtherDegrees>();
-        for(Integer id:ids){
-            logger.info("查询文件id:{}",id);
-            teacherOtherDegrees =teacherOtherDegreesDao.findById(id);
-            teacherOtherDegrees.setTeacherApplicationId(application.getId());
-            logger.info("applicationId:{}",application.getId());
-            ts.add(teacherOtherDegrees);
-        }
-        logger.info("用户：{}批量更新文件的TeacherApplicationId:{}",teacher.getId(),application.getId());
-        teacherOtherDegreesDao.updateBatch(ts);
-        //查询
-        List<TeacherOtherDegrees> files =  teacherOtherDegreesDao.findByTeacherIdAndTeacherApplicationId(teacher.getId(),application.getId());
-        if(CollectionUtils.isNotEmpty(files)) {
-            int Identification = 0;
-            int Diploma = 0;
-            int Contract = 0;
-            for (TeacherOtherDegrees file : files) {
-                if (file.getFileType() == 3) {
-                    Identification++;
-                }
-                if (file.getFileType() == 4) {
-                    Diploma++;
-                }
-                if (file.getFileType() == 5) {
-                    Contract++;
+            List<TeacherApplication> list = teacherApplicationDao.findCurrentApplication(teacher.getId());
+            if (CollectionUtils.isNotEmpty(list)) {
+                for (int i = 0; i < list.size(); i++) {
+                    TeacherApplication application = list.get(i);
+                    application.setCurrent(0);
+                    teacherApplicationDao.update(application);
                 }
             }
 
-            if (Identification == 0 || Diploma == 0 || Contract == 0) {
-                return ResponseUtils.responseFail("Your file is not uploaded. !", this);
+            TeacherApplication application = new TeacherApplication();
+            application.setTeacherId(teacher.getId());//  步骤关联的教师
+            application.setApplyDateTime(new Timestamp(System.currentTimeMillis()));
+            application.setStatus(TeacherApplicationEnum.Status.CONTRACT_INFO.toString());
+            application = teacherApplicationDao.initApplicationData(application);
+            int ret = teacherApplicationDao.save(application);
+            logger.info("update teacherApplication for teacherId:{} with result: {}", teacher.getId(), ret);
+            if(ret <= 0) {
+                logger.warn("failed to save teacherApplication!");
+                return false;
             }
-            return ResponseUtils.responseSuccess();
-        }else{
-            return ResponseUtils.responseFail("Your file is not uploaded. !", this);
-        }
 
-       }
+            TeacherOtherDegrees teacherOtherDegrees;
+            List<TeacherOtherDegrees> otherDegrees = new ArrayList<TeacherOtherDegrees>();
+            for (Integer id : ids) {
+                //TODO: change the table name and Dao name
+                teacherOtherDegrees = teacherOtherDegreesDao.findById(id);
+                teacherOtherDegrees.setTeacherApplicationId(application.getId());
+                logger.info("applicationId:{}", application.getId());
+                otherDegrees.add(teacherOtherDegrees);
+            }
+
+            logger.info("批量更新文件 for teacherId:{} with  teacherApplicationId:{}", teacher.getId(), application.getId());
+            teacherOtherDegreesDao.updateBatch(otherDegrees);
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+            return false;
+        }
+        return true;
+    }
+
 
     /**
      * 插入teacherOtherDegrees里的文件
+     *
      * @param teacherOtherDegrees
      * @return
      */
-    public  int save(TeacherOtherDegrees teacherOtherDegrees){
-           return teacherOtherDegreesDao.save(teacherOtherDegrees);
-       }
+    public int save(TeacherOtherDegrees teacherOtherDegrees) {
+        return teacherOtherDegreesDao.save(teacherOtherDegrees);
+    }
 
     /**
      * 删除teacherOtherDegrees里的文件
+     *
      * @param teacherOtherDegrees
      * @return
      */
-    public  int delete(TeacherOtherDegrees teacherOtherDegrees){
-            return teacherOtherDegreesDao.delete(teacherOtherDegrees);
-        }
+    public int delete(TeacherOtherDegrees teacherOtherDegrees) {
+        return teacherOtherDegreesDao.delete(teacherOtherDegrees);
+    }
 
-        public Map<String,Object> reomteFile(int fileId,Teacher teacher){
-           TeacherOtherDegrees teacherOtherDegrees =  teacherOtherDegreesDao.findById(fileId);
-            if(teacherOtherDegrees.getTeacherId()!=teacher.getId()){
-                return ResponseUtils.responseFail("You can't delete the file !",this);
-            }else {
-                if (teacherOtherDegrees.getTeacherApplicationId() == 0) {
-                    teacherOtherDegreesDao.delete(teacherOtherDegrees);
-                    return ResponseUtils.responseSuccess();
-                } else {
-                    return ResponseUtils.responseSuccess();
-                }
+    public Map<String, Object> reomteFile(int fileId, Teacher teacher) {
+        TeacherOtherDegrees teacherOtherDegrees = teacherOtherDegreesDao.findById(fileId);
+        if (teacherOtherDegrees.getTeacherId() != teacher.getId()) {
+            return ResponseUtils.responseFail("You can't delete the file !", this);
+        } else {
+            if (teacherOtherDegrees.getTeacherApplicationId() == 0) {
+                teacherOtherDegreesDao.delete(teacherOtherDegrees);
+                return ResponseUtils.responseSuccess();
+            } else {
+                return ResponseUtils.responseSuccess();
             }
         }
+    }
 
     /**
      * 查询老师上传过的文件
+     *
      * @param t
      * @return
      */
-    public Map<String,ContractFile> findContract(Teacher t){
+    public Map<String, ContractFile> findContract(Teacher t) {
         ContractFile contractFile = new ContractFile();
-        Teacher teacher =  teacherDao.findById(t.getId());
-         logger.info("用户：{}查询上传文件",teacher.getId());
+        Teacher teacher = teacherDao.findById(t.getId());
+        logger.info("用户：{}查询上传文件", teacher.getId());
 
         List<TeacherApplication> listEntity = teacherApplicationDao.findCurrentApplication(teacher.getId());
-        logger.info("用户：{}查询TeacherApplication",teacher.getId());
+        logger.info("用户：{}查询TeacherApplication", teacher.getId());
         List<TeacherOtherDegrees> teacherOtherDegrees = Lists.newArrayList();
-        if(CollectionUtils.isNotEmpty(listEntity)) {
+        if (CollectionUtils.isNotEmpty(listEntity)) {
             TeacherApplication teacherApplication = listEntity.get(0);
-           teacherOtherDegrees = teacherOtherDegreesDao.findByTeacherIdAndTeacherApplicationId(teacher.getId(), teacherApplication.getId());
+            teacherOtherDegrees = teacherOtherDegreesDao.findByTeacherIdAndTeacherApplicationId(teacher.getId(), teacherApplication.getId());
         }
-        if(CollectionUtils.isEmpty(teacherOtherDegrees)) {
+        if (CollectionUtils.isEmpty(teacherOtherDegrees)) {
             logger.info("用户{}查询未提交的文件", teacher.getId());
             teacherOtherDegrees = teacherOtherDegreesDao.findByTeacherId(teacher.getId());
         }
-        Map<String,ContractFile>  map = Maps.newHashMap();
+        Map<String, ContractFile> map = Maps.newHashMap();
 
-            if(CollectionUtils.isNotEmpty(teacherOtherDegrees)) {
-                List<TeacherOtherDegrees>  degrees = Lists.newArrayList();
-                List<TeacherOtherDegrees>  contract = Lists.newArrayList();
-                List<String>  res = Lists.newArrayList();
-                List<TeacherOtherDegrees>  identification = Lists.newArrayList();
-                List<TeacherOtherDegrees>  diploma = Lists.newArrayList();
-                List<TeacherOtherDegrees>  tax = Lists.newArrayList();
-                List<TeacherOtherDegrees>  certification = Lists.newArrayList();
-                teacherOtherDegrees.forEach(obj -> {
-                    if (obj.getFileType() == 1) {
-                        degrees.add(obj);
-                    }
-                    if (obj.getFileType() == 2) {
-                        certification.add(obj);
-                    }
-                    if (obj.getFileType() == 3) {
-                        obj.setTypeName("identity");
-                        identification.add(obj);
-                    }
-                    if (obj.getFileType() == 6) {
-                        obj.setTypeName("passport");
-                        identification.add(obj);
+        if (CollectionUtils.isNotEmpty(teacherOtherDegrees)) {
+            List<TeacherOtherDegrees> degrees = Lists.newArrayList();
+            List<TeacherOtherDegrees> contract = Lists.newArrayList();
+            List<String> res = Lists.newArrayList();
+            List<TeacherOtherDegrees> identification = Lists.newArrayList();
+            List<TeacherOtherDegrees> diploma = Lists.newArrayList();
+            List<TeacherOtherDegrees> tax = Lists.newArrayList();
+            List<TeacherOtherDegrees> certification = Lists.newArrayList();
+            teacherOtherDegrees.forEach(obj -> {
+                if (obj.getFileType() == 1) {
+                    degrees.add(obj);
+                }
+                if (obj.getFileType() == 2) {
+                    certification.add(obj);
+                }
+                if (obj.getFileType() == 3) {
+                    obj.setTypeName("identity");
+                    identification.add(obj);
+                }
+                if (obj.getFileType() == 6) {
+                    obj.setTypeName("passport");
+                    identification.add(obj);
 
-                    }
-                    if (obj.getFileType() == 7) {
-                        obj.setTypeName("driver");
-                        identification.add(obj);
-                    }
-                    if (obj.getFileType() == 4) {
-                        diploma.add(obj);
-                    }
-                    if (obj.getFileType() == 5) {
-                        contract.add(obj);
-                    }
-                    if (obj.getFileType() == 8) {
-                        tax.add(obj);
-                    }
-                    if (obj.getResult() != null && obj.getResult().equals("")) {
-                        res.add(obj.getResult());
-                    }
-
-                });
-                if(CollectionUtils.isNotEmpty(tax)) {
-                    contractFile.setTax(tax.get(tax.size()-1));
+                }
+                if (obj.getFileType() == 7) {
+                    obj.setTypeName("driver");
+                    identification.add(obj);
+                }
+                if (obj.getFileType() == 4) {
+                    diploma.add(obj);
+                }
+                if (obj.getFileType() == 5) {
+                    contract.add(obj);
+                }
+                if (obj.getFileType() == 8) {
+                    tax.add(obj);
+                }
+                if (obj.getResult() != null && obj.getResult().equals("")) {
+                    res.add(obj.getResult());
                 }
 
-                if(CollectionUtils.isNotEmpty(contract)) {
-                    contractFile.setContract(contract.get(contract.size()-1));
-                }
-                if(CollectionUtils.isNotEmpty(diploma)){
-                    contractFile.setDiploma(diploma.get(diploma.size() - 1));
-                }
-                if(CollectionUtils.isNotEmpty(identification)){
-                    contractFile.setIdentification(identification.get(identification.size() - 1));
-                }
-                String result =  isPass(res);
-                contractFile.setCertification(certification);
-                contractFile.setDegrees(degrees);
-                map.put(result, contractFile);
+            });
+            if (CollectionUtils.isNotEmpty(tax)) {
+                contractFile.setTax(tax.get(tax.size() - 1));
+            }
+
+            if (CollectionUtils.isNotEmpty(contract)) {
+                contractFile.setContract(contract.get(contract.size() - 1));
+            }
+            if (CollectionUtils.isNotEmpty(diploma)) {
+                contractFile.setDiploma(diploma.get(diploma.size() - 1));
+            }
+            if (CollectionUtils.isNotEmpty(identification)) {
+                contractFile.setIdentification(identification.get(identification.size() - 1));
+            }
+            String result = isPass(res);
+            contractFile.setCertification(certification);
+            contractFile.setDegrees(degrees);
+            map.put(result, contractFile);
         }
-            return map;
+        return map;
 
     }
 
-    public String isPass(List<String> res){
-        if(CollectionUtils.isEmpty(res)){
+    public String isPass(List<String> res) {
+        if (CollectionUtils.isEmpty(res)) {
             return String.valueOf(TeacherApplicationEnum.Result.FAIL);
         }
 
-        for(String result:res){
-            if(result.equals("FAIL")){
+        for (String result : res) {
+            if (result.equals("FAIL")) {
                 return String.valueOf(TeacherApplicationEnum.Result.FAIL);
             }
         }
         return String.valueOf(TeacherApplicationEnum.Result.PASS);
     }
 
+
+    public List<TeacherOtherDegrees> findTeacherOtherDegrees(long teacherId) {
+        List<TeacherApplication> listEntity = teacherApplicationDao.findCurrentApplication(teacherId);
+        logger.info("用户：{}查询TeacherApplication", teacherId);
+        List<TeacherOtherDegrees> teacherOtherDegrees = Lists.newArrayList();
+        //TODO zhaojun
+        if (CollectionUtils.isNotEmpty(listEntity)) {
+            TeacherApplication teacherApplication = listEntity.get(0);
+            teacherOtherDegrees = teacherOtherDegreesDao.findByTeacherIdAndTeacherApplicationId(teacherId, teacherApplication.getId());
+        }
+        if (CollectionUtils.isEmpty(teacherOtherDegrees)) {
+            logger.info("用户{}查询未提交的文件", teacherId);
+            teacherOtherDegrees = teacherOtherDegreesDao.findByTeacherId(teacherId);
+        }
+        return teacherOtherDegrees;
+
+    }
 }
