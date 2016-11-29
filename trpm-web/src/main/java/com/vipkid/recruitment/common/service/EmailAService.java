@@ -31,8 +31,8 @@ public class EmailAService{
         if (teacher.getRealName() != null)
             paramsMap.put("teacherName", teacher.getRealName());
         logger.info("【EMAIL.sendCancelPrac1】toAddMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",teacher.getRealName(),teacher.getEmail(),"BasicInfoPassTitle.html","BasicInfoPass.html");
-        Map<String, String> emailMap = new TempleteUtils().readTemplete("", paramsMap, "");
-        new EmailEngine().addMailPool(teacher.getEmail(), emailMap, EmailConfig.EmailFormEnum.TEACHVIP);
+            Map<String, String> emailMap = TempleteUtils.readTemplete("InterviewBook.html", paramsMap, "InterviewBookTitle.html");
+            EmailEngine.addMailPool(teacher.getEmail(), emailMap, EmailConfig.EmailFormEnum.TEACHVIP);
         logger.info("【EMAIL.sendCancelPrac1】addedMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",teacher.getRealName(),teacher.getEmail(),"BasicInfoPassTitle.html","BasicInfoPass.html");
          return ResponseUtils.responseSuccess();
     } catch (Exception e) {
@@ -49,8 +49,8 @@ public class EmailAService{
             if (teacher.getRealName() != null)
                 paramsMap.put("teacherName", teacher.getRealName());
             logger.info("【EMAIL.sendReschedulePrac1】toAddMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",teacher.getRealName(),teacher.getEmail(),"BasicInfoPassTitle.html","BasicInfoPass.html");
-            Map<String, String> emailMap = new TempleteUtils().readTemplete("", paramsMap, "");
-            new EmailEngine().addMailPool(teacher.getEmail(), emailMap, EmailConfig.EmailFormEnum.TEACHVIP);
+            Map<String, String> emailMap = TempleteUtils.readTemplete("InterviewBook.html", paramsMap, "InterviewBookTitle.html");
+            EmailEngine.addMailPool(teacher.getEmail(), emailMap, EmailConfig.EmailFormEnum.TEACHVIP);
             logger.info("【EMAIL.sendReschedulePrac1】addedMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",teacher.getRealName(),teacher.getEmail(),"BasicInfoPassTitle.html","BasicInfoPass.html");
             return ResponseUtils.responseSuccess();
         } catch (Exception e) {
@@ -68,8 +68,8 @@ public class EmailAService{
             if (teacher.getRealName() != null)
                 paramsMap.put("teacherName", teacher.getRealName());
             logger.info("【EMAIL.sendPrac1Pass】toAddMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",teacher.getRealName(),teacher.getEmail(),"BasicInfoPassTitle.html","BasicInfoPass.html");
-            Map<String, String> emailMap = new TempleteUtils().readTemplete("", paramsMap, "");
-            new EmailEngine().addMailPool(teacher.getEmail(), emailMap, EmailConfig.EmailFormEnum.TEACHVIP);
+            Map<String, String> emailMap = TempleteUtils.readTemplete("InterviewBook.html", paramsMap, "InterviewBookTitle.html");
+            EmailEngine.addMailPool(teacher.getEmail(), emailMap, EmailConfig.EmailFormEnum.TEACHVIP);
             logger.info("【EMAIL.sendPrac1Pass】addedMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",teacher.getRealName(),teacher.getEmail(),"BasicInfoPassTitle.html","BasicInfoPass.html");
             return ResponseUtils.responseSuccess();
         } catch (Exception e) {
@@ -87,8 +87,8 @@ public class EmailAService{
             if (teacher.getRealName() != null)
                 paramsMap.put("teacherName", teacher.getRealName());
             logger.info("【EMAIL.sendPrac2Start】toAddMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",teacher.getRealName(),teacher.getEmail(),"BasicInfoPassTitle.html","BasicInfoPass.html");
-            Map<String, String> emailMap = new TempleteUtils().readTemplete("", paramsMap, "");
-            new EmailEngine().addMailPool(teacher.getEmail(), emailMap, EmailConfig.EmailFormEnum.TEACHVIP);
+            Map<String, String> emailMap = TempleteUtils.readTemplete("InterviewBook.html", paramsMap, "InterviewBookTitle.html");
+            EmailEngine.addMailPool(teacher.getEmail(), emailMap, EmailConfig.EmailFormEnum.TEACHVIP);
             logger.info("【EMAIL.sendPrac2Start】addedMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",teacher.getRealName(),teacher.getEmail(),"BasicInfoPassTitle.html","BasicInfoPass.html");
             return ResponseUtils.responseSuccess();
         } catch (Exception e) {
@@ -106,8 +106,8 @@ public class EmailAService{
             if (teacher.getRealName() != null)
                 paramsMap.put("teacherName", teacher.getRealName());
             logger.info("【EMAIL.sendCancelPrac2】toAddMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",teacher.getRealName(),teacher.getEmail(),"BasicInfoPassTitle.html","BasicInfoPass.html");
-            Map<String, String> emailMap = new TempleteUtils().readTemplete("", paramsMap, "");
-            new EmailEngine().addMailPool(teacher.getEmail(), emailMap, EmailConfig.EmailFormEnum.TEACHVIP);
+            Map<String, String> emailMap = TempleteUtils.readTemplete("InterviewBook.html", paramsMap, "InterviewBookTitle.html");
+            EmailEngine.addMailPool(teacher.getEmail(), emailMap, EmailConfig.EmailFormEnum.TEACHVIP);
             logger.info("【EMAIL.sendCancelPrac2】addedMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",teacher.getRealName(),teacher.getEmail(),"BasicInfoPassTitle.html","BasicInfoPass.html");
             return ResponseUtils.responseSuccess();
         } catch (Exception e) {
@@ -125,8 +125,8 @@ public class EmailAService{
             if (teacher.getRealName() != null)
                 paramsMap.put("teacherName", teacher.getRealName());
             logger.info("【EMAIL.sendReschedulePrac2】toAddMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",teacher.getRealName(),teacher.getEmail(),"BasicInfoPassTitle.html","BasicInfoPass.html");
-            Map<String, String> emailMap = new TempleteUtils().readTemplete("", paramsMap, "");
-            new EmailEngine().addMailPool(teacher.getEmail(), emailMap, EmailConfig.EmailFormEnum.TEACHVIP);
+            Map<String, String> emailMap = TempleteUtils.readTemplete("InterviewBook.html", paramsMap, "InterviewBookTitle.html");
+            EmailEngine.addMailPool(teacher.getEmail(), emailMap, EmailConfig.EmailFormEnum.TEACHVIP);
             logger.info("【EMAIL.sendReschedulePrac2】addedMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",teacher.getRealName(),teacher.getEmail(),"BasicInfoPassTitle.html","BasicInfoPass.html");
             return ResponseUtils.responseSuccess();
         } catch (Exception e) {
@@ -144,8 +144,8 @@ public class EmailAService{
             if (teacher.getRealName() != null)
                 paramsMap.put("teacherName", teacher.getRealName());
             logger.info("【EMAIL.sendPrac2Pass】toAddMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",teacher.getRealName(),teacher.getEmail(),"BasicInfoPassTitle.html","BasicInfoPass.html");
-            Map<String, String> emailMap = new TempleteUtils().readTemplete("", paramsMap, "");
-            new EmailEngine().addMailPool(teacher.getEmail(), emailMap, EmailConfig.EmailFormEnum.TEACHVIP);
+            Map<String, String> emailMap = TempleteUtils.readTemplete("InterviewBook.html", paramsMap, "InterviewBookTitle.html");
+            EmailEngine.addMailPool(teacher.getEmail(), emailMap, EmailConfig.EmailFormEnum.TEACHVIP);
             logger.info("【EMAIL.sendPrac2Pass】addedMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",teacher.getRealName(),teacher.getEmail(),"BasicInfoPassTitle.html","BasicInfoPass.html");
             return ResponseUtils.responseSuccess();
         } catch (Exception e) {
