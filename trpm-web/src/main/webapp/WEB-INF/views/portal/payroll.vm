@@ -23,7 +23,7 @@ li[role] a {
 	.rowsDisableCss {background-color: #F5F5F5;}
 </style>
 
-<div id="payroll" style="width: 1200px;overflow-x: auto;margin:0 auto;border:1px #f00 solid;"> 
+<div id="payroll" style="width: 1256px;overflow-x: auto;margin:0 auto;"> 
   <!-- Nav tabs -->
   <ul class="nav nav-tabs" role="tablist">
     <li role="presentation" #tabActive($payrollType, "SALARY")>
