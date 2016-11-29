@@ -132,4 +132,23 @@
 		<trim prefix="WHERE" prefixOverrides="AND">AND id = #{id}</trim>
 	</delete>
 
+
+
+
+
+
+
+
+	<select id="findTAByAuditTimesStatusResult" resultMap="TeacherQuizResultMap">
+		SELECT
+		<include refid="teacherApplicationColumns" />
+		FROM teacher_quiz
+		WHERE
+		status = #{status}
+		AND
+		<foreach collection="auditTimes" open="AND (" close=")" separator=" OR " item="auditTime">
+			(creation_time BETWEEN #{auditTime.startTime} AND #{auditTime.endTime})
+		</foreach>
+	</select>
+
 </mapper>

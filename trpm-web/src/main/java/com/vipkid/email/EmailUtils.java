@@ -72,11 +72,28 @@ public class EmailUtils {
 			logger.error("【EMAIL.sendEmial4InterviewBook】ERROR: {}", e);
 		}
 	}
-	
+
+//Training Quiz PASS send Email +quizScore
+	public static void sendEmail4TrainingPass(Teacher teacher, int quizScore) {
+		try {
+			Map<String, String> paramsMap = Maps.newHashMap();
+			if (teacher.getRealName() != null)
+				paramsMap.put("teacherName", teacher.getRealName());
+			    paramsMap.put("quizScore",quizScore+"");
+			logger.info("【EMAIL.sendEmail4TrainingPass】toAddMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",teacher.getRealName(),teacher.getEmail(),"BasicInfoPassTitle.html","BasicInfoPass.html");
+			Map<String, String> emailMap = new TempleteUtils().readTemplete("BasicInfoPass.html", paramsMap, "BasicInfoPassTitle.html");
+			new EmailEngine().addMailPool(teacher.getEmail(), emailMap, EmailConfig.EmailFormEnum.TEACHVIP);
+			logger.info("【EMAIL.sendEmail4TrainingPass】addedMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",teacher.getRealName(),teacher.getEmail(),"BasicInfoPassTitle.html","BasicInfoPass.html");
+		} catch (Exception e) {
+			logger.error("【EMAIL.sendEmail4TrainingPass】ERROR: {}", e);
+		}
+	}
+
+
 	/**
-	 * 用户激活邮件 
+	 * 用户激活邮件
 	 * 2016年11月29日 下午3:48:20
-	 * @param teacher    
+	 * @param teacher
 	 * void
 	 */
 	public static void sendActivationEmail(Teacher teacher){
@@ -90,12 +107,12 @@ public class EmailUtils {
         } catch (Exception e) {
             logger.error("【EMAIL.sendActivationEmail】ERROR: {}", e);
         }
-	} 
-	
+	}
+
 	/**
 	 * 重置密码邮件
 	 * 2016年11月29日 下午3:48:10
-	 * @param teacher    
+	 * @param teacher
 	 * void
 	 */
 	public static void sendRestPasswordEmail(Teacher teacher){

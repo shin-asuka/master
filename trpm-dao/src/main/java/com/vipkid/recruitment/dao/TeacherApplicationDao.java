@@ -210,4 +210,12 @@ public class TeacherApplicationDao extends MapperDaoTemplate<TeacherApplication>
         paramsMap.put("finishTypes", finishTypes);
         return selectCount("countReapplyTAByTeacherIdStatusFinishType", paramsMap);
     }
+
+
+    public List<Long> findPracticumBook(List<Map> auditTimes, String status) {
+        Map<String, Object> paramsMap = new HashMap<String, Object>();
+        paramsMap.put("auditTimes", auditTimes);
+        paramsMap.put("status", status);
+        return listEntity("findPracticumBook", paramsMap);
+    }
 }

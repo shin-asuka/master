@@ -105,9 +105,9 @@ public class TrainingController extends RestfulController {
         Object grade = pramMap.get("grade");
         Object quizToken = pramMap.get("quizToken");
         try{
-            User user = getUser(request);
-            logger.info("用户{}提交grade:{}",user.getId(),String.valueOf(grade));
-            result.put("result",this.adminQuizService.saveQuizResult(user.getId(), String.valueOf(grade),Long.valueOf(quizToken+"")));
+           Teacher teacher = getTeacher(request);
+            logger.info("用户{}提交grade:{}",teacher.getId(),String.valueOf(grade));
+            result.put("result",this.adminQuizService.saveQuizResult(teacher, String.valueOf(grade),Long.valueOf(quizToken+"")));
             return result;
         } catch (IllegalArgumentException e) {
             logger.error("内部参数转化异常:"+e.getMessage());

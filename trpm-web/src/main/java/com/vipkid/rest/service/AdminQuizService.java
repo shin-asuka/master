@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import com.vipkid.email.EmailUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.community.tools.JsonTools;
@@ -143,7 +144,8 @@ public class AdminQuizService {
      * boolean
      * @date 2016年8月18日
      */
-    public boolean saveQuizResult(long teacherId,String grade,long quizToken){
+    public boolean saveQuizResult(Teacher teacher,String grade,long quizToken){
+        long teacherId = teacher.getId();
         logger.info("teacehrId:{},提交分数:{}",teacherId, grade);
         //查询老师待考试记录
         List<TeacherQuiz> list = this.teacherQuizDao.findNeedQuiz(teacherId);
@@ -181,6 +183,9 @@ public class AdminQuizService {
                     application.setStatus(TeacherApplicationEnum.Status.TRAINING.toString());
                     application = teacherApplicationDao.initApplicationData(application);
                     this.teacherApplicationDao.save(application);
+
+                    //教师通过考试发通知邮件
+                    EmailUtils.sendEmail4TrainingPass(teacher,quizScore);
                 }
 
                 logger.info("teacehrId:{},提交考试结果，quizId:{},result:{} ",teacherId,teacherQuiz.getId(),teacherQuiz.getStatus());

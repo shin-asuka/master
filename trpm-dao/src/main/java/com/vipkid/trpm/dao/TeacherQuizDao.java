@@ -1,6 +1,7 @@
 package com.vipkid.trpm.dao;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -109,9 +110,10 @@ public class TeacherQuizDao extends MapperDaoTemplate<TeacherQuiz>{
         return list;
     }
 
-    public List<TeacherQuiz> findByStatus(){
-        TeacherQuiz teacherQuiz = new TeacherQuiz();
-        teacherQuiz.setStatus(TeacherQuizEnum.Status.NOQUIZ.val());
-        return super.selectList(teacherQuiz);
+    public List<TeacherQuiz> findTAByAuditTimesStatusResult(List<Map> auditTimes,int status){
+        Map<String, Object> paramsMap = new HashMap<String, Object>();
+        paramsMap.put("auditTimes", auditTimes);
+        paramsMap.put("status", status);
+        return listEntity("findTAByAuditTimesStatusResult", paramsMap);
     }
 }
