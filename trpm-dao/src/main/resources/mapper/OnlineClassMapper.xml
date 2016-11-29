@@ -674,6 +674,9 @@
 		<if test="course != null and course!= ''">
 			AND c.name = #{course}
 		</if>
+		<if test="onlineClassId != null and onlineClassId!= ''">
+			AND oc.id = #{onlineClassId}
+		</if>
 		order by oc.scheduled_date_time desc
     </select>
 
