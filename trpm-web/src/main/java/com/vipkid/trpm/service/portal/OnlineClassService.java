@@ -186,7 +186,7 @@ public class OnlineClassService {
         /** 获取teacherComments中的stars字段的值，并存入model */
         int stars = this.findTeacherCommentByOnlineClassId(onlineClass, studentId);
         logger.info("TeacherId:{}, Major Course query stars : {},onlineClassId:{},studentId:{}", teacher.getId(), stars,
-                        onlineClass.getId(), studentId);
+                onlineClass.getId(), studentId);
         modelMap.put("stars", stars);
         if (lesson.getSerialNumber().startsWith("A")) {
             DemoReport currentReport = demoReportDao.findByStudentIdAndOnlineClassId(studentId, onlineClass.getId());
@@ -250,7 +250,7 @@ public class OnlineClassService {
         parmMap.put("roomId", onlineClass.getClassroom());
         String content = FilesUtils.readLogTemplete(ApplicationConstant.AuditCategory.CLASSROOM_ENTER, parmMap);
         auditDao.saveAudit(ApplicationConstant.AuditCategory.CLASSROOM_ENTER, "INFO", content, teacher.getRealName(),
-                        teacher, IpUtils.getRemoteIP());
+                teacher, IpUtils.getRemoteIP());
     }
 
     /**
@@ -283,7 +283,7 @@ public class OnlineClassService {
      */
     public void exitOpenclass(long onlineClassId) {
         onlineClassDao.updateEntity(
-                        new OnlineClass().setId(onlineClassId).setStatus("FINISHED").setFinishType("AS_SCHEDULED"));
+                new OnlineClass().setId(onlineClassId).setStatus("FINISHED").setFinishType("AS_SCHEDULED"));
     }
 
     /**
@@ -540,7 +540,7 @@ public class OnlineClassService {
         Map<String, String> requestHeader = new HashMap<String, String>();
         requestHeader.put("Authorization", t + " " + DigestUtils.md5Hex(t));
         String content = HttpClientProxy.get(ApplicationConstant.TEACHER_IN_CLASSROOM_URL, requestParams,
-                        requestHeader);
+                requestHeader);
 
         logger.info("### Mark that teacher enter classroom: {}", content);
         logger.info("### Sent get request to {} with params {}", ApplicationConstant.TEACHER_IN_CLASSROOM_URL,
@@ -824,6 +824,9 @@ public class OnlineClassService {
             User user = userDao.findById(student.getChineseLeadTeacherId());
             map.put("cltId",student.getChineseLeadTeacherId());
             map.put("cltName", user.getName());
+        }else{
+            map.put("cltId","");
+            map.put("cltName","");
         }
         map.put("sequence", lesson.getSequence());
         return map;
