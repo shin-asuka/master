@@ -7,6 +7,7 @@ import java.util.Base64;
 import java.util.Map;
 import java.util.UUID;
 
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.community.config.PropertyConfigurer;
 import org.slf4j.Logger;
@@ -209,7 +210,7 @@ public class PassportService {
     }
 
     /**
-     * 1.更新token 2.发送邮件
+     * 1.更新token(RecruitmentId) 2.发送邮件
      * 
      * @Author:ALong (ZengWeiLong)
      * @param user
@@ -218,6 +219,9 @@ public class PassportService {
      */
     public Map<String, Object> senEmailForPassword(User user) {
         Teacher teacher = this.findTeacherById(user.getId());
+        if(teacher == null){
+            return ResponseUtils.responseFail("The is a not exits teacher!", this);
+        }
         teacher.setRecruitmentId(this.updateRecruitmentId(teacher));
         TempleteUtils templete = new TempleteUtils();
         Map<String, String> map = Maps.newHashMap();
@@ -270,13 +274,13 @@ public class PassportService {
      * @date 2016年3月2日
      */
     public String updateRecruitmentId(Teacher teacher) {
-        String uuid = UUID.randomUUID().toString().replace("-", "").substring(0, 10);
+        String recruitmentId = UUID.randomUUID().toString().replace("-", "").substring(0, 10);
         SHA256PasswordEncoder encoder = new SHA256PasswordEncoder();
-        uuid = encoder.encode(teacher.getSerialNumber() + uuid + teacher.getEmail());
-        uuid = System.currentTimeMillis() + "-" + uuid;
-        teacher.setRecruitmentId(uuid);
+        recruitmentId = encoder.encode(teacher.getSerialNumber() + recruitmentId + teacher.getEmail());
+        recruitmentId = System.currentTimeMillis() + "-" + recruitmentId;
+        teacher.setRecruitmentId(recruitmentId);
         this.teacherDao.update(teacher);
-        return uuid;
+        return recruitmentId;
     }
 
     /**
@@ -287,30 +291,39 @@ public class PassportService {
      * @return int
      * @date 2016年3月3日
      */
-    public String updatePassword(Teacher teacher, String password) {
+    public Map<String,Object> updatePassword(Teacher teacher, String newpassword) {
         User user = this.userDao.findById(teacher.getId());
-        if (user == null)
-            return null;
-        String strPwd = new String(Base64.getDecoder().decode(password));
-        if (StringUtils.isEmpty(strPwd)) {
-            return null;
+        if (user == null){
+            return ResponseUtils.responseFail("User is null,Id:"+teacher.getId(), this);
         }
+        //解码64
+        String strPwd = new String(Base64.getDecoder().decode(newpassword));
+        if (StringUtils.isBlank(strPwd)) {
+            return ResponseUtils.responseFail("new password base64 is error ! "+newpassword, this);
+        }
+        //SHA256加密
         SHA256PasswordEncoder encoder = new SHA256PasswordEncoder();
         user.setPassword(encoder.encode(strPwd));
-        if (StringUtils.isEmpty(user.getToken())) {
+        
+        //如果用户没有token 则生成一个
+        if (StringUtils.isBlank(user.getToken())) {
             user.setToken(UUID.randomUUID().toString());
         }
-        // 更新手机端appToken
+        //更新user的密码
+        int i = this.userDao.update(user);
+        if (i <= 0) {
+            return ResponseUtils.responseFail("update user result is "+i+" , id:"+user.getId(), this);
+        }
+        //更新Teacher修改密码的验证token，使原来的密码修改token失效
+        this.updateRecruitmentId(teacher);
+        //更新手机端appToken
         Map<String, Object> tokenMap = this.appRestfulDao.findAppTokenByTeacherId(teacher.getId());
-        if (tokenMap != null && !tokenMap.isEmpty()) {
+        if (MapUtils.isNotEmpty(tokenMap)) {
             this.appRestfulDao.updateTeacherToken(Long.valueOf(tokenMap.get("id") + ""), user.getToken());
         }
-        int i = this.userDao.update(user);
-        if (i > 0) {
-            this.updateRecruitmentId(teacher);
-            return AES.encrypt(user.getToken(), AES.getKey(AES.KEY_LENGTH_128, ApplicationConstant.AES_128_KEY));
-        }
-        return null;
+        //返回成功
+        return ResponseUtils.responseSuccess();
+        
     }
 
     /**
