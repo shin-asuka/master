@@ -11,6 +11,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.alibaba.fastjson.JSON;
 import com.google.common.base.Stopwatch;
+import com.vipkid.trpm.entity.teachercomment.TeacherComment;
+import com.vipkid.trpm.entity.teachercomment.TeacherCommentResult;
+import com.vipkid.trpm.service.portal.TeacherService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -28,7 +31,6 @@ import com.vipkid.trpm.entity.DemoReport;
 import com.vipkid.trpm.entity.Lesson;
 import com.vipkid.trpm.entity.OnlineClass;
 import com.vipkid.trpm.entity.StudentExam;
-import com.vipkid.trpm.entity.TeacherComment;
 import com.vipkid.trpm.service.passport.IndexService;
 import com.vipkid.trpm.service.portal.ReportService;
 import com.vipkid.trpm.service.rest.LoginService;
@@ -58,6 +60,9 @@ public class ReportController extends AbstractPortalController {
     
     @Autowired
     private LoginService loginService;
+
+    @Autowired
+    private TeacherService teacherService;
     
     /**
      * UA报告上传页面进入
@@ -289,7 +294,9 @@ public class ReportController extends AbstractPortalController {
     public String getComment(HttpServletRequest request, HttpServletResponse response, @RequestParam long id) {
         logger.info("ReportController: getComment() 参数为：id={}", id);
         // 查询FeedBack信息
-        TeacherComment teacherComment = reportService.findTeacherCommentById(id);
+        TeacherCommentResult tcFromApi = teacherService.findByTeacherCommentId(String.valueOf(id));
+        TeacherComment teacherComment = new TeacherComment(tcFromApi);
+
 
         Map<String, Object> parmMap = Maps.newHashMap();
         if (Objects.nonNull(teacherComment) && Objects.nonNull(teacherComment.getFirstDateTime())) {
@@ -322,7 +329,8 @@ public class ReportController extends AbstractPortalController {
         model.addAttribute("studentExam", handleExamLevel(studentExam, serialNum));
 
         // 查询教师评价
-        model.addAttribute("teacherComments", reportService.listRecentlyTeacherComment(studentId));
+        model.addAttribute("teacherComments",
+                teacherService.findTCByStudentIdAndGroupByOnlineClassId(String.valueOf(studentId)));
 
         return view("online_class_info");
     }
