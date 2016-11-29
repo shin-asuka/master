@@ -79,7 +79,7 @@ $("#thirdYearAnniversaryBanner").show();
 	<div class="notice-c">
 		<div class="title">NOTICE</div>
 		<div class="close-btn"></div>
-		<div class="content">You can now access the training materials in your teacher portal. If you think you need to brush up on training, feel free to take a look!</div>
+		<div class="content">You can now access the suggested Teaching Tips materials in your teacher portal. Feel free to take a look whenever you need!</div>
 		<div class="sure-btn">OK</div>
 	</div>
 </div>

@@ -2,13 +2,13 @@
   #if($courseType.equals("MAJOR"))
   <div class="row">
     <div class="col-md-12">
-      <p style="line-height: 36px; font-size: 16px; color: #dd4814;"><span class="glyphicon glyphicon-bullhorn"></span> You can make a timeslot available to be booked within 24 hours now! <a href="#springUrl('/faq/booking_course')" target="_blank" style="color: #009fda;">Learn more...</a></p>
+      <p style="line-height: 36px; font-size: 16px; color: #dd4814;"><span class="glyphicon glyphicon-bullhorn"></span> You can make a time slot available to be booked within 24 hours now! <a href="#springUrl('/faq/booking_course')" target="_blank" style="color: #009fda;">Learn more...</a></p>
     </div>
   </div>
   #else
   <div class="row">
       <div class="col-md-12">
-          <p style="line-height: 36px; font-size: 16px; color: #dd4814;"><span class="glyphicon glyphicon-bullhorn"></span> You can make practicum timeslot available to be booked within 24 hours now! <a href="#springUrl('/faq/booking_course')" target="_blank" style="color: #009fda;">Learn more...</a></p>
+          <p style="line-height: 36px; font-size: 16px; color: #dd4814;"><span class="glyphicon glyphicon-bullhorn"></span> You can make a practicum time slot available to be booked within 24 hours now! <a href="#springUrl('/faq/booking_course')" target="_blank" style="color: #009fda;">Learn more...</a></p>
       </div>
   </div>
   #end
@@ -25,7 +25,7 @@
     <div class="col-md-2">
       <button type="button" class="btn btn-primary btn-sm next" style="float: right; margin-right:30px; width:180px;">Next Week &gt;</button>
     </div>
-    <form id="scheduleForm" style="display: none;" method="post" action="#springUrl('/schedule.shtml')">
+    <form id="scheduleForm" style="display: none;" method="post" action="#springUrl('/bookings.shtml')">
       <input type="hidden" id="offsetOfWeek" name="offsetOfWeek" value="$!{offsetOfWeek}" />
       <input type="hidden" id="courseType" name="courseType" value="$!{courseType}" />
       <input type="submit" />

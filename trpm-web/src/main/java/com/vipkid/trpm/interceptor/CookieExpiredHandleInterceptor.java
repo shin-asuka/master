@@ -1,5 +1,6 @@
 package com.vipkid.trpm.interceptor;
 
+
 import java.io.IOException;
 import java.util.Map;
 
@@ -8,7 +9,6 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.vipkid.rest.security.AppContext;
 import org.apache.commons.lang3.StringUtils;
 import org.community.config.PropertyConfigurer;
 import org.slf4j.Logger;
@@ -22,6 +22,7 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import com.vipkid.http.service.AnnouncementHttpService;
 import com.vipkid.rest.config.RestfulConfig.RoleClass;
+import com.vipkid.rest.security.AppContext;
 import com.vipkid.trpm.constant.ApplicationConstant;
 import com.vipkid.trpm.constant.ApplicationConstant.CookieKey;
 import com.vipkid.trpm.constant.ApplicationConstant.LoginType;
@@ -30,7 +31,6 @@ import com.vipkid.trpm.entity.Staff;
 import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.entity.User;
 import com.vipkid.trpm.proxy.RedisProxy;
-import com.vipkid.trpm.service.passport.IndexService;
 import com.vipkid.trpm.service.portal.LocationService;
 import com.vipkid.trpm.service.rest.AdminQuizService;
 import com.vipkid.trpm.service.rest.LoginService;
@@ -168,7 +168,7 @@ public class CookieExpiredHandleInterceptor extends HandlerInterceptorAdapter {
             }else{
                 //需要考试，请求的映射不再基本信息修改则进行跳转
                 logger.info("当前老师 [{}] 未通过考试", user.getName());
-                response.sendRedirect("/training/material");
+                response.sendRedirect("/teaching/material");
                 return false;
             }
         }
@@ -176,7 +176,7 @@ public class CookieExpiredHandleInterceptor extends HandlerInterceptorAdapter {
         //是否需要密码修改
 		if (!checkChangePasswordUri(request) && checkCookie(request)) {
 			logger.info("拦截检测到需要修改密码进入页面");
-			response.sendRedirect(request.getContextPath() + "/schedule.shtml");
+			response.sendRedirect(request.getContextPath() + "/bookings.shtml");
 			return false;
 		}
 		logger.info("通过拦截");
@@ -209,10 +209,7 @@ public class CookieExpiredHandleInterceptor extends HandlerInterceptorAdapter {
 	 */
 	private boolean checkCookie(HttpServletRequest request) {
 		Cookie cookie = CookieUtils.getCookie(request, ApplicationConstant.CookieKey.TRPM_CHANGE_WINDOW);
-		if (cookie != null && CookieKey.TRPM_CHANGE_WINDOW.equals(cookie.getValue())) {
-			return true;
-		}
-		return false;
+		return cookie != null && CookieKey.TRPM_CHANGE_WINDOW.equals(cookie.getValue());
 	}
 
 	/**
@@ -224,7 +221,7 @@ public class CookieExpiredHandleInterceptor extends HandlerInterceptorAdapter {
 	 * @date 2016年4月19日
 	 */
 	private boolean checkChangePasswordUri(HttpServletRequest request) {
-		String regex = "^(?:.*schedule.shtml)|(?:.*changePassword.shtml)|(?:.*disableLayer.json)|(?:.*changePasswordAction.json){0,}$";
+		String regex = "^(?:.*bookings.shtml)|(?:.*changePassword.shtml)|(?:.*disableLayer.json)|(?:.*changePasswordAction.json){0,}$";
 		String requestUri = request.getRequestURI();
 		return requestUri.matches(regex);
 	}

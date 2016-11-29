@@ -279,54 +279,6 @@
   #end	
 
 <div class="container">
-    #**
-  <div class="vk-logo"></div>
-  <div class="vk-nav-info">
-    <div class="vk-sub-title"> 
-      <font color="red"> 
-        <a target="_blank" href="http://help.duobeiyun.com/room/test/?result=http://beta-app-proxy.vipkid.com.cn/api/service/public/ittest/callback&amp;lang=en&amp;role=TEACHER&amp;id=$!{TRPM_TEACHER.id}">Test Your Computer</a> 
-      </font> 
-    </div>
-    <div>
-      <ul id="quiz-tips" class="nav nav-pills pull-right vk-nav">
-		<li class="$!{material}"><a href="#springUrl('/training/material')">Training Center</a></li>
-        <li class="$!{activeSchedule}"><a href="#springUrl('/schedule.shtml')">Schedule</a></li>
-        <li class="$!{activeClassrooms}"><a href="#springUrl('/classrooms.shtml')">Classrooms</a></li>
-
-        	<li><a href="#springUrl('/evaluations')">Evaluations</a>
-        		#if($isEvalClick)<div class="redPoint"></div>#end
-        	</li>
-
-        #if($isTe && !$isTes)
-        	<li><a href="#springUrl('/te')">TE</a></li>
-		#end 
-		#if($isTes)
-			<li><a href="#springUrl('/te-supervisor')">TES</a></li>		
-		#end
-        #if($isPes)
-        	<li class="$!{activeClassroomsPe}"><a href="#springUrl('/pesupervisor.shtml')">PES</a></li>
-		#end        
-        ##<li class="$!{activeComments}"><a href="#springUrl('/comments.shtml')">Comments</a></li>
-        <li class="$!{activePersonalInfo}"><a href="#springUrl('/personalInfo.shtml')">Personal Info</a></li>
-        ##教师端不展示Payroll模块 2016-06-02   
-		<li class="$!{activePayrollInfo}"><a href="#springUrl('/payroll.shtml')">Payroll</a></li>
-        
-        <li><a href="#springUrl('/logout.shtml')">Quit</a></li>
-      </ul>
-      <span class="welcome-msg pull-right"> Welcome, <span id="teacherName">${TRPM_USER.name}</span>
-          #if($stringUtils.contains($!{TRPM_TEACHER.avatar}, 'http://')) 
-          <img class="avatarImg" src="$!{TRPM_TEACHER.avatar}" onerror="javascript:this.src='${resourceTool.oss.url_preffix}/static/images/teacher_portal/default_avatar.png';this.onerror=null;" style="width:40px; height:40px; margin-left:5px;border-radius:100%;" /> 
-          #else
-          <img class="avatarImg" src="#if($!{TRPM_TEACHER.avatar})${resourceTool.oss.url_preffix}/$!{TRPM_TEACHER.avatar}#end" onerror="javascript:this.src='${resourceTool.oss.url_preffix}/static/images/teacher_portal/default_avatar.png';this.onerror=null;" style="width:40px; height:40px; margin-left:5px;border-radius:100%;" /> 
-          #end
-      </span> 
-      	#set($ctime = $dateTool.format('yyyyMMdd',$dateTool.getDate()))
-      	## 超过2016-04-20天将不再显示
-		#if($conversionTool.parseNumber($ctime) < $conversionTool.parseNumber("20160420")) 			 
-			<a id="activityurl" href="#springUrl('/activity.shtml')" target="_blank" style="position: absolute;z-index: 999;top:6px;left: 470px;"><img style="width:94px" src="#styleUrl('/resources/images/activity/icon.png')"/></a>
-    	#end
-    </div>
-  </div>**#
         <div class="header-wrapper">
             <div class="vipkid-info-area">
                 <div class="vipkid-logo-img"></div>
@@ -362,10 +314,10 @@
             </div>
             <ul class="nav" id="quiz-tips">
                 <li class="$!{material}">
-                    <a href="#springUrl('/training/material')">Training Center</a>
+                    <a href="#springUrl('/teaching/material')">Teaching Center</a>
                 </li>
                 <li class="$!{activeSchedule}">
-                    <a href="#springUrl('/schedule.shtml')">Schedule</a>
+                    <a href="#springUrl('/bookings.shtml')">Bookings</a>
                 </li>
                 <li class="$!{activeClassrooms}">
                     <a href="#springUrl('/classrooms.shtml')">Classrooms</a>
@@ -387,7 +339,7 @@
                     </li>
                 #end
                 <li class="$!{activePayrollInfo}">
-                    <a href="#springUrl('/payroll.shtml')">Payroll</a>
+                    <a href="#springUrl('/payment.shtml')">Payment</a>
                 </li>
                 <li class="it-test">
                     <img src="#springUrl('/resources/images/nav/test-computer-icon.png')">

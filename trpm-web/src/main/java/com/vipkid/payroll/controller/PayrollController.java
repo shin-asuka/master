@@ -43,7 +43,7 @@ public class PayrollController extends AbstractPortalController {
 	@Autowired
     private LoginService loginService;
 
-	@RequestMapping("/payroll")
+	@RequestMapping("/payment")
 	public String payroll(HttpServletRequest request, HttpServletResponse response, Model model) {
 		int offsetOfMonth = ServletRequestUtils.getIntParameter(request, "offsetOfMonth", 0);
 		Teacher teacher = loginService.getTeacher();
@@ -61,8 +61,7 @@ public class PayrollController extends AbstractPortalController {
 	    if(payrollType!=null&&payrollType.contains("PRICE")){
 	    	return priceList(request, response, model,payrollType);
 	    }
-		
-		
+			
 		try {
 
 			PayrollItemResponse payrollRpc = neoClient.getPayrollItemByTeacherAndMonth(teacherId, month);
@@ -160,11 +159,6 @@ public class PayrollController extends AbstractPortalController {
 		int month = monthOfYear.getYear() * 100 + monthOfYear.getMonthValue() ;
 		itemType = ServletRequestUtils.getIntParameter(request, "itemType",
 				Result.SLALARY_TYPE_COURSE_ALL_RULE);
-		//Date..formatTo(instant, formatter)
-		
-//		teacherId = 1167406;
-//		month = 201605;
-		
 		model.addAttribute("offsetOfMonth", offsetOfMonth);
 		
 		try {

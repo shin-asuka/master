@@ -48,6 +48,7 @@ define(depends, function() {
 		$("button.next").bind("click", nextMonth);
 		$("button.curr").bind("click", currMonth);
 		$("button.prev").bind("click", prevMonth);
+		$('#courses_total_container').collapse('show');
 		
 		
 		//处理Vipkid 日期
