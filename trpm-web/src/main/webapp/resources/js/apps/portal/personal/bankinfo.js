@@ -1,6 +1,8 @@
 var depends = ["personal","function", "tools", "jquery-form","jquery-bootstrap","jquery-load","select2"];
 define(depends, function(personal) {
-	
+	var aba = $("#bankABARoutingNumber");
+	var ach = $("#bankACHNumber");
+
 	var ajaxErrorfunction = function(reponse, status, info) {
 		Portal.loading("close");
 		if (reponse.statusText == "timeout") {
@@ -37,7 +39,8 @@ define(depends, function(personal) {
 		};
 	
 	var init = function(picroot) {
-		
+		$(aba).val("");
+		$(ach).val("");
 		aliyunroot = picroot;
 		
 		/*表单回选*/
@@ -55,7 +58,14 @@ define(depends, function(personal) {
 		//$(".select2").select2();
 		
 		/*提交表单监听*/
-		$("#setBankInfoSubmit").click(function(){
+		$("#setBankInfoSubmit").click(function(e){
+				aba = $("#bankABARoutingNumber").val();
+				ach = $("#bankACHNumber").val();
+				if(aba=="" && ach==""){
+					e.stopPropagation();
+					alert("You mast select at last one item to fill in between  ABA routing number and ACH number!");
+					return ;
+				}
 			ajaxSubmits();
 		});
 		/*		

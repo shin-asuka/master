@@ -28,7 +28,7 @@
             <div class='title-lable'>Beneficiary's account name</div>
           </div>
           <div class="col-sm-8 col-md-7">
-            $!{TRPM_TEACHER.bankAccountName}
+            $!{accountName}
           </div>
         </div>
         
@@ -38,7 +38,7 @@
             	<div class='title-lable'>Beneficiary's checking account number</div>
            	</div>
 			<div class="col-sm-8 col-md-7">
-				$!{TRPM_TEACHER.bankCardNumber}
+				$!{accountNumber}
 			</div>
         </div>
         
@@ -88,7 +88,7 @@
             <div class='title-lable'>Swift code</div>
           </div>
           <div class="col-sm-8 col-sm-7">
-            $!{TRPM_TEACHER.bankSwiftCode}
+            $!{swiftCode}
           </div>
         </div>
         
@@ -98,7 +98,7 @@
             <div class='title-lable'>ABA routing number</div>
           </div>
           <div class="col-sm-8 col-sm-7">
-          	$!{TRPM_TEACHER.bankABARoutingNumber}
+          	$!{ABAroutingNumber}
           </div>
         </div>
         
@@ -108,7 +108,7 @@
             <div class='title-lable'>ACH number (US only)</div>
           </div>
           <div class="col-sm-8 col-sm-7">
-            $!{TRPM_TEACHER.bankACHNumber}
+            $!{ACHnumber}
           </div>
         </div>
         
@@ -138,7 +138,7 @@
             <div class='title-lable'>ID number</div>
           </div>
           <div class="col-sm-8 col-sm-7">
-            $!{TRPM_TEACHER.identityNumber}
+            $!{IDnumber}
           </div>
         </div>
         

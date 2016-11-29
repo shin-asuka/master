@@ -211,8 +211,6 @@ public class LoginController extends RestfulController {
             //3.老招聘,其他lifeCyc
             }else{
                 logger.info("restLogin Successfully email ：{},客户端IP：{},教师ID：{} to recruitment !"+email,ip,teacher.getId());
-                String loginToken = loginService.setLoginCooke(response, user);
-                result.put("loginToken", loginToken);
                 result.put("portal", RestfulConfig.Port.RECRUITMENT);
                 result.put("LifeCycle", teacher.getLifeCycle());
                 result.put("action", "signlogin.shtml?token="+ AES.encrypt(user.getToken(), AES.getKey(AES.KEY_LENGTH_128, ApplicationConstant.AES_128_KEY)));
