@@ -125,7 +125,14 @@ public class RecruitmentController extends RestfulController{
         }
     }
     
-    
+    /**
+     * 密码修改
+     * @param request
+     * @param response
+     * @param bean
+     * @return    
+     * Map<String,Object>
+     */
     @RequestMapping(value = "/password", method = RequestMethod.PUT, produces = RestfulConfig.JSON_UTF_8)
     public Map<String,Object> updatePassword(HttpServletRequest request, HttpServletResponse response,@RequestBody PasswordDto bean){
         try{
