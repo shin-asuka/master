@@ -117,7 +117,7 @@ public class UnitAssessmentController {
         if(onlineClass == null || onlineClass.size()==0){
             return ResponseVo.getReponseVo(1,"没有数据",onlineClass);
         }
-        return onlineClass;
+        return ResponseVo.getReponseVo(0,"查询成功",onlineClass);
     }
 
 
