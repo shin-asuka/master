@@ -6,11 +6,8 @@ import com.google.common.base.Preconditions;
 import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.entity.User;
 
-import java.text.SimpleDateFormat;
-import java.util.Locale;
-
 public class RestfulController {
-
+    
     public static final String AUTOKEN = "Authorization";
     
     public static final String TEACHER = "Teacher";

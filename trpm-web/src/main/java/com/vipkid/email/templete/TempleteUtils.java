@@ -31,7 +31,7 @@ public class TempleteUtils {
      * @date 2016年4月23日
      */
     @SuppressWarnings("unchecked")
-    public Map<String, String> readTemplete(String contentTemplete, Map<String, String> map, String titleTemplete) {
+    public static Map<String, String> readTemplete(String contentTemplete, Map<String, String> map, String titleTemplete) {
         Map<String,String> cacheMap = TempleteChche.getMe().get(contentTemplete,Map.class);
         String content = "",title = "";
         if(cacheMap == null || cacheMap.size() == 0){
@@ -63,8 +63,8 @@ public class TempleteUtils {
      * @param templeteName 文件名称
      * @return 2015年11月5日
      */
-    private StringBuilder readTemplete(String templeteName) {
-        InputStream is = this.getClass().getClassLoader().getResourceAsStream("template" + File.separator + templeteName);
+    private static StringBuilder readTemplete(String templeteName) {
+        InputStream is = TempleteUtils.class.getClass().getClassLoader().getResourceAsStream("template" + File.separator + templeteName);
         StringBuilder result = new StringBuilder("");
         try {
             BufferedReader br = new BufferedReader(new InputStreamReader(is,Charsets.UTF_8));// 构造一个BufferedReader类来读取文件

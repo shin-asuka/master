@@ -18,9 +18,12 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.google.api.client.util.Maps;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.vipkid.email.EmailUtils;
 import com.vipkid.enums.OnlineClassEnum.CourseType;
 import com.vipkid.enums.TeacherEnum.LifeCycle;
 import com.vipkid.enums.TeacherModuleEnum.RoleClass;
+import com.vipkid.recruitment.utils.ResponseUtils;
 import com.vipkid.rest.config.RestfulConfig;
 import com.vipkid.rest.config.TeacherInfo;
 import com.vipkid.trpm.constant.ApplicationConstant;
@@ -42,6 +45,10 @@ import com.vipkid.trpm.util.IpUtils;
 
 @Service
 public class LoginService {
+    
+    private static final String LOGIN_ACTIVATION_EMAIL_KEY = "TRPM_REST_ACTIVATION_EMAIL_KEY:%s";
+
+    private static final int EXPIRED_SECONDS = 30;
 
     private final static Logger logger = LoggerFactory.getLogger(LoginService.class);
 
@@ -290,6 +297,26 @@ public class LoginService {
             teacherinfo.setRoles(roles);
         }
     }  
+    
+    public Map<String,Object> sendActivationEmail(String email){
+        
+        String key = String.format(LOGIN_ACTIVATION_EMAIL_KEY, email);
+        
+        if (null != redisProxy.get(key)) {
+            Map<String,Object> result = Maps.newHashMap();
+            result.put("expire", redisProxy.ttl(key));
+            return ResponseUtils.responseFail("The activation email ["+email+"] time is not expire",result,this);
+        }
+        
+        Teacher teacher = teacherDao.findByEmail(email);
+        if (0 == teacher.getId()) {
+            return ResponseUtils.responseFail(" Email is null ", this);
+        }
+        
+        EmailUtils.sendActivationEmail(teacher);
+        redisProxy.set(key, "true", EXPIRED_SECONDS);
+        return ResponseUtils.responseSuccess();
+    }
     
 
     public User findUserById(long id) {

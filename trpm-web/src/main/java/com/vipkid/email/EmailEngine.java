@@ -37,7 +37,7 @@ public class EmailEngine {
      * @param emailForm 使用发送者
      * @date 2016年4月23日
      */
-    public void addMailPool(String toEmail, Map<String, String> map, EmailFormEnum emailForm) {
+    public static void addMailPool(String toEmail, Map<String, String> map, EmailFormEnum emailForm) {
         logger.info("异步发送邮件：" + toEmail);
         ExecutorService executorService = Executors.newSingleThreadExecutor();
         executorService.submit(() -> {
@@ -58,7 +58,7 @@ public class EmailEngine {
      * @throws InterruptedException void
      * @date 2016年4月23日
      */
-    public void addMail(String toEmail, Map<String, String> map, EmailFormEnum emailForm) {
+    public static void addMail(String toEmail, Map<String, String> map, EmailFormEnum emailForm) {
         logger.info("同步发送邮件：" + toEmail);
         EmailHandle.switchMail(toEmail,map.get("title"), map.get("content"), emailForm);
         logger.info("同步发送邮件结束：" + toEmail);

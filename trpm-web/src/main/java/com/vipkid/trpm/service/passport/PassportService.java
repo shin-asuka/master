@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import com.google.common.collect.Maps;
 import com.vipkid.email.EmailEngine;
+import com.vipkid.email.EmailUtils;
 import com.vipkid.email.handle.EmailConfig.EmailFormEnum;
 import com.vipkid.email.templete.TempleteUtils;
 import com.vipkid.enums.Role;
@@ -121,66 +122,58 @@ public class PassportService {
     public Map<String, Object> saveSignUp(String email, String password, Object reid, Object partnerId) {
         Map<String, Object> resultMap = Maps.newHashMap();
         User user = this.userDao.findByUsername(email);
-        SHA256PasswordEncoder encoder = new SHA256PasswordEncoder();
-
         // 1.是否存在
-        if (user == null) {
-            // 2.创建User
-            user = new User();
-            user.setUsername(email);
-            if (StringUtils.isBlank(password)) {
-                password = UserEnum.DEFAULT_TEACHER_PASSWORD;
-            }
-            String strPwd = new String(Base64.getDecoder().decode(password));
-            user.setPassword(encoder.encode(strPwd));
-            if(PropertyConfigurer.booleanValue("signup.send.mail.switch")){
-                user.setStatus(UserEnum.Status.LOCKED.toString());
-            }else{
-                user.setStatus(UserEnum.Status.NORMAL.toString());
-            }
-            user.setToken(UUID.randomUUID().toString());
-            user.setCreateDateTime(new Timestamp(System.currentTimeMillis()));
-            user.setLastEditDateTime(new Timestamp(System.currentTimeMillis()));
-            user.setRegisterDateTime(new Timestamp(System.currentTimeMillis()));
-            user.setRoles(Role.TEACHER.toString());
-            user.setDtype(UserEnum.Dtype.TEACHER.val());
-            userDao.save(user);
-            user.setLastEditorId(user.getId());
-            user.setCreaterId(user.getId());
-            userDao.update(user);
-
-            // 3.创建 Teacher
-            Teacher teacher = new Teacher();
-            teacher.setId(user.getId());
-            teacher.setEmail(email);
-            teacher.setLifeCycle(TeacherEnum.LifeCycle.SIGNUP.toString());
-            String serialNumber = teacherDao.getSerialNumber();
-            teacher.setSerialNumber(serialNumber);
-            teacher.setRecruitmentId(System.currentTimeMillis() + "-"+ encoder.encode(teacher.getSerialNumber() + "kxoucywejl" + teacher.getEmail()));
-            teacher.setCurrency(TeacherEnum.Currency.US_DOLLAR.toString());
-            teacher.setHide(TeacherEnum.Hide.NONE.toString());
-            // 设置推荐人保存字段
-            teacher = this.prerefereeId(teacher, reid, partnerId);
-            teacherDao.save(teacher);
-            logger.info(" Sign up teacher: " + teacher.getSerialNumber());
-            if(PropertyConfigurer.booleanValue("signup.send.mail.switch")){
-                // 4.发送邮件(带着Recruitment ID)
-                Map<String, String> map = Maps.newHashMap();
-                map.put("teacherName", NEW_TEACHER_NAME);
-                map.put("link", PropertyConfigurer.stringValue("teacher.www") + "/api/user/activation?uuid="
-                        + teacher.getRecruitmentId());
-                TempleteUtils templete = new TempleteUtils();
-                Map<String, String> sendMap = templete.readTemplete("VIPKIDAccountActivationLink.html", map,
-                        "VIPKIDAccountActivationLink-Title.html");
-                new EmailEngine().addMailPool(email, sendMap, EmailFormEnum.TEACHVIP);
-                resultMap.put("uuid", AES.encrypt(teacher.getRecruitmentId(),
-                        AES.getKey(AES.KEY_LENGTH_128, ApplicationConstant.AES_128_KEY)));
-            }
-            resultMap.put("user", user);
-            return ResponseUtils.responseSuccess(resultMap);
-        } else {
+        if (user != null) {
             return ResponseUtils.responseFail(ApplicationConstant.AjaxCode.USER_EXITS, this);
         }
+        // 2.创建User
+        user = new User();
+        user.setUsername(email);
+        if (StringUtils.isBlank(password)) {
+            password = UserEnum.DEFAULT_TEACHER_PASSWORD;
+        }
+        String strPwd = new String(Base64.getDecoder().decode(password));
+        SHA256PasswordEncoder encoder = new SHA256PasswordEncoder();
+        user.setPassword(encoder.encode(strPwd));
+        
+        if(PropertyConfigurer.booleanValue("signup.send.mail.switch")){
+            user.setStatus(UserEnum.Status.LOCKED.toString());
+        }else{
+            user.setStatus(UserEnum.Status.NORMAL.toString());
+        }
+        user.setToken(UUID.randomUUID().toString());
+        user.setCreateDateTime(new Timestamp(System.currentTimeMillis()));
+        user.setLastEditDateTime(new Timestamp(System.currentTimeMillis()));
+        user.setRegisterDateTime(new Timestamp(System.currentTimeMillis()));
+        user.setRoles(Role.TEACHER.toString());
+        user.setDtype(UserEnum.Dtype.TEACHER.val());
+        userDao.save(user);
+        user.setLastEditorId(user.getId());
+        user.setCreaterId(user.getId());
+        userDao.update(user);
+
+        // 3.创建 Teacher
+        Teacher teacher = new Teacher();
+        teacher.setId(user.getId());
+        teacher.setEmail(email);
+        teacher.setLifeCycle(TeacherEnum.LifeCycle.SIGNUP.toString());
+        String serialNumber = teacherDao.getSerialNumber();
+        teacher.setSerialNumber(serialNumber);
+        teacher.setRecruitmentId(System.currentTimeMillis() + "-"+ encoder.encode(teacher.getSerialNumber() + "kxoucywejl" + teacher.getEmail()));
+        teacher.setCurrency(TeacherEnum.Currency.US_DOLLAR.toString());
+        teacher.setHide(TeacherEnum.Hide.NONE.toString());
+        // 设置推荐人保存字段
+        teacher = this.prerefereeId(teacher, reid, partnerId);
+        teacherDao.save(teacher);
+        logger.info(" Sign up teacher: " + teacher.getSerialNumber());
+        if(PropertyConfigurer.booleanValue("signup.send.mail.switch")){
+            // 4.发送邮件(带着Recruitment ID)
+            EmailUtils.sendActivationEmail(teacher);
+            //用于注册后跳转的参数(前后端分离后，不需要uuid该参数)
+            resultMap.put("uuid", AES.encrypt(teacher.getRecruitmentId(),AES.getKey(AES.KEY_LENGTH_128, ApplicationConstant.AES_128_KEY)));
+        }
+        resultMap.put("user", user);
+        return ResponseUtils.responseSuccess(resultMap);
     }
 
     /**
@@ -223,18 +216,17 @@ public class PassportService {
             return ResponseUtils.responseFail("The is a not exits teacher!", this);
         }
         teacher.setRecruitmentId(this.updateRecruitmentId(teacher));
-        TempleteUtils templete = new TempleteUtils();
         Map<String, String> map = Maps.newHashMap();
         if (StringUtils.isEmpty(teacher.getRealName())) {
             map.put("teacherName", NEW_TEACHER_NAME);
         } else {
             map.put("teacherName", teacher.getRealName());
         }
-        map.put("link", PropertyConfigurer.stringValue("teacher.www") + "modifyPassword.shtml?validate_token="
-                + teacher.getRecruitmentId());
-        Map<String, String> sendMap = templete.readTemplete("VIPKIDPasswordResetLink.html", map,
-                "VIPKIDPasswordResetLink-Title.html");
-        new EmailEngine().addMailPool(teacher.getEmail(), sendMap, EmailFormEnum.TEACHVIP);
+        
+        map.put("link", PropertyConfigurer.stringValue("teacher.www") + "modifyPassword.shtml?validate_token="+ teacher.getRecruitmentId());
+        Map<String, String> sendMap = TempleteUtils.readTemplete("VIPKIDPasswordResetLink.html", map,"VIPKIDPasswordResetLink-Title.html");
+        EmailEngine.addMailPool(teacher.getEmail(), sendMap, EmailFormEnum.TEACHVIP);
+        
         return ResponseUtils.responseSuccess();
     }
 
