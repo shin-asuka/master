@@ -62,19 +62,13 @@ public class Practicum2NoBookJob {
         Map<Long, TeacherApplication> teacherApplicationsMap = new HashedMap();
         List<Map> times = UADateUtils.getStartEndOclockTimeMapListByBeforeHours(beforeHours);
 
-        List<TeacherApplication> teacherApplications = teacherApplicationDao.findByAuditTimesStatusResult(times, TeacherApplicationEnum.Status.INTERVIEW.toString(), TeacherApplicationEnum.Result.REAPPLY.toString());
+        List<TeacherApplication> teacherApplications = teacherApplicationDao.findByAuditTimesStatusResult(times, TeacherApplicationEnum.Status.PRACTICUM.toString(), TeacherApplicationEnum.Result.PRACTICUM2.toString());
         logger.info("【JOB.EMAIL.Practicum2NoBookJob】FIND.1: Cost {}ms. Query: times = {}, status = {}, result = {}; Result: users = ",
-                stopwatch.elapsed(TimeUnit.MILLISECONDS), JsonUtils.toJSONString(times), TeacherApplicationEnum.Status.INTERVIEW.toString(), TeacherApplicationEnum.Result.REAPPLY.toString());
+                stopwatch.elapsed(TimeUnit.MILLISECONDS), JsonUtils.toJSONString(times), TeacherApplicationEnum.Status.PRACTICUM.toString(), TeacherApplicationEnum.Result.PRACTICUM2.toString());
         for(TeacherApplication ta : teacherApplications){
             teacherIds.add(ta.getTeacherId());
             teacherApplicationsMap.put(ta.getTeacherId(), ta);
         }
-
-        if(teacherIds.size() == 0) return;
-        List<TeacherApplication> teacherApplicationsToRemove = teacherApplicationDao.findByTeacherIdsStatusNeResult(teacherIds,TeacherApplicationEnum.Status.INTERVIEW.toString(), TeacherApplicationEnum.Result.REAPPLY.toString());
-        logger.info("【JOB.EMAIL.Practicum2NoBookJob】FIND.2: Cost {}ms. Query: teacherIds = {}, status = {}, result = {}; Result: teacherApplications = ",
-                stopwatch.elapsed(TimeUnit.MILLISECONDS), JsonUtils.toJSONString(teacherIds),TeacherApplicationEnum.Status.INTERVIEW.toString(), TeacherApplicationEnum.Result.REAPPLY.toString());
-        teacherApplicationsToRemove.forEach(x -> teacherIds.remove(x.getTeacherId()));
 
         if(teacherIds.size() == 0) return;
         List<Teacher> teachers = teacherDao.findByIds(teacherIds);

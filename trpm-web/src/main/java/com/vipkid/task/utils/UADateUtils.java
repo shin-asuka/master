@@ -57,7 +57,18 @@ public class UADateUtils {
 		int hour = calendar.get(Calendar.HOUR_OF_DAY)-interval;
 		calendar.set(Calendar.HOUR_OF_DAY, hour);
 		calendar.set(Calendar.MINUTE,0);
-		calendar.set(Calendar.SECOND,0);
+		calendar.set(Calendar.SECOND,1);
+		calendar.set(Calendar.MILLISECOND,0);
+		return calendar.getTime();
+	}
+
+
+	public static Date getDateOclockByAfterHours(int interval ){
+		Calendar calendar = Calendar.getInstance();
+		int hour = calendar.get(Calendar.HOUR_OF_DAY)+interval;
+		calendar.set(Calendar.HOUR_OF_DAY, hour);
+		calendar.set(Calendar.MINUTE,0);
+		calendar.set(Calendar.SECOND,1);
 		calendar.set(Calendar.MILLISECOND,0);
 		return calendar.getTime();
 	}
@@ -180,6 +191,28 @@ public class UADateUtils {
 		for (int i : beforeHours){
 			String startTime = UADateUtils.format(UADateUtils.getDateOclockByBeforeHours(i + interval)) ;
 			String endTime = UADateUtils.format(UADateUtils.getDateOclockByBeforeHours(i)) ;
+
+			Map<String, String> time = new HashMap<>();
+			time.put("startTime",startTime);
+			time.put("endTime",endTime);
+
+			startEndTimes.add(time);
+		}
+		return startEndTimes;
+	}
+
+
+
+	public static List<Map> getStartEndOclockTimeMapListByAfterHours(int... beforeHours){
+		return getStartEndOclockTimeMapListByAfterHours(new Integer(1), beforeHours);
+	}
+
+	//UADateUtils.getStartEndOclockTimeMapListByBeforeHours(new Integer(1), 24, 48, 72)
+	public static List<Map> getStartEndOclockTimeMapListByAfterHours(Integer interval, int... beforeHours){
+		List<Map> startEndTimes = new ArrayList<>();
+		for (int i : beforeHours){
+			String startTime = UADateUtils.format(UADateUtils.getDateOclockByAfterHours(i + interval)) ;
+			String endTime = UADateUtils.format(UADateUtils.getDateOclockByAfterHours(i)) ;
 
 			Map<String, String> time = new HashMap<>();
 			time.put("startTime",startTime);

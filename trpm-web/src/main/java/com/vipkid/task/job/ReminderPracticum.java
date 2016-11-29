@@ -18,10 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -53,7 +50,7 @@ public class ReminderPracticum {
 
     void find (Stopwatch stopwatch, int... beforeHours) {
         List<Long> teacherIds ;
-        List<Map> times = UADateUtils.getStartEndOclockTimeMapListByBeforeHours(beforeHours);
+        List<Map> times = UADateUtils.getStartEndOclockTimeMapListByAfterHours(beforeHours);
         teacherIds  = teacherApplicationDao.findPracticumBook(times,TeacherApplicationEnum.Status.PRACTICUM.toString());
 
 
@@ -73,6 +70,15 @@ public class ReminderPracticum {
             EmailUtils.sendEmail4Recruitment(email, name, titleTemplate, contentTemplate);
             logger.info("【JOB.EMAIL.ReminderPracticum】SEND: Cost {}ms. email = {}, name = {}, titleTemplate = {}, contentTemplate = {}", stopwatch.elapsed(TimeUnit.MILLISECONDS), email, name, titleTemplate, contentTemplate);
 
+    }
+
+
+
+    public static Date getDateByOffset(int dayOffset, int minuteOffset){
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.DATE, dayOffset);
+        calendar.add(Calendar.MINUTE, minuteOffset);
+        return calendar.getTime();
     }
 
 }
