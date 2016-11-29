@@ -30,7 +30,6 @@ import com.vipkid.recruitment.entity.TeachingExperience;
 import com.vipkid.recruitment.utils.ResponseUtils;
 import com.vipkid.rest.config.RestfulConfig;
 import com.vipkid.rest.dto.TeacherDto;
-import com.vipkid.trpm.constant.ApplicationConstant;
 import com.vipkid.trpm.dao.TeacherAddressDao;
 import com.vipkid.trpm.dao.TeacherDao;
 import com.vipkid.trpm.dao.TeacherNationalityCodeDao;
@@ -39,7 +38,6 @@ import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.entity.TeacherAddress;
 import com.vipkid.trpm.entity.User;
 import com.vipkid.trpm.proxy.RedisProxy;
-import com.vipkid.trpm.util.AES;
 
 @Service
 public class BasicInfoService {
@@ -203,9 +201,7 @@ public class BasicInfoService {
             //发送邮件
             logger.info("调用发送邮件程序发送给:{}",user.getUsername());
             EmailUtils.sendEmail4BasicInfoPass(teacher);
-            result.put("result", Result.PASS);
-            result.put("action","signlogin.shtml?token="+ AES.encrypt(user.getToken(), AES.getKey(AES.KEY_LENGTH_128, ApplicationConstant.AES_128_KEY)));
-            
+            result.put("result", Result.PASS);            
         }
         this.teacherApplicationDao.save(application);
         this.teacherDao.update(teacher);
