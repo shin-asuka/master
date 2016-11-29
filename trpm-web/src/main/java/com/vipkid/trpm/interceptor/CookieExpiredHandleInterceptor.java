@@ -221,7 +221,7 @@ public class CookieExpiredHandleInterceptor extends HandlerInterceptorAdapter {
 	 * @date 2016年4月19日
 	 */
 	private boolean checkChangePasswordUri(HttpServletRequest request) {
-		String regex = "^(?:.*schedule.shtml)|(?:.*changePassword.shtml)|(?:.*disableLayer.json)|(?:.*changePasswordAction.json){0,}$";
+		String regex = "^(?:.*bookings.shtml)|(?:.*changePassword.shtml)|(?:.*disableLayer.json)|(?:.*changePasswordAction.json){0,}$";
 		String requestUri = request.getRequestURI();
 		return requestUri.matches(regex);
 	}
