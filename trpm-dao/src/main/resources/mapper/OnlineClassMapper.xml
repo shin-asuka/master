@@ -704,4 +704,17 @@
 			and oc.teacher_id = #{teacherId}
 		</if>
 	</select>
+
+	<select id="batchGetStatusByOnlineClassIds" resultType="java.util.HashMap" useCache="false">
+		SELECT
+		id AS id,
+		status AS status
+		FROM online_class
+		WHERE
+		status != 'INVALID'
+		AND id IN
+		<foreach collection="onlineClassIds" item="item" open="(" close=")" separator=",">
+			#{item}
+		</foreach>
+	</select>
 </mapper>

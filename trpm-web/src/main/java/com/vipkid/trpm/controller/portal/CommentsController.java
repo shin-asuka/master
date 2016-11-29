@@ -3,6 +3,10 @@ package com.vipkid.trpm.controller.portal;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.google.common.collect.Maps;
+import com.vipkid.trpm.entity.teachercomment.TeacherCommentResult;
+import com.vipkid.trpm.service.portal.TeacherService;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -11,21 +15,23 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.service.passport.IndexService;
-import com.vipkid.trpm.service.portal.CommentsService;
 import com.vipkid.trpm.service.rest.LoginService;
 import com.vipkid.trpm.util.DateUtils;
 
+import java.util.List;
+import java.util.Map;
+
 @Controller
 public class CommentsController extends AbstractPortalController {
-
-    @Autowired
-	private CommentsService commentsService;
 
     @Autowired
     private IndexService indexService;
     
     @Autowired
     private LoginService loginService;
+
+	@Autowired
+	private TeacherService teacherService;
     
 	/**
 	 * 老师的Comments首页面
@@ -48,8 +54,12 @@ public class CommentsController extends AbstractPortalController {
 
 		String monthOfYear = DateUtils.monthOfYear(offsetOfMonth, DateUtils.FMT_YM);
 		Teacher teacher = loginService.getTeacher();
-		model.addAllAttributes(commentsService.doComments(teacher.getId(), monthOfYear,
-				teacher.getTimezone()));
+		Map<String, Object> modelMap = Maps.newHashMap();
+		List<TeacherCommentResult> results = teacherService
+				.findTeacherCommentByTeacherIdAndMonthOfYear(teacher.getId(), monthOfYear,
+						teacher.getTimezone(), null, null);
+		modelMap.put("totalLine", CollectionUtils.isEmpty(results) ? 0 : results.size());
+		model.addAllAttributes(modelMap);
 
 		return view("comments");
 	}
@@ -71,8 +81,12 @@ public class CommentsController extends AbstractPortalController {
 		String monthOfYear = DateUtils.monthOfYear(offsetOfMonth, DateUtils.FMT_YM);
 
 		Teacher teacher = loginService.getTeacher();
-		model.addAllAttributes(commentsService.doCommentsList(teacher.getId(), monthOfYear,
-				teacher.getTimezone(), curPage, LINE_PER_PAGE));
+		List<TeacherCommentResult> dataList = teacherService
+				.findTeacherCommentByTeacherIdAndMonthOfYear(teacher.getId(), monthOfYear,
+						teacher.getTimezone(), curPage, LINE_PER_PAGE);
+		Map<String, Object> paramMap = Maps.newHashMap();
+		paramMap.put("dataList", dataList);
+		model.addAllAttributes(paramMap);
 
 		return jsonView();
 	}

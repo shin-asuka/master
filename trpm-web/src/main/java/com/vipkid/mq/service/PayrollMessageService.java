@@ -6,7 +6,7 @@ package com.vipkid.mq.service;
 import com.vipkid.mq.message.FinishOnlineClassMessage;
 import com.vipkid.mq.message.FinishOnlineClassMessage.OperatorType;
 import com.vipkid.trpm.entity.AssessmentReport;
-import com.vipkid.trpm.entity.TeacherComment;
+import com.vipkid.trpm.entity.teachercomment.TeacherComment;
 
 /**
  * 结束课程消息服务
