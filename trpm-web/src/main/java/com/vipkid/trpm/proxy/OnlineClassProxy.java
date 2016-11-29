@@ -165,13 +165,13 @@ public class OnlineClassProxy {
 
     public static List<String> get24HourClass (long teacherId, List<String> onlineClassIds) {
         Map<String, String> requestHeader = get24HourClassRequestHeader(teacherId);
-        //logger.info("Get 24Hour Request Header: {}",requestHeader.get("Authorization"));
+        logger.info("Get 24Hour Request Header: {}",requestHeader.get("Authorization"));
         try {
             Map<String, String> requestParams = Maps.newHashMap();
             String value = onlineClassIds.stream().collect(Collectors.joining(","));
             requestParams.put("classIds", value);
             String requestUrl = getHttpUrl() + "/api/service/public/24HourClass/filterByClass";
-            //logger.info("Get 24Hour Request Url: {}", requestUrl);
+            logger.info("Get 24Hour Request Url: {}", requestUrl);
             String responseBody = HttpClientProxy.get(requestUrl, requestParams, requestHeader);
             if (StringUtils.isBlank(responseBody)) {
                 return Lists.newArrayList();
@@ -179,7 +179,7 @@ public class OnlineClassProxy {
             responseBody = StringTools.matchString(responseBody, "\\[(.*?)\\]", Pattern.CASE_INSENSITIVE, 1);
             return Arrays.asList(StringUtils.split(responseBody, ","));
         } catch (Exception e) {
-            logger.error("HttpClientProxy err: {}", e);
+            logger.error("HttpClientProxy.get24HourClass err: {}", e);
             return Lists.newArrayList();
         }
     }

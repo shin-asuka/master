@@ -1,6 +1,6 @@
-package com.vipkid.recruitment.practicum;
+package com.vipkid.recruitment.interview;
 
-public class PracticumConstant {
+public class InterviewConstant {
 
     /***
      * 课前1小时不允许取消

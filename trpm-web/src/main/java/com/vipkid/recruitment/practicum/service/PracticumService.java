@@ -80,7 +80,7 @@ public class PracticumService {
         List<Map<String,Object>> list = practicumDao.findTimeList(fromTime, toTime);
         ids24Available.forEach(x -> {
             Map<String,Object> map = new HashedMap();
-            map.put("id", x);
+            map.put("id", Integer.valueOf(x));
             map.put("scheduledDateTime", idsTimes24.get(x));
             list.add(map);
         });
@@ -142,7 +142,7 @@ public class PracticumService {
                 return ResponseUtils.responseFail("You have booked a class already. Please refresh your page! "+onlineClassId, this);
             }
         }
-        //cancel次数最多3次，如果已经cancel 4次了说明这个老师已经Fail了不允许book
+        //判断剩余可取消次数
         if(recruitmentService.getRemainRescheduleTimes(teacher, Status.PRACTICUM.toString(), Result.CANCEL.toString()) <= 0){
             return ResponseUtils.responseFail("You have canceled classes too much and can't book class again!", this);
         }
@@ -209,7 +209,6 @@ public class PracticumService {
             //一旦失败，抛出异常回滚
             throw new RuntimeException("Class canceling is fail! "+result.get("info"));
         }
-        result.put("count", PracticumConstant.CANCEL_NUM - (count+1));
         return result;
     }
 

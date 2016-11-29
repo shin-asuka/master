@@ -26,7 +26,7 @@ import com.vipkid.recruitment.dao.InterviewDao;
 import com.vipkid.recruitment.dao.TeacherApplicationDao;
 import com.vipkid.recruitment.dao.TeacherApplicationLogDao;
 import com.vipkid.recruitment.entity.TeacherApplication;
-import com.vipkid.recruitment.interview.ConstantInterview;
+import com.vipkid.recruitment.interview.InterviewConstant;
 import com.vipkid.recruitment.utils.ResponseUtils;
 import com.vipkid.trpm.dao.OnlineClassDao;
 import com.vipkid.trpm.dao.TeacherDao;
@@ -146,7 +146,7 @@ public class InterviewService {
         }
 
         //book的课程在开课前1小时之内不允许book
-        if(System.currentTimeMillis() + ConstantInterview.CANCEL_TIME > onlineClass.getScheduledDateTime().getTime()){
+        if(System.currentTimeMillis() + InterviewConstant.CANCEL_TIME > onlineClass.getScheduledDateTime().getTime()){
             return ResponseUtils.responseFail("Class is about to start is not allowed to book !", this);
         }
         //约课老师必须是INTERVIEW的待约课老师
@@ -158,7 +158,7 @@ public class InterviewService {
                 return ResponseUtils.responseFail("You have booked a class already. Please refresh your page !"+onlineClassId, this);
             }
         }
-        //cancel次数最多2次，如果已经cancel 3次了说明这个老师已经Fail了不允许book
+        //判断剩余可取消次数
         if(recruitmentService.getRemainRescheduleTimes(teacher, Status.INTERVIEW.toString(), Result.CANCEL.toString()) <= 0){
             return ResponseUtils.responseFail("You cancel too many times, can't book the class !", this);
         }
@@ -192,7 +192,7 @@ public class InterviewService {
         }
 
         //book的课程在开课前1小时之内不允许cancel
-        if(System.currentTimeMillis() + ConstantInterview.CANCEL_TIME > onlineClass.getScheduledDateTime().getTime()){
+        if(System.currentTimeMillis() + InterviewConstant.CANCEL_TIME > onlineClass.getScheduledDateTime().getTime()){
             return ResponseUtils.responseFail("The online class will begin,can't rescheduled:"+onlineClassId,this);
         }
 
@@ -229,7 +229,6 @@ public class InterviewService {
             //一旦失败，抛出异常回滚
             throw new RuntimeException("The a cancel class result is fail ! "+result.get("info"));
         }
-        result.put("count", ConstantInterview.CANCEL_NUM - (count+1));
         return result;
     }
 
