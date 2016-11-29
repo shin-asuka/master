@@ -801,4 +801,28 @@ public class OnlineClassService {
         }
         return onlineClassVos;
     }
+
+    /**
+     * 获取UA基本信息，yoda调用
+     * @return
+     */
+    public Map<String,Object> findOnlineClassUaInfoById(Long onlineClassId){
+        HashMap<String,Object> map = Maps.newHashMap();
+        map.put("onlineClassId",onlineClassId);
+        List<Map<String,Object>> mapList = onlineClassDao.findMajorCourseListByCond(map);
+        if(mapList==null || mapList.size()==0){
+            return null;
+        }else{
+            map = (HashMap<String,Object>)mapList.get(0);
+        }
+        Integer lessonId = (Integer) map.get("lessonId");
+        Integer studentId = (Integer) map.get("studentId");
+        Lesson lesson = lessonDao.findById(lessonId.longValue());
+        Student student = studentDao.findById(studentId);
+        User user = userDao.findById(student.getChineseLeadTeacherId());
+        map.put("sequence", lesson.getSequence());
+        map.put("cltId",student.getChineseLeadTeacherId());
+        map.put("cltName",user.getName());
+        return map;
+    }
 }
