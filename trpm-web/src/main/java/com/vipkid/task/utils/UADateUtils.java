@@ -3,12 +3,12 @@
  */
 package com.vipkid.task.utils;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
-
-import org.apache.commons.lang3.StringUtils;
 
 /**
  * @author zouqinghua
@@ -178,8 +178,8 @@ public class UADateUtils {
 	public static List<Map> getStartEndOclockTimeMapListByBeforeHours(Integer interval, int... beforeHours){
 		List<Map> startEndTimes = new ArrayList<>();
 		for (int i : beforeHours){
-			String startTime = UADateUtils.format(UADateUtils.getDateOclockByBeforeHours(i)) ;
-			String endTime = UADateUtils.format(UADateUtils.getDateOclockByBeforeHours(i - interval)) ;
+			String startTime = UADateUtils.format(UADateUtils.getDateOclockByBeforeHours(i + interval)) ;
+			String endTime = UADateUtils.format(UADateUtils.getDateOclockByBeforeHours(i)) ;
 
 			Map<String, String> time = new HashMap<>();
 			time.put("startTime",startTime);

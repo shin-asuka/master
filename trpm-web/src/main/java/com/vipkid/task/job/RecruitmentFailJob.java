@@ -1,10 +1,10 @@
 package com.vipkid.task.job;
 
 import com.google.common.base.Stopwatch;
-import com.vipkid.http.utils.JsonUtils;
 import com.vipkid.email.EmailUtils;
+import com.vipkid.enums.TeacherApplicationEnum;
+import com.vipkid.http.utils.JsonUtils;
 import com.vipkid.task.utils.UADateUtils;
-import com.vipkid.trpm.constant.ApplicationConstant;
 import com.vipkid.trpm.dao.TeacherApplicationDao;
 import com.vipkid.vschedule.client.common.Vschedule;
 import com.vipkid.vschedule.client.schedule.JobContext;
@@ -50,8 +50,8 @@ public class RecruitmentFailJob {
 
 	void find(Stopwatch stopwatch, int hours){
 		//查询出hours个小时以前fail掉的老师
-		Date startDate = UADateUtils.getDateOclockByBeforeHours(hours);
-		Date endDate = UADateUtils.getDateOclockByBeforeHours(hours-1);
+		Date startDate = UADateUtils.getDateOclockByBeforeHours(hours+1);
+		Date endDate = UADateUtils.getDateOclockByBeforeHours(hours);
 		String startTime = UADateUtils.format(startDate, UADateUtils.defaultFormat) ;
 		String endTime = UADateUtils.format(endDate, UADateUtils.defaultFormat) ;
 
@@ -70,10 +70,10 @@ public class RecruitmentFailJob {
 				String titleTemplate = null;
 				String contentTemplate = null;
 
-				if (ApplicationConstant.RecruitmentStatus.BASIC_INFO.equals(status)){
+				if (TeacherApplicationEnum.Status.BASIC_INFO.toString().equals(status)){
 					titleTemplate = "BasicInfoFailTitle.html";
 					contentTemplate = "BasicInfoFail.html";
-				} else if (ApplicationConstant.RecruitmentStatus.INTERVIEW.equals(status)){
+				} else if (TeacherApplicationEnum.Status.INTERVIEW.toString().equals(status)){
 					titleTemplate = "InterviewFailTitle.html";
 					contentTemplate = "InterviewFail.html";
 				}

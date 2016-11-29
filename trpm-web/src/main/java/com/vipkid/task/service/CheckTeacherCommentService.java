@@ -3,19 +3,6 @@
  */
 package com.vipkid.task.service;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
-import com.vipkid.trpm.dao.TeacherCommentDao;
-import com.vipkid.trpm.entity.TeacherComment;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.alibaba.fastjson.JSONObject;
 import com.google.api.client.util.Maps;
 import com.google.common.collect.Lists;
@@ -26,6 +13,18 @@ import com.vipkid.http.utils.JsonUtils;
 import com.vipkid.http.vo.OnlineClassVo;
 import com.vipkid.task.utils.UADateUtils;
 import com.vipkid.trpm.dao.OnlineClassDao;
+import com.vipkid.trpm.dao.TeacherCommentDao;
+import com.vipkid.trpm.entity.TeacherComment;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author xingxuelin
@@ -46,8 +45,8 @@ public class CheckTeacherCommentService {
 	public void remindTeacherComment(int hours){
 		
 		//查询出hours个小时以前已经AS_SCHEDULED的课程
-		Date startDate = UADateUtils.getDateOclockByBeforeHours(hours);
-		Date endDate = UADateUtils.getDateOclockByBeforeHours(hours-1);
+		Date startDate = UADateUtils.getDateByBeforeHours(hours+1);
+		Date endDate = UADateUtils.getDateByBeforeHours(hours);
 		
 		String startTime = UADateUtils.format(startDate, UADateUtils.defaultFormat) ;
 		String endTime = UADateUtils.format(endDate, UADateUtils.defaultFormat) ;
@@ -55,7 +54,7 @@ public class CheckTeacherCommentService {
 		logger.info("查询出"+hours+"个小时以前已经AS_SCHEDULED的课程  startTime = {},endTime = {}",startTime,endTime);
 		
 		List<Map<String, Object>> list = onlineClassDao.findOnlineClassList4CheckTeacherComment(startTime, endTime ,null);
-		logger.info("Get unSubmit OnlineClass list = {}",JsonUtils.toJSONString(list));
+		logger.info("Get unSubmit OnlineClass list = {}", JsonUtils.toJSONString(list));
 		
 		List<OnlineClassVo> onlineClassVos = getOnlineClassVoList(list);
 		
@@ -73,13 +72,13 @@ public class CheckTeacherCommentService {
 			OnlineClassVo onlineClassVoUnSubmit = new OnlineClassVo();
 			onlineClassVoUnSubmit.setIdList(onlineClassVo.getIdList());
 			teacherCommentSubmit.forEach(x->onlineClassVoUnSubmit.getIdList().remove(x.getOnlineClassId()));
-			logger.info("Result unSubmit OnlineClass  = {}",JsonUtils.toJSONString(onlineClassVoUnSubmit));
+			logger.info("Result unSubmit OnlineClass  = {}", JsonUtils.toJSONString(onlineClassVoUnSubmit));
 			sendEmail(onlineClassVoUnSubmit, ocMap,"FeedbackRemindTeacher"+hours+"hour.html","FeedbackRemindTeacher"+hours+"hourTitle.html");
 		}
 		
 	}
 
-	public void sendEmail(OnlineClassVo onlineClassVoUnSubmit,Map<Long,OnlineClassVo> ocMap,String contentTemplete,String titleTemplete){
+	public void sendEmail(OnlineClassVo onlineClassVoUnSubmit, Map<Long,OnlineClassVo> ocMap, String contentTemplete, String titleTemplete){
 		if(onlineClassVoUnSubmit!=null && CollectionUtils.isNotEmpty(onlineClassVoUnSubmit.getIdList())){
 			List<Long> idList = onlineClassVoUnSubmit.getIdList();
 			for (Long id : idList) {
@@ -89,13 +88,13 @@ public class CheckTeacherCommentService {
 					String name = oc.getTeacherName();
 					logger.info("send Email to teacher name= {},email = {} , contentTemplete = {}, titleTemplete = {}",name,email,contentTemplete,titleTemplete);
 					String scheduledDateTime = UADateUtils.format(oc.getScheduledDateTime(), "MM/dd/YYYY") ;
-					scheduledDateTime +=" at "+UADateUtils.format(oc.getScheduledDateTime(), "HH:mm") ;
+					scheduledDateTime +=" at "+ UADateUtils.format(oc.getScheduledDateTime(), "HH:mm") ;
 					try {
 	                    Map<String, String> paramsMap = Maps.newHashMap();
 	                    paramsMap.put("scheduledDateTime", scheduledDateTime);
 
 	                    Map<String, String> emailMap = new TempleteUtils().readTemplete(contentTemplete, paramsMap, titleTemplete);
-	                    new EmailEngine().addMailPool(email, emailMap,EmailFormEnum.EDUCATION);
+	                    new EmailEngine().addMailPool(email, emailMap, EmailFormEnum.EDUCATION);
 	                    //EmailHandle emailHandle = new EmailHandle(email, emailMap.get("title"), emailMap.get("content"), EmailFormEnum.TEACHVIP);
 	                    //emailHandle.sendMail();  
 	                    logger.info("send Email success  teacher = {},email = {},contentTemplete = {}, titleTemplete = {}",name,email,contentTemplete,titleTemplete);
