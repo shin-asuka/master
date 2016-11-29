@@ -1,27 +1,11 @@
 package com.vipkid.trpm.service.portal;
 
-import java.sql.Timestamp;
-import java.time.Instant;
-import java.util.*;
-
 import com.alibaba.fastjson.JSON;
-import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.time.DateFormatUtils;
-import org.community.config.PropertyConfigurer;
-import org.community.http.client.HttpClientProxy;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.vipkid.http.service.AssessmentHttpService;
-import com.vipkid.http.utils.JsonUtils;
 import com.vipkid.http.vo.OnlineClassVo;
 import com.vipkid.http.vo.StudentUnitAssessment;
 import com.vipkid.rest.config.RestfulConfig.RoleClass;
@@ -33,6 +17,20 @@ import com.vipkid.trpm.proxy.ClassroomProxy;
 import com.vipkid.trpm.util.DateUtils;
 import com.vipkid.trpm.util.FilesUtils;
 import com.vipkid.trpm.util.IpUtils;
+import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.time.DateFormatUtils;
+import org.community.config.PropertyConfigurer;
+import org.community.http.client.HttpClientProxy;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.sql.Timestamp;
+import java.time.Instant;
+import java.util.*;
 
 @Service
 public class OnlineClassService {
@@ -113,11 +111,11 @@ public class OnlineClassService {
      */
     public Map<String, Object> enterOpen(OnlineClass onlineClass, long studentId, Teacher teacher, Lesson lesson) {
         logger.info("TeacherId:{} Open Course,onlineClassId:{},studentId:{}", teacher.getId(), onlineClass.getId(),
-                studentId);
+                        studentId);
         Map<String, Object> modelMap = Maps.newHashMap();
         modelMap.putAll(this.enterBefore(onlineClass, studentId, "OPEN"));
         modelMap.put("url", ClassroomProxy.generateRoomEnterUrl(String.valueOf(teacher.getId()), teacher.getRealName(),
-                onlineClass.getClassroom(), ClassroomProxy.ROLE_TEACHER, onlineClass.getSupplierCode()));
+                        onlineClass.getClassroom(), ClassroomProxy.ROLE_TEACHER, onlineClass.getSupplierCode()));
 
         this.enterAfter(teacher, onlineClass);
         return modelMap;
@@ -136,18 +134,19 @@ public class OnlineClassService {
         Map<String, Object> modelMap = Maps.newHashMap();
 
         logger.info("TeacherId:{} Practicum Course,onlineClassId:{},studentId:{}", student.getId(), onlineClass.getId(),
-                studentId);
+                        studentId);
 
         modelMap.putAll(this.enterBefore(onlineClass, studentId, "BOOKED"));
 
-        TeacherApplication teacherApplication = teacherApplicationDao.findApplictionByOlineclassId(onlineClass.getId(),
-                student.getId());
+        TeacherApplication teacherApplication =
+                        teacherApplicationDao.findApplictionByOlineclassId(onlineClass.getId(), student.getId());
         modelMap.put("teacherApplication", teacherApplication);
         modelMap.put("url", ClassroomProxy.generateRoomEnterUrl(String.valueOf(student.getId()), student.getRealName(),
-                onlineClass.getClassroom(), ClassroomProxy.ROLE_STUDENT, onlineClass.getSupplierCode()));
+                        onlineClass.getClassroom(), ClassroomProxy.ROLE_STUDENT, onlineClass.getSupplierCode()));
         modelMap.put("teacherPe", teacherPeDao.findByOnlineClassId(onlineClass.getId()));
-        List<TeacherApplication> list = teacherApplicationDao
-                .findApplictionForStatusResult(teacherApplication.getTeacherId(),TeacherApplicationDao.Status.PRACTICUM.toString(),TeacherApplicationDao.Result.PRACTICUM2.toString());
+        List<TeacherApplication> list = teacherApplicationDao.findApplictionForStatusResult(
+                        teacherApplication.getTeacherId(), TeacherApplicationDao.Status.PRACTICUM.toString(),
+                        TeacherApplicationDao.Result.PRACTICUM2.toString());
         if (list != null && list.size() > 0) {
             modelMap.put("practicum2", true);
         } else {
@@ -179,21 +178,21 @@ public class OnlineClassService {
      */
     public Map<String, Object> enterMajor(OnlineClass onlineClass, long studentId, Teacher teacher, Lesson lesson) {
         logger.info("TeacherId:{}, Major Course onlineClassId:{},studentId:{}", teacher.getId(), onlineClass.getId(),
-                studentId);
+                        studentId);
         Map<String, Object> modelMap = Maps.newHashMap();
         modelMap.putAll(this.enterBefore(onlineClass, studentId, "BOOKED"));
 
         /** 获取teacherComments中的stars字段的值，并存入model */
         int stars = this.findTeacherCommentByOnlineClassId(onlineClass, studentId);
         logger.info("TeacherId:{}, Major Course query stars : {},onlineClassId:{},studentId:{}", teacher.getId(), stars,
-                onlineClass.getId(), studentId);
+                        onlineClass.getId(), studentId);
         modelMap.put("stars", stars);
         if (lesson.getSerialNumber().startsWith("A")) {
             DemoReport currentReport = demoReportDao.findByStudentIdAndOnlineClassId(studentId, onlineClass.getId());
             modelMap.put("currentReport", currentReport);
         }
         modelMap.put("url", ClassroomProxy.generateRoomEnterUrl(String.valueOf(teacher.getId()), teacher.getRealName(),
-                onlineClass.getClassroom(), ClassroomProxy.ROLE_TEACHER, onlineClass.getSupplierCode()));
+                        onlineClass.getClassroom(), ClassroomProxy.ROLE_TEACHER, onlineClass.getSupplierCode()));
 
         this.enterAfter(teacher, onlineClass);
 
@@ -248,10 +247,9 @@ public class OnlineClassService {
         parmMap.put("teacherName", teacher.getRealName());
         parmMap.put("onlineClassId", onlineClass.getId());
         parmMap.put("roomId", onlineClass.getClassroom());
-        String content = FilesUtils
-                .readLogTemplete(ApplicationConstant.AuditCategory.CLASSROOM_ENTER, parmMap);
-        auditDao.saveAudit(ApplicationConstant.AuditCategory.CLASSROOM_ENTER, "INFO", content,
-                teacher.getRealName(), teacher, IpUtils.getRemoteIP());
+        String content = FilesUtils.readLogTemplete(ApplicationConstant.AuditCategory.CLASSROOM_ENTER, parmMap);
+        auditDao.saveAudit(ApplicationConstant.AuditCategory.CLASSROOM_ENTER, "INFO", content, teacher.getRealName(),
+                        teacher, IpUtils.getRemoteIP());
     }
 
     /**
@@ -272,10 +270,9 @@ public class OnlineClassService {
         parmMap.put("onlineClassId", onlineClassId);
         OnlineClass onlineClass = getOnlineClassById(onlineClassId);
         parmMap.put("roomId", onlineClass.getClassroom());
-        String content = FilesUtils
-                .readLogTemplete(ApplicationConstant.AuditCategory.CLASSROOM_EXIT, parmMap);
-        auditDao.saveAudit(ApplicationConstant.AuditCategory.CLASSROOM_EXIT, "INFO", content,
-                teacher.getRealName(), teacher, IpUtils.getRemoteIP());
+        String content = FilesUtils.readLogTemplete(ApplicationConstant.AuditCategory.CLASSROOM_EXIT, parmMap);
+        auditDao.saveAudit(ApplicationConstant.AuditCategory.CLASSROOM_EXIT, "INFO", content, teacher.getRealName(),
+                        teacher, IpUtils.getRemoteIP());
     }
 
     /**
@@ -285,7 +282,7 @@ public class OnlineClassService {
      */
     public void exitOpenclass(long onlineClassId) {
         onlineClassDao.updateEntity(
-                new OnlineClass().setId(onlineClassId).setStatus("FINISHED").setFinishType("AS_SCHEDULED"));
+                        new OnlineClass().setId(onlineClassId).setStatus("FINISHED").setFinishType("AS_SCHEDULED"));
     }
 
     /**
@@ -325,7 +322,7 @@ public class OnlineClassService {
      * @date 2016年1月11日
      */
     public Map<String, Object> updateAudit(Teacher pe, TeacherApplication currTeacherApplication, String result,
-            String finishType) {
+                    String finishType) {
         // 默认操作状态
         Map<String, Object> modelMap = Maps.newHashMap();
         modelMap.put("result", false);
@@ -340,7 +337,7 @@ public class OnlineClassService {
         // 2.验证 teacherApplications 是否为空
         long onlineClassId = currTeacherApplication.getOnlineClassId();
         TeacherApplication teacherApplication = teacherApplicationDao.findApplictionByOlineclassId(onlineClassId,
-                currTeacherApplication.getTeacherId());
+                        currTeacherApplication.getTeacherId());
         if (teacherApplication == null) {
             modelMap.put("msg", "Not exis the online-class recruitment info ！");
             logger.info(" TeacherApplication is null onlineClassId:{} , status is PRACTICUM ", onlineClassId);
@@ -358,9 +355,8 @@ public class OnlineClassService {
         OnlineClass onlineClass = onlineClassDao.findById(onlineClassId);
         // 4.如果result 不等于null 则返回错误
         if (!StringUtils.isEmpty(teacherApplication.getResult())) {
-            logger.info(
-                    "Teacher application already end or recruitment process step already end, class id is : {},status is {}",
-                    onlineClass.getId(), onlineClass.getStatus());
+            logger.info("Teacher application already end or recruitment process step already end, class id is : {},status is {}",
+                            onlineClass.getId(), onlineClass.getStatus());
             modelMap.put("msg", " The recruitment process already end.");
             return modelMap;
         }
@@ -373,11 +369,12 @@ public class OnlineClassService {
 
         // 5.practicum2 判断是否存在
         if (ApplicationConstant.RecruitmentResult.PRACTICUM2.equals(result)) {
-            List<TeacherApplication> list = teacherApplicationDao
-                    .findApplictionForStatusResult(teacherApplication.getTeacherId(),TeacherApplicationDao.Status.PRACTICUM.toString(),TeacherApplicationDao.Result.PRACTICUM2.toString());
+            List<TeacherApplication> list = teacherApplicationDao.findApplictionForStatusResult(
+                            teacherApplication.getTeacherId(), TeacherApplicationDao.Status.PRACTICUM.toString(),
+                            TeacherApplicationDao.Result.PRACTICUM2.toString());
             if (list != null && list.size() > 0) {
                 logger.info("The teacher is already in practicum 2., class id is : {},status is {},recruitTeacher:{}",
-                        onlineClass.getId(), onlineClass.getStatus(), recruitTeacher.getId());
+                                onlineClass.getId(), onlineClass.getStatus(), recruitTeacher.getId());
                 modelMap.put("msg", "The teacher is already in practicum 2.");
                 return modelMap;
             }
@@ -405,13 +402,11 @@ public class OnlineClassService {
             // 如果课程已经结束
             modelMap = this.updateTeacherApplication(recruitTeacher, pe, result, "", currTeacherApplication);
             // 日志 2
-            String content = FilesUtils
-                    .readLogTemplete(ApplicationConstant.AuditCategory.PRACTICUM_AUDIT, parmMap);
-            auditDao.saveAudit(ApplicationConstant.AuditCategory.PRACTICUM_AUDIT, "INFO", content,
-                    pe.getRealName(), recruitTeacher, IpUtils.getRemoteIP());
-            logger.info(
-                    "Practicum Online Class[finish] updateAudit,studentId:{},onlineClassId:{},recruitTeacher:{},teacherId:{}",
-                    pe.getId(), onlineClass.getId(), recruitTeacher.getId(), pe.getId());
+            String content = FilesUtils.readLogTemplete(ApplicationConstant.AuditCategory.PRACTICUM_AUDIT, parmMap);
+            auditDao.saveAudit(ApplicationConstant.AuditCategory.PRACTICUM_AUDIT, "INFO", content, pe.getRealName(),
+                            recruitTeacher, IpUtils.getRemoteIP());
+            logger.info("Practicum Online Class[finish] updateAudit,studentId:{},onlineClassId:{},recruitTeacher:{},teacherId:{}",
+                            pe.getId(), onlineClass.getId(), recruitTeacher.getId(), pe.getId());
 
             // 设置调用接口的参数
             modelMap.put("teacherApplicationId", currTeacherApplication.getId());
@@ -441,7 +436,7 @@ public class OnlineClassService {
      * @date 2016年1月14日
      */
     private Map<String, Object> updateTeacherApplication(Teacher recruitTeacher, Teacher pe, String result,
-            String comments, TeacherApplication teacherApplication) {
+                    String comments, TeacherApplication teacherApplication) {
         Map<String, Object> modelMap = Maps.newHashMap();
 
         // 设置审核结果
@@ -514,8 +509,7 @@ public class OnlineClassService {
             requestHeader.put("Authorization", t + " " + DigestUtils.md5Hex(t));
 
             // Change HTTP POST to Get 2016-11-03
-            String content = HttpClientProxy.get(ApplicationConstant.HELP_URL, requestParams,
-                    requestHeader);
+            String content = HttpClientProxy.get(ApplicationConstant.HELP_URL, requestParams, requestHeader);
             logger.info("### Request help return content: {}", content);
             if (!StringUtils.isEmpty(content)) {
                 modelMap.put("status", true);
@@ -545,11 +539,11 @@ public class OnlineClassService {
         Map<String, String> requestHeader = new HashMap<String, String>();
         requestHeader.put("Authorization", t + " " + DigestUtils.md5Hex(t));
         String content = HttpClientProxy.get(ApplicationConstant.TEACHER_IN_CLASSROOM_URL, requestParams,
-                requestHeader);
+                        requestHeader);
 
         logger.info("### Mark that teacher enter classroom: {}", content);
         logger.info("### Sent get request to {} with params {}", ApplicationConstant.TEACHER_IN_CLASSROOM_URL,
-                requestParams.get("onlineClassId"));
+                        requestParams.get("onlineClassId"));
         if (!StringUtils.isNotEmpty(content)) {
             modelMap.put("status", true);
         } else {
@@ -584,8 +578,8 @@ public class OnlineClassService {
             modelMap.put("empty", true);
 
             // 查询UA是否已经填写
-            StudentUnitAssessment studentUnitAssessment = assessmentHttpService
-                    .findStudentUnitAssessmentByOnlineClassId(onlineClassId);
+            StudentUnitAssessment studentUnitAssessment =
+                            assessmentHttpService.findStudentUnitAssessmentByOnlineClassId(onlineClassId);
             if (studentUnitAssessment != null) {
                 modelMap.put("empty", false);
             }
@@ -631,23 +625,19 @@ public class OnlineClassService {
         parmMap.put("roomId", onlineClass.getClassroom());
 
         if (send) {
-            String content = FilesUtils.readLogTemplete(ApplicationConstant.AuditCategory.STAR_SEND,
-                    parmMap);
-            auditDao.saveAudit(ApplicationConstant.AuditCategory.STAR_SEND, "INFO", content,
-                    teacher.getRealName(), teacher, IpUtils.getRemoteIP());
-            logger.info(
-                    "Teacher: id={},name={} send star, Student: id={},name={}, onlineClassId: id={},room={}",
-                    teacher.getId(), teacher.getRealName(), studentId, student.getEnglishName(),
-                    onlineClassId, onlineClass.getClassroom());
+            String content = FilesUtils.readLogTemplete(ApplicationConstant.AuditCategory.STAR_SEND, parmMap);
+            auditDao.saveAudit(ApplicationConstant.AuditCategory.STAR_SEND, "INFO", content, teacher.getRealName(),
+                            teacher, IpUtils.getRemoteIP());
+            logger.info("Teacher: id={},name={} send star, Student: id={},name={}, onlineClassId: id={},room={}",
+                            teacher.getId(), teacher.getRealName(), studentId, student.getEnglishName(), onlineClassId,
+                            onlineClass.getClassroom());
         } else {
-            String content = FilesUtils
-                    .readLogTemplete(ApplicationConstant.AuditCategory.STAR_REMOVE, parmMap);
-            auditDao.saveAudit(ApplicationConstant.AuditCategory.STAR_REMOVE, "INFO", content,
-                    teacher.getRealName(), teacher, IpUtils.getRemoteIP());
-            logger.info(
-                    "Teacher: id={},name={} remove star, Student: id={},name={}, onlineClassId: id={},room={}",
-                    teacher.getId(), teacher.getRealName(), studentId, student.getEnglishName(),
-                    onlineClassId, onlineClass.getClassroom());
+            String content = FilesUtils.readLogTemplete(ApplicationConstant.AuditCategory.STAR_REMOVE, parmMap);
+            auditDao.saveAudit(ApplicationConstant.AuditCategory.STAR_REMOVE, "INFO", content, teacher.getRealName(),
+                            teacher, IpUtils.getRemoteIP());
+            logger.info("Teacher: id={},name={} remove star, Student: id={},name={}, onlineClassId: id={},room={}",
+                            teacher.getId(), teacher.getRealName(), studentId, student.getEnglishName(), onlineClassId,
+                            onlineClass.getClassroom());
         }
     }
 
@@ -696,7 +686,19 @@ public class OnlineClassService {
                 onlineClass.setFinishType(FinishType.AS_SCHEDULED);
             }
             onlineClass.setStatus(ClassStatus.FINISHED);
+            if(isIn24HourBooked(onlineClass)&&onlineClass.getFinishType()==FinishType.AS_SCHEDULED){
+                onlineClass.setShortNotice(1);
+            }
             onlineClassDao.updateEntity(onlineClass);
+        }
+    }
+
+    private boolean isIn24HourBooked(OnlineClass onlineClass) {
+        try {
+            return (onlineClass.getScheduledDateTime().getTime() - onlineClass.getBookDateTime().getTime()) <= 24 * 60 * 60
+                    * 1000;
+        }catch(Exception e){
+            return false;
         }
     }
 
@@ -711,65 +713,66 @@ public class OnlineClassService {
         }
     }
 
-    public HashMap<String,Object> getUnfinishUA(HashMap<String,Object> onlineClassVoCond,Integer pageNo,Integer pageSize){
+    public HashMap<String, Object> getUnfinishUA(HashMap<String, Object> onlineClassVoCond, Integer pageNo,
+                    Integer pageSize) {
 
-        Long from = (Long)onlineClassVoCond.get("from");
-        Long to = (Long)onlineClassVoCond.get("to");
-        Long endTime1 = from + 7*86400*1000l;
+        Long from = (Long) onlineClassVoCond.get("from");
+        Long to = (Long) onlineClassVoCond.get("to");
+        Long endTime1 = from + 7 * 86400 * 1000l;
         Long endTime2 = new Date().getTime() - new Double(48 * 3600 * 1000).longValue();
         Long endTime = to;
-        Long minEnd = Math.min(Math.min(endTime1,endTime2),endTime);
+        Long minEnd = Math.min(Math.min(endTime1, endTime2), endTime);
 
-        onlineClassVoCond.put("from",DateFormatUtils.format(new Date(from),"yyyy-MM-dd HH:mm:ss"));
-        onlineClassVoCond.put("to",DateFormatUtils.format(new Date(minEnd),"yyyy-MM-dd HH:mm:ss"));
+        onlineClassVoCond.put("from", DateFormatUtils.format(new Date(from), "yyyy-MM-dd HH:mm:ss"));
+        onlineClassVoCond.put("to", DateFormatUtils.format(new Date(minEnd), "yyyy-MM-dd HH:mm:ss"));
         List<Map<String, Object>> list = onlineClassDao.findMajorCourseListByCond(onlineClassVoCond);
 
         ArrayList<OnlineClassVo> onlineClassVos = getOnlineClassVoList(list);
 
         OnlineClassVo onlineClassVo = new OnlineClassVo();
         ArrayList<OnlineClassVo> onlineClassVoList = new ArrayList<OnlineClassVo>();
-        Map<Long,OnlineClassVo> ocMap = Maps.newHashMap();
-        if(CollectionUtils.isNotEmpty(onlineClassVos)){
-            for (OnlineClassVo oc : onlineClassVos) { //数据格式转换
+        Map<Long, OnlineClassVo> ocMap = Maps.newHashMap();
+        if (CollectionUtils.isNotEmpty(onlineClassVos)) {
+            for (OnlineClassVo oc : onlineClassVos) { // 数据格式转换
                 Long id = oc.getId();
                 onlineClassVo.getIdList().add(id);
                 ocMap.put(id, oc);
             }
 
-            //调用homework服务查询为完成UA报告的课程
+            // 调用homework服务查询为完成UA报告的课程
             onlineClassVo.setIdListStr(StringUtils.join(onlineClassVo.getIdList(), ","));
             onlineClassVo.getIdList().clear();
             OnlineClassVo onlineClassVoUnSubmit = assessmentHttpService.findUnSubmitonlineClassVo(onlineClassVo);
-            for(Long id : onlineClassVoUnSubmit.getIdList()){
+            for (Long id : onlineClassVoUnSubmit.getIdList()) {
                 OnlineClassVo curOnlineClassVo = ocMap.get(id);
-                if(onlineClassVoUnSubmit.getRefillinUaIds().contains(id)){
+                if (onlineClassVoUnSubmit.getRefillinUaIds().contains(id)) {
                     curOnlineClassVo.setHasAudited(1);
                 }
                 onlineClassVoList.add(curOnlineClassVo);
             }
         }
 
-        Integer offset = (pageNo-1) * pageSize;
+        Integer offset = (pageNo - 1) * pageSize;
         Integer limit = pageSize;
         List<OnlineClassVo> ocPage = new ArrayList<OnlineClassVo>();
-        if(onlineClassVoList.size() > 0) {
+        if (onlineClassVoList.size() > 0) {
             if (offset + limit > onlineClassVoList.size()) {
                 limit = onlineClassVoList.size() % pageSize;
             }
-            ocPage =  onlineClassVoList.subList(offset,offset + limit);
-        }else{
+            ocPage = onlineClassVoList.subList(offset, offset + limit);
+        } else {
             ocPage = Lists.newArrayList();
         }
-        HashMap<String,Object> ret = Maps.newHashMap();
-        ret.put("onlineClassVos",ocPage);
-        ret.put("total",onlineClassVoList.size());
+        HashMap<String, Object> ret = Maps.newHashMap();
+        ret.put("onlineClassVos", ocPage);
+        ret.put("total", onlineClassVoList.size());
         return ret;
     }
 
-    public ArrayList<OnlineClassVo> getOnlineClassVoList(List<Map<String, Object>> list){
+    public ArrayList<OnlineClassVo> getOnlineClassVoList(List<Map<String, Object>> list) {
         ArrayList<OnlineClassVo> onlineClassVos = Lists.newArrayList();
-        if(CollectionUtils.isNotEmpty(list)){
-            for (Map<String,Object> map : list) {
+        if (CollectionUtils.isNotEmpty(list)) {
+            for (Map<String, Object> map : list) {
                 JSONObject jsonObject = (JSONObject) JSONObject.toJSON(map);
 
                 OnlineClassVo onlineClassVo = new OnlineClassVo();
