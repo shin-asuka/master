@@ -1,11 +1,14 @@
 package com.vipkid.trpm.controller.portal;
 
 import com.google.api.client.util.Maps;
+import com.vipkid.trpm.constant.ApplicationConstant;
 import com.vipkid.trpm.constant.ApplicationConstant.CourseType;
 import com.vipkid.trpm.constant.ApplicationConstant.LoginType;
+import com.vipkid.trpm.entity.OnlineClass;
 import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.service.activity.ActivityService;
 import com.vipkid.trpm.service.passport.IndexService;
+import com.vipkid.trpm.service.portal.OnlineClassService;
 import com.vipkid.trpm.service.portal.ScheduleService;
 import com.vipkid.trpm.service.rest.LoginService;
 import com.vipkid.trpm.service.rest.TeacherPageLoginService;
@@ -39,6 +42,9 @@ public class ScheduleController extends AbstractPortalController {
 	
 	@Autowired
     private LoginService loginService;
+
+	@Autowired
+	private OnlineClassService onlineClassService;
 
 	@RequestMapping("/schedule")
 	public String schedule(HttpServletRequest request, HttpServletResponse response, Model model) {
@@ -120,15 +126,20 @@ public class ScheduleController extends AbstractPortalController {
 		Teacher teacher = loginService.getTeacher();
 
 		Map<String, Object> resultMap = Maps.newHashMap();
-		if (scheduleService.checkInOneHour(onlineClassId)) {
+		OnlineClass onlineClass = onlineClassService.getOnlineClassById(onlineClassId);
+		if (scheduleService.checkInOneHour(onlineClass)) {
 			resultMap.put("lessOneHourError", true);
 			return jsonView(response, resultMap);
 		}
 
-		if (scheduleService.checkTimeSlots(teacher.getId(), teacher.getTimezone(), offsetOfWeek)) {
+		if(onlineClass.getClassType()== ApplicationConstant.ClassType.PRACTICUM){
 			resultMap.put("result", scheduleService.set24HourClass(teacher.getId(), onlineClassId));
-		} else {
-			resultMap.put("less15Error", true);
+		}else{
+			if (scheduleService.checkTimeSlots(teacher.getId(), teacher.getTimezone(), offsetOfWeek)) {
+				resultMap.put("result", scheduleService.set24HourClass(teacher.getId(), onlineClassId));
+			} else {
+				resultMap.put("less15Error", true);
+			}
 		}
 
 		return jsonView(response, resultMap);
