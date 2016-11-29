@@ -10,6 +10,7 @@ import javax.jms.Destination;
 import com.alibaba.fastjson.JSON;
 import com.vipkid.enums.OnlineClassEnum;
 
+import com.vipkid.trpm.entity.teachercomment.TeacherComment;
 import net.sf.json.JSONObject;
 
 import org.apache.commons.lang3.StringUtils;
@@ -27,7 +28,6 @@ import com.vipkid.mq.producer.ProducerService;
 import com.vipkid.mq.service.PayrollMessageService;
 import com.vipkid.payroll.service.AssessmentReportService;
 import com.vipkid.payroll.service.StudentService;
-import com.vipkid.payroll.service.TeacherCommentService;
 import com.vipkid.payroll.utils.DateUtils;
 import com.vipkid.trpm.dao.CourseDao;
 import com.vipkid.trpm.dao.LessonDao;

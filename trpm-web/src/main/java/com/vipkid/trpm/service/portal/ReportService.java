@@ -15,6 +15,10 @@ import com.vipkid.email.EmailEngine;
 import com.vipkid.email.handle.EmailConfig;
 import com.vipkid.email.templete.TempleteUtils;
 import com.vipkid.trpm.dao.*;
+import com.vipkid.trpm.entity.*;
+import com.vipkid.trpm.entity.teachercomment.TeacherComment;
+import com.vipkid.trpm.entity.teachercomment.TeacherCommentResult;
+import com.vipkid.trpm.entity.teachercomment.TeacherCommentUpdateDto;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.community.tools.JsonTools;
@@ -32,14 +36,6 @@ import com.vipkid.trpm.constant.ApplicationConstant;
 import com.vipkid.trpm.constant.ApplicationConstant.MediaType;
 import com.vipkid.trpm.constant.ApplicationConstant.ReportLifeCycle;
 import com.vipkid.trpm.constant.ApplicationConstant.UaReportStatus;
-import com.vipkid.trpm.entity.AssessmentReport;
-import com.vipkid.trpm.entity.DemoReport;
-import com.vipkid.trpm.entity.Lesson;
-import com.vipkid.trpm.entity.OnlineClass;
-import com.vipkid.trpm.entity.Student;
-import com.vipkid.trpm.entity.StudentExam;
-import com.vipkid.trpm.entity.TeacherComment;
-import com.vipkid.trpm.entity.User;
 import com.vipkid.trpm.entity.media.UploadResult;
 import com.vipkid.trpm.entity.report.DemoReports;
 import com.vipkid.trpm.entity.report.ReportLevels;
@@ -84,9 +80,6 @@ public class ReportService {
     private DemoReportDao demoReportDao;
 
     @Autowired
-    private TeacherCommentDao teacherCommentDao;
-
-    @Autowired
     private OnlineClassDao onlineClassDao;
 
     @Autowired
@@ -103,6 +96,9 @@ public class ReportService {
 
     @Autowired
     private PayrollMessageService payrollMessageService;
+
+    @Autowired
+    private TeacherService teacherService;
 
     /**
      * uaReport<br/>
@@ -586,7 +582,7 @@ public class ReportService {
         if (0 == onlineClassId || 0 == studentId) {
             return null;
         }
-        TeacherComment comment = teacherCommentDao.findByStudentIdAndOnlineClassId(studentId, onlineClassId);
+        TeacherComment comment = teacherService.findByStudentIdAndOnlineClassId(studentId, onlineClassId);
         logger.info("onlineClassId：" + onlineClassId + ";studentId:" + studentId + "; Teacher Comment" + comment);
         if (comment == null || comment.getId() == 0) {
             logger.info("正在重新创建 TeacherComment");
@@ -594,14 +590,13 @@ public class ReportService {
             comment.setOnlineClassId(onlineClassId);
             comment.setStudentId(studentId);
             comment.setCreateDateTime(new Timestamp(System.currentTimeMillis()));
-            teacherCommentDao.insertTeacherComment(comment);
+
+            TeacherCommentUpdateDto tcuDto = new TeacherCommentUpdateDto(comment);
+            teacherService.insertOneTeacherComment(tcuDto);
         }
         return comment;
     }
 
-    public TeacherComment findTeacherCommentById(long id) {
-        return teacherCommentDao.findTeacherCommentById(id);
-    }
 
     /**
      * FeedBack SAVE<br/>
@@ -621,7 +616,9 @@ public class ReportService {
         teacherComment.setEmpty(0);
 
         // 日志记录参数准备
-        TeacherComment oldtc = teacherCommentDao.findTeacherCommentById(teacherComment.getId());
+        TeacherCommentResult oldtcFromAPI = teacherService
+                .findByTeacherCommentId(String.valueOf(teacherComment.getId()));
+        TeacherComment oldtc = new TeacherComment(oldtcFromAPI);
 
         Map<String, Object> paramMap = Maps.newHashMap();
         paramMap.put("teacherId", user.getId());
@@ -641,9 +638,11 @@ public class ReportService {
         teacherComment.setLastDateTime(new Timestamp(System.currentTimeMillis()));
 
         // 更新后并返回影响的行数
-        int status = teacherCommentDao.update(teacherComment);
+        //int status = teacherCommentDao.update(teacherComment);
+        TeacherCommentUpdateDto tcuDto = new TeacherCommentUpdateDto(teacherComment);
+        boolean success = teacherService.updateTeacherComment(tcuDto);
 
-        if (status != 0) {
+        if (success) {
             logger.info("FEEDBACK_SAVE_OK,paramMap = {},teacherName = {},teacherComment ={}",
                     JSON.toJSONString(paramMap), user.getUsername(), teacherComment);
             paramMap.put("result", true);
@@ -711,22 +710,6 @@ public class ReportService {
      */
     public AssessmentReport findReportByClassId(long onlineClassId) {
         return assessmentReportDao.findReportByClassId(onlineClassId);
-    }
-
-    /**
-     *
-     * INFO<br/>
-     *
-     * 查询最近的TeacherComment列表 (feedback) <br/>
-     *
-     * @Author:ALong
-     * @Title: listRecentlyTeacherComment
-     * @param studentId
-     * @return List<Map<String,Object>>
-     * @date 2015年12月18日
-     */
-    public List<Map<String, Object>> listRecentlyTeacherComment(long studentId) {
-        return teacherCommentDao.findCommentByStudentId(studentId);
     }
 
     /**

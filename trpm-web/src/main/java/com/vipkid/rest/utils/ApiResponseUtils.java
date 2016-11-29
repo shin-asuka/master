@@ -14,6 +14,17 @@ public class ApiResponseUtils {
     /**
      * 成功返回
      *
+     * @param msg
+     * @return
+     */
+    public static Map<String, Object> buildSuccessDataResp(String msg) {
+        Map<String, Object> retMap = buildResponse(true, 0, msg, null);
+        return retMap;
+    }
+
+    /**
+     * 成功返回
+     *
      * @param data
      * @return
      */
