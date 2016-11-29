@@ -23,6 +23,10 @@ public class AnnouncementHttpService extends HttpBaseService {
 
     private static final Logger logger = LoggerFactory.getLogger(AnnouncementHttpService.class);
 
+    //tianwenqi
+    public List<Announcement> test() {
+        return null;
+    }
     public List<Announcement> findAnnouncementList() {
 
         String url = new StringBuilder(super.serverAddress)
