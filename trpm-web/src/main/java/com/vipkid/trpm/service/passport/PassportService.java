@@ -167,7 +167,7 @@ public class PassportService {
                 // 4.发送邮件(带着Recruitment ID)
                 Map<String, String> map = Maps.newHashMap();
                 map.put("teacherName", NEW_TEACHER_NAME);
-                map.put("link", PropertyConfigurer.stringValue("teacher.www") + "activation.shtml?uuid="
+                map.put("link", PropertyConfigurer.stringValue("teacher.www") + "/api/user/activation?uuid="
                         + teacher.getRecruitmentId());
                 TempleteUtils templete = new TempleteUtils();
                 Map<String, String> sendMap = templete.readTemplete("VIPKIDAccountActivationLink.html", map,
