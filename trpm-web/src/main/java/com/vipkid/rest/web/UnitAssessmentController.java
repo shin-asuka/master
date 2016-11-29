@@ -1,5 +1,6 @@
 package com.vipkid.rest.web;
 
+import com.alibaba.fastjson.JSONObject;
 import com.google.api.client.util.Maps;
 import com.vipkid.http.service.AssessmentHttpService;
 import com.vipkid.http.vo.OnlineClassVo;
@@ -11,6 +12,8 @@ import com.vipkid.trpm.service.portal.OnlineClassService;
 import com.vipkid.trpm.vo.ResponseVo;
 import org.apache.commons.lang3.StringUtils;
 import org.community.tools.JsonTools;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -23,6 +26,8 @@ import java.util.*;
 @RestController
 public class UnitAssessmentController {
 
+    private static final Logger logger = LoggerFactory.getLogger(UnitAssessmentController.class);
+
     @Autowired
     private OnlineClassService onlineClassService;
     @Autowired
@@ -34,6 +39,7 @@ public class UnitAssessmentController {
     @RequestMapping(value = "/unfinishedUA", method = RequestMethod.GET,produces = RestfulConfig.JSON_UTF_8)
     @ResponseBody
     public Object getUnfinishedUA(OnlineClassVo onlineClassVoCond ,@RequestParam(defaultValue = "1") Integer pageNo, @RequestParam(defaultValue = "10") Integer pageSize) {
+        logger.info("[/unfinishedUA] ====,{}", JSONObject.toJSONString(onlineClassVoCond));
         try{
         HashMap<String,Object> cond = new HashMap<String,Object>();
         cond.put("lessonSn",onlineClassVoCond.getLessonSn());
@@ -113,6 +119,7 @@ public class UnitAssessmentController {
      */
     @RequestMapping(value = "/onlineClass/fetchById/{id}", method = RequestMethod.GET)
     public Object findUaBasicInfo(@PathVariable Long id){
+        logger.info("[/onlineClass/fetchById/{id}]========={}",JSONObject.toJSONString(id));
         Map<String,Object> onlineClass = onlineClassService.findOnlineClassUaInfoById(id);
         if(onlineClass == null || onlineClass.size()==0){
             return ResponseVo.getReponseVo(1,"没有数据",onlineClass);
