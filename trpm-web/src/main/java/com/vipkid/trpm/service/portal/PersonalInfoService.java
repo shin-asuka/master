@@ -325,10 +325,10 @@ public class PersonalInfoService {
 		} else {
 			int len = source.length();
 
-			for (int i = 0; i < len - 4; i++) {
+			for (int i = 0; i < len - length; i++) {
 				stringBuffer.append("*");
 			}
-			String str = source.substring(len - 4, len);
+			String str = source.substring(len - length, len);
 			stringBuffer.append(str);
 		}
 	}
