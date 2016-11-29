@@ -192,7 +192,7 @@ public class BasicInfoService {
                 });
             }
             application.setFailedReason(JsonTools.getJson(_list));
-            result.put("result",AuditStatus.ToAudit.toString());
+            result.put("result",AuditStatus.TO_AUDIT.toString());
         }else{
             //Basic审核为PASS
             application.setAuditDateTime(new Timestamp(System.currentTimeMillis()));

@@ -24,9 +24,9 @@ public class TeacherApplicationEnum {
 	}
 	
     public enum AuditStatus {
-        ToAudit, // 待审核
-        ToSubmit, // 待提交
-        GoToClass, // 待上课
-        HasTimeOut //过期
+        TO_AUDIT, // 待审核
+        TO_SUBMIT, // 待提交
+        TO_CLASS, // 待上课
+        HAS_TIMEOUT //过期
     }
 }

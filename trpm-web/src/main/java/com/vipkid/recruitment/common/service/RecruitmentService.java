@@ -79,14 +79,14 @@ public class RecruitmentService {
 
         //【待提交】没有流程则视为
         if(CollectionUtils.isEmpty(list)){
-            resultMap.put("result",AuditStatus.ToSubmit.toString());
+            resultMap.put("result",AuditStatus.TO_SUBMIT.toString());
             return resultMap;
         }
         TeacherApplication teacherApplication = list.get(0);
 
         //【待提交】当前状态与流程状态不一样,以lifeCycle为准
         if(!StringUtils.equalsIgnoreCase(teacherApplication.getStatus(), teacher.getLifeCycle())){
-            resultMap.put("result",AuditStatus.ToSubmit.toString());
+            resultMap.put("result",AuditStatus.TO_SUBMIT.toString());
             return resultMap;
         }
 
@@ -107,7 +107,7 @@ public class RecruitmentService {
         }
         //其他情况 待经审核
         if(StringUtils.isBlank(teacherApplication.getResult())){
-            resultMap.put("result",AuditStatus.ToAudit.toString());
+            resultMap.put("result",AuditStatus.TO_AUDIT.toString());
             return resultMap;
         }
         //已经审核 结果【FAIL,PASS,REPLAY】
@@ -130,7 +130,7 @@ public class RecruitmentService {
         Map<String,Object> result = Maps.newHashMap();
         if(StringUtils.equalsIgnoreCase(Result.FAIL.toString(),teacherApplication.getResult())){
             if(!DateUtils.count11hrlf(teacherApplication.getAuditDateTime().getTime())){
-                result.put("result",AuditStatus.ToAudit.toString());
+                result.put("result",AuditStatus.TO_AUDIT.toString());
                 return result;
             }
         }
@@ -142,7 +142,7 @@ public class RecruitmentService {
         if(StringUtils.isBlank(teacherApplication.getResult())){
             if(teacherApplication.getOnlineClassId() == 0){
                 //待约课
-                result.put("result",AuditStatus.ToSubmit.toString());
+                result.put("result",AuditStatus.TO_SUBMIT.toString());
                 return result;
             }else{
                 //倒计时
@@ -154,15 +154,15 @@ public class RecruitmentService {
                     result.put("onlineClassId", onlineClass.getId());
                     //小于1个小时 可进入onlineClass
                     if(!DateUtils.count1h(onlineClass.getScheduledDateTime().getTime())){
-                        result.put("result",AuditStatus.GoToClass.toString());
+                        result.put("result",AuditStatus.TO_CLASS.toString());
                         return result;
                     //小于54周 处于审核中
                     }else if(!DateUtils.count54week(onlineClass.getScheduledDateTime().getTime())){
-                        result.put("result",AuditStatus.ToAudit.toString());
+                        result.put("result",AuditStatus.TO_AUDIT.toString());
                         return result;
                     //大于54周超时
                     }else{
-                        result.put("result",AuditStatus.HasTimeOut.toString());
+                        result.put("result",AuditStatus.HAS_TIMEOUT.toString());
                         return result;
                     }
                 }
@@ -178,7 +178,7 @@ public class RecruitmentService {
     private Map<String,Object> getPracticumStatus(Teacher teacher,TeacherApplication teacherApplication){
         Map<String,Object> result = this.getInterviewStatus( teacher, teacherApplication);
         if(Result.PRACTICUM2.toString().equals(teacherApplication.getResult())){
-            result.put("result",AuditStatus.ToSubmit.toString());
+            result.put("result",AuditStatus.TO_SUBMIT.toString());
         }
         List<TeacherApplication> list = teacherApplicationDao.findApplictionForStatusResult(teacher.getId(), null, Result.PRACTICUM2.name());
         if(CollectionUtils.isNotEmpty(list)){
