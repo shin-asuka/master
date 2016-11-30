@@ -27,7 +27,7 @@ import java.util.List;
  * @since 2016/11/29 下午6:18
  */
 @Controller
-@RequestMapping("/h5/teacher/comment")
+@RequestMapping("/api/h5/teacher/comment")
 public class TeacherCommentController {
 
     //TODO 增加cookie验证
