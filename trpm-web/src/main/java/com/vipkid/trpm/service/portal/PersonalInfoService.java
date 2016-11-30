@@ -306,11 +306,11 @@ public class PersonalInfoService {
 		return teacherAddressDao.getTeacherAddress(id);
 	}
 
-	/**
+/*	*//**
 	 * 隐藏Bankinfo的某些信息
 	 *@param status true表示在尾部隐藏，false表示在头部隐藏
 	 *@param length 需要保留的长度
-	 */
+	 *//*
 	public String hideInfo(String source ,boolean status ,int length){
 		StringBuffer stringBuffer = new StringBuffer();
 	if(source == null || source.length()<=0) {
@@ -333,7 +333,35 @@ public class PersonalInfoService {
 		}
 	}
 		return stringBuffer.toString();
+	}*/
+
+	/**
+	 * 隐藏BankInfo的部分信息
+	 * @param source
+	 * @param start 开始隐藏信息的位置
+	 * @param end 结束隐藏信息的位置
+	 * @return
+	 */
+	public String hideInfo(String source ,int start,int end){
+		int len = source.length();
+		StringBuffer stringBuffer = new StringBuffer();
+		if(end > len-1){
+			return null;
+		}else{
+			for(int i = 0;i< start ;i++){
+				stringBuffer.append("*");
+			}
+			end +=1;
+			stringBuffer.append(source.substring(start,end));
+			for( ; end < len ;end++){
+				stringBuffer.append("*");
+			}
+			return stringBuffer.toString();
+		}
 	}
+
+
+
 	public String hideNameInfo(String source){
 		if (source == null || source.length()<=0){
 			return null;
@@ -355,6 +383,12 @@ public class PersonalInfoService {
 		}
 
 	}
+/*	public static void main(String [] args){
+		String ss = "qqqqaaaa";
+		PersonalInfoService per = new PersonalInfoService();
+		String str = per.hideInfo(ss,0,0);
+		System.out.print(str);
+	}*/
 
 
 }
