@@ -136,7 +136,7 @@ public class AdminQuizController extends RestfulController {
         try{
             logger.info("提交分数:{}",grade);
             Teacher teacher = getTeacher(request);
-            result.put("result",this.adminQuizService.saveQuizResult(teacher, grade, quizToken));
+            result.put("result",this.adminQuizService.saveQuizResult(teacher.getId(), grade, quizToken));
             return result;
         } catch (IllegalArgumentException e) {
             logger.error("内部参数转化异常:"+e.getMessage());
