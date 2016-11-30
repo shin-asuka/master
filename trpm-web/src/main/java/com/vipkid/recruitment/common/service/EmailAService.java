@@ -52,7 +52,7 @@ public class EmailAService{
         } catch (Exception e) {
             logger.error("【EMAIL.sendPrac1Pass】ERROR: {}", e);
         }
-        return ResponseUtils.responseFail("eamil send fail",this);
+        return ResponseUtils.responseFail("eil send fail",this);
     }
 
 
@@ -71,7 +71,7 @@ public class EmailAService{
         } catch (Exception e) {
             logger.error("【EMAIL.sendPrac2Start】ERROR: {}", e);
         }
-        return ResponseUtils.responseFail("eamil send fail",this);
+        return ResponseUtils.responseFail("email send fail",this);
     }
 
 
@@ -100,7 +100,7 @@ public class EmailAService{
         } catch (Exception e) {
             logger.error("【EMAIL.sendPracReapply】ERROR: {}", e);
         }
-        return ResponseUtils.responseFail("eamil send fail",this);
+        return ResponseUtils.responseFail("email send fail",this);
     }
 
 
