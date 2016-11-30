@@ -29,7 +29,6 @@ import com.vipkid.trpm.constant.ApplicationConstant.CookieKey;
 import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.entity.TeacherQuiz;
 import com.vipkid.trpm.entity.User;
-import com.vipkid.trpm.service.passport.IndexService;
 import com.vipkid.trpm.util.CookieUtils;
 
 @RestController
@@ -136,7 +135,7 @@ public class AdminQuizController extends RestfulController {
         result.put("result", false);
         try{
             logger.info("提交分数:{}",grade);
-            Teacher teacher = loginService.getTeacher(request);
+            Teacher teacher = getTeacher(request);
             result.put("result",this.adminQuizService.saveQuizResult(teacher, grade, quizToken));
             return result;
         } catch (IllegalArgumentException e) {
