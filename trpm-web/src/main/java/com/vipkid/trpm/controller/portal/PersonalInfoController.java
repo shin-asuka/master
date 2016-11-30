@@ -81,7 +81,6 @@ public class PersonalInfoController extends AbstractPortalController {
 		String bankCardNumber = teacher.getBankCardNumber();
 		boolean isRemindEditBankInfo = bankCardNumber==null||bankCardNumber.isEmpty();//如果没有银行卡号，就提醒
 		model.addAttribute("isRemindEditBankInfo", isRemindEditBankInfo);
-		
 		getBasicinfoView(request, response, model);
 		String param = request.getParameter("p");
 		model.addAttribute("index", param);
@@ -185,6 +184,32 @@ public class PersonalInfoController extends AbstractPortalController {
 
 		/* 获取当前登录的老师信息 */
 		Teacher teacher = loginService.getTeacher();
+
+		String accountName  = teacher.getBankAccountName();
+        accountName  = personalInfoService.hideNameInfo(accountName);
+
+		String accountNumber = teacher.getBankCardNumber();
+		accountNumber = personalInfoService.hideInfo(accountNumber,false,4);
+
+		String swiftCode = teacher.getBankSwiftCode();
+		swiftCode = personalInfoService.hideInfo(swiftCode,false,2);
+
+		String bankABARoutingNumber = teacher.getBankABARoutingNumber();
+        bankABARoutingNumber = personalInfoService.hideInfo(bankABARoutingNumber,false,4);
+
+		String bankACHNumber= teacher.getBankACHNumber();
+        bankACHNumber = personalInfoService.hideInfo(bankACHNumber,false,4);
+
+		String idNumber = teacher.getIdentityNumber();
+		idNumber = personalInfoService.hideInfo(idNumber,true,1);
+
+        model.addAttribute("accountName",accountName);
+        model.addAttribute("accountNumber",accountNumber);
+        model.addAttribute("swiftCode",swiftCode);
+        model.addAttribute("bankABARoutingNumber",bankABARoutingNumber);
+        model.addAttribute("bankACHNumber",bankACHNumber);
+        model.addAttribute("idNumber",idNumber);
+
 		TeacherAddress beneficiaryAddress = personalInfoService.getTeacherAddress(teacher.getBeneficiaryAddressId());
 		if (null != beneficiaryAddress) {
 			TeacherLocation beneficiaryCountry = personalInfoService.getLocationById(beneficiaryAddress.getCountryId());

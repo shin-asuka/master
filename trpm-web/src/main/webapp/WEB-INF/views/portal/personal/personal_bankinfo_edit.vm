@@ -43,7 +43,7 @@
            	<div class="col-sm-1 col-md-1"></div>
            	<div class="col-sm-5 col-md-5 add-right-border">
             	<div class='title-lable'>Beneficiary's checking account number</div>
-            	<input type="text" class="form-control" id="bankCardNumber" name="bankCardNumber" value="$!{TRPM_TEACHER.bankCardNumber}">
+            	<input type="text" class="form-control" id="bankCardNumber" name="bankCardNumber" value="">
             	<div>(e.g.,0123456789)</div>
             	<div class="line_input">
 					<span id="bankCardNumber-tip" class="help-block has-error"></span>
@@ -141,7 +141,7 @@
           	<div class="col-sm-1 col-md-1"></div>
            	<div class="col-sm-5 col-md-5 add-right-border">
 	            <div class='title-lable'>ABA routing number</div>
-	            <input type="text" maxlength="9" onkeyup="value=value.replace(/[^\d]/g,'') " class="form-control" id="bankABARoutingNumber" name="bankABARoutingNumber" value="$!{TRPM_TEACHER.bankABARoutingNumber}">
+	            <input type="text" maxlength="9" onkeyup="value=value.replace(/[^\d]/g,'') " class="form-control" id="bankABARoutingNumber" name="bankABARoutingNumber" value="">
 	            <div>(e.g.,123456789)</div>
 	            <span id="bankABARoutingNumber-tip" class="help-block has-error"></span>
 	        </div>          	
@@ -156,7 +156,7 @@
           	<div class="col-sm-1 col-md-1"></div>
            	<div class="col-sm-5 col-md-5 add-right-border">
 	            <div class='title-lable'>ACH number (US only)</div>
-	            <input type="text" maxlength="9" onkeyup="value=value.replace(/[^\d]/g,'') " class="form-control" id="bankACHNumber" name="bankACHNumber" value="$!{TRPM_TEACHER.bankACHNumber}">
+	            <input type="text" maxlength="9" onkeyup="value=value.replace(/[^\d]/g,'') " class="form-control" id="bankACHNumber" name="bankACHNumber" value="">
 	            <div>(e.g.,123456789)</div>
 	            <span id="bankACHNumber-tip" class="help-block has-error"></span>
 	        </div>          	
@@ -219,7 +219,7 @@
 			<div class="col-sm-1 col-md-1"></div>
 	        <div class="col-sm-5 col-md-5 add-right-border">
 	            <div class='title-lable'>ID number</div>
-	            <input type="text" id="identityNumber" name="identityNumber"  value="$!{TRPM_TEACHER.identityNumber}" placeholder="" class="form-control" />
+	            <input type="text" id="identityNumber" name="identityNumber"  value="" placeholder="" class="form-control" />
 	            <span id="identityNumber-tip" class="help-block has-error"></span>
 	        </div>
           	<div class="col-sm-6 col-md-6">
@@ -258,7 +258,7 @@
  #** Bank Info End *# 
  #@requireJs()
     require(['personal-bankinfo','personal-location'], function(bankinfo,location){
-      
+
       bankinfo.init("${resourceTool.oss.url_preffix}/");
       
       #if($!beneficiaryBankAddress)
