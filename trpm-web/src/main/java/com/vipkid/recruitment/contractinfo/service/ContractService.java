@@ -1,9 +1,11 @@
 package com.vipkid.recruitment.contractinfo.service;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import com.vipkid.recruitment.dao.TeacherContractFileDao;
+import com.vipkid.recruitment.entity.TeacherContractFile;
 import com.vipkid.recruitment.utils.ResponseUtils;
 import com.vipkid.trpm.dao.TeacherAddressDao;
 import com.vipkid.trpm.dao.TeacherTaxpayerFormDao;
@@ -22,10 +24,8 @@ import com.vipkid.enums.TeacherEnum;
 import com.vipkid.recruitment.dao.TeacherApplicationDao;
 import com.vipkid.recruitment.entity.TeacherApplication;
 import com.vipkid.trpm.dao.TeacherDao;
-import com.vipkid.recruitment.dao.TeacherOtherDegreesDao;
 import com.vipkid.recruitment.entity.ContractFile;
 import com.vipkid.trpm.entity.Teacher;
-import com.vipkid.recruitment.entity.TeacherOtherDegrees;
 
 /**
  * Created by zhangzhaojun on 2016/11/14.
@@ -34,7 +34,7 @@ import com.vipkid.recruitment.entity.TeacherOtherDegrees;
 public class ContractService {
     private static Logger logger = LoggerFactory.getLogger(ContractService.class);
     @Autowired
-    private TeacherOtherDegreesDao teacherOtherDegreesDao;
+    private TeacherContractFileDao teacherContractFileDao;
 
     @Autowired
     private TeacherDao teacherDao;
@@ -148,18 +148,17 @@ public class ContractService {
                 return false;
             }
 
-            TeacherOtherDegrees teacherOtherDegrees;
-            List<TeacherOtherDegrees> otherDegrees = new ArrayList<TeacherOtherDegrees>();
+            TeacherContractFile teacherContractFile;
+            List<TeacherContractFile> teacherContractFiles = new ArrayList<TeacherContractFile>();
             for (Integer id : ids) {
-                //TODO: change the table name and Dao name
-                teacherOtherDegrees = teacherOtherDegreesDao.findById(id);
-                teacherOtherDegrees.setTeacherApplicationId(application.getId());
+                teacherContractFile = this.teacherContractFileDao.findById(id);
+                teacherContractFile.setTeacherApplicationId(application.getId());
                 logger.info("applicationId:{}", application.getId());
-                otherDegrees.add(teacherOtherDegrees);
+                teacherContractFiles.add(teacherContractFile);
             }
 
             logger.info("批量更新文件 for teacherId:{} with  teacherApplicationId:{}", teacher.getId(), application.getId());
-            teacherOtherDegreesDao.updateBatch(otherDegrees);
+            this.teacherContractFileDao.updateBatch(teacherContractFiles);
         } catch (Exception e) {
             logger.error(e.getMessage());
             return false;
@@ -171,30 +170,30 @@ public class ContractService {
     /**
      * 插入teacherOtherDegrees里的文件
      *
-     * @param teacherOtherDegrees
+     * @param teacherContractFile
      * @return
      */
-    public int save(TeacherOtherDegrees teacherOtherDegrees) {
-        return teacherOtherDegreesDao.save(teacherOtherDegrees);
+    public int save(TeacherContractFile teacherContractFile) {
+        return this.teacherContractFileDao.save(teacherContractFile);
     }
 
     /**
      * 删除teacherOtherDegrees里的文件
      *
-     * @param teacherOtherDegrees
+     * @param teacherContractFile
      * @return
      */
-    public int delete(TeacherOtherDegrees teacherOtherDegrees) {
-        return teacherOtherDegreesDao.delete(teacherOtherDegrees);
+    public int delete(TeacherContractFile teacherContractFile) {
+        return this.teacherContractFileDao.delete(teacherContractFile);
     }
 
     public Map<String, Object> reomteFile(int fileId, Teacher teacher) {
-        TeacherOtherDegrees teacherOtherDegrees = teacherOtherDegreesDao.findById(fileId);
-        if (teacherOtherDegrees.getTeacherId() != teacher.getId()) {
+        TeacherContractFile teacherContractFile = this.teacherContractFileDao.findById(fileId);
+        if (teacherContractFile.getTeacherId() != teacher.getId()) {
             return ResponseUtils.responseFail("You can't delete the file !", this);
         } else {
-            if (teacherOtherDegrees.getTeacherApplicationId() == 0) {
-                teacherOtherDegreesDao.delete(teacherOtherDegrees);
+            if (teacherContractFile.getTeacherApplicationId() == 0) {
+                this.teacherContractFileDao.delete(teacherContractFile);
                 return ResponseUtils.responseSuccess();
             } else {
                 return ResponseUtils.responseSuccess();
@@ -210,56 +209,49 @@ public class ContractService {
      */
     public Map<String, ContractFile> findContract(Teacher teacher) {
         ContractFile contractFile = new ContractFile();
+
         logger.info("用户：{}查询上传文件", teacher.getId());
 
         List<TeacherApplication> listEntity = teacherApplicationDao.findCurrentApplication(teacher.getId());
         logger.info("用户：{}查询TeacherApplication", teacher.getId());
-        List<TeacherOtherDegrees> teacherOtherDegrees = Lists.newArrayList();
-        if (CollectionUtils.isNotEmpty(listEntity)) {
-            TeacherApplication teacherApplication = listEntity.get(0);
-            teacherOtherDegrees = teacherOtherDegreesDao.findByTeacherIdAndTeacherApplicationId(teacher.getId(), teacherApplication.getId());
-        }
-        if (CollectionUtils.isEmpty(teacherOtherDegrees)) {
-            logger.info("用户{}查询未提交的文件", teacher.getId());
-            teacherOtherDegrees = teacherOtherDegreesDao.findByTeacherId(teacher.getId());
-        }
+        List<TeacherContractFile> teacherContractFiles =teacherContractFileDao.findByTeacherIdAndTeacherApplicationId(teacher.getId(),0);
         Map<String, ContractFile> map = Maps.newHashMap();
 
-        if (CollectionUtils.isNotEmpty(teacherOtherDegrees)) {
-            List<TeacherOtherDegrees> degrees = Lists.newArrayList();
-            List<TeacherOtherDegrees> contract = Lists.newArrayList();
+        if (CollectionUtils.isNotEmpty(teacherContractFiles)) {
+            List<TeacherContractFile> degrees = Lists.newArrayList();
+            List<TeacherContractFile> contract = Lists.newArrayList();
             List<String> res = Lists.newArrayList();
-            List<TeacherOtherDegrees> identification = Lists.newArrayList();
-            List<TeacherOtherDegrees> diploma = Lists.newArrayList();
-            List<TeacherOtherDegrees> tax = Lists.newArrayList();
-            List<TeacherOtherDegrees> certification = Lists.newArrayList();
-            teacherOtherDegrees.forEach(obj -> {
-                if (obj.getFileType() == 1) {
+            List<TeacherContractFile> identification = Lists.newArrayList();
+            List<TeacherContractFile> diploma = Lists.newArrayList();
+            List<TeacherContractFile> tax = Lists.newArrayList();
+            List<TeacherContractFile> certification = Lists.newArrayList();
+            teacherContractFiles.forEach(obj -> {
+                if (obj.getFileType() == TeacherApplicationEnum.ContractFileType.OTHER_DEGREES.val()) {
                     degrees.add(obj);
                 }
-                if (obj.getFileType() == 2) {
+                if (obj.getFileType() == TeacherApplicationEnum.ContractFileType.CERTIFICATIONFILES.val()) {
                     certification.add(obj);
                 }
-                if (obj.getFileType() == 3) {
+                if (obj.getFileType() == TeacherApplicationEnum.ContractFileType.IDENTIFICATION.val()) {
                     obj.setTypeName("identity");
                     identification.add(obj);
                 }
-                if (obj.getFileType() == 6) {
+                if (obj.getFileType() == TeacherApplicationEnum.ContractFileType.PASSPORT.val()) {
                     obj.setTypeName("passport");
                     identification.add(obj);
 
                 }
-                if (obj.getFileType() == 7) {
+                if (obj.getFileType() == TeacherApplicationEnum.ContractFileType.DRIVER.val()) {
                     obj.setTypeName("driver");
                     identification.add(obj);
                 }
-                if (obj.getFileType() == 4) {
+                if (obj.getFileType() == TeacherApplicationEnum.ContractFileType.DIPLOMA.val()) {
                     diploma.add(obj);
                 }
-                if (obj.getFileType() == 5) {
+                if (obj.getFileType() == TeacherApplicationEnum.ContractFileType.CONTRACT.val()) {
                     contract.add(obj);
                 }
-                if (obj.getFileType() == 8) {
+                if (obj.getFileType() == TeacherApplicationEnum.ContractFileType.CONTRACT_W9.val()) {
                     tax.add(obj);
                 }
                 if (obj.getResult() != null && obj.getResult().equals("")) {
@@ -303,20 +295,7 @@ public class ContractService {
     }
 
 
-    public List<TeacherOtherDegrees> findTeacherOtherDegrees(long teacherId) {
-        List<TeacherApplication> listEntity = teacherApplicationDao.findCurrentApplication(teacherId);
-        logger.info("用户：{}查询TeacherApplication", teacherId);
-        List<TeacherOtherDegrees> teacherOtherDegrees = Lists.newArrayList();
-        //TODO zhaojun
-        if (CollectionUtils.isNotEmpty(listEntity)) {
-            TeacherApplication teacherApplication = listEntity.get(0);
-            teacherOtherDegrees = teacherOtherDegreesDao.findByTeacherIdAndTeacherApplicationId(teacherId, teacherApplication.getId());
-        }
-        if (CollectionUtils.isEmpty(teacherOtherDegrees)) {
-            logger.info("用户{}查询未提交的文件", teacherId);
-            teacherOtherDegrees = teacherOtherDegreesDao.findByTeacherId(teacherId);
-        }
-        return teacherOtherDegrees;
-
+    public List<TeacherContractFile> findTeacherContractFile(long teacherId) {
+        return teacherContractFileDao.findByTeacherIdAndTeacherApplicationId(teacherId, 0);
     }
 }

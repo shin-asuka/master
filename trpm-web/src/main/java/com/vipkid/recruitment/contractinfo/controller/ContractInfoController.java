@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.google.common.base.Function;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
+import com.vipkid.enums.TeacherApplicationEnum;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.community.config.PropertyConfigurer;
@@ -41,7 +42,7 @@ import com.vipkid.http.service.FileHttpService;
 import com.vipkid.recruitment.common.service.RecruitmentService;
 import com.vipkid.recruitment.contractinfo.service.ContractService;
 import com.vipkid.recruitment.entity.ContractFile;
-import com.vipkid.recruitment.entity.TeacherOtherDegrees;
+import com.vipkid.recruitment.entity.TeacherContractFile;
 import com.vipkid.recruitment.interceptor.RestInterface;
 import com.vipkid.recruitment.contractinfo.service.ContractInfoService;
 import com.vipkid.recruitment.utils.ResponseUtils;
@@ -278,11 +279,11 @@ public class ContractInfoController extends RestfulController {
 
     private boolean checkContractFile(Long teacherId,List<Integer> fileIds) {
         boolean isFileValid = false;
-        List<TeacherOtherDegrees> files= contractService.findTeacherOtherDegrees(teacherId);
-        List<Integer> idList = Lists.transform(files, new Function<TeacherOtherDegrees, Integer>() {
+        List<TeacherContractFile> files= contractService.findTeacherContractFile(teacherId);
+        List<Integer> idList = Lists.transform(files, new Function<TeacherContractFile, Integer>() {
             @Nullable
             @Override
-            public Integer apply(TeacherOtherDegrees input) {
+            public Integer apply(TeacherContractFile input) {
                 return input.getId();
             }
         });
@@ -291,15 +292,16 @@ public class ContractInfoController extends RestfulController {
             boolean hasIdCard = false;
             boolean hasDiploma = false;
             boolean hasContract = false;
-            for (TeacherOtherDegrees file : files) {
-                //TODO for zhaojun, add Enum
-                if (file.getFileType() == 3) {
+            for (TeacherContractFile file : files) {
+                if (file.getFileType() == TeacherApplicationEnum.ContractFileType.IDENTIFICATION.val()
+                        ||file.getFileType() == TeacherApplicationEnum.ContractFileType.PASSPORT.val()
+                        ||file.getFileType() == TeacherApplicationEnum.ContractFileType.DRIVER.val()) {
                     hasIdCard = true;
                 }
-                if (file.getFileType() == 4) {
+                if (file.getFileType() == TeacherApplicationEnum.ContractFileType.DIPLOMA.val()) {
                     hasDiploma = true;
                 }
-                if (file.getFileType() == 5) {
+                if (file.getFileType() == TeacherApplicationEnum.ContractFileType.CONTRACT.val()) {
                     hasContract = true;
                 }
                 idList.add(file.getId());
@@ -634,24 +636,25 @@ public class ContractInfoController extends RestfulController {
         }
 
         try{
-            TeacherOtherDegrees teacherOtherDegrees = new TeacherOtherDegrees();
-            teacherOtherDegrees.setTeacherId(teacher.getId());
-            teacherOtherDegrees.setUrl(fileVo.getUrl());
+            TeacherContractFile teacherContractFile = new TeacherContractFile();
+            teacherContractFile.setTeacherId(teacher.getId());
+            teacherContractFile.setUrl(fileVo.getUrl());
+            teacherContractFile.setTeacherApplicationId(0);
             //文件类型1-other_degrees  2-certificationFiles   3-Identification  4-Diploma 5-Contract  6-Passport   7-Driver's license
             if(filetype.equals("passport")){
-                teacherOtherDegrees.setFileType(6);
+                teacherContractFile.setFileType(TeacherApplicationEnum.ContractFileType.PASSPORT.val());
             }
             if(filetype.equals("driver")){
-                teacherOtherDegrees.setFileType(7);
+                teacherContractFile.setFileType(TeacherApplicationEnum.ContractFileType.DRIVER.val());
             }
             if(filetype.equals("identity")){
-                teacherOtherDegrees.setFileType(3);
+                teacherContractFile.setFileType(TeacherApplicationEnum.ContractFileType.IDENTIFICATION.val());
             }
 
-            contractService.save(teacherOtherDegrees);
+            contractService.save(teacherContractFile);
             result.put("file",fileVo.getUrl());
             result.put("status",true);
-            result.put("id",teacherOtherDegrees.getId());
+            result.put("id", teacherContractFile.getId());
             return ResponseUtils.responseSuccess(result);
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
@@ -684,14 +687,15 @@ public class ContractInfoController extends RestfulController {
         }
 
         try{
-            TeacherOtherDegrees teacherOtherDegrees = new TeacherOtherDegrees();
-            teacherOtherDegrees.setTeacherId(teacher.getId());
-            teacherOtherDegrees.setUrl(fileVo.getUrl());
-            teacherOtherDegrees.setFileType(4);
-            contractService.save(teacherOtherDegrees);
+            TeacherContractFile teacherContractFile = new TeacherContractFile();
+            teacherContractFile.setTeacherId(teacher.getId());
+            teacherContractFile.setUrl(fileVo.getUrl());
+            teacherContractFile.setTeacherApplicationId(0);
+            teacherContractFile.setFileType(TeacherApplicationEnum.ContractFileType.DIPLOMA.val());
+            contractService.save(teacherContractFile);
             result.put("file",fileVo.getUrl());
             result.put("status",true);
-            result.put("id",teacherOtherDegrees.getId());
+            result.put("id", teacherContractFile.getId());
             return ResponseUtils.responseSuccess(result);
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
@@ -724,15 +728,16 @@ public class ContractInfoController extends RestfulController {
         }
 
         try{
-            TeacherOtherDegrees teacherOtherDegrees = new TeacherOtherDegrees();
-            teacherOtherDegrees.setTeacherId(teacher.getId());
-            teacherOtherDegrees.setUrl(fileVo.getUrl());
-            teacherOtherDegrees.setFileType(5);
-            contractService.save(teacherOtherDegrees);
+            TeacherContractFile teacherContractFile = new TeacherContractFile();
+            teacherContractFile.setTeacherId(teacher.getId());
+            teacherContractFile.setUrl(fileVo.getUrl());
+            teacherContractFile.setTeacherApplicationId(0);
+            teacherContractFile.setFileType(TeacherApplicationEnum.ContractFileType.CONTRACT.val());
+            contractService.save(teacherContractFile);
 
             result.put("file",fileVo.getUrl());
             result.put("status",true);
-            result.put("id",teacherOtherDegrees.getId());
+            result.put("id", teacherContractFile.getId());
             return ResponseUtils.responseSuccess(result);
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
@@ -774,15 +779,16 @@ public class ContractInfoController extends RestfulController {
             setTeacherTaxpayerFormInfo(teacherTaxpayerForm, request);
             teacherTaxpayerFormService.saveTeacherTaxpayerForm(teacherTaxpayerForm );
 
-            TeacherOtherDegrees teacherOtherDegrees = new TeacherOtherDegrees();
+            TeacherContractFile teacherContractFile = new TeacherContractFile();
             logger.info("保存用户：{}上传的合W9-TAX文件url到teacher_other_degrees",teacher.getId());
-            teacherOtherDegrees.setTeacherId(teacher.getId());
-            teacherOtherDegrees.setUrl(fileVo.getUrl());
-            teacherOtherDegrees.setFileType(8);
-            contractService.save(teacherOtherDegrees);
+            teacherContractFile.setTeacherId(teacher.getId());
+            teacherContractFile.setUrl(fileVo.getUrl());
+            teacherContractFile.setTeacherApplicationId(0);
+            teacherContractFile.setFileType(TeacherApplicationEnum.ContractFileType.CONTRACT_W9.val());
+            contractService.save(teacherContractFile);
 
             result.put("file",fileVo.getUrl());
-            result.put("id",teacherOtherDegrees.getId());
+            result.put("id", teacherContractFile.getId());
             result.put("status",true);
             return ResponseUtils.responseSuccess(result);
         } catch (IllegalArgumentException e) {
@@ -818,14 +824,15 @@ public class ContractInfoController extends RestfulController {
             return ResponseUtils.responseFail("upload file is fail",this);
         }
         try{
-            TeacherOtherDegrees teacherOtherDegrees = new TeacherOtherDegrees();
-            teacherOtherDegrees.setTeacherId(teacher.getId());
-            teacherOtherDegrees.setUrl(fileVo.getUrl());
-            teacherOtherDegrees.setFileType(2);
-            contractService.save(teacherOtherDegrees);
+            TeacherContractFile teacherContractFile = new TeacherContractFile();
+            teacherContractFile.setTeacherId(teacher.getId());
+            teacherContractFile.setUrl(fileVo.getUrl());
+            teacherContractFile.setTeacherApplicationId(0);
+            teacherContractFile.setFileType(TeacherApplicationEnum.ContractFileType.CERTIFICATIONFILES.val());
+            contractService.save(teacherContractFile);
             result.put("file",fileVo.getUrl());
             result.put("status",true);
-            result.put("id",teacherOtherDegrees.getId());
+            result.put("id", teacherContractFile.getId());
             return ResponseUtils.responseSuccess(result);
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
@@ -856,14 +863,15 @@ public class ContractInfoController extends RestfulController {
             return ResponseUtils.responseFail("upload file is fail",this);
         }
         try{
-            TeacherOtherDegrees teacherOtherDegrees = new TeacherOtherDegrees();
-            teacherOtherDegrees.setTeacherId(teacher.getId());
-            teacherOtherDegrees.setUrl(fileVo.getUrl());
-            teacherOtherDegrees.setFileType(1);
-            contractService.save(teacherOtherDegrees);
+            TeacherContractFile teacherContractFile = new TeacherContractFile();
+            teacherContractFile.setTeacherId(teacher.getId());
+            teacherContractFile.setUrl(fileVo.getUrl());
+            teacherContractFile.setTeacherApplicationId(0);
+            teacherContractFile.setFileType(TeacherApplicationEnum.ContractFileType.OTHER_DEGREES.val());
+            contractService.save(teacherContractFile);
             result.put("file",fileVo.getUrl());
             result.put("status",true);
-            result.put("id",teacherOtherDegrees.getId());
+            result.put("id", teacherContractFile.getId());
             return ResponseUtils.responseSuccess(result);
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());

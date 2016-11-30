@@ -8,7 +8,7 @@ import java.sql.Timestamp;
 /**
  * Created by zhangzhaojun on 2016/11/15.
  */
-public class TeacherOtherDegrees extends Entity implements Serializable {
+public class TeacherContractFile extends Entity implements Serializable {
 
     private int id;
     private long teacherId;

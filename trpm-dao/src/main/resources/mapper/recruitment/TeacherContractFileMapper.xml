@@ -1,27 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="TeacherOtherDegreesMapper">
+<mapper namespace="TeacherContractFileMapper">
 
 
-    <sql id="teacherOtherDegreesColumns">
-        teacher_other_degrees.id AS id,
-        teacher_other_degrees.teacher_id AS teacherId,
-        teacher_other_degrees.teacher_other_degrees AS url,
-        teacher_other_degrees.file_type AS fileType,
-        teacher_other_degrees.create_time AS createTime,
-        teacher_other_degrees.update_time AS updateTime,
-        teacher_other_degrees.create_id AS createId,
-        teacher_other_degrees.update_id AS updateId,
-        teacher_other_degrees.teacher_application_id AS teacherApplicationId,
-        teacher_other_degrees.fail_reason AS failReason,
-        teacher_other_degrees.result AS result
+    <sql id="teacherContractFileColumns">
+        teacher_contract_file.id AS id,
+        teacher_contract_file.teacher_id AS teacherId,
+        teacher_contract_file.file_url AS url,
+        teacher_contract_file.file_type AS fileType,
+        teacher_contract_file.create_time AS createTime,
+        teacher_contract_file.update_time AS updateTime,
+        teacher_contract_file.create_id AS createId,
+        teacher_contract_file.update_id AS updateId,
+        teacher_contract_file.teacher_application_id AS teacherApplicationId,
+        teacher_contract_file.fail_reason AS failReason,
+        teacher_contract_file.result AS result
     </sql>
     <insert id="saveDao" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO teacher_other_degrees
+        INSERT INTO teacher_contract_file
         <trim prefix="(" prefixOverrides=",">
             <if test="id!=0">,id</if>
             <if test="teacherId!=0">,teacher_id</if>
-            <if test="url!=null">,teacher_other_degrees</if>
+            <if test="url!=null">,file_url</if>
             <if test="fileType!=null">,file_type</if>
             <if test="createTime!=null">,create_time</if>
             <if test="updateTime!=null">,update_time</if>
@@ -48,42 +48,42 @@
         )
     </insert>
 
-    <select id="findByTeacherIdAndTeacherApplicationId"  resultType="com.vipkid.recruitment.entity.TeacherOtherDegrees" >
+    <select id="findByTeacherIdAndTeacherApplicationId"  resultType="com.vipkid.recruitment.entity.TeacherContractFile" >
         SELECT
-        <include refid="teacherOtherDegreesColumns"/>
-        FROM teacher_other_degrees
+        <include refid="teacherContractFileColumns"/>
+        FROM teacher_contract_file
         WHERE
-        teacher_other_degrees.teacher_id =#{teacherId}
+        teacher_contract_file.teacher_id =#{teacherId}
         AND
-        teacher_other_degrees.teacher_application_id=#{teacherApplicationId}
+        teacher_contract_file.teacher_application_id=#{teacherApplicationId}
 
     </select>
 
 
-    <select id="findByTeacherId"  resultType="com.vipkid.recruitment.entity.TeacherOtherDegrees" >
+    <select id="findByTeacherId"  resultType="com.vipkid.recruitment.entity.TeacherContractFile" >
         SELECT
-        <include refid="teacherOtherDegreesColumns"/>
-        FROM teacher_other_degrees
+        <include refid="teacherContractFileColumns"/>
+        FROM teacher_contract_file
         WHERE
-        teacher_other_degrees.teacher_id =#{teacherId}
+        teacher_contract_file.teacher_id =#{teacherId}
     </select>
 
 
-    <select id="findById"  resultType="com.vipkid.recruitment.entity.TeacherOtherDegrees" >
+    <select id="findById"  resultType="com.vipkid.recruitment.entity.TeacherContractFile" >
         SELECT
-        <include refid="teacherOtherDegreesColumns"/>
-        FROM teacher_other_degrees
+        <include refid="teacherContractFileColumns"/>
+        FROM teacher_contract_file
         WHERE
-        teacher_other_degrees.id =#{id}
+        teacher_contract_file.id =#{id}
     </select>
 
 
     <update id="updateDao">
-        UPDATE teacher_other_degrees
+        UPDATE teacher_contract_file
         <trim prefix="SET" prefixOverrides=",">
                 <if test="id!=0">,id=#{id}</if>
                 <if test="teacherId!=0">,teacher_id = #{teacherId}</if>
-                <if test="degrees!=null">,teacher_other_degrees=#{degrees}</if>
+                <if test="url!=null">,file_url=#{url}</if>
                 <if test="fileType!=null">,file_type=#{fileType}</if>
                 <if test="createTime!=null">, create_time=#{createTime}</if>
                 <if test="updateTime!=null">,update_time = #{updateTime}</if>
@@ -98,7 +98,7 @@
 
 
     <delete id="deleteDao">
-        DELETE FROM teacher_other_degrees
+        DELETE FROM teacher_contract_file
         <trim prefix="WHERE" prefixOverrides="AND">AND id = #{id}</trim>
     </delete>
 

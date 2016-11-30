@@ -29,8 +29,24 @@ public class TeacherApplicationEnum {
         TO_CLASS, // 待上课
         HAS_TIMEOUT //过期
     }
-
+//1-other_degrees  2-certificationFiles   3-Identification  4-Diploma 5-Contract  6-Passport   7-Driver's license
 	public enum ContractFileType {
-		//TODO for zhaojun
+		OTHER_DEGREES(1),
+	    CERTIFICATIONFILES(2),
+	    IDENTIFICATION(3),
+	    DIPLOMA(4),
+	    CONTRACT(5),
+	    PASSPORT(6),
+	    DRIVER(7),
+	    CONTRACT_W9(8);
+
+	private Integer val;
+
+	private ContractFileType(Integer val) {
+		this.val = val;
+	}
+	public Integer val() {
+		return val;
+	}
 	}
 }
