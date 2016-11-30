@@ -95,7 +95,7 @@ public class ContractInfoController extends RestfulController {
      * @param response
      * @return
      */
-    @RequestMapping(value = "/queryPersonalInfo", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
+    @RequestMapping(value = "/queryContractInfo", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
     public Map<String, Object> queryPersonalInfo(HttpServletRequest request, HttpServletResponse response) {
 
         Map<String, Object> result = Maps.newHashMap();
@@ -202,7 +202,7 @@ public class ContractInfoController extends RestfulController {
      * @return
      */
     @RequestMapping(value = "/submit", method = RequestMethod.POST, produces = RestfulConfig.JSON_UTF_8)
-    public  Map<String,Object> submitsContractInfo(@RequestBody Map<String,Object> paramMap, HttpServletRequest request, HttpServletResponse response){
+    public  Map<String,Object> submitContractInfo(@RequestBody Map<String,Object> paramMap, HttpServletRequest request, HttpServletResponse response){
         String fileIds = (String) paramMap.get("id");
         String bio = (String) paramMap.get("bio");
 
@@ -345,7 +345,7 @@ public class ContractInfoController extends RestfulController {
                     String url = "http://" + bucketName + "/" + key;
                     FileUploadStatus fileUploadStatus = fileHttpService.uploadAvatar(teacherId, key);
                     result.put("url", fileUploadStatus.getUrl());
-                    result.put("status", fileUploadStatus.getStatus());
+                    //result.put("status", fileUploadStatus.getStatus());
                     return ResponseUtils.responseSuccess(result);
                 } else {
                     return ResponseUtils.responseFail("Failed to upload avatar to AWS.", this);
@@ -391,7 +391,7 @@ public class ContractInfoController extends RestfulController {
                     String url = "http://" + bucketName + "/" + key;
                     FileUploadStatus fileUploadStatus = fileHttpService.uploadLifePicture(teacherId, key);
                     result.put("url", fileUploadStatus.getUrl());
-                    result.put("status", fileUploadStatus.getStatus());
+                    //result.put("status", fileUploadStatus.getStatus());
                     return ResponseUtils.responseSuccess(result);
                 } else {
                     return ResponseUtils.responseFail("Failed to upload life picture to AWS.", this);
@@ -437,7 +437,7 @@ public class ContractInfoController extends RestfulController {
                     String url = "http://" + bucketName + "/" + key;
                     FileUploadStatus fileUploadStatus = fileHttpService.uploadShortVideo(teacherId, key);
                     result.put("url", fileUploadStatus.getUrl());
-                    result.put("status", fileUploadStatus.getStatus());
+                    //result.put("status", fileUploadStatus.getStatus());
                     return ResponseUtils.responseSuccess(result);
                 } else {
                     return ResponseUtils.responseFail("Failed to upload short video to AWS.", this);
