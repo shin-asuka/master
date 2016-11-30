@@ -20,6 +20,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.util.List;
 /**
  * 实现描述:
+ * h5页面接口,
+ * 对外提供的api路径实际上是/api/h5/teacher/comment
  *
  * @author steven
  * @version v1.0.0
@@ -27,7 +29,7 @@ import java.util.List;
  * @since 2016/11/29 下午6:18
  */
 @Controller
-@RequestMapping("/api/h5/teacher/comment")
+@RequestMapping("/h5/teacher/comment")
 public class TeacherCommentController {
 
     //TODO 增加cookie验证
