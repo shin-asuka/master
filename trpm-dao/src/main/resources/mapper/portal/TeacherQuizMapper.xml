@@ -133,15 +133,9 @@
 	</delete>
 
 
-
-
-
-
-
-
 	<select id="findTAByAuditTimesStatusResult" resultMap="TeacherQuizResultMap">
 		SELECT
-		<include refid="teacherApplicationColumns" />
+		<include refid="TeacherQuizColumns" />
 		FROM teacher_quiz
 		WHERE
 		status = #{status}
