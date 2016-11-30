@@ -64,7 +64,7 @@ public class PracticumNoBookJob {
 
         List<TeacherApplication> teacherApplications = teacherApplicationDao.findByAuditTimesStatusResult(times, TeacherApplicationEnum.Status.TRAINING.toString(), TeacherApplicationEnum.Result.PASS.toString());
         logger.info("【JOB.EMAIL.PracticumNoBookJob】FIND.1: Cost {}ms. Query: times = {}, status = {}, result = {}; Result: users = ",
-                stopwatch.elapsed(TimeUnit.MILLISECONDS), JsonUtils.toJSONString(times), TeacherApplicationEnum.Status.BASIC_INFO.toString(), TeacherApplicationEnum.Result.PASS.toString());
+                stopwatch.elapsed(TimeUnit.MILLISECONDS), JsonUtils.toJSONString(times), TeacherApplicationEnum.Status.TRAINING.toString(), TeacherApplicationEnum.Result.PASS.toString());
         for (TeacherApplication ta : teacherApplications) {
             teacherIds.add(ta.getTeacherId());
             teacherApplicationsMap.put(ta.getTeacherId(), ta);

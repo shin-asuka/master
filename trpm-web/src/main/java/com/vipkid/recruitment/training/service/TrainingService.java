@@ -9,8 +9,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import com.vipkid.enums.TeacherEnum;
 import com.vipkid.enums.TeacherEnum.LifeCycle;
 import com.vipkid.trpm.dao.TeacherDao;
 import com.vipkid.trpm.entity.Teacher;

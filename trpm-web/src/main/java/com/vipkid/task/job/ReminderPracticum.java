@@ -72,13 +72,4 @@ public class ReminderPracticum {
 
     }
 
-
-
-    public static Date getDateByOffset(int dayOffset, int minuteOffset){
-        Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.DATE, dayOffset);
-        calendar.add(Calendar.MINUTE, minuteOffset);
-        return calendar.getTime();
-    }
-
 }
