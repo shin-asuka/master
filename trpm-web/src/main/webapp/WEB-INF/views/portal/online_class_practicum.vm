@@ -63,13 +63,13 @@
         
     ##通道选择加载js
     ## 2代表多贝云
-    #if(${onlineClass.supplierCode} == 2)
-        require(['dbyproxy'], function(dby){
-            dby.initChannel($!{TRPM_USER.id}, "$!onlineClass.classroom", true, "$!stars");
-        });    
+    #if(${onlineClass.supplierCode} == 1)
+    	require(['xdyproxy'], function(xdy){
+	    xdy.initChannel($!{TRPM_USER.id}, "$!onlineClass.classroom", true, "$!stars");
+        });
     #else
-        require(['xdyproxy'], function(xdy){
-            xdy.initChannel($!{TRPM_USER.id}, "$!onlineClass.classroom", true, "$!stars");
-        });  
-    #end      
+        require(['dbyproxy'], function(dby){
+    	dby.initChannel($!{TRPM_USER.id}, "$!onlineClass.classroom", true, "$!stars");
+    	});
+	#end
 #end

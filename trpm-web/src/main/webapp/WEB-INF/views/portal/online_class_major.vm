@@ -327,15 +327,15 @@
     #end 
         
     ##通道选择加载js
-    ## 2代表多贝云
-    #if(${onlineClass.supplierCode} == 2)
+    ## 2代表多贝云 1 xuedianyun 4 duobeiyun 2
+    #if(${onlineClass.supplierCode} == 1)
+	    require(['xdyproxy'], function(xdy){
+        xdy.initChannel("$!{TRPM_USER.id}", "$!onlineClass.classroom", true, "$!stars");
+        });
+	#else
         require(['dbyproxy'], function(dby){
-            dby.initChannel("$!{TRPM_USER.id}", "$!onlineClass.classroom", true, "$!stars");
-        });    
-    #else
-        require(['xdyproxy'], function(xdy){
-            xdy.initChannel("$!{TRPM_USER.id}", "$!onlineClass.classroom", true, "$!stars");
-        });  
+        dby.initChannel("$!{TRPM_USER.id}", "$!onlineClass.classroom", true, "$!stars");
+        });
     #end  
 	
 	##UA 报告 弹出框 拖动效果 依赖类库
