@@ -230,6 +230,7 @@ public class ContractInfoController extends RestfulController {
     }
 
     private boolean checkPersonInfo (Long teacherId) {
+        logger.info("检查老师的头像/照片/视频是都都上传了? 从 TIS 获取数据");
         //检查老师的头像/照片/视频是都都上传了? 从 TIS 获取数据
         Map<String, Object> teacherFiles = Maps.newHashMap();
         teacherFiles = fileHttpService.queryTeacherFiles(teacherId);
@@ -248,16 +249,10 @@ public class ContractInfoController extends RestfulController {
     }
 
     private boolean checkContractFile(Long teacherId,List<Integer> fileIds) {
+        logger.info("检查文件id是否合格");
         boolean isFileValid = false;
         List<TeacherContractFile> files= contractService.findTeacherContractFile(teacherId);
-        List<Integer> idList = Lists.transform(files, new Function<TeacherContractFile, Integer>() {
-            @Nullable
-            @Override
-            public Integer apply(TeacherContractFile input) {
-                return input.getId();
-            }
-        });
-
+        List<Integer> idList = new ArrayList<>();
         if(CollectionUtils.isNotEmpty(files)) {
             boolean hasIdCard = false;
             boolean hasDiploma = false;
