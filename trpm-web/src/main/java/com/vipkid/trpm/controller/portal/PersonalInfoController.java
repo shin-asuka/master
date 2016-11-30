@@ -184,26 +184,24 @@ public class PersonalInfoController extends AbstractPortalController {
 
 		/* 获取当前登录的老师信息 */
 		Teacher teacher = loginService.getTeacher();
+		
+		String accountName  = teacher.getBankAccountName();
+        accountName  = personalInfoService.hideNameInfo(accountName);
 
-		String Info = null;
+		String accountNumber = teacher.getBankCardNumber();
+		accountNumber = personalInfoService.hideInfo(accountNumber,false,4);
 
-		Info = teacher.getBankAccountName();
-        String accountName  = personalInfoService.hideNameInfo(Info);
+		String swiftCode = teacher.getBankSwiftCode();
+		swiftCode = personalInfoService.hideInfo(swiftCode,false,2);
 
-		Info = teacher.getBankCardNumber();
-        String accountNumber = personalInfoService.hideInfo(Info,false,4);
+		String bankABAroutingNumber = teacher.getBankABARoutingNumber();
+        bankABAroutingNumber = personalInfoService.hideInfo(bankABAroutingNumber,false,4);
 
-		Info = teacher.getBankSwiftCode();
-        String swiftCode = personalInfoService.hideInfo(Info,false,2);
+		String bankACHnumber= teacher.getBankACHNumber();
+        bankACHnumber = personalInfoService.hideInfo(bankACHnumber,false,4);
 
-		Info = teacher.getBankABARoutingNumber();
-        String bankABAroutingNumber = personalInfoService.hideInfo(Info,false,4);
-
-		Info = teacher.getBankACHNumber();
-        String bankACHnumber = personalInfoService.hideInfo(Info,false,4);
-
-		Info = teacher.getIdentityNumber();
-        String idNumber = personalInfoService.hideInfo(Info,true,1);
+		String idNumber = teacher.getIdentityNumber();
+		idNumber = personalInfoService.hideInfo(idNumber,true,1);
 
         model.addAttribute("accountName",accountName);
         model.addAttribute("accountNumber",accountNumber);
