@@ -236,11 +236,11 @@ public class ContractInfoController extends RestfulController {
         Map<String, Object> teacherFiles = Maps.newHashMap();
         teacherFiles = fileHttpService.queryTeacherFiles(teacherId);
         String avatarUrl = (String) teacherFiles.get("avatarUrl");
-        String lifePictures = (String) teacherFiles.get("lifePictures");
+        List<AppLifePicture> lifePictures = (List<AppLifePicture>)teacherFiles.get("lifePictures");
         String shortVideoUrl = (String) teacherFiles.get("shortVideo");
         String shortVideoStatus = (String) teacherFiles.get("shortVideoStatus");
 
-        if (StringUtils.isEmpty(avatarUrl) || StringUtils.isEmpty(lifePictures)
+        if (StringUtils.isEmpty(avatarUrl) || CollectionUtils.isEmpty(lifePictures)
                 || StringUtils.isEmpty(shortVideoUrl) || StringUtils.isEmpty(shortVideoStatus)) {
             logger.warn("Teacher's files do NOT exists, failed to update bio");
             return false;
