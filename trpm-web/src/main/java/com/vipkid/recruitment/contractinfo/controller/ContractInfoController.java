@@ -202,7 +202,7 @@ public class ContractInfoController extends RestfulController {
 
             }
             logger.info("Check Teacher 的 file id{}",idList);
-            //check personal info
+           /* //check personal info
             boolean isPersonalInfoValid = checkPersonInfo(teacherId);
             if(!isPersonalInfoValid) {
                 return ResponseUtils.responseFail("Teacher's personal files do NOT exists, failed to update bio", this);
@@ -213,7 +213,7 @@ public class ContractInfoController extends RestfulController {
             boolean bioUpdated = contractInfoService.updateTeacher(teacher);
             if(!bioUpdated) {
                 return ResponseUtils.responseFail("Failed to submit teacher bio", this);
-            }
+            }*/
 
             boolean result = contractService.updateTeacherApplication(teacher,idList);
             if(result){
