@@ -638,6 +638,7 @@
 	    	t.email as teacherEmail,
 	    	t.timezone as timezone,
 			l.serial_number as lessonSn,
+			c.id as courseId,
 			c.name as course,
 			oc.finish_type as finishType,
 			s.english_name as studentEnglishName,
