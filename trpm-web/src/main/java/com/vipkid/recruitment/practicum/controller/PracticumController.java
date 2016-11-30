@@ -138,8 +138,8 @@ public class PracticumController extends RestfulController {
     @RequestMapping(value = "/getRemainRescheduleTimes", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
     public Map<String,Object> getRemainRescheduleTimes(HttpServletRequest request, HttpServletResponse response){
         try{
-            int count = this.recruitmentService.getRemainRescheduleTimes(getTeacher(request), Status.INTERVIEW.toString(), Result.CANCEL.toString());
-            Map<String,Object> result = new HashedMap();
+            int count = this.recruitmentService.getRemainRescheduleTimes(getTeacher(request), Status.PRACTICUM.toString(), Result.CANCEL.toString());
+            Map<String,Object> result = Maps.newHashMap();
             result.put("count",count);
             if(ResponseUtils.isFail(result)){
                 response.setStatus(HttpStatus.FORBIDDEN.value());

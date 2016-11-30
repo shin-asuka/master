@@ -176,9 +176,13 @@ public class RecruitmentService {
     }
 
     private Map<String,Object> getPracticumStatus(Teacher teacher,TeacherApplication teacherApplication){
-        Map<String,Object> result = this.getInterviewStatus( teacher, teacherApplication);
+        Map<String,Object> result = this.getInterviewStatus(teacher, teacherApplication);
         if(Result.PRACTICUM2.toString().equals(teacherApplication.getResult())){
             result.put("result",AuditStatus.TO_SUBMIT.toString());
+
+        }
+        if(Result.TBD.toString().equals(teacherApplication.getResult()) || Result.TBD_FAIL.toString().equals(teacherApplication.getResult())){
+            result.put("result",AuditStatus.TO_AUDIT.toString());
         }
         List<TeacherApplication> list = teacherApplicationDao.findApplictionForStatusResult(teacher.getId(), null, Result.PRACTICUM2.name());
         if(CollectionUtils.isNotEmpty(list)){
