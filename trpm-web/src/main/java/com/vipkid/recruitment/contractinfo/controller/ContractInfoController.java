@@ -98,6 +98,7 @@ public class ContractInfoController extends RestfulController {
     public Map<String, Object> queryPersonalInfo(HttpServletRequest request, HttpServletResponse response) {
 
         Map<String, Object> result = Maps.newHashMap();
+
         try {
             Teacher teacher = getTeacher(request);
             if (null == teacher) {
@@ -105,8 +106,8 @@ public class ContractInfoController extends RestfulController {
                 return ResponseUtils.responseFail("Teacher doesn't exist", this);
             }
             Long teacherId = teacher.getId();
-            //从 TIS 获取数据, 检查老师的头像/照片/视频是都都上传了?
 
+            //1. 获取老师上传的 person info,  是否有 audit failReason
             Map<String, Object> teacherFiles = fileHttpService.queryTeacherFiles(teacherId);
             String avatarUrl = (String) teacherFiles.get("avatarUrl");
             List<AppLifePicture> lifePictures = (List<AppLifePicture>) teacherFiles.get("lifePictures");
@@ -118,16 +119,35 @@ public class ContractInfoController extends RestfulController {
                 fileUploadStatus.setStatus(shortVideoStatus);
                 fileUploadStatus.setUrl(shortVideoUrl);
             }
-            result.put("avatar", avatarUrl);
-            result.put("video", fileUploadStatus);
-            result.put("lifePics", lifePictures);
+            Map<String, Object> personalInfo = Maps.newHashMap();
+
+            personalInfo.put("avatar", avatarUrl);
+            personalInfo.put("video", fileUploadStatus);
+            personalInfo.put("lifePics", lifePictures);
 
             Map<String,Object> status = recruitmentService.getStatus(teacherId);
             if(status != null && status.size() > 0) {
                 String failedReasonJson = (String) status.get("failedReason");
-                result.put("failedReason", failedReasonJson);
+                personalInfo.put("failedReason", failedReasonJson);
             }
-            result.put("bio", teacher.getIntroduction());
+            personalInfo.put("bio", teacher.getIntroduction());
+
+            //2. 获取老师上传的 contract info,  , 是否有 audit failReason
+            Map<String, Object> contractInfo = Maps.newHashMap();
+            Map<String, ContractFile> contractFileMap = contractService.findContract(teacher);
+            Iterator it = contractFileMap.entrySet().iterator();
+            while (it.hasNext()) {
+                Map.Entry entry = (java.util.Map.Entry) it.next();
+                String re = (String) entry.getKey();
+                ContractFile contractFile = (ContractFile) entry.getValue();
+                logger.info("保存用户：{}查询上传过的文件{}", teacher.getId(), contractFile);
+                contractInfo.put("file",contractFile);
+                contractInfo.put("result", re);
+                contractInfo.put("status", true);
+            }
+
+            result.put("personalInfo", personalInfo);
+            result.put("contractInfo", contractInfo);
 
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
@@ -138,6 +158,40 @@ public class ContractInfoController extends RestfulController {
         }
 
         return ResponseUtils.responseSuccess(result);
+    }
+
+    /**
+     * 查询用户所提交的文件URL
+     * @param request
+     * @param response
+     * @return
+     */
+
+    @RequestMapping(value = "/contract", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
+    public Map<String,Object>  contract(HttpServletRequest request,HttpServletResponse response){
+        Teacher teacher = getTeacher(request);
+        Map<String,Object> result = new HashMap<String,Object>();
+        logger.info("保存用户：{}查询上传过的文件",teacher.getId());
+        try {
+            Map<String, ContractFile> contractFileMap = contractService.findContract(teacher);
+            Iterator it = contractFileMap.entrySet().iterator();
+            while (it.hasNext()) {
+                Map.Entry entry = (java.util.Map.Entry) it.next();
+                String re = (String) entry.getKey();
+                ContractFile contractFile = (ContractFile) entry.getValue();
+                logger.info("保存用户：{}查询上传过的文件{}", teacher.getId(), contractFile);
+                result.put("file",contractFile);
+                result.put("result", re);
+                result.put("status", true);
+            }
+            return ResponseUtils.responseSuccess(result);
+        } catch (IllegalArgumentException e) {
+            response.setStatus(HttpStatus.BAD_REQUEST.value());
+            return ResponseUtils.responseFail(e.getMessage(), this);
+        } catch (Exception e) {
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            return ResponseUtils.responseFail(e.getMessage(), this);
+        }
     }
 
     /**
@@ -822,39 +876,7 @@ public class ContractInfoController extends RestfulController {
 
 
 
-    /**
-     * 查询用户所提交的文件URL
-     * @param request
-     * @param response
-     * @return
-     */
 
-    @RequestMapping(value = "/contract", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
-    public Map<String,Object>  contract(HttpServletRequest request,HttpServletResponse response){
-        Teacher teacher = getTeacher(request);
-        Map<String,Object> result = new HashMap<String,Object>();
-        logger.info("保存用户：{}查询上传过的文件",teacher.getId());
-        try {
-            Map<String, ContractFile> map = contractService.findContract(teacher);
-            Iterator it = map.entrySet().iterator();
-            while (it.hasNext()) {
-                Map.Entry entry = (java.util.Map.Entry) it.next();
-                String re = (String) entry.getKey();
-                ContractFile contractFile = (ContractFile) entry.getValue();
-                logger.info("保存用户：{}查询上传过的文件{}", teacher.getId(), contractFile);
-                result.put("file",contractFile);
-                result.put("result", re);
-                result.put("status", true);
-            }
-            return ResponseUtils.responseSuccess(result);
-        } catch (IllegalArgumentException e) {
-            response.setStatus(HttpStatus.BAD_REQUEST.value());
-            return ResponseUtils.responseFail(e.getMessage(), this);
-        } catch (Exception e) {
-            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            return ResponseUtils.responseFail(e.getMessage(), this);
-        }
-    }
 
     public void setTeacherTaxpayerFormInfo(TeacherTaxpayerForm teacherTaxpayerForm, HttpServletRequest request){
         Teacher teacher = getTeacher(request);

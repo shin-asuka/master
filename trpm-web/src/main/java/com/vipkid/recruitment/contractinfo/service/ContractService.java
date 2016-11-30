@@ -205,12 +205,11 @@ public class ContractService {
     /**
      * 查询老师上传过的文件
      *
-     * @param t
+     * @param teacher
      * @return
      */
-    public Map<String, ContractFile> findContract(Teacher t) {
+    public Map<String, ContractFile> findContract(Teacher teacher) {
         ContractFile contractFile = new ContractFile();
-        Teacher teacher = teacherDao.findById(t.getId());
         logger.info("用户：{}查询上传文件", teacher.getId());
 
         List<TeacherApplication> listEntity = teacherApplicationDao.findCurrentApplication(teacher.getId());
