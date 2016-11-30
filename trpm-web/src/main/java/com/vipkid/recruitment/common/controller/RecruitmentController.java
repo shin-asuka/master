@@ -94,6 +94,7 @@ public class RecruitmentController extends RestfulController{
                     result.put("cityName",city.getName());
                 }
             }
+            result.putAll(this.recruitmentService.getOnlineClassInfo(teacher));
             return ResponseUtils.responseSuccess(result);
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());

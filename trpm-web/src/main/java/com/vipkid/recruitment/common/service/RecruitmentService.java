@@ -9,6 +9,7 @@ import com.vipkid.recruitment.dao.TeacherApplicationLogDao;
 import com.vipkid.recruitment.dao.TeacherLockLogDao;
 import com.vipkid.recruitment.entity.TeacherLockLog;
 import com.vipkid.trpm.constant.ApplicationConstant.FinishType;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.community.tools.JsonTools;
@@ -22,6 +23,7 @@ import com.vipkid.enums.OnlineClassEnum;
 import com.vipkid.enums.TeacherApplicationEnum.Status;
 import com.vipkid.enums.TeacherApplicationEnum.AuditStatus;
 import com.vipkid.enums.TeacherApplicationEnum.Result;
+import com.vipkid.enums.TeacherEnum.LifeCycle;
 import com.vipkid.recruitment.dao.TeacherApplicationDao;
 import com.vipkid.recruitment.entity.TeacherApplication;
 import com.vipkid.rest.dto.TimezoneDto;
@@ -149,9 +151,6 @@ public class RecruitmentService {
                 OnlineClass onlineClass = this.onlineClassDao.findById(teacherApplication.getOnlineClassId());
                 //处于book状态的onlineClass 应该处于倒计时页面
                 if(OnlineClassEnum.ClassStatus.BOOKED.toString().equals(onlineClass.getStatus())){
-                    result.put("serverTime",System.currentTimeMillis());
-                    result.put("scheduledDateTime",onlineClass.getScheduledDateTime().getTime());
-                    result.put("onlineClassId", onlineClass.getId());
                     //小于1个小时 可进入onlineClass
                     if(!DateUtils.count1h(onlineClass.getScheduledDateTime().getTime())){
                         result.put("result",AuditStatus.TO_CLASS.toString());
@@ -220,7 +219,37 @@ public class RecruitmentService {
         TeacherLocation teacherLocation = teacherLocationDao.findById(id);
         return teacherLocation;
     }
-
+    
+    /**
+     * 获取上课信息
+     * @param onlineClassId
+     * @return    
+     * Map<String,Object>
+     */
+    public Map<String,Object> getOnlineClassInfo(Teacher teacher){
+        Map<String,Object> result = Maps.newHashMap();
+        
+        List<TeacherApplication> list = this.teacherApplicationDao.findCurrentApplication(teacher.getId());
+        
+        if(CollectionUtils.isEmpty(list)){
+            return result;
+        }
+        
+        TeacherApplication bean = list.get(0);
+        if(bean.getOnlineClassId() <= 0){
+            return result;
+        }
+        
+        if(LifeCycle.INTERVIEW.toString().equalsIgnoreCase(bean.getStatus()) || LifeCycle.PRACTICUM.toString().equalsIgnoreCase(bean.getStatus()) ){
+            OnlineClass onlineClass = this.onlineClassDao.findById(bean.getOnlineClassId());
+            if(OnlineClassEnum.ClassStatus.BOOKED.toString().equals(onlineClass.getStatus())){
+                result.put("serverTime",System.currentTimeMillis());
+                result.put("scheduledDateTime",onlineClass.getScheduledDateTime().getTime());
+                result.put("onlineClassId", onlineClass.getId());  
+            }
+        }
+        return result;
+    }
     /**
      * 更新timezone
      * @param bean
