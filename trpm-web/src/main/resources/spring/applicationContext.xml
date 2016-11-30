@@ -22,6 +22,9 @@
 		<!-- 拦截器配置restful事件处理。-->
 		<mvc:interceptor>
 			<mvc:mapping path="/**"/>
+			<!-- 需排除拦截的 -->
+			<mvc:exclude-mapping path="/api/h5/**"/>
+			<mvc:exclude-mapping path="/h5/**"/>
 			<beans:bean class="com.vipkid.rest.interceptor.LoginExpiredHandleInterceptor" />
 		</mvc:interceptor>
 		
@@ -29,8 +32,16 @@
 			<mvc:mapping path="/**/*.shtml" />
 			<mvc:mapping path="/**/*.json" />
 			<!-- 需排除拦截的 -->
-			<mvc:exclude-mapping path="/api/h5/**/*"/>
+			<mvc:exclude-mapping path="/api/h5/**"/>
+			<mvc:exclude-mapping path="/h5/**"/>
 			<beans:bean class="com.vipkid.trpm.interceptor.CookieExpiredHandleInterceptor" />
+		</mvc:interceptor>
+
+		<!-- h5页面的拦截器,用于验证用户是否有效-->
+		<mvc:interceptor>
+			<mvc:mapping path="/api/h5/**" />
+			<mvc:mapping path="/h5/**" />
+			<beans:bean class="com.vipkid.trpm.interceptor.H5CookieExpiredHandleInterceptor" />
 		</mvc:interceptor>
 		
 		<!-- 拦截器配置,执行portal公共事件处理。-->

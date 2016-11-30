@@ -21,7 +21,10 @@ import java.util.List;
 /**
  * 实现描述:
  * h5页面接口,
- * 对外提供的api路径实际上是/api/h5/teacher/comment
+ * 对外提供的api路径实际上是
+ * /api/h5/teacher/comment
+ * /h5/teacher/comment
+ * 两种
  *
  * @author steven
  * @version v1.0.0
