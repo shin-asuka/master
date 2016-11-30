@@ -5,11 +5,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import com.vipkid.enums.TeacherLockLogEnum.Reason;
-import com.vipkid.recruitment.common.service.RecruitmentService;
-import com.vipkid.recruitment.dao.TeacherLockLogDao;
-import com.vipkid.recruitment.entity.TeacherLockLog;
-import com.vipkid.trpm.dao.UserDao;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
@@ -22,15 +17,22 @@ import com.vipkid.enums.OnlineClassEnum;
 import com.vipkid.enums.TeacherApplicationEnum.Result;
 import com.vipkid.enums.TeacherApplicationEnum.Status;
 import com.vipkid.enums.TeacherEnum.LifeCycle;
+import com.vipkid.enums.TeacherLockLogEnum.Reason;
+import com.vipkid.recruitment.common.service.RecruitmentService;
 import com.vipkid.recruitment.dao.InterviewDao;
 import com.vipkid.recruitment.dao.TeacherApplicationDao;
 import com.vipkid.recruitment.dao.TeacherApplicationLogDao;
+import com.vipkid.recruitment.dao.TeacherLockLogDao;
 import com.vipkid.recruitment.entity.TeacherApplication;
+import com.vipkid.recruitment.entity.TeacherLockLog;
 import com.vipkid.recruitment.interview.InterviewConstant;
 import com.vipkid.recruitment.utils.ResponseUtils;
+import com.vipkid.trpm.dao.LessonDao;
 import com.vipkid.trpm.dao.OnlineClassDao;
 import com.vipkid.trpm.dao.TeacherDao;
 import com.vipkid.trpm.dao.TeacherQuizDao;
+import com.vipkid.trpm.dao.UserDao;
+import com.vipkid.trpm.entity.Lesson;
 import com.vipkid.trpm.entity.OnlineClass;
 import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.proxy.OnlineClassProxy;
@@ -64,6 +66,9 @@ public class InterviewService {
     @Autowired
     private RecruitmentService recruitmentService;
 
+    @Autowired
+    private LessonDao lessonDao;
+    
     @Autowired
     private TeacherLockLogDao teacherLockLogDao;
 
@@ -118,6 +123,11 @@ public class InterviewService {
         }
 
         Map<String,Object> result = OnlineClassProxy.generateRoomEnterUrl(teacher.getId()+"", teacher.getRealName(),onlineClass.getClassroom(), OnlineClassProxy.RoomRole.TEACHER, onlineClass.getSupplierCode());
+        
+        Lesson lesson = lessonDao.findById(onlineClass.getLessonId());
+        
+        result.put("lessonName",lesson.getName());
+        
         return result;
     }
 
