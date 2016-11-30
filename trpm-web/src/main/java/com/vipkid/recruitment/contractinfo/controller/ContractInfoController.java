@@ -175,6 +175,7 @@ public class ContractInfoController extends RestfulController {
         String fileIds = (String) paramMap.get("id");
         String bio = (String) paramMap.get("bio");
 
+        logger.info("uplod file id String {},techer 的自我简介{}",fileIds,bio);
         if(StringUtils.isBlank(fileIds)){
             return ResponseUtils.responseFail("You don't have to upload the file", this);
         }
