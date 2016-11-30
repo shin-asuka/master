@@ -5,6 +5,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.vipkid.email.EmailUtils;
 import com.vipkid.recruitment.utils.ResponseUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
@@ -107,7 +108,7 @@ public class TrainingController extends RestfulController {
         try{
            Teacher teacher = getTeacher(request);
             logger.info("用户{}提交grade:{}",teacher.getId(),String.valueOf(grade));
-            result.put("result",this.adminQuizService.saveQuizResult(teacher, String.valueOf(grade),Long.valueOf(quizToken+"")));
+            result.put("result",this.adminQuizService.saveQuizResult(teacher.getId(), String.valueOf(grade),Long.valueOf(quizToken+"")));
             return result;
         } catch (IllegalArgumentException e) {
             logger.error("内部参数转化异常:"+e.getMessage());
