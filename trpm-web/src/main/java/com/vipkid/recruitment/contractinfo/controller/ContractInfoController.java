@@ -135,16 +135,17 @@ public class ContractInfoController extends RestfulController {
 
             //2. 获取老师上传的 contract info,  , 是否有 audit failReason
             Map<String, Object> contractInfo = Maps.newHashMap();
+            ContractFile contractFile=new ContractFile();
+            contractInfo.put("file",contractFile);
             Map<String, ContractFile> contractFileMap = contractService.findContract(teacher);
             Iterator it = contractFileMap.entrySet().iterator();
             while (it.hasNext()) {
                 Map.Entry entry = (java.util.Map.Entry) it.next();
                 String re = (String) entry.getKey();
-                ContractFile contractFile = (ContractFile) entry.getValue();
+                 contractFile = (ContractFile) entry.getValue();
                 logger.info("查询用户：{}查询上传过的文件{}", teacher.getId(), contractFile);
                 contractInfo.put("file",contractFile);
                 contractInfo.put("result", re);
-                contractInfo.put("status", true);
             }
 
             result.put("personalInfo", personalInfo);
