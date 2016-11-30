@@ -29,8 +29,7 @@
 			<mvc:mapping path="/**/*.shtml" />
 			<mvc:mapping path="/**/*.json" />
 			<!-- 需排除拦截的 -->
-			<mvc:exclude-mapping path="/h5/**/*.shtml"/>
-			<mvc:exclude-mapping path="/h5/**/*.json"/>
+			<mvc:exclude-mapping path="/api/h5/**/*"/>
 			<beans:bean class="com.vipkid.trpm.interceptor.CookieExpiredHandleInterceptor" />
 		</mvc:interceptor>
 		
