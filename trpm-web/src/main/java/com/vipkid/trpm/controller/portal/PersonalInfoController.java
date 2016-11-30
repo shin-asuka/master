@@ -185,30 +185,32 @@ public class PersonalInfoController extends AbstractPortalController {
 		/* 获取当前登录的老师信息 */
 		Teacher teacher = loginService.getTeacher();
 
-        String accName = teacher.getBankAccountName();
-        String accountName  = personalInfoService.hideNameInfo(accName);
+		String Info = null;
 
-        String accNum = teacher.getBankCardNumber();
-        String accountNumber = personalInfoService.hideInfo(accNum,false,4);
+		Info = teacher.getBankAccountName();
+        String accountName  = personalInfoService.hideNameInfo(Info);
 
-        String swift = teacher.getBankSwiftCode();
-        String swiftCode = personalInfoService.hideInfo(swift,false,2);
+		Info = teacher.getBankCardNumber();
+        String accountNumber = personalInfoService.hideInfo(Info,false,4);
 
-        String rout = teacher.getBankABARoutingNumber();
-        String ABAroutingNumber = personalInfoService.hideInfo(rout,false,4);
+		Info = teacher.getBankSwiftCode();
+        String swiftCode = personalInfoService.hideInfo(Info,false,2);
 
-        String num = teacher.getBankACHNumber();
-        String ACHnumber = personalInfoService.hideInfo(num,false,4);
+		Info = teacher.getBankABARoutingNumber();
+        String bankABAroutingNumber = personalInfoService.hideInfo(Info,false,4);
 
-        String Idnumber = teacher.getIdentityNumber();
-        String IDnumber = personalInfoService.hideInfo(Idnumber,true,1);
+		Info = teacher.getBankACHNumber();
+        String bankACHnumber = personalInfoService.hideInfo(Info,false,4);
+
+		Info = teacher.getIdentityNumber();
+        String idNumber = personalInfoService.hideInfo(Info,true,1);
 
         model.addAttribute("accountName",accountName);
         model.addAttribute("accountNumber",accountNumber);
         model.addAttribute("swiftCode",swiftCode);
-        model.addAttribute("ABAroutingNumber",ABAroutingNumber);
-        model.addAttribute("ACHnumber",ACHnumber);
-        model.addAttribute("IDnumber",IDnumber);
+        model.addAttribute("bankABAroutingNumber",bankABAroutingNumber);
+        model.addAttribute("bankACHnumber",bankACHnumber);
+        model.addAttribute("idNumber",idNumber);
 
 		TeacherAddress beneficiaryAddress = personalInfoService.getTeacherAddress(teacher.getBeneficiaryAddressId());
 		if (null != beneficiaryAddress) {

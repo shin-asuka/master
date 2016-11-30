@@ -98,7 +98,7 @@
             <div class='title-lable'>ABA routing number</div>
           </div>
           <div class="col-sm-8 col-sm-7">
-          	$!{ABAroutingNumber}
+          	$!{bankABAroutingNumber}
           </div>
         </div>
         
@@ -108,7 +108,7 @@
             <div class='title-lable'>ACH number (US only)</div>
           </div>
           <div class="col-sm-8 col-sm-7">
-            $!{ACHnumber}
+            $!{bankACHnumber}
           </div>
         </div>
         
@@ -138,7 +138,7 @@
             <div class='title-lable'>ID number</div>
           </div>
           <div class="col-sm-8 col-sm-7">
-            $!{IDnumber}
+            $!{idNumber}
           </div>
         </div>
         
