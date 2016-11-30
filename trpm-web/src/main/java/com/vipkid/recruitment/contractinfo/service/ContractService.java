@@ -211,8 +211,6 @@ public class ContractService {
         ContractFile contractFile = new ContractFile();
 
         logger.info("用户：{}查询上传文件", teacher.getId());
-
-        List<TeacherApplication> listEntity = teacherApplicationDao.findCurrentApplication(teacher.getId());
         logger.info("用户：{}查询TeacherApplication", teacher.getId());
         List<TeacherContractFile> teacherContractFiles =teacherContractFileDao.findByTeacherIdAndTeacherApplicationId(teacher.getId(),0);
         Map<String, ContractFile> map = Maps.newHashMap();

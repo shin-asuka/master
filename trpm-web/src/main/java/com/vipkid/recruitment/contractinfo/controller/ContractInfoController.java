@@ -141,7 +141,7 @@ public class ContractInfoController extends RestfulController {
                 Map.Entry entry = (java.util.Map.Entry) it.next();
                 String re = (String) entry.getKey();
                 ContractFile contractFile = (ContractFile) entry.getValue();
-                logger.info("保存用户：{}查询上传过的文件{}", teacher.getId(), contractFile);
+                logger.info("查询用户：{}查询上传过的文件{}", teacher.getId(), contractFile);
                 contractInfo.put("file",contractFile);
                 contractInfo.put("result", re);
                 contractInfo.put("status", true);
@@ -161,39 +161,7 @@ public class ContractInfoController extends RestfulController {
         return ResponseUtils.responseSuccess(result);
     }
 
-    /**
-     * 查询用户所提交的文件URL
-     * @param request
-     * @param response
-     * @return
-     */
 
-    @RequestMapping(value = "/contract", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
-    public Map<String,Object>  contract(HttpServletRequest request,HttpServletResponse response){
-        Teacher teacher = getTeacher(request);
-        Map<String,Object> result = new HashMap<String,Object>();
-        logger.info("保存用户：{}查询上传过的文件",teacher.getId());
-        try {
-            Map<String, ContractFile> contractFileMap = contractService.findContract(teacher);
-            Iterator it = contractFileMap.entrySet().iterator();
-            while (it.hasNext()) {
-                Map.Entry entry = (java.util.Map.Entry) it.next();
-                String re = (String) entry.getKey();
-                ContractFile contractFile = (ContractFile) entry.getValue();
-                logger.info("保存用户：{}查询上传过的文件{}", teacher.getId(), contractFile);
-                result.put("file",contractFile);
-                result.put("result", re);
-                result.put("status", true);
-            }
-            return ResponseUtils.responseSuccess(result);
-        } catch (IllegalArgumentException e) {
-            response.setStatus(HttpStatus.BAD_REQUEST.value());
-            return ResponseUtils.responseFail(e.getMessage(), this);
-        } catch (Exception e) {
-            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            return ResponseUtils.responseFail(e.getMessage(), this);
-        }
-    }
 
     /**
      * 提交用户上传文件的信息

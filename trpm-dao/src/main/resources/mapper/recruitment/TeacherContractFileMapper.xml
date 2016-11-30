@@ -27,7 +27,7 @@
             <if test="updateTime!=null">,update_time</if>
             <if test="createId!=null">,create_id</if>
             <if test="updateId!=null">,update_id</if>
-            <if test="teacherApplicationId!=0">,teacher_application_id</if>
+            <if test="teacherApplicationId!=-1">,teacher_application_id</if>
             <if test="failReason!=null">,fail_reason</if>
             <if test="result!=null">,result</if>
         </trim>
@@ -41,7 +41,7 @@
             <if test="updateTime!=null">,#{updateTime}</if>
             <if test="createId!=null">,#{createId}</if>
             <if test="updateId!=null">,#{updateId}</if>
-            <if test="teacherApplicationId!=0">,#{teacherApplicationId}</if>
+            <if test="teacherApplicationId!=-1">,#{teacherApplicationId}</if>
             <if test="failReason!=null">,#{failReason}</if>
             <if test="result!=null">,#{result}</if>
         </trim>
@@ -89,7 +89,7 @@
                 <if test="updateTime!=null">,update_time = #{updateTime}</if>
                 <if test="createId!=null">,create_id=#{createId}</if>
                 <if test="updateId!=null">,update_id = #{updateId}</if>
-                <if test="teacherApplicationId!=0">,teacher_application_id = #{teacherApplicationId}</if>
+                <if test="teacherApplicationId!=-1">,teacher_application_id = #{teacherApplicationId}</if>
                 <if test="failReason!=null">,fail_reason = #{failReason}</if>
                 <if test="result!=null">,result = #{result}</if>
             </trim>
