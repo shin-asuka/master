@@ -58,18 +58,18 @@ public class EmailUtils {
 		}
 	}
 
-	public static void sendEmial4InterviewBook(Teacher teacher, OnlineClass onlineclass){
+	public static void sendEmail4InterviewBook(Teacher teacher, OnlineClass onlineclass){
 		try {
 			Map<String,String> paramsMap = new HashMap<String,String>();
 			paramsMap.put("teacherName",teacher.getRealName());
 			paramsMap.put("scheduledDateTime", DateUtils.formatTo(onlineclass.getScheduledDateTime().toInstant(), teacher.getTimezone(), DateUtils.FMT_YMD_HM));
 			paramsMap.put("timezone", teacher.getTimezone());
-			logger.info("【EMAIL.sendEmial4InterviewBook】toAddMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",teacher.getRealName(),teacher.getEmail(),"InterviewBookTitle.html","InterviewBook.html");
+			logger.info("【EMAIL.sendEmail4InterviewBook】toAddMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",teacher.getRealName(),teacher.getEmail(),"InterviewBookTitle.html","InterviewBook.html");
 			Map<String, String> emailMap = TempleteUtils.readTemplete("InterviewBook.html", paramsMap, "InterviewBookTitle.html");
 			EmailEngine.addMailPool(teacher.getEmail(), emailMap, EmailConfig.EmailFormEnum.TEACHVIP);
-			logger.info("【EMAIL.sendEmial4InterviewBook】addedMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",teacher.getRealName(),teacher.getEmail(),"InterviewBookTitle.html","InterviewBook.html");
+			logger.info("【EMAIL.sendEmail4InterviewBook】addedMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",teacher.getRealName(),teacher.getEmail(),"InterviewBookTitle.html","InterviewBook.html");
 		} catch (Exception e) {
-			logger.error("【EMAIL.sendEmial4InterviewBook】ERROR: {}", e);
+			logger.error("【EMAIL.sendEmail4InterviewBook】ERROR: {}", e);
 		}
 	}
 

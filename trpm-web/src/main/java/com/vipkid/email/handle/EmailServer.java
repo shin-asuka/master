@@ -40,7 +40,7 @@ public class EmailServer {
             int result = sendMail(reviceEntity);
             logger.info("Email send end ====>：{}", result);
         } catch (Exception e) {
-            logger.error("Emial send Exceprion:", e);
+            logger.error("Email send Exception:", e);
             return 0;
         }
         logger.info("Email send complete ====>：");
@@ -70,7 +70,7 @@ public class EmailServer {
                 }
             }
         } catch (Exception e) {
-            logger.error("Emial send Exceprion:", e);
+            logger.error("Email send Exception:", e);
         }
         return 0;
     }

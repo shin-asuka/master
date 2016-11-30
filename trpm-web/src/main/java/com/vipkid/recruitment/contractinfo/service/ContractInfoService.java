@@ -47,10 +47,11 @@ public class ContractInfoService {
         return false;
     }
 
-    public Map<String,Object> toRegular(Teacher teacher){
+    public boolean toRegular(Teacher teacher){
         List<TeacherApplication> listEntity = teacherApplicationDao.findCurrentApplication(teacher.getId());
         if(CollectionUtils.isEmpty(listEntity)){
-            return ResponseUtils.responseFail("You have no legal power into the next phase !", this);
+            logger.error("teacherApplication list is empty, can NOT get into REGULAR !");
+            return false;
         }
         if(TeacherApplicationEnum.Status.CONTRACT_INFO.toString().equals(listEntity.get(0).getStatus())
                 && TeacherApplicationEnum.Result.PASS.toString().equals(listEntity.get(0).getResult())){
@@ -59,9 +60,10 @@ public class ContractInfoService {
             teacher.setLifeCycle(TeacherEnum.LifeCycle.REGULAR.toString());
             this.teacherDao.insertLifeCycleLog(teacher.getId(), TeacherEnum.LifeCycle.CONTRACT_INFO, TeacherEnum.LifeCycle.REGULAR, teacher.getId());
             this.teacherDao.update(teacher);
-            return ResponseUtils.responseSuccess();
+            return true;
         }
-        return ResponseUtils.responseFail("You have no legal power into the next phase !",this);
+        logger.error("current teacherApplication is not CONTRACT_INFO or not PASS, can NOT get into REGULAR !");
+        return false;
     }
 
 
