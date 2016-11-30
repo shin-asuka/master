@@ -232,16 +232,22 @@ public class RecruitmentService {
         List<TeacherApplication> list = this.teacherApplicationDao.findCurrentApplication(teacher.getId());
         
         if(CollectionUtils.isEmpty(list)){
+            logger.info(" The teacher only start recruitment process  id = {}",teacher.getId());
             return result;
         }
         
         TeacherApplication bean = list.get(0);
         if(bean.getOnlineClassId() <= 0){
+            logger.error(" OnlineClass id is null,id = {}",bean.getOnlineClassId());
             return result;
         }
         
         if(LifeCycle.INTERVIEW.toString().equalsIgnoreCase(bean.getStatus()) || LifeCycle.PRACTICUM.toString().equalsIgnoreCase(bean.getStatus()) ){
             OnlineClass onlineClass = this.onlineClassDao.findById(bean.getOnlineClassId());
+            if(onlineClass == null){
+                logger.error(" OnlineClass is null,id = {}",bean.getOnlineClassId());
+                return result;
+            }
             if(OnlineClassEnum.ClassStatus.BOOKED.toString().equals(onlineClass.getStatus())){
                 result.put("serverTime",System.currentTimeMillis());
                 result.put("scheduledDateTime",onlineClass.getScheduledDateTime().getTime());
