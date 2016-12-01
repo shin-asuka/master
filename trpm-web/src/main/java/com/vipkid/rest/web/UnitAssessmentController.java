@@ -6,17 +6,14 @@ import com.vipkid.http.service.AssessmentHttpService;
 import com.vipkid.http.vo.OnlineClassVo;
 import com.vipkid.http.vo.StudentUnitAssessment;
 import com.vipkid.rest.config.RestfulConfig;
-import com.vipkid.rest.security.AppContext;
-import com.vipkid.trpm.dao.StudentDao;
-import com.vipkid.trpm.entity.Student;
+import com.vipkid.rest.interceptor.RestInterface;
+import com.vipkid.trpm.constant.ApplicationConstant;
 import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.entity.User;
 import com.vipkid.trpm.service.portal.OnlineClassService;
-import com.vipkid.trpm.service.portal.TeacherService;
 import com.vipkid.trpm.service.rest.LoginService;
 import com.vipkid.trpm.vo.ResponseVo;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
 import org.community.tools.JsonTools;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,7 +39,7 @@ public class UnitAssessmentController {
     private OnlineClassService onlineClassService;
     @Autowired
     private AssessmentHttpService assessmentHttpService;
-    
+
 
 
     @RequestMapping(value = "/unfinishedUA", method = RequestMethod.GET,produces = RestfulConfig.JSON_UTF_8)
@@ -126,7 +123,8 @@ public class UnitAssessmentController {
      * @param id
      * @return
      */
-    @RequestMapping(value = "/onlineClass/fetchById/{id}.json", method = RequestMethod.GET)
+    @RequestMapping(value = "/onlineClass/fetchById/{id}", method = RequestMethod.GET)
+    @RestInterface(lifeCycle = ApplicationConstant.TeacherLifeCycle.REGULAR)
     public Object findUaBasicInfo(@PathVariable Long id,HttpServletResponse response){
         logger.info("[/onlineClass/fetchById/{id}]========={}",JSONObject.toJSONString(id));
         Teacher loginTeacher = loginService.getTeacher();
