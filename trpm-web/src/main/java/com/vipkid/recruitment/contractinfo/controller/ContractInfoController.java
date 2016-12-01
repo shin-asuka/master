@@ -464,7 +464,8 @@ public class ContractInfoController extends RestfulController {
     @ResponseBody
     @RequestMapping("/deleteLifePic")
     public Object deleteAvatar(@RequestBody Map<String,Object> paramMap, HttpServletRequest request, HttpServletResponse response) {
-        Long lifePicId = (Long)paramMap.get("lifePicId");
+        String lifePicId = (String)paramMap.get("lifePicId");
+        Long fileId = Long.parseLong(lifePicId);
         Teacher teacher = getTeacher(request);
         if (null == teacher) {
             response.setStatus(HttpStatus.NOT_FOUND.value());
@@ -473,7 +474,7 @@ public class ContractInfoController extends RestfulController {
         Long teacherId = teacher.getId();
 
         try {
-            boolean ret = fileHttpService.deleteLifePicture(teacherId, lifePicId);
+            boolean ret = fileHttpService.deleteLifePicture(teacherId, fileId);
             if (ret) {
                 logger.info("Successful to delete life picture!");
                 return ResponseUtils.responseSuccess("Successful to delete life picture.", null);
