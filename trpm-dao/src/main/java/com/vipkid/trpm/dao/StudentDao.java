@@ -1,9 +1,11 @@
 package com.vipkid.trpm.dao;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.time.DateFormatUtils;
 import org.community.dao.support.MapperDaoTemplate;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,13 +39,10 @@ public class StudentDao extends MapperDaoTemplate<Student> {
         return listEntity("findStudentByOnlineClassId", paramsMap);
     }
 
-    public List<Map<String, Object>> findOrderListByStudentIdAndPaidDateTime(Long studentId, String startDate,
-            String endDate) {
+    public List<Map<String, Object>> findOrderListByStudentIdAndPaidDateTime(Long studentId, Date startDate) {
         Map<String, Object> paramsMap = new HashMap<String, Object>();
-        paramsMap.put("studentId", studentId);
-        paramsMap.put("startDate", startDate);
-        paramsMap.put("endDate", endDate);
-
+        paramsMap.put("studentId", studentId);      
+        paramsMap.put("startDate", DateFormatUtils.format(startDate, "yyyy-MM-dd HH:mm:ss"));
         return listEntity("findOrderListByStudentIdAndPaidDateTime", paramsMap);
     }
 

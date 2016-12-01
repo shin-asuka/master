@@ -65,8 +65,7 @@ public class StudentService {
         String startDate = DateUtils.getFirstDayOfMonth(scheduleDateTime);
         String endDate = DateFormatUtils.format(new Date(), "yyyy-MM-dd");
         logger.info("查询学生的订单，开始日期 = {}，结束日期 = {}，StudentId = {}", startDate, endDate, studentId);
-        List<Map<String, Object>> list = studentDao.findOrderListByStudentIdAndPaidDateTime(studentId, startDate,
-                endDate);
+        List<Map<String, Object>> list = studentDao.findOrderListByStudentIdAndPaidDateTime(studentId, scheduleDateTime);
         logger.info("学生的订单信息为，StudentId = {}，orderList = {}", studentId, JSON.toJSONString(list));
         return list;
     }
