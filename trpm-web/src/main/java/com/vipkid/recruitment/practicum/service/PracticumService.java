@@ -154,11 +154,6 @@ public class PracticumService {
             throw new RuntimeException("Class booking is fail! " + result.get("info"));
         }
 
-        List<TeacherApplication> list = teacherApplicationDao.findApplictionForStatusResult(teacher.getId(), Status.TRAINING.toString(), Result.PASS.toString());
-        if (CollectionUtils.isNotEmpty(list)){
-            result.put("trainingPassTime", list.get(0).getAuditDateTime().getTime());
-        }
-
         return result;
     }
 

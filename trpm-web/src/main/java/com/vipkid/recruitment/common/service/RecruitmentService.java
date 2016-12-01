@@ -189,6 +189,10 @@ public class RecruitmentService {
         } else {
             result.put("practicumNo", 1);
         }
+        List<TeacherApplication> trainingPassTAList = teacherApplicationDao.findApplictionForStatusResult(teacher.getId(), Status.TRAINING.toString(), Result.PASS.toString());
+        if (CollectionUtils.isNotEmpty(trainingPassTAList)){
+            result.put("trainingPassTime", trainingPassTAList.get(0).getAuditDateTime().getTime());
+        }
         return result;
     }
 
@@ -222,7 +226,7 @@ public class RecruitmentService {
     
     /**
      * 获取上课信息
-     * @param onlineClassId
+     * @param teacher
      * @return    
      * Map<String,Object>
      */
@@ -283,7 +287,9 @@ public class RecruitmentService {
         int reapplyTimesByCancelNoShow = getReapplyTimesByCancelNoShow(teacher.getId(), status);
         int cancelNum = getCancelNum(teacher.getId(), status);
         if (lockTimes > 0){
-            if(reapplyTimesByITProblem + reapplyTimesByCancelNoShow + cancelNum <= 5 + lockTimes){
+            int itOverTimes = reapplyTimesByITProblem - 2;
+            int cancelOverTimes = reapplyTimesByCancelNoShow + cancelNum - 3;
+            if((itOverTimes > 0 ? itOverTimes : 0) + (cancelOverTimes > 0 ? cancelOverTimes : 0) < lockTimes){
                 remainTimes = 1;
             }
         } else {
