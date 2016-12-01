@@ -38,30 +38,35 @@ public class EmailAController extends RestfulController {
     @RequestMapping(value = "/mail")
     public Map<String,Object> sendmail(@RequestBody Map<String,Object> pramMap,HttpServletRequest request, HttpServletResponse response) {
 
-        int id = (Integer) pramMap.get("teacherId");
+        int teacherIdid = (Integer) pramMap.get("teacherId");
         String status = (String) pramMap.get("lifeCycle");
         String result = (String) pramMap.get("result");
         Map<String, Object> ret = new HashMap<>();
         switch (status) {
+            //TODO   caoxinzhou  Interview
             case "PRACTICUM":
 
                 if (result != null) {
 
                     switch (result) {
                         case "PASS":
-                            logger.info("向用户{}sendPrac1Pass的邮件", id);
-                            ret = emailAService.sendPracPass(id);
+                            logger.info("向用户{}sendPrac1Pass的邮件", teacherIdid);
+                            ret = emailAService.sendPracPass(teacherIdid);
                             break;
                         case "REAPPLY":
-                            ret = emailAService.sendPracReapply(id);
+                            logger.info("向用户{}sendPracReapply", teacherIdid);
+                            ret = emailAService.sendPracReapply(teacherIdid);
                             break;
                         case "PRACTICUM2":
-                            ret = emailAService.sendPrac2Start(id);
+                            logger.info("向用户{}sendPrac2Start", teacherIdid);
+                            ret = emailAService.sendPrac2Start(teacherIdid);
                             break;
                         default:
                             break;
                     }
                 }
+
+                //TODO   caoxinzhou  ContractInfo
                 break;
             default:
                 break;
