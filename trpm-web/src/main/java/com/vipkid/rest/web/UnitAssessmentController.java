@@ -13,6 +13,7 @@ import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.entity.User;
 import com.vipkid.trpm.service.portal.OnlineClassService;
 import com.vipkid.trpm.service.portal.TeacherService;
+import com.vipkid.trpm.service.rest.LoginService;
 import com.vipkid.trpm.vo.ResponseVo;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -34,6 +35,9 @@ public class UnitAssessmentController {
 
     private static final Logger logger = LoggerFactory.getLogger(UnitAssessmentController.class);
 
+
+    @Autowired
+    private LoginService loginService;
     @Autowired
     private OnlineClassService onlineClassService;
     @Autowired
@@ -128,10 +132,9 @@ public class UnitAssessmentController {
     @RequestMapping(value = "/onlineClass/fetchById/{id}.json", method = RequestMethod.GET)
     public Object findUaBasicInfo(@PathVariable Long id,HttpServletResponse response){
         logger.info("[/onlineClass/fetchById/{id}]========={}",JSONObject.toJSONString(id));
-        Teacher loginTeacher = AppContext.getTeacher();
-        User user = AppContext.getUser();
+        Teacher loginTeacher = loginService.getTeacher();
         Map<String, Object> result = Maps.newHashMap();
-
+        User user = loginService.getUser();
         if (null == loginTeacher || null == user || null == id) {
             response.setStatus(HttpStatus.NOT_FOUND.value());
             return ResponseVo.getReponseVo(HttpStatus.NOT_FOUND.value(),"没有权限",null);
