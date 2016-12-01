@@ -101,12 +101,6 @@ public class ReportService {
     private TeacherService teacherService;
 
     @Autowired
-    private UnitDao unitDao;
-
-    @Autowired
-    private LearningCycleDao learningCycleDao;
-
-    @Autowired
     private CourseDao courseDao;
 
     /**
