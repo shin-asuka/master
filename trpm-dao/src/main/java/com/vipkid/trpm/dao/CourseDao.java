@@ -44,7 +44,20 @@ public class CourseDao extends MapperDaoTemplate<Course> {
 
 		return selectOne("findByLessonId", paramsMap);
 	}
-	
+
+	/**
+	 * 通过LessonId查询ids
+	 *
+	 * @param lessonId
+	 * @return Course
+	 */
+	public Course findIdsByLessonId(long lessonId) {
+		Map<String, Object> paramsMap = Maps.newHashMap();
+		paramsMap.put("lessonId", lessonId);
+
+		return selectOne("findIdsByLessonId", paramsMap);
+	}
+
 	/**
 	 * 根据type找course
 	 * @param type

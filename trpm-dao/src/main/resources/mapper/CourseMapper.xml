@@ -60,6 +60,13 @@
 		<result column="course_childtype" property="childtype" />
 	</resultMap>
 
+	<resultMap type="com.vipkid.trpm.entity.Course" id="idsResultMap">
+		<id column="course_id" property="id" />
+		<result column="course_type" property="type" />
+		<result column="unit_id" property="unitId" />
+		<result column="learning_cycle_id" property="learningCycleId" />
+	</resultMap>
+
 	<select id="findDao" resultMap="courseResultMap" useCache="true">
 		SELECT
 		<include refid="courseColumns" />
@@ -175,5 +182,20 @@
         WHERE
         lesson.id = #{lessonId}
     </select>
+
+
+	<select id="findIdsByLessonId" resultMap="idsResultMap" useCache="true">
+		SELECT
+		course.id as course_id,
+		course.type as course_type,
+		unit.id as unit_id,
+		learning_cycle.id as learning_cycle_id
+		FROM lesson
+		INNER JOIN learning_cycle ON (lesson.learning_cycle_id = learning_cycle.id)
+		INNER JOIN unit ON (learning_cycle.unit_id = unit.id)
+		INNER JOIN course ON (unit.course_id = course.id)
+		WHERE
+		lesson.id = #{lessonId}
+	</select>
 
 </mapper>
