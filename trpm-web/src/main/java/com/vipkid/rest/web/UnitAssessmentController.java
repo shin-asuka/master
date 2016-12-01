@@ -42,10 +42,7 @@ public class UnitAssessmentController {
     private OnlineClassService onlineClassService;
     @Autowired
     private AssessmentHttpService assessmentHttpService;
-    @Autowired
-    private StudentDao studentDao;
-    @Autowired
-    private TeacherService teacherService;
+    
 
 
     @RequestMapping(value = "/unfinishedUA", method = RequestMethod.GET,produces = RestfulConfig.JSON_UTF_8)
