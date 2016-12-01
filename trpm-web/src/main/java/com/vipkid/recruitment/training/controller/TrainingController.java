@@ -51,22 +51,21 @@ public class TrainingController extends RestfulController {
      */
     @RequestMapping(value = "/findNeedQuiz", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
     public Map<String,Object> findNeedQuiz(HttpServletRequest request, HttpServletResponse response){
-        Map<String,Object> result = Maps.newHashMap();
-        result.put("need",false);
         try{
-           User user = getUser(request);
+            Map<String,Object> result = Maps.newHashMap();
+            result.put("need",false);
+            User user = getUser(request);
             logger.info("用户：{}查询他是否存在待考记录",user.getId());
             this.adminQuizService.updateCheckQuiz(user.getId());
             result.put("need",this.adminQuizService.findNeedQuiz(user.getId()));
-            return result;
+            return ResponseUtils.responseSuccess(result);
         } catch (IllegalArgumentException e) {
-            logger.error("内部参数转化异常:"+e.getMessage());
             response.setStatus(HttpStatus.BAD_REQUEST.value());
+            return ResponseUtils.responseFail(e.getMessage(), this,e);
         } catch (Exception e) {
-            logger.error(e.getMessage(), e);
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            return ResponseUtils.responseFail(e.getMessage(), this, e);
         }
-        return result;
     }
 
     /**
@@ -77,21 +76,20 @@ public class TrainingController extends RestfulController {
      */
     @RequestMapping(value = "/startQuiz", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
     public Map<String,Object> startQuiz(HttpServletRequest request, HttpServletResponse response){
-        Map<String,Object> result = Maps.newHashMap();
-        result.put("quizToken", 0);
         try{
+            Map<String,Object> result = Maps.newHashMap();
+            result.put("quizToken", 0);
             User user = getUser(request);
             logger.info("用户{}开始考试",user.getId());
             result.put("quizToken",this.adminQuizService.startQuiz(user.getId()));
-            return result;
+            return ResponseUtils.responseSuccess(result);
         } catch (IllegalArgumentException e) {
-            logger.error("内部参数转化异常:"+e.getMessage());
             response.setStatus(HttpStatus.BAD_REQUEST.value());
+            return ResponseUtils.responseFail(e.getMessage(), this,e);
         } catch (Exception e) {
-            logger.error(e.getMessage(), e);
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            return ResponseUtils.responseFail(e.getMessage(), this, e);
         }
-        return result;
     }
 
 
@@ -103,23 +101,22 @@ public class TrainingController extends RestfulController {
      */
     @RequestMapping(value = "/saveQuizResult", method = RequestMethod.POST, produces = RestfulConfig.JSON_UTF_8)
     public Map<String,Object> saveQuizResult(HttpServletRequest request, HttpServletResponse response,@RequestBody Map<String,Object> pramMap){
-        Map<String,Object> result = Maps.newHashMap();
-        result.put("result", false);
-        Object grade = pramMap.get("grade");
-        Object quizToken = pramMap.get("quizToken");
         try{
-           Teacher teacher = getTeacher(request);
+            Map<String,Object> result = Maps.newHashMap();
+            result.put("result", false);
+            Object grade = pramMap.get("grade");
+            Object quizToken = pramMap.get("quizToken");
+            Teacher teacher = getTeacher(request);
             logger.info("用户{}提交grade:{}",teacher.getId(),String.valueOf(grade));
             result.put("result",this.adminQuizService.saveQuizResult(teacher.getId(), String.valueOf(grade),Long.valueOf(quizToken+"")));
-            return result;
+            return ResponseUtils.responseSuccess(result);
         } catch (IllegalArgumentException e) {
-            logger.error("内部参数转化异常:"+e.getMessage());
             response.setStatus(HttpStatus.BAD_REQUEST.value());
+            return ResponseUtils.responseFail(e.getMessage(), this,e);
         } catch (Exception e) {
-            logger.error(e.getMessage(), e);
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            return ResponseUtils.responseFail(e.getMessage(), this, e);
         }
-        return result;
     }
 
     /**
@@ -130,8 +127,8 @@ public class TrainingController extends RestfulController {
      */
     @RequestMapping(value = "/getLastQuiz", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
     public Map<String,Object> getLastQuiz(HttpServletRequest request, HttpServletResponse response){
-        Map<String,Object> result = Maps.newHashMap();
         try{
+            Map<String,Object> result = Maps.newHashMap();
             User user = getUser(request);
             logger.info("用户{}查询最后一次考试记录",user.getId());
             //查询用户最后一次考试记录
@@ -143,15 +140,14 @@ public class TrainingController extends RestfulController {
                 result.put("grade",teacherQuiz.getQuizScore());
                 result.put("count",list.size());
             }
-            return result;
+            return ResponseUtils.responseSuccess(result);
         } catch (IllegalArgumentException e) {
-            logger.error("内部参数转化异常:"+e.getMessage());
             response.setStatus(HttpStatus.BAD_REQUEST.value());
+            return ResponseUtils.responseFail(e.getMessage(), this,e);
         } catch (Exception e) {
-            logger.error(e.getMessage(), e);
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            return ResponseUtils.responseFail(e.getMessage(), this, e);
         }
-        return result;
     }
 
     /**
@@ -168,13 +164,13 @@ public class TrainingController extends RestfulController {
             if(ResponseUtils.isFail(result)){
                 response.setStatus(HttpStatus.FORBIDDEN.value());
             }
-            return result;
+            return ResponseUtils.responseSuccess(result);
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
-            return ResponseUtils.responseFail(e.getMessage(), this);
+            return ResponseUtils.responseFail(e.getMessage(), this,e);
         } catch (Exception e) {
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            return ResponseUtils.responseFail(e.getMessage(), this);
+            return ResponseUtils.responseFail(e.getMessage(), this, e);
         }
     }
 

@@ -47,10 +47,10 @@ public class PracticumController extends RestfulController {
             return ResponseUtils.responseSuccess(result);
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
-            return ResponseUtils.responseFail(e.getMessage(), this);
+            return ResponseUtils.responseFail(e.getMessage(), this,e);
         } catch (Exception e) {
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            return ResponseUtils.responseFail(e.getMessage(), this);
+            return ResponseUtils.responseFail(e.getMessage(), this, e);
         }
     }
 
@@ -69,10 +69,10 @@ public class PracticumController extends RestfulController {
             return result;
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
-            return ResponseUtils.responseFail(e.getMessage(), this);
+            return ResponseUtils.responseFail(e.getMessage(), this,e);
         } catch (Exception e) {
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            return ResponseUtils.responseFail(e.getMessage(), this);
+            return ResponseUtils.responseFail(e.getMessage(), this, e);
         }
     }
 
@@ -91,10 +91,10 @@ public class PracticumController extends RestfulController {
             return result;
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
-            return ResponseUtils.responseFail(e.getMessage(), this);
+            return ResponseUtils.responseFail(e.getMessage(), this,e);
         } catch (Exception e) {
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            return ResponseUtils.responseFail(e.getMessage(), this);
+            return ResponseUtils.responseFail(e.getMessage(), this, e);
         }
     }
 
@@ -108,10 +108,10 @@ public class PracticumController extends RestfulController {
             return result;
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
-            return ResponseUtils.responseFail(e.getMessage(), this);
+            return ResponseUtils.responseFail(e.getMessage(), this,e);
         } catch (Exception e) {
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            return ResponseUtils.responseFail(e.getMessage(), this);
+            return ResponseUtils.responseFail(e.getMessage(), this, e);
         }
     }
 
@@ -127,10 +127,10 @@ public class PracticumController extends RestfulController {
             return result;
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
-            return ResponseUtils.responseFail(e.getMessage(), this);
+            return ResponseUtils.responseFail(e.getMessage(), this,e);
         } catch (Exception e) {
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            return ResponseUtils.responseFail(e.getMessage(), this);
+            return ResponseUtils.responseFail(e.getMessage(), this, e);
         }
     }
 
@@ -146,10 +146,10 @@ public class PracticumController extends RestfulController {
             return ResponseUtils.responseSuccess(result);
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
-            return ResponseUtils.responseFail(e.getMessage(), this);
+            return ResponseUtils.responseFail(e.getMessage(), this,e);
         } catch (Exception e) {
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            return ResponseUtils.responseFail(e.getMessage(), this);
+            return ResponseUtils.responseFail(e.getMessage(), this, e);
         }
     }
 }

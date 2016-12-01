@@ -135,7 +135,7 @@ public class AdminQuizService {
     }
     
     /**
-     * // 提交考试结果,大于60分更新当前数据PASS通过，不插入新的考试
+     * // 提交考试结果,大于80分更新当前数据PASS通过，不插入新的考试
      * // 小于60分则更新当前数据，并插入新的考试记录
      * @Author:ALong (ZengWeiLong)
      * @param teacherId

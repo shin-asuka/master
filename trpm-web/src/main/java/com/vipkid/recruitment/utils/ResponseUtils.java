@@ -57,7 +57,7 @@ public class ResponseUtils {
     public static Map<String, Object> responseFail(String info, Class<?> clazz) {
         return responseFail(info, null, clazz);
     }
-
+    
     public static Map<String, Object> responseFail(String info, Map<String, Object> data, Object object) {
         return responseFail(info, data, object.getClass());
     }
@@ -66,6 +66,14 @@ public class ResponseUtils {
         return responseFail(info, data, clazz, null);
     }
 
+    public static Map<String, Object> responseFail(String info, Object object,Throwable t) {
+        return responseFail(info,object.getClass(),t);
+    }
+    
+    public static Map<String, Object> responseFail(String info, Class<?> clazz,Throwable t) {
+        return responseFail(info, null, clazz,t);
+    }
+    
     public static Map<String, Object> responseFail(String info, Map<String, Object> data, Class<?> clazz, Throwable t) {
         //1. print the error logger and the exception stack
         Logger clazzLogger = LoggerFactory.getLogger(clazz);

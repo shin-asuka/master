@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.google.common.base.Splitter;
 import com.vipkid.enums.TeacherApplicationEnum;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.community.config.PropertyConfigurer;
@@ -152,11 +153,11 @@ public class ContractInfoController extends RestfulController {
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
             logger.error("queryContractInfo with IllegalArgumentException", e);
-            return ResponseUtils.responseFail(e.getMessage(), this);
+            return ResponseUtils.responseFail(e.getMessage(), this,e);
         } catch (Exception e) {
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
             logger.error("queryContractInfo with Exception", e);
-            return ResponseUtils.responseFail(e.getMessage(), this);
+            return ResponseUtils.responseFail(e.getMessage(), this,e);
         }
         logger.info("Successful query contract info {}", JsonUtils.toJSONString(result));
         return ResponseUtils.responseSuccess(result);
@@ -224,11 +225,11 @@ public class ContractInfoController extends RestfulController {
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
             logger.error("submitContractInfo with IllegalArgumentException", e);
-            return ResponseUtils.responseFail(e.getMessage(), this);
+            return ResponseUtils.responseFail(e.getMessage(), this,e);
         } catch (Exception e) {
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
             logger.error("submitContractInfo with Exception", e);
-            return ResponseUtils.responseFail(e.getMessage(), this);
+            return ResponseUtils.responseFail(e.getMessage(), this,e);
         }
         logger.info("Successful submit contract info!");
         return ResponseUtils.responseSuccess();
@@ -326,11 +327,11 @@ public class ContractInfoController extends RestfulController {
             } catch (IllegalArgumentException e) {
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
                 logger.error("submitContractInfo with Exception", e);
-                return ResponseUtils.responseFail(e.getMessage(), this);
+                return ResponseUtils.responseFail(e.getMessage(), this,e);
             } catch (Exception e) {
                 response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
                 logger.error("submitContractInfo with Exception", e);
-                return ResponseUtils.responseFail(e.getMessage(), this);
+                return ResponseUtils.responseFail(e.getMessage(), this,e);
             }
         }
         response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
@@ -375,10 +376,10 @@ public class ContractInfoController extends RestfulController {
                 }
             } catch (IllegalArgumentException e) {
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
-                return ResponseUtils.responseFail(e.getMessage(), this);
+                return ResponseUtils.responseFail(e.getMessage(), this,e);
             } catch (Exception e) {
                 response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-                return ResponseUtils.responseFail(e.getMessage(), this);
+                return ResponseUtils.responseFail(e.getMessage(), this,e);
             }
         }
         response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
@@ -423,11 +424,11 @@ public class ContractInfoController extends RestfulController {
             } catch (IllegalArgumentException e) {
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
                 logger.error("uploadVideo exception", e);
-                return ResponseUtils.responseFail(e.getMessage(), this);
+                return ResponseUtils.responseFail(e.getMessage(), this,e);
             } catch (Exception e) {
                 response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
                 logger.error("uploadVideo exception", e);
-                return ResponseUtils.responseFail(e.getMessage(), this);
+                return ResponseUtils.responseFail(e.getMessage(), this,e);
             }
         }
 
@@ -457,7 +458,7 @@ public class ContractInfoController extends RestfulController {
         } catch (Exception e) {
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
             logger.error("deleteAvatar exception", e);
-            return ResponseUtils.responseFail(e.getMessage(), this);
+            return ResponseUtils.responseFail(e.getMessage(), this,e);
         }
     }
 
@@ -485,7 +486,7 @@ public class ContractInfoController extends RestfulController {
         } catch (Exception e) {
             logger.error("deleteLifePic exception", e);
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            return ResponseUtils.responseFail(e.getMessage(), this);
+            return ResponseUtils.responseFail(e.getMessage(), this, e);
         }
     }
 
@@ -511,7 +512,7 @@ public class ContractInfoController extends RestfulController {
         } catch (Exception e) {
             logger.error("deleteVideo exception", e);
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            return ResponseUtils.responseFail(e.getMessage(), this);
+            return ResponseUtils.responseFail(e.getMessage(), this,e);
         }
     }
 
@@ -531,11 +532,11 @@ public class ContractInfoController extends RestfulController {
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
             logger.error("toRegular exception", e);
-            return ResponseUtils.responseFail(e.getMessage(), this);
+            return ResponseUtils.responseFail(e.getMessage(), this,e);
         } catch (Exception e) {
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
             logger.error("toRegular exception", e);
-            return ResponseUtils.responseFail(e.getMessage(), this);
+            return ResponseUtils.responseFail(e.getMessage(), this,e);
         }
     }
 
@@ -566,11 +567,11 @@ public class ContractInfoController extends RestfulController {
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
             logger.error("deleteFile exception", e);
-            return ResponseUtils.responseFail(e.getMessage(), this);
+            return ResponseUtils.responseFail(e.getMessage(), this,e);
         } catch (Exception e) {
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
             logger.error("deleteFile exception", e);
-            return ResponseUtils.responseFail(e.getMessage(), this);
+            return ResponseUtils.responseFail(e.getMessage(), this,e);
         }
     }
 
@@ -654,10 +655,10 @@ public class ContractInfoController extends RestfulController {
             return ResponseUtils.responseSuccess(result);
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
-            return ResponseUtils.responseFail(e.getMessage(), this);
+            return ResponseUtils.responseFail(e.getMessage(), this,e);
         } catch (Exception e) {
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            return ResponseUtils.responseFail(e.getMessage(), this);
+            return ResponseUtils.responseFail(e.getMessage(), this,e);
         }
     }
 
@@ -695,10 +696,10 @@ public class ContractInfoController extends RestfulController {
             return ResponseUtils.responseSuccess(result);
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
-            return ResponseUtils.responseFail(e.getMessage(), this);
+            return ResponseUtils.responseFail(e.getMessage(), this,e);
         } catch (Exception e) {
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            return ResponseUtils.responseFail(e.getMessage(), this);
+            return ResponseUtils.responseFail(e.getMessage(), this,e);
         }
     }
 
@@ -737,10 +738,10 @@ public class ContractInfoController extends RestfulController {
             return ResponseUtils.responseSuccess(result);
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
-            return ResponseUtils.responseFail(e.getMessage(), this);
+            return ResponseUtils.responseFail(e.getMessage(), this,e);
         } catch (Exception e) {
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            return ResponseUtils.responseFail(e.getMessage(), this);
+            return ResponseUtils.responseFail(e.getMessage(), this,e);
         }
     }
 
@@ -789,10 +790,10 @@ public class ContractInfoController extends RestfulController {
             return ResponseUtils.responseSuccess(result);
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
-            return ResponseUtils.responseFail(e.getMessage(), this);
+            return ResponseUtils.responseFail(e.getMessage(), this,e);
         } catch (Exception e) {
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            return ResponseUtils.responseFail(e.getMessage(), this);
+            return ResponseUtils.responseFail(e.getMessage(), this,e);
         }
     }
 
@@ -832,10 +833,10 @@ public class ContractInfoController extends RestfulController {
             return ResponseUtils.responseSuccess(result);
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
-            return ResponseUtils.responseFail(e.getMessage(), this);
+            return ResponseUtils.responseFail(e.getMessage(), this,e);
         } catch (Exception e) {
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            return ResponseUtils.responseFail(e.getMessage(), this);
+            return ResponseUtils.responseFail(e.getMessage(), this,e);
         }
     }
 
@@ -871,10 +872,10 @@ public class ContractInfoController extends RestfulController {
             return ResponseUtils.responseSuccess(result);
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
-            return ResponseUtils.responseFail(e.getMessage(), this);
+            return ResponseUtils.responseFail(e.getMessage(), this,e);
         } catch (Exception e) {
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            return ResponseUtils.responseFail(e.getMessage(), this);
+            return ResponseUtils.responseFail(e.getMessage(), this, e);
         }
     }
 
