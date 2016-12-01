@@ -185,7 +185,7 @@ public class BasicInfoController extends RestfulController{
             String token = request.getHeader(RestfulController.AUTOKEN);
             result = this.basicInfoService.submitInfo(bean,user,token);
             if(ResponseUtils.isFail(result)){
-                response.setStatus(HttpStatus.BAD_REQUEST.value());
+                response.setStatus(HttpStatus.FORBIDDEN.value());
             }
             return result;
         } catch (IllegalArgumentException e) {

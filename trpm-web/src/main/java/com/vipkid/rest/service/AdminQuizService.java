@@ -1,12 +1,13 @@
 package com.vipkid.rest.service;
 
 import java.sql.Timestamp;
-import java.util.*;
+import java.util.Base64;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
-import com.vipkid.email.EmailUtils;
-import com.vipkid.recruitment.utils.ResponseUtils;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang3.StringUtils;
 import org.community.tools.JsonTools;
 import org.slf4j.Logger;
@@ -15,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.vipkid.email.EmailUtils;
 import com.vipkid.enums.TeacherApplicationEnum;
 import com.vipkid.enums.TeacherPageLoginEnum.LoginType;
 import com.vipkid.enums.TeacherQuizEnum;
@@ -143,7 +145,6 @@ public class AdminQuizService {
      * @date 2016年8月18日
      */
     public boolean saveQuizResult(long teacherId,String grade,long quizToken){
-        Map<String,Object> result = new HashMap<String,Object>();
         Teacher teacher  = teacherDao.findById(teacherId);
         logger.info("teacehrId:{},提交分数:{}",teacherId, grade);
         //查询老师待考试记录
@@ -164,7 +165,7 @@ public class AdminQuizService {
                 if(quizScore < RestfulConfig.Quiz.QUIZ_PASS_SCORE){
                     logger.info("teacehrId:{},提交考试结果，quizId:{} 没通过,新增一条考试记录",teacherId,teacherQuiz.getId(),teacherQuiz.getStatus());
                     this.teacherQuizDao.insertQuiz(teacherId,teacherId);
-                }else if(teacher.getLifeCycle()==TeacherApplicationEnum.Status.TRAINING.toString()&&teacher.getLifeCycle().equals("TRAINING")){
+                }else if(TeacherApplicationEnum.Status.TRAINING.toString().equalsIgnoreCase(teacher.getLifeCycle())){
                     List<TeacherApplication> old_teacherlist = teacherApplicationDao.findCurrentApplication(teacherId);
                     if (CollectionUtils.isNotEmpty(old_teacherlist)) {
                         logger.info("用户：{}执行teacherApplicationDao.update操作", teacherId);

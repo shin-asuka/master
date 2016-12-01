@@ -4,12 +4,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import com.vipkid.enums.TeacherLockLogEnum.Reason;
-import com.vipkid.recruitment.dao.TeacherApplicationLogDao;
-import com.vipkid.recruitment.dao.TeacherLockLogDao;
-import com.vipkid.recruitment.entity.TeacherLockLog;
-import com.vipkid.trpm.constant.ApplicationConstant.FinishType;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.community.tools.JsonTools;
@@ -20,13 +14,19 @@ import org.springframework.stereotype.Service;
 
 import com.google.api.client.util.Maps;
 import com.vipkid.enums.OnlineClassEnum;
-import com.vipkid.enums.TeacherApplicationEnum.Status;
 import com.vipkid.enums.TeacherApplicationEnum.AuditStatus;
 import com.vipkid.enums.TeacherApplicationEnum.Result;
+import com.vipkid.enums.TeacherApplicationEnum.Status;
 import com.vipkid.enums.TeacherEnum.LifeCycle;
+import com.vipkid.enums.TeacherLockLogEnum.Reason;
 import com.vipkid.recruitment.dao.TeacherApplicationDao;
+import com.vipkid.recruitment.dao.TeacherApplicationLogDao;
+import com.vipkid.recruitment.dao.TeacherLockLogDao;
 import com.vipkid.recruitment.entity.TeacherApplication;
+import com.vipkid.recruitment.entity.TeacherLockLog;
+import com.vipkid.recruitment.utils.ResponseUtils;
 import com.vipkid.rest.dto.TimezoneDto;
+import com.vipkid.trpm.constant.ApplicationConstant.FinishType;
 import com.vipkid.trpm.dao.OnlineClassDao;
 import com.vipkid.trpm.dao.TeacherAddressDao;
 import com.vipkid.trpm.dao.TeacherDao;
@@ -263,16 +263,15 @@ public class RecruitmentService {
      * @return
      * boolean
      */
-    public boolean updateTimezone(TimezoneDto bean,Teacher teacher){
+    public Map<String,Object> updateTimezone(TimezoneDto bean,Teacher teacher){
         teacher.setTimezone(bean.getTimezone());
         //2.更新Address
         TeacherAddress teacherAddress = this.teacherAddressDao.updateOrSaveCurrentAddressId(teacher, bean.getCountryId(), bean.getStateId(), bean.getCityId(),null,null);
         if(teacherAddress == null || teacherAddress.getId() <= 0){
-            logger.error("老师:{},地址信息:{},保存有问题.",teacher.getId(),JsonTools.getJson(teacherAddress));
-            return false;
+            return ResponseUtils.responseFail("老师:"+teacher.getId()+",地址信息:"+JsonTools.getJson(teacherAddress)+",保存有问题.", this);
         }
         this.teacherDao.update(teacher);
-        return true;
+        return ResponseUtils.responseSuccess();
     }
 
 

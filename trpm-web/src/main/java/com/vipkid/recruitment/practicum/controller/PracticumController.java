@@ -5,10 +5,6 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.vipkid.enums.TeacherApplicationEnum.Status;
-import com.vipkid.enums.TeacherApplicationEnum.Result;
-import com.vipkid.recruitment.common.service.RecruitmentService;
-import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,7 +16,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.google.api.client.util.Maps;
+import com.vipkid.enums.TeacherApplicationEnum.Result;
+import com.vipkid.enums.TeacherApplicationEnum.Status;
 import com.vipkid.enums.TeacherEnum.LifeCycle;
+import com.vipkid.recruitment.common.service.RecruitmentService;
 import com.vipkid.recruitment.interceptor.RestInterface;
 import com.vipkid.recruitment.practicum.service.PracticumService;
 import com.vipkid.recruitment.utils.ResponseUtils;
@@ -60,7 +59,7 @@ public class PracticumController extends RestfulController {
         try{
             Object onlineClassId = pramMap.get("onlineClassId");
             if(onlineClassId == null || !StringUtils.isNumeric(onlineClassId+"")){
-                response.setStatus(HttpStatus.FORBIDDEN.value());
+                response.setStatus(HttpStatus.BAD_REQUEST.value());
                 return ResponseUtils.responseFail("onlineClassId is error !", this);
             }
             Map<String,Object> result = this.practicumService.bookClass(Long.valueOf(onlineClassId+""), getTeacher(request));
@@ -82,7 +81,7 @@ public class PracticumController extends RestfulController {
         try{
             Object onlineClassId = pramMap.get("onlineClassId");
             if(onlineClassId == null || !StringUtils.isNumeric(onlineClassId+"")){
-                response.setStatus(HttpStatus.FORBIDDEN.value());
+                response.setStatus(HttpStatus.BAD_REQUEST.value());
                 return ResponseUtils.responseFail("onlineClassId is error !", this);
             }
             Map<String,Object> result = this.practicumService.cancelClass(Long.valueOf(onlineClassId+""), getTeacher(request));

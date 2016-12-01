@@ -5,20 +5,22 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.vipkid.email.EmailUtils;
-import com.vipkid.recruitment.utils.ResponseUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.google.common.collect.Maps;
 import com.vipkid.enums.TeacherEnum.LifeCycle;
 import com.vipkid.enums.TeacherQuizEnum;
 import com.vipkid.recruitment.interceptor.RestInterface;
 import com.vipkid.recruitment.training.service.TrainingService;
+import com.vipkid.recruitment.utils.ResponseUtils;
 import com.vipkid.rest.RestfulController;
 import com.vipkid.rest.config.RestfulConfig;
 import com.vipkid.rest.service.AdminQuizService;

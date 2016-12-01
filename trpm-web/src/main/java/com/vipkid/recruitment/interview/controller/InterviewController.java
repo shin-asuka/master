@@ -60,7 +60,7 @@ public class InterviewController extends RestfulController {
         try{
             Object onlineClassId = pramMap.get("onlineClassId");
             if(onlineClassId == null || !StringUtils.isNumeric(onlineClassId+"")){
-                response.setStatus(HttpStatus.FORBIDDEN.value());
+                response.setStatus(HttpStatus.BAD_REQUEST.value());
                 return ResponseUtils.responseFail("onlineClassId is error !", this);
             }
             //
@@ -84,7 +84,7 @@ public class InterviewController extends RestfulController {
         try{
             Object onlineClassId = pramMap.get("onlineClassId");
             if(onlineClassId == null || !StringUtils.isNumeric(onlineClassId+"")){
-                response.setStatus(HttpStatus.FORBIDDEN.value());
+                response.setStatus(HttpStatus.BAD_REQUEST.value());
                 return ResponseUtils.responseFail("onlineClassId is error !", this);
             }
             Map<String,Object> result = this.interviewService.cancelInterviewClass(Long.valueOf(onlineClassId+""), getTeacher(request));

@@ -115,8 +115,11 @@ public class RecruitmentController extends RestfulController{
                 return ResponseUtils.responseFail(list.get(0).getName() + "," + list.get(0).getMessages(), this);
             }
             logger.info("user:{},timezone",teacher.getId());
-            this.recruitmentService.updateTimezone(timezone, teacher);
-            return ResponseUtils.responseSuccess();
+            Map<String,Object> result = this.recruitmentService.updateTimezone(timezone, teacher);
+            if(ResponseUtils.isFail(result)){
+                response.setStatus(HttpStatus.FORBIDDEN.value());
+            }
+            return result;
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
             return ResponseUtils.responseFail(e.getMessage(), this);
@@ -148,7 +151,7 @@ public class RecruitmentController extends RestfulController{
             SHA256PasswordEncoder encoder = new SHA256PasswordEncoder();
             //旧密码相等则进行修改逻辑
             if(!StringUtils.equals(user.getPassword(), encoder.encode(bean.getOldPassword()))){
-                response.setStatus(HttpStatus.FORBIDDEN.value());
+                response.setStatus(HttpStatus.BAD_REQUEST.value());
                 return ResponseUtils.responseFail(" old password is error! ", this);
             }
             Map<String,Object> result = this.passportService.updatePassword(teacher,bean.getNewPassword());
