@@ -51,5 +51,6 @@ public class TeacherApplicationLogDao extends MapperDaoTemplate<TeacherApplicati
         bean.setUpdateId(teacherId);
         bean.setCreateTime(new Timestamp(time));
         bean.setUpdateTime(new Timestamp(time));
+        this.save(bean);
     }
 }
