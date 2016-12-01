@@ -6,11 +6,16 @@ import com.vipkid.http.service.AssessmentHttpService;
 import com.vipkid.http.vo.OnlineClassVo;
 import com.vipkid.http.vo.StudentUnitAssessment;
 import com.vipkid.rest.config.RestfulConfig;
+import com.vipkid.rest.security.AppContext;
 import com.vipkid.trpm.dao.StudentDao;
 import com.vipkid.trpm.entity.Student;
+import com.vipkid.trpm.entity.Teacher;
+import com.vipkid.trpm.entity.User;
 import com.vipkid.trpm.service.portal.OnlineClassService;
+import com.vipkid.trpm.service.portal.TeacherService;
 import com.vipkid.trpm.vo.ResponseVo;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.community.tools.JsonTools;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.*;
 
 /**
@@ -34,6 +40,8 @@ public class UnitAssessmentController {
     private AssessmentHttpService assessmentHttpService;
     @Autowired
     private StudentDao studentDao;
+    @Autowired
+    private TeacherService teacherService;
 
 
     @RequestMapping(value = "/unfinishedUA", method = RequestMethod.GET,produces = RestfulConfig.JSON_UTF_8)
@@ -117,12 +125,25 @@ public class UnitAssessmentController {
      * @param id
      * @return
      */
-    @RequestMapping(value = "/onlineClass/fetchById/{id}", method = RequestMethod.GET)
-    public Object findUaBasicInfo(@PathVariable Long id){
+    @RequestMapping(value = "/onlineClass/fetchById/{id}.json", method = RequestMethod.GET)
+    public Object findUaBasicInfo(@PathVariable Long id,HttpServletResponse response){
         logger.info("[/onlineClass/fetchById/{id}]========={}",JSONObject.toJSONString(id));
+        Teacher loginTeacher = AppContext.getTeacher();
+        User user = AppContext.getUser();
+        Map<String, Object> result = Maps.newHashMap();
+
+        if (null == loginTeacher || null == user || null == id) {
+            response.setStatus(HttpStatus.NOT_FOUND.value());
+            return ResponseVo.getReponseVo(HttpStatus.NOT_FOUND.value(),"没有权限",null);
+        }
         Map<String,Object> onlineClass = onlineClassService.findOnlineClassUaInfoById(id);
         if(onlineClass == null || onlineClass.size()==0){
             return ResponseVo.getReponseVo(1,"没有数据",onlineClass);
+        }
+        if (null == onlineClass.get("teacherId") || null == onlineClass.get("studentId")
+                || !String.valueOf(onlineClass.get("teacherId")).equals(String.valueOf(loginTeacher.getId()))) {
+            response.setStatus(HttpStatus.FORBIDDEN.value());
+            return ResponseVo.getReponseVo(HttpStatus.FORBIDDEN.value(), "没有权限", null);
         }
         return ResponseVo.getReponseVo(0,"查询成功",onlineClass);
     }
