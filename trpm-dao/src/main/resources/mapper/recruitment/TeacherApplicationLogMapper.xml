@@ -50,7 +50,6 @@
 		<result column="teacher_application_log_update_time" property="updateTime" />
 		<result column="teacher_application_log_create_id" property="createId" />
 		<result column="teacher_application_log_update_id" property="updateId" />
-		<result column="teacher_application_log_status" property="status" />
 	</resultMap>
 
 	<select id="findDao" resultMap="TeacherApplicationLogResultMap">
@@ -98,7 +97,6 @@
 			<if test="updateTime!=null">,update_time</if>
 			<if test="createId!=null">,create_id</if>
 			<if test="updateId!=null">,update_id</if>
-			<if test="status!=null">,status</if>
 		</trim>
 		) VALUES
 		<trim prefix="(" prefixOverrides=",">
@@ -113,7 +111,6 @@
 			<if test="updateTime!=null">,#{updateTime}</if>
 			<if test="createId!=null">,#{createId}</if>
 			<if test="updateId!=null">,#{updateId}</if>
-			<if test="status!=null">,#{status}</if>
 		</trim>
 		)
 	</insert>
@@ -132,7 +129,6 @@
 			<if test="updateTime!=null">,update_time = #{updateTime}</if>
 			<if test="createId!=null">,create_id = #{createId}</if>
 			<if test="updateId!=null">,update_id = #{updateId}</if>
-			<if test="status!=null">,status = #{status}</if>
 		</trim>
 		<trim prefix="WHERE" prefixOverrides="AND">AND id = #{id}</trim>
 	</update>
