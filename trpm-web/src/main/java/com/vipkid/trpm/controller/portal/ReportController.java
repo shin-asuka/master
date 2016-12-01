@@ -243,7 +243,7 @@ public class ReportController extends AbstractPortalController {
         model.addAttribute("lesson", lesson);
 
         // 查询FeedBack信息
-        TeacherComment teacherComment = reportService.findTectBycIdAndStuId(onlineClassId, studentId);
+        TeacherComment teacherComment = reportService.findTectBycIdAndStuId(onlineClassId, studentId,onlineClass,lesson);
         handleTeacherComment(teacherComment);
         model.addAttribute("teacherComment", teacherComment);
         //查询StudentExam信息

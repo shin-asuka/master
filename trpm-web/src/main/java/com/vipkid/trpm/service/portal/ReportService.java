@@ -100,6 +100,15 @@ public class ReportService {
     @Autowired
     private TeacherService teacherService;
 
+    @Autowired
+    private UnitDao unitDao;
+
+    @Autowired
+    private LearningCycleDao learningCycleDao;
+
+    @Autowired
+    private CourseDao courseDao;
+
     /**
      * uaReport<br/>
      *
@@ -578,7 +587,7 @@ public class ReportService {
      * @date 2015年12月16日
      * @return
      */
-    public TeacherComment findTectBycIdAndStuId(long onlineClassId, long studentId) {
+    public TeacherComment findTectBycIdAndStuId(long onlineClassId, long studentId,OnlineClass onlineClass,Lesson lesson) {
         if (0 == onlineClassId || 0 == studentId) {
             return null;
         }
@@ -592,6 +601,26 @@ public class ReportService {
             comment.setCreateDateTime(new Timestamp(System.currentTimeMillis()));
 
             TeacherCommentUpdateDto tcuDto = new TeacherCommentUpdateDto(comment);
+            tcuDto.setLessonId(lesson.getId());
+            tcuDto.setLessonName(lesson.getName());
+            tcuDto.setLessonSerialNumber(lesson.getSerialNumber());
+            tcuDto.setLearningCycleId(lesson.getLearningCycleId());
+            tcuDto.setScheduledDateTime(new Date(onlineClass.getScheduledDateTime().getTime()));
+
+//            LearningCycle learningCycle = learningCycleDao.findUnitIdById(lesson.getLearningCycleId());
+//            tcuDto.setUnitId(learningCycle.getUnitId());
+//            Unit unit = unitDao.findCourseIdById(learningCycle.getUnitId());
+//            tcuDto.setCourseId(unit.getCourseId());
+            Course course = courseDao.findIdsByLessonId(lesson.getId());
+            tcuDto.setCourseId(course.getId());
+            tcuDto.setCourseType(course.getType());
+            tcuDto.setUnitId(course.getUnitId());
+            tcuDto.setLearningCycleId(course.getLearningCycleId());
+//            "courseId": 10,
+//                    "courseType": "Major",
+//                    "unitId": 10,
+//                    "studentEnglishName":"studentEnglishName"}
+
             teacherService.insertOneTeacherComment(tcuDto);
         }
         return comment;
