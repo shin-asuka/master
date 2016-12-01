@@ -88,7 +88,6 @@ public class EmailAService{
            // if(onlineClass.getFinishType().equals(""))
 
 
-
             Map<String, String> paramsMap = Maps.newHashMap();
             if (teacher.getRealName() != null)
                 paramsMap.put("teacherName", teacher.getRealName());

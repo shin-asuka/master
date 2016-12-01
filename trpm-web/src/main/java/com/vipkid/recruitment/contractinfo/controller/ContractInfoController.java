@@ -243,10 +243,10 @@ public class ContractInfoController extends RestfulController {
         String avatarUrl = (String) teacherFiles.get("avatarUrl");
         List<AppLifePicture> lifePictures = (List<AppLifePicture>)teacherFiles.get("lifePictures");
         String shortVideoUrl = (String) teacherFiles.get("shortVideo");
-        String shortVideoStatus = (String) teacherFiles.get("shortVideoStatus");
+        Integer shortVideoStatus = (Integer) teacherFiles.get("shortVideoStatus");
 
         if (StringUtils.isEmpty(avatarUrl) || CollectionUtils.isEmpty(lifePictures)
-                || StringUtils.isEmpty(shortVideoUrl) || StringUtils.isEmpty(shortVideoStatus)) {
+                || StringUtils.isEmpty(shortVideoUrl) || shortVideoStatus==null) {
             logger.warn("Teacher's files do NOT exists, failed to update bio");
             return false;
         }
@@ -255,7 +255,7 @@ public class ContractInfoController extends RestfulController {
     }
 
     private boolean checkContractFile(Long teacherId,List<Integer> fileIds) {
-        logger.info("检查文件id是否合格");
+        logger.info("Teacher:{} 检查文件id是否合格",teacherId);
         boolean isFileValid = false;
         List<TeacherContractFile> files= contractService.findTeacherContractFile(teacherId);
         List<Integer> idList = new ArrayList<>();
@@ -559,7 +559,7 @@ public class ContractInfoController extends RestfulController {
         Teacher teacher = getTeacher(request);
         try{
             logger.info("删除文件id........:{}",fileId);
-            Map<String,Object> result = contractService.reomteFile(fileId,teacher);
+            Map<String,Object> result = contractService.reomteFile(fileId,teacher.getId());
             if(ResponseUtils.isFail(result)){
                 response.setStatus(HttpStatus.FORBIDDEN.value());
             }
