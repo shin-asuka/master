@@ -453,8 +453,10 @@
 
 	<select id="findPracticumBook" resultType="Long">
 		SELECT DISTINCT ta.teacher_id FROM teacher_application ta
-		JOIN online_class oc ON ta.teacher_id=oc.teacher_id
+		JOIN online_class oc ON oc.id = ta.online_class_id
 		WHERE  ta.status =#{status}
+		AND
+		ta.result =#{result}
 		AND
 		<foreach collection="auditTimes" open="AND (" close=")" separator=" OR " item="auditTime">
 			(oc.scheduled_date_time BETWEEN #{auditTime.startTime} AND #{auditTime.endTime})

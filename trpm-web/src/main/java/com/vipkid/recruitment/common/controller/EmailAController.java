@@ -61,6 +61,10 @@ public class EmailAController extends RestfulController {
                             logger.info("向用户{}sendPrac2Start", teacherIdid);
                             ret = emailAService.sendPrac2Start(teacherIdid);
                             break;
+                        case "TBD":
+                            logger.info("向用户{}sendPrac2Start", teacherIdid);
+                            ret = emailAService.sendPracTbd(teacherIdid);
+                            break;
                         default:
                             break;
                     }
