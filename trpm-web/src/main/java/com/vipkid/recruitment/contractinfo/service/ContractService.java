@@ -93,6 +93,9 @@ public class ContractService {
             List<TeacherContractFile> teacherContractFiles = new ArrayList<TeacherContractFile>();
             for (Integer id : ids) {
                 teacherContractFile = this.teacherContractFileDao.findById(id);
+                if(teacherContractFile.getResult().equals("FAIL")){
+                    teacherContractFile.setResult(null);
+                }
                 teacherContractFile.setTeacherApplicationId(application.getId());
                 logger.info("applicationId:{}", application.getId());
                 teacherContractFiles.add(teacherContractFile);

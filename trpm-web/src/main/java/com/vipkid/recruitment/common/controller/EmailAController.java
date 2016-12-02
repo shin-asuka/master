@@ -1,6 +1,8 @@
 package com.vipkid.recruitment.common.controller;
 import com.vipkid.recruitment.common.service.EmailAService;
 import com.vipkid.rest.RestfulController;
+import com.vipkid.rest.interceptor.annotation.Authentication;
+import com.vipkid.rest.interceptor.annotation.RemoteInterface;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +22,7 @@ import java.util.Map;
 /**
  * Created by zhangzhaojun on 2016/11/29.
  */
+@RemoteInterface(portal ={Authentication.Portal.MANAGEMENT})
 @RestController
 @RequestMapping("/recruitment/auditEven")
 public class EmailAController extends RestfulController {
