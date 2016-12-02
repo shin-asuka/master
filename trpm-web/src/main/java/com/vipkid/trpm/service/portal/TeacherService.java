@@ -71,6 +71,9 @@ public class TeacherService {
 	@Autowired
 	private LessonDao lessonDao;
 
+	@Autowired
+	private StudentDao studentDao;
+
 	/**
 	 * 通过teacherId获取教师信息
 	 *
@@ -118,13 +121,18 @@ public class TeacherService {
 					result.setTopic(lesson.getTopic());
 				}
 				result.setClassNumber(teacherComment.getLessonSerialNumber());
+
+				Student student = studentDao.findById(teacherComment.getStudentId());
+				if(student!=null&&StringUtils.isNotBlank(student.getName())){
+					result.setStudentName(student.getName());
+				}
 			}
 
 		}
 
 		//返回已填过的字段
 		result.setEmpty(teacherComment.getEmpty());
-		result.setStudentName(teacherComment.getStudentEnglishName());
+
 		if (teacherComment.getPerformance() != null && teacherComment.getPerformance() > 0) {
 			String lfd = ApplicationConstant.LEVEL_OF_DIFFITULTY.get(teacherComment.getPerformance());
 			if (StringUtils.isNotBlank(lfd)) {

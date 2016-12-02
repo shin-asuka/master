@@ -103,8 +103,6 @@ public class TeacherCommentUpdateDto {
 
     private String lessonSerialNumber;
 
-    private String studentEnglishName;
-
     private String lessonName;
 
     // 2015-08-29 comment对应的课类型：trial 类型需要显示 trial level result
@@ -415,14 +413,6 @@ public class TeacherCommentUpdateDto {
 
     public void setLessonSerialNumber(String lessonSerialNumber) {
         this.lessonSerialNumber = lessonSerialNumber;
-    }
-
-    public String getStudentEnglishName() {
-        return studentEnglishName;
-    }
-
-    public void setStudentEnglishName(String studentEnglishName) {
-        this.studentEnglishName = studentEnglishName;
     }
 
     public String getLessonName() {
