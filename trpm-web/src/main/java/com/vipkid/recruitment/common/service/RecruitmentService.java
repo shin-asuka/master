@@ -176,6 +176,9 @@ public class RecruitmentService {
 
     private Map<String,Object> getPracticumStatus(Teacher teacher,TeacherApplication teacherApplication){
         Map<String,Object> result = this.getInterviewStatus(teacher, teacherApplication);
+        if (result == null) {
+            result = Maps.newHashMap();
+        }
         if(Result.PRACTICUM2.toString().equals(teacherApplication.getResult())){
             result.put("result",AuditStatus.TO_SUBMIT.toString());
 
@@ -190,7 +193,7 @@ public class RecruitmentService {
             result.put("practicumNo", 1);
         }
         List<TeacherApplication> trainingPassTAList = teacherApplicationDao.findApplictionForStatusResult(teacher.getId(), Status.TRAINING.toString(), Result.PASS.toString());
-        if (CollectionUtils.isNotEmpty(trainingPassTAList) && trainingPassTAList.get(0).getAuditDateTime()!=null){
+        if (CollectionUtils.isNotEmpty(trainingPassTAList) && trainingPassTAList.get(0).getAuditDateTime() != null){
             result.put("trainingPassTime", trainingPassTAList.get(0).getAuditDateTime().getTime());
         } else {
             result.put("trainingPassTime", 0);
