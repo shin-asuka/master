@@ -59,13 +59,13 @@ define(depends, function(personal) {
 		
 		/*提交表单监听*/
 		$("#setBankInfoSubmit").click(function(e){
-				aba = $("#bankABARoutingNumber").val();
-				ach = $("#swiftCode").val();
-				if(aba=="" && ach==""){
-					e.stopPropagation();
-					alert("You must select at least one item to fill in between  ABA routing number and Swift Code!");
-					return ;
-				}
+			aba = $("#bankABARoutingNumber").val();
+			ach = $("#swiftCode").val();
+			if(aba=="" && ach==""){
+				e.stopPropagation();
+				alert("You must select at least one item to fill in between  ABA routing number and Swift Code!");
+				return ;
+			}
 			ajaxSubmits();
 		});
 		/*		

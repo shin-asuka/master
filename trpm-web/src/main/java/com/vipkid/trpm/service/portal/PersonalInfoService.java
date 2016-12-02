@@ -314,20 +314,24 @@ public class PersonalInfoService {
 	 * @return
 	 */
 	public String hideInfo(String source ,int start,int end){
-		int len = source.length();
-		StringBuffer stringBuffer = new StringBuffer();
-		if(end > len-1 || len == 0 || start == end){
+		if(StringUtils.isEmpty(source)){
 			return null;
-		}else{
-			for(int i = 0;i< start ;i++){
-				stringBuffer.append("*");
+		}else {
+			int len = source.length();
+			StringBuffer stringBuffer = new StringBuffer();
+			if (end > len - 1 || end == 0) {
+				return null;
+			} else {
+				for (int i = 0; i < start; i++) {
+					stringBuffer.append("*");
+				}
+				end += 1;
+				stringBuffer.append(source.substring(start, end));
+				for (; end < len; end++) {
+					stringBuffer.append("*");
+				}
+				return stringBuffer.toString();
 			}
-			end +=1;
-			stringBuffer.append(source.substring(start,end));
-			for( ; end < len ;end++){
-				stringBuffer.append("*");
-			}
-			return stringBuffer.toString();
 		}
 	}
 
