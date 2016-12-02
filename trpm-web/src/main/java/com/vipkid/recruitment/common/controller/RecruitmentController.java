@@ -18,14 +18,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.google.common.collect.Maps;
-import com.vipkid.enums.TeacherEnum.LifeCycle;
 import com.vipkid.recruitment.common.service.RecruitmentService;
-import com.vipkid.recruitment.interceptor.RestInterface;
 import com.vipkid.recruitment.utils.ResponseUtils;
 import com.vipkid.rest.RestfulController;
 import com.vipkid.rest.config.RestfulConfig;
 import com.vipkid.rest.dto.PasswordDto;
 import com.vipkid.rest.dto.TimezoneDto;
+import com.vipkid.rest.interceptor.annotation.RestInterface;
 import com.vipkid.rest.validation.ValidateUtils;
 import com.vipkid.rest.validation.tools.Result;
 import com.vipkid.rest.web.LoginController;
@@ -37,7 +36,7 @@ import com.vipkid.trpm.security.SHA256PasswordEncoder;
 import com.vipkid.trpm.service.passport.PassportService;
 
 @RestController
-@RestInterface(lifeCycle={LifeCycle.ALL})
+@RestInterface
 @RequestMapping("/recruitment")
 public class RecruitmentController extends RestfulController{
     

@@ -1,4 +1,4 @@
-package com.vipkid.recruitment.interceptor;
+package com.vipkid.rest.interceptor.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -13,5 +13,5 @@ import com.vipkid.enums.TeacherEnum.LifeCycle;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface RestInterface {
 
-    LifeCycle[] lifeCycle() default {};
+    LifeCycle[] lifeCycle() default {LifeCycle.ALL};
 }

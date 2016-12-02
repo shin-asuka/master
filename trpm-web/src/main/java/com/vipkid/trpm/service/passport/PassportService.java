@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 
 import com.google.common.collect.Maps;
 import com.vipkid.email.EmailUtils;
-import com.vipkid.enums.Role;
 import com.vipkid.enums.TeacherEnum;
 import com.vipkid.enums.TeacherEnum.RecruitmentChannel;
 import com.vipkid.enums.UserEnum;
@@ -140,7 +139,7 @@ public class PassportService {
         user.setCreateDateTime(new Timestamp(System.currentTimeMillis()));
         user.setLastEditDateTime(new Timestamp(System.currentTimeMillis()));
         user.setRegisterDateTime(new Timestamp(System.currentTimeMillis()));
-        user.setRoles(Role.TEACHER.toString());
+        user.setRoles(UserEnum.Role.TEACHER.toString());
         user.setDtype(UserEnum.Dtype.TEACHER.val());
         userDao.save(user);
         user.setLastEditorId(user.getId());

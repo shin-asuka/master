@@ -20,11 +20,11 @@ import com.vipkid.enums.TeacherApplicationEnum.Result;
 import com.vipkid.enums.TeacherApplicationEnum.Status;
 import com.vipkid.enums.TeacherEnum.LifeCycle;
 import com.vipkid.recruitment.common.service.RecruitmentService;
-import com.vipkid.recruitment.interceptor.RestInterface;
 import com.vipkid.recruitment.interview.service.InterviewService;
 import com.vipkid.recruitment.utils.ResponseUtils;
 import com.vipkid.rest.RestfulController;
 import com.vipkid.rest.config.RestfulConfig;
+import com.vipkid.rest.interceptor.annotation.RestInterface;
 import com.vipkid.trpm.entity.Teacher;
 
 @RestController
