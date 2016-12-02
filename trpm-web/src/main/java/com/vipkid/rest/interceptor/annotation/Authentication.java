@@ -3,7 +3,7 @@ package com.vipkid.rest.interceptor.annotation;
 
 public class Authentication{
     
-    public enum Port{
+    public enum Portal{
         
         ALL,        //所有端
         
