@@ -82,7 +82,7 @@ public class H5CookieExpiredHandleInterceptor extends HandlerInterceptorAdapter 
 //            return true;
 //        }
 
-		if(PropertyConfigurer.booleanValue("h5.cookie.check")){
+		if(!PropertyConfigurer.booleanValue("h5.cookie.check")){
 			logger.info("配置不拦截");
 			return true;
 		}
