@@ -601,19 +601,11 @@ public class ReportService {
             tcuDto.setLearningCycleId(lesson.getLearningCycleId());
             tcuDto.setScheduledDateTime(new Date(onlineClass.getScheduledDateTime().getTime()));
 
-//            LearningCycle learningCycle = learningCycleDao.findUnitIdById(lesson.getLearningCycleId());
-//            tcuDto.setUnitId(learningCycle.getUnitId());
-//            Unit unit = unitDao.findCourseIdById(learningCycle.getUnitId());
-//            tcuDto.setCourseId(unit.getCourseId());
             Course course = courseDao.findIdsByLessonId(lesson.getId());
             tcuDto.setCourseId(course.getId());
             tcuDto.setCourseType(course.getType());
             tcuDto.setUnitId(course.getUnitId());
             tcuDto.setLearningCycleId(course.getLearningCycleId());
-//            "courseId": 10,
-//                    "courseType": "Major",
-//                    "unitId": 10,
-//                    "studentEnglishName":"studentEnglishName"}
 
             teacherService.insertOneTeacherComment(tcuDto);
         }
