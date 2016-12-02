@@ -148,7 +148,7 @@ public class PracticumService {
         }
         //执行BOOK逻辑
         String dateTime = DateFormatUtils.format(onlineClass.getScheduledDateTime(),"yyyy-MM-dd HH:mm:ss");
-        Map<String,Object> result = OnlineClassProxy.doBookRecruitment(teacher.getId(), onlineClass.getId(), ClassType.TEACHER_RECRUITMENT,dateTime);
+        Map<String,Object> result = OnlineClassProxy.doBookRecruitment(teacher.getId(), onlineClass.getId(), ClassType.PRACTICUM,dateTime);
         if(ResponseUtils.isFail(result)){
             //一旦失败，抛出异常回滚
             throw new RuntimeException("Class booking is fail! " + result.get("info"));
