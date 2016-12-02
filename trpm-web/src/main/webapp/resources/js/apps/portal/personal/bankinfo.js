@@ -1,7 +1,7 @@
 var depends = ["personal","function", "tools", "jquery-form","jquery-bootstrap","jquery-load","select2"];
 define(depends, function(personal) {
 	var aba = $("#bankABARoutingNumber");
-	var ach = $("#bankACHNumber");
+	var ach = $("#swiftCode");
 
 	var ajaxErrorfunction = function(reponse, status, info) {
 		Portal.loading("close");
@@ -60,10 +60,10 @@ define(depends, function(personal) {
 		/*提交表单监听*/
 		$("#setBankInfoSubmit").click(function(e){
 				aba = $("#bankABARoutingNumber").val();
-				ach = $("#bankACHNumber").val();
+				ach = $("#swiftCode").val();
 				if(aba=="" && ach==""){
 					e.stopPropagation();
-					alert("You mast select at last one item to fill in between  ABA routing number and ACH number!");
+					alert("You must select at least one item to fill in between  ABA routing number and Swift Code!");
 					return ;
 				}
 			ajaxSubmits();

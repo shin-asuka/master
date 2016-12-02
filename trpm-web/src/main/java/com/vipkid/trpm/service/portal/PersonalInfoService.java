@@ -75,7 +75,7 @@ public class PersonalInfoService {
 	/**
 	 * 处理银行信息更新逻辑
 	 * 
-	 * @param teacherId
+	 * @param teacher
 	 * @param bankInfo
 	 */
 	public Map<String, Object> doSetBankInfo(Teacher teacher, TeacherBankVO bankInfo) {
@@ -140,7 +140,7 @@ public class PersonalInfoService {
 	/**
 	 * 处理基本信息更新逻辑
 	 * 
-	 * @param teacherId
+	 * @param teacher
 	 * @param basicInfo
 	 * @return Map<String, Object>
 	 */
@@ -305,7 +305,7 @@ public class PersonalInfoService {
 	public TeacherAddress getTeacherAddress(int id) {
 		return teacherAddressDao.getTeacherAddress(id);
 	}
-    
+
 	/**
 	 * 隐藏BankInfo的部分信息
 	 * @param source
@@ -316,7 +316,7 @@ public class PersonalInfoService {
 	public String hideInfo(String source ,int start,int end){
 		int len = source.length();
 		StringBuffer stringBuffer = new StringBuffer();
-		if(end > len-1){
+		if(end > len-1 || len == 0 || start == end){
 			return null;
 		}else{
 			for(int i = 0;i< start ;i++){
