@@ -252,4 +252,8 @@ public class ContractService {
         logger.info("Teacher:{} 执行 findTeacherContractFile  method for check  ContractFile submit",teacherId);
         return teacherContractFileDao.findByTeacherIdAndTeacherApplicationId(teacherId, 0);
     }
+
+    public List<TeacherApplication> finTeacherApplication(long teacherId){
+       return teacherApplicationDao.findApplictionForStatusResult(teacherId, TeacherApplicationEnum.Status.CONTRACT_INFO.toString(),null);
+    }
 }

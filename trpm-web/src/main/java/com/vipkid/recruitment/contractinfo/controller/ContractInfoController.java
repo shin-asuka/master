@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.google.common.base.Splitter;
 import com.vipkid.enums.TeacherApplicationEnum;
 
+import com.vipkid.recruitment.entity.TeacherApplication;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.community.config.PropertyConfigurer;
@@ -190,6 +191,10 @@ public class ContractInfoController extends RestfulController {
         try {
             Teacher teacher = getTeacher(request);
             Long teacherId = teacher.getId();
+            boolean submit = CheckManySubmit(teacherId);
+            if(submit){
+                return ResponseUtils.responseFail("The teacher has been submitted. ", this);
+            }
 
             if (null == teacher) {
                 response.setStatus(HttpStatus.NOT_FOUND.value());
@@ -234,6 +239,15 @@ public class ContractInfoController extends RestfulController {
         logger.info("Successful submit contract info!");
         return ResponseUtils.responseSuccess();
     }
+
+    private boolean CheckManySubmit(Long teacherId){
+        List<TeacherApplication> teacherApplications =  contractService.finTeacherApplication(teacherId);
+        if(CollectionUtils.isEmpty(teacherApplications)){
+            return false;
+        }
+        return true;
+    }
+
 
     private boolean checkPersonInfo (Long teacherId) {
         logger.info("检查老师的头像/照片/视频是都都上传了? 从 TIS 获取数据");

@@ -5,18 +5,15 @@ import com.vipkid.email.EmailUtils;
 import com.vipkid.enums.TeacherApplicationEnum;
 import com.vipkid.http.utils.JsonUtils;
 import com.vipkid.recruitment.dao.TeacherApplicationDao;
-import com.vipkid.recruitment.dao.TeacherLockLogDao;
-import com.vipkid.recruitment.entity.TeacherApplication;
 import com.vipkid.task.utils.UADateUtils;
 import com.vipkid.trpm.dao.TeacherDao;
-import com.vipkid.trpm.dao.UserDao;
 import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.vschedule.client.common.Vschedule;
 import com.vipkid.vschedule.client.schedule.JobContext;
-import org.apache.commons.collections.map.HashedMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -24,8 +21,10 @@ import java.util.concurrent.TimeUnit;
 /**
  * Created by zhangzhaojun on 2016/11/28.
  */
-public class ReminderPracticum {
-    private static final Logger logger = LoggerFactory.getLogger(ReminderPracticum.class);
+@Component
+@Vschedule
+public class PracticumReminderJob {
+    private static final Logger logger = LoggerFactory.getLogger(PracticumReminderJob.class);
 
 
     @Autowired
@@ -50,14 +49,13 @@ public class ReminderPracticum {
 
     void find (Stopwatch stopwatch, int... beforeHours) {
         List<Map> times = UADateUtils.getStartEndOclockTimeMapListByAfterHours(beforeHours);
-        List<Long>  teacherIds  = teacherApplicationDao.findPracticumBook(times,TeacherApplicationEnum.Status.PRACTICUM.toString(),null);
-
+        List<Long>  teacherIds  = teacherApplicationDao.findPracticumBook(times,TeacherApplicationEnum.Status.PRACTICUM.toString());
 
         if(teacherIds.size() == 0) return;
         List<Teacher> teachers = teacherDao.findByIds(teacherIds);
         logger.info("【JOB.EMAIL.ReminderPracticum】FIND.3: Cost {}ms. Query: teacherIds = {}; Result: teachers = ",
                 stopwatch.elapsed(TimeUnit.MILLISECONDS), JsonUtils.toJSONString(teacherIds));
-        //teachers.forEach(x -> send(stopwatch, x));
+        teachers.forEach(x -> send(stopwatch, x));
 
     }
 

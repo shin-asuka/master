@@ -212,11 +212,11 @@ public class TeacherApplicationDao extends MapperDaoTemplate<TeacherApplication>
     }
 
 
-    public List<Long> findPracticumBook(List<Map> auditTimes, String status,String result) {
+    public List<Long> findPracticumBook(List<Map> auditTimes, String status) {
         Map<String, Object> paramsMap = new HashMap<String, Object>();
         paramsMap.put("auditTimes", auditTimes);
         paramsMap.put("status", status);
-        paramsMap.put("result", result);
+        paramsMap.put("oc_status", "BOOKED");
         return listEntity("findPracticumBook", paramsMap);
     }
 }

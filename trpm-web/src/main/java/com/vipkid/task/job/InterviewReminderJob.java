@@ -13,6 +13,7 @@ import com.vipkid.vschedule.client.schedule.JobContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Map;
@@ -21,8 +22,10 @@ import java.util.concurrent.TimeUnit;
 /**
  * Created by zhangzhaojun on 2016/12/1.
  */
-public class ReminderInterview {
-    private static final Logger logger = LoggerFactory.getLogger(ReminderInterview.class);
+@Component
+@Vschedule
+public class InterviewReminderJob {
+    private static final Logger logger = LoggerFactory.getLogger(InterviewReminderJob.class);
 
 
     @Autowired
@@ -48,7 +51,7 @@ public class ReminderInterview {
     void find (Stopwatch stopwatch, int... beforeHours) {
 
         List<Map> times = UADateUtils.getStartEndOclockTimeMapListByAfterHours(beforeHours);
-        List<Long>  teacherIds  = teacherApplicationDao.findPracticumBook(times, TeacherApplicationEnum.Status.INTERVIEW.toString(),null);
+        List<Long>  teacherIds  = teacherApplicationDao.findPracticumBook(times, TeacherApplicationEnum.Status.INTERVIEW.toString());
 
 
         if(teacherIds.size() == 0) return;

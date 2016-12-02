@@ -19,6 +19,7 @@ import org.apache.commons.collections.map.HashedMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -29,6 +30,8 @@ import java.util.concurrent.TimeUnit;
 /**
  * Created by zhangzhaojun on 2016/11/26.
  */
+@Component
+@Vschedule
 public class TrainingQuizJob {
     private static final Logger logger = LoggerFactory.getLogger(TrainingQuizJob.class);
 
