@@ -52,7 +52,7 @@ public class EmailAService{
         } catch (Exception e) {
             logger.error("【EMAIL.sendPrac1Pass】ERROR: {}", e);
         }
-        return ResponseUtils.responseFail("eil send fail  sendPracTbd",this);
+        return ResponseUtils.responseFail("email send fail  ",this);
     }
 
 
@@ -122,8 +122,44 @@ public class EmailAService{
     }
 
 
+    public Map<String,Object> sendInterViewPass(long teacherId){
+        try{
+            Teacher teacher  =  teacherDao.findById(teacherId);
+            Map<String, String> paramsMap = Maps.newHashMap();
+
+            if (teacher.getRealName() != null)
+                paramsMap.put("teacherName", teacher.getRealName());
+            logger.info("【EMAIL.sendInterViewPass】toAddMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",teacher.getRealName(),teacher.getEmail(),"BasicInfoPassTitle.html","BasicInfoPass.html");
+            Map<String, String> emailMap = TempleteUtils.readTemplete("InterviewBook.html", paramsMap, "InterviewBookTitle.html");
+            EmailEngine.addMailPool(teacher.getEmail(), emailMap, EmailConfig.EmailFormEnum.TEACHVIP);
+            logger.info("【EMAIL.sendInterViewPass】addedMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",teacher.getRealName(),teacher.getEmail(),"BasicInfoPassTitle.html","BasicInfoPass.html");
+            return ResponseUtils.responseSuccess();
+        } catch (Exception e) {
+            logger.error("【EMAIL.sendInterViewPass】ERROR: {}", e);
+        }
+        return ResponseUtils.responseFail("email send fail ",this);
+    }
 
 
+
+
+    public Map<String,Object> sendInterViewReapply(long teacherId){
+        try{
+            Teacher teacher  =  teacherDao.findById(teacherId);
+            Map<String, String> paramsMap = Maps.newHashMap();
+
+            if (teacher.getRealName() != null)
+                paramsMap.put("teacherName", teacher.getRealName());
+            logger.info("【EMAIL.sendInterViewReapply】toAddMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",teacher.getRealName(),teacher.getEmail(),"BasicInfoPassTitle.html","BasicInfoPass.html");
+            Map<String, String> emailMap = TempleteUtils.readTemplete("InterviewBook.html", paramsMap, "InterviewBookTitle.html");
+            EmailEngine.addMailPool(teacher.getEmail(), emailMap, EmailConfig.EmailFormEnum.TEACHVIP);
+            logger.info("【EMAIL.sendInterViewReapply】addedMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",teacher.getRealName(),teacher.getEmail(),"BasicInfoPassTitle.html","BasicInfoPass.html");
+            return ResponseUtils.responseSuccess();
+        } catch (Exception e) {
+            logger.error("【EMAIL.sendInterViewReapply】ERROR: {}", e);
+        }
+        return ResponseUtils.responseFail("email send fail ",this);
+    }
 
 
 }

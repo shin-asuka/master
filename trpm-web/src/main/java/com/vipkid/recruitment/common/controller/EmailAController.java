@@ -38,38 +38,51 @@ public class EmailAController extends RestfulController {
     @RequestMapping(value = "/mail")
     public Map<String,Object> sendmail(@RequestBody Map<String,Object> pramMap,HttpServletRequest request, HttpServletResponse response) {
 
-        int teacherIdid = (Integer) pramMap.get("teacherId");
+        int teacherId = (Integer) pramMap.get("teacherId");
         String status = (String) pramMap.get("lifeCycle");
         String result = (String) pramMap.get("result");
         Map<String, Object> ret = new HashMap<>();
         switch (status) {
             //TODO   caoxinzhou  Interview
+            case "INTERVIEW":
+                if (result != null) {
+
+                    switch (result) {
+                        case "PASS":
+                            logger.info("向用户{}sendInterviewPass的邮件", teacherId);
+                            ret = emailAService.sendInterViewPass(teacherId);
+                            break;
+                        case "REAPPLY":
+                            logger.info("向用户{}sendInterviewReapply的邮件", teacherId);
+                            ret = emailAService.sendInterViewReapply(teacherId);
+                            break;
+                    }
+                }
             case "PRACTICUM":
 
                 if (result != null) {
 
                     switch (result) {
                         case "PASS":
-                            logger.info("向用户{}sendPrac1Pass的邮件", teacherIdid);
-                            ret = emailAService.sendPracPass(teacherIdid);
+                            logger.info("向用户{}sendPrac1Pass的邮件", teacherId);
+                            ret = emailAService.sendPracPass(teacherId);
                             break;
                         case "REAPPLY":
-                            logger.info("向用户{}sendPracReapply", teacherIdid);
-                            ret = emailAService.sendPracReapply(teacherIdid);
+                            logger.info("向用户{}sendPracReapply", teacherId);
+                            ret = emailAService.sendPracReapply(teacherId);
                             break;
                         case "PRACTICUM2":
-                            logger.info("向用户{}sendPrac2Start", teacherIdid);
-                            ret = emailAService.sendPrac2Start(teacherIdid);
+                            logger.info("向用户{}sendPrac2Start", teacherId);
+                            ret = emailAService.sendPrac2Start(teacherId);
                             break;
                         case "TBD":
-                            logger.info("向用户{}sendPrac2Start", teacherIdid);
-                            ret = emailAService.sendPracTbd(teacherIdid);
+                            logger.info("向用户{}sendPrac2Start", teacherId);
+                            ret = emailAService.sendPracTbd(teacherId);
                             break;
                         default:
                             break;
                     }
                 }
-
                 //TODO   caoxinzhou  ContractInfo
                 break;
             default:
