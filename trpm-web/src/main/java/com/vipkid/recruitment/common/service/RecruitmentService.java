@@ -72,9 +72,9 @@ public class RecruitmentService {
      * Map<String,Object>
      * @date 2016年10月19日
      */
-    public Map<String,Object> getStatus(long teacherId){
+    public Map<String,Object> getStatus(Teacher teacher){
         Map<String,Object> resultMap = Maps.newHashMap();
-        Teacher teacher = this.teacherDao.findById(teacherId);
+        
         resultMap.put("lifeCycle",teacher.getLifeCycle());
 
         List<TeacherApplication> list = this.teacherApplicationDao.findCurrentApplication(teacher.getId());

@@ -51,8 +51,7 @@ public class RecruitmentController extends RestfulController{
     @RequestMapping(value = "/getStatus", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
     public Map<String,Object> getStatus(HttpServletRequest request, HttpServletResponse response){
         try{
-            User user = getUser(request);
-            Map<String,Object> result =  this.recruitmentService.getStatus(user.getId());
+            Map<String,Object> result =  this.recruitmentService.getStatus(getTeacher(request));
             return ResponseUtils.responseSuccess(result);
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());

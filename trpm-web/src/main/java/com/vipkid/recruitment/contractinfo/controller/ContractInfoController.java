@@ -125,7 +125,7 @@ public class ContractInfoController extends RestfulController {
             personalInfo.put("video", fileUploadStatus);
             personalInfo.put("lifePics", lifePictures);
 
-            Map<String,Object> status = recruitmentService.getStatus(teacherId);
+            Map<String,Object> status = recruitmentService.getStatus(teacher);
             if(status != null && status.size() > 0) {
                 String failedReasonJson = (String) status.get("failedReason");
                 personalInfo.put("failedReason", failedReasonJson);
