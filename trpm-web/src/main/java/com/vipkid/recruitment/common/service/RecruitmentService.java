@@ -190,8 +190,10 @@ public class RecruitmentService {
             result.put("practicumNo", 1);
         }
         List<TeacherApplication> trainingPassTAList = teacherApplicationDao.findApplictionForStatusResult(teacher.getId(), Status.TRAINING.toString(), Result.PASS.toString());
-        if (CollectionUtils.isNotEmpty(trainingPassTAList)){
+        if (CollectionUtils.isNotEmpty(trainingPassTAList) && trainingPassTAList.get(0).getAuditDateTime()!=null){
             result.put("trainingPassTime", trainingPassTAList.get(0).getAuditDateTime().getTime());
+        } else {
+            result.put("trainingPassTime", 0);
         }
         return result;
     }

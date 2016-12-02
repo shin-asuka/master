@@ -200,6 +200,7 @@ public class PracticumService {
 
         //执行Cancel逻辑
         Map<String,Object> result = OnlineClassProxy.doCancelRecruitement(teacher.getId(), onlineClass.getId(), ClassType.TEACHER_RECRUITMENT);
+        result.put("count", count);
         if(ResponseUtils.isFail(result)){
             //一旦失败，抛出异常回滚
             throw new RuntimeException("Class canceling is fail! "+result.get("info"));
