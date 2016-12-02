@@ -46,9 +46,9 @@ public class ReminderInterview {
     }
 
     void find (Stopwatch stopwatch, int... beforeHours) {
-        List<Long> teacherIds ;
+
         List<Map> times = UADateUtils.getStartEndOclockTimeMapListByAfterHours(beforeHours);
-        teacherIds  = teacherApplicationDao.findPracticumBook(times, TeacherApplicationEnum.Status.INTERVIEW.toString(),null);
+        List<Long>  teacherIds  = teacherApplicationDao.findPracticumBook(times, TeacherApplicationEnum.Status.INTERVIEW.toString(),null);
 
 
         if(teacherIds.size() == 0) return;

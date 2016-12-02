@@ -1,10 +1,14 @@
 package com.vipkid.recruitment.practicum.controller;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.vipkid.task.job.ReminderInterview;
+import com.vipkid.task.job.ReminderPracticum;
+import com.vipkid.vschedule.client.schedule.JobContext;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -139,6 +143,27 @@ public class PracticumController extends RestfulController {
         try{
             Map<String,Object> result = Maps.newHashMap();
             result.put("count",this.recruitmentService.getRemainRescheduleTimes(getTeacher(request), Status.PRACTICUM.toString(), Result.CANCEL.toString()));
+            return ResponseUtils.responseSuccess(result);
+        } catch (IllegalArgumentException e) {
+            response.setStatus(HttpStatus.BAD_REQUEST.value());
+            return ResponseUtils.responseFail(e.getMessage(), this,e);
+        } catch (Exception e) {
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            return ResponseUtils.responseFail(e.getMessage(), this, e);
+        }
+    }
+
+
+
+    @RequestMapping("/cese ")
+    public Map<String,Object> cese (HttpServletRequest request, HttpServletResponse response){
+
+        Map<String,Object> result = new HashMap<String,Object>();
+        ReminderPracticum reminderPracticum = new ReminderPracticum();
+        JobContext jobContext= new JobContext();
+        reminderPracticum.doJob(jobContext);
+        try{
+
             return ResponseUtils.responseSuccess(result);
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());

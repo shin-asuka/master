@@ -211,8 +211,9 @@ public class UADateUtils {
 	public static List<Map> getStartEndOclockTimeMapListByAfterHours(Integer interval, int... beforeHours){
 		List<Map> startEndTimes = new ArrayList<>();
 		for (int i : beforeHours){
-			String startTime = UADateUtils.format(UADateUtils.getDateOclockByAfterHours(i + interval)) ;
+			String startTime = UADateUtils.format(UADateUtils.getDateOclockByAfterHours(i - interval)) ;
 			String endTime = UADateUtils.format(UADateUtils.getDateOclockByAfterHours(i)) ;
+
 
 			Map<String, String> time = new HashMap<>();
 			time.put("startTime",startTime);
