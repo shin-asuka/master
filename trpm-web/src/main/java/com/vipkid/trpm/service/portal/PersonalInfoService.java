@@ -313,29 +313,28 @@ public class PersonalInfoService {
 	 * @param end 结束隐藏信息的位置
 	 * @return
 	 */
-	public String hideInfo(String source ,int start,int end){
-		if(StringUtils.isEmpty(source)){
-			return null;
-		}else {
-			int len = source.length();
-			StringBuffer stringBuffer = new StringBuffer();
-			if (end > len - 1 || end == 0) {
-				return null;
-			} else {
-				for (int i = 0; i < start; i++) {
-					stringBuffer.append("*");
-				}
-				end += 1;
-				stringBuffer.append(source.substring(start, end));
-				for (; end < len; end++) {
-					stringBuffer.append("*");
-				}
-				return stringBuffer.toString();
-			}
+
+	public static String hideInfo(String source ,int start ,int end) {
+		if (StringUtils.isEmpty(source)) {
+			return source;
 		}
+
+		int len = source.length();
+		if (start < 0 || start > len || end > len || end < 0 || start > end) {
+			logger.warn("invalid params: start={}, end={}", start, end);
+			return source;
+		}
+
+		StringBuffer stringBuffer = new StringBuffer();
+		stringBuffer.append(source.substring(0, start));
+
+		for (int i = start; i < end; i++) {
+			stringBuffer.append("*");
+		}
+
+		stringBuffer.append(source.substring(end, len));
+		return stringBuffer.toString();
 	}
-
-
 
 	public String hideNameInfo(String source){
 		if (source == null || source.length()<=0){
@@ -358,7 +357,5 @@ public class PersonalInfoService {
 		}
 
 	}
-
-
 
 }
