@@ -68,16 +68,20 @@ public class ContractService {
                 }
             }
 
+            String failReason="";
             List<TeacherApplication> list = teacherApplicationDao.findCurrentApplication(teacher.getId());
             if (CollectionUtils.isNotEmpty(list)) {
                 for (int i = 0; i < list.size(); i++) {
                     TeacherApplication application = list.get(i);
                     application.setCurrent(0);
                     teacherApplicationDao.update(application);
+                    failReason = application.getFailedReason().replaceAll("FAIL","");
                 }
             }
-
             TeacherApplication application = new TeacherApplication();
+            if(StringUtils.isEmpty(failReason)){
+                application.setFailedReason(failReason);
+            }
             application.setTeacherId(teacher.getId());//  步骤关联的教师
             application.setApplyDateTime(new Timestamp(System.currentTimeMillis()));
             application.setStatus(TeacherApplicationEnum.Status.CONTRACT_INFO.toString());
