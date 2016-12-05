@@ -206,7 +206,8 @@ public class PersonalInfoController extends AbstractPortalController {
 
 
 		String idNumber = teacher.getIdentityNumber();
-		idNumber = personalInfoService.hideInfo(idNumber,0,1);
+		len = idNumber.length();
+		idNumber = personalInfoService.hideInfo(idNumber,1,len);
 
         model.addAttribute("accountName",accountName);
         model.addAttribute("accountNumber",accountNumber);
