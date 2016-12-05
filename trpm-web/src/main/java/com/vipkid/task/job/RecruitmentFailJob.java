@@ -4,8 +4,8 @@ import com.google.common.base.Stopwatch;
 import com.vipkid.email.EmailUtils;
 import com.vipkid.enums.TeacherApplicationEnum;
 import com.vipkid.http.utils.JsonUtils;
+import com.vipkid.recruitment.dao.TeacherApplicationDao;
 import com.vipkid.task.utils.UADateUtils;
-import com.vipkid.trpm.dao.TeacherApplicationDao;
 import com.vipkid.vschedule.client.common.Vschedule;
 import com.vipkid.vschedule.client.schedule.JobContext;
 import org.apache.commons.lang3.StringUtils;
@@ -74,6 +74,9 @@ public class RecruitmentFailJob {
 					titleTemplate = "BasicInfoFailTitle.html";
 					contentTemplate = "BasicInfoFail.html";
 				} else if (TeacherApplicationEnum.Status.INTERVIEW.toString().equals(status)){
+					titleTemplate = "InterviewFailTitle.html";
+					contentTemplate = "InterviewFail.html";
+				} else if (TeacherApplicationEnum.Status.PRACTICUM.toString().equals(status)){
 					titleTemplate = "InterviewFailTitle.html";
 					contentTemplate = "InterviewFail.html";
 				}

@@ -4,16 +4,14 @@ import com.google.common.base.Stopwatch;
 import com.vipkid.email.EmailUtils;
 import com.vipkid.enums.TeacherApplicationEnum;
 import com.vipkid.http.utils.JsonUtils;
+import com.vipkid.recruitment.dao.TeacherApplicationDao;
+import com.vipkid.recruitment.dao.TeacherLockLogDao;
+import com.vipkid.recruitment.entity.TeacherApplication;
 import com.vipkid.task.utils.UADateUtils;
-import com.vipkid.trpm.constant.ApplicationConstant;
-import com.vipkid.trpm.dao.AuditDao;
-import com.vipkid.trpm.dao.TeacherApplicationDao;
 import com.vipkid.trpm.dao.TeacherDao;
 import com.vipkid.trpm.dao.UserDao;
 import com.vipkid.trpm.entity.Teacher;
-import com.vipkid.trpm.entity.TeacherApplication;
 import com.vipkid.trpm.entity.User;
-import com.vipkid.trpm.util.IpUtils;
 import com.vipkid.vschedule.client.common.Vschedule;
 import com.vipkid.vschedule.client.schedule.JobContext;
 import org.apache.commons.collections.map.HashedMap;
@@ -46,7 +44,7 @@ public class SignUpNoFinishRegisterJob {
 	@Autowired
 	private TeacherDao teacherDao;
 	@Autowired
-	private AuditDao auditDao;
+	private TeacherLockLogDao teacherLockLogDao;
 
 	@Vschedule
 	public void doJob (JobContext jobContext) {
@@ -96,8 +94,8 @@ public class SignUpNoFinishRegisterJob {
 
 		if (registerTime.after(startTime) && registerTime.before(endTime)){
 			//userDao.doLock(teacher.getId());
-			//logger.info("【JOB.EMAIL.SignUpNoFinishRegister】LOCK: Cost {}ms. teacherId = {}, teacherEmail = {}", stopwatch.elapsed(TimeUnit.MILLISECONDS), teacher.getId(), teacher.getEmail());
-			//auditDao.saveAudit(ApplicationConstant.AuditCategory.TEACHER_LOCK, "INFO", "SignUpNoFinishRegister: " + teacher.getRealName(), "system", teacher, IpUtils.getRemoteIP());
+			//teacherLockLogDao.save(new TeacherLockLog(teacher.getId(), Reason.NO_FINISH_REGISTER.toString(), TeacherEnum.LifeCycle.SIGNUP.toString()));
+			logger.info("【JOB.EMAIL.SignUpNoFinishRegister】LOCK: Cost {}ms. teacherId = {}, teacherEmail = {}", stopwatch.elapsed(TimeUnit.MILLISECONDS), teacher.getId(), teacher.getEmail());
 		} else {
 			String email = teacher.getEmail();
 			String name = teacher.getRealName();
