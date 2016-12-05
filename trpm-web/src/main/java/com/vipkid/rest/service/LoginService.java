@@ -235,7 +235,7 @@ public class LoginService {
     }
 
     public void removeLoginCooke(HttpServletRequest request, HttpServletResponse response) {
-        String token = CookieUtils.getValue(request, CookieKey.TRPM_TOKEN);
+        String token = getToken();
         if(StringUtils.isNotBlank(token)){
         	String key = CacheUtils.getUserTokenKey(token);
             if(StringUtils.isNotBlank(key)){
