@@ -189,19 +189,25 @@ public class PersonalInfoController extends AbstractPortalController {
         accountName  = personalInfoService.hideNameInfo(accountName);
 
 		String accountNumber = teacher.getBankCardNumber();
-		accountNumber = personalInfoService.hideInfo(accountNumber,false,4);
+		int len = accountNumber.length();
+		accountNumber = personalInfoService.hideInfo(accountNumber,0,len-4);
 
 		String swiftCode = teacher.getBankSwiftCode();
-		swiftCode = personalInfoService.hideInfo(swiftCode,false,2);
+		len = swiftCode.length();
+		swiftCode = personalInfoService.hideInfo(swiftCode,0,len-2);
 
 		String bankABARoutingNumber = teacher.getBankABARoutingNumber();
-        bankABARoutingNumber = personalInfoService.hideInfo(bankABARoutingNumber,false,4);
+		len = bankABARoutingNumber.length();
+        bankABARoutingNumber = personalInfoService.hideInfo(bankABARoutingNumber,0,len-4);
 
 		String bankACHNumber= teacher.getBankACHNumber();
-        bankACHNumber = personalInfoService.hideInfo(bankACHNumber,false,4);
+		len = bankACHNumber.length();
+        bankACHNumber = personalInfoService.hideInfo(bankACHNumber,0,len-4);
+
 
 		String idNumber = teacher.getIdentityNumber();
-		idNumber = personalInfoService.hideInfo(idNumber,true,1);
+		len = idNumber.length();
+		idNumber = personalInfoService.hideInfo(idNumber,1,len);
 
         model.addAttribute("accountName",accountName);
         model.addAttribute("accountNumber",accountNumber);
