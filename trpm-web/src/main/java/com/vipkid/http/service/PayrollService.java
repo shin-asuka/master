@@ -45,34 +45,26 @@ public class PayrollService extends HttpBaseService {
 		return jsonObject;
 	}
 
-	public String findPayrollItemByTypeWithPage(int slalaryTypeCourseAdditionRule, int teacherId, int month,
-			Page page) {
+	public String findPayrollItemByTypeWithPage(int slalaryTypeCourseAdditionRule, int teacherId, int month, Page page) {
 		Map<String, String> params = Maps.newHashMap();
-		
-            params.put("id", new Integer(teacher.getId()).toString());
-            params.put("pageNo", pageNo.toString());
-            params.put("pageNo", "1");
-        if (pageSize != null) {
-            params.put("pageSize", pageSize.toString());
-        } else {
-            params.put("pageSize", "15");
-        }
-		
 
+		params.put("id", new Integer(teacherId).toString());
+		params.put("pageNo",  new Integer(page.getPageNo()).toString());
+		params.put("pageNo", "1");
+		params.put("month", new Integer(month).toString());
+		if (page.getPageSize() != 0) {
+			params.put("pageSize",  new Integer(page.getPageSize()).toString());
+		} else {
+			params.put("pageSize", "15");
+		}
 		String url = new StringBuilder(super.serverAddress).append("/api/app/teacher/findPayrollItemByTypeWithPage")
 				.toString();
-		JSONObject jsonObject = null;
-		
-		params.put("teacherId", new Integer(teacherId).toString());
-		params.put("month", new Integer(month).toString());
-		params.put("page", page.toString());
 		HttpResult result = WebUtils.post(url, params);
-		 String resultString = null;
+		String resultString = null;
 		if (HttpResult.STATUS_SUCCESS.equals(result.getStatus())) {
-            // jsonObject = JSONObject.parseObject(result.getResponse().toString());
-            resultString = result.getResponse().toString();
-        }
-        return resultString;
+			resultString = result.getResponse().toString();
+		}
+		return resultString;
 	}
 	
 	private JSONObject getResult(Map<String, String> params, String url, JSONObject jsonObject) {
