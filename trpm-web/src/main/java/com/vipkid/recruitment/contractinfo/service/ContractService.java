@@ -79,7 +79,7 @@ public class ContractService {
                 }
             }
             TeacherApplication application = new TeacherApplication();
-            if(StringUtils.isEmpty(failReason)){
+            if(StringUtils.isNotEmpty(failReason)){
                 application.setFailedReason(failReason);
             }
             application.setTeacherId(teacher.getId());//  步骤关联的教师
