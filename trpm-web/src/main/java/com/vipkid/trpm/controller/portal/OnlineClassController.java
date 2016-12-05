@@ -8,6 +8,15 @@ import java.util.Objects;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.vipkid.enums.TeacherApplicationEnum.Result;
+import com.vipkid.enums.TeacherApplicationEnum.Status;
+import com.vipkid.enums.TeacherEnum;
+import com.vipkid.enums.TeacherLockLogEnum.Reason;
+import com.vipkid.recruitment.common.service.RecruitmentService;
+import com.vipkid.recruitment.dao.TeacherLockLogDao;
+import com.vipkid.recruitment.entity.TeacherLockLog;
+import com.vipkid.trpm.dao.UserDao;
+import com.vipkid.rest.service.LoginService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,7 +32,6 @@ import com.google.common.collect.Maps;
 import com.vipkid.enums.OnlineClassEnum;
 import com.vipkid.recruitment.entity.TeacherApplication;
 import com.vipkid.trpm.constant.ApplicationConstant.FinishType;
-import com.vipkid.trpm.constant.ApplicationConstant.RecruitmentResult;
 import com.vipkid.trpm.entity.DemoReport;
 import com.vipkid.trpm.entity.Lesson;
 import com.vipkid.trpm.entity.OnlineClass;
@@ -33,7 +41,6 @@ import com.vipkid.trpm.service.passport.IndexService;
 import com.vipkid.trpm.service.pe.AppserverPracticumService;
 import com.vipkid.trpm.service.pe.PeSupervisorService;
 import com.vipkid.trpm.service.portal.OnlineClassService;
-import com.vipkid.trpm.service.rest.LoginService;
 
 @Controller
 public class OnlineClassController extends AbstractPortalController {
@@ -55,6 +62,14 @@ public class OnlineClassController extends AbstractPortalController {
     @Autowired
     private LoginService loginService;
 
+    @Autowired
+    private RecruitmentService recruitmentService;
+
+    @Autowired
+    private TeacherLockLogDao teacherLockLogDao;
+
+    @Autowired
+    private UserDao userDao;
     /**
      * 进入教室
      *
@@ -122,7 +137,7 @@ public class OnlineClassController extends AbstractPortalController {
             return "error/info";
         }
         // INVALID不允许进入教室
-        if (OnlineClassEnum.Status.INVALID.toString().equals(onlineClass.getStatus())) {
+        if (OnlineClassEnum.ClassStatus.INVALID.toString().equals(onlineClass.getStatus())) {
             logger.error("teacherId:{},没有权限进入教室，原因:onlineClass 状态为：INVALID,onlineClassId:{}",user.getId(), onlineClassId);
             model.addAttribute("info", errorHTML);
             return "error/info";
@@ -231,7 +246,7 @@ public class OnlineClassController extends AbstractPortalController {
      *
      * @param request
      * @param response
-     * @param scheduleTime
+     * @param onlineClassId
      * @param model
      * @return
      */
@@ -255,11 +270,7 @@ public class OnlineClassController extends AbstractPortalController {
      *
      * @Author:ALong
      * @Title: doAudit
-     * @param type 完成类型
-     * @param onlineClassId 课程Id
-     * @param studentId 学生Id
-     * @param comments 备注
-     * @param finishType 完成类型
+     * @param teacherApplication 申请
      * @return String
      * @date 2016年1月11日
      */
@@ -271,7 +282,7 @@ public class OnlineClassController extends AbstractPortalController {
         String finishType = ServletRequestUtils.getStringParameter(request, "finishType", "");
 
         Map<String, Object> modelMap = Maps.newHashMap();
-        if (type.startsWith(RecruitmentResult.TBD)) {
+        if (type.startsWith(Result.TBD.toString())) {
             modelMap = peSupervisorService.doPracticumForPE(pe, teacherApplication, type);
         } else {
             if (StringUtils.isEmpty(finishType)) {
@@ -291,6 +302,14 @@ public class OnlineClassController extends AbstractPortalController {
         Teacher recruitTeacher = (Teacher) modelMap.get("recruitTeacher");
         if (Objects.nonNull(teacherApplicationId) && Objects.nonNull(recruitTeacher)) {
             appserverPracticumService.finishPracticumProcess(teacherApplicationId, recruitTeacher);
+        }
+
+        if (FinishType.STUDENT_CANCELLATION.equals(finishType) || FinishType.STUDENT_NO_SHOW.equals(finishType) || FinishType.STUDENT_IT_PROBLEM.equals(finishType)){
+            int count = recruitmentService.getRemainRescheduleTimes(recruitTeacher, Status.PRACTICUM.toString(), finishType);
+            if(count == 0){
+                userDao.doLock(recruitTeacher.getId());
+                teacherLockLogDao.save(new TeacherLockLog(recruitTeacher.getId(), Reason.RESCHEDULE.toString(), TeacherEnum.LifeCycle.PRACTICUM.toString()));
+            }
         }
 
         return jsonView(response, modelMap);

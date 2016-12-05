@@ -6,7 +6,14 @@ import java.util.Objects;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
+import com.vipkid.enums.TeacherEnum.LifeCycle;
+import com.vipkid.enums.TeacherLockLogEnum.Reason;
+import com.vipkid.recruitment.common.service.RecruitmentService;
+import com.vipkid.recruitment.dao.TeacherLockLogDao;
+import com.vipkid.recruitment.entity.TeacherLockLog;
+import com.vipkid.trpm.dao.UserDao;
+import com.vipkid.rest.service.LoginService;
+import com.vipkid.trpm.constant.ApplicationConstant.FinishType;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,14 +27,11 @@ import com.vipkid.enums.TeacherApplicationEnum.Result;
 import com.vipkid.enums.TeacherApplicationEnum.Status;
 import com.vipkid.recruitment.dao.TeacherApplicationDao;
 import com.vipkid.recruitment.entity.TeacherApplication;
-import com.vipkid.trpm.constant.ApplicationConstant.FinishType;
 import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.entity.TeacherPe;
-import com.vipkid.trpm.service.passport.IndexService;
 import com.vipkid.trpm.service.pe.AppserverPracticumService;
 import com.vipkid.trpm.service.pe.PeSupervisorService;
 import com.vipkid.trpm.service.portal.OnlineClassService;
-import com.vipkid.trpm.service.rest.LoginService;
 
 @Controller
 public class PeSupervisorController extends AbstractPeController {
@@ -36,9 +40,6 @@ public class PeSupervisorController extends AbstractPeController {
 
     @Autowired
     private PeSupervisorService peSupervisorService;
-
-    @Autowired
-    private IndexService indexService;
 
     @Autowired
     private OnlineClassService onlineclassService;
@@ -51,7 +52,16 @@ public class PeSupervisorController extends AbstractPeController {
 
     @Autowired
     private LoginService loginService;
-    
+
+    @Autowired
+    private RecruitmentService recruitmentService;
+
+    @Autowired
+    private TeacherLockLogDao teacherLockLogDao;
+
+    @Autowired
+    private UserDao userDao;
+
     @RequestMapping("/pesupervisor")
     public String peSupervisor(HttpServletRequest request, HttpServletResponse response,
             Model model) {
@@ -113,11 +123,6 @@ public class PeSupervisorController extends AbstractPeController {
      *
      * @Author:ALong
      * @Title: doAudit
-     * @param type 完成类型
-     * @param onlineClassId 课程Id
-     * @param studentId 学生Id
-     * @param comments 备注
-     * @param finishType 完成类型
      * @return String
      * @date 2016年1月11日
      */
@@ -146,6 +151,14 @@ public class PeSupervisorController extends AbstractPeController {
         Teacher recruitTeacher = (Teacher) modelMap.get("recruitTeacher");
         if (Objects.nonNull(teacherApplicationId) && Objects.nonNull(recruitTeacher)) {
             appserverPracticumService.finishPracticumProcess(teacherApplicationId, recruitTeacher);
+        }
+
+        if (FinishType.STUDENT_CANCELLATION.equals(finishType) || FinishType.STUDENT_NO_SHOW.equals(finishType) || FinishType.STUDENT_IT_PROBLEM.equals(finishType)){
+            int count = recruitmentService.getRemainRescheduleTimes(recruitTeacher, Status.PRACTICUM.toString(), finishType);
+            if(count == 0){
+                userDao.doLock(recruitTeacher.getId());
+                teacherLockLogDao.save(new TeacherLockLog(recruitTeacher.getId(), Reason.RESCHEDULE.toString(), LifeCycle.PRACTICUM.toString()));
+            }
         }
 
         return jsonView(response, modelMap);

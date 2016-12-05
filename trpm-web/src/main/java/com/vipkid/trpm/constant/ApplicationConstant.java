@@ -33,18 +33,29 @@ public interface ApplicationConstant {
     public static Integer UA_FOR_CLASS_ID = 20160420;
 
     public static final class AjaxCode {
+        public static String USER_NULL = "user-null";
 
-        public static String ERROR_CODE = "error-account";
+        public static String USER_ERROR = "user-error";
 
-        public static String SUCCESS_CODE = "success-pass";
+        public static String PWD_ERROR = "pwd-error";
 
-        public static String LOCKED_CODE = "error-locked";
+        public static String DTYPE_ERROR = "dtype-error";
 
-        public static String QUIT_CODE = "quit-locked";
+        public static String TEACHER_NULL = "teacher-null";
 
-        public static String TYPE_CODE = "user-error";
+        public static String USER_FAIL = "user-fail";
 
-        public static String EMAIL_CODE = "email-error";
+        public static String USER_LOCKED = "user-locked";
+
+        public static String USER_QUIT = "user-quit";
+
+        public static String USER_ACTIVITY = "user-activity";
+
+        public static String USER_EXITS = "user-exits";
+
+        public static String TOKEN_OVERDUE = "token-overdue";
+
+        public static String TOKEN_ERROR = "token-error";
 
         public static String VERIFY_CODE = "need-verify-code";
 
@@ -141,69 +152,6 @@ public interface ApplicationConstant {
 
     }
 
-    /* Online Class 状态定义 */
-    public static final class ClassStatus {
-
-        public static final String AVAILABLE = "AVAILABLE"; // 可排课
-        public static final String OPEN = "OPEN"; // 一对多课程，可接受预约
-        public static final String BOOKED = "BOOKED"; // 已预约
-        public static final String FINISHED = "FINISHED"; // 已结束
-
-        public static final String CANCELED = "CANCELED"; // 已取消
-        public static final String EXPIRED = "EXPIRED"; // 已过期
-        public static final String REMOVED = "REMOVED"; // 已删除， 用于统计
-        public static final String INVALID = "INVALID"; // 换老师操作后，原课程变为INVALID
-
-        public static boolean isAvailable(String status) {
-            return AVAILABLE.equals(status);
-        }
-
-        public static boolean isOpen(String status) {
-            return OPEN.equals(status);
-        }
-
-        public static boolean isBooked(String status) {
-            return BOOKED.equals(status);
-        }
-
-        public static boolean isFinished(String status) {
-            return FINISHED.equals(status);
-        }
-
-        public static boolean isCanceled(String status) {
-            return CANCELED.equals(status);
-        }
-
-        public static boolean isExpired(String status) {
-            return EXPIRED.equals(status);
-        }
-
-        public static boolean isRemoved(String status) {
-            return REMOVED.equals(status);
-        }
-
-        public static boolean isInvalid(String status) {
-            return INVALID.equals(status);
-        }
-
-    }
-
-    /* 课程类型定义 */
-    public static final class CourseType {
-
-        public static final String PRACTICUM = "PRACTICUM";
-        public static final String MAJOR = "MAJOR";
-
-        public static boolean isPracticum(String courseType) {
-            return PRACTICUM.equals(courseType);
-        }
-
-        public static boolean isMajor(String courseType) {
-            return MAJOR.equals(courseType);
-        }
-
-    }
-
     /* Online Class 的完成类型定义 */
     public static final class FinishType {
 
@@ -266,72 +214,6 @@ public interface ApplicationConstant {
 
     }
 
-    /* 招聘流程状态定义 */
-    public static final class RecruitmentStatus {
-
-        public static final String SIGNUP = "SIGNUP";// 新申请
-        public static final String BASIC_INFO = "BASIC_INFO"; // 添加basic-info状态，从signup分离
-        public static final String INTERVIEW = "INTERVIEW";// 面试
-        public static final String SIGN_CONTRACT = "SIGN_CONTRACT"; // 签合同
-
-        public static final String TRAINING = "TRAINING"; // 教师培训
-        public static final String PRACTICUM = "PRACTICUM";// 试讲
-        public static final String CANCELED = "CANCELED"; // 已取消
-        public static final String FINISHED = "FINISHED";// 已结束
-
-    }
-
-    /* 招聘流程结果定义 */
-    public static final class RecruitmentResult {
-
-        public static final String AUDITING = "AUDITING";// 审核中 （15-10-8新增
-        public static final String PASS = "PASS";// 通过
-        public static final String FAIL = "FAIL"; // 失败
-
-        public static final String REAPPLY = "REAPPLY"; // 重新申请="";继续上PRACTICUM1（由于客观原因没能完成面试）
-        public static final String PRACTICUM2 = "RACTICUM2"; // 第一次面试没通过，上PRACTICUM2
-
-        public static final String TBD = "TBD";
-        public static final String TBD_FAIL = "TBD_FAIL";
-    }
-
-    /* 老师生命周期定义 */
-    public static final class TeacherLifeCycle {
-
-        public static final String SIGNUP = "SIGNUP"; // 注册 + 收集基本信息
-        public static final String BASIC_INFO = "BASIC_INFO"; // 添加basic-info状态，从signup分离
-        public static final String INTERVIEW = "INTERVIEW"; // 面试
-
-        public static final String SIGN_CONTRACT = "SIGN_CONTRACT"; // 签合同（旧）
-        public static final String TRAINING = "TRAINING"; // 教师培训
-        public static final String PRACTICUM = "PRACTICUM";// 试讲
-
-        public static final String SEND_DOCS="SEND_DOCS";//（新）
-        public static final String CONTRACT="CONTRACT"; //（新）合同页面
-        public static final String REGULAR = "REGULAR"; // 成为正式老师Ø
-        public static final String QUIT = "QUIT"; // 离职
-        public static final String FAIL = "FAIL"; // 被剔除的老师，永不录用的那种
-
-    }
-
-    /* 老师类型定义 */
-    public static final class TeacherType {
-
-        public static final String FULL_TIME = "FULL_TIME"; // 全职
-        public static final String PART_TIME = "PART_TIME"; // 兼职
-        public static final String TEST = "TEST"; // test
-
-    }
-
-    /* OnlineClass类型定义 */
-    public static final class ClassType {
-
-        public static final int MAJOR = 0;
-        public static final int PRACTICUM = 1;
-        public static final int INTERVIEW = 2;
-
-    }
-
     /** UA 状态 */
     public static final class UaReportStatus {
 
@@ -343,20 +225,6 @@ public interface ApplicationConstant {
 
         /** 已驳回 */
         public static final int RESUBMIT = 2;
-
-    }
-
-    public static final class LoginType {
-
-        public static final int CLASSROOMS = 0;
-
-        public static final int PRACTICUM = 1;
-        
-        public static final int ADMINQUIZ = 2;
-        
-        public static final int EVALUATION = 3;
-        
-        public static final int EVALUATION_CLICK = 4;
 
     }
 
