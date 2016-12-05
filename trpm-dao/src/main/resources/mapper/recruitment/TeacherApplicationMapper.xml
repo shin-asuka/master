@@ -391,7 +391,7 @@
 		FROM
 		teacher_application ta
 		JOIN teacher t ON t.id = ta.teacher_id
-		WHERE ta.status IN ('BASIC_INFO','INTERVIEW')
+		WHERE ta.status IN ('BASIC_INFO','INTERVIEW','PRACTICUM')
 		AND ta.current = 1
 		AND ta.result = 'FAIL'
 		AND ta.audit_date_time BETWEEN #{startTime} AND #{endTime}
