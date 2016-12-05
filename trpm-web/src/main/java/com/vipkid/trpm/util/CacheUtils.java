@@ -42,7 +42,7 @@ public class CacheUtils {
 	public static String getUserTokenKeyFromApp(String token){
 		String key = null;
 		if(StringUtils.isNotBlank(token)){
-			key = ApplicationConstant.RedisConstants.APP_TOKEN+"_"+token;
+			key = ApplicationConstant.RedisConstants.APP_TOKEN+token;
 		}
 		return key;
 	}
