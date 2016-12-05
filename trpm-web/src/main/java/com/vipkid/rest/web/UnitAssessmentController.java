@@ -1,28 +1,39 @@
 package com.vipkid.rest.web;
 
-import com.alibaba.fastjson.JSONObject;
-import com.google.api.client.util.Maps;
-import com.vipkid.http.service.AssessmentHttpService;
-import com.vipkid.http.vo.OnlineClassVo;
-import com.vipkid.http.vo.StudentUnitAssessment;
-import com.vipkid.rest.config.RestfulConfig;
-import com.vipkid.rest.interceptor.RestInterface;
-import com.vipkid.trpm.constant.ApplicationConstant;
-import com.vipkid.trpm.entity.Teacher;
-import com.vipkid.trpm.entity.User;
-import com.vipkid.trpm.service.portal.OnlineClassService;
-import com.vipkid.trpm.service.rest.LoginService;
-import com.vipkid.trpm.vo.ResponseVo;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.lang3.StringUtils;
 import org.community.tools.JsonTools;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletResponse;
-import java.util.*;
+import com.alibaba.fastjson.JSONObject;
+import com.google.api.client.util.Maps;
+import com.vipkid.enums.TeacherEnum.LifeCycle;
+import com.vipkid.http.service.AssessmentHttpService;
+import com.vipkid.http.vo.OnlineClassVo;
+import com.vipkid.http.vo.StudentUnitAssessment;
+import com.vipkid.rest.config.RestfulConfig;
+import com.vipkid.rest.interceptor.annotation.RestInterface;
+import com.vipkid.rest.service.LoginService;
+import com.vipkid.trpm.entity.Teacher;
+import com.vipkid.trpm.entity.User;
+import com.vipkid.trpm.service.portal.OnlineClassService;
+import com.vipkid.trpm.vo.ResponseVo;
 
 /**
  * Created by LP-813 on 2016/10/26.
@@ -124,7 +135,7 @@ public class UnitAssessmentController {
      * @return
      */
     @RequestMapping(value = "/onlineClass/fetchById/{id}", method = RequestMethod.GET)
-    @RestInterface(lifeCycle = ApplicationConstant.TeacherLifeCycle.REGULAR)
+    @RestInterface(lifeCycle = LifeCycle.REGULAR)
     public Object findUaBasicInfo(@PathVariable Long id,HttpServletResponse response){
         logger.info("[/onlineClass/fetchById/{id}]========={}",JSONObject.toJSONString(id));
         Teacher loginTeacher = loginService.getTeacher();

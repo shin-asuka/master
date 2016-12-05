@@ -1,17 +1,9 @@
 package com.vipkid.trpm.controller.passport;
 
-import com.vipkid.enums.UserEnum;
-import com.vipkid.trpm.constant.ApplicationConstant;
-import com.vipkid.trpm.constant.ApplicationConstant.TeacherLifeCycle;
-import com.vipkid.trpm.controller.AbstractController;
-import com.vipkid.trpm.entity.Teacher;
-import com.vipkid.trpm.entity.TeacherPageLogin;
-import com.vipkid.trpm.service.passport.IndexService;
-import com.vipkid.trpm.service.passport.PassportService;
-import com.vipkid.trpm.service.passport.RemberService;
-import com.vipkid.trpm.service.rest.LoginService;
-import com.vipkid.trpm.util.AES;
-import com.vipkid.trpm.util.CookieUtils;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.lang.StringUtils;
 import org.community.config.PropertyConfigurer;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,9 +12,17 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import com.vipkid.enums.TeacherEnum.LifeCycle;
+import com.vipkid.enums.UserEnum;
+import com.vipkid.rest.service.LoginService;
+import com.vipkid.trpm.constant.ApplicationConstant;
+import com.vipkid.trpm.controller.AbstractController;
+import com.vipkid.trpm.entity.Teacher;
+import com.vipkid.trpm.entity.TeacherPageLogin;
+import com.vipkid.trpm.service.passport.PassportService;
+import com.vipkid.trpm.service.passport.RemberService;
+import com.vipkid.trpm.util.AES;
+import com.vipkid.trpm.util.CookieUtils;
 
 @Deprecated
 @Controller
@@ -65,8 +65,8 @@ public class IndexController extends AbstractController {
 		}
 
 		/* 判断老师的LifeCycle，进行项目跳转 */
-		if (TeacherLifeCycle.REGULAR.toString().equals(teacher.getLifeCycle())) {
-			loginService.setLoginCooke(response, user);
+		if (LifeCycle.REGULAR.toString().equals(teacher.getLifeCycle())) {
+			loginService.setLoginToken(response, user);
 			/* 设置老师能教的课程类型列表 */
 			loginService.setCourseTypes(user.getId(), loginService.getCourseType(user.getId()));
 			Cookie cookie = CookieUtils.getCookie(request, "from");

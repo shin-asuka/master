@@ -11,6 +11,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.vipkid.enums.UserEnum;
+import com.vipkid.rest.service.LoginService;
 import com.vipkid.trpm.constant.ApplicationConstant;
 import com.vipkid.trpm.controller.AbstractController;
 import com.vipkid.trpm.entity.Teacher;
@@ -18,7 +19,6 @@ import com.vipkid.trpm.entity.User;
 import com.vipkid.trpm.service.passport.EmailService;
 import com.vipkid.trpm.service.passport.IndexService;
 import com.vipkid.trpm.service.passport.PassportService;
-import com.vipkid.trpm.service.rest.LoginService;
 import com.vipkid.trpm.util.IpUtils;
 
 @Deprecated

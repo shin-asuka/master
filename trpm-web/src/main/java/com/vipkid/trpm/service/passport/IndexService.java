@@ -34,7 +34,7 @@ import com.vipkid.trpm.proxy.RedisProxy;
 import com.vipkid.trpm.util.CacheUtils;
 import com.vipkid.trpm.util.CookieUtils;
 import com.vipkid.trpm.util.IpUtils;
-
+@Deprecated
 @Service
 public class IndexService {
 

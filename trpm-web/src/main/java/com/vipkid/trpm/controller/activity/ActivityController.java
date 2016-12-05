@@ -18,7 +18,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -26,13 +25,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.google.common.base.Stopwatch;
 import com.vipkid.http.vo.ThirdYearAnniversaryData;
+import com.vipkid.rest.service.LoginService;
 import com.vipkid.trpm.constant.ApplicationConstant;
 import com.vipkid.trpm.controller.AbstractController;
 import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.entity.User;
 import com.vipkid.trpm.service.activity.ActivityService;
-import com.vipkid.trpm.service.passport.IndexService;
-import com.vipkid.trpm.service.rest.LoginService;
 import com.vipkid.trpm.util.AES;
 
 @Controller
@@ -43,8 +41,8 @@ public class ActivityController extends AbstractController{
     @Autowired
     private ActivityService activityService;
     
-    @Autowired
-    private IndexService indexService;
+    /*@Autowired
+    private IndexService indexService;*/
     
     @Autowired
     private LoginService loginService;

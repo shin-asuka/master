@@ -18,7 +18,6 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.google.api.client.util.Maps;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.vipkid.email.EmailUtils;
 import com.vipkid.enums.OnlineClassEnum.CourseType;
 import com.vipkid.enums.TeacherEnum.LifeCycle;
@@ -219,7 +218,7 @@ public class LoginService {
         return userDao.findByLogin(username);
     }
 
-    public String setLoginCooke(HttpServletResponse response, User user) {
+    public String setLoginToken(HttpServletResponse response, User user) {
         String token = CacheUtils.getTokenId();
         String key = CacheUtils.getUserTokenKey(token);
         
@@ -229,17 +228,14 @@ public class LoginService {
         	
         	Integer timeout = CacheUtils.getLoginTimeout();
         	logger.info("setLoginCooke 设置登录Redis ,user = {} , key = {},ip = {},timeout = {} (second)",user.getId()+"|"+user.getUsername(),key,ip,timeout);
-        	//redisProxy.set(key, JsonTools.getJson(user), 12 * 60 * 60);
         	redisProxy.set(key, JsonTools.getJson(user), timeout);
         }
         logger.info("setLoginCooke 设置登录Cookie ,teacherID = {},token = {} , key = {}",user.getId(),token,key);
-        CookieUtils.setCookie(response, CookieKey.TRPM_TOKEN, token, null);
         return token;
     }
 
     public void removeLoginCooke(HttpServletRequest request, HttpServletResponse response) {
         String token = CookieUtils.getValue(request, CookieKey.TRPM_TOKEN);
-        //String token = getToken();
         if(StringUtils.isNotBlank(token)){
         	String key = CacheUtils.getUserTokenKey(token);
             if(StringUtils.isNotBlank(key)){

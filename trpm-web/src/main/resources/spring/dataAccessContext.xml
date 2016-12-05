@@ -42,10 +42,11 @@
 	<aop:aspectj-autoproxy />
 
 	<aop:config proxy-target-class="true">
-		<aop:advisor advice-ref="txAdvice"
-			pointcut="execution(* com.vipkid.trpm.service.**.*Service.*(..))" order="2" />
-		<aop:advisor advice-ref="rwDataSourceInterceptor"
-		    pointcut="execution(* com.vipkid.trpm.controller.**.*Controller.*(..))" order="1" />
+		<aop:advisor advice-ref="txAdvice" pointcut="execution(* com.vipkid.trpm.service.**.*Service.*(..))" order="2" />
+		<aop:advisor advice-ref="txAdvice" pointcut="execution(* com.vipkid.recruitment.**.service.*Service.*(..))"/>
+		<aop:advisor advice-ref="txAdvice" pointcut="execution(* com.vipkid.rest.service.*Service.*(..))"/>
+		<aop:advisor advice-ref="txAdvice" pointcut="execution(* com.vipkid.payroll.service.*Service.*(..))"/>
+		<aop:advisor advice-ref="rwDataSourceInterceptor" pointcut="execution(* com.vipkid.trpm.controller.**.*Controller.*(..))" order="1" />
 	</aop:config>
 
 	<bean id="rwDataSourceInterceptor" class="com.vipkid.dataSource.TypedReadWriteDataSourceInterceptor"></bean>

@@ -1,14 +1,8 @@
 package com.vipkid.trpm.controller.portal;
 
-import com.vipkid.dataSource.annotation.Slave;
-import com.vipkid.trpm.constant.ApplicationConstant.CourseType;
-import com.vipkid.trpm.constant.ApplicationConstant.LoginType;
-import com.vipkid.trpm.entity.Teacher;
-import com.vipkid.trpm.service.passport.IndexService;
-import com.vipkid.trpm.service.portal.ClassroomsService;
-import com.vipkid.trpm.service.rest.LoginService;
-import com.vipkid.trpm.service.rest.TeacherPageLoginService;
-import com.vipkid.trpm.util.DateUtils;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,8 +10,14 @@ import org.springframework.web.bind.ServletRequestUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import com.vipkid.dataSource.annotation.Slave;
+import com.vipkid.enums.OnlineClassEnum.CourseType;
+import com.vipkid.enums.TeacherPageLoginEnum.LoginType;
+import com.vipkid.rest.service.LoginService;
+import com.vipkid.rest.service.TeacherPageLoginService;
+import com.vipkid.trpm.entity.Teacher;
+import com.vipkid.trpm.service.portal.ClassroomsService;
+import com.vipkid.trpm.util.DateUtils;
 
 @Controller
 public class ClassroomsController extends AbstractPortalController {
@@ -45,7 +45,7 @@ public class ClassroomsController extends AbstractPortalController {
 		model.addAttribute("monthOfYear", DateUtils.monthOfYear(offsetOfMonth, DateUtils.FMT_MMM_YYYY_US));
 
 		/* 当前显示的课程类型 */
-		String courseType = ServletRequestUtils.getStringParameter(request, "courseType", CourseType.MAJOR);
+		String courseType = ServletRequestUtils.getStringParameter(request, "courseType", CourseType.MAJOR.toString());
 		model.addAttribute("courseType", courseType);
 		model.addAttribute("linePerPage", LINE_PER_PAGE);
 
