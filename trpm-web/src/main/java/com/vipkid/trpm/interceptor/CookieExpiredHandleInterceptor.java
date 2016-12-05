@@ -79,7 +79,8 @@ public class CookieExpiredHandleInterceptor extends HandlerInterceptorAdapter {
             return true;
         }
 
-		String token = CookieUtils.getValue(request, CookieKey.TRPM_TOKEN);
+        String token = loginService.getToken();
+		//String token = CookieUtils.getValue(request, CookieKey.TRPM_TOKEN);
 		String key = CacheUtils.getUserTokenKey(token);
 		String ip = IpUtils.getRequestRemoteIP();
 		

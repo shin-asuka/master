@@ -21,12 +21,39 @@ import com.vipkid.file.utils.StringUtils;
 public class AwsFileUtils {
 
 	public static Logger logger = LoggerFactory.getLogger(AwsFileUtils.class);
-	public static final String TAXPAYER_FORM = "tpinfo";
+	public static final String TAXPAYER_FORM = "taxpayer";
 	
 	public static final long TAPXPAYER_FILE_MAX_SIZE = 20*1024*1024L; //20M
 	public static final String TAPXPAYER_FILE_TYPE = "pdf,jpg,png,jpeg";
 	
-	public static String getTaxpayerkey(String fileName){
+	
+	/**
+	 * key = /${aws.teacer.dir}/TAXPAYER_FORM/${teacherId}/uuid/fileName.xxx
+	 * @param teacherId
+	 * @param fileName
+	 * @return
+	 */
+	public static String getTaxpayerkey(Long teacherId,String fileName){
+		String key = null;
+		try {
+			String rootDir = PropertyConfigurer.stringValue("aws.teacer.dir");
+			String uuid = UUID.randomUUID().toString().replace("-", "");
+			key = rootDir+"/"+TAXPAYER_FORM;
+			if(teacherId!=null){ //加入教师Id方便查询
+				key+="/"+teacherId;
+			}
+			key+="/"+uuid+"/"+fileName;
+			key = key.replaceAll("//", "/");
+			if(key.startsWith("/")){
+				key = key.substring(1);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return key;
+	}
+	
+	/*public static String getTaxpayerkey(String fileName){
 		String key = null;
 		try {
 			String rootDir = PropertyConfigurer.stringValue("aws.teacer.dir");
@@ -40,7 +67,7 @@ public class AwsFileUtils {
 			e.printStackTrace();
 		}
 		return key;
-	}
+	}*/
 	
 	public static Boolean checkFileType(String fileName){
 		Boolean flag = false;

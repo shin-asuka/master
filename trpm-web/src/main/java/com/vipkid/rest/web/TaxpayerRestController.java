@@ -184,7 +184,7 @@ public class TaxpayerRestController {
 			String bucketName = PropertyConfigurer.stringValue("aws.bucketName");
 			
 			teacherId = teacherId == null?0:teacherId;
-			String key = AwsFileUtils.getTaxpayerkey(teacherId+"-"+name);
+			String key = AwsFileUtils.getTaxpayerkey(teacherId,teacherId+"-"+name);
 			Long size = file.getSize();
 			
 			Preconditions.checkArgument(AwsFileUtils.checkFileType(name), "文件类型不正确，支持类型为"+AwsFileUtils.TAPXPAYER_FILE_TYPE);

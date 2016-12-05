@@ -14,6 +14,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.util.HtmlUtils;
 
 import com.google.common.base.Preconditions;
 import com.vipkid.enums.TeacherEnum;
@@ -93,7 +94,7 @@ public class TaxpayerFileController extends AbstractPortalController{
 			String name = file.getOriginalFilename();
 			String bucketName = PropertyConfigurer.stringValue("aws.bucketName");
 			String awsName = teacherId+"-"+name;
-			String key = AwsFileUtils.getTaxpayerkey(awsName);
+			String key = AwsFileUtils.getTaxpayerkey(teacherId,awsName);
 			Long size = file.getSize();
 			
 			Preconditions.checkArgument(AwsFileUtils.checkFileType(name), "文件类型不正确，支持类型为"+AwsFileUtils.TAPXPAYER_FILE_TYPE);
@@ -127,6 +128,11 @@ public class TaxpayerFileController extends AbstractPortalController{
 		try {
 			Preconditions.checkArgument(StringUtils.isNotBlank(url), "url 不能为空!");
 			Preconditions.checkArgument(formType!=null,"formType 不能为空!");
+			
+			//url 解码
+			String url2 = HtmlUtils.htmlUnescape(url);
+			System.out.println(url2);
+			url = url2; //处理过滤器编码后的url
 			
 			TeacherTaxpayerForm teacherTaxpayerForm = new TeacherTaxpayerForm();
 			teacherTaxpayerForm.setId(id);
