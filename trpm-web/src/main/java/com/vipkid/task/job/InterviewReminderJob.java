@@ -52,11 +52,13 @@ public class InterviewReminderJob {
 
         List<Map> times = UADateUtils.getStartEndOclockTimeMapListByAfterHours(beforeHours);
         List<Long>  teacherIds  = teacherApplicationDao.findPracticumBook(times, TeacherApplicationEnum.Status.INTERVIEW.toString());
+        logger.info("【JOB.EMAIL.ReminderInterview】FIND.1: Cost {}ms. Query: times = {}, status = {}; Result: teacherIds = {}",
+                stopwatch.elapsed(TimeUnit.MILLISECONDS), JsonUtils.toJSONString(times), TeacherApplicationEnum.Status.INTERVIEW.toString(), JsonUtils.toJSONString(teacherIds));
 
 
         if(teacherIds.size() == 0) return;
         List<Teacher> teachers = teacherDao.findByIds(teacherIds);
-        logger.info("【JOB.EMAIL.ReminderInterview】FIND.3: Cost {}ms. Query: teacherIds = {}; Result: teachers = ",
+        logger.info("【JOB.EMAIL.ReminderInterview】FIND.2: Cost {}ms. Query: teacherIds = {}; Result: teachers = ",
                 stopwatch.elapsed(TimeUnit.MILLISECONDS), JsonUtils.toJSONString(teacherIds));
         teachers.forEach(x -> send(stopwatch, x));
 

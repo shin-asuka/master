@@ -73,7 +73,7 @@ public class PracticumNoBookJob {
         if (teacherIds.size() == 0) return;
         List<TeacherApplication> teacherApplicationsToRemove = teacherApplicationDao.findByTeacherIdsStatusNeResult(teacherIds, TeacherApplicationEnum.Status.PRACTICUM.toString(), null);
         logger.info("【JOB.EMAIL.PracticumNoBookJob】FIND.2: Cost {}ms. Query: teacherIds = {}, status = {}, result = {}; Result: teacherApplications = ",
-                stopwatch.elapsed(TimeUnit.MILLISECONDS), JsonUtils.toJSONString(teacherIds), TeacherApplicationEnum.Status.INTERVIEW.toString(), "null");
+                stopwatch.elapsed(TimeUnit.MILLISECONDS), JsonUtils.toJSONString(teacherIds), TeacherApplicationEnum.Status.PRACTICUM.toString(), "null");
         teacherApplicationsToRemove.forEach(x -> teacherIds.remove(x.getTeacherId()));
 
         if (teacherIds.size() == 0) return;

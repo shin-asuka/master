@@ -62,7 +62,7 @@ public class Practicum2NoBookJob {
         Map<Long, TeacherApplication> teacherApplicationsMap = new HashedMap();
         List<Map> times = UADateUtils.getStartEndOclockTimeMapListByBeforeHours(beforeHours);
 
-        List<TeacherApplication> teacherApplications = teacherApplicationDao.findByAuditTimesStatusResult(times, TeacherApplicationEnum.Status.PRACTICUM.toString(), TeacherApplicationEnum.Result.PRACTICUM2.toString());
+        List<TeacherApplication> teacherApplications = teacherApplicationDao.findByAuditTimesCurrentStatusResult(times, TeacherApplicationEnum.Status.PRACTICUM.toString(), TeacherApplicationEnum.Result.PRACTICUM2.toString());
         logger.info("【JOB.EMAIL.Practicum2NoBookJob】FIND.1: Cost {}ms. Query: times = {}, status = {}, result = {}; Result: users = ",
                 stopwatch.elapsed(TimeUnit.MILLISECONDS), JsonUtils.toJSONString(times), TeacherApplicationEnum.Status.PRACTICUM.toString(), TeacherApplicationEnum.Result.PRACTICUM2.toString());
         for(TeacherApplication ta : teacherApplications){
@@ -72,21 +72,29 @@ public class Practicum2NoBookJob {
 
         if(teacherIds.size() == 0) return;
         List<Teacher> teachers = teacherDao.findByIds(teacherIds);
-        logger.info("【JOB.EMAIL.Practicum2NoBookJob】FIND.3: Cost {}ms. Query: teacherIds = {}; Result: teachers = ",
+        logger.info("【JOB.EMAIL.Practicum2NoBookJob】FIND.2: Cost {}ms. Query: teacherIds = {}; Result: teachers = ",
                 stopwatch.elapsed(TimeUnit.MILLISECONDS), JsonUtils.toJSONString(teacherIds));
         teachers.forEach(x -> send(stopwatch, x, teacherApplicationsMap.get(x.getId()).getAuditDateTime(), times));
 
     }
 
     void send (Stopwatch stopwatch, Teacher teacher, Date auditTime, List<Map> times) {
+        Map<String, String> time = times.get(times.size() - 1);
+        Date startTime = UADateUtils.parse(time.get("startTime"));
+        Date endTime = UADateUtils.parse(time.get("endTime"));
 
+        if (auditTime.after(startTime) && auditTime.before(endTime)) {
+            //userDao.doLock(teacher.getId());
+            //teacherLockLogDao.save(new TeacherLockLog(teacher.getId(), Reason.NO_BOOK.toString(), TeacherEnum.LifeCycle.INTERVIEW.toString()));
+            logger.info("【JOB.EMAIL.Practicum2NoBookJob】LOCK: Cost {}ms. teacherId = {}, teacherEmail = {}", stopwatch.elapsed(TimeUnit.MILLISECONDS), teacher.getId(), teacher.getEmail());
+        } else {
             String email = teacher.getEmail();
             String name = teacher.getRealName();
             String titleTemplate = "InterviewNoRescheduleTitle.html";
             String contentTemplate = "InterviewNoReschedule.html";
             EmailUtils.sendEmail4Recruitment(email, name, titleTemplate, contentTemplate);
             logger.info("【JOB.EMAIL.Practicum2NoBookJob】SEND: Cost {}ms. email = {}, name = {}, titleTemplate = {}, contentTemplate = {}", stopwatch.elapsed(TimeUnit.MILLISECONDS), email, name, titleTemplate, contentTemplate);
-
+        }
     }
 
 }

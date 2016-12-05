@@ -69,10 +69,10 @@ public class ContractInfoFailAndUploadReminderJob {
 		Map<Long, TeacherApplication> teacherApplicationsMap = new HashedMap();
 		List<Map> times = UADateUtils.getStartEndOclockTimeMapListByBeforeHours(beforeHours);
 
-		List<TeacherApplication> teacherApplications = teacherApplicationDao.findByAuditTimesStatusResult(
+		List<TeacherApplication> teacherApplications = teacherApplicationDao.findByAuditTimesCurrentStatusResult(
 				times, TeacherApplicationEnum.Status.CONTRACT_INFO.toString(), TeacherApplicationEnum.Result.REAPPLY.toString());
 		logger.info("【JOB.EMAIL.ContractInfoFailAndUploadReminderJob】FIND.1: Cost {}ms. Query: times = {}, status = {}, result = {}; Result: users = ",
-				stopwatch.elapsed(TimeUnit.MILLISECONDS), JsonUtils.toJSONString(times), TeacherApplicationEnum.Status.INTERVIEW.toString(), TeacherApplicationEnum.Result.REAPPLY.toString());
+				stopwatch.elapsed(TimeUnit.MILLISECONDS), JsonUtils.toJSONString(times), TeacherApplicationEnum.Status.CONTRACT_INFO.toString(), TeacherApplicationEnum.Result.REAPPLY.toString());
 		for(TeacherApplication ta : teacherApplications){
 			teacherIds.add(ta.getTeacherId());
 			teacherApplicationsMap.put(ta.getTeacherId(), ta);
@@ -80,7 +80,7 @@ public class ContractInfoFailAndUploadReminderJob {
 
 		if(teacherIds.size() == 0) return;
 		List<Teacher> teachers = teacherDao.findByIds(teacherIds);
-		logger.info("【JOB.EMAIL.ContractInfoFailAndUploadReminderJob】FIND.3: Cost {}ms. Query: teacherIds = {}; Result: teachers = ",
+		logger.info("【JOB.EMAIL.ContractInfoFailAndUploadReminderJob】FIND.2: Cost {}ms. Query: teacherIds = {}; Result: teachers = ",
 				stopwatch.elapsed(TimeUnit.MILLISECONDS), JsonUtils.toJSONString(teacherIds));
 		teachers.forEach(x -> send(stopwatch, x, teacherApplicationsMap.get(x.getId()).getAuditDateTime(), times));
 
@@ -92,7 +92,8 @@ public class ContractInfoFailAndUploadReminderJob {
 		Date endTime = UADateUtils.parse(time.get("endTime"));
 
 		if (auditTime.after(startTime) && auditTime.before(endTime)){
-			userDao.doLock(teacher.getId());
+			//userDao.doLock(teacher.getId());
+			//teacherLockLogDao.save(new TeacherLockLog(teacher.getId(), Reason.NO_BOOK.toString(), TeacherEnum.LifeCycle.INTERVIEW.toString()));
 			logger.info("【JOB.EMAIL.ContractInfoFailAndUploadReminderJob】LOCK: Cost {}ms. teacherId = {}, teacherEmail = {}", stopwatch.elapsed(TimeUnit.MILLISECONDS), teacher.getId(), teacher.getEmail());
 		} else {
 			String email = teacher.getEmail();

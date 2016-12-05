@@ -50,10 +50,12 @@ public class PracticumReminderJob {
     void find (Stopwatch stopwatch, int... beforeHours) {
         List<Map> times = UADateUtils.getStartEndOclockTimeMapListByAfterHours(beforeHours);
         List<Long>  teacherIds  = teacherApplicationDao.findPracticumBook(times,TeacherApplicationEnum.Status.PRACTICUM.toString());
+        logger.info("【JOB.EMAIL.ReminderPracticum】FIND.1: Cost {}ms. Query: times = {}, status = {}; Result: teacherIds = {}",
+                stopwatch.elapsed(TimeUnit.MILLISECONDS), JsonUtils.toJSONString(times), TeacherApplicationEnum.Status.PRACTICUM.toString(), JsonUtils.toJSONString(teacherIds));
 
         if(teacherIds.size() == 0) return;
         List<Teacher> teachers = teacherDao.findByIds(teacherIds);
-        logger.info("【JOB.EMAIL.ReminderPracticum】FIND.3: Cost {}ms. Query: teacherIds = {}; Result: teachers = ",
+        logger.info("【JOB.EMAIL.ReminderPracticum】FIND.2: Cost {}ms. Query: teacherIds = {}; Result: teachers = ",
                 stopwatch.elapsed(TimeUnit.MILLISECONDS), JsonUtils.toJSONString(teacherIds));
         teachers.forEach(x -> send(stopwatch, x));
 
