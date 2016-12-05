@@ -240,6 +240,7 @@ public class ContractInfoController extends RestfulController {
         return ResponseUtils.responseSuccess();
     }
 
+    //检查用户是否重复提交
     private boolean CheckManySubmit(Long teacherId){
         List<TeacherApplication> teacherApplications =  contractService.finTeacherApplication(teacherId);
         if(CollectionUtils.isEmpty(teacherApplications)){
