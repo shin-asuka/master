@@ -35,9 +35,6 @@ import java.util.List;
 @RequestMapping("/h5/teacher/comment")
 public class TeacherCommentController {
 
-    //TODO 增加cookie验证
-    //extends AbstractPortalController{
-
     private Logger logger = LoggerFactory.getLogger(TeacherCommentController.class);
 
     @Autowired

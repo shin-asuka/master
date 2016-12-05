@@ -339,8 +339,11 @@ public class TeacherService {
 		String response = null;
 		List<TeacherCommentResult> teacherCommentList = null;
 		try {
+			logger.info("getTeacherCommentResult http request url = {}; param={}",httpUrlConstant.getApiHomeworkServerUrl() + requestUrl,requestParam);
 			response = httpApiClient
 					.doPost(httpUrlConstant.getApiHomeworkServerUrl() + requestUrl, requestParam);
+			logger.info("getTeacherCommentResult http response = {}",response);
+
 			StandardJsonObject standardJsonObject = null;
 			if (StringUtils.isBlank(response)) {
 				return null;
@@ -372,8 +375,10 @@ public class TeacherService {
 		String response = null;
 		List<Map<String,Object>> teacherCommentList = Lists.newArrayList();
 		try {
+			logger.info("getTeacherCommentObject http request url = {}; param={}",httpUrlConstant.getApiHomeworkServerUrl() + requestUrl,requestParam);
 			response = httpApiClient
 					.doPost(httpUrlConstant.getApiHomeworkServerUrl() + requestUrl, requestParam);
+			logger.info("getTeacherCommentObject http response = {}",response);
 			StandardJsonObject standardJsonObject = null;
 			if (StringUtils.isBlank(response)) {
 				return null;
