@@ -75,7 +75,7 @@ public class ContractService {
                     TeacherApplication application = list.get(i);
                     application.setCurrent(0);
                     teacherApplicationDao.update(application);
-                    failReason = application.getFailedReason().replaceAll("FAIL","");
+                    failReason = application.getFailedReason().replaceAll("\"result\":\"FAIL\"","\"result\":\"\"");
                 }
             }
             TeacherApplication application = new TeacherApplication();
