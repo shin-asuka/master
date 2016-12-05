@@ -113,7 +113,8 @@ public class H5CookieExpiredHandleInterceptor extends HandlerInterceptorAdapter 
 			return false;
 		}
 		String teacherId = redisProxy.get(key);
-		if(NumberUtils.isNumber(teacherId)){
+		logger.info("preHandleUserInfo teacherId = {} ",teacherId);
+		if(!NumberUtils.isNumber(teacherId)){
 			response.setStatus(HttpStatus.UNAUTHORIZED.value());
 			setErrorResponse(response);
 			logger.info("TOKEN 无效");
