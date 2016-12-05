@@ -123,7 +123,7 @@ public class TaxpayerFileController extends AbstractPortalController{
 	@RequestMapping(value = "/save")
 	public String save(Integer formType,Long id,String url,
 			HttpServletRequest request, HttpServletResponse response, Model model){
-		logger.info("save taxpayer formType = {}",formType);
+		logger.info("save taxpayer formType = {} url={} ",formType,url);
 		
 		try {
 			Preconditions.checkArgument(StringUtils.isNotBlank(url), "url 不能为空!");
@@ -131,7 +131,6 @@ public class TaxpayerFileController extends AbstractPortalController{
 			
 			//url 解码
 			String url2 = HtmlUtils.htmlUnescape(url);
-			System.out.println(url2);
 			url = url2; //处理过滤器编码后的url
 			
 			TeacherTaxpayerForm teacherTaxpayerForm = new TeacherTaxpayerForm();

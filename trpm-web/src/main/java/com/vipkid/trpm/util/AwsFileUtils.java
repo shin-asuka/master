@@ -6,7 +6,6 @@ import org.community.config.PropertyConfigurer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.amazonaws.services.s3.AmazonS3;
 import com.vipkid.file.utils.FileUtils;
 import com.vipkid.file.utils.StringUtils;
 
@@ -52,22 +51,6 @@ public class AwsFileUtils {
 		}
 		return key;
 	}
-	
-	/*public static String getTaxpayerkey(String fileName){
-		String key = null;
-		try {
-			String rootDir = PropertyConfigurer.stringValue("aws.teacer.dir");
-			String uuid = UUID.randomUUID().toString().replace("-", "");
-			key = rootDir+"/"+TAXPAYER_FORM+"/"+uuid+"/"+fileName;
-			key = key.replaceAll("//", "/");
-			if(key.startsWith("/")){
-				key = key.substring(1);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return key;
-	}*/
 	
 	public static Boolean checkFileType(String fileName){
 		Boolean flag = false;
