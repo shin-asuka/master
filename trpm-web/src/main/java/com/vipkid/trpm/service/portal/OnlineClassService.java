@@ -20,6 +20,7 @@ import com.vipkid.trpm.util.IpUtils;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.lang.time.DateFormatUtils;
 import org.community.config.PropertyConfigurer;
 import org.community.http.client.HttpClientProxy;
@@ -185,7 +186,7 @@ public class OnlineClassService {
         /** 获取teacherComments中的stars字段的值，并存入model */
         int stars = this.findTeacherCommentByOnlineClassId(onlineClass, studentId);
         logger.info("TeacherId:{}, Major Course query stars : {},onlineClassId:{},studentId:{}", teacher.getId(), stars,
-                        onlineClass.getId(), studentId);
+                onlineClass.getId(), studentId);
         modelMap.put("stars", stars);
         if (lesson.getSerialNumber().startsWith("A")) {
             DemoReport currentReport = demoReportDao.findByStudentIdAndOnlineClassId(studentId, onlineClass.getId());
@@ -249,7 +250,7 @@ public class OnlineClassService {
         parmMap.put("roomId", onlineClass.getClassroom());
         String content = FilesUtils.readLogTemplete(ApplicationConstant.AuditCategory.CLASSROOM_ENTER, parmMap);
         auditDao.saveAudit(ApplicationConstant.AuditCategory.CLASSROOM_ENTER, "INFO", content, teacher.getRealName(),
-                        teacher, IpUtils.getRemoteIP());
+                teacher, IpUtils.getRemoteIP());
     }
 
     /**
@@ -282,7 +283,7 @@ public class OnlineClassService {
      */
     public void exitOpenclass(long onlineClassId) {
         onlineClassDao.updateEntity(
-                        new OnlineClass().setId(onlineClassId).setStatus("FINISHED").setFinishType("AS_SCHEDULED"));
+                new OnlineClass().setId(onlineClassId).setStatus("FINISHED").setFinishType("AS_SCHEDULED"));
     }
 
     /**
@@ -539,7 +540,7 @@ public class OnlineClassService {
         Map<String, String> requestHeader = new HashMap<String, String>();
         requestHeader.put("Authorization", t + " " + DigestUtils.md5Hex(t));
         String content = HttpClientProxy.get(ApplicationConstant.TEACHER_IN_CLASSROOM_URL, requestParams,
-                        requestHeader);
+                requestHeader);
 
         logger.info("### Mark that teacher enter classroom: {}", content);
         logger.info("### Sent get request to {} with params {}", ApplicationConstant.TEACHER_IN_CLASSROOM_URL,
@@ -800,5 +801,34 @@ public class OnlineClassService {
             }
         }
         return onlineClassVos;
+    }
+
+    /**
+     * 获取UA基本信息，yoda调用
+     * @return
+     */
+    public Map<String,Object> findOnlineClassUaInfoById(Long onlineClassId){
+        HashMap<String,Object> map = Maps.newHashMap();
+        map.put("onlineClassId",onlineClassId);
+        List<Map<String,Object>> mapList = onlineClassDao.findMajorCourseListByCond(map);
+        if(mapList==null || mapList.size()==0){
+            return null;
+        }else{
+            map = (HashMap<String,Object>)mapList.get(0);
+        }
+        Integer lessonId = NumberUtils.toInt(String.valueOf(map.get("lessonId")));
+        Integer studentId = NumberUtils.toInt(String.valueOf(map.get("studentId")));
+        Lesson lesson = lessonDao.findById(lessonId.longValue());
+        Student student = studentDao.findById(studentId);
+        if(student != null && student.getChineseLeadTeacherId()!=0) {
+            User user = userDao.findById(student.getChineseLeadTeacherId());
+            map.put("cltId",student.getChineseLeadTeacherId());
+            map.put("cltName", user.getName());
+        }else{
+            map.put("cltId","");
+            map.put("cltName","");
+        }
+        map.put("sequence", lesson.getSequence());
+        return map;
     }
 }
