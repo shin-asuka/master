@@ -71,7 +71,7 @@ public class EmailController extends AbstractController {
 			return jsonView(response, model.asMap());
 		} else {
 		    log.info("用户名为："+loginService.getUser().getUsername() + "的老师从IP为:【"+ IpUtils.getRemoteIP()+"】的客户端，给老师【"+user.getUsername()+"】发送类型是:【"+type+"】的邮件！");
-			model.addAllAttributes(this.emailService.senEmail(user, teacher, type));
+			model.addAllAttributes(this.emailService.sendEmail(user, teacher, type));
 			return jsonView(response, model.asMap());
 		}
 	}

@@ -41,7 +41,7 @@ public class EmailService {
      * @return Map<String,String>
      * @date 2016年3月31日
      */
-    public Map<String, String> senEmail(User user, Teacher teacher, String type) {
+    public Map<String, String> sendEmail(User user, Teacher teacher, String type) {
         if (EmailTypeEnum.ACTIVATION.toString().equals(type)) {
             return this.sendActivation(user, teacher);
         } else if (EmailTypeEnum.SUBMITBASICINFO.toString().equals(type)) {
