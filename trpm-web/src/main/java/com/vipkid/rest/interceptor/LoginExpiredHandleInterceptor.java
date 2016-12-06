@@ -70,7 +70,7 @@ public class LoginExpiredHandleInterceptor extends HandlerInterceptorAdapter {
             //如果有RemoteInterface 注解 表示该接口暴露给其他系统调用需要进行以下拦截认证
             RemoteInterface remoteInterface = AnnotaionUtils.getAnnotation(handlerMethod,RemoteInterface.class);
             if(remoteInterface != null && remoteInterface.portal().length > 0){
-                return this.remoteHandle(remoteInterface, response, request);
+                return this.remoteHandle(remoteInterface, request, response);
             }
             
             //如果有RestInterface，表示该接口为前后端分离接口需要进行以下拦截认证
@@ -85,26 +85,29 @@ public class LoginExpiredHandleInterceptor extends HandlerInterceptorAdapter {
             logger.error(e.getMessage(), e);
             response.setStatus(HttpStatus.BAD_REQUEST.value());
             response.setContentType(RestfulConfig.JSON_UTF_8);
-            responseToJson(e.getMessage(),response);
+            responseToJson(e.getMessage(),e,response);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            responseToJson(e.getMessage(),response);
+            responseToJson(e.getMessage(),e,response);
         }
         
         return false;
     }
     
     private void responseToJson(String Jsonbody,HttpServletResponse response){
+        this.responseToJson(Jsonbody, null, response);
+    }
+    
+    private void responseToJson(String Jsonbody,Throwable t, HttpServletResponse response){
         try{
             response.setContentType(RestfulConfig.JSON_UTF_8);
-            response.getWriter().print(JsonTools.getJson(ReturnMapUtils.returnFail(Jsonbody)));
+            response.getWriter().print(JsonTools.getJson(ReturnMapUtils.returnFail(Jsonbody,t)));
             response.getWriter().close();
         }catch(Exception ex){
             ex.printStackTrace();
         }
-    }
-    
+    }        
     
     /**
      * API接口认证
@@ -112,7 +115,7 @@ public class LoginExpiredHandleInterceptor extends HandlerInterceptorAdapter {
      * @return    
      * boolean
      */
-    public boolean remoteHandle(RemoteInterface remoteInterface,HttpServletResponse response,HttpServletRequest request){
+    public boolean remoteHandle(RemoteInterface remoteInterface, HttpServletRequest request, HttpServletResponse response){
         //有注解RestInterface，则进行拦截下面判断
         boolean result = false;
         
