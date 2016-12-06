@@ -39,9 +39,8 @@ import com.vipkid.file.service.AwsFileService;
 import com.vipkid.http.service.FileHttpService;
 import com.vipkid.http.utils.JsonUtils;
 import com.vipkid.recruitment.common.service.RecruitmentService;
-import com.vipkid.recruitment.contractinfo.service.ContractService;
-import com.vipkid.recruitment.entity.TeacherContractFile;
 import com.vipkid.recruitment.contractinfo.service.ContractInfoService;
+import com.vipkid.recruitment.entity.TeacherContractFile;
 import com.vipkid.recruitment.utils.ReturnMapUtils;
 import com.vipkid.rest.RestfulController;
 import com.vipkid.rest.config.RestfulConfig;
@@ -72,9 +71,6 @@ public class ContractInfoController extends RestfulController {
 
     @Autowired
     private FileHttpService fileHttpService;
-
-    @Autowired
-    private ContractService contractService;
 
     @Autowired
     private ContractInfoService contractInfoService;
@@ -129,7 +125,7 @@ public class ContractInfoController extends RestfulController {
 
             //2. 获取老师上传的 contract info,  , 是否有 audit failReason
             Map<String, Object> contractInfo = Maps.newHashMap();
-            Map<String, Object> contractFileMap = contractService.findContract(teacher);
+            Map<String, Object> contractFileMap = contractInfoService.findContract(teacher);
             logger.info("查询用户：{},查询上传过的文件", teacher.getId());
             contractInfo.put("file",contractFileMap.get("contractFile"));
             contractInfo.put("result", contractFileMap.get("result"));
@@ -206,7 +202,7 @@ public class ContractInfoController extends RestfulController {
                 return ReturnMapUtils.returnFail("Failed to submit teacher bio");
             }
 
-            boolean result = contractService.updateTeacherApplication(teacher,idList);
+            boolean result = contractInfoService.updateTeacherApplication(teacher,idList);
             if(!result){
                 logger.error("Failed to submit contract info!");
                 response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
@@ -227,7 +223,7 @@ public class ContractInfoController extends RestfulController {
 
     //检查用户是否重复提交
     private boolean checkManySubmit(Long teacherId){
-        List<TeacherApplication> teacherApplications =  contractService.findTeacherApplication(teacherId);
+        List<TeacherApplication> teacherApplications =  contractInfoService.findTeacherApplication(teacherId);
         if(CollectionUtils.isNotEmpty(teacherApplications)){
             TeacherApplication teacherApplication = teacherApplications.get(0);
             if(StringUtils.isBlank(teacherApplication.getResult())){
@@ -260,7 +256,7 @@ public class ContractInfoController extends RestfulController {
     private boolean checkContractFile(Long teacherId,List<Integer> fileIds) {
         logger.info("Teacher:{} 检查文件id是否合格",teacherId);
         boolean isFileValid = false;
-        List<TeacherContractFile> files= contractService.findTeacherContractFile(teacherId);
+        List<TeacherContractFile> files= contractInfoService.findTeacherContractFile(teacherId);
         List<Integer> idList = new ArrayList<>();
         if(CollectionUtils.isNotEmpty(files)) {
             boolean hasIdCard = false;
@@ -555,7 +551,7 @@ public class ContractInfoController extends RestfulController {
             int fileId =(Integer)id;
             Teacher teacher = getTeacher(request);
             logger.info("删除文件id........:{}",fileId);
-            Map<String,Object> result = contractService.remoteFile(fileId,teacher.getId());
+            Map<String,Object> result = contractInfoService.remoteFile(fileId,teacher.getId());
             if(ReturnMapUtils.isFail(result)){
                 response.setStatus(HttpStatus.FORBIDDEN.value());
             }
@@ -640,7 +636,7 @@ public class ContractInfoController extends RestfulController {
                 teacherContractFile.setFileType(TeacherApplicationEnum.ContractFileType.IDENTIFICATION.val());
             }
 
-            contractService.save(teacherContractFile);
+            contractInfoService.save(teacherContractFile);
             result.put("file",fileVo.getUrl());
             result.put("status",true);
             result.put("id", teacherContractFile.getId());
@@ -677,7 +673,7 @@ public class ContractInfoController extends RestfulController {
             teacherContractFile.setUrl(fileVo.getUrl());
             teacherContractFile.setTeacherApplicationId(0);
             teacherContractFile.setFileType(TeacherApplicationEnum.ContractFileType.DIPLOMA.val());
-            contractService.save(teacherContractFile);
+            contractInfoService.save(teacherContractFile);
             result.put("file",fileVo.getUrl());
             result.put("status",true);
             result.put("id", teacherContractFile.getId());
@@ -714,7 +710,7 @@ public class ContractInfoController extends RestfulController {
             teacherContractFile.setUrl(fileVo.getUrl());
             teacherContractFile.setTeacherApplicationId(0);
             teacherContractFile.setFileType(TeacherApplicationEnum.ContractFileType.CONTRACT.val());
-            contractService.save(teacherContractFile);
+            contractInfoService.save(teacherContractFile);
 
             result.put("file",fileVo.getUrl());
             result.put("status",true);
@@ -762,7 +758,7 @@ public class ContractInfoController extends RestfulController {
             teacherContractFile.setUrl(fileVo.getUrl());
             teacherContractFile.setTeacherApplicationId(0);
             teacherContractFile.setFileType(TeacherApplicationEnum.ContractFileType.CONTRACT_W9.val());
-            contractService.save(teacherContractFile);
+            contractInfoService.save(teacherContractFile);
 
             result.put("file",fileVo.getUrl());
             result.put("id", teacherContractFile.getId());
@@ -802,7 +798,7 @@ public class ContractInfoController extends RestfulController {
             teacherContractFile.setUrl(fileVo.getUrl());
             teacherContractFile.setTeacherApplicationId(0);
             teacherContractFile.setFileType(TeacherApplicationEnum.ContractFileType.CERTIFICATIONFILES.val());
-            contractService.save(teacherContractFile);
+            contractInfoService.save(teacherContractFile);
             result.put("file",fileVo.getUrl());
             result.put("status",true);
             result.put("id", teacherContractFile.getId());
@@ -837,7 +833,7 @@ public class ContractInfoController extends RestfulController {
             teacherContractFile.setUrl(fileVo.getUrl());
             teacherContractFile.setTeacherApplicationId(0);
             teacherContractFile.setFileType(TeacherApplicationEnum.ContractFileType.OTHER_DEGREES.val());
-            contractService.save(teacherContractFile);
+            contractInfoService.save(teacherContractFile);
             result.put("file",fileVo.getUrl());
             result.put("status",true);
             result.put("id", teacherContractFile.getId());
