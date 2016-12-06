@@ -7,6 +7,7 @@ import java.util.Map;
 import com.vipkid.recruitment.dao.TeacherContractFileDao;
 import com.vipkid.recruitment.entity.TeacherContractFile;
 import com.vipkid.recruitment.utils.ReturnMapUtils;
+import com.vipkid.rest.config.RestfulConfig;
 import com.vipkid.trpm.dao.TeacherAddressDao;
 import com.vipkid.trpm.dao.TeacherTaxpayerFormDao;
 import com.vipkid.trpm.entity.TeacherAddress;
@@ -84,6 +85,10 @@ public class ContractService {
             }
             application.setTeacherId(teacher.getId());//  步骤关联的教师
             application.setApplyDateTime(new Timestamp(System.currentTimeMillis()));
+
+            application.setAuditDateTime(new Timestamp(System.currentTimeMillis()));
+            application.setAuditorId(RestfulConfig.SYSTEM_USER_ID);
+
             application.setStatus(TeacherApplicationEnum.Status.CONTRACT_INFO.toString());
             application = teacherApplicationDao.initApplicationData(application);
             int ret = teacherApplicationDao.save(application);

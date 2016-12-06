@@ -177,7 +177,12 @@ public class AdminQuizService {
                     }
                     TeacherApplication application = new TeacherApplication();
                     application.setTeacherId(teacherId);//  步骤关联的教师
+
                     application.setApplyDateTime(new Timestamp(System.currentTimeMillis()));
+                    application.setAuditDateTime(new Timestamp(System.currentTimeMillis()));
+
+                    application.setAuditorId(RestfulConfig.SYSTEM_USER_ID);
+
                     application.setResult(TeacherApplicationEnum.Result.PASS.toString());
                     application.setStatus(TeacherApplicationEnum.Status.TRAINING.toString());
                     application = teacherApplicationDao.initApplicationData(application);
