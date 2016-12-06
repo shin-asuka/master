@@ -116,7 +116,8 @@ public class ContractInfoService {
             logger.info("批量更新文件 for teacherId:{} with  teacherApplicationId:{}", teacher.getId(), application.getId());
             this.teacherContractFileDao.updateBatch(teacherContractFiles);
         } catch (Exception e) {
-            logger.error(e.getMessage());
+            e.printStackTrace();
+            logger.error(e.getMessage(),e);
             return false;
         }
         return true;
