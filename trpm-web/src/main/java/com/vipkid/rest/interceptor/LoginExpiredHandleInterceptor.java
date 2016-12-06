@@ -134,6 +134,9 @@ public class LoginExpiredHandleInterceptor extends HandlerInterceptorAdapter {
         }
         
         if(!result && ArrayUtils.contains(remoteInterface.portal(), Portal.MANAGEMENT)){
+
+            result = true;
+            
             User user = UserUtils.getUser(request);
             if(user.getId() == 0){
               result = false;
@@ -145,7 +148,6 @@ public class LoginExpiredHandleInterceptor extends HandlerInterceptorAdapter {
                 logger.info("management api user is locked:id = {}, name = {} ",user.getId(),user.getUsername());
             }
             
-            result = true;
             logger.info("managemane api 被访问 验证结果{}, info:user id = {} username = {}",result,user.getId(),user.getUsername());
         }
         
