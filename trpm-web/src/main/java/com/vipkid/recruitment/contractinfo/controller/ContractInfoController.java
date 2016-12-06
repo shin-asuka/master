@@ -166,7 +166,9 @@ public class ContractInfoController extends RestfulController {
 
         try {
             for(int i=0;i<idLists.size();i++){
-                idList.add(Integer.parseInt(idLists.get(i)));
+                if(StringUtils.isNumeric(idLists.get(i))) {
+                    idList.add(Integer.parseInt(idLists.get(i)));
+                }
             }
             Teacher teacher = getTeacher(request);
 

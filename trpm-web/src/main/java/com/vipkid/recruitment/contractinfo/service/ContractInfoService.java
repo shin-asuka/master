@@ -28,6 +28,7 @@ import com.vipkid.recruitment.dao.TeacherApplicationDao;
 import com.vipkid.recruitment.entity.TeacherApplication;
 import com.vipkid.recruitment.entity.ContractFile;
 import com.vipkid.trpm.entity.Teacher;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @author by zhangzhaojun on 2016/11/14.
@@ -54,6 +55,7 @@ public class ContractInfoService {
      * 在TeacherApplication中加入一条带审核数据
      * @return boolean
      */
+    @Transactional
     public boolean updateTeacherApplication(Teacher teacher, List<Integer> ids) {
             TeacherTaxpayerForm teacherTaxpayerForm = teacherTaxpayerFormDao.findByTeacherIdAndType(teacher.getId(), TeacherEnum.FormType.W9.val());
             if (teacherTaxpayerForm == null) {
@@ -114,7 +116,7 @@ public class ContractInfoService {
 
             logger.info("批量更新文件 for teacherId:{} with  teacherApplicationId:{}", teacher.getId(), application.getId());
             this.teacherContractFileDao.updateBatch(teacherContractFiles);
-        return true;
+            return true;
     }
 
 
@@ -199,20 +201,31 @@ public class ContractInfoService {
                 }
 
             });
+            String result = isPass(res);
             if (CollectionUtils.isNotEmpty(tax)) {
                 contractFile.setTax(tax.get(tax.size() - 1));
+            }else{
+                result = "FAIL";
             }
 
             if (CollectionUtils.isNotEmpty(contract)) {
                 contractFile.setContract(contract.get(contract.size() - 1));
+            }else{
+                result = "FAIL";
             }
+
             if (CollectionUtils.isNotEmpty(diploma)) {
                 contractFile.setDiploma(diploma.get(diploma.size() - 1));
+            }else{
+                result = "FAIL";
             }
+
             if (CollectionUtils.isNotEmpty(identification)) {
                 contractFile.setIdentification(identification.get(identification.size() - 1));
+            }else{
+                result = "FAIL";
             }
-            String result = isPass(res);
+
             contractFile.setCertification(certification);
             contractFile.setDegrees(degrees);
             map.put("contractFile", contractFile);
