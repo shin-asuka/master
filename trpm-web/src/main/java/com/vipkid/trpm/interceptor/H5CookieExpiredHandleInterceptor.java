@@ -3,6 +3,7 @@ package com.vipkid.trpm.interceptor;
 import com.vipkid.http.service.AnnouncementHttpService;
 import com.vipkid.http.utils.JsonUtils;
 import com.vipkid.http.vo.StandardJsonObject;
+import com.vipkid.rest.RestfulController;
 import com.vipkid.rest.config.RestfulConfig.RoleClass;
 import com.vipkid.rest.security.AppContext;
 import com.vipkid.trpm.constant.ApplicationConstant;
@@ -82,12 +83,14 @@ public class H5CookieExpiredHandleInterceptor extends HandlerInterceptorAdapter 
 //            return true;
 //        }
 
-		if(!PropertyConfigurer.booleanValue("h5.cookie.check")){
-			logger.info("配置不拦截");
+		boolean isFilter = PropertyConfigurer.booleanValue("h5.cookie.check");
+		if(!isFilter){
+			logger.info("配置[h5.cookie.check]={}不拦截",isFilter);
 			return true;
 		}
 
-		String token = CookieUtils.getValue(request, CookieKey.TRPM_TOKEN);
+		//String token = CookieUtils.getValue(request, CookieKey.TRPM_TOKEN);
+		String token = request.getHeader(RestfulController.AUTOKEN);
 		String key = CacheUtils.getUserTokenKeyFromApp(token);
 		String ip = IpUtils.getRequestRemoteIP();
 
