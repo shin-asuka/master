@@ -99,8 +99,10 @@ public class TaxpayerFileController extends AbstractPortalController{
 			String fileName = AwsFileUtils.reNewFileName(name); //处理文件名
 			FormType formTypeEnum = TeacherEnum.getFormTypeById(formType);
 			String formTypeName = formTypeEnum.name();
-			String awsName = teacherId+"-"+formTypeName+"-"+fileName;
-			
+			String awsName = teacherId+"-"+fileName;
+			if(!name.equals(fileName)){
+				awsName = teacherId+"-"+formTypeName+"-"+fileName;
+			}
 			String key = AwsFileUtils.getTaxpayerkey(teacherId,awsName);
 			Long size = file.getSize();
 			
