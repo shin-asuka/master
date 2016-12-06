@@ -155,10 +155,18 @@ public class ContractInfoService {
      */
     public Map<String, Object> findContract(Teacher teacher) {
         ContractFile contractFile = new ContractFile();
-
-        logger.info("Teacher：{}  find  Teacher Contract Files", teacher.getId());
-        List<TeacherContractFile> teacherContractFiles =teacherContractFileDao.findByTeacherIdAndTeacherApplicationId(teacher.getId(),TEACHERAPPLICATION_ID);
+        List<TeacherApplication> list = teacherApplicationDao.findCurrentApplication(teacher.getId());
         Map<String, Object> map = Maps.newHashMap();
+        if (CollectionUtils.isNotEmpty(list)) {
+            TeacherApplication application = list.get(0);
+            logger.info("Teacher：{}  find  Teacher Contract Files", teacher.getId());
+            List<TeacherContractFile> teacherContractFiles;
+            if(application.getStatus().equals(TeacherApplicationEnum.Status.CONTRACT_INFO)&&application.getResult().equals(TeacherApplicationEnum.Result.PASS)){
+               teacherContractFiles =teacherContractFileDao.findByTeacherIdAndTeacherApplicationId(teacher.getId(),application.getId());
+            }else {
+
+                teacherContractFiles = teacherContractFileDao.findByTeacherIdAndTeacherApplicationId(teacher.getId(), TEACHERAPPLICATION_ID);
+            }
 
         if (CollectionUtils.isNotEmpty(teacherContractFiles)) {
             List<TeacherContractFile> degrees = Lists.newArrayList();
@@ -231,6 +239,7 @@ public class ContractInfoService {
             contractFile.setDegrees(degrees);
             map.put("contractFile", contractFile);
             map.put("result",result);
+         }
         }
         return map;
 
