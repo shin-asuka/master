@@ -338,7 +338,7 @@ public class PersonalInfoService {
 
 	public String hideNameInfo(String source){
 		if (source == null || source.length()<=0){
-			logger.warn("invalid params:source={}, end={}", source);
+			logger.warn("invalid params:source={}", source);
 			return source;
 		}else {
 			int n = source.lastIndexOf(" ");
