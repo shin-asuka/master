@@ -61,10 +61,10 @@ public class TrainingController extends RestfulController {
             return ReturnMapUtils.returnSuccess(result);
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
-            return ReturnMapUtils.returnFail(e.getMessage(), this,e);
+            return ReturnMapUtils.returnFail(e.getMessage(),e);
         } catch (Exception e) {
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            return ReturnMapUtils.returnFail(e.getMessage(), this, e);
+            return ReturnMapUtils.returnFail(e.getMessage(), e);
         }
     }
 
@@ -85,10 +85,10 @@ public class TrainingController extends RestfulController {
             return ReturnMapUtils.returnSuccess(result);
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
-            return ReturnMapUtils.returnFail(e.getMessage(), this,e);
+            return ReturnMapUtils.returnFail(e.getMessage(),e);
         } catch (Exception e) {
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            return ReturnMapUtils.returnFail(e.getMessage(), this, e);
+            return ReturnMapUtils.returnFail(e.getMessage(), e);
         }
     }
 
@@ -112,10 +112,10 @@ public class TrainingController extends RestfulController {
             return ReturnMapUtils.returnSuccess(result);
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
-            return ReturnMapUtils.returnFail(e.getMessage(), this,e);
+            return ReturnMapUtils.returnFail(e.getMessage(),e);
         } catch (Exception e) {
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            return ReturnMapUtils.returnFail(e.getMessage(), this, e);
+            return ReturnMapUtils.returnFail(e.getMessage(), e);
         }
     }
 
@@ -143,10 +143,10 @@ public class TrainingController extends RestfulController {
             return ReturnMapUtils.returnSuccess(result);
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
-            return ReturnMapUtils.returnFail(e.getMessage(), this,e);
+            return ReturnMapUtils.returnFail(e.getMessage(),e);
         } catch (Exception e) {
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            return ReturnMapUtils.returnFail(e.getMessage(), this, e);
+            return ReturnMapUtils.returnFail(e.getMessage(), e);
         }
     }
 
@@ -167,10 +167,10 @@ public class TrainingController extends RestfulController {
             return ReturnMapUtils.returnSuccess(result);
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
-            return ReturnMapUtils.returnFail(e.getMessage(), this,e);
+            return ReturnMapUtils.returnFail(e.getMessage(),e);
         } catch (Exception e) {
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            return ReturnMapUtils.returnFail(e.getMessage(), this, e);
+            return ReturnMapUtils.returnFail(e.getMessage(), e);
         }
     }
 

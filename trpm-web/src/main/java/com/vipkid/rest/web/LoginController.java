@@ -79,7 +79,7 @@ public class LoginController extends RestfulController {
             if(CollectionUtils.isNotEmpty(list) && list.get(0).isResult()){
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
                 logger.info(list.get(0).getName() + "," + list.get(0).getMessages());
-                return ReturnMapUtils.returnFail(ApplicationConstant.AjaxCode.USER_ERROR, this);
+                return ReturnMapUtils.returnFail(ApplicationConstant.AjaxCode.USER_ERROR);
             }
             
             logger.info(" 请求参数 Json ={} ",JsonTools.getJson(bean));
@@ -91,11 +91,11 @@ public class LoginController extends RestfulController {
                 if (StringUtils.isBlank(bean.getKey()) || StringUtils.isBlank(bean.getImageCode())) {
                     logger.warn("同一IP超过最大登录次数，或登录失败次数超限，需要添加验证码,userName = {}",bean.getEmail());
                     response.setStatus(HttpStatus.BAD_REQUEST.value());
-                    return ReturnMapUtils.returnFail(ApplicationConstant.AjaxCode.VERIFY_CODE, this);
+                    return ReturnMapUtils.returnFail(ApplicationConstant.AjaxCode.VERIFY_CODE);
                 } else if (!passportService.checkVerifyCode(bean.getKey(), bean.getImageCode())) {
                     logger.warn("验证码错误，key = {},imageCode = {}", bean.getKey(), bean.getImageCode());
                     response.setStatus(HttpStatus.BAD_REQUEST.value());
-                    return ReturnMapUtils.returnFail(ApplicationConstant.AjaxCode.VERIFY_CODE_ERROR, this);
+                    return ReturnMapUtils.returnFail(ApplicationConstant.AjaxCode.VERIFY_CODE_ERROR);
                 }
             }
             if (StringUtils.isNotBlank(ip)) {
@@ -111,7 +111,7 @@ public class LoginController extends RestfulController {
                 passportService.addLoginFailedCount(bean.getEmail());
                 logger.warn("user is null email:" + bean.getEmail());
                 response.setStatus(HttpStatus.NOT_FOUND.value());
-                return ReturnMapUtils.returnFail(ApplicationConstant.AjaxCode.USER_NULL, this);
+                return ReturnMapUtils.returnFail(ApplicationConstant.AjaxCode.USER_NULL);
             }
             // token check
             logger.info("token check start!");
@@ -126,7 +126,7 @@ public class LoginController extends RestfulController {
                 passportService.addLoginFailedCount(bean.getEmail());
                 logger.warn(" Username or password  error!" + bean.getEmail());
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
-                return ReturnMapUtils.returnFail(ApplicationConstant.AjaxCode.PWD_ERROR, this);
+                return ReturnMapUtils.returnFail(ApplicationConstant.AjaxCode.PWD_ERROR);
             }
             // 检查用户类型
             if (!UserEnum.Dtype.TEACHER.val().equals(user.getDtype())) {
@@ -134,7 +134,7 @@ public class LoginController extends RestfulController {
                 passportService.addLoginFailedCount(bean.getEmail());
                 logger.warn("user not is teacher id = " + user.getId());
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
-                return ReturnMapUtils.returnFail(ApplicationConstant.AjaxCode.DTYPE_ERROR, this);
+                return ReturnMapUtils.returnFail(ApplicationConstant.AjaxCode.DTYPE_ERROR);
             }
             // techer null check
             Teacher teacher = this.passportService.findTeacherById(user.getId());
@@ -143,7 +143,7 @@ public class LoginController extends RestfulController {
                 passportService.addLoginFailedCount(bean.getEmail());
                 logger.warn("teacher is null id = " + user.getId());
                 response.setStatus(HttpStatus.NOT_FOUND.value());
-                return ReturnMapUtils.returnFail(ApplicationConstant.AjaxCode.TEACHER_NULL, this);
+                return ReturnMapUtils.returnFail(ApplicationConstant.AjaxCode.TEACHER_NULL);
             }
             logger.info("登陆  FAIL start:{} !",teacher.getLifeCycle());
             // 检查老师状态是否FAIL
@@ -152,7 +152,7 @@ public class LoginController extends RestfulController {
                 passportService.addLoginFailedCount(bean.getEmail());
                 logger.warn(" Username fail error!" + bean.getEmail());
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
-                return ReturnMapUtils.returnFail(ApplicationConstant.AjaxCode.USER_FAIL, this);
+                return ReturnMapUtils.returnFail(ApplicationConstant.AjaxCode.USER_FAIL);
             }    
             logger.info("登陆  QUIT start !");
             // 检查老师状态是否QUIT
@@ -161,7 +161,7 @@ public class LoginController extends RestfulController {
                 passportService.addLoginFailedCount(bean.getEmail());
                 logger.warn(" Username quit error!" + bean.getEmail());
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
-                return ReturnMapUtils.returnFail(ApplicationConstant.AjaxCode.USER_QUIT, this);
+                return ReturnMapUtils.returnFail(ApplicationConstant.AjaxCode.USER_QUIT);
             }
     
             // 检查用户状态是否锁住
@@ -174,7 +174,7 @@ public class LoginController extends RestfulController {
                         passportService.addLoginFailedCount(bean.getEmail());
                         logger.warn(" Username 没有激活 error!" + bean.getEmail());
                         response.setStatus(HttpStatus.BAD_REQUEST.value());
-                        return ReturnMapUtils.returnFail(ApplicationConstant.AjaxCode.USER_ACTIVITY, this);
+                        return ReturnMapUtils.returnFail(ApplicationConstant.AjaxCode.USER_ACTIVITY);
                     }else{
                         this.passportService.updateUserStatus(user);
                     }
@@ -184,7 +184,7 @@ public class LoginController extends RestfulController {
                     passportService.addLoginFailedCount(bean.getEmail());
                     logger.warn(" Username locked error!" + bean.getEmail());
                     response.setStatus(HttpStatus.BAD_REQUEST.value());
-                    return ReturnMapUtils.returnFail(ApplicationConstant.AjaxCode.USER_LOCKED, this);
+                    return ReturnMapUtils.returnFail(ApplicationConstant.AjaxCode.USER_LOCKED);
                 }            
             }
     
@@ -208,10 +208,10 @@ public class LoginController extends RestfulController {
             return ReturnMapUtils.returnSuccess(result);
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
-            return ReturnMapUtils.returnFail(e.getMessage(), this);
+            return ReturnMapUtils.returnFail(e.getMessage());
         } catch (Exception e) {
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            return ReturnMapUtils.returnFail(e.getMessage(), this);
+            return ReturnMapUtils.returnFail(e.getMessage());
         }
     }
 
@@ -231,7 +231,7 @@ public class LoginController extends RestfulController {
         if(CollectionUtils.isNotEmpty(list) && list.get(0).isResult()){
             response.setStatus(HttpStatus.BAD_REQUEST.value());
             logger.info(list.get(0).getName() + "," + list.get(0).getMessages());
-            return ReturnMapUtils.returnFail(ApplicationConstant.AjaxCode.USER_ERROR, this);
+            return ReturnMapUtils.returnFail(ApplicationConstant.AjaxCode.USER_ERROR);
         }
         String email = StringUtils.trim(bean.getEmail());
         logger.info("sign up teacher email = {" + email + "}");
@@ -239,17 +239,17 @@ public class LoginController extends RestfulController {
             if (StringUtils.isBlank(bean.getKey()) || StringUtils.isBlank(bean.getImageCode())) {
                 logger.warn("验证码为空或验证码key为空");
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
-                return ReturnMapUtils.returnFail(ApplicationConstant.AjaxCode.VERIFY_CODE, this);
+                return ReturnMapUtils.returnFail(ApplicationConstant.AjaxCode.VERIFY_CODE);
             }
             if (!passportService.checkVerifyCode(bean.getKey(),bean.getImageCode())) {
                 logger.warn("验证码校验不通过！");
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
-                return ReturnMapUtils.returnFail(ApplicationConstant.AjaxCode.VERIFY_CODE_ERROR, this);
+                return ReturnMapUtils.returnFail(ApplicationConstant.AjaxCode.VERIFY_CODE_ERROR);
             }
             if (StringUtils.isBlank(email) || StringUtils.isBlank(bean.getPassword())) {
                 logger.warn("email or password is null email:" + email);
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
-                return ReturnMapUtils.returnFail(ApplicationConstant.AjaxCode.USER_ERROR, this);
+                return ReturnMapUtils.returnFail(ApplicationConstant.AjaxCode.USER_ERROR);
                 // 2.用户名可用，执行业务，
             }
             
@@ -260,7 +260,7 @@ public class LoginController extends RestfulController {
             if (user != null) {
                 logger.warn("Email 已经注册过:" + email);
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
-                return ReturnMapUtils.returnFail(ApplicationConstant.AjaxCode.USER_EXITS, this);
+                return ReturnMapUtils.returnFail(ApplicationConstant.AjaxCode.USER_EXITS);
                 // 2.用户名可用，执行业务，
             }
             // 执行业务逻辑
@@ -277,10 +277,10 @@ public class LoginController extends RestfulController {
             return result;
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
-            return ReturnMapUtils.returnFail(e.getMessage(), this);
+            return ReturnMapUtils.returnFail(e.getMessage());
         } catch (Exception e) {
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            return ReturnMapUtils.returnFail(e.getMessage(), this);
+            return ReturnMapUtils.returnFail(e.getMessage());
         }
     }
 
@@ -302,7 +302,7 @@ public class LoginController extends RestfulController {
             if (StringUtils.isBlank(email)) {
                 logger.warn("email is null");
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
-                return ReturnMapUtils.returnFail(ApplicationConstant.AjaxCode.USER_ERROR, this);
+                return ReturnMapUtils.returnFail(ApplicationConstant.AjaxCode.USER_ERROR);
             }
             
             logger.info("user check start email:{}!",email);
@@ -312,26 +312,26 @@ public class LoginController extends RestfulController {
             if (null == user) {
                 logger.warn("user is null email:" + email);
                 response.setStatus(HttpStatus.NOT_FOUND.value());
-                return ReturnMapUtils.returnFail(ApplicationConstant.AjaxCode.USER_NULL, this);
+                return ReturnMapUtils.returnFail(ApplicationConstant.AjaxCode.USER_NULL);
             }
             // 检查用户类型
             if (!UserEnum.Dtype.TEACHER.val().equals(user.getDtype())) {
                 logger.warn("user not is teacher id = " + user.getId());
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
-                return ReturnMapUtils.returnFail(ApplicationConstant.AjaxCode.DTYPE_ERROR, this);
+                return ReturnMapUtils.returnFail(ApplicationConstant.AjaxCode.DTYPE_ERROR);
             }
             // techer null check
             Teacher teacher = this.passportService.findTeacherById(user.getId());
             if (teacher == null) {
                 logger.warn("teacher is null id = " + user.getId());
                 response.setStatus(HttpStatus.NOT_FOUND.value());
-                return ReturnMapUtils.returnFail(ApplicationConstant.AjaxCode.TEACHER_NULL, this);
+                return ReturnMapUtils.returnFail(ApplicationConstant.AjaxCode.TEACHER_NULL);
             }
             // 检查老师状态是否FAIL
             if (TeacherEnum.LifeCycle.FAIL.toString().equals(teacher.getLifeCycle())) {
                 logger.warn("teacher is fail id = " + user.getId());
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
-                return ReturnMapUtils.returnFail(ApplicationConstant.AjaxCode.USER_FAIL, this);
+                return ReturnMapUtils.returnFail(ApplicationConstant.AjaxCode.USER_FAIL);
             }
     
             // 检查用户状态是否锁住
@@ -341,7 +341,7 @@ public class LoginController extends RestfulController {
                     if(PropertyConfigurer.booleanValue("signup.send.mail.switch")){
                         logger.warn("teacher 未激活  id = " + user.getId());
                         response.setStatus(HttpStatus.BAD_REQUEST.value());
-                        return ReturnMapUtils.returnFail(ApplicationConstant.AjaxCode.USER_ACTIVITY, this);
+                        return ReturnMapUtils.returnFail(ApplicationConstant.AjaxCode.USER_ACTIVITY);
                     }else{
                         this.passportService.updateUserStatus(user);
                     }
@@ -349,23 +349,23 @@ public class LoginController extends RestfulController {
                     // 否则告诉被锁定
                     logger.warn("teacher is 被锁定 id = " + user.getId());
                     response.setStatus(HttpStatus.BAD_REQUEST.value());
-                    return ReturnMapUtils.returnFail(ApplicationConstant.AjaxCode.USER_LOCKED, this);
+                    return ReturnMapUtils.returnFail(ApplicationConstant.AjaxCode.USER_LOCKED);
                 }
             }
             // 检查老师状态是否QUIT
             if (TeacherEnum.LifeCycle.QUIT.toString().equals(teacher.getLifeCycle())) {
                 logger.warn("teacher is QUIT id = " + user.getId());
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
-                return ReturnMapUtils.returnFail(ApplicationConstant.AjaxCode.USER_QUIT, this);
+                return ReturnMapUtils.returnFail(ApplicationConstant.AjaxCode.USER_QUIT);
             }
             logger.info("resetPasswordRequest OK : " + email);
             return this.passportService.senEmailForPassword(user);
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
-            return ReturnMapUtils.returnFail(e.getMessage(), this);
+            return ReturnMapUtils.returnFail(e.getMessage());
         } catch (Exception e) {
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            return ReturnMapUtils.returnFail(e.getMessage(), this);
+            return ReturnMapUtils.returnFail(e.getMessage());
         }
     }
 
@@ -389,25 +389,25 @@ public class LoginController extends RestfulController {
             if(CollectionUtils.isNotEmpty(list) && list.get(0).isResult()){
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
                 logger.info(list.get(0).getName() + "," + list.get(0).getMessages());
-                return ReturnMapUtils.returnFail(ApplicationConstant.AjaxCode.USER_ERROR, this);
+                return ReturnMapUtils.returnFail(ApplicationConstant.AjaxCode.USER_ERROR);
             }
             
             if (!this.passportService.checkTokenTimeout(bean.getToken())) {
                 logger.warn("token 过期   token:" + bean.getToken());
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
-                return ReturnMapUtils.returnFail(ApplicationConstant.AjaxCode.TOKEN_OVERDUE, this);
+                return ReturnMapUtils.returnFail(ApplicationConstant.AjaxCode.TOKEN_OVERDUE);
             }
             Teacher teacher = this.passportService.findByRecruitmentId(bean.getToken());
             if (teacher == null) {
                 logger.warn("teacher is null:" + teacher);
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
-                return ReturnMapUtils.returnFail(ApplicationConstant.AjaxCode.TEACHER_NULL, this);
+                return ReturnMapUtils.returnFail(ApplicationConstant.AjaxCode.TEACHER_NULL);
             }
             // 修改成功后strToken替换成最新，使原来的失效
             Map<String,Object> retMap = this.passportService.updatePassword(teacher, bean.getPassword());
             if (ReturnMapUtils.isFail(retMap)) {
                 response.setStatus(HttpStatus.FORBIDDEN.value());
-                return ReturnMapUtils.returnFail(ApplicationConstant.AjaxCode.TOKEN_ERROR, this);
+                return ReturnMapUtils.returnFail(ApplicationConstant.AjaxCode.TOKEN_ERROR);
             }
             User user = this.passportService.findUserById(teacher.getId());
             String loginToken = loginService.setLoginToken(response, user);
@@ -415,10 +415,10 @@ public class LoginController extends RestfulController {
             return retMap;
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
-            return ReturnMapUtils.returnFail(e.getMessage(), this);
+            return ReturnMapUtils.returnFail(e.getMessage());
         } catch (Exception e) {
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            return ReturnMapUtils.returnFail(e.getMessage(), this);
+            return ReturnMapUtils.returnFail(e.getMessage());
         }
     }
 
@@ -429,13 +429,13 @@ public class LoginController extends RestfulController {
             // 检查老师状态是否FAIL
             if (TeacherEnum.LifeCycle.FAIL.toString().equals(this.getTeacher(request).getLifeCycle())) {
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
-                return ReturnMapUtils.returnFail(ApplicationConstant.AjaxCode.USER_FAIL, this);
+                return ReturnMapUtils.returnFail(ApplicationConstant.AjaxCode.USER_FAIL);
             }
     
             // 检查老师状态是否QUIT
             if (TeacherEnum.LifeCycle.QUIT.toString().equals(this.getTeacher(request).getLifeCycle())) {
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
-                return ReturnMapUtils.returnFail(ApplicationConstant.AjaxCode.USER_QUIT, this);
+                return ReturnMapUtils.returnFail(ApplicationConstant.AjaxCode.USER_QUIT);
             }
             
             User user = this.getUser(request);
@@ -443,7 +443,7 @@ public class LoginController extends RestfulController {
             if (!UserEnum.Dtype.TEACHER.val().equals(user.getDtype())) {
                 logger.warn("user not is teacher id = " + user.getId());
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
-                return ReturnMapUtils.returnFail(ApplicationConstant.AjaxCode.DTYPE_ERROR, this);
+                return ReturnMapUtils.returnFail(ApplicationConstant.AjaxCode.DTYPE_ERROR);
             }
             
             TeacherInfo teacherinfo = new TeacherInfo();
@@ -461,10 +461,10 @@ public class LoginController extends RestfulController {
             return success;
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
-            return ReturnMapUtils.returnFail(e.getMessage(), this);
+            return ReturnMapUtils.returnFail(e.getMessage());
         } catch (Exception e) {
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            return ReturnMapUtils.returnFail(e.getMessage(), this);
+            return ReturnMapUtils.returnFail(e.getMessage());
         }
     }     
     
@@ -474,7 +474,7 @@ public class LoginController extends RestfulController {
         
         if (StringUtils.isBlank(email)) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
-            return ReturnMapUtils.returnFail(" Email  is null ", this);
+            return ReturnMapUtils.returnFail(" Email  is null ");
         }
         
         Map<String,Object> result = this.loginService.sendActivationEmail(email);

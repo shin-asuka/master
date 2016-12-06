@@ -106,20 +106,20 @@ public class InterviewService {
 
         //课程没有找到，无法book
         if(onlineClass == null){
-            return ReturnMapUtils.returnFail("The online class not exis:"+onlineClassId,this);
+            return ReturnMapUtils.returnFail("The online class not exis:"+onlineClassId);
         }
         //判断教室是否创建好
         if(StringUtils.isBlank(onlineClass.getClassroom())){
-            return ReturnMapUtils.returnFail("The classroom is null:"+onlineClassId,this);
+            return ReturnMapUtils.returnFail("The classroom is null:"+onlineClassId);
         }
         //课程必须是当前步骤中的数据
         List<TeacherApplication> listEntity = this.teacherApplicationDao.findCurrentApplication(teacher.getId());
         if(CollectionUtils.isEmpty(listEntity)){
-            return ReturnMapUtils.returnFail("You cannot enter this classroom!",this);
+            return ReturnMapUtils.returnFail("You cannot enter this classroom!");
         }
         //进教室权限判断    
         if(listEntity.get(0).getOnlineClassId() != onlineClassId){
-            return ReturnMapUtils.returnFail("You cannot enter this classroom!",this);
+            return ReturnMapUtils.returnFail("You cannot enter this classroom!");
         }
 
         Map<String,Object> result = OnlineClassProxy.generateRoomEnterUrl(teacher.getId()+"", teacher.getRealName(),onlineClass.getClassroom(), OnlineClassProxy.RoomRole.TEACHER, onlineClass.getSupplierCode());
@@ -147,17 +147,17 @@ public class InterviewService {
 
         //课程没有找到，无法book
         if(onlineClass == null){
-            return ReturnMapUtils.returnFail("The online class not exis:"+onlineClassId,this);
+            return ReturnMapUtils.returnFail("The online class not exis:"+onlineClassId);
         }
 
         //onlineClassId 必须是OPEN 课
         if(!OnlineClassEnum.ClassStatus.OPEN.toString().equalsIgnoreCase(onlineClass.getStatus())){
-            return ReturnMapUtils.returnFail("This class("+onlineClassId+") is empty or anyone else has been booked !", this);
+            return ReturnMapUtils.returnFail("This class("+onlineClassId+") is empty or anyone else has been booked !");
         }
 
         //book的课程在开课前1小时之内不允许book
         if(System.currentTimeMillis() + InterviewConstant.CANCEL_TIME > onlineClass.getScheduledDateTime().getTime()){
-            return ReturnMapUtils.returnFail("Class is about to start is not allowed to book !", this);
+            return ReturnMapUtils.returnFail("Class is about to start is not allowed to book !");
         }
         //约课老师必须是INTERVIEW的待约课老师
         List<TeacherApplication> listEntity = teacherApplicationDao.findCurrentApplication(teacher.getId());
@@ -165,12 +165,12 @@ public class InterviewService {
             TeacherApplication teacherApplication = listEntity.get(0);
             //存在步骤，但步骤中已经存在待审核的课程 不允许继续book
             if(teacherApplication.getOnlineClassId() != 0 && StringUtils.isBlank(teacherApplication.getResult())){
-                return ReturnMapUtils.returnFail("You have booked a class already. Please refresh your page !"+onlineClassId, this);
+                return ReturnMapUtils.returnFail("You have booked a class already. Please refresh your page !"+onlineClassId);
             }
         }
         //判断剩余可取消次数
         if(recruitmentService.getRemainRescheduleTimes(teacher, Status.INTERVIEW.toString(), Result.CANCEL.toString()) <= 0){
-            return ReturnMapUtils.returnFail("You cancel too many times, can't book the class !", this);
+            return ReturnMapUtils.returnFail("You cancel too many times, can't book the class !");
         }
         //执行BOOK逻辑
         String dateTime = DateFormatUtils.format(onlineClass.getScheduledDateTime(),"yyyy-MM-dd HH:mm:ss");
@@ -198,27 +198,27 @@ public class InterviewService {
 
         //课程没有找到，无法取消
         if(onlineClass == null){
-            return ReturnMapUtils.returnFail("The online class doesn't exist:"+onlineClassId,this);
+            return ReturnMapUtils.returnFail("The online class doesn't exist:"+onlineClassId);
         }
 
         //book的课程在开课前1小时之内不允许cancel
         if(System.currentTimeMillis() + InterviewConstant.CANCEL_TIME > onlineClass.getScheduledDateTime().getTime()){
-            return ReturnMapUtils.returnFail("The online class will begin,can't rescheduled:"+onlineClassId,this);
+            return ReturnMapUtils.returnFail("The online class will begin,can't rescheduled:"+onlineClassId);
         }
 
         List<TeacherApplication> listEntity = this.teacherApplicationDao.findCurrentApplication(teacher.getId());
         //如果步骤中无数据则不允许cancel
         if(CollectionUtils.isEmpty(listEntity)){
-            return ReturnMapUtils.returnFail("You do not have permission to cancel this course:"+onlineClassId,this);
+            return ReturnMapUtils.returnFail("You do not have permission to cancel this course:"+onlineClassId);
         }else{
             TeacherApplication teacherApplication = listEntity.get(0);
             //如果步骤中有数据并且数据不是本次cancel的课程 则不允许cancel
             if(teacherApplication.getOnlineClassId() != onlineClass.getId()){
-                return ReturnMapUtils.returnFail("You have already cancelled this class. Please refresh your page !",this);
+                return ReturnMapUtils.returnFail("You have already cancelled this class. Please refresh your page !");
             }else{
                 //果步骤中有数据并且数据不是本次cancel的课程 但管理端已经审核，不允许cancel
                 if(StringUtils.isNotBlank(teacherApplication.getResult())){
-                    return ReturnMapUtils.returnFail("This class already audited. Please refresh your page !",this);
+                    return ReturnMapUtils.returnFail("This class already audited. Please refresh your page !");
                 }
             }
         }
@@ -252,7 +252,7 @@ public class InterviewService {
     public Map<String,Object> toTraining(Teacher teacher){
         List<TeacherApplication> listEntity = teacherApplicationDao.findCurrentApplication(teacher.getId());
         if(CollectionUtils.isEmpty(listEntity)){
-            return ReturnMapUtils.returnFail("You have no legal power into the next phase !",this);
+            return ReturnMapUtils.returnFail("You have no legal power into the next phase !");
         }
 
         //执行逻辑 只有在INTERVIEW的PASS状态才能进入
@@ -266,6 +266,6 @@ public class InterviewService {
             teacherQuizDao.insertQuiz(teacher.getId(),teacher.getId());
             return ReturnMapUtils.returnSuccess();
         }
-        return ReturnMapUtils.returnFail("You have no legal power into the next phase !",this);
+        return ReturnMapUtils.returnFail("You have no legal power into the next phase !");
     }
 }

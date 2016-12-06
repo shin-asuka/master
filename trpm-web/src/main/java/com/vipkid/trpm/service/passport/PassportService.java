@@ -118,7 +118,7 @@ public class PassportService {
         User user = this.userDao.findByUsername(email);
         // 1.是否存在
         if (user != null) {
-            return ReturnMapUtils.returnFail(ApplicationConstant.AjaxCode.USER_EXITS, this);
+            return ReturnMapUtils.returnFail(ApplicationConstant.AjaxCode.USER_EXITS);
         }
         // 2.创建User
         user = new User();
@@ -207,7 +207,7 @@ public class PassportService {
     public Map<String, Object> senEmailForPassword(User user) {
         Teacher teacher = this.findTeacherById(user.getId());
         if(teacher == null){
-            return ReturnMapUtils.returnFail("The is a not exits teacher!", this);
+            return ReturnMapUtils.returnFail("The is a not exits teacher!");
         }
         teacher.setRecruitmentId(this.updateRecruitmentId(teacher));
         EmailUtils.sendRestPasswordEmail(teacher);
@@ -270,12 +270,12 @@ public class PassportService {
     public Map<String,Object> updatePassword(Teacher teacher, String newpassword) {
         User user = this.userDao.findById(teacher.getId());
         if (user == null){
-            return ReturnMapUtils.returnFail("User is null,Id:"+teacher.getId(), this);
+            return ReturnMapUtils.returnFail("User is null,Id:"+teacher.getId());
         }
         //解码64
         String strPwd = new String(Base64.getDecoder().decode(newpassword));
         if (StringUtils.isBlank(strPwd)) {
-            return ReturnMapUtils.returnFail("new password base64 is error ! "+newpassword, this);
+            return ReturnMapUtils.returnFail("new password base64 is error ! "+newpassword);
         }
         //SHA256加密
         SHA256PasswordEncoder encoder = new SHA256PasswordEncoder();
@@ -288,7 +288,7 @@ public class PassportService {
         //更新user的密码
         int i = this.userDao.update(user);
         if (i <= 0) {
-            return ReturnMapUtils.returnFail("update user result is "+i+" , id:"+user.getId(), this);
+            return ReturnMapUtils.returnFail("update user result is "+i+" , id:"+user.getId());
         }
         //更新Teacher修改密码的验证token，使原来的密码修改token失效
         this.updateRecruitmentId(teacher);

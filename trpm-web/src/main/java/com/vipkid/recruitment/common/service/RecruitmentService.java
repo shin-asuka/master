@@ -277,7 +277,7 @@ public class RecruitmentService {
         //2.更新Address
         TeacherAddress teacherAddress = this.teacherAddressDao.updateOrSaveCurrentAddressId(teacher, bean.getCountryId(), bean.getStateId(), bean.getCityId(),null,null);
         if(teacherAddress == null || teacherAddress.getId() <= 0){
-            return ReturnMapUtils.returnFail("老师:"+teacher.getId()+",地址信息:"+JsonTools.getJson(teacherAddress)+",保存有问题.", this);
+            return ReturnMapUtils.returnFail("老师:"+teacher.getId()+",地址信息:"+JsonTools.getJson(teacherAddress)+",保存有问题.");
         }
         this.teacherDao.update(teacher);
         return ReturnMapUtils.returnSuccess();

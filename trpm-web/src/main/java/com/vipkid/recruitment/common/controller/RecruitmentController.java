@@ -55,10 +55,10 @@ public class RecruitmentController extends RestfulController{
             return ReturnMapUtils.returnSuccess(result);
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
-            return ReturnMapUtils.returnFail(e.getMessage(), this);
+            return ReturnMapUtils.returnFail(e.getMessage(),e);
         } catch (Exception e) {
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            return ReturnMapUtils.returnFail(e.getMessage(), this);
+            return ReturnMapUtils.returnFail(e.getMessage(),e);
         }
     } 
     
@@ -96,10 +96,10 @@ public class RecruitmentController extends RestfulController{
             return ReturnMapUtils.returnSuccess(result);
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
-            return ReturnMapUtils.returnFail(e.getMessage(), this);
+            return ReturnMapUtils.returnFail(e.getMessage(),e);
         } catch (Exception e) {
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            return ReturnMapUtils.returnFail(e.getMessage(), this);
+            return ReturnMapUtils.returnFail(e.getMessage(),e);
         }
     } 
     
@@ -110,7 +110,7 @@ public class RecruitmentController extends RestfulController{
             List<Result> list = ValidateUtils.checkBean(timezone,false);
             if(CollectionUtils.isNotEmpty(list) && list.get(0).isResult()){
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
-                return ReturnMapUtils.returnFail(list.get(0).getName() + "," + list.get(0).getMessages(), this);
+                return ReturnMapUtils.returnFail(list.get(0).getName() + "," + list.get(0).getMessages());
             }
             logger.info("user:{},timezone",teacher.getId());
             Map<String,Object> result = this.recruitmentService.updateTimezone(timezone, teacher);
@@ -120,10 +120,10 @@ public class RecruitmentController extends RestfulController{
             return result;
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
-            return ReturnMapUtils.returnFail(e.getMessage(), this);
+            return ReturnMapUtils.returnFail(e.getMessage(),e);
         } catch (Exception e) {
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            return ReturnMapUtils.returnFail(e.getMessage(), this);
+            return ReturnMapUtils.returnFail(e.getMessage(),e);
         }
     }
     
@@ -142,7 +142,7 @@ public class RecruitmentController extends RestfulController{
             List<Result> list = ValidateUtils.checkBean(bean,false);
             if(CollectionUtils.isNotEmpty(list) && list.get(0).isResult()){
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
-                return ReturnMapUtils.returnFail(list.get(0).getName() + "," + list.get(0).getMessages(), this);
+                return ReturnMapUtils.returnFail(list.get(0).getName() + "," + list.get(0).getMessages());
             }
             logger.info("user:{},updatePassword",teacher.getId());
             User user = getUser(request);
@@ -150,7 +150,7 @@ public class RecruitmentController extends RestfulController{
             //旧密码相等则进行修改逻辑
             if(!StringUtils.equals(user.getPassword(), encoder.encode(bean.getOldPassword()))){
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
-                return ReturnMapUtils.returnFail(" old password is error! ", this);
+                return ReturnMapUtils.returnFail(" old password is error! ");
             }
             Map<String,Object> result = this.passportService.updatePassword(teacher,bean.getNewPassword());
             if(ReturnMapUtils.isFail(result)){
@@ -159,10 +159,10 @@ public class RecruitmentController extends RestfulController{
             return result;
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
-            return ReturnMapUtils.returnFail(e.getMessage(), this);
+            return ReturnMapUtils.returnFail(e.getMessage(),e);
         } catch (Exception e) {
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            return ReturnMapUtils.returnFail(e.getMessage(), this);
+            return ReturnMapUtils.returnFail(e.getMessage(),e);
         }
     }
 }

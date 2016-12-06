@@ -49,10 +49,10 @@ public class EvaluationController extends RestfulController{
             return ReturnMapUtils.returnSuccess(evaluationService.findTags());
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
-            return ReturnMapUtils.returnFail(e.getMessage(), this);
+            return ReturnMapUtils.returnFail(e.getMessage());
         } catch (Exception e) {
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            return ReturnMapUtils.returnFail(e.getMessage(), this);
+            return ReturnMapUtils.returnFail(e.getMessage());
         }
     }
     
@@ -65,10 +65,10 @@ public class EvaluationController extends RestfulController{
             return ReturnMapUtils.returnSuccess(evaluationService.findTeacherBio(teacherId));
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
-            return ReturnMapUtils.returnFail(e.getMessage(), this);
+            return ReturnMapUtils.returnFail(e.getMessage());
         } catch (Exception e) {
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            return ReturnMapUtils.returnFail(e.getMessage(), this);
+            return ReturnMapUtils.returnFail(e.getMessage());
         }
     }
     
@@ -82,10 +82,10 @@ public class EvaluationController extends RestfulController{
             return ReturnMapUtils.returnSuccess(result);
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
-            return ReturnMapUtils.returnFail(e.getMessage(), this);
+            return ReturnMapUtils.returnFail(e.getMessage());
         } catch (Exception e) {
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            return ReturnMapUtils.returnFail(e.getMessage(), this);
+            return ReturnMapUtils.returnFail(e.getMessage());
         }
     }
 }

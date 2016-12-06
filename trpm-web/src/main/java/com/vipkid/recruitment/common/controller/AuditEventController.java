@@ -1,24 +1,25 @@
 package com.vipkid.recruitment.common.controller;
 
 
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.vipkid.recruitment.event.AuditEvent;
 import com.vipkid.recruitment.event.AuditEventHandler;
 import com.vipkid.recruitment.utils.ReturnMapUtils;
 import com.vipkid.rest.RestfulController;
 import com.vipkid.rest.interceptor.annotation.Authentication;
 import com.vipkid.rest.interceptor.annotation.RemoteInterface;
-
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.util.Map;
 
 
 /**
@@ -49,7 +50,7 @@ public class AuditEventController extends RestfulController {
         String result = (String) pramMap.get("result");
 
         if(teacherId == null || StringUtils.isBlank(status) || StringUtils.isBlank(result)) {
-            return ReturnMapUtils.returnFail("Parameter invalid!", this);
+            return ReturnMapUtils.returnFail("Parameter invalid!");
         }
 
         AuditEvent auditEvent = new AuditEvent();

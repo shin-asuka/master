@@ -77,7 +77,7 @@ public class AuditEmailService {
         } catch (Exception e) {
             logger.error("【EMAIL.sendPracticumPass】ERROR: {}", e);
         }
-        return ReturnMapUtils.returnFail("email send fail  ",this);
+        return ReturnMapUtils.returnFail("email send fail  ");
     }
 
     public Map<String,Object> sendPracticum2Start(long teacherId){
@@ -100,7 +100,7 @@ public class AuditEmailService {
         } catch (Exception e) {
             logger.error("【EMAIL.sendPracticum2Start】ERROR: {}", e);
         }
-        return ReturnMapUtils.returnFail("email send fail",this);
+        return ReturnMapUtils.returnFail("email send fail");
     }
 
 
@@ -130,7 +130,7 @@ public class AuditEmailService {
         } catch (Exception e) {
             logger.error("【EMAIL.sendPracticumReapply】ERROR: {}", e);
         }
-        return ReturnMapUtils.returnFail("email send fail",this);
+        return ReturnMapUtils.returnFail("email send fail");
     }
 
 
@@ -152,7 +152,7 @@ public class AuditEmailService {
             logger.error("【EMAIL.sendInterviewPass】ERROR: {}", e);
         }
 
-        return ReturnMapUtils.returnFail("email send fail ",this);
+        return ReturnMapUtils.returnFail("email send fail ");
     }
 
     public Map<String,Object> sendInterviewReapply(long teacherId){
@@ -172,7 +172,7 @@ public class AuditEmailService {
         } catch (Exception e) {
             logger.error("【EMAIL.sendInterviewReapply】ERROR: {}", e);
         }
-        return ReturnMapUtils.returnFail("email send fail ", this);
+        return ReturnMapUtils.returnFail("email send fail ");
     }
 
     public Map<String,Object> sendContractInfoPass(Long teacherId){
@@ -190,7 +190,7 @@ public class AuditEmailService {
         } catch (Exception e) {
             logger.error("【EMAIL.sendContractInfoReapply】ERROR: {}", e);
         }
-        return ReturnMapUtils.returnFail("email send fail ", this);
+        return ReturnMapUtils.returnFail("email send fail ");
     }
 
     public Map<String,Object> sendContractInfoReapply(Long teacherId){
@@ -208,7 +208,7 @@ public class AuditEmailService {
         } catch (Exception e) {
             logger.error("【EMAIL.sendContractInfoReapply】ERROR: {}", e);
         }
-        return ReturnMapUtils.returnFail("email send fail ", this);
+        return ReturnMapUtils.returnFail("email send fail ");
     }
 
 }

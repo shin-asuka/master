@@ -46,45 +46,35 @@ public class ReturnMapUtils {
 
     /**  2. Fail return */
 
-    public static Map<String, Object> returnFail(String info, Object object) {
-        return returnFail(info, null, object.getClass());
+    public static Map<String, Object> returnFail(String info) {
+        return returnFail(info, null,null);
     }
 
-    public static Map<String, Object> returnFail(Map<String, Object> data, Object object) {
-        return returnFail(null, data, object.getClass());
-    }
-
-    public static Map<String, Object> returnFail(String info, Class<?> clazz) {
-        return returnFail(info, null, clazz);
+    public static Map<String, Object> returnFail(Map<String, Object> data) {
+        return returnFail("error", data ,null);
     }
     
-    public static Map<String, Object> returnFail(String info, Map<String, Object> data, Object object) {
-        return returnFail(info, data, object.getClass());
+    public static Map<String, Object> returnFail(String info, Map<String, Object> data) {
+        return returnFail(info, data , null);
     }
 
-    public static Map<String, Object> returnFail(String info, Map<String, Object> data, Class<?> clazz) {
-        return returnFail(info, data, clazz, null);
-    }
-
-    public static Map<String, Object> returnFail(String info, Object object,Throwable t) {
-        return returnFail(info,object.getClass(),t);
+    public static Map<String, Object> returnFail(String info,Throwable t) {
+        return returnFail(info, null, t);
     }
     
-    public static Map<String, Object> returnFail(String info, Class<?> clazz,Throwable t) {
-        return returnFail(info, null, clazz,t);
-    }
-    
-    public static Map<String, Object> returnFail(String info, Map<String, Object> data, Class<?> clazz, Throwable t) {
-        //1. print the error logger and the exception stack
-        Logger clazzLogger = LoggerFactory.getLogger(clazz);
-        if (clazzLogger == null) {
-            clazzLogger = logger;
-        }
+    public static Map<String, Object> returnFail(String info, Map<String, Object> data,Throwable t) {        
 
         if (null != t) {
-            clazzLogger.error(info, t);
+            logger.error(info, t);
         } else {
-            clazzLogger.error(info);
+            //错误异常栈
+            logger.warn(info);
+            StackTraceElement[] elements = new Throwable().getStackTrace();
+            for(int i = 0 ; i < elements.length; i++){
+                if(!elements[i].getClassName().equals(ReturnMapUtils.class.getCanonicalName())){
+                    logger.error(elements[i]+"");
+                }
+            }
         }
 
         //2. compose the result
