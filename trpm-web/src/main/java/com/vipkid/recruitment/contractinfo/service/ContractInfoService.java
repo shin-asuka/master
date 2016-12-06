@@ -161,7 +161,7 @@ public class ContractInfoService {
             TeacherApplication application = list.get(0);
             logger.info("Teacher：{}  find  Teacher Contract Files", teacher.getId());
             List<TeacherContractFile> teacherContractFiles;
-            if(application.getStatus().equals(TeacherApplicationEnum.Status.CONTRACT_INFO)&&application.getResult().equals(TeacherApplicationEnum.Result.PASS)){
+            if(application.getStatus().equals(TeacherApplicationEnum.Status.CONTRACT_INFO.toString())&&application.getResult().equals(TeacherApplicationEnum.Result.PASS.toString())){
                teacherContractFiles =teacherContractFileDao.findByTeacherIdAndTeacherApplicationId(teacher.getId(),application.getId());
             }else {
 
