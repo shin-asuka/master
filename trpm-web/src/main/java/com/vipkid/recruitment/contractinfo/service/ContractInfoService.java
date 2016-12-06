@@ -199,7 +199,7 @@ public class ContractInfoService {
                 if (obj.getFileType() == TeacherApplicationEnum.ContractFileType.CONTRACT_W9.val()) {
                     tax.add(obj);
                 }
-                if (StringUtils.isBlank(obj.getResult())) {
+                if (StringUtils.isNotBlank(obj.getResult())) {
                     res.add(obj.getResult());
                 }
 
