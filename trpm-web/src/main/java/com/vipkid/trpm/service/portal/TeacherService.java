@@ -274,7 +274,7 @@ public class TeacherService {
 
 	public List<TeacherCommentResult> batchGetByOnlineClassIds(List<Long> onlineClassIds){
 		Map<String, String> paramsMap = Maps.newHashMap();
-		paramsMap.put("onlineClassIds", Joiner.on(',').join(onlineClassIds));
+		paramsMap.put("onlineClassIdList", Joiner.on(',').join(onlineClassIds));
 		List<TeacherCommentResult> teacherCommentList = getTeacherCommentResult(paramsMap,
 				API_TEACHER_COMMENT_QUERY_CLASSIDLIST);
 		if (CollectionUtils.isEmpty(teacherCommentList)) {
