@@ -21,7 +21,7 @@ import com.vipkid.enums.TeacherApplicationEnum.Status;
 import com.vipkid.enums.TeacherEnum.LifeCycle;
 import com.vipkid.recruitment.common.service.RecruitmentService;
 import com.vipkid.recruitment.interview.service.InterviewService;
-import com.vipkid.recruitment.utils.ResponseUtils;
+import com.vipkid.recruitment.utils.MapReturnUtils;
 import com.vipkid.rest.RestfulController;
 import com.vipkid.rest.config.RestfulConfig;
 import com.vipkid.rest.interceptor.annotation.RestInterface;
@@ -44,13 +44,13 @@ public class InterviewController extends RestfulController {
         try{
             Map<String,Object> result = Maps.newHashMap();
             result.put("list", this.interviewService.findlistByInterview());
-            return ResponseUtils.responseSuccess(result);
+            return MapReturnUtils.responseSuccess(result);
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
-            return ResponseUtils.responseFail(e.getMessage(), this,e);
+            return MapReturnUtils.responseFail(e.getMessage(), this,e);
         } catch (Exception e) {
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            return ResponseUtils.responseFail(e.getMessage(), this, e);
+            return MapReturnUtils.responseFail(e.getMessage(), this, e);
         }
     }
     
@@ -61,20 +61,20 @@ public class InterviewController extends RestfulController {
             Object onlineClassId = pramMap.get("onlineClassId");
             if(onlineClassId == null || !StringUtils.isNumeric(onlineClassId+"")){
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
-                return ResponseUtils.responseFail("onlineClassId is error !", this);
+                return MapReturnUtils.responseFail("onlineClassId is error !", this);
             }
             //
             Map<String,Object> result = this.interviewService.bookInterviewClass(Long.valueOf(onlineClassId+""), getTeacher(request));
-            if(ResponseUtils.isFail(result)){
+            if(MapReturnUtils.isFail(result)){
                 response.setStatus(HttpStatus.FORBIDDEN.value());
             }
             return result;   
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
-            return ResponseUtils.responseFail(e.getMessage(), this,e);
+            return MapReturnUtils.responseFail(e.getMessage(), this,e);
         } catch (Exception e) {
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            return ResponseUtils.responseFail(e.getMessage(), this, e);
+            return MapReturnUtils.responseFail(e.getMessage(), this, e);
         }
     } 
     
@@ -85,19 +85,19 @@ public class InterviewController extends RestfulController {
             Object onlineClassId = pramMap.get("onlineClassId");
             if(onlineClassId == null || !StringUtils.isNumeric(onlineClassId+"")){
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
-                return ResponseUtils.responseFail("onlineClassId is error !", this);
+                return MapReturnUtils.responseFail("onlineClassId is error !", this);
             }
             Map<String,Object> result = this.interviewService.cancelInterviewClass(Long.valueOf(onlineClassId+""), getTeacher(request));
-            if(ResponseUtils.isFail(result)){
+            if(MapReturnUtils.isFail(result)){
                 response.setStatus(HttpStatus.FORBIDDEN.value());
             }
             return result;
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
-            return ResponseUtils.responseFail(e.getMessage(), this,e);
+            return MapReturnUtils.responseFail(e.getMessage(), this,e);
         } catch (Exception e) {
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            return ResponseUtils.responseFail(e.getMessage(), this, e);
+            return MapReturnUtils.responseFail(e.getMessage(), this, e);
         }
     } 
     
@@ -106,16 +106,16 @@ public class InterviewController extends RestfulController {
     public Map<String,Object> getClassRoomUrl(HttpServletRequest request, HttpServletResponse response,long onlineClassId){
         try{
             Map<String,Object> result = this.interviewService.getClassRoomUrl(onlineClassId, getTeacher(request));
-            if(ResponseUtils.isFail(result)){
+            if(MapReturnUtils.isFail(result)){
                 response.setStatus(HttpStatus.FORBIDDEN.value());
             }
             return result;
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
-            return ResponseUtils.responseFail(e.getMessage(), this,e);
+            return MapReturnUtils.responseFail(e.getMessage(), this,e);
         } catch (Exception e) {
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            return ResponseUtils.responseFail(e.getMessage(), this, e);
+            return MapReturnUtils.responseFail(e.getMessage(), this, e);
         }
     } 
     
@@ -126,16 +126,16 @@ public class InterviewController extends RestfulController {
             Teacher teacher = getTeacher(request);
             logger.info("user:{},getReschedule",teacher.getId());
             Map<String,Object> result = this.interviewService.toTraining(teacher);
-            if(ResponseUtils.isFail(result)){
+            if(MapReturnUtils.isFail(result)){
                 response.setStatus(HttpStatus.FORBIDDEN.value());
             }
             return result;
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
-            return ResponseUtils.responseFail(e.getMessage(), this,e);
+            return MapReturnUtils.responseFail(e.getMessage(), this,e);
         } catch (Exception e) {
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            return ResponseUtils.responseFail(e.getMessage(), this, e);
+            return MapReturnUtils.responseFail(e.getMessage(), this, e);
         }
     }
 
@@ -144,13 +144,13 @@ public class InterviewController extends RestfulController {
         try{
             Map<String,Object> result = Maps.newHashMap();
             result.put("count",this.recruitmentService.getRemainRescheduleTimes(getTeacher(request), Status.INTERVIEW.toString(), Result.CANCEL.toString()));
-            return ResponseUtils.responseSuccess(result);
+            return MapReturnUtils.responseSuccess(result);
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
-            return ResponseUtils.responseFail(e.getMessage(), this,e);
+            return MapReturnUtils.responseFail(e.getMessage(), this,e);
         } catch (Exception e) {
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            return ResponseUtils.responseFail(e.getMessage(), this, e);
+            return MapReturnUtils.responseFail(e.getMessage(), this, e);
         }
     }
 }

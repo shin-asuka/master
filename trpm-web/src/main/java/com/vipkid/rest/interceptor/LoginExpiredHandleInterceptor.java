@@ -19,7 +19,7 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import com.vipkid.enums.AppEnum;
 import com.vipkid.enums.TeacherEnum.LifeCycle;
 import com.vipkid.enums.UserEnum;
-import com.vipkid.recruitment.utils.ResponseUtils;
+import com.vipkid.recruitment.utils.MapReturnUtils;
 import com.vipkid.rest.RestfulController;
 import com.vipkid.rest.config.RestfulConfig;
 import com.vipkid.rest.interceptor.annotation.AnnotaionUtils;
@@ -98,7 +98,7 @@ public class LoginExpiredHandleInterceptor extends HandlerInterceptorAdapter {
     private void responseToJson(String Jsonbody,HttpServletResponse response){
         try{
             response.setContentType(RestfulConfig.JSON_UTF_8);
-            response.getWriter().print(JsonTools.getJson(ResponseUtils.responseFail(Jsonbody,this)));
+            response.getWriter().print(JsonTools.getJson(MapReturnUtils.responseFail(Jsonbody,this)));
             response.getWriter().close();
         }catch(Exception ex){
             ex.printStackTrace();

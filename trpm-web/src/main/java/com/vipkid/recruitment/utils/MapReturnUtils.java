@@ -15,9 +15,9 @@ import com.google.api.client.util.Maps;
  *
  * @author Along
  */
-public class ResponseUtils {
+public class MapReturnUtils {
 
-    public static Logger logger = LoggerFactory.getLogger(ResponseUtils.class);
+    public static Logger logger = LoggerFactory.getLogger(MapReturnUtils.class);
 
     /** 1. Successful response */
     public static Map<String, Object> responseSuccess() {

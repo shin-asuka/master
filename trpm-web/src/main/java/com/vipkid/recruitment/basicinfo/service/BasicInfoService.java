@@ -27,7 +27,7 @@ import com.vipkid.recruitment.dao.TeacherApplicationDao;
 import com.vipkid.recruitment.dao.TeachingExperienceDao;
 import com.vipkid.recruitment.entity.TeacherApplication;
 import com.vipkid.recruitment.entity.TeachingExperience;
-import com.vipkid.recruitment.utils.ResponseUtils;
+import com.vipkid.recruitment.utils.MapReturnUtils;
 import com.vipkid.rest.config.RestfulConfig;
 import com.vipkid.rest.dto.TeacherDto;
 import com.vipkid.trpm.dao.TeacherAddressDao;
@@ -113,7 +113,7 @@ public class BasicInfoService {
         this.initTeacher(teacher, bean);
         this.teacherDao.update(teacher);
         result.put("id", user.getId());
-        return ResponseUtils.responseSuccess(result);
+        return MapReturnUtils.responseSuccess(result);
     }
     
     /**
@@ -141,7 +141,7 @@ public class BasicInfoService {
         List<TeacherApplication> applicationList = teacherApplicationDao.findApplictionForStatus(user.getId(),LifeCycle.BASIC_INFO.toString());
         if(CollectionUtils.isNotEmpty(applicationList)){
             logger.error("已经提交基本信息的老师{}，重复提交被拦截:提交状态{},审核结果{},用户状态:{}",teacher.getId(),applicationList.get(0).getStatus(),applicationList.get(0).getResult(),teacher.getLifeCycle());
-            return ResponseUtils.responseFail("You have already submitted data!", this);
+            return MapReturnUtils.responseFail("You have already submitted data!", this);
         }
         //3.更新Teacher
         teacher = this.initTeacher(teacher, bean);   
@@ -163,7 +163,7 @@ public class BasicInfoService {
         TeacherAddress teacherAddress = this.teacherAddressDao.updateOrSaveCurrentAddressId(teacher, bean.getCountryId(), bean.getStateId(), bean.getCityId(), bean.getStreetAddress(), bean.getZipCode());
         if(teacherAddress == null || teacherAddress.getId() <= 0){
             logger.error("老师:{},地址信息:{},保存有问题.",teacher.getId(),JsonTools.getJson(teacherAddress));
-            return ResponseUtils.responseFail("You address save error data!", this);
+            return MapReturnUtils.responseFail("You address save error data!", this);
         }
    
         //4.新增 TeacherApplication
@@ -206,7 +206,7 @@ public class BasicInfoService {
         this.teacherApplicationDao.save(application);
         this.teacherDao.update(teacher);
         result.put("id", user.getId());
-        return ResponseUtils.responseSuccess(result);
+        return MapReturnUtils.responseSuccess(result);
     }
    
     /**
@@ -278,7 +278,7 @@ public class BasicInfoService {
     public Map<String,Object> toInterview(Teacher teacher){
         List<TeacherApplication> listEntity = teacherApplicationDao.findCurrentApplication(teacher.getId());
         if(CollectionUtils.isEmpty(listEntity)){
-            return ResponseUtils.responseFail("You have no legal power into the next phase !",this);
+            return MapReturnUtils.responseFail("You have no legal power into the next phase !",this);
         }
         //执行逻辑 只有在INTERVIEW的PASS状态才能进入
         if(Status.BASIC_INFO.toString().equals(listEntity.get(0).getStatus())
@@ -287,9 +287,9 @@ public class BasicInfoService {
             teacher.setLifeCycle(LifeCycle.INTERVIEW.toString());
             this.teacherDao.insertLifeCycleLog(teacher.getId(),LifeCycle.BASIC_INFO,LifeCycle.INTERVIEW, teacher.getId());
             this.teacherDao.update(teacher);
-            return ResponseUtils.responseSuccess();
+            return MapReturnUtils.responseSuccess();
         }
-        return ResponseUtils.responseFail("You have no legal power into the next phase !",this);
+        return MapReturnUtils.responseFail("You have no legal power into the next phase !",this);
     }
     
     /**

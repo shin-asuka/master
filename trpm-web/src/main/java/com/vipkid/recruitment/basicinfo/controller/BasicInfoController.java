@@ -24,7 +24,7 @@ import com.vipkid.enums.TeacherEnum.RecruitmentChannel;
 import com.vipkid.enums.UserEnum.Gender;
 import com.vipkid.recruitment.basicinfo.service.BasicInfoService;
 import com.vipkid.recruitment.basicinfo.service.TeachingExperienceService;
-import com.vipkid.recruitment.utils.ResponseUtils;
+import com.vipkid.recruitment.utils.MapReturnUtils;
 import com.vipkid.rest.RestfulController;
 import com.vipkid.rest.config.RestfulConfig;
 import com.vipkid.rest.dto.TeacherDto;
@@ -54,13 +54,13 @@ public class BasicInfoController extends RestfulController{
         try{
             Map<String,Object> result = Maps.newHashMap();
             result.put("list", this.basicInfoService.getRecruitmentChannelList());
-            return ResponseUtils.responseSuccess(result);
+            return MapReturnUtils.responseSuccess(result);
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
-            return ResponseUtils.responseFail(e.getMessage(), this,e);
+            return MapReturnUtils.responseFail(e.getMessage(), this,e);
         } catch (Exception e) {
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            return ResponseUtils.responseFail(e.getMessage(), this, e);
+            return MapReturnUtils.responseFail(e.getMessage(), this, e);
         }
     }
     
@@ -71,13 +71,13 @@ public class BasicInfoController extends RestfulController{
             User user = getUser(request);
             Map<String,Object> result = Maps.newHashMap();
             result.put("list", this.teachingExperienceService.getTeachingList(user.getId()));
-            return ResponseUtils.responseSuccess(result);
+            return MapReturnUtils.responseSuccess(result);
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
-            return ResponseUtils.responseFail(e.getMessage(), this,e);
+            return MapReturnUtils.responseFail(e.getMessage(), this,e);
         } catch (Exception e) {
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            return ResponseUtils.responseFail(e.getMessage(), this, e);
+            return MapReturnUtils.responseFail(e.getMessage(), this, e);
         }
     }
     
@@ -90,12 +90,12 @@ public class BasicInfoController extends RestfulController{
             List<Result> list = ValidateUtils.checkBean(teachingExperience,false);
             if(CollectionUtils.isNotEmpty(list) && list.get(0).isResult()){
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
-                return ResponseUtils.responseFail(list.get(0).getName() + "," + list.get(0).getMessages(), this);
+                return MapReturnUtils.responseFail(list.get(0).getName() + "," + list.get(0).getMessages(), this);
             }
             //时间判断
             if(teachingExperience.getTimePeriodStart() >= teachingExperience.getTimePeriodEnd()){
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
-                return ResponseUtils.responseFail("The time interval is illegal!", this);
+                return MapReturnUtils.responseFail("The time interval is illegal!", this);
             }
             if(teachingExperience.getId() > 0){
                 resultRow = this.teachingExperienceService.updateTeaching(teachingExperience, user);
@@ -104,18 +104,18 @@ public class BasicInfoController extends RestfulController{
             }
             Map<String,Object> result = Maps.newHashMap();
             result.put("status", resultRow > 0 ? true : false);
-            if(ResponseUtils.isFail(result)){
+            if(MapReturnUtils.isFail(result)){
                 response.setStatus(HttpStatus.FORBIDDEN.value());
-                return ResponseUtils.responseFail("Save or Update fail",result,this);
+                return MapReturnUtils.responseFail("Save or Update fail",result,this);
             }
             result.put("id", resultRow);
             return result;
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
-            return ResponseUtils.responseFail(e.getMessage(), this,e);
+            return MapReturnUtils.responseFail(e.getMessage(), this,e);
         } catch (Exception e) {
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            return ResponseUtils.responseFail(e.getMessage(), this, e);
+            return MapReturnUtils.responseFail(e.getMessage(), this, e);
         }
     } 
     
@@ -128,18 +128,18 @@ public class BasicInfoController extends RestfulController{
             User user = getUser(request);
             resultRow = this.teachingExperienceService.delTeaching(id, user);
             result.put("status", resultRow > 0 ? true : false);
-            if(ResponseUtils.isFail(result)){
+            if(MapReturnUtils.isFail(result)){
                 response.setStatus(HttpStatus.FORBIDDEN.value());
-                return ResponseUtils.responseFail("Save or Update fail",result,this);
+                return MapReturnUtils.responseFail("Save or Update fail",result,this);
             }
             result.put("id", resultRow);
             return result;
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
-            return ResponseUtils.responseFail(e.getMessage(), this,e);
+            return MapReturnUtils.responseFail(e.getMessage(), this,e);
         } catch (Exception e) {
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            return ResponseUtils.responseFail(e.getMessage(), this, e);
+            return MapReturnUtils.responseFail(e.getMessage(), this, e);
         }
     } 
     
@@ -167,33 +167,33 @@ public class BasicInfoController extends RestfulController{
             List<Result> list = ValidateUtils.checkBean(bean,false);
             if(CollectionUtils.isNotEmpty(list) && list.get(0).isResult()){
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
-                return ResponseUtils.responseFail(list.get(0).getName() + "," + list.get(0).getMessages(), this);
+                return MapReturnUtils.responseFail(list.get(0).getName() + "," + list.get(0).getMessages(), this);
             }
             if(!AppEnum.containsName(Gender.class, bean.getGender())){
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
-                return ResponseUtils.responseFail("Gender data is error:"+bean.getGender(), this);
+                return MapReturnUtils.responseFail("Gender data is error:"+bean.getGender(), this);
             }
             if(!AppEnum.containsName(DegreeType.class, bean.getHighestLevelOfEdu())){
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
-                return ResponseUtils.responseFail("HighestLevelOfEdu data is error:"+bean.getHighestLevelOfEdu(), this);
+                return MapReturnUtils.responseFail("HighestLevelOfEdu data is error:"+bean.getHighestLevelOfEdu(), this);
             }
             if(!AppEnum.containsName(RecruitmentChannel.class, bean.getRecruitmentChannel())){
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
-                return ResponseUtils.responseFail("RecruitmentChannel data is error:"+bean.getRecruitmentChannel(), this);
+                return MapReturnUtils.responseFail("RecruitmentChannel data is error:"+bean.getRecruitmentChannel(), this);
             }
             User user = getUser(request);
             String token = request.getHeader(RestfulController.AUTOKEN);
             result = this.basicInfoService.submitInfo(bean,user,token);
-            if(ResponseUtils.isFail(result)){
+            if(MapReturnUtils.isFail(result)){
                 response.setStatus(HttpStatus.FORBIDDEN.value());
             }
             return result;
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
-            return ResponseUtils.responseFail(e.getMessage(), this,e);
+            return MapReturnUtils.responseFail(e.getMessage(), this,e);
         } catch (Exception e) {
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            return ResponseUtils.responseFail(e.getMessage(), this, e);
+            return MapReturnUtils.responseFail(e.getMessage(), this, e);
         }
     } 
     
@@ -204,16 +204,16 @@ public class BasicInfoController extends RestfulController{
             Teacher teacher = getTeacher(request);
             logger.info("user:{},getReschedule",teacher.getId());
             Map<String,Object> result = this.basicInfoService.toInterview(teacher);
-            if(ResponseUtils.isFail(result)){
+            if(MapReturnUtils.isFail(result)){
                 response.setStatus(HttpStatus.FORBIDDEN.value());
             }
             return result;
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
-            return ResponseUtils.responseFail(e.getMessage(), this,e);
+            return MapReturnUtils.responseFail(e.getMessage(), this,e);
         } catch (Exception e) {
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            return ResponseUtils.responseFail(e.getMessage(), this, e);
+            return MapReturnUtils.responseFail(e.getMessage(), this, e);
         }
     } 
         
@@ -224,13 +224,13 @@ public class BasicInfoController extends RestfulController{
             User user = getUser(request);
             logger.info("userId:{}",user.getId());
             result.put("list", this.basicInfoService.findTeacher());
-            return ResponseUtils.responseSuccess(result);
+            return MapReturnUtils.responseSuccess(result);
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
-            return ResponseUtils.responseFail(e.getMessage(), this,e);
+            return MapReturnUtils.responseFail(e.getMessage(), this,e);
         } catch (Exception e) {
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            return ResponseUtils.responseFail(e.getMessage(), this, e);
+            return MapReturnUtils.responseFail(e.getMessage(), this, e);
         }
     }
 

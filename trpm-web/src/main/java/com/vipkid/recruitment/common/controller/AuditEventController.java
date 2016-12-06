@@ -3,7 +3,7 @@ package com.vipkid.recruitment.common.controller;
 import com.vipkid.recruitment.common.service.AuditEmailService;
 import com.vipkid.recruitment.event.AuditEvent;
 import com.vipkid.recruitment.event.AuditEventHandler;
-import com.vipkid.recruitment.utils.ResponseUtils;
+import com.vipkid.recruitment.utils.MapReturnUtils;
 import com.vipkid.rest.RestfulController;
 import com.vipkid.rest.interceptor.annotation.Authentication;
 import com.vipkid.rest.interceptor.annotation.RemoteInterface;
@@ -54,7 +54,7 @@ public class AuditEventController extends RestfulController {
         String result = (String) pramMap.get("result");
 
         if(teacherId == null || StringUtils.isBlank(status) || StringUtils.isBlank(result)) {
-            return ResponseUtils.responseFail("Parameter invalid!", this);
+            return MapReturnUtils.responseFail("Parameter invalid!", this);
         }
 
         AuditEvent auditEvent = new AuditEvent();

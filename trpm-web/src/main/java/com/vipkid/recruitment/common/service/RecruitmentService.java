@@ -24,7 +24,7 @@ import com.vipkid.recruitment.dao.TeacherApplicationLogDao;
 import com.vipkid.recruitment.dao.TeacherLockLogDao;
 import com.vipkid.recruitment.entity.TeacherApplication;
 import com.vipkid.recruitment.entity.TeacherLockLog;
-import com.vipkid.recruitment.utils.ResponseUtils;
+import com.vipkid.recruitment.utils.MapReturnUtils;
 import com.vipkid.rest.dto.TimezoneDto;
 import com.vipkid.trpm.constant.ApplicationConstant.FinishType;
 import com.vipkid.trpm.dao.OnlineClassDao;
@@ -277,10 +277,10 @@ public class RecruitmentService {
         //2.更新Address
         TeacherAddress teacherAddress = this.teacherAddressDao.updateOrSaveCurrentAddressId(teacher, bean.getCountryId(), bean.getStateId(), bean.getCityId(),null,null);
         if(teacherAddress == null || teacherAddress.getId() <= 0){
-            return ResponseUtils.responseFail("老师:"+teacher.getId()+",地址信息:"+JsonTools.getJson(teacherAddress)+",保存有问题.", this);
+            return MapReturnUtils.responseFail("老师:"+teacher.getId()+",地址信息:"+JsonTools.getJson(teacherAddress)+",保存有问题.", this);
         }
         this.teacherDao.update(teacher);
-        return ResponseUtils.responseSuccess();
+        return MapReturnUtils.responseSuccess();
     }
 
 
