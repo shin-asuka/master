@@ -22,7 +22,7 @@ import com.vipkid.email.EmailUtils;
 import com.vipkid.enums.OnlineClassEnum.CourseType;
 import com.vipkid.enums.TeacherEnum.LifeCycle;
 import com.vipkid.enums.TeacherModuleEnum.RoleClass;
-import com.vipkid.recruitment.utils.MapReturnUtils;
+import com.vipkid.recruitment.utils.ReturnMapUtils;
 import com.vipkid.rest.config.RestfulConfig;
 import com.vipkid.rest.config.TeacherInfo;
 import com.vipkid.trpm.constant.ApplicationConstant;
@@ -301,17 +301,17 @@ public class LoginService {
         if (null != redisProxy.get(key)) {
             Map<String,Object> result = Maps.newHashMap();
             result.put("expire", redisProxy.ttl(key));
-            return MapReturnUtils.returnFail("The activation email ["+email+"] time is not expire",result,this);
+            return ReturnMapUtils.returnFail("The activation email ["+email+"] time is not expire",result,this);
         }
         
         Teacher teacher = teacherDao.findByEmail(email);
         if (0 == teacher.getId()) {
-            return MapReturnUtils.returnFail(" Email is null ", this);
+            return ReturnMapUtils.returnFail(" Email is null ", this);
         }
         
         EmailUtils.sendActivationEmail(teacher);
         redisProxy.set(key, "true", EXPIRED_SECONDS);
-        return MapReturnUtils.returnSuccess();
+        return ReturnMapUtils.returnSuccess();
     }
     
 

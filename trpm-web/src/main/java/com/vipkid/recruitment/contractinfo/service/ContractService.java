@@ -6,7 +6,7 @@ import java.util.Map;
 
 import com.vipkid.recruitment.dao.TeacherContractFileDao;
 import com.vipkid.recruitment.entity.TeacherContractFile;
-import com.vipkid.recruitment.utils.MapReturnUtils;
+import com.vipkid.recruitment.utils.ReturnMapUtils;
 import com.vipkid.trpm.dao.TeacherAddressDao;
 import com.vipkid.trpm.dao.TeacherTaxpayerFormDao;
 import com.vipkid.trpm.entity.TeacherAddress;
@@ -134,17 +134,17 @@ public class ContractService {
     public Map<String, Object> reomteFile(int fileId, long teacherId) {
         TeacherContractFile teacherContractFile = this.teacherContractFileDao.findById(fileId);
         if(null==teacherContractFile){
-            return MapReturnUtils.returnFail("You  delete the file failed!", this);
+            return ReturnMapUtils.returnFail("You  delete the file failed!", this);
         }
         if (teacherContractFile.getTeacherId() != teacherId) {
-            return MapReturnUtils.returnFail("You can't delete the file !", this);
+            return ReturnMapUtils.returnFail("You can't delete the file !", this);
         } else {
             if (teacherContractFile.getTeacherApplicationId() == 0) {
                 logger.info("Teacher:{} delete teacherContractFile",teacherId);
                 this.teacherContractFileDao.delete(teacherContractFile);
-                return MapReturnUtils.returnSuccess();
+                return ReturnMapUtils.returnSuccess();
             } else {
-                return MapReturnUtils.returnSuccess();
+                return ReturnMapUtils.returnSuccess();
             }
         }
     }

@@ -18,7 +18,7 @@ import com.vipkid.email.EmailUtils;
 import com.vipkid.enums.TeacherEnum;
 import com.vipkid.enums.TeacherEnum.RecruitmentChannel;
 import com.vipkid.enums.UserEnum;
-import com.vipkid.recruitment.utils.MapReturnUtils;
+import com.vipkid.recruitment.utils.ReturnMapUtils;
 import com.vipkid.trpm.constant.ApplicationConstant;
 import com.vipkid.trpm.dao.AppRestfulDao;
 import com.vipkid.trpm.dao.TeacherDao;
@@ -118,7 +118,7 @@ public class PassportService {
         User user = this.userDao.findByUsername(email);
         // 1.是否存在
         if (user != null) {
-            return MapReturnUtils.returnFail(ApplicationConstant.AjaxCode.USER_EXITS, this);
+            return ReturnMapUtils.returnFail(ApplicationConstant.AjaxCode.USER_EXITS, this);
         }
         // 2.创建User
         user = new User();
@@ -167,7 +167,7 @@ public class PassportService {
             resultMap.put("uuid", AES.encrypt(teacher.getRecruitmentId(),AES.getKey(AES.KEY_LENGTH_128, ApplicationConstant.AES_128_KEY)));
         }
         resultMap.put("user", user);
-        return MapReturnUtils.returnSuccess(resultMap);
+        return ReturnMapUtils.returnSuccess(resultMap);
     }
 
     /**
@@ -207,11 +207,11 @@ public class PassportService {
     public Map<String, Object> senEmailForPassword(User user) {
         Teacher teacher = this.findTeacherById(user.getId());
         if(teacher == null){
-            return MapReturnUtils.returnFail("The is a not exits teacher!", this);
+            return ReturnMapUtils.returnFail("The is a not exits teacher!", this);
         }
         teacher.setRecruitmentId(this.updateRecruitmentId(teacher));
         EmailUtils.sendRestPasswordEmail(teacher);
-        return MapReturnUtils.returnSuccess();
+        return ReturnMapUtils.returnSuccess();
     }
 
     /**
@@ -270,12 +270,12 @@ public class PassportService {
     public Map<String,Object> updatePassword(Teacher teacher, String newpassword) {
         User user = this.userDao.findById(teacher.getId());
         if (user == null){
-            return MapReturnUtils.returnFail("User is null,Id:"+teacher.getId(), this);
+            return ReturnMapUtils.returnFail("User is null,Id:"+teacher.getId(), this);
         }
         //解码64
         String strPwd = new String(Base64.getDecoder().decode(newpassword));
         if (StringUtils.isBlank(strPwd)) {
-            return MapReturnUtils.returnFail("new password base64 is error ! "+newpassword, this);
+            return ReturnMapUtils.returnFail("new password base64 is error ! "+newpassword, this);
         }
         //SHA256加密
         SHA256PasswordEncoder encoder = new SHA256PasswordEncoder();
@@ -288,7 +288,7 @@ public class PassportService {
         //更新user的密码
         int i = this.userDao.update(user);
         if (i <= 0) {
-            return MapReturnUtils.returnFail("update user result is "+i+" , id:"+user.getId(), this);
+            return ReturnMapUtils.returnFail("update user result is "+i+" , id:"+user.getId(), this);
         }
         //更新Teacher修改密码的验证token，使原来的密码修改token失效
         this.updateRecruitmentId(teacher);
@@ -298,7 +298,7 @@ public class PassportService {
             this.appRestfulDao.updateTeacherToken(Long.valueOf(tokenMap.get("id") + ""), user.getToken());
         }
         //返回成功
-        return MapReturnUtils.returnSuccess();
+        return ReturnMapUtils.returnSuccess();
         
     }
 

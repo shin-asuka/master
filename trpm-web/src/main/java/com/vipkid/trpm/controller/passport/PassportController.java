@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.vipkid.enums.TeacherEnum;
 import com.vipkid.enums.UserEnum;
-import com.vipkid.recruitment.utils.MapReturnUtils;
+import com.vipkid.recruitment.utils.ReturnMapUtils;
 import com.vipkid.rest.service.LoginService;
 import com.vipkid.trpm.constant.ApplicationConstant;
 import com.vipkid.trpm.constant.ApplicationConstant.CookieKey;
@@ -374,7 +374,7 @@ public class PassportController extends AbstractController {
 			return jsonView(response, model.asMap());
 		}
 		Map<String,Object> retMap = this.passportService.updatePassword(teacher, password);
-		if (MapReturnUtils.isFail(retMap)) {
+		if (ReturnMapUtils.isFail(retMap)) {
 			return jsonView(response, model.asMap());
 		}
 		model.addAttribute("lifeCycle", teacher.getLifeCycle());

@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.google.api.client.util.Maps;
 import com.vipkid.enums.TeacherEnum.LifeCycle;
 import com.vipkid.enums.TeacherPageLoginEnum.LoginType;
-import com.vipkid.recruitment.utils.MapReturnUtils;
+import com.vipkid.recruitment.utils.ReturnMapUtils;
 import com.vipkid.rest.RestfulController;
 import com.vipkid.rest.config.RestfulConfig;
 import com.vipkid.rest.interceptor.annotation.RestInterface;
@@ -46,13 +46,13 @@ public class EvaluationController extends RestfulController{
         try{
             User user = getUser(request);
             logger.info("userId:" + user.getId());
-            return MapReturnUtils.returnSuccess(evaluationService.findTags());
+            return ReturnMapUtils.returnSuccess(evaluationService.findTags());
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
-            return MapReturnUtils.returnFail(e.getMessage(), this);
+            return ReturnMapUtils.returnFail(e.getMessage(), this);
         } catch (Exception e) {
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            return MapReturnUtils.returnFail(e.getMessage(), this);
+            return ReturnMapUtils.returnFail(e.getMessage(), this);
         }
     }
     
@@ -62,13 +62,13 @@ public class EvaluationController extends RestfulController{
         try{
             User user = getUser(request);
             logger.info("userId:" + user.getId());
-            return MapReturnUtils.returnSuccess(evaluationService.findTeacherBio(teacherId));
+            return ReturnMapUtils.returnSuccess(evaluationService.findTeacherBio(teacherId));
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
-            return MapReturnUtils.returnFail(e.getMessage(), this);
+            return ReturnMapUtils.returnFail(e.getMessage(), this);
         } catch (Exception e) {
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            return MapReturnUtils.returnFail(e.getMessage(), this);
+            return ReturnMapUtils.returnFail(e.getMessage(), this);
         }
     }
     
@@ -79,13 +79,13 @@ public class EvaluationController extends RestfulController{
             logger.info("userId:" + user.getId());
             Map<String,Object> result = Maps.newHashMap();
             result.put("result",this.teacherPageLoginService.saveTeacherPageLogin(user.getId(),LoginType.EVALUATION_CLICK));
-            return MapReturnUtils.returnSuccess(result);
+            return ReturnMapUtils.returnSuccess(result);
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
-            return MapReturnUtils.returnFail(e.getMessage(), this);
+            return ReturnMapUtils.returnFail(e.getMessage(), this);
         } catch (Exception e) {
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            return MapReturnUtils.returnFail(e.getMessage(), this);
+            return ReturnMapUtils.returnFail(e.getMessage(), this);
         }
     }
 }

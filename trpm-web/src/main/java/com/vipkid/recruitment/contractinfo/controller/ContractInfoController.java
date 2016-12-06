@@ -44,7 +44,7 @@ import com.vipkid.recruitment.contractinfo.service.ContractService;
 import com.vipkid.recruitment.entity.ContractFile;
 import com.vipkid.recruitment.entity.TeacherContractFile;
 import com.vipkid.recruitment.contractinfo.service.ContractInfoService;
-import com.vipkid.recruitment.utils.MapReturnUtils;
+import com.vipkid.recruitment.utils.ReturnMapUtils;
 import com.vipkid.rest.RestfulController;
 import com.vipkid.rest.config.RestfulConfig;
 import com.vipkid.rest.interceptor.annotation.RestInterface;
@@ -104,7 +104,7 @@ public class ContractInfoController extends RestfulController {
             Teacher teacher = getTeacher(request);
             if (null == teacher) {
                 response.setStatus(HttpStatus.NOT_FOUND.value());
-                return MapReturnUtils.returnFail("Teacher doesn't exist", this);
+                return ReturnMapUtils.returnFail("Teacher doesn't exist", this);
             }
             Long teacherId = teacher.getId();
 
@@ -154,14 +154,14 @@ public class ContractInfoController extends RestfulController {
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
             logger.error("queryContractInfo with IllegalArgumentException", e);
-            return MapReturnUtils.returnFail(e.getMessage(), this,e);
+            return ReturnMapUtils.returnFail(e.getMessage(), this,e);
         } catch (Exception e) {
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
             logger.error("queryContractInfo with Exception", e);
-            return MapReturnUtils.returnFail(e.getMessage(), this,e);
+            return ReturnMapUtils.returnFail(e.getMessage(), this,e);
         }
         logger.info("Successful query contract info {}", JsonUtils.toJSONString(result));
-        return MapReturnUtils.returnSuccess(result);
+        return ReturnMapUtils.returnSuccess(result);
     }
 
 
@@ -179,7 +179,7 @@ public class ContractInfoController extends RestfulController {
 
         logger.info("uplod file id String {},techer 的自我简介{}",fileIds,bio);
         if(StringUtils.isBlank(fileIds)){
-            return MapReturnUtils.returnFail("You don't have to upload the file", this);
+            return ReturnMapUtils.returnFail("You don't have to upload the file", this);
         }
 
         //ID (3 TYPES), DIPLOMA, DEGREE, CERTIFICATE, W9, CONTRACT,
@@ -193,51 +193,51 @@ public class ContractInfoController extends RestfulController {
             Long teacherId = teacher.getId();
             boolean submit = CheckManySubmit(teacherId);
             if(submit){
-                return MapReturnUtils.returnFail("The teacher has been submitted. ", this);
+                return ReturnMapUtils.returnFail("The teacher has been submitted. ", this);
             }
 
             if (null == teacher) {
                 response.setStatus(HttpStatus.NOT_FOUND.value());
-                return MapReturnUtils.returnFail("Teacher doesn't exist", this);
+                return ReturnMapUtils.returnFail("Teacher doesn't exist", this);
             }
 
             //check contract files
             boolean isContractFileValid = checkContractFile(teacherId,idList);
             if(!isContractFileValid) {
-                return MapReturnUtils.returnFail("Teacher's contract files do NOT exists, failed to submit", this);
+                return ReturnMapUtils.returnFail("Teacher's contract files do NOT exists, failed to submit", this);
 
             }
             logger.info("Check Teacher 的 file id{}",idList);
             //check personal info
             boolean isPersonalInfoValid = checkPersonInfo(teacherId);
             if(!isPersonalInfoValid) {
-                return MapReturnUtils.returnFail("Teacher's personal files do NOT exists, failed to update bio", this);
+                return ReturnMapUtils.returnFail("Teacher's personal files do NOT exists, failed to update bio", this);
             }
 
             logger.info("update Teacher 的自我简介{}",bio);
             teacher.setIntroduction(bio);
             boolean bioUpdated = contractInfoService.updateTeacher(teacher);
             if(!bioUpdated) {
-                return MapReturnUtils.returnFail("Failed to submit teacher bio", this);
+                return ReturnMapUtils.returnFail("Failed to submit teacher bio", this);
             }
 
             boolean result = contractService.updateTeacherApplication(teacher,idList);
             if(!result){
                 logger.error("Failed to submit contract info!");
                 response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-                return MapReturnUtils.returnFail("Failed to submitsContractInfo!", this);
+                return ReturnMapUtils.returnFail("Failed to submitsContractInfo!", this);
             }
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
             logger.error("submitContractInfo with IllegalArgumentException", e);
-            return MapReturnUtils.returnFail(e.getMessage(), this,e);
+            return ReturnMapUtils.returnFail(e.getMessage(), this,e);
         } catch (Exception e) {
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
             logger.error("submitContractInfo with Exception", e);
-            return MapReturnUtils.returnFail(e.getMessage(), this,e);
+            return ReturnMapUtils.returnFail(e.getMessage(), this,e);
         }
         logger.info("Successful submit contract info!");
-        return MapReturnUtils.returnSuccess();
+        return ReturnMapUtils.returnSuccess();
     }
 
     //检查用户是否重复提交
@@ -321,7 +321,7 @@ public class ContractInfoController extends RestfulController {
                 Teacher teacher = getTeacher(request);
                 if (null == teacher) {
                     response.setStatus(HttpStatus.NOT_FOUND.value());
-                    return MapReturnUtils.returnFail("Teacher doesn't exist", this);
+                    return ReturnMapUtils.returnFail("Teacher doesn't exist", this);
                 }
                 Long teacherId = teacher.getId();
 
@@ -333,24 +333,24 @@ public class ContractInfoController extends RestfulController {
                     result.put("url", fileUploadStatus.getUrl());
                     //result.put("status", fileUploadStatus.getStatus());
                     logger.info("Successful to upload avatar!");
-                    return MapReturnUtils.returnSuccess(result);
+                    return ReturnMapUtils.returnSuccess(result);
                 } else {
                     logger.error("Failed to upload avatar!");
                     response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-                    return MapReturnUtils.returnFail("Failed to upload avatar to AWS.", this);
+                    return ReturnMapUtils.returnFail("Failed to upload avatar to AWS.", this);
                 }
             } catch (IllegalArgumentException e) {
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
                 logger.error("submitContractInfo with Exception", e);
-                return MapReturnUtils.returnFail(e.getMessage(), this,e);
+                return ReturnMapUtils.returnFail(e.getMessage(), this,e);
             } catch (Exception e) {
                 response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
                 logger.error("submitContractInfo with Exception", e);
-                return MapReturnUtils.returnFail(e.getMessage(), this,e);
+                return ReturnMapUtils.returnFail(e.getMessage(), this,e);
             }
         }
         response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-        return MapReturnUtils.returnFail("Failed to upload avatar!", this);
+        return ReturnMapUtils.returnFail("Failed to upload avatar!", this);
     }
 
     @ResponseBody
@@ -372,7 +372,7 @@ public class ContractInfoController extends RestfulController {
                 Teacher teacher = getTeacher(request);
                 if (null == teacher) {
                     response.setStatus(HttpStatus.NOT_FOUND.value());
-                    return MapReturnUtils.returnFail("Teacher doesn't exist", this);
+                    return ReturnMapUtils.returnFail("Teacher doesn't exist", this);
                 }
                 Long teacherId = teacher.getId();
 
@@ -384,21 +384,21 @@ public class ContractInfoController extends RestfulController {
                     result.put("url", fileUploadStatus.getUrl());
                     //result.put("status", fileUploadStatus.getStatus());
                     logger.info("Successful to upload uploadLifePic: {}", JsonUtils.toJSONString(result));
-                    return MapReturnUtils.returnSuccess(result);
+                    return ReturnMapUtils.returnSuccess(result);
                 } else {
                     response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-                    return MapReturnUtils.returnFail("Failed to upload life picture to AWS.", this);
+                    return ReturnMapUtils.returnFail("Failed to upload life picture to AWS.", this);
                 }
             } catch (IllegalArgumentException e) {
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
-                return MapReturnUtils.returnFail(e.getMessage(), this,e);
+                return ReturnMapUtils.returnFail(e.getMessage(), this,e);
             } catch (Exception e) {
                 response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-                return MapReturnUtils.returnFail(e.getMessage(), this,e);
+                return ReturnMapUtils.returnFail(e.getMessage(), this,e);
             }
         }
         response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-        return MapReturnUtils.returnFail("Failed to upload life picture!", this);
+        return ReturnMapUtils.returnFail("Failed to upload life picture!", this);
     }
 
     @ResponseBody
@@ -420,7 +420,7 @@ public class ContractInfoController extends RestfulController {
                 Teacher teacher = getTeacher(request);
                 if (null == teacher) {
                     response.setStatus(HttpStatus.NOT_FOUND.value());
-                    return MapReturnUtils.returnFail("Teacher doesn't exist", this);
+                    return ReturnMapUtils.returnFail("Teacher doesn't exist", this);
                 }
                 Long teacherId = teacher.getId();
 
@@ -431,23 +431,23 @@ public class ContractInfoController extends RestfulController {
                     FileUploadStatus fileUploadStatus = fileHttpService.uploadShortVideo(teacherId, key);
                     result.put("url", fileUploadStatus.getUrl());
                     //result.put("status", fileUploadStatus.getStatus());
-                    return MapReturnUtils.returnSuccess(result);
+                    return ReturnMapUtils.returnSuccess(result);
                 } else {
                     response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-                    return MapReturnUtils.returnFail("Failed to upload short video to AWS.", this);
+                    return ReturnMapUtils.returnFail("Failed to upload short video to AWS.", this);
                 }
             } catch (IllegalArgumentException e) {
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
                 logger.error("uploadVideo exception", e);
-                return MapReturnUtils.returnFail(e.getMessage(), this,e);
+                return ReturnMapUtils.returnFail(e.getMessage(), this,e);
             } catch (Exception e) {
                 response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
                 logger.error("uploadVideo exception", e);
-                return MapReturnUtils.returnFail(e.getMessage(), this,e);
+                return ReturnMapUtils.returnFail(e.getMessage(), this,e);
             }
         }
 
-        return MapReturnUtils.returnFail("Failed to short video picture!", this);
+        return ReturnMapUtils.returnFail("Failed to short video picture!", this);
     }
 
     @ResponseBody
@@ -457,7 +457,7 @@ public class ContractInfoController extends RestfulController {
         Teacher teacher = getTeacher(request);
         if (null == teacher) {
             response.setStatus(HttpStatus.NOT_FOUND.value());
-            return MapReturnUtils.returnFail("Teacher doesn't exist", this);
+            return ReturnMapUtils.returnFail("Teacher doesn't exist", this);
         }
         Long teacherId = teacher.getId();
 
@@ -465,15 +465,15 @@ public class ContractInfoController extends RestfulController {
             boolean ret = fileHttpService.deleteAvatar(teacherId);
             if (ret) {
                 logger.info("Successful to delete avatar!");
-                return MapReturnUtils.returnSuccess("Successful to delete avatar.", null);
+                return ReturnMapUtils.returnSuccess("Successful to delete avatar.", null);
             } else {
                 response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-                return MapReturnUtils.returnFail("Failed to delete avatar.", this);
+                return ReturnMapUtils.returnFail("Failed to delete avatar.", this);
             }
         } catch (Exception e) {
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
             logger.error("deleteAvatar exception", e);
-            return MapReturnUtils.returnFail(e.getMessage(), this,e);
+            return ReturnMapUtils.returnFail(e.getMessage(), this,e);
         }
     }
 
@@ -485,7 +485,7 @@ public class ContractInfoController extends RestfulController {
         Teacher teacher = getTeacher(request);
         if (null == teacher) {
             response.setStatus(HttpStatus.NOT_FOUND.value());
-            return MapReturnUtils.returnFail("Teacher doesn't exist!", this);
+            return ReturnMapUtils.returnFail("Teacher doesn't exist!", this);
         }
         Long teacherId = teacher.getId();
 
@@ -493,15 +493,15 @@ public class ContractInfoController extends RestfulController {
             boolean ret = fileHttpService.deleteLifePicture(teacherId, fileId);
             if (ret) {
                 logger.info("Successful to delete life picture!");
-                return MapReturnUtils.returnSuccess("Successful to delete life picture.", null);
+                return ReturnMapUtils.returnSuccess("Successful to delete life picture.", null);
             } else {
                 response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-                return MapReturnUtils.returnFail("Failed to delete life picture.", this);
+                return ReturnMapUtils.returnFail("Failed to delete life picture.", this);
             }
         } catch (Exception e) {
             logger.error("deleteLifePic exception", e);
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            return MapReturnUtils.returnFail(e.getMessage(), this, e);
+            return ReturnMapUtils.returnFail(e.getMessage(), this, e);
         }
     }
 
@@ -511,7 +511,7 @@ public class ContractInfoController extends RestfulController {
         Teacher teacher = getTeacher(request);
         if (null == teacher) {
             response.setStatus(HttpStatus.NOT_FOUND.value());
-            return MapReturnUtils.returnFail("Teacher doesn't exist", this);
+            return ReturnMapUtils.returnFail("Teacher doesn't exist", this);
         }
         Long teacherId = teacher.getId();
 
@@ -519,15 +519,15 @@ public class ContractInfoController extends RestfulController {
             boolean ret = fileHttpService.deleteShortVideo(teacherId);
             if (ret) {
                 logger.info("Successful to delete short video!");
-                return MapReturnUtils.returnSuccess("Successful to delete short video.", null);
+                return ReturnMapUtils.returnSuccess("Successful to delete short video.", null);
             } else {
                 response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-                return MapReturnUtils.returnFail("Failed to delete short video.", this);
+                return ReturnMapUtils.returnFail("Failed to delete short video.", this);
             }
         } catch (Exception e) {
             logger.error("deleteVideo exception", e);
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            return MapReturnUtils.returnFail(e.getMessage(), this,e);
+            return ReturnMapUtils.returnFail(e.getMessage(), this,e);
         }
     }
 
@@ -539,19 +539,19 @@ public class ContractInfoController extends RestfulController {
             boolean result = this.contractInfoService.toRegular(teacher);
             if(result){
                 logger.info("Successfully get TO REGULAR!");
-                return MapReturnUtils.returnSuccess();
+                return ReturnMapUtils.returnSuccess();
             } else {
                 response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-                return MapReturnUtils.returnFail("Failed to get to REGULAR!", this);
+                return ReturnMapUtils.returnFail("Failed to get to REGULAR!", this);
             }
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
             logger.error("toRegular exception", e);
-            return MapReturnUtils.returnFail(e.getMessage(), this,e);
+            return ReturnMapUtils.returnFail(e.getMessage(), this,e);
         } catch (Exception e) {
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
             logger.error("toRegular exception", e);
-            return MapReturnUtils.returnFail(e.getMessage(), this,e);
+            return ReturnMapUtils.returnFail(e.getMessage(), this,e);
         }
     }
 
@@ -575,18 +575,18 @@ public class ContractInfoController extends RestfulController {
         try{
             logger.info("删除文件id........:{}",fileId);
             Map<String,Object> result = contractService.reomteFile(fileId,teacher.getId());
-            if(MapReturnUtils.isFail(result)){
+            if(ReturnMapUtils.isFail(result)){
                 response.setStatus(HttpStatus.FORBIDDEN.value());
             }
             return result;
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
             logger.error("deleteFile exception", e);
-            return MapReturnUtils.returnFail(e.getMessage(), this,e);
+            return ReturnMapUtils.returnFail(e.getMessage(), this,e);
         } catch (Exception e) {
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
             logger.error("deleteFile exception", e);
-            return MapReturnUtils.returnFail(e.getMessage(), this,e);
+            return ReturnMapUtils.returnFail(e.getMessage(), this,e);
         }
     }
 
@@ -636,7 +636,7 @@ public class ContractInfoController extends RestfulController {
     public Map<String,Object> uploadIdentification(@RequestParam("file") MultipartFile file,String filetype,HttpServletRequest request, HttpServletResponse response){
         Map<String,Object> result = new HashMap<String,Object>();
         if(filetype.equals("")||filetype==null){
-            return MapReturnUtils.returnFail("There is no type of file upload", this);
+            return ReturnMapUtils.returnFail("There is no type of file upload", this);
         }
         Teacher teacher = new Teacher().setId(getTeacher(request).getId());
         logger.info("用户：{}，upload Identification file = {}", teacher.getId(), file);
@@ -644,7 +644,7 @@ public class ContractInfoController extends RestfulController {
         FileVo fileVo  = awsUpload(file, teacher.getId());
         if(fileVo==null){
             response.setStatus(HttpStatus.BAD_REQUEST.value());
-            return MapReturnUtils.returnFail("upload file is fail",this);
+            return ReturnMapUtils.returnFail("upload file is fail",this);
         }
 
         try{
@@ -667,13 +667,13 @@ public class ContractInfoController extends RestfulController {
             result.put("file",fileVo.getUrl());
             result.put("status",true);
             result.put("id", teacherContractFile.getId());
-            return MapReturnUtils.returnSuccess(result);
+            return ReturnMapUtils.returnSuccess(result);
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
-            return MapReturnUtils.returnFail(e.getMessage(), this,e);
+            return ReturnMapUtils.returnFail(e.getMessage(), this,e);
         } catch (Exception e) {
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            return MapReturnUtils.returnFail(e.getMessage(), this,e);
+            return ReturnMapUtils.returnFail(e.getMessage(), this,e);
         }
     }
 
@@ -695,7 +695,7 @@ public class ContractInfoController extends RestfulController {
         FileVo fileVo  = awsUpload(file, teacher.getId());
         if(fileVo==null){
             response.setStatus(HttpStatus.BAD_REQUEST.value());
-            return MapReturnUtils.returnFail("upload file is fail",this);
+            return ReturnMapUtils.returnFail("upload file is fail",this);
         }
 
         try{
@@ -708,13 +708,13 @@ public class ContractInfoController extends RestfulController {
             result.put("file",fileVo.getUrl());
             result.put("status",true);
             result.put("id", teacherContractFile.getId());
-            return MapReturnUtils.returnSuccess(result);
+            return ReturnMapUtils.returnSuccess(result);
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
-            return MapReturnUtils.returnFail(e.getMessage(), this,e);
+            return ReturnMapUtils.returnFail(e.getMessage(), this,e);
         } catch (Exception e) {
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            return MapReturnUtils.returnFail(e.getMessage(), this,e);
+            return ReturnMapUtils.returnFail(e.getMessage(), this,e);
         }
     }
 
@@ -736,7 +736,7 @@ public class ContractInfoController extends RestfulController {
         FileVo fileVo  = awsUpload(file, teacher.getId());
         if(fileVo==null){
             response.setStatus(HttpStatus.BAD_REQUEST.value());
-            return MapReturnUtils.returnFail("upload file is fail",this);
+            return ReturnMapUtils.returnFail("upload file is fail",this);
         }
 
         try{
@@ -750,13 +750,13 @@ public class ContractInfoController extends RestfulController {
             result.put("file",fileVo.getUrl());
             result.put("status",true);
             result.put("id", teacherContractFile.getId());
-            return MapReturnUtils.returnSuccess(result);
+            return ReturnMapUtils.returnSuccess(result);
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
-            return MapReturnUtils.returnFail(e.getMessage(), this,e);
+            return ReturnMapUtils.returnFail(e.getMessage(), this,e);
         } catch (Exception e) {
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            return MapReturnUtils.returnFail(e.getMessage(), this,e);
+            return ReturnMapUtils.returnFail(e.getMessage(), this,e);
         }
     }
 
@@ -778,7 +778,7 @@ public class ContractInfoController extends RestfulController {
         FileVo fileVo  = awsUpload(file, teacher.getId());
         if(fileVo==null){
             response.setStatus(HttpStatus.BAD_REQUEST.value());
-            return MapReturnUtils.returnFail("upload file is fail",this);
+            return ReturnMapUtils.returnFail("upload file is fail",this);
         }
 
         try{
@@ -802,13 +802,13 @@ public class ContractInfoController extends RestfulController {
             result.put("file",fileVo.getUrl());
             result.put("id", teacherContractFile.getId());
             result.put("status",true);
-            return MapReturnUtils.returnSuccess(result);
+            return ReturnMapUtils.returnSuccess(result);
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
-            return MapReturnUtils.returnFail(e.getMessage(), this,e);
+            return ReturnMapUtils.returnFail(e.getMessage(), this,e);
         } catch (Exception e) {
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            return MapReturnUtils.returnFail(e.getMessage(), this,e);
+            return ReturnMapUtils.returnFail(e.getMessage(), this,e);
         }
     }
 
@@ -833,7 +833,7 @@ public class ContractInfoController extends RestfulController {
         FileVo fileVo  = awsUpload(file, teacher.getId());
         if(fileVo==null){
             response.setStatus(HttpStatus.BAD_REQUEST.value());
-            return MapReturnUtils.returnFail("upload file is fail",this);
+            return ReturnMapUtils.returnFail("upload file is fail",this);
         }
         try{
             TeacherContractFile teacherContractFile = new TeacherContractFile();
@@ -845,13 +845,13 @@ public class ContractInfoController extends RestfulController {
             result.put("file",fileVo.getUrl());
             result.put("status",true);
             result.put("id", teacherContractFile.getId());
-            return MapReturnUtils.returnSuccess(result);
+            return ReturnMapUtils.returnSuccess(result);
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
-            return MapReturnUtils.returnFail(e.getMessage(), this,e);
+            return ReturnMapUtils.returnFail(e.getMessage(), this,e);
         } catch (Exception e) {
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            return MapReturnUtils.returnFail(e.getMessage(), this,e);
+            return ReturnMapUtils.returnFail(e.getMessage(), this,e);
         }
     }
 
@@ -872,7 +872,7 @@ public class ContractInfoController extends RestfulController {
         FileVo fileVo  = awsUpload(file, teacher.getId());
         if(fileVo==null){
             response.setStatus(HttpStatus.BAD_REQUEST.value());
-            return MapReturnUtils.returnFail("upload file is fail",this);
+            return ReturnMapUtils.returnFail("upload file is fail",this);
         }
         try{
             TeacherContractFile teacherContractFile = new TeacherContractFile();
@@ -884,13 +884,13 @@ public class ContractInfoController extends RestfulController {
             result.put("file",fileVo.getUrl());
             result.put("status",true);
             result.put("id", teacherContractFile.getId());
-            return MapReturnUtils.returnSuccess(result);
+            return ReturnMapUtils.returnSuccess(result);
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
-            return MapReturnUtils.returnFail(e.getMessage(), this,e);
+            return ReturnMapUtils.returnFail(e.getMessage(), this,e);
         } catch (Exception e) {
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            return MapReturnUtils.returnFail(e.getMessage(), this, e);
+            return ReturnMapUtils.returnFail(e.getMessage(), this, e);
         }
     }
 

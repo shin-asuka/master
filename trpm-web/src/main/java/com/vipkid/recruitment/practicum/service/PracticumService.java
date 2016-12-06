@@ -27,7 +27,7 @@ import com.vipkid.recruitment.dao.TeacherApplicationDao;
 import com.vipkid.recruitment.dao.TeacherApplicationLogDao;
 import com.vipkid.recruitment.entity.TeacherApplication;
 import com.vipkid.recruitment.practicum.PracticumConstant;
-import com.vipkid.recruitment.utils.MapReturnUtils;
+import com.vipkid.recruitment.utils.ReturnMapUtils;
 import com.vipkid.trpm.dao.OnlineClassDao;
 import com.vipkid.trpm.dao.TeacherDao;
 import com.vipkid.trpm.entity.OnlineClass;
@@ -97,20 +97,20 @@ public class PracticumService {
 
         //课程没有找到，无法book
         if(onlineClass == null){
-            return MapReturnUtils.returnFail("The online class doesn't exist: "+onlineClassId,this);
+            return ReturnMapUtils.returnFail("The online class doesn't exist: "+onlineClassId,this);
         }
         //判断教室是否创建好
         if(StringUtils.isBlank(onlineClass.getClassroom())){
-            return MapReturnUtils.returnFail("The classroom is empty: "+onlineClassId,this);
+            return ReturnMapUtils.returnFail("The classroom is empty: "+onlineClassId,this);
         }
         //课程必须是当前步骤中的数据
         List<TeacherApplication> listEntity = this.teacherApplicationDao.findCurrentApplication(teacher.getId());
         if(CollectionUtils.isEmpty(listEntity)){
-            return MapReturnUtils.returnFail("You can't enter this classroom!",this);
+            return ReturnMapUtils.returnFail("You can't enter this classroom!",this);
         }
         //进教室权限判断
         if(listEntity.get(0).getOnlineClassId() != onlineClassId){
-            return MapReturnUtils.returnFail("You can't enter this classroom!",this);
+            return ReturnMapUtils.returnFail("You can't enter this classroom!",this);
         }
 
         Map<String,Object> result = OnlineClassProxy.generateRoomEnterUrl(teacher.getId()+"", teacher.getRealName(),onlineClass.getClassroom(), OnlineClassProxy.RoomRole.TEACHER, onlineClass.getSupplierCode());
@@ -122,16 +122,16 @@ public class PracticumService {
 
         //课程没有找到，无法book
         if(onlineClass == null){
-            return MapReturnUtils.returnFail("The online class doesn't exist: "+onlineClassId,this);
+            return ReturnMapUtils.returnFail("The online class doesn't exist: "+onlineClassId,this);
         }
 
         //onlineClassId 必须是AVAILABLE课
         if(!OnlineClassEnum.ClassStatus.AVAILABLE.toString().equalsIgnoreCase(onlineClass.getStatus())){
-            return MapReturnUtils.returnFail("This class ("+onlineClassId+") is empty or has been booked by anyone else!", this);
+            return ReturnMapUtils.returnFail("This class ("+onlineClassId+") is empty or has been booked by anyone else!", this);
         }
         //book的课程在开课前1小时之内不允许book
         if(System.currentTimeMillis() + PracticumConstant.CANCEL_TIME > onlineClass.getScheduledDateTime().getTime()){
-            return MapReturnUtils.returnFail("Class is too close to start and not allowed to book!", this);
+            return ReturnMapUtils.returnFail("Class is too close to start and not allowed to book!", this);
         }
         //约课老师必须是Practicum的待约课老师
         List<TeacherApplication> listEntity = teacherApplicationDao.findCurrentApplication(teacher.getId());
@@ -139,17 +139,17 @@ public class PracticumService {
             TeacherApplication teacherApplication = listEntity.get(0);
             //存在步骤，但步骤中已经存在待审核的课程 不允许继续book
             if(teacherApplication.getOnlineClassId() != 0 && StringUtils.isBlank(teacherApplication.getResult())){
-                return MapReturnUtils.returnFail("You have booked a class already. Please refresh your page! "+onlineClassId, this);
+                return ReturnMapUtils.returnFail("You have booked a class already. Please refresh your page! "+onlineClassId, this);
             }
         }
         //判断剩余可取消次数
         if(recruitmentService.getRemainRescheduleTimes(teacher, Status.PRACTICUM.toString(), Result.CANCEL.toString()) <= 0){
-            return MapReturnUtils.returnFail("You have canceled classes too much and can't book class again!", this);
+            return ReturnMapUtils.returnFail("You have canceled classes too much and can't book class again!", this);
         }
         //执行BOOK逻辑
         String dateTime = DateFormatUtils.format(onlineClass.getScheduledDateTime(),"yyyy-MM-dd HH:mm:ss");
         Map<String,Object> result = OnlineClassProxy.doBookRecruitment(teacher.getId(), onlineClass.getId(), ClassType.PRACTICUM,dateTime);
-        if(MapReturnUtils.isFail(result)){
+        if(ReturnMapUtils.isFail(result)){
             //一旦失败，抛出异常回滚
             throw new RuntimeException("Class booking is fail! " + result.get("info"));
         }
@@ -163,27 +163,27 @@ public class PracticumService {
 
         //课程没有找到，无法取消
         if(onlineClass == null){
-            return MapReturnUtils.returnFail("The online class doesn't exist: "+onlineClassId,this);
+            return ReturnMapUtils.returnFail("The online class doesn't exist: "+onlineClassId,this);
         }
 
         //book的课程在开课前1小时之内不允许cancel
         if(System.currentTimeMillis() + PracticumConstant.CANCEL_TIME > onlineClass.getScheduledDateTime().getTime()){
-            return MapReturnUtils.returnFail("The online class will begin, can't be rescheduled: "+onlineClassId,this);
+            return ReturnMapUtils.returnFail("The online class will begin, can't be rescheduled: "+onlineClassId,this);
         }
 
         List<TeacherApplication> listEntity = this.teacherApplicationDao.findCurrentApplication(teacher.getId());
         //如果步骤中无数据则不允许cancel
         if(CollectionUtils.isEmpty(listEntity)){
-            return MapReturnUtils.returnFail("You don't have permission to cancel this course: "+onlineClassId,this);
+            return ReturnMapUtils.returnFail("You don't have permission to cancel this course: "+onlineClassId,this);
         }else{
             TeacherApplication teacherApplication = listEntity.get(0);
             //如果步骤中有数据并且数据不是本次cancel的课程 则不允许cancel
             if(teacherApplication.getOnlineClassId() != onlineClass.getId()){
-                return MapReturnUtils.returnFail("You have already cancelled this class. Please refresh your page!",this);
+                return ReturnMapUtils.returnFail("You have already cancelled this class. Please refresh your page!",this);
             }else{
                 //如果步骤中有数据并且数据不是本次cancel的课程 但管理端已经审核，不允许cancel
                 if(StringUtils.isNotBlank(teacherApplication.getResult())){
-                    return MapReturnUtils.returnFail("This class is already audited. Please refresh your page!",this);
+                    return ReturnMapUtils.returnFail("This class is already audited. Please refresh your page!",this);
                 }
             }
         }
@@ -201,7 +201,7 @@ public class PracticumService {
         //执行Cancel逻辑
         Map<String,Object> result = OnlineClassProxy.doCancelRecruitement(teacher.getId(), onlineClass.getId(), ClassType.TEACHER_RECRUITMENT);
         result.put("count", count);
-        if(MapReturnUtils.isFail(result)){
+        if(ReturnMapUtils.isFail(result)){
             //一旦失败，抛出异常回滚
             throw new RuntimeException("Class canceling is fail! "+result.get("info"));
         }
@@ -217,7 +217,7 @@ public class PracticumService {
     public Map<String,Object> toContract(Teacher teacher){
         List<TeacherApplication> listEntity = teacherApplicationDao.findCurrentApplication(teacher.getId());
         if(CollectionUtils.isEmpty(listEntity)){
-            return MapReturnUtils.returnFail("You don't have permission to enter into next phase!",this);
+            return ReturnMapUtils.returnFail("You don't have permission to enter into next phase!",this);
         }
 
         //执行逻辑 只有在Practicum的PASS状态才能进入
@@ -233,9 +233,9 @@ public class PracticumService {
 
             this.teacherDao.insertLifeCycleLog(teacher.getId(), LifeCycle.PRACTICUM, LifeCycle.valueOf(teacher.getLifeCycle()), teacher.getId());
             this.teacherDao.update(teacher);
-            return MapReturnUtils.returnSuccess();
+            return ReturnMapUtils.returnSuccess();
         }
-        return MapReturnUtils.returnFail("You don't have permission to enter into next phase!",this);
+        return ReturnMapUtils.returnFail("You don't have permission to enter into next phase!",this);
     }
 
 }

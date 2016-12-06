@@ -19,7 +19,7 @@ import com.google.common.collect.Maps;
 import com.vipkid.enums.TeacherEnum.LifeCycle;
 import com.vipkid.enums.TeacherQuizEnum;
 import com.vipkid.recruitment.training.service.TrainingService;
-import com.vipkid.recruitment.utils.MapReturnUtils;
+import com.vipkid.recruitment.utils.ReturnMapUtils;
 import com.vipkid.rest.RestfulController;
 import com.vipkid.rest.config.RestfulConfig;
 import com.vipkid.rest.interceptor.annotation.RestInterface;
@@ -58,13 +58,13 @@ public class TrainingController extends RestfulController {
             logger.info("用户：{}查询他是否存在待考记录",user.getId());
             this.adminQuizService.updateCheckQuiz(user.getId());
             result.put("need",this.adminQuizService.findNeedQuiz(user.getId()));
-            return MapReturnUtils.returnSuccess(result);
+            return ReturnMapUtils.returnSuccess(result);
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
-            return MapReturnUtils.returnFail(e.getMessage(), this,e);
+            return ReturnMapUtils.returnFail(e.getMessage(), this,e);
         } catch (Exception e) {
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            return MapReturnUtils.returnFail(e.getMessage(), this, e);
+            return ReturnMapUtils.returnFail(e.getMessage(), this, e);
         }
     }
 
@@ -82,13 +82,13 @@ public class TrainingController extends RestfulController {
             User user = getUser(request);
             logger.info("用户{}开始考试",user.getId());
             result.put("quizToken",this.adminQuizService.startQuiz(user.getId()));
-            return MapReturnUtils.returnSuccess(result);
+            return ReturnMapUtils.returnSuccess(result);
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
-            return MapReturnUtils.returnFail(e.getMessage(), this,e);
+            return ReturnMapUtils.returnFail(e.getMessage(), this,e);
         } catch (Exception e) {
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            return MapReturnUtils.returnFail(e.getMessage(), this, e);
+            return ReturnMapUtils.returnFail(e.getMessage(), this, e);
         }
     }
 
@@ -109,13 +109,13 @@ public class TrainingController extends RestfulController {
             Teacher teacher = getTeacher(request);
             logger.info("用户{}提交grade:{}",teacher.getId(),String.valueOf(grade));
             result.put("result",this.adminQuizService.saveQuizResult(teacher.getId(), String.valueOf(grade),Long.valueOf(quizToken+"")));
-            return MapReturnUtils.returnSuccess(result);
+            return ReturnMapUtils.returnSuccess(result);
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
-            return MapReturnUtils.returnFail(e.getMessage(), this,e);
+            return ReturnMapUtils.returnFail(e.getMessage(), this,e);
         } catch (Exception e) {
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            return MapReturnUtils.returnFail(e.getMessage(), this, e);
+            return ReturnMapUtils.returnFail(e.getMessage(), this, e);
         }
     }
 
@@ -140,13 +140,13 @@ public class TrainingController extends RestfulController {
                 result.put("grade",teacherQuiz.getQuizScore());
                 result.put("count",list.size());
             }
-            return MapReturnUtils.returnSuccess(result);
+            return ReturnMapUtils.returnSuccess(result);
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
-            return MapReturnUtils.returnFail(e.getMessage(), this,e);
+            return ReturnMapUtils.returnFail(e.getMessage(), this,e);
         } catch (Exception e) {
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            return MapReturnUtils.returnFail(e.getMessage(), this, e);
+            return ReturnMapUtils.returnFail(e.getMessage(), this, e);
         }
     }
 
@@ -161,16 +161,16 @@ public class TrainingController extends RestfulController {
             Teacher teacher = getTeacher(request);
             logger.info("user:{},getReschedule",teacher.getId());
             Map<String,Object> result = this.trainingService.toPracticum(teacher);
-            if(MapReturnUtils.isFail(result)){
+            if(ReturnMapUtils.isFail(result)){
                 response.setStatus(HttpStatus.FORBIDDEN.value());
             }
-            return MapReturnUtils.returnSuccess(result);
+            return ReturnMapUtils.returnSuccess(result);
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
-            return MapReturnUtils.returnFail(e.getMessage(), this,e);
+            return ReturnMapUtils.returnFail(e.getMessage(), this,e);
         } catch (Exception e) {
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            return MapReturnUtils.returnFail(e.getMessage(), this, e);
+            return ReturnMapUtils.returnFail(e.getMessage(), this, e);
         }
     }
 

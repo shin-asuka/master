@@ -3,7 +3,7 @@ package com.vipkid.recruitment.training.service;
 import com.vipkid.enums.TeacherApplicationEnum;
 import com.vipkid.recruitment.dao.TeacherApplicationDao;
 import com.vipkid.recruitment.entity.TeacherApplication;
-import com.vipkid.recruitment.utils.MapReturnUtils;
+import com.vipkid.recruitment.utils.ReturnMapUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,7 +35,7 @@ public class TrainingService {
         logger.info("用户：{}，更改LifeCycle",teacher.getId());
         List<TeacherApplication> listEntity = teacherApplicationDao.findCurrentApplication(teacher.getId());
         if(CollectionUtils.isEmpty(listEntity)){
-            return MapReturnUtils.returnFail("You have no legal power into the next phase !",this);
+            return ReturnMapUtils.returnFail("You have no legal power into the next phase !",this);
         }
 
         //执行逻辑 只有在TRAINING的PASS状态才能进入
@@ -44,9 +44,9 @@ public class TrainingService {
             teacher.setLifeCycle(LifeCycle.PRACTICUM.toString());
             this.teacherDao.insertLifeCycleLog(teacher.getId(),LifeCycle.TRAINING,LifeCycle.PRACTICUM, teacher.getId());
             this.teacherDao.update(teacher);
-            return MapReturnUtils.returnSuccess();
+            return ReturnMapUtils.returnSuccess();
         }
-        return MapReturnUtils.returnFail("You have no legal power into the next phase !",this);
+        return ReturnMapUtils.returnFail("You have no legal power into the next phase !",this);
     }
 
 }
