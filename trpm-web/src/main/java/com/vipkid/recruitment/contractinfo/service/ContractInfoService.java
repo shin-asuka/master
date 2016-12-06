@@ -155,19 +155,10 @@ public class ContractInfoService {
      */
     public Map<String, Object> findContract(Teacher teacher) {
         ContractFile contractFile = new ContractFile();
-        List<TeacherApplication> list = teacherApplicationDao.findCurrentApplication(teacher.getId());
+
+        logger.info("Teacher：{}  find  Teacher Contract Files", teacher.getId());
+        List<TeacherContractFile> teacherContractFiles =teacherContractFileDao.findByTeacherIdAndTeacherApplicationId(teacher.getId(),TEACHERAPPLICATION_ID);
         Map<String, Object> map = Maps.newHashMap();
-        if (CollectionUtils.isNotEmpty(list)) {
-            TeacherApplication application = list.get(0);
-            logger.info("Teacher：{}  find  Teacher Contract Files", teacher.getId());
-            List<TeacherContractFile> teacherContractFiles;
-            if(application.getStatus().equals(TeacherApplicationEnum.Status.CONTRACT_INFO.toString())&&application.getResult().equals(TeacherApplicationEnum.Result.PASS.toString())){
-               teacherContractFiles =teacherContractFileDao.findByTeacherIdAndTeacherApplicationId(teacher.getId(),application.getId());
-            }else {
-
-                teacherContractFiles = teacherContractFileDao.findByTeacherIdAndTeacherApplicationId(teacher.getId(), TEACHERAPPLICATION_ID);
-            }
-
         if (CollectionUtils.isNotEmpty(teacherContractFiles)) {
             List<TeacherContractFile> degrees = Lists.newArrayList();
             List<TeacherContractFile> contract = Lists.newArrayList();
@@ -176,6 +167,7 @@ public class ContractInfoService {
             List<TeacherContractFile> diploma = Lists.newArrayList();
             List<TeacherContractFile> tax = Lists.newArrayList();
             List<TeacherContractFile> certification = Lists.newArrayList();
+            
             teacherContractFiles.forEach(obj -> {
                 if (obj.getFileType() == TeacherApplicationEnum.ContractFileType.OTHER_DEGREES.val()) {
                     degrees.add(obj);
@@ -240,7 +232,7 @@ public class ContractInfoService {
             map.put("contractFile", contractFile);
             map.put("result",result);
          }
-        }
+
         return map;
 
     }
