@@ -35,7 +35,7 @@ public class TrainingService {
         logger.info("用户：{}，更改LifeCycle",teacher.getId());
         List<TeacherApplication> listEntity = teacherApplicationDao.findCurrentApplication(teacher.getId());
         if(CollectionUtils.isEmpty(listEntity)){
-            return MapReturnUtils.responseFail("You have no legal power into the next phase !",this);
+            return MapReturnUtils.returnFail("You have no legal power into the next phase !",this);
         }
 
         //执行逻辑 只有在TRAINING的PASS状态才能进入
@@ -44,9 +44,9 @@ public class TrainingService {
             teacher.setLifeCycle(LifeCycle.PRACTICUM.toString());
             this.teacherDao.insertLifeCycleLog(teacher.getId(),LifeCycle.TRAINING,LifeCycle.PRACTICUM, teacher.getId());
             this.teacherDao.update(teacher);
-            return MapReturnUtils.responseSuccess();
+            return MapReturnUtils.returnSuccess();
         }
-        return MapReturnUtils.responseFail("You have no legal power into the next phase !",this);
+        return MapReturnUtils.returnFail("You have no legal power into the next phase !",this);
     }
 
 }

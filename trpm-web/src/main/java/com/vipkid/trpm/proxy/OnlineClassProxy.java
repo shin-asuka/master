@@ -72,30 +72,30 @@ public class OnlineClassProxy {
         String author = "TEACHER " + userId;
         header.put("Authorization", author + " " + DigestUtils.md5Hex(author));
         if (StringUtils.isBlank(roomId)) {
-            return MapReturnUtils.responseFail("fail to get url: classroom ,the classroom is empty", OnlineClassProxy.class);
+            return MapReturnUtils.returnFail("fail to get url: classroom ,the classroom is empty", OnlineClassProxy.class);
         }
         String requestUrl = getHttpUrl() + "/api/service/private/supplier/getOnlineClassRoomURL";
         logger.info("Request before: URL:{}; params:{},roomId:{}",requestUrl,JsonTools.getJson(params),roomId);
         String responseBody = HttpClientProxy.get(requestUrl, params, header);
         logger.info("Request after: responseBody=" + responseBody);
         if (StringUtils.isBlank(responseBody)) {
-            return MapReturnUtils.responseFail("Failed to get classroom "+roomId+"'s url", OnlineClassProxy.class);
+            return MapReturnUtils.returnFail("Failed to get classroom "+roomId+"'s url", OnlineClassProxy.class);
         }
         JsonNode resultJson = null;
         try{
             resultJson = JsonTools.readValue(responseBody);
         }catch(Exception ex){
             logger.error(ex.getMessage());
-            return MapReturnUtils.responseFail(responseBody, OnlineClassProxy.class);
+            return MapReturnUtils.returnFail(responseBody, OnlineClassProxy.class);
         }
         logger.info("Request after =" + JsonTools.getJson(resultJson));
         JsonNode jsonURL = resultJson.get("url");
         if (jsonURL == null) {
-            return MapReturnUtils.responseFail("Not have class room url,you should checke request param ok!", OnlineClassProxy.class);
+            return MapReturnUtils.returnFail("Not have class room url,you should checke request param ok!", OnlineClassProxy.class);
         }
         Map<String,Object> resultMap = Maps.newHashMap();
         resultMap.put("url", jsonURL.asText());
-        return MapReturnUtils.responseSuccess(resultMap);
+        return MapReturnUtils.returnSuccess(resultMap);
     }
     
     /**
@@ -122,11 +122,11 @@ public class OnlineClassProxy {
         String responseBody = HttpClientProxy.post(requestUrl, requestParams, requestHeader);
         logger.info("BOOK CLASS MESSAGE : " + responseBody);
         if (StringUtils.isBlank(responseBody)) {
-            return MapReturnUtils.responseFail("Request failed, please try again later !", OnlineClassProxy.class);
+            return MapReturnUtils.returnFail("Request failed, please try again later !", OnlineClassProxy.class);
         } else if (responseBody.indexOf("Success") > 0) {
-            return MapReturnUtils.responseSuccess();
+            return MapReturnUtils.returnSuccess();
         } else {
-            return MapReturnUtils.responseFail("Request failed, Please try again later!", OnlineClassProxy.class);
+            return MapReturnUtils.returnFail("Request failed, Please try again later!", OnlineClassProxy.class);
         }
     }
     
@@ -153,13 +153,13 @@ public class OnlineClassProxy {
         
         logger.info("CANCEL CLASS MESSAGE : " + responseBody);
         if (StringUtils.isBlank(responseBody)) {
-            return MapReturnUtils.responseFail("Request failed, Please try again later !",OnlineClassProxy.class);
+            return MapReturnUtils.returnFail("Request failed, Please try again later !",OnlineClassProxy.class);
         } else if (responseBody.indexOf("Success") > 0) {
-            return MapReturnUtils.responseSuccess();
+            return MapReturnUtils.returnSuccess();
         } else if (responseBody.indexOf("628") > 0) {
-            return MapReturnUtils.responseFail("Sorry, you can't cancel again within 5 minutes. Try again later!",OnlineClassProxy.class);
+            return MapReturnUtils.returnFail("Sorry, you can't cancel again within 5 minutes. Try again later!",OnlineClassProxy.class);
         } else {
-            return MapReturnUtils.responseFail("Request failed, Please try again later!",OnlineClassProxy.class);
+            return MapReturnUtils.returnFail("Request failed, Please try again later!",OnlineClassProxy.class);
         }
     }
 

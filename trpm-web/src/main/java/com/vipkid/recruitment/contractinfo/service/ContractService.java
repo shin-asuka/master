@@ -134,17 +134,17 @@ public class ContractService {
     public Map<String, Object> reomteFile(int fileId, long teacherId) {
         TeacherContractFile teacherContractFile = this.teacherContractFileDao.findById(fileId);
         if(null==teacherContractFile){
-            return MapReturnUtils.responseFail("You  delete the file failed!", this);
+            return MapReturnUtils.returnFail("You  delete the file failed!", this);
         }
         if (teacherContractFile.getTeacherId() != teacherId) {
-            return MapReturnUtils.responseFail("You can't delete the file !", this);
+            return MapReturnUtils.returnFail("You can't delete the file !", this);
         } else {
             if (teacherContractFile.getTeacherApplicationId() == 0) {
                 logger.info("Teacher:{} delete teacherContractFile",teacherId);
                 this.teacherContractFileDao.delete(teacherContractFile);
-                return MapReturnUtils.responseSuccess();
+                return MapReturnUtils.returnSuccess();
             } else {
-                return MapReturnUtils.responseSuccess();
+                return MapReturnUtils.returnSuccess();
             }
         }
     }

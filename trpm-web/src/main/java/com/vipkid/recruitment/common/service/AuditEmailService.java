@@ -50,11 +50,11 @@ public class AuditEmailService {
             EmailEngine.addMailPool(teacher.getEmail(), emailMap, EmailConfig.EmailFormEnum.TEACHVIP);
             logger.info("【EMAIL.sendPracticumPass】addedMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",
                     teacher.getRealName(),teacher.getEmail(),"BasicInfoPassTitle.html","BasicInfoPass.html");
-            return MapReturnUtils.responseSuccess();
+            return MapReturnUtils.returnSuccess();
         } catch (Exception e) {
             logger.error("【EMAIL.sendPracticumPass】ERROR: {}", e);
         }
-        return MapReturnUtils.responseFail("email send fail  ",this);
+        return MapReturnUtils.returnFail("email send fail  ",this);
     }
 
     public Map<String,Object> sendPracticum2Start(long teacherId){
@@ -73,11 +73,11 @@ public class AuditEmailService {
 
             logger.info("【EMAIL.sendPracticum2Start】addedMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",
                     teacher.getRealName(),teacher.getEmail(),"BasicInfoPassTitle.html","BasicInfoPass.html");
-            return MapReturnUtils.responseSuccess();
+            return MapReturnUtils.returnSuccess();
         } catch (Exception e) {
             logger.error("【EMAIL.sendPracticum2Start】ERROR: {}", e);
         }
-        return MapReturnUtils.responseFail("email send fail",this);
+        return MapReturnUtils.returnFail("email send fail",this);
     }
 
 
@@ -103,11 +103,11 @@ public class AuditEmailService {
             EmailEngine.addMailPool(teacher.getEmail(), emailMap, EmailConfig.EmailFormEnum.TEACHVIP);
             logger.info("【EMAIL.sendPracticumReapply】addedMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",
                     teacher.getRealName(),teacher.getEmail(),"BasicInfoPassTitle.html","BasicInfoPass.html");
-            return MapReturnUtils.responseSuccess();
+            return MapReturnUtils.returnSuccess();
         } catch (Exception e) {
             logger.error("【EMAIL.sendPracticumReapply】ERROR: {}", e);
         }
-        return MapReturnUtils.responseFail("email send fail",this);
+        return MapReturnUtils.returnFail("email send fail",this);
     }
 
 
@@ -124,12 +124,12 @@ public class AuditEmailService {
             EmailEngine.addMailPool(teacher.getEmail(), emailMap, EmailConfig.EmailFormEnum.TEACHVIP);
             logger.info("【EMAIL.sendInterviewPass】addedMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",
                     teacher.getRealName(),teacher.getEmail(),"BasicInfoPassTitle.html","BasicInfoPass.html");
-            return MapReturnUtils.responseSuccess();
+            return MapReturnUtils.returnSuccess();
         } catch (Exception e) {
             logger.error("【EMAIL.sendInterviewPass】ERROR: {}", e);
         }
 
-        return MapReturnUtils.responseFail("email send fail ",this);
+        return MapReturnUtils.returnFail("email send fail ",this);
     }
 
     public Map<String,Object> sendInterviewReapply(long teacherId){
@@ -145,11 +145,11 @@ public class AuditEmailService {
             EmailEngine.addMailPool(teacher.getEmail(), emailMap, EmailConfig.EmailFormEnum.TEACHVIP);
             logger.info("【EMAIL.sendInterviewReapply】addedMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",
                     teacher.getRealName(),teacher.getEmail(),"BasicInfoPassTitle.html","BasicInfoPass.html");
-            return MapReturnUtils.responseSuccess();
+            return MapReturnUtils.returnSuccess();
         } catch (Exception e) {
             logger.error("【EMAIL.sendInterviewReapply】ERROR: {}", e);
         }
-        return MapReturnUtils.responseFail("email send fail ", this);
+        return MapReturnUtils.returnFail("email send fail ", this);
     }
 
     public Map<String,Object> sendContractInfoPass(Long teacherId){
@@ -163,11 +163,11 @@ public class AuditEmailService {
             Map<String, String> emailMap = TempleteUtils.readTemplete("ContractInfoReapply.html", paramsMap, "ContractInfoReapply.html");
             EmailEngine.addMailPool(teacher.getEmail(), emailMap, EmailConfig.EmailFormEnum.TEACHVIP);
             logger.info("【EMAIL.sendContractInfoPass】addedMailPool: teacher name = {}, email = {}", teacher.getRealName(),teacher.getEmail());
-            return MapReturnUtils.responseSuccess();
+            return MapReturnUtils.returnSuccess();
         } catch (Exception e) {
             logger.error("【EMAIL.sendContractInfoReapply】ERROR: {}", e);
         }
-        return MapReturnUtils.responseFail("email send fail ", this);
+        return MapReturnUtils.returnFail("email send fail ", this);
     }
 
     public Map<String,Object> sendContractInfoReapply(Long teacherId){
@@ -181,11 +181,11 @@ public class AuditEmailService {
             Map<String, String> emailMap = TempleteUtils.readTemplete("ContractInfoReapply.html", paramsMap, "ContractInfoReapply.html");
             EmailEngine.addMailPool(teacher.getEmail(), emailMap, EmailConfig.EmailFormEnum.TEACHVIP);
             logger.info("【EMAIL.sendContractInfoReapply】addedMailPool: teacher name = {}, email = {}", teacher.getRealName(),teacher.getEmail());
-            return MapReturnUtils.responseSuccess();
+            return MapReturnUtils.returnSuccess();
         } catch (Exception e) {
             logger.error("【EMAIL.sendContractInfoReapply】ERROR: {}", e);
         }
-        return MapReturnUtils.responseFail("email send fail ", this);
+        return MapReturnUtils.returnFail("email send fail ", this);
     }
 
 }

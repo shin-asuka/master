@@ -19,16 +19,16 @@ public class MapReturnUtils {
 
     public static Logger logger = LoggerFactory.getLogger(MapReturnUtils.class);
 
-    /** 1. Successful response */
-    public static Map<String, Object> responseSuccess() {
-        return responseSuccess(null, null);
+    /** 1. Successful return */
+    public static Map<String, Object> returnSuccess() {
+        return returnSuccess(null, null);
     }
 
-    public static Map<String, Object> responseSuccess(Map<String, Object> data) {
-        return responseSuccess(null, data);
+    public static Map<String, Object> returnSuccess(Map<String, Object> data) {
+        return returnSuccess(null, data);
     }
 
-    public static Map<String, Object> responseSuccess(String info, Map<String, Object> data) {
+    public static Map<String, Object> returnSuccess(String info, Map<String, Object> data) {
         //compose the result
         Map<String, Object> result = Maps.newHashMap();
         result.put("status", true);
@@ -44,37 +44,37 @@ public class MapReturnUtils {
         return result;
     }
 
-    /**  2. Fail response */
+    /**  2. Fail return */
 
-    public static Map<String, Object> responseFail(String info, Object object) {
-        return responseFail(info, null, object.getClass());
+    public static Map<String, Object> returnFail(String info, Object object) {
+        return returnFail(info, null, object.getClass());
     }
 
-    public static Map<String, Object> responseFail(Map<String, Object> data, Object object) {
-        return responseFail(null, data, object.getClass());
+    public static Map<String, Object> returnFail(Map<String, Object> data, Object object) {
+        return returnFail(null, data, object.getClass());
     }
 
-    public static Map<String, Object> responseFail(String info, Class<?> clazz) {
-        return responseFail(info, null, clazz);
+    public static Map<String, Object> returnFail(String info, Class<?> clazz) {
+        return returnFail(info, null, clazz);
     }
     
-    public static Map<String, Object> responseFail(String info, Map<String, Object> data, Object object) {
-        return responseFail(info, data, object.getClass());
+    public static Map<String, Object> returnFail(String info, Map<String, Object> data, Object object) {
+        return returnFail(info, data, object.getClass());
     }
 
-    public static Map<String, Object> responseFail(String info, Map<String, Object> data, Class<?> clazz) {
-        return responseFail(info, data, clazz, null);
+    public static Map<String, Object> returnFail(String info, Map<String, Object> data, Class<?> clazz) {
+        return returnFail(info, data, clazz, null);
     }
 
-    public static Map<String, Object> responseFail(String info, Object object,Throwable t) {
-        return responseFail(info,object.getClass(),t);
+    public static Map<String, Object> returnFail(String info, Object object,Throwable t) {
+        return returnFail(info,object.getClass(),t);
     }
     
-    public static Map<String, Object> responseFail(String info, Class<?> clazz,Throwable t) {
-        return responseFail(info, null, clazz,t);
+    public static Map<String, Object> returnFail(String info, Class<?> clazz,Throwable t) {
+        return returnFail(info, null, clazz,t);
     }
     
-    public static Map<String, Object> responseFail(String info, Map<String, Object> data, Class<?> clazz, Throwable t) {
+    public static Map<String, Object> returnFail(String info, Map<String, Object> data, Class<?> clazz, Throwable t) {
         //1. print the error logger and the exception stack
         Logger clazzLogger = LoggerFactory.getLogger(clazz);
         if (clazzLogger == null) {

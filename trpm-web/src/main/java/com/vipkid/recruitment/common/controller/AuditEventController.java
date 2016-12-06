@@ -54,7 +54,7 @@ public class AuditEventController extends RestfulController {
         String result = (String) pramMap.get("result");
 
         if(teacherId == null || StringUtils.isBlank(status) || StringUtils.isBlank(result)) {
-            return MapReturnUtils.responseFail("Parameter invalid!", this);
+            return MapReturnUtils.returnFail("Parameter invalid!", this);
         }
 
         AuditEvent auditEvent = new AuditEvent();

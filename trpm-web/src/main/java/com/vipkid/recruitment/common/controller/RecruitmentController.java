@@ -52,13 +52,13 @@ public class RecruitmentController extends RestfulController{
     public Map<String,Object> getStatus(HttpServletRequest request, HttpServletResponse response){
         try{
             Map<String,Object> result =  this.recruitmentService.getStatus(getTeacher(request));
-            return MapReturnUtils.responseSuccess(result);
+            return MapReturnUtils.returnSuccess(result);
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
-            return MapReturnUtils.responseFail(e.getMessage(), this);
+            return MapReturnUtils.returnFail(e.getMessage(), this);
         } catch (Exception e) {
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            return MapReturnUtils.responseFail(e.getMessage(), this);
+            return MapReturnUtils.returnFail(e.getMessage(), this);
         }
     } 
     
@@ -93,13 +93,13 @@ public class RecruitmentController extends RestfulController{
                 }
             }
             result.putAll(this.recruitmentService.getOnlineClassInfo(teacher));
-            return MapReturnUtils.responseSuccess(result);
+            return MapReturnUtils.returnSuccess(result);
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
-            return MapReturnUtils.responseFail(e.getMessage(), this);
+            return MapReturnUtils.returnFail(e.getMessage(), this);
         } catch (Exception e) {
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            return MapReturnUtils.responseFail(e.getMessage(), this);
+            return MapReturnUtils.returnFail(e.getMessage(), this);
         }
     } 
     
@@ -110,7 +110,7 @@ public class RecruitmentController extends RestfulController{
             List<Result> list = ValidateUtils.checkBean(timezone,false);
             if(CollectionUtils.isNotEmpty(list) && list.get(0).isResult()){
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
-                return MapReturnUtils.responseFail(list.get(0).getName() + "," + list.get(0).getMessages(), this);
+                return MapReturnUtils.returnFail(list.get(0).getName() + "," + list.get(0).getMessages(), this);
             }
             logger.info("user:{},timezone",teacher.getId());
             Map<String,Object> result = this.recruitmentService.updateTimezone(timezone, teacher);
@@ -120,10 +120,10 @@ public class RecruitmentController extends RestfulController{
             return result;
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
-            return MapReturnUtils.responseFail(e.getMessage(), this);
+            return MapReturnUtils.returnFail(e.getMessage(), this);
         } catch (Exception e) {
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            return MapReturnUtils.responseFail(e.getMessage(), this);
+            return MapReturnUtils.returnFail(e.getMessage(), this);
         }
     }
     
@@ -142,7 +142,7 @@ public class RecruitmentController extends RestfulController{
             List<Result> list = ValidateUtils.checkBean(bean,false);
             if(CollectionUtils.isNotEmpty(list) && list.get(0).isResult()){
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
-                return MapReturnUtils.responseFail(list.get(0).getName() + "," + list.get(0).getMessages(), this);
+                return MapReturnUtils.returnFail(list.get(0).getName() + "," + list.get(0).getMessages(), this);
             }
             logger.info("user:{},updatePassword",teacher.getId());
             User user = getUser(request);
@@ -150,7 +150,7 @@ public class RecruitmentController extends RestfulController{
             //旧密码相等则进行修改逻辑
             if(!StringUtils.equals(user.getPassword(), encoder.encode(bean.getOldPassword()))){
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
-                return MapReturnUtils.responseFail(" old password is error! ", this);
+                return MapReturnUtils.returnFail(" old password is error! ", this);
             }
             Map<String,Object> result = this.passportService.updatePassword(teacher,bean.getNewPassword());
             if(MapReturnUtils.isFail(result)){
@@ -159,10 +159,10 @@ public class RecruitmentController extends RestfulController{
             return result;
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
-            return MapReturnUtils.responseFail(e.getMessage(), this);
+            return MapReturnUtils.returnFail(e.getMessage(), this);
         } catch (Exception e) {
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            return MapReturnUtils.responseFail(e.getMessage(), this);
+            return MapReturnUtils.returnFail(e.getMessage(), this);
         }
     }
 }

@@ -301,17 +301,17 @@ public class LoginService {
         if (null != redisProxy.get(key)) {
             Map<String,Object> result = Maps.newHashMap();
             result.put("expire", redisProxy.ttl(key));
-            return MapReturnUtils.responseFail("The activation email ["+email+"] time is not expire",result,this);
+            return MapReturnUtils.returnFail("The activation email ["+email+"] time is not expire",result,this);
         }
         
         Teacher teacher = teacherDao.findByEmail(email);
         if (0 == teacher.getId()) {
-            return MapReturnUtils.responseFail(" Email is null ", this);
+            return MapReturnUtils.returnFail(" Email is null ", this);
         }
         
         EmailUtils.sendActivationEmail(teacher);
         redisProxy.set(key, "true", EXPIRED_SECONDS);
-        return MapReturnUtils.responseSuccess();
+        return MapReturnUtils.returnSuccess();
     }
     
 

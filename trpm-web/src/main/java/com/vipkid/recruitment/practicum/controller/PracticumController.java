@@ -44,13 +44,13 @@ public class PracticumController extends RestfulController {
         try{
             Map<String,Object> result = Maps.newHashMap();
             result.put("list", this.practicumService.findTimeList(getTeacher(request)));
-            return MapReturnUtils.responseSuccess(result);
+            return MapReturnUtils.returnSuccess(result);
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
-            return MapReturnUtils.responseFail(e.getMessage(), this,e);
+            return MapReturnUtils.returnFail(e.getMessage(), this,e);
         } catch (Exception e) {
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            return MapReturnUtils.responseFail(e.getMessage(), this, e);
+            return MapReturnUtils.returnFail(e.getMessage(), this, e);
         }
     }
 
@@ -60,7 +60,7 @@ public class PracticumController extends RestfulController {
             Object onlineClassId = pramMap.get("onlineClassId");
             if(onlineClassId == null || !StringUtils.isNumeric(onlineClassId+"")){
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
-                return MapReturnUtils.responseFail("onlineClassId is error !", this);
+                return MapReturnUtils.returnFail("onlineClassId is error !", this);
             }
             Map<String,Object> result = this.practicumService.bookClass(Long.valueOf(onlineClassId+""), getTeacher(request));
             if(MapReturnUtils.isFail(result)){
@@ -69,10 +69,10 @@ public class PracticumController extends RestfulController {
             return result;
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
-            return MapReturnUtils.responseFail(e.getMessage(), this,e);
+            return MapReturnUtils.returnFail(e.getMessage(), this,e);
         } catch (Exception e) {
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            return MapReturnUtils.responseFail(e.getMessage(), this, e);
+            return MapReturnUtils.returnFail(e.getMessage(), this, e);
         }
     }
 
@@ -82,7 +82,7 @@ public class PracticumController extends RestfulController {
             Object onlineClassId = pramMap.get("onlineClassId");
             if(onlineClassId == null || !StringUtils.isNumeric(onlineClassId+"")){
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
-                return MapReturnUtils.responseFail("onlineClassId is error !", this);
+                return MapReturnUtils.returnFail("onlineClassId is error !", this);
             }
             Map<String,Object> result = this.practicumService.cancelClass(Long.valueOf(onlineClassId+""), getTeacher(request));
             if(MapReturnUtils.isFail(result)){
@@ -91,10 +91,10 @@ public class PracticumController extends RestfulController {
             return result;
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
-            return MapReturnUtils.responseFail(e.getMessage(), this,e);
+            return MapReturnUtils.returnFail(e.getMessage(), this,e);
         } catch (Exception e) {
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            return MapReturnUtils.responseFail(e.getMessage(), this, e);
+            return MapReturnUtils.returnFail(e.getMessage(), this, e);
         }
     }
 
@@ -108,10 +108,10 @@ public class PracticumController extends RestfulController {
             return result;
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
-            return MapReturnUtils.responseFail(e.getMessage(), this,e);
+            return MapReturnUtils.returnFail(e.getMessage(), this,e);
         } catch (Exception e) {
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            return MapReturnUtils.responseFail(e.getMessage(), this, e);
+            return MapReturnUtils.returnFail(e.getMessage(), this, e);
         }
     }
 
@@ -127,10 +127,10 @@ public class PracticumController extends RestfulController {
             return result;
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
-            return MapReturnUtils.responseFail(e.getMessage(), this,e);
+            return MapReturnUtils.returnFail(e.getMessage(), this,e);
         } catch (Exception e) {
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            return MapReturnUtils.responseFail(e.getMessage(), this, e);
+            return MapReturnUtils.returnFail(e.getMessage(), this, e);
         }
     }
 
@@ -139,13 +139,13 @@ public class PracticumController extends RestfulController {
         try{
             Map<String,Object> result = Maps.newHashMap();
             result.put("count",this.recruitmentService.getRemainRescheduleTimes(getTeacher(request), Status.PRACTICUM.toString(), Result.CANCEL.toString()));
-            return MapReturnUtils.responseSuccess(result);
+            return MapReturnUtils.returnSuccess(result);
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
-            return MapReturnUtils.responseFail(e.getMessage(), this,e);
+            return MapReturnUtils.returnFail(e.getMessage(), this,e);
         } catch (Exception e) {
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            return MapReturnUtils.responseFail(e.getMessage(), this, e);
+            return MapReturnUtils.returnFail(e.getMessage(), this, e);
         }
     }
 

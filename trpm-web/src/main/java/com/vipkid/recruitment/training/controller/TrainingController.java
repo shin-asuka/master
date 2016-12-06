@@ -58,13 +58,13 @@ public class TrainingController extends RestfulController {
             logger.info("用户：{}查询他是否存在待考记录",user.getId());
             this.adminQuizService.updateCheckQuiz(user.getId());
             result.put("need",this.adminQuizService.findNeedQuiz(user.getId()));
-            return MapReturnUtils.responseSuccess(result);
+            return MapReturnUtils.returnSuccess(result);
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
-            return MapReturnUtils.responseFail(e.getMessage(), this,e);
+            return MapReturnUtils.returnFail(e.getMessage(), this,e);
         } catch (Exception e) {
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            return MapReturnUtils.responseFail(e.getMessage(), this, e);
+            return MapReturnUtils.returnFail(e.getMessage(), this, e);
         }
     }
 
@@ -82,13 +82,13 @@ public class TrainingController extends RestfulController {
             User user = getUser(request);
             logger.info("用户{}开始考试",user.getId());
             result.put("quizToken",this.adminQuizService.startQuiz(user.getId()));
-            return MapReturnUtils.responseSuccess(result);
+            return MapReturnUtils.returnSuccess(result);
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
-            return MapReturnUtils.responseFail(e.getMessage(), this,e);
+            return MapReturnUtils.returnFail(e.getMessage(), this,e);
         } catch (Exception e) {
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            return MapReturnUtils.responseFail(e.getMessage(), this, e);
+            return MapReturnUtils.returnFail(e.getMessage(), this, e);
         }
     }
 
@@ -109,13 +109,13 @@ public class TrainingController extends RestfulController {
             Teacher teacher = getTeacher(request);
             logger.info("用户{}提交grade:{}",teacher.getId(),String.valueOf(grade));
             result.put("result",this.adminQuizService.saveQuizResult(teacher.getId(), String.valueOf(grade),Long.valueOf(quizToken+"")));
-            return MapReturnUtils.responseSuccess(result);
+            return MapReturnUtils.returnSuccess(result);
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
-            return MapReturnUtils.responseFail(e.getMessage(), this,e);
+            return MapReturnUtils.returnFail(e.getMessage(), this,e);
         } catch (Exception e) {
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            return MapReturnUtils.responseFail(e.getMessage(), this, e);
+            return MapReturnUtils.returnFail(e.getMessage(), this, e);
         }
     }
 
@@ -140,13 +140,13 @@ public class TrainingController extends RestfulController {
                 result.put("grade",teacherQuiz.getQuizScore());
                 result.put("count",list.size());
             }
-            return MapReturnUtils.responseSuccess(result);
+            return MapReturnUtils.returnSuccess(result);
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
-            return MapReturnUtils.responseFail(e.getMessage(), this,e);
+            return MapReturnUtils.returnFail(e.getMessage(), this,e);
         } catch (Exception e) {
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            return MapReturnUtils.responseFail(e.getMessage(), this, e);
+            return MapReturnUtils.returnFail(e.getMessage(), this, e);
         }
     }
 
@@ -164,13 +164,13 @@ public class TrainingController extends RestfulController {
             if(MapReturnUtils.isFail(result)){
                 response.setStatus(HttpStatus.FORBIDDEN.value());
             }
-            return MapReturnUtils.responseSuccess(result);
+            return MapReturnUtils.returnSuccess(result);
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
-            return MapReturnUtils.responseFail(e.getMessage(), this,e);
+            return MapReturnUtils.returnFail(e.getMessage(), this,e);
         } catch (Exception e) {
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            return MapReturnUtils.responseFail(e.getMessage(), this, e);
+            return MapReturnUtils.returnFail(e.getMessage(), this, e);
         }
     }
 
