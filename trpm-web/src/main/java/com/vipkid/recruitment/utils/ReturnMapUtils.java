@@ -71,7 +71,7 @@ public class ReturnMapUtils {
             logger.warn(info);
             StackTraceElement[] elements = new Throwable().getStackTrace();
             for(int i = 0 ; i < elements.length; i++){
-                if(!elements[i].getClassName().equals(ReturnMapUtils.class.getCanonicalName())){
+                if(!ReturnMapUtils.class.getCanonicalName().equals(elements[i].getClassName())){
                     logger.warn(elements[i]+"");
                 }
             }

@@ -18,7 +18,7 @@ public class HtmlFilter {
 
     @Test
     public void name() {
-        ReturnMapUtils.returnFail("ERROR");
+        ReturnMapUtils.returnFail("info");
     }
     
 }
