@@ -434,7 +434,7 @@ public class ContractInfoController extends RestfulController {
     @ResponseBody
     @RequestMapping("/deleteAvatar")
     public Object deleteAvatar(HttpServletRequest request, HttpServletResponse response) {
-
+        try {
         Teacher teacher = getTeacher(request);
         if (null == teacher) {
             response.setStatus(HttpStatus.NOT_FOUND.value());
@@ -442,7 +442,7 @@ public class ContractInfoController extends RestfulController {
         }
         Long teacherId = teacher.getId();
 
-        try {
+
             boolean ret = fileHttpService.deleteAvatar(teacherId);
             if (ret) {
                 logger.info("Successful to delete avatar!");
@@ -489,6 +489,7 @@ public class ContractInfoController extends RestfulController {
     @ResponseBody
     @RequestMapping("/deleteVideo")
     public Object deleteVideo(HttpServletRequest request, HttpServletResponse response) {
+        try {
         Teacher teacher = getTeacher(request);
         if (null == teacher) {
             response.setStatus(HttpStatus.NOT_FOUND.value());
@@ -496,7 +497,7 @@ public class ContractInfoController extends RestfulController {
         }
         Long teacherId = teacher.getId();
 
-        try {
+
             boolean ret = fileHttpService.deleteShortVideo(teacherId);
             if (ret) {
                 logger.info("Successful to delete short video!");

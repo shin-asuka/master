@@ -125,8 +125,6 @@ public class ContractInfoService {
 
     /**
      * 插入teacherOtherDegrees里的文件
-     *
-     * @return int
      */
     public int save(TeacherContractFile teacherContractFile) {
         return this.teacherContractFileDao.save(teacherContractFile);
@@ -201,7 +199,7 @@ public class ContractInfoService {
                 if (obj.getFileType() == TeacherApplicationEnum.ContractFileType.CONTRACT_W9.val()) {
                     tax.add(obj);
                 }
-                if (obj.getResult() != null && obj.getResult().equals("")) {
+                if (StringUtils.isBlank(obj.getResult())) {
                     res.add(obj.getResult());
                 }
 
