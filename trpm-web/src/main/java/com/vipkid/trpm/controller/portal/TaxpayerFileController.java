@@ -14,12 +14,15 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.util.HtmlUtils;
 
 import com.google.common.base.Preconditions;
 import com.vipkid.enums.TeacherEnum;
+import com.vipkid.enums.TeacherEnum.FormType;
 import com.vipkid.file.model.FileVo;
 import com.vipkid.file.service.AwsFileService;
 import com.vipkid.file.utils.ActionHelp;
+import com.vipkid.file.utils.Encodes;
 import com.vipkid.file.utils.StringUtils;
 import com.vipkid.rest.exception.ServiceException;
 import com.vipkid.trpm.entity.Teacher;
@@ -90,10 +93,17 @@ public class TaxpayerFileController extends AbstractPortalController{
 		logger.info("upload taxpayer  teacherId = {}, teacherName = {}, formType = {},file = {}",teacherId,teacherName,TeacherEnum.getFormTypeById(formType),file);
 		FileVo fileVo = null;
 		if(file!=null){
+			
 			String name = file.getOriginalFilename();
 			String bucketName = PropertyConfigurer.stringValue("aws.bucketName");
-			String awsName = teacherId+"-"+name;
-			String key = AwsFileUtils.getTaxpayerkey(awsName);
+			String fileName = AwsFileUtils.reNewFileName(name); //处理文件名
+			FormType formTypeEnum = TeacherEnum.getFormTypeById(formType);
+			String formTypeName = formTypeEnum.name();
+			String awsName = teacherId+"-"+fileName;
+			if(!name.equals(fileName)){
+				awsName = teacherId+"-"+formTypeName+"-"+fileName;
+			}
+			String key = AwsFileUtils.getTaxpayerkey(teacherId,awsName);
 			Long size = file.getSize();
 			
 			Preconditions.checkArgument(AwsFileUtils.checkFileType(name), "文件类型不正确，支持类型为"+AwsFileUtils.TAPXPAYER_FILE_TYPE);
@@ -118,11 +128,10 @@ public class TaxpayerFileController extends AbstractPortalController{
 		ActionHelp.WriteStrToOut(response, fileVo); //解决中文乱码问题
 	}
 	
-	
 	@RequestMapping(value = "/save")
 	public String save(Integer formType,Long id,String url,
 			HttpServletRequest request, HttpServletResponse response, Model model){
-		logger.info("save taxpayer formType = {}",formType);
+		logger.info("save taxpayer formType = {} url={} ",formType,url);
 		
 		try {
 			Preconditions.checkArgument(StringUtils.isNotBlank(url), "url 不能为空!");

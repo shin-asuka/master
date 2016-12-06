@@ -1,14 +1,16 @@
 package com.vipkid.trpm.util;
 
+import java.util.Date;
 import java.util.UUID;
 
 import org.community.config.PropertyConfigurer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.amazonaws.services.s3.AmazonS3;
+import com.vipkid.file.utils.Encodes;
 import com.vipkid.file.utils.FileUtils;
 import com.vipkid.file.utils.StringUtils;
+import com.vipkid.neo.utils.DateTimeUtils;
 
 /**
  * 
@@ -21,17 +23,28 @@ import com.vipkid.file.utils.StringUtils;
 public class AwsFileUtils {
 
 	public static Logger logger = LoggerFactory.getLogger(AwsFileUtils.class);
-	public static final String TAXPAYER_FORM = "tpinfo";
+	public static final String TAXPAYER_FORM = "taxpayer";
 	
 	public static final long TAPXPAYER_FILE_MAX_SIZE = 20*1024*1024L; //20M
 	public static final String TAPXPAYER_FILE_TYPE = "pdf,jpg,png,jpeg";
 	
-	public static String getTaxpayerkey(String fileName){
+	
+	/**
+	 * key = /${aws.teacer.dir}/TAXPAYER_FORM/${teacherId}/uuid/fileName.xxx
+	 * @param teacherId
+	 * @param fileName
+	 * @return
+	 */
+	public static String getTaxpayerkey(Long teacherId,String fileName){
 		String key = null;
 		try {
 			String rootDir = PropertyConfigurer.stringValue("aws.teacer.dir");
 			String uuid = UUID.randomUUID().toString().replace("-", "");
-			key = rootDir+"/"+TAXPAYER_FORM+"/"+uuid+"/"+fileName;
+			key = rootDir+"/"+TAXPAYER_FORM;
+			if(teacherId!=null){ //加入教师Id方便查询
+				key+="/"+teacherId;
+			}
+			key+="/"+uuid+"/"+fileName;
 			key = key.replaceAll("//", "/");
 			if(key.startsWith("/")){
 				key = key.substring(1);
@@ -40,6 +53,18 @@ public class AwsFileUtils {
 			e.printStackTrace();
 		}
 		return key;
+	}
+	
+	public static String reNewFileName(String fileName){
+		String name = fileName;
+		if(StringUtils.isNotBlank(fileName)){
+			String encodeName = Encodes.urlEncode(fileName);
+			String fileType = FileUtils.getFileType(fileName);
+			if(!fileName.equals(encodeName)){
+				name = DateTimeUtils.formatDate(new Date(), "yyyyMMdd-HHmmss")+"."+fileType;
+			}
+		}
+		return name;
 	}
 	
 	public static Boolean checkFileType(String fileName){

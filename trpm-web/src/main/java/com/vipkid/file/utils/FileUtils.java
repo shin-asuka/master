@@ -26,6 +26,15 @@ public class FileUtils {
         }
         return newUrl;
     }
+    
+    public static String getFileName(String url){
+    	String fileName = "";
+    	if(StringUtils.isNotBlank(url)){
+    		String outName = url.substring(url.lastIndexOf("/") + 1);
+    		fileName = outName;
+    	}
+    	return fileName;
+    }
 
     /**
      * 修复路径，将 \\ 或 / 等替换为 File.separator
