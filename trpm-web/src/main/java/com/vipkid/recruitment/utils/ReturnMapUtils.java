@@ -67,12 +67,12 @@ public class ReturnMapUtils {
         if (null != t) {
             logger.error(info, t);
         } else {
-            //错误异常栈
+            //错误消息栈
             logger.warn(info);
             StackTraceElement[] elements = new Throwable().getStackTrace();
             for(int i = 0 ; i < elements.length; i++){
                 if(!elements[i].getClassName().equals(ReturnMapUtils.class.getCanonicalName())){
-                    logger.error(elements[i]+"");
+                    logger.warn(elements[i]+"");
                 }
             }
         }
