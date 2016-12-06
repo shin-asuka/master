@@ -183,66 +183,70 @@ public class PersonalInfoController extends AbstractPortalController {
 		logger.info("页面初始化：子页面name = bankinfo");
 
 		/* 获取当前登录的老师信息 */
-		Teacher teacher = loginService.getTeacher();
+        try {
+            Teacher teacher = loginService.getTeacher();
 
-		String accountName  = teacher.getBankAccountName();
-        accountName  = personalInfoService.hideNameInfo(accountName);
+            String accountName  = teacher.getBankAccountName();
+            accountName  = personalInfoService.hideNameInfo(accountName);
 
-		String accountNumber = teacher.getBankCardNumber();
-		int len = accountNumber.length();
-		accountNumber = personalInfoService.hideInfo(accountNumber,0,len-4);
+            String accountNumber = teacher.getBankCardNumber();
+            int len = accountNumber.length();
+            accountNumber = personalInfoService.hideInfo(accountNumber,0,len-4);
 
-		String swiftCode = teacher.getBankSwiftCode();
-		len = swiftCode.length();
-		swiftCode = personalInfoService.hideInfo(swiftCode,0,len-2);
+            String swiftCode = teacher.getBankSwiftCode();
+            len = swiftCode.length();
+            swiftCode = personalInfoService.hideInfo(swiftCode,0,len-2);
 
-		String bankABARoutingNumber = teacher.getBankABARoutingNumber();
-		len = bankABARoutingNumber.length();
-        bankABARoutingNumber = personalInfoService.hideInfo(bankABARoutingNumber,0,len-4);
+            String bankABARoutingNumber = teacher.getBankABARoutingNumber();
+            len = bankABARoutingNumber.length();
+            bankABARoutingNumber = personalInfoService.hideInfo(bankABARoutingNumber,0,len-4);
 
-		String bankACHNumber= teacher.getBankACHNumber();
-		len = bankACHNumber.length();
-        bankACHNumber = personalInfoService.hideInfo(bankACHNumber,0,len-4);
+            String bankACHNumber= teacher.getBankACHNumber();
+            len = bankACHNumber.length();
+            bankACHNumber = personalInfoService.hideInfo(bankACHNumber,0,len-4);
 
 
-		String idNumber = teacher.getIdentityNumber();
-		len = idNumber.length();
-		idNumber = personalInfoService.hideInfo(idNumber,1,len);
+            String idNumber = teacher.getIdentityNumber();
+            len = idNumber.length();
+            idNumber = personalInfoService.hideInfo(idNumber,1,len);
 
-        model.addAttribute("accountName",accountName);
-        model.addAttribute("accountNumber",accountNumber);
-        model.addAttribute("swiftCode",swiftCode);
-        model.addAttribute("bankABARoutingNumber",bankABARoutingNumber);
-        model.addAttribute("bankACHNumber",bankACHNumber);
-        model.addAttribute("idNumber",idNumber);
+            model.addAttribute("accountName",accountName);
+            model.addAttribute("accountNumber",accountNumber);
+            model.addAttribute("swiftCode",swiftCode);
+            model.addAttribute("bankABARoutingNumber",bankABARoutingNumber);
+            model.addAttribute("bankACHNumber",bankACHNumber);
+            model.addAttribute("idNumber",idNumber);
 
-		TeacherAddress beneficiaryAddress = personalInfoService.getTeacherAddress(teacher.getBeneficiaryAddressId());
-		if (null != beneficiaryAddress) {
-			TeacherLocation beneficiaryCountry = personalInfoService.getLocationById(beneficiaryAddress.getCountryId());
-			TeacherLocation beneficiaryState = personalInfoService.getLocationById(beneficiaryAddress.getStateId());
-			TeacherLocation beneficiaryCity = personalInfoService.getLocationById(beneficiaryAddress.getCity());
-			model.addAttribute("beneficiaryAddress", beneficiaryAddress);
-			model.addAttribute("beneficiaryCountry", beneficiaryCountry);
-			model.addAttribute("beneficiaryState", beneficiaryState);
-			model.addAttribute("beneficiaryCity", beneficiaryCity);
-		}
-		TeacherAddress beneficiaryBankAddress = personalInfoService.getTeacherAddress(teacher
-				.getBeneficiaryBankAddressId());
-		if (beneficiaryBankAddress != null) {
-			TeacherLocation beneficiaryBankCountry = personalInfoService.getLocationById(beneficiaryBankAddress
-					.getCountryId());
-			TeacherLocation beneficiaryBankState = personalInfoService.getLocationById(beneficiaryBankAddress
-					.getStateId());
-			TeacherLocation beneficiaryBankCity = personalInfoService.getLocationById(beneficiaryBankAddress.getCity());
-			model.addAttribute("beneficiaryBankAddress", beneficiaryBankAddress);
-			model.addAttribute("beneficiaryBankCountry", beneficiaryBankCountry);
-			model.addAttribute("beneficiaryBankState", beneficiaryBankState);
-			model.addAttribute("beneficiaryBankCity", beneficiaryBankCity);
-		}
-		TeacherLocation issuanceCountry = personalInfoService.getLocationById(teacher.getIssuanceCountry());
-		model.addAttribute("issuanceCountry", issuanceCountry);
+            TeacherAddress beneficiaryAddress = personalInfoService.getTeacherAddress(teacher.getBeneficiaryAddressId());
+            if (null != beneficiaryAddress) {
+                TeacherLocation beneficiaryCountry = personalInfoService.getLocationById(beneficiaryAddress.getCountryId());
+                TeacherLocation beneficiaryState = personalInfoService.getLocationById(beneficiaryAddress.getStateId());
+                TeacherLocation beneficiaryCity = personalInfoService.getLocationById(beneficiaryAddress.getCity());
+                model.addAttribute("beneficiaryAddress", beneficiaryAddress);
+                model.addAttribute("beneficiaryCountry", beneficiaryCountry);
+                model.addAttribute("beneficiaryState", beneficiaryState);
+                model.addAttribute("beneficiaryCity", beneficiaryCity);
+            }
+            TeacherAddress beneficiaryBankAddress = personalInfoService.getTeacherAddress(teacher
+                    .getBeneficiaryBankAddressId());
+            if (beneficiaryBankAddress != null) {
+                TeacherLocation beneficiaryBankCountry = personalInfoService.getLocationById(beneficiaryBankAddress
+                        .getCountryId());
+                TeacherLocation beneficiaryBankState = personalInfoService.getLocationById(beneficiaryBankAddress
+                        .getStateId());
+                TeacherLocation beneficiaryBankCity = personalInfoService.getLocationById(beneficiaryBankAddress.getCity());
+                model.addAttribute("beneficiaryBankAddress", beneficiaryBankAddress);
+                model.addAttribute("beneficiaryBankCountry", beneficiaryBankCountry);
+                model.addAttribute("beneficiaryBankState", beneficiaryBankState);
+                model.addAttribute("beneficiaryBankCity", beneficiaryBankCity);
+            }
+            TeacherLocation issuanceCountry = personalInfoService.getLocationById(teacher.getIssuanceCountry());
+            model.addAttribute("issuanceCountry", issuanceCountry);
+        } catch (Exception e) {
+            logger.error("获取老师bankInfo信息时出现错误",e);
+        }
 
-		return view("personal/personal_bankinfo");
+        return view("personal/personal_bankinfo");
 	}
 
 	/**
