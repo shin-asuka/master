@@ -7,40 +7,41 @@ import java.sql.Timestamp;
 
 public class TeacherLockLog extends Entity implements Serializable{
 
-    private long id;
+    private Long id;
 
-    private long teacherId;
+    private Long teacherId;
     
     private String reason;
     
     private String lifeCycle;
 
-    private long operatorId;
+    private Long operatorId;
 
     private Timestamp createDateTime;
 
     public TeacherLockLog() {
     }
 
-    public TeacherLockLog(long teacherId, String reason, String lifeCycle) {
+    public TeacherLockLog(Long teacherId, String reason, String lifeCycle) {
         this.teacherId = teacherId;
         this.reason = reason;
         this.lifeCycle = lifeCycle;
     }
 
-    public long getId() {
+
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
-    public long getTeacherId() {
+    public Long getTeacherId() {
         return teacherId;
     }
 
-    public void setTeacherId(long teacherId) {
+    public void setTeacherId(Long teacherId) {
         this.teacherId = teacherId;
     }
 
@@ -60,11 +61,11 @@ public class TeacherLockLog extends Entity implements Serializable{
         this.lifeCycle = lifeCycle;
     }
 
-    public long getOperatorId() {
+    public Long getOperatorId() {
         return operatorId;
     }
 
-    public void setOperatorId(long operatorId) {
+    public void setOperatorId(Long operatorId) {
         this.operatorId = operatorId;
     }
 

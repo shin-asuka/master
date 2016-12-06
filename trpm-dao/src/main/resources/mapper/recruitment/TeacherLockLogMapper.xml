@@ -13,11 +13,11 @@
 
 	<sql id="TeacherLockLogWhere">
 		<trim prefix="WHERE" prefixOverrides="AND">
-			<if test="id!=0">AND teacher_lock_log.id = #{id}</if>
-			<if test="teacherId!=0">AND teacher_lock_log.teacher_id = #{teacherId}</if>
+			<if test="id!=null">AND teacher_lock_log.id = #{id}</if>
+			<if test="teacherId!=null">AND teacher_lock_log.teacher_id = #{teacherId}</if>
 			<if test="reason!=null">AND teacher_lock_log.reason = #{reason}</if>
 			<if test="lifeCycle!=null">AND teacher_lock_log.life_cycle = #{lifeCycle}</if>
-			<if test="operatorId!=-1">AND teacher_lock_log.operator_id = #{operatorId}</if>
+			<if test="operatorId!=null">AND teacher_lock_log.operator_id = #{operatorId}</if>
 			<if test="createDateTime!=null">AND teacher_lock_log.create_date_time = #{createDateTime}</if>
 		</trim>
 	</sql>
@@ -71,20 +71,20 @@
 	<insert id="saveDao" useGeneratedKeys="true" keyProperty="id">
 		INSERT INTO teacher_lock_log
 		<trim prefix="(" prefixOverrides=",">
-			<if test="id!=0">,id</if>
-			<if test="teacherId!=0">,teacher_id</if>
+			<if test="id!=null">,id</if>
+			<if test="teacherId!=null">,teacher_id</if>
 			<if test="reason!=null">,reason</if>
 			<if test="lifeCycle!=null">,life_cycle</if>
-			<if test="operatorId!=-1">,operator_id</if>
+			<if test="operatorId!=null">,operator_id</if>
 			<if test="createDateTime!=null">,create_date_time</if>
 		</trim>
 		) VALUES
 		<trim prefix="(" prefixOverrides=",">
-			<if test="id!=0">,#{id}</if>
-			<if test="teacherId!=0">,#{teacherId}</if>
+			<if test="id!=null">,#{id}</if>
+			<if test="teacherId!=null">,#{teacherId}</if>
 			<if test="reason!=null">,#{reason}</if>
 			<if test="lifeCycle!=null">,#{lifeCycle}</if>
-			<if test="operatorId!=-1">,#{operatorId}</if>
+			<if test="operatorId!=null">,#{operatorId}</if>
 			<if test="createDateTime!=null">,#{createDateTime}</if>
 		</trim>
 		)
@@ -93,11 +93,11 @@
 	<update id="updateDao">
 		UPDATE teacher_lock_log
 		<trim prefix="SET" prefixOverrides=",">
-			<if test="id!=0">,id = #{id}</if>
-			<if test="teacherId!=0">,teacherId = #{teacher_id}</if>
+			<if test="id!=null">,id = #{id}</if>
+			<if test="teacherId!=null">,teacherId = #{teacher_id}</if>
 			<if test="reason!=null">,reason = #{reason}</if>
 			<if test="lifeCycle!=null">,status = #{life_cycle}</if>
-			<if test="operatorId!=-1">,status = #{teacher_id}</if>
+			<if test="operatorId!=null">,status = #{teacher_id}</if>
 			<if test="createDateTime!=null">,status = #{create_date_time}</if>
 		</trim>
 		<trim prefix="WHERE" prefixOverrides="AND">AND id = #{id}</trim>

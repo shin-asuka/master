@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import com.vipkid.recruitment.common.CommonConstant;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.community.tools.JsonTools;
@@ -67,7 +68,7 @@ public class RecruitmentService {
     /**
      * 获取老师当前LifeCycle状态下的流程结果 
      * @Author:ALong (ZengWeiLong)
-     * @param teacherId
+     * @param teacher
      * @return
      * Map<String,Object>
      * @date 2016年10月19日
@@ -292,16 +293,20 @@ public class RecruitmentService {
         int reapplyTimesByCancelNoShow = getReapplyTimesByCancelNoShow(teacher.getId(), status);
         int cancelNum = getCancelNum(teacher.getId(), status);
         if (lockTimes > 0){
-            int itOverTimes = reapplyTimesByITProblem - 2;
-            int cancelOverTimes = reapplyTimesByCancelNoShow + cancelNum - 3;
-            if((itOverTimes > 0 ? itOverTimes : 0) + (cancelOverTimes > 0 ? cancelOverTimes : 0) < lockTimes){
+            int itOverTimes = reapplyTimesByITProblem - CommonConstant.IT_PRO_MAX_ALLOWED_TIMES;
+            itOverTimes = itOverTimes > 0 ? itOverTimes : 0;
+
+            int cancelOverTimes = reapplyTimesByCancelNoShow + cancelNum - CommonConstant.CANCEL_MAX_ALLOWED_TIMES;
+            cancelOverTimes = cancelOverTimes > 0 ? cancelOverTimes : 0;
+
+            if(itOverTimes + cancelOverTimes < lockTimes){
                 remainTimes = 1;
             }
         } else {
             if (FinishType.STUDENT_CANCELLATION.equals(type) || FinishType.STUDENT_NO_SHOW.equals(type) || Result.CANCEL.toString().equals(type)){
-                remainTimes = 3 - reapplyTimesByCancelNoShow - cancelNum;
+                remainTimes = CommonConstant.CANCEL_MAX_ALLOWED_TIMES - reapplyTimesByCancelNoShow - cancelNum;
             } else if (FinishType.STUDENT_IT_PROBLEM.equals(type)){
-                remainTimes = 2 - reapplyTimesByITProblem;
+                remainTimes = CommonConstant.IT_PRO_MAX_ALLOWED_TIMES - reapplyTimesByITProblem;
             } else {
                 remainTimes = 99;
             }
