@@ -3,7 +3,7 @@ package com.vipkid.recruitment.common.service;
 import com.google.api.client.util.Maps;
 import com.vipkid.email.EmailEngine;
 import com.vipkid.email.handle.EmailConfig;
-import com.vipkid.email.templete.TempleteUtils;
+import com.vipkid.email.templete.TemplateUtils;
 import com.vipkid.recruitment.dao.TeacherApplicationDao;
 import com.vipkid.recruitment.entity.TeacherApplication;
 import com.vipkid.recruitment.utils.ReturnMapUtils;
@@ -37,28 +37,26 @@ public class AuditEmailService {
     @Autowired
     private OnlineClassDao onlineClassDao;
 
-    private static String PracticumPassTitle="";
-    private static String PracticumPassContent="";
+    private static String PRACTICUM_PASS_TITLE = "";
+    private static String PRACTICUM_PASS_CONTENT = "";
 
-    private static String Practicum2StartTitle="";
-    private static String Practicum2StartContent="";
+    private static String PRACTICUM2_START_TITLE = "";
+    private static String PRACTICUM2_START_CONTENT = "";
 
-    private static String PracticumReapplyTitle="";
-    private static String PracticumReapplyContent="";
+    private static String PRACTICUM_REAPPLY_TITLE = "";
+    private static String PRACTICUM_REAPPLY_CONTENT = "";
 
-    private static String InterviewPassTitle="";
-    private static String InterviewPassContent="";
+    private static String INTERVIEW_PASS_TITLE = "";
+    private static String INTERVIEW_PASS_CONTENT = "";
 
-    private static String InterviewReapplyTitle="";
-    private static String InterviewReapplyContent="";
+    private static String INTERVIEW_REAPPLY_TITLE = "";
+    private static String INTERVIEW_REAPPLY_CONTENT = "";
 
-    private static String ContractInfoPassTitle="";
-    private static String ContractInfoPassContent="";
+    private static String CONTRACTINFO_PASS_TITLE = "";
+    private static String CONTRACTINFO_PASS_CONTENT = "";
 
-    private static String ContractInfoReapplyTitle="";
-    private static String ContractInfoReapplyContent="";
-
-
+    private static String CONTRACTINFO_REAPPLY_TITLE = "";
+    private static String CONTRACTINFO_REAPPLY_CONTENT = "";
 
     public Map<String,Object> sendPracticumPass(long teacherId){
         try{
@@ -68,11 +66,11 @@ public class AuditEmailService {
             if (teacher.getRealName() != null)
                 paramsMap.put("teacherName", teacher.getRealName());
             logger.info("【EMAIL.sendPracticumPass】toAddMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",
-                    teacher.getRealName(),teacher.getEmail(),PracticumPassTitle,PracticumPassContent);
-            Map<String, String> emailMap = TempleteUtils.readTemplete(PracticumPassContent, paramsMap, PracticumPassTitle);
+                    teacher.getRealName(),teacher.getEmail(), PRACTICUM_PASS_TITLE, PRACTICUM_PASS_CONTENT);
+            Map<String, String> emailMap = TemplateUtils.readTemplate(PRACTICUM_PASS_CONTENT, paramsMap, PRACTICUM_PASS_TITLE);
             EmailEngine.addMailPool(teacher.getEmail(), emailMap, EmailConfig.EmailFormEnum.TEACHVIP);
             logger.info("【EMAIL.sendPracticumPass】addedMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",
-                    teacher.getRealName(),teacher.getEmail(),PracticumPassTitle,PracticumPassContent);
+                    teacher.getRealName(),teacher.getEmail(), PRACTICUM_PASS_TITLE, PRACTICUM_PASS_CONTENT);
             return ReturnMapUtils.returnSuccess();
         } catch (Exception e) {
             logger.error("【EMAIL.sendPracticumPass】ERROR: {}", e);
@@ -89,13 +87,13 @@ public class AuditEmailService {
                 paramsMap.put("teacherName", teacher.getRealName());
             }
             logger.info("【EMAIL.sendPracticum2Start】toAddMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",
-                    teacher.getRealName(),teacher.getEmail(),Practicum2StartTitle,Practicum2StartContent);
+                    teacher.getRealName(),teacher.getEmail(),PRACTICUM2_START_TITLE,PRACTICUM2_START_CONTENT);
 
-            Map<String, String> emailMap = TempleteUtils.readTemplete(Practicum2StartContent, paramsMap, Practicum2StartTitle);
+            Map<String, String> emailMap = TemplateUtils.readTemplate(PRACTICUM2_START_CONTENT, paramsMap, PRACTICUM2_START_TITLE);
             EmailEngine.addMailPool(teacher.getEmail(), emailMap, EmailConfig.EmailFormEnum.TEACHVIP);
 
             logger.info("【EMAIL.sendPracticum2Start】addedMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",
-                    teacher.getRealName(),teacher.getEmail(),Practicum2StartTitle,Practicum2StartContent);
+                    teacher.getRealName(),teacher.getEmail(),PRACTICUM2_START_TITLE, PRACTICUM2_START_CONTENT);
             return ReturnMapUtils.returnSuccess();
         } catch (Exception e) {
             logger.error("【EMAIL.sendPracticum2Start】ERROR: {}", e);
@@ -121,11 +119,11 @@ public class AuditEmailService {
             if (teacher.getRealName() != null)
                 paramsMap.put("teacherName", teacher.getRealName());
             logger.info("【EMAIL.sendPracticumReapply】toAddMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",
-                    teacher.getRealName(),teacher.getEmail(),PracticumReapplyTitle,PracticumReapplyContent);
-            Map<String, String> emailMap = TempleteUtils.readTemplete(PracticumReapplyContent, paramsMap, PracticumReapplyTitle);
+                    teacher.getRealName(),teacher.getEmail(),PRACTICUM_REAPPLY_TITLE, PRACTICUM_REAPPLY_CONTENT);
+            Map<String, String> emailMap = TemplateUtils.readTemplate(PRACTICUM_REAPPLY_CONTENT, paramsMap, PRACTICUM_REAPPLY_TITLE);
             EmailEngine.addMailPool(teacher.getEmail(), emailMap, EmailConfig.EmailFormEnum.TEACHVIP);
             logger.info("【EMAIL.sendPracticumReapply】addedMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",
-                    teacher.getRealName(),teacher.getEmail(),PracticumReapplyTitle,PracticumReapplyContent);
+                    teacher.getRealName(),teacher.getEmail(),PRACTICUM_REAPPLY_TITLE, PRACTICUM_REAPPLY_CONTENT);
             return ReturnMapUtils.returnSuccess();
         } catch (Exception e) {
             logger.error("【EMAIL.sendPracticumReapply】ERROR: {}", e);
@@ -142,11 +140,11 @@ public class AuditEmailService {
             if (teacher.getRealName() != null)
                 paramsMap.put("teacherName", teacher.getRealName());
             logger.info("【EMAIL.sendInterviewPass】toAddMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",
-                    teacher.getRealName(),teacher.getEmail(),InterviewPassTitle,InterviewPassContent);
-            Map<String, String> emailMap = TempleteUtils.readTemplete(InterviewPassContent, paramsMap,InterviewPassTitle);
+                    teacher.getRealName(),teacher.getEmail(),INTERVIEW_PASS_TITLE, INTERVIEW_PASS_CONTENT);
+            Map<String, String> emailMap = TemplateUtils.readTemplate(INTERVIEW_PASS_CONTENT, paramsMap, INTERVIEW_PASS_TITLE);
             EmailEngine.addMailPool(teacher.getEmail(), emailMap, EmailConfig.EmailFormEnum.TEACHVIP);
             logger.info("【EMAIL.sendInterviewPass】addedMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",
-                    teacher.getRealName(),teacher.getEmail(),InterviewPassTitle,InterviewPassContent);
+                    teacher.getRealName(),teacher.getEmail(),INTERVIEW_PASS_TITLE, INTERVIEW_PASS_CONTENT);
             return ReturnMapUtils.returnSuccess();
         } catch (Exception e) {
             logger.error("【EMAIL.sendInterviewPass】ERROR: {}", e);
@@ -163,11 +161,11 @@ public class AuditEmailService {
             if (teacher.getRealName() != null)
                 paramsMap.put("teacherName", teacher.getRealName());
             logger.info("【EMAIL.sendInterviewReapply】toAddMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",
-                    teacher.getRealName(),teacher.getEmail(),InterviewReapplyTitle,InterviewReapplyContent);
-            Map<String, String> emailMap = TempleteUtils.readTemplete(InterviewReapplyContent, paramsMap, InterviewReapplyTitle);
+                    teacher.getRealName(),teacher.getEmail(),INTERVIEW_REAPPLY_TITLE, INTERVIEW_REAPPLY_CONTENT);
+            Map<String, String> emailMap = TemplateUtils.readTemplate(INTERVIEW_REAPPLY_CONTENT, paramsMap, INTERVIEW_REAPPLY_TITLE);
             EmailEngine.addMailPool(teacher.getEmail(), emailMap, EmailConfig.EmailFormEnum.TEACHVIP);
             logger.info("【EMAIL.sendInterviewReapply】addedMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",
-                    teacher.getRealName(),teacher.getEmail(),InterviewReapplyTitle,InterviewReapplyContent);
+                    teacher.getRealName(),teacher.getEmail(),INTERVIEW_REAPPLY_TITLE, INTERVIEW_REAPPLY_CONTENT);
             return ReturnMapUtils.returnSuccess();
         } catch (Exception e) {
             logger.error("【EMAIL.sendInterviewReapply】ERROR: {}", e);
@@ -182,8 +180,9 @@ public class AuditEmailService {
 
             if (teacher.getRealName() != null)
                 paramsMap.put("teacherName", teacher.getRealName());
-            logger.info("【EMAIL.sendContractInfoPass】toAddMailPool: teacher name = {}, email = {}", teacher.getRealName(),teacher.getEmail(),ContractInfoPassTitle,ContractInfoPassContent);
-            Map<String, String> emailMap = TempleteUtils.readTemplete(ContractInfoPassTitle,paramsMap, ContractInfoPassContent);
+            logger.info("【EMAIL.sendContractInfoPass】toAddMailPool: teacher name = {}, email = {}",
+                    teacher.getRealName(),teacher.getEmail(),CONTRACTINFO_PASS_TITLE, CONTRACTINFO_PASS_CONTENT);
+            Map<String, String> emailMap = TemplateUtils.readTemplate(CONTRACTINFO_PASS_CONTENT, paramsMap, CONTRACTINFO_PASS_TITLE);
             EmailEngine.addMailPool(teacher.getEmail(), emailMap, EmailConfig.EmailFormEnum.TEACHVIP);
             logger.info("【EMAIL.sendContractInfoPass】addedMailPool: teacher name = {}, email = {}", teacher.getRealName(),teacher.getEmail());
             return ReturnMapUtils.returnSuccess();
@@ -201,7 +200,7 @@ public class AuditEmailService {
             if (teacher.getRealName() != null)
                 paramsMap.put("teacherName", teacher.getRealName());
             logger.info("【EMAIL.sendContractInfoReapply】toAddMailPool: teacher name = {}, email = {}", teacher.getRealName(),teacher.getEmail(),"ContractInfoReapply.html","ContractInfoReapply.html");
-            Map<String, String> emailMap = TempleteUtils.readTemplete(ContractInfoReapplyTitle, paramsMap, ContractInfoReapplyContent);
+            Map<String, String> emailMap = TemplateUtils.readTemplate(CONTRACTINFO_REAPPLY_CONTENT, paramsMap, CONTRACTINFO_REAPPLY_TITLE);
             EmailEngine.addMailPool(teacher.getEmail(), emailMap, EmailConfig.EmailFormEnum.TEACHVIP);
             logger.info("【EMAIL.sendContractInfoReapply】addedMailPool: teacher name = {}, email = {}", teacher.getRealName(),teacher.getEmail());
             return ReturnMapUtils.returnSuccess();

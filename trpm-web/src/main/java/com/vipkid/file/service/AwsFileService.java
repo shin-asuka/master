@@ -22,6 +22,7 @@ import com.amazonaws.services.s3.model.S3Object;
 import com.vipkid.file.model.FileVo;
 import com.vipkid.file.utils.FileUtils;
 import com.vipkid.http.utils.JsonUtils;
+import com.vipkid.trpm.util.AwsFileUtils;
 
 /**
  * @author zouqinghua
@@ -41,9 +42,7 @@ public Logger logger = LoggerFactory.getLogger(AwsFileService.class);
 	public AmazonS3 getAmazonS3(){
 		if(amazonS3 == null){
 			try {
-				String accessKey = PropertyConfigurer.stringValue("aws.accessKey");
-				String secretKey = PropertyConfigurer.stringValue("aws.secretKey");
-				AWSCredentials credentials = new BasicAWSCredentials(accessKey, secretKey);
+				AWSCredentials credentials = AwsFileUtils.getAWSCredentials();
 				ClientConfiguration clientConfig = new ClientConfiguration();
 				amazonS3 = new AmazonS3Client(credentials, clientConfig);
 				Region cn = Region.getRegion(Regions.CN_NORTH_1);

@@ -35,7 +35,7 @@ public class MessageTools {
             pram.put("studentName",student.getEnglishName());
             pram.put("lessonName",serialNumber);
             pram.put("mobileUrl",PropertyConfigurer.stringValue("mobile.url")+"teacherfeedback?teacherId="+teacherUser.getId()+"&onlineClassId="+onlineClassId+"&sign=1&type=MAJOR");
-            String content = this.readTemplete("weichat.html",pram);
+            String content = this.readTemplate("weichat.html",pram);
             
             Map<String, String> requestParam = Maps.newHashMap();
             requestParam.put("openIds", openIds);
@@ -64,7 +64,7 @@ public class MessageTools {
             pram.put("studentName",student.getEnglishName());
             pram.put("lessonName",serialNumber);
             pram.put("mobileUrl",PropertyConfigurer.stringValue("mobile.url")+"teacherfeedback?teacherId="+teacherUser.getId()+"&onlineClassId="+onlineClassId+"&sign=1&type=MAJOR");
-            String content = this.readTemplete("weichat.html",pram);
+            String content = this.readTemplate("weichat.html",pram);
             
             Map<String, String> requestParam = Maps.newHashMap();
             requestParam.put("openIds", openIds);

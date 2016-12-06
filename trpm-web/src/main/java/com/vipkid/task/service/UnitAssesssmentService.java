@@ -14,21 +14,18 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.google.api.client.util.Maps;
 import com.google.common.collect.Lists;
 import com.vipkid.email.EmailEngine;
-import com.vipkid.email.handle.EmailHandle;
 import com.vipkid.email.handle.EmailConfig.EmailFormEnum;
-import com.vipkid.email.templete.TempleteUtils;
+import com.vipkid.email.templete.TemplateUtils;
 import com.vipkid.http.service.AssessmentHttpService;
 import com.vipkid.http.utils.JsonUtils;
 import com.vipkid.http.vo.OnlineClassVo;
 import com.vipkid.task.utils.UADateUtils;
 import com.vipkid.trpm.dao.LessonDao;
 import com.vipkid.trpm.dao.OnlineClassDao;
-import com.vipkid.trpm.util.DateUtils;
 
 /**
  * @author zouqinghua
@@ -166,7 +163,7 @@ public class UnitAssesssmentService {
 	                    Map<String, String> paramsMap = Maps.newHashMap();
 	                    paramsMap.put("scheduledDateTime", scheduledDateTime);
 
-	                    Map<String, String> emailMap = new TempleteUtils().readTemplete(contentTemplete, paramsMap, titleTemplete);
+	                    Map<String, String> emailMap = new TemplateUtils().readTemplate(contentTemplete, paramsMap, titleTemplete);
 	                    new EmailEngine().addMailPool(email, emailMap,EmailFormEnum.EDUCATION);
 	                    //EmailHandle emailHandle = new EmailHandle(email, emailMap.get("title"), emailMap.get("content"), EmailFormEnum.TEACHVIP);
 	                    //emailHandle.sendMail();  

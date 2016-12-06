@@ -11,34 +11,34 @@ import com.google.common.collect.Maps;
 
 /**
  * Email 模板内容读取
- * 含  readTemplete 接口
+ * 含  readTemplate 接口
  * @author ALong
  *
  */
-public class TempleteUtils {
+public class TemplateUtils {
 
-    public final static String NOTE_TEMPLETE = "<tr><td>{{time}}</td><td>{{ename}}</td><td>{{lessonson}}</td></tr>";
+    public final static String NOTE_TEMPLATE = "<tr><td>{{time}}</td><td>{{ename}}</td><td>{{lessonNo}}</td></tr>";
     
     /**
      * 
      *  模板读取<br/>
      * 
      * @Author:ALong (ZengWeiLong)
-     * @param contentTemplete 内容模板路径
+     * @param contentTemplate 内容模板路径
      * @param map 模板中,以{{name}}标识的参数名称和值
      * @param titleTemplete 标题模板路径
      * @return Map<String,String> 返回读取的内容title content
      * @date 2016年4月23日
      */
     @SuppressWarnings("unchecked")
-    public static Map<String, String> readTemplete(String contentTemplete, Map<String, String> map, String titleTemplete) {
-        Map<String,String> cacheMap = TempleteChche.getMe().get(contentTemplete,Map.class);
+    public static Map<String, String> readTemplate(String contentTemplate, Map<String, String> map, String titleTemplete) {
+        Map<String,String> cacheMap = TempleteChche.getMe().get(contentTemplate,Map.class);
         String content = "",title = "";
         if(cacheMap == null || cacheMap.size() == 0){
             cacheMap = Maps.newHashMap();
-            cacheMap.put("content", readTemplete(contentTemplete).toString());
-            cacheMap.put("title", readTemplete(titleTemplete).toString());
-            TempleteChche.getMe().set(contentTemplete,cacheMap);
+            cacheMap.put("content", readTemplate(contentTemplate).toString());
+            cacheMap.put("title", readTemplate(titleTemplete).toString());
+            TempleteChche.getMe().set(contentTemplate,cacheMap);
         }
         content = cacheMap.get("content");
         title = cacheMap.get("title");
@@ -60,11 +60,11 @@ public class TempleteUtils {
      * 读取模板内容
      * 
      * @Author:ALong
-     * @param templeteName 文件名称
+     * @param templateName 文件名称
      * @return 2015年11月5日
      */
-    private static StringBuilder readTemplete(String templeteName) {
-        InputStream is = TempleteUtils.class.getClass().getClassLoader().getResourceAsStream("template" + File.separator + templeteName);
+    private static StringBuilder readTemplate(String templateName) {
+        InputStream is = TemplateUtils.class.getClass().getClassLoader().getResourceAsStream("template" + File.separator + templateName);
         StringBuilder result = new StringBuilder("");
         try {
             BufferedReader br = new BufferedReader(new InputStreamReader(is,Charsets.UTF_8));// 构造一个BufferedReader类来读取文件
