@@ -2,11 +2,14 @@ package com.vipkid.recruitment.event;
 
 
 import java.util.Map;
+
 import javax.annotation.Resource;
 
 import com.google.api.client.util.Maps;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 import com.vipkid.recruitment.common.service.AuditEmailService;
 
@@ -15,6 +18,7 @@ import com.vipkid.recruitment.common.service.AuditEmailService;
  *
  * @author Austin.Cao  Date: 05/12/2016
  */
+@Component
 public class AuditEventHandler implements AuditHandler {
 
     private static Logger logger = LoggerFactory.getLogger(AuditEventHandler.class);
