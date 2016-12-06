@@ -76,12 +76,13 @@ public class ContractInfoService {
             String failReason= "";
             List<TeacherApplication> list = teacherApplicationDao.findCurrentApplication(teacher.getId());
             if (CollectionUtils.isNotEmpty(list)) {
-                    TeacherApplication application = list.get(0);
-                    application.setCurrent(0);
-                    teacherApplicationDao.update(application);
-                //将文件的FileReason 的reslut Fail  的置为空，重新为管理端审核
-                    failReason = application.getFailedReason().replaceAll("\"result\":\"FAIL\"","\"result\":\"\"");
-
+                TeacherApplication application = list.get(0);
+                application.setCurrent(0);
+                teacherApplicationDao.update(application);
+                if(application.getStatus().equals(TeacherApplicationEnum.Status.CONTRACT_INFO.toString())) {
+                    //将文件的FileReason 的reslut Fail  的置为空，重新为管理端审核
+                    failReason = application.getFailedReason().replaceAll("\"result\":\"FAIL\"", "\"result\":\"\"");
+                }
             }
             TeacherApplication application = new TeacherApplication();
             if(StringUtils.isNotEmpty(failReason)){
