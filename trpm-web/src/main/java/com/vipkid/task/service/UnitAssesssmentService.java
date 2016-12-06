@@ -19,7 +19,7 @@ import com.google.api.client.util.Maps;
 import com.google.common.collect.Lists;
 import com.vipkid.email.EmailEngine;
 import com.vipkid.email.handle.EmailConfig.EmailFormEnum;
-import com.vipkid.email.templete.TemplateUtils;
+import com.vipkid.email.template.TemplateUtils;
 import com.vipkid.http.service.AssessmentHttpService;
 import com.vipkid.http.utils.JsonUtils;
 import com.vipkid.http.vo.OnlineClassVo;

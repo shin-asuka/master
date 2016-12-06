@@ -3,7 +3,7 @@ package com.vipkid.recruitment.common.service;
 import com.google.api.client.util.Maps;
 import com.vipkid.email.EmailEngine;
 import com.vipkid.email.handle.EmailConfig;
-import com.vipkid.email.templete.TemplateUtils;
+import com.vipkid.email.template.TemplateUtils;
 import com.vipkid.recruitment.dao.TeacherApplicationDao;
 import com.vipkid.recruitment.entity.TeacherApplication;
 import com.vipkid.recruitment.utils.ReturnMapUtils;

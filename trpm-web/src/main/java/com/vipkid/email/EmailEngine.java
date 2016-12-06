@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import com.vipkid.email.handle.EmailConfig.EmailFormEnum;
 import com.vipkid.email.handle.EmailHandle;
-import com.vipkid.email.templete.TemplateUtils;
+import com.vipkid.email.template.TemplateUtils;
 
 /**
  * <b>邮件发送线程调度引擎类</b> <br/>

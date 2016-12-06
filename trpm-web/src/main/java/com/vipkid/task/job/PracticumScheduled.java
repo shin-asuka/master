@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 import com.google.api.client.util.Maps;
 import com.vipkid.email.EmailEngine;
 import com.vipkid.email.handle.EmailConfig.EmailFormEnum;
-import com.vipkid.email.templete.TemplateUtils;
+import com.vipkid.email.template.TemplateUtils;
 import com.vipkid.trpm.dao.TeacherDao;
 import com.vipkid.trpm.dao.TeacherPeDao;
 import com.vipkid.trpm.entity.Teacher;

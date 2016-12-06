@@ -1,4 +1,4 @@
-package com.vipkid.email.templete;
+package com.vipkid.email.template;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;

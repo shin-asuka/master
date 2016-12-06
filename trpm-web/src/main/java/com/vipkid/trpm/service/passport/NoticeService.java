@@ -14,7 +14,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.vipkid.email.EmailEngine;
 import com.vipkid.email.handle.EmailConfig.EmailFormEnum;
-import com.vipkid.email.templete.TemplateUtils;
+import com.vipkid.email.template.TemplateUtils;
 import com.vipkid.trpm.dao.*;
 import com.vipkid.trpm.entity.Lesson;
 import com.vipkid.trpm.entity.Student;

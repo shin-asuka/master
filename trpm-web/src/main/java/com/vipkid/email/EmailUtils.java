@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
 import com.google.api.client.util.Maps;
 import com.vipkid.email.handle.EmailConfig;
 import com.vipkid.email.handle.EmailConfig.EmailFormEnum;
-import com.vipkid.email.templete.TemplateUtils;
+import com.vipkid.email.template.TemplateUtils;
 import com.vipkid.trpm.entity.OnlineClass;
 import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.util.DateUtils;
