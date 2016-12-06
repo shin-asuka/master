@@ -256,7 +256,7 @@ public class OnlineClassService {
         parmMap.put("teacherName", teacher.getRealName());
         parmMap.put("onlineClassId", onlineClass.getId());
         parmMap.put("roomId", onlineClass.getClassroom());
-        String content = FilesUtils.readLogTemplete(ApplicationConstant.AuditCategory.CLASSROOM_ENTER, parmMap);
+        String content = FilesUtils.readLogTemplate(ApplicationConstant.AuditCategory.CLASSROOM_ENTER, parmMap);
         auditDao.saveAudit(ApplicationConstant.AuditCategory.CLASSROOM_ENTER, "INFO", content, teacher.getRealName(),
                 teacher, IpUtils.getRemoteIP());
     }
@@ -279,7 +279,7 @@ public class OnlineClassService {
         parmMap.put("onlineClassId", onlineClassId);
         OnlineClass onlineClass = getOnlineClassById(onlineClassId);
         parmMap.put("roomId", onlineClass.getClassroom());
-        String content = FilesUtils.readLogTemplete(ApplicationConstant.AuditCategory.CLASSROOM_EXIT, parmMap);
+        String content = FilesUtils.readLogTemplate(ApplicationConstant.AuditCategory.CLASSROOM_EXIT, parmMap);
         auditDao.saveAudit(ApplicationConstant.AuditCategory.CLASSROOM_EXIT, "INFO", content, teacher.getRealName(),
                 teacher, IpUtils.getRemoteIP());
     }
@@ -400,7 +400,7 @@ public class OnlineClassService {
             // 如果课程已经结束
             modelMap = this.updateTeacherApplication(recruitTeacher, pe, result, "", currTeacherApplication);
             // 日志 2
-            String content = FilesUtils.readLogTemplete(ApplicationConstant.AuditCategory.PRACTICUM_AUDIT, parmMap);
+            String content = FilesUtils.readLogTemplate(ApplicationConstant.AuditCategory.PRACTICUM_AUDIT, parmMap);
             auditDao.saveAudit(ApplicationConstant.AuditCategory.PRACTICUM_AUDIT, "INFO", content, pe.getRealName(),
                     recruitTeacher, IpUtils.getRemoteIP());
             logger.info("Practicum Online Class[finish] updateAudit,studentId:{},onlineClassId:{},recruitTeacher:{},teacherId:{}",
@@ -623,14 +623,14 @@ public class OnlineClassService {
         parmMap.put("roomId", onlineClass.getClassroom());
 
         if (send) {
-            String content = FilesUtils.readLogTemplete(ApplicationConstant.AuditCategory.STAR_SEND, parmMap);
+            String content = FilesUtils.readLogTemplate(ApplicationConstant.AuditCategory.STAR_SEND, parmMap);
             auditDao.saveAudit(ApplicationConstant.AuditCategory.STAR_SEND, "INFO", content, teacher.getRealName(),
                     teacher, IpUtils.getRemoteIP());
             logger.info("Teacher: id={},name={} send star, Student: id={},name={}, onlineClassId: id={},room={}",
                     teacher.getId(), teacher.getRealName(), studentId, student.getEnglishName(), onlineClassId,
                     onlineClass.getClassroom());
         } else {
-            String content = FilesUtils.readLogTemplete(ApplicationConstant.AuditCategory.STAR_REMOVE, parmMap);
+            String content = FilesUtils.readLogTemplate(ApplicationConstant.AuditCategory.STAR_REMOVE, parmMap);
             auditDao.saveAudit(ApplicationConstant.AuditCategory.STAR_REMOVE, "INFO", content, teacher.getRealName(),
                     teacher, IpUtils.getRemoteIP());
             logger.info("Teacher: id={},name={} remove star, Student: id={},name={}, onlineClassId: id={},room={}",

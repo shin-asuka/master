@@ -34,7 +34,7 @@ public class EmailEngine {
      * @Author:ALong (ZengWeiLong)
      * @param toEmail 发送到目标地址
      * @param map （必须包含邮件标题 <span style="color:red;"> title</span>，邮件内容 <span style="color:red;">
-     *        content</span>） 通过 {@link TemplateUtils} 的静态方法 readTemplete可以得到
+     *        content</span>） 通过 {@link TemplateUtils} 的静态方法 readTemplate可以得到
      * @param emailForm 使用发送者
      * @date 2016年4月23日
      */
@@ -54,7 +54,7 @@ public class EmailEngine {
      * @Author:ALong (ZengWeiLong)
      * @param toEmail 发送到目标地址
      * @param map （必须包含邮件标题 <span style="color:red;"> title</span>，邮件内容 <span style="color:red;">
-     *        content</span>） 通过 {@link TemplateUtils} 的静态方法 readTemplete可以得到
+     *        content</span>） 通过 {@link TemplateUtils} 的静态方法 readTemplate可以得到
      * @param emailForm 使用发送者
      * @throws InterruptedException void
      * @date 2016年4月23日

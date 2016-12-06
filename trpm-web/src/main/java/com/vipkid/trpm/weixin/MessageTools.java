@@ -82,11 +82,11 @@ public class MessageTools {
     /**
      * 读取模板内容
      * @Author:ALong
-     * @param templeteName 文件名称
+     * @param templateName 文件名称
      * @return 2015年11月5日
      */
-    private String readTemplete(String templeteName,Map<String,String> pram){
-        InputStream is = this.getClass().getResourceAsStream(templeteName);
+    private String readTemplate(String templateName, Map<String, String> pram){
+        InputStream is = this.getClass().getResourceAsStream(templateName);
         StringBuilder result = new StringBuilder("");
         try{
             BufferedReader br =new BufferedReader(new InputStreamReader(is,Charsets.UTF_8));//构造一个BufferedReader类来读取文件

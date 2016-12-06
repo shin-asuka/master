@@ -683,8 +683,8 @@ public class ScheduleService {
             replaceMap.put("createTime", DateUtils.formatTo(instant, DateUtils.FMT_YMD_HMS));
             replaceMap.put("scheduleDatetime", onlineClass.getScheduledDateTime());
 
-            String content = FilesUtils.readLogTemplete(ApplicationConstant.AuditCategory.ONLINE_CLASS_CREATE,
-                            replaceMap);
+            String content = FilesUtils.readLogTemplate(ApplicationConstant.AuditCategory.ONLINE_CLASS_CREATE,
+                    replaceMap);
             auditDao.saveAudit(ApplicationConstant.AuditCategory.ONLINE_CLASS_CREATE, "INFO", content,
                             teacher.getRealName(), onlineClassDao, IpUtils.getRemoteIP());
 
@@ -781,8 +781,8 @@ public class ScheduleService {
             replaceMap.put("createTime", DateUtils.formatTo(instant, DateUtils.FMT_YMD_HMS));
             replaceMap.put("scheduleDatetime", onlineClass.getScheduledDateTime());
 
-            String content = FilesUtils.readLogTemplete(ApplicationConstant.AuditCategory.ONLINE_CLASS_DELETE,
-                            replaceMap);
+            String content = FilesUtils.readLogTemplate(ApplicationConstant.AuditCategory.ONLINE_CLASS_DELETE,
+                    replaceMap);
             auditDao.saveAudit(ApplicationConstant.AuditCategory.ONLINE_CLASS_DELETE, "INFO", content,
                             teacher.getRealName(), onlineClassDao, IpUtils.getRemoteIP());
 

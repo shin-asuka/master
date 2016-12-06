@@ -103,8 +103,8 @@ public class NoticeService {
             map.put("datetime-name-course", sb.toString());
             map.put("count", String.valueOf(list.size()));
             map.put("teacherName", teacher.getRealName());
-            TemplateUtils templete = new TemplateUtils();
-            Map<String, String> tmpMap = templete.readTemplate("UpcomingClassesReminder.html", map, "UpcomingClassesReminder-Title.html");
+            TemplateUtils templateUtils = new TemplateUtils();
+            Map<String, String> tmpMap = templateUtils.readTemplate("UpcomingClassesReminder.html", map, "UpcomingClassesReminder-Title.html");
             new EmailEngine().addMail(teacher.getEmail(), tmpMap,EmailFormEnum.TEACHVIP);
             return true;
         }catch(Exception e){

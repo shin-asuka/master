@@ -1,7 +1,6 @@
 package com.vipkid.trpm.service.pe;
 
 import java.sql.Timestamp;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -20,8 +19,6 @@ import com.vipkid.enums.TbdResultEnum;
 import com.vipkid.enums.TeacherApplicationEnum;
 import com.vipkid.enums.TeacherApplicationEnum.Result;
 import com.vipkid.enums.TeacherApplicationEnum.Status;
-import com.vipkid.enums.TeacherEnum;
-import com.vipkid.enums.TeacherEnum.LifeCycle;
 import com.vipkid.enums.TeacherModuleEnum.RoleClass;
 import com.vipkid.recruitment.dao.TeacherApplicationDao;
 import com.vipkid.recruitment.entity.TeacherApplication;
@@ -208,7 +205,7 @@ public class PeSupervisorService {
                     currTeacherApplication);
             // 日志 1
             String content = FilesUtils
-                    .readLogTemplete(ApplicationConstant.AuditCategory.PRACTICUM_AUDIT, parmMap);
+                    .readLogTemplate(ApplicationConstant.AuditCategory.PRACTICUM_AUDIT, parmMap);
             auditDao.saveAudit(ApplicationConstant.AuditCategory.PRACTICUM_AUDIT, "INFO", content,
                     peSupervisor.getRealName(), recruitTeacher, IpUtils.getRemoteIP());
 

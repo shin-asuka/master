@@ -377,7 +377,7 @@ public class ReportController extends AbstractPortalController {
     private Model uploadData(AssessmentReport report, HttpServletRequest request, Model model, String classType) {
         logger.info("ReportController: uploadData() 参数为：report={}, classType={}", JSON.toJSONString(report), classType);
 
-        model.addAttribute("templete", report);
+        model.addAttribute("template", report);
 
         String onlineClassId = request.getParameter("onlineClassId");
         OnlineClass onlineClass = reportService.findOnlineClassById(Long.valueOf(onlineClassId));

@@ -186,7 +186,7 @@ public class ReportService {
             assessmentReportDao.save(resultReport);
 
             // 日志记录
-            String content = FilesUtils.readLogTemplete(ApplicationConstant.AuditCategory.REPORT_UA_CREATE, parmMap);
+            String content = FilesUtils.readLogTemplate(ApplicationConstant.AuditCategory.REPORT_UA_CREATE, parmMap);
             auditDao.saveAudit(ApplicationConstant.AuditCategory.REPORT_UA_CREATE, "INFO", content, user.getName(),
                     resultReport, IpUtils.getRemoteIP());
 
@@ -198,7 +198,7 @@ public class ReportService {
             if (UaReportStatus.NEWADD == resultReport.getReaded()
                     || UaReportStatus.RESUBMIT == resultReport.getReaded()) {
                 // 日志记录
-                String content = FilesUtils.readLogTemplete(ApplicationConstant.AuditCategory.REPORT_UA_UPDATE,
+                String content = FilesUtils.readLogTemplate(ApplicationConstant.AuditCategory.REPORT_UA_UPDATE,
                         parmMap);
                 content += "【" + resultReport.getUrl() + " Update to " + upload.getUrl() + "】";
                 auditDao.saveAudit(ApplicationConstant.AuditCategory.REPORT_UA_UPDATE, "INFO", content, user.getName(),
@@ -296,7 +296,7 @@ public class ReportService {
             assessmentReportDao.save(resultReport);
 
             // 日志记录
-            String content = FilesUtils.readLogTemplete(ApplicationConstant.AuditCategory.PRACTICUM_REPORT_CREATE,
+            String content = FilesUtils.readLogTemplate(ApplicationConstant.AuditCategory.PRACTICUM_REPORT_CREATE,
                     parmMap);
             auditDao.saveAudit(ApplicationConstant.AuditCategory.PRACTICUM_REPORT_CREATE, "INFO", content,
                     user.getName(), resultReport, IpUtils.getRemoteIP());
@@ -309,7 +309,7 @@ public class ReportService {
             if (UaReportStatus.NEWADD == resultReport.getReaded()
                     || UaReportStatus.RESUBMIT == resultReport.getReaded()) {
                 // 日志记录
-                String content = FilesUtils.readLogTemplete(ApplicationConstant.AuditCategory.PRACTICUM_REPORT_UPDATE,
+                String content = FilesUtils.readLogTemplate(ApplicationConstant.AuditCategory.PRACTICUM_REPORT_UPDATE,
                         parmMap);
                 content += "【" + resultReport.getUrl() + " Update to " + upload.getUrl() + "】";
                 auditDao.saveAudit(ApplicationConstant.AuditCategory.PRACTICUM_REPORT_UPDATE, "INFO", content,
@@ -426,9 +426,9 @@ public class ReportService {
      * dbEntity.getTeacherId()); parmMap.put("studentId", dbEntity.getStudentId()); String content = ""; //
      * 提交后状态直接变为SUBMITTED,并且不能再进行保存/提交操作 if (isSubmited) { demoReport.setSubmitDateTime(new
      * Timestamp(System.currentTimeMillis())); demoReport.setLifeCycle(ReportLifeCycle.SUBMITTED); content =
-     * FilesUtils.readLogTemplete (ApplicationConstant.AuditCategory.REPORT_DEMO_SUBMIT, parmMap); } else { //
+     * FilesUtils.readLogTemplate (ApplicationConstant.AuditCategory.REPORT_DEMO_SUBMIT, parmMap); } else { //
      * 保存后状态变为UNFINISHED demoReport.setLifeCycle(ReportLifeCycle.UNFINISHED); content =
-     * FilesUtils.readLogTemplete(ApplicationConstant.AuditCategory.REPORT_DEMO_SAVE , parmMap); } String INFO = "INFO";
+     * FilesUtils.readLogTemplate(ApplicationConstant.AuditCategory.REPORT_DEMO_SAVE , parmMap); } String INFO = "INFO";
      * if (0 != demoReportDao.updateDemoReport(demoReport)) { resultMap.put("result", true); } else { INFO = "ERROR";
      * resultMap.put("msg", "Operation failed.Please contact management!"); } //日志记录 if (isSubmited) {
      * auditDao.saveAudit(ApplicationConstant.AuditCategory .REPORT_DEMO_SUBMIT,INFO,content, user.getName()); }else{
@@ -506,14 +506,14 @@ public class ReportService {
                     || ReportLifeCycle.UNFINISHED.equals(dbEntity.getLifeCycle())) {
                 demoReport.setLifeCycle(ReportLifeCycle.SUBMITTED);
             }
-            content = FilesUtils.readLogTemplete(ApplicationConstant.AuditCategory.REPORT_DEMO_SUBMIT, parmMap);
+            content = FilesUtils.readLogTemplate(ApplicationConstant.AuditCategory.REPORT_DEMO_SUBMIT, parmMap);
         } else {
             // 仅仅为空的时候才将其变为UNFINISHED，其他状态不修其状态
             if (StringUtils.isEmpty(dbEntity.getLifeCycle())) {
                 // 保存后状态变为UNFINISHED
                 demoReport.setLifeCycle(ReportLifeCycle.UNFINISHED);
             }
-            content = FilesUtils.readLogTemplete(ApplicationConstant.AuditCategory.REPORT_DEMO_SAVE, parmMap);
+            content = FilesUtils.readLogTemplate(ApplicationConstant.AuditCategory.REPORT_DEMO_SAVE, parmMap);
         }
 
         String INFO = "INFO";

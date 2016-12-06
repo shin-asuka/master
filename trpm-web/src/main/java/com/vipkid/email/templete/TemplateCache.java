@@ -9,23 +9,23 @@ import java.util.concurrent.ConcurrentHashMap;
  *  仅仅在内存中保存模板数据，一旦机器重启将清空缓存
  *  
  * @author Along(ZengWeiLong)
- * @ClassName: TempleteChche
+ * @ClassName: TemplateCache
  * @date 2016年4月23日 下午7:10:14
  *
  */
-public class TempleteChche {
+public class TemplateCache {
 
-    private static TempleteChche tc = null;
+    private static TemplateCache tc = null;
 
     private Map<String, Object> cacheMap = new ConcurrentHashMap<String, Object>();
 
-    private TempleteChche() {
+    private TemplateCache() {
 
     }
 
-    public static TempleteChche getMe() {
+    public static TemplateCache getMe() {
         if (tc == null) {
-            tc = new TempleteChche();
+            tc = new TemplateCache();
         }
         return tc;
     }

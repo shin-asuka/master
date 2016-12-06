@@ -88,7 +88,7 @@ public class EmailService {
      */
     private Map<String, String> sendActivation(User user, Teacher teacher) {
         Map<String, String> resultMap = Maps.newHashMap();
-        TemplateUtils templete = new TemplateUtils();
+        TemplateUtils templateUtils = new TemplateUtils();
         Map<String, String> map = Maps.newHashMap();
         if (StringUtils.isEmpty(teacher.getRealName())) {
             map.put("teacherName", NEW_TEACHER_NAME);
@@ -97,7 +97,7 @@ public class EmailService {
         }
         map.put("link", PropertyConfigurer.stringValue("teacher.www") + "activation.shtml?uuid="
                 + teacher.getRecruitmentId());
-        Map<String, String> tmpMap = templete.readTemplate("VIPKIDAccountActivationLink.html", map,
+        Map<String, String> tmpMap = templateUtils.readTemplate("VIPKIDAccountActivationLink.html", map,
                 "VIPKIDAccountActivationLink-Title.html");
 
         new EmailEngine().addMail(user.getUsername(), tmpMap, EmailFormEnum.TEACHVIP);
@@ -117,7 +117,7 @@ public class EmailService {
      */
     private Map<String, String> sendApplyThx(User user, Teacher teacher) {
         Map<String, String> resultMap = Maps.newHashMap();
-        TemplateUtils templete = new TemplateUtils();
+        TemplateUtils templateUtils = new TemplateUtils();
         Map<String, String> map = Maps.newHashMap();
         if (StringUtils.isEmpty(teacher.getRealName())) {
             map.put("teacherName", NEW_TEACHER_NAME);
@@ -126,7 +126,7 @@ public class EmailService {
         }
         map.put("loginName", user.getUsername());
         Map<String, String> tmpMap =
-                templete.readTemplate("Step2Apply.html", map, "Step2Apply-Title.html");
+                templateUtils.readTemplate("Step2Apply.html", map, "Step2Apply-Title.html");
 
         new EmailEngine().addMail(user.getUsername(), tmpMap, EmailFormEnum.TEACHVIP);
         resultMap.put("info", "OK");

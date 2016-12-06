@@ -145,7 +145,7 @@ public class UnitAssesssmentService {
 
 	}
 
-	public void sendEmail(OnlineClassVo onlineClassVoUnSubmit,Map<Long,OnlineClassVo> ocMap,String contentTemplete,String titleTemplete){
+	public void sendEmail(OnlineClassVo onlineClassVoUnSubmit,Map<Long,OnlineClassVo> ocMap,String contentTemplate,String titleTemplate){
 		if(onlineClassVoUnSubmit!=null && CollectionUtils.isNotEmpty(onlineClassVoUnSubmit.getIdList())){
 			List<Long> idList = onlineClassVoUnSubmit.getIdList();
 			for (Long id : idList) {
@@ -156,18 +156,18 @@ public class UnitAssesssmentService {
 					String timezone = oc.getTimezone();
 					
 					//email = "yangchao@vipkid.com.cn"; //
-					logger.info("send Email to teacher name= {},email = {} , contentTemplete = {}, titleTemplete = {}",name,email,contentTemplete,titleTemplete);
+					logger.info("send Email to teacher name= {},email = {} , contentTemplate = {}, titleTemplate = {}",name,email,contentTemplate,titleTemplate);
 					String scheduledDateTime = UADateUtils.format(oc.getScheduledDateTime(), "MM/dd/YYYY",timezone) ;
 					scheduledDateTime +=" at "+UADateUtils.format(oc.getScheduledDateTime(), "HH:mm",timezone) ;
 					try {
 	                    Map<String, String> paramsMap = Maps.newHashMap();
 	                    paramsMap.put("scheduledDateTime", scheduledDateTime);
 
-	                    Map<String, String> emailMap = new TemplateUtils().readTemplate(contentTemplete, paramsMap, titleTemplete);
+	                    Map<String, String> emailMap = new TemplateUtils().readTemplate(contentTemplate, paramsMap, titleTemplate);
 	                    new EmailEngine().addMailPool(email, emailMap,EmailFormEnum.EDUCATION);
 	                    //EmailHandle emailHandle = new EmailHandle(email, emailMap.get("title"), emailMap.get("content"), EmailFormEnum.TEACHVIP);
 	                    //emailHandle.sendMail();  
-	                    logger.info("send Email success  teacher = {},email = {},contentTemplete = {}, titleTemplete = {}",name,email,contentTemplete,titleTemplete);
+	                    logger.info("send Email success  teacher = {},email = {},contentTemplate = {}, titleTemplate = {}",name,email,contentTemplate,titleTemplate);
 	                } catch (Exception e) {
 	                    logger.error("Send TQ mail error", e);
 	                }

@@ -26,19 +26,19 @@ public class TemplateUtils {
      * @Author:ALong (ZengWeiLong)
      * @param contentTemplate 内容模板路径
      * @param map 模板中,以{{name}}标识的参数名称和值
-     * @param titleTemplete 标题模板路径
+     * @param titleTemplate 标题模板路径
      * @return Map<String,String> 返回读取的内容title content
      * @date 2016年4月23日
      */
     @SuppressWarnings("unchecked")
-    public static Map<String, String> readTemplate(String contentTemplate, Map<String, String> map, String titleTemplete) {
-        Map<String,String> cacheMap = TempleteChche.getMe().get(contentTemplate,Map.class);
+    public static Map<String, String> readTemplate(String contentTemplate, Map<String, String> map, String titleTemplate) {
+        Map<String,String> cacheMap = TemplateCache.getMe().get(contentTemplate,Map.class);
         String content = "",title = "";
         if(cacheMap == null || cacheMap.size() == 0){
             cacheMap = Maps.newHashMap();
             cacheMap.put("content", readTemplate(contentTemplate).toString());
-            cacheMap.put("title", readTemplate(titleTemplete).toString());
-            TempleteChche.getMe().set(contentTemplate,cacheMap);
+            cacheMap.put("title", readTemplate(titleTemplate).toString());
+            TemplateCache.getMe().set(contentTemplate,cacheMap);
         }
         content = cacheMap.get("content");
         title = cacheMap.get("title");
