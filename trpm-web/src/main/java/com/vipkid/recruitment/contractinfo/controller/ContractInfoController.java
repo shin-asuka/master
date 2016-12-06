@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -41,7 +40,6 @@ import com.vipkid.http.service.FileHttpService;
 import com.vipkid.http.utils.JsonUtils;
 import com.vipkid.recruitment.common.service.RecruitmentService;
 import com.vipkid.recruitment.contractinfo.service.ContractService;
-import com.vipkid.recruitment.entity.ContractFile;
 import com.vipkid.recruitment.entity.TeacherContractFile;
 import com.vipkid.recruitment.contractinfo.service.ContractInfoService;
 import com.vipkid.recruitment.utils.ReturnMapUtils;
@@ -90,10 +88,6 @@ public class ContractInfoController extends RestfulController {
 
     /**
      * 进入 PersonalInfo 状态之前, 先查出之前是否有上传资料
-     *
-     * @param request
-     * @param response
-     * @return
      */
     @RequestMapping(value = "/queryContractInfo", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
     public Map<String, Object> queryPersonalInfo(HttpServletRequest request, HttpServletResponse response) {
@@ -135,19 +129,10 @@ public class ContractInfoController extends RestfulController {
 
             //2. 获取老师上传的 contract info,  , 是否有 audit failReason
             Map<String, Object> contractInfo = Maps.newHashMap();
-            ContractFile contractFile=new ContractFile();
-            contractInfo.put("file",contractFile);
-            Map<String, ContractFile> contractFileMap = contractService.findContract(teacher);
-            Iterator it = contractFileMap.entrySet().iterator();
-            while (it.hasNext()) {
-                Map.Entry entry = (java.util.Map.Entry) it.next();
-                String re = (String) entry.getKey();
-                 contractFile = (ContractFile) entry.getValue();
-                logger.info("查询用户：{}查询上传过的文件{}", teacher.getId(), contractFile);
-                contractInfo.put("file",contractFile);
-                contractInfo.put("result", re);
-            }
-
+            Map<String, Object> contractFileMap = contractService.findContract(teacher);
+            logger.info("查询用户：{},查询上传过的文件", teacher.getId());
+            contractInfo.put("file",contractFileMap.get("contractFile"));
+            contractInfo.put("result", contractFileMap.get("result"));
             result.put("personalInfo", personalInfo);
             result.put("contractInfo", contractInfo);
 
@@ -168,9 +153,6 @@ public class ContractInfoController extends RestfulController {
 
     /**
      * 提交用户上传文件的信息
-     * @param request
-     * @param response
-     * @return
      */
     @RequestMapping(value = "/submit", method = RequestMethod.POST, produces = RestfulConfig.JSON_UTF_8)
     public  Map<String,Object> submitContractInfo(@RequestBody Map<String,Object> paramMap, HttpServletRequest request, HttpServletResponse response){
@@ -178,21 +160,24 @@ public class ContractInfoController extends RestfulController {
         String bio = (String) paramMap.get("bio");
 
         logger.info("uplod file id String {},techer 的自我简介{}",fileIds,bio);
-        if(StringUtils.isBlank(fileIds)){
+        if(StringUtils.isBlank(fileIds)||StringUtils.isBlank(bio)){
             return ReturnMapUtils.returnFail("You don't have to upload the file");
         }
 
         //ID (3 TYPES), DIPLOMA, DEGREE, CERTIFICATE, W9, CONTRACT,
         List<String> idLists = Splitter.on(",").splitToList(fileIds);
         List<Integer> idList = new ArrayList<>();
-        for(int i=0;i<idLists.size();i++){
-            idList.add(Integer.parseInt(idLists.get(i)));
-        }
+
         try {
+            for(int i=0;i<idLists.size();i++){
+                idList.add(Integer.parseInt(idLists.get(i)));
+            }
             Teacher teacher = getTeacher(request);
+
             Long teacherId = teacher.getId();
-            boolean submit = CheckManySubmit(teacherId);
+            boolean submit = checkManySubmit(teacherId);
             if(submit){
+                response.setStatus(HttpStatus.NOT_FOUND.value());
                 return ReturnMapUtils.returnFail("The teacher has been submitted. ");
             }
 
@@ -241,20 +226,23 @@ public class ContractInfoController extends RestfulController {
     }
 
     //检查用户是否重复提交
-    private boolean CheckManySubmit(Long teacherId){
-        List<TeacherApplication> teacherApplications =  contractService.finTeacherApplication(teacherId);
-        if(CollectionUtils.isEmpty(teacherApplications)){
-            return false;
+    private boolean checkManySubmit(Long teacherId){
+        List<TeacherApplication> teacherApplications =  contractService.findTeacherApplication(teacherId);
+        if(CollectionUtils.isNotEmpty(teacherApplications)){
+            TeacherApplication teacherApplication = teacherApplications.get(0);
+            if(StringUtils.isBlank(teacherApplication.getResult())){
+                return true;
+            }
         }
-        return true;
+
+        return false;
     }
 
 
     private boolean checkPersonInfo (Long teacherId) {
         logger.info("检查老师的头像/照片/视频是都都上传了? 从 TIS 获取数据");
         //检查老师的头像/照片/视频是都都上传了? 从 TIS 获取数据
-        Map<String, Object> teacherFiles = Maps.newHashMap();
-        teacherFiles = fileHttpService.queryTeacherFiles(teacherId);
+        Map<String, Object> teacherFiles = fileHttpService.queryTeacherFiles(teacherId);
         String avatarUrl = (String) teacherFiles.get("avatarUrl");
         List<AppLifePicture> lifePictures = (List<AppLifePicture>)teacherFiles.get("lifePictures");
         String shortVideoUrl = (String) teacherFiles.get("shortVideo");
@@ -328,7 +316,6 @@ public class ContractInfoController extends RestfulController {
                 FileVo fileVo = awsFileService.upload(bucketName, key, file.getInputStream(), fileSize);
 
                 if (fileVo != null) {
-                    String url = "http://" + bucketName + "/" + key;
                     FileUploadStatus fileUploadStatus = fileHttpService.uploadAvatar(teacherId, key);
                     result.put("url", fileUploadStatus.getUrl());
                     //result.put("status", fileUploadStatus.getStatus());
@@ -379,7 +366,6 @@ public class ContractInfoController extends RestfulController {
                 FileVo fileVo = awsFileService.upload(bucketName, key, file.getInputStream(), fileSize);
 
                 if (fileVo != null) {
-                    String url = "http://" + bucketName + "/" + key;
                     FileUploadStatus fileUploadStatus = fileHttpService.uploadLifePicture(teacherId, key);
                     result.put("url", fileUploadStatus.getUrl());
                     //result.put("status", fileUploadStatus.getStatus());
@@ -427,7 +413,6 @@ public class ContractInfoController extends RestfulController {
                 FileVo fileVo = awsFileService.upload(bucketName, key, file.getInputStream(), fileSize);
 
                 if (fileVo != null) {
-                    String url = "http://" + bucketName + "/" + key;
                     FileUploadStatus fileUploadStatus = fileHttpService.uploadShortVideo(teacherId, key);
                     result.put("url", fileUploadStatus.getUrl());
                     //result.put("status", fileUploadStatus.getStatus());
@@ -555,26 +540,22 @@ public class ContractInfoController extends RestfulController {
         }
     }
 
-    /**
+    /*
      * =============================================== Contract 想关接口 =====================================================
      */
 
     /**
-     *
+
      * 删除文件
-     * @param pramMap
-     * @param request
-     * @param response
-     * @return
      */
     @RequestMapping("/deleteFile")
     public Map<String,Object> deleteFile(@RequestBody Map<String,Object> pramMap,HttpServletRequest request, HttpServletResponse response){
         Object id = pramMap.get("id");
-        int fileId =Integer.parseInt(String.valueOf(id));
-        Teacher teacher = getTeacher(request);
         try{
+            int fileId =(Integer)id;
+            Teacher teacher = getTeacher(request);
             logger.info("删除文件id........:{}",fileId);
-            Map<String,Object> result = contractService.reomteFile(fileId,teacher.getId());
+            Map<String,Object> result = contractService.remoteFile(fileId,teacher.getId());
             if(ReturnMapUtils.isFail(result)){
                 response.setStatus(HttpStatus.FORBIDDEN.value());
             }
@@ -592,18 +573,15 @@ public class ContractInfoController extends RestfulController {
 
     /**
      * 文件上传功能
-     * @param file
-     * @param teacherId
-     * @return
      */
-    public FileVo awsUpload(MultipartFile file, Long teacherId) {
+    private FileVo awsUpload(MultipartFile file, Long teacherId) {
         logger.info("teacher id = {} ", teacherId);
         FileVo fileVo = null;
         if (file != null) {
             String name = file.getOriginalFilename();
             String bucketName = PropertyConfigurer.stringValue("aws.bucketName");
 
-            teacherId = teacherId == null ? 0 : teacherId;
+
             String key = AwsFileUtils.getTaxpayerkey(teacherId + "-" + name);
             Long size = file.getSize();
 
@@ -627,18 +605,17 @@ public class ContractInfoController extends RestfulController {
 
     /**
      * 上传老师的身份证明
-     * @param file
-     * @param request
-     * @param response
-     * @return
      */
     @RequestMapping("/uploadIdentification")
     public Map<String,Object> uploadIdentification(@RequestParam("file") MultipartFile file,String filetype,HttpServletRequest request, HttpServletResponse response){
-        Map<String,Object> result = new HashMap<String,Object>();
-        if(filetype.equals("")||filetype==null){
+        Map<String,Object> result = new HashMap<>();
+
+        if(StringUtils.isBlank(filetype)){
             return ReturnMapUtils.returnFail("There is no type of file upload");
         }
-        Teacher teacher = new Teacher().setId(getTeacher(request).getId());
+
+        try{
+        Teacher teacher = getTeacher(request);
         logger.info("用户：{}，upload Identification file = {}", teacher.getId(), file);
 
         FileVo fileVo  = awsUpload(file, teacher.getId());
@@ -647,7 +624,7 @@ public class ContractInfoController extends RestfulController {
             return ReturnMapUtils.returnFail("upload file is fail");
         }
 
-        try{
+
             TeacherContractFile teacherContractFile = new TeacherContractFile();
             teacherContractFile.setTeacherId(teacher.getId());
             teacherContractFile.setUrl(fileVo.getUrl());
@@ -680,17 +657,13 @@ public class ContractInfoController extends RestfulController {
 
     /**
      * 上传老师的最高学历
-     * @param file
-     * @param request
-     * @param response
-     * @return
      */
     @RequestMapping("/uploadDiploma")
     public Map<String,Object> uploadDiploma(@RequestParam("file") MultipartFile file,HttpServletRequest request, HttpServletResponse response){
 
-        Map<String,Object> result = new HashMap<String,Object>();
-
-        Teacher teacher = new Teacher().setId(getTeacher(request).getId());
+        Map<String,Object> result = new HashMap<>();
+        try{
+        Teacher teacher = getTeacher(request);
         logger.info("用户 :{},upload uploadDiploma file = {}",teacher.getId(),file);
         FileVo fileVo  = awsUpload(file, teacher.getId());
         if(fileVo==null){
@@ -698,7 +671,7 @@ public class ContractInfoController extends RestfulController {
             return ReturnMapUtils.returnFail("upload file is fail");
         }
 
-        try{
+
             TeacherContractFile teacherContractFile = new TeacherContractFile();
             teacherContractFile.setTeacherId(teacher.getId());
             teacherContractFile.setUrl(fileVo.getUrl());
@@ -721,17 +694,13 @@ public class ContractInfoController extends RestfulController {
 
     /**
      * 上传老师的合同
-     * @param file
-     * @param request
-     * @param response
-     * @return
      */
     @RequestMapping("/uploadContract")
     public Map<String,Object> uploadContract(@RequestParam("file") MultipartFile file,HttpServletRequest request, HttpServletResponse response){
 
-        Map<String,Object> result = new HashMap<String,Object>();
-
-        Teacher teacher = new Teacher().setId(getTeacher(request).getId());
+        Map<String,Object> result = new HashMap<>();
+        try{
+        Teacher teacher = getTeacher(request);
         logger.info("用户 :{},upload uploadContract file = {}",teacher.getId(),file);
         FileVo fileVo  = awsUpload(file, teacher.getId());
         if(fileVo==null){
@@ -739,7 +708,7 @@ public class ContractInfoController extends RestfulController {
             return ReturnMapUtils.returnFail("upload file is fail");
         }
 
-        try{
+
             TeacherContractFile teacherContractFile = new TeacherContractFile();
             teacherContractFile.setTeacherId(teacher.getId());
             teacherContractFile.setUrl(fileVo.getUrl());
@@ -763,17 +732,13 @@ public class ContractInfoController extends RestfulController {
 
     /**
      * 上传W9-TAX文件
-     * @param file
-     * @param request
-     * @param response
-     * @return
      */
     @RequestMapping("/uploadW9Tax")
     public Map<String,Object> uploadW9Tax(@RequestParam("file") MultipartFile file,HttpServletRequest request, HttpServletResponse response){
 
-        Map<String,Object> result = new HashMap<String,Object>();
-
-        Teacher teacher = new Teacher().setId(getTeacher(request).getId());
+        Map<String,Object> result = new HashMap<>();
+        try{
+        Teacher teacher = getTeacher(request);
         logger.info("用户 :{},upload uploadW9Tax file = {}",teacher.getId(),file);
         FileVo fileVo  = awsUpload(file, teacher.getId());
         if(fileVo==null){
@@ -781,7 +746,7 @@ public class ContractInfoController extends RestfulController {
             return ReturnMapUtils.returnFail("upload file is fail");
         }
 
-        try{
+
             //更新w9-tax
             TeacherTaxpayerForm teacherTaxpayerForm = new TeacherTaxpayerForm();
             logger.info("保存用户：{}上传的合W9-TAX文件url",teacher.getId());
@@ -818,24 +783,20 @@ public class ContractInfoController extends RestfulController {
 
     /**
      * 上传Certification文件
-     * @param file
-     * @param request
-     * @param response
-     * @return
      */
     @RequestMapping("/uploadCertification ")
     public Map<String,Object> uploadCertification (@RequestParam("file") MultipartFile file,HttpServletRequest request, HttpServletResponse response){
 
-        Map<String,Object> result = new HashMap<String,Object>();
-
-        Teacher teacher = new Teacher().setId(getTeacher(request).getId());
+        Map<String,Object> result = new HashMap<>();
+        try{
+        Teacher teacher =getTeacher(request);
         logger.info("用户 :{},upload uploadCertification file = {}",teacher.getId(),file);
         FileVo fileVo  = awsUpload(file, teacher.getId());
         if(fileVo==null){
             response.setStatus(HttpStatus.BAD_REQUEST.value());
             return ReturnMapUtils.returnFail("upload file is fail");
         }
-        try{
+
             TeacherContractFile teacherContractFile = new TeacherContractFile();
             teacherContractFile.setTeacherId(teacher.getId());
             teacherContractFile.setUrl(fileVo.getUrl());
@@ -857,24 +818,20 @@ public class ContractInfoController extends RestfulController {
 
     /**
      * 上传Degrees文件
-     * @param file
-     * @param request
-     * @param response
-     * @return
      */
     @RequestMapping("/uploadDegrees ")
     public Map<String,Object> uploadDegrees (@RequestParam("file") MultipartFile file,HttpServletRequest request, HttpServletResponse response){
 
-        Map<String,Object> result = new HashMap<String,Object>();
-
-        Teacher teacher = new Teacher().setId(getTeacher(request).getId());
+        Map<String,Object> result = new HashMap<>();
+        try{
+        Teacher teacher = getTeacher(request);
         logger.info("用户 :{},upload uploadDegrees file = {}",teacher.getId(),file);
         FileVo fileVo  = awsUpload(file, teacher.getId());
         if(fileVo==null){
             response.setStatus(HttpStatus.BAD_REQUEST.value());
             return ReturnMapUtils.returnFail("upload file is fail");
         }
-        try{
+
             TeacherContractFile teacherContractFile = new TeacherContractFile();
             teacherContractFile.setTeacherId(teacher.getId());
             teacherContractFile.setUrl(fileVo.getUrl());
@@ -898,7 +855,7 @@ public class ContractInfoController extends RestfulController {
 
 
 
-    public void setTeacherTaxpayerFormInfo(TeacherTaxpayerForm teacherTaxpayerForm, HttpServletRequest request){
+    private void setTeacherTaxpayerFormInfo(TeacherTaxpayerForm teacherTaxpayerForm, HttpServletRequest request){
         Teacher teacher = getTeacher(request);
         Long teacherId = teacher.getId();
         String teacherName = teacher.getRealName();

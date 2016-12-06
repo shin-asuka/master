@@ -1,7 +1,6 @@
 package com.vipkid.recruitment.contractinfo.service;
 
 import java.util.List;
-import java.util.Map;
 import javax.annotation.Resource;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -13,7 +12,6 @@ import com.vipkid.enums.TeacherApplicationEnum;
 import com.vipkid.enums.TeacherEnum;
 import com.vipkid.recruitment.dao.TeacherApplicationDao;
 import com.vipkid.recruitment.entity.TeacherApplication;
-import com.vipkid.recruitment.utils.ReturnMapUtils;
 import com.vipkid.trpm.dao.TeacherDao;
 import com.vipkid.trpm.entity.Teacher;
 
@@ -65,7 +63,6 @@ public class ContractInfoService {
         logger.error("current teacherApplication is not CONTRACT_INFO or not PASS, can NOT get into REGULAR !");
         return false;
     }
-
 
 
 }

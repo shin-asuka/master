@@ -29,7 +29,7 @@ import com.vipkid.recruitment.entity.ContractFile;
 import com.vipkid.trpm.entity.Teacher;
 
 /**
- * Created by zhangzhaojun on 2016/11/14.
+ * @author by zhangzhaojun on 2016/11/14.
  */
 @Service
 public class ContractService {
@@ -45,11 +45,10 @@ public class ContractService {
     @Autowired
     private TeacherAddressDao teacherAddressDao;
 
+    private static int TEACHERAPPLICATION_ID=0;
     /**
      * 在TeacherApplication中加入一条带审核数据
-     *
-     * @param teacher
-     * @return
+     * @return boolean
      */
     public boolean updateTeacherApplication(Teacher teacher, List<Integer> ids) {
         try{
@@ -69,15 +68,15 @@ public class ContractService {
                 }
             }
 
-            String failReason="";
+            String failReason= "";
             List<TeacherApplication> list = teacherApplicationDao.findCurrentApplication(teacher.getId());
             if (CollectionUtils.isNotEmpty(list)) {
-                for (int i = 0; i < list.size(); i++) {
-                    TeacherApplication application = list.get(i);
+                    TeacherApplication application = list.get(0);
                     application.setCurrent(0);
                     teacherApplicationDao.update(application);
+                //将文件的FileReason 的reslut Fail  的置为空，重新为管理端审核
                     failReason = application.getFailedReason().replaceAll("\"result\":\"FAIL\"","\"result\":\"\"");
-                }
+
             }
             TeacherApplication application = new TeacherApplication();
             if(StringUtils.isNotEmpty(failReason)){
@@ -99,7 +98,7 @@ public class ContractService {
             }
 
             TeacherContractFile teacherContractFile;
-            List<TeacherContractFile> teacherContractFiles = new ArrayList<TeacherContractFile>();
+            List<TeacherContractFile> teacherContractFiles = new ArrayList<>();
             for (Integer id : ids) {
                 teacherContractFile = this.teacherContractFileDao.findById(id);
                 if(teacherContractFile.getResult().equals("FAIL")){
@@ -123,8 +122,7 @@ public class ContractService {
     /**
      * 插入teacherOtherDegrees里的文件
      *
-     * @param teacherContractFile
-     * @return
+     * @return int
      */
     public int save(TeacherContractFile teacherContractFile) {
         return this.teacherContractFileDao.save(teacherContractFile);
@@ -132,11 +130,8 @@ public class ContractService {
 
     /**
      * 删除teacherOtherDegrees里的文件
-     * @param fileId
-     * @param teacherId
-     * @return
      */
-    public Map<String, Object> reomteFile(int fileId, long teacherId) {
+    public Map<String, Object> remoteFile(int fileId, long teacherId) {
         TeacherContractFile teacherContractFile = this.teacherContractFileDao.findById(fileId);
         if(null==teacherContractFile){
             return ReturnMapUtils.returnFail("You  delete the file failed!");
@@ -144,7 +139,7 @@ public class ContractService {
         if (teacherContractFile.getTeacherId() != teacherId) {
             return ReturnMapUtils.returnFail("You can't delete the file !");
         } else {
-            if (teacherContractFile.getTeacherApplicationId() == 0) {
+            if (teacherContractFile.getTeacherApplicationId() == TEACHERAPPLICATION_ID) {
                 logger.info("Teacher:{} delete teacherContractFile",teacherId);
                 this.teacherContractFileDao.delete(teacherContractFile);
                 return ReturnMapUtils.returnSuccess();
@@ -157,15 +152,13 @@ public class ContractService {
     /**
      * 查询老师上传过的文件
      *
-     * @param teacher
-     * @return
      */
-    public Map<String, ContractFile> findContract(Teacher teacher) {
+    public Map<String, Object> findContract(Teacher teacher) {
         ContractFile contractFile = new ContractFile();
 
         logger.info("Teacher：{}  find  Teacher Contract Files", teacher.getId());
-        List<TeacherContractFile> teacherContractFiles =teacherContractFileDao.findByTeacherIdAndTeacherApplicationId(teacher.getId(),0);
-        Map<String, ContractFile> map = Maps.newHashMap();
+        List<TeacherContractFile> teacherContractFiles =teacherContractFileDao.findByTeacherIdAndTeacherApplicationId(teacher.getId(),TEACHERAPPLICATION_ID);
+        Map<String, Object> map = Maps.newHashMap();
 
         if (CollectionUtils.isNotEmpty(teacherContractFiles)) {
             List<TeacherContractFile> degrees = Lists.newArrayList();
@@ -225,7 +218,8 @@ public class ContractService {
             String result = isPass(res);
             contractFile.setCertification(certification);
             contractFile.setDegrees(degrees);
-            map.put(result, contractFile);
+            map.put("contractFile", contractFile);
+            map.put("result",result);
         }
         return map;
 
@@ -233,10 +227,8 @@ public class ContractService {
 
     /**
      * 判断 Contract file 是否Pass
-     * @param res
-     * @return
      */
-    public String isPass(List<String> res) {
+     private String isPass(List<String> res) {
         if (CollectionUtils.isEmpty(res)) {
             return String.valueOf(TeacherApplicationEnum.Result.FAIL);
         }
@@ -250,19 +242,18 @@ public class ContractService {
             }
         }
         return String.valueOf(TeacherApplicationEnum.Result.PASS);
-    }
+     }
 
     /**
      * submit 时查询Contract 的 文件 是否合格
-     * @param teacherId
-     * @return
      */
     public List<TeacherContractFile> findTeacherContractFile(long teacherId) {
         logger.info("Teacher:{} 执行 findTeacherContractFile  method for check  ContractFile submit",teacherId);
-        return teacherContractFileDao.findByTeacherIdAndTeacherApplicationId(teacherId, 0);
+        return teacherContractFileDao.findByTeacherIdAndTeacherApplicationId(teacherId, TEACHERAPPLICATION_ID);
     }
 
-    public List<TeacherApplication> finTeacherApplication(long teacherId){
-       return teacherApplicationDao.findApplictionForStatusResult(teacherId, TeacherApplicationEnum.Status.CONTRACT_INFO.toString(),null);
+    public List<TeacherApplication> findTeacherApplication(long teacherId){
+        logger.info("Teacher:{} 执行 findTeacherApplication  method for check  ContractFile Many submit",teacherId);
+       return teacherApplicationDao.findCurrentApplication(teacherId);
     }
 }
