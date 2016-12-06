@@ -18,9 +18,11 @@ import org.springframework.web.util.HtmlUtils;
 
 import com.google.common.base.Preconditions;
 import com.vipkid.enums.TeacherEnum;
+import com.vipkid.enums.TeacherEnum.FormType;
 import com.vipkid.file.model.FileVo;
 import com.vipkid.file.service.AwsFileService;
 import com.vipkid.file.utils.ActionHelp;
+import com.vipkid.file.utils.Encodes;
 import com.vipkid.file.utils.StringUtils;
 import com.vipkid.rest.exception.ServiceException;
 import com.vipkid.trpm.entity.Teacher;
@@ -91,9 +93,14 @@ public class TaxpayerFileController extends AbstractPortalController{
 		logger.info("upload taxpayer  teacherId = {}, teacherName = {}, formType = {},file = {}",teacherId,teacherName,TeacherEnum.getFormTypeById(formType),file);
 		FileVo fileVo = null;
 		if(file!=null){
+			
 			String name = file.getOriginalFilename();
 			String bucketName = PropertyConfigurer.stringValue("aws.bucketName");
-			String awsName = teacherId+"-"+name;
+			String fileName = AwsFileUtils.reNewFileName(name); //处理文件名
+			FormType formTypeEnum = TeacherEnum.getFormTypeById(formType);
+			String formTypeName = formTypeEnum.name();
+			String awsName = teacherId+"-"+formTypeName+"-"+fileName;
+			
 			String key = AwsFileUtils.getTaxpayerkey(teacherId,awsName);
 			Long size = file.getSize();
 			
@@ -119,7 +126,6 @@ public class TaxpayerFileController extends AbstractPortalController{
 		ActionHelp.WriteStrToOut(response, fileVo); //解决中文乱码问题
 	}
 	
-	
 	@RequestMapping(value = "/save")
 	public String save(Integer formType,Long id,String url,
 			HttpServletRequest request, HttpServletResponse response, Model model){
@@ -128,10 +134,6 @@ public class TaxpayerFileController extends AbstractPortalController{
 		try {
 			Preconditions.checkArgument(StringUtils.isNotBlank(url), "url 不能为空!");
 			Preconditions.checkArgument(formType!=null,"formType 不能为空!");
-			
-			//url 解码
-			String url2 = HtmlUtils.htmlUnescape(url);
-			url = url2; //处理过滤器编码后的url
 			
 			TeacherTaxpayerForm teacherTaxpayerForm = new TeacherTaxpayerForm();
 			teacherTaxpayerForm.setId(id);

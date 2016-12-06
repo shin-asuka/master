@@ -32,6 +32,7 @@ import com.google.api.client.util.Maps;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.vipkid.enums.TeacherEnum;
+import com.vipkid.enums.TeacherEnum.FormType;
 import com.vipkid.file.model.FileVo;
 import com.vipkid.file.service.AwsFileService;
 import com.vipkid.file.utils.ActionHelp;
@@ -183,8 +184,11 @@ public class TaxpayerRestController {
 			String name = file.getOriginalFilename();
 			String bucketName = PropertyConfigurer.stringValue("aws.bucketName");
 			
+			String fileName = AwsFileUtils.reNewFileName(name); //处理文件名
+			String awsName = teacherId+"-"+fileName;
+			
 			teacherId = teacherId == null?0:teacherId;
-			String key = AwsFileUtils.getTaxpayerkey(teacherId,teacherId+"-"+name);
+			String key = AwsFileUtils.getTaxpayerkey(teacherId,awsName);
 			Long size = file.getSize();
 			
 			Preconditions.checkArgument(AwsFileUtils.checkFileType(name), "文件类型不正确，支持类型为"+AwsFileUtils.TAPXPAYER_FILE_TYPE);

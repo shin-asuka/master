@@ -1,13 +1,16 @@
 package com.vipkid.trpm.util;
 
+import java.util.Date;
 import java.util.UUID;
 
 import org.community.config.PropertyConfigurer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.vipkid.file.utils.Encodes;
 import com.vipkid.file.utils.FileUtils;
 import com.vipkid.file.utils.StringUtils;
+import com.vipkid.neo.utils.DateTimeUtils;
 
 /**
  * 
@@ -50,6 +53,18 @@ public class AwsFileUtils {
 			e.printStackTrace();
 		}
 		return key;
+	}
+	
+	public static String reNewFileName(String fileName){
+		String name = fileName;
+		if(StringUtils.isNotBlank(fileName)){
+			String encodeName = Encodes.urlEncode(fileName);
+			String fileType = FileUtils.getFileType(fileName);
+			if(!fileName.equals(encodeName)){
+				name = DateTimeUtils.formatDate(new Date(), "yyyyMMdd-HHmmss")+"."+fileType;
+			}
+		}
+		return name;
 	}
 	
 	public static Boolean checkFileType(String fileName){
