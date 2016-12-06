@@ -55,7 +55,6 @@ public class ContractInfoService {
      * @return boolean
      */
     public boolean updateTeacherApplication(Teacher teacher, List<Integer> ids) {
-        try{
             TeacherTaxpayerForm teacherTaxpayerForm = teacherTaxpayerFormDao.findByTeacherIdAndType(teacher.getId(), TeacherEnum.FormType.W9.val());
             if (teacherTaxpayerForm == null) {
                 if (teacher.getCountry().equals("USA")) {
@@ -105,8 +104,8 @@ public class ContractInfoService {
             List<TeacherContractFile> teacherContractFiles = new ArrayList<>();
             for (Integer id : ids) {
                 teacherContractFile = this.teacherContractFileDao.findById(id);
-                if(teacherContractFile.getResult().equals("FAIL")){
-                    teacherContractFile.setResult(null);
+                if(TeacherApplicationEnum.Result.FAIL.toString().equals(teacherContractFile.getResult())){
+                    teacherContractFile.setResult("");
                 }
                 teacherContractFile.setTeacherApplicationId(application.getId());
                 logger.info("applicationId:{}", application.getId());
@@ -115,11 +114,6 @@ public class ContractInfoService {
 
             logger.info("批量更新文件 for teacherId:{} with  teacherApplicationId:{}", teacher.getId(), application.getId());
             this.teacherContractFileDao.updateBatch(teacherContractFiles);
-        } catch (Exception e) {
-            e.printStackTrace();
-            logger.error(e.getMessage(),e);
-            return false;
-        }
         return true;
     }
 
