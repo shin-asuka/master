@@ -1,6 +1,6 @@
 package com.vipkid.recruitment.common.controller;
 
-import com.vipkid.recruitment.common.service.AuditEmailService;
+
 import com.vipkid.recruitment.event.AuditEvent;
 import com.vipkid.recruitment.event.AuditEventHandler;
 import com.vipkid.recruitment.utils.ReturnMapUtils;
@@ -16,11 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import javax.print.DocFlavor;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.HashMap;
 import java.util.Map;
 
 
@@ -33,8 +30,6 @@ import java.util.Map;
 public class AuditEventController extends RestfulController {
     private static Logger logger = LoggerFactory.getLogger(AuditEventController.class);
 
-    @Autowired
-    private AuditEmailService auditEmailService;
 
     @Autowired
     private AuditEventHandler auditEventHandler;
