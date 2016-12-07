@@ -85,59 +85,68 @@ public class RecruitmentService {
             resultMap.put("result",AuditStatus.TO_SUBMIT.toString());
             return resultMap;
         }
-        TeacherApplication teacherApplication = list.get(0);
-
+        
         //【待提交】当前状态与流程状态不一样,以lifeCycle为准
+        TeacherApplication teacherApplication = list.get(0);
         if(!StringUtils.equalsIgnoreCase(teacherApplication.getStatus(), teacher.getLifeCycle())){
             resultMap.put("result",AuditStatus.TO_SUBMIT.toString());
             return resultMap;
         }
-
-        Map<String,Object> _result = null;
+        
         //BASIC_INFO 11.5小时之内如果状态是FAIL 为待审核
         if(StringUtils.equalsIgnoreCase(Status.BASIC_INFO.toString(),teacherApplication.getStatus())){
-            _result = getBasicInfoStatus(teacher, teacherApplication);
-        //INTERVIEW 待审核 待约课
+            resultMap.putAll(getBasicInfoStatus(teacher, teacherApplication));
+            return resultMap;
+        //INTERVIEW
         }else if(StringUtils.equalsIgnoreCase(Status.INTERVIEW.toString(),teacherApplication.getStatus())){
-            _result = getInterviewStatus(teacher, teacherApplication);
-        //待审核
+            resultMap.putAll(getInterviewStatus(teacher, teacherApplication));
+            return resultMap;
+        //TRAINING
+        }else if(StringUtils.equalsIgnoreCase(Status.TRAINING.toString(),teacherApplication.getStatus())){
+            resultMap.putAll(getTrainingStatus(teacher, teacherApplication));
+            return resultMap;
+        //Practicum
         }else if(StringUtils.equalsIgnoreCase(Status.PRACTICUM.toString(),teacherApplication.getStatus())){
-            _result = getPracticumStatus(teacher, teacherApplication);
-        }
-        if(_result != null){
-            resultMap.putAll(_result);
+            resultMap.putAll(getPracticumStatus(teacher, teacherApplication));
+            return resultMap;
+        //ContractInfo
+        }else if(StringUtils.equalsIgnoreCase(Status.CONTRACT_INFO.toString(),teacherApplication.getStatus())){
+            resultMap.putAll(getContractInfoStatus(teacher, teacherApplication));
+            return resultMap;
+        }else{
+            resultMap.put("result",AuditStatus.TO_SUBMIT.toString());
             return resultMap;
         }
-        //其他情况 待经审核
-        if(StringUtils.isBlank(teacherApplication.getResult())){
-            resultMap.put("result",AuditStatus.TO_AUDIT.toString());
-            return resultMap;
-        }
-        //已经审核 结果【FAIL,PASS,REPLAY】
-        if(StringUtils.isNotBlank(teacherApplication.getResult())){
-            resultMap.put("result",teacherApplication.getResult());
-            if(StringUtils.equalsIgnoreCase(Result.FAIL.toString(),teacherApplication.getResult())
-                    || StringUtils.equalsIgnoreCase(Result.REAPPLY.toString(),teacherApplication.getResult())){
-                //失败原因
-                resultMap.put("failedReason",teacherApplication.getFailedReason());
-                //重来备注
-                resultMap.put("comments",teacherApplication.getComments());
-            }
-            return resultMap;
-        }
-        return resultMap;
     }
 
 
     private Map<String,Object> getBasicInfoStatus(Teacher teacher,TeacherApplication teacherApplication){
+        //其他情况 待经审核
         Map<String,Object> result = Maps.newHashMap();
-        if(StringUtils.equalsIgnoreCase(Result.FAIL.toString(),teacherApplication.getResult())){
-            if(!DateUtils.count11hrlf(teacherApplication.getAuditDateTime().getTime())){
+        //审核结果为空则为待审核
+        if(StringUtils.isBlank(teacherApplication.getResult())){
+            result.put("result",AuditStatus.TO_AUDIT.toString());
+            return result;
+        //审核结果为其他
+        }else{
+            //如果是Fail并且在半小时之内为待审核
+            boolean _result = StringUtils.equalsIgnoreCase(Result.FAIL.toString(),teacherApplication.getResult());
+            boolean _failTimeout = !DateUtils.count11hrlf(teacherApplication.getAuditDateTime().getTime());
+            if(_result && _failTimeout){
                 result.put("result",AuditStatus.TO_AUDIT.toString());
+                return result;
+            //其他则直接返回给前端
+            }else{
+                result.put("result",teacherApplication.getResult());
+                if(!StringUtils.equalsIgnoreCase(Result.PASS.toString(),teacherApplication.getResult())){
+                    //失败原因
+                    result.put("failedReason",teacherApplication.getFailedReason());
+                    //重来备注
+                    result.put("comments",teacherApplication.getComments());
+                }
                 return result;
             }
         }
-        return null;
     }
 
     private Map<String,Object> getInterviewStatus(Teacher teacher,TeacherApplication teacherApplication){
@@ -165,16 +174,48 @@ public class RecruitmentService {
                         result.put("result",AuditStatus.HAS_TIMEOUT.toString());
                         return result;
                     }
+                }else{
+                    //这状态属于数据有误，将其处于待审核状态
+                    result.put("result",AuditStatus.TO_AUDIT.toString());
+                    return result;
                 }
             }
-        }else if(StringUtils.equalsIgnoreCase(Result.PASS.toString(),teacherApplication.getResult())){
+        }else{
             result.put("result",teacherApplication.getResult());
-            result.put("basePay",teacherApplication.getBasePay());
+            result.put("result",teacherApplication.getResult());
+            if(!StringUtils.equalsIgnoreCase(Result.PASS.toString(),teacherApplication.getResult())){
+                //失败原因
+                result.put("failedReason",teacherApplication.getFailedReason());
+                //重来备注
+                result.put("comments",teacherApplication.getComments());
+            }else{
+                result.put("basePay",teacherApplication.getBasePay());
+            }
             return result;
         }
-        return null;
     }
 
+    
+    private Map<String,Object> getTrainingStatus(Teacher teacher,TeacherApplication teacherApplication){
+        //其他情况 待经审核
+        Map<String,Object> result = Maps.newHashMap();
+        //审核结果为空则为待审核
+        if(StringUtils.isBlank(teacherApplication.getResult())){
+            result.put("result",AuditStatus.TO_AUDIT.toString());
+            return result;
+        //审核结果为其他
+        }else{
+            result.put("result",teacherApplication.getResult());
+            if(!StringUtils.equalsIgnoreCase(Result.PASS.toString(),teacherApplication.getResult())){
+                //失败原因
+                result.put("failedReason",teacherApplication.getFailedReason());
+                //重来备注
+                result.put("comments",teacherApplication.getComments());
+            }
+            return result;
+        }
+    }
+    
     private Map<String,Object> getPracticumStatus(Teacher teacher,TeacherApplication teacherApplication){
         Map<String,Object> result = this.getInterviewStatus(teacher, teacherApplication);
         if (result == null) {
@@ -200,6 +241,26 @@ public class RecruitmentService {
             result.put("trainingPassTime", 0);
         }
         return result;
+    }
+    
+    private Map<String,Object> getContractInfoStatus(Teacher teacher,TeacherApplication teacherApplication){
+        //其他情况 待经审核
+        Map<String,Object> result = Maps.newHashMap();
+        //审核结果为空则为待审核
+        if(StringUtils.isBlank(teacherApplication.getResult())){
+            result.put("result",AuditStatus.TO_AUDIT.toString());
+            return result;
+        //审核结果为其他
+        }else{
+            result.put("result",teacherApplication.getResult());
+            if(!StringUtils.equalsIgnoreCase(Result.PASS.toString(),teacherApplication.getResult())){
+                //失败原因
+                result.put("failedReason",teacherApplication.getFailedReason());
+                //重来备注
+                result.put("comments",teacherApplication.getComments());
+            }
+            return result;
+        }
     }
 
     /**
