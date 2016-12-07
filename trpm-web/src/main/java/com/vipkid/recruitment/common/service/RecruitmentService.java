@@ -118,8 +118,7 @@ public class RecruitmentService {
             return resultMap;
         }
     }
-
-
+    
     private Map<String,Object> getBasicInfoStatus(Teacher teacher,TeacherApplication teacherApplication){
         //其他情况 待经审核
         Map<String,Object> result = Maps.newHashMap();
@@ -149,37 +148,41 @@ public class RecruitmentService {
         }
     }
 
+    private Map<String,Object> getInterviewPracticumStatusByResultIsBlank(Map<String,Object> result, TeacherApplication teacherApplication, int enterClassAllowedMinute){
+        if(teacherApplication.getOnlineClassId() == 0){
+            //待约课
+            result.put("result",AuditStatus.TO_SUBMIT.toString());
+            return result;
+        }else{
+            //倒计时
+            OnlineClass onlineClass = this.onlineClassDao.findById(teacherApplication.getOnlineClassId());
+            //处于book状态的onlineClass 应该处于倒计时页面
+            if(OnlineClassEnum.ClassStatus.BOOKED.toString().equals(onlineClass.getStatus())){
+                //小于1个小时 可进入onlineClass
+                if(!DateUtils.countXMinute(onlineClass.getScheduledDateTime().getTime(), enterClassAllowedMinute)){
+                    result.put("result",AuditStatus.TO_CLASS.toString());
+                    return result;
+                    //大于1小时 但 小于54周 处于审核中
+                }else if(!DateUtils.count54week(onlineClass.getScheduledDateTime().getTime())){
+                    result.put("result",AuditStatus.TO_AUDIT.toString());
+                    return result;
+                    //大于54周超时
+                }else{
+                    result.put("result",AuditStatus.HAS_TIMEOUT.toString());
+                    return result;
+                }
+            }else{
+                //这状态属于数据有误，将其处于待审核状态
+                result.put("result",AuditStatus.TO_AUDIT.toString());
+                return result;
+            }
+        }
+    }
+
     private Map<String,Object> getInterviewStatus(Teacher teacher,TeacherApplication teacherApplication){
         Map<String,Object> result = Maps.newHashMap();
         if(StringUtils.isBlank(teacherApplication.getResult())){
-            if(teacherApplication.getOnlineClassId() == 0){
-                //待约课
-                result.put("result",AuditStatus.TO_SUBMIT.toString());
-                return result;
-            }else{
-                //倒计时
-                OnlineClass onlineClass = this.onlineClassDao.findById(teacherApplication.getOnlineClassId());
-                //处于book状态的onlineClass 应该处于倒计时页面
-                if(OnlineClassEnum.ClassStatus.BOOKED.toString().equals(onlineClass.getStatus())){
-                    //小于1个小时 可进入onlineClass
-                    if(!DateUtils.count30Mine(onlineClass.getScheduledDateTime().getTime())){
-                        result.put("result",AuditStatus.TO_CLASS.toString());
-                        return result;
-                    //大于1小时 但 小于54周 处于审核中
-                    }else if(!DateUtils.count54week(onlineClass.getScheduledDateTime().getTime())){
-                        result.put("result",AuditStatus.TO_AUDIT.toString());
-                        return result;
-                    //大于54周超时
-                    }else{
-                        result.put("result",AuditStatus.HAS_TIMEOUT.toString());
-                        return result;
-                    }
-                }else{
-                    //这状态属于数据有误，将其处于待审核状态
-                    result.put("result",AuditStatus.TO_AUDIT.toString());
-                    return result;
-                }
-            }
+            return getInterviewPracticumStatusByResultIsBlank(result, teacherApplication, 30);
         }else{
             result.put("result",teacherApplication.getResult());
             result.put("result",teacherApplication.getResult());
@@ -195,7 +198,6 @@ public class RecruitmentService {
         }
     }
 
-    
     private Map<String,Object> getTrainingStatus(Teacher teacher,TeacherApplication teacherApplication){
         //其他情况 待经审核
         Map<String,Object> result = Maps.newHashMap();
@@ -217,30 +219,42 @@ public class RecruitmentService {
     }
     
     private Map<String,Object> getPracticumStatus(Teacher teacher,TeacherApplication teacherApplication){
-        Map<String,Object> result = this.getInterviewStatus(teacher, teacherApplication);
-        if (result == null) {
-            result = Maps.newHashMap();
-        }
-        if(Result.PRACTICUM2.toString().equals(teacherApplication.getResult())){
-            result.put("result",AuditStatus.TO_SUBMIT.toString());
 
-        }
-        if(Result.TBD.toString().equals(teacherApplication.getResult()) || Result.TBD_FAIL.toString().equals(teacherApplication.getResult())){
-            result.put("result",AuditStatus.TO_AUDIT.toString());
-        }
+        Map<String,Object> result = Maps.newHashMap();
+
         List<TeacherApplication> list = teacherApplicationDao.findApplictionForStatusResult(teacher.getId(), null, Result.PRACTICUM2.name());
         if(CollectionUtils.isNotEmpty(list)){
             result.put("practicumNo", 2);
-        } else {
+        }else{
             result.put("practicumNo", 1);
         }
+
         List<TeacherApplication> trainingPassTAList = teacherApplicationDao.findApplictionForStatusResult(teacher.getId(), Status.TRAINING.toString(), Result.PASS.toString());
-        if (CollectionUtils.isNotEmpty(trainingPassTAList) && trainingPassTAList.get(0).getAuditDateTime() != null){
+        if(CollectionUtils.isNotEmpty(trainingPassTAList) && trainingPassTAList.get(0).getAuditDateTime() != null){
             result.put("trainingPassTime", trainingPassTAList.get(0).getAuditDateTime().getTime());
-        } else {
+        }else{
             result.put("trainingPassTime", 0);
         }
-        return result;
+
+        if(StringUtils.isBlank(teacherApplication.getResult())){
+            return getInterviewPracticumStatusByResultIsBlank(result, teacherApplication, 60);
+        }else{
+            if(Result.PRACTICUM2.toString().equals(teacherApplication.getResult())){
+                result.put("result",AuditStatus.TO_SUBMIT.toString());
+            }else if(Result.TBD.toString().equals(teacherApplication.getResult()) || Result.TBD_FAIL.toString().equals(teacherApplication.getResult())){
+                result.put("result",AuditStatus.TO_AUDIT.toString());
+            }else{
+                result.put("result",teacherApplication.getResult());
+            }
+
+            if(!StringUtils.equalsIgnoreCase(Result.PASS.toString(),teacherApplication.getResult())){
+                //失败原因
+                result.put("failedReason",teacherApplication.getFailedReason());
+                //重来备注
+                result.put("comments",teacherApplication.getComments());
+            }
+            return result;
+        }
     }
     
     private Map<String,Object> getContractInfoStatus(Teacher teacher,TeacherApplication teacherApplication){
