@@ -23,10 +23,11 @@ public class RequestUtils {
             return JsonTools.getJson(parame);
         }
         //读取body
-        int contentLen = request.getContentLength();
+        HttpServletRequest _request = request;
+        int contentLen = _request.getContentLength();
         if (contentLen > 0) {
             try {    
-            InputStream is = request.getInputStream();
+            InputStream is = _request.getInputStream();
             int readLen = 0;
             int readLengthThisTime = 0;
             byte[] message = new byte[contentLen];                
