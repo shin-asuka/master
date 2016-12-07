@@ -10,10 +10,10 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.google.api.client.util.Key;
 import com.google.common.base.Splitter;
 import com.vipkid.enums.TeacherApplicationEnum;
 
-import com.vipkid.file.utils.FileUtils;
 import com.vipkid.recruitment.entity.TeacherApplication;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -54,14 +54,14 @@ import com.vipkid.trpm.util.AwsFileUtils;
 
 /**
  * ContractInfo -> Regular
- *
+ * <p>
  * LifeCycle: ContractInfo
  * 上传头像, 生活照, 介绍视频, 和自我介绍
  *
  * @author Austin.Cao  Date: 18/11/2016
  */
 @RestController
-@RestInterface(lifeCycle={TeacherEnum.LifeCycle.CONTRACT_INFO})
+@RestInterface(lifeCycle = {TeacherEnum.LifeCycle.CONTRACT_INFO})
 @RequestMapping("/recruitment/contractinfo")
 public class ContractInfoController extends RestfulController {
 
@@ -107,7 +107,7 @@ public class ContractInfoController extends RestfulController {
             Integer shortVideoStatus = (Integer) teacherFiles.get("shortVideoStatus");
 
             FileUploadStatus fileUploadStatus = new FileUploadStatus();
-            if(shortVideoStatus != null && shortVideoUrl != null) {
+            if (shortVideoStatus != null && shortVideoUrl != null) {
                 fileUploadStatus.setStatus(shortVideoStatus);
                 fileUploadStatus.setUrl(shortVideoUrl);
             }
@@ -117,8 +117,8 @@ public class ContractInfoController extends RestfulController {
             personalInfo.put("video", fileUploadStatus);
             personalInfo.put("lifePics", lifePictures);
 
-            Map<String,Object> status = recruitmentService.getStatus(teacher);
-            if(status != null && status.size() > 0) {
+            Map<String, Object> status = recruitmentService.getStatus(teacher);
+            if (status != null && status.size() > 0) {
                 String failedReasonJson = (String) status.get("failedReason");
                 personalInfo.put("failedReason", failedReasonJson);
             }
@@ -128,7 +128,7 @@ public class ContractInfoController extends RestfulController {
             Map<String, Object> contractInfo = Maps.newHashMap();
             Map<String, Object> contractFileMap = contractInfoService.findContract(teacher);
             logger.info("查询用户：{},查询上传过的文件", teacher.getId());
-            contractInfo.put("file",contractFileMap.get("contractFile"));
+            contractInfo.put("file", contractFileMap.get("contractFile"));
             contractInfo.put("result", contractFileMap.get("result"));
             result.put("personalInfo", personalInfo);
             result.put("contractInfo", contractInfo);
@@ -147,17 +147,16 @@ public class ContractInfoController extends RestfulController {
     }
 
 
-
     /**
      * 提交用户上传文件的信息
      */
     @RequestMapping(value = "/submit", method = RequestMethod.POST, produces = RestfulConfig.JSON_UTF_8)
-    public  Map<String,Object> submitContractInfo(@RequestBody Map<String,Object> paramMap, HttpServletRequest request, HttpServletResponse response){
+    public Map<String, Object> submitContractInfo(@RequestBody Map<String, Object> paramMap, HttpServletRequest request, HttpServletResponse response) {
         String fileIds = (String) paramMap.get("id");
         String bio = (String) paramMap.get("bio");
 
-        logger.info("upload file id String {},teacher 的自我简介{}",fileIds,bio);
-        if(StringUtils.isBlank(fileIds) || StringUtils.isBlank(bio)){
+        logger.info("upload file id String {},teacher 的自我简介{}", fileIds, bio);
+        if (StringUtils.isBlank(fileIds) || StringUtils.isBlank(bio)) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
             logger.error("submitContractInfo with incorrect parameters: {}, {}", fileIds, bio);
             return ReturnMapUtils.returnFail("You can't submit with incorrect parameters!");
@@ -168,8 +167,8 @@ public class ContractInfoController extends RestfulController {
         List<Integer> idList = new ArrayList<>();
 
         try {
-            for(int i=0;i<idLists.size();i++){
-                if(StringUtils.isNumeric(idLists.get(i))) {
+            for (int i = 0; i < idLists.size(); i++) {
+                if (StringUtils.isNumeric(idLists.get(i))) {
                     idList.add(Integer.parseInt(idLists.get(i)));
                 }
             }
@@ -181,33 +180,33 @@ public class ContractInfoController extends RestfulController {
 
             Long teacherId = teacher.getId();
             boolean couldSubmit = couldSubmit(teacherId);
-            if(!couldSubmit){
+            if (!couldSubmit) {
                 response.setStatus(HttpStatus.NOT_FOUND.value());
                 return ReturnMapUtils.returnFail("The teacher has been submitted. ");
             }
 
             //check contract files
-            boolean isContractFileValid = checkContractFile(teacherId,idList);
-            if(!isContractFileValid) {
+            boolean isContractFileValid = checkContractFile(teacherId, idList);
+            if (!isContractFileValid) {
                 return ReturnMapUtils.returnFail("Teacher's contract files do NOT exists, failed to submit");
 
             }
-            logger.info("Check Teacher 的 file id{}",idList);
+            logger.info("Check Teacher 的 file id{}", idList);
             //check personal info
             boolean isPersonalInfoValid = checkPersonInfo(teacherId);
-            if(!isPersonalInfoValid) {
+            if (!isPersonalInfoValid) {
                 return ReturnMapUtils.returnFail("Teacher's personal files do NOT exists, failed to update bio");
             }
 
-            logger.info("update Teacher 的自我简介{}",bio);
+            logger.info("update Teacher 的自我简介{}", bio);
             teacher.setIntroduction(bio);
             boolean bioUpdated = contractInfoService.updateTeacher(teacher);
-            if(!bioUpdated) {
+            if (!bioUpdated) {
                 return ReturnMapUtils.returnFail("Failed to submit teacher bio");
             }
 
-            boolean result = contractInfoService.updateTeacherApplication(teacher,idList);
-            if(!result){
+            boolean result = contractInfoService.updateTeacherApplication(teacher, idList);
+            if (!result) {
                 logger.error("Failed to submit contract info!");
                 response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
                 return ReturnMapUtils.returnFail("Failed to submitsContractInfo!");
@@ -231,18 +230,18 @@ public class ContractInfoController extends RestfulController {
      * @param teacherId
      * @return
      */
-    private boolean couldSubmit(Long teacherId){
+    private boolean couldSubmit(Long teacherId) {
 
         boolean couldSubmit = true;
-        List<TeacherApplication> teacherApplications =  contractInfoService.findTeacherApplication(teacherId);
+        List<TeacherApplication> teacherApplications = contractInfoService.findTeacherApplication(teacherId);
         logger.info("Check if could submit contract info: {}", JsonUtils.toJSONString(teacherApplications));
 
-        if(CollectionUtils.isNotEmpty(teacherApplications)){
+        if (CollectionUtils.isNotEmpty(teacherApplications)) {
             TeacherApplication teacherApplication = teacherApplications.get(0);
             //提交未审核, 存在 CONTRACT_INFO 的 application, 并且 result 为空
-            if(StringUtils.equals(teacherApplication.getStatus(), TeacherEnum.LifeCycle.CONTRACT_INFO.toString())
+            if (StringUtils.equals(teacherApplication.getStatus(), TeacherEnum.LifeCycle.CONTRACT_INFO.toString())
                     && StringUtils.isBlank(teacherApplication.getResult())) {
-                    couldSubmit = false;
+                couldSubmit = false;
             }
         }
 
@@ -256,16 +255,16 @@ public class ContractInfoController extends RestfulController {
      * @param teacherId
      * @return
      */
-    private boolean checkPersonInfo (Long teacherId) {
+    private boolean checkPersonInfo(Long teacherId) {
         logger.info("Check if teacher {} has uploaded the avatar, life pictures and video", teacherId);
         Map<String, Object> teacherFiles = fileHttpService.queryTeacherFiles(teacherId);
         String avatarUrl = (String) teacherFiles.get("avatarUrl");
-        List<AppLifePicture> lifePictures = (List<AppLifePicture>)teacherFiles.get("lifePictures");
+        List<AppLifePicture> lifePictures = (List<AppLifePicture>) teacherFiles.get("lifePictures");
         String shortVideoUrl = (String) teacherFiles.get("shortVideo");
         Integer shortVideoStatus = (Integer) teacherFiles.get("shortVideoStatus");
 
         if (StringUtils.isEmpty(avatarUrl) || CollectionUtils.isEmpty(lifePictures)
-                || StringUtils.isEmpty(shortVideoUrl) || shortVideoStatus==null) {
+                || StringUtils.isEmpty(shortVideoUrl) || shortVideoStatus == null) {
             logger.warn("Teacher's files do NOT exists, failed to update bio");
             return false;
         }
@@ -273,19 +272,19 @@ public class ContractInfoController extends RestfulController {
         return true;
     }
 
-    private boolean checkContractFile(Long teacherId,List<Integer> fileIds) {
+    private boolean checkContractFile(Long teacherId, List<Integer> fileIds) {
         logger.info("Teacher:{} 检查文件id是否合格", teacherId);
         boolean isFileValid = false;
-        List<TeacherContractFile> files= contractInfoService.findTeacherContractFile(teacherId);
+        List<TeacherContractFile> files = contractInfoService.findTeacherContractFile(teacherId);
         List<Integer> idList = new ArrayList<>();
-        if(CollectionUtils.isNotEmpty(files)) {
+        if (CollectionUtils.isNotEmpty(files)) {
             boolean hasIdCard = false;
             boolean hasDiploma = false;
             boolean hasContract = false;
             for (TeacherContractFile file : files) {
                 if (file.getFileType() == TeacherApplicationEnum.ContractFileType.IDENTIFICATION.val()
-                        ||file.getFileType() == TeacherApplicationEnum.ContractFileType.PASSPORT.val()
-                        ||file.getFileType() == TeacherApplicationEnum.ContractFileType.DRIVER.val()) {
+                        || file.getFileType() == TeacherApplicationEnum.ContractFileType.PASSPORT.val()
+                        || file.getFileType() == TeacherApplicationEnum.ContractFileType.DRIVER.val()) {
                     hasIdCard = true;
                 }
                 if (file.getFileType() == TeacherApplicationEnum.ContractFileType.DIPLOMA.val()) {
@@ -314,8 +313,8 @@ public class ContractInfoController extends RestfulController {
         Map<String, Object> result = Maps.newHashMap();
         if (file != null) {
             String fileName = file.getOriginalFilename();
-            if(StringUtils.isNotBlank(fileName)){
-                fileName =AwsFileUtils.reNewFileName(fileName);
+            if (StringUtils.isNotBlank(fileName)) {
+                fileName = AwsFileUtils.reNewFileName(fileName);
             }
             String bucketName = AwsFileUtils.getAwsBucketName();
             String key = AwsFileUtils.getAvatarKey(fileName);
@@ -367,8 +366,8 @@ public class ContractInfoController extends RestfulController {
         Map<String, Object> result = Maps.newHashMap();
         if (file != null) {
             String fileName = file.getOriginalFilename();
-            if(StringUtils.isNotBlank(fileName)){
-                fileName =AwsFileUtils.reNewFileName(fileName);
+            if (StringUtils.isNotBlank(fileName)) {
+                fileName = AwsFileUtils.reNewFileName(fileName);
             }
             String bucketName = PropertyConfigurer.stringValue("aws.bucketName");
             String key = AwsFileUtils.getLifePictureKey(fileName);
@@ -417,8 +416,8 @@ public class ContractInfoController extends RestfulController {
         Map<String, Object> result = Maps.newHashMap();
         if (file != null) {
             String fileName = file.getOriginalFilename();
-            if(StringUtils.isNotBlank(fileName)){
-                fileName =AwsFileUtils.reNewFileName(fileName);
+            if (StringUtils.isNotBlank(fileName)) {
+                fileName = AwsFileUtils.reNewFileName(fileName);
             }
             String bucketName = PropertyConfigurer.stringValue("aws.bucketName");
             String key = AwsFileUtils.getShortVideoKey(fileName);
@@ -464,12 +463,12 @@ public class ContractInfoController extends RestfulController {
     @RequestMapping("/deleteAvatar")
     public Object deleteAvatar(HttpServletRequest request, HttpServletResponse response) {
         try {
-        Teacher teacher = getTeacher(request);
-        if (null == teacher) {
-            response.setStatus(HttpStatus.NOT_FOUND.value());
-            return ReturnMapUtils.returnFail("Teacher doesn't exist");
-        }
-        Long teacherId = teacher.getId();
+            Teacher teacher = getTeacher(request);
+            if (null == teacher) {
+                response.setStatus(HttpStatus.NOT_FOUND.value());
+                return ReturnMapUtils.returnFail("Teacher doesn't exist");
+            }
+            Long teacherId = teacher.getId();
 
 
             boolean ret = fileHttpService.deleteAvatar(teacherId);
@@ -489,8 +488,8 @@ public class ContractInfoController extends RestfulController {
 
     @ResponseBody
     @RequestMapping("/deleteLifePic")
-    public Object deleteAvatar(@RequestBody Map<String,Object> paramMap, HttpServletRequest request, HttpServletResponse response) {
-        String lifePicId = (String)paramMap.get("lifePicId");
+    public Object deleteAvatar(@RequestBody Map<String, Object> paramMap, HttpServletRequest request, HttpServletResponse response) {
+        String lifePicId = (String) paramMap.get("lifePicId");
         Long fileId = Long.parseLong(lifePicId);
         Teacher teacher = getTeacher(request);
         if (null == teacher) {
@@ -519,12 +518,12 @@ public class ContractInfoController extends RestfulController {
     @RequestMapping("/deleteVideo")
     public Object deleteVideo(HttpServletRequest request, HttpServletResponse response) {
         try {
-        Teacher teacher = getTeacher(request);
-        if (null == teacher) {
-            response.setStatus(HttpStatus.NOT_FOUND.value());
-            return ReturnMapUtils.returnFail("Teacher doesn't exist");
-        }
-        Long teacherId = teacher.getId();
+            Teacher teacher = getTeacher(request);
+            if (null == teacher) {
+                response.setStatus(HttpStatus.NOT_FOUND.value());
+                return ReturnMapUtils.returnFail("Teacher doesn't exist");
+            }
+            Long teacherId = teacher.getId();
 
 
             boolean ret = fileHttpService.deleteShortVideo(teacherId);
@@ -543,12 +542,12 @@ public class ContractInfoController extends RestfulController {
     }
 
     @RequestMapping(value = "/toRegular", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
-    public Map<String,Object> toRegular(HttpServletRequest request, HttpServletResponse response){
-        try{
+    public Map<String, Object> toRegular(HttpServletRequest request, HttpServletResponse response) {
+        try {
             Teacher teacher = getTeacher(request);
             logger.info("Teacher:{} toPublic", teacher.getId());
             boolean result = this.contractInfoService.toRegular(teacher);
-            if(result){
+            if (result) {
                 logger.info("Successfully get TO REGULAR!");
                 return ReturnMapUtils.returnSuccess();
             } else {
@@ -571,18 +570,17 @@ public class ContractInfoController extends RestfulController {
      */
 
     /**
-
      * 删除文件
      */
     @RequestMapping("/deleteFile")
-    public Map<String,Object> deleteFile(@RequestBody Map<String,Object> pramMap,HttpServletRequest request, HttpServletResponse response){
-        Object id = pramMap.get("id");
-        try{
-            int fileId =(Integer)id;
+    public Map<String, Object> deleteFile(@RequestBody Map<String, Object> paramMap, HttpServletRequest request, HttpServletResponse response) {
+        Object id = paramMap.get("id");
+        try {
+            int fileId = (Integer) id;
             Teacher teacher = getTeacher(request);
-            logger.info("删除文件id........:{}",fileId);
-            Map<String,Object> result = contractInfoService.removeFile(fileId, teacher.getId());
-            if(ReturnMapUtils.isFail(result)){
+            logger.info("删除文件id........:{}", fileId);
+            Map<String, Object> result = contractInfoService.removeFile(fileId, teacher.getId());
+            if (ReturnMapUtils.isFail(result)) {
                 response.setStatus(HttpStatus.FORBIDDEN.value());
             }
             return result;
@@ -600,25 +598,13 @@ public class ContractInfoController extends RestfulController {
     /**
      * 文件上传功能
      */
-    private FileVo awsUpload(MultipartFile file, Long teacherId) {
+    private FileVo awsUpload(MultipartFile file, Long teacherId, String fileName, String key) {
         logger.info("teacher id = {} ", teacherId);
         FileVo fileVo = null;
         if (file != null) {
-            String fileName = file.getOriginalFilename();
-            if(StringUtils.isNotBlank(fileName)){
-                fileName =AwsFileUtils.reNewFileName(fileName);
-            }
             String bucketName = PropertyConfigurer.stringValue("aws.bucketName");
-
-
-            String key = AwsFileUtils.getTaxpayerkey(teacherId, teacherId + "-" + fileName);
-            Long size = file.getSize();
-
-            Preconditions.checkArgument(AwsFileUtils.checkTaxPayerFileType(fileName), "文件类型不正确，支持类型为" + AwsFileUtils.TAPXPAYER_FILE_TYPE);
-            Preconditions.checkArgument(AwsFileUtils.checkTaxPayerFileSize(size), "文件太大，maxSize = " + AwsFileUtils.TAPXPAYER_FILE_MAX_SIZE);
-
             try {
-                logger.info("文件:{}上传",fileName);
+                logger.info("文件:{}上传", fileName);
                 fileVo = awsFileService.upload(bucketName, key, file.getInputStream(), file.getSize());
             } catch (IOException e) {
                 logger.error("awsUpload exception", e);
@@ -636,22 +622,32 @@ public class ContractInfoController extends RestfulController {
      * 上传老师的身份证明
      */
     @RequestMapping("/uploadIdentification")
-    public Map<String,Object> uploadIdentification(@RequestParam("file") MultipartFile file,String filetype,HttpServletRequest request, HttpServletResponse response){
-        Map<String,Object> result = new HashMap<>();
-
-        if(StringUtils.isBlank(filetype)){
+    public Map<String, Object> uploadIdentification(@RequestParam("file") MultipartFile file, String filetype, HttpServletRequest request, HttpServletResponse response) {
+        Map<String, Object> result = new HashMap<>();
+        if (StringUtils.isBlank(filetype)) {
             return ReturnMapUtils.returnFail("There is no type of file upload");
         }
+        FileVo fileVo = null;
+        try {
+            Teacher teacher = getTeacher(request);
+            logger.info("用户：{}，upload Identification file = {}", teacher.getId(), file);
+            if (file != null) {
+                String fileName = file.getOriginalFilename();
+                if (StringUtils.isNotBlank(fileName)) {
+                    fileName = AwsFileUtils.reNewFileName(fileName);
+                }
+                String key = AwsFileUtils.getIdentificationkey(teacher.getId(), teacher.getId() + "-" + fileName);
+                Long size = file.getSize();
+                Preconditions.checkArgument(AwsFileUtils.checkIdentificationFileType(fileName), "文件类型不正确，支持类型为" + AwsFileUtils.IDENTIFICATION_FILE_TYPE);
+                Preconditions.checkArgument(AwsFileUtils.checkIdentificationFileSize(size), "文件太大，maxSize = " + AwsFileUtils.IDENTIFICATION_FILE_MAX_SIZE);
 
-        try{
-        Teacher teacher = getTeacher(request);
-        logger.info("用户：{}，upload Identification file = {}", teacher.getId(), file);
+                fileVo = awsUpload(file, teacher.getId(), fileName, key);
+            }
 
-        FileVo fileVo  = awsUpload(file, teacher.getId());
-        if(fileVo==null){
-            response.setStatus(HttpStatus.BAD_REQUEST.value());
-            return ReturnMapUtils.returnFail("upload file is fail");
-        }
+            if (fileVo == null) {
+                response.setStatus(HttpStatus.BAD_REQUEST.value());
+                return ReturnMapUtils.returnFail("upload file is fail");
+            }
 
 
             TeacherContractFile teacherContractFile = new TeacherContractFile();
@@ -659,19 +655,19 @@ public class ContractInfoController extends RestfulController {
             teacherContractFile.setUrl(fileVo.getUrl());
             teacherContractFile.setTeacherApplicationId(0);
             //文件类型1-other_degrees  2-certificationFiles   3-Identification  4-Diploma 5-Contract  6-Passport   7-Driver's license
-            if(filetype.equals("passport")){
+            if (filetype.equals("passport")) {
                 teacherContractFile.setFileType(TeacherApplicationEnum.ContractFileType.PASSPORT.val());
             }
-            if(filetype.equals("driver")){
+            if (filetype.equals("driver")) {
                 teacherContractFile.setFileType(TeacherApplicationEnum.ContractFileType.DRIVER.val());
             }
-            if(filetype.equals("identity")){
+            if (filetype.equals("identity")) {
                 teacherContractFile.setFileType(TeacherApplicationEnum.ContractFileType.IDENTIFICATION.val());
             }
 
             contractInfoService.save(teacherContractFile);
-            result.put("file",fileVo.getUrl());
-            result.put("status",true);
+            result.put("file", fileVo.getUrl());
+            result.put("status", true);
             result.put("id", teacherContractFile.getId());
             return ReturnMapUtils.returnSuccess(result);
         } catch (IllegalArgumentException e) {
@@ -688,17 +684,28 @@ public class ContractInfoController extends RestfulController {
      * 上传老师的最高学历
      */
     @RequestMapping("/uploadDiploma")
-    public Map<String,Object> uploadDiploma(@RequestParam("file") MultipartFile file,HttpServletRequest request, HttpServletResponse response){
+    public Map<String, Object> uploadDiploma(@RequestParam("file") MultipartFile file, HttpServletRequest request, HttpServletResponse response) {
 
-        Map<String,Object> result = new HashMap<>();
-        try{
-        Teacher teacher = getTeacher(request);
-        logger.info("用户 :{},upload uploadDiploma file = {}",teacher.getId(),file);
-        FileVo fileVo  = awsUpload(file, teacher.getId());
-        if(fileVo==null){
-            response.setStatus(HttpStatus.BAD_REQUEST.value());
-            return ReturnMapUtils.returnFail("upload file is fail");
-        }
+        Map<String, Object> result = new HashMap<>();
+        FileVo fileVo = null;
+        try {
+            Teacher teacher = getTeacher(request);
+            logger.info("用户：{}，upload Identification file = {}", teacher.getId(), file);
+            if (file != null) {
+                String fileName = file.getOriginalFilename();
+                if (StringUtils.isNotBlank(fileName)) {
+                    fileName = AwsFileUtils.reNewFileName(fileName);
+                }
+                String key = AwsFileUtils.getDiplomakey(teacher.getId(), teacher.getId() + "-" + fileName);
+                Long size = file.getSize();
+                Preconditions.checkArgument(AwsFileUtils.checkDiplomaFileType(fileName), "文件类型不正确，支持类型为" + AwsFileUtils.DIPLOMA_FILE_TYPE);
+                Preconditions.checkArgument(AwsFileUtils.checkDegreesFileSize(size), "文件太大，maxSize = " + AwsFileUtils.DIPLOMA_FILE_MAX_SIZE);
+                fileVo = awsUpload(file, teacher.getId(), fileName, key);
+            }
+            if (fileVo == null) {
+                response.setStatus(HttpStatus.BAD_REQUEST.value());
+                return ReturnMapUtils.returnFail("upload file is fail");
+            }
 
 
             TeacherContractFile teacherContractFile = new TeacherContractFile();
@@ -707,8 +714,8 @@ public class ContractInfoController extends RestfulController {
             teacherContractFile.setTeacherApplicationId(0);
             teacherContractFile.setFileType(TeacherApplicationEnum.ContractFileType.DIPLOMA.val());
             contractInfoService.save(teacherContractFile);
-            result.put("file",fileVo.getUrl());
-            result.put("status",true);
+            result.put("file", fileVo.getUrl());
+            result.put("status", true);
             result.put("id", teacherContractFile.getId());
             return ReturnMapUtils.returnSuccess(result);
         } catch (IllegalArgumentException e) {
@@ -725,17 +732,28 @@ public class ContractInfoController extends RestfulController {
      * 上传老师的合同
      */
     @RequestMapping("/uploadContract")
-    public Map<String,Object> uploadContract(@RequestParam("file") MultipartFile file,HttpServletRequest request, HttpServletResponse response){
+    public Map<String, Object> uploadContract(@RequestParam("file") MultipartFile file, HttpServletRequest request, HttpServletResponse response) {
 
-        Map<String,Object> result = new HashMap<>();
-        try{
-        Teacher teacher = getTeacher(request);
-        logger.info("用户 :{},upload uploadContract file = {}",teacher.getId(),file);
-        FileVo fileVo  = awsUpload(file, teacher.getId());
-        if(fileVo==null){
-            response.setStatus(HttpStatus.BAD_REQUEST.value());
-            return ReturnMapUtils.returnFail("upload file is fail");
-        }
+        Map<String, Object> result = new HashMap<>();
+        FileVo fileVo = null;
+        try {
+            Teacher teacher = getTeacher(request);
+            logger.info("用户：{}，upload Identification file = {}", teacher.getId(), file);
+            if (file != null) {
+                String fileName = file.getOriginalFilename();
+                if (StringUtils.isNotBlank(fileName)) {
+                    fileName = AwsFileUtils.reNewFileName(fileName);
+                }
+                String key = AwsFileUtils.getContractkey(teacher.getId(), teacher.getId() + "-" + fileName);
+                Long size = file.getSize();
+                Preconditions.checkArgument(AwsFileUtils.checkContractFileType(fileName), "文件类型不正确，支持类型为" + AwsFileUtils.CONTRACT_FILE_TYPE);
+                Preconditions.checkArgument(AwsFileUtils.checkContractFileSize(size), "文件太大，maxSize = " + AwsFileUtils.CONTRACT_FILE_MAX_SIZE);
+                fileVo = awsUpload(file, teacher.getId(), fileName, key);
+            }
+            if (fileVo == null) {
+                response.setStatus(HttpStatus.BAD_REQUEST.value());
+                return ReturnMapUtils.returnFail("upload file is fail");
+            }
 
 
             TeacherContractFile teacherContractFile = new TeacherContractFile();
@@ -745,8 +763,8 @@ public class ContractInfoController extends RestfulController {
             teacherContractFile.setFileType(TeacherApplicationEnum.ContractFileType.CONTRACT.val());
             contractInfoService.save(teacherContractFile);
 
-            result.put("file",fileVo.getUrl());
-            result.put("status",true);
+            result.put("file", fileVo.getUrl());
+            result.put("status", true);
             result.put("id", teacherContractFile.getId());
             return ReturnMapUtils.returnSuccess(result);
         } catch (IllegalArgumentException e) {
@@ -763,39 +781,50 @@ public class ContractInfoController extends RestfulController {
      * 上传W9-TAX文件
      */
     @RequestMapping("/uploadW9Tax")
-    public Map<String,Object> uploadW9Tax(@RequestParam("file") MultipartFile file,HttpServletRequest request, HttpServletResponse response){
+    public Map<String, Object> uploadW9Tax(@RequestParam("file") MultipartFile file, HttpServletRequest request, HttpServletResponse response) {
 
-        Map<String,Object> result = new HashMap<>();
-        try{
-        Teacher teacher = getTeacher(request);
-        logger.info("用户 :{},upload uploadW9Tax file = {}",teacher.getId(),file);
-        FileVo fileVo  = awsUpload(file, teacher.getId());
-        if(fileVo==null){
-            response.setStatus(HttpStatus.BAD_REQUEST.value());
-            return ReturnMapUtils.returnFail("upload file is fail");
-        }
+        Map<String, Object> result = new HashMap<>();
+        FileVo fileVo = null;
+        try {
+            Teacher teacher = getTeacher(request);
+            logger.info("用户：{}，upload Identification file = {}", teacher.getId(), file);
+            if (file != null) {
+                String fileName = file.getOriginalFilename();
+                if (StringUtils.isNotBlank(fileName)) {
+                    fileName = AwsFileUtils.reNewFileName(fileName);
+                }
+                String key = AwsFileUtils.getTaxpayerkey(teacher.getId(), teacher.getId() + "-" + fileName);
+                Long size = file.getSize();
+                Preconditions.checkArgument(AwsFileUtils.checkTaxPayerFileType(fileName), "文件类型不正确，支持类型为" + AwsFileUtils.TAPXPAYER_FILE_TYPE);
+                Preconditions.checkArgument(AwsFileUtils.checkTaxPayerFileSize(size), "文件太大，maxSize = " + AwsFileUtils.TAPXPAYER_FILE_MAX_SIZE);
+                fileVo = awsUpload(file, teacher.getId(), fileName, key);
+            }
+            if (fileVo == null) {
+                response.setStatus(HttpStatus.BAD_REQUEST.value());
+                return ReturnMapUtils.returnFail("upload file is fail");
+            }
 
 
             //更新w9-tax
             TeacherTaxpayerForm teacherTaxpayerForm = new TeacherTaxpayerForm();
-            logger.info("保存用户：{}上传的合W9-TAX文件url",teacher.getId());
+            logger.info("保存用户：{}上传的合W9-TAX文件url", teacher.getId());
             teacherTaxpayerForm.setTeacherId(teacher.getId());
             teacherTaxpayerForm.setUrl(fileVo.getUrl());
             teacherTaxpayerForm.setFormType(TeacherEnum.FormType.W9.val());
             setTeacherTaxpayerFormInfo(teacherTaxpayerForm, request);
-            teacherTaxpayerFormService.saveTeacherTaxpayerForm(teacherTaxpayerForm );
+            teacherTaxpayerFormService.saveTeacherTaxpayerForm(teacherTaxpayerForm);
 
             TeacherContractFile teacherContractFile = new TeacherContractFile();
-            logger.info("保存用户：{}上传的合W9-TAX文件url到teacher_other_degrees",teacher.getId());
+            logger.info("保存用户：{}上传的合W9-TAX文件url到teacher_other_degrees", teacher.getId());
             teacherContractFile.setTeacherId(teacher.getId());
             teacherContractFile.setUrl(fileVo.getUrl());
             teacherContractFile.setTeacherApplicationId(0);
             teacherContractFile.setFileType(TeacherApplicationEnum.ContractFileType.CONTRACT_W9.val());
             contractInfoService.save(teacherContractFile);
 
-            result.put("file",fileVo.getUrl());
+            result.put("file", fileVo.getUrl());
             result.put("id", teacherContractFile.getId());
-            result.put("status",true);
+            result.put("status", true);
             return ReturnMapUtils.returnSuccess(result);
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
@@ -807,24 +836,32 @@ public class ContractInfoController extends RestfulController {
     }
 
 
-
-
-
     /**
      * 上传Certification文件
      */
     @RequestMapping("/uploadCertification ")
-    public Map<String,Object> uploadCertification (@RequestParam("file") MultipartFile file,HttpServletRequest request, HttpServletResponse response){
+    public Map<String, Object> uploadCertification(@RequestParam("file") MultipartFile file, HttpServletRequest request, HttpServletResponse response) {
 
-        Map<String,Object> result = new HashMap<>();
-        try{
-        Teacher teacher =getTeacher(request);
-        logger.info("用户 :{},upload uploadCertification file = {}",teacher.getId(),file);
-        FileVo fileVo  = awsUpload(file, teacher.getId());
-        if(fileVo==null){
-            response.setStatus(HttpStatus.BAD_REQUEST.value());
-            return ReturnMapUtils.returnFail("upload file is fail");
-        }
+        Map<String, Object> result = new HashMap<>();
+        FileVo fileVo = null;
+        try {
+            Teacher teacher = getTeacher(request);
+            logger.info("用户：{}，upload Identification file = {}", teacher.getId(), file);
+            if (file != null) {
+                String fileName = file.getOriginalFilename();
+                if (StringUtils.isNotBlank(fileName)) {
+                    fileName = AwsFileUtils.reNewFileName(fileName);
+                }
+                String key = AwsFileUtils.getCertificateskey(teacher.getId(), teacher.getId() + "-" + fileName);
+                Long size = file.getSize();
+                Preconditions.checkArgument(AwsFileUtils.checkCertificatesFileType(fileName), "文件类型不正确，支持类型为" + AwsFileUtils.CERTIFICATES_FILE_TYPE);
+                Preconditions.checkArgument(AwsFileUtils.checkCertificatesFileSize(size), "文件太大，maxSize = " + AwsFileUtils.CERTIFICATES_FILE_MAX_SIZE);
+                fileVo = awsUpload(file, teacher.getId(), fileName, key);
+            }
+            if (fileVo == null) {
+                response.setStatus(HttpStatus.BAD_REQUEST.value());
+                return ReturnMapUtils.returnFail("upload file is fail");
+            }
 
             TeacherContractFile teacherContractFile = new TeacherContractFile();
             teacherContractFile.setTeacherId(teacher.getId());
@@ -832,8 +869,8 @@ public class ContractInfoController extends RestfulController {
             teacherContractFile.setTeacherApplicationId(0);
             teacherContractFile.setFileType(TeacherApplicationEnum.ContractFileType.CERTIFICATIONFILES.val());
             contractInfoService.save(teacherContractFile);
-            result.put("file",fileVo.getUrl());
-            result.put("status",true);
+            result.put("file", fileVo.getUrl());
+            result.put("status", true);
             result.put("id", teacherContractFile.getId());
             return ReturnMapUtils.returnSuccess(result);
         } catch (IllegalArgumentException e) {
@@ -849,17 +886,28 @@ public class ContractInfoController extends RestfulController {
      * 上传Degrees文件
      */
     @RequestMapping("/uploadDegrees ")
-    public Map<String,Object> uploadDegrees (@RequestParam("file") MultipartFile file,HttpServletRequest request, HttpServletResponse response){
+    public Map<String, Object> uploadDegrees(@RequestParam("file") MultipartFile file, HttpServletRequest request, HttpServletResponse response) {
 
-        Map<String,Object> result = new HashMap<>();
-        try{
-        Teacher teacher = getTeacher(request);
-        logger.info("用户 :{},upload uploadDegrees file = {}",teacher.getId(),file);
-        FileVo fileVo  = awsUpload(file, teacher.getId());
-        if(fileVo==null){
-            response.setStatus(HttpStatus.BAD_REQUEST.value());
-            return ReturnMapUtils.returnFail("upload file is fail");
-        }
+        Map<String, Object> result = new HashMap<>();
+        FileVo fileVo = null;
+        try {
+            Teacher teacher = getTeacher(request);
+            logger.info("用户：{}，upload Identification file = {}", teacher.getId(), file);
+            if (file != null) {
+                String fileName = file.getOriginalFilename();
+                if (StringUtils.isNotBlank(fileName)) {
+                    fileName = AwsFileUtils.reNewFileName(fileName);
+                }
+                String key = AwsFileUtils.getDegreeskey(teacher.getId(), teacher.getId() + "-" + fileName);
+                Long size = file.getSize();
+                Preconditions.checkArgument(AwsFileUtils.checkDegreesFileType(fileName), "文件类型不正确，支持类型为" + AwsFileUtils.DEGREES_FILE_TYPE);
+                Preconditions.checkArgument(AwsFileUtils.checkDegreesFileSize(size), "文件太大，maxSize = " + AwsFileUtils.DEGREES_FILE_MAX_SIZE);
+                fileVo = awsUpload(file, teacher.getId(), fileName, key);
+            }
+            if (fileVo == null) {
+                response.setStatus(HttpStatus.BAD_REQUEST.value());
+                return ReturnMapUtils.returnFail("upload file is fail");
+            }
 
             TeacherContractFile teacherContractFile = new TeacherContractFile();
             teacherContractFile.setTeacherId(teacher.getId());
@@ -867,8 +915,8 @@ public class ContractInfoController extends RestfulController {
             teacherContractFile.setTeacherApplicationId(0);
             teacherContractFile.setFileType(TeacherApplicationEnum.ContractFileType.OTHER_DEGREES.val());
             contractInfoService.save(teacherContractFile);
-            result.put("file",fileVo.getUrl());
-            result.put("status",true);
+            result.put("file", fileVo.getUrl());
+            result.put("status", true);
             result.put("id", teacherContractFile.getId());
             return ReturnMapUtils.returnSuccess(result);
         } catch (IllegalArgumentException e) {
@@ -881,10 +929,7 @@ public class ContractInfoController extends RestfulController {
     }
 
 
-
-
-
-    private void setTeacherTaxpayerFormInfo(TeacherTaxpayerForm teacherTaxpayerForm, HttpServletRequest request){
+    private void setTeacherTaxpayerFormInfo(TeacherTaxpayerForm teacherTaxpayerForm, HttpServletRequest request) {
         Teacher teacher = getTeacher(request);
         Long teacherId = teacher.getId();
         String teacherName = teacher.getRealName();

@@ -65,12 +65,12 @@ public class ContractInfoService {
     public boolean updateTeacherApplication(Teacher teacher, List<Integer> ids) {
         TeacherTaxpayerForm teacherTaxpayerForm = teacherTaxpayerFormDao.findByTeacherIdAndType(teacher.getId(), TeacherEnum.FormType.W9.val());
         if (teacherTaxpayerForm == null) {
-            if (teacher.getCountry().equals("USA")) {
+            if (StringUtils.equals(teacher.getCountry(), "USA")) {
                 logger.warn("{} teacher's country is USA but W9 file is not uploaded!", teacher.getId());
                 return false;
             } else {
                 //查询教师的Location id
-                TeacherAddress teacherAddress = teacherAddressDao.findById(teacher.getCurrentAddressId());
+                TeacherAddress teacherAddress = teacherAddressDao.getTeacherAddress(teacher.getCurrentAddressId());
                 //  2497273 = 老师location 为   United States
                 if (teacherAddress != null && teacherAddress.getCountryId() == 2497273) {
                     logger.warn("{} teacher's address's country id is 2497273 (USA) but W9 file is not uploaded!", teacher.getId());
@@ -215,12 +215,12 @@ public class ContractInfoService {
             } else {
                 TeacherTaxpayerForm teacherTaxpayerForm = teacherTaxpayerFormDao.findByTeacherIdAndType(teacher.getId(), TeacherEnum.FormType.W9.val());
                 if (teacherTaxpayerForm == null) {
-                    if (teacher.getCountry().equals("USA")) {
+                    if (StringUtils.equals(teacher.getCountry(), "USA")) {
                         logger.warn("{} teacher's country is USA but W9 file is not uploaded!", teacher.getId());
                         result = "FAIL";
                     } else {
                         //查询教师的Location id
-                        TeacherAddress teacherAddress = teacherAddressDao.findById(teacher.getCurrentAddressId());
+                        TeacherAddress teacherAddress = teacherAddressDao.getTeacherAddress(teacher.getCurrentAddressId());
                         //  2497273 = 老师location 为   United States
                         if (teacherAddress != null && teacherAddress.getCountryId() == 2497273) {
                             logger.warn("{} teacher's address's country id is 2497273 (USA) but W9 file is not uploaded!", teacher.getId());
