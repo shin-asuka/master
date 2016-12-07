@@ -598,7 +598,7 @@ public class ContractInfoController extends RestfulController {
             String bucketName = PropertyConfigurer.stringValue("aws.bucketName");
 
 
-            String key = AwsFileUtils.getTaxpayerkey(teacherId + "-" + name);
+            String key = AwsFileUtils.getTaxpayerkey(teacherId, teacherId + "-" + name);
             Long size = file.getSize();
 
             Preconditions.checkArgument(AwsFileUtils.checkTaxPayerFileType(name), "文件类型不正确，支持类型为" + AwsFileUtils.TAPXPAYER_FILE_TYPE);
