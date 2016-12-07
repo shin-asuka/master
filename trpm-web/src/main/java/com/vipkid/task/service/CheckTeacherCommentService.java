@@ -46,8 +46,8 @@ public class CheckTeacherCommentService {
 	public void remindTeacherComment(int hours){
 
 		//查询出hours个小时以前已经AS_SCHEDULED的课程
-		Date startDate = UADateUtils.getDateOclockByBeforeHours(hours);
-		Date endDate = UADateUtils.getDateOclockByBeforeHours(hours-1);
+		Date startDate = UADateUtils.getDateByBeforeHours(hours+1);
+		Date endDate = UADateUtils.getDateByBeforeHours(hours);
 
 		String startTime = UADateUtils.format(startDate, UADateUtils.defaultFormat) ;
 		String endTime = UADateUtils.format(endDate, UADateUtils.defaultFormat) ;
