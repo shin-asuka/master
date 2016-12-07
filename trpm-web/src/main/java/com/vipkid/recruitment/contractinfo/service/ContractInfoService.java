@@ -213,7 +213,21 @@ public class ContractInfoService {
             if (CollectionUtils.isNotEmpty(tax)) {
                 contractFile.setTax(tax.get(tax.size() - 1));
             } else {
-                result = "FAIL";
+                TeacherTaxpayerForm teacherTaxpayerForm = teacherTaxpayerFormDao.findByTeacherIdAndType(teacher.getId(), TeacherEnum.FormType.W9.val());
+                if (teacherTaxpayerForm == null) {
+                    if (teacher.getCountry().equals("USA")) {
+                        logger.warn("{} teacher's country is USA but W9 file is not uploaded!", teacher.getId());
+                        result = "FAIL";
+                    } else {
+                        //查询教师的Location id
+                        TeacherAddress teacherAddress = teacherAddressDao.findById(teacher.getCurrentAddressId());
+                        //  2497273 = 老师location 为   United States
+                        if (teacherAddress != null && teacherAddress.getCountryId() == 2497273) {
+                            logger.warn("{} teacher's address's country id is 2497273 (USA) but W9 file is not uploaded!", teacher.getId());
+                            result = "FAIL";
+                        }
+                    }
+                }
             }
 
             if (CollectionUtils.isNotEmpty(contract)) {

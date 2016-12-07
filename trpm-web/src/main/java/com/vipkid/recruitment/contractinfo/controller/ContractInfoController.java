@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.google.common.base.Splitter;
 import com.vipkid.enums.TeacherApplicationEnum;
 
+import com.vipkid.file.utils.FileUtils;
 import com.vipkid.recruitment.entity.TeacherApplication;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -313,6 +314,9 @@ public class ContractInfoController extends RestfulController {
         Map<String, Object> result = Maps.newHashMap();
         if (file != null) {
             String fileName = file.getOriginalFilename();
+            if(StringUtils.isNotBlank(fileName)){
+                fileName =AwsFileUtils.reNewFileName(fileName);
+            }
             String bucketName = AwsFileUtils.getAwsBucketName();
             String key = AwsFileUtils.getAvatarKey(fileName);
             Long fileSize = file.getSize();
@@ -363,6 +367,9 @@ public class ContractInfoController extends RestfulController {
         Map<String, Object> result = Maps.newHashMap();
         if (file != null) {
             String fileName = file.getOriginalFilename();
+            if(StringUtils.isNotBlank(fileName)){
+                fileName =AwsFileUtils.reNewFileName(fileName);
+            }
             String bucketName = PropertyConfigurer.stringValue("aws.bucketName");
             String key = AwsFileUtils.getLifePictureKey(fileName);
             Long fileSize = file.getSize();
@@ -410,6 +417,9 @@ public class ContractInfoController extends RestfulController {
         Map<String, Object> result = Maps.newHashMap();
         if (file != null) {
             String fileName = file.getOriginalFilename();
+            if(StringUtils.isNotBlank(fileName)){
+                fileName =AwsFileUtils.reNewFileName(fileName);
+            }
             String bucketName = PropertyConfigurer.stringValue("aws.bucketName");
             String key = AwsFileUtils.getShortVideoKey(fileName);
             Long fileSize = file.getSize();
@@ -594,18 +604,21 @@ public class ContractInfoController extends RestfulController {
         logger.info("teacher id = {} ", teacherId);
         FileVo fileVo = null;
         if (file != null) {
-            String name = file.getOriginalFilename();
+            String fileName = file.getOriginalFilename();
+            if(StringUtils.isNotBlank(fileName)){
+                fileName =AwsFileUtils.reNewFileName(fileName);
+            }
             String bucketName = PropertyConfigurer.stringValue("aws.bucketName");
 
 
-            String key = AwsFileUtils.getTaxpayerkey(teacherId, teacherId + "-" + name);
+            String key = AwsFileUtils.getTaxpayerkey(teacherId, teacherId + "-" + fileName);
             Long size = file.getSize();
 
-            Preconditions.checkArgument(AwsFileUtils.checkTaxPayerFileType(name), "文件类型不正确，支持类型为" + AwsFileUtils.TAPXPAYER_FILE_TYPE);
+            Preconditions.checkArgument(AwsFileUtils.checkTaxPayerFileType(fileName), "文件类型不正确，支持类型为" + AwsFileUtils.TAPXPAYER_FILE_TYPE);
             Preconditions.checkArgument(AwsFileUtils.checkTaxPayerFileSize(size), "文件太大，maxSize = " + AwsFileUtils.TAPXPAYER_FILE_MAX_SIZE);
 
             try {
-                logger.info("文件:{}上传",name);
+                logger.info("文件:{}上传",fileName);
                 fileVo = awsFileService.upload(bucketName, key, file.getInputStream(), file.getSize());
             } catch (IOException e) {
                 logger.error("awsUpload exception", e);

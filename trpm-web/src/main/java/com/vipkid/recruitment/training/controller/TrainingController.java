@@ -23,7 +23,6 @@ import com.vipkid.recruitment.utils.ReturnMapUtils;
 import com.vipkid.rest.RestfulController;
 import com.vipkid.rest.config.RestfulConfig;
 import com.vipkid.rest.interceptor.annotation.RestInterface;
-import com.vipkid.rest.service.AdminQuizService;
 import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.entity.TeacherQuiz;
 import com.vipkid.trpm.entity.User;
@@ -36,8 +35,7 @@ public class TrainingController extends RestfulController {
 
     private static Logger logger = LoggerFactory.getLogger(TrainingController.class);
 
-    @Autowired
-    private AdminQuizService adminQuizService;
+
 
     @Autowired
     private TrainingService trainingService;
@@ -56,8 +54,8 @@ public class TrainingController extends RestfulController {
             result.put("need",false);
             User user = getUser(request);
             logger.info("用户：{}查询他是否存在待考记录",user.getId());
-            this.adminQuizService.updateCheckQuiz(user.getId());
-            result.put("need",this.adminQuizService.findNeedQuiz(user.getId()));
+            this.trainingService.updateCheckQuiz(user.getId());
+            result.put("need",this.trainingService.findNeedQuiz(user.getId()));
             return ReturnMapUtils.returnSuccess(result);
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
@@ -81,7 +79,7 @@ public class TrainingController extends RestfulController {
             result.put("quizToken", 0);
             User user = getUser(request);
             logger.info("用户{}开始考试",user.getId());
-            result.put("quizToken",this.adminQuizService.startQuiz(user.getId()));
+            result.put("quizToken",this.trainingService.startQuiz(user.getId()));
             return ReturnMapUtils.returnSuccess(result);
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
@@ -108,7 +106,7 @@ public class TrainingController extends RestfulController {
             Object quizToken = pramMap.get("quizToken");
             Teacher teacher = getTeacher(request);
             logger.info("用户{}提交grade:{}",teacher.getId(),String.valueOf(grade));
-            result.put("result",this.adminQuizService.saveQuizResult(teacher.getId(), String.valueOf(grade),Long.valueOf(quizToken+"")));
+            result.put("result",this.trainingService.saveQuizResult(teacher.getId(), String.valueOf(grade),Long.valueOf(quizToken+"")));
             return ReturnMapUtils.returnSuccess(result);
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
@@ -132,7 +130,7 @@ public class TrainingController extends RestfulController {
             User user = getUser(request);
             logger.info("用户{}查询最后一次考试记录",user.getId());
             //查询用户最后一次考试记录
-            List<TeacherQuiz> list = adminQuizService.getLastQuiz(user.getId());
+            List<TeacherQuiz> list = trainingService.getLastQuiz(user.getId());
             if(CollectionUtils.isNotEmpty(list)){
                 logger.info("用户:{}的考试记录：{}",user.getId(),list);
                 TeacherQuiz teacherQuiz = list.get(0);
