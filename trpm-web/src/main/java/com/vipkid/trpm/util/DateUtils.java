@@ -42,8 +42,6 @@ public final class DateUtils {
 
 	public static DateTimeFormatter FMT_YM = DateTimeFormatter.ofPattern("yyyy-MM");
 
-	public static DateTimeFormatter FMT_YMD_EMd = DateTimeFormatter.ofPattern("E,L d hh:mm a");
-
 	/* 每天的半小时数量 */
 	public static final int HALFHOUR_OF_DAY = 24 * 2;
 	/* 半小时的分钟数 */

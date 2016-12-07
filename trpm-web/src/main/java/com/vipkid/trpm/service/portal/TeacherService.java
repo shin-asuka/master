@@ -24,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -112,9 +113,10 @@ public class TeacherService {
 		if (NumberUtils.isNumber(onlineClassId)) {
 			OnlineClass onlineClass = onlineClassDao.findById(Long.valueOf(onlineClassId));
 			if (onlineClass != null) {
-				String classTime = DateUtils
-						.formatTo(onlineClass.getAbleToEnterClassroomDateTime().toInstant(), DateUtils.FMT_YMD_EMd);
-				result.setClassTime(classTime);
+				Timestamp classTime = onlineClass.getAbleToEnterClassroomDateTime();
+				if(classTime!=null){
+					result.setClassTime(String.valueOf(classTime.getTime()));
+				}
 
 				Lesson lesson = lessonDao.findById(teacherComment.getLessonId());
 				if (lesson != null) {
