@@ -23,6 +23,7 @@ public class RequestUtils {
             return JsonTools.getJson(parame);
         }
         //读取body
+        /*
         HttpServletRequest _request = request;
         int contentLen = _request.getContentLength();
         if (contentLen > 0) {
@@ -43,6 +44,7 @@ public class RequestUtils {
                 logger.error(e.getMessage(),e);
             }
         }
+        */
         return "";
     }
 }
