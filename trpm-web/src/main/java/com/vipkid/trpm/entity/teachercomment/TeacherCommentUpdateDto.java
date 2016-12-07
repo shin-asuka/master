@@ -492,7 +492,7 @@ public class TeacherCommentUpdateDto {
     }
 
     public TeacherCommentUpdateDto(TeacherComment teacherComment){
-        {
+
             //理论上不会有比int大的
             if (teacherComment.getId() > 0) {
                 id = Integer.valueOf(String.valueOf(teacherComment.getId()));
@@ -580,6 +580,6 @@ public class TeacherCommentUpdateDto {
                 updateTime = new Date(teacherComment.getLastDateTime().getTime());
             }
             courseType = teacherComment.getCourseType();
-        }
+
     }
 }

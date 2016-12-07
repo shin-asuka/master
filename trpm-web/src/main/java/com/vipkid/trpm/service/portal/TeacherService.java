@@ -10,6 +10,7 @@ import com.vipkid.http.constant.HttpUrlConstant;
 import com.vipkid.http.service.HttpApiClient;
 import com.vipkid.http.utils.JsonUtils;
 import com.vipkid.http.vo.StandardJsonObject;
+import com.vipkid.rest.security.AppContext;
 import com.vipkid.trpm.constant.ApplicationConstant;
 import com.vipkid.trpm.dao.*;
 import com.vipkid.trpm.entity.*;
@@ -113,9 +114,12 @@ public class TeacherService {
 		if (NumberUtils.isNumber(onlineClassId)) {
 			OnlineClass onlineClass = onlineClassDao.findById(Long.valueOf(onlineClassId));
 			if (onlineClass != null) {
+				//获取登录老师(时区),转换前端展示的classTime
+				Teacher teacher = AppContext.getTeacher();
 				Timestamp classTime = onlineClass.getAbleToEnterClassroomDateTime();
-				if(classTime!=null){
-					result.setClassTime(String.valueOf(classTime.getTime()));
+				if(classTime!=null && teacher!=null && StringUtils.isNotBlank(teacher.getTimezone())){
+					String classTimeFormat = DateUtils.formatTo(classTime.toInstant(),teacher.getTimezone(),DateUtils.FMT_YMD_EMd);
+					result.setClassTime(classTimeFormat);
 				}
 
 				Lesson lesson = lessonDao.findById(teacherComment.getLessonId());
@@ -277,6 +281,7 @@ public class TeacherService {
 	public List<TeacherCommentResult> batchGetByOnlineClassIds(List<Long> onlineClassIds){
 		Map<String, String> paramsMap = Maps.newHashMap();
 		paramsMap.put("onlineClassIdList", Joiner.on(',').join(onlineClassIds));
+		paramsMap.put("needFeedback","true");
 		List<TeacherCommentResult> teacherCommentList = getTeacherCommentResult(paramsMap,
 				API_TEACHER_COMMENT_QUERY_CLASSIDLIST);
 		if (CollectionUtils.isEmpty(teacherCommentList)) {

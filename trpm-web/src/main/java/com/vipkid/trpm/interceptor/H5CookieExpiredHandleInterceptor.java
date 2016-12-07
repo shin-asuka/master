@@ -85,7 +85,9 @@ public class H5CookieExpiredHandleInterceptor extends HandlerInterceptorAdapter 
 
 		boolean isFilter = PropertyConfigurer.booleanValue("h5.cookie.check");
 		if(!isFilter){
-			logger.info("配置[h5.cookie.check]={}不拦截",isFilter);
+			logger.info("配置[h5.cookie.check]={}不拦截,默认登录老师id是359",isFilter);
+			Teacher teacher = loginService.findTeacherById(359);
+			AppContext.setTeacher(teacher);
 			return true;
 		}
 
