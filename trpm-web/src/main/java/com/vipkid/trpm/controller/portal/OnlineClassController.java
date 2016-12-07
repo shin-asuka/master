@@ -1,22 +1,19 @@
 package com.vipkid.trpm.controller.portal;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import com.google.common.collect.Maps;
+import com.vipkid.enums.OnlineClassEnum;
 import com.vipkid.enums.TeacherApplicationEnum.Result;
-import com.vipkid.enums.TeacherApplicationEnum.Status;
-import com.vipkid.enums.TeacherEnum;
-import com.vipkid.enums.TeacherLockLogEnum.Reason;
 import com.vipkid.recruitment.common.service.RecruitmentService;
 import com.vipkid.recruitment.dao.TeacherLockLogDao;
-import com.vipkid.recruitment.entity.TeacherLockLog;
-import com.vipkid.trpm.dao.UserDao;
+import com.vipkid.recruitment.entity.TeacherApplication;
 import com.vipkid.rest.service.LoginService;
+import com.vipkid.trpm.constant.ApplicationConstant.FinishType;
+import com.vipkid.trpm.dao.UserDao;
+import com.vipkid.trpm.entity.*;
+import com.vipkid.trpm.service.passport.IndexService;
+import com.vipkid.trpm.service.pe.AppserverPracticumService;
+import com.vipkid.trpm.service.pe.PeSupervisorService;
+import com.vipkid.trpm.service.portal.OnlineClassService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,19 +25,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.google.common.collect.Maps;
-import com.vipkid.enums.OnlineClassEnum;
-import com.vipkid.recruitment.entity.TeacherApplication;
-import com.vipkid.trpm.constant.ApplicationConstant.FinishType;
-import com.vipkid.trpm.entity.DemoReport;
-import com.vipkid.trpm.entity.Lesson;
-import com.vipkid.trpm.entity.OnlineClass;
-import com.vipkid.trpm.entity.Teacher;
-import com.vipkid.trpm.entity.User;
-import com.vipkid.trpm.service.passport.IndexService;
-import com.vipkid.trpm.service.pe.AppserverPracticumService;
-import com.vipkid.trpm.service.pe.PeSupervisorService;
-import com.vipkid.trpm.service.portal.OnlineClassService;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 
 @Controller
 public class OnlineClassController extends AbstractPortalController {
@@ -51,9 +41,6 @@ public class OnlineClassController extends AbstractPortalController {
     private OnlineClassService onlineclassService;
 
     @Autowired
-    private IndexService indexService;
-
-    @Autowired
     private PeSupervisorService peSupervisorService;
 
     @Autowired
@@ -61,15 +48,6 @@ public class OnlineClassController extends AbstractPortalController {
     
     @Autowired
     private LoginService loginService;
-
-    @Autowired
-    private RecruitmentService recruitmentService;
-
-    @Autowired
-    private TeacherLockLogDao teacherLockLogDao;
-
-    @Autowired
-    private UserDao userDao;
     /**
      * 进入教室
      *
@@ -292,8 +270,7 @@ public class OnlineClassController extends AbstractPortalController {
 
             // Finish课程
             if ((Boolean) modelMap.get("result")) {
-                onlineclassService.finishPracticum(teacherApplication.getOnlineClassId(),
-                        finishType);
+                onlineclassService.finishPracticum(teacherApplication.getOnlineClassId(), finishType, pe, (Teacher) modelMap.get("recruitTeacher"));
             }
         }
 
@@ -302,14 +279,6 @@ public class OnlineClassController extends AbstractPortalController {
         Teacher recruitTeacher = (Teacher) modelMap.get("recruitTeacher");
         if (Objects.nonNull(teacherApplicationId) && Objects.nonNull(recruitTeacher)) {
             appserverPracticumService.finishPracticumProcess(teacherApplicationId, recruitTeacher);
-        }
-
-        if (FinishType.STUDENT_CANCELLATION.equals(finishType) || FinishType.STUDENT_NO_SHOW.equals(finishType) || FinishType.STUDENT_IT_PROBLEM.equals(finishType)){
-            int count = recruitmentService.getRemainRescheduleTimes(recruitTeacher, Status.PRACTICUM.toString(), finishType);
-            if(count == 0){
-                userDao.doLock(recruitTeacher.getId());
-                teacherLockLogDao.save(new TeacherLockLog(recruitTeacher.getId(), Reason.RESCHEDULE.toString(), TeacherEnum.LifeCycle.PRACTICUM.toString()));
-            }
         }
 
         return jsonView(response, modelMap);
