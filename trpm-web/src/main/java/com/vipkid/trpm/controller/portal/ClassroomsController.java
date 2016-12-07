@@ -34,6 +34,7 @@ public class ClassroomsController extends AbstractPortalController {
     @Autowired
     private LoginService loginService;
 
+    @Deprecated
 	@Slave
 	@RequestMapping("/classrooms")
 	public String classrooms(HttpServletRequest request, HttpServletResponse response, Model model) {
@@ -63,6 +64,7 @@ public class ClassroomsController extends AbstractPortalController {
 		return view("classrooms");
 	}
 
+    @Deprecated
 	@Slave
 	@RequestMapping("/majorList")
 	public String majorList(HttpServletRequest request, HttpServletResponse response, Model model) {
@@ -83,6 +85,7 @@ public class ClassroomsController extends AbstractPortalController {
 		return jsonView();
 	}
 
+    @Deprecated
 	@Slave
 	@RequestMapping("/practicumList")
 	public String practicumList(HttpServletRequest request, HttpServletResponse response, Model model) {
@@ -111,6 +114,7 @@ public class ClassroomsController extends AbstractPortalController {
 	 * @param model
 	 * @return
 	 */
+    @Deprecated
 	@RequestMapping("/showReport")
 	public String showReport(HttpServletRequest request, HttpServletResponse response, Model model) {
 		String serialNumber = ServletRequestUtils.getStringParameter(request, "serialNumber", null);
@@ -147,6 +151,7 @@ public class ClassroomsController extends AbstractPortalController {
 	 * @param serialNumber
 	 * @return
 	 */
+    @Deprecated
 	@RequestMapping("/showMaterials")
 	public String showMaterials(HttpServletRequest request, HttpServletResponse response, Model model,
 			@RequestParam long lessonId, @RequestParam String serialNumber) {

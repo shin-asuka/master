@@ -179,7 +179,7 @@ public class OnlineClassController extends AbstractPortalController {
         Teacher teacher = loginService.getTeacher();
         onlineclassService.exitclassroom(onlineClassId, teacher);
 
-        return "redirect:/classrooms.shtml";
+        return "redirect:/classrooms";
     }
 
     @RequestMapping("/exitClassroomPage")

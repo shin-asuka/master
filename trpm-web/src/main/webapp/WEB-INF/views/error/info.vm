@@ -25,7 +25,7 @@
    <div class="content">
        <div class="main">
            <P class="sorrymessage404">Sorry, $info</P>
-           <a href="${request.contextPath}/classrooms.shtml" class="backhome500" >BACK</a>
+           <a href="${request.contextPath}/classrooms" class="backhome500" >BACK</a>
            <span id="rocket"></span>
            <p class="anball rotateball" id="anball"><img src="${request.contextPath}/common/images/404_ball.png"></p>
        </div>

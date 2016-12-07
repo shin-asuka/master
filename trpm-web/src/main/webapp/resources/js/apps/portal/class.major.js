@@ -187,7 +187,7 @@ define(["function","jquery-bootstrap","jquery-load","countdown" ], function() {
 			success : function(data) {
 				//Portal.loading("close");
 				if(data!=null && data.status == 1){
-					window.location.href = webPath + "/classrooms.shtml";
+					window.location.href = webPath + "/classrooms";
 				}else{
 					Portal.loading("close");
 				}
