@@ -153,10 +153,10 @@ public class RecruitmentService {
                 //处于book状态的onlineClass 应该处于倒计时页面
                 if(OnlineClassEnum.ClassStatus.BOOKED.toString().equals(onlineClass.getStatus())){
                     //小于1个小时 可进入onlineClass
-                    if(!DateUtils.count1h(onlineClass.getScheduledDateTime().getTime())){
+                    if(!DateUtils.count30Mine(onlineClass.getScheduledDateTime().getTime())){
                         result.put("result",AuditStatus.TO_CLASS.toString());
                         return result;
-                    //小于54周 处于审核中
+                    //大于1小时 但 小于54周 处于审核中
                     }else if(!DateUtils.count54week(onlineClass.getScheduledDateTime().getTime())){
                         result.put("result",AuditStatus.TO_AUDIT.toString());
                         return result;

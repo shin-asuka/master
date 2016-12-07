@@ -124,15 +124,12 @@ public class BasicInfoController extends RestfulController{
     public Map<String,Object> delTeaching(HttpServletRequest request, HttpServletResponse response,long id){
         Map<String,Object> result = Maps.newHashMap();
         try{
-            long resultRow = 0;
             User user = getUser(request);
-            resultRow = this.teachingExperienceService.delTeaching(id, user);
-            result.put("status", resultRow > 0 ? true : false);
+            result = this.teachingExperienceService.delTeaching(id, user);
             if(ReturnMapUtils.isFail(result)){
                 response.setStatus(HttpStatus.FORBIDDEN.value());
                 return ReturnMapUtils.returnFail("Save or Update fail",result);
             }
-            result.put("id", resultRow);
             return result;
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());

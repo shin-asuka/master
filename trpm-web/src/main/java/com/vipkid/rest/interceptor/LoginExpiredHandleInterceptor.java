@@ -19,6 +19,7 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import com.vipkid.enums.AppEnum;
 import com.vipkid.enums.TeacherEnum.LifeCycle;
 import com.vipkid.enums.UserEnum;
+import com.vipkid.recruitment.utils.RequestUtils;
 import com.vipkid.recruitment.utils.ReturnMapUtils;
 import com.vipkid.rest.RestfulController;
 import com.vipkid.rest.config.RestfulConfig;
@@ -62,7 +63,7 @@ public class LoginExpiredHandleInterceptor extends HandlerInterceptorAdapter {
             if(StringUtils.endsWith(uri, "user/login")){
                 logger.info("IP:{},发起请求:{}",IpUtils.getIpAddress(request),request.getRequestURI());
             }else{
-                logger.info("IP:{},发起请求:{},请求参数:{}",IpUtils.getIpAddress(request),request.getRequestURI(),JsonTools.getJson(request.getParameterMap()));
+                logger.info("IP:{},发起请求:{},请求参数:{}",IpUtils.getIpAddress(request),request.getRequestURI(),RequestUtils.readRequestBody(request));
             }
             
             HandlerMethod handlerMethod = (HandlerMethod) handler;
@@ -204,7 +205,7 @@ public class LoginExpiredHandleInterceptor extends HandlerInterceptorAdapter {
         if(StringUtils.endsWith(uri, "user/login")){
             logger.info("IP:{},user:{},发起请求:{}",IpUtils.getIpAddress(request),user.getId(),request.getRequestURI());
         }else{
-            logger.info("IP:{},user:{},发起请求:{},参数:{}",IpUtils.getIpAddress(request),user.getId(),request.getRequestURI(),JsonTools.getJson(request.getParameterMap()));
+            logger.info("IP:{},user:{},发起请求:{},参数:{}",IpUtils.getIpAddress(request),user.getId(),request.getRequestURI(),RequestUtils.readRequestBody(request));
         }
         //teacher
         Teacher teacher = this.loginService.getTeacher();

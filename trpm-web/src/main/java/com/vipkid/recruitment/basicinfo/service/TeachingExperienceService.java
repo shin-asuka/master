@@ -2,6 +2,7 @@ package com.vipkid.recruitment.basicinfo.service;
 
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,9 +10,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.HtmlUtils;
 
+import com.google.api.client.util.Maps;
 import com.google.common.base.Preconditions;
 import com.vipkid.recruitment.dao.TeachingExperienceDao;
 import com.vipkid.recruitment.entity.TeachingExperience;
+import com.vipkid.recruitment.utils.ReturnMapUtils;
 import com.vipkid.rest.dto.TeachingExperienceDto;
 import com.vipkid.trpm.entity.User;
 import com.vipkid.trpm.util.DateUtils;
@@ -75,30 +78,30 @@ public class TeachingExperienceService {
         return 0L;        
     }
 
-    public long delTeaching(long id,User user){
+    public Map<String,Object> delTeaching(long id,User user){
         logger.info("userId is {}, delete TeachingExperience,teachingExperienceId is:{}",user.getId(),id);
         if(id == 0){
-            logger.warn("1.删除失败,不存在的的id:{}",id);
-            return 0L; 
+            return ReturnMapUtils.returnFail("delete fail , reason id is error:"+id);
         }
         TeachingExperience teachingExperience = teachingExperienceDao.findById(id);
         if(teachingExperience == null){
-            logger.warn("2.删除失败,不存在的的id:{}",id);
-            return 0L;
+            return ReturnMapUtils.returnFail("delete fail , reason id not exits:"+id);
         }
         //仅仅保存状态可以删除
         if(teachingExperience.getStatus() == TeachingExperienceDao.Status.SAVE.val()){
             if(teachingExperience.getTeacherId() == user.getId()){
                 if(teachingExperienceDao.delete(teachingExperience) > 0){
-                    return id;
+                    Map<String,Object> result = Maps.newHashMap();
+                    result.put("id", id);
+                    return ReturnMapUtils.returnSuccess(result);
                 }
             }else{
-                logger.warn("不能删除非自己的教育经验teacherId:{},id:{}",user.getId(),id);    
+                return ReturnMapUtils.returnFail("delete fail , reason: Permissions error,id:"+id+",teacherId:"+teachingExperience.getTeacherId());
             }
         }else{
-            logger.warn("已经提交的数据不能删除id:{}",id);
+            return ReturnMapUtils.returnFail("delete fail , reason the ecperience's status already submitted:"+id);
         }
-        return 0L;
+        return ReturnMapUtils.returnFail("delete fail , reason id is error:"+id);
     }
     
     public List<TeachingExperience> getTeachingList(long teacherId){
