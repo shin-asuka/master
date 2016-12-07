@@ -130,7 +130,7 @@ public class PracticumService {
             return ReturnMapUtils.returnFail("This class ("+onlineClassId+") is empty or has been booked by anyone else!");
         }
         //book的课程在开课前1小时之内不允许book
-        if(System.currentTimeMillis() + PracticumConstant.CANCEL_TIME > onlineClass.getScheduledDateTime().getTime()){
+        if(System.currentTimeMillis() + PracticumConstant.BOOK_TIME > onlineClass.getScheduledDateTime().getTime()){
             return ReturnMapUtils.returnFail("Class is too close to start and not allowed to book!");
         }
         //约课老师必须是Practicum的待约课老师
@@ -157,7 +157,6 @@ public class PracticumService {
         return result;
     }
 
-    @Transactional
     public Map<String,Object> cancelClass(long onlineClassId,Teacher teacher){
         OnlineClass onlineClass = this.onlineClassDao.findById(onlineClassId);
 
@@ -166,9 +165,9 @@ public class PracticumService {
             return ReturnMapUtils.returnFail("The online class doesn't exist: "+onlineClassId);
         }
 
-        //book的课程在开课前1小时之内不允许cancel
-        if(System.currentTimeMillis() + PracticumConstant.CANCEL_TIME > onlineClass.getScheduledDateTime().getTime()){
-            return ReturnMapUtils.returnFail("The online class will begin, can't be rescheduled: "+onlineClassId);
+        //class already start, can't cancel error
+        if(System.currentTimeMillis() > onlineClass.getScheduledDateTime().getTime()){
+            return ReturnMapUtils.returnFail("The class is already started, can't be rescheduled: "+onlineClassId);
         }
 
         List<TeacherApplication> listEntity = this.teacherApplicationDao.findCurrentApplication(teacher.getId());
