@@ -1,7 +1,5 @@
 package com.vipkid.recruitment.utils;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -17,34 +15,28 @@ public class RequestUtils {
     private static Logger logger = LoggerFactory.getLogger(RequestUtils.class);
     
     public static final String readRequestBody(HttpServletRequest request) {
-        //读取from
+        //优先读取from
         Map<?,?> parame = request.getParameterMap();
         if(MapUtils.isNotEmpty(parame)){
+            logger.info("读取到from 信息");
             return JsonTools.getJson(parame);
         }
+        
         //读取body
+        String str = "";
         /*
-        HttpServletRequest _request = request;
-        int contentLen = _request.getContentLength();
-        if (contentLen > 0) {
-            try {    
-            InputStream is = _request.getInputStream();
-            int readLen = 0;
-            int readLengthThisTime = 0;
-            byte[] message = new byte[contentLen];                
-                while (readLen != contentLen) {
-                        readLengthThisTime = is.read(message, readLen, contentLen - readLen);
-                        if (readLengthThisTime == -1) {// Should not happen.
-                                break;
-                        }
-                        readLen += readLengthThisTime;
-                }
-                return new String(message);
-            } catch (IOException e) {
-                logger.error(e.getMessage(),e);
+        try {
+            logger.info("读取到json 信息");
+            BufferedReader br = request.getReader();
+            String inputLine;
+            while ((inputLine = br.readLine()) != null) {
+                str += inputLine;
             }
+            br.close();
+        } catch (IOException e) {
+            logger.error("IOException: " + e);
         }
         */
-        return "";
+        return str;
     }
 }
