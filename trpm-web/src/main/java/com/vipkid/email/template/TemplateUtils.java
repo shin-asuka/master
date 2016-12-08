@@ -1,13 +1,13 @@
 package com.vipkid.email.template;
 
+import com.google.common.base.Charsets;
+import com.google.common.collect.Maps;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Map;
-
-import com.google.common.base.Charsets;
-import com.google.common.collect.Maps;
 
 /**
  * Email 模板内容读取
@@ -64,7 +64,8 @@ public class TemplateUtils {
      * @return 2015年11月5日
      */
     private static StringBuilder readTemplate(String templateName) {
-        InputStream is = TemplateUtils.class.getClass().getClassLoader().getResourceAsStream("template" + File.separator + templateName);
+        ClassLoader classLoader= TemplateCache.getMe().getClass().getClassLoader();
+        InputStream is = classLoader.getResourceAsStream("template" + File.separator + templateName);
         StringBuilder result = new StringBuilder("");
         try {
             BufferedReader br = new BufferedReader(new InputStreamReader(is,Charsets.UTF_8));// 构造一个BufferedReader类来读取文件
