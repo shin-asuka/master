@@ -177,7 +177,7 @@ public class InterviewService {
         Map<String,Object> result = OnlineClassProxy.doBookRecruitment(teacher.getId(), onlineClass.getId(), ClassType.TEACHER_RECRUITMENT,dateTime);
         if(ReturnMapUtils.isFail(result)){
             //一旦失败，抛出异常回滚
-            throw new RuntimeException("The a book class result is fail!"+result.get("info"));
+            throw new RuntimeException("The a class book fail !"+result.get("info"));
         }
         return result;
     }
@@ -238,7 +238,7 @@ public class InterviewService {
         result.put("count", count);
         if(ReturnMapUtils.isFail(result)){
             //一旦失败，抛出异常回滚
-            throw new RuntimeException("The a cancel class result is fail ! "+result.get("info"));
+            throw new RuntimeException("The class cancel fail ! "+result.get("info"));
         }
         return result;
     }
