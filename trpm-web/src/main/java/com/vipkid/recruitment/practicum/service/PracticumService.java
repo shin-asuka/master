@@ -2,12 +2,14 @@ package com.vipkid.recruitment.practicum.service;
 
 import java.time.LocalDateTime;
 import java.util.*;
-
+import com.vipkid.enums.TeacherEnum.Type;
 import com.vipkid.enums.TeacherLockLogEnum.Reason;
 import com.vipkid.recruitment.common.service.RecruitmentService;
 import com.vipkid.recruitment.dao.TeacherLockLogDao;
 import com.vipkid.recruitment.entity.TeacherLockLog;
+import com.vipkid.trpm.dao.TeacherQuizDao;
 import com.vipkid.trpm.dao.UserDao;
+import com.vipkid.trpm.entity.TeacherQuiz;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang3.StringUtils;
@@ -54,6 +56,8 @@ public class PracticumService {
     private TeacherLockLogDao teacherLockLogDao;
     @Autowired
     private RecruitmentService recruitmentService;
+    @Autowired
+    private TeacherQuizDao teacherQuizDao;
 
     private static Logger logger = LoggerFactory.getLogger(PracticumService.class);
 
@@ -218,14 +222,29 @@ public class PracticumService {
         if(CollectionUtils.isEmpty(listEntity)){
             return ReturnMapUtils.returnFail("You don't have permission to enter into next phase!");
         }
-
+        TeacherApplication teacherApplication = listEntity.get(0);
         //执行逻辑 只有在Practicum的PASS状态才能进入
-        if(Status.PRACTICUM.toString().equals(listEntity.get(0).getStatus())
-                && Result.PASS.toString().equals(listEntity.get(0).getResult())){
+        if(Status.PRACTICUM.toString().equals(teacherApplication.getStatus())
+                && Result.PASS.toString().equals(teacherApplication.getResult())){
             //按照新流程 该步骤将老师的LifeCycle改变为Practicum -to-Contract
             List<TeacherApplication> list = teacherApplicationDao.findApplictionForStatusResult(teacher.getId(),Status.SIGN_CONTRACT.toString(), Result.PASS.toString());
             if(CollectionUtils.isNotEmpty(list)){
+                // 1.教师状态更新
                 teacher.setLifeCycle(LifeCycle.REGULAR.toString());
+                // 2.新增教师入职时间
+                teacher.setEntryDate(new Date());
+                // 3.新增教师类型
+                teacher.setType(Type.PART_TIME.toString());
+
+
+                // 4.如果是PASS操作，则ta状态修改为FINISH，教师状态修改为REGULAR
+                teacherApplication.setStatus(Status.FINISHED.toString());
+                teacherApplicationDao.update(teacherApplication);
+                // 5.增加quiz的考试记录
+                List<TeacherQuiz> quizslist = teacherQuizDao.findNeedQuiz(teacher.getId());
+                if (CollectionUtils.isEmpty(quizslist)) {
+                    teacherQuizDao.insertQuiz(teacher.getId(), teacher.getId());
+                }
             } else {
                 teacher.setLifeCycle(LifeCycle.CONTRACT_INFO.toString());
             }
