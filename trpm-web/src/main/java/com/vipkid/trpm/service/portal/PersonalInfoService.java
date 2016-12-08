@@ -324,7 +324,6 @@ public class PersonalInfoService {
 			logger.warn("invalid params: start={}, end={}", start, end);
 			return source;
 		}
-
 		StringBuffer stringBuffer = new StringBuffer();
 		stringBuffer.append(source.substring(0, start));
 
