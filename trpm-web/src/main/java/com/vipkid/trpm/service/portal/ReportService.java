@@ -587,29 +587,39 @@ public class ReportService {
         }
         TeacherComment comment = teacherService.findByStudentIdAndOnlineClassId(studentId, onlineClassId);
         logger.info("onlineClassId：" + onlineClassId + ";studentId:" + studentId + "; Teacher Comment" + comment);
-        if (comment == null || comment.getId() == 0) {
+        if ((comment == null || comment.getId() == 0) && onlineClass!=null) {
             logger.info("正在重新创建 TeacherComment");
-            comment = new TeacherComment();
-            comment.setOnlineClassId(onlineClassId);
-            comment.setStudentId(studentId);
-            comment.setCreateDateTime(new Timestamp(System.currentTimeMillis()));
 
             TeacherCommentUpdateDto tcuDto = new TeacherCommentUpdateDto(comment);
+            tcuDto.setStudentId(studentId);
+            tcuDto.setOnlineClassId(onlineClassId);
+            tcuDto.setTeacherId(onlineClass.getTeacherId());
+
             tcuDto.setLessonId(lesson.getId());
             tcuDto.setLessonName(lesson.getName());
             tcuDto.setLessonSerialNumber(lesson.getSerialNumber());
             tcuDto.setLearningCycleId(lesson.getLearningCycleId());
             tcuDto.setScheduledDateTime(new Date(onlineClass.getScheduledDateTime().getTime()));
+            tcuDto.setCreateTime(new Timestamp(System.currentTimeMillis()));
 
             Course course = courseDao.findIdsByLessonId(lesson.getId());
             tcuDto.setCourseId(course.getId());
             tcuDto.setCourseType(course.getType());
             tcuDto.setUnitId(course.getUnitId());
-            tcuDto.setLearningCycleId(course.getLearningCycleId());
+
+            tcuDto.setStars(0);
 
             teacherService.insertOneTeacherComment(tcuDto);
+            TeacherComment result  = new TeacherComment();
+            result.setOnlineClassId(onlineClassId);
+            result.setStudentId(studentId);
+            result.setCreateDateTime(new Timestamp(System.currentTimeMillis()));
+            result.setTeacherId(onlineClass.getTeacherId());
+            return result;
+
+        }else{
+            return comment;
         }
-        return comment;
     }
 
 
