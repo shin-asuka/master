@@ -64,7 +64,7 @@ public class TemplateUtils {
      * @return 2015年11月5日
      */
     private static StringBuilder readTemplate(String templateName) {
-        ClassLoader classLoader= TemplateCache.getMe().getClass().getClassLoader();
+        ClassLoader classLoader= TemplateUtils.class.getClassLoader();
         InputStream is = classLoader.getResourceAsStream("template" + File.separator + templateName);
         StringBuilder result = new StringBuilder("");
         try {
