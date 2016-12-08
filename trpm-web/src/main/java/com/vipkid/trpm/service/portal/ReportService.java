@@ -11,6 +11,7 @@ import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 import com.alibaba.fastjson.JSON;
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import com.vipkid.email.EmailEngine;
 import com.vipkid.email.handle.EmailConfig;
 import com.vipkid.email.templete.TempleteUtils;
@@ -582,15 +583,15 @@ public class ReportService {
      * @return
      */
     public TeacherComment findTectBycIdAndStuId(long onlineClassId, long studentId,OnlineClass onlineClass,Lesson lesson) {
-        if (0 == onlineClassId || 0 == studentId) {
+        if (0 == onlineClassId || 0 == studentId || onlineClass==null) {
             return null;
         }
         TeacherComment comment = teacherService.findByStudentIdAndOnlineClassId(studentId, onlineClassId);
         logger.info("onlineClassId：" + onlineClassId + ";studentId:" + studentId + "; Teacher Comment" + comment);
-        if ((comment == null || comment.getId() == 0) && onlineClass!=null) {
+        if (comment == null || comment.getId() == 0) {
             logger.info("正在重新创建 TeacherComment");
 
-            TeacherCommentUpdateDto tcuDto = new TeacherCommentUpdateDto(comment);
+            TeacherCommentUpdateDto tcuDto = new TeacherCommentUpdateDto();
             tcuDto.setStudentId(studentId);
             tcuDto.setOnlineClassId(onlineClassId);
             tcuDto.setTeacherId(onlineClass.getTeacherId());
@@ -608,15 +609,19 @@ public class ReportService {
             tcuDto.setUnitId(course.getUnitId());
 
             tcuDto.setStars(0);
+            tcuDto.setEmpty(true);
 
-            teacherService.insertOneTeacherComment(tcuDto);
-            TeacherComment result  = new TeacherComment();
-            result.setOnlineClassId(onlineClassId);
-            result.setStudentId(studentId);
-            result.setCreateDateTime(new Timestamp(System.currentTimeMillis()));
-            result.setTeacherId(onlineClass.getTeacherId());
-            return result;
-
+            Boolean insertSuccess = teacherService.insertOneTeacherComment(tcuDto);
+            if (insertSuccess) {
+                TeacherComment result = new TeacherComment();
+                result.setOnlineClassId(onlineClassId);
+                result.setStudentId(studentId);
+                result.setCreateDateTime(new Timestamp(System.currentTimeMillis()));
+                result.setTeacherId(onlineClass.getTeacherId());
+                return result;
+            }else{
+                return null;
+            }
         }else{
             return comment;
         }
