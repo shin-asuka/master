@@ -72,7 +72,9 @@ public class CheckTeacherCommentService {
 			List<TeacherCommentResult> teacherCommentSubmit = teacherService.batchGetByOnlineClassIds(onlineClassVo.getIdList());
 			OnlineClassVo onlineClassVoUnSubmit = new OnlineClassVo();
 			onlineClassVoUnSubmit.setIdList(onlineClassVo.getIdList());
-			teacherCommentSubmit.forEach(x->onlineClassVoUnSubmit.getIdList().remove(x.getOnlineClassId()));
+			if(CollectionUtils.isNotEmpty(teacherCommentSubmit)){
+				teacherCommentSubmit.forEach(x->onlineClassVoUnSubmit.getIdList().remove(x.getOnlineClassId()));
+			}
 			logger.info("Result unSubmit OnlineClass  = {}",JsonUtils.toJSONString(onlineClassVoUnSubmit));
 			sendEmail(onlineClassVoUnSubmit, ocMap,"FeedbackRemindTeacher"+hours+"hour.html","FeedbackRemindTeacher"+hours+"hourTitle.html");
 		}
