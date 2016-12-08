@@ -23,13 +23,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.vipkid.enums.TeacherEnum;
 import com.vipkid.enums.UserEnum;
 import com.vipkid.recruitment.utils.ReturnMapUtils;
-import com.vipkid.rest.service.LoginService;
 import com.vipkid.trpm.constant.ApplicationConstant;
 import com.vipkid.trpm.constant.ApplicationConstant.CookieKey;
 import com.vipkid.trpm.controller.AbstractController;
 import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.entity.User;
 import com.vipkid.trpm.security.SHA256PasswordEncoder;
+import com.vipkid.trpm.service.passport.IndexService;
 import com.vipkid.trpm.service.passport.PassportService;
 import com.vipkid.trpm.service.passport.RemberService;
 import com.vipkid.trpm.util.AES;
@@ -48,14 +48,14 @@ public class PassportController extends AbstractController {
 	@Autowired
 	private PassportService passportService;
 
-	/*@Autowired
-	private IndexService indexService;*/
+	@Autowired
+	private IndexService indexService;
 
 	@Autowired
 	private RemberService remberService;
 
-	@Autowired
-    private LoginService loginService;
+	/*@Autowired
+    private LoginService loginService;*/
 	
 	/**
 	 * 登陆入口
@@ -80,7 +80,7 @@ public class PassportController extends AbstractController {
 		User user = passportService.findUserByUsername(_strEmail);
 		// 密码解密
 		String _strPwd = new String(Base64.getDecoder().decode(strPwd));
-		logger.error(" user checking " + _strEmail + ";password=" + _strPwd);
+		logger.info(" user checking " + _strEmail + ";password=" + _strPwd);
 		// 根据email，检查是否有此账号。
 		if (null == user) {
 			logger.error(" User is Null " + _strEmail + ";password=" + _strPwd);
@@ -103,7 +103,7 @@ public class PassportController extends AbstractController {
 
 		logger.info("user Dtype start!");
 		// 非教师在此登陆
-		if (!UserEnum.Dtype.TEACHER.toString().equals(user.getDtype())) {
+		if (!UserEnum.Dtype.TEACHER.val().equals(user.getDtype())) {
 			logger.error(" Username type error!" + _strEmail + ";password=" + _strPwd);
 			model.addAttribute("info", ApplicationConstant.AjaxCode.DTYPE_ERROR);
 			return jsonView(response, model.asMap());
@@ -152,14 +152,14 @@ public class PassportController extends AbstractController {
 		// 只有教师端老师登陆后才做强制修改密码判断
 		logger.info("登陆  REGULAR start !");
 		if (TeacherEnum.LifeCycle.REGULAR.toString().equals(teacher.getLifeCycle())) {
-			loginService.changePasswordNotice(response, _strPwd);
+			indexService.changePasswordNotice(response, _strPwd);
 		}
 
 		// 如果招聘Id不存在则set进去
 		if (StringUtils.isEmpty(teacher.getRecruitmentId())) {
 			teacher.setRecruitmentId(this.passportService.updateRecruitmentId(teacher));
 		}
-		model.addAttribute("info", "OK");
+		model.addAttribute("info", "success-pass");
 		model.addAttribute("uuid",
 				AES.encrypt(user.getToken(), AES.getKey(AES.KEY_LENGTH_128, ApplicationConstant.AES_128_KEY)));
 
@@ -278,7 +278,7 @@ public class PassportController extends AbstractController {
 			return jsonView(response, model.asMap());
 		}
 		// 检查用户类型
-		if (!UserEnum.Dtype.TEACHER.toString().equals(user.getDtype())) {
+		if (!UserEnum.Dtype.TEACHER.val().equals(user.getDtype())) {
 			model.addAttribute("info", ApplicationConstant.AjaxCode.DTYPE_ERROR);
 			return jsonView(response, model.asMap());
 		}
@@ -430,9 +430,9 @@ public class PassportController extends AbstractController {
 			if (teacher != null && TeacherEnum.LifeCycle.REGULAR.toString().equals(teacher.getLifeCycle())) {
 				this.passportService.updateRecruitmentId(teacher);
 
-				loginService.setLoginToken(response, user);
+				indexService.setLoginCooke(response, user);
 				/* 设置老师能教的课程类型列表 */
-				loginService.setCourseTypes(user.getId(), loginService.getCourseType(user.getId()));
+				indexService.setCourseTypes(user.getId(), indexService.getCourseType(user.getId()));
 
 				return "redirect:/bookings.shtml";
 			}

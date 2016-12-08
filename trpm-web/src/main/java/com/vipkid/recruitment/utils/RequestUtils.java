@@ -1,5 +1,7 @@
 package com.vipkid.recruitment.utils;
 
+import java.io.BufferedReader;
+import java.io.IOException;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -23,6 +25,7 @@ public class RequestUtils {
         }
         
         //读取body
+        
         String str = "";
         /*
         try {
