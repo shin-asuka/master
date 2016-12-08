@@ -44,9 +44,9 @@ public class AwsFileUtils {
 	public static final String TEACHER_SHORT_VIDEO = "video";
 	
 	public static final Long TAPXPAYER_FILE_MAX_SIZE = 20*1024*1024L; //20M
-	public static final String TAPXPAYER_FILE_TYPE = "pdf,jpg,png,jpeg";
+	public static final String TAPXPAYER_FILE_TYPE = "pdf,jpg,png,jpeg,bmp";
 
-	public static final String CONTRACT_FILE_TYPE = "doc,docx,pdf,jpg,jpeg,png bmp.";
+	public static final String CONTRACT_FILE_TYPE = "doc,docx,pdf,jpg,jpeg,png,bmp.";
 	public static final Long CONTRACT_FILE_MAX_SIZE = 20*1024*1024L; //20M
 
 	public static final String IDENTIFICATION_FILE_TYPE = "doc,docx,pdf,jpg,jpeg,png,bmp.";
