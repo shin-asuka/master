@@ -81,6 +81,9 @@ public class ReturnMapUtils {
         Map<String, Object> result = Maps.newHashMap();
         result.put("status", false);
         if (StringUtils.isNotBlank(info)) {
+            if(info.indexOf("Exception:") > -1){
+                info = info.substring(info.indexOf("Exception:")+("Exception:".length()),info.length());
+            }
             result.put("info", info);
         }
         if (MapUtils.isNotEmpty(data)) {
@@ -98,5 +101,4 @@ public class ReturnMapUtils {
     public static boolean isFail(Map<String, Object> data) {
         return !isSuccess(data);
     }
-
 }
