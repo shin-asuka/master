@@ -2,10 +2,6 @@ package com.vipkid.http.service;
 
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,9 +9,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.google.api.client.util.Maps;
 import com.vipkid.http.utils.WebUtils;
 import com.vipkid.http.vo.HttpResult;
-import com.vipkid.neo.model.Teacher;
 import com.vipkid.payroll.model.Page;
-import com.vipkid.service.neo.grpc.FindPayrollItemByTypeWithPageResponse;
 
 public class PayrollService extends HttpBaseService {
 
@@ -26,7 +20,7 @@ public class PayrollService extends HttpBaseService {
 	     params.put("teacherId", new Integer(teacherId).toString());
 	     params.put("month", new Integer(month).toString());
 
-		String url = new StringBuilder(super.serverAddress).append("/api/app/teacher/getPayrollItemByTeacherAndMonth").toString();
+		String url = new StringBuilder(super.serverAddress).append("/api/public/payroll/getPayrollItemByTeacherAndMonth").toString();
 		JSONObject jsonObject = null ;
 		jsonObject = getResult(params, url, jsonObject);
 		return jsonObject;
@@ -35,7 +29,7 @@ public class PayrollService extends HttpBaseService {
 
 
 	public JSONObject findRuleByTeacherMonth(Integer teacherId, int month) {
-		String url = new StringBuilder(super.serverAddress).append("/api/app/teacher/findRuleByTeacherMonth").toString();
+		String url = new StringBuilder(super.serverAddress).append("/api/public/payroll/findRuleByTeacherMonth").toString();
 		JSONObject jsonObject = null ;
 		 Map<String, String> params = Maps.newHashMap();
 	     params.put("teacherId", new Integer(teacherId).toString());
@@ -50,14 +44,14 @@ public class PayrollService extends HttpBaseService {
 
 		params.put("id", new Integer(teacherId).toString());
 		params.put("pageNo",  new Integer(page.getPageNo()).toString());
-		params.put("pageNo", "1");
+		params.put("itemType", new Integer(slalaryTypeCourseAdditionRule).toString());
 		params.put("month", new Integer(month).toString());
 		if (page.getPageSize() != 0) {
 			params.put("pageSize",  new Integer(page.getPageSize()).toString());
 		} else {
 			params.put("pageSize", "15");
 		}
-		String url = new StringBuilder(super.serverAddress).append("/api/app/teacher/findPayrollItemByTypeWithPage")
+		String url = new StringBuilder(super.serverAddress).append("/api/public/payroll/findPayrollItemByTypeWithPage")
 				.toString();
 		HttpResult result = WebUtils.post(url, params);
 		String resultString = null;
