@@ -34,7 +34,6 @@ public class PayrollService extends HttpBaseService {
 		 Map<String, String> params = Maps.newHashMap();
 	     params.put("teacherId", new Integer(teacherId).toString());
 	     params.put("month", new Integer(month).toString());
-
 		jsonObject = getResult(params, url, jsonObject);
 		return jsonObject;
 	}
