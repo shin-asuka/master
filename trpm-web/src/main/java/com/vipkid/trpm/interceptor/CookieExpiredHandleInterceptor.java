@@ -21,6 +21,9 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import com.vipkid.http.service.AnnouncementHttpService;
+import com.vipkid.http.service.FileHttpService;
+import com.vipkid.http.utils.JsonUtils;
+import com.vipkid.http.vo.TeacherFile;
 import com.vipkid.rest.config.RestfulConfig.RoleClass;
 import com.vipkid.rest.security.AppContext;
 import com.vipkid.trpm.constant.ApplicationConstant;
@@ -67,6 +70,9 @@ public class CookieExpiredHandleInterceptor extends HandlerInterceptorAdapter {
 	
 	@Autowired
 	private TeacherPageLoginService teacherPageLoginService;
+	
+	@Autowired
+    private FileHttpService fileHttpService;
 	
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
@@ -147,6 +153,14 @@ public class CookieExpiredHandleInterceptor extends HandlerInterceptorAdapter {
             AppContext.setTeacher(teacher);
 		}
         
+		Long teacherId = teacher.getId();
+		
+		logger.info("获取老师文件信息 queryTeacherFiles teacherId = {}",teacherId );
+		TeacherFile teacherFile = fileHttpService.queryTeacherFiles(teacherId);
+		
+		logger.info("老师文件信息 teacherFile = {}",JsonUtils.toJSONString(teacherFile));
+		request.setAttribute("teacherFile", teacherFile);
+				
 		request.setAttribute("locationService", locationService);
 		request.setAttribute("TRPM_TEACHER", teacher);
 		request.setAttribute("TRPM_USER", user);
