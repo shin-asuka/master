@@ -17,6 +17,7 @@ import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import com.vipkid.enums.AppEnum;
+import com.vipkid.enums.TeacherEnum;
 import com.vipkid.enums.TeacherEnum.LifeCycle;
 import com.vipkid.enums.UserEnum;
 import com.vipkid.recruitment.utils.RequestUtils;
@@ -180,15 +181,16 @@ public class LoginExpiredHandleInterceptor extends HandlerInterceptorAdapter {
         String token = request.getHeader(RestfulController.AUTOKEN);
         if(StringUtils.isBlank(token)){
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
-            logger.warn("Token为Null:{}",token);
-            responseToJson("Token is null:"+token,response);
+            logger.warn("Token无效:{}",token);
+            responseToJson("Token is invalid",response);
             return false;
         }
         //user
         User user = loginService.getUser();
         if(user == null){
-            response.setStatus(HttpStatus.FORBIDDEN.value());
-            logger.warn("用户不存在，token过期");
+            response.setStatus(HttpStatus.UNAUTHORIZED.value());
+            logger.warn("User 不存在...或者已经过期.");
+            responseToJson("The a user is  not exist",response);
             return false;
         }
         //判断当前用户所在地区的ip是否变化，如果变化。则返回空用户，用户重新登陆
@@ -210,14 +212,40 @@ public class LoginExpiredHandleInterceptor extends HandlerInterceptorAdapter {
         //teacher
         Teacher teacher = this.loginService.getTeacher();
         if(teacher == null){
-            response.setStatus(HttpStatus.FORBIDDEN.value());
-            logger.warn("用户老师账号不存在,检查数据库或者登陆信息是否有效");
-            responseToJson("The teacher is not exis",response);
+            response.setStatus(HttpStatus.UNAUTHORIZED.value());
+            logger.warn(user.getUsername()+",Teacher 不存在.");
+            responseToJson("The a teacher is  not exist",response);
             return false;
         }
         //权限判断，符合条件的LifeCycle可以访问控制器
         if(ArrayUtils.contains(restInterface.lifeCycle(),AppEnum.getByName(LifeCycle.class,teacher.getLifeCycle())) 
                 || ArrayUtils.contains(restInterface.lifeCycle(),LifeCycle.ALL)){
+            //user 常规拦截
+            if(UserEnum.Status.isLocked(user.getStatus())){
+                response.setStatus(HttpStatus.UNAUTHORIZED.value());
+                logger.warn(user.getUsername()+",账户被锁.");
+                responseToJson("You has been locked!",response);
+                return false; 
+            }
+            if(!UserEnum.Dtype.TEACHER.toString().equalsIgnoreCase(user.getDtype())){
+                response.setStatus(HttpStatus.UNAUTHORIZED.value());
+                logger.warn(user.getUsername()+",账户不合法.");
+                responseToJson("You are not an effective teacher!",response);
+                return false; 
+            }
+            if(TeacherEnum.LifeCycle.QUIT.toString().equals(teacher.getLifeCycle())){
+                response.setStatus(HttpStatus.UNAUTHORIZED.value());
+                logger.warn(user.getUsername()+",账户被Quit.");
+                responseToJson("You has been quit!",response);
+                return false; 
+            }
+            if(TeacherEnum.LifeCycle.FAIL.toString().equals(teacher.getLifeCycle())){
+                response.setStatus(HttpStatus.UNAUTHORIZED.value());
+                logger.warn(user.getUsername()+",账户status被Fail.");
+                responseToJson("You has been fail!",response);
+                return false; 
+            }
+            //常规拦截结束
             request.setAttribute(RestfulController.AUTOKEN, user);
             request.setAttribute(RestfulController.TEACHER, teacher);
             return true;
