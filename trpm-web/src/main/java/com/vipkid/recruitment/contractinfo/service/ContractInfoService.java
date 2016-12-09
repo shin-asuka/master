@@ -63,19 +63,19 @@ public class ContractInfoService {
      * @return boolean
      */
     @Transactional
-    public Map<String, Object> updateTeacherApplication(Teacher teacher, List<Integer> ids) {
+    public boolean updateTeacherApplication(Teacher teacher, List<Integer> ids) {
         TeacherTaxpayerForm teacherTaxpayerForm = teacherTaxpayerFormDao.findByTeacherIdAndType(teacher.getId(), TeacherEnum.FormType.W9.val());
         if (teacherTaxpayerForm == null) {
             if (StringUtils.equals(teacher.getCountry(), "USA")) {
                 logger.warn("{} teacher's country is USA but W9 file is not uploaded!", teacher.getId());
-                return ReturnMapUtils.returnFail("teacher's country is USA but W9 file is not uploaded!");
+                return false;
             } else {
                 //查询教师的Location id
-                TeacherAddress teacherAddress = teacherAddressDao.getTeacherAddress(teacher.getCurrentAddressId());
+                TeacherAddress teacherAddress = teacherAddressDao.findById(teacher.getCurrentAddressId());
                 //  2497273 = 老师location 为   United States
                 if (teacherAddress != null && teacherAddress.getCountryId() == 2497273) {
                     logger.warn("{} teacher's address's country id is 2497273 (USA) but W9 file is not uploaded!", teacher.getId());
-                    return ReturnMapUtils.returnFail("teacher's Location is USA but W9 file is not uploaded!");
+                    return false;
                 }
             }
         }
@@ -109,7 +109,7 @@ public class ContractInfoService {
         logger.info("update teacherApplication for teacherId:{} with result: {}", teacher.getId(), ret);
         if (ret <= 0) {
             logger.warn("failed to save teacherApplication!");
-            return ReturnMapUtils.returnFail("failed to save teacherApplication!");
+            return false;
         }
 
         TeacherContractFile teacherContractFile;
@@ -126,7 +126,7 @@ public class ContractInfoService {
 
         logger.info("批量更新文件 for teacherId:{} with  teacherApplicationId:{}", teacher.getId(), application.getId());
         this.teacherContractFileDao.updateBatch(teacherContractFiles);
-        return ReturnMapUtils.returnSuccess();
+        return true;
     }
 
 
