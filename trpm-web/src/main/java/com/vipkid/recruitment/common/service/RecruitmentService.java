@@ -187,15 +187,22 @@ public class RecruitmentService {
         if(StringUtils.isBlank(teacherApplication.getResult())){
             result.putAll(getInterviewPracticumStatusByResultIsBlank(teacherApplication, InterviewConstant.ENTER_CLASS_MINUTES));
         }else{
-            result.put("result",teacherApplication.getResult());
-            result.put("result",teacherApplication.getResult());
-            if(!StringUtils.equalsIgnoreCase(Result.PASS.toString(),teacherApplication.getResult())){
-                //失败原因
-                result.put("failedReason",teacherApplication.getFailedReason());
-                //重来备注
-                result.put("comments",teacherApplication.getComments());
-            }else{
-                result.put("basePay",teacherApplication.getBasePay());
+            //如果是Fail并且在11个半小时之内为待审核
+            boolean _result = StringUtils.equalsIgnoreCase(Result.FAIL.toString(),teacherApplication.getResult());
+            boolean _failTimeout = !DateUtils.count11hrlf(teacherApplication.getAuditDateTime().getTime());
+            if(_result && _failTimeout){
+                result.put("result",AuditStatus.TO_AUDIT.toString());
+                //其他则直接返回给前端
+            }else {
+                result.put("result", teacherApplication.getResult());
+                if (!StringUtils.equalsIgnoreCase(Result.PASS.toString(), teacherApplication.getResult())) {
+                    //失败原因
+                    result.put("failedReason", teacherApplication.getFailedReason());
+                    //重来备注
+                    result.put("comments", teacherApplication.getComments());
+                } else {
+                    result.put("basePay", teacherApplication.getBasePay());
+                }
             }
         }
         return result;
@@ -226,19 +233,22 @@ public class RecruitmentService {
         if(StringUtils.isBlank(teacherApplication.getResult())){
             result.putAll(getInterviewPracticumStatusByResultIsBlank(teacherApplication, PracticumConstant.ENTER_CLASS_MINUTES));
         }else{
-            if(Result.PRACTICUM2.toString().equals(teacherApplication.getResult())){
-                result.put("result",AuditStatus.TO_SUBMIT.toString());
-            }else if(Result.TBD.toString().equals(teacherApplication.getResult()) || Result.TBD_FAIL.toString().equals(teacherApplication.getResult())){
+            //如果是Fail并且在11个半小时之内为待审核
+            boolean _result = StringUtils.equalsIgnoreCase(Result.FAIL.toString(),teacherApplication.getResult());
+            boolean _failTimeout = !DateUtils.count11hrlf(teacherApplication.getAuditDateTime().getTime());
+            if((_result && _failTimeout) || Result.TBD.toString().equals(teacherApplication.getResult()) || Result.TBD_FAIL.toString().equals(teacherApplication.getResult())){
                 result.put("result",AuditStatus.TO_AUDIT.toString());
+            }else if(Result.PRACTICUM2.toString().equals(teacherApplication.getResult())){
+                result.put("result",AuditStatus.TO_SUBMIT.toString());
             }else{
+                //其他则直接返回给前端
                 result.put("result",teacherApplication.getResult());
-            }
-
-            if(!StringUtils.equalsIgnoreCase(Result.PASS.toString(),teacherApplication.getResult())){
-                //失败原因
-                result.put("failedReason",teacherApplication.getFailedReason());
-                //重来备注
-                result.put("comments",teacherApplication.getComments());
+                if(!StringUtils.equalsIgnoreCase(Result.PASS.toString(),teacherApplication.getResult())){
+                    //失败原因
+                    result.put("failedReason",teacherApplication.getFailedReason());
+                    //重来备注
+                    result.put("comments",teacherApplication.getComments());
+                }
             }
         }
 
