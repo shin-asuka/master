@@ -129,8 +129,8 @@ public class TeacherService {
 				result.setClassNumber(teacherComment.getLessonSerialNumber());
 
 				Student student = studentDao.findById(teacherComment.getStudentId());
-				if(student!=null&&StringUtils.isNotBlank(student.getName())){
-					result.setStudentName(student.getName());
+				if(student!=null&&StringUtils.isNotBlank(student.getEnglishName())){
+					result.setStudentName(student.getEnglishName());
 				}
 			}
 
