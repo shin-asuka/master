@@ -99,11 +99,6 @@ public class EmailTemplateTools {
         return null;
     }
 
-
-
-
-
-
     public static String readyContent(TeacherApplication teacherApplication){
         if(teacherApplication == null){
             return null;
