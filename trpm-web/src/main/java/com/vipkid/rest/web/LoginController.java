@@ -387,7 +387,7 @@ public class LoginController extends RestfulController {
                 return ReturnMapUtils.returnFail(ApplicationConstant.AjaxCode.USER_QUIT);
             }
             
-            logger.info("检查完毕-(通过)-正在发送Email:{}",email);
+            logger.info("重置请求检查完毕-(通过)-正在发送Email:{}",email);
             
             Map<String,Object> result = this.passportService.senEmailForPassword(user);
             
@@ -508,7 +508,7 @@ public class LoginController extends RestfulController {
                 return ReturnMapUtils.returnFail(ApplicationConstant.AjaxCode.DTYPE_ERROR);
             }
             
-            logger.info(user.getUsername()+",类型完毕-通过-.获取权限等数据");
+            logger.info(user.getUsername()+",检查完毕-通过-.获取权限等数据");
             TeacherInfo teacherinfo = new TeacherInfo();
             teacherinfo.setTeacherId(this.getUser(request).getId());
             //权限判断 start
