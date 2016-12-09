@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.google.common.collect.Maps;
 import com.vipkid.enums.TeacherEnum;
 import com.vipkid.enums.TeacherEnum.LifeCycle;
@@ -41,6 +42,7 @@ import com.vipkid.rest.validation.tools.Result;
 import com.vipkid.trpm.constant.ApplicationConstant;
 import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.entity.User;
+import com.vipkid.trpm.proxy.RedisProxy;
 import com.vipkid.trpm.security.SHA256PasswordEncoder;
 import com.vipkid.trpm.service.passport.PassportService;
 import com.vipkid.trpm.util.Bean2Map;
@@ -49,6 +51,10 @@ import com.vipkid.trpm.util.IpUtils;
 @RestController
 @RequestMapping("/user")
 public class LoginController extends RestfulController {
+    
+    private static final String TRPM_LOGIN_AUTH_INFO_KEY = "TRPM_LOGIN_AUTH_INFO:%s";
+    
+    private static final int EXPIRED_SECONDS = 5;
 
     private static Logger logger = LoggerFactory.getLogger(LoginController.class);
 
@@ -60,6 +66,9 @@ public class LoginController extends RestfulController {
 
     @Autowired
     private LoginService loginService;
+    
+    @Autowired
+    private RedisProxy redisProxy;
     
 
     /**
@@ -509,18 +518,29 @@ public class LoginController extends RestfulController {
             }
             
             logger.info(user.getUsername()+",检查完毕-通过-.获取权限等数据");
-            TeacherInfo teacherinfo = new TeacherInfo();
-            teacherinfo.setTeacherId(this.getUser(request).getId());
-            //权限判断 start
-            loginService.findByTeacherModule(teacherinfo,this.getTeacher(request).getLifeCycle());
-            //其他信息       
-            teacherinfo.setInfo(this.getTeacher(request),this.getUser(request));
-            Map<String,Object> success = ReturnMapUtils.returnSuccess();
-            success.putAll(Bean2Map.toMap(teacherinfo));
-            success.put("evaluation",teacherPageLoginService.isType(this.getUser(request).getId(),LoginType.EVALUATION));
-            success.put("evaluationClick",teacherPageLoginService.isType(this.getUser(request).getId(),LoginType.EVALUATION_CLICK));
-            logger.info("返回数据:{}",JsonTools.getJson(success));
-            return success;
+            
+            String key = String.format(TRPM_LOGIN_AUTH_INFO_KEY, user.getId());
+            
+            String json = redisProxy.get(key);
+            if(StringUtils.isNotBlank(json)){
+                Map<String,Object> success = JsonTools.readValue(json, new TypeReference<Map<String, Object>>(){});
+                logger.info("Auth读取缓存数据:{}",JsonTools.getJson(success));
+                return success;
+            }else{
+                TeacherInfo teacherinfo = new TeacherInfo();
+                teacherinfo.setTeacherId(this.getUser(request).getId());
+                //权限判断 start
+                loginService.findByTeacherModule(teacherinfo,this.getTeacher(request).getLifeCycle());
+                //其他信息       
+                teacherinfo.setInfo(this.getTeacher(request),this.getUser(request));
+                Map<String,Object> success = ReturnMapUtils.returnSuccess();
+                success.putAll(Bean2Map.toMap(teacherinfo));
+                success.put("evaluation",teacherPageLoginService.isType(this.getUser(request).getId(),LoginType.EVALUATION));
+                success.put("evaluationClick",teacherPageLoginService.isType(this.getUser(request).getId(),LoginType.EVALUATION_CLICK));
+                logger.info("返回数据:{}",JsonTools.getJson(success));
+                redisProxy.set(key, JsonTools.getJson(success), EXPIRED_SECONDS);
+                return success;
+            }
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
             return ReturnMapUtils.returnFail(e.getMessage(),e);
