@@ -205,11 +205,10 @@ public class ContractInfoController extends RestfulController {
                 return ReturnMapUtils.returnFail("Failed to submit teacher bio");
             }
 
-            boolean result = contractInfoService.updateTeacherApplication(teacher,idList);
-            if(!result){
-                logger.error("Failed to submit contract info!");
+            Map<String, Object> result  = contractInfoService.updateTeacherApplication(teacher, idList);
+            if (ReturnMapUtils.isFail(result)) {
                 response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-                return ReturnMapUtils.returnFail("Failed to submitsContractInfo!");
+                return result;
             }
 
         } catch (IllegalArgumentException e) {
