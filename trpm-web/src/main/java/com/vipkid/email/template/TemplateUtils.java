@@ -71,7 +71,7 @@ public class TemplateUtils {
      * @return 2015年11月5日
      */
     public static StringBuilder readTemplate(String templateName) {
-        InputStream is = TemplateUtils.class.getClass().getClassLoader().getResourceAsStream("template" + File.separator + templateName);
+        InputStream is = TemplateUtils.class.getClassLoader().getResourceAsStream("template" + File.separator + templateName);
         return streamToString(is);
     }
 
@@ -83,7 +83,7 @@ public class TemplateUtils {
      * @return 2015年11月5日
      */
     public static StringBuilder readTemplatePath(String templateName) {
-        InputStream is = TemplateUtils.class.getClass().getClassLoader().getResourceAsStream(templateName);
+        InputStream is = TemplateUtils.class.getClassLoader().getResourceAsStream(templateName);
         return streamToString(is);
     }
 
