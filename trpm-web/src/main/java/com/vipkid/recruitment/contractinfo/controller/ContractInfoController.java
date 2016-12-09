@@ -207,7 +207,7 @@ public class ContractInfoController extends RestfulController {
 
             Map<String, Object> result  = contractInfoService.updateTeacherApplication(teacher, idList);
             if (ReturnMapUtils.isFail(result)) {
-                response.setStatus(HttpStatus.FORBIDDEN.value());
+                response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
                 return result;
             }
 
