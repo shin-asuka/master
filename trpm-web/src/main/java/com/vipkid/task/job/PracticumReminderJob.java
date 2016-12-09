@@ -1,15 +1,23 @@
 package com.vipkid.task.job;
 
 import com.google.common.base.Stopwatch;
+import com.vipkid.email.EmailEngine;
 import com.vipkid.email.EmailUtils;
+import com.vipkid.email.handle.EmailConfig;
+import com.vipkid.email.template.TemplateUtils;
 import com.vipkid.enums.TeacherApplicationEnum;
 import com.vipkid.http.utils.JsonUtils;
 import com.vipkid.recruitment.dao.TeacherApplicationDao;
+import com.vipkid.recruitment.entity.TeacherApplication;
 import com.vipkid.task.utils.UADateUtils;
+import com.vipkid.trpm.dao.OnlineClassDao;
 import com.vipkid.trpm.dao.TeacherDao;
+import com.vipkid.trpm.entity.OnlineClass;
 import com.vipkid.trpm.entity.Teacher;
+import com.vipkid.trpm.util.DateUtils;
 import com.vipkid.vschedule.client.common.Vschedule;
 import com.vipkid.vschedule.client.schedule.JobContext;
+import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +39,8 @@ public class PracticumReminderJob {
     private TeacherApplicationDao teacherApplicationDao;
     @Autowired
     private TeacherDao teacherDao;
+    @Autowired
+    private OnlineClassDao onlineClassDao;
 
     @Vschedule
     public void doJob (JobContext jobContext) {
@@ -62,13 +72,28 @@ public class PracticumReminderJob {
     }
 
     void send (Stopwatch stopwatch, Teacher teacher) {
-            String email = teacher.getEmail();
-            String name = teacher.getRealName();
-            String titleTemplate = "InterviewNoRescheduleTitle.html";
-            String contentTemplate = "InterviewNoReschedule.html";
-            EmailUtils.sendEmail4Recruitment(email, name, titleTemplate, contentTemplate);
-            logger.info("【JOB.EMAIL.ReminderPracticum】SEND: Cost {}ms. email = {}, name = {}, titleTemplate = {}, contentTemplate = {}", stopwatch.elapsed(TimeUnit.MILLISECONDS), email, name, titleTemplate, contentTemplate);
+        List<TeacherApplication> list = teacherApplicationDao.findCurrentApplication(teacher.getId());
+        if (CollectionUtils.isNotEmpty(list)) {
+            //更新上一个版本的 application
+            TeacherApplication teacherApplication = list.get(0);
+            OnlineClass onlineClass = onlineClassDao.findById(teacherApplication.getOnlineClassId());
+            sendEmail4PracticumReminderJob(teacher, onlineClass);
+        }
+    }
 
+    public static void sendEmail4PracticumReminderJob(Teacher teacher, OnlineClass onlineclass){
+        try {
+            Map<String,String> paramsMap = new HashMap<>();
+            paramsMap.put("teacherName",teacher.getRealName());
+            paramsMap.put("scheduledDateTime", DateUtils.formatTo(onlineclass.getScheduledDateTime().toInstant(), teacher.getTimezone(), DateUtils.FMT_YMD_HM));
+            paramsMap.put("timezone", teacher.getTimezone());
+            logger.info("【EMAIL.sendEmail4PracticumBookJob】toAddMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",teacher.getRealName(),teacher.getEmail(),"InterviewBookTitle.html","InterviewBook.html");
+            Map<String, String> emailMap = TemplateUtils.readTemplate("PracticumReminderJob.html", paramsMap, "PracticumReminderJobTitle.html");
+            EmailEngine.addMailPool(teacher.getEmail(), emailMap, EmailConfig.EmailFormEnum.TEACHVIP);
+            logger.info("【EMAIL.sendEmail4PracticumBookJob】addedMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",teacher.getRealName(),teacher.getEmail(),"InterviewBookTitle.html","InterviewBook.html");
+        } catch (Exception e) {
+            logger.error("【EMAIL.sendEmail4PracticumBookJob】ERROR: {}", e);
+        }
     }
 
 }

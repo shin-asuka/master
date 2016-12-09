@@ -91,8 +91,8 @@ public class TrainingQuizNoQuizJob {
         } else {
             String email = teacher.getEmail();
             String name = teacher.getRealName();
-            String titleTemplate = "InterviewNoBookTitle.html";
-            String contentTemplate = "InterviewNoBook.html";
+            String titleTemplate = "TrainingQuizReminderTitle.html";
+            String contentTemplate = "TrainingQuizReminder.html";
             EmailUtils.sendEmail4Recruitment(email, name, titleTemplate, contentTemplate);
             logger.info("【JOB.EMAIL.TrainingQuizNoQuiz】SEND: Cost {}ms. email = {}, name = {}, titleTemplate = {}, contentTemplate = {}", stopwatch.elapsed(TimeUnit.MILLISECONDS), email, name, titleTemplate, contentTemplate);
         }

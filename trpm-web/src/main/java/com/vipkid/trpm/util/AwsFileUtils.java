@@ -66,13 +66,13 @@ public class AwsFileUtils {
 
 
 	public static final Long AVATAR_MAX_SIZE = 20*1024*1024L; //20M
-	public static final String AVATAR_FILE_TYPE = "jpg,png,jpeg";
+	public static final String AVATAR_FILE_TYPE = "pdf,jpg,jpeg,png,bmp";
 
 	public static final Long LIFE_PICTURE_MAX_SIZE = 20*1024*1024L; //20M
-	public static final String LIFE_PICTURE_FILE_TYPE = "jpg,png,jpeg";
+	public static final String LIFE_PICTURE_FILE_TYPE = "pdf,jpg,jpeg,png,bmp";
 
-	public static final Long SHORT_VIDEO_MAX_SIZE = 20*1024*1024L; //20M
-	public static final String SHORT_VIDEO_FILE_TYPE = "mp4,mov,avi";
+	public static final Long SHORT_VIDEO_MAX_SIZE = 100*1024*1024L; //100M
+	public static final String SHORT_VIDEO_FILE_TYPE = "mp4,mov,avi,rmvb";
 
 	public static final String TEACHER_S3_ROOT = PropertyConfigurer.stringValue("aws.teacher.dir");
 

@@ -8,6 +8,7 @@ import static com.vipkid.trpm.constant.ApplicationConstant.NEW_TEACHER_NAME;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.digester.ObjectCreateRule;
 import org.apache.commons.lang3.StringUtils;
 import org.community.config.PropertyConfigurer;
 import org.slf4j.Logger;
@@ -73,6 +74,24 @@ public class EmailUtils {
 		}
 	}
 
+
+	public static void sendEmail4PracticumBook(Teacher teacher, OnlineClass onlineclass){
+		try {
+			Map<String,String> paramsMap = new HashMap<String,String>();
+			paramsMap.put("teacherName",teacher.getRealName());
+			paramsMap.put("scheduledDateTime", DateUtils.formatTo(onlineclass.getScheduledDateTime().toInstant(), teacher.getTimezone(), DateUtils.FMT_YMD_HM));
+			paramsMap.put("timezone", teacher.getTimezone());
+			logger.info("【EMAIL.sendEmail4PracticumBook】toAddMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",teacher.getRealName(),teacher.getEmail(),"InterviewBookTitle.html","InterviewBook.html");
+			Map<String, String> emailMap = TemplateUtils.readTemplate("PracticumBook.html", paramsMap, "PracticumBookTitle.html");
+			EmailEngine.addMailPool(teacher.getEmail(), emailMap, EmailConfig.EmailFormEnum.TEACHVIP);
+			logger.info("【EMAIL.sendEmail4PracticumBook】addedMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",teacher.getRealName(),teacher.getEmail(),"InterviewBookTitle.html","InterviewBook.html");
+		} catch (Exception e) {
+			logger.error("【EMAIL.sendEmail4InterviewBook】ERROR: {}", e);
+		}
+	}
+
+
+
 //Training Quiz PASS send Email +quizScore
 	public static void sendEmail4TrainingPass(Teacher teacher, int quizScore) {
 		try {
@@ -81,7 +100,7 @@ public class EmailUtils {
 				paramsMap.put("teacherName", teacher.getRealName());
 			    paramsMap.put("quizScore",quizScore+"");
 			logger.info("【EMAIL.sendEmail4TrainingPass】toAddMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",teacher.getRealName(),teacher.getEmail(),"BasicInfoPassTitle.html","BasicInfoPass.html");
-			Map<String, String> emailMap = TemplateUtils.readTemplate("InterviewBook.html", paramsMap, "InterviewBookTitle.html");
+			Map<String, String> emailMap = TemplateUtils.readTemplate("TrainingPass.html", paramsMap, "TrainingPassTitle.html");
 			EmailEngine.addMailPool(teacher.getEmail(), emailMap, EmailConfig.EmailFormEnum.TEACHVIP);
 			logger.info("【EMAIL.sendEmail4TrainingPass】addedMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",teacher.getRealName(),teacher.getEmail(),"BasicInfoPassTitle.html","BasicInfoPass.html");
 		} catch (Exception e) {
@@ -108,7 +127,6 @@ public class EmailUtils {
             logger.error("【EMAIL.sendActivationEmail】ERROR: {}", e);
         }
 	}
-
 	/**
 	 * 重置密码邮件
 	 * 2016年11月29日 下午3:48:10

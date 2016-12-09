@@ -9,6 +9,11 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Map;
 
+import com.google.common.base.Charsets;
+import com.google.common.collect.Maps;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Email 模板内容读取
  * 含  readTemplate 接口
@@ -16,6 +21,8 @@ import java.util.Map;
  *
  */
 public class TemplateUtils {
+
+    private static Logger logger = LoggerFactory.getLogger(TemplateUtils.class);
 
     public final static String NOTE_TEMPLATE = "<tr><td>{{time}}</td><td>{{ename}}</td><td>{{lessonNo}}</td></tr>";
     
@@ -63,9 +70,24 @@ public class TemplateUtils {
      * @param templateName 文件名称
      * @return 2015年11月5日
      */
-    private static StringBuilder readTemplate(String templateName) {
-        ClassLoader classLoader= TemplateUtils.class.getClassLoader();
-        InputStream is = classLoader.getResourceAsStream("template" + File.separator + templateName);
+    public static StringBuilder readTemplate(String templateName) {
+        InputStream is = TemplateUtils.class.getClass().getClassLoader().getResourceAsStream("template" + File.separator + templateName);
+        return streamToString(is);
+    }
+
+    /**
+     * 读取模板内容
+     *
+     * @Author:ALong
+     * @param templateName 文件名称
+     * @return 2015年11月5日
+     */
+    public static StringBuilder readTemplatePath(String templateName) {
+        InputStream is = TemplateUtils.class.getClass().getClassLoader().getResourceAsStream(templateName);
+        return streamToString(is);
+    }
+
+    private static StringBuilder streamToString(InputStream is){
         StringBuilder result = new StringBuilder("");
         try {
             BufferedReader br = new BufferedReader(new InputStreamReader(is,Charsets.UTF_8));// 构造一个BufferedReader类来读取文件

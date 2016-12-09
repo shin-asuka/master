@@ -77,8 +77,8 @@ public class RecruitmentFailJob {
 					titleTemplate = "InterviewFailTitle.html";
 					contentTemplate = "InterviewFail.html";
 				} else if (TeacherApplicationEnum.Status.PRACTICUM.toString().equals(status)){
-					titleTemplate = "InterviewFailTitle.html";
-					contentTemplate = "InterviewFail.html";
+					titleTemplate = "PracticumFailTitle.html";
+					contentTemplate = "PracticumFail.html";
 				}
 
 				EmailUtils.sendEmail4Recruitment(email, name, titleTemplate, contentTemplate);

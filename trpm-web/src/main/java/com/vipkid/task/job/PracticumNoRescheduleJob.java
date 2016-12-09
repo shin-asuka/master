@@ -96,8 +96,8 @@ public class PracticumNoRescheduleJob {
         } else {
             String email = teacher.getEmail();
             String name = teacher.getRealName();
-            String titleTemplate = "InterviewNoRescheduleTitle.html";
-            String contentTemplate = "InterviewNoReschedule.html";
+            String titleTemplate = "PracticumReapplyTitle.html";
+            String contentTemplate = "PracticumReapply.html";
             EmailUtils.sendEmail4Recruitment(email, name, titleTemplate, contentTemplate);
             logger.info("【JOB.EMAIL.PracticumNoRescheduleJob】SEND: Cost {}ms. email = {}, name = {}, titleTemplate = {}, contentTemplate = {}", stopwatch.elapsed(TimeUnit.MILLISECONDS), email, name, titleTemplate, contentTemplate);
         }

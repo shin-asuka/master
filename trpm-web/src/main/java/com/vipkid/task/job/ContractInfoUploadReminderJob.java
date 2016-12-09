@@ -97,8 +97,8 @@ public class ContractInfoUploadReminderJob {
 		} else {
 			String email = teacher.getEmail();
 			String name = teacher.getRealName();
-			String titleTemplate = "ContractInfoUploadReminderJobTitle.html";
-			String contentTemplate = "ContractInfoUploadReminderJob.html";
+			String titleTemplate = "ContractInfoUploadReminderTitle.html";
+			String contentTemplate = "ContractInfoUploadReminder.html";
 			EmailUtils.sendEmail4Recruitment(email, name, titleTemplate, contentTemplate);
 			logger.info("【JOB.EMAIL.ContractInfoUploadReminderJob】SEND: Cost {}ms. email = {}, name = {}, titleTemplate = {}, contentTemplate = {}", stopwatch.elapsed(TimeUnit.MILLISECONDS), email, name, titleTemplate, contentTemplate);
 		}

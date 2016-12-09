@@ -90,8 +90,8 @@ public class Practicum2NoBookJob {
         } else {
             String email = teacher.getEmail();
             String name = teacher.getRealName();
-            String titleTemplate = "InterviewNoRescheduleTitle.html";
-            String contentTemplate = "InterviewNoReschedule.html";
+            String titleTemplate = "Practicum2NoBookTitle.html";
+            String contentTemplate = "Practicum2NoBook.html";
             EmailUtils.sendEmail4Recruitment(email, name, titleTemplate, contentTemplate);
             logger.info("【JOB.EMAIL.Practicum2NoBookJob】SEND: Cost {}ms. email = {}, name = {}, titleTemplate = {}, contentTemplate = {}", stopwatch.elapsed(TimeUnit.MILLISECONDS), email, name, titleTemplate, contentTemplate);
         }

@@ -2,6 +2,7 @@ package com.vipkid.recruitment.contractinfo.service;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -247,6 +248,9 @@ public class ContractInfoService {
             } else {
                 result = "FAIL";
             }
+            if(CollectionUtils.isEmpty(res)){
+                result=null;
+            }
 
             contractFile.setCertification(certification);
             contractFile.setDegrees(degrees);
@@ -263,14 +267,13 @@ public class ContractInfoService {
      */
     private String isPass(List<String> res) {
         if (CollectionUtils.isEmpty(res)) {
-            return String.valueOf(TeacherApplicationEnum.Result.FAIL);
+            return null;
         }
 
         for (String result : res) {
             if (StringUtils.isEmpty(result)) {
                 logger.error("Teacher Contract File result is Null");
-            }
-            if (result.equals("FAIL")) {
+            }else if (StringUtils.equals(TeacherApplicationEnum.Result.FAIL.toString(),result)) {
                 return String.valueOf(TeacherApplicationEnum.Result.FAIL);
             }
         }
@@ -315,8 +318,16 @@ public class ContractInfoService {
         }
         if (TeacherApplicationEnum.Status.CONTRACT_INFO.toString().equals(listEntity.get(0).getStatus())
                 && TeacherApplicationEnum.Result.PASS.toString().equals(listEntity.get(0).getResult())) {
-
+            TeacherApplication  teacherApplication = listEntity.get(0);
+            teacherApplication.setStatus(TeacherApplicationEnum.Status.FINISHED.toString());
+                // 2.教师状态更新
             teacher.setLifeCycle(TeacherEnum.LifeCycle.REGULAR.toString());
+                // 3.新增教师入职时间
+            teacher.setEntryDate(new Date());
+            teacher.setType(TeacherEnum.Type.PART_TIME.toString());
+            // 3.更新teacherApplication
+            this.teacherApplicationDao.update(teacherApplication);
+
             this.teacherDao.insertLifeCycleLog(teacher.getId(), TeacherEnum.LifeCycle.CONTRACT_INFO, TeacherEnum.LifeCycle.REGULAR, teacher.getId());
             this.teacherDao.update(teacher);
             return true;

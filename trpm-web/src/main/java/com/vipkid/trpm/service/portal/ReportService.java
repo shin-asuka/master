@@ -369,7 +369,7 @@ public class ReportService {
      */
     public DemoReports getDemoReports() {
         if (demoReports == null) {
-            String contentJson = FilesUtils.readContent(this.getClass().getResourceAsStream("/demoReports.json"),
+            String contentJson = FilesUtils.readContent(this.getClass().getResourceAsStream("data/demoReports.json"),
                     StandardCharsets.UTF_8);
             demoReports = JsonTools.readValue(contentJson, DemoReports.class);
         }
@@ -389,7 +389,7 @@ public class ReportService {
      */
     public ReportLevels getReportLevels() {
         if (reportLevels == null) {
-            String contentJson = FilesUtils.readContent(this.getClass().getResourceAsStream("/levels.json"),
+            String contentJson = FilesUtils.readContent(this.getClass().getResourceAsStream("data/levels.json"),
                     StandardCharsets.UTF_8);
             reportLevels = JsonTools.readValue(contentJson, ReportLevels.class);
         }
