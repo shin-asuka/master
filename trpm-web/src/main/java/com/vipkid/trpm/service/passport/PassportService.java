@@ -183,8 +183,10 @@ public class PassportService {
         if (teacher != null) {
             User user = this.userDao.findById(teacher.getId());
             user.setStatus(UserEnum.Status.NORMAL.toString());
+            logger.info(" 激活用户："+user.getUsername());
             int i = this.userDao.update(user);
             if (i > 0) {
+                logger.info(" 激活用户成功更新recruitmentId："+user.getUsername());
                 return this.updateRecruitmentId(teacher);
             }
         }

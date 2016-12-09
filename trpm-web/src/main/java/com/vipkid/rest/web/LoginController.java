@@ -311,7 +311,7 @@ public class LoginController extends RestfulController {
             User user = this.passportService.findUserByUsername(email);
             if (null == user) {
                 logger.warn("user is null email:" + email);
-                response.setStatus(HttpStatus.NOT_FOUND.value());
+                response.setStatus(HttpStatus.BAD_REQUEST.value());
                 return ReturnMapUtils.returnFail(ApplicationConstant.AjaxCode.USER_NULL);
             }
             // 检查用户类型
@@ -324,7 +324,7 @@ public class LoginController extends RestfulController {
             Teacher teacher = this.passportService.findTeacherById(user.getId());
             if (teacher == null) {
                 logger.warn("teacher is null id = " + user.getId());
-                response.setStatus(HttpStatus.NOT_FOUND.value());
+                response.setStatus(HttpStatus.BAD_REQUEST.value());
                 return ReturnMapUtils.returnFail(ApplicationConstant.AjaxCode.TEACHER_NULL);
             }
             // 检查老师状态是否FAIL
@@ -493,7 +493,7 @@ public class LoginController extends RestfulController {
         if (StringUtils.isNotBlank(privateCode)) {
             String result = this.passportService.userActivation(privateCode);
             if (StringUtils.isNotBlank(result)) {
-                logger.info("User execute activation link success for email 。。。");
+                logger.info("User execute activation link success for email 。。。privateCode="+privateCode);
             }
         }
         return "redirect:/";
