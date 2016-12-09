@@ -392,6 +392,7 @@
 		teacher_application ta
 		JOIN teacher t ON t.id = ta.teacher_id
 		WHERE ta.status IN ('BASIC_INFO','INTERVIEW')
+		AND ta.current = 1
 		AND ta.result = 'FAIL'
 		AND ta.audit_date_time BETWEEN #{startTime} AND #{endTime}
 	</select>

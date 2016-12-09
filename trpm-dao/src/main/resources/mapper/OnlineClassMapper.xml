@@ -638,6 +638,7 @@
 	    	t.email as teacherEmail,
 	    	t.timezone as timezone,
 			l.serial_number as lessonSn,
+			c.id as courseId,
 			c.name as course,
 			oc.finish_type as finishType,
 			s.english_name as studentEnglishName,
@@ -673,6 +674,9 @@
 		</if>
 		<if test="course != null and course!= ''">
 			AND c.name = #{course}
+		</if>
+		<if test="onlineClassId != null and onlineClassId!= ''">
+			AND oc.id = #{onlineClassId}
 		</if>
 		order by oc.scheduled_date_time desc
     </select>

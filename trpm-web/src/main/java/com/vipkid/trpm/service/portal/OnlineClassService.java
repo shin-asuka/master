@@ -21,6 +21,7 @@ import com.vipkid.trpm.util.IpUtils;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.lang.time.DateFormatUtils;
 import org.community.config.PropertyConfigurer;
 import org.community.http.client.HttpClientProxy;
@@ -790,5 +791,34 @@ public class OnlineClassService {
             }
         }
         return onlineClassVos;
+    }
+
+    /**
+     * 获取UA基本信息，yoda调用
+     * @return
+     */
+    public Map<String,Object> findOnlineClassUaInfoById(Long onlineClassId){
+        HashMap<String,Object> map = Maps.newHashMap();
+        map.put("onlineClassId",onlineClassId);
+        List<Map<String,Object>> mapList = onlineClassDao.findMajorCourseListByCond(map);
+        if(mapList==null || mapList.size()==0){
+            return null;
+        }else{
+            map = (HashMap<String,Object>)mapList.get(0);
+        }
+        Integer lessonId = NumberUtils.toInt(String.valueOf(map.get("lessonId")));
+        Integer studentId = NumberUtils.toInt(String.valueOf(map.get("studentId")));
+        Lesson lesson = lessonDao.findById(lessonId.longValue());
+        Student student = studentDao.findById(studentId);
+        if(student != null && student.getChineseLeadTeacherId()!=0) {
+            User user = userDao.findById(student.getChineseLeadTeacherId());
+            map.put("cltId",student.getChineseLeadTeacherId());
+            map.put("cltName", user.getName());
+        }else{
+            map.put("cltId","");
+            map.put("cltName","");
+        }
+        map.put("sequence", lesson.getSequence());
+        return map;
     }
 }

@@ -39,6 +39,7 @@ public class OnlineClassVo implements Serializable{
 	private Integer total;
 	private Integer hasAudited;
 	private Date updateTime;
+	private Integer sequence;
 	
 	List<Long> idList = Lists.newArrayList();
 	List<Integer> refillinUaIds = Lists.newArrayList();
@@ -293,5 +294,13 @@ public class OnlineClassVo implements Serializable{
 
 	public void setIdListStr(String idListStr) {
 		this.idListStr = idListStr;
+	}
+
+	public Integer getSequence() {
+		return sequence;
+	}
+
+	public void setSequence(Integer sequence) {
+		this.sequence = sequence;
 	}
 }

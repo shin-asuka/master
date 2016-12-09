@@ -75,7 +75,7 @@ public class PersonalInfoService {
 	/**
 	 * 处理银行信息更新逻辑
 	 * 
-	 * @param teacherId
+	 * @param teacher
 	 * @param bankInfo
 	 */
 	public Map<String, Object> doSetBankInfo(Teacher teacher, TeacherBankVO bankInfo) {
@@ -140,7 +140,7 @@ public class PersonalInfoService {
 	/**
 	 * 处理基本信息更新逻辑
 	 * 
-	 * @param teacherId
+	 * @param teacher
 	 * @param basicInfo
 	 * @return Map<String, Object>
 	 */
@@ -307,36 +307,39 @@ public class PersonalInfoService {
 	}
 
 	/**
-	 * 隐藏Bankinfo的某些信息
-	 *@param status true表示在尾部隐藏，false表示在头部隐藏
-	 *@param length 需要保留的长度
+	 * 隐藏BankInfo的部分信息
+	 * @param source
+	 * @param start 开始隐藏信息的位置
+	 * @param end 结束隐藏信息的位置
+	 * @return
 	 */
-	public String hideInfo(String source ,boolean status ,int length){
-		StringBuffer stringBuffer = new StringBuffer();
-	if(source == null || source.length()<=0) {
-		return null;
-	}else{
-		if (status) {
-			String str = source.substring(0, length);
-			stringBuffer.append(str);
-			for (int i = length; i < source.length(); i++) {
-				stringBuffer.append("*");
-			}
-		} else {
-			int len = source.length();
 
-			for (int i = 0; i < len - length; i++) {
-				stringBuffer.append("*");
-			}
-			String str = source.substring(len - length, len);
-			stringBuffer.append(str);
+	public static String hideInfo(String source ,int start ,int end) {
+		if (StringUtils.isEmpty(source)) {
+			return source;
 		}
-	}
+
+		int len = source.length();
+		if (start < 0 || start > len || end > len || end < 0 || start > end) {
+			logger.warn("invalid params: start={}, end={}", start, end);
+			return source;
+		}
+
+		StringBuffer stringBuffer = new StringBuffer();
+		stringBuffer.append(source.substring(0, start));
+
+		for (int i = start; i < end; i++) {
+			stringBuffer.append("*");
+		}
+
+		stringBuffer.append(source.substring(end, len));
 		return stringBuffer.toString();
 	}
+
 	public String hideNameInfo(String source){
 		if (source == null || source.length()<=0){
-			return null;
+			logger.warn("invalid params:source={}", source);
+			return source;
 		}else {
 			int n = source.lastIndexOf(" ");
 			StringBuffer sb = new StringBuffer();
@@ -355,6 +358,5 @@ public class PersonalInfoService {
 		}
 
 	}
-
 
 }
