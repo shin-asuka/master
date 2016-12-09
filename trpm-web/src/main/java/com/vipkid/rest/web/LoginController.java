@@ -110,7 +110,7 @@ public class LoginController extends RestfulController {
                 //add
                 passportService.addLoginFailedCount(bean.getEmail());
                 logger.warn("user is null email:" + bean.getEmail());
-                response.setStatus(HttpStatus.NOT_FOUND.value());
+                response.setStatus(HttpStatus.BAD_REQUEST.value());
                 return ReturnMapUtils.returnFail(ApplicationConstant.AjaxCode.USER_NULL);
             }
             // token check
@@ -142,7 +142,7 @@ public class LoginController extends RestfulController {
                 //add
                 passportService.addLoginFailedCount(bean.getEmail());
                 logger.warn("teacher is null id = " + user.getId());
-                response.setStatus(HttpStatus.NOT_FOUND.value());
+                response.setStatus(HttpStatus.BAD_REQUEST.value());
                 return ReturnMapUtils.returnFail(ApplicationConstant.AjaxCode.TEACHER_NULL);
             }
             logger.info("登陆  FAIL start:{} !",teacher.getLifeCycle());
