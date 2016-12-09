@@ -229,7 +229,7 @@ public class LoginExpiredHandleInterceptor extends HandlerInterceptorAdapter {
             }
             if(!UserEnum.Dtype.TEACHER.toString().equalsIgnoreCase(user.getDtype())){
                 response.setStatus(HttpStatus.UNAUTHORIZED.value());
-                logger.warn(user.getUsername()+",账户不合法.");
+                logger.warn(user.getUsername()+",账户Dtype不合法.");
                 responseToJson("You are not an effective teacher!",response);
                 return false; 
             }
