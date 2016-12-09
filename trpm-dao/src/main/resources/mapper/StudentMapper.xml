@@ -266,7 +266,7 @@
 		where a.student_id=#{studentId}
 			and a.status='PAY_CONFIRMED'
 			and a.real_total_price is not null and a.real_total_price>500
-			and a.confirm_date_time between concat(#{startDate},' 00:00:00') and concat(#{endDate},' 23:59:59')
+			and a.confirm_date_time >#{startDate}
     </select>
 
     <select id="findStudentsByIds" resultType="java.util.HashMap">
