@@ -251,7 +251,7 @@ define(depends, function(personal) {
 	var postDataFun = function(){
 		var data = {};
 		
-		data.beneficiaryAccountName = $("#bankAccountName").val();
+		data.beneficiaryAccountName = $("#bankAccountName").val().trim();
 		data.beneficiaryAccountNumber = $("#bankCardNumber").val();
 		data.beneficiaryBankName = $("#bankName").val();
 		
