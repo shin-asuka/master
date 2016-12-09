@@ -142,12 +142,12 @@ public class LoginExpiredHandleInterceptor extends HandlerInterceptorAdapter {
             User user = UserUtils.getUser(request);
             if(user.getId() == 0){
               result = false;
-              logger.info("management api user is null");
+              logger.warn("management api user is null");
             }
             
             if(UserEnum.Status.isLocked(user.getStatus())){
                 result = false;
-                logger.info("management api user is locked:id = {}, name = {} ",user.getId(),user.getUsername());
+                logger.warn("management api user is locked:id = {}, name = {} ",user.getId(),user.getUsername());
             }
             
             logger.info("managemane api 被访问 验证结果{}, info:user id = {} username = {}",result,user.getId(),user.getUsername());
