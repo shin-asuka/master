@@ -319,7 +319,7 @@ public class TeacherService {
 		return true;
 	}
 
-	public boolean insertOneTeacherComment(TeacherCommentUpdateDto inputDto) {
+	public String insertOneTeacherComment(TeacherCommentUpdateDto inputDto) {
 		Map<String, String> param = Maps.newHashMap();
 		param.put("teacherComment", JsonUtils.toJSONString(inputDto));
 
@@ -331,14 +331,25 @@ public class TeacherService {
 		} catch (Exception e) {
 			logger.error("请求CF失败，返回数据格式异常，转换StandardJsonObject失败，请求参数：{}，返回结果：{}", param,
 					response, e);
-			return false;
+			return null;
 		}
 		if (standardJsonObject == null || !standardJsonObject.getRet()) {
 			logger.error("请求CF返回失败，请求参数：{}，返回结果：{}", param, response);
-			return false;
+			return null;
+		}
+		if (standardJsonObject.getData() == null || standardJsonObject.getData().get("result") == null) {
+			logger.error("请求CF返回数据为空，请求参数：{}，返回结果：{}", param, response);
+			return null;
 		}
 
-		return true;
+
+		Object newId = ((Map)standardJsonObject.getData().get("result")).get("id");
+		if(newId==null||StringUtils.isBlank(newId.toString())){
+			logger.error("请求CF插入数据返回id为空，请求参数：{}，返回结果：{}", param, response);
+			return null;
+		}
+
+		return newId.toString();
 	}
 
 

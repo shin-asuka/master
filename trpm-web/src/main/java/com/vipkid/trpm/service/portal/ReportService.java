@@ -22,6 +22,7 @@ import com.vipkid.trpm.entity.teachercomment.TeacherCommentResult;
 import com.vipkid.trpm.entity.teachercomment.TeacherCommentUpdateDto;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.community.tools.JsonTools;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -611,12 +612,12 @@ public class ReportService {
             tcuDto.setStars(0);
             tcuDto.setEmpty(true);
 
-            Boolean insertSuccess = teacherService.insertOneTeacherComment(tcuDto);
-            if (insertSuccess) {
+            String newId = teacherService.insertOneTeacherComment(tcuDto);
+            if (NumberUtils.isNumber(newId)) {
                 TeacherComment result = new TeacherComment();
+                result.setId(Long.valueOf(newId));
                 result.setOnlineClassId(onlineClassId);
                 result.setStudentId(studentId);
-                result.setCreateDateTime(new Timestamp(System.currentTimeMillis()));
                 result.setTeacherId(onlineClass.getTeacherId());
                 return result;
             }else{
