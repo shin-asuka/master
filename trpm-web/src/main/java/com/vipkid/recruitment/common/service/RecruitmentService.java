@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Map;
 
 import com.vipkid.recruitment.common.CommonConstant;
+import com.vipkid.recruitment.interview.InterviewConstant;
+import com.vipkid.recruitment.practicum.PracticumConstant;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.community.tools.JsonTools;
@@ -148,7 +150,8 @@ public class RecruitmentService {
         }
     }
 
-    private Map<String,Object> getInterviewPracticumStatusByResultIsBlank(Map<String,Object> result, TeacherApplication teacherApplication, int enterClassAllowedMinute){
+    private Map<String,Object> getInterviewPracticumStatusByResultIsBlank(TeacherApplication teacherApplication, int enterClassAllowedMinute){
+        Map<String,Object> result = Maps.newHashMap();
         if(teacherApplication.getOnlineClassId() == 0){
             //待约课
             result.put("result",AuditStatus.TO_SUBMIT.toString());
@@ -182,7 +185,7 @@ public class RecruitmentService {
     private Map<String,Object> getInterviewStatus(Teacher teacher,TeacherApplication teacherApplication){
         Map<String,Object> result = Maps.newHashMap();
         if(StringUtils.isBlank(teacherApplication.getResult())){
-            return getInterviewPracticumStatusByResultIsBlank(result, teacherApplication, 30);
+            result.putAll(getInterviewPracticumStatusByResultIsBlank(teacherApplication, InterviewConstant.ENTER_CLASS_MINUTES));
         }else{
             result.put("result",teacherApplication.getResult());
             result.put("result",teacherApplication.getResult());
@@ -194,8 +197,8 @@ public class RecruitmentService {
             }else{
                 result.put("basePay",teacherApplication.getBasePay());
             }
-            return result;
         }
+        return result;
     }
 
     private Map<String,Object> getTrainingStatus(Teacher teacher,TeacherApplication teacherApplication){
@@ -219,25 +222,9 @@ public class RecruitmentService {
     }
     
     private Map<String,Object> getPracticumStatus(Teacher teacher,TeacherApplication teacherApplication){
-
         Map<String,Object> result = Maps.newHashMap();
-
-        List<TeacherApplication> list = teacherApplicationDao.findApplictionForStatusResult(teacher.getId(), null, Result.PRACTICUM2.name());
-        if(CollectionUtils.isNotEmpty(list)){
-            result.put("practicumNo", 2);
-        }else{
-            result.put("practicumNo", 1);
-        }
-
-        List<TeacherApplication> trainingPassTAList = teacherApplicationDao.findApplictionForStatusResult(teacher.getId(), Status.TRAINING.toString(), Result.PASS.toString());
-        if(CollectionUtils.isNotEmpty(trainingPassTAList) && trainingPassTAList.get(0).getAuditDateTime() != null){
-            result.put("trainingPassTime", trainingPassTAList.get(0).getAuditDateTime().getTime());
-        }else{
-            result.put("trainingPassTime", 0);
-        }
-
         if(StringUtils.isBlank(teacherApplication.getResult())){
-            return getInterviewPracticumStatusByResultIsBlank(result, teacherApplication, 60);
+            result.putAll(getInterviewPracticumStatusByResultIsBlank(teacherApplication, PracticumConstant.ENTER_CLASS_MINUTES));
         }else{
             if(Result.PRACTICUM2.toString().equals(teacherApplication.getResult())){
                 result.put("result",AuditStatus.TO_SUBMIT.toString());
@@ -253,8 +240,24 @@ public class RecruitmentService {
                 //重来备注
                 result.put("comments",teacherApplication.getComments());
             }
-            return result;
         }
+
+        List<TeacherApplication> list = teacherApplicationDao.findApplictionForStatusResult(teacher.getId(), null, Result.PRACTICUM2.name());
+        if(CollectionUtils.isNotEmpty(list)){
+            result.put("practicumNo", 2);
+        }else{
+            result.put("practicumNo", 1);
+        }
+
+        result.put("trainingPassTime", 0);
+        if(AuditStatus.TO_SUBMIT.toString().equals(result.get("result").toString())){
+            List<TeacherApplication> trainingPassTAList = teacherApplicationDao.findApplictionForStatusResult(teacher.getId(), Status.TRAINING.toString(), Result.PASS.toString());
+            if(CollectionUtils.isNotEmpty(trainingPassTAList) && trainingPassTAList.get(0).getAuditDateTime() != null){
+                result.put("trainingPassTime", trainingPassTAList.get(0).getAuditDateTime().getTime());
+            }
+        }
+
+        return result;
     }
     
     private Map<String,Object> getContractInfoStatus(Teacher teacher,TeacherApplication teacherApplication){

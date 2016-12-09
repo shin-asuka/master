@@ -60,7 +60,7 @@ public class PracticumController extends RestfulController {
             Object onlineClassId = pramMap.get("onlineClassId");
             if(onlineClassId == null || !StringUtils.isNumeric(onlineClassId+"")){
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
-                return ReturnMapUtils.returnFail("onlineClassId is error !");
+                return ReturnMapUtils.returnFail("onlineClassId is error! " + onlineClassId);
             }
             Map<String,Object> result = this.practicumService.bookClass(Long.valueOf(onlineClassId+""), getTeacher(request));
             if(ReturnMapUtils.isFail(result)){
@@ -82,7 +82,7 @@ public class PracticumController extends RestfulController {
             Object onlineClassId = pramMap.get("onlineClassId");
             if(onlineClassId == null || !StringUtils.isNumeric(onlineClassId+"")){
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
-                return ReturnMapUtils.returnFail("onlineClassId is error !");
+                return ReturnMapUtils.returnFail("onlineClassId is error! " + onlineClassId);
             }
             Map<String,Object> result = this.practicumService.cancelClass(Long.valueOf(onlineClassId+""), getTeacher(request));
             if(ReturnMapUtils.isFail(result)){
