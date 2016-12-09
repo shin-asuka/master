@@ -26,11 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * Created by zhangzhaojun on 2016/12/8.
  */
 public class EmailTemplateTools {
-
-    public  static void  main(String[] args){
-        TeacherApplication teacherApplication = new TeacherApplication();
-        System.out.print(readyContent(teacherApplication));
-    }
+    
     private static Logger logger = LoggerFactory.getLogger(EmailTemplateTools.class);
     @Autowired
     private static TeacherDao teacherDao;
