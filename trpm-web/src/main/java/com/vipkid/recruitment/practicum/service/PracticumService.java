@@ -241,7 +241,7 @@ public class PracticumService {
                 teacherApplication.setStatus(Status.FINISHED.toString());
                 teacherApplicationDao.update(teacherApplication);
                 // 5.增加quiz的考试记录
-                List<TeacherQuiz> quizslist = teacherQuizDao.findNeedQuiz(teacher.getId());
+                List<TeacherQuiz> quizslist = teacherQuizDao.findAllQuiz(teacher.getId());
                 if (CollectionUtils.isEmpty(quizslist)) {
                     teacherQuizDao.insertQuiz(teacher.getId(), teacher.getId());
                 }
