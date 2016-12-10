@@ -84,7 +84,7 @@ public class RecruitmentService {
 
         //【待提交】没有流程则视为
         if(CollectionUtils.isEmpty(list)){
-            logger.info("没有流程记录 teacherId:{} ",teacher.getId());
+            logger.info("当前没有流程记录,以老师状态【"+teacher.getLifeCycle()+"】为准 teacherId:{} ",teacher.getId());
             resultMap.put("result",AuditStatus.TO_SUBMIT.toString());
             return resultMap;
         }
@@ -92,7 +92,7 @@ public class RecruitmentService {
         //【待提交】当前状态与流程状态不一样,以lifeCycle为准
         TeacherApplication teacherApplication = list.get(0);
         if(!StringUtils.equalsIgnoreCase(teacherApplication.getStatus(), teacher.getLifeCycle())){
-            logger.info("当前状态与流程状态不一样 teacherId:{} taId:{}",teacher.getId(),teacherApplication.getId());
+            logger.info("当前状态与流程状态不一样,以老师状态【"+teacher.getLifeCycle()+"】为准 teacherId:{} taId:{}",teacher.getId(),teacherApplication.getId());
             resultMap.put("result",AuditStatus.TO_SUBMIT.toString());
             return resultMap;
         }
