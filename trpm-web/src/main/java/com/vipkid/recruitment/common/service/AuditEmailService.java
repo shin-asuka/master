@@ -66,8 +66,8 @@ public class AuditEmailService {
     private static String INTERVIEW_REAPPLY_TITLE = "InterviewNoRescheduleTitle.html";
     private static String INTERVIEW_REAPPLY_CONTENT = "InterviewNoReschedule.html";
 
-    private static String CONTRACTINFO_PASS_TITLE = "";
-    private static String CONTRACTINFO_PASS_CONTENT = "";
+    private static String CONTRACTINFO_PASS_TITLE = "ContractInfoTitle.html";
+    private static String CONTRACTINFO_PASS_CONTENT = "ContractInfo.html";
 
     private static String CONTRACTINFO_REAPPLY_TITLE = "ContractInfoReapplyTitle.html";
     private static String CONTRACTINFO_REAPPLY_CONTENT = "ContractInfoReapply.html";
