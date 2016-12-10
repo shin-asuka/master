@@ -147,17 +147,17 @@ public class InterviewService {
 
         //课程没有找到，无法book
         if(onlineClass == null){
-            return ReturnMapUtils.returnFail("The online class not exis:"+onlineClassId);
+            return ReturnMapUtils.returnFail("This online class does not exist.");
         }
 
         //onlineClassId 必须是OPEN 课
         if(!OnlineClassEnum.ClassStatus.OPEN.toString().equalsIgnoreCase(onlineClass.getStatus())){
-            return ReturnMapUtils.returnFail("This class("+onlineClassId+") is empty or anyone else has been booked !");
+            return ReturnMapUtils.returnFail("Oops, someone else just booked this time slot. Please select another.");
         }
 
         //book的课程在开课前1小时之内不允许book
         if((System.currentTimeMillis() + InterviewConstant.BOOK_TIME) > onlineClass.getScheduledDateTime().getTime()){
-            return ReturnMapUtils.returnFail("Class is about to start is not allowed to book !");
+            return ReturnMapUtils.returnFail("Oops, someone else just booked this time slot. Please select another.");
         }
         //约课老师必须是INTERVIEW的待约课老师
         List<TeacherApplication> listEntity = teacherApplicationDao.findCurrentApplication(teacher.getId());
@@ -165,19 +165,19 @@ public class InterviewService {
             TeacherApplication teacherApplication = listEntity.get(0);
             //存在步骤，但步骤中已经存在待审核的课程 不允许继续book
             if(teacherApplication.getOnlineClassId() != 0 && StringUtils.isBlank(teacherApplication.getResult())){
-                return ReturnMapUtils.returnFail("You have booked a class already. Please refresh your page !"+onlineClassId);
+                return ReturnMapUtils.returnFail("You have booked a class already. Please refresh your page !");
             }
         }
         //判断剩余可取消次数
         if(recruitmentService.getRemainRescheduleTimes(teacher, Status.INTERVIEW.toString(), Result.CANCEL.toString()) <= 0){
-            return ReturnMapUtils.returnFail("You cancel too many times, can't book the class !");
+            return ReturnMapUtils.returnFail("There are no more cancellations allowed for your account. Contact us at teachvip@vipkid.com.cn for more information.");
         }
         //执行BOOK逻辑
         String dateTime = DateFormatUtils.format(onlineClass.getScheduledDateTime(),"yyyy-MM-dd HH:mm:ss");
         Map<String,Object> result = OnlineClassProxy.doBookRecruitment(teacher.getId(), onlineClass.getId(), ClassType.TEACHER_RECRUITMENT,dateTime);
         if(ReturnMapUtils.isFail(result)){
             //一旦失败，抛出异常回滚
-            throw new RuntimeException("The a class book fail !"+result.get("info"));
+            throw new RuntimeException("Booking failed! Please try again." + result.get("info"));
         }
         return result;
     }
@@ -198,12 +198,12 @@ public class InterviewService {
 
         //课程没有找到，无法取消
         if(onlineClass == null){
-            return ReturnMapUtils.returnFail("The online class doesn't exist:"+onlineClassId);
+            return ReturnMapUtils.returnFail("This online class does not exist.");
         }
 
         //class already start, can't cancel error
         if(System.currentTimeMillis() > onlineClass.getScheduledDateTime().getTime()){
-            return ReturnMapUtils.returnFail("The class already start, can't cancel error:"+onlineClassId);
+            return ReturnMapUtils.returnFail("Sorry, you can't cancel after the start time has passed.");
         }
 
         List<TeacherApplication> listEntity = this.teacherApplicationDao.findCurrentApplication(teacher.getId());
@@ -238,7 +238,7 @@ public class InterviewService {
         result.put("count", count);
         if(ReturnMapUtils.isFail(result)){
             //一旦失败，抛出异常回滚
-            throw new RuntimeException("The class cancel fail ! "+result.get("info"));
+            throw new RuntimeException("Cancel failed! Please try again."+result.get("info"));
         }
         return result;
     }

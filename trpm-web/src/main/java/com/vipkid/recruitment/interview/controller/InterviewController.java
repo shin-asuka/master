@@ -61,7 +61,7 @@ public class InterviewController extends RestfulController {
             Object onlineClassId = pramMap.get("onlineClassId");
             if(onlineClassId == null || !StringUtils.isNumeric(onlineClassId+"")){
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
-                return ReturnMapUtils.returnFail("onlineClassId is error !" + onlineClassId);
+                return ReturnMapUtils.returnFail("This online class does not exist.");
             }
             //
             Map<String,Object> result = this.interviewService.bookInterviewClass(Long.valueOf(onlineClassId+""), getTeacher(request));
@@ -85,7 +85,7 @@ public class InterviewController extends RestfulController {
             Object onlineClassId = pramMap.get("onlineClassId");
             if(onlineClassId == null || !StringUtils.isNumeric(onlineClassId+"")){
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
-                return ReturnMapUtils.returnFail("onlineClassId is error !" + onlineClassId);
+                return ReturnMapUtils.returnFail("This online class does not exist.");
             }
             Map<String,Object> result = this.interviewService.cancelInterviewClass(Long.valueOf(onlineClassId+""), getTeacher(request));
             if(ReturnMapUtils.isFail(result)){

@@ -182,7 +182,7 @@ public class LoginExpiredHandleInterceptor extends HandlerInterceptorAdapter {
         if(StringUtils.isBlank(token)){
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
             logger.warn("Token无效:{}",token);
-            responseToJson("Token is invalid",response);
+            responseToJson("Session expired! Please sign in again.",response);
             return false;
         }
         //user
@@ -190,7 +190,7 @@ public class LoginExpiredHandleInterceptor extends HandlerInterceptorAdapter {
         if(user == null){
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
             logger.warn("User 不存在...或者已经过期.");
-            responseToJson("The a user is  not exist",response);
+            responseToJson("This account does not exist.",response);
             return false;
         }
         //判断当前用户所在地区的ip是否变化，如果变化。则返回空用户，用户重新登陆
@@ -214,7 +214,7 @@ public class LoginExpiredHandleInterceptor extends HandlerInterceptorAdapter {
         if(teacher == null){
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
             logger.warn(user.getUsername()+",Teacher 不存在.");
-            responseToJson("The a teacher is  not exist",response);
+            responseToJson("This account does not exist.",response);
             return false;
         }
         //权限判断，符合条件的LifeCycle可以访问控制器
@@ -224,25 +224,25 @@ public class LoginExpiredHandleInterceptor extends HandlerInterceptorAdapter {
             if(UserEnum.Status.isLocked(user.getStatus())){
                 response.setStatus(HttpStatus.UNAUTHORIZED.value());
                 logger.warn(user.getUsername()+",账户被锁.");
-                responseToJson("You has been locked!",response);
+                responseToJson("This account has been locked.",response);
                 return false; 
             }
             if(!UserEnum.Dtype.TEACHER.toString().equalsIgnoreCase(user.getDtype())){
                 response.setStatus(HttpStatus.UNAUTHORIZED.value());
                 logger.warn(user.getUsername()+",账户Dtype不合法.");
-                responseToJson("You are not an effective teacher!",response);
+                responseToJson("Password or user name is incorrect!",response);
                 return false; 
             }
             if(TeacherEnum.LifeCycle.QUIT.toString().equals(teacher.getLifeCycle())){
                 response.setStatus(HttpStatus.UNAUTHORIZED.value());
                 logger.warn(user.getUsername()+",账户被Quit.");
-                responseToJson("You has been quit!",response);
+                responseToJson("Password or user name is incorrect!",response);
                 return false; 
             }
             if(TeacherEnum.LifeCycle.FAIL.toString().equals(teacher.getLifeCycle())){
                 response.setStatus(HttpStatus.UNAUTHORIZED.value());
                 logger.warn(user.getUsername()+",账户status被Fail.");
-                responseToJson("You has been fail!",response);
+                responseToJson("This account has been locked.",response);
                 return false; 
             }
             //常规拦截结束
@@ -252,7 +252,7 @@ public class LoginExpiredHandleInterceptor extends HandlerInterceptorAdapter {
         }
         response.setStatus(HttpStatus.FORBIDDEN.value());
         logger.warn("没有权限访问的用户:允许状态{},当前状态:{}",restInterface.lifeCycle(),teacher.getLifeCycle());
-        responseToJson("You lifeCycle permission is don't match:"+Arrays.toString(restInterface.lifeCycle())+",your state:"+teacher.getLifeCycle(),response);
+        responseToJson("You have already completed this stage. Please refresh your page to view your result.",response);
         return false;
     }
 }

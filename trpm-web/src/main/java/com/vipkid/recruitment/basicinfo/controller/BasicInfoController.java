@@ -95,7 +95,7 @@ public class BasicInfoController extends RestfulController{
             //时间判断
             if(teachingExperience.getTimePeriodStart() >= teachingExperience.getTimePeriodEnd()){
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
-                return ReturnMapUtils.returnFail("The time interval is illegal!");
+                return ReturnMapUtils.returnFail("The start time must be greater than the end time.");
             }
             if(teachingExperience.getId() > 0){
                 resultRow = this.teachingExperienceService.updateTeaching(teachingExperience, user);
@@ -106,7 +106,7 @@ public class BasicInfoController extends RestfulController{
             result.put("status", resultRow > 0 ? true : false);
             if(ReturnMapUtils.isFail(result)){
                 response.setStatus(HttpStatus.FORBIDDEN.value());
-                return ReturnMapUtils.returnFail("Save or Update fail",result);
+                return ReturnMapUtils.returnFail("An error occurred while saving your data. Please try again.",result);
             }
             result.put("id", resultRow);
             return result;
@@ -128,7 +128,7 @@ public class BasicInfoController extends RestfulController{
             result = this.teachingExperienceService.delTeaching(id, user);
             if(ReturnMapUtils.isFail(result)){
                 response.setStatus(HttpStatus.FORBIDDEN.value());
-                return ReturnMapUtils.returnFail("Save or Update fail",result);
+                return ReturnMapUtils.returnFail("An error occurred while deleting. Please try again.",result);
             }
             return result;
         } catch (IllegalArgumentException e) {

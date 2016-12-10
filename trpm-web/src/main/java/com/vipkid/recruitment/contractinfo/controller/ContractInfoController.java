@@ -10,11 +10,6 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.google.api.client.util.Key;
-import com.google.common.base.Splitter;
-import com.vipkid.enums.TeacherApplicationEnum;
-
-import com.vipkid.recruitment.entity.TeacherApplication;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.community.config.PropertyConfigurer;
@@ -32,6 +27,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.google.api.client.util.Maps;
 import com.google.common.base.Preconditions;
+import com.google.common.base.Splitter;
+import com.vipkid.enums.TeacherApplicationEnum;
 import com.vipkid.enums.TeacherEnum;
 import com.vipkid.file.model.AppLifePicture;
 import com.vipkid.file.model.FileUploadStatus;
@@ -41,6 +38,7 @@ import com.vipkid.http.service.FileHttpService;
 import com.vipkid.http.utils.JsonUtils;
 import com.vipkid.recruitment.common.service.RecruitmentService;
 import com.vipkid.recruitment.contractinfo.service.ContractInfoService;
+import com.vipkid.recruitment.entity.TeacherApplication;
 import com.vipkid.recruitment.entity.TeacherContractFile;
 import com.vipkid.recruitment.utils.ReturnMapUtils;
 import com.vipkid.rest.RestfulController;
@@ -175,14 +173,14 @@ public class ContractInfoController extends RestfulController {
             Teacher teacher = getTeacher(request);
             if (null == teacher) {
                 response.setStatus(HttpStatus.NOT_FOUND.value());
-                return ReturnMapUtils.returnFail("Teacher doesn't exist");
+                return ReturnMapUtils.returnFail("This account does not exist.");
             }
 
             Long teacherId = teacher.getId();
             boolean couldSubmit = couldSubmit(teacherId);
             if (!couldSubmit) {
                 response.setStatus(HttpStatus.NOT_FOUND.value());
-                return ReturnMapUtils.returnFail("The teacher has been submitted. ");
+                return ReturnMapUtils.returnFail("You have already submitted. Please refresh your page.");
             }
 
             //check contract files
@@ -327,7 +325,7 @@ public class ContractInfoController extends RestfulController {
                 Teacher teacher = getTeacher(request);
                 if (null == teacher) {
                     response.setStatus(HttpStatus.NOT_FOUND.value());
-                    return ReturnMapUtils.returnFail("Teacher doesn't exist");
+                    return ReturnMapUtils.returnFail("This account does not exist.");
                 }
                 Long teacherId = teacher.getId();
 
@@ -342,7 +340,7 @@ public class ContractInfoController extends RestfulController {
                 } else {
                     logger.error("Failed to upload avatar!");
                     response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-                    return ReturnMapUtils.returnFail("Failed to upload avatar to AWS.");
+                    return ReturnMapUtils.returnFail("Upload failed!  Please try again.");
                 }
             } catch (IllegalArgumentException e) {
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
@@ -355,7 +353,7 @@ public class ContractInfoController extends RestfulController {
             }
         }
         response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-        return ReturnMapUtils.returnFail("Failed to upload avatar!");
+        return ReturnMapUtils.returnFail("Upload failed!  Please try again.");
     }
 
     @ResponseBody
@@ -380,7 +378,7 @@ public class ContractInfoController extends RestfulController {
                 Teacher teacher = getTeacher(request);
                 if (null == teacher) {
                     response.setStatus(HttpStatus.NOT_FOUND.value());
-                    return ReturnMapUtils.returnFail("Teacher doesn't exist");
+                    return ReturnMapUtils.returnFail("This account does not exist.");
                 }
                 Long teacherId = teacher.getId();
 
@@ -394,7 +392,7 @@ public class ContractInfoController extends RestfulController {
                     return ReturnMapUtils.returnSuccess(result);
                 } else {
                     response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-                    return ReturnMapUtils.returnFail("Failed to upload life picture to AWS.");
+                    return ReturnMapUtils.returnFail("Upload failed!  Please try again.");
                 }
             } catch (IllegalArgumentException e) {
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
@@ -405,7 +403,7 @@ public class ContractInfoController extends RestfulController {
             }
         }
         response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-        return ReturnMapUtils.returnFail("Failed to upload life picture!");
+        return ReturnMapUtils.returnFail("Upload failed!  Please try again.");
     }
 
     @ResponseBody
@@ -430,7 +428,7 @@ public class ContractInfoController extends RestfulController {
                 Teacher teacher = getTeacher(request);
                 if (null == teacher) {
                     response.setStatus(HttpStatus.NOT_FOUND.value());
-                    return ReturnMapUtils.returnFail("Teacher doesn't exist");
+                    return ReturnMapUtils.returnFail("This account does not exist.");
                 }
                 Long teacherId = teacher.getId();
 
@@ -443,7 +441,7 @@ public class ContractInfoController extends RestfulController {
                     return ReturnMapUtils.returnSuccess(result);
                 } else {
                     response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-                    return ReturnMapUtils.returnFail("Failed to upload short video to AWS.");
+                    return ReturnMapUtils.returnFail("Upload failed!  Please try again.");
                 }
             } catch (IllegalArgumentException e) {
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
@@ -456,7 +454,7 @@ public class ContractInfoController extends RestfulController {
             }
         }
 
-        return ReturnMapUtils.returnFail("Failed to short video picture!");
+        return ReturnMapUtils.returnFail("Upload failed!  Please try again.");
     }
 
     @ResponseBody
@@ -466,7 +464,7 @@ public class ContractInfoController extends RestfulController {
             Teacher teacher = getTeacher(request);
             if (null == teacher) {
                 response.setStatus(HttpStatus.NOT_FOUND.value());
-                return ReturnMapUtils.returnFail("Teacher doesn't exist");
+                return ReturnMapUtils.returnFail("This account does not exist.");
             }
             Long teacherId = teacher.getId();
 
@@ -494,7 +492,7 @@ public class ContractInfoController extends RestfulController {
         Teacher teacher = getTeacher(request);
         if (null == teacher) {
             response.setStatus(HttpStatus.NOT_FOUND.value());
-            return ReturnMapUtils.returnFail("Teacher doesn't exist!");
+            return ReturnMapUtils.returnFail("This account does not exist.");
         }
         Long teacherId = teacher.getId();
 
@@ -521,7 +519,7 @@ public class ContractInfoController extends RestfulController {
             Teacher teacher = getTeacher(request);
             if (null == teacher) {
                 response.setStatus(HttpStatus.NOT_FOUND.value());
-                return ReturnMapUtils.returnFail("Teacher doesn't exist");
+                return ReturnMapUtils.returnFail("This account does not exist.");
             }
             Long teacherId = teacher.getId();
 
@@ -646,7 +644,7 @@ public class ContractInfoController extends RestfulController {
 
             if (fileVo == null) {
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
-                return ReturnMapUtils.returnFail("upload file is fail");
+                return ReturnMapUtils.returnFail("Upload failed!  Please try again.");
             }
 
 
@@ -704,7 +702,7 @@ public class ContractInfoController extends RestfulController {
             }
             if (fileVo == null) {
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
-                return ReturnMapUtils.returnFail("upload file is fail");
+                return ReturnMapUtils.returnFail("Upload failed!  Please try again.");
             }
 
 
@@ -752,7 +750,7 @@ public class ContractInfoController extends RestfulController {
             }
             if (fileVo == null) {
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
-                return ReturnMapUtils.returnFail("upload file is fail");
+                return ReturnMapUtils.returnFail("Upload failed!  Please try again.");
             }
 
 
@@ -801,7 +799,7 @@ public class ContractInfoController extends RestfulController {
             }
             if (fileVo == null) {
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
-                return ReturnMapUtils.returnFail("upload file is fail");
+                return ReturnMapUtils.returnFail("Upload failed!  Please try again.");
             }
 
 
@@ -860,7 +858,7 @@ public class ContractInfoController extends RestfulController {
             }
             if (fileVo == null) {
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
-                return ReturnMapUtils.returnFail("upload file is fail");
+                return ReturnMapUtils.returnFail("Upload failed!  Please try again.");
             }
 
             TeacherContractFile teacherContractFile = new TeacherContractFile();
@@ -906,7 +904,7 @@ public class ContractInfoController extends RestfulController {
             }
             if (fileVo == null) {
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
-                return ReturnMapUtils.returnFail("upload file is fail");
+                return ReturnMapUtils.returnFail("Upload failed!  Please try again.");
             }
 
             TeacherContractFile teacherContractFile = new TeacherContractFile();
