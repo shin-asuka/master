@@ -97,14 +97,22 @@ public class LoginExpiredHandleInterceptor extends HandlerInterceptorAdapter {
         return false;
     }
     
-    private void responseToJson(String Jsonbody,HttpServletResponse response){
-        this.responseToJson(Jsonbody, null, response);
+    private void responseToJson(String info,HttpServletResponse response){
+        this.responseToJson(info,null, null, response);
     }
     
-    private void responseToJson(String Jsonbody,Throwable t, HttpServletResponse response){
+    private void responseToJson(String info,Throwable t,HttpServletResponse response){
+        this.responseToJson(info,null, null, response);
+    }
+    
+    private void responseToJson(String info,String Jsonbody,HttpServletResponse response){
+        this.responseToJson(info,Jsonbody, null, response);
+    }
+    
+    private void responseToJson(String info,String Jsonbody,Throwable t, HttpServletResponse response){
         try{
             response.setContentType(RestfulConfig.JSON_UTF_8);
-            response.getWriter().print(JsonTools.getJson(ReturnMapUtils.returnFail(Jsonbody,t)));
+            response.getWriter().print(JsonTools.getJson(ReturnMapUtils.returnFail(info,Jsonbody,t)));
             response.getWriter().close();
         }catch(Exception ex){
             ex.printStackTrace();
@@ -160,8 +168,7 @@ public class LoginExpiredHandleInterceptor extends HandlerInterceptorAdapter {
         
         if(!result){
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
-            logger.warn("用户身份认证失败!{}",Arrays.toString(remoteInterface.portal()));
-            responseToJson("You identity permission is don't match:"+Arrays.toString(remoteInterface.portal()),response);
+            responseToJson("You identity permission is don't match","用户身份认证失败."+Arrays.toString(remoteInterface.portal()),response);
         }
         return result;
     }
@@ -181,16 +188,14 @@ public class LoginExpiredHandleInterceptor extends HandlerInterceptorAdapter {
         String token = request.getHeader(RestfulController.AUTOKEN);
         if(StringUtils.isBlank(token)){
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
-            logger.warn("Token无效:{}",token);
-            responseToJson("Session expired! Please sign in again.",response);
+            responseToJson("Session expired! Please sign in again.","Token无效"+token,response);
             return false;
         }
         //user
         User user = loginService.getUser();
         if(user == null){
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
-            logger.warn("User 不存在...或者已经过期.");
-            responseToJson("This account does not exist.",response);
+            responseToJson("This account does not exist.","账户不存在或者已经过期."+token,response);
             return false;
         }
         //判断当前用户所在地区的ip是否变化，如果变化。则返回空用户，用户重新登陆
@@ -223,26 +228,22 @@ public class LoginExpiredHandleInterceptor extends HandlerInterceptorAdapter {
             //user 常规拦截
             if(UserEnum.Status.isLocked(user.getStatus())){
                 response.setStatus(HttpStatus.UNAUTHORIZED.value());
-                logger.warn(user.getUsername()+",账户被锁.");
-                responseToJson("This account has been locked.",response);
+                responseToJson("This account has been locked.","账户被锁."+user.getUsername(),response);
                 return false; 
             }
             if(!UserEnum.Dtype.TEACHER.toString().equalsIgnoreCase(user.getDtype())){
                 response.setStatus(HttpStatus.UNAUTHORIZED.value());
-                logger.warn(user.getUsername()+",账户Dtype不合法.");
-                responseToJson("Password or user name is incorrect!",response);
+                responseToJson("Password or user name is incorrect!","账户Dtype不合法."+user.getUsername(),response);
                 return false; 
             }
             if(TeacherEnum.LifeCycle.QUIT.toString().equals(teacher.getLifeCycle())){
                 response.setStatus(HttpStatus.UNAUTHORIZED.value());
-                logger.warn(user.getUsername()+",账户被Quit.");
-                responseToJson("Password or user name is incorrect!",response);
+                responseToJson("Password or user name is incorrect!","账户被Quit."+user.getUsername(),response);
                 return false; 
             }
             if(TeacherEnum.LifeCycle.FAIL.toString().equals(teacher.getLifeCycle())){
                 response.setStatus(HttpStatus.UNAUTHORIZED.value());
-                logger.warn(user.getUsername()+",账户status被Fail.");
-                responseToJson("This account has been locked.",response);
+                responseToJson("This account has been locked.","账户被Fail."+user.getUsername(),response);
                 return false; 
             }
             //常规拦截结束

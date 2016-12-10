@@ -50,29 +50,30 @@ public class ReturnMapUtils {
         return returnFail(info, null,null);
     }
 
-    public static Map<String, Object> returnFail(Map<String, Object> data) {
-        return returnFail("error", data ,null);
-    }
-    
-    public static Map<String, Object> returnFail(String info, Map<String, Object> data) {
-        return returnFail(info, data , null);
+    public static Map<String, Object> returnFail(String info, String jsonParam) {
+        return returnFail(info, jsonParam , null);
     }
 
     public static Map<String, Object> returnFail(String info,Throwable t) {
         return returnFail(info, null, t);
     }
     
-    public static Map<String, Object> returnFail(String info, Map<String, Object> data,Throwable t) {        
+    public static Map<String, Object> returnFail(String info, String jsonParam,Throwable t) {        
 
+        String message = info + "-logger["+jsonParam+"]";
+        
         if (null != t) {
-            logger.error(info, t);
+            logger.error(message, t);
         } else {
             //错误消息栈
-            logger.warn(info);
+            logger.warn(message);
+            int j = 0;
             StackTraceElement[] elements = new Throwable().getStackTrace();
             for(int i = 0 ; i < elements.length; i++){
                 if(!ReturnMapUtils.class.getCanonicalName().equals(elements[i].getClassName())){
-                    logger.warn(elements[i]+"");
+                    if(j < 3)
+                        logger.warn(elements[i]+"");
+                    j++;
                 }
             }
         }
@@ -85,11 +86,8 @@ public class ReturnMapUtils {
                 info = info.substring(info.indexOf("Exception:")+("Exception:".length()),info.length());
             }
             result.put("info", info);
+            result.put("data", jsonParam);
         }
-        if (MapUtils.isNotEmpty(data)) {
-            result.putAll(data);
-        }
-
         return result;
     }
 

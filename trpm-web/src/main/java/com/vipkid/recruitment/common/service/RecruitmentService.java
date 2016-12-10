@@ -84,6 +84,7 @@ public class RecruitmentService {
 
         //【待提交】没有流程则视为
         if(CollectionUtils.isEmpty(list)){
+            logger.info("没有流程记录 teacherId:{} ",teacher.getId());
             resultMap.put("result",AuditStatus.TO_SUBMIT.toString());
             return resultMap;
         }
@@ -91,28 +92,34 @@ public class RecruitmentService {
         //【待提交】当前状态与流程状态不一样,以lifeCycle为准
         TeacherApplication teacherApplication = list.get(0);
         if(!StringUtils.equalsIgnoreCase(teacherApplication.getStatus(), teacher.getLifeCycle())){
+            logger.info("当前状态与流程状态不一样 teacherId:{} taId:{}",teacher.getId(),teacherApplication.getId());
             resultMap.put("result",AuditStatus.TO_SUBMIT.toString());
             return resultMap;
         }
         
         //BASIC_INFO 11.5小时之内如果状态是FAIL 为待审核
         if(StringUtils.equalsIgnoreCase(Status.BASIC_INFO.toString(),teacherApplication.getStatus())){
+            logger.info("BasicInfo teacherId:{} taId:{}",teacher.getId(),teacherApplication.getId());
             resultMap.putAll(getBasicInfoStatus(teacher, teacherApplication));
             return resultMap;
         //INTERVIEW
         }else if(StringUtils.equalsIgnoreCase(Status.INTERVIEW.toString(),teacherApplication.getStatus())){
+            logger.info("Interview teacherId:{} taId:{}",teacher.getId(),teacherApplication.getId());
             resultMap.putAll(getInterviewStatus(teacher, teacherApplication));
             return resultMap;
         //TRAINING
         }else if(StringUtils.equalsIgnoreCase(Status.TRAINING.toString(),teacherApplication.getStatus())){
+            logger.info("Training teacherId:{} taId:{}",teacher.getId(),teacherApplication.getId());
             resultMap.putAll(getTrainingStatus(teacher, teacherApplication));
             return resultMap;
         //Practicum
         }else if(StringUtils.equalsIgnoreCase(Status.PRACTICUM.toString(),teacherApplication.getStatus())){
+            logger.info("Practicum teacherId:{} taId:{}",teacher.getId(),teacherApplication.getId());
             resultMap.putAll(getPracticumStatus(teacher, teacherApplication));
             return resultMap;
         //ContractInfo
         }else if(StringUtils.equalsIgnoreCase(Status.CONTRACT_INFO.toString(),teacherApplication.getStatus())){
+            logger.info("ContractInfo teacherId:{} taId:{}",teacher.getId(),teacherApplication.getId());
             resultMap.putAll(getContractInfoStatus(teacher, teacherApplication));
             return resultMap;
         }else{
@@ -126,6 +133,7 @@ public class RecruitmentService {
         Map<String,Object> result = Maps.newHashMap();
         //审核结果为空则为待审核
         if(StringUtils.isBlank(teacherApplication.getResult())){
+            logger.info("进入"+teacherApplication.getStatus()+"待审核页面 teacherId:{} taId:{}",teacher.getId(),teacherApplication.getId());
             result.put("result",AuditStatus.TO_AUDIT.toString());
             return result;
         //审核结果为其他
@@ -134,10 +142,12 @@ public class RecruitmentService {
             boolean _result = StringUtils.equalsIgnoreCase(Result.FAIL.toString(),teacherApplication.getResult());
             boolean _failTimeout = !DateUtils.count11hrlf(teacherApplication.getAuditDateTime().getTime());
             if(_result && _failTimeout){
+                logger.info("进入"+teacherApplication.getStatus()+"待审核页面 teacherId:{} taId:{}",teacher.getId(),teacherApplication.getId());
                 result.put("result",AuditStatus.TO_AUDIT.toString());
                 return result;
             //其他则直接返回给前端
             }else{
+                logger.info("进入"+teacherApplication.getStatus()+"审核结果 teacherId:{} taId:{}",teacher.getId(),teacherApplication.getId());
                 result.put("result",teacherApplication.getResult());
                 if(!StringUtils.equalsIgnoreCase(Result.PASS.toString(),teacherApplication.getResult())){
                     //失败原因
@@ -154,28 +164,34 @@ public class RecruitmentService {
         Map<String,Object> result = Maps.newHashMap();
         if(teacherApplication.getOnlineClassId() == 0){
             //待约课
+            logger.info("进入"+teacherApplication.getStatus()+"待约课页面 teacherId:{} taId:{}",teacherApplication.getTeacherId(),teacherApplication.getId());
             result.put("result",AuditStatus.TO_SUBMIT.toString());
             return result;
         }else{
+            logger.info("进入"+teacherApplication.getStatus()+"约课等待页面 teacherId:{} taId:{}",teacherApplication.getTeacherId(),teacherApplication.getId());
             //倒计时
             OnlineClass onlineClass = this.onlineClassDao.findById(teacherApplication.getOnlineClassId());
             //处于book状态的onlineClass 应该处于倒计时页面
             if(OnlineClassEnum.ClassStatus.BOOKED.toString().equals(onlineClass.getStatus())){
                 //小于1个小时 可进入onlineClass
                 if(!DateUtils.countXMinute(onlineClass.getScheduledDateTime().getTime(), enterClassAllowedMinute)){
+                    logger.info("进入"+teacherApplication.getStatus()+"待上课核页面 teacherId:{} taId:{}",teacherApplication.getTeacherId(),teacherApplication.getId());
                     result.put("result",AuditStatus.TO_CLASS.toString());
                     return result;
                     //大于1小时 但 小于54周 处于审核中
                 }else if(!DateUtils.count54week(onlineClass.getScheduledDateTime().getTime())){
+                    logger.info("进入"+teacherApplication.getStatus()+"待审核页面 teacherId:{} taId:{}",teacherApplication.getTeacherId(),teacherApplication.getId());
                     result.put("result",AuditStatus.TO_AUDIT.toString());
                     return result;
                     //大于54周超时
                 }else{
+                    logger.info("进入"+teacherApplication.getStatus()+"超时页面 teacherId:{} taId:{}",teacherApplication.getTeacherId(),teacherApplication.getId());
                     result.put("result",AuditStatus.HAS_TIMEOUT.toString());
                     return result;
                 }
             }else{
                 //这状态属于数据有误，将其处于待审核状态
+                logger.info("进入"+teacherApplication.getStatus()+"待审核页面 teacherId:{} taId:{}",teacherApplication.getTeacherId(),teacherApplication.getId());
                 result.put("result",AuditStatus.TO_AUDIT.toString());
                 return result;
             }
@@ -191,10 +207,12 @@ public class RecruitmentService {
             boolean _result = StringUtils.equalsIgnoreCase(Result.FAIL.toString(),teacherApplication.getResult());
             boolean _failTimeout = !DateUtils.count11hrlf(teacherApplication.getAuditDateTime().getTime());
             if(_result && _failTimeout){
+                logger.info("进入"+teacherApplication.getStatus()+"待审核页面 teacherId:{} taId:{}",teacher.getId(),teacherApplication.getId());
                 result.put("result",AuditStatus.TO_AUDIT.toString());
                 //其他则直接返回给前端
             }else {
                 result.put("result", teacherApplication.getResult());
+                logger.info("进入"+teacherApplication.getStatus()+"的"+teacherApplication.getResult()+"页面 teacherId:{} taId:{}",teacher.getId(),teacherApplication.getId());
                 if (!StringUtils.equalsIgnoreCase(Result.PASS.toString(), teacherApplication.getResult())) {
                     //失败原因
                     result.put("failedReason", teacherApplication.getFailedReason());
@@ -213,11 +231,13 @@ public class RecruitmentService {
         Map<String,Object> result = Maps.newHashMap();
         //审核结果为空则为待审核
         if(StringUtils.isBlank(teacherApplication.getResult())){
+            logger.info("进入"+teacherApplication.getStatus()+"待审核页面 teacherId:{} taId:{}",teacher.getId(),teacherApplication.getId());
             result.put("result",AuditStatus.TO_AUDIT.toString());
             return result;
         //审核结果为其他
         }else{
             result.put("result",teacherApplication.getResult());
+            logger.info("进入"+teacherApplication.getStatus()+"的"+teacherApplication.getResult()+"页面 teacherId:{} taId:{}",teacher.getId(),teacherApplication.getId());
             if(!StringUtils.equalsIgnoreCase(Result.PASS.toString(),teacherApplication.getResult())){
                 //失败原因
                 result.put("failedReason",teacherApplication.getFailedReason());
@@ -237,12 +257,15 @@ public class RecruitmentService {
             boolean _result = StringUtils.equalsIgnoreCase(Result.FAIL.toString(),teacherApplication.getResult());
             boolean _failTimeout = !DateUtils.count11hrlf(teacherApplication.getAuditDateTime().getTime());
             if((_result && _failTimeout) || Result.TBD.toString().equals(teacherApplication.getResult()) || Result.TBD_FAIL.toString().equals(teacherApplication.getResult())){
+                logger.info("进入"+teacherApplication.getStatus()+"待审核页面 teacherId:{} taId:{}",teacher.getId(),teacherApplication.getId());
                 result.put("result",AuditStatus.TO_AUDIT.toString());
             }else if(Result.PRACTICUM2.toString().equals(teacherApplication.getResult())){
+                logger.info("进入"+teacherApplication.getStatus()+"待约课页面 teacherId:{} taId:{}",teacher.getId(),teacherApplication.getId());
                 result.put("result",AuditStatus.TO_SUBMIT.toString());
             }else{
                 //其他则直接返回给前端
                 result.put("result",teacherApplication.getResult());
+                logger.info("进入"+teacherApplication.getStatus()+"的"+teacherApplication.getResult()+"页面 teacherId:{} taId:{}",teacher.getId(),teacherApplication.getId());
                 if(!StringUtils.equalsIgnoreCase(Result.PASS.toString(),teacherApplication.getResult())){
                     //失败原因
                     result.put("failedReason",teacherApplication.getFailedReason());
@@ -261,6 +284,7 @@ public class RecruitmentService {
 
         result.put("trainingPassTime", 0);
         if(AuditStatus.TO_SUBMIT.toString().equals(result.get("result").toString())){
+            logger.info("进入"+teacherApplication.getStatus()+"待约课页面 teacherId:{} taId:{}",teacher.getId(),teacherApplication.getId());
             List<TeacherApplication> trainingPassTAList = teacherApplicationDao.findApplictionForStatusResult(teacher.getId(), Status.TRAINING.toString(), Result.PASS.toString());
             if(CollectionUtils.isNotEmpty(trainingPassTAList) && trainingPassTAList.get(0).getAuditDateTime() != null){
                 result.put("trainingPassTime", trainingPassTAList.get(0).getAuditDateTime().getTime());
@@ -275,11 +299,13 @@ public class RecruitmentService {
         Map<String,Object> result = Maps.newHashMap();
         //审核结果为空则为待审核
         if(StringUtils.isBlank(teacherApplication.getResult())){
+            logger.info("进入"+teacherApplication.getStatus()+"待审核页面 teacherId:{} taId:{}",teacher.getId(),teacherApplication.getId());
             result.put("result",AuditStatus.TO_AUDIT.toString());
             return result;
         //审核结果为其他
         }else{
             result.put("result",teacherApplication.getResult());
+            logger.info("进入"+teacherApplication.getStatus()+"的"+teacherApplication.getResult()+"页面 teacherId:{} taId:{}",teacher.getId(),teacherApplication.getId());
             if(!StringUtils.equalsIgnoreCase(Result.PASS.toString(),teacherApplication.getResult())){
                 //失败原因
                 result.put("failedReason",teacherApplication.getFailedReason());

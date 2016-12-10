@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.community.tools.JsonTools;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -90,12 +91,12 @@ public class BasicInfoController extends RestfulController{
             List<Result> list = ValidateUtils.checkBean(teachingExperience,false);
             if(CollectionUtils.isNotEmpty(list) && list.get(0).isResult()){
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
-                return ReturnMapUtils.returnFail(list.get(0).getName() + "," + list.get(0).getMessages());
+                return ReturnMapUtils.returnFail("reslult:"+list.get(0).getName() + "," + list.get(0).getMessages());
             }
             //时间判断
             if(teachingExperience.getTimePeriodStart() >= teachingExperience.getTimePeriodEnd()){
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
-                return ReturnMapUtils.returnFail("The start time must be greater than the end time.");
+                return ReturnMapUtils.returnFail("The start time must be greater than the end time.","userId:"+user.getId());
             }
             if(teachingExperience.getId() > 0){
                 resultRow = this.teachingExperienceService.updateTeaching(teachingExperience, user);
@@ -106,7 +107,7 @@ public class BasicInfoController extends RestfulController{
             result.put("status", resultRow > 0 ? true : false);
             if(ReturnMapUtils.isFail(result)){
                 response.setStatus(HttpStatus.FORBIDDEN.value());
-                return ReturnMapUtils.returnFail("An error occurred while saving your data. Please try again.",result);
+                return ReturnMapUtils.returnFail("An error occurred while saving your data. Please try again.",JsonTools.getJson(result));
             }
             result.put("id", resultRow);
             return result;
@@ -128,7 +129,7 @@ public class BasicInfoController extends RestfulController{
             result = this.teachingExperienceService.delTeaching(id, user);
             if(ReturnMapUtils.isFail(result)){
                 response.setStatus(HttpStatus.FORBIDDEN.value());
-                return ReturnMapUtils.returnFail("An error occurred while deleting. Please try again.",result);
+                return ReturnMapUtils.returnFail("An error occurred while deleting. Please try again.",JsonTools.getJson(result));
             }
             return result;
         } catch (IllegalArgumentException e) {
@@ -168,15 +169,15 @@ public class BasicInfoController extends RestfulController{
             }
             if(!AppEnum.containsName(Gender.class, bean.getGender())){
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
-                return ReturnMapUtils.returnFail("Gender data is error:"+bean.getGender());
+                return ReturnMapUtils.returnFail("Gender data is error",bean.getGender());
             }
             if(!AppEnum.containsName(DegreeType.class, bean.getHighestLevelOfEdu())){
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
-                return ReturnMapUtils.returnFail("HighestLevelOfEdu data is error:"+bean.getHighestLevelOfEdu());
+                return ReturnMapUtils.returnFail("HighestLevelOfEdu data is error",bean.getHighestLevelOfEdu());
             }
             if(!AppEnum.containsName(RecruitmentChannel.class, bean.getRecruitmentChannel())){
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
-                return ReturnMapUtils.returnFail("RecruitmentChannel data is error:"+bean.getRecruitmentChannel());
+                return ReturnMapUtils.returnFail("RecruitmentChannel data is error",bean.getRecruitmentChannel());
             }
             User user = getUser(request);
             String token = request.getHeader(RestfulController.AUTOKEN);
