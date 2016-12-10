@@ -300,9 +300,11 @@ public class TeacherService {
 		//        param.put("suggestAdjustment", String.valueOf(inputDto.isSuggestAdjustment()));
 		//        param.put("trialLevelResult", inputDto.getTrialLevelResult());
 		param.put("teacherComment", JsonUtils.toJSONString(inputDto));
-
+		logger.info("updateTeacherComment http request url = {}; param={}",
+				httpUrlConstant.getApiHomeworkServerUrl() + API_TEACHER_COMMENT_UPDATE,JsonUtils.toJSONString(inputDto));
 		String response = httpApiClient
 				.doPost(httpUrlConstant.getApiHomeworkServerUrl() + API_TEACHER_COMMENT_UPDATE, param);
+		logger.info("updateTeacherComment http response = {}", response);
 		StandardJsonObject standardJsonObject = null;
 		try {
 			standardJsonObject = JsonUtils.toBean(response, StandardJsonObject.class);
@@ -323,8 +325,12 @@ public class TeacherService {
 		Map<String, String> param = Maps.newHashMap();
 		param.put("teacherComment", JsonUtils.toJSONString(inputDto));
 
+		logger.info("insertOneTeacherComment http request url = {}; param={}",
+				httpUrlConstant.getApiHomeworkServerUrl() + API_TEACHER_COMMENT_INSERT,JsonUtils.toJSONString(inputDto));
 		String response = httpApiClient
 				.doPost(httpUrlConstant.getApiHomeworkServerUrl() + API_TEACHER_COMMENT_INSERT, param);
+		logger.info("insertOneTeacherComment http response = {}", response);
+
 		StandardJsonObject standardJsonObject = null;
 		try {
 			standardJsonObject = JsonUtils.toBean(response, StandardJsonObject.class);

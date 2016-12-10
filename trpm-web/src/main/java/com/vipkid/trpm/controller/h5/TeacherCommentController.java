@@ -46,6 +46,7 @@ public class TeacherCommentController {
     @ResponseBody
     @RequestMapping(value = "/submit")
     public Object updateStatus(String submitDto) {
+        logger.info("updateStatus input={}",submitDto);
         if (StringUtils.isBlank(submitDto)) {
             return ApiResponseUtils.buildErrorResp(-1, "参数不能为空!");
         }
@@ -68,7 +69,7 @@ public class TeacherCommentController {
     @ResponseBody
     @RequestMapping(value = "/query")
     public Object queryTeacherComment(String teacherId, String studentId, String onlineclassId) {
-
+        logger.info("queryTeacherComment teacherId={},studentId={},onlineclassId={}",teacherId,studentId,onlineclassId);
         if (!NumberUtils.isNumber(teacherId) || !NumberUtils.isNumber(studentId) || !NumberUtils
                 .isNumber(onlineclassId)) {
             return ApiResponseUtils.buildErrorResp(-1, "参数错误!");
