@@ -80,6 +80,38 @@ public class ContractInfoController extends RestfulController {
     @Autowired
     private TeacherTaxpayerFormService teacherTaxpayerFormService;
 
+    /**
+     * 验证W9文件是否应该上传
+     * @param request
+     * @param response
+     * @return
+     */
+    @RequestMapping(value = "/continue", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
+    public Map<String,Object>  querycontinue(HttpServletRequest request, HttpServletResponse response){
+        try {
+            Teacher teacher = getTeacher(request);
+            if (null == teacher) {
+                response.setStatus(HttpStatus.NOT_FOUND.value());
+                return ReturnMapUtils.returnFail("Teacher doesn't exist");
+            }
+
+            Map<String, Object> result = contractInfoService.checkW9IsUpload(teacher);
+            if (ReturnMapUtils.isFail(result)) {
+                response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+                return result;
+            }
+        } catch (IllegalArgumentException e) {
+        response.setStatus(HttpStatus.BAD_REQUEST.value());
+        logger.error("queryContractInfo with IllegalArgumentException", e);
+        return ReturnMapUtils.returnFail(e.getMessage(), e);
+    } catch (Exception e) {
+        response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+        logger.error("queryContractInfo with Exception", e);
+        return ReturnMapUtils.returnFail(e.getMessage(), e);
+    }
+        logger.info("Successful continue contract info!");
+        return ReturnMapUtils.returnSuccess();
+    }
 
     /**
      * 进入 PersonalInfo 状态之前, 先查出之前是否有上传资料

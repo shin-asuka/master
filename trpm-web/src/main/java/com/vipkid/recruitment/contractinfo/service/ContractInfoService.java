@@ -57,6 +57,45 @@ public class ContractInfoService {
     //最新的 contract files 提交记录的 applicationId
     private static int CONTRACT_FILE_LATEST_APPLICATION_ID = 0;
 
+
+    public Map<String, Object> checkW9IsUpload(Teacher teacher){
+        if(!checkW9(teacher)){
+            return ReturnMapUtils.returnFail("teacher's country is USA or Location is USA but W9 file is not uploaded!");
+        }
+        return ReturnMapUtils.returnSuccess();
+    }
+
+
+    public boolean checkW9(Teacher teacher){
+        TeacherTaxpayerForm teacherTaxpayerForm = teacherTaxpayerFormDao.findByTeacherIdAndType(teacher.getId(), TeacherEnum.FormType.W9.val());
+        List<TeacherContractFile> teacherContractFiles = teacherContractFileDao.findByTeacherIdAndTeacherApplicationId(teacher.getId(), CONTRACT_FILE_LATEST_APPLICATION_ID);
+        List<TeacherContractFile> tax = Lists.newArrayList();
+        if(CollectionUtils.isNotEmpty(teacherContractFiles)) {
+            teacherContractFiles.forEach(obj -> {
+                if (obj.getFileType() == TeacherApplicationEnum.ContractFileType.CONTRACT_W9.val()) {
+                    tax.add(obj);
+                }
+            });
+        }
+        if (teacherTaxpayerForm == null||CollectionUtils.isEmpty(tax)) {
+            if (StringUtils.equals(teacher.getCountry(), "USA")) {
+                logger.warn("{} teacher's country is USA but W9 file is not uploaded!", teacher.getId());
+                return false;
+            } else {
+                //查询教师的Location id
+                TeacherAddress teacherAddress = teacherAddressDao.getTeacherAddress(teacher.getCurrentAddressId());
+                //  2497273 = 老师location 为   United States
+                if (teacherAddress != null && teacherAddress.getCountryId() == 2497273) {
+                    logger.warn("{} teacher's address's country id is 2497273 (USA) but W9 file is not uploaded!", teacher.getId());
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+
+
     /**
      * 在TeacherApplication中加入一条带审核数据
      *
@@ -64,20 +103,8 @@ public class ContractInfoService {
      */
     @Transactional
     public Map<String, Object> updateTeacherApplication(Teacher teacher, List<Integer> ids) {
-        TeacherTaxpayerForm teacherTaxpayerForm = teacherTaxpayerFormDao.findByTeacherIdAndType(teacher.getId(), TeacherEnum.FormType.W9.val());
-        if (teacherTaxpayerForm == null) {
-            if (StringUtils.equals(teacher.getCountry(), "USA")) {
-                logger.warn("{} teacher's country is USA but W9 file is not uploaded!", teacher.getId());
-                return ReturnMapUtils.returnFail("teacher's country is USA but W9 file is not uploaded!");
-            } else {
-                //查询教师的Location id
-                TeacherAddress teacherAddress = teacherAddressDao.getTeacherAddress(teacher.getCurrentAddressId());
-                //  2497273 = 老师location 为   United States
-                if (teacherAddress != null && teacherAddress.getCountryId() == 2497273) {
-                    logger.warn("{} teacher's address's country id is 2497273 (USA) but W9 file is not uploaded!", teacher.getId());
-                    return ReturnMapUtils.returnFail("teacher's Location is USA but W9 file is not uploaded!");
-                }
-            }
+        if(!checkW9(teacher)){
+            return ReturnMapUtils.returnFail("teacher's country is USA or Location is USA but W9 file is not uploaded!");
         }
 
         TeacherApplication application = new TeacherApplication();
@@ -214,20 +241,8 @@ public class ContractInfoService {
             if (CollectionUtils.isNotEmpty(tax)) {
                 contractFile.setTax(tax.get(tax.size() - 1));
             } else {
-                TeacherTaxpayerForm teacherTaxpayerForm = teacherTaxpayerFormDao.findByTeacherIdAndType(teacher.getId(), TeacherEnum.FormType.W9.val());
-                if (teacherTaxpayerForm == null) {
-                    if (StringUtils.equals(teacher.getCountry(), "USA")) {
-                        logger.warn("{} teacher's country is USA but W9 file is not uploaded!", teacher.getId());
-                        result = "FAIL";
-                    } else {
-                        //查询教师的Location id
-                        TeacherAddress teacherAddress = teacherAddressDao.getTeacherAddress(teacher.getCurrentAddressId());
-                        //  2497273 = 老师location 为   United States
-                        if (teacherAddress != null && teacherAddress.getCountryId() == 2497273) {
-                            logger.warn("{} teacher's address's country id is 2497273 (USA) but W9 file is not uploaded!", teacher.getId());
-                            result = "FAIL";
-                        }
-                    }
+                if(!checkW9(teacher)){
+                    result = "FAIL";
                 }
             }
 
