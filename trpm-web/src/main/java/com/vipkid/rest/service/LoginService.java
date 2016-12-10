@@ -22,6 +22,7 @@ import com.vipkid.email.EmailUtils;
 import com.vipkid.enums.OnlineClassEnum.CourseType;
 import com.vipkid.enums.TeacherEnum.LifeCycle;
 import com.vipkid.enums.TeacherModuleEnum.RoleClass;
+import com.vipkid.enums.TeacherPageLoginEnum.LoginType;
 import com.vipkid.recruitment.utils.ReturnMapUtils;
 import com.vipkid.rest.config.RestfulConfig;
 import com.vipkid.rest.config.TeacherInfo;
@@ -277,6 +278,7 @@ public class LoginService {
      */
     public void findByTeacherModule(TeacherInfo teacherinfo,String lifeCycle) {
         Map<String,Object> roles = teacherinfo.getRoles();
+        
         if(LifeCycle.REGULAR.toString().equalsIgnoreCase(lifeCycle)){
             roles.put(RoleClass.PE, this.isPe(teacherinfo.getTeacherId()));
             String result = teacherModuleDao.findByTeacherModule(teacherinfo.getTeacherId());
@@ -291,6 +293,8 @@ public class LoginService {
                 roles.put(RoleClass.TES,true);
             }
             teacherinfo.setRoles(roles);
+            teacherinfo.setEvaluation(teacherLoginTypeDao.isType(teacherinfo.getTeacherId(),LoginType.EVALUATION.val()));
+            teacherinfo.setEvaluationClick(teacherLoginTypeDao.isType(teacherinfo.getTeacherId(),LoginType.EVALUATION_CLICK.val()));
         }
     }  
     

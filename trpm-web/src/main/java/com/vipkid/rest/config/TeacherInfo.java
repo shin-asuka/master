@@ -33,6 +33,10 @@ public class TeacherInfo {
     private String action = "";
     
     private boolean haveChannel = false;
+    //quanxian
+    private boolean evaluation = false;
+    //quanxian
+    private boolean evaluationClick = false;
 
     public Map<String, Object> getRoles() {
         return roles;
@@ -106,6 +110,23 @@ public class TeacherInfo {
     public void setHaveChannel(boolean haveChannel) {
         this.haveChannel = haveChannel;
     }
+    
+    public boolean isEvaluation() {
+        return evaluation;
+    }
+
+    public void setEvaluation(boolean evaluation) {
+        this.evaluation = evaluation;
+    }
+
+    public boolean isEvaluationClick() {
+        return evaluationClick;
+    }
+
+    public void setEvaluationClick(boolean evaluationClick) {
+        this.evaluationClick = evaluationClick;
+    }
+
     /**
      * 其他信息，头像,bio,lifeCycle,name
      * @Author:ALong (ZengWeiLong)
