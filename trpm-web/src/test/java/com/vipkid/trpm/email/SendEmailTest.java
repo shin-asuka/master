@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
@@ -14,14 +15,17 @@ import com.alibaba.fastjson.JSONObject;
 import com.amazonaws.util.json.Jackson;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.client.util.Maps;
+import com.google.common.base.Stopwatch;
 import com.google.gson.JsonObject;
 import com.vipkid.email.EmailEngine;
+import com.vipkid.email.EmailUtils;
 import com.vipkid.email.handle.EmailConfig.EmailFormEnum;
 import com.vipkid.enums.TeacherApplicationEnum;
 import com.vipkid.recruitment.common.service.AuditEmailService;
 import com.vipkid.recruitment.entity.TeacherApplication;
 import com.vipkid.recruitment.entity.TeacherContractFile;
 import com.vipkid.task.utils.UADateUtils;
+import com.vipkid.trpm.entity.Teacher;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,11 +48,11 @@ public class SendEmailTest {
 		    Map<String, String> sendMap = Maps.newHashMap();
 	        sendMap.put("title", "Email"+"第gmail:"+i);
 	        sendMap.put("content", "hello world!");
-		    new EmailEngine().addMailPool("zwlzwl376@gmail.com", sendMap , EmailFormEnum.TEACHVIP);
+		    new EmailEngine().addMailPool("zhangzhaojun@vipkid.com.cn", sendMap , EmailFormEnum.TEACHVIP);
             Map<String, String> sendMap2 = Maps.newHashMap();
             sendMap2.put("title", "Email"+"163第"+i);
             sendMap2.put("content", "hello world!");
-		    new EmailEngine().addMailPool("zwlzwl376@126.com", sendMap2, EmailFormEnum.TEACHVIP);
+		    new EmailEngine().addMailPool("zhangzhaojun@vipkid.com.cn", sendMap2, EmailFormEnum.TEACHVIP);
 		}
 		
 	}
@@ -173,6 +177,19 @@ public class SendEmailTest {
 			}
 		}
 		return null;
+	}
+
+
+	@Test
+	public void sendEmail(){
+
+			String email = "zhangzhaojun@vipkid.com.cn";
+			String name = "张兆军";
+			String titleTemplate = "reminderApplicantBefore24HoursEmailSubjectTemplate.html";
+			String contentTemplate = "reminderApplicantBefore24HoursEmailContentTemplate.html";
+			EmailUtils.sendEmail4Recruitment(email, name, titleTemplate, contentTemplate);
+
+
 	}
 
 }
