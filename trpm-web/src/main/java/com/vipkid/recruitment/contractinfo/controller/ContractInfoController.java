@@ -124,7 +124,7 @@ public class ContractInfoController extends RestfulController {
             //2. 获取老师上传的 contract info,  , 是否有 audit failReason
             Map<String, Object> contractInfo = Maps.newHashMap();
             Map<String, Object> contractFileMap = contractInfoService.findContract(teacher);
-            boolean w9IsUpload = contractInfoService.checkW9(teacher);
+            boolean w9IsUpload = contractInfoService.W9IsUpload(teacher);
             logger.info("查询用户：{},查询上传过的文件", teacher.getId());
             contractInfo.put("file", contractFileMap.get("contractFile"));
             contractInfo.put("result", contractFileMap.get("result"));
