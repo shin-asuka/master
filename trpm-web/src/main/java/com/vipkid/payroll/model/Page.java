@@ -19,14 +19,14 @@ import org.apache.commons.lang3.StringUtils;
  *
  */
 @SuppressWarnings("rawtypes")
-public class Page implements Serializable {
+public class Page<T> implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     private int pageNo = 1; // 当前页码
     private int pageSize = 15; // 页面大小，设置为“-1”表示不进行分页（分页无效）
-    private long count;// 总记录数，设置为“-1”表示不查询总数
-    private List list = new ArrayList(); // 查询结果列表
+    private Integer count;// 总记录数，设置为“-1”表示不查询总数
+    private List<T> list = new ArrayList<T>(); // 查询结果列表
 
     public Page() {
         this.pageSize = -1;
@@ -61,7 +61,6 @@ public class Page implements Serializable {
         } else if (defaultPageSize != -2) {
             this.pageSize = defaultPageSize;
         }
-
     }
 
     /**
@@ -81,8 +80,8 @@ public class Page implements Serializable {
      * @param pageSize 分页大小
      * @param count 数据条数
      */
-    public Page(int pageNo, int pageSize, long count) {
-        this(pageNo, pageSize, count, new ArrayList());
+    public Page(int pageNo, int pageSize, Integer count) {
+        this(pageNo, pageSize, count, new ArrayList<T>());
     }
 
     /**
@@ -93,7 +92,7 @@ public class Page implements Serializable {
      * @param count 数据条数
      * @param list 本页数据对象列表
      */
-    public Page(int pageNo, int pageSize, long count, List list) {
+    public Page(int pageNo, int pageSize, Integer count, List<T> list) {
         this.setCount(count);
         this.setPageNo(pageNo);
         this.pageSize = pageSize;
@@ -105,7 +104,7 @@ public class Page implements Serializable {
      * 
      * @return
      */
-    public long getCount() {
+    public Integer getCount() {
         return count;
     }
 
@@ -114,7 +113,7 @@ public class Page implements Serializable {
      * 
      * @param count
      */
-    public void setCount(long count) {
+    public void setCount(Integer count) {
         this.count = count;
         if (pageSize >= count) {
             pageNo = 1;
@@ -162,7 +161,7 @@ public class Page implements Serializable {
      * 
      * @return List<T>
      */
-    public List getList() {
+    public List<T> getList() {
         return list;
     }
 
@@ -171,7 +170,7 @@ public class Page implements Serializable {
      * 
      * @param list
      */
-    public Page setList(List list) {
+    public Page setList(List<T> list) {
         this.list = list;
         return this;
     }

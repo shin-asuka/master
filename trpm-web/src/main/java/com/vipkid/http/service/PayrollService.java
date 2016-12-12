@@ -20,7 +20,7 @@ public class PayrollService extends HttpBaseService {
 	     params.put("teacherId", new Integer(teacherId).toString());
 	     params.put("month", new Integer(month).toString());
 
-		String url = new StringBuilder(super.serverAddress).append("/api/public/payroll/getPayrollItemByTeacherAndMonth").toString();
+		String url = new StringBuilder(super.serverAddress).append("/public/payroll/getPayrollItemByTeacherAndMonth").toString();
 		JSONObject jsonObject = null ;
 		jsonObject = getResult(params, url, jsonObject);
 		return jsonObject;
@@ -29,7 +29,7 @@ public class PayrollService extends HttpBaseService {
 
 
 	public JSONObject findRuleByTeacherMonth(Integer teacherId, int month) {
-		String url = new StringBuilder(super.serverAddress).append("/api/public/payroll/findRuleByTeacherMonth").toString();
+		String url = new StringBuilder(super.serverAddress).append("/public/payroll/findRuleByTeacherMonth").toString();
 		JSONObject jsonObject = null ;
 		 Map<String, String> params = Maps.newHashMap();
 	     params.put("teacherId", new Integer(teacherId).toString());
@@ -41,7 +41,7 @@ public class PayrollService extends HttpBaseService {
 	public String findPayrollItemByTypeWithPage(int slalaryTypeCourseAdditionRule, int teacherId, int month, Page page) {
 		Map<String, String> params = Maps.newHashMap();
 
-		params.put("id", new Integer(teacherId).toString());
+		params.put("teacherId", new Integer(teacherId).toString());
 		params.put("pageNo",  new Integer(page.getPageNo()).toString());
 		params.put("itemType", new Integer(slalaryTypeCourseAdditionRule).toString());
 		params.put("month", new Integer(month).toString());
@@ -50,7 +50,7 @@ public class PayrollService extends HttpBaseService {
 		} else {
 			params.put("pageSize", "15");
 		}
-		String url = new StringBuilder(super.serverAddress).append("/api/public/payroll/findPayrollItemByTypeWithPage")
+		String url = new StringBuilder(super.serverAddress).append("/public/payroll/findPayrollItemByTypeWithPage")
 				.toString();
 		HttpResult result = WebUtils.post(url, params);
 		String resultString = null;
