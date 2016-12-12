@@ -50,7 +50,7 @@ public class AuditEventController extends RestfulController {
      * @param response
      * @return
      */
-    @RequestMapping(value = "/sendEvent",method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
+    @RequestMapping(value = "/sendEvent",method = RequestMethod.POST, produces = RestfulConfig.JSON_UTF_8)
     public Map<String,Object> process(@RequestBody AuditEvent auditEvent,HttpServletRequest request, HttpServletResponse response) {
 
         logger.info("接收到管理端邮件调用参数:"+JsonTools.getJson(auditEvent));
