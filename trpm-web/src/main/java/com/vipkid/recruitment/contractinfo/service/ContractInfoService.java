@@ -91,7 +91,7 @@ public class ContractInfoService {
         if (teacherTaxpayerForm == null||CollectionUtils.isEmpty(tax)) {
             return W9IsUpload(teacher);
         }
-        return true;
+        return false;
     }
 
 
