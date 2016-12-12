@@ -5,16 +5,26 @@ import java.io.Serializable;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 
+import com.vipkid.rest.validation.annotation.Ignore;
+import com.vipkid.rest.validation.annotation.NotNull;
+
 /**
  * 定义 Audit 事件对象
  *
  * @author Austin.Cao  Date: 05/12/2016
  */
+@NotNull
 public class AuditEvent implements Serializable {
 
+    private static final long serialVersionUID = -8035433153839608310L;
+
     private Long sourceId;      // 事件关联的源 Id, 主要指 teacherId
+    
     private String status;      // 事件源的状态, 主要指示 teacher lifeCycle
+    
     private String auditResult; // 审核结果
+    
+    @Ignore
     private Long dateTime;
 
     public Long getSourceId() {
