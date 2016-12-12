@@ -100,7 +100,7 @@ public class PeSupervisorService {
         OnlineClass onlineClass = onlineClassDao.findById(teacherPe.getOnlineClassId());
         Map<String,Object> result = OnlineClassProxy.generateRoomEnterUrl(String.valueOf(teacherPe.getStudentId()),
                 teacherPe.getStudentName(), onlineClass.getClassroom(), OnlineClassProxy.RoomRole.STUDENT,
-                onlineClass.getSupplierCode());
+                onlineClass.getSupplierCode(),onlineClass.getId(),OnlineClassProxy.ClassType.PRACTICUM);
         return result.get("url")+"";
     }
 

@@ -44,7 +44,9 @@ public class OnlineClassProxy {
      */
     public enum ClassType{
         TEACHER_RECRUITMENT,
-        PRACTICUM
+        PRACTICUM,
+        MAJOR,
+        OPEN
     }
 
     private static String getHttpUrl(){     
@@ -60,7 +62,7 @@ public class OnlineClassProxy {
      * @param supplierCode 1 多贝 , 2 学点 从onlineClass对象中获取
      * @return   Map&lt;String,Object&gt;  教室URL
      */
-    public static Map<String,Object> generateRoomEnterUrl(String userId, String realName, String roomId,RoomRole userRole,String supplierCode) {
+    public static Map<String,Object> generateRoomEnterUrl(String userId, String realName, String roomId,RoomRole userRole,String supplierCode,long onlineClassId,ClassType type) {
         Map<String, String> params = Maps.newHashMap();
         params.put("userId", userId);
         params.put("name", realName);
@@ -75,24 +77,27 @@ public class OnlineClassProxy {
             return ReturnMapUtils.returnFail("fail to get url: classroom ,the classroom is empty");
         }
         String requestUrl = getHttpUrl() + "/api/service/private/supplier/getOnlineClassRoomURL";
-        logger.info("Request before: URL:{}; params:{},roomId:{}",requestUrl,JsonTools.getJson(params),roomId);
+        logger.info("用户Id:【{}】以【{}】角色,尝试进入onlineClassId:【{}】的教室，classType:【{}】,supplierCode:【{}】", userId,userRole.toString(),onlineClassId,type.toString(),supplierCode);
         String responseBody = HttpClientProxy.get(requestUrl, params, header);
         logger.info("Request after: responseBody=" + responseBody);
         if (StringUtils.isBlank(responseBody)) {
+            logger.warn("用户Id:【{}】以【{}】角色,进入onlineClassId:【{}】的教室失败1，classType:【{}】,supplierCode:【{}】,原因：接口 "+requestUrl + " 返回为空。", userId,userRole.toString(),onlineClassId,type.toString(),supplierCode);
             return ReturnMapUtils.returnFail("Failed to get classroom "+roomId+"'s url");
         }
         JsonNode resultJson = null;
         try{
             resultJson = JsonTools.readValue(responseBody);
         }catch(Exception ex){
-            logger.error(ex.getMessage());
-            return ReturnMapUtils.returnFail(responseBody);
+            logger.warn("用户Id:【{}】以【{}】角色,进入onlineClassId:【{}】的教室失败2，classType:【{}】,supplierCode:【{}】,原因：接口 "+requestUrl + " 返回Json字符串格式不对。", userId,userRole.toString(),onlineClassId,type.toString(),supplierCode);
+            return ReturnMapUtils.returnFail(responseBody,ex);
         }
         logger.info("Request after =" + JsonTools.getJson(resultJson));
         JsonNode jsonURL = resultJson.get("url");
         if (jsonURL == null) {
-            return ReturnMapUtils.returnFail("Not have class room url,you should checke request param ok!");
+            logger.warn("用户Id:【{}】以【{}】角色,进入onlineClassId:【{}】的教室失败3，classType:【{}】,supplierCode:【{}】,原因：接口 "+requestUrl + " 返回Json字符串没有url字段。", userId,userRole.toString(),onlineClassId,type.toString(),supplierCode);
+            return ReturnMapUtils.returnFail("Not have class room url,you should checke request param ok!","url is:"+jsonURL);
         }
+        logger.info("用户Id:【{}】以【{}】角色,进入onlineClassId:【{}】的教室成功，classType:【{}】,supplierCode:【{}】,教室Url:"+jsonURL.asText(), userId,userRole.toString(),onlineClassId,type.toString(),supplierCode);
         Map<String,Object> resultMap = Maps.newHashMap();
         resultMap.put("url", jsonURL.asText());
         return ReturnMapUtils.returnSuccess(resultMap);
@@ -122,10 +127,13 @@ public class OnlineClassProxy {
         String responseBody = HttpClientProxy.post(requestUrl, requestParams, requestHeader);
         logger.info("BOOK CLASS MESSAGE : " + responseBody);
         if (StringUtils.isBlank(responseBody)) {
+            logger.warn("用户Id:【{}】,Booked onlineClassId:【{}】失败1,classType:【{}】,classTime:【{}】,原因：接口 "+requestUrl + " 返回为空。", userId,onlineClassId,type,scheduledDateTime);
             return ReturnMapUtils.returnFail("Request failed, please try again later !");
         } else if (responseBody.indexOf("Success") > 0) {
+            logger.info("用户Id:【{}】,Booked onlineClassId:【{}】成功,classType:【{}】,classTime:【{}】", userId,onlineClassId,type,scheduledDateTime);
             return ReturnMapUtils.returnSuccess();
         } else {
+            logger.warn("用户Id:【{}】,Booked onlineClassId:【{}】失败2,classType:【{}】,classTime:【{}】,原因：接口 "+requestUrl + " 未知【"+responseBody+"】", userId,onlineClassId,type,scheduledDateTime);
             return ReturnMapUtils.returnFail("Request failed, Please try again later!");
         }
     }
@@ -153,12 +161,16 @@ public class OnlineClassProxy {
         
         logger.info("CANCEL CLASS MESSAGE : " + responseBody);
         if (StringUtils.isBlank(responseBody)) {
+            logger.warn("用户Id:【{}】,Cancel onlineClassId:【{}】失败1,classType:【{}】,原因：接口 "+requestUrl + " 返回空白。", userId,onlineClassId,type);
             return ReturnMapUtils.returnFail("Request failed, Please try again later !");
         } else if (responseBody.indexOf("Success") > 0) {
+            logger.info("用户Id:【{}】,Cancel onlineClassId:【{}】成功,classType:【{}】", userId,onlineClassId,type);
             return ReturnMapUtils.returnSuccess();
         } else if (responseBody.indexOf("628") > 0) {
+            logger.warn("用户Id:【{}】,Cancel onlineClassId:【{}】失败2,classType:【{}】,原因：接口 "+requestUrl + " 628错误。", userId,onlineClassId,type);
             return ReturnMapUtils.returnFail("Sorry, you can't cancel again within 5 minutes. Try again later!");
         } else {
+            logger.warn("用户Id:【{}】,Cancel onlineClassId:【{}】失败3,classType:【{}】,原因：接口 "+requestUrl + " 未知【"+responseBody+"】", userId,onlineClassId,type);
             return ReturnMapUtils.returnFail("Request failed, Please try again later!");
         }
     }
