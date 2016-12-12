@@ -128,7 +128,7 @@ public class ContractInfoController extends RestfulController {
             logger.info("查询用户：{},查询上传过的文件", teacher.getId());
             contractInfo.put("file", contractFileMap.get("contractFile"));
             contractInfo.put("result", contractFileMap.get("result"));
-            contractInfo.put("isW9Requir",w9IsUpload);
+            contractInfo.put("isW9Required",w9IsUpload);
             result.put("personalInfo", personalInfo);
             result.put("contractInfo", contractInfo);
 
