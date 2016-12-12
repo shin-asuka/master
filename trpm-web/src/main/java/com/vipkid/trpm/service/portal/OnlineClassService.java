@@ -13,7 +13,9 @@ import com.vipkid.trpm.constant.ApplicationConstant;
 import com.vipkid.trpm.constant.ApplicationConstant.*;
 import com.vipkid.trpm.dao.*;
 import com.vipkid.trpm.entity.*;
+import com.vipkid.trpm.entity.teachercomment.QueryTeacherCommentOutputDto;
 import com.vipkid.trpm.entity.teachercomment.TeacherComment;
+import com.vipkid.trpm.entity.teachercomment.TeacherCommentUpdateDto;
 import com.vipkid.trpm.proxy.ClassroomProxy;
 import com.vipkid.trpm.util.DateUtils;
 import com.vipkid.trpm.util.FilesUtils;
@@ -80,6 +82,9 @@ public class OnlineClassService {
 
     @Autowired
     private TeacherService teacherService;
+
+    @Autowired
+    private CourseDao courseDao;
 
     /**
      * 根据id找online class
@@ -820,5 +825,53 @@ public class OnlineClassService {
         }
         map.put("sequence", lesson.getSequence());
         return map;
+    }
+
+    public String checkAndAddFeedback(long studentId, long teacherId, OnlineClass onlineClass, Lesson lesson) {
+        try {
+            if (studentId > 0 && teacherId > 0 && onlineClass != null && lesson != null) {
+                logger.info(
+                    "teacher enter the classRoom,checkAndAddFeedback a teacherCommentRecord. input "
+                        + "studentId={},teacherId={},onlineClassId={},lessonId={}", studentId,
+                    teacherId, onlineClass.getId(), lesson.getId());
+
+                QueryTeacherCommentOutputDto isExist = teacherService
+                    .getTeacherComment(String.valueOf(teacherId), String.valueOf(studentId), String.valueOf(onlineClass.getId()));
+                if (isExist != null) {
+                    return isExist.getTeacherCommentId();
+                }
+
+                TeacherCommentUpdateDto tcuDto = new TeacherCommentUpdateDto();
+                tcuDto.setStudentId(studentId);
+                tcuDto.setOnlineClassId(onlineClass.getId());
+                tcuDto.setTeacherId(teacherId);
+
+                tcuDto.setLessonId(lesson.getId());
+                tcuDto.setLessonName(lesson.getName());
+                tcuDto.setLessonSerialNumber(lesson.getSerialNumber());
+                tcuDto.setLearningCycleId(lesson.getLearningCycleId());
+                tcuDto.setScheduledDateTime(new Date(onlineClass.getScheduledDateTime().getTime()));
+                tcuDto.setCreateTime(new Timestamp(System.currentTimeMillis()));
+
+                Course course = courseDao.findIdsByLessonId(lesson.getId());
+                tcuDto.setCourseId(course.getId());
+                tcuDto.setCourseType(course.getType());
+                tcuDto.setUnitId(course.getUnitId());
+
+                tcuDto.setStars(0);
+                tcuDto.setEmpty(true);
+
+                String newId = teacherService.insertOneTeacherComment(tcuDto);
+                logger.info("teacher enter the classRoom,insert a teacherCommentRecord. newId={}",
+                    newId);
+                return newId;
+
+            }
+        }catch (Exception e){
+            logger.error("checkAndAddFeedback error Exceprion:", e);
+        }
+        logger.error("checkAndAddFeedback error input param error!studentId={},teacherId={},onlineClass={},lesson={}",
+            studentId, teacherId, onlineClass, lesson);
+        return null;
     }
 }

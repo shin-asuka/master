@@ -140,6 +140,7 @@ public class OnlineClassController extends AbstractPortalController {
         }
         model.addAttribute("isTrial", isTrial);
         logger.info("TeacherId:{},成功进入教室(INTO),onlineClassId:{},studentId:{}",user.getId(),onlineClassId,studentId);
+        onlineclassService.checkAndAddFeedback(studentId,teacher.getId(),onlineClass,lesson);
         model.addAttribute("lesson", lesson);
         if (lesson.getSerialNumber().startsWith("P")) {
             model.addAllAttributes(
