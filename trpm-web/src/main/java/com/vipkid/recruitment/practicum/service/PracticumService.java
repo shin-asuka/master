@@ -227,7 +227,7 @@ public class PracticumService {
         }
 
         //执行Cancel逻辑
-        Map<String,Object> result = OnlineClassProxy.doCancelRecruitement(teacher.getId(), onlineClass.getId(), ClassType.TEACHER_RECRUITMENT);
+        Map<String,Object> result = OnlineClassProxy.doCancelRecruitement(teacher.getId(), onlineClass.getId(), ClassType.PRACTICUM);
         result.put("count", count);
         if(ReturnMapUtils.isFail(result)){
             //一旦失败，抛出异常回滚
