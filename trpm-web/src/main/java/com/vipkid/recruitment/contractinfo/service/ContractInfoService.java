@@ -58,12 +58,6 @@ public class ContractInfoService {
     private static int CONTRACT_FILE_LATEST_APPLICATION_ID = 0;
 
 
-    public Map<String, Object> checkW9IsUpload(Teacher teacher){
-        if(!checkW9(teacher)){
-            return ReturnMapUtils.returnFail("teacher's country is USA or Location is USA but W9 file is not uploaded!");
-        }
-        return ReturnMapUtils.returnSuccess();
-    }
 
 
     public boolean checkW9(Teacher teacher){
