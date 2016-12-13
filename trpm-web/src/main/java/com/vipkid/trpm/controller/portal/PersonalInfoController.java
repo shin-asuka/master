@@ -88,7 +88,7 @@ public class PersonalInfoController extends AbstractPortalController {
 
     /**
      * 老师的PersonalInfo首页面
-     * 
+     *
      * @param request
      * @param response
      * @param model
@@ -263,7 +263,7 @@ public class PersonalInfoController extends AbstractPortalController {
 
     /**
      * 处理老师基本信息更新
-     * 
+     *
      * @param request
      * @param response
      * @param basicInfo
@@ -283,7 +283,7 @@ public class PersonalInfoController extends AbstractPortalController {
 
     /**
      * 处理用户密码修改逻辑
-     * 
+     *
      * @param request
      * @param response
      * @param changePassword
@@ -332,7 +332,7 @@ public class PersonalInfoController extends AbstractPortalController {
 
     /**
      * 处理老师银行信息更新
-     * 
+     *
      * @param request
      * @param response
      * @param bankInfo
@@ -349,7 +349,7 @@ public class PersonalInfoController extends AbstractPortalController {
 
     /**
      * 修改avatar的请求处理
-     * 
+     *
      * @param request
      * @param response
      * @param model
@@ -362,7 +362,7 @@ public class PersonalInfoController extends AbstractPortalController {
 
     /**
      * 处理上传avatar
-     * 
+     *
      * @param request
      * @param file
      * @return

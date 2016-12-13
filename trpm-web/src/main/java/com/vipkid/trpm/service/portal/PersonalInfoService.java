@@ -55,7 +55,7 @@ public class PersonalInfoService {
 
 	/**
 	 * 处理用户密码修改逻辑
-	 * 
+	 *
 	 * @param teacherId
 	 * @param encodedNewPassword
 	 * @return Map<String, Object>
@@ -74,7 +74,7 @@ public class PersonalInfoService {
 
 	/**
 	 * 处理银行信息更新逻辑
-	 * 
+	 *
 	 * @param teacher
 	 * @param bankInfo
 	 */
@@ -139,7 +139,7 @@ public class PersonalInfoService {
 
 	/**
 	 * 处理基本信息更新逻辑
-	 * 
+	 *
 	 * @param teacher
 	 * @param basicInfo
 	 * @return Map<String, Object>
@@ -149,7 +149,7 @@ public class PersonalInfoService {
 		modelMap.put("action", true);
 
 		teacher.setAddress(basicInfo.getAddress());
-		
+
 		teacher.setEmail(basicInfo.getEmail());
 		teacher.setIntroduction(basicInfo.getIntroduction());
 		teacher.setPhoneNationCode(basicInfo.getPhoneNationCode());
@@ -173,8 +173,8 @@ public class PersonalInfoService {
 		logger.info("Update teacher address: {}", JsonTools.getJson(teacherAddress));
 
 		teacher.setCurrentAddressId(teacherAddress.getId());
-		
-		//country 
+
+		//country
 		String strCountry = basicInfo.getCountry();
 		teacher.setCountry(strCountry);
 		teacherDao.update(teacher);
@@ -186,13 +186,13 @@ public class PersonalInfoService {
 		user.setName(basicInfo.getName());
 
 		userDao.update(user);
-		
+
 		return modelMap;
 	}
 
 	/**
 	 * 处理头像上传
-	 * 
+	 *
 	 * @param file
 	 * @param teacherId
 	 * @return Map<String, Object>
@@ -226,7 +226,7 @@ public class PersonalInfoService {
 
 	/**
 	 * 处理老师个人信息页面逻辑
-	 * 
+	 *
 	 * @param teacherId
 	 * @return Map<String, Object>
 	 */
@@ -341,6 +341,7 @@ public class PersonalInfoService {
 			logger.warn("invalid params:source={}", source);
 			return source;
 		}else {
+            source = source.trim();
 			int n = source.lastIndexOf(" ");
 			StringBuffer sb = new StringBuffer();
 			String name;
