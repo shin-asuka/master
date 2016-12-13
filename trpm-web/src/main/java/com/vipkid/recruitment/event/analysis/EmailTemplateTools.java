@@ -21,7 +21,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.annotation.Resource;
 
 
 /**
@@ -31,7 +30,7 @@ public class EmailTemplateTools {
     
     private static Logger logger = LoggerFactory.getLogger(EmailTemplateTools.class);
 
-    @Resource
+    @Autowired
     private  TeacherDao teacherDao;
 
     private static JsonNode JSON = null;
