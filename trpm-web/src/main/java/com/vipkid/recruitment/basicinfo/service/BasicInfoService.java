@@ -23,6 +23,7 @@ import com.vipkid.enums.TeacherEnum;
 import com.vipkid.enums.TeacherEnum.LifeCycle;
 import com.vipkid.enums.TeacherEnum.RecruitmentChannel;
 import com.vipkid.enums.UserEnum;
+import com.vipkid.recruitment.common.service.RecruitmentService;
 import com.vipkid.recruitment.dao.TeacherApplicationDao;
 import com.vipkid.recruitment.dao.TeachingExperienceDao;
 import com.vipkid.recruitment.entity.TeacherApplication;
@@ -61,6 +62,9 @@ public class BasicInfoService {
     
     @Autowired
     private TeacherNationalityCodeDao teacherNationalityCode;
+    
+    @Autowired
+    private RecruitmentService recruitmentService;
     
     @Autowired
     private RedisProxy redisProxy;
@@ -130,15 +134,18 @@ public class BasicInfoService {
      * Map<String,Object>
      * @date 2016年10月17日
      */
-    public Map<String,Object> submitInfo(TeacherDto bean,User user,String token){ 
+    public Map<String,Object> submitInfo(TeacherDto bean,Teacher teacher,User user,String token){ 
         Map<String,Object> result = Maps.newHashMap();
         
         bean.setFirstName(upperStr(bean.getFirstName()));
         bean.setMiddleName(upperStr(bean.getMiddleName()));
         bean.setLastName(upperStr(bean.getLastName()));
+
+        if(recruitmentService.teacherIsApplicationFinished(teacher)){
+            return ReturnMapUtils.returnFail("Your recruitment process is over already, Please refresh your page !","INTERVIEW:"+teacher.getId());
+        }
         
-        Teacher teacher = this.teacherDao.findById(user.getId());
-        List<TeacherApplication> applicationList = teacherApplicationDao.findApplictionForStatus(user.getId(),LifeCycle.BASIC_INFO.toString());
+        List<TeacherApplication> applicationList = teacherApplicationDao.findApplictionForStatus(teacher.getId(),LifeCycle.BASIC_INFO.toString());
         if(CollectionUtils.isNotEmpty(applicationList)){
             logger.error("已经提交基本信息的老师{}，重复提交被拦截:提交状态{},审核结果{},用户状态:{}",teacher.getId(),applicationList.get(0).getStatus(),applicationList.get(0).getResult(),teacher.getLifeCycle());
             return ReturnMapUtils.returnFail("You have already submitted data!");

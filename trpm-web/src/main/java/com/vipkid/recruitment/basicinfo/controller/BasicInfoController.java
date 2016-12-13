@@ -98,7 +98,7 @@ public class BasicInfoController extends RestfulController{
                 return ReturnMapUtils.returnFail("reslult:"+list.get(0).getName() + "," + list.get(0).getMessages());
             }
             //检查验证
-            if(recruitmentService.teacherIsApplicationFail(getTeacher(request))){
+            if(recruitmentService.teacherIsApplicationFinished(getTeacher(request))){
                 return ReturnMapUtils.returnFail("Your recruitment process is over already, Please refresh your page !","BASICINFO:"+user.getId());
             }
             //时间判断
@@ -187,9 +187,10 @@ public class BasicInfoController extends RestfulController{
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
                 return ReturnMapUtils.returnFail("RecruitmentChannel data is error",bean.getRecruitmentChannel());
             }
-            User user = getUser(request);
+            
+            Teacher teacher = getTeacher(request);
             String token = request.getHeader(RestfulController.AUTOKEN);
-            result = this.basicInfoService.submitInfo(bean,user,token);
+            result = this.basicInfoService.submitInfo(bean,teacher,getUser(request),token);
             if(ReturnMapUtils.isFail(result)){
                 response.setStatus(HttpStatus.FORBIDDEN.value());
             }

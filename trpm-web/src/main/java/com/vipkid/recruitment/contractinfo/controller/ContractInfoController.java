@@ -180,7 +180,7 @@ public class ContractInfoController extends RestfulController {
                 return ReturnMapUtils.returnFail("This account does not exist.");
             }
             
-            if(recruitmentService.teacherIsApplicationFail(teacher)){
+            if(recruitmentService.teacherIsApplicationFinished(teacher)){
                 return ReturnMapUtils.returnFail("Your recruitment process is over already, Please refresh your page !","CONTRACT_INFO:"+teacher.getId());
             }
 
