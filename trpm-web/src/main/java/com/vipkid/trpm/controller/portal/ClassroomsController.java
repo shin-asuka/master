@@ -52,7 +52,7 @@ public class ClassroomsController extends AbstractPortalController {
 		Teacher teacher = loginService.getTeacher();
 
 		// 判断是否能上Practicum类型的课程
-		if (loginService.enabledPracticum(teacher.getId())) {
+		if (loginService.isPe(teacher.getId())) {
 			model.addAttribute("showLayer", teacherPageLoginService.isType(teacher.getId(),LoginType.CLASSROOMS));
 		}
 

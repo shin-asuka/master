@@ -81,6 +81,7 @@ public class LoginService {
      * @return boolean
      * @date 2016年7月4日
      */
+    @Deprecated
     public Map<String,Object> getAllRole(long teacherId) {
         String result = teacherModuleDao.findByTeacherModule(teacherId);
         Map<String,Object> roles = Maps.newHashMap();
@@ -174,28 +175,6 @@ public class LoginService {
     	return token;
     }
 
-    public boolean enabledPracticum(long userId) {
-        String key = CacheUtils.getCoursesKey(userId);
-        String json = redisProxy.get(key);
-        List<String> courseTypes = JsonTools.readValue(json, new TypeReference<List<String>>() {});
-        return courseTypes.contains(CourseType.PRACTICUM);
-    }
-    
-    /**
-     * 查询老师可以教的课程类型列表
-     * 
-     * @param teacherId
-     * @return List<String>
-     */
-    public List<String> getCourseType(long teacherId) {
-        List<String> courseTypes = Lists.newArrayList();
-
-        courseDao.findByTeacherId(teacherId).stream().forEach((course) -> {
-            courseTypes.add(course.getType());
-        });
-        return courseTypes;
-    }
-
     /**
      * 处理不显示提示Layer逻辑
      * 
@@ -245,12 +224,25 @@ public class LoginService {
             CookieUtils.removeCookie(response, CookieKey.TRPM_TOKEN, null, null);
         }
     }
-
+    
     public void setCourseTypes(long userId, List<String> courseTypes) {
         String key = CacheUtils.getCoursesKey(userId);
-        redisProxy.set(key, JsonTools.getJson(courseTypes));
+        redisProxy.set(key, JsonTools.getJson(courseTypes),EXPIRED_SECONDS);
     }
+    /**
+     * 查询老师可以教的课程类型列表
+     * 
+     * @param teacherId
+     * @return List<String>
+     */
+    public List<String> getCourseType(long teacherId) {
+        List<String> courseTypes = Lists.newArrayList();
 
+        courseDao.findByTeacherId(teacherId).stream().forEach((course) -> {
+            courseTypes.add(course.getType());
+        });
+        return courseTypes;
+    }
     /**
      * 是否是PE
      *  
@@ -263,8 +255,13 @@ public class LoginService {
     public boolean isPe(long userId) {
         String key = CacheUtils.getCoursesKey(userId);
         String json = redisProxy.get(key);
-        List<String> courseTypes = JsonTools.readValue(json, new TypeReference<List<String>>() {
-        });
+        List<String> courseTypes = Lists.newArrayList();
+        if(StringUtils.isBlank(json)){
+            courseTypes = getCourseType(userId);
+            setCourseTypes(userId, courseTypes);
+        }else{
+            courseTypes = JsonTools.readValue(json, new TypeReference<List<String>>() {});
+        }
         return courseTypes.contains(CourseType.PRACTICUM);
     }
         

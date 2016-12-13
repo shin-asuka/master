@@ -65,7 +65,7 @@ public class ScheduleController extends AbstractPortalController {
 
 		// 判断是否能上Practicum类型的课程
 		model.addAttribute("showPracticum", false);
-		if (loginService.enabledPracticum(teacher.getId())) {
+		if (loginService.isPe(teacher.getId())) {
 		    model.addAttribute("showPracticum", teacherPageLoginService.isType(teacher.getId(), LoginType.PRACTICUM));
 		}
 		//判断是否显示AdminQuiz
