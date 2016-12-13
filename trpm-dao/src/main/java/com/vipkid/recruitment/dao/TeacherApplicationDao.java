@@ -93,8 +93,16 @@ public class TeacherApplicationDao extends MapperDaoTemplate<TeacherApplication>
        return findApplictionForStatusResult(teacherId, status, null);
     }
     
-    
-    public List<TeacherApplication> findApplictionForStatusResult(long teacherId,String result) {
+    /**
+     * 根据结果查询 
+     * @Author:ALong (ZengWeiLong)
+     * @param teacherId
+     * @param status
+     * @return    
+     * List<TeacherApplication>
+     * @date 2016年10月20日
+     */
+    public List<TeacherApplication> findApplictionForResult(long teacherId,String result) {
         return this.findApplictionForStatusResult(teacherId, null, result);
     }
     

@@ -407,7 +407,7 @@ public class RecruitmentService {
      */
     public boolean teacherIsApplicationFinished(Teacher teacher){
         //老师已经被fail过，不能继续操作n
-        List<TeacherApplication> fail = teacherApplicationDao.findApplictionForStatusResult(teacher.getId(),Result.FAIL.toString());
+        List<TeacherApplication> fail = teacherApplicationDao.findApplictionForResult(teacher.getId(),Result.FAIL.toString());
         if(CollectionUtils.isNotEmpty(fail)){
             return true;
         }
