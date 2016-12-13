@@ -19,20 +19,16 @@ import com.google.common.base.Charsets;
 import com.google.common.collect.Maps;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 
 /**
  * Created by zhangzhaojun on 2016/12/8.
  */
-@Component
+
 public class EmailTemplateTools {
     
     private static Logger logger = LoggerFactory.getLogger(EmailTemplateTools.class);
-
-    @Autowired
-    private  TeacherDao teacherDao;
 
     private static JsonNode JSON = null;
 
@@ -102,12 +98,11 @@ public class EmailTemplateTools {
         return null;
     }
 
-    public  String readyContent(TeacherApplication teacherApplication){
+    public  static String readyContent(TeacherApplication teacherApplication,Teacher teacher){
         if(teacherApplication == null){
             return null;
         }
 
-        Teacher teacher  = teacherDao.findById(teacherApplication.getTeacherId());
 
         Map<String,String> map = Maps.newHashMap();
         map.put("contractURL", teacherApplication.getContractUrl());
