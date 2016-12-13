@@ -58,6 +58,16 @@ public class ContractInfoService {
     private static int CONTRACT_FILE_LATEST_APPLICATION_ID = 0;
 
 
+
+    public String findContractUrl(long teacherId){
+       List<TeacherApplication> teacherApplications =  teacherApplicationDao.findApplictionForStatusResult(teacherId,TeacherApplicationEnum.Status.INTERVIEW.toString(),TeacherApplicationEnum.Result.PASS.toString());
+        if(CollectionUtils.isNotEmpty(teacherApplications)){
+            TeacherApplication teacherApplication = teacherApplications.get(0);
+                     return teacherApplication.getContractUrl();
+        }
+        return null;
+    }
+
     public boolean W9IsUpload(Teacher teacher){
         if (StringUtils.equals(teacher.getCountry(), "USA")) {
             logger.warn("{} teacher's country is USA but W9 file is not uploaded!", teacher.getId());

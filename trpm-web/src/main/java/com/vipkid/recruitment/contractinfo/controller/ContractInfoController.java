@@ -125,9 +125,13 @@ public class ContractInfoController extends RestfulController {
             Map<String, Object> contractInfo = Maps.newHashMap();
             Map<String, Object> contractFileMap = contractInfoService.findContract(teacher);
             boolean w9IsUpload = contractInfoService.W9IsUpload(teacher);
+            String contractUrl = contractInfoService.findContractUrl(teacher.getId());
             logger.info("查询用户：{},查询上传过的文件", teacher.getId());
             contractInfo.put("file", contractFileMap.get("contractFile"));
             contractInfo.put("result", contractFileMap.get("result"));
+            if(StringUtils.isNotBlank(contractUrl)){
+                contractInfo.put("contractUrl",contractUrl);
+            }
             contractInfo.put("isW9Required",w9IsUpload);
             result.put("personalInfo", personalInfo);
             result.put("contractInfo", contractInfo);
@@ -144,6 +148,8 @@ public class ContractInfoController extends RestfulController {
         logger.info("Successful query contract info {}", JsonUtils.toJSONString(result));
         return ReturnMapUtils.returnSuccess(result);
     }
+
+
 
 
     /**

@@ -9,7 +9,6 @@ import java.util.Map;
 import com.amazonaws.util.json.Jackson;
 import com.vipkid.email.template.TemplateUtils;
 import com.vipkid.recruitment.entity.TeacherApplication;
-import com.vipkid.trpm.dao.TeacherDao;
 import com.vipkid.trpm.entity.Teacher;
 import org.apache.commons.lang.StringUtils;
 
@@ -19,7 +18,6 @@ import com.google.common.base.Charsets;
 import com.google.common.collect.Maps;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
 
 
 /**
