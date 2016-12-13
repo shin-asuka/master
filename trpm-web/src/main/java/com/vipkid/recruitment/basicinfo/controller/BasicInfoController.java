@@ -25,6 +25,7 @@ import com.vipkid.enums.TeacherEnum.RecruitmentChannel;
 import com.vipkid.enums.UserEnum.Gender;
 import com.vipkid.recruitment.basicinfo.service.BasicInfoService;
 import com.vipkid.recruitment.basicinfo.service.TeachingExperienceService;
+import com.vipkid.recruitment.common.service.RecruitmentService;
 import com.vipkid.recruitment.utils.ReturnMapUtils;
 import com.vipkid.rest.RestfulController;
 import com.vipkid.rest.config.RestfulConfig;
@@ -48,6 +49,9 @@ public class BasicInfoController extends RestfulController{
     
     @Autowired
     private TeachingExperienceService teachingExperienceService;
+    
+    @Autowired
+    private RecruitmentService recruitmentService;
     
     
     @RequestMapping(value = "/getRecruitmentChannelList", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
@@ -92,6 +96,10 @@ public class BasicInfoController extends RestfulController{
             if(CollectionUtils.isNotEmpty(list) && list.get(0).isResult()){
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
                 return ReturnMapUtils.returnFail("reslult:"+list.get(0).getName() + "," + list.get(0).getMessages());
+            }
+            //检查验证
+            if(recruitmentService.teacherIsApplicationFail(getTeacher(request))){
+                return ReturnMapUtils.returnFail("Your recruitment process is over already, Please refresh your page !","BASICINFO:"+user.getId());
             }
             //时间判断
             if(teachingExperience.getTimePeriodStart() >= teachingExperience.getTimePeriodEnd()){

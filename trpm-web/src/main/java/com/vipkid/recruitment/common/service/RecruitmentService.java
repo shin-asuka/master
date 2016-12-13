@@ -4,9 +4,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import com.vipkid.recruitment.common.CommonConstant;
-import com.vipkid.recruitment.interview.InterviewConstant;
-import com.vipkid.recruitment.practicum.PracticumConstant;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.community.tools.JsonTools;
@@ -22,11 +19,14 @@ import com.vipkid.enums.TeacherApplicationEnum.Result;
 import com.vipkid.enums.TeacherApplicationEnum.Status;
 import com.vipkid.enums.TeacherEnum.LifeCycle;
 import com.vipkid.enums.TeacherLockLogEnum.Reason;
+import com.vipkid.recruitment.common.CommonConstant;
 import com.vipkid.recruitment.dao.TeacherApplicationDao;
 import com.vipkid.recruitment.dao.TeacherApplicationLogDao;
 import com.vipkid.recruitment.dao.TeacherLockLogDao;
 import com.vipkid.recruitment.entity.TeacherApplication;
 import com.vipkid.recruitment.entity.TeacherLockLog;
+import com.vipkid.recruitment.interview.InterviewConstant;
+import com.vipkid.recruitment.practicum.PracticumConstant;
 import com.vipkid.recruitment.utils.ReturnMapUtils;
 import com.vipkid.rest.dto.TimezoneDto;
 import com.vipkid.trpm.constant.ApplicationConstant.FinishType;
@@ -399,15 +399,21 @@ public class RecruitmentService {
     }
 
     /**
-     * 检查老师是否被Fail 
+     * 检查老师是否被Fail，或者当前步骤是否Pass 
      * 2016年12月13日 下午1:29:27
      * @param teaccherId
      * @return    
      * boolean true:是,false:不是
      */
-    public boolean teacherIsApplicationFail(long teacherId){
-        List<TeacherApplication> list = teacherApplicationDao.findApplictionForStatusResult(teacherId,Result.FAIL.toString());
-        if(CollectionUtils.isNotEmpty(list)){
+    public boolean teacherIsApplicationFail(Teacher teacher){
+        //老师已经被fail过，不能继续操作
+        List<TeacherApplication> fail = teacherApplicationDao.findApplictionForStatusResult(teacher.getId(),Result.FAIL.toString());
+        if(CollectionUtils.isNotEmpty(fail)){
+            return true;
+        }
+        //当前步骤已经pass过 不允许操作
+        List<TeacherApplication> pass = teacherApplicationDao.findApplictionForStatusResult(teacher.getId(),teacher.getLifeCycle(),Result.PASS.toString());
+        if(CollectionUtils.isNotEmpty(pass)){
             return true;
         }
         return false;

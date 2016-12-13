@@ -160,6 +160,8 @@ public class ContractInfoController extends RestfulController {
             logger.error("submitContractInfo with incorrect parameters: {}, {}", fileIds, bio);
             return ReturnMapUtils.returnFail("You can't submit with incorrect parameters!");
         }
+        
+
 
         //ID (3 TYPES), DIPLOMA, DEGREE, CERTIFICATE, W9, CONTRACT,
         List<String> idLists = Splitter.on(",").splitToList(fileIds);
@@ -171,10 +173,15 @@ public class ContractInfoController extends RestfulController {
                     idList.add(Integer.parseInt(idLists.get(i)));
                 }
             }
+            
             Teacher teacher = getTeacher(request);
             if (null == teacher) {
                 response.setStatus(HttpStatus.NOT_FOUND.value());
                 return ReturnMapUtils.returnFail("This account does not exist.");
+            }
+            
+            if(recruitmentService.teacherIsApplicationFail(teacher)){
+                return ReturnMapUtils.returnFail("Your recruitment process is over already, Please refresh your page !","CONTRACT_INFO:"+teacher.getId());
             }
 
             Long teacherId = teacher.getId();

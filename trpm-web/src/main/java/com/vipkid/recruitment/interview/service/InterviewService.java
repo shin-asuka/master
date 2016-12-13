@@ -158,8 +158,8 @@ public class InterviewService {
         
         String logpix = "onlineclassId:"+onlineClassId+";teacherId:"+teacher.getId();
         
-        if(recruitmentService.teacherIsApplicationFail(teacher.getId())){
-            return ReturnMapUtils.returnFail("Your recruitment process is over already, Please refresh your page !");
+        if(recruitmentService.teacherIsApplicationFail(teacher)){
+            return ReturnMapUtils.returnFail("Your recruitment process is over already, Please refresh your page !","INTERVIEW:"+teacher.getId());
         }
         
         OnlineClass onlineClass = this.onlineClassDao.findById(onlineClassId);
