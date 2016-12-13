@@ -670,10 +670,7 @@ public class OnlineClassService {
      */
     public boolean checkStudentIdClassId(long onlineClassId, long studentId) {
         List<Map<String, Object>> list = onlineClassDao.findOnlineClassIdAndStudentId(onlineClassId, studentId);
-        if (list != null && !list.isEmpty()) {
-            return true;
-        }
-        return false;
+        return list != null && !list.isEmpty();
     }
 
     public void finishPracticum(long onlineClassId, String finishType) {
@@ -690,6 +687,8 @@ public class OnlineClassService {
             if(isIn24HourBooked(onlineClass)&&onlineClass.getFinishType()==FinishType.AS_SCHEDULED){
                 onlineClass.setShortNotice(1);
             }
+            onlineClass.setLastEditDateTime(new Timestamp(System.currentTimeMillis()));
+            onlineClass.setLastEditorId(onlineClass.getTeacherId());
             onlineClassDao.updateEntity(onlineClass);
         }
     }
