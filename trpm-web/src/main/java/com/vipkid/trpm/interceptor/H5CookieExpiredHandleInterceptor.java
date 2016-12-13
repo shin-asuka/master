@@ -10,8 +10,10 @@ import com.vipkid.trpm.constant.ApplicationConstant;
 import com.vipkid.trpm.constant.ApplicationConstant.CookieKey;
 import com.vipkid.trpm.constant.ApplicationConstant.LoginType;
 import com.vipkid.trpm.controller.portal.PersonalInfoController;
+import com.vipkid.trpm.dao.TeacherTokenDao;
 import com.vipkid.trpm.entity.Staff;
 import com.vipkid.trpm.entity.Teacher;
+import com.vipkid.trpm.entity.TeacherToken;
 import com.vipkid.trpm.entity.User;
 import com.vipkid.trpm.proxy.RedisProxy;
 import com.vipkid.trpm.service.portal.LocationService;
@@ -49,39 +51,20 @@ public class H5CookieExpiredHandleInterceptor extends HandlerInterceptorAdapter 
 
 	private Logger logger = LoggerFactory.getLogger(H5CookieExpiredHandleInterceptor.class);
 
-	private static final String AUTHORIZE = "permitAll";
-
-	private static final int COOKIE_EXPIRED_CODE = 606;
-
 	@Autowired
 	private RedisProxy redisProxy;
-
-	/*@Autowired
-	private IndexService indexService;*/
 
 	@Autowired
     private LoginService loginService;
 
 	@Autowired
-	private LocationService locationService;
-
-	@Autowired
-	private AdminQuizService adminQuizService;
-
-	@Autowired
-	private TeacherPageLoginService teacherPageLoginService;
+	private TeacherTokenDao teacherTokenDao;
 
 
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
 			throws IOException {
 	    logger.info("IP:{},发起请求:{}",IpUtils.getIpAddress(request),request.getRequestURI());
-//        HandlerMethod handlerMethod = (HandlerMethod) handler;
-//        //1.有注解PreAuthorize，不进行拦截
-//        PreAuthorize preAuthorize = preAnnotation(handlerMethod);
-//        if (null == preAuthorize || AUTHORIZE.equals(preAuthorize.value())) {
-//            return true;
-//        }
 
 		boolean isFilter = PropertyConfigurer.booleanValue("h5.cookie.check");
 		if(!isFilter){
@@ -91,62 +74,52 @@ public class H5CookieExpiredHandleInterceptor extends HandlerInterceptorAdapter 
 			return true;
 		}
 
-		//String token = CookieUtils.getValue(request, CookieKey.TRPM_TOKEN);
 		String token = request.getHeader(RestfulController.AUTOKEN);
-		String key = CacheUtils.getUserTokenKeyFromApp(token);
 		String ip = IpUtils.getRequestRemoteIP();
 
 		logger.info("preHandleRequest 用户  request token = {} ,ip = {}, url = {} ",token ,ip,request.getRequestURL());
 
-//		if (null == token && StringUtils.contains(xRequestedWith, "XMLHttpRequest")) {
-//			response.setStatus(COOKIE_EXPIRED_CODE);
-//			logger.info("COOKIE 无效 ajax");
-//			return false;
-//		} else if (null == token && StringUtils.isEmpty(xRequestedWith)) {
-//			response.sendRedirect(request.getContextPath() + "/index.shtml");
-//			logger.info("TOKEN 无效");
-//			return false;
-//		} else if (null != token && null == redisProxy.get(key)) {
-//			response.sendRedirect(request.getContextPath() + "/index.shtml");
-//			logger.info("TOKEN 无效");
-//			return false;
-//		}
-		if(key == null){
+		if(StringUtils.isBlank(token)){
 			response.setStatus(HttpStatus.UNAUTHORIZED.value());
 			setErrorResponse(response);
-			logger.info("TOKEN 无效");
+			logger.info("TOKEN为空 无效");
 			return false;
 		}
-		String teacherId = redisProxy.get(key);
+		//String teacherId = redisProxy.get(key);
+		TeacherToken teacherToken = teacherTokenDao.findByToken(token);
+		if(teacherToken==null || teacherToken.getTeacherId()==null){
+			response.setStatus(HttpStatus.UNAUTHORIZED.value());
+			setErrorResponse(response);
+			logger.info("TOKEN{} 无效",token);
+			return false;
+		}
+		Long teacherId = teacherToken.getTeacherId();
 		logger.info("preHandleUserInfo teacherId = {} ",teacherId);
-		if(!NumberUtils.isNumber(teacherId)){
+
+		User user = loginService.findUserById(teacherId);
+		logger.info("preHandleUserInfo token = {} ,ip,user = {}, url = {} ", token, ip,
+			user == null ? null : (user.getId() + "|" + user.getUsername()), request.getRequestURL());
+		if (user == null) {
+			logger.info("IP:{},用户为NULL。。。", IpUtils.getIpAddress(request));
+
 			response.setStatus(HttpStatus.UNAUTHORIZED.value());
 			setErrorResponse(response);
-			logger.info("TOKEN 无效");
+
 			return false;
 		}
 
-        User user = loginService.findUserById(Long.valueOf(teacherId));
-        logger.info("preHandleUserInfo token = {} ,ip,user = {}, url = {} ",token ,ip,user==null?null:(user.getId()+"|"+user.getUsername()),request.getRequestURL());
-        if(user == null){
-            logger.info("IP:{},用户为NULL。。。",IpUtils.getIpAddress(request));
+		AppContext.setUser(user);
+
+		logger.info("IP:{},user:{},发起请求:{}", IpUtils.getIpAddress(request), user.getId(),
+			request.getRequestURI());
+
+		Teacher teacher = loginService.findTeacherById(teacherId);
+		if (teacher == null) {
+			logger.info("IP:{},Teacher is NULL。。。", request.getRemoteAddr());
 			response.setStatus(HttpStatus.UNAUTHORIZED.value());
 			setErrorResponse(response);
-
-            return false;
-        }
-
-        AppContext.setUser(user);
-
-        logger.info("IP:{},user:{},发起请求:{}",IpUtils.getIpAddress(request),user.getId(),request.getRequestURI());
-
-        Teacher teacher = loginService.findTeacherById(Long.valueOf(teacherId));
-        if(teacher == null){
-            logger.info("IP:{},Teacher is NULL。。。",request.getRemoteAddr());
-			response.setStatus(HttpStatus.UNAUTHORIZED.value());
-			setErrorResponse(response);
-            return false;
-        }
+			return false;
+		}
 
 		AppContext.setTeacher(teacher);
 
@@ -177,41 +150,5 @@ public class H5CookieExpiredHandleInterceptor extends HandlerInterceptorAdapter 
         AppContext.releaseContext();
         super.postHandle(request, response, handler, modelAndView);
     }
-
-	private PreAuthorize preAnnotation(HandlerMethod handlerMethod){
-       PreAuthorize preAuthorize = handlerMethod.getMethodAnnotation(PreAuthorize.class);
-       //是否公开LINK
-       if (null == preAuthorize) {
-           preAuthorize = handlerMethod.getBeanType().getAnnotation(PreAuthorize.class);
-       }
-        return preAuthorize;
-    }
-
-	/**
-	 * 检查修改密码的Cookie是否存在，存在:true 不存在 false
-	 *
-	 * @Author:ALong (ZengWeiLong)
-	 * @param request
-	 * @return boolean
-	 * @date 2016年4月19日
-	 */
-	private boolean checkCookie(HttpServletRequest request) {
-		Cookie cookie = CookieUtils.getCookie(request, CookieKey.TRPM_CHANGE_WINDOW);
-		return cookie != null && CookieKey.TRPM_CHANGE_WINDOW.equals(cookie.getValue());
-	}
-
-	/**
-	 * 检查是否拦截uri请求 不拦截：true 拦截:false
-	 * 
-	 * @Author:ALong (ZengWeiLong)
-	 * @param request
-	 * @return boolean
-	 * @date 2016年4月19日
-	 */
-	private boolean checkChangePasswordUri(HttpServletRequest request) {
-		String regex = "^(?:.*bookings.shtml)|(?:.*changePassword.shtml)|(?:.*disableLayer.json)|(?:.*changePasswordAction.json){0,}$";
-		String requestUri = request.getRequestURI();
-		return requestUri.matches(regex);
-	}
 
 }
