@@ -296,11 +296,13 @@
                         </div>
                     </div>
                     <div class="user-image">
-                        #if($stringUtils.contains($!{TRPM_TEACHER.avatar}, 'http://'))
-                            <img src="$!{TRPM_TEACHER.avatar}" onerror="javascript:this.src='${resourceTool.oss.url_preffix}/static/images/teacher_portal/default_avatar.png';this.onerror=null;" />
-                        #else
-                            <img src="#if($!{TRPM_TEACHER.avatar})${resourceTool.oss.url_preffix}/$!{TRPM_TEACHER.avatar}#end" onerror="javascript:this.src='${resourceTool.oss.url_preffix}/static/images/teacher_portal/default_avatar.png';this.onerror=null;" />
-                        #end
+                        ## #if($stringUtils.contains($!{TRPM_TEACHER.avatar}, 'http://'))
+                        ##  <img src="$!{TRPM_TEACHER.avatar}" onerror="javascript:this.src='${resourceTool.oss.url_preffix}/static/images/teacher_portal/default_avatar.png';this.onerror=null;" />
+                        ## #else
+                        ##    <img src="#if($!{TRPM_TEACHER.avatar})${resourceTool.oss.url_preffix}/$!{TRPM_TEACHER.avatar}#end" onerror="javascript:this.src='${resourceTool.oss.url_preffix}/static/images/teacher_portal/default_avatar.png';this.onerror=null;" />
+						## #end
+						<img src="$!{teacherFile.avatar}" onerror="javascript:this.src='${resourceTool.oss.url_preffix}/static/images/teacher_portal/default_avatar.png';this.onerror=null;" />
+						
                     </div>
                     <div class="user-name">Welcome, ${TRPM_USER.name}</div>
                     <div class="quit">

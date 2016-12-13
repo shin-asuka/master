@@ -5,11 +5,13 @@
       <div align="right" class="col-sm-2 col-md-2"></div>
       <div class="col-sm-6 col-md-6">
       	  <div class='title-lable'>Professional profile picture</div>
-          #if($stringUtils.contains($!{TRPM_TEACHER.avatar}, 'http://')) 
-          	<img class="avatarImg" src="$!{TRPM_TEACHER.avatar}" onerror="javascript:this.src='${resourceTool.oss.url_preffix}/static/images/teacher_portal/default_avatar.png';this.onerror=null;" style="width:100px; margin:0 30px 0 5px;"/> 
-          #else 
-          	<img class="avatarImg" src="#if($!{TRPM_TEACHER.avatar})${resourceTool.oss.url_preffix}/$!{TRPM_TEACHER.avatar}#end" onerror="javascript:this.src='${resourceTool.oss.url_preffix}/static/images/teacher_portal/default_avatar.png';this.onerror=null;" style="width:100px; margin:0 30px 0 5px;"/> 
-          #end
+          ## #if($stringUtils.contains($!{TRPM_TEACHER.avatar}, 'http://')) 
+          ##	<img class="avatarImg" src="$!{TRPM_TEACHER.avatar}" onerror="javascript:this.src='${resourceTool.oss.url_preffix}/static/images/teacher_portal/default_avatar.png';this.onerror=null;" style="width:100px; margin:0 30px 0 5px;"/> 
+          ## #else 
+          ##	<img class="avatarImg" src="#if($!{TRPM_TEACHER.avatar})${resourceTool.oss.url_preffix}/$!{TRPM_TEACHER.avatar}#end" onerror="javascript:this.src='${resourceTool.oss.url_preffix}/static/images/teacher_portal/default_avatar.png';this.onerror=null;" style="width:100px; margin:0 30px 0 5px;"/> 
+		  ## #end
+		  <img class="avatarImg" src="$!{teacherFile.avatar}" onerror="javascript:this.src='${resourceTool.oss.url_preffix}/static/images/teacher_portal/default_avatar.png';this.onerror=null;" style="width:100px; margin:0 30px 0 5px;"/> 
+		  
           <input type="button" class="btn btn-primary" id="changeAvatar" value='Change'/>
       </div>
       <div class="col-sm-4 col-md-4"></div>
