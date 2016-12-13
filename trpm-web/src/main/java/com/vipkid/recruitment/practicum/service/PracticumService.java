@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import com.google.api.client.util.Maps;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang3.StringUtils;
@@ -258,6 +259,7 @@ public class PracticumService {
                 && Result.PASS.toString().equals(teacherApplication.getResult())){
             //按照新流程 该步骤将老师的LifeCycle改变为Practicum -to-Contract
             List<TeacherApplication> list = teacherApplicationDao.findApplictionForStatusResult(teacher.getId(),Status.SIGN_CONTRACT.toString(), Result.PASS.toString());
+
             if(CollectionUtils.isNotEmpty(list)){
                 // 1.教师状态更新
                 teacher.setLifeCycle(LifeCycle.REGULAR.toString());
@@ -281,7 +283,10 @@ public class PracticumService {
 
             this.teacherDao.insertLifeCycleLog(teacher.getId(), LifeCycle.PRACTICUM, LifeCycle.valueOf(teacher.getLifeCycle()), teacher.getId());
             this.teacherDao.update(teacher);
-            return ReturnMapUtils.returnSuccess();
+
+            Map<String,Object> resultMap = Maps.newHashMap();
+            resultMap.put("lifeCycle",teacher.getLifeCycle());
+            return ReturnMapUtils.returnSuccess(resultMap);
         }
         return ReturnMapUtils.returnFail("You don't have permission to enter into next phase!","teacherId;"+teacher.getId());
     }
