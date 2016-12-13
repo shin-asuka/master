@@ -9,14 +9,25 @@ import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
  */
 public class FileUploadStatus implements Serializable {
 
-    private int status;
+    private static final long serialVersionUID = -265263423308348563L;
+
+    private Long id;
+    private Integer status;
     private String url;
 
-    public int getStatus() {
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Integer getStatus() {
         return status;
     }
 
-    public void setStatus(int status) {
+    public void setStatus(Integer status) {
         this.status = status;
     }
 
