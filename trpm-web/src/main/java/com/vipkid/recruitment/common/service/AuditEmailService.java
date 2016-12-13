@@ -179,9 +179,9 @@ public class AuditEmailService {
 
             List<TeacherApplication> list = teacherApplicationDao.findCurrentApplication(teacherId);
             String INTERVIEW_PASS_CONTENT= StringUtils.EMPTY;
-            if (CollectionUtils.isNotEmpty(list)) {
+                if (CollectionUtils.isNotEmpty(list)) {
                 TeacherApplication teacherApplication = list.get(0);
-              INTERVIEW_PASS_CONTENT = EmailTemplateTools.readyContent(teacherApplication);
+              INTERVIEW_PASS_CONTENT = new EmailTemplateTools().readyContent(teacherApplication);
             }
             Teacher teacher  =  teacherDao.findById(teacherId);
             Map<String, String> paramsMap = Maps.newHashMap();
