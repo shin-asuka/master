@@ -342,13 +342,12 @@ public class PassportService {
         }
         
         if(refereeId != null){//三周年庆时有改动，这里的if兼容之前的逻辑
-        String rfid = String.valueOf(refereeId);
-        if (!StringUtils.isNumeric(rfid)) {
-            return teacher;
-        }
-        long userId = Long.valueOf(rfid);
-        User user = this.findUserById(userId);
-
+            String rfid = String.valueOf(refereeId);
+            if (!StringUtils.isNumeric(rfid)) {
+                return teacher;
+            }
+            long userId = Long.valueOf(rfid);
+            User user = this.findUserById(userId);
             if (user != null) {
                 if (UserEnum.Dtype.PARTNER.toString().equals(user.getDtype())) {
                     teacher.setRecruitmentChannel(RecruitmentChannel.PARTNER.toString());
@@ -366,9 +365,10 @@ public class PassportService {
                 }
             }
         }
+        
         if(partnerId != null){//三周年庆的需求添加
         	String ptid = String.valueOf(partnerId);
-            if (!ptid.matches("[^0][\\d]+")) {
+        	if (!StringUtils.isNumeric(ptid)) {
                 return teacher;
             }
             long userId = Long.valueOf(ptid);
@@ -377,7 +377,7 @@ public class PassportService {
             if (user != null) {
                 if (UserEnum.Dtype.PARTNER.toString().equals(user.getDtype())) {
                     teacher.setPartnerId(user.getId());
-                    teacher.setRecruitmentChannel(UserEnum.Dtype.PARTNER.toString());
+                    teacher.setRecruitmentChannel(RecruitmentChannel.PARTNER.toString());
                 } 
             }
         }
