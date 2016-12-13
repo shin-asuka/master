@@ -191,8 +191,8 @@ public class TaxpayerRestController {
 			String key = AwsFileUtils.getTaxpayerkey(teacherId,awsName);
 			Long size = file.getSize();
 			
-			Preconditions.checkArgument(AwsFileUtils.checkFileType(name), "文件类型不正确，支持类型为"+AwsFileUtils.TAPXPAYER_FILE_TYPE);
-			Preconditions.checkArgument(AwsFileUtils.checkFileSize(size), "文件太大，maxSize = "+AwsFileUtils.TAPXPAYER_FILE_MAX_SIZE);
+			Preconditions.checkArgument(AwsFileUtils.checkTaxPayerFileType(name), "文件类型不正确，支持类型为"+AwsFileUtils.TAPXPAYER_FILE_TYPE);
+			Preconditions.checkArgument(AwsFileUtils.checkTaxPayerFileSize(size), "文件太大，maxSize = "+AwsFileUtils.TAPXPAYER_FILE_MAX_SIZE);
 			
 			try {
 				fileVo = awsFileService.upload(bucketName , key , file.getInputStream(), file.getSize());
