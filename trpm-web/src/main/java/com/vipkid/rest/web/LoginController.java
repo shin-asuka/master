@@ -233,7 +233,7 @@ public class LoginController extends RestfulController {
             return ReturnMapUtils.returnFail(AjaxCode.USER_ERROR);
         }
         String email = StringUtils.trim(bean.getEmail());
-        logger.info("sign up teacher email = {" + email + "}");
+        logger.info("sign up teacher email = {" + email + "},参数:"+JsonTools.getJson(bean));
         try{
             logger.info("验证数据检查:{}",bean.getEmail());
             if (StringUtils.isBlank(bean.getKey()) || StringUtils.isBlank(bean.getImageCode())) {
