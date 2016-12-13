@@ -51,6 +51,10 @@ public class AuditEmailService {
     @Autowired
     private TeacherContractFileDao teacherContractFileDao;
 
+    private static String BASICINFO_PASS_TITLE = "BasicInfoPassTitle.html";
+    private static String BASICINFO_PASS_CONTENT = "BasicInfoPass.html";
+
+
     private static String PRACTICUM_PASS_TITLE = "PracticumPassTitle.html";
     private static String PRACTICUM_PASS_CONTENT = "PracticumPass.html";
 
@@ -71,6 +75,30 @@ public class AuditEmailService {
 
     private static String CONTRACTINFO_REAPPLY_TITLE = "ContractInfoReapplyTitle.html";
     private static String CONTRACTINFO_REAPPLY_CONTENT = "ContractInfoReapply.html";
+
+    public Map<String,Object> sendBasicInfoPass(long teacherId){
+        try{
+            Teacher teacher  =  teacherDao.findById(teacherId);
+            Map<String, String> paramsMap = Maps.newHashMap();
+
+            if (teacher.getRealName() != null)
+                paramsMap.put("teacherName", teacher.getRealName());
+            logger.info("【EMAIL.sendBasicInfoPass】toAddMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",
+                    teacher.getRealName(),teacher.getEmail(), BASICINFO_PASS_TITLE, BASICINFO_PASS_CONTENT);
+            Map<String, String> emailMap = TemplateUtils.readTemplate(BASICINFO_PASS_CONTENT, paramsMap, BASICINFO_PASS_TITLE);
+            EmailEngine.addMailPool(teacher.getEmail(), emailMap, EmailConfig.EmailFormEnum.TEACHVIP);
+            logger.info("【EMAIL.sendBasicInfoPass】addedMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",
+                    teacher.getRealName(),teacher.getEmail(), BASICINFO_PASS_TITLE, BASICINFO_PASS_CONTENT);
+            return ReturnMapUtils.returnSuccess();
+        } catch (Exception e) {
+            logger.error("【EMAIL.sendBasicInfoPass】ERROR: {}", e);
+        }
+        return ReturnMapUtils.returnFail("email send fail  ");
+    }
+
+
+
+
 
     public Map<String,Object> sendPracticumPass(long teacherId){
         try{

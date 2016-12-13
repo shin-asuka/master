@@ -34,6 +34,13 @@ public class AuditEventHandler implements AuditHandler {
         String result = event.getAuditResult();
 
         switch (status) {
+            case "BASIC_INFO":
+                switch (result) {
+                    case "PASS":
+                        logger.info("向用户 {} sendBasicInfoPass 的邮件", teacherId);
+                        ret = auditEmailService.sendBasicInfoPass(teacherId);
+                        break;
+                }
             case "INTERVIEW":
                 switch (result) {
                     case "PASS":
