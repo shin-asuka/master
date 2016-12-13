@@ -79,13 +79,16 @@ public class EmailTemplateTools {
     public static String readTemplate() {
         try{
             if(TEMPLETE == null){
-                InputStream is = EmailTemplateTools.class.getClassLoader().getResourceAsStream("template/interviewPass.html");
+                InputStream is = EmailTemplateTools.class.getClassLoader().getResourceAsStream("template/InterviewPass.html");
                 StringBuilder result = new StringBuilder("");
                 BufferedReader br = new BufferedReader(new InputStreamReader(is, Charsets.UTF_8));// 构造一个BufferedReader类来读取文件
                 String s = null;
                 while ((s = br.readLine()) != null) {// 使用readLine方法，一次读一行
                     result.append(s);
                 }
+
+
+
                 br.close();
                 TEMPLETE = result.toString();
             }
