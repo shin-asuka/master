@@ -60,9 +60,8 @@ public class TeacherService {
 
 	private static final String API_TEACHER_COMMENT_INSERT = "/api/teacher/comment/insertOne";
 
-
-
-
+	@Autowired
+	private CourseDao courseDao;
 
 	@Autowired
 	private TeacherDao teacherDao;
@@ -134,6 +133,10 @@ public class TeacherService {
 				}
 			}
 
+		}
+		Course course = courseDao.findById(teacherComment.getCourseId());
+		if(course!=null){
+			result.setCourseDisplayName(course.getName());
 		}
 
 		//返回已填过的字段

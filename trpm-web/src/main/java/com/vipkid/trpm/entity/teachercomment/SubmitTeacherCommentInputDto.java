@@ -20,10 +20,20 @@ public class SubmitTeacherCommentInputDto implements Serializable{
 
     //Major特有字段
     private String levelOfdifficulty;
-    private boolean suggestAdjustment;
+    private Boolean suggestAdjustment;
 
     //trial特有字段
     private String trialLevelResult;
+
+    private String classNumber;
+
+    public String getClassNumber() {
+        return classNumber;
+    }
+
+    public void setClassNumber(String classNumber) {
+        this.classNumber = classNumber;
+    }
 
     public String getTeacherCommentId() {
         return teacherCommentId;
@@ -57,11 +67,11 @@ public class SubmitTeacherCommentInputDto implements Serializable{
         this.levelOfdifficulty = levelOfdifficulty;
     }
 
-    public boolean isSuggestAdjustment() {
+    public Boolean isSuggestAdjustment() {
         return suggestAdjustment;
     }
 
-    public void setSuggestAdjustment(boolean suggestAdjustment) {
+    public void setSuggestAdjustment(Boolean suggestAdjustment) {
         this.suggestAdjustment = suggestAdjustment;
     }
 

@@ -46,6 +46,19 @@ public class CourseDao extends MapperDaoTemplate<Course> {
 	}
 
 	/**
+	 * 通过LessonId查询课程
+	 *
+	 * @param id
+	 * @return Course
+	 */
+	public Course findById(long id) {
+		Map<String, Object> paramsMap = Maps.newHashMap();
+		paramsMap.put("id", id);
+
+		return selectOne("findById",paramsMap);
+	}
+
+	/**
 	 * 通过LessonId查询ids
 	 *
 	 * @param lessonId

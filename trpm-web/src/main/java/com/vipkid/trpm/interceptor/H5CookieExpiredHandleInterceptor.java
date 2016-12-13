@@ -51,8 +51,6 @@ public class H5CookieExpiredHandleInterceptor extends HandlerInterceptorAdapter 
 
 	private Logger logger = LoggerFactory.getLogger(H5CookieExpiredHandleInterceptor.class);
 
-	@Autowired
-	private RedisProxy redisProxy;
 
 	@Autowired
     private LoginService loginService;
@@ -68,9 +66,12 @@ public class H5CookieExpiredHandleInterceptor extends HandlerInterceptorAdapter 
 
 		boolean isFilter = PropertyConfigurer.booleanValue("h5.cookie.check");
 		if(!isFilter){
-			logger.info("配置[h5.cookie.check]={}不拦截,默认登录老师id是359",isFilter);
-			Teacher teacher = loginService.findTeacherById(359);
+			//自测调试代码
+			logger.info("配置[h5.cookie.check]={}不拦截,默认登录老师id是1890513",isFilter);
+			Teacher teacher = loginService.findTeacherById(1890513);
 			AppContext.setTeacher(teacher);
+			User user = loginService.findUserById(teacher.getId());
+			AppContext.setUser(user);
 			return true;
 		}
 

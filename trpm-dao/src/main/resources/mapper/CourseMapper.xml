@@ -183,6 +183,15 @@
         lesson.id = #{lessonId}
     </select>
 
+	<!-- 通过LessonId查询课程 -->
+	<select id="findById" resultMap="courseResultMap" useCache="true">
+		SELECT
+		<include refid="courseColumns" />
+		FROM course
+		WHERE
+		id = #{id}
+	</select>
+
 
 	<select id="findIdsByLessonId" resultMap="idsResultMap" useCache="true">
 		SELECT

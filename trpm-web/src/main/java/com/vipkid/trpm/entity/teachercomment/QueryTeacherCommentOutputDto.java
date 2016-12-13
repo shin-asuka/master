@@ -19,6 +19,8 @@ public class QueryTeacherCommentOutputDto {
 
     private String courseType;
 
+    private String courseDisplayName;
+
     private String classNumber;
 
     private String studentName;
@@ -41,6 +43,14 @@ public class QueryTeacherCommentOutputDto {
     private Date createDate;
 
     private int stars;
+
+    public String getCourseDisplayName() {
+        return courseDisplayName;
+    }
+
+    public void setCourseDisplayName(String courseDisplayName) {
+        this.courseDisplayName = courseDisplayName;
+    }
 
     public int getStars() {
         return stars;

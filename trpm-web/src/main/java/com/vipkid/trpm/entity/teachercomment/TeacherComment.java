@@ -1,6 +1,7 @@
 package com.vipkid.trpm.entity.teachercomment;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.community.dao.support.Entity;
 
 import java.io.Serializable;
@@ -65,6 +66,8 @@ public class TeacherComment extends Entity implements Serializable {
 
     private String courseType;
 
+    private String submitSource;
+
     public TeacherComment(){
 
     }
@@ -87,7 +90,7 @@ public class TeacherComment extends Entity implements Serializable {
             createDateTime = new Timestamp(teacherCommentResult.getCreateTime().getTime());
         }
         if(teacherCommentResult.getEmpty()!=null){
-            empty = teacherCommentResult.getEmpty() ? 0 : 1;
+            empty = teacherCommentResult.getEmpty() ? 1 : 0;
         }
         if(teacherCommentResult.getReadingSkills()!=null){
             readingSkills = teacherCommentResult.getReadingSkills();
@@ -155,6 +158,29 @@ public class TeacherComment extends Entity implements Serializable {
         hasComment = StringUtils.isNotBlank(teacherCommentResult.getTeacherFeedback()) ? true : false;
 
         courseType = teacherCommentResult.getCourseType();
+    }
+
+    public TeacherComment(SubmitTeacherCommentInputDto inputDto) {
+
+        id = Integer.valueOf(inputDto.getTeacherCommentId());
+        empty = 0;
+        teacherFeedback = inputDto.getTeacherFeedback();
+        tipsForOtherTeachers = inputDto.getTipsForOtherTeachers();
+        if(NumberUtils.isNumber(inputDto.getLevelOfdifficulty())){
+            performance = Integer.valueOf(inputDto.getLevelOfdifficulty());
+        }
+        if(inputDto.isSuggestAdjustment()!=null && inputDto.isSuggestAdjustment()){
+            performanceAdjust = 1;
+        }
+        trialLevelResult = inputDto.getTrialLevelResult();
+    }
+
+    public String getSubmitSource() {
+        return submitSource;
+    }
+
+    public void setSubmitSource(String submitSource) {
+        this.submitSource = submitSource;
     }
 
     public String getCourseType() {

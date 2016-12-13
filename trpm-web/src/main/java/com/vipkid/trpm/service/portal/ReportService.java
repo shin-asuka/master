@@ -15,11 +15,13 @@ import com.sun.org.apache.xpath.internal.operations.Bool;
 import com.vipkid.email.EmailEngine;
 import com.vipkid.email.handle.EmailConfig;
 import com.vipkid.email.templete.TempleteUtils;
+import com.vipkid.rest.security.AppContext;
 import com.vipkid.trpm.dao.*;
 import com.vipkid.trpm.entity.*;
 import com.vipkid.trpm.entity.teachercomment.TeacherComment;
 import com.vipkid.trpm.entity.teachercomment.TeacherCommentResult;
 import com.vipkid.trpm.entity.teachercomment.TeacherCommentUpdateDto;
+import com.vipkid.trpm.service.rest.LoginService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -104,6 +106,9 @@ public class ReportService {
 
     @Autowired
     private CourseDao courseDao;
+
+    @Autowired
+    private LoginService loginService;
 
     /**
      * uaReport<br/>
@@ -640,7 +645,7 @@ public class ReportService {
      * @date 2015年12月16日
      */
     public Map<String, Object> submitTeacherComment(TeacherComment teacherComment, User user,String serialNumber,
-            String scheduledDateTime) {
+            String scheduledDateTime,boolean isFromH5) {
         // 如果ID为0 则抛出异常并回滚
         checkArgument(0 != teacherComment.getId(), "Argument teacherComment id equals 0");
 
@@ -649,7 +654,20 @@ public class ReportService {
         // 日志记录参数准备
         TeacherCommentResult oldtcFromAPI = teacherService
                 .findByTeacherCommentId(String.valueOf(teacherComment.getId()));
+        if(oldtcFromAPI==null){
+            Map<String, Object> paramMap = Maps.newHashMap();
+            paramMap.put("result", false);
+            paramMap.put("msg", "You submit a wrong feedback.");
+            return paramMap;
+        }
         TeacherComment oldtc = new TeacherComment(oldtcFromAPI);
+        if (isFromH5) {
+            //从APP的h5页面过来的
+            Teacher teacher = AppContext.getTeacher();
+            scheduledDateTime = DateUtils
+                .formatTo(oldtcFromAPI.getScheduledDateTime().toInstant(), teacher.getTimezone(),
+                    DateUtils.FMT_YMD_HMS);
+        }
 
         Map<String, Object> paramMap = Maps.newHashMap();
         paramMap.put("teacherId", user.getId());
@@ -696,8 +714,10 @@ public class ReportService {
         if (teacherComment.getPerformanceAdjust()==1 && teacherComment.getPerformance()!=0){
             logger.info("判断PerformanceAdjust给CLT发邮件: studentId = {}, serialNumber = {}, scheduledDateTime = {} ",
                     oldtc.getStudentId(), serialNumber, scheduledDateTime);
+            final String finalScheduledDateTime = scheduledDateTime;
             sendEmailExecutor.execute(() -> {
-                emailService.sendEmail4PerformanceAdjust2CLT(oldtc.getStudentId(), serialNumber, scheduledDateTime, teacherComment.getPerformance());
+                emailService.sendEmail4PerformanceAdjust2CLT(oldtc.getStudentId(), serialNumber,
+                    finalScheduledDateTime, teacherComment.getPerformance());
             });
         }
 

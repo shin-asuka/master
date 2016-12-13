@@ -1,12 +1,12 @@
 package com.vipkid.trpm.controller.h5;
 import com.vipkid.http.service.TeacherAppService;
 import com.vipkid.http.utils.JsonUtils;
+import com.vipkid.rest.security.AppContext;
 import com.vipkid.rest.utils.ApiResponseUtils;
-import com.vipkid.trpm.entity.teachercomment.QueryTeacherCommentOutputDto;
-import com.vipkid.trpm.entity.teachercomment.StudentAbilityLevelRule;
-import com.vipkid.trpm.entity.teachercomment.SubmitTeacherCommentInputDto;
-import com.vipkid.trpm.entity.teachercomment.TeacherCommentUpdateDto;
+import com.vipkid.trpm.entity.teachercomment.*;
+import com.vipkid.trpm.service.portal.ReportService;
 import com.vipkid.trpm.service.portal.TeacherService;
+import com.vipkid.trpm.service.rest.LoginService;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.slf4j.Logger;
@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.List;
+import java.util.Map;
+
 /**
  * 实现描述:
  * h5页面接口,
@@ -43,6 +45,12 @@ public class TeacherCommentController {
     @Autowired
     private TeacherAppService teacherAppService;
 
+    @Autowired
+    private ReportService reportService;
+
+    @Autowired
+    private LoginService loginService;
+
     @ResponseBody
     @RequestMapping(value = "/submit")
     public Object updateStatus(String submitDto) {
@@ -56,10 +64,14 @@ public class TeacherCommentController {
             return ApiResponseUtils.buildErrorResp(-1, "参数格式错误!");
         }
 
-        TeacherCommentUpdateDto tcuDto = new TeacherCommentUpdateDto(inputDto);
+        TeacherComment tcuDto = new TeacherComment(inputDto);
         tcuDto.setSubmitSource("APP");
-        boolean result = teacherService.updateTeacherComment(tcuDto);
-        if(result){
+        //boolean result = teacherService.updateTeacherComment(tcuDto);
+        Map<String, Object> parmMap = reportService.submitTeacherComment(tcuDto, AppContext.getUser(),
+            inputDto.getClassNumber(),null,true);
+
+
+        if(parmMap!=null && parmMap.get("result")!=null&&((Boolean) parmMap.get("result"))){
             return ApiResponseUtils.buildSuccessDataResp("提交成功");
         }else{
             return ApiResponseUtils.buildErrorResp(-1,"提交失败");
