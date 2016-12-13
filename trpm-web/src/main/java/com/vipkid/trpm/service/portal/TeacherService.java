@@ -116,7 +116,7 @@ public class TeacherService {
 			if (onlineClass != null) {
 				//获取登录老师(时区),转换前端展示的classTime
 				Teacher teacher = AppContext.getTeacher();
-				Timestamp classTime = onlineClass.getAbleToEnterClassroomDateTime();
+				Timestamp classTime = onlineClass.getScheduledDateTime();
 				if(classTime!=null && teacher!=null && StringUtils.isNotBlank(teacher.getTimezone())){
 					String classTimeFormat = DateUtils.formatTo(classTime.toInstant(),teacher.getTimezone(),DateUtils.FMT_YMD_EMd);
 					result.setClassTime(classTimeFormat);
