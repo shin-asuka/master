@@ -20,12 +20,13 @@ import com.google.common.collect.Maps;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-
+import org.springframework.stereotype.Component;
 
 
 /**
  * Created by zhangzhaojun on 2016/12/8.
  */
+@Component
 public class EmailTemplateTools {
     
     private static Logger logger = LoggerFactory.getLogger(EmailTemplateTools.class);
