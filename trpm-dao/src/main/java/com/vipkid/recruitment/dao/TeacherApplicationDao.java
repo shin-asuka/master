@@ -13,6 +13,7 @@ import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.google.common.collect.Lists;
 import com.vipkid.recruitment.entity.TeacherApplication;
 
 @Repository
@@ -92,6 +93,11 @@ public class TeacherApplicationDao extends MapperDaoTemplate<TeacherApplication>
        return findApplictionForStatusResult(teacherId, status, null);
     }
     
+    
+    public List<TeacherApplication> findApplictionForStatusResult(long teacherId,String result) {
+        return this.findApplictionForStatusResult(teacherId, null, result);
+    }
+    
     /**
      * 根据状态结果查询
      * @Author:ALong
@@ -99,7 +105,9 @@ public class TeacherApplicationDao extends MapperDaoTemplate<TeacherApplication>
      * @return 2015年10月22日
      */
     public List<TeacherApplication> findApplictionForStatusResult(long teacherId,String status,String result) {
-        
+        if(teacherId <= 0L){
+            return Lists.newArrayList();
+        }
         Map<String, Object> map = new HashMap<String, Object>();
         
         map.put("teacherId", teacherId);

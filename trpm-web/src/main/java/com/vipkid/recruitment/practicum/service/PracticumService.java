@@ -134,13 +134,18 @@ public class PracticumService {
     }
 
     public Map<String,Object> bookClass(long onlineClassId,Teacher teacher){
-        OnlineClass onlineClass = this.onlineClassDao.findById(onlineClassId);
-
+       
         if(teacher == null || teacher.getId() == 0 || StringUtils.isBlank(teacher.getRealName())){
             return ReturnMapUtils.returnFail("This account does not exist.");
         }
         
         String logpix = "onlineclassId:"+onlineClassId+";teacherId:"+teacher.getId();
+        
+        if(recruitmentService.teacherIsApplicationFail(teacher.getId())){
+            return ReturnMapUtils.returnFail("Your recruitment process is over already, Please refresh your page !");
+        }
+                
+        OnlineClass onlineClass = this.onlineClassDao.findById(onlineClassId);
         
         //课程没有找到，无法book
         if(onlineClass == null){

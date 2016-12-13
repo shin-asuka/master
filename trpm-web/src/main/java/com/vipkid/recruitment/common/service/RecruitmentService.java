@@ -398,6 +398,20 @@ public class RecruitmentService {
         return ReturnMapUtils.returnSuccess();
     }
 
+    /**
+     * 检查老师是否被Fail 
+     * 2016年12月13日 下午1:29:27
+     * @param teaccherId
+     * @return    
+     * boolean true:是,false:不是
+     */
+    public boolean teacherIsApplicationFail(long teacherId){
+        List<TeacherApplication> list = teacherApplicationDao.findApplictionForStatusResult(teacherId,Result.FAIL.toString());
+        if(CollectionUtils.isNotEmpty(list)){
+            return true;
+        }
+        return false;
+    }
 
     public int getRemainRescheduleTimes(Teacher teacher, String status, String type){
         //type: cancelNum, CancelNoShow, ITProblem
