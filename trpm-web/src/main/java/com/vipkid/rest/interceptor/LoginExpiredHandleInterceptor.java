@@ -102,7 +102,7 @@ public class LoginExpiredHandleInterceptor extends HandlerInterceptorAdapter {
     }
     
     private void responseToJson(String info,Throwable t,HttpServletResponse response){
-        this.responseToJson(info,null, null, response);
+        this.responseToJson(info,null,t, response);
     }
     
     private void responseToJson(String info,String Jsonbody,HttpServletResponse response){
@@ -114,8 +114,8 @@ public class LoginExpiredHandleInterceptor extends HandlerInterceptorAdapter {
             response.setContentType(RestfulConfig.JSON_UTF_8);
             response.getWriter().print(JsonTools.getJson(ReturnMapUtils.returnFail(info,Jsonbody,t)));
             response.getWriter().close();
-        }catch(Exception ex){
-            ex.printStackTrace();
+        }catch(Exception e){
+            logger.error(e.getMessage(),e);
         }
     }        
     
