@@ -6,6 +6,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.community.tools.JsonTools;
 import org.slf4j.Logger;
@@ -227,7 +228,9 @@ public class LoginService {
     
     public void setCourseTypes(long userId, List<String> courseTypes) {
         String key = CacheUtils.getCoursesKey(userId);
-        redisProxy.set(key, JsonTools.getJson(courseTypes),EXPIRED_SECONDS);
+        if(CollectionUtils.isNotEmpty(courseTypes)){
+            redisProxy.set(key, JsonTools.getJson(courseTypes),EXPIRED_SECONDS);
+        }
     }
     /**
      * 查询老师可以教的课程类型列表
@@ -256,9 +259,14 @@ public class LoginService {
         String key = CacheUtils.getCoursesKey(userId);
         String json = redisProxy.get(key);
         List<String> courseTypes = Lists.newArrayList();
+        //
         if(StringUtils.isBlank(json)){
             courseTypes = getCourseType(userId);
-            setCourseTypes(userId, courseTypes);
+            if(CollectionUtils.isNotEmpty(courseTypes)){
+                setCourseTypes(userId, courseTypes);
+            }else{
+                return false;
+            }
         }else{
             courseTypes = JsonTools.readValue(json, new TypeReference<List<String>>() {});
         }
