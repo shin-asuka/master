@@ -182,7 +182,6 @@ public class SendEmailTest {
 
 	@Test
 	public void sendEmail(){
-
 			String email = "zhangzhaojun@vipkid.com.cn";
 			String name = "张兆军";
 			String titleTemplate = "reminderApplicantBefore24HoursEmailSubjectTemplate.html";
