@@ -141,6 +141,8 @@ public class TeacherApplicationDao extends MapperDaoTemplate<TeacherApplication>
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("teacherId", teacherId);
         map.put("current", 1);
+        //按照ID倒叙排列
+        map.put("orderString"," id desc");
         List<TeacherApplication> teacherApplications = super.selectList(new TeacherApplication(), map);
         return teacherApplications;
     }
