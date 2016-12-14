@@ -99,12 +99,10 @@ public class EmailTemplateTools {
         return null;
     }
 
-    public  static String readyContent(TeacherApplication teacherApplication,Teacher teacher){
+    public  static Map<String,String> readyContent(TeacherApplication teacherApplication,Teacher teacher){
         if(teacherApplication == null){
             return null;
         }
-
-
         Map<String,String> map = Maps.newHashMap();
         map.put("contractURL", teacherApplication.getContractUrl());
         map.put("teacherName", teacher.getRealName());
@@ -196,7 +194,7 @@ public class EmailTemplateTools {
         map.put("demo-score",demoScore+"");
         map.put("all-score", (preScore+demoScore)+"");
         map.put("basePay", teacherApplication.getBasePay()+"");
-        return replaceTemplate(readTemplate(), map);
+        return  map;
     }
 }
 

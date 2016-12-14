@@ -44,6 +44,21 @@ public class SendEmailTest {
 	private AuditEmailService auditEmailService;
 	
     public static void main(String[] args) {
+
+
+		Map<String, String> paramsMap1 = Maps.newHashMap();
+		paramsMap1.put("teacherName", "Bel2");
+		String titleTemplate1 = "InterviewPassTitle.html";
+		String contentTemplate1 = StringUtils.EMPTY;
+		Map<String, String> emailMap1 = TemplateUtils.readTemplate(contentTemplate1, paramsMap1, titleTemplate1);
+		new EmailEngine().addMailPool("zhaojia3@vipkid.com.cn ", emailMap1, EmailFormEnum.TEACHVIP);
+/*
+		Map<String, String> paramsMap4 = Maps.newHashMap();
+		paramsMap4.put("teacherName", "Bel5");
+		String titleTemplate4 = "TrainingPassTitle.html";
+		String contentTemplate4 = "TrainingPass.html";
+		Map<String, String> emailMap4 = TemplateUtils.readTemplate(contentTemplate4, paramsMap4, titleTemplate4);
+		new EmailEngine().addMailPool("zhaojia3@vipkid.com.cn ", emailMap4 , EmailFormEnum.TEACHVIP);*/
 		/*Map<String, String> paramsMap = Maps.newHashMap();
 			paramsMap.put("teacherName", "Bel1");
 			String titleTemplate = "reminderApplicantBefore24HoursEmailSubjectTemplate.html";
@@ -51,12 +66,7 @@ public class SendEmailTest {
 			Map<String, String> emailMap = TemplateUtils.readTemplate(contentTemplate, paramsMap, titleTemplate);
 		    new EmailEngine().addMailPool("zhaojia3@vipkid.com.cn ", emailMap , EmailFormEnum.TEACHVIP);
 
-		Map<String, String> paramsMap1 = Maps.newHashMap();
-		paramsMap1.put("teacherName", "Bel2");
-		String titleTemplate1 = "InterviewPassTitle.html";
-		String contentTemplate1 = "InterviewPass.html";
-		Map<String, String> emailMap1 = TemplateUtils.readTemplate(contentTemplate1, paramsMap1, titleTemplate1);
-		new EmailEngine().addMailPool("zhaojia3@vipkid.com.cn ", emailMap1, EmailFormEnum.TEACHVIP);
+
 
 		Map<String, String> paramsMap2 = Maps.newHashMap();
 		paramsMap2.put("teacherName", "Bel3");
@@ -73,12 +83,7 @@ public class SendEmailTest {
 		Map<String, String> emailMap3 = TemplateUtils.readTemplate(contentTemplate3, paramsMap3, titleTemplate3);
 		new EmailEngine().addMailPool("zhaojia3@vipkid.com.cn ", emailMap3 , EmailFormEnum.TEACHVIP);
 
-		Map<String, String> paramsMap4 = Maps.newHashMap();
-		paramsMap4.put("teacherName", "Bel5");
-		String titleTemplate4 = "TrainingPassTitle.html";
-		String contentTemplate4 = "TrainingPass.html";
-		Map<String, String> emailMap4 = TemplateUtils.readTemplate(contentTemplate4, paramsMap4, titleTemplate4);
-		new EmailEngine().addMailPool("zhaojia3@vipkid.com.cn ", emailMap4 , EmailFormEnum.TEACHVIP);
+
 
 		Map<String, String> paramsMap5 = Maps.newHashMap();
 		paramsMap5.put("teacherName", "Bel6");
@@ -159,13 +164,13 @@ public class SendEmailTest {
 		Map<String, String> emailMap16 = TemplateUtils.readTemplate(contentTemplate16, paramsMap16, titleTemplate16);
 		new EmailEngine().addMailPool("zhaojia3@vipkid.com.cn ", emailMap16 , EmailFormEnum.TEACHVIP);*/
 
-
+/*
 		Map<String, String> paramsMap12 = Maps.newHashMap();
 		paramsMap12.put("teacherName", "Bel13");
 		String titleTemplate12 = "Practicum2NoBookTitle.html";
 		String contentTemplate12 = "Practicum2NoBook.html";
 		Map<String, String> emailMap12 = TemplateUtils.readTemplate(contentTemplate12, paramsMap12, titleTemplate12);
-		new EmailEngine().addMailPool("zhangzhaojun@vipkid.com.cn ", emailMap12 , EmailFormEnum.TEACHVIP);
+		new EmailEngine().addMailPool("zhangzhaojun@vipkid.com.cn ", emailMap12 , EmailFormEnum.TEACHVIP);*/
 
 	}
 

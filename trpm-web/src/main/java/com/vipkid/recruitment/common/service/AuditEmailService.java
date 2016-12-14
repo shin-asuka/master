@@ -65,7 +65,7 @@ public class AuditEmailService {
     private static String PRACTICUM_REAPPLY_CONTENT = "PracticumReapply.html";
 
     private static String INTERVIEW_PASS_TITLE = "InterviewPassTitle.html";
-
+    private static String INTERVIEW_PASS_CONTENT ="InterviewPass.html";
 
     private static String INTERVIEW_REAPPLY_TITLE = "InterviewNoRescheduleTitle.html";
     private static String INTERVIEW_REAPPLY_CONTENT = "InterviewNoReschedule.html";
@@ -178,15 +178,13 @@ public class AuditEmailService {
         try{
 
             List<TeacherApplication> list = teacherApplicationDao.findCurrentApplication(teacherId);
-            String INTERVIEW_PASS_CONTENT= StringUtils.EMPTY;
+            Map<String, String> paramsMap = Maps.newHashMap();
                 if (CollectionUtils.isNotEmpty(list)) {
                 TeacherApplication teacherApplication = list.get(0);
                 Teacher teacher  = teacherDao.findById(teacherApplication.getTeacherId());
-              INTERVIEW_PASS_CONTENT =  EmailTemplateTools.readyContent(teacherApplication,teacher);
+                paramsMap =  EmailTemplateTools.readyContent(teacherApplication,teacher);
             }
             Teacher teacher  =  teacherDao.findById(teacherId);
-            Map<String, String> paramsMap = Maps.newHashMap();
-
             if (teacher.getRealName() != null)
                 paramsMap.put("teacherName", teacher.getRealName());
             logger.info("【EMAIL.sendInterviewPass】toAddMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",
