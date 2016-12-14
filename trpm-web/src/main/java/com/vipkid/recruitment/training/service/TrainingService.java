@@ -158,7 +158,20 @@ public class TrainingService {
                     }
                 }
 
+
                 TeacherApplication new_application = old_teacherlist.get(0);
+                if(StringUtils.equals(new_application.getStatus(),TeacherApplicationEnum.Status.INTERVIEW.toString())&&
+                        StringUtils.equals(new_application.getResult(),TeacherApplicationEnum.Result.PASS.toString())){
+                    // 保存申请时间
+                    TeacherApplication teacherApplication = new TeacherApplication();
+                    teacherApplication = teacherApplicationDao.initApplicationData(teacherApplication);
+                    teacherApplication.setTeacherId(teacher.getId());
+                    teacherApplication.setApplyDateTime(new Timestamp(System.currentTimeMillis()));
+                    teacherApplication.setCurrent(1);
+                    teacherApplication.setStatus(TeacherApplicationEnum.Status.TRAINING.toString());
+                    this.teacherApplicationDao.save(teacherApplication);
+                }
+
                 new_application.setTeacherId(teacherId);//  步骤关联的教师
                 new_application.setApplyDateTime(new Timestamp(System.currentTimeMillis()));
                 new_application.setAuditDateTime(new Timestamp(System.currentTimeMillis()));
