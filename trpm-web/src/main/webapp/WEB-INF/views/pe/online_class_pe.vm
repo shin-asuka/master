@@ -26,7 +26,7 @@
           <div class="rightActionBarGroup2"> 
             ##报告不存在的P课程
             <div id="addFeedback">Add Feedback</div>
-            <div class="lastAction"> <a href="#springUrl('/pesupervisor.shtml')" style="color: white;">Exit Classroom</a></div>
+            <div class="lastAction"> <a href="#springUrl('/pe_supervisor')" style="color: white;">Exit Classroom</a></div>
           </div>
         </div>
       </section>
