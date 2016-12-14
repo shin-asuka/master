@@ -91,7 +91,7 @@ public class PersonalInfoController extends AbstractPortalController {
 
     /**
      * 老师的PersonalInfo首页面
-     * 
+     *
      * @param request
      * @param response
      * @param model
@@ -266,7 +266,7 @@ public class PersonalInfoController extends AbstractPortalController {
 
     /**
      * 处理老师基本信息更新
-     * 
+     *
      * @param request
      * @param response
      * @param basicInfo
@@ -286,7 +286,7 @@ public class PersonalInfoController extends AbstractPortalController {
 
     /**
      * 处理用户密码修改逻辑
-     * 
+     *
      * @param request
      * @param response
      * @param changePassword
@@ -335,7 +335,7 @@ public class PersonalInfoController extends AbstractPortalController {
 
     /**
      * 处理老师银行信息更新
-     * 
+     *
      * @param request
      * @param response
      * @param bankInfo
@@ -352,7 +352,7 @@ public class PersonalInfoController extends AbstractPortalController {
 
     /**
      * 修改avatar的请求处理
-     * 
+     *
      * @param request
      * @param response
      * @param model
@@ -363,21 +363,20 @@ public class PersonalInfoController extends AbstractPortalController {
         return view("personal/upload_avatar");
     }
 
-	/**
-	 * 处理上传avatar
-	 * 
-	 * @param request
-	 * @param file
-	 * @return
-	 */
-	@RequestMapping(value = "/uploadImage", method = RequestMethod.POST)
-	public String upload(MultipartHttpServletRequest request, HttpServletResponse response,
-			@RequestParam("file") MultipartFile file) {
-		Teacher teacher = loginService.getTeacher();
-		//Map<String, Object> modelMap = personalInfoService.doUploadImage(file, teacher.getId());
-		Map<String, Object> modelMap = personalInfoService.doUploadAvatarImage(file, teacher.getId());
-		return jsonView(response, modelMap);
-	}
+    /**
+     * 处理上传avatar
+     *
+     * @param request
+     * @param file
+     * @return
+     */
+    @RequestMapping(value = "/uploadImage", method = RequestMethod.POST)
+    public String upload(MultipartHttpServletRequest request, HttpServletResponse response,
+            @RequestParam("file") MultipartFile file) {
+        Teacher teacher = loginService.getTeacher();
+        Map<String, Object> modelMap = personalInfoService.doUploadImage(file, teacher.getId());
+        return jsonView(response, modelMap);
+    }
 
 
 }
