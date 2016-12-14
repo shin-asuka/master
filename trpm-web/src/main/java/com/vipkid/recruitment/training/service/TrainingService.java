@@ -148,31 +148,35 @@ public class TrainingService {
                 //更新当前考试记录
                 this.teacherQuizDao.update(teacherQuiz);
                 // 插入新的待考记录
+                List<TeacherApplication> old_teacherlist = teacherApplicationDao.findCurrentApplication(teacherId);
+                if (CollectionUtils.isNotEmpty(old_teacherlist)) {
+                    logger.info("用户：{}执行teacherApplicationDao.update操作", teacherId);
+                    for (int i = 0; i < old_teacherlist.size(); i++) {
+                        TeacherApplication application = old_teacherlist.get(i);
+                        application.setCurrent(0);
+                        this.teacherApplicationDao.update(application);
+                    }
+                }
+
+                TeacherApplication new_application = old_teacherlist.get(0);
+                new_application.setTeacherId(teacherId);//  步骤关联的教师
+                new_application.setApplyDateTime(new Timestamp(System.currentTimeMillis()));
+                new_application.setAuditDateTime(new Timestamp(System.currentTimeMillis()));
+                new_application.setAuditorId(RestfulConfig.SYSTEM_USER_ID);
+                new_application.setStatus(TeacherApplicationEnum.Status.TRAINING.toString());
+                new_application = teacherApplicationDao.initApplicationData(new_application);
+
+
                 if(quizScore < RestfulConfig.Quiz.NEW_QUIZ_PASS_SCORE){
                     logger.info("teacehrId:{},提交考试结果，quizId:{} 没通过,新增一条考试记录",teacherId,teacherQuiz.getId(),teacherQuiz.getStatus());
                     this.teacherQuizDao.insertQuiz(teacherId,teacherId);
+                    new_application.setResult(TeacherApplicationEnum.Result.FAIL.toString());
+                    this.teacherApplicationDao.update(new_application);
                 }else if(TeacherApplicationEnum.Status.TRAINING.toString().equalsIgnoreCase(teacher.getLifeCycle())){
-                    List<TeacherApplication> old_teacherlist = teacherApplicationDao.findCurrentApplication(teacherId);
-                    if (CollectionUtils.isNotEmpty(old_teacherlist)) {
-                        logger.info("用户：{}执行teacherApplicationDao.update操作", teacherId);
-                        for (int i = 0; i < old_teacherlist.size(); i++) {
-                            TeacherApplication application = old_teacherlist.get(i);
-                            application.setCurrent(0);
-                            this.teacherApplicationDao.update(application);
-                        }
-                    }
-                    TeacherApplication application = new TeacherApplication();
-                    application.setTeacherId(teacherId);//  步骤关联的教师
 
-                    application.setApplyDateTime(new Timestamp(System.currentTimeMillis()));
-                    application.setAuditDateTime(new Timestamp(System.currentTimeMillis()));
 
-                    application.setAuditorId(RestfulConfig.SYSTEM_USER_ID);
-
-                    application.setResult(TeacherApplicationEnum.Result.PASS.toString());
-                    application.setStatus(TeacherApplicationEnum.Status.TRAINING.toString());
-                    application = teacherApplicationDao.initApplicationData(application);
-                    this.teacherApplicationDao.save(application);
+                    new_application.setResult(TeacherApplicationEnum.Result.PASS.toString());
+                    this.teacherApplicationDao.update(new_application);
                     //教师通过考试发通知邮件
                     EmailUtils.sendEmail4TrainingPass(teacher, quizScore);
 
@@ -188,7 +192,7 @@ public class TrainingService {
     }
 
 
-    /**
+    /**update
      * 保存考試的詳細，算出 考試分數
      * @param teacherId
      * @param teacherQuiz
