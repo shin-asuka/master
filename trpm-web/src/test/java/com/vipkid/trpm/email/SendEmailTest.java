@@ -44,14 +44,17 @@ public class SendEmailTest {
 	private AuditEmailService auditEmailService;
 	
     public static void main(String[] args) {
+		StringBuilder sb = new StringBuilder();
+		System.out.println("ss"+sb.toString()+"aa");
 
-
+/*
 		Map<String, String> paramsMap1 = Maps.newHashMap();
 		paramsMap1.put("teacherName", "Bel2");
 		String titleTemplate1 = "InterviewPassTitle.html";
 		String contentTemplate1 = StringUtils.EMPTY;
 		Map<String, String> emailMap1 = TemplateUtils.readTemplate(contentTemplate1, paramsMap1, titleTemplate1);
 		new EmailEngine().addMailPool("zhaojia3@vipkid.com.cn ", emailMap1, EmailFormEnum.TEACHVIP);
+		*/
 /*
 		Map<String, String> paramsMap4 = Maps.newHashMap();
 		paramsMap4.put("teacherName", "Bel5");

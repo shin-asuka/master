@@ -182,7 +182,7 @@ public class AuditEmailService {
                 if (CollectionUtils.isNotEmpty(list)) {
                 TeacherApplication teacherApplication = list.get(0);
                 Teacher teacher  = teacherDao.findById(teacherApplication.getTeacherId());
-                paramsMap =  EmailTemplateTools.InterviewPassContentMap(teacherApplication,teacher);
+                paramsMap =  EmailTemplateTools.interviewPassContentMap(teacherApplication,teacher);
             }
             Teacher teacher  =  teacherDao.findById(teacherId);
             if (teacher.getRealName() != null)

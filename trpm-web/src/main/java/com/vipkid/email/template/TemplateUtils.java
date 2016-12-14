@@ -96,6 +96,7 @@ public class TemplateUtils {
             br.close();
         } catch (Exception e) {
             e.printStackTrace();
+            logger.error("TemplateUtils.streamToString() ",e);
         }
         return result;
     }

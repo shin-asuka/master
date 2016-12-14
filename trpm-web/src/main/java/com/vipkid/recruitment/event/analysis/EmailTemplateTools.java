@@ -84,7 +84,7 @@ public class EmailTemplateTools {
         return null;
     }
 
-    public  static Map<String,String> InterviewPassContentMap(TeacherApplication teacherApplication,Teacher teacher){
+    public  static Map<String,String> interviewPassContentMap(TeacherApplication teacherApplication,Teacher teacher){
         if(teacherApplication == null){
             return null;
         }
