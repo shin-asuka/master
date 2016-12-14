@@ -349,24 +349,23 @@ public class PassportService {
         
         if(refereeId != null){//三周年庆时有改动，这里的if兼容之前的逻辑
             logger.info("开始refereeId判断:{},refereeId:{},parenerId:{}",teacher.getEmail(),refereeId,partnerId);
-            long userId = Long.valueOf(refereeId);
-            User user = this.findUserById(userId);
+            User user = this.findUserById(refereeId);
             if (user != null) {
-                if (UserEnum.Dtype.PARTNER.toString().equals(user.getDtype())) {
+                if (UserEnum.Dtype.PARTNER.val().equals(user.getDtype())) {
                     teacher.setRecruitmentChannel(RecruitmentChannel.PARTNER.toString());
                     teacher.setPartnerId(user.getId());
                     logger.info("PARTNER设置: teacher-refereeId:{},refereeId:{},parenerId:{}",teacher.getEmail(),refereeId,partnerId);
-                } else if (UserEnum.Dtype.TEACHER.toString().equals(user.getDtype())) {
-                	Teacher t = teacherDao.findById(userId);
-                	if(t!=null){
-                	    teacher.setRecruitmentChannel(RecruitmentChannel.TEACHER.toString());
-                		teacher.setReferee(user.getId() + "," + t.getRealName());//Referee存老师的realName
-                		logger.info("TEACHER设置: teacher-refereeId:{},refereeId:{},parenerId:{}",teacher.getEmail(),refereeId,partnerId);
-                	}else{
-                	    teacher.setRecruitmentChannel(RecruitmentChannel.OTHER.toString());
-                	    teacher.setReferee(user.getId() + ",");
-                	    logger.warn("没有找到teacher-refereeId:{},refereeId:{},parenerId:{}",teacher.getEmail(),refereeId,partnerId);
-                	}
+                } else if (UserEnum.Dtype.TEACHER.val().equals(user.getDtype())) {
+                    Teacher t = teacherDao.findById(refereeId);
+                    if(t!=null){
+                        teacher.setRecruitmentChannel(RecruitmentChannel.TEACHER.toString());
+                        teacher.setReferee(user.getId() + "," + t.getRealName());//Referee存老师的realName
+                        logger.info("TEACHER设置: teacher-refereeId:{},refereeId:{},parenerId:{}",teacher.getEmail(),refereeId,partnerId);
+                    }else{
+                        teacher.setRecruitmentChannel(RecruitmentChannel.OTHER.toString());
+                        teacher.setReferee(user.getId() + ",");
+                        logger.warn("没有找到teacher-refereeId:{},refereeId:{},parenerId:{}",teacher.getEmail(),refereeId,partnerId);
+                    }
                 }
             }else{
                 logger.warn("没有找到user-refereeId:{},refereeId:{},parenerId:{}",teacher.getEmail(),refereeId,partnerId);
@@ -376,7 +375,7 @@ public class PassportService {
         if(partnerId != null){//三周年庆的需求添加
             User user = this.findUserById(partnerId);
             if (user != null) {
-                if (UserEnum.Dtype.PARTNER.toString().equals(user.getDtype())) {
+                if (UserEnum.Dtype.PARTNER.val().equals(user.getDtype())) {
                     teacher.setPartnerId(user.getId());
                     teacher.setRecruitmentChannel(RecruitmentChannel.PARTNER.toString());
                     logger.info("PARTNER 三周年设置: teacher-refereeId:{},refereeId:{},parenerId:{}",teacher.getEmail(),refereeId,partnerId);
