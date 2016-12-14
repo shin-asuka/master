@@ -1,5 +1,6 @@
 package com.vipkid.recruitment.interview.service;
 
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
@@ -273,7 +274,7 @@ public class InterviewService {
      * @return
      * Map&lt;String,Object&gt;
      */
-    public Map<String,Object> toTraining(Teacher teacher){
+    public Map<String,Object> updateToTraining(Teacher teacher){
         List<TeacherApplication> listEntity = teacherApplicationDao.findCurrentApplication(teacher.getId());
         if(CollectionUtils.isEmpty(listEntity)){
             return ReturnMapUtils.returnFail("You have no legal power into the next phase !","teacherId;"+teacher.getId());
@@ -282,12 +283,30 @@ public class InterviewService {
         //执行逻辑 只有在INTERVIEW的PASS状态才能进入
         if(Status.INTERVIEW.toString().equals(listEntity.get(0).getStatus())
                 && Result.PASS.toString().equals(listEntity.get(0).getResult())){
+            
             //按照新流程 该步骤将老师的LifeCycle改变为Interview -to-Training
             teacher.setLifeCycle(LifeCycle.TRAINING.toString());
             this.teacherDao.insertLifeCycleLog(teacher.getId(),LifeCycle.INTERVIEW,LifeCycle.TRAINING, teacher.getId());
             this.teacherDao.update(teacher);
+            
             // 增加quiz的考试记录
             teacherQuizDao.insertQuiz(teacher.getId(),teacher.getId());
+            
+            // 新加Training 申请记录
+            List<TeacherApplication> list = teacherApplicationDao.findCurrentApplication(teacher.getId());
+            if(CollectionUtils.isNotEmpty(list)){
+               list.stream().forEach(application -> {application.setCurrent(0);teacherApplicationDao.update(application);});
+            }
+            
+            // 保存申请时间
+            TeacherApplication teacherApplication = new TeacherApplication();
+            teacherApplication = teacherApplicationDao.initApplicationData(teacherApplication);
+            teacherApplication.setTeacherId(teacher.getId());
+            teacherApplication.setApplyDateTime(new Timestamp(System.currentTimeMillis()));
+            teacherApplication.setCurrent(1);
+            teacherApplication.setStatus(Status.TRAINING.toString());
+            this.teacherApplicationDao.save(teacherApplication);
+            
             return ReturnMapUtils.returnSuccess();
         }
         return ReturnMapUtils.returnFail("You have no legal power into the next phase !","teacherId;"+teacher.getId());

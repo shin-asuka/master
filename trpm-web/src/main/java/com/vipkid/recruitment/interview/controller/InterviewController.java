@@ -125,7 +125,7 @@ public class InterviewController extends RestfulController {
         try{
             Teacher teacher = getTeacher(request);
             logger.info("user:{},getReschedule",teacher.getId());
-            Map<String,Object> result = this.interviewService.toTraining(teacher);
+            Map<String,Object> result = this.interviewService.updateToTraining(teacher);
             if(ReturnMapUtils.isFail(result)){
                 response.setStatus(HttpStatus.FORBIDDEN.value());
             }
