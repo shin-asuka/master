@@ -14,18 +14,36 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.google.api.client.util.Maps;
 import com.google.common.base.Stopwatch;
+import com.vipkid.enums.TeacherEnum.LifeCycle;
 import com.vipkid.http.utils.JsonUtils;
+import com.vipkid.rest.RestfulController;
+import com.vipkid.rest.interceptor.annotation.RestInterface;
 import com.vipkid.rest.portal.service.ClassroomsRestService;
+import com.vipkid.rest.service.LoginService;
+import com.vipkid.rest.utils.ApiResponseUtils;
 
 @RestController
-public class ClassroomsRestController {
-	private static Logger logger = LoggerFactory.getLogger(ClassroomsRestController.class);
+@RestInterface(lifeCycle = LifeCycle.REGULAR)
+public class ClassroomsRestController extends RestfulController{
+	private static final Logger logger = LoggerFactory.getLogger(ClassroomsRestController.class);
 	
 	@Autowired
 	private ClassroomsRestService classroomsRestService;
+	
+	@Autowired
+	private LoginService loginService;
 
+	/**
+	 * classrooms页面的数据接口
+	 * @param request
+	 * @param response
+	 * @param teacherId
+	 * @param offsetOfMonth
+	 * @param courseType
+	 * @param page
+	 * @return
+	 */
 	@RequestMapping(value = "/restClassrooms", method = RequestMethod.GET)
 	public Map<String, Object> classrooms(HttpServletRequest request, HttpServletResponse response,
 			@RequestParam(value="teacherId", required=true) long teacherId,
@@ -36,53 +54,41 @@ public class ClassroomsRestController {
 			Stopwatch stopwatch = Stopwatch.createStarted();
 			logger.info("开始调用restClassrooms接口，传入参数：teacherId={}, month={}, tag={}, page={}", teacherId, offsetOfMonth, courseType, page);
 			
-			Map<String, Object> result = null;
-			result = classroomsRestService.getClassroomsData(teacherId, offsetOfMonth, courseType, page);
+			Map<String, Object> result = classroomsRestService.getClassroomsData(teacherId, offsetOfMonth, courseType, page);
 			
 			long millis =stopwatch.stop().elapsed(TimeUnit.MILLISECONDS);
 			logger.info("结束调用restClassrooms接口，传入参数：teacherId={}, month={}, tag={}, page={}。返回Json={}。共耗时{}ms", teacherId, offsetOfMonth, courseType, page, JsonUtils.toJSONString(result), millis);
 	        return result;
 	        } catch (Exception e) {
-	        	logger.error("调用restClassrooms接口抛异常: {}", e);//由于维龙的代码没有合上去，暂时这么处理
+	        	logger.error("调用restClassrooms接口抛异常，传入参数：teacherId={}, month={}, tag={}, page={}。抛异常: {}", teacherId, offsetOfMonth, courseType, e);//由于维龙的代码没有合上去，暂时这么处理
 	        }
-		return null;
+		return ApiResponseUtils.buildErrorResp(1001, "服务器端错误");
 	}
 	
+	/**
+	 * 根据lessonId获取此节课的material接口，要求登陆的regular老师才能请求
+	 * @param request
+	 * @param response
+	 * @param lessonId
+	 * @return
+	 */
 	@RequestMapping(value = "/restClassroomsMaterial", method  = RequestMethod.GET)
 	public Map<String, Object> material(HttpServletRequest request, HttpServletResponse response,
 			@RequestParam(value = "lessonId", required = true) long lessonId){
 		try {
 			Stopwatch stopwatch = Stopwatch.createStarted();
 			logger.info("开始调用restClassroomsMaterials接口， 传入参数：lessonId = {}", lessonId);
-			Map<String, Object> result = Maps.newHashMap();
-			result = classroomsRestService.getClassroomsMaterialByLessonId(lessonId);
+//			Teacher teacher = loginService.getTeacher();
+//			if(null == teacher){
+//				return ApiResponseUtils.buildErrorResp(1002, "没有权限请求此接口");
+//			}
+			Map<String, Object> result  = classroomsRestService.getClassroomsMaterialByLessonId(lessonId);
 			long millis = stopwatch.stop().elapsed(TimeUnit.MILLISECONDS);
 			logger.info("结束调用restClassroomsMaterials接口，传入参数：lessonId = {}。返回Json={}。耗时{}ms", lessonId, JsonUtils.toJSONString(result), millis);
 			return result;
 		} catch (Exception e) {
-			logger.error("调用restClassroomsMaterial接口抛异常: {}", e);//由于维龙的代码没有合上去，暂时这么处理
+			logger.error("调用restClassroomsMaterial接口， 传入参数：lessonId = {}。抛异常: {}", lessonId, e);//由于维龙的代码没有合上去，暂时这么处理
 		}
-		return null;
+		return ApiResponseUtils.buildErrorResp(1001, "服务器端错误");
 	}
-	
-	@Deprecated
-	@RequestMapping(value = "/restClassroomsMaterials", method = RequestMethod.GET)
-	public Map<String, Object> materials(HttpServletRequest request, HttpServletResponse response,
-			@RequestParam(value = "lessonId", required = true) long lessonId){
-		try {
-			Stopwatch stopwatch = Stopwatch.createStarted();
-			logger.info("开始调用restClassroomsMaterials接口， 传入参数：lessonId = {}", lessonId);
-			
-			Map<String, Object> result = null;
-			result = classroomsRestService.getClassroomsMaterials(lessonId);
-
-			long millis = stopwatch.stop().elapsed(TimeUnit.MILLISECONDS);
-			logger.info("结束调用restClassroomsMaterials接口，传入参数：lessonId = {}。返回Json={}。耗时{}ms", lessonId, JsonUtils.toJSONString(result), millis);
-			return result;
-		} catch (Exception e) {
-        	logger.error("调用restClassroomsMaterials接口抛异常: {}", e);//由于维龙的代码没有合上去，暂时这么处理
-		}
-		return null;
-	}
-	
 }

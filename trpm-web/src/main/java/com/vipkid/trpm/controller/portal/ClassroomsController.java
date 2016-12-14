@@ -160,11 +160,4 @@ public class ClassroomsController extends AbstractPortalController {
 
 		return view("materials");
 	}
-
-	//FAQ静态页面的controler
-	@RequestMapping("/faq")
-	public String showFAQ(HttpServletRequest request, HttpServletResponse response, Model model) {
-
-		return view("faq");
-	}
 }
