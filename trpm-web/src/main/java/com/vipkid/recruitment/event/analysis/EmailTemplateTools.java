@@ -10,8 +10,6 @@ import com.amazonaws.util.json.Jackson;
 import com.vipkid.email.template.TemplateUtils;
 import com.vipkid.recruitment.entity.TeacherApplication;
 import com.vipkid.trpm.entity.Teacher;
-import org.apache.commons.lang.StringUtils;
-
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.base.Charsets;
@@ -58,20 +56,7 @@ public class EmailTemplateTools {
         return null;
     }
 
-    /**
-     *  替换模板<br/>
-     */
-    public static String replaceTemplate(String content, Map<String, String> map) {
-        if(StringUtils.isBlank(content)){
-            return "";
-        }
-        if(map != null && map.size() > 0){
-            for (Map.Entry<String, String> entry : map.entrySet()) {
-                content = content.replace("{{" + entry.getKey().trim() + "}}", entry.getValue() == null ? "":entry.getValue());
-            }
-        }
-        return content;
-    }
+
 
     /**
      * 读取模板内容
@@ -99,7 +84,7 @@ public class EmailTemplateTools {
         return null;
     }
 
-    public  static Map<String,String> readyContent(TeacherApplication teacherApplication,Teacher teacher){
+    public  static Map<String,String> InterviewPassContentMap(TeacherApplication teacherApplication,Teacher teacher){
         if(teacherApplication == null){
             return null;
         }
