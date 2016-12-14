@@ -22,4 +22,8 @@ public class TeacherLockLogDao extends MapperDaoTemplate<TeacherLockLog>{
     public int count(TeacherLockLog teacherLockLog){
         return super.selectCount(teacherLockLog);
     }
+
+    public int unlock(TeacherLockLog teacherLockLog){
+        return super.update(teacherLockLog, "unlockByTeacherIdReasonStatus");
+    }
 }

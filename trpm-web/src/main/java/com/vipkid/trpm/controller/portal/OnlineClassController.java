@@ -270,7 +270,7 @@ public class OnlineClassController extends AbstractPortalController {
 
             // Finish课程
             if ((Boolean) modelMap.get("result")) {
-                onlineclassService.finishPracticum(teacherApplication.getOnlineClassId(), finishType, pe, (Teacher) modelMap.get("recruitTeacher"));
+                onlineclassService.finishPracticum(teacherApplication, finishType, pe, (Teacher) modelMap.get("recruitTeacher"));
             }
         }
 

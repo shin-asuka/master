@@ -71,9 +71,6 @@ public class PeSupervisorService {
     @Autowired
     private TeacherModuleDao teacherModuleDao;
 
-    @Autowired
-    private TeacherQuizDao teacherQuizDao;
-
     public int totalPe(long teacherId) {
         return teacherPeDao.countByTeacherId(teacherId);
     }
@@ -108,12 +105,11 @@ public class PeSupervisorService {
      * 结束Practicum课操作
      *
      * @Author:ALong
-     * @param teacher 操作老师(学生角色)
-     * @param onlineClassId 上课Id
+     * @param peSupervisor 操作老师(学生角色)
+     * @param currTeacherApplication 上课Id
      * @param result 结果
-     * @param studentId 学生Id
-     * @param comments 备注
      * @param finishType 完成类型
+     * @param peId peId
      * @return Map<String,Object>
      * @date 2016年1月11日
      */
@@ -261,7 +257,7 @@ public class PeSupervisorService {
         teacherApplication.setTeacherId(recruitTeacher.getId());
         teacherApplication.setCurrent(1);
         // 如果是PASS操作，则ta状态修改为FINISH，教师状态修改为REGULAR
-        if (TeacherApplicationEnum.Result.PASS.toString().equals(result)) {
+//        if (TeacherApplicationEnum.Result.PASS.toString().equals(result)) {
             //teacherApplication.setStatus(TeacherApplicationEnum.Status.FINISHED.toString());
             // 2.教师状态更新
             //recruitTeacher.setLifeCycle(LifeCycle.REGULAR.toString());
@@ -271,7 +267,7 @@ public class PeSupervisorService {
             //this.teacherDao.update(recruitTeacher);
             // 增加quiz的考试记录
             //teacherQuizDao.insertQuiz(recruitTeacher.getId(),pes.getId());
-        }
+//        }
         // 3.更新teacherApplication
         this.teacherApplicationDao.update(teacherApplication);
 
@@ -290,7 +286,7 @@ public class PeSupervisorService {
     /**
      * 处理PE的Practicum操作
      *
-     * @param teacher
+     * @param pe
      * @param teacherApplication
      * @return
      */

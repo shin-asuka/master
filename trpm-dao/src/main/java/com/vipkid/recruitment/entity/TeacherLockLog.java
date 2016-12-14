@@ -15,6 +15,8 @@ public class TeacherLockLog extends Entity implements Serializable{
     
     private String lifeCycle;
 
+    private Integer isUnlocked;
+
     private Long operatorId;
 
     private Timestamp createDateTime;
@@ -23,9 +25,14 @@ public class TeacherLockLog extends Entity implements Serializable{
     }
 
     public TeacherLockLog(Long teacherId, String reason, String lifeCycle) {
+        this(teacherId, reason, lifeCycle, null);
+    }
+
+    public TeacherLockLog(Long teacherId, String reason, String lifeCycle, Integer isUnlocked) {
         this.teacherId = teacherId;
         this.reason = reason;
         this.lifeCycle = lifeCycle;
+        this.isUnlocked = isUnlocked;
     }
 
 
@@ -59,6 +66,14 @@ public class TeacherLockLog extends Entity implements Serializable{
 
     public void setLifeCycle(String lifeCycle) {
         this.lifeCycle = lifeCycle;
+    }
+
+    public Integer getIsUnlocked() {
+        return isUnlocked;
+    }
+
+    public void setIsUnlocked(Integer isUnlocked) {
+        this.isUnlocked = isUnlocked;
     }
 
     public Long getOperatorId() {

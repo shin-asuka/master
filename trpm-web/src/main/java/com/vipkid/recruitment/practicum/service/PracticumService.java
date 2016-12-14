@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.google.api.client.util.Maps;
+import com.vipkid.enums.UserEnum;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang3.StringUtils;
@@ -225,16 +226,16 @@ public class PracticumService {
         //保存cancel记录
         this.teacherApplicationLogDao.saveCancel(teacher.getId(), listEntity.get(0).getId(), Status.PRACTICUM, Result.CANCEL, onlineClass);
 
-        int count = recruitmentService.getRemainRescheduleTimes(teacher, Status.PRACTICUM.toString(), Result.CANCEL.toString());
-
-        if(count == 0){
-            userDao.doLock(teacher.getId());
-            teacherLockLogDao.save(new TeacherLockLog(teacher.getId(), Reason.RESCHEDULE.toString(), LifeCycle.PRACTICUM.toString()));
+        if (!UserEnum.Status.isLocked(userDao.findById(teacher.getId()).getStatus())) {
+            int count = recruitmentService.getRemainRescheduleTimes(teacher, Status.PRACTICUM.toString(), Result.CANCEL.toString());
+            if (count == 0) {
+                userDao.doLock(teacher.getId());
+                teacherLockLogDao.save(new TeacherLockLog(teacher.getId(), Reason.RESCHEDULE.toString(), LifeCycle.PRACTICUM.toString()));
+            }
         }
 
         //执行Cancel逻辑
         Map<String,Object> result = OnlineClassProxy.doCancelRecruitement(teacher.getId(), onlineClass.getId(), ClassType.PRACTICUM);
-        result.put("count", count);
         if(ReturnMapUtils.isFail(result)){
             //一旦失败，抛出异常回滚
             throw new RuntimeException("Class canceling is fail! "+result.get("info"));

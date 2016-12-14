@@ -7,6 +7,7 @@
 		teacher_lock_log.teacher_id AS teacher_lock_log_teacher_id,
 		teacher_lock_log.reason AS teacher_lock_log_reason,
 		teacher_lock_log.life_cycle AS teacher_lock_log_life_cycle,
+		teacher_lock_log.is_unlocked AS teacher_lock_log_is_unlocked,
 		teacher_lock_log.operator_id AS teacher_lock_log_operator_id,
 		teacher_lock_log.create_date_time AS teacher_lock_log_create_date_time
 	</sql>
@@ -17,6 +18,7 @@
 			<if test="teacherId!=null">AND teacher_lock_log.teacher_id = #{teacherId}</if>
 			<if test="reason!=null">AND teacher_lock_log.reason = #{reason}</if>
 			<if test="lifeCycle!=null">AND teacher_lock_log.life_cycle = #{lifeCycle}</if>
+			<if test="isUnlocked!=null">AND teacher_lock_log.is_unlocked = #{isUnlocked}</if>
 			<if test="operatorId!=null">AND teacher_lock_log.operator_id = #{operatorId}</if>
 			<if test="createDateTime!=null">AND teacher_lock_log.create_date_time = #{createDateTime}</if>
 		</trim>
@@ -33,7 +35,8 @@
 		<result column="teacher_lock_log_teacher_id" property="teacherId" />
 		<result column="teacher_lock_log_reason" property="reason" />
 		<result column="teacher_lock_log_life_cycle" property="lifeCycle" />
-		<result column="teacher_lock_log_operator_id" property="lifeCycle" />
+		<result column="teacher_lock_log_is_unlocked" property="isUnlocked" />
+		<result column="teacher_lock_log_operator_id" property="operatorId" />
 		<result column="teacher_lock_log_create_date_time" property="createDateTime" />
 	</resultMap>
 
@@ -75,6 +78,7 @@
 			<if test="teacherId!=null">,teacher_id</if>
 			<if test="reason!=null">,reason</if>
 			<if test="lifeCycle!=null">,life_cycle</if>
+			<if test="isUnlocked!=null">,is_unlocked</if>
 			<if test="operatorId!=null">,operator_id</if>
 			<if test="createDateTime!=null">,create_date_time</if>
 		</trim>
@@ -84,6 +88,7 @@
 			<if test="teacherId!=null">,#{teacherId}</if>
 			<if test="reason!=null">,#{reason}</if>
 			<if test="lifeCycle!=null">,#{lifeCycle}</if>
+			<if test="isUnlocked!=null">,#{isUnlocked}</if>
 			<if test="operatorId!=null">,#{operatorId}</if>
 			<if test="createDateTime!=null">,#{createDateTime}</if>
 		</trim>
@@ -94,13 +99,24 @@
 		UPDATE teacher_lock_log
 		<trim prefix="SET" prefixOverrides=",">
 			<if test="id!=null">,id = #{id}</if>
-			<if test="teacherId!=null">,teacherId = #{teacher_id}</if>
+			<if test="teacherId!=null">,teacher_id = #{teacherId}</if>
 			<if test="reason!=null">,reason = #{reason}</if>
-			<if test="lifeCycle!=null">,status = #{life_cycle}</if>
-			<if test="operatorId!=null">,status = #{teacher_id}</if>
-			<if test="createDateTime!=null">,status = #{create_date_time}</if>
+			<if test="lifeCycle!=null">,life_cycle = #{lifeCycle}</if>
+			<if test="isUnlocked!=null">,is_unlocked = #{isUnlocked}</if>
+			<if test="operatorId!=null">,operator_id = #{operatorId}</if>
+			<if test="createDateTime!=null">,create_date_time = #{createDateTime}</if>
 		</trim>
 		<trim prefix="WHERE" prefixOverrides="AND">AND id = #{id}</trim>
+	</update>
+
+	<update id="unlockByTeacherIdReasonStatus">
+		UPDATE teacher_lock_log
+		SET is_unlocked = 1
+		<trim prefix="WHERE" prefixOverrides="AND">
+			<if test="teacherId!=null">AND teacher_id = #{teacherId}</if>
+			<if test="reason!=null">AND reason = #{reason}</if>
+			<if test="lifeCycle!=null">AND life_cycle = #{lifeCycle}</if>
+		</trim>
 	</update>
 
 	<delete id="deleteDao">

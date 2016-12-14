@@ -27,6 +27,20 @@ public class AuditEvent implements Serializable {
     @Ignore
     private Long dateTime;
 
+    public AuditEvent() {
+    }
+
+    public AuditEvent(Long sourceId, String status, String auditResult) {
+        this(sourceId, status, auditResult, System.currentTimeMillis());
+    }
+
+    public AuditEvent(Long sourceId, String status, String auditResult, Long dateTime) {
+        this.sourceId = sourceId;
+        this.status = status;
+        this.auditResult = auditResult;
+        this.dateTime = dateTime;
+    }
+
     public Long getSourceId() {
         return sourceId;
     }

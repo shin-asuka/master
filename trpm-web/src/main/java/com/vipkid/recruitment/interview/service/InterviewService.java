@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import com.vipkid.enums.UserEnum;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
@@ -251,16 +252,16 @@ public class InterviewService {
         //保存cancel记录
         this.teacherApplicationLogDao.saveCancel(teacher.getId(), listEntity.get(0).getId(), Status.INTERVIEW, Result.CANCEL, onlineClass);
 
-        int count = recruitmentService.getRemainRescheduleTimes(teacher, Status.INTERVIEW.toString(), Result.CANCEL.toString());
-
-        if(count == 0){
-            userDao.doLock(teacher.getId());
-            teacherLockLogDao.save(new TeacherLockLog(teacher.getId(), Reason.RESCHEDULE.toString(), LifeCycle.INTERVIEW.toString()));
+        if (!UserEnum.Status.isLocked(userDao.findById(teacher.getId()).getStatus())) {
+            int count = recruitmentService.getRemainRescheduleTimes(teacher, Status.INTERVIEW.toString(), Result.CANCEL.toString());
+            if (count == 0) {
+                userDao.doLock(teacher.getId());
+                teacherLockLogDao.save(new TeacherLockLog(teacher.getId(), Reason.RESCHEDULE.toString(), LifeCycle.INTERVIEW.toString()));
+            }
         }
 
         //执行Cancel逻辑
         Map<String,Object> result = OnlineClassProxy.doCancelRecruitement(teacher.getId(), onlineClass.getId(), ClassType.TEACHER_RECRUITMENT);
-        result.put("count", count);
         if(ReturnMapUtils.isFail(result)){
             //一旦失败，抛出异常回滚
             throw new RuntimeException("Cancel failed! Please try again."+result.get("info"));

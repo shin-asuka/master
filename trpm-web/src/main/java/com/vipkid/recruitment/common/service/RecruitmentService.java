@@ -401,7 +401,7 @@ public class RecruitmentService {
     /**
      * 检查老师是否被Fail，或者当前步骤是否Pass 
      * 2016年12月13日 下午1:29:27
-     * @param teaccherId
+     * @param teacher
      * @return    
      * boolean true:是,false:不是
      */
@@ -422,19 +422,15 @@ public class RecruitmentService {
     public int getRemainRescheduleTimes(Teacher teacher, String status, String type){
         //type: cancelNum, CancelNoShow, ITProblem
         int remainTimes = 0;
-        int lockTimes = getLockTimes(teacher.getId(), status);
+        int lockedTimes = getLockTimes(teacher.getId(), status, null);
+        int lockTimes = getLockTimes(teacher.getId(), status, new Integer(0));
         int reapplyTimesByITProblem = getReapplyTimesByITProblem(teacher.getId(), status);
         int reapplyTimesByCancelNoShow = getReapplyTimesByCancelNoShow(teacher.getId(), status);
         int cancelNum = getCancelNum(teacher.getId(), status);
-        if (lockTimes > 0){
-            int itOverTimes = reapplyTimesByITProblem - CommonConstant.IT_PRO_MAX_ALLOWED_TIMES;
-            itOverTimes = itOverTimes > 0 ? itOverTimes : 0;
-
-            int cancelOverTimes = reapplyTimesByCancelNoShow + cancelNum - CommonConstant.CANCEL_MAX_ALLOWED_TIMES;
-            cancelOverTimes = cancelOverTimes > 0 ? cancelOverTimes : 0;
-
-            if(itOverTimes + cancelOverTimes < lockTimes){
+        if (lockedTimes > 0){
+            if (lockTimes > 0) {
                 remainTimes = 1;
+                teacherLockLogDao.unlock(new TeacherLockLog(teacher.getId(), Reason.RESCHEDULE.toString(), status));
             }
         } else {
             if (FinishType.STUDENT_CANCELLATION.equals(type) || FinishType.STUDENT_NO_SHOW.equals(type) || Result.CANCEL.toString().equals(type)){
@@ -448,8 +444,8 @@ public class RecruitmentService {
         return remainTimes;
     }
 
-    private int getLockTimes(long teacherId, String lifeCycle){
-        return teacherLockLogDao.count(new TeacherLockLog(teacherId, Reason.RESCHEDULE.toString(), lifeCycle));
+    private int getLockTimes(long teacherId, String lifeCycle, Integer isUnlocked){
+        return teacherLockLogDao.count(new TeacherLockLog(teacherId, Reason.RESCHEDULE.toString(), lifeCycle, isUnlocked));
     }
 
     private int getReapplyTimesByCancelNoShow(long teacherId, String status){

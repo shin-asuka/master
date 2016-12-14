@@ -127,7 +127,7 @@ public class PeSupervisorController extends AbstractPeController {
         Teacher recruitTeacher = (Teacher) modelMap.get("recruitTeacher");
         // Finish课程
         if ((Boolean) modelMap.get("result")) {
-            onlineclassService.finishPracticum(teacherApplication.getOnlineClassId(), finishType, peSupervisor, recruitTeacher);
+            onlineclassService.finishPracticum(teacherApplication, finishType, peSupervisor, recruitTeacher);
         }
 
         // 并异步调用AppServer发送邮件及消息
