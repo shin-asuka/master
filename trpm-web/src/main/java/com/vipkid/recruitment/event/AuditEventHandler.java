@@ -32,7 +32,7 @@ public class AuditEventHandler implements AuditHandler {
         Long teacherId = event.getSourceId();
         String status = event.getStatus();
         String result = event.getAuditResult();
-
+        logger.info("teacherId:{},  status:{}  result:{}",teacherId,status,result);
         switch (status) {
             case "BASIC_INFO":
                 switch (result) {
@@ -40,7 +40,10 @@ public class AuditEventHandler implements AuditHandler {
                         logger.info("向用户 {} sendBasicInfoPass 的邮件", teacherId);
                         ret = auditEmailService.sendBasicInfoPass(teacherId);
                         break;
+                    default:
+                        break;
                 }
+                break;
             case "INTERVIEW":
                 switch (result) {
                     case "PASS":
@@ -51,7 +54,10 @@ public class AuditEventHandler implements AuditHandler {
                         logger.info("向用户 {} sendInterviewReapply 的邮件", teacherId);
                         ret = auditEmailService.sendInterviewReapply(teacherId);
                         break;
+                    default:
+                        break;
                 }
+                break;
             case "PRACTICUM":
                 switch (result) {
                     case "PASS":
@@ -69,6 +75,7 @@ public class AuditEventHandler implements AuditHandler {
                     default:
                         break;
                 }
+                break;
             case "CONTRACT_INFO":
                 switch (result) {
                     case "PASS":
@@ -82,6 +89,7 @@ public class AuditEventHandler implements AuditHandler {
                     default:
                         break;
                 }
+                break;
             default:
                 break;
         }

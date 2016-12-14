@@ -45,7 +45,7 @@ public class AuditEventController extends RestfulController {
 
     /**
      * 从管理端发送邮件
-     * @param pramMap
+     * @param
      * @param request
      * @param response
      * @return

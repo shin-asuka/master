@@ -44,7 +44,7 @@ public class SendEmailTest {
 	private AuditEmailService auditEmailService;
 	
     public static void main(String[] args) {
-		Map<String, String> paramsMap = Maps.newHashMap();
+		/*Map<String, String> paramsMap = Maps.newHashMap();
 			paramsMap.put("teacherName", "Bel1");
 			String titleTemplate = "reminderApplicantBefore24HoursEmailSubjectTemplate.html";
 			String contentTemplate = "reminderApplicantBefore24HoursEmailContentTemplate.html";
@@ -157,7 +157,7 @@ public class SendEmailTest {
 		String titleTemplate16 = "ContractInfoPassTitle.html";
 		String contentTemplate16= "ContractInfoPass.html";
 		Map<String, String> emailMap16 = TemplateUtils.readTemplate(contentTemplate16, paramsMap16, titleTemplate16);
-		new EmailEngine().addMailPool("zhaojia3@vipkid.com.cn ", emailMap16 , EmailFormEnum.TEACHVIP);
+		new EmailEngine().addMailPool("zhaojia3@vipkid.com.cn ", emailMap16 , EmailFormEnum.TEACHVIP);*/
 
 
 		Map<String, String> paramsMap12 = Maps.newHashMap();
@@ -165,7 +165,7 @@ public class SendEmailTest {
 		String titleTemplate12 = "Practicum2NoBookTitle.html";
 		String contentTemplate12 = "Practicum2NoBook.html";
 		Map<String, String> emailMap12 = TemplateUtils.readTemplate(contentTemplate12, paramsMap12, titleTemplate12);
-		new EmailEngine().addMailPool("zhaojia3@vipkid.com.cn ", emailMap12 , EmailFormEnum.TEACHVIP);
+		new EmailEngine().addMailPool("zhangzhaojun@vipkid.com.cn ", emailMap12 , EmailFormEnum.TEACHVIP);
 
 	}
 

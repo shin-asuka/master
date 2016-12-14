@@ -79,7 +79,8 @@ public class EmailServer {
     private static String getSignture(EmailEntity mailEntity) {
         StringBuffer content = new StringBuffer();
         content.append(mailEntity.getFromMail());
-        content.append(mailEntity.getToMail());
+        //TODO      content.append(mailEntity.getToMail());
+        content.append("13001226942@163.com");
         content.append(mailEntity.getMailSubject());
         content.append(mailEntity.getMailBody());
         content.append(EmailConfig.APP_SECRECT);
