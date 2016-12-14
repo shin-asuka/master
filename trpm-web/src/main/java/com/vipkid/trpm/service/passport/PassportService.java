@@ -113,7 +113,7 @@ public class PassportService {
      * @Author:VIPKID-ZengWeiLong
      * @return 2016年3月3日
      */
-    public Map<String, Object> saveSignUp(String email, String password, Object reid, Object partnerId) {
+    public Map<String, Object> saveSignUp(String email, String password, Long reid, Long partnerId) {
         Map<String, Object> resultMap = Maps.newHashMap();
         User user = this.userDao.findByUsername(email);
         // 1.是否存在
@@ -336,49 +336,55 @@ public class PassportService {
      * @return Teacher
      * @date 2016年3月18日
      */
-    public Teacher prerefereeId(Teacher teacher, Object refereeId, Object partnerId) {
-        if (refereeId == null &&partnerId == null) {
+    public Teacher prerefereeId(Teacher teacher, Long refereeId, Long partnerId) {
+        
+        logger.info("注册时候添加推荐信息参数:{},refereeId:{},parenerId:{}",teacher.getEmail(),refereeId,partnerId);
+        
+        if (refereeId == null && partnerId == null) {
+            logger.warn("参数为空 返回Teacher:{},refereeId:{},parenerId:{}",teacher.getEmail(),refereeId,partnerId);
             return teacher;
         }
         
+        logger.info("参数不为空:{},refereeId:{},parenerId:{}",teacher.getEmail(),refereeId,partnerId);
+        
         if(refereeId != null){//三周年庆时有改动，这里的if兼容之前的逻辑
-            String rfid = String.valueOf(refereeId);
-            if (!StringUtils.isNumeric(rfid)) {
-                return teacher;
-            }
-            long userId = Long.valueOf(rfid);
+            logger.info("开始refereeId判断:{},refereeId:{},parenerId:{}",teacher.getEmail(),refereeId,partnerId);
+            long userId = Long.valueOf(refereeId);
             User user = this.findUserById(userId);
             if (user != null) {
                 if (UserEnum.Dtype.PARTNER.toString().equals(user.getDtype())) {
                     teacher.setRecruitmentChannel(RecruitmentChannel.PARTNER.toString());
                     teacher.setPartnerId(user.getId());
+                    logger.info("PARTNER设置: teacher-refereeId:{},refereeId:{},parenerId:{}",teacher.getEmail(),refereeId,partnerId);
                 } else if (UserEnum.Dtype.TEACHER.toString().equals(user.getDtype())) {
                 	Teacher t = teacherDao.findById(userId);
                 	if(t!=null){
                 	    teacher.setRecruitmentChannel(RecruitmentChannel.TEACHER.toString());
                 		teacher.setReferee(user.getId() + "," + t.getRealName());//Referee存老师的realName
+                		logger.info("TEACHER设置: teacher-refereeId:{},refereeId:{},parenerId:{}",teacher.getEmail(),refereeId,partnerId);
                 	}else{
                 	    teacher.setRecruitmentChannel(RecruitmentChannel.OTHER.toString());
                 	    teacher.setReferee(user.getId() + ",");
-                		logger.warn("找不到id为"+userId+"老师");
+                	    logger.warn("没有找到teacher-refereeId:{},refereeId:{},parenerId:{}",teacher.getEmail(),refereeId,partnerId);
                 	}
                 }
+            }else{
+                logger.warn("没有找到user-refereeId:{},refereeId:{},parenerId:{}",teacher.getEmail(),refereeId,partnerId);
             }
         }
         
         if(partnerId != null){//三周年庆的需求添加
-        	String ptid = String.valueOf(partnerId);
-        	if (!StringUtils.isNumeric(ptid)) {
-                return teacher;
-            }
-            long userId = Long.valueOf(ptid);
-            User user = this.findUserById(userId);
-
+            User user = this.findUserById(partnerId);
             if (user != null) {
                 if (UserEnum.Dtype.PARTNER.toString().equals(user.getDtype())) {
                     teacher.setPartnerId(user.getId());
                     teacher.setRecruitmentChannel(RecruitmentChannel.PARTNER.toString());
-                } 
+                    logger.info("PARTNER 三周年设置: teacher-refereeId:{},refereeId:{},parenerId:{}",teacher.getEmail(),refereeId,partnerId);
+                }else{
+                    logger.warn("没有找到三周年PARENER:{},refereeId:{},parenerId:{}",teacher.getEmail(),refereeId,partnerId);
+                }
+            }else{
+                logger.warn("没有找到三周年User-PARENER:{},refereeId:{},parenerId:{}",teacher.getEmail(),refereeId,partnerId);
             }
         }
         

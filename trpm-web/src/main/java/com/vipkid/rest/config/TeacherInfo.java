@@ -140,7 +140,7 @@ public class TeacherInfo {
         this.setEvaluationBio(teacher.getEvaluationBio());
         this.setLifeCycle(teacher.getLifeCycle());
         this.setShowName(user.getName());
-        this.setHaveChannel(StringUtils.isNoneBlank(teacher.getReferee()) || teacher.getPartnerId() > 0 || StringUtils.isNotBlank(teacher.getOtherChannel()));
+        this.setHaveChannel(StringUtils.isNotBlank(teacher.getReferee()) || teacher.getPartnerId() > 0 || StringUtils.isNotBlank(teacher.getOtherChannel()));
 
     }
    

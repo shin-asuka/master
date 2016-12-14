@@ -10,9 +10,9 @@ public class RegisterDto {
     @NotNull
     private String password;
     
-    private Integer refereeId;
+    private Long refereeId;
     
-    private Integer partnerId;
+    private Long partnerId;
     
     @NotNull
     private String key;
@@ -38,20 +38,20 @@ public class RegisterDto {
 
     }
 
-    public Integer getRefereeId() {
+    public Long getRefereeId() {
         return refereeId;
     }
 
-    public void setRefereeId(Integer refereeId) {
+    public void setRefereeId(Long refereeId) {
         this.refereeId = refereeId;
 
     }
 
-    public Integer getPartnerId() {
+    public Long getPartnerId() {
         return partnerId;
     }
 
-    public void setPartnerId(Integer partnerId) {
+    public void setPartnerId(Long partnerId) {
         this.partnerId = partnerId;
 
     }

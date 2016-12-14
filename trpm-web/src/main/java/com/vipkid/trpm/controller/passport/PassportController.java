@@ -224,7 +224,7 @@ public class PassportController extends AbstractController {
 			// 执行业务逻辑
 			Object reid = CookieUtils.getValue(request, ApplicationConstant.REFEREEID);
 			Object partnerid = CookieUtils.getValue(request, ApplicationConstant.PARTNERID);
-			model.addAllAttributes(passportService.saveSignUp(email, privateCode, reid, partnerid));
+			model.addAllAttributes(passportService.saveSignUp(email, privateCode, Long.valueOf(reid+""),  Long.valueOf(partnerid+"")));
 			CookieUtils.removeCookie(response, ApplicationConstant.REFEREEID, null, null);
 		}
 		return jsonView(response, model.asMap());
