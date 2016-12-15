@@ -221,7 +221,7 @@ public class ReportController extends AbstractPortalController {
      */
     @RequestMapping("/feedback")
     public String feedback(HttpServletRequest request, HttpServletResponse response, @RequestParam long onlineClassId,
-            @RequestParam long studentId, Model model) {
+            @RequestParam long studentId,String isPreVip,String isTrial, Model model) {
         Stopwatch stopwatch = Stopwatch.createStarted();
         logger.info("ReportController: feedback() 参数为：onlineClassId={}, studentId={}", onlineClassId, studentId);
 
@@ -245,7 +245,8 @@ public class ReportController extends AbstractPortalController {
         model.addAttribute("studentExam", reportService.handleExamLevel(studentExam, lesson.getSerialNumber()));
 
         model.addAttribute("studentId", studentId);
-
+        model.addAttribute("isPreVip",isPreVip);
+        model.addAttribute("isTrial",isTrial);
         long millis =stopwatch.stop().elapsed(TimeUnit.MILLISECONDS);
         logger.info("执行ReportController: feedback()耗时：{} ", millis);
 

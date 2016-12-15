@@ -82,7 +82,7 @@ define([ "jquery-form", "jquery-bootstrap", "jquery-load", "tools" ], function()
 	};
 
 	/** **public 请求页面 */
-	var openFeedback = function(isRequire, onlineClassId, studentId) {
+	var openFeedback = function(isRequire, onlineClassId, studentId,isPreVip,isTrial) {
 		/** * 已经打开直接返回 */
 		if ($("div.trailFeedbackContainer").children().length > 0) {
 			openShow(isRequire);
@@ -92,7 +92,9 @@ define([ "jquery-form", "jquery-bootstrap", "jquery-load", "tools" ], function()
 		var data = {
 			"type" : "required",
 			"onlineClassId" : onlineClassId,
-			"studentId" : studentId
+			"studentId" : studentId,
+			"isPreVip" : isPreVip,
+			"isTrial" : isTrial
 		};
 		var url = webPath + "/feedback.shtml";
 		Portal.loading("open");

@@ -37,7 +37,7 @@
 					
 					#else
 						##否则显示feedback
-						<div onclick="require('feedback').openFeedback('Required','$!onlineClass.id','$!student.id')">Add Feedback</div>
+						<div onclick="require('feedback').openFeedback('Required','$!onlineClass.id','$!student.id','$!isPreVip','$!isTrial')">Add Feedback</div>
 ##                      x<div class="js-add">Add Feedback</div>
 					#end
 					
