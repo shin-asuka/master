@@ -2,6 +2,8 @@ package com.vipkid.portal.service;
 
 import com.google.common.collect.Lists;
 import com.vipkid.portal.entity.TimeUnit;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -18,6 +20,8 @@ import java.util.stream.IntStream;
  */
 @Service
 public class BookingsService {
+
+    private static final Logger logger = LoggerFactory.getLogger(BookingsService.class);
 
     private static final int DAYS_OF_A_WEEK = 7;
     private static final int HALF_HOURS_OF_DAY = 48;
@@ -54,16 +58,24 @@ public class BookingsService {
         return daysOfWeek;
     }
 
-    public List<TimeUnit> getTimeUnitsOfDay() {
+    /**
+     * 根据时区获取一天的时间单位
+     * 
+     * @param timezone 老师所在时区
+     * @return List<TimeUnit>
+     */
+    public List<TimeUnit> getTimeUnitsOfDay(String timezone) {
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.HOUR_OF_DAY, 0);
         calendar.set(Calendar.MINUTE, 0);
         calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
 
         List<TimeUnit> timeUnitsOfDay = Lists.newLinkedList();
         IntStream.range(0, HALF_HOURS_OF_DAY).forEach(index -> {
             Date date = calendar.getTime();
-            String title = LocalDateTime.ofInstant(date.toInstant(), SHANG_HAI).format(FMT_HMA_US);
+            String title = LocalDateTime.ofInstant(date.toInstant(), ZoneId.of(timezone)).format(FMT_HMA_US);
+            // TODO 考虑是否要删除
             timeUnitsOfDay.add(new TimeUnit(title, date.getTime()));
             calendar.add(Calendar.MINUTE, MINUTES_OF_A_HALF_HOUR);
         });
