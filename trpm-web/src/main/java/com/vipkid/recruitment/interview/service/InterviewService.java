@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import com.vipkid.email.EmailUtils;
 import com.vipkid.enums.UserEnum;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -199,6 +200,10 @@ public class InterviewService {
         if(ReturnMapUtils.isFail(result)){
             //一旦失败，抛出异常回滚
             throw new RuntimeException("Booking failed! Please try again." + result.get("info"));
+        }
+        if(ReturnMapUtils.isSuccess(result)){
+            logger.info("teacher:{} book Interview success send email",teacher.getId());
+            EmailUtils.sendEmail4InterviewBook(teacher,onlineClass);
         }
         return result;
     }
