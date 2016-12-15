@@ -174,11 +174,9 @@ public class TrainingService {
                 List<TeacherApplication> old_teacherlist = teacherApplicationDao.findCurrentApplication(teacherId);
                 TeacherApplication new_application = old_teacherlist.get(0);
                 new_application.setTeacherId(teacherId);//  步骤关联的教师
-                new_application.setApplyDateTime(new Timestamp(System.currentTimeMillis()));
                 new_application.setAuditDateTime(new Timestamp(System.currentTimeMillis()));
                 new_application.setAuditorId(RestfulConfig.SYSTEM_USER_ID);
                 new_application.setStatus(TeacherApplicationEnum.Status.TRAINING.toString());
-                new_application = teacherApplicationDao.initApplicationData(new_application);
 
 
                 if(quizScore < RestfulConfig.Quiz.NEW_QUIZ_PASS_SCORE){
@@ -187,8 +185,6 @@ public class TrainingService {
                     new_application.setResult(TeacherApplicationEnum.Result.FAIL.toString());
                     this.teacherApplicationDao.update(new_application);
                 }else if(TeacherApplicationEnum.Status.TRAINING.toString().equalsIgnoreCase(teacher.getLifeCycle())){
-
-
                     new_application.setResult(TeacherApplicationEnum.Result.PASS.toString());
                     this.teacherApplicationDao.update(new_application);
                     //教师通过考试发通知邮件
