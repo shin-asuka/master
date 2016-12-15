@@ -83,16 +83,22 @@ public class TrainingService {
         if(CollectionUtils.isEmpty(list)){
             teacherQuizDao.insertQuiz(teacherId,teacherId);
         }
-        List<TeacherApplication> teacherApplications = teacherApplicationDao.findCurrentApplication(teacherId);
-        boolean flag=false;
-           for(TeacherApplication teacherApplication:teacherApplications) {
-               if (StringUtils.equalsIgnoreCase(teacherApplication.getStatus(), TeacherApplicationEnum.Status.TRAINING.toString())) {
-                   flag = true;
-               }
-           }
-        if(flag){
+        List<TeacherApplication> teacherApplications = teacherApplicationDao.findApplictionForResult(teacherId,TeacherApplicationEnum.Status.TRAINING.toString());
+
+        if(CollectionUtils.isEmpty(teacherApplications)){
+            List<TeacherApplication> old_teacherApplications = teacherApplicationDao.findCurrentApplication(teacherId);
+            if (CollectionUtils.isNotEmpty(old_teacherApplications)) {
+                logger.info("用户：{}执行teacherApplicationDao.update操作", teacherId);
+                for (int i = 0; i < old_teacherApplications.size(); i++) {
+                    TeacherApplication application = old_teacherApplications.get(i);
+                    application.setCurrent(0);
+                    this.teacherApplicationDao.update(application);
+                }
+            }
             // 保存申请时间
             TeacherApplication teacherApplication = new TeacherApplication();
+            teacherApplication.setAuditDateTime(new Timestamp(System.currentTimeMillis()));
+            teacherApplication.setAuditorId(RestfulConfig.SYSTEM_USER_ID);
             teacherApplication = teacherApplicationDao.initApplicationData(teacherApplication);
             teacherApplication.setTeacherId(teacherId);
             teacherApplication.setApplyDateTime(new Timestamp(System.currentTimeMillis()));
@@ -166,14 +172,6 @@ public class TrainingService {
                 this.teacherQuizDao.update(teacherQuiz);
                 // 插入新的待考记录
                 List<TeacherApplication> old_teacherlist = teacherApplicationDao.findCurrentApplication(teacherId);
-                if (CollectionUtils.isNotEmpty(old_teacherlist)) {
-                    logger.info("用户：{}执行teacherApplicationDao.update操作", teacherId);
-                    for (int i = 0; i < old_teacherlist.size(); i++) {
-                        TeacherApplication application = old_teacherlist.get(i);
-                        application.setCurrent(0);
-                        this.teacherApplicationDao.update(application);
-                    }
-                }
                 TeacherApplication new_application = old_teacherlist.get(0);
                 new_application.setTeacherId(teacherId);//  步骤关联的教师
                 new_application.setApplyDateTime(new Timestamp(System.currentTimeMillis()));
