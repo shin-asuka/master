@@ -22,19 +22,19 @@ public class PayrollService extends HttpBaseService {
 
 		String url = new StringBuilder(super.serverAddress).append("/public/payroll/getPayrollItemByTeacherAndMonth").toString();
 		JSONObject jsonObject = null ;
-		jsonObject = getResult(params, url, jsonObject);
+		jsonObject = getResult(params, url);
 		return jsonObject;
 	}
 
 
 
 	public JSONObject findRuleByTeacherMonth(Integer teacherId, int month) {
-		String url = new StringBuilder(super.serverAddress).append("/public/payroll/findRuleByTeacherMonth").toString();
+		String url = new StringBuilder(super.serverAddress).append("/public/payroll/findRuleByTeacherIdMonth").toString();
 		JSONObject jsonObject = null ;
 		 Map<String, String> params = Maps.newHashMap();
 	     params.put("teacherId", new Integer(teacherId).toString());
 	     params.put("month", new Integer(month).toString());
-		jsonObject = getResult(params, url, jsonObject);
+		jsonObject = getResult(params, url);
 		return jsonObject;
 	}
 
@@ -60,14 +60,15 @@ public class PayrollService extends HttpBaseService {
 		return resultString;
 	}
 	
-	private JSONObject getResult(Map<String, String> params, String url, JSONObject jsonObject) {
+	private JSONObject getResult(Map<String, String> params, String url) {
+		JSONObject jsonObject = null;
 		try {
 			HttpResult result = WebUtils.post(url, params);
 			if (HttpResult.STATUS_SUCCESS.equals(result.getStatus())) {
 				jsonObject = JSONObject.parseObject(result.getResponse().toString());
 			}
-		} catch (Exception e) {
-			logger.error("url", e);
+		} catch (Exception e) {			
+			logger.error("request 请求payroll service异常 , uri={} ,e={}", url, e);
 		}
 		return jsonObject;
 	}

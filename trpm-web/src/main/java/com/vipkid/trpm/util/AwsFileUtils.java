@@ -282,7 +282,7 @@ public class AwsFileUtils {
 			String encodeName = Encodes.urlEncode(fileName);
 			String fileType = FileUtils.getFileType(fileName);
 			if(!fileName.equals(encodeName)){
-				name = DateTimeUtils.formatDate(new Date(), "yyyyMMdd-HHmmss")+"."+fileType;
+				name = DateUtils.formatDate(new Date(), "yyyyMMdd-HHmmss")+"."+fileType;
 			}
 		}
 		return name;

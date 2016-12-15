@@ -15,7 +15,6 @@ import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Lists;
 import com.vipkid.http.utils.JsonUtils;
 import com.vipkid.http.utils.WebUtils;
-import com.vipkid.http.vo.Announcement;
 import com.vipkid.trpm.entity.TeacherLocation;
 import com.vipkid.trpm.entity.TeacherNationalityCode;
 
