@@ -76,6 +76,12 @@ public class TeacherService {
 	@Autowired
 	private StudentDao studentDao;
 
+	@Autowired
+	private StudentExamDao studentExamDao;
+
+	@Autowired
+	private ReportService reportService;
+
 	/**
 	 * 通过teacherId获取教师信息
 	 *
@@ -155,27 +161,32 @@ public class TeacherService {
 						true :
 						false);
 		result.setTipsForOtherTeachers(teacherComment.getTipsForOtherTeachers());
-		result.setTrialLevelResult(handleTeacherComment(teacherComment.getTrialLevelResult()));
+
+		String trialLevelResultDisplay = findTrialLevelResutl4Display(teacherComment.getTrialLevelResult(),studentId,teacherComment.getLessonSerialNumber());
+		result.setTrialLevelResult(trialLevelResultDisplay);
 
 		return result;
 	}
 
-	//TeacherComment的trialLevelResult, L*U* 换成Level * Unit *
-	private String handleTeacherComment(String teacherComment) {
-		// teacherComment 不为空则进行替换逻辑
-		if (StringUtils.isNotBlank(teacherComment)) {
-
-			String lowerCase = teacherComment.toLowerCase();
-			if ("l1u0".equals(lowerCase)) {
-				return "Level 0 Unit 0";
-			} else if (lowerCase.startsWith("l")) {
-				return lowerCase.replaceAll("l", "Level ").replaceAll("u", " Unit ");
+	private String findTrialLevelResutl4Display(String trialLevelResult, String studentId,
+		String lessonSerialNumber) {
+		if (StringUtils.isNotBlank(lessonSerialNumber) && lessonSerialNumber.startsWith("T")) {
+			String trialLevelResultTmp = reportService.handleTeacherComment(trialLevelResult);
+			if (StringUtils.isNotBlank(trialLevelResultTmp)) {
+				return trialLevelResultTmp;
+			} else {
+				StudentExam studentExam =
+					studentExamDao.findStudentExamByStudentId(Long.valueOf(studentId));
+				StudentExam examLevel = reportService.handleExamLevel(studentExam, lessonSerialNumber);
+				if (examLevel != null && StringUtils.isNotBlank(examLevel.getExamLevel())) {
+					return examLevel.getExamLevel();
+				}
 			}
-
+			return "No Level Test result";
 		}
-		return teacherComment;
-
+		return null;
 	}
+
 
 	public TeacherComment findByStudentIdAndOnlineClassId(long studentId, long onlineClassId){
 		Map<String, String> param = Maps.newHashMap();

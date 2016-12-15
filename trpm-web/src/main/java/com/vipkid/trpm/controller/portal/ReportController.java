@@ -244,12 +244,14 @@ public class ReportController extends AbstractPortalController {
 
         // 查询FeedBack信息
         TeacherComment teacherComment = reportService.findTectBycIdAndStuId(onlineClassId, studentId,onlineClass,lesson);
-        handleTeacherComment(teacherComment);
+        if(teacherComment!=null){
+            String trialLevelResultDisplay = reportService.handleTeacherComment(teacherComment.getTrialLevelResult());
+            teacherComment.setTrialLevelResult(trialLevelResultDisplay);
+        }
         model.addAttribute("teacherComment", teacherComment);
         //查询StudentExam信息
         StudentExam studentExam = studentExamDao.findStudentExamByStudentId(studentId);
-        handleExamLevel(studentExam, lesson.getSerialNumber());
-        model.addAttribute("studentExam", studentExam);
+        model.addAttribute("studentExam", reportService.handleExamLevel(studentExam, lesson.getSerialNumber()));
 
         model.addAttribute("studentId", studentId);
 
@@ -326,7 +328,7 @@ public class ReportController extends AbstractPortalController {
         StudentExam studentExam = reportService.findStudentExamByStudentId(studentId);
 
         // 处理考试名称
-        model.addAttribute("studentExam", handleExamLevel(studentExam, serialNum));
+        model.addAttribute("studentExam", reportService.handleExamLevel(studentExam, serialNum));
 
         // 查询教师评价
         model.addAttribute("teacherComments",
@@ -371,56 +373,6 @@ public class ReportController extends AbstractPortalController {
         model.addAttribute("reportLevels", reportService.getReportLevels());
     }
 
-    /**
-     * 根据serialNum处理 考试的Level名称显示<br/>
-     * studentExam 为NULL 则返回一个空对象
-     * 
-     * @Author:ALong
-     * @Title: handleExamLevel
-     * @param studentExam
-     * @param serialNum
-     * @return StudentExam
-     * @date 2016年1月12日
-     */
-    private StudentExam handleExamLevel(StudentExam studentExam, String serialNum) {
-        logger.info("ReportController: handleExamLevel() 参数为：serialNum={}, studentExam={}", serialNum, JSON.toJSONString(studentExam));
-
-        // studentExam 不为空则进行替换逻辑
-        if (studentExam != null) {
-            // ExamLevel 不为空则进行替换逻辑
-            if (studentExam.getExamLevel() != null) {
-                String lowerCase = studentExam.getExamLevel().toLowerCase();
-                if ("l1u0".equals(lowerCase)) {
-                    studentExam.setExamLevel("Level Test result is Level 0 Unit 0");
-                } else if (lowerCase.startsWith("l")) {
-                    studentExam.setExamLevel("Level Test result is " + lowerCase.replaceAll("l", "Level ").replaceAll("u", " Unit "));
-                }
-            }
-        } else {
-            // studentExam 为空则返回空对象
-            studentExam = new StudentExam();
-            // ExamLevel 为空则根据Lession的SerialNum进行处理
-            if (serialNum != null) {
-                switch (serialNum) {
-                case "T1-U1-LC1-L1":
-                    studentExam.setExamLevel("No Computer Test result, use Level 2 Unit 01");
-                    break;
-                case "T1-U1-LC1-L2":
-                    studentExam.setExamLevel("No Computer Test result, use Level 2 Unit 04");
-                    break;
-                case "T1-U1-LC1-L3":
-                    studentExam.setExamLevel("No Computer Test result, use Level 3 Unit 01");
-                    break;
-                case "T1-U1-LC1-L4":
-                    studentExam.setExamLevel("No Computer Test result, use Level 4 Unit 01");
-                    break;
-                default:
-                    break;
-                }
-            }
-        }
-        return studentExam;
-    }
 
     private Model uploadData(AssessmentReport report, HttpServletRequest request, Model model, String classType) {
         logger.info("ReportController: uploadData() 参数为：report={}, classType={}", JSON.toJSONString(report), classType);
@@ -459,23 +411,6 @@ public class ReportController extends AbstractPortalController {
         }
         return model;
     }
-    
-    //TeacherComment的trialLevelResult, L*U* 换成Level * Unit *
-    private TeacherComment handleTeacherComment(TeacherComment teacherComment) {
-        logger.info("ReportController: handleTeacherComment() 参数为： teacherComment={}", JSON.toJSONString(teacherComment));
 
-        // teacherComment 不为空则进行替换逻辑
-        if (teacherComment != null) {
-            if (teacherComment.getTrialLevelResult() != null) {
-                String lowerCase = teacherComment.getTrialLevelResult().toLowerCase();
-                if ("l1u0".equals(lowerCase)) {
-                	teacherComment.setTrialLevelResult("Level 0 Unit 0");
-                } else if (lowerCase.startsWith("l")) {
-                	teacherComment.setTrialLevelResult(lowerCase.replaceAll("l", "Level ").replaceAll("u", " Unit "));
-                }
-            }
-        } 
-        return teacherComment;
-    }
 
 }

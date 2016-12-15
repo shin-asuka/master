@@ -796,4 +796,72 @@ public class ReportService {
         }
         return studentDao.findById(studentId);
     }
+
+
+    /**
+     * 根据serialNum处理 考试的Level名称显示<br/>
+     * studentExam 为NULL 则返回一个空对象
+     *
+     * @Author:ALong
+     * @Title: handleExamLevel
+     * @param studentExam
+     * @param serialNum
+     * @return StudentExam
+     * @date 2016年1月12日
+     */
+    public StudentExam handleExamLevel(StudentExam studentExam, String serialNum) {
+        logger.info("ReportController: handleExamLevel() 参数为：serialNum={}, studentExam={}", serialNum, JSON.toJSONString(studentExam));
+
+        // studentExam 不为空则进行替换逻辑
+        if (studentExam != null) {
+            // ExamLevel 不为空则进行替换逻辑
+            if (studentExam.getExamLevel() != null) {
+                String lowerCase = studentExam.getExamLevel().toLowerCase();
+                if ("l1u0".equals(lowerCase)) {
+                    studentExam.setExamLevel("Level Test result is Level 0 Unit 0");
+                } else if (lowerCase.startsWith("l")) {
+                    studentExam.setExamLevel("Level Test result is " + lowerCase.replaceAll("l", "Level ").replaceAll("u", " Unit "));
+                }
+            }
+        } else {
+            // studentExam 为空则返回空对象
+            studentExam = new StudentExam();
+            // ExamLevel 为空则根据Lession的SerialNum进行处理
+            if (serialNum != null) {
+                switch (serialNum) {
+                    case "T1-U1-LC1-L1":
+                        studentExam.setExamLevel("No Computer Test result, use Level 2 Unit 01");
+                        break;
+                    case "T1-U1-LC1-L2":
+                        studentExam.setExamLevel("No Computer Test result, use Level 2 Unit 04");
+                        break;
+                    case "T1-U1-LC1-L3":
+                        studentExam.setExamLevel("No Computer Test result, use Level 3 Unit 01");
+                        break;
+                    case "T1-U1-LC1-L4":
+                        studentExam.setExamLevel("No Computer Test result, use Level 4 Unit 01");
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+        return studentExam;
+    }
+
+    //TeacherComment的trialLevelResult, L*U* 换成Level * Unit *
+    public String handleTeacherComment(String trialLevelResult) {
+        logger.info("ReportController: handleTeacherComment() 参数为： trialLevelResult={}", trialLevelResult);
+
+        // teacherComment 不为空则进行替换逻辑
+        if (StringUtils.isNotBlank(trialLevelResult)) {
+            String lowerCase = trialLevelResult.toLowerCase();
+            if ("l1u0".equals(lowerCase)) {
+                return "Level 0 Unit 0";
+            } else if (lowerCase.startsWith("l")) {
+                return lowerCase.replaceAll("l", "Level ").replaceAll("u", " Unit ");
+            }
+        }
+        return trialLevelResult;
+    }
 }
