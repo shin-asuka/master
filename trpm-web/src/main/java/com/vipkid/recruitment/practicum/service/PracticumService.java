@@ -188,7 +188,12 @@ public class PracticumService {
         }
         if(ReturnMapUtils.isSuccess(result)){
             logger.info("teacher:{} book Practicum success send email",teacher.getId());
-            EmailUtils.sendEmail4PracticumBook(teacher,onlineClass);
+            List<TeacherApplication> list = teacherApplicationDao.findApplictionForStatusResult(teacher.getId(), null, Result.PRACTICUM2.name());
+            if(CollectionUtils.isNotEmpty(list)){
+                EmailUtils.sendEmail4Practicum2Book(teacher,onlineClass);
+            }else{
+                EmailUtils.sendEmail4PracticumBook(teacher,onlineClass);
+            }
         }
 
         return result;
