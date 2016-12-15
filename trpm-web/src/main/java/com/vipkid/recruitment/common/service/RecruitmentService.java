@@ -421,7 +421,7 @@ public class RecruitmentService {
         return false;
     }
 
-    public int getRemainRescheduleTimes(Teacher teacher, String status, String type){
+    public int getRemainRescheduleTimes(Teacher teacher, String status, String type, boolean isForRescheduleAction){
         //type: cancelNum, CancelNoShow, ITProblem
         int remainTimes = 0;
         int lockedTimes = getLockTimes(teacher.getId(), status, null);
@@ -432,6 +432,7 @@ public class RecruitmentService {
         if (lockedTimes > 0){
             if (lockTimes > 0) {
                 remainTimes = 1;
+                if (isForRescheduleAction)
                 teacherLockLogDao.unlock(new TeacherLockLog(teacher.getId(), Reason.RESCHEDULE.toString(), status));
             }
         } else {

@@ -253,7 +253,13 @@ public class LoginExpiredHandleInterceptor extends HandlerInterceptorAdapter {
         }
         response.setStatus(HttpStatus.FORBIDDEN.value());
         logger.warn("没有权限访问的用户:允许状态{},当前状态:{}",restInterface.lifeCycle(),teacher.getLifeCycle());
-        responseToJson("You have already completed this stage. Please refresh your page to view your result.",response);
+        String lifeCycleStr = "this stage";
+        if (LifeCycle.INTERVIEW.toString().equals(restInterface.lifeCycle())){
+            lifeCycleStr = "your interview";
+        } else if(LifeCycle.PRACTICUM.toString().equals(restInterface.lifeCycle())){
+            lifeCycleStr = "your mock class";
+        }
+        responseToJson("You have already completed "+lifeCycleStr+". Please refresh your page to view your result.",response);
         return false;
     }
 }

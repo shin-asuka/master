@@ -190,7 +190,7 @@ public class InterviewService {
             }
         }
         //判断剩余可取消次数
-        if(recruitmentService.getRemainRescheduleTimes(teacher, Status.INTERVIEW.toString(), Result.CANCEL.toString()) <= 0){
+        if(recruitmentService.getRemainRescheduleTimes(teacher, Status.INTERVIEW.toString(), Result.CANCEL.toString(), false) <= 0){
             return ReturnMapUtils.returnFail("There are no more cancellations allowed for your account. Contact us at teachvip@vipkid.com.cn for more information.",logpix);
         }
         //执行BOOK逻辑
@@ -253,7 +253,7 @@ public class InterviewService {
         this.teacherApplicationLogDao.saveCancel(teacher.getId(), listEntity.get(0).getId(), Status.INTERVIEW, Result.CANCEL, onlineClass);
 
         if (!UserEnum.Status.isLocked(userDao.findById(teacher.getId()).getStatus())) {
-            int count = recruitmentService.getRemainRescheduleTimes(teacher, Status.INTERVIEW.toString(), Result.CANCEL.toString());
+            int count = recruitmentService.getRemainRescheduleTimes(teacher, Status.INTERVIEW.toString(), Result.CANCEL.toString(), true);
             if (count == 0) {
                 userDao.doLock(teacher.getId());
                 teacherLockLogDao.save(new TeacherLockLog(teacher.getId(), Reason.RESCHEDULE.toString(), LifeCycle.INTERVIEW.toString()));

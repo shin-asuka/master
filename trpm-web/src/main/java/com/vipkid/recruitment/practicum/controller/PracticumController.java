@@ -138,7 +138,7 @@ public class PracticumController extends RestfulController {
     public Map<String,Object> getRemainRescheduleTimes(HttpServletRequest request, HttpServletResponse response){
         try{
             Map<String,Object> result = Maps.newHashMap();
-            result.put("count",this.recruitmentService.getRemainRescheduleTimes(getTeacher(request), Status.PRACTICUM.toString(), Result.CANCEL.toString()));
+            result.put("count",this.recruitmentService.getRemainRescheduleTimes(getTeacher(request), Status.PRACTICUM.toString(), Result.CANCEL.toString(), false));
             return ReturnMapUtils.returnSuccess(result);
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());

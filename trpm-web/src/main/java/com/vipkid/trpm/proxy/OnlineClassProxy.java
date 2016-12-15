@@ -168,7 +168,7 @@ public class OnlineClassProxy {
             return ReturnMapUtils.returnSuccess();
         } else if (responseBody.indexOf("628") > 0) {
             logger.warn("用户Id:【{}】,Cancel onlineClassId:【{}】失败2,classType:【{}】,原因：接口 "+requestUrl + " 628错误。", userId,onlineClassId,type);
-            return ReturnMapUtils.returnFail("Sorry, you can't cancel twice in less than 5 minutes. try again later!");
+            return ReturnMapUtils.returnFail("Sorry, you can't cancel twice in less than 5 minutes. Please try again later!");
         } else {
             logger.warn("用户Id:【{}】,Cancel onlineClassId:【{}】失败3,classType:【{}】,原因：接口 "+requestUrl + " 未知【"+responseBody+"】", userId,onlineClassId,type);
             return ReturnMapUtils.returnFail("Request failed, Please try again later!");
