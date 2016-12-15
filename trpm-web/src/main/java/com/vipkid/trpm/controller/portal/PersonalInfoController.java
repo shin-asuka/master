@@ -374,7 +374,8 @@ public class PersonalInfoController extends AbstractPortalController {
     public String upload(MultipartHttpServletRequest request, HttpServletResponse response,
             @RequestParam("file") MultipartFile file) {
         Teacher teacher = loginService.getTeacher();
-        Map<String, Object> modelMap = personalInfoService.doUploadImage(file, teacher.getId());
+		//Map<String, Object> modelMap = personalInfoService.doUploadImage(file, teacher.getId());
+		Map<String, Object> modelMap = personalInfoService.doUploadAvatarImage(file, teacher.getId());
         return jsonView(response, modelMap);
     }
 
