@@ -3,10 +3,7 @@
  */
 package com.vipkid.trpm.email;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 import com.alibaba.fastjson.JSON;
@@ -44,9 +41,10 @@ public class SendEmailTest {
 	private AuditEmailService auditEmailService;
 	
     public static void main(String[] args) {
-		StringBuilder sb = new StringBuilder();
-		System.out.println("ss"+sb.toString()+"aa");
-
+	Map<String,String> map = new HashMap<>();
+		map.put("r","ss");
+		map.put("r","aa");
+		System.out.print(map.get("r"));
 /*
 		Map<String, String> paramsMap1 = Maps.newHashMap();
 		paramsMap1.put("teacherName", "Bel2");

@@ -23,7 +23,7 @@ import java.util.concurrent.TimeUnit;
  * Created by zhangzhaojun on 2016/12/1.
  */
 @Component
-@Vschedule
+    @Vschedule
 public class InterviewReminderJob {
     private static final Logger logger = LoggerFactory.getLogger(InterviewReminderJob.class);
 
@@ -33,6 +33,10 @@ public class InterviewReminderJob {
     @Autowired
     private TeacherDao teacherDao;
 
+    public static void main(String[] args){
+        JobContext jobContext = new JobContext();
+        new InterviewReminderJob().doJob(jobContext);
+    }
     @Vschedule
     public void doJob (JobContext jobContext) {
         logger.info("【JOB.EMAIL.ReminderInterview】START: ==================================================");

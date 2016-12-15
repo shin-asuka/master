@@ -235,11 +235,13 @@ public class RecruitmentService {
             result.put("result",AuditStatus.TO_SUBMIT.toString());
             return result;
         //审核结果为其他
-        }else{
+        }else {
             result.put("result",teacherApplication.getResult());
             logger.info("进入"+teacherApplication.getStatus()+"的"+teacherApplication.getResult()+"页面 teacherId:{} taId:{}",teacher.getId(),teacherApplication.getId());
             if(!StringUtils.equalsIgnoreCase(Result.PASS.toString(),teacherApplication.getResult())){
                 //失败原因
+                result.put("result",AuditStatus.TO_SUBMIT.toString());
+
                 result.put("failedReason",teacherApplication.getFailedReason());
                 //重来备注
                 result.put("comments",teacherApplication.getComments());
