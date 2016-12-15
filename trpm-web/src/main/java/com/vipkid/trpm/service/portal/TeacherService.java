@@ -1,5 +1,6 @@
 package com.vipkid.trpm.service.portal;
 
+import com.alibaba.fastjson.JSON;
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
@@ -154,9 +155,26 @@ public class TeacherService {
 						true :
 						false);
 		result.setTipsForOtherTeachers(teacherComment.getTipsForOtherTeachers());
-		result.setTrialLevelResult(teacherComment.getTrialLevelResult());
+		result.setTrialLevelResult(handleTeacherComment(teacherComment.getTrialLevelResult()));
 
 		return result;
+	}
+
+	//TeacherComment的trialLevelResult, L*U* 换成Level * Unit *
+	private String handleTeacherComment(String teacherComment) {
+		// teacherComment 不为空则进行替换逻辑
+		if (StringUtils.isNotBlank(teacherComment)) {
+
+			String lowerCase = teacherComment.toLowerCase();
+			if ("l1u0".equals(lowerCase)) {
+				return "Level 0 Unit 0";
+			} else if (lowerCase.startsWith("l")) {
+				return lowerCase.replaceAll("l", "Level ").replaceAll("u", " Unit ");
+			}
+
+		}
+		return teacherComment;
+
 	}
 
 	public TeacherComment findByStudentIdAndOnlineClassId(long studentId, long onlineClassId){
