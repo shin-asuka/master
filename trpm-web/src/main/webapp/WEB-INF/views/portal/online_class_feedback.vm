@@ -28,95 +28,96 @@
 						<textarea name="tipsForOtherTeachers" $!elememtDisabled class="form-control ng-pristine ng-valid">$!teacherComment.tipsForOtherTeachers</textarea>
 					</div>
 				</div>
-
-				#if($lesson.serialNumber && ($stringUtils.startsWith($!lesson.serialNumber,'C1') || $stringUtils.startsWith($!lesson.serialNumber,'MC')))
-					<div style="padding-top:10px;">
-						<label>Level of Difficulty</label>
-						<div style="font-weight:normal;color:#666;margin-top:-5px;padding-bottom:5px;">
-							(This helps us with overall lesson performance/ student ability)</div>
-						<div>
-							<select id="performance" name="performance" field="$!teacherComment.performance" $!elememtDisabled class="ng-pristine ng-valid">
-								<option value="0">Choose From Here</option>
-								<option value="5">Very Easy</option>
-								<option value="4">Slightly Easy</option>
-								<option value="3">On Level</option>
-								<option value="2">Slightly Difficult</option>
-								<option value="1">Very Difficult</option>
-							</select>
-						</div>
-					</div>
-					#if($stringUtils.contains($!lesson.serialNumber,'-U1-') || $stringUtils.contains($!lesson.serialNumber,'-U4-') || $stringUtils.contains($!lesson.serialNumber,'-U7-') || $stringUtils.contains($!lesson.serialNumber,'-U10-'))
+				#if($isPreVip!=1 || $isTrial != 1)
+					#if($lesson.serialNumber && ($stringUtils.startsWith($!lesson.serialNumber,'C1') || $stringUtils.startsWith($!lesson.serialNumber,'MC')))
 						<div style="padding-top:10px;">
-							<input type="checkbox" id="performanceAdjust" name="performanceAdjust" value="1" $!elememtDisabled #if($!teacherComment.performanceAdjust == 1) checked #end/>&nbsp;&nbsp;I suggest adjustment to the current student placement
-						</div>
-					#end
-				#end
-
-				#if($lesson.serialNumber)
-					#if($stringUtils.startsWith($!lesson.serialNumber,'T'))
-					<div id="Suggestion">
-	
-						<label Style="margin-top: 20px">Suggest an entry point for this student based on the Student Level Test and in-class assessment. <span style="display:none;" id="result_suggest"></span></label>
-
-						#if($!teacherComment.trialLevelResult)
-                        	<div Style="margin: 13px 0px">
-                            	<label>Trial Level result is $!teacherComment.trialLevelResult</label>
-							</div>
-						#elseif($!studentExam.examLevel)
-                            <div Style="margin: 13px 0px">
-                                <b>$!studentExam.examLevel</b>
-                            </div>
-						#else
-                            <div Style="margin: 13px 0px">
-                                <b>No Level Test result</b>
-                            </div>
-						#end
-
-						<div>
-							<a href="javascript:;" name="level2" class="trialLevel ng-hide-feedback">Level2</a>
+							<label>Level of Difficulty</label>
+							<div style="font-weight:normal;color:#666;margin-top:-5px;padding-bottom:5px;">
+								(This helps us with overall lesson performance/ student ability)</div>
 							<div>
-								<a name="level2" class="trialLevelContent ng-hide-feedback">The reading goals in Level 2 start with capital and lower-case letter recognition, moving
-                                    on to individual phonics sounds, vowel word families, and blending sounds to read CVC words.
-                                    Level 2 speaking goals begin with the repetition of single words and very basic introductory
-                                    dialogue, move on to the repetition of complete but simple sentences, answering in sentence
-                                    fragments, and answering in complete sentences. In level 2, students are required to actively
-                                    respond to the one-step directions like “Sit down!” “Repeat!” or “Circle it!” If the student cannot
-                                    read, but is a confident speaker, they still belong in Level 2. The aim of Level 1 is to teach students
-                                    reading basics. </a>
+								<select id="performance" name="performance" field="$!teacherComment.performance" $!elememtDisabled class="ng-pristine ng-valid">
+									<option value="0">Choose From Here</option>
+									<option value="5">Very Easy</option>
+									<option value="4">Slightly Easy</option>
+									<option value="3">On Level</option>
+									<option value="2">Slightly Difficult</option>
+									<option value="1">Very Difficult</option>
+								</select>
 							</div>
 						</div>
-						<hr class="ihr" style="width: 100%;" />
-						<div>
-							<a href="javascript:;" name="level3" class="trialLevel ng-hide-feedback">Level3</a>
-							<a name="level3" class="trialLevelContent ng-hide-feedback">The reading goals in Level 3 start with CVC and CVCe words, and move to vowel 
-								digraphs and initial blends, digraphs blends, moving on to four and five letter words combining all of the above. Reading comprehension 
-								goals include identifying the main topic and key elements of a level-appropriate text, sequencing and retelling stories with teacher 
-								support. Level 3 students also learn tenses: simple present, simple past, and present progressive, while simple future was taught 
-								in Level 2. Grammar including articles, adverbs of frequency, prepositions, noun/verb conjugation, selected adjectives, sentence 
-								types and capitalization and punctuation rules. Level 3 speaking goals begin with the student answering in complete sentences, 
-								moving on to compound sentences, asking questions, and finally engaging in a free talk-style discussion with the teacher that
-								incorporates taught sentence structures and natural language usage. In level 3, students are required to actively respond 
-								to multi-step instructions. </a>
+						#if($stringUtils.contains($!lesson.serialNumber,'-U1-') || $stringUtils.contains($!lesson.serialNumber,'-U4-') || $stringUtils.contains($!lesson.serialNumber,'-U7-') || $stringUtils.contains($!lesson.serialNumber,'-U10-'))
+							<div style="padding-top:10px;">
+								<input type="checkbox" id="performanceAdjust" name="performanceAdjust" value="1" $!elememtDisabled #if($!teacherComment.performanceAdjust == 1) checked #end/>&nbsp;&nbsp;I suggest adjustment to the current student placement
+							</div>
+						#end
+					#end
+
+					#if($lesson.serialNumber)
+						#if($stringUtils.startsWith($!lesson.serialNumber,'T'))
+						<div id="Suggestion">
+
+							<label Style="margin-top: 20px">Suggest an entry point for this student based on the Student Level Test and in-class assessment. <span style="display:none;" id="result_suggest"></span></label>
+
+							#if($!teacherComment.trialLevelResult)
+                	        	<div Style="margin: 13px 0px">
+                	            	<label>Trial Level result is $!teacherComment.trialLevelResult</label>
+								</div>
+							#elseif($!studentExam.examLevel)
+                	            <div Style="margin: 13px 0px">
+                	                <b>$!studentExam.examLevel</b>
+                	            </div>
+							#else
+                	            <div Style="margin: 13px 0px">
+                	                <b>No Level Test result</b>
+                	            </div>
+							#end
+
+							<div>
+								<a href="javascript:;" name="level2" class="trialLevel ng-hide-feedback">Level2</a>
+								<div>
+									<a name="level2" class="trialLevelContent ng-hide-feedback">The reading goals in Level 2 start with capital and lower-case letter recognition, moving
+                	                    on to individual phonics sounds, vowel word families, and blending sounds to read CVC words.
+                	                    Level 2 speaking goals begin with the repetition of single words and very basic introductory
+                	                    dialogue, move on to the repetition of complete but simple sentences, answering in sentence
+                	                    fragments, and answering in complete sentences. In level 2, students are required to actively
+                	                    respond to the one-step directions like “Sit down!” “Repeat!” or “Circle it!” If the student cannot
+                	                    read, but is a confident speaker, they still belong in Level 2. The aim of Level 1 is to teach students
+                	                    reading basics. </a>
+								</div>
+							</div>
+							<hr class="ihr" style="width: 100%;" />
+							<div>
+								<a href="javascript:;" name="level3" class="trialLevel ng-hide-feedback">Level3</a>
+								<a name="level3" class="trialLevelContent ng-hide-feedback">The reading goals in Level 3 start with CVC and CVCe words, and move to vowel
+									digraphs and initial blends, digraphs blends, moving on to four and five letter words combining all of the above. Reading comprehension
+									goals include identifying the main topic and key elements of a level-appropriate text, sequencing and retelling stories with teacher
+									support. Level 3 students also learn tenses: simple present, simple past, and present progressive, while simple future was taught
+									in Level 2. Grammar including articles, adverbs of frequency, prepositions, noun/verb conjugation, selected adjectives, sentence
+									types and capitalization and punctuation rules. Level 3 speaking goals begin with the student answering in complete sentences,
+									moving on to compound sentences, asking questions, and finally engaging in a free talk-style discussion with the teacher that
+									incorporates taught sentence structures and natural language usage. In level 3, students are required to actively respond
+									to multi-step instructions. </a>
+							</div>
+							<hr class="ihr" style="width: 100%;" />
+							<div>
+								<a href="javascript:;" name="level4" class="trialLevel ng-hide-feedback">Level4</a>
+								<a name="level4" class="trialLevelContent ng-hide-feedback">The reading goals in Level 4 continue to focus on new phonics skills with
+									irregular spellings, but moves away from learning to read towards “reading to learn.” Students in Level 4 gain information fiction
+									and non-fiction texts, using these to understand thematic topics with less pictorial support, and are able to discuss key elements
+									and the language used. Thematically Level 4 begins to address more mature, advanced topics.  Level 4 speaking goals require students
+									to ask and answer questions, describe their thoughts clearly, and make connections between multiple topics. Students will review
+									simple future, simple past, simple present, and present continuous tense, and begin to learn the past progressive tense. They do
+									not use these tenses at native proficiency. </a>
+							</div>
+							<hr class="ihr" style="width: 100%;" />
+							<div>
+								<a href="javascript:;" name="level5" class="trialLevel ng-hide-feedback">Level5</a>
+								<a name="level5" class="trialLevelContent ng-hide-feedback">The reading goals in Level 5 practice higher level reading skills, including
+									identifying the points that an author gives in the text to support claims. By the end of Level 5, students can speak in regular
+									past tense (including a handful of irregular verbs) and simple forms of the present perfect tense.  </a>
+							</div>
 						</div>
-						<hr class="ihr" style="width: 100%;" />
-						<div>
-							<a href="javascript:;" name="level4" class="trialLevel ng-hide-feedback">Level4</a> 
-							<a name="level4" class="trialLevelContent ng-hide-feedback">The reading goals in Level 4 continue to focus on new phonics skills with 
-								irregular spellings, but moves away from learning to read towards “reading to learn.” Students in Level 4 gain information fiction 
-								and non-fiction texts, using these to understand thematic topics with less pictorial support, and are able to discuss key elements 
-								and the language used. Thematically Level 4 begins to address more mature, advanced topics.  Level 4 speaking goals require students 
-								to ask and answer questions, describe their thoughts clearly, and make connections between multiple topics. Students will review 
-								simple future, simple past, simple present, and present continuous tense, and begin to learn the past progressive tense. They do 
-								not use these tenses at native proficiency. </a>
-						</div>
-						<hr class="ihr" style="width: 100%;" />
-						<div>
-							<a href="javascript:;" name="level5" class="trialLevel ng-hide-feedback">Level5</a> 
-							<a name="level5" class="trialLevelContent ng-hide-feedback">The reading goals in Level 5 practice higher level reading skills, including 
-								identifying the points that an author gives in the text to support claims. By the end of Level 5, students can speak in regular 
-								past tense (including a handful of irregular verbs) and simple forms of the present perfect tense.  </a>
-						</div>
-					</div>
+						#end
 					#end
 				#end
 			</div>
