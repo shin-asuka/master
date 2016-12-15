@@ -431,9 +431,11 @@ public class RecruitmentService {
         int cancelNum = getCancelNum(teacher.getId(), status);
         if (lockedTimes > 0){
             if (lockTimes > 0) {
-                remainTimes = 1;
-                if (isForRescheduleAction)
-                teacherLockLogDao.unlock(new TeacherLockLog(teacher.getId(), Reason.RESCHEDULE.toString(), status));
+                if (isForRescheduleAction) {
+                    teacherLockLogDao.unlock(new TeacherLockLog(teacher.getId(), Reason.RESCHEDULE.toString(), status));
+                } else {
+                    remainTimes = 1;
+                }
             }
         } else {
             if (FinishType.STUDENT_CANCELLATION.equals(type) || FinishType.STUDENT_NO_SHOW.equals(type) || Result.CANCEL.toString().equals(type)){
