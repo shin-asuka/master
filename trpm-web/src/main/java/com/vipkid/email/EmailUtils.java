@@ -81,10 +81,10 @@ public class EmailUtils {
 			paramsMap.put("teacherName",teacher.getRealName());
 			paramsMap.put("scheduledDateTime", DateUtils.formatTo(onlineclass.getScheduledDateTime().toInstant(), teacher.getTimezone(), DateUtils.FMT_YMD_HM));
 			paramsMap.put("timezone", teacher.getTimezone());
-			logger.info("【EMAIL.sendEmail4PracticumBook】toAddMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",teacher.getRealName(),teacher.getEmail(),"InterviewBookTitle.html","InterviewBook.html");
+			logger.info("【EMAIL.sendEmail4PracticumBook】toAddMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",teacher.getRealName(),teacher.getEmail(),"PracticumBookTitle.html","PracticumBook.html");
 			Map<String, String> emailMap = TemplateUtils.readTemplate("PracticumBook.html", paramsMap, "PracticumBookTitle.html");
 			EmailEngine.addMailPool(teacher.getEmail(), emailMap, EmailConfig.EmailFormEnum.TEACHVIP);
-			logger.info("【EMAIL.sendEmail4PracticumBook】addedMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",teacher.getRealName(),teacher.getEmail(),"InterviewBookTitle.html","InterviewBook.html");
+			logger.info("【EMAIL.sendEmail4PracticumBook】addedMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",teacher.getRealName(),teacher.getEmail(),"PracticumBookTitle.html","PracticumBook.html");
 		} catch (Exception e) {
 			logger.error("【EMAIL.sendEmail4InterviewBook】ERROR: {}", e);
 		}
@@ -96,10 +96,10 @@ public class EmailUtils {
 			paramsMap.put("teacherName",teacher.getRealName());
 			paramsMap.put("scheduledDateTime", DateUtils.formatTo(onlineclass.getScheduledDateTime().toInstant(), teacher.getTimezone(), DateUtils.FMT_YMD_HM));
 			paramsMap.put("timezone", teacher.getTimezone());
-			logger.info("【EMAIL.sendEmail4Practicum2Book】toAddMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",teacher.getRealName(),teacher.getEmail(),"InterviewBookTitle.html","InterviewBook.html");
+			logger.info("【EMAIL.sendEmail4Practicum2Book】toAddMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",teacher.getRealName(),teacher.getEmail(),"Practicum2BookTitle.html","Practicum2Book.html");
 			Map<String, String> emailMap = TemplateUtils.readTemplate("Practicum2Book.html", paramsMap, "Practicum2BookTitle.html");
 			EmailEngine.addMailPool(teacher.getEmail(), emailMap, EmailConfig.EmailFormEnum.TEACHVIP);
-			logger.info("【EMAIL.sendEmail4Practicum2Book】addedMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",teacher.getRealName(),teacher.getEmail(),"InterviewBookTitle.html","InterviewBook.html");
+			logger.info("【EMAIL.sendEmail4Practicum2Book】addedMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",teacher.getRealName(),teacher.getEmail(),"Practicum2BookTitle.html","Practicum2Book.html");
 		} catch (Exception e) {
 			logger.error("【EMAIL.sendEmail4Practicum2Book】ERROR: {}", e);
 		}
@@ -114,10 +114,10 @@ public class EmailUtils {
 			if (teacher.getRealName() != null)
 				paramsMap.put("teacherName", teacher.getRealName());
 			    paramsMap.put("quizScore",quizScore+"");
-			logger.info("【EMAIL.sendEmail4TrainingPass】toAddMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",teacher.getRealName(),teacher.getEmail(),"BasicInfoPassTitle.html","BasicInfoPass.html");
+			logger.info("【EMAIL.sendEmail4TrainingPass】toAddMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",teacher.getRealName(),teacher.getEmail(),"TrainingPassTitle.html","TrainingPass.html");
 			Map<String, String> emailMap = TemplateUtils.readTemplate("TrainingPass.html", paramsMap, "TrainingPassTitle.html");
 			EmailEngine.addMailPool(teacher.getEmail(), emailMap, EmailConfig.EmailFormEnum.TEACHVIP);
-			logger.info("【EMAIL.sendEmail4TrainingPass】addedMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",teacher.getRealName(),teacher.getEmail(),"BasicInfoPassTitle.html","BasicInfoPass.html");
+			logger.info("【EMAIL.sendEmail4TrainingPass】addedMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",teacher.getRealName(),teacher.getEmail(),"TrainingPassTitle.html","TrainingPass.html");
 		} catch (Exception e) {
 			logger.error("【EMAIL.sendEmail4TrainingPass】ERROR: {}", e);
 		}
