@@ -232,7 +232,7 @@ public class RecruitmentService {
         //审核结果为空则为待审核
         if(StringUtils.isBlank(teacherApplication.getResult())){
             logger.info("进入"+teacherApplication.getStatus()+"待审核页面 teacherId:{} taId:{}",teacher.getId(),teacherApplication.getId());
-            result.put("result",AuditStatus.TO_AUDIT.toString());
+            result.put("result",AuditStatus.TO_SUBMIT.toString());
             return result;
         //审核结果为其他
         }else{

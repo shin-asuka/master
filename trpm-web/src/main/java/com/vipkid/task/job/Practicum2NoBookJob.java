@@ -5,11 +5,9 @@ import com.vipkid.email.EmailUtils;
 import com.vipkid.enums.TeacherApplicationEnum;
 import com.vipkid.http.utils.JsonUtils;
 import com.vipkid.recruitment.dao.TeacherApplicationDao;
-import com.vipkid.recruitment.dao.TeacherLockLogDao;
 import com.vipkid.recruitment.entity.TeacherApplication;
 import com.vipkid.task.utils.UADateUtils;
 import com.vipkid.trpm.dao.TeacherDao;
-import com.vipkid.trpm.dao.UserDao;
 import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.vschedule.client.common.Vschedule;
 import com.vipkid.vschedule.client.schedule.JobContext;
@@ -34,13 +32,10 @@ public class Practicum2NoBookJob {
     private static final Logger logger = LoggerFactory.getLogger(Practicum2NoBookJob.class);
 
     @Autowired
-    private UserDao userDao;
-    @Autowired
     private TeacherApplicationDao teacherApplicationDao;
     @Autowired
     private TeacherDao teacherDao;
-    @Autowired
-    private TeacherLockLogDao teacherLockLogDao;
+
 
     @Vschedule
     public void doJob (JobContext jobContext) {
