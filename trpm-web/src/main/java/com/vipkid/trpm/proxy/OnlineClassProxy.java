@@ -128,13 +128,13 @@ public class OnlineClassProxy {
         logger.info("BOOK CLASS MESSAGE : " + responseBody);
         if (StringUtils.isBlank(responseBody)) {
             logger.warn("用户Id:【{}】,Booked onlineClassId:【{}】失败1,classType:【{}】,classTime:【{}】,原因：接口 "+requestUrl + " 返回为空。", userId,onlineClassId,type,scheduledDateTime);
-            return ReturnMapUtils.returnFail("Request failed, please try again later !");
+            return ReturnMapUtils.returnFail("Booked failed, please try again later !");
         } else if (responseBody.indexOf("Success") > 0) {
             logger.info("用户Id:【{}】,Booked onlineClassId:【{}】成功,classType:【{}】,classTime:【{}】", userId,onlineClassId,type,scheduledDateTime);
             return ReturnMapUtils.returnSuccess();
         } else {
             logger.warn("用户Id:【{}】,Booked onlineClassId:【{}】失败2,classType:【{}】,classTime:【{}】,原因：接口 "+requestUrl + " 未知【"+responseBody+"】", userId,onlineClassId,type,scheduledDateTime);
-            return ReturnMapUtils.returnFail("Request failed, Please try again later!");
+            return ReturnMapUtils.returnFail("Booked failed, Please try again later!");
         }
     }
     
@@ -162,7 +162,7 @@ public class OnlineClassProxy {
         logger.info("CANCEL CLASS MESSAGE : " + responseBody);
         if (StringUtils.isBlank(responseBody)) {
             logger.warn("用户Id:【{}】,Cancel onlineClassId:【{}】失败1,classType:【{}】,原因：接口 "+requestUrl + " 返回空白。", userId,onlineClassId,type);
-            return ReturnMapUtils.returnFail("Request failed, Please try again later !");
+            return ReturnMapUtils.returnFail("Cancel failed, Please try again later !");
         } else if (responseBody.indexOf("Success") > 0) {
             logger.info("用户Id:【{}】,Cancel onlineClassId:【{}】成功,classType:【{}】", userId,onlineClassId,type);
             return ReturnMapUtils.returnSuccess();
@@ -171,7 +171,7 @@ public class OnlineClassProxy {
             return ReturnMapUtils.returnFail("Sorry, you can't cancel twice in less than 5 minutes. Please try again later.");
         } else {
             logger.warn("用户Id:【{}】,Cancel onlineClassId:【{}】失败3,classType:【{}】,原因：接口 "+requestUrl + " 未知【"+responseBody+"】", userId,onlineClassId,type);
-            return ReturnMapUtils.returnFail("Request failed, Please try again later!");
+            return ReturnMapUtils.returnFail("Cancel failed, Please try again later!");
         }
     }
 
