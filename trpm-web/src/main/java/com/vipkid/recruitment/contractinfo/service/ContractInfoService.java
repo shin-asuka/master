@@ -70,7 +70,7 @@ public class ContractInfoService {
 
     public boolean isNeedUploadW9(Teacher teacher){
         if (StringUtils.equals(teacher.getCountry(), "USA")) {
-            logger.warn("{} teacher's country is {} but W9 file is not uploaded!", teacher.getId(),teacher.getCountry());
+            logger.warn("{} teacher's country is {},need upload W9", teacher.getId(),teacher.getCountry());
             return true;
         } else {
             //查询教师的Location id
@@ -344,7 +344,7 @@ public class ContractInfoService {
         if (TeacherApplicationEnum.Status.CONTRACT_INFO.toString().equals(listEntity.get(0).getStatus())
                 && TeacherApplicationEnum.Result.PASS.toString().equals(listEntity.get(0).getResult())) {
             TeacherApplication  teacherApplication = listEntity.get(0);
-            teacherApplication.setStatus(TeacherApplicationEnum.Status.FINISHED.toString());
+           // teacherApplication.setStatus(TeacherApplicationEnum.Status.FINISHED.toString());
                 // 2.教师状态更新
             teacher.setLifeCycle(TeacherEnum.LifeCycle.REGULAR.toString());
                 // 3.新增教师入职时间
