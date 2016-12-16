@@ -14,6 +14,7 @@ import org.springframework.stereotype.Repository;
 
 import com.google.common.collect.Lists;
 import com.vipkid.enums.TeacherQuizEnum;
+import com.vipkid.enums.TeacherQuizEnum.Version;
 import com.vipkid.trpm.entity.TeacherQuiz;
 
 @Repository
@@ -33,11 +34,12 @@ public class TeacherQuizDao extends MapperDaoTemplate<TeacherQuiz>{
      * List<TeacherQuiz>
      * @date 2016年8月18日
      */;
-    public List<TeacherQuiz> getLastQuiz(long teacherId){
+    public List<TeacherQuiz> getLastQuiz(long teacherId,Version version){
         TeacherQuiz teacherQuiz = new TeacherQuiz();
         teacherQuiz.setTeacherId(teacherId);
         teacherQuiz.setAndwhere(" AND status > " + TeacherQuizEnum.Status.NOQUIZ.val());
         teacherQuiz.setStatus(-1);
+        teacherQuiz.setVersion(version.val());
         teacherQuiz.setOrderString(" id DESC ");
         return super.selectList(teacherQuiz);
     }
@@ -86,7 +88,7 @@ public class TeacherQuizDao extends MapperDaoTemplate<TeacherQuiz>{
      * int
      * @date 2016年8月18日
      */
-    public int insertQuiz(long teacherId,long passId){
+    public int insertQuiz(long teacherId,long passId,Version version){
         logger.info("新增一条考试记录:{}",teacherId);
         TeacherQuiz teacherQuiz = new TeacherQuiz();
         teacherQuiz.setTeacherId(teacherId);
@@ -95,6 +97,7 @@ public class TeacherQuizDao extends MapperDaoTemplate<TeacherQuiz>{
         teacherQuiz.setUpdateId(passId);
         teacherQuiz.setUpdateTime(new Date());
         teacherQuiz.setQuizScore(0);
+        teacherQuiz.setVersion(version.val());
         return super.save(teacherQuiz);
     }
     /**

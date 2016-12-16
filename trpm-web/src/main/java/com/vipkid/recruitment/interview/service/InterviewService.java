@@ -6,8 +6,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import com.vipkid.email.EmailUtils;
-import com.vipkid.enums.UserEnum;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
@@ -16,11 +14,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.vipkid.email.EmailUtils;
 import com.vipkid.enums.OnlineClassEnum;
 import com.vipkid.enums.TeacherApplicationEnum.Result;
 import com.vipkid.enums.TeacherApplicationEnum.Status;
 import com.vipkid.enums.TeacherEnum.LifeCycle;
 import com.vipkid.enums.TeacherLockLogEnum.Reason;
+import com.vipkid.enums.TeacherQuizEnum.Version;
+import com.vipkid.enums.UserEnum;
 import com.vipkid.recruitment.common.service.RecruitmentService;
 import com.vipkid.recruitment.dao.InterviewDao;
 import com.vipkid.recruitment.dao.TeacherApplicationDao;
@@ -298,7 +299,7 @@ public class InterviewService {
             this.teacherDao.update(teacher);
             
             // 增加quiz的考试记录
-            teacherQuizDao.insertQuiz(teacher.getId(),teacher.getId());
+            teacherQuizDao.insertQuiz(teacher.getId(),teacher.getId(),Version.TRINING_QUIZ);
             
             // 新加Training 申请记录
             List<TeacherApplication> list = teacherApplicationDao.findCurrentApplication(teacher.getId());

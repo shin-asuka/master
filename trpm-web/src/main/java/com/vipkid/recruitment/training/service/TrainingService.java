@@ -1,16 +1,10 @@
 package com.vipkid.recruitment.training.service;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.vipkid.email.EmailUtils;
-import com.vipkid.enums.TeacherApplicationEnum;
-import com.vipkid.enums.TeacherQuizEnum;
-import com.vipkid.recruitment.dao.TeacherApplicationDao;
-import com.vipkid.recruitment.entity.TeacherApplication;
-import com.vipkid.recruitment.utils.ReturnMapUtils;
-import com.vipkid.rest.config.RestfulConfig;
-import com.vipkid.trpm.dao.*;
-import com.vipkid.trpm.entity.TeacherQuiz;
-import com.vipkid.trpm.entity.TeacherQuizDetails;
+import java.sql.Timestamp;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.community.tools.JsonTools;
@@ -18,13 +12,23 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.vipkid.enums.TeacherEnum.LifeCycle;
-import com.vipkid.trpm.entity.Teacher;
 
-import java.sql.Timestamp;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.vipkid.email.EmailUtils;
+import com.vipkid.enums.TeacherApplicationEnum;
+import com.vipkid.enums.TeacherEnum.LifeCycle;
+import com.vipkid.enums.TeacherQuizEnum;
+import com.vipkid.enums.TeacherQuizEnum.Version;
+import com.vipkid.recruitment.dao.TeacherApplicationDao;
+import com.vipkid.recruitment.entity.TeacherApplication;
+import com.vipkid.recruitment.utils.ReturnMapUtils;
+import com.vipkid.rest.config.RestfulConfig;
+import com.vipkid.trpm.dao.TeacherDao;
+import com.vipkid.trpm.dao.TeacherQuizDao;
+import com.vipkid.trpm.dao.TeacherQuizDetailsDao;
+import com.vipkid.trpm.entity.Teacher;
+import com.vipkid.trpm.entity.TeacherQuiz;
+import com.vipkid.trpm.entity.TeacherQuizDetails;
 
 @Service
 public class TrainingService {
@@ -81,7 +85,7 @@ public class TrainingService {
         List<TeacherQuiz> list = this.teacherQuizDao.findAllQuiz(teacherId);
         logger.info("check quiz reslult count:" + list);
         if(CollectionUtils.isEmpty(list)){
-            teacherQuizDao.insertQuiz(teacherId,teacherId);
+            teacherQuizDao.insertQuiz(teacherId,teacherId,Version.TRINING_QUIZ);
         }
         List<TeacherApplication> teacherApplications = teacherApplicationDao.findByTeacherId(teacherId,TeacherApplicationEnum.Status.TRAINING.toString());
 
@@ -181,7 +185,7 @@ public class TrainingService {
 
                 if(quizScore < RestfulConfig.Quiz.NEW_QUIZ_PASS_SCORE){
                     logger.info("teacehrId:{},提交考试结果，quizId:{} 没通过,新增一条考试记录",teacherId,teacherQuiz.getId(),teacherQuiz.getStatus());
-                    this.teacherQuizDao.insertQuiz(teacherId,teacherId);
+                    this.teacherQuizDao.insertQuiz(teacherId,teacherId,Version.TRINING_QUIZ);
                     new_application.setResult(TeacherApplicationEnum.Result.FAIL.toString());
                     this.teacherApplicationDao.update(new_application);
                 }else if(TeacherApplicationEnum.Status.TRAINING.toString().equalsIgnoreCase(teacher.getLifeCycle())){
@@ -249,7 +253,7 @@ public class TrainingService {
      */
     public List<TeacherQuiz> getLastQuiz(long teacherId){
         logger.info("select quiz list for teacherId is " + teacherId);
-        return this.teacherQuizDao.getLastQuiz(teacherId);
+        return this.teacherQuizDao.getLastQuiz(teacherId,Version.TRINING_QUIZ);
     }
 
 }

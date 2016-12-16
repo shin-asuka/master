@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.community.tools.JsonTools;
@@ -12,10 +13,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.vipkid.enums.TeacherQuizEnum;
-import com.vipkid.rest.config.RestfulConfig;
 import com.vipkid.enums.TeacherPageLoginEnum.LoginType;
+import com.vipkid.enums.TeacherQuizEnum;
+import com.vipkid.enums.TeacherQuizEnum.Version;
+import com.vipkid.rest.config.RestfulConfig;
 import com.vipkid.trpm.dao.AppRestfulDao;
 import com.vipkid.trpm.dao.TeacherDao;
 import com.vipkid.trpm.dao.TeacherPageLoginDao;
@@ -91,7 +94,7 @@ public class AdminQuizService {
      */
     public List<TeacherQuiz> getLastQuiz(long teacherId){
         logger.info("select quiz list for teacherId is " + teacherId);
-        return this.teacherQuizDao.getLastQuiz(teacherId);
+        return this.teacherQuizDao.getLastQuiz(teacherId,Version.ADMIN_QUIZ);
     }
 
     /**
@@ -137,7 +140,7 @@ public class AdminQuizService {
                 // 插入新的待考记录
                 if(quizScore < RestfulConfig.Quiz.OLD_QUIZ_PASS_SCORE){
                     logger.info("teacehrId:{},提交考试结果，quizId:{} 没通过,新增一条考试记录",teacherId,teacherQuiz.getId(),teacherQuiz.getStatus());
-                    this.teacherQuizDao.insertQuiz(teacherId,teacherId);
+                    this.teacherQuizDao.insertQuiz(teacherId,teacherId,Version.ADMIN_QUIZ);
                 }
                 logger.info("teacehrId:{},提交考试结果，quizId:{},result:{} ",teacherId,teacherQuiz.getId(),teacherQuiz.getStatus());
                 return true;

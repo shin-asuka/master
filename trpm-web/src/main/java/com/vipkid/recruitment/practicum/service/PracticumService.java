@@ -24,6 +24,7 @@ import com.vipkid.enums.TeacherApplicationEnum.Status;
 import com.vipkid.enums.TeacherEnum.LifeCycle;
 import com.vipkid.enums.TeacherEnum.Type;
 import com.vipkid.enums.TeacherLockLogEnum.Reason;
+import com.vipkid.enums.TeacherQuizEnum.Version;
 import com.vipkid.enums.UserEnum;
 import com.vipkid.recruitment.common.service.RecruitmentService;
 import com.vipkid.recruitment.dao.PracticumDao;
@@ -288,7 +289,7 @@ public class PracticumService {
                 // 5.增加quiz的考试记录
                 List<TeacherQuiz> quizslist = teacherQuizDao.findAllQuiz(teacher.getId());
                 if (CollectionUtils.isEmpty(quizslist)) {
-                    teacherQuizDao.insertQuiz(teacher.getId(), teacher.getId());
+                    teacherQuizDao.insertQuiz(teacher.getId(), teacher.getId(),Version.ADMIN_QUIZ);
                 }
             } else {
                 teacher.setLifeCycle(LifeCycle.CONTRACT_INFO.toString());
