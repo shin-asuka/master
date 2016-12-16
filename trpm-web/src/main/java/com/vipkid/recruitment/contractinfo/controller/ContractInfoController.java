@@ -125,7 +125,7 @@ public class ContractInfoController extends RestfulController {
             Map<String, Object> contractInfo = Maps.newHashMap();
             Map<String, Object> contractFileMap = contractInfoService.findContract(teacher);
             boolean w9IsUpload = contractInfoService.isNeedUploadW9(teacher);
-            logger.info("查询用户：w9IsUpload {},", w9IsUpload);
+            logger.info("查询用户：w9IsUpload {},teacherId:{}", w9IsUpload,teacher.getId());
 
             String contractUrl = contractInfoService.findContractUrl(teacher.getId());
             logger.info("查询用户：{},查询上传过的文件", teacher.getId());
