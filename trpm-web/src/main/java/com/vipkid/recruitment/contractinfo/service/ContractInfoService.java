@@ -69,11 +69,12 @@ public class ContractInfoService {
     }
 
     public boolean isNeedUploadW9(Teacher teacher){
-        if (StringUtils.equals(teacher.getCountry(), "USA")) {
+        if (StringUtils.equals(teacher.getCountry(),"USA")) {
             logger.warn("{} teacher's country is {},need upload W9", teacher.getId(),teacher.getCountry());
             return true;
         } else {
             //查询教师的Location id
+            logger.info("teacherId {},  Country:{}", teacher.getId(),teacher.getCountry());
             TeacherAddress teacherAddress = teacherAddressDao.getTeacherAddress(teacher.getCurrentAddressId());
             //  2497273 = 老师location 为   United States
             if (teacherAddress != null && teacherAddress.getCountryId() == LOCATION_IS_USA) {
