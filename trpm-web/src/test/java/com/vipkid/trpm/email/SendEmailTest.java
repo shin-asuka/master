@@ -62,8 +62,8 @@ public class SendEmailTest {
 		new EmailEngine().addMailPool("zhaojia3@vipkid.com.cn ", emailMap4 , EmailFormEnum.TEACHVIP);*/
 		/*Map<String, String> paramsMap = Maps.newHashMap();
 			paramsMap.put("teacherName", "Bel1");
-			String titleTemplate = "reminderApplicantBefore24HoursEmailSubjectTemplate.html";
-			String contentTemplate = "reminderApplicantBefore24HoursEmailContentTemplate.html";
+			String titleTemplate = "InterviewReminderTitle.html";
+			String contentTemplate = "InterviewReminder.html";
 			Map<String, String> emailMap = TemplateUtils.readTemplate(contentTemplate, paramsMap, titleTemplate);
 		    new EmailEngine().addMailPool("zhaojia3@vipkid.com.cn ", emailMap , EmailFormEnum.TEACHVIP);
 
@@ -302,8 +302,8 @@ public class SendEmailTest {
 	public void sendEmail(){
 			String email = "zhaojia3@vipkid.com.cn ";
 			String name = "Bel";
-			String titleTemplate = "reminderApplicantBefore24HoursEmailSubjectTemplate.html";
-			String contentTemplate = "reminderApplicantBefore24HoursEmailContentTemplate.html";
+			String titleTemplate = "InterviewReminderTitle.html";
+			String contentTemplate = "InterviewReminder.html";
 			EmailUtils.sendEmail4Recruitment(email, name, titleTemplate, contentTemplate);
 
 

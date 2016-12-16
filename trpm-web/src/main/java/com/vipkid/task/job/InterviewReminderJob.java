@@ -91,10 +91,10 @@ public class InterviewReminderJob {
             paramsMap.put("teacherName",teacher.getRealName());
             paramsMap.put("scheduledDateTime", DateUtils.formatTo(onlineclass.getScheduledDateTime().toInstant(), teacher.getTimezone(), DateUtils.FMT_YMD_HM));
             paramsMap.put("timezone", teacher.getTimezone());
-            logger.info("【EMAIL.sendEmail4InterviewReminderJob】toAddMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",teacher.getRealName(),teacher.getEmail(),"InterviewBookTitle.html","InterviewBook.html");
-            Map<String, String> emailMap = TemplateUtils.readTemplate("reminderApplicantBefore24HoursEmailContentTemplate.html", paramsMap, "reminderApplicantBefore24HoursEmailSubjectTemplate.html");
+            logger.info("【EMAIL.sendEmail4InterviewReminderJob】toAddMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",teacher.getRealName(),teacher.getEmail(),"InterviewReminderTitle.html","InterviewReminder.html");
+            Map<String, String> emailMap = TemplateUtils.readTemplate("InterviewReminder.html", paramsMap, "InterviewReminderTitle.html");
             EmailEngine.addMailPool(teacher.getEmail(), emailMap, EmailConfig.EmailFormEnum.TEACHVIP);
-            logger.info("【EMAIL.sendEmail4InterviewReminderJob】addedMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",teacher.getRealName(),teacher.getEmail(),"InterviewBookTitle.html","InterviewBook.html");
+            logger.info("【EMAIL.sendEmail4InterviewReminderJob】addedMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",teacher.getRealName(),teacher.getEmail(),"InterviewReminderTitle.html","InterviewReminder.html");
         } catch (Exception e) {
             logger.error("【EMAIL.sendEmail4InterviewReminderJob】ERROR: {}", e);
         }

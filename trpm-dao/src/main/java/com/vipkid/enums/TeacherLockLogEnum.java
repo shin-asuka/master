@@ -7,6 +7,7 @@ public class TeacherLockLogEnum {
 		// 邮件：
 		NO_BOOK,
 		NO_RESCHEDULE,
-		NO_FINISH_REGISTER
+		NO_FINISH_REGISTER,
+		NO_UPLOAD
 	}
 }

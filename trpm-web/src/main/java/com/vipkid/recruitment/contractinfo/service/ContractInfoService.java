@@ -150,16 +150,15 @@ public class ContractInfoService {
             return ReturnMapUtils.returnFail("failed to save teacherApplication!");
         }
 
-        TeacherContractFile teacherContractFile;
-        List<TeacherContractFile> teacherContractFiles = new ArrayList<>();
-        for (Integer id : ids) {
-            teacherContractFile = this.teacherContractFileDao.findById(id);
+
+        List<TeacherContractFile> teacherContractFiles =teacherContractFileDao.findByTeacherIdAndTeacherApplicationId(teacher.getId(),CONTRACT_FILE_LATEST_APPLICATION_ID);
+        for (TeacherContractFile teacherContractFile : teacherContractFiles) {
             if (TeacherApplicationEnum.Result.FAIL.toString().equals(teacherContractFile.getResult())) {
                 teacherContractFile.setResult(StringUtils.EMPTY);
             }
             teacherContractFile.setTeacherApplicationId(application.getId());
             logger.info("applicationId:{}", application.getId());
-            teacherContractFiles.add(teacherContractFile);
+
         }
 
         logger.info("批量更新文件 for teacherId:{} with  teacherApplicationId:{}", teacher.getId(), application.getId());

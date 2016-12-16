@@ -87,7 +87,7 @@ public class TrainingService {
         if(CollectionUtils.isEmpty(list)){
             teacherQuizDao.insertQuiz(teacherId,teacherId,Version.TRINING_QUIZ);
         }
-        List<TeacherApplication> teacherApplications = teacherApplicationDao.findByTeacherId(teacherId,TeacherApplicationEnum.Status.TRAINING.toString());
+        List<TeacherApplication> teacherApplications = teacherApplicationDao.findApplictionForStatusResult(teacherId,TeacherApplicationEnum.Status.TRAINING.toString(),null);
 
         if(CollectionUtils.isEmpty(teacherApplications)){
             List<TeacherApplication> old_teacherApplications = teacherApplicationDao.findCurrentApplication(teacherId);
