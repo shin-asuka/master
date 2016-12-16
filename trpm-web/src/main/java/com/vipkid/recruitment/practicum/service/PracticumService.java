@@ -7,9 +7,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import com.google.api.client.util.Maps;
-import com.vipkid.email.EmailUtils;
-import com.vipkid.enums.UserEnum;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang3.StringUtils;
@@ -19,12 +16,15 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.google.api.client.util.Maps;
+import com.vipkid.email.EmailUtils;
 import com.vipkid.enums.OnlineClassEnum;
 import com.vipkid.enums.TeacherApplicationEnum.Result;
 import com.vipkid.enums.TeacherApplicationEnum.Status;
 import com.vipkid.enums.TeacherEnum.LifeCycle;
 import com.vipkid.enums.TeacherEnum.Type;
 import com.vipkid.enums.TeacherLockLogEnum.Reason;
+import com.vipkid.enums.UserEnum;
 import com.vipkid.recruitment.common.service.RecruitmentService;
 import com.vipkid.recruitment.dao.PracticumDao;
 import com.vipkid.recruitment.dao.TeacherApplicationDao;
@@ -250,7 +250,7 @@ public class PracticumService {
         Map<String,Object> result = OnlineClassProxy.doCancelRecruitement(teacher.getId(), onlineClass.getId(), ClassType.PRACTICUM);
         if(ReturnMapUtils.isFail(result)){
             //一旦失败，抛出异常回滚
-            throw new RuntimeException("Class canceling is fail! "+result.get("info"));
+            throw new RuntimeException(""+result.get("info"));
         }
         return result;
     }

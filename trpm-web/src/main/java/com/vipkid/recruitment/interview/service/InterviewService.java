@@ -271,7 +271,7 @@ public class InterviewService {
         Map<String,Object> result = OnlineClassProxy.doCancelRecruitement(teacher.getId(), onlineClass.getId(), ClassType.TEACHER_RECRUITMENT);
         if(ReturnMapUtils.isFail(result)){
             //一旦失败，抛出异常回滚
-            throw new RuntimeException("Cancel failed! Please try again."+result.get("info"));
+            throw new RuntimeException(""+result.get("info"));
         }
         return result;
     }
