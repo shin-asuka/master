@@ -42,7 +42,7 @@ public final class DateUtils {
 
 	public static DateTimeFormatter FMT_YM = DateTimeFormatter.ofPattern("yyyy-MM");
 
-	public static DateTimeFormatter FMT_YMD_EMd = DateTimeFormatter.ofPattern("E,MMM d h:mma").withLocale(Locale.US);
+	public static DateTimeFormatter FMT_YMD_EMd = DateTimeFormatter.ofPattern("E, MMM d h:mma").withLocale(Locale.US);
 
 	/* 每天的半小时数量 */
 	public static final int HALFHOUR_OF_DAY = 24 * 2;
