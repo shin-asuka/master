@@ -76,7 +76,7 @@ public class BookingsService {
      *
      * @return List<TimePoint>
      */
-    private static List<TimePoint> getTimePointsOfDay() {
+    public List<TimePoint> getTimePointsOfDay() {
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.HOUR_OF_DAY, 0);
         calendar.set(Calendar.MINUTE, 0);
@@ -231,7 +231,7 @@ public class BookingsService {
      *
      * @return List<String>
      */
-    private static List<String> getClassTimes() {
+    public List<String> getClassTimes() {
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.HOUR_OF_DAY, 0);
         calendar.set(Calendar.MINUTE, 0);
@@ -475,7 +475,7 @@ public class BookingsService {
         return modelMap;
     }
 
-    private List<String> get24HourClass(long teacherId, List<String> onlineClassIds) {
+    public List<String> get24HourClass(long teacherId, List<String> onlineClassIds) {
         Map<String, String> requestHeader = get24HourRequestHeader(teacherId);
         logger.info("Get 24Hour Request Header: {}", requestHeader.get("Authorization"));
 
@@ -497,7 +497,7 @@ public class BookingsService {
         }
     }
 
-    private Map<String, String> get24HourRequestHeader(long teacherId) {
+    public Map<String, String> get24HourRequestHeader(long teacherId) {
         String t = "TEACHER " + teacherId;
         Map<String, String> requestHeader = new HashMap<>();
         requestHeader.put("Authorization",
