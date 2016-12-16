@@ -7,6 +7,10 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import com.google.common.base.Stopwatch;
+import com.vipkid.enums.TeacherEnum;
+import com.vipkid.enums.TeacherLockLogEnum;
+import com.vipkid.recruitment.dao.TeacherLockLogDao;
+import com.vipkid.recruitment.entity.TeacherLockLog;
 import org.apache.commons.collections.map.HashedMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,7 +45,8 @@ public class InterviewPassContinueReminderJob {
 
 	@Autowired
 	private UserDao userDao;
-
+	@Autowired
+	private TeacherLockLogDao teacherLockLogDao;
 	@Autowired
 	private TeacherApplicationDao teacherApplicationDao;
 
@@ -93,8 +98,8 @@ public class InterviewPassContinueReminderJob {
 		Date endTime = UADateUtils.parse(time.get("endTime"));
 
 		if (auditTime.after(startTime) && auditTime.before(endTime)){
-			//userDao.doLock(teacher.getId());
-			//teacherLockLogDao.save(new TeacherLockLog(teacher.getId(), Reason.NO_BOOK.toString(), TeacherEnum.LifeCycle.INTERVIEW.toString()));
+			userDao.doLock(teacher.getId());
+			teacherLockLogDao.save(new TeacherLockLog(teacher.getId(), TeacherLockLogEnum.Reason.INTERVIEW_PASS_CONTINUE_REMINDER_JOB.toString(), TeacherEnum.LifeCycle.INTERVIEW.toString()));
 			logger.info("【JOB.EMAIL.InterviewPassContinueReminderJob】LOCK: Cost {}ms. teacherId = {}, teacherEmail = {}", stopwatch.elapsed(TimeUnit.MILLISECONDS), teacher.getId(), teacher.getEmail());
 		} else {
 			String email = teacher.getEmail();

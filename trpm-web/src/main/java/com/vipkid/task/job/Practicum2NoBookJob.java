@@ -3,11 +3,16 @@ package com.vipkid.task.job;
 import com.google.common.base.Stopwatch;
 import com.vipkid.email.EmailUtils;
 import com.vipkid.enums.TeacherApplicationEnum;
+import com.vipkid.enums.TeacherEnum;
+import com.vipkid.enums.TeacherLockLogEnum;
 import com.vipkid.http.utils.JsonUtils;
 import com.vipkid.recruitment.dao.TeacherApplicationDao;
+import com.vipkid.recruitment.dao.TeacherLockLogDao;
 import com.vipkid.recruitment.entity.TeacherApplication;
+import com.vipkid.recruitment.entity.TeacherLockLog;
 import com.vipkid.task.utils.UADateUtils;
 import com.vipkid.trpm.dao.TeacherDao;
+import com.vipkid.trpm.dao.UserDao;
 import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.vschedule.client.common.Vschedule;
 import com.vipkid.vschedule.client.schedule.JobContext;
@@ -30,7 +35,10 @@ import java.util.concurrent.TimeUnit;
 @Vschedule
 public class Practicum2NoBookJob {
     private static final Logger logger = LoggerFactory.getLogger(Practicum2NoBookJob.class);
-
+    @Autowired
+    private UserDao userDao;
+    @Autowired
+    private TeacherLockLogDao teacherLockLogDao;
     @Autowired
     private TeacherApplicationDao teacherApplicationDao;
     @Autowired
@@ -79,8 +87,8 @@ public class Practicum2NoBookJob {
         Date endTime = UADateUtils.parse(time.get("endTime"));
 
         if (auditTime.after(startTime) && auditTime.before(endTime)) {
-            //userDao.doLock(teacher.getId());
-            //teacherLockLogDao.save(new TeacherLockLog(teacher.getId(), Reason.NO_BOOK.toString(), TeacherEnum.LifeCycle.INTERVIEW.toString()));
+            userDao.doLock(teacher.getId());
+            teacherLockLogDao.save(new TeacherLockLog(teacher.getId(), TeacherLockLogEnum.Reason.PRACTICUM2_NO_BOOK.toString(), TeacherEnum.LifeCycle.PRACTICUM.toString()));
             logger.info("【JOB.EMAIL.Practicum2NoBookJob】LOCK: Cost {}ms. teacherId = {}, teacherEmail = {}", stopwatch.elapsed(TimeUnit.MILLISECONDS), teacher.getId(), teacher.getEmail());
         } else {
             String email = teacher.getEmail();

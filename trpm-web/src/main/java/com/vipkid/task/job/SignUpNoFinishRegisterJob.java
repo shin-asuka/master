@@ -3,10 +3,13 @@ package com.vipkid.task.job;
 import com.google.common.base.Stopwatch;
 import com.vipkid.email.EmailUtils;
 import com.vipkid.enums.TeacherApplicationEnum;
+import com.vipkid.enums.TeacherEnum;
+import com.vipkid.enums.TeacherLockLogEnum;
 import com.vipkid.http.utils.JsonUtils;
 import com.vipkid.recruitment.dao.TeacherApplicationDao;
 import com.vipkid.recruitment.dao.TeacherLockLogDao;
 import com.vipkid.recruitment.entity.TeacherApplication;
+import com.vipkid.recruitment.entity.TeacherLockLog;
 import com.vipkid.task.utils.UADateUtils;
 import com.vipkid.trpm.dao.TeacherDao;
 import com.vipkid.trpm.dao.UserDao;
@@ -93,8 +96,8 @@ public class SignUpNoFinishRegisterJob {
 		Date endTime = UADateUtils.parse(time.get("endTime"));
 
 		if (registerTime.after(startTime) && registerTime.before(endTime)){
-			//userDao.doLock(teacher.getId());
-			//teacherLockLogDao.save(new TeacherLockLog(teacher.getId(), Reason.NO_FINISH_REGISTER.toString(), TeacherEnum.LifeCycle.SIGNUP.toString()));
+			userDao.doLock(teacher.getId());
+			teacherLockLogDao.save(new TeacherLockLog(teacher.getId(), TeacherLockLogEnum.Reason.NO_FINISH_REGISTER.toString(), TeacherEnum.LifeCycle.SIGNUP.toString()));
 			logger.info("【JOB.EMAIL.SignUpNoFinishRegister】LOCK: Cost {}ms. teacherId = {}, teacherEmail = {}", stopwatch.elapsed(TimeUnit.MILLISECONDS), teacher.getId(), teacher.getEmail());
 		} else {
 			String email = teacher.getEmail();
