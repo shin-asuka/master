@@ -145,7 +145,6 @@
 		FROM teacher_quiz
 		WHERE
 		status = #{status}
-		AND
 		<foreach collection="auditTimes" open="AND (" close=")" separator=" OR " item="auditTime">
 			(creation_time BETWEEN #{auditTime.startTime} AND #{auditTime.endTime})
 		</foreach>
