@@ -11,7 +11,8 @@
 		teacher_quiz.teacher_id AS teacher_quiz_teacher_id,
 		teacher_quiz.update_time AS teacher_quiz_update_time,
 		teacher_quiz.update_id	AS teacher_quiz_update_id, 
-		teacher_quiz.status AS teacher_quiz_status
+		teacher_quiz.status AS teacher_quiz_status,
+		teacher_quiz.version AS teacher_quiz_version
 	</sql>
 
 	<sql id="TeacherQuizWhere">
@@ -25,6 +26,7 @@
 			<if test="updateTime!=null">AND teacher_quiz.update_time = #{updateTime}</if>
 			<if test="updateId !=0">AND teacher_quiz.update_id = #{updateId}</if>
 			<if test="status != -1">AND teacher_quiz.status = #{status}</if>
+			<if test="version != 0">AND teacher_quiz.version = #{version}</if>
 			<if test="andwhere!=null"> ${andwhere} </if>
 		</trim>
 	</sql>
@@ -45,6 +47,7 @@
 		<result column="teacher_quiz_update_time" property="updateTime" />
 		<result column="teacher_quiz_update_id" property="updateId" />
 		<result column="teacher_quiz_status" property="status" />
+		<result column="teacher_quiz_version" property="version" />
 	</resultMap>
 
 	<select id="findDao" resultMap="TeacherQuizResultMap">
@@ -95,6 +98,7 @@
 			<if test="teacherId!=0">,teacher_id</if>
 			<if test="updateId!=0">,update_id</if>
 			<if test="status!=0">,status</if>
+			<if test="version!=0">,version</if>
 		</trim>
 		) VALUES
 		<trim prefix="(" prefixOverrides=",">
@@ -107,6 +111,7 @@
 			<if test="teacherId!=0">,#{teacherId}</if>
 			<if test="updateId!=0">,#{updateId}</if>
 			<if test="status!=0">,#{status}</if>
+			<if test="version!=0">,#{version}</if>
 		</trim>
 		)
 	</insert>
@@ -123,6 +128,7 @@
 			<if test="teacherId!=0">,teacher_id = #{teacherId}</if>
 			<if test="updateId!=0">,update_id = #{updateId}</if>
 			<if test="status!=0">,status = #{status}</if>
+			<if test="version!=0">,version = #{version}</if>
 		</trim>
 		<trim prefix="WHERE" prefixOverrides="AND">AND id = #{id}</trim>
 	</update>
