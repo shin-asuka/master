@@ -66,9 +66,9 @@ public class UADateUtils {
 	public static Date getDateOclockByAfterHours(int interval ){
 		Calendar calendar = Calendar.getInstance();
 		int hour = calendar.get(Calendar.HOUR_OF_DAY)+interval;
-		calendar.set(Calendar.HOUR_OF_DAY, hour);
-		calendar.set(Calendar.MINUTE,0);
-		calendar.set(Calendar.SECOND,1);
+		calendar.set(Calendar.HOUR_OF_DAY, hour-1);
+		calendar.set(Calendar.MINUTE,59);
+		calendar.set(Calendar.SECOND,59);
 		calendar.set(Calendar.MILLISECOND,0);
 		return calendar.getTime();
 	}
@@ -211,8 +211,8 @@ public class UADateUtils {
 	public static List<Map> getStartEndOclockTimeMapListByAfterHours(Integer interval, int... beforeHours){
 		List<Map> startEndTimes = new ArrayList<>();
 		for (int i : beforeHours){
-			String startTime = UADateUtils.format(UADateUtils.getDateOclockByAfterHours(i - interval)) ;
-			String endTime = UADateUtils.format(UADateUtils.getDateOclockByAfterHours(i)) ;
+			String startTime = UADateUtils.format(UADateUtils.getDateOclockByAfterHours(i)) ;
+			String endTime = UADateUtils.format(UADateUtils.getDateOclockByAfterHours(i + interval)) ;
 
 
 			Map<String, String> time = new HashMap<>();
