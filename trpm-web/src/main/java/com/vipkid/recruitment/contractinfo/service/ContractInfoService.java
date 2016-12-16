@@ -69,7 +69,7 @@ public class ContractInfoService {
     }
 
     public boolean isNeedUploadW9(Teacher teacher){
-        if (StringUtils.equals(teacher.getCountry(),"United States")) {
+        if (StringUtils.equals(teacher.getCountry(),"United States")||StringUtils.equals(teacher.getCountry(),"USA")) {
             logger.warn("{} teacher's country is {},need upload W9", teacher.getId(),teacher.getCountry());
             return true;
         } else {
