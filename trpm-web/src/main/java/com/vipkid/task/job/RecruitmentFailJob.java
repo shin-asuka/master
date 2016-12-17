@@ -6,6 +6,7 @@ import com.vipkid.enums.TeacherApplicationEnum;
 import com.vipkid.http.utils.JsonUtils;
 import com.vipkid.recruitment.dao.TeacherApplicationDao;
 import com.vipkid.task.utils.UADateUtils;
+import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.vschedule.client.common.Vschedule;
 import com.vipkid.vschedule.client.schedule.JobContext;
 import org.apache.commons.lang3.StringUtils;
@@ -64,8 +65,12 @@ public class RecruitmentFailJob {
 		if(map!=null){
 			String email = map.get("teacherEmail"); //获取教师邮箱发送邮件
 			String name = map.get("teacherName");
+			String firstName = map.get("firstName");
 			String status = map.get("status");
-
+			Teacher teacher = new Teacher();
+			teacher.setEmail(email);
+			teacher.setRealName(name);
+			teacher.setFirstName(firstName);
 			if (StringUtils.isNoneBlank(email) && StringUtils.isNoneBlank(status)){
 				String titleTemplate = null;
 				String contentTemplate = null;
@@ -81,7 +86,7 @@ public class RecruitmentFailJob {
 					contentTemplate = "PracticumFail.html";
 				}
 
-				EmailUtils.sendEmail4Recruitment(email, name, titleTemplate, contentTemplate);
+				EmailUtils.sendEmail4Recruitment(teacher, titleTemplate, contentTemplate);
 				logger.info("【JOB.EMAIL.RecruitmentFail】SEND: Cost {}ms. email = {}, name = {}, titleTemplate = {}, contentTemplate = {}", stopwatch.elapsed(TimeUnit.MILLISECONDS), email, name, titleTemplate, contentTemplate);
 			}
 		}

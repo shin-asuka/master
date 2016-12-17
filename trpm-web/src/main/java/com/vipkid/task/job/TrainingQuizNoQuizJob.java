@@ -98,7 +98,7 @@ public class TrainingQuizNoQuizJob {
             String name = teacher.getRealName();
             String titleTemplate = "TrainingQuizReminderTitle.html";
             String contentTemplate = "TrainingQuizReminder.html";
-            EmailUtils.sendEmail4Recruitment(email, name, titleTemplate, contentTemplate);
+            EmailUtils.sendEmail4Recruitment(teacher, titleTemplate, contentTemplate);
             logger.info("【JOB.EMAIL.TrainingQuizNoQuiz】SEND: Cost {}ms. email = {}, name = {}, titleTemplate = {}, contentTemplate = {}", stopwatch.elapsed(TimeUnit.MILLISECONDS), email, name, titleTemplate, contentTemplate);
         }
     }

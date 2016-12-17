@@ -23,6 +23,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.sql.Timestamp;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -44,55 +45,59 @@ public class PracticumReminderJob {
 
     @Vschedule
     public void doJob (JobContext jobContext) {
-        logger.info("【JOB.EMAIL.ReminderPracticum】START: ==================================================");
+        logger.info("【JOB.EMAIL.PracticumReminderJob】START: ==================================================");
         Stopwatch stopwatch = Stopwatch.createStarted();
 
         try {
             find(stopwatch, 24, 48);
         } catch (Exception e) {
-            logger.error("【JOB.EMAIL.ReminderPracticum】EXCEPTION: Cost {}ms. ", stopwatch.elapsed(TimeUnit.MILLISECONDS), e);
+            logger.error("【JOB.EMAIL.PracticumReminderJob】EXCEPTION: Cost {}ms. ", stopwatch.elapsed(TimeUnit.MILLISECONDS), e);
         }
 
         long millis =stopwatch.stop().elapsed(TimeUnit.MILLISECONDS);
-        logger.info("【JOB.EMAIL.ReminderPracticum】END: Cost {}ms. ==================================================", millis);
+        logger.info("【JOB.EMAIL.PracticumReminderJob】END: Cost {}ms. ==================================================", millis);
     }
 
     void find (Stopwatch stopwatch, int... beforeHours) {
+        List<Long> teacherIds = new ArrayList<>();
+        Map<Long, Timestamp> teacherIdScheduledDateTimeMap = new HashMap<>();
         List<Map> times = UADateUtils.getStartEndOclockTimeMapListByAfterHours(beforeHours);
-        List<Long>  teacherIds  = teacherApplicationDao.findPracticumBook(times,TeacherApplicationEnum.Status.PRACTICUM.toString());
-        logger.info("【JOB.EMAIL.ReminderPracticum】FIND.1: Cost {}ms. Query: times = {}, status = {}; Result: teacherIds = {}",
+
+        List<Map<String, Object>> teacherIdScheduledDateTimeList = teacherApplicationDao.findRecruitmentBook(times,TeacherApplicationEnum.Status.PRACTICUM.toString());
+        logger.info("【JOB.EMAIL.PracticumReminderJob】FIND.1: Cost {}ms. Query: times = {}, status = {}; Result: teacherIds = {}",
                 stopwatch.elapsed(TimeUnit.MILLISECONDS), JsonUtils.toJSONString(times), TeacherApplicationEnum.Status.PRACTICUM.toString(), JsonUtils.toJSONString(teacherIds));
+
+        for(Map<String, Object> ts : teacherIdScheduledDateTimeList){
+            Long teacherId = Long.parseLong(ts.get("teacherId").toString());
+            Timestamp scheduledDateTime = (Timestamp)ts.get("scheduledDateTime");
+            teacherIds.add(teacherId);
+            teacherIdScheduledDateTimeMap.put(teacherId, scheduledDateTime);
+        }
 
         if(teacherIds.size() == 0) return;
         List<Teacher> teachers = teacherDao.findByIds(teacherIds);
-        logger.info("【JOB.EMAIL.ReminderPracticum】FIND.2: Cost {}ms. Query: teacherIds = {}; Result: teachers = ",
+        logger.info("【JOB.EMAIL.PracticumReminderJob】FIND.2: Cost {}ms. Query: teacherIds = {}; Result: teachers = ",
                 stopwatch.elapsed(TimeUnit.MILLISECONDS), JsonUtils.toJSONString(teacherIds));
-        teachers.forEach(x -> send(stopwatch, x));
+        teachers.forEach(x -> send(stopwatch, x, teacherIdScheduledDateTimeMap.get(x.getId())));
 
     }
 
-    void send (Stopwatch stopwatch, Teacher teacher) {
-        List<TeacherApplication> list = teacherApplicationDao.findCurrentApplication(teacher.getId());
-        if (CollectionUtils.isNotEmpty(list)) {
-            //更新上一个版本的 application
-            TeacherApplication teacherApplication = list.get(0);
-            OnlineClass onlineClass = onlineClassDao.findById(teacherApplication.getOnlineClassId());
-            sendEmail4PracticumReminderJob(teacher, onlineClass);
-        }
-    }
-
-    public static void sendEmail4PracticumReminderJob(Teacher teacher, OnlineClass onlineclass){
+    void send (Stopwatch stopwatch, Teacher teacher, Timestamp scheduledDateTime){
         try {
             Map<String,String> paramsMap = new HashMap<>();
-            paramsMap.put("teacherName",teacher.getRealName());
-            paramsMap.put("scheduledDateTime", DateUtils.formatTo(onlineclass.getScheduledDateTime().toInstant(), teacher.getTimezone(), DateUtils.FMT_YMD_HM));
+            if (teacher.getFirstName() != null){
+                paramsMap.put("teacherName", teacher.getFirstName());
+            }else if (teacher.getRealName() != null){
+                paramsMap.put("teacherName", teacher.getRealName());
+            }
+            paramsMap.put("scheduledDateTime", DateUtils.formatTo(scheduledDateTime.toInstant(), teacher.getTimezone(), DateUtils.FMT_YMD_HM));
             paramsMap.put("timezone", teacher.getTimezone());
-            logger.info("【EMAIL.sendEmail4PracticumBookJob】toAddMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",teacher.getRealName(),teacher.getEmail(),"InterviewBookTitle.html","InterviewBook.html");
+            logger.info("【JOB.EMAIL.PracticumReminderJob】toAddMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",teacher.getRealName(),teacher.getEmail(),"InterviewBookTitle.html","InterviewBook.html");
             Map<String, String> emailMap = TemplateUtils.readTemplate("PracticumReminderJob.html", paramsMap, "PracticumReminderJobTitle.html");
             EmailEngine.addMailPool(teacher.getEmail(), emailMap, EmailConfig.EmailFormEnum.TEACHVIP);
-            logger.info("【EMAIL.sendEmail4PracticumBookJob】addedMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",teacher.getRealName(),teacher.getEmail(),"InterviewBookTitle.html","InterviewBook.html");
+            logger.info("【JOB.EMAIL.PracticumReminderJob】addedMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",teacher.getRealName(),teacher.getEmail(),"InterviewBookTitle.html","InterviewBook.html");
         } catch (Exception e) {
-            logger.error("【EMAIL.sendEmail4PracticumBookJob】ERROR: {}", e);
+            logger.error("【JOB.EMAIL.PracticumReminderJob】ERROR: {}", e);
         }
     }
 

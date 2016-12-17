@@ -387,6 +387,7 @@
 		SELECT
 		ta.status AS status,
 		t.real_name AS teacherName,
+		t.first_name AS firstName,
 		t.email AS teacherEmail
 		FROM
 		teacher_application ta
@@ -451,12 +452,14 @@
 	</select>
 
 
-	<select id="findPracticumBook" resultType="int">
-		SELECT DISTINCT ta.teacher_id FROM teacher_application ta
+	<select id="findRecruitmentBook" resultType="java.util.HashMap">
+		SELECT ta.teacher_id AS teacherId,
+		oc.scheduled_date_time AS scheduledDateTime
+		FROM teacher_application ta
 		JOIN online_class oc ON oc.id = ta.online_class_id
 		WHERE  ta.status =#{status}
-		AND
-		oc.status=#{oc_status}
+		AND ta.current=1
+		AND oc.status=#{onlineClassStatus}
 		<foreach collection="auditTimes" open="AND (" close=")" separator=" OR " item="auditTime">
 			(oc.scheduled_date_time BETWEEN #{auditTime.startTime} AND #{auditTime.endTime})
 		</foreach>

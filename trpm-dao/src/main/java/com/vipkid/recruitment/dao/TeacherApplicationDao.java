@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import com.vipkid.enums.OnlineClassEnum.ClassStatus;
 import org.apache.commons.lang3.StringUtils;
 import org.community.dao.support.MapperDaoTemplate;
 import org.mybatis.spring.SqlSessionTemplate;
@@ -97,7 +98,7 @@ public class TeacherApplicationDao extends MapperDaoTemplate<TeacherApplication>
      * 根据结果查询 
      * @Author:ALong (ZengWeiLong)
      * @param teacherId
-     * @param status
+     * @param result
      * @return    
      * List<TeacherApplication>
      * @date 2016年10月20日
@@ -230,11 +231,11 @@ public class TeacherApplicationDao extends MapperDaoTemplate<TeacherApplication>
     }
 
 
-    public List<Long> findPracticumBook(List<Map> auditTimes, String status) {
+    public List<Map<String, Object>> findRecruitmentBook(List<Map> auditTimes, String status) {
         Map<String, Object> paramsMap = new HashMap<String, Object>();
         paramsMap.put("auditTimes", auditTimes);
         paramsMap.put("status", status);
-        paramsMap.put("oc_status", "BOOKED");
-        return listEntity("findPracticumBook", paramsMap);
+        paramsMap.put("onlineClassStatus", ClassStatus.BOOKED.toString());
+        return listEntity("findRecruitmentBook", paramsMap);
     }
 }

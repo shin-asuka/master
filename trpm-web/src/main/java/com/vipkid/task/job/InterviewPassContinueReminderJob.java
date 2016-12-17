@@ -99,14 +99,14 @@ public class InterviewPassContinueReminderJob {
 
 		if (auditTime.after(startTime) && auditTime.before(endTime)){
 			userDao.doLock(teacher.getId());
-			teacherLockLogDao.save(new TeacherLockLog(teacher.getId(), TeacherLockLogEnum.Reason.INTERVIEW_PASS_CONTINUE_REMINDER_JOB.toString(), TeacherEnum.LifeCycle.INTERVIEW.toString()));
+			teacherLockLogDao.save(new TeacherLockLog(teacher.getId(), TeacherLockLogEnum.Reason.INTERVIEW_PASS_CONTINUE_REMINDER.toString(), TeacherEnum.LifeCycle.INTERVIEW.toString()));
 			logger.info("【JOB.EMAIL.InterviewPassContinueReminderJob】LOCK: Cost {}ms. teacherId = {}, teacherEmail = {}", stopwatch.elapsed(TimeUnit.MILLISECONDS), teacher.getId(), teacher.getEmail());
 		} else {
 			String email = teacher.getEmail();
 			String name = teacher.getRealName();
 			String titleTemplate = "InterviewPassContinueReminderTitle.html";
 			String contentTemplate = "InterviewPassContinueReminder.html";
-			EmailUtils.sendEmail4Recruitment(email, name, titleTemplate, contentTemplate);
+			EmailUtils.sendEmail4Recruitment(teacher, titleTemplate, contentTemplate);
 			logger.info("【JOB.EMAIL.InterviewPassContinueReminderJob】SEND: Cost {}ms. email = {}, name = {}, titleTemplate = {}, contentTemplate = {}", stopwatch.elapsed(TimeUnit.MILLISECONDS), email, name, titleTemplate, contentTemplate);
 		}
 	}

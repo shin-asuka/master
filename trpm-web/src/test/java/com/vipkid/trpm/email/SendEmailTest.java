@@ -302,9 +302,12 @@ public class SendEmailTest {
 	public void sendEmail(){
 			String email = "zhaojia3@vipkid.com.cn ";
 			String name = "Bel";
+		Teacher teacher = new Teacher();
+		teacher.setEmail(email);
+		teacher.setRealName(name);
 			String titleTemplate = "InterviewReminderTitle.html";
 			String contentTemplate = "InterviewReminder.html";
-			EmailUtils.sendEmail4Recruitment(email, name, titleTemplate, contentTemplate);
+			EmailUtils.sendEmail4Recruitment(teacher, titleTemplate, contentTemplate);
 
 
 	}

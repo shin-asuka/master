@@ -95,7 +95,7 @@ public class Practicum2NoBookJob {
             String name = teacher.getRealName();
             String titleTemplate = "Practicum2NoBookTitle.html";
             String contentTemplate = "Practicum2NoBook.html";
-            EmailUtils.sendEmail4Recruitment(email, name, titleTemplate, contentTemplate);
+            EmailUtils.sendEmail4Recruitment(teacher, titleTemplate, contentTemplate);
             logger.info("【JOB.EMAIL.Practicum2NoBookJob】SEND: Cost {}ms. email = {}, name = {}, titleTemplate = {}, contentTemplate = {}", stopwatch.elapsed(TimeUnit.MILLISECONDS), email, name, titleTemplate, contentTemplate);
         }
     }

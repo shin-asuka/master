@@ -31,15 +31,18 @@ public class EmailUtils {
 
 	private static final Logger logger = LoggerFactory.getLogger(EmailUtils.class);
 
-	public static void sendEmail4Recruitment(String email, String name, String titleTemplate, String contentTemplate) {
+	public static void sendEmail4Recruitment(Teacher teacher, String titleTemplate, String contentTemplate) {
 		try {
 			Map<String, String> paramsMap = Maps.newHashMap();
-			if (name != null)
-			paramsMap.put("teacherName", name);
-			logger.info("【EMAIL.sendEmail4Recruitment】toAddMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",name,email,titleTemplate,contentTemplate);
+			if (teacher.getFirstName() != null){
+				paramsMap.put("teacherName", teacher.getFirstName());
+			}else if (teacher.getRealName() != null){
+				paramsMap.put("teacherName", teacher.getRealName());
+			}
+			logger.info("【EMAIL.sendEmail4Recruitment】toAddMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",teacher.getRealName(),teacher.getEmail(),titleTemplate,contentTemplate);
 			Map<String, String> emailMap = TemplateUtils.readTemplate(contentTemplate, paramsMap, titleTemplate);
-			EmailEngine.addMailPool(email, emailMap, EmailConfig.EmailFormEnum.TEACHVIP);
-			logger.info("【EMAIL.sendEmail4Recruitment】addedMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",name,email,titleTemplate,contentTemplate);
+			EmailEngine.addMailPool(teacher.getEmail(), emailMap, EmailConfig.EmailFormEnum.TEACHVIP);
+			logger.info("【EMAIL.sendEmail4Recruitment】addedMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",teacher.getRealName(),teacher.getEmail(),titleTemplate,contentTemplate);
 		} catch (Exception e) {
 			logger.error("【EMAIL.sendEmail4Recruitment】ERROR: {}", e);
 		}
@@ -48,8 +51,11 @@ public class EmailUtils {
 	public static void sendEmail4BasicInfoPass(Teacher teacher) {
 		try {
 			Map<String, String> paramsMap = Maps.newHashMap();
-			if (teacher.getRealName() != null)
-			paramsMap.put("teacherName", teacher.getRealName());
+			if (teacher.getFirstName() != null){
+				paramsMap.put("teacherName", teacher.getFirstName());
+			}else if (teacher.getRealName() != null){
+				paramsMap.put("teacherName", teacher.getRealName());
+			}
 			logger.info("【EMAIL.sendEmail4BasicInfoPass】toAddMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",teacher.getRealName(),teacher.getEmail(),"BasicInfoPassTitle.html","BasicInfoPass.html");
 			Map<String, String> emailMap = TemplateUtils.readTemplate("BasicInfoPass.html", paramsMap, "BasicInfoPassTitle.html");
 			EmailEngine.addMailPool(teacher.getEmail(), emailMap, EmailConfig.EmailFormEnum.TEACHVIP);
@@ -62,7 +68,11 @@ public class EmailUtils {
 	public static void sendEmail4InterviewBook(Teacher teacher, OnlineClass onlineclass){
 		try {
 			Map<String,String> paramsMap = new HashMap<String,String>();
-			paramsMap.put("teacherName",teacher.getRealName());
+			if (teacher.getFirstName() != null){
+				paramsMap.put("teacherName", teacher.getFirstName());
+			}else if (teacher.getRealName() != null){
+				paramsMap.put("teacherName", teacher.getRealName());
+			}
 			paramsMap.put("scheduledDateTime", DateUtils.formatTo(onlineclass.getScheduledDateTime().toInstant(), teacher.getTimezone(), DateUtils.FMT_YMD_HM));
 			paramsMap.put("timezone", teacher.getTimezone());
 			logger.info("【EMAIL.sendEmail4InterviewBook】toAddMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",teacher.getRealName(),teacher.getEmail(),"InterviewBookTitle.html","InterviewBook.html");
@@ -78,7 +88,11 @@ public class EmailUtils {
 	public static void sendEmail4PracticumBook(Teacher teacher, OnlineClass onlineclass){
 		try {
 			Map<String,String> paramsMap = new HashMap<String,String>();
-			paramsMap.put("teacherName",teacher.getRealName());
+			if (teacher.getFirstName() != null){
+				paramsMap.put("teacherName", teacher.getFirstName());
+			}else if (teacher.getRealName() != null){
+				paramsMap.put("teacherName", teacher.getRealName());
+			}
 			paramsMap.put("scheduledDateTime", DateUtils.formatTo(onlineclass.getScheduledDateTime().toInstant(), teacher.getTimezone(), DateUtils.FMT_YMD_HM));
 			paramsMap.put("timezone", teacher.getTimezone());
 			logger.info("【EMAIL.sendEmail4PracticumBook】toAddMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",teacher.getRealName(),teacher.getEmail(),"PracticumBookTitle.html","PracticumBook.html");
@@ -93,7 +107,11 @@ public class EmailUtils {
 	public static void sendEmail4Practicum2Book(Teacher teacher, OnlineClass onlineclass){
 		try {
 			Map<String,String> paramsMap = new HashMap<String,String>();
-			paramsMap.put("teacherName",teacher.getRealName());
+			if (teacher.getFirstName() != null){
+				paramsMap.put("teacherName", teacher.getFirstName());
+			}else if (teacher.getRealName() != null){
+				paramsMap.put("teacherName", teacher.getRealName());
+			}
 			paramsMap.put("scheduledDateTime", DateUtils.formatTo(onlineclass.getScheduledDateTime().toInstant(), teacher.getTimezone(), DateUtils.FMT_YMD_HM));
 			paramsMap.put("timezone", teacher.getTimezone());
 			logger.info("【EMAIL.sendEmail4Practicum2Book】toAddMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",teacher.getRealName(),teacher.getEmail(),"Practicum2BookTitle.html","Practicum2Book.html");
@@ -111,9 +129,12 @@ public class EmailUtils {
 	public static void sendEmail4TrainingPass(Teacher teacher, int quizScore) {
 		try {
 			Map<String, String> paramsMap = Maps.newHashMap();
-			if (teacher.getRealName() != null)
+			if (teacher.getFirstName() != null){
+				paramsMap.put("teacherName", teacher.getFirstName());
+			}else if (teacher.getRealName() != null){
 				paramsMap.put("teacherName", teacher.getRealName());
-			    paramsMap.put("quizScore",quizScore+"");
+			}
+			paramsMap.put("quizScore",quizScore+"");
 			logger.info("【EMAIL.sendEmail4TrainingPass】toAddMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",teacher.getRealName(),teacher.getEmail(),"TrainingPassTitle.html","TrainingPass.html");
 			Map<String, String> emailMap = TemplateUtils.readTemplate("TrainingPass.html", paramsMap, "TrainingPassTitle.html");
 			EmailEngine.addMailPool(teacher.getEmail(), emailMap, EmailConfig.EmailFormEnum.TEACHVIP);
@@ -133,7 +154,7 @@ public class EmailUtils {
 	public static void sendActivationEmail(Teacher teacher){
 	    try {
             Map<String, String> paramsMap = Maps.newHashMap();
-            paramsMap.put("teacherName", NEW_TEACHER_NAME);
+			paramsMap.put("teacherName", NEW_TEACHER_NAME);
             paramsMap.put("link", PropertyConfigurer.stringValue("teacher.www") + "/api/user/activation?uuid="+ teacher.getRecruitmentId());
             Map<String, String> sendMap = TemplateUtils.readTemplate("VIPKIDAccountActivationLink.html", paramsMap, "VIPKIDAccountActivationLink-Title.html");
             EmailEngine.addMailPool(teacher.getEmail(), sendMap, EmailFormEnum.TEACHVIP);
@@ -151,11 +172,13 @@ public class EmailUtils {
 	public static void sendRestPasswordEmail(Teacher teacher){
 	    try {
             Map<String, String> map = Maps.newHashMap();
-            if (StringUtils.isEmpty(teacher.getRealName())) {
-                map.put("teacherName", NEW_TEACHER_NAME);
-            } else {
-                map.put("teacherName", teacher.getRealName());
-            }
+			if (teacher.getFirstName() != null){
+				map.put("teacherName", teacher.getFirstName());
+			}else if (teacher.getRealName() != null){
+				map.put("teacherName", teacher.getRealName());
+			} else {
+				map.put("teacherName", NEW_TEACHER_NAME);
+			}
             map.put("link", PropertyConfigurer.stringValue("teacher.www") + "modifyPassword.shtml?validate_token="+ teacher.getRecruitmentId());
             Map<String, String> sendMap = TemplateUtils.readTemplate("VIPKIDPasswordResetLink.html", map, "VIPKIDPasswordResetLink-Title.html");
             EmailEngine.addMailPool(teacher.getEmail(), sendMap, EmailFormEnum.TEACHVIP);

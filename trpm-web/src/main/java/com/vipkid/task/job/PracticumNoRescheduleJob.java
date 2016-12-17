@@ -65,7 +65,7 @@ public class PracticumNoRescheduleJob {
         Map<Long, TeacherApplication> teacherApplicationsMap = new HashedMap();
         List<Map> times = UADateUtils.getStartEndOclockTimeMapListByBeforeHours(beforeHours);
 
-        List<TeacherApplication> teacherApplications = teacherApplicationDao.findByAuditTimesStatusResult(times, TeacherApplicationEnum.Status.PRACTICUM.toString(), TeacherApplicationEnum.Result.REAPPLY.toString());
+        List<TeacherApplication> teacherApplications = teacherApplicationDao.findByAuditTimesCurrentStatusResult(times, TeacherApplicationEnum.Status.PRACTICUM.toString(), TeacherApplicationEnum.Result.REAPPLY.toString());
         logger.info("【JOB.EMAIL.PracticumNoRescheduleJob】FIND.1: Cost {}ms. Query: times = {}, status = {}, result = {}; Result: users = ",
                 stopwatch.elapsed(TimeUnit.MILLISECONDS), JsonUtils.toJSONString(times), TeacherApplicationEnum.Status.PRACTICUM.toString(), TeacherApplicationEnum.Result.REAPPLY.toString());
         for(TeacherApplication ta : teacherApplications){
@@ -74,14 +74,8 @@ public class PracticumNoRescheduleJob {
         }
 
         if(teacherIds.size() == 0) return;
-        List<TeacherApplication> teacherApplicationsToRemove = teacherApplicationDao.findByTeacherIdsStatusNeResult(teacherIds,TeacherApplicationEnum.Status.PRACTICUM.toString(), TeacherApplicationEnum.Result.REAPPLY.toString());
-        logger.info("【JOB.EMAIL.PracticumNoRescheduleJob】FIND.2: Cost {}ms. Query: teacherIds = {}, status = {}, result = {}; Result: teacherApplications = ",
-                stopwatch.elapsed(TimeUnit.MILLISECONDS), JsonUtils.toJSONString(teacherIds),TeacherApplicationEnum.Status.PRACTICUM.toString(), TeacherApplicationEnum.Result.REAPPLY.toString());
-        teacherApplicationsToRemove.forEach(x -> teacherIds.remove(x.getTeacherId()));
-
-        if(teacherIds.size() == 0) return;
         List<Teacher> teachers = teacherDao.findByIds(teacherIds);
-        logger.info("【JOB.EMAIL.PracticumNoRescheduleJob】FIND.3: Cost {}ms. Query: teacherIds = {}; Result: teachers = ",
+        logger.info("【JOB.EMAIL.PracticumNoRescheduleJob】FIND.2: Cost {}ms. Query: teacherIds = {}; Result: teachers = ",
                 stopwatch.elapsed(TimeUnit.MILLISECONDS), JsonUtils.toJSONString(teacherIds));
         teachers.forEach(x -> send(stopwatch, x, teacherApplicationsMap.get(x.getId()).getAuditDateTime(), times));
 
@@ -101,7 +95,7 @@ public class PracticumNoRescheduleJob {
             String name = teacher.getRealName();
             String titleTemplate = "PracticumReapplyTitle.html";
             String contentTemplate = "PracticumReapply.html";
-            EmailUtils.sendEmail4Recruitment(email, name, titleTemplate, contentTemplate);
+            EmailUtils.sendEmail4Recruitment(teacher, titleTemplate, contentTemplate);
             logger.info("【JOB.EMAIL.PracticumNoRescheduleJob】SEND: Cost {}ms. email = {}, name = {}, titleTemplate = {}, contentTemplate = {}", stopwatch.elapsed(TimeUnit.MILLISECONDS), email, name, titleTemplate, contentTemplate);
         }
     }

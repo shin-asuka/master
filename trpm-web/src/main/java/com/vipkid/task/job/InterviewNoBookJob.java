@@ -103,7 +103,7 @@ public class InterviewNoBookJob {
 			String name = teacher.getRealName();
 			String titleTemplate = "InterviewNoBookTitle.html";
 			String contentTemplate = "InterviewNoBook.html";
-			EmailUtils.sendEmail4Recruitment(email, name, titleTemplate, contentTemplate);
+			EmailUtils.sendEmail4Recruitment(teacher, titleTemplate, contentTemplate);
 			logger.info("【JOB.EMAIL.InterviewNoBook】SEND: Cost {}ms. email = {}, name = {}, titleTemplate = {}, contentTemplate = {}", stopwatch.elapsed(TimeUnit.MILLISECONDS), email, name, titleTemplate, contentTemplate);
 		}
 	}
