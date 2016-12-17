@@ -35,10 +35,12 @@ import com.vipkid.recruitment.entity.TeacherApplication;
 import com.vipkid.recruitment.entity.TeacherLockLog;
 import com.vipkid.recruitment.practicum.PracticumConstant;
 import com.vipkid.recruitment.utils.ReturnMapUtils;
+import com.vipkid.trpm.dao.LessonDao;
 import com.vipkid.trpm.dao.OnlineClassDao;
 import com.vipkid.trpm.dao.TeacherDao;
 import com.vipkid.trpm.dao.TeacherQuizDao;
 import com.vipkid.trpm.dao.UserDao;
+import com.vipkid.trpm.entity.Lesson;
 import com.vipkid.trpm.entity.OnlineClass;
 import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.entity.TeacherQuiz;
@@ -51,21 +53,23 @@ public class PracticumService {
     @Autowired
     private PracticumDao practicumDao;
     @Autowired
-    private OnlineClassDao onlineClassDao;
+    private UserDao userDao;
     @Autowired
     private TeacherDao teacherDao;
     @Autowired
-    private UserDao userDao;
+    private OnlineClassDao onlineClassDao;
+    @Autowired
+    private LessonDao lessonDao;
+    @Autowired
+    private TeacherQuizDao teacherQuizDao;
+    @Autowired
+    private TeacherLockLogDao teacherLockLogDao;
     @Autowired
     private TeacherApplicationDao teacherApplicationDao;
     @Autowired
     private TeacherApplicationLogDao teacherApplicationLogDao;
     @Autowired
-    private TeacherLockLogDao teacherLockLogDao;
-    @Autowired
     private RecruitmentService recruitmentService;
-    @Autowired
-    private TeacherQuizDao teacherQuizDao;
 
     private static Logger logger = LoggerFactory.getLogger(PracticumService.class);
 
@@ -134,6 +138,10 @@ public class PracticumService {
         }
 
         Map<String,Object> result = OnlineClassProxy.generateRoomEnterUrl(teacher.getId()+"", teacher.getRealName(),onlineClass.getClassroom(), OnlineClassProxy.RoomRole.TEACHER, onlineClass.getSupplierCode(),onlineClassId,OnlineClassProxy.ClassType.PRACTICUM);
+
+        Lesson lesson = lessonDao.findById(onlineClass.getLessonId());
+        result.put("lessonName",lesson.getName());
+
         return result;
     }
 
@@ -207,14 +215,13 @@ public class PracticumService {
         }
 
         String logpix = "onlineclassId:"+onlineClassId+";teacherId:"+teacher.getId();
-        
-        //课程没有找到，无法取消
+
+        //class already start, can't cancel error
         OnlineClass onlineClass = this.onlineClassDao.findById(onlineClassId);
         if(onlineClass == null){
             return ReturnMapUtils.returnFail("This online class does not exist.",logpix);
         }
 
-        //class already start, can't cancel error
         if(System.currentTimeMillis() > onlineClass.getScheduledDateTime().getTime()){
             return ReturnMapUtils.returnFail("Sorry, you can't cancel after the start time has passed.",logpix);
         }
