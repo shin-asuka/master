@@ -185,7 +185,7 @@ public class PracticumService {
         Map<String,Object> result = OnlineClassProxy.doBookRecruitment(teacher.getId(), onlineClass.getId(), ClassType.PRACTICUM,dateTime);
         if(ReturnMapUtils.isFail(result)){
             //一旦失败，抛出异常回滚
-            throw new RuntimeException("Booking failed! Please try again." + result.get("info"));
+            throw new RuntimeException("" + result.get("info"));
         }
         if(ReturnMapUtils.isSuccess(result)){
             logger.info("teacher:{} book Practicum success send email",teacher.getId());

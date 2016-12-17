@@ -128,13 +128,13 @@ public class OnlineClassProxy {
         logger.info("BOOK CLASS MESSAGE : " + responseBody);
         if (StringUtils.isBlank(responseBody)) {
             logger.warn("用户Id:【{}】,Booked onlineClassId:【{}】失败1,classType:【{}】,classTime:【{}】,原因：接口 "+requestUrl + " 返回为空。", userId,onlineClassId,type,scheduledDateTime);
-            return ReturnMapUtils.returnFail("Booked failed, please try again later !");
+            return ReturnMapUtils.returnFail("Booking failed! Please try again.");
         } else if (responseBody.indexOf("Success") > 0) {
             logger.info("用户Id:【{}】,Booked onlineClassId:【{}】成功,classType:【{}】,classTime:【{}】", userId,onlineClassId,type,scheduledDateTime);
             return ReturnMapUtils.returnSuccess();
         } else {
             logger.warn("用户Id:【{}】,Booked onlineClassId:【{}】失败2,classType:【{}】,classTime:【{}】,原因：接口 "+requestUrl + " 未知【"+responseBody+"】", userId,onlineClassId,type,scheduledDateTime);
-            return ReturnMapUtils.returnFail("Booked failed, Please try again later!");
+            return ReturnMapUtils.returnFail("Booking failed! Please try again.");
         }
     }
     

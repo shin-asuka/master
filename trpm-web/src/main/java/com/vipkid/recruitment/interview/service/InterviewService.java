@@ -202,7 +202,7 @@ public class InterviewService {
         Map<String,Object> result = OnlineClassProxy.doBookRecruitment(teacher.getId(), onlineClass.getId(), ClassType.TEACHER_RECRUITMENT,dateTime);
         if(ReturnMapUtils.isFail(result)){
             //一旦失败，抛出异常回滚
-            throw new RuntimeException("Booking failed! Please try again." + result.get("info"));
+            throw new RuntimeException(result.get("info")+"");
         }
         if(ReturnMapUtils.isSuccess(result)){
             logger.info("teacher:{} book Interview success send email",teacher.getId());
