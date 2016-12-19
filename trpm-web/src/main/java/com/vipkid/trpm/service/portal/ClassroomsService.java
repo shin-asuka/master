@@ -3,6 +3,7 @@ package com.vipkid.trpm.service.portal;
 import java.util.List;
 import java.util.Map;
 
+import com.vipkid.trpm.entity.teachercomment.TeacherComment;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,13 +22,11 @@ import com.vipkid.trpm.dao.DemoReportDao;
 import com.vipkid.trpm.dao.LessonDao;
 import com.vipkid.trpm.dao.OnlineClassDao;
 import com.vipkid.trpm.dao.TeacherApplicationDao;
-import com.vipkid.trpm.dao.TeacherCommentDao;
 import com.vipkid.trpm.dao.TeacherPageLoginDao;
 import com.vipkid.trpm.entity.AssessmentReport;
 import com.vipkid.trpm.entity.Course;
 import com.vipkid.trpm.entity.DemoReport;
 import com.vipkid.trpm.entity.Teacher;
-import com.vipkid.trpm.entity.TeacherComment;
 import com.vipkid.trpm.util.DateUtils;
 
 /**
@@ -72,7 +71,7 @@ public class ClassroomsService {
     private DemoReportDao demoReportDao;
 
     @Autowired
-    private TeacherCommentDao teacherCommentDao;
+    private TeacherService teacherService;
 
     @Autowired
     private CourseDao courseDao;
@@ -426,8 +425,7 @@ public class ClassroomsService {
         modelMap.put("studentId", studentId);
 
         TeacherComment teacherComment =
-                teacherCommentDao.findByStudentIdAndOnlineClassId(studentId, onlineClassId);
-
+                teacherService.findByStudentIdAndOnlineClassId(studentId, onlineClassId);
         if (null == teacherComment || StringUtils.isBlank(teacherComment.getTeacherFeedback())) {
             modelMap.put("lifeCycle", "(empty)");
         }

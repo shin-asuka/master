@@ -21,6 +21,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
+import com.vipkid.http.service.FileHttpService;
+import com.vipkid.http.utils.JsonUtils;
+import com.vipkid.http.vo.TeacherFile;
 import com.vipkid.trpm.constant.ApplicationConstant.CookieKey;
 import com.vipkid.trpm.entity.*;
 import com.vipkid.trpm.entity.personal.BasicInfo;
@@ -371,8 +374,10 @@ public class PersonalInfoController extends AbstractPortalController {
     public String upload(MultipartHttpServletRequest request, HttpServletResponse response,
             @RequestParam("file") MultipartFile file) {
         Teacher teacher = loginService.getTeacher();
-        Map<String, Object> modelMap = personalInfoService.doUploadImage(file, teacher.getId());
+		//Map<String, Object> modelMap = personalInfoService.doUploadImage(file, teacher.getId());
+		Map<String, Object> modelMap = personalInfoService.doUploadAvatarImage(file, teacher.getId());
         return jsonView(response, modelMap);
     }
+
 
 }

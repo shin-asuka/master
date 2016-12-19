@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="TeacherTokenMapper">
+
+	<sql id="teacherTokenColumns">
+        id AS id,
+        teacher_id AS teacher_id,
+		app_token AS app_token
+	</sql>
+
+	<resultMap type="com.vipkid.trpm.entity.TeacherToken" id="teacherTokenResultMap">
+		<id column="id" property="id" />
+		<result column="teacher_id" property="teacherId" />
+		<result column="app_token" property="appToken" />
+	</resultMap>
+
+	<select id="findByTeacherId" resultMap="teacherTokenResultMap" useCache="true">
+		SELECT
+		<include refid="teacherTokenColumns" />
+		FROM teacher_token
+		WHERE
+		teacher_id = #{teacherId}
+	</select>
+
+	<select id="findByToken" resultMap="teacherTokenResultMap" useCache="true">
+		SELECT
+		<include refid="teacherTokenColumns" />
+		FROM teacher_token
+		WHERE
+		app_token = #{token}
+	</select>
+
+</mapper>

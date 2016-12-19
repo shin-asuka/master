@@ -15,9 +15,17 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.util.HtmlUtils;
 
 import com.alibaba.druid.util.StringUtils;
+import com.google.api.client.repackaged.com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
+import com.vipkid.file.model.FileUploadStatus;
+import com.vipkid.file.model.FileVo;
+import com.vipkid.file.service.AwsFileService;
+import com.vipkid.file.utils.Encodes;
+import com.vipkid.file.utils.FileUtils;
+import com.vipkid.http.service.FileHttpService;
 import com.vipkid.trpm.constant.ApplicationConstant.MediaType;
 import com.vipkid.trpm.dao.*;
 import com.vipkid.trpm.entity.*;
@@ -26,6 +34,7 @@ import com.vipkid.trpm.entity.personal.BasicInfo;
 import com.vipkid.trpm.entity.personal.TeacherBankVO;
 import com.vipkid.trpm.service.media.AbstarctMediaService;
 import com.vipkid.trpm.service.media.OSSMediaService;
+import com.vipkid.trpm.util.AwsFileUtils;
 
 @Service
 public class PersonalInfoService {
@@ -53,6 +62,12 @@ public class PersonalInfoService {
 	@Autowired
 	private TeacherAddressDao teacherAddressDao;
 
+	@Autowired
+    private AwsFileService awsFileService;
+
+    @Autowired
+    private FileHttpService fileHttpService;
+    
 	/**
 	 * 处理用户密码修改逻辑
 	 *
@@ -223,6 +238,48 @@ public class PersonalInfoService {
 
 		return modelMap;
 	}
+	
+	public Map<String, Object> doUploadAvatarImage(MultipartFile file, Long teacherId) {
+		
+		Map<String, Object> modelMap = Maps.newHashMap();
+
+		logger.info("upload file for filename = {}", file.getOriginalFilename());
+
+		String fileName = file.getOriginalFilename();
+        String bucketName = AwsFileUtils.getAwsBucketName();
+        String key = AwsFileUtils.getAvatarKey(fileName);
+        Long fileSize = file.getSize();
+
+        Preconditions.checkArgument(AwsFileUtils.checkAvatarFileType(fileName), "文件类型不正确，支持类型为" + AwsFileUtils.AVATAR_FILE_TYPE);
+        Preconditions.checkArgument(AwsFileUtils.checkAvatarFileSize(fileSize), "文件太大，maxSize = " + AwsFileUtils.AVATAR_MAX_SIZE);
+		
+        UploadResult uploadResult = new UploadResult();
+        boolean succeed = false;
+		try {
+            FileVo fileVo = awsFileService.upload(bucketName, key, file.getInputStream(), fileSize);
+            if (fileVo != null) {
+                FileUploadStatus fileUploadStatus = fileHttpService.uploadAvatar(teacherId, key);
+                String url = fileUploadStatus.getUrl();
+                String encodeUrl = FileUtils.EncodeURLFileName(url);
+                
+                modelMap.put("teacher", teacherDao.findById(teacherId));
+                modelMap.put("result", true);
+                modelMap.put("url", url);
+				uploadResult.setEncodeUrl(encodeUrl );
+                succeed = true;
+            } else {
+                logger.error("Failed to upload avatar!");
+                modelMap.put("result", false);
+            }
+        } catch (Exception e) {
+        	logger.error("upload avatar Exception", e);
+        	modelMap.put("result", false);
+        }
+		uploadResult.setResult(succeed);
+        modelMap.put("uploadResult", uploadResult);
+		return modelMap;
+	}
+	
 
 	/**
 	 * 处理老师个人信息页面逻辑

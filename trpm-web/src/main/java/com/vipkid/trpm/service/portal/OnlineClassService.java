@@ -13,6 +13,9 @@ import com.vipkid.trpm.constant.ApplicationConstant;
 import com.vipkid.trpm.constant.ApplicationConstant.*;
 import com.vipkid.trpm.dao.*;
 import com.vipkid.trpm.entity.*;
+import com.vipkid.trpm.entity.teachercomment.QueryTeacherCommentOutputDto;
+import com.vipkid.trpm.entity.teachercomment.TeacherComment;
+import com.vipkid.trpm.entity.teachercomment.TeacherCommentUpdateDto;
 import com.vipkid.trpm.proxy.ClassroomProxy;
 import com.vipkid.trpm.util.DateUtils;
 import com.vipkid.trpm.util.FilesUtils;
@@ -48,9 +51,6 @@ public class OnlineClassService {
     private UserDao userDao;
 
     @Autowired
-    private TeacherCommentDao teacherCommentDao;
-
-    @Autowired
     private StudentDao studentDao;
 
     @Autowired
@@ -79,6 +79,12 @@ public class OnlineClassService {
 
     @Autowired
     private AssessmentReportDao assessmentReportDao;
+
+    @Autowired
+    private TeacherService teacherService;
+
+    @Autowired
+    private CourseDao courseDao;
 
     /**
      * 根据id找online class
@@ -112,11 +118,11 @@ public class OnlineClassService {
      */
     public Map<String, Object> enterOpen(OnlineClass onlineClass, long studentId, Teacher teacher, Lesson lesson) {
         logger.info("TeacherId:{} Open Course,onlineClassId:{},studentId:{}", teacher.getId(), onlineClass.getId(),
-                        studentId);
+                studentId);
         Map<String, Object> modelMap = Maps.newHashMap();
         modelMap.putAll(this.enterBefore(onlineClass, studentId, "OPEN"));
         modelMap.put("url", ClassroomProxy.generateRoomEnterUrl(String.valueOf(teacher.getId()), teacher.getRealName(),
-                        onlineClass.getClassroom(), ClassroomProxy.ROLE_TEACHER, onlineClass.getSupplierCode()));
+                onlineClass.getClassroom(), ClassroomProxy.ROLE_TEACHER, onlineClass.getSupplierCode()));
 
         this.enterAfter(teacher, onlineClass);
         return modelMap;
@@ -135,19 +141,19 @@ public class OnlineClassService {
         Map<String, Object> modelMap = Maps.newHashMap();
 
         logger.info("TeacherId:{} Practicum Course,onlineClassId:{},studentId:{}", student.getId(), onlineClass.getId(),
-                        studentId);
+                studentId);
 
         modelMap.putAll(this.enterBefore(onlineClass, studentId, "BOOKED"));
 
         TeacherApplication teacherApplication =
-                        teacherApplicationDao.findApplictionByOlineclassId(onlineClass.getId(), student.getId());
+                teacherApplicationDao.findApplictionByOlineclassId(onlineClass.getId(), student.getId());
         modelMap.put("teacherApplication", teacherApplication);
         modelMap.put("url", ClassroomProxy.generateRoomEnterUrl(String.valueOf(student.getId()), student.getRealName(),
-                        onlineClass.getClassroom(), ClassroomProxy.ROLE_STUDENT, onlineClass.getSupplierCode()));
+                onlineClass.getClassroom(), ClassroomProxy.ROLE_STUDENT, onlineClass.getSupplierCode()));
         modelMap.put("teacherPe", teacherPeDao.findByOnlineClassId(onlineClass.getId()));
         List<TeacherApplication> list = teacherApplicationDao.findApplictionForStatusResult(
-                        teacherApplication.getTeacherId(), TeacherApplicationDao.Status.PRACTICUM.toString(),
-                        TeacherApplicationDao.Result.PRACTICUM2.toString());
+                teacherApplication.getTeacherId(), TeacherApplicationDao.Status.PRACTICUM.toString(),
+                TeacherApplicationDao.Result.PRACTICUM2.toString());
         if (list != null && list.size() > 0) {
             modelMap.put("practicum2", true);
         } else {
@@ -179,7 +185,7 @@ public class OnlineClassService {
      */
     public Map<String, Object> enterMajor(OnlineClass onlineClass, long studentId, Teacher teacher, Lesson lesson) {
         logger.info("TeacherId:{}, Major Course onlineClassId:{},studentId:{}", teacher.getId(), onlineClass.getId(),
-                        studentId);
+                studentId);
         Map<String, Object> modelMap = Maps.newHashMap();
         modelMap.putAll(this.enterBefore(onlineClass, studentId, "BOOKED"));
 
@@ -193,7 +199,7 @@ public class OnlineClassService {
             modelMap.put("currentReport", currentReport);
         }
         modelMap.put("url", ClassroomProxy.generateRoomEnterUrl(String.valueOf(teacher.getId()), teacher.getRealName(),
-                        onlineClass.getClassroom(), ClassroomProxy.ROLE_TEACHER, onlineClass.getSupplierCode()));
+                onlineClass.getClassroom(), ClassroomProxy.ROLE_TEACHER, onlineClass.getSupplierCode()));
 
         this.enterAfter(teacher, onlineClass);
 
@@ -273,7 +279,7 @@ public class OnlineClassService {
         parmMap.put("roomId", onlineClass.getClassroom());
         String content = FilesUtils.readLogTemplete(ApplicationConstant.AuditCategory.CLASSROOM_EXIT, parmMap);
         auditDao.saveAudit(ApplicationConstant.AuditCategory.CLASSROOM_EXIT, "INFO", content, teacher.getRealName(),
-                        teacher, IpUtils.getRemoteIP());
+                teacher, IpUtils.getRemoteIP());
     }
 
     /**
@@ -302,17 +308,6 @@ public class OnlineClassService {
     }
 
     /**
-     * 根据onlineclassid 和studentid 得到teacher comment
-     *
-     * @param onlineClassId
-     * @param studentId
-     * @return
-     */
-    public TeacherComment getTeacherComment(long onlineClassId, long studentId) {
-        return teacherCommentDao.findByStudentIdAndOnlineClassId(studentId, onlineClassId);
-    }
-
-    /**
      * 结束Practicum课操作
      *
      * @Author:ALong
@@ -323,7 +318,7 @@ public class OnlineClassService {
      * @date 2016年1月11日
      */
     public Map<String, Object> updateAudit(Teacher pe, TeacherApplication currTeacherApplication, String result,
-                    String finishType) {
+            String finishType) {
         // 默认操作状态
         Map<String, Object> modelMap = Maps.newHashMap();
         modelMap.put("result", false);
@@ -338,7 +333,7 @@ public class OnlineClassService {
         // 2.验证 teacherApplications 是否为空
         long onlineClassId = currTeacherApplication.getOnlineClassId();
         TeacherApplication teacherApplication = teacherApplicationDao.findApplictionByOlineclassId(onlineClassId,
-                        currTeacherApplication.getTeacherId());
+                currTeacherApplication.getTeacherId());
         if (teacherApplication == null) {
             modelMap.put("msg", "Not exis the online-class recruitment info ！");
             logger.info(" TeacherApplication is null onlineClassId:{} , status is PRACTICUM ", onlineClassId);
@@ -357,7 +352,7 @@ public class OnlineClassService {
         // 4.如果result 不等于null 则返回错误
         if (!StringUtils.isEmpty(teacherApplication.getResult())) {
             logger.info("Teacher application already end or recruitment process step already end, class id is : {},status is {}",
-                            onlineClass.getId(), onlineClass.getStatus());
+                    onlineClass.getId(), onlineClass.getStatus());
             modelMap.put("msg", " The recruitment process already end.");
             return modelMap;
         }
@@ -371,11 +366,11 @@ public class OnlineClassService {
         // 5.practicum2 判断是否存在
         if (ApplicationConstant.RecruitmentResult.PRACTICUM2.equals(result)) {
             List<TeacherApplication> list = teacherApplicationDao.findApplictionForStatusResult(
-                            teacherApplication.getTeacherId(), TeacherApplicationDao.Status.PRACTICUM.toString(),
-                            TeacherApplicationDao.Result.PRACTICUM2.toString());
+                    teacherApplication.getTeacherId(), TeacherApplicationDao.Status.PRACTICUM.toString(),
+                    TeacherApplicationDao.Result.PRACTICUM2.toString());
             if (list != null && list.size() > 0) {
                 logger.info("The teacher is already in practicum 2., class id is : {},status is {},recruitTeacher:{}",
-                                onlineClass.getId(), onlineClass.getStatus(), recruitTeacher.getId());
+                        onlineClass.getId(), onlineClass.getStatus(), recruitTeacher.getId());
                 modelMap.put("msg", "The teacher is already in practicum 2.");
                 return modelMap;
             }
@@ -405,9 +400,9 @@ public class OnlineClassService {
             // 日志 2
             String content = FilesUtils.readLogTemplete(ApplicationConstant.AuditCategory.PRACTICUM_AUDIT, parmMap);
             auditDao.saveAudit(ApplicationConstant.AuditCategory.PRACTICUM_AUDIT, "INFO", content, pe.getRealName(),
-                            recruitTeacher, IpUtils.getRemoteIP());
+                    recruitTeacher, IpUtils.getRemoteIP());
             logger.info("Practicum Online Class[finish] updateAudit,studentId:{},onlineClassId:{},recruitTeacher:{},teacherId:{}",
-                            pe.getId(), onlineClass.getId(), recruitTeacher.getId(), pe.getId());
+                    pe.getId(), onlineClass.getId(), recruitTeacher.getId(), pe.getId());
 
             // 设置调用接口的参数
             modelMap.put("teacherApplicationId", currTeacherApplication.getId());
@@ -437,7 +432,7 @@ public class OnlineClassService {
      * @date 2016年1月14日
      */
     private Map<String, Object> updateTeacherApplication(Teacher recruitTeacher, Teacher pe, String result,
-                    String comments, TeacherApplication teacherApplication) {
+            String comments, TeacherApplication teacherApplication) {
         Map<String, Object> modelMap = Maps.newHashMap();
 
         // 设置审核结果
@@ -544,7 +539,7 @@ public class OnlineClassService {
 
         logger.info("### Mark that teacher enter classroom: {}", content);
         logger.info("### Sent get request to {} with params {}", ApplicationConstant.TEACHER_IN_CLASSROOM_URL,
-                        requestParams.get("onlineClassId"));
+                requestParams.get("onlineClassId"));
         if (!StringUtils.isNotEmpty(content)) {
             modelMap.put("status", true);
         } else {
@@ -574,13 +569,13 @@ public class OnlineClassService {
         }
 
         /* 判断当前课程是否显示退出教室提示 */
-        TeacherComment teacherComment = teacherCommentDao.findByStudentIdAndOnlineClassId(studentId, onlineClassId);
+        TeacherComment teacherComment = teacherService.findByStudentIdAndOnlineClassId(studentId, onlineClassId);
         if (null == teacherComment || StringUtils.isBlank(teacherComment.getTeacherFeedback())) {
             modelMap.put("empty", true);
 
             // 查询UA是否已经填写
             StudentUnitAssessment studentUnitAssessment =
-                            assessmentHttpService.findStudentUnitAssessmentByOnlineClassId(onlineClassId);
+                    assessmentHttpService.findStudentUnitAssessmentByOnlineClassId(onlineClassId);
             if (studentUnitAssessment != null) {
                 modelMap.put("empty", false);
             }
@@ -628,17 +623,17 @@ public class OnlineClassService {
         if (send) {
             String content = FilesUtils.readLogTemplete(ApplicationConstant.AuditCategory.STAR_SEND, parmMap);
             auditDao.saveAudit(ApplicationConstant.AuditCategory.STAR_SEND, "INFO", content, teacher.getRealName(),
-                            teacher, IpUtils.getRemoteIP());
+                    teacher, IpUtils.getRemoteIP());
             logger.info("Teacher: id={},name={} send star, Student: id={},name={}, onlineClassId: id={},room={}",
-                            teacher.getId(), teacher.getRealName(), studentId, student.getEnglishName(), onlineClassId,
-                            onlineClass.getClassroom());
+                    teacher.getId(), teacher.getRealName(), studentId, student.getEnglishName(), onlineClassId,
+                    onlineClass.getClassroom());
         } else {
             String content = FilesUtils.readLogTemplete(ApplicationConstant.AuditCategory.STAR_REMOVE, parmMap);
             auditDao.saveAudit(ApplicationConstant.AuditCategory.STAR_REMOVE, "INFO", content, teacher.getRealName(),
-                            teacher, IpUtils.getRemoteIP());
+                    teacher, IpUtils.getRemoteIP());
             logger.info("Teacher: id={},name={} remove star, Student: id={},name={}, onlineClassId: id={},room={}",
-                            teacher.getId(), teacher.getRealName(), studentId, student.getEnglishName(), onlineClassId,
-                            onlineClass.getClassroom());
+                    teacher.getId(), teacher.getRealName(), studentId, student.getEnglishName(), onlineClassId,
+                    onlineClass.getClassroom());
         }
     }
 
@@ -652,7 +647,7 @@ public class OnlineClassService {
      * @date 2016年1月9日
      */
     private int findTeacherCommentByOnlineClassId(OnlineClass onlineclass, long studentId) {
-        TeacherComment bean = teacherCommentDao.findByStudentIdAndOnlineClassId(studentId, onlineclass.getId());
+        TeacherComment bean = teacherService.findByStudentIdAndOnlineClassId(studentId, onlineclass.getId());
         if (bean != null) {
             return bean.getStars();
         }
@@ -714,7 +709,7 @@ public class OnlineClassService {
     }
 
     public HashMap<String, Object> getUnfinishUA(HashMap<String, Object> onlineClassVoCond, Integer pageNo,
-                    Integer pageSize) {
+            Integer pageSize) {
 
         Long from = (Long) onlineClassVoCond.get("from");
         Long to = (Long) onlineClassVoCond.get("to");
@@ -829,5 +824,53 @@ public class OnlineClassService {
         }
         map.put("sequence", lesson.getSequence());
         return map;
+    }
+
+    public String checkAndAddFeedback(long studentId, long teacherId, OnlineClass onlineClass, Lesson lesson) {
+        try {
+            if (studentId > 0 && teacherId > 0 && onlineClass != null && lesson != null) {
+                logger.info(
+                    "teacher enter the classRoom,checkAndAddFeedback a teacherCommentRecord. input "
+                        + "studentId={},teacherId={},onlineClassId={},lessonId={}", studentId,
+                    teacherId, onlineClass.getId(), lesson.getId());
+
+                QueryTeacherCommentOutputDto isExist = teacherService
+                    .getTeacherComment(String.valueOf(teacherId), String.valueOf(studentId), String.valueOf(onlineClass.getId()));
+                if (isExist != null) {
+                    return isExist.getTeacherCommentId();
+                }
+
+                TeacherCommentUpdateDto tcuDto = new TeacherCommentUpdateDto();
+                tcuDto.setStudentId(studentId);
+                tcuDto.setOnlineClassId(onlineClass.getId());
+                tcuDto.setTeacherId(teacherId);
+
+                tcuDto.setLessonId(lesson.getId());
+                tcuDto.setLessonName(lesson.getName());
+                tcuDto.setLessonSerialNumber(lesson.getSerialNumber());
+                tcuDto.setLearningCycleId(lesson.getLearningCycleId());
+                tcuDto.setScheduledDateTime(new Date(onlineClass.getScheduledDateTime().getTime()));
+                tcuDto.setCreateTime(new Timestamp(System.currentTimeMillis()));
+
+                Course course = courseDao.findIdsByLessonId(lesson.getId());
+                tcuDto.setCourseId(course.getId());
+                tcuDto.setCourseType(course.getType());
+                tcuDto.setUnitId(course.getUnitId());
+
+                tcuDto.setStars(0);
+                tcuDto.setEmpty(true);
+
+                String newId = teacherService.insertOneTeacherComment(tcuDto);
+                logger.info("teacher enter the classRoom,insert a teacherCommentRecord. newId={}",
+                    newId);
+                return newId;
+
+            }
+        }catch (Exception e){
+            logger.error("checkAndAddFeedback error Exceprion:", e);
+        }
+        logger.error("checkAndAddFeedback error input param error!studentId={},teacherId={},onlineClass={},lesson={}",
+            studentId, teacherId, onlineClass, lesson);
+        return null;
     }
 }

@@ -380,6 +380,10 @@ public interface ApplicationConstant {
     public static final class RedisConstants {
 
     	public static final String TEACHER_TOKEN = "TEACHER_TOKEN"; // 教师redis缓存key前缀
+
+        //从app端跳h5页面时的cookie
+        //必须和teacher-information-service的CookieConstant.APP_COOKIE_PREFIX保持一致,不然获取不到token
+        public static final String APP_TOKEN = "appCookie_";
     	
         public static final String IMAGE_CODE_KEY = "TRPM_REST_IMAGE_CODE:%s"; // 图片验证码
         public static final String LOGIN_PASSWORD_FAILED_DAY_KEY =

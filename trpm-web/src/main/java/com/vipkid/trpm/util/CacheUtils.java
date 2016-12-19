@@ -38,6 +38,14 @@ public class CacheUtils {
 		}
 		return key;
 	}
+
+	public static String getUserTokenKeyFromApp(String token){
+		String key = null;
+		if(StringUtils.isNotBlank(token)){
+			key = ApplicationConstant.RedisConstants.APP_TOKEN+token;
+		}
+		return key;
+	}
 	
 	/**
 	 * 获取用户在线信息redis缓存时间

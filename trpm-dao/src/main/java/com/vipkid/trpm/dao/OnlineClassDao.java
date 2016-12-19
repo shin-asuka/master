@@ -398,4 +398,16 @@ public class OnlineClassDao extends MapperDaoTemplate<OnlineClass> {
 		paramsMap.put("teacherId", teacherId);
 		return listEntity("findOnlineClassList4CheckTeacherComment", paramsMap);
 	}
+
+	/**
+	 * 过滤有效的onlineClassId
+	 *
+	 * @param onlineClassIds
+	 * @return
+	 */
+	public List<Map<String, Object>> batchGetStatusByOnlineClassIds(List<String> onlineClassIds) {
+		Map<String, Object> paramsMap = new HashMap<String, Object>();
+		paramsMap.put("onlineClassIds", onlineClassIds);
+		return listEntity("batchGetStatusByOnlineClassIds", paramsMap);
+	}
 }

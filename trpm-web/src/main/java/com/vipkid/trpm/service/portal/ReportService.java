@@ -11,12 +11,20 @@ import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 import com.alibaba.fastjson.JSON;
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import com.vipkid.email.EmailEngine;
 import com.vipkid.email.handle.EmailConfig;
 import com.vipkid.email.templete.TempleteUtils;
+import com.vipkid.rest.security.AppContext;
 import com.vipkid.trpm.dao.*;
+import com.vipkid.trpm.entity.*;
+import com.vipkid.trpm.entity.teachercomment.TeacherComment;
+import com.vipkid.trpm.entity.teachercomment.TeacherCommentResult;
+import com.vipkid.trpm.entity.teachercomment.TeacherCommentUpdateDto;
+import com.vipkid.trpm.service.rest.LoginService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.community.tools.JsonTools;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,14 +40,6 @@ import com.vipkid.trpm.constant.ApplicationConstant;
 import com.vipkid.trpm.constant.ApplicationConstant.MediaType;
 import com.vipkid.trpm.constant.ApplicationConstant.ReportLifeCycle;
 import com.vipkid.trpm.constant.ApplicationConstant.UaReportStatus;
-import com.vipkid.trpm.entity.AssessmentReport;
-import com.vipkid.trpm.entity.DemoReport;
-import com.vipkid.trpm.entity.Lesson;
-import com.vipkid.trpm.entity.OnlineClass;
-import com.vipkid.trpm.entity.Student;
-import com.vipkid.trpm.entity.StudentExam;
-import com.vipkid.trpm.entity.TeacherComment;
-import com.vipkid.trpm.entity.User;
 import com.vipkid.trpm.entity.media.UploadResult;
 import com.vipkid.trpm.entity.report.DemoReports;
 import com.vipkid.trpm.entity.report.ReportLevels;
@@ -84,9 +84,6 @@ public class ReportService {
     private DemoReportDao demoReportDao;
 
     @Autowired
-    private TeacherCommentDao teacherCommentDao;
-
-    @Autowired
     private OnlineClassDao onlineClassDao;
 
     @Autowired
@@ -103,6 +100,15 @@ public class ReportService {
 
     @Autowired
     private PayrollMessageService payrollMessageService;
+
+    @Autowired
+    private TeacherService teacherService;
+
+    @Autowired
+    private CourseDao courseDao;
+
+    @Autowired
+    private LoginService loginService;
 
     /**
      * uaReport<br/>
@@ -582,26 +588,51 @@ public class ReportService {
      * @date 2015年12月16日
      * @return
      */
-    public TeacherComment findTectBycIdAndStuId(long onlineClassId, long studentId) {
-        if (0 == onlineClassId || 0 == studentId) {
+    public TeacherComment findTectBycIdAndStuId(long onlineClassId, long studentId,OnlineClass onlineClass,Lesson lesson) {
+        if (0 == onlineClassId || 0 == studentId || onlineClass==null) {
             return null;
         }
-        TeacherComment comment = teacherCommentDao.findByStudentIdAndOnlineClassId(studentId, onlineClassId);
+        TeacherComment comment = teacherService.findByStudentIdAndOnlineClassId(studentId, onlineClassId);
         logger.info("onlineClassId：" + onlineClassId + ";studentId:" + studentId + "; Teacher Comment" + comment);
         if (comment == null || comment.getId() == 0) {
             logger.info("正在重新创建 TeacherComment");
-            comment = new TeacherComment();
-            comment.setOnlineClassId(onlineClassId);
-            comment.setStudentId(studentId);
-            comment.setCreateDateTime(new Timestamp(System.currentTimeMillis()));
-            teacherCommentDao.insertTeacherComment(comment);
+
+            TeacherCommentUpdateDto tcuDto = new TeacherCommentUpdateDto();
+            tcuDto.setStudentId(studentId);
+            tcuDto.setOnlineClassId(onlineClassId);
+            tcuDto.setTeacherId(onlineClass.getTeacherId());
+
+            tcuDto.setLessonId(lesson.getId());
+            tcuDto.setLessonName(lesson.getName());
+            tcuDto.setLessonSerialNumber(lesson.getSerialNumber());
+            tcuDto.setLearningCycleId(lesson.getLearningCycleId());
+            tcuDto.setScheduledDateTime(new Date(onlineClass.getScheduledDateTime().getTime()));
+            tcuDto.setCreateTime(new Timestamp(System.currentTimeMillis()));
+
+            Course course = courseDao.findIdsByLessonId(lesson.getId());
+            tcuDto.setCourseId(course.getId());
+            tcuDto.setCourseType(course.getType());
+            tcuDto.setUnitId(course.getUnitId());
+
+            tcuDto.setStars(0);
+            tcuDto.setEmpty(true);
+
+            String newId = teacherService.insertOneTeacherComment(tcuDto);
+            if (NumberUtils.isNumber(newId)) {
+                TeacherComment result = new TeacherComment();
+                result.setId(Long.valueOf(newId));
+                result.setOnlineClassId(onlineClassId);
+                result.setStudentId(studentId);
+                result.setTeacherId(onlineClass.getTeacherId());
+                return result;
+            }else{
+                return null;
+            }
+        }else{
+            return comment;
         }
-        return comment;
     }
 
-    public TeacherComment findTeacherCommentById(long id) {
-        return teacherCommentDao.findTeacherCommentById(id);
-    }
 
     /**
      * FeedBack SAVE<br/>
@@ -614,14 +645,29 @@ public class ReportService {
      * @date 2015年12月16日
      */
     public Map<String, Object> submitTeacherComment(TeacherComment teacherComment, User user,String serialNumber,
-            String scheduledDateTime) {
+            String scheduledDateTime,boolean isFromH5) {
         // 如果ID为0 则抛出异常并回滚
         checkArgument(0 != teacherComment.getId(), "Argument teacherComment id equals 0");
 
         teacherComment.setEmpty(0);
 
         // 日志记录参数准备
-        TeacherComment oldtc = teacherCommentDao.findTeacherCommentById(teacherComment.getId());
+        TeacherCommentResult oldtcFromAPI = teacherService
+                .findByTeacherCommentId(String.valueOf(teacherComment.getId()));
+        if(oldtcFromAPI==null){
+            Map<String, Object> paramMap = Maps.newHashMap();
+            paramMap.put("result", false);
+            paramMap.put("msg", "You submit a wrong feedback.");
+            return paramMap;
+        }
+        TeacherComment oldtc = new TeacherComment(oldtcFromAPI);
+        if (isFromH5) {
+            //从APP的h5页面过来的
+            Teacher teacher = AppContext.getTeacher();
+            scheduledDateTime = DateUtils
+                .formatTo(oldtcFromAPI.getScheduledDateTime().toInstant(), teacher.getTimezone(),
+                    DateUtils.FMT_YMD_HMS);
+        }
 
         Map<String, Object> paramMap = Maps.newHashMap();
         paramMap.put("teacherId", user.getId());
@@ -641,9 +687,11 @@ public class ReportService {
         teacherComment.setLastDateTime(new Timestamp(System.currentTimeMillis()));
 
         // 更新后并返回影响的行数
-        int status = teacherCommentDao.update(teacherComment);
+        //int status = teacherCommentDao.update(teacherComment);
+        TeacherCommentUpdateDto tcuDto = new TeacherCommentUpdateDto(teacherComment);
+        boolean success = teacherService.updateTeacherComment(tcuDto);
 
-        if (status != 0) {
+        if (success) {
             logger.info("FEEDBACK_SAVE_OK,paramMap = {},teacherName = {},teacherComment ={}",
                     JSON.toJSONString(paramMap), user.getUsername(), teacherComment);
             paramMap.put("result", true);
@@ -666,8 +714,10 @@ public class ReportService {
         if (teacherComment.getPerformanceAdjust()==1 && teacherComment.getPerformance()!=0){
             logger.info("判断PerformanceAdjust给CLT发邮件: studentId = {}, serialNumber = {}, scheduledDateTime = {} ",
                     oldtc.getStudentId(), serialNumber, scheduledDateTime);
+            final String finalScheduledDateTime = scheduledDateTime;
             sendEmailExecutor.execute(() -> {
-                emailService.sendEmail4PerformanceAdjust2CLT(oldtc.getStudentId(), serialNumber, scheduledDateTime, teacherComment.getPerformance());
+                emailService.sendEmail4PerformanceAdjust2CLT(oldtc.getStudentId(), serialNumber,
+                    finalScheduledDateTime, teacherComment.getPerformance());
             });
         }
 
@@ -714,22 +764,6 @@ public class ReportService {
     }
 
     /**
-     *
-     * INFO<br/>
-     *
-     * 查询最近的TeacherComment列表 (feedback) <br/>
-     *
-     * @Author:ALong
-     * @Title: listRecentlyTeacherComment
-     * @param studentId
-     * @return List<Map<String,Object>>
-     * @date 2015年12月18日
-     */
-    public List<Map<String, Object>> listRecentlyTeacherComment(long studentId) {
-        return teacherCommentDao.findCommentByStudentId(studentId);
-    }
-
-    /**
      * INFO<br/>
      *
      * 通过studentId查询StudentExam(最近考试信息)<br/>
@@ -761,5 +795,73 @@ public class ReportService {
             return null;
         }
         return studentDao.findById(studentId);
+    }
+
+
+    /**
+     * 根据serialNum处理 考试的Level名称显示<br/>
+     * studentExam 为NULL 则返回一个空对象
+     *
+     * @Author:ALong
+     * @Title: handleExamLevel
+     * @param studentExam
+     * @param serialNum
+     * @return StudentExam
+     * @date 2016年1月12日
+     */
+    public StudentExam handleExamLevel(StudentExam studentExam, String serialNum) {
+        logger.info("ReportController: handleExamLevel() 参数为：serialNum={}, studentExam={}", serialNum, JSON.toJSONString(studentExam));
+
+        // studentExam 不为空则进行替换逻辑
+        if (studentExam != null) {
+            // ExamLevel 不为空则进行替换逻辑
+            if (studentExam.getExamLevel() != null) {
+                String lowerCase = studentExam.getExamLevel().toLowerCase();
+                if ("l1u0".equals(lowerCase)) {
+                    studentExam.setExamLevel("Level Test result is Level 0 Unit 0");
+                } else if (lowerCase.startsWith("l")) {
+                    studentExam.setExamLevel("Level Test result is " + lowerCase.replaceAll("l", "Level ").replaceAll("u", " Unit "));
+                }
+            }
+        } else {
+            // studentExam 为空则返回空对象
+            studentExam = new StudentExam();
+            // ExamLevel 为空则根据Lession的SerialNum进行处理
+            if (serialNum != null) {
+                switch (serialNum) {
+                    case "T1-U1-LC1-L1":
+                        studentExam.setExamLevel("No Computer Test result, use Level 2 Unit 01");
+                        break;
+                    case "T1-U1-LC1-L2":
+                        studentExam.setExamLevel("No Computer Test result, use Level 2 Unit 04");
+                        break;
+                    case "T1-U1-LC1-L3":
+                        studentExam.setExamLevel("No Computer Test result, use Level 3 Unit 01");
+                        break;
+                    case "T1-U1-LC1-L4":
+                        studentExam.setExamLevel("No Computer Test result, use Level 4 Unit 01");
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+        return studentExam;
+    }
+
+    //TeacherComment的trialLevelResult, L*U* 换成Level * Unit *
+    public String handleTeacherComment(String trialLevelResult) {
+        logger.info("ReportController: handleTeacherComment() 参数为： trialLevelResult={}", trialLevelResult);
+
+        // teacherComment 不为空则进行替换逻辑
+        if (StringUtils.isNotBlank(trialLevelResult)) {
+            String lowerCase = trialLevelResult.toLowerCase();
+            if ("l1u0".equals(lowerCase)) {
+                return "Level 0 Unit 0";
+            } else if (lowerCase.startsWith("l")) {
+                return lowerCase.replaceAll("l", "Level ").replaceAll("u", " Unit ");
+            }
+        }
+        return trialLevelResult;
     }
 }

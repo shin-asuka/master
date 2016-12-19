@@ -36,6 +36,26 @@ public class Course extends Entity implements Serializable {
 	/* 下级节点类型,e.g. level,unit */
 	private String childtype;
 
+
+	private long unitId;
+	private long learningCycleId;
+
+	public long getUnitId() {
+		return unitId;
+	}
+
+	public void setUnitId(long unitId) {
+		this.unitId = unitId;
+	}
+
+	public long getLearningCycleId() {
+		return learningCycleId;
+	}
+
+	public void setLearningCycleId(long learningCycleId) {
+		this.learningCycleId = learningCycleId;
+	}
+
 	public long getId() {
 		return this.id;
 	}

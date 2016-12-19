@@ -29,9 +29,9 @@ public class ReportEmailService {
     private static final Logger logger = LoggerFactory.getLogger(ReportEmailService.class);
 
     @Autowired
-    private TeacherCommentDao teacherCommentDao;
-    @Autowired
     private StudentService studentService;
+    @Autowired
+    private TeacherService teacherService;
 
     public void sendEmail4PerformanceAdjust2CLT(long studentId, String serialNumber, String scheduledDateTime, Integer performance){
         if (studentId == 0 || StringUtils.isEmpty(serialNumber) || StringUtils.isEmpty(scheduledDateTime)){
@@ -49,7 +49,7 @@ public class ReportEmailService {
         }
         //一个学生在每一个unit被标记为very difficult 或者 very easy的
         String lessonSnPrefix = serialNumber.substring(0, serialNumber.indexOf("-LC") + 1).concat("%");
-        List<Map<String, Object>> lessonSnList = teacherCommentDao.findLessonSn4PerformanceByStudentAndUnit(studentId, lessonSnPrefix);
+        List<Map<String, Object>> lessonSnList = teacherService.findByStudentIdLessonSnPrefix(String.valueOf(studentId), lessonSnPrefix);
         logger.info("sendEmail4Performance2CLT findLessonSn4PerformanceByStudentAndUnit lessonSnList = {} ", lessonSnList);
 
         if (CollectionUtils.isNotEmpty(lessonSnList) && lessonSnList.size() >= 3){
@@ -133,12 +133,12 @@ public class ReportEmailService {
         logger.info(serialNumber.substring(0, serialNumber.indexOf("-U1-") + ("-U1-").length()) + "%");
         List<String> lessonSnList =  Arrays.asList(
                 "MC-L2-U6-LC2-11",
-            "C1-L1-U1-LC1-2",
-            "C1-L1-U1-LC1-10",
-            "C1-L1-U1-LC1-3",
-            "C1-L1-U1-LC2-7",
-            "C1-L1-U1-LC2-11",
-            "C1-L1-U1-LC2-12");
+                "C1-L1-U1-LC1-2",
+                "C1-L1-U1-LC1-10",
+                "C1-L1-U1-LC1-3",
+                "C1-L1-U1-LC2-7",
+                "C1-L1-U1-LC2-11",
+                "C1-L1-U1-LC2-12");
         logger.info(JSON.toJSONString(null));
         logger.info(JSON.toJSONString(lessonSnList));
         if (CollectionUtils.isNotEmpty(lessonSnList) && lessonSnList.size() >= 3) {

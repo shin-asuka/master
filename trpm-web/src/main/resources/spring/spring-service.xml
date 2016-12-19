@@ -14,6 +14,13 @@
     <bean id="assessmentHttpService" class="com.vipkid.http.service.AssessmentHttpService">
         <property name="serverAddress" value="${homework.serverAddress}"/>
     </bean>
+
+    <bean id="fileHttpService" class="com.vipkid.http.service.FileHttpService">
+        <property name="serverAddress" value="${teacherApp.serverAddress}"/>
+        <property name="s3BucketName" value="${aws.bucketName}"/>
+
+
+    </bean>
     
     <bean id="teacherAppService" class="com.vipkid.http.service.TeacherAppService">
         <property name="serverAddress" value="${teacherApp.serverAddress}"/>
