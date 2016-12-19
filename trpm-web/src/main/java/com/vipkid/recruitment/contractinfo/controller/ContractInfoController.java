@@ -202,17 +202,17 @@ public class ContractInfoController extends RestfulController {
             //check contract files
             boolean isContractFileValid = checkContractFile(teacherId, idList);
             if (!isContractFileValid) {
-                return ReturnMapUtils.returnFail("Teacher's contract files do NOT exist, failed to submit");
+                return ReturnMapUtils.returnFail("Not all the contract files has been uploaded successfully, please try again!");
 
             }
             logger.info("Check Teacher 的 file id{}", idList);
             //check personal info
             boolean isPersonalInfoValid = checkPersonInfo(teacherId);
             if (!isPersonalInfoValid) {
-                return ReturnMapUtils.returnFail("Teacher's personal files do NOT exist, failed to update bio");
+                return ReturnMapUtils.returnFail("Not all the personal files have been uploaded successfully, please try again!");
             }
 
-            logger.info("update Teacher 的自我简介{}", bio);
+            logger.info("update Teacher's introduction: {}", bio);
             teacher.setIntroduction(bio);
             boolean bioUpdated = contractInfoService.updateTeacher(teacher);
             if (!bioUpdated) {
@@ -277,9 +277,18 @@ public class ContractInfoController extends RestfulController {
         String shortVideoUrl = (String) teacherFiles.get("shortVideo");
         Integer shortVideoStatus = (Integer) teacherFiles.get("shortVideoStatus");
 
-        if (StringUtils.isEmpty(avatarUrl) || CollectionUtils.isEmpty(lifePictures)
-                || StringUtils.isEmpty(shortVideoUrl) || shortVideoStatus == null) {
-            logger.warn("Teacher's files do NOT exist, failed to update bio");
+        if (StringUtils.isEmpty(avatarUrl)) {
+            logger.warn("{}'s Avatar has not been uploaded successfully!", teacherId);
+            return false;
+        }
+
+        if(CollectionUtils.isEmpty(lifePictures) || lifePictures.size() < 2 ) {
+            logger.warn("{}'s lifePictures is empty or there is not enough lifePictures!", teacherId);
+            return false;
+        }
+
+        if(!(shortVideoStatus == 1 || shortVideoStatus == 2)) {
+            logger.warn("{}'s shortVideo is not transformed or failed to be transformed!", teacherId);
             return false;
         }
 
@@ -314,7 +323,7 @@ public class ContractInfoController extends RestfulController {
                 isFileValid = true;
             }
         }
-
+        logger.info("Teacher:{} 检查文件id是否合格, 结果是{}", teacherId, isFileValid);
         return isFileValid;
     }
 
@@ -334,27 +343,26 @@ public class ContractInfoController extends RestfulController {
             String key = AwsFileUtils.getAvatarKey(fileName);
             Long fileSize = file.getSize();
 
-            Preconditions.checkArgument(AwsFileUtils.checkAvatarFileType(fileName), "文件类型不正确，支持类型为" + AwsFileUtils.AVATAR_FILE_TYPE);
-            Preconditions.checkArgument(AwsFileUtils.checkAvatarFileSize(fileSize), "文件太大，maxSize = " + AwsFileUtils.AVATAR_MAX_SIZE);
-
             try {
+                Preconditions.checkArgument(AwsFileUtils.checkAvatarFileType(fileName), "文件类型不正确，支持类型为" + AwsFileUtils.AVATAR_FILE_TYPE);
+                Preconditions.checkArgument(AwsFileUtils.checkAvatarFileSize(fileSize), "文件太大，maxSize = " + AwsFileUtils.AVATAR_MAX_SIZE);
+
                 Teacher teacher = getTeacher(request);
                 if (null == teacher) {
                     response.setStatus(HttpStatus.NOT_FOUND.value());
                     return ReturnMapUtils.returnFail("This account does not exist.");
                 }
                 Long teacherId = teacher.getId();
-
+                logger.info("Upload avatar for {}!", teacherId);
                 FileVo fileVo = awsFileService.upload(bucketName, key, file.getInputStream(), fileSize);
 
                 if (fileVo != null) {
                     FileUploadStatus fileUploadStatus = fileHttpService.uploadAvatar(teacherId, key);
                     result.put("url", fileUploadStatus.getUrl());
-                    //result.put("status", fileUploadStatus.getStatus());
-                    logger.info("Successful to upload avatar!");
+                    logger.info("Successful to upload avatar for {}!", teacherId);
                     return ReturnMapUtils.returnSuccess(result);
                 } else {
-                    logger.error("Failed to upload avatar!");
+                    logger.error("Failed to upload avatar for {}!", teacherId);
                     response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
                     return ReturnMapUtils.returnFail("Upload failed!  Please try again.");
                 }
@@ -387,16 +395,17 @@ public class ContractInfoController extends RestfulController {
             String key = AwsFileUtils.getLifePictureKey(fileName);
             Long fileSize = file.getSize();
 
-            Preconditions.checkArgument(AwsFileUtils.checkLifePicFileType(fileName), "文件类型不正确，支持类型为" + AwsFileUtils.LIFE_PICTURE_FILE_TYPE);
-            Preconditions.checkArgument(AwsFileUtils.checkLifePicFileSize(fileSize), "文件太大，maxSize = " + AwsFileUtils.LIFE_PICTURE_MAX_SIZE);
-
             try {
+                Preconditions.checkArgument(AwsFileUtils.checkLifePicFileType(fileName), "文件类型不正确，支持类型为" + AwsFileUtils.LIFE_PICTURE_FILE_TYPE);
+                Preconditions.checkArgument(AwsFileUtils.checkLifePicFileSize(fileSize), "文件太大，maxSize = " + AwsFileUtils.LIFE_PICTURE_MAX_SIZE);
+
                 Teacher teacher = getTeacher(request);
                 if (null == teacher) {
                     response.setStatus(HttpStatus.NOT_FOUND.value());
-                    return ReturnMapUtils.returnFail("This account does not exist.");
+                    return ReturnMapUtils.returnFail("This teacher does not exist.");
                 }
                 Long teacherId = teacher.getId();
+                logger.info("uploadLifePic for {}!", teacherId);
 
                 FileVo fileVo = awsFileService.upload(bucketName, key, file.getInputStream(), fileSize);
 
@@ -404,7 +413,7 @@ public class ContractInfoController extends RestfulController {
                     FileUploadStatus fileUploadStatus = fileHttpService.uploadLifePicture(teacherId, key);
                     result.put("id", fileUploadStatus.getId());
                     result.put("url", fileUploadStatus.getUrl());
-                    logger.info("Successful to upload uploadLifePic: {}", JsonUtils.toJSONString(result));
+                    logger.info("Successful to upload uploadLifePic: {} for {}.", JsonUtils.toJSONString(result), teacherId);
                     return ReturnMapUtils.returnSuccess(result);
                 } else {
                     response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
@@ -437,16 +446,19 @@ public class ContractInfoController extends RestfulController {
             String key = AwsFileUtils.getShortVideoKey(fileName);
             Long fileSize = file.getSize();
 
-            Preconditions.checkArgument(AwsFileUtils.checkShortVideoFileType(fileName), "文件类型不正确，支持类型为" + AwsFileUtils.SHORT_VIDEO_FILE_TYPE);
-            Preconditions.checkArgument(AwsFileUtils.checkShortVideoFileSize(fileSize), "文件太大，maxSize = " + AwsFileUtils.SHORT_VIDEO_MAX_SIZE);
-
             try {
+                Preconditions.checkArgument(AwsFileUtils.checkShortVideoFileType(fileName),
+                        String.format("%s 文件类型不正确，支持类型为 %s", fileName, AwsFileUtils.SHORT_VIDEO_FILE_TYPE));
+                Preconditions.checkArgument(AwsFileUtils.checkShortVideoFileSize(fileSize),
+                        String.format("文件大小为 %d, minSize=%d, maxSize=%d ", fileSize, AwsFileUtils.SHORT_VIDEO_MIN_SIZE, AwsFileUtils.SHORT_VIDEO_MAX_SIZE));
+
                 Teacher teacher = getTeacher(request);
                 if (null == teacher) {
                     response.setStatus(HttpStatus.NOT_FOUND.value());
-                    return ReturnMapUtils.returnFail("This account does not exist.");
+                    return ReturnMapUtils.returnFail("This teacher does not exist.");
                 }
                 Long teacherId = teacher.getId();
+                logger.info("uploadVideo for {}", teacherId);
 
                 FileVo fileVo = awsFileService.upload(bucketName, key, file.getInputStream(), fileSize);
 
@@ -454,6 +466,7 @@ public class ContractInfoController extends RestfulController {
                     FileUploadStatus fileUploadStatus = fileHttpService.uploadShortVideo(teacherId, key);
                     result.put("url", fileUploadStatus.getUrl()); //video don't have the url at this time
                     result.put("status", fileUploadStatus.getStatus());
+                    logger.info("Successful to uploadVideo: {} for {}.", JsonUtils.toJSONString(result), teacherId);
                     return ReturnMapUtils.returnSuccess(result);
                 } else {
                     response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());

@@ -58,12 +58,8 @@ public class AwsFileUtils {
 	public static final String CERTIFICATES_FILE_TYPE = "doc,docx,pdf,jpg,jpeg,png,bmp.";
 	public static final Long CERTIFICATES_FILE_MAX_SIZE = 20*1024*1024L; //20M
 
-
 	public static final String DEGREES_FILE_TYPE = "doc,docx,pdf,jpg,jpeg,png,bmp.";
 	public static final Long DEGREES_FILE_MAX_SIZE = 20*1024*1024L; //20M
-
-
-
 
 	public static final Long AVATAR_MAX_SIZE = 20*1024*1024L; //20M
 	public static final String AVATAR_FILE_TYPE = "pdf,jpg,jpeg,png,bmp";
@@ -71,6 +67,7 @@ public class AwsFileUtils {
 	public static final Long LIFE_PICTURE_MAX_SIZE = 20*1024*1024L; //20M
 	public static final String LIFE_PICTURE_FILE_TYPE = "pdf,jpg,jpeg,png,bmp";
 
+	public static final Long SHORT_VIDEO_MIN_SIZE = 2*1024*1024L; //3M
 	public static final Long SHORT_VIDEO_MAX_SIZE = 100*1024*1024L; //100M
 	public static final String SHORT_VIDEO_FILE_TYPE = "mp4,mov,avi,rmvb";
 
@@ -162,7 +159,7 @@ public class AwsFileUtils {
 	}
 
 	public static Boolean checkContractFileSize(Long fileSize){
-		Boolean flag = checkUploadFileSize(CONTRACT_FILE_MAX_SIZE, fileSize);
+		Boolean flag = checkUploadFileSize(null, CONTRACT_FILE_MAX_SIZE, fileSize);
 		return flag;
 	}
 
@@ -172,7 +169,7 @@ public class AwsFileUtils {
 	}
 
 	public static Boolean checkIdentificationFileSize(Long fileSize){
-		Boolean flag = checkUploadFileSize(IDENTIFICATION_FILE_MAX_SIZE, fileSize);
+		Boolean flag = checkUploadFileSize(null, IDENTIFICATION_FILE_MAX_SIZE, fileSize);
 		return flag;
 	}
 
@@ -182,7 +179,7 @@ public class AwsFileUtils {
 	}
 
 	public static Boolean checkDiplomaFileSize(Long fileSize){
-		Boolean flag = checkUploadFileSize(DIPLOMA_FILE_MAX_SIZE, fileSize);
+		Boolean flag = checkUploadFileSize(null, DIPLOMA_FILE_MAX_SIZE, fileSize);
 		return flag;
 	}
 
@@ -193,7 +190,7 @@ public class AwsFileUtils {
 	}
 
 	public static Boolean checkCertificatesFileSize(Long fileSize){
-		Boolean flag = checkUploadFileSize(CERTIFICATES_FILE_MAX_SIZE, fileSize);
+		Boolean flag = checkUploadFileSize(null, CERTIFICATES_FILE_MAX_SIZE, fileSize);
 		return flag;
 	}
 
@@ -204,20 +201,10 @@ public class AwsFileUtils {
 	}
 
 	public static Boolean checkDegreesFileSize(Long fileSize){
-		Boolean flag = checkUploadFileSize(DEGREES_FILE_MAX_SIZE, fileSize);
+		Boolean flag = checkUploadFileSize(null, DEGREES_FILE_MAX_SIZE, fileSize);
 		return flag;
 	}
 
-
-
-
-
-
-
-
-
-
-	
 	public static Boolean checkTaxPayerFileType(String fileName){
 		Boolean flag = checkUploadFileType(TAPXPAYER_FILE_TYPE, fileName);
 		return flag;
@@ -225,7 +212,7 @@ public class AwsFileUtils {
 
 
 	public static Boolean checkTaxPayerFileSize(Long fileSize){
-		Boolean flag = checkUploadFileSize(TAPXPAYER_FILE_MAX_SIZE, fileSize);
+		Boolean flag = checkUploadFileSize(null, TAPXPAYER_FILE_MAX_SIZE, fileSize);
 		return flag;
 	}
 
@@ -235,7 +222,7 @@ public class AwsFileUtils {
 	}
 
 	public static Boolean checkAvatarFileSize(Long fileSize){
-		Boolean flag = checkUploadFileSize(AVATAR_MAX_SIZE, fileSize);
+		Boolean flag = checkUploadFileSize(null, AVATAR_MAX_SIZE, fileSize);
 		return flag;
 	}
 
@@ -245,7 +232,7 @@ public class AwsFileUtils {
 	}
 
 	public static Boolean checkLifePicFileSize(Long fileSize){
-		Boolean flag = checkUploadFileSize(LIFE_PICTURE_MAX_SIZE, fileSize);
+		Boolean flag = checkUploadFileSize(null, LIFE_PICTURE_MAX_SIZE, fileSize);
 		return flag;
 	}
 
@@ -255,7 +242,7 @@ public class AwsFileUtils {
 	}
 
 	public static Boolean checkShortVideoFileSize(Long fileSize){
-		Boolean flag = checkUploadFileSize(SHORT_VIDEO_MAX_SIZE, fileSize);
+		Boolean flag = checkUploadFileSize(SHORT_VIDEO_MIN_SIZE, SHORT_VIDEO_MAX_SIZE, fileSize);
 		return flag;
 	}
 
@@ -272,13 +259,23 @@ public class AwsFileUtils {
 		return flag;
 	}
 
-	public static Boolean checkUploadFileSize(Long sizeLimit, Long fileSize){
-		Boolean flag = false;
-		if(fileSize != null && fileSize != null && fileSize <= sizeLimit){
-			flag = true;
+	public static Boolean checkUploadFileSize(Long minSizeLimit, Long maxSizeLimit, Long fileSize){
+		if(fileSize == null) {
+			return false;
 		}
-		return flag;
+
+		if(minSizeLimit != null && fileSize <= minSizeLimit){
+			return false;
+		}
+
+		if(maxSizeLimit != null && fileSize >= maxSizeLimit) {
+			return false;
+		}
+
+		return true;
 	}
+
+
 	public static String reNewFileName(String fileName){
 		String name = fileName;
 		if(StringUtils.isNotBlank(fileName)){

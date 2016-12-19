@@ -222,7 +222,7 @@ public class FileHttpService extends HttpBaseService {
                     JSONObject data = response.getJSONObject("data");
                     if (null != data) {
                         Long id = data.getLong("id");
-                        Integer status = data.getInteger("status");//1 成功，0 失败
+                        Integer status = data.getInteger("status");//1 成功，2 失败
                         String fileUrl = data.getString("url");
                         fileUploadStatus = new FileUploadStatus();
                         fileUploadStatus.setId(id);
