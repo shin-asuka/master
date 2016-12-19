@@ -329,7 +329,7 @@ public class AuditEmailService {
             if (StringUtils.equals(name, "shortVideo")) {
                 return "15 Second video greeting";
             }
-            if (StringUtils.equals(name, "seftIntroduction")) {
+            if (StringUtils.equals(name, "selfIntroduction")) {
                 return "Self introduction";
             }
         }

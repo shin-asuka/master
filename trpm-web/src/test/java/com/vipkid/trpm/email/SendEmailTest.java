@@ -190,7 +190,7 @@ public class SendEmailTest {
 	@Test
 	public void findOnlineClass(){
 		StringBuilder stringBuilder = new StringBuilder();
-		String s = " [{\"id\":\"avatar\",\"name\":\"avatar\",\"result\":\"FAIL\",\"failReason\":\"\",\"url\":\"http://ogmdlv3io.bkt.clouddn.com/teacher/avatar/2069783/98bfc1142f4f4de0ad6734a7bbdfbc56/avatar_medium/teacher-avatar-2069783.png\"},{\"id\":\"lifePictures_157\",\"name\":\"lifePictures\",\"result\":\"FAIL\",\"failReason\":\"\",\"url\":\"http://ogmdlv3io.bkt.clouddn.com/teacher/lifePicture/2069783/33fa8db95c29425184b038cedb4f550e/life_picture_medium/teacher-lifephoto-2069783.png\"},{\"id\":\"shortVideo\",\"name\":\"shortVideo\",\"result\":\"FAIL\",\"failReason\":\"\",\"url\":\"http://ogmdlv3io.bkt.clouddn.com/teacher/shortVideo/2069783/ae59fe5e5ded4fa5b754f1469d542591/short_video_medium/20161208-191858.mp4\"},{\"id\":\"seftIntroduction\",\"name\":\"seftIntroduction\",\"result\":\"FAIL\",\"failReason\":\"\",\"url\":\"dfasfasf\"}]";
+		String s = " [{\"id\":\"avatar\",\"name\":\"avatar\",\"result\":\"FAIL\",\"failReason\":\"\",\"url\":\"http://ogmdlv3io.bkt.clouddn.com/teacher/avatar/2069783/98bfc1142f4f4de0ad6734a7bbdfbc56/avatar_medium/teacher-avatar-2069783.png\"},{\"id\":\"lifePictures_157\",\"name\":\"lifePictures\",\"result\":\"FAIL\",\"failReason\":\"\",\"url\":\"http://ogmdlv3io.bkt.clouddn.com/teacher/lifePicture/2069783/33fa8db95c29425184b038cedb4f550e/life_picture_medium/teacher-lifephoto-2069783.png\"},{\"id\":\"shortVideo\",\"name\":\"shortVideo\",\"result\":\"FAIL\",\"failReason\":\"\",\"url\":\"http://ogmdlv3io.bkt.clouddn.com/teacher/shortVideo/2069783/ae59fe5e5ded4fa5b754f1469d542591/short_video_medium/20161208-191858.mp4\"},{\"id\":\"selfIntroduction\",\"name\":\"selfIntroduction\",\"result\":\"FAIL\",\"failReason\":\"\",\"url\":\"dfasfasf\"}]";
 		JSONArray array =  JSON.parseArray(s);
 		List<TeacherContractFile> teacherContractFiles = new ArrayList<TeacherContractFile>();
 		TeacherContractFile teacherContractFile =new TeacherContractFile();
@@ -290,7 +290,7 @@ public class SendEmailTest {
 			if (StringUtils.equals(name, "shortVideo")) {
 				return "15 Second video greeting";
 			}
-			if (StringUtils.equals(name, "seftIntroduction")) {
+			if (StringUtils.equals(name, "selfIntroduction")) {
 				return "Self introduction";
 			}
 		}
