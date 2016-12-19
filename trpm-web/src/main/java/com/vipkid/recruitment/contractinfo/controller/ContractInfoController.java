@@ -202,14 +202,14 @@ public class ContractInfoController extends RestfulController {
             //check contract files
             boolean isContractFileValid = checkContractFile(teacherId, idList);
             if (!isContractFileValid) {
-                return ReturnMapUtils.returnFail("Teacher's contract files do NOT exists, failed to submit");
+                return ReturnMapUtils.returnFail("Teacher's contract files do NOT exist, failed to submit");
 
             }
             logger.info("Check Teacher 的 file id{}", idList);
             //check personal info
             boolean isPersonalInfoValid = checkPersonInfo(teacherId);
             if (!isPersonalInfoValid) {
-                return ReturnMapUtils.returnFail("Teacher's personal files do NOT exists, failed to update bio");
+                return ReturnMapUtils.returnFail("Teacher's personal files do NOT exist, failed to update bio");
             }
 
             logger.info("update Teacher 的自我简介{}", bio);
@@ -279,7 +279,7 @@ public class ContractInfoController extends RestfulController {
 
         if (StringUtils.isEmpty(avatarUrl) || CollectionUtils.isEmpty(lifePictures)
                 || StringUtils.isEmpty(shortVideoUrl) || shortVideoStatus == null) {
-            logger.warn("Teacher's files do NOT exists, failed to update bio");
+            logger.warn("Teacher's files do NOT exist, failed to update bio");
             return false;
         }
 

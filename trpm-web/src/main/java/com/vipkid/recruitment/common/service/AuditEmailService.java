@@ -81,8 +81,11 @@ public class AuditEmailService {
             Teacher teacher  =  teacherDao.findById(teacherId);
             Map<String, String> paramsMap = Maps.newHashMap();
 
-            if (teacher.getRealName() != null)
+            if (teacher.getFirstName() != null){
+                paramsMap.put("teacherName", teacher.getFirstName());
+            }else if (teacher.getRealName() != null){
                 paramsMap.put("teacherName", teacher.getRealName());
+            }
             logger.info("【EMAIL.sendBasicInfoPass】toAddMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",
                     teacher.getRealName(),teacher.getEmail(), BASICINFO_PASS_TITLE, BASICINFO_PASS_CONTENT);
             Map<String, String> emailMap = TemplateUtils.readTemplate(BASICINFO_PASS_CONTENT, paramsMap, BASICINFO_PASS_TITLE);
@@ -105,8 +108,11 @@ public class AuditEmailService {
             Teacher teacher  =  teacherDao.findById(teacherId);
             Map<String, String> paramsMap = Maps.newHashMap();
 
-            if (teacher.getRealName() != null)
+            if (teacher.getFirstName() != null){
+                paramsMap.put("teacherName", teacher.getFirstName());
+            }else if (teacher.getRealName() != null){
                 paramsMap.put("teacherName", teacher.getRealName());
+            }
             logger.info("【EMAIL.sendPracticumPass】toAddMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",
                     teacher.getRealName(),teacher.getEmail(), PRACTICUM_PASS_TITLE, PRACTICUM_PASS_CONTENT);
             Map<String, String> emailMap = TemplateUtils.readTemplate(PRACTICUM_PASS_CONTENT, paramsMap, PRACTICUM_PASS_TITLE);
@@ -125,7 +131,9 @@ public class AuditEmailService {
             Teacher teacher  =  teacherDao.findById(teacherId);
             Map<String, String> paramsMap = Maps.newHashMap();
 
-            if (teacher.getRealName() != null) {
+            if (teacher.getFirstName() != null){
+                paramsMap.put("teacherName", teacher.getFirstName());
+            }else if (teacher.getRealName() != null){
                 paramsMap.put("teacherName", teacher.getRealName());
             }
             logger.info("【EMAIL.sendPracticum2Start】toAddMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",
@@ -158,8 +166,11 @@ public class AuditEmailService {
 
 
             Map<String, String> paramsMap = Maps.newHashMap();
-            if (teacher.getRealName() != null)
+            if (teacher.getFirstName() != null){
+                paramsMap.put("teacherName", teacher.getFirstName());
+            }else if (teacher.getRealName() != null){
                 paramsMap.put("teacherName", teacher.getRealName());
+            }
             logger.info("【EMAIL.sendPracticumReapply】toAddMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",
                     teacher.getRealName(),teacher.getEmail(),PRACTICUM_REAPPLY_TITLE, PRACTICUM_REAPPLY_CONTENT);
             Map<String, String> emailMap = TemplateUtils.readTemplate(PRACTICUM_REAPPLY_CONTENT, paramsMap, PRACTICUM_REAPPLY_TITLE);
@@ -185,8 +196,11 @@ public class AuditEmailService {
                 paramsMap =  EmailTemplateTools.interviewPassContentMap(teacherApplication,teacher);
             }
             Teacher teacher  =  teacherDao.findById(teacherId);
-            if (teacher.getRealName() != null)
+            if (teacher.getFirstName() != null){
+                paramsMap.put("teacherName", teacher.getFirstName());
+            }else if (teacher.getRealName() != null){
                 paramsMap.put("teacherName", teacher.getRealName());
+            }
             logger.info("【EMAIL.sendInterviewPass】toAddMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",
                     teacher.getRealName(),teacher.getEmail(),INTERVIEW_PASS_TITLE, INTERVIEW_PASS_CONTENT);
             Map<String, String> emailMap = TemplateUtils.readTemplate(INTERVIEW_PASS_CONTENT, paramsMap, INTERVIEW_PASS_TITLE);
@@ -206,8 +220,11 @@ public class AuditEmailService {
             Teacher teacher  =  teacherDao.findById(teacherId);
             Map<String, String> paramsMap = Maps.newHashMap();
 
-            if (teacher.getRealName() != null)
+            if (teacher.getFirstName() != null){
+                paramsMap.put("teacherName", teacher.getFirstName());
+            }else if (teacher.getRealName() != null){
                 paramsMap.put("teacherName", teacher.getRealName());
+            }
             logger.info("【EMAIL.sendInterviewReapply】toAddMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",
                     teacher.getRealName(),teacher.getEmail(),INTERVIEW_REAPPLY_TITLE, INTERVIEW_REAPPLY_CONTENT);
             Map<String, String> emailMap = TemplateUtils.readTemplate(INTERVIEW_REAPPLY_CONTENT, paramsMap, INTERVIEW_REAPPLY_TITLE);
@@ -226,8 +243,11 @@ public class AuditEmailService {
             Teacher teacher  =  teacherDao.findById(teacherId);
             Map<String, String> paramsMap = Maps.newHashMap();
 
-            if (teacher.getRealName() != null)
+            if (teacher.getFirstName() != null){
+                paramsMap.put("teacherName", teacher.getFirstName());
+            }else if (teacher.getRealName() != null){
                 paramsMap.put("teacherName", teacher.getRealName());
+            }
             logger.info("【EMAIL.sendContractInfoPass】toAddMailPool: teacher name = {}, email = {}",
                     teacher.getRealName(),teacher.getEmail(),CONTRACTINFO_PASS_TITLE, CONTRACTINFO_PASS_CONTENT);
             Map<String, String> emailMap = TemplateUtils.readTemplate(CONTRACTINFO_PASS_CONTENT, paramsMap, CONTRACTINFO_PASS_TITLE);
@@ -275,9 +295,12 @@ public class AuditEmailService {
                 }
             }
 
-            if (teacher.getRealName() != null)
+            if (teacher.getFirstName() != null){
+                paramsMap.put("teacherName", teacher.getFirstName());
+            }else if (teacher.getRealName() != null){
                 paramsMap.put("teacherName", teacher.getRealName());
-                paramsMap.put("failFiles", stringBuilder.toString());
+            }
+            paramsMap.put("failFiles", stringBuilder.toString());
             logger.info("【EMAIL.sendContractInfoReapply】toAddMailPool: teacher name = {}, email = {}", teacher.getRealName(),teacher.getEmail(),"ContractInfoReapply.html","ContractInfoReapply.html");
             Map<String, String> emailMap = TemplateUtils.readTemplate(CONTRACTINFO_REAPPLY_CONTENT, paramsMap, CONTRACTINFO_REAPPLY_TITLE);
             EmailEngine.addMailPool(teacher.getEmail(), emailMap, EmailConfig.EmailFormEnum.TEACHVIP);
