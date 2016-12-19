@@ -23,7 +23,7 @@
 			
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close">&times;</button>
-				<h4 class="modal-title"> <strong>Practicum Eval Report</strong> </h4>
+				<h4 class="modal-title"> <strong>Mock Class Eval Report</strong> </h4>
 			</div>
 			
 			<div id="upload" class="modal-body">
@@ -45,7 +45,7 @@
 						
 						##分数
 						<div class="line-row">
-							<div class="col-lg-7 col-width">Practicum eval report score:</div>
+							<div class="col-lg-7 col-width">Mock Class eval report score:</div>
 							<div class="col-lg-3 col-width">
 								<input id="onlineClassId" type="hidden" name="onlineClassId" value="$!onlineClass.id"/>
 								<input id="score" type="text" class="form-control" name="score" value="$!bean.score"/>
