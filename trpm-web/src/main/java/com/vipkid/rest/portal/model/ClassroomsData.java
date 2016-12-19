@@ -5,24 +5,23 @@ import java.util.Map;
 
 /*classrooms页面的接口返回的数据模型*/
 public class ClassroomsData {
-	private long teacherId;
+	private Long teacherId;
 	private String monthOfYear;
-	private int curPage;
-	private int totalPage;
+	private Integer curPage;
+	private Integer totalPage;
 	private List<Map<String, Object>> tagList;
 	private List<ClassroomDetail> dataList;
 	private List<Map<String, Object>> stateList;
-	
-	public long getTeacherId() {
+	public Long getTeacherId() {
 		return teacherId;
 	}
 	public String getMonthOfYear() {
 		return monthOfYear;
 	}
-	public int getCurPage() {
+	public Integer getCurPage() {
 		return curPage;
 	}
-	public int getTotalPage() {
+	public Integer getTotalPage() {
 		return totalPage;
 	}
 	public List<Map<String, Object>> getTagList() {
@@ -34,16 +33,16 @@ public class ClassroomsData {
 	public List<Map<String, Object>> getStateList() {
 		return stateList;
 	}
-	public void setTeacherId(long teacherId) {
+	public void setTeacherId(Long teacherId) {
 		this.teacherId = teacherId;
 	}
 	public void setMonthOfYear(String monthOfYear) {
 		this.monthOfYear = monthOfYear;
 	}
-	public void setCurPage(int curPage) {
+	public void setCurPage(Integer curPage) {
 		this.curPage = curPage;
 	}
-	public void setTotalPage(int totalPage) {
+	public void setTotalPage(Integer totalPage) {
 		this.totalPage = totalPage;
 	}
 	public void setTagList(List<Map<String, Object>> tagList) {

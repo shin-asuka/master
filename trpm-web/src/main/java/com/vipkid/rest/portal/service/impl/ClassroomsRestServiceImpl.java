@@ -186,6 +186,9 @@ public class ClassroomsRestServiceImpl implements ClassroomsRestService{
 		data.put("nextLessonSerialNum", nextLessonSerialNum);
 
 		Lesson lesson = lessonDao.findById(lessonId);
+		if(null == lesson){
+			return ApiResponseUtils.buildErrorResp(1001, "lessonId非法");
+		}
 
 		data.put("lessonId", lesson.getId());
 
@@ -265,6 +268,9 @@ public class ClassroomsRestServiceImpl implements ClassroomsRestService{
 			}
 			modelMap.put("totalPage", totalPage);
 
+			if (page < 0 || page > totalPage) {
+				page = 0;
+			}
 			if (page == 0) {
 				/* 如果page为默认值0，就设page为当前日期对应的page */
 				page = classroomsService.majorInPage(teacher, monthOfYear, linePerPage);//

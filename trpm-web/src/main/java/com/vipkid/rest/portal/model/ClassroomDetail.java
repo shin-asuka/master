@@ -2,28 +2,28 @@ package com.vipkid.rest.portal.model;
 
 /*classrooms页面的接口返回的每节课的数据模型*/
 public class ClassroomDetail{
-	private long studentId;
+	private Long studentId;
 	private String studentName;
-	private long lessonId;
+	private Long lessonId;
 	private String lessonName;
 	private String lessonSerialNumber;
-	private long teacherId;
-	private int shortNotice;
-	private long learningCycleId;
-	private long onlineClassId;
+	private Long teacherId;
+	private Integer shortNotice;
+	private Long learningCycleId;
+	private Long onlineClassId;
 	private String scheduledDateTime;
 	private String status;
-	private int isPaidTrail;
+	private Integer isPaidTrail;
 	private String finishType;
-	private int reportType;
-	private int reportStatus;
-	public long getStudentId() {
+	private Integer reportType;
+	private Integer reportStatus;
+	public Long getStudentId() {
 		return studentId;
 	}
 	public String getStudentName() {
 		return studentName;
 	}
-	public long getLessonId() {
+	public Long getLessonId() {
 		return lessonId;
 	}
 	public String getLessonName() {
@@ -32,16 +32,16 @@ public class ClassroomDetail{
 	public String getLessonSerialNumber() {
 		return lessonSerialNumber;
 	}
-	public long getTeacherId() {
+	public Long getTeacherId() {
 		return teacherId;
 	}
-	public int getShortNotice() {
+	public Integer getShortNotice() {
 		return shortNotice;
 	}
-	public long getLearningCycleId() {
+	public Long getLearningCycleId() {
 		return learningCycleId;
 	}
-	public long getOnlineClassId() {
+	public Long getOnlineClassId() {
 		return onlineClassId;
 	}
 	public String getScheduledDateTime() {
@@ -50,25 +50,25 @@ public class ClassroomDetail{
 	public String getStatus() {
 		return status;
 	}
-	public int getIsPaidTrail() {
+	public Integer getIsPaidTrail() {
 		return isPaidTrail;
 	}
 	public String getFinishType() {
 		return finishType;
 	}
-	public int getReportType() {
+	public Integer getReportType() {
 		return reportType;
 	}
-	public int getReportStatus() {
+	public Integer getReportStatus() {
 		return reportStatus;
 	}
-	public void setStudentId(long studentId) {
+	public void setStudentId(Long studentId) {
 		this.studentId = studentId;
 	}
 	public void setStudentName(String studentName) {
 		this.studentName = studentName;
 	}
-	public void setLessonId(long lessonId) {
+	public void setLessonId(Long lessonId) {
 		this.lessonId = lessonId;
 	}
 	public void setLessonName(String lessonName) {
@@ -77,16 +77,16 @@ public class ClassroomDetail{
 	public void setLessonSerialNumber(String lessonSerialNumber) {
 		this.lessonSerialNumber = lessonSerialNumber;
 	}
-	public void setTeacherId(long teacherId) {
+	public void setTeacherId(Long teacherId) {
 		this.teacherId = teacherId;
 	}
-	public void setShortNotice(int shortNotice) {
+	public void setShortNotice(Integer shortNotice) {
 		this.shortNotice = shortNotice;
 	}
-	public void setLearningCycleId(long learningCycleId) {
+	public void setLearningCycleId(Long learningCycleId) {
 		this.learningCycleId = learningCycleId;
 	}
-	public void setOnlineClassId(long onlineClassId) {
+	public void setOnlineClassId(Long onlineClassId) {
 		this.onlineClassId = onlineClassId;
 	}
 	public void setScheduledDateTime(String scheduledDateTime) {
@@ -95,16 +95,17 @@ public class ClassroomDetail{
 	public void setStatus(String status) {
 		this.status = status;
 	}
-	public void setIsPaidTrail(int isPaidTrail) {
+	public void setIsPaidTrail(Integer isPaidTrail) {
 		this.isPaidTrail = isPaidTrail;
 	}
 	public void setFinishType(String finishType) {
 		this.finishType = finishType;
 	}
-	public void setReportType(int reportType) {
+	public void setReportType(Integer reportType) {
 		this.reportType = reportType;
 	}
-	public void setReportStatus(int reportStatus) {
+	public void setReportStatus(Integer reportStatus) {
 		this.reportStatus = reportStatus;
 	}
+	
 }
