@@ -109,9 +109,11 @@ public class PracticumService {
 
 
     public Map<String,Object> getClassRoomUrl(long onlineClassId,Teacher teacher){
+    	
+    	Map<String,Object> result = Maps.newHashMap();
         
         if(teacher == null || teacher.getId() == 0 || StringUtils.isBlank(teacher.getRealName())){
-            return ReturnMapUtils.returnFail("This account does not exist.");
+            return ReturnMapUtils.returnFail("This account doesn't exist");
         }
         
         OnlineClass onlineClass = this.onlineClassDao.findById(onlineClassId);
@@ -121,27 +123,38 @@ public class PracticumService {
             return ReturnMapUtils.returnFail("The online class doesn't exist: "+onlineClassId);
         }
         
+        Lesson lesson = lessonDao.findById(onlineClass.getLessonId());
+        
+        if(lesson != null){
+        	result.put("lessonName",lesson.getName());
+        }
+        
         String logpix = "onlineclassId:"+onlineClassId+";teacherId:"+teacher.getId();
         
-        //判断教室是否创建好
-        if(StringUtils.isBlank(onlineClass.getClassroom())){
-            return ReturnMapUtils.returnFail("The classroom without creating",logpix);
-        }
         //课程必须是当前步骤中的数据
         List<TeacherApplication> listEntity = this.teacherApplicationDao.findCurrentApplication(teacher.getId());
+        
         if(CollectionUtils.isEmpty(listEntity)){
-            return ReturnMapUtils.returnFail("You cannot enter this classroom!",logpix);
+            result.putAll(ReturnMapUtils.returnFail("You cannot enter this classroom!",logpix));
+            return result;
         }
-        //进教室权限判断
+        
+        //进教室权限判断    
         if(listEntity.get(0).getOnlineClassId() != onlineClassId){
-            return ReturnMapUtils.returnFail("You cannot enter this classroom!",logpix);
+        	result.putAll(ReturnMapUtils.returnFail("You cannot enter this classroom!",logpix));
+            return result; 
         }
 
-        Map<String,Object> result = OnlineClassProxy.generateRoomEnterUrl(teacher.getId()+"", teacher.getRealName(),onlineClass.getClassroom(), OnlineClassProxy.RoomRole.TEACHER, onlineClass.getSupplierCode(),onlineClassId,OnlineClassProxy.ClassType.PRACTICUM);
+        //判断教室是否创建好
+        if(StringUtils.isBlank(onlineClass.getClassroom())){
+        	result.putAll(ReturnMapUtils.returnFail("The classroom without creating",logpix));
+        	return result;
+        }
 
-        Lesson lesson = lessonDao.findById(onlineClass.getLessonId());
+        result = OnlineClassProxy.generateRoomEnterUrl(teacher.getId()+"", teacher.getRealName(),onlineClass.getClassroom(), OnlineClassProxy.RoomRole.TEACHER, onlineClass.getSupplierCode(),onlineClassId,OnlineClassProxy.ClassType.PRACTICUM);
+        
         result.put("lessonName",lesson.getName());
-
+        
         return result;
     }
 
