@@ -153,7 +153,9 @@ public class PracticumService {
 
         result = OnlineClassProxy.generateRoomEnterUrl(teacher.getId()+"", teacher.getRealName(),onlineClass.getClassroom(), OnlineClassProxy.RoomRole.TEACHER, onlineClass.getSupplierCode(),onlineClassId,OnlineClassProxy.ClassType.PRACTICUM);
         
-        result.put("lessonName",lesson.getName());
+        if(lesson != null){
+        	result.put("lessonName",lesson.getName());
+        }
         
         return result;
     }
