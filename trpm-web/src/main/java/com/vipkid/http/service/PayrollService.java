@@ -16,27 +16,29 @@ public class PayrollService extends HttpBaseService {
 	private static final Logger logger = LoggerFactory.getLogger(PayrollService.class);
 
 	public JSONObject getPayrollItemByTeacherAndMonth(Integer teacherId, Integer month) {
-		 Map<String, String> params = Maps.newHashMap();
-	     params.put("teacherId", new Integer(teacherId).toString());
-	     params.put("month", new Integer(month).toString());
-	  
-		String url = new StringBuilder(super.serverAddress).append("/rest/payroll/public/payroll/getPayrollItemByTeacherAndMonth").toString();
+		Map<String, String> params = Maps.newHashMap();
+		params.put("teacherId", new Integer(teacherId).toString());
+		params.put("month", new Integer(month).toString());
+
+		String url = new StringBuilder(super.serverAddress).append(
+				"/rest/payroll/public/payroll/getPayrollItemByTeacherAndMonth").toString();
 		logger.info("request 请求payroll service , uri={} ,teacherId={}", url, teacherId);
-		JSONObject jsonObject = null ;
-		jsonObject = getResult(params, url);
+		JSONObject jsonObject = null;
+		jsonObject = getResult(params, url, teacherId);
 		return jsonObject;
 	}
 
 
 
 	public JSONObject findRuleByTeacherMonth(Integer teacherId, int month) {
-		String url = new StringBuilder(super.serverAddress).append("/rest/payroll/public/payroll/findRuleByTeacherIdMonth").toString();
+		String url = new StringBuilder(super.serverAddress).append(
+				"/rest/payroll/public/payroll/findRuleByTeacherIdMonth").toString();
 		logger.info("request 请求payroll service , uri={} ,teacherId={}", url, teacherId);
-		JSONObject jsonObject = null ;
-		 Map<String, String> params = Maps.newHashMap();
-	     params.put("teacherId", new Integer(teacherId).toString());
-	     params.put("month", new Integer(month).toString());
-		jsonObject = getResult(params, url);
+		JSONObject jsonObject = null;
+		Map<String, String> params = Maps.newHashMap();
+		params.put("teacherId", new Integer(teacherId).toString());
+		params.put("month", new Integer(month).toString());
+		jsonObject = getResult(params, url, teacherId);
 		return jsonObject;
 	}
 
@@ -63,7 +65,7 @@ public class PayrollService extends HttpBaseService {
 		return resultString;
 	}
 	
-	private JSONObject getResult(Map<String, String> params, String url) {
+	private JSONObject getResult(Map<String, String> params, String url,int teacherId) {
 		JSONObject jsonObject = null;
 		try {
 			HttpResult result = WebUtils.post(url, params);
@@ -71,7 +73,7 @@ public class PayrollService extends HttpBaseService {
 				jsonObject = JSONObject.parseObject(result.getResponse().toString());
 			}
 		} catch (Exception e) {			
-			logger.error("request 请求payroll service异常 , uri={} ,e={}", url, e);
+			logger.error("request 请求payroll service异常 , uri={},teacherId={},e={}", url,teacherId, e);
 		}
 		return jsonObject;
 	}
