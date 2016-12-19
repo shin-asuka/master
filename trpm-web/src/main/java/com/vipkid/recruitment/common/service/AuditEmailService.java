@@ -58,6 +58,9 @@ public class AuditEmailService {
     private static String PRACTICUM_PASS_TITLE = "PracticumPassTitle.html";
     private static String PRACTICUM_PASS_CONTENT = "PracticumPass.html";
 
+    private static String PRACTICUM_PASS_4_OLD_PROCESS_TITLE = "PracticumPass4OldProcessTitle.html";
+    private static String PRACTICUM_PASS_CONTENT_4_OLD_PROCESS = "PracticumPass4OldProcess.html";
+
     private static String PRACTICUM2_START_TITLE = "Practicum2StartTitle.html";
     private static String PRACTICUM2_START_CONTENT = "Practicum2Start.html";
 
@@ -113,12 +116,24 @@ public class AuditEmailService {
             }else if (teacher.getRealName() != null){
                 paramsMap.put("teacherName", teacher.getRealName());
             }
-            logger.info("【EMAIL.sendPracticumPass】toAddMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",
-                    teacher.getRealName(),teacher.getEmail(), PRACTICUM_PASS_TITLE, PRACTICUM_PASS_CONTENT);
-            Map<String, String> emailMap = TemplateUtils.readTemplate(PRACTICUM_PASS_CONTENT, paramsMap, PRACTICUM_PASS_TITLE);
-            EmailEngine.addMailPool(teacher.getEmail(), emailMap, EmailConfig.EmailFormEnum.TEACHVIP);
-            logger.info("【EMAIL.sendPracticumPass】addedMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",
-                    teacher.getRealName(),teacher.getEmail(), PRACTICUM_PASS_TITLE, PRACTICUM_PASS_CONTENT);
+
+            List<TeacherApplication> list = teacherApplicationDao.findApplictionForStatusResult(teacher.getId(), TeacherApplicationEnum.Status.SIGN_CONTRACT.toString(), TeacherApplicationEnum.Result.PASS.toString());
+            if(CollectionUtils.isNotEmpty(list)){
+                logger.info("【EMAIL.sendPracticumPass4OldProcess】toAddMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",
+                        teacher.getRealName(),teacher.getEmail(), PRACTICUM_PASS_4_OLD_PROCESS_TITLE, PRACTICUM_PASS_CONTENT_4_OLD_PROCESS);
+                Map<String, String> emailMap = TemplateUtils.readTemplate(PRACTICUM_PASS_CONTENT_4_OLD_PROCESS, paramsMap, PRACTICUM_PASS_4_OLD_PROCESS_TITLE);
+                EmailEngine.addMailPool(teacher.getEmail(), emailMap, EmailConfig.EmailFormEnum.TEACHVIP);
+                logger.info("【EMAIL.sendPracticumPass4OldProcess】addedMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",
+                        teacher.getRealName(),teacher.getEmail(), PRACTICUM_PASS_4_OLD_PROCESS_TITLE, PRACTICUM_PASS_CONTENT_4_OLD_PROCESS);
+            } else {
+                logger.info("【EMAIL.sendPracticumPass】toAddMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",
+                        teacher.getRealName(),teacher.getEmail(), PRACTICUM_PASS_TITLE, PRACTICUM_PASS_CONTENT);
+                Map<String, String> emailMap = TemplateUtils.readTemplate(PRACTICUM_PASS_CONTENT, paramsMap, PRACTICUM_PASS_TITLE);
+                EmailEngine.addMailPool(teacher.getEmail(), emailMap, EmailConfig.EmailFormEnum.TEACHVIP);
+                logger.info("【EMAIL.sendPracticumPass】addedMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",
+                        teacher.getRealName(),teacher.getEmail(), PRACTICUM_PASS_TITLE, PRACTICUM_PASS_CONTENT);
+            }
+
             return ReturnMapUtils.returnSuccess();
         } catch (Exception e) {
             logger.error("【EMAIL.sendPracticumPass】ERROR: {}", e);
