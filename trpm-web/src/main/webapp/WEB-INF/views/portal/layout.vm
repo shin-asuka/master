@@ -341,7 +341,7 @@
                     </li>
                 #end
                 <li class="$!{activePayrollInfo}">
-                    <a href="#springUrl('/payment')">Payment</a>
+                    <a href="#springUrl('/api/portal/payment')">Payment</a>
                 </li>
                 <li class="it-test">
                     <img src="#springUrl('/resources/images/nav/test-computer-icon.png')">
