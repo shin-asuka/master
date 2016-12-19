@@ -67,7 +67,7 @@ public class AwsFileUtils {
 	public static final Long LIFE_PICTURE_MAX_SIZE = 20*1024*1024L; //20M
 	public static final String LIFE_PICTURE_FILE_TYPE = "pdf,jpg,jpeg,png,bmp";
 
-	public static final Long SHORT_VIDEO_MIN_SIZE = 2*1024*1024L; //3M
+	public static final Long SHORT_VIDEO_MIN_SIZE = 0*1024*1024L; //0M
 	public static final Long SHORT_VIDEO_MAX_SIZE = 100*1024*1024L; //100M
 	public static final String SHORT_VIDEO_FILE_TYPE = "mp4,mov,avi,rmvb";
 
