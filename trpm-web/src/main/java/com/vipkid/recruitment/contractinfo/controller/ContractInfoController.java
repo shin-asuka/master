@@ -454,7 +454,12 @@ public class ContractInfoController extends RestfulController {
 
                 if (fileVo != null) {
                     FileUploadStatus fileUploadStatus = fileHttpService.uploadShortVideo(teacherId, key);
-                    result.put("url", fileUploadStatus.getUrl()); //video don't have the url at this time
+                    String awsUrl = fileVo.getUrl();
+                    String url = fileUploadStatus.getUrl();//video don't have the url at this time
+                    if(StringUtils.isBlank(url)) {
+                        url = awsUrl;
+                    }
+                    result.put("url", url);
                     result.put("status", fileUploadStatus.getStatus());
                     logger.info("Successful to uploadVideo: {} for {}.", JsonUtils.toJSONString(result), teacherId);
                     return ReturnMapUtils.returnSuccess(result);
