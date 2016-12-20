@@ -795,17 +795,45 @@ public class ReportService {
      */
     public StudentExam handleExamLevel(StudentExam studentExam, String serialNum) {
         logger.info("ReportController: handleExamLevel() 参数为：serialNum={}, studentExam={}", serialNum, JSON.toJSONString(studentExam));
-
         // studentExam 不为空则进行替换逻辑
         if (studentExam != null) {
             // ExamLevel 不为空则进行替换逻辑
             if (studentExam.getExamLevel() != null) {
                 String lowerCase = studentExam.getExamLevel().toLowerCase();
+                String examLevel = "No Computer Test result.";
                 if ("l1u0".equals(lowerCase)) {
-                    studentExam.setExamLevel("Level Test result is Level 0 Unit 0");
+                    studentExam.setExamLevel("Computer Test result  is Level 0 Unit 0");
                 } else if (lowerCase.startsWith("l")) {
-                    studentExam.setExamLevel("Level Test result is " + lowerCase.replaceAll("l", "Level ").replaceAll("u", " Unit "));
+                    examLevel= "Computer Test result is " + lowerCase.replaceAll("l", "Level ").replaceAll("u", " Unit ");
+                }else if(lowerCase.equals("l1u1")){
+                    examLevel = "Computer Test result is L1U1(PreVIP)";
                 }
+                if (serialNum != null) {
+                    switch (serialNum) {
+                        case ApplicationConstant.TrailLessonConstants.L0:
+                            if(StringUtils.equals(examLevel,"No Computer Test result.")){
+                                examLevel = examLevel +"Please use the PreVIP courseware.";
+                            }else{
+                                examLevel = "Please ignore the Computer Test result and use the PreVIP courseware.";
+                            }
+
+                        case ApplicationConstant.TrailLessonConstants.L1:
+                            examLevel = examLevel + " Please use the Level 2 Unit 01 courseware.";
+                            break;
+                        case ApplicationConstant.TrailLessonConstants.L2:
+                            examLevel = examLevel + "Please use the use Level 2 Unit 04 courseware.";
+                            break;
+                        case ApplicationConstant.TrailLessonConstants.L3:
+                            examLevel = examLevel + "Please use the Level 3 Unit 01 courseware.";
+                            break;
+                        case ApplicationConstant.TrailLessonConstants.L4:
+                            examLevel = examLevel + "Please use the Level 4 Unit 01 courseware.";
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                studentExam.setExamLevel(examLevel);
             }
         } else {
             // studentExam 为空则返回空对象
@@ -813,17 +841,20 @@ public class ReportService {
             // ExamLevel 为空则根据Lession的SerialNum进行处理
             if (serialNum != null) {
                 switch (serialNum) {
-                    case "T1-U1-LC1-L1":
-                        studentExam.setExamLevel("No Computer Test result, use Level 2 Unit 01");
+                    case ApplicationConstant.TrailLessonConstants.L0:
+                        studentExam.setExamLevel("No Computer Test result. Please use the PreVIP courseware.");
                         break;
-                    case "T1-U1-LC1-L2":
-                        studentExam.setExamLevel("No Computer Test result, use Level 2 Unit 04");
+                    case ApplicationConstant.TrailLessonConstants.L1:
+                        studentExam.setExamLevel("No Computer Test result. Please use the Level2 Unit1 courseware.");
                         break;
-                    case "T1-U1-LC1-L3":
-                        studentExam.setExamLevel("No Computer Test result, use Level 3 Unit 01");
+                    case ApplicationConstant.TrailLessonConstants.L2:
+                        studentExam.setExamLevel("No Computer Test result. Please use the Level2 Unit4 courseware.");
                         break;
-                    case "T1-U1-LC1-L4":
-                        studentExam.setExamLevel("No Computer Test result, use Level 4 Unit 01");
+                    case ApplicationConstant.TrailLessonConstants.L3:
+                        studentExam.setExamLevel("No Computer Test result. Please use the Level3 Unit1 courseware.");
+                        break;
+                    case ApplicationConstant.TrailLessonConstants.L4:
+                        studentExam.setExamLevel("No Computer Test result. Please use the Level4 Unit1 courseware.");
                         break;
                     default:
                         break;
