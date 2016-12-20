@@ -48,7 +48,7 @@ public class TeacherPortalPersonalInfoRestController {
 		return ApiResponseUtils.buildErrorResp(1002, "抛异常");
 	}
 	
-	@RequestMapping(value = "restChangPassword", method = RequestMethod.POST)
+	@RequestMapping(value = "restChangePassword", method = RequestMethod.POST)
 	public Map<String, Object> restChangPassword( HttpServletRequest request,HttpServletResponse response,
 			@RequestParam(value = "teacherId", required = true) long teacherId,
 			@RequestParam(value = "currentPassword", required = true) String currentPassword,
@@ -64,6 +64,24 @@ public class TeacherPortalPersonalInfoRestController {
 			return result;
 		} catch (Exception e) {
 			logger.error("调用restChangPassword接口抛异常。传入参数：teacherId = {}，currentPassword = 缺省， newPassword = 缺省。异常 = {}。", teacherId, e);
+		}
+		return ApiResponseUtils.buildErrorResp(1002, "抛异常");
+	}
+	
+	@RequestMapping(value = "restTaxpayer", method = RequestMethod.GET)
+	public Map<String, Object> restChangPassword( HttpServletRequest request,HttpServletResponse response,
+			@RequestParam(value = "teacherId", required = true) long teacherId){
+		try {
+			Stopwatch stopwatch = Stopwatch.createStarted();
+			logger.info("开始调用restTaxpayer接口。传入参数：teacherId = {}", teacherId);
+			
+			Map<String, Object> result = personalInfoRestService.getTaxpayerData(teacherId);
+			
+			long millis =stopwatch.stop().elapsed(TimeUnit.MILLISECONDS);
+			logger.info("结束调用restTaxpayer接口。传入参数：teacherId = {}。返回json = {}。用时{}ms", teacherId, JsonUtils.toJSONString(result), millis);
+			return result;
+		} catch (Exception e) {
+			logger.error("调用restTaxpayer接口抛异常。传入参数：teacherId = {}。异常 = {}。", teacherId, e);
 		}
 		return ApiResponseUtils.buildErrorResp(1002, "抛异常");
 	}

@@ -23,10 +23,13 @@ import com.vipkid.trpm.constant.ApplicationConstant.CookieKey;
 import com.vipkid.trpm.dao.TeacherDao;
 import com.vipkid.trpm.dao.UserDao;
 import com.vipkid.trpm.entity.Teacher;
+import com.vipkid.trpm.entity.TeacherTaxpayerForm;
 import com.vipkid.trpm.entity.User;
+import com.vipkid.trpm.entity.personal.TaxpayerView;
 import com.vipkid.trpm.security.SHA256PasswordEncoder;
 import com.vipkid.trpm.service.passport.RemberService;
 import com.vipkid.trpm.service.portal.PersonalInfoService;
+import com.vipkid.trpm.service.portal.TeacherTaxpayerFormService;
 import com.vipkid.trpm.service.rest.LoginService;
 import com.vipkid.trpm.util.CookieUtils;
 @Service
@@ -54,13 +57,16 @@ public class PersonalInfoRestServiceImpl implements PersonalInfoRestService {
 	@Autowired
 	private RemberService remberService;
 	
+	@Autowired
+	private TeacherTaxpayerFormService teacherTaxpayerFormService;
+	
 	public Map<String, Object> getTeachingInfoData(long teacherId){
 //		Teacher teacher = loginService.getTeacher();
 //		if(teacherId != teacher.getId()){
 //			return ApiResponseUtils.buildErrorResp(1001, "教师id非法");
 //		}
 		Teacher teacher = teacherDao.findById(teacherId);
-		User user = userDao.findById(teacherId);
+		User user = userDao.findById(teacherId);//测试代码
 		if(null == teacher || null == user){
 			return ApiResponseUtils.buildErrorResp(1001, "教师id非法");
 		}
@@ -96,7 +102,7 @@ public class PersonalInfoRestServiceImpl implements PersonalInfoRestService {
 //			return ApiResponseUtils.buildErrorResp(1001, "教师id非法");
 //		}
 		User user = userDao.findById(teacherId);
-		Teacher teacher = teacherDao.findById(teacherId);
+		Teacher teacher = teacherDao.findById(teacherId);//测试代码
 		
 		if(null == user || null == teacher){
 			return ApiResponseUtils.buildErrorResp(1001, "教师id非法");
@@ -107,16 +113,20 @@ public class PersonalInfoRestServiceImpl implements PersonalInfoRestService {
 			logger.warn("老师越过前端限制修改密码，输入非法的密码格式。teacherId = {}, newPassword = {}", teacherId, newPassword);
 			return ApiResponseUtils.buildErrorResp(1001, "非法请求，密码格式不对");
 		}
+		//检查新旧密码是否相同
+		if(newPassword.equals(currentPassword)){
+			return ApiResponseUtils.buildErrorResp(1001, "非法请求，新密码与旧密码相同");
+		}
 		
 		Map<String, Object> data = Maps.newHashMap();
 		
 		 // 验证用户密码
-        String encodedPassword = mSHA256PasswordEncoder.encode(currentPassword);
+		String encodedPassword = null;
+		if(null != currentPassword){
+			encodedPassword = mSHA256PasswordEncoder.encode(currentPassword);
+		}
         
-		boolean a = false;
-		a = encodedPassword.equals(user.getPassword());
-       
-        if (!a) {
+        if (encodedPassword == null || !encodedPassword.equals(user.getPassword())){
         	data.put("isSuccess", false);
         	data.put("errCode", 1);
             return ApiResponseUtils.buildSuccessDataResp(data);//原密码输入错误
@@ -135,7 +145,29 @@ public class PersonalInfoRestServiceImpl implements PersonalInfoRestService {
         	logger.error("教师修改密码失败。teacherId = {}, newPassword = {}", teacherId, newPassword);
         	return ApiResponseUtils.buildErrorResp(1001, "服务器端错误，导致教师修改密码错误");
         }
-        
+	}
+	
+	public Map<String, Object> getTaxpayerData(long teacherId){
+		//Teacher teacher = loginService.getTeacher();
+		Teacher teacher = teacherDao.findById(teacherId);//测试代码
+		if(null == teacher){
+			return ApiResponseUtils.buildErrorResp(1001, "null == teacher");
+		}
+		if(teacher.getId() != teacherId){
+			return ApiResponseUtils.buildErrorResp(1001, "非法teacherId");
+		}
 		
+		Map<String, Object> data = null;
+ 		TaxpayerView taxpayerView = teacherTaxpayerFormService.getTeacherTaxpayerView(teacherId);
+		
+		if(null != taxpayerView){
+			TeacherTaxpayerForm teacherTaxpayerFormW9 = taxpayerView.getFormW9();
+			if(null != teacherTaxpayerFormW9){
+				data = Maps.newHashMap();
+				data.put("fileName", teacherTaxpayerFormW9.getFileName());
+				data.put("url", teacherTaxpayerFormW9.getUrl());
+			}
+		}
+		return ApiResponseUtils.buildSuccessDataResp(data);
 	}
 }
