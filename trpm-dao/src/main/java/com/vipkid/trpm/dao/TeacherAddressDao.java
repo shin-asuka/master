@@ -34,6 +34,9 @@ public class TeacherAddressDao extends MapperDaoTemplate<TeacherAddress> {
         TeacherAddress teacherAddress = new TeacherAddress();
         if (teacher.getCurrentAddressId() > 0) {
             teacherAddress = this.findById(teacher.getCurrentAddressId());
+            if(teacherAddress != null){
+            	teacherAddress = new TeacherAddress();
+            }
         }
         teacherAddress.setTeacherId(teacher.getId());
         teacherAddress.setCountryId(countryId);
