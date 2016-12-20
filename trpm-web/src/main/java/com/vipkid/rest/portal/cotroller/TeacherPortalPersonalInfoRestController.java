@@ -3,6 +3,9 @@ package com.vipkid.rest.portal.cotroller;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +18,9 @@ import com.google.common.base.Stopwatch;
 import com.vipkid.http.utils.JsonUtils;
 import com.vipkid.rest.portal.service.PersonalInfoRestService;
 import com.vipkid.rest.utils.ApiResponseUtils;
+import com.vipkid.trpm.constant.ApplicationConstant.CookieKey;
+import com.vipkid.trpm.service.passport.RemberService;
+import com.vipkid.trpm.util.CookieUtils;
 
 @RestController
 //@RestInterface( lifeCycle = "REGULAR")
@@ -23,7 +29,7 @@ public class TeacherPortalPersonalInfoRestController {
 	
 	@Autowired
 	private PersonalInfoRestService personalInfoRestService;
-
+	
 	@RequestMapping(value = "restTeachingInfo", method = RequestMethod.GET)
 	public Map<String, Object> restTeachingInfo(
 			@RequestParam(value = "teacherId", required = true) long teacherId){
@@ -43,7 +49,7 @@ public class TeacherPortalPersonalInfoRestController {
 	}
 	
 	@RequestMapping(value = "restChangPassword", method = RequestMethod.POST)
-	public Map<String, Object> restChangPassword(
+	public Map<String, Object> restChangPassword( HttpServletRequest request,HttpServletResponse response,
 			@RequestParam(value = "teacherId", required = true) long teacherId,
 			@RequestParam(value = "currentPassword", required = true) String currentPassword,
 			@RequestParam(value = "newPassword", required = true) String newPassword){
@@ -51,7 +57,7 @@ public class TeacherPortalPersonalInfoRestController {
 			Stopwatch stopwatch = Stopwatch.createStarted();
 			logger.info("开始调用restChangPassword接口。传入参数：teacherId = {}，currentPassword = 缺省， newPassword = 缺省", teacherId);
 			
-			Map<String, Object> result = personalInfoRestService.changePassword(teacherId, currentPassword, newPassword);
+			Map<String, Object> result = personalInfoRestService.changePassword(teacherId, currentPassword, newPassword, request, response);
 			
 			long millis =stopwatch.stop().elapsed(TimeUnit.MILLISECONDS);
 			logger.info("结束调用restChangPassword接口。传入参数：teacherId = {}，currentPassword = 缺省， newPassword = 缺省。返回json = {}。用时{}ms", teacherId, JsonUtils.toJSONString(result), millis);
