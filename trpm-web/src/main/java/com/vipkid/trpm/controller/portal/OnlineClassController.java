@@ -140,7 +140,7 @@ public class OnlineClassController extends AbstractPortalController {
         }
         model.addAttribute("isTrial", isTrial);
         logger.info("TeacherId:{},成功进入教室(INTO),onlineClassId:{},studentId:{}",user.getId(),onlineClassId,studentId);
-        onlineclassService.checkAndAddFeedback(studentId,teacher.getId(),onlineClass,lesson);
+
         model.addAttribute("lesson", lesson);
         if (lesson.getSerialNumber().startsWith("P")) {
             model.addAllAttributes(
@@ -155,6 +155,8 @@ public class OnlineClassController extends AbstractPortalController {
             if ("feedback".equals(request.getParameter("from"))) {
                 model.addAttribute("from", "feedback");
             }
+            //只有在Major课老师进教室时，才创建TeacherComment
+            onlineclassService.checkAndAddFeedback(studentId,teacher.getId(),onlineClass,lesson);
             model.addAllAttributes(
                     onlineclassService.enterMajor(onlineClass, studentId, teacher, lesson));
             return view("online_class_major");
