@@ -1,30 +1,5 @@
 package com.vipkid.recruitment.contractinfo.controller;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.community.config.PropertyConfigurer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
-
 import com.google.api.client.util.Maps;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
@@ -36,6 +11,7 @@ import com.vipkid.file.model.FileVo;
 import com.vipkid.file.service.AwsFileService;
 import com.vipkid.http.service.FileHttpService;
 import com.vipkid.http.utils.JsonUtils;
+import com.vipkid.http.vo.TeacherFile;
 import com.vipkid.recruitment.common.service.RecruitmentService;
 import com.vipkid.recruitment.contractinfo.service.ContractInfoService;
 import com.vipkid.recruitment.entity.TeacherApplication;
@@ -49,6 +25,20 @@ import com.vipkid.trpm.entity.TeacherTaxpayerForm;
 import com.vipkid.trpm.entity.TeacherTaxpayerFormDetail;
 import com.vipkid.trpm.service.portal.TeacherTaxpayerFormService;
 import com.vipkid.trpm.util.AwsFileUtils;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.community.config.PropertyConfigurer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.*;
 
 /**
  * ContractInfo -> Regular
@@ -97,11 +87,11 @@ public class ContractInfoController extends RestfulController {
             Long teacherId = teacher.getId();
 
             //1. 获取老师上传的 person info,  是否有 audit failReason
-            Map<String, Object> teacherFiles = fileHttpService.queryTeacherFiles(teacherId);
-            String avatarUrl = (String) teacherFiles.get("avatarUrl");
-            List<AppLifePicture> lifePictures = (List<AppLifePicture>) teacherFiles.get("lifePictures");
-            String shortVideoUrl = (String) teacherFiles.get("shortVideo");
-            Integer shortVideoStatus = (Integer) teacherFiles.get("shortVideoStatus");
+            TeacherFile teacherFiles = fileHttpService.queryTeacherFiles(teacherId);
+            String avatarUrl = teacherFiles.getAvatar();
+            List<AppLifePicture> lifePictures = teacherFiles.getLifePictures();
+            String shortVideoUrl = teacherFiles.getShortVideo().getUrl();
+            Integer shortVideoStatus = teacherFiles.getShortVideo().getStatus();
 
             FileUploadStatus fileUploadStatus = new FileUploadStatus();
             if (shortVideoStatus != null && shortVideoUrl != null) {
@@ -271,11 +261,11 @@ public class ContractInfoController extends RestfulController {
      */
     private boolean checkPersonInfo(Long teacherId) {
         logger.info("Check if teacher {} has uploaded the avatar, life pictures and video", teacherId);
-        Map<String, Object> teacherFiles = fileHttpService.queryTeacherFiles(teacherId);
-        String avatarUrl = (String) teacherFiles.get("avatarUrl");
-        List<AppLifePicture> lifePictures = (List<AppLifePicture>) teacherFiles.get("lifePictures");
-        String shortVideoUrl = (String) teacherFiles.get("shortVideo");
-        Integer shortVideoStatus = (Integer) teacherFiles.get("shortVideoStatus");
+        TeacherFile teacherFiles = fileHttpService.queryTeacherFiles(teacherId);
+        String avatarUrl = teacherFiles.getAvatar();
+        List<AppLifePicture> lifePictures = teacherFiles.getLifePictures();
+        String shortVideoUrl = teacherFiles.getShortVideo().getUrl();
+        Integer shortVideoStatus = teacherFiles.getShortVideo().getStatus();
 
         if (StringUtils.isEmpty(avatarUrl)) {
             logger.warn("{}'s Avatar has not been uploaded successfully!", teacherId);

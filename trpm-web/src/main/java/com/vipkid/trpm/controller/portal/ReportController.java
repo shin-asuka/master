@@ -1,19 +1,17 @@
 package com.vipkid.trpm.controller.portal;
 
-import java.sql.Timestamp;
-import java.util.Map;
-import java.util.Objects;
-import java.util.TimeZone;
-import java.util.concurrent.TimeUnit;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import com.alibaba.fastjson.JSON;
 import com.google.common.base.Stopwatch;
+import com.google.common.collect.Maps;
+import com.vipkid.enums.OnlineClassEnum;
+import com.vipkid.rest.service.LoginService;
+import com.vipkid.trpm.dao.StudentExamDao;
+import com.vipkid.trpm.entity.*;
 import com.vipkid.trpm.entity.teachercomment.TeacherComment;
 import com.vipkid.trpm.entity.teachercomment.TeacherCommentResult;
+import com.vipkid.trpm.service.portal.ReportService;
 import com.vipkid.trpm.service.portal.TeacherService;
+import com.vipkid.trpm.util.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -23,18 +21,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
-import com.google.common.collect.Maps;
-import com.vipkid.enums.OnlineClassEnum;
-import com.vipkid.trpm.dao.StudentExamDao;
-import com.vipkid.trpm.entity.AssessmentReport;
-import com.vipkid.trpm.entity.DemoReport;
-import com.vipkid.trpm.entity.Lesson;
-import com.vipkid.trpm.entity.OnlineClass;
-import com.vipkid.trpm.entity.StudentExam;
-import com.vipkid.trpm.service.passport.IndexService;
-import com.vipkid.trpm.service.portal.ReportService;
-import com.vipkid.trpm.service.rest.LoginService;
-import com.vipkid.trpm.util.DateUtils;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.sql.Timestamp;
+import java.util.Map;
+import java.util.Objects;
+import java.util.TimeZone;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 1.主要负责UAReport、DemoReport、FeebBack等模块的参数接收和页面跳转<br>
@@ -51,9 +44,6 @@ public class ReportController extends AbstractPortalController {
 
     @Autowired
     private ReportService reportService;
-
-    @Autowired
-    private IndexService indexService;
 
     @Autowired
     private StudentExamDao studentExamDao;
@@ -383,7 +373,7 @@ public class ReportController extends AbstractPortalController {
         OnlineClass onlineClass = reportService.findOnlineClassById(Long.valueOf(onlineClassId));
         model.addAttribute("onlineClass", onlineClass);
         if (onlineClass.getScheduledDateTime().before(new Timestamp(System.currentTimeMillis()))
-                && !OnlineClassEnum.Status.INVALID.toString().equals(onlineClass.getStatus())) {
+                && !OnlineClassEnum.ClassStatus.INVALID.toString().equals(onlineClass.getStatus())) {
             model.addAttribute("mark", onlineClass.getScheduledDateTime());
         }
 

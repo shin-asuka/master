@@ -1,28 +1,28 @@
 package com.vipkid.trpm.service.portal;
 
-import static com.google.common.base.Preconditions.checkArgument;
-
-import java.nio.charset.StandardCharsets;
-import java.sql.Array;
-import java.sql.Timestamp;
-import java.util.*;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
-import java.util.stream.Collectors;
-
 import com.alibaba.fastjson.JSON;
-import com.sun.org.apache.xpath.internal.operations.Bool;
-import com.vipkid.email.EmailEngine;
-import com.vipkid.email.handle.EmailConfig;
-import com.vipkid.email.templete.TempleteUtils;
+import com.google.common.collect.Maps;
+import com.vipkid.mq.message.FinishOnlineClassMessage.OperatorType;
+import com.vipkid.mq.service.PayrollMessageService;
 import com.vipkid.rest.security.AppContext;
+import com.vipkid.rest.service.LoginService;
+import com.vipkid.trpm.constant.ApplicationConstant;
+import com.vipkid.trpm.constant.ApplicationConstant.MediaType;
+import com.vipkid.trpm.constant.ApplicationConstant.ReportLifeCycle;
+import com.vipkid.trpm.constant.ApplicationConstant.UaReportStatus;
 import com.vipkid.trpm.dao.*;
 import com.vipkid.trpm.entity.*;
+import com.vipkid.trpm.entity.media.UploadResult;
+import com.vipkid.trpm.entity.report.DemoReports;
+import com.vipkid.trpm.entity.report.ReportLevels;
 import com.vipkid.trpm.entity.teachercomment.TeacherComment;
 import com.vipkid.trpm.entity.teachercomment.TeacherCommentResult;
 import com.vipkid.trpm.entity.teachercomment.TeacherCommentUpdateDto;
-import com.vipkid.trpm.service.rest.LoginService;
-import org.apache.commons.collections.CollectionUtils;
+import com.vipkid.trpm.service.media.AbstarctMediaService;
+import com.vipkid.trpm.util.DateUtils;
+import com.vipkid.trpm.util.FilesUtils;
+import com.vipkid.trpm.util.IpUtils;
+import com.vipkid.trpm.util.LessonSerialNumber;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.community.tools.JsonTools;
@@ -33,22 +33,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.google.common.collect.Maps;
-import com.vipkid.mq.message.FinishOnlineClassMessage.OperatorType;
-import com.vipkid.mq.service.PayrollMessageService;
-import com.vipkid.trpm.constant.ApplicationConstant;
-import com.vipkid.trpm.constant.ApplicationConstant.MediaType;
-import com.vipkid.trpm.constant.ApplicationConstant.ReportLifeCycle;
-import com.vipkid.trpm.constant.ApplicationConstant.UaReportStatus;
-import com.vipkid.trpm.entity.media.UploadResult;
-import com.vipkid.trpm.entity.report.DemoReports;
-import com.vipkid.trpm.entity.report.ReportLevels;
-import com.vipkid.trpm.service.media.AbstarctMediaService;
-import com.vipkid.trpm.util.DateUtils;
-import com.vipkid.trpm.util.FilesUtils;
-import com.vipkid.trpm.util.IpUtils;
-import com.vipkid.trpm.util.LessonSerialNumber;
-import com.vipkid.trpm.weixin.MessageTools;
+import java.nio.charset.StandardCharsets;
+import java.sql.Timestamp;
+import java.util.Date;
+import java.util.Map;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+
+import static com.google.common.base.Preconditions.checkArgument;
 
 /**
  * 1.主要负责UAReport、DemoReport、FeebBack等模块的查询和保存、以及UAReport的文件上传<br/>

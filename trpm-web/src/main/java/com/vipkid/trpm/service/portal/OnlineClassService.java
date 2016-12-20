@@ -5,20 +5,32 @@ import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.vipkid.enums.OnlineClassEnum.ClassStatus;
+import com.vipkid.enums.TeacherApplicationEnum;
+import com.vipkid.enums.TeacherApplicationEnum.Result;
+import com.vipkid.enums.TeacherApplicationEnum.Status;
+import com.vipkid.enums.TeacherEnum.LifeCycle;
+import com.vipkid.enums.TeacherLockLogEnum.Reason;
+import com.vipkid.enums.TeacherModuleEnum.RoleClass;
+import com.vipkid.enums.UserEnum;
 import com.vipkid.http.service.AssessmentHttpService;
 import com.vipkid.http.vo.OnlineClassVo;
 import com.vipkid.http.vo.StudentUnitAssessment;
+import com.vipkid.recruitment.common.service.RecruitmentService;
 import com.vipkid.recruitment.dao.TeacherApplicationDao;
+import com.vipkid.recruitment.dao.TeacherLockLogDao;
 import com.vipkid.recruitment.entity.TeacherApplication;
-import com.vipkid.rest.config.RestfulConfig.RoleClass;
+import com.vipkid.recruitment.entity.TeacherLockLog;
+import com.vipkid.recruitment.event.AuditEvent;
+import com.vipkid.recruitment.event.AuditEventHandler;
 import com.vipkid.trpm.constant.ApplicationConstant;
-import com.vipkid.trpm.constant.ApplicationConstant.*;
+import com.vipkid.trpm.constant.ApplicationConstant.FinishType;
 import com.vipkid.trpm.dao.*;
 import com.vipkid.trpm.entity.*;
 import com.vipkid.trpm.entity.teachercomment.QueryTeacherCommentOutputDto;
 import com.vipkid.trpm.entity.teachercomment.TeacherComment;
 import com.vipkid.trpm.entity.teachercomment.TeacherCommentUpdateDto;
-import com.vipkid.trpm.proxy.ClassroomProxy;
+import com.vipkid.trpm.proxy.OnlineClassProxy;
 import com.vipkid.trpm.util.DateUtils;
 import com.vipkid.trpm.util.FilesUtils;
 import com.vipkid.trpm.util.IpUtils;
@@ -88,6 +100,14 @@ public class OnlineClassService {
     @Autowired
     private CourseDao courseDao;
 
+    @Autowired
+    private RecruitmentService recruitmentService;
+
+    @Autowired
+    private TeacherLockLogDao teacherLockLogDao;
+
+    @Autowired
+    private AuditEventHandler auditEventHandler;
     /**
      * 根据id找online class
      *
@@ -123,8 +143,8 @@ public class OnlineClassService {
                 studentId);
         Map<String, Object> modelMap = Maps.newHashMap();
         modelMap.putAll(this.enterBefore(onlineClass, studentId, "OPEN"));
-        modelMap.put("url", ClassroomProxy.generateRoomEnterUrl(String.valueOf(teacher.getId()), teacher.getRealName(),
-                onlineClass.getClassroom(), ClassroomProxy.ROLE_TEACHER, onlineClass.getSupplierCode()));
+        modelMap.putAll(OnlineClassProxy.generateRoomEnterUrl(String.valueOf(teacher.getId()), teacher.getRealName(),
+                onlineClass.getClassroom(), OnlineClassProxy.RoomRole.TEACHER, onlineClass.getSupplierCode(),onlineClass.getId(),OnlineClassProxy.ClassType.OPEN));
 
         this.enterAfter(teacher, onlineClass);
         return modelMap;
@@ -150,12 +170,12 @@ public class OnlineClassService {
         TeacherApplication teacherApplication =
                 teacherApplicationDao.findApplictionByOlineclassId(onlineClass.getId(), student.getId());
         modelMap.put("teacherApplication", teacherApplication);
-        modelMap.put("url", ClassroomProxy.generateRoomEnterUrl(String.valueOf(student.getId()), student.getRealName(),
-                onlineClass.getClassroom(), ClassroomProxy.ROLE_STUDENT, onlineClass.getSupplierCode()));
+        modelMap.putAll(OnlineClassProxy.generateRoomEnterUrl(String.valueOf(student.getId()), student.getRealName(),
+                onlineClass.getClassroom(), OnlineClassProxy.RoomRole.STUDENT, onlineClass.getSupplierCode(),onlineClass.getId(),OnlineClassProxy.ClassType.PRACTICUM));
         modelMap.put("teacherPe", teacherPeDao.findByOnlineClassId(onlineClass.getId()));
         List<TeacherApplication> list = teacherApplicationDao.findApplictionForStatusResult(
-                teacherApplication.getTeacherId(), TeacherApplicationDao.Status.PRACTICUM.toString(),
-                TeacherApplicationDao.Result.PRACTICUM2.toString());
+                teacherApplication.getTeacherId(),Status.PRACTICUM.toString(),Result.PRACTICUM2.toString());
+
         if (list != null && list.size() > 0) {
             modelMap.put("practicum2", true);
         } else {
@@ -200,8 +220,8 @@ public class OnlineClassService {
             DemoReport currentReport = demoReportDao.findByStudentIdAndOnlineClassId(studentId, onlineClass.getId());
             modelMap.put("currentReport", currentReport);
         }
-        modelMap.put("url", ClassroomProxy.generateRoomEnterUrl(String.valueOf(teacher.getId()), teacher.getRealName(),
-                onlineClass.getClassroom(), ClassroomProxy.ROLE_TEACHER, onlineClass.getSupplierCode()));
+        modelMap.putAll(OnlineClassProxy.generateRoomEnterUrl(String.valueOf(teacher.getId()), teacher.getRealName(),
+                onlineClass.getClassroom(), OnlineClassProxy.RoomRole.TEACHER, onlineClass.getSupplierCode(),onlineClass.getId(),OnlineClassProxy.ClassType.MAJOR));
 
         this.enterAfter(teacher, onlineClass);
 
@@ -366,10 +386,10 @@ public class OnlineClassService {
         }
 
         // 5.practicum2 判断是否存在
-        if (ApplicationConstant.RecruitmentResult.PRACTICUM2.equals(result)) {
-            List<TeacherApplication> list = teacherApplicationDao.findApplictionForStatusResult(
-                    teacherApplication.getTeacherId(), TeacherApplicationDao.Status.PRACTICUM.toString(),
-                    TeacherApplicationDao.Result.PRACTICUM2.toString());
+        if (TeacherApplicationEnum.Result.PRACTICUM2.toString().equals(result)) {
+            List<TeacherApplication> list = teacherApplicationDao
+                    .findApplictionForStatusResult(teacherApplication.getTeacherId(),Status.PRACTICUM.toString(),Result.PRACTICUM2.toString());
+
             if (list != null && list.size() > 0) {
                 logger.info("The teacher is already in practicum 2., class id is : {},status is {},recruitTeacher:{}",
                         onlineClass.getId(), onlineClass.getStatus(), recruitTeacher.getId());
@@ -446,17 +466,17 @@ public class OnlineClassService {
         // 设置应聘老师Id
         teacherApplication.setTeacherId(recruitTeacher.getId());
         // 如果是PASS操作，则ta状态修改为FINISH，教师状态修改为REGULAR
-        if (RecruitmentResult.PASS.equals(result)) {
-            teacherApplication.setStatus(RecruitmentStatus.FINISHED);
+  //      if (RecruitmentResult.PASS.equals(result)) {
+            //teacherApplication.setStatus(RecruitmentStatus.FINISHED);
             // 2.教师状态更新
-            recruitTeacher.setLifeCycle(TeacherLifeCycle.REGULAR);
+            //recruitTeacher.setLifeCycle(TeacherLifeCycle.REGULAR);
             // 3.新增教师入职时间
-            recruitTeacher.setEntryDate(new Date());
-            recruitTeacher.setType(TeacherType.PART_TIME);
-            this.teacherDao.update(recruitTeacher);
+            //recruitTeacher.setEntryDate(new Date());
+            //recruitTeacher.setType(TeacherType.PART_TIME);
+            //this.teacherDao.update(recruitTeacher);
             // 增加quiz的考试记录
-            teacherQuizDao.insertQuiz(recruitTeacher.getId(), pe.getId());
-        }
+            //teacherQuizDao.insertQuiz(recruitTeacher.getId(), pe.getId());
+ //       }
         // 3.更新teacherApplication
         this.teacherApplicationDao.update(teacherApplication);
 
@@ -670,23 +690,37 @@ public class OnlineClassService {
         return list != null && !list.isEmpty();
     }
 
-    public void finishPracticum(long onlineClassId, String finishType) {
-        Preconditions.checkArgument(0 != onlineClassId);
+    public void finishPracticum(TeacherApplication teacherApplication, String finishType, Teacher peTeacher, Teacher recruitTeacher) {
+        Preconditions.checkArgument(0 != teacherApplication.getOnlineClassId());
 
-        OnlineClass onlineClass = onlineClassDao.findById(onlineClassId);
+        OnlineClass onlineClass = onlineClassDao.findById(teacherApplication.getOnlineClassId());
         if (null != onlineClass) {
             if (StringUtils.isNotEmpty(finishType)) {
                 onlineClass.setFinishType(finishType);
             } else {
                 onlineClass.setFinishType(FinishType.AS_SCHEDULED);
             }
-            onlineClass.setStatus(ClassStatus.FINISHED);
+            onlineClass.setStatus(ClassStatus.FINISHED.toString());
             if(isIn24HourBooked(onlineClass)&&onlineClass.getFinishType()==FinishType.AS_SCHEDULED){
                 onlineClass.setShortNotice(1);
             }
+            onlineClass.setLastEditorId(peTeacher.getId());
             onlineClass.setLastEditDateTime(new Timestamp(System.currentTimeMillis()));
-            onlineClass.setLastEditorId(onlineClass.getTeacherId());
             onlineClassDao.updateEntity(onlineClass);
+
+            //根据Reschedule次数判断是否lock用户
+            if (FinishType.STUDENT_CANCELLATION.equals(finishType) || FinishType.STUDENT_NO_SHOW.equals(finishType) || FinishType.STUDENT_IT_PROBLEM.equals(finishType)){
+                if (!UserEnum.Status.isLocked(userDao.findById(recruitTeacher.getId()).getStatus())){
+                    int count = recruitmentService.getRemainRescheduleTimes(recruitTeacher, Status.PRACTICUM.toString(), finishType, true);
+                    if(count <= 0){
+                        userDao.doLock(recruitTeacher.getId());
+                        teacherLockLogDao.save(new TeacherLockLog(recruitTeacher.getId(), Reason.RESCHEDULE.toString(), LifeCycle.PRACTICUM.toString()));
+                    }
+                }
+            }
+            //发邮件
+            auditEventHandler.onAuditEvent(new AuditEvent(recruitTeacher.getId(), LifeCycle.PRACTICUM.toString(), teacherApplication.getResult()));
+
         }
     }
 

@@ -149,8 +149,21 @@ public final class DateUtils {
             return true;
         }
     }
-    
-    /**
+	/**
+	 * 检查当前时间离传入时间是否超过30分钟
+	 * @Author:ALong (ZengWeiLong)
+	 * @param classtime
+	 * @return true 超过
+	 * boolean
+	 */
+	public static boolean countXMinute(long classtime, int x){
+		long currentTime = (System.currentTimeMillis() - x*60*1000);
+		if( currentTime > classtime){
+			return true;
+		}
+		return false;
+	}
+	/**
      * 检查上课时间是否已经上了15分钟的课程
      * @Author:ALong (ZengWeiLong)
      * @param classTime
@@ -169,7 +182,7 @@ public final class DateUtils {
     /**
      * 检查两个时间差是否大于11.5个小时
      * @Author:ALong (ZengWeiLong)
-     * @param classTime
+     * @param auditTime
      * @return    
      * long
      * @date 2016年6月30日
@@ -180,9 +193,40 @@ public final class DateUtils {
             return true;
         }
         return false;
-    } 
-    
-    /**
+    }
+	/**
+	 * 检查当前时间离传入时间是否超过1个小时
+	 * @Author:ALong (ZengWeiLong)
+	 * @param classtime
+	 * @return true 超过
+	 * boolean
+	 */
+	public static boolean count1h(long classtime){
+		long currentTime = (System.currentTimeMillis() - 60*60*1000);
+		if( currentTime > classtime){
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * 检查当前时间离传入时间是否超过54week
+	 * @Author:ALong (ZengWeiLong)
+	 * @param classtime
+	 * @return true 超过
+	 * boolean
+	 */
+	public static boolean count54week(long classtime){
+		Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+		LocalDateTime source = LocalDateTime.ofInstant(timestamp.toInstant(),SHANGHAI).plusYears(-1);
+		Date convertToDate = Date.from(source.atZone(ZoneId.systemDefault()).toInstant());
+		long currentTime = convertToDate.getTime();
+		if(currentTime > classtime){
+			return true;
+		}
+		return false;
+	}
+	/**
      * 
      * 计算两个时间之间月份跨度 
      * @Author:ALong (ZengWeiLong)
