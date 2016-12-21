@@ -125,6 +125,7 @@ public class InterviewService {
         
         if(lesson != null){
         	result.put("lessonName",lesson.getName());
+            result.put("lessonSN",lesson.getSerialNumber());
         }
         
         String logpix = "onlineclassId:"+onlineClassId+";teacherId:"+teacher.getId();

@@ -12,7 +12,7 @@
 		            <div class="classroomLabel">Classroom</div>
 		            <div class="lessonName ng-binding" style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis; width:492px;">
 		              <a href="javascript:;" style="color: white; text-decoration: none;" title="$!{lesson.serialNumber}:$!{lesson.name}($!{student.englishName})">
-		                $!{lesson.serialNumber} : $!{lesson.name}($!{student.englishName})
+		                $!{lesson.serialNumber} : $!{lesson.name.replace("Practicum","Mock Class")}($!{student.englishName})
 		              </a>
 		            </div>
 		        </div>
