@@ -23,7 +23,7 @@ public class PayrollPage<T> implements Serializable  {
     private List<T> list = new ArrayList<T>(); // 查询结果列表
 
     public PayrollPage() {
-        this.pageSize = -1;
+        //this.pageSize = -1;
     }
 
     /**

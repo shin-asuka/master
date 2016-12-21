@@ -17,8 +17,8 @@ public class PayrollService extends HttpBaseService {
 
 	public JSONObject getPayrollItemByTeacherAndMonth(Integer teacherId, Integer month) {
 		Map<String, String> params = Maps.newHashMap();
-		params.put("teacherId", new Integer(teacherId).toString());
-		params.put("month", new Integer(month).toString());
+		params.put("teacherId", String.valueOf(teacherId).toString());
+		params.put("month", String.valueOf(month).toString());
 
 		String url = new StringBuilder(super.serverAddress).append(
 				"/rest/payroll/public/payroll/getPayrollItemByTeacherAndMonth").toString();
@@ -36,8 +36,8 @@ public class PayrollService extends HttpBaseService {
 		logger.info("request 请求payroll service , uri={} ,teacherId={}", url, teacherId);
 		JSONObject jsonObject = null;
 		Map<String, String> params = Maps.newHashMap();
-		params.put("teacherId", new Integer(teacherId).toString());
-		params.put("month", new Integer(month).toString());
+		params.put("teacherId", String.valueOf(teacherId));
+		params.put("month", String.valueOf(month));
 		jsonObject = getResult(params, url, teacherId);
 		return jsonObject;
 	}
@@ -45,12 +45,12 @@ public class PayrollService extends HttpBaseService {
 	public String findPayrollItemByTypeWithPage(int slalaryTypeCourseAdditionRule, int teacherId, int month, Page page) {
 		Map<String, String> params = Maps.newHashMap();
 
-		params.put("teacherId", new Integer(teacherId).toString());
-		params.put("pageNo",  new Integer(page.getPageNo()).toString());
-		params.put("itemType", new Integer(slalaryTypeCourseAdditionRule).toString());
-		params.put("month", new Integer(month).toString());
+		params.put("teacherId", String.valueOf(teacherId));
+		params.put("pageNo",  String.valueOf(page.getPageNo()));
+		params.put("itemType", String.valueOf(slalaryTypeCourseAdditionRule));
+		params.put("month", String.valueOf(month));
 		if (page.getPageSize() != 0) {
-			params.put("pageSize",  new Integer(page.getPageSize()).toString());
+			params.put("pageSize",  String.valueOf(page.getPageSize()));
 		} else {
 			params.put("pageSize", "15");
 		}
