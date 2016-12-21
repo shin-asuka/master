@@ -316,32 +316,22 @@ public class TeacherService {
 	public List<TeacherCommentResult> batchGetByOnlineClassIds(List<Long> onlineClassIds){
 		List<TeacherCommentResult> teacherCommentList = Lists.newArrayList();
 		if (CollectionUtils.isNotEmpty(onlineClassIds)) {
-			List<Long> onlineClassIdList = Lists.newArrayList(onlineClassIds);
-			//防止onlineClassId过多,分批查询,每次200个
-			int idListSize = onlineClassIdList.size();
-			int queryTimes = (idListSize % QUERY_LIMIT_SIZE) == 0 ?
-				idListSize / QUERY_LIMIT_SIZE :
-				idListSize / QUERY_LIMIT_SIZE + 1;
-			for (int i = 0; i < queryTimes; i++) {
-				int toIndex = i * QUERY_LIMIT_SIZE + QUERY_LIMIT_SIZE;
-				if (toIndex > idListSize - 1) {
-					toIndex = idListSize;
-				}
-				List<Long> subIds = onlineClassIdList.subList(i * QUERY_LIMIT_SIZE, toIndex);
+			//分批查询,一次200个
+			List<List<Long>> parts = Lists.partition(onlineClassIds, 200);
+
+			parts.stream().forEach(subIds -> {
 				Map<String, String> paramsMap = Maps.newHashMap();
 				paramsMap.put("onlineClassIdList", Joiner.on(',').join(subIds));
 				paramsMap.put("needFeedback", "true");
+				logger.info("batchGetByOnlineClassIds query one time");
 
 				List<TeacherCommentResult> teacherCommentListPart =
 					getTeacherCommentResult(paramsMap, API_TEACHER_COMMENT_QUERY_CLASSIDLIST);
-				if (CollectionUtils.isNotEmpty(teacherCommentListPart)) {
-					teacherCommentList.addAll(teacherCommentListPart);
-				}
-			}
-
+				teacherCommentList.addAll(teacherCommentListPart);
+			});
 		}
-
 		return teacherCommentList;
+
 	}
 
 	public boolean updateTeacherComment(TeacherCommentUpdateDto inputDto) {
