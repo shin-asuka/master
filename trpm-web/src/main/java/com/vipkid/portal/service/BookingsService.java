@@ -2,15 +2,21 @@ package com.vipkid.portal.service;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.vipkid.portal.entity.ScheduledRequest;
-import com.vipkid.portal.entity.TimePoint;
-import com.vipkid.portal.entity.TimeSlot;
-import com.vipkid.portal.entity.ZoneTime;
+import com.vipkid.portal.constant.BookingsResult;
+import com.vipkid.portal.entity.*;
 import com.vipkid.trpm.constant.ApplicationConstant;
+import com.vipkid.trpm.constant.ApplicationConstant.ClassStatus;
+import com.vipkid.trpm.constant.ApplicationConstant.ClassType;
+import com.vipkid.trpm.constant.ApplicationConstant.CourseType;
+import com.vipkid.trpm.constant.ApplicationConstant.PeakTimeType;
 import com.vipkid.trpm.dao.*;
+import com.vipkid.trpm.entity.OnlineClass;
 import com.vipkid.trpm.entity.PeakTime;
 import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.proxy.RedisProxy;
+import com.vipkid.trpm.util.DateUtils;
+import com.vipkid.trpm.util.FilesUtils;
+import com.vipkid.trpm.util.IpUtils;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -21,7 +27,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -221,8 +229,7 @@ public class BookingsService {
 
     public void setTimeSlotProperties(TimeSlot timeSlot, String peakType) {
         if (timeSlot.isShow()) {
-            if (!StringUtils.isEmpty(peakType)
-                            && !StringUtils.contains(peakType, ApplicationConstant.PeakTimeType.NORMALTIME)) {
+            if (!StringUtils.isEmpty(peakType) && !StringUtils.contains(peakType, PeakTimeType.NORMALTIME)) {
                 timeSlot.setPeakTime(true);
             }
         }
@@ -258,7 +265,7 @@ public class BookingsService {
      * @return boolean
      */
     public boolean isShow(String formatToBeiJing, String courseType) {
-        if (ApplicationConstant.CourseType.isMajor(courseType)) {
+        if (CourseType.isMajor(courseType)) {
             long count = getClassTimes().stream().filter(time -> -1 != formatToBeiJing.indexOf(time)).count();
             return (0 != count) ? true : false;
         }
@@ -313,7 +320,7 @@ public class BookingsService {
              * 由于查询的列表中包含除了REMOVED之外所有的课程，因此需要过滤不用于显示的INVALID记录； 业务场景：换课时，只显示第一个被换老师的INVALID记录。
              */
             String status = (String) teacherSchedule.get("status");
-            if (ApplicationConstant.ClassStatus.isInvalid(status)) {
+            if (ClassStatus.isInvalid(status)) {
                 boolean isFilter = true;
 
                 for (Map<String, Object> invalidSchedule : invalidScheduleList) {
@@ -330,7 +337,7 @@ public class BookingsService {
 
             /* 设置课程类型 */
             int classType = (Integer) teacherSchedule.get("classType");
-            if (ApplicationConstant.ClassType.PRACTICUM == classType) {
+            if (ClassType.PRACTICUM == classType) {
                 teacherSchedule.put("isPracticum", true);
             } else {
                 teacherSchedule.put("isPracticum", false);
@@ -364,7 +371,7 @@ public class BookingsService {
         /* 获取TeacherSchedule的状态 */
         String status = (String) teacherSchedule.get("status");
 
-        if (ApplicationConstant.ClassStatus.isOpen(status)) {
+        if (ClassStatus.isOpen(status)) {
             long onlineClassId = (Long) teacherSchedule.get("id");
             teacherSchedule.put("studentCount", onlineClassDao.countStudentByOnlineClassId(onlineClassId));
         }
@@ -393,41 +400,39 @@ public class BookingsService {
 
             /* 增加新类型替换 */
             /* 如果老状态为FINISHED */
-            if (ApplicationConstant.ClassStatus.isFinished(oldStatus)) {
+            if (ClassStatus.isFinished(oldStatus)) {
                 /* 新状态为BOOKED，则替换 */
-                if (ApplicationConstant.ClassStatus.isBooked(newStatus)) {
+                if (ClassStatus.isBooked(newStatus)) {
                     isReplaced = true;
                 }
                 /* 新状态为AVAILABLE，老的FinishType为StudentNoShow24则替换 */
-                if (ApplicationConstant.ClassStatus.isAvailable(newStatus)
+                if (ClassStatus.isAvailable(newStatus)
                                 && ApplicationConstant.FinishType.isStudentNoShow24(oldFinishType)) {
                     isReplaced = true;
                 }
                 /* 新状态为FINISHED，老的FinishType为StudentNoShow则替换 */
-                if (ApplicationConstant.ClassStatus.isFinished(newStatus)
+                if (ClassStatus.isFinished(newStatus)
                                 && ApplicationConstant.FinishType.isStudentNoShow(oldFinishType)) {
                     isReplaced = true;
                 }
             }
 
             /* 如果老状态为EXPIRED，新状态为FINISHED，或新状态为BOOKED，则替换 */
-            if (ApplicationConstant.ClassStatus.isExpired(oldStatus)) {
-                if (ApplicationConstant.ClassStatus.isFinished(newStatus)
-                                || ApplicationConstant.ClassStatus.isBooked(newStatus)) {
+            if (ClassStatus.isExpired(oldStatus)) {
+                if (ClassStatus.isFinished(newStatus) || ClassStatus.isBooked(newStatus)) {
                     isReplaced = true;
                 }
             }
 
             /* 如果老状态为CANCELED，或REMOVED，则替换 */
-            if (ApplicationConstant.ClassStatus.isCanceled(oldStatus)
-                            || ApplicationConstant.ClassStatus.isRemoved(oldStatus)) {
+            if (ClassStatus.isCanceled(oldStatus) || ClassStatus.isRemoved(oldStatus)) {
                 isReplaced = true;
             }
 
             /* 如果老状态为AVAILABLE */
-            if (ApplicationConstant.ClassStatus.isAvailable(oldStatus)) {
+            if (ClassStatus.isAvailable(oldStatus)) {
                 /* 新状态为BOOKED，则替换 */
-                if (ApplicationConstant.ClassStatus.isBooked(newStatus)) {
+                if (ClassStatus.isBooked(newStatus)) {
                     isReplaced = true;
                 }
                 /* 新FinishType为StudentNoShow，则替换 */
@@ -437,13 +442,12 @@ public class BookingsService {
             }
 
             /* 如果老状态为INVALID，新状态不为INVALID，则替换 */
-            if (ApplicationConstant.ClassStatus.isInvalid(oldStatus)
-                            && !ApplicationConstant.ClassStatus.isInvalid(newStatus)) {
+            if (ClassStatus.isInvalid(oldStatus) && !ClassStatus.isInvalid(newStatus)) {
                 isReplaced = true;
             }
         } else {
             /* 如果新状态不为REMOVED，则替换 */
-            if (!ApplicationConstant.ClassStatus.isRemoved(newStatus)) {
+            if (!ClassStatus.isRemoved(newStatus)) {
                 isReplaced = true;
             }
         }
@@ -510,6 +514,243 @@ public class BookingsService {
         requestHeader.put("Authorization",
                         t + " " + org.apache.commons.codec.binary.Base64.encodeBase64String(DigestUtils.md5(t)));
         return requestHeader;
+    }
+
+    /**
+     * 处理TimeSlot创建逻辑
+     *
+     * @param teacher
+     * @param scheduleTime
+     * @param courseType
+     * @return Map<String,Object>
+     */
+    public Map<String, Object> doCreateTimeSlot(Teacher teacher, String scheduleTime, String courseType) {
+        Map<String, Object> modelMap = Maps.newHashMap();
+
+        /* 验证当前时间是否已存在OnlineClass */
+        Timestamp scheduleDateTime = parseFrom(scheduleTime, FMT_YMD_HMS);
+
+        if (canSetSchedule(teacher.getId(), scheduleDateTime)) {
+            OnlineClass onlineClass = new OnlineClass();
+
+            /* 设置课程的属性 */
+            onlineClass.setTeacherId(teacher.getId());
+            onlineClass.setScheduledDateTime(scheduleDateTime);
+
+            onlineClass.setStatus(ClassStatus.AVAILABLE);
+            onlineClass.setSerialNumber(Long.toString(scheduleDateTime.getTime()));
+
+            /* 设置为课程开始前1小时 */
+            long oneHour = 60 * 60 * 1000;
+            onlineClass.setAbleToEnterClassroomDateTime(new Timestamp(scheduleDateTime.getTime() - oneHour));
+            onlineClass.setLastEditDateTime(new Timestamp(System.currentTimeMillis()));
+
+            /* 变量半小时，用来参与验证时间点是否可以放课时 */
+            long halfHour = 30 * 60 * 1000;
+
+            /* 如果是PRACTICUM的课程，则需要指定ClassType */
+            if (CourseType.isPracticum(courseType)) {
+                onlineClass.setClassType(ClassType.PRACTICUM);
+
+                /* 需要加锁，一次只处理一个请求 */
+                synchronized (teacher) {
+                    /* 验证PRACTICUM课程的这个时间点是否与MAJOR课时冲突 */
+                    Timestamp plusHour = new Timestamp(scheduleDateTime.getTime() + halfHour);
+
+                    /* 验证往后半小时的课程时间有没有跨天 */
+                    LocalDateTime localDateTimeBeiJing = LocalDateTime.ofInstant(plusHour.toInstant(), SHANGHAI);
+                    String formatToBeiJing = localDateTimeBeiJing.format(FMT_YMD_HMS);
+
+                    if (!isShow(formatToBeiJing, courseType)) {
+                        modelMap.put("action", false);
+                        modelMap.put("error", BookingsResult.DISABLED_PLACE);
+                        return modelMap;
+                    }
+
+                    /* 往前半小时只验证PRACTICUM的课程时间 */
+                    Timestamp minusHour = new Timestamp(scheduleDateTime.getTime() - halfHour);
+                    List<OnlineClass> tList =
+                                    onlineClassDao.findByTeacherIdAndScheduleDateTime(teacher.getId(), minusHour);
+
+                    long count = tList.stream().filter((o) -> o.getClassType() == ClassType.PRACTICUM)
+                                    .filter((o) -> ClassStatus.isBooked(o.getStatus())
+                                                    || ClassStatus.isAvailable(o.getStatus()))
+                                    .count();
+
+                    if (canSetSchedule(teacher.getId(), plusHour) && 0 == count) {
+                        onlineClassDao.save(onlineClass);
+                    } else {
+                        modelMap.put("action", false);
+                        modelMap.put("error", BookingsResult.DISABLED_PLACE);
+                        return modelMap;
+                    }
+                }
+            } else {
+                /* 验证MAJOR课程的这个时间点是否与PRACTICUM课时冲突 */
+                Timestamp minusHour = new Timestamp(scheduleDateTime.getTime() - halfHour);
+                List<OnlineClass> tList = onlineClassDao.findByTeacherIdAndScheduleDateTime(teacher.getId(), minusHour);
+
+                /* 往前半小时只验证PRACTICUM的课程时间 */
+                long count = tList.stream().filter((o) -> o.getClassType() == ClassType.PRACTICUM).filter(
+                                (o) -> ClassStatus.isBooked(o.getStatus()) || ClassStatus.isAvailable(o.getStatus()))
+                                .count();
+
+                if (0 == count) {
+                    onlineClassDao.save(onlineClass);
+                } else {
+                    modelMap.put("action", false);
+                    modelMap.put("error", BookingsResult.DISABLED_PLACE);
+                    return modelMap;
+                }
+            }
+
+            /* 记录操作日志 */
+            Map<String, Object> replaceMap = Maps.newHashMap();
+            replaceMap.put("teacherId", teacher.getId());
+            replaceMap.put("onlineClassId", onlineClass.getId());
+
+            Instant instant = Calendar.getInstance().toInstant();
+            replaceMap.put("createTime", DateUtils.formatTo(instant, DateUtils.FMT_YMD_HMS));
+            replaceMap.put("scheduleDatetime", onlineClass.getScheduledDateTime());
+
+            String content = FilesUtils.readLogTemplete(ApplicationConstant.AuditCategory.ONLINE_CLASS_CREATE,
+                            replaceMap);
+            auditDao.saveAudit(ApplicationConstant.AuditCategory.ONLINE_CLASS_CREATE, "INFO", content,
+                            teacher.getRealName(), onlineClassDao, IpUtils.getRemoteIP());
+
+            /* 返回结果 */
+            String timePoint = formatTo(scheduleDateTime.toInstant(), teacher.getTimezone(), FMT_HMA_US);
+
+            modelMap.put("onlineClassId", onlineClass.getId());
+            modelMap.put("timePoint", timePoint);
+            modelMap.put("action", true);
+        } else {
+            modelMap.put("action", false);
+            modelMap.put("error", BookingsResult.DISABLED_PLACE);
+        }
+
+        return modelMap;
+    }
+
+    public Map<String, Object> doCreateTimeSlotWithLock(TimeSlotCreateRequest timeSlotCreateRequest, Teacher teacher) {
+        String scheduleTime = timeSlotCreateRequest.getScheduledDateTime();
+        String courseType = timeSlotCreateRequest.getType();
+
+        Timestamp scheduleDateTime = parseFrom(scheduleTime, FMT_YMD_HMS);
+        String key = "TP:LOCK:" + teacher.getId() + ":" + scheduleDateTime.getTime();
+        try {
+            if (redisProxy.lock(key, LOCK_TIMESLOT_EXPIRED)) {
+                return doCreateTimeSlot(teacher, scheduleTime, courseType);
+            } else {
+                Map<String, Object> modelMap = Maps.newHashMap();
+                modelMap.put("action", false);
+                modelMap.put("error", BookingsResult.DISABLED_PLACE);
+                return modelMap;
+            }
+        } finally {
+            redisProxy.del(key);
+        }
+    }
+
+    public boolean canSetSchedule(long teacherId, Timestamp t) {
+        List<OnlineClass> tList = onlineClassDao.findByTeacherIdAndScheduleDateTime(teacherId, t);
+        long count = tList.stream()
+                        .filter((o) -> ClassStatus.isBooked(o.getStatus()) || ClassStatus.isAvailable(o.getStatus()))
+                        .count();
+        return (0 != count) ? false : true;
+    }
+
+    /**
+     * 处理TimeSlot取消逻辑
+     *
+     * @param teacher
+     * @param onlineClassId
+     * @param scheduleTime
+     * @param courseType
+     * @return Map<String, Object>
+     */
+    public Map<String, Object> doCancelTimeSlot(TimeSlotCancelRequest timeSlotCancelRequest, Teacher teacher) {
+        Map<String, Object> modelMap = Maps.newHashMap();
+
+        OnlineClass onlineClass = onlineClassDao.findById(timeSlotCancelRequest.getOnlineClassId());
+        if (null == onlineClass) {
+            modelMap.put("action", false);
+            modelMap.put("error", BookingsResult.ILLEGAL_ONLINECLASS);
+        }
+
+        /* 如果当前取消时间为PeakTime，则不能少于15节课时 */
+        Timestamp scheduleDateTime = onlineClass.getScheduledDateTime();
+        PeakTime peakTime = peakTimeDao.findByTimePoint(scheduleDateTime);
+
+        if (0 == onlineClass.getClassType() && null != peakTime && PeakTimeType.isPeakTime(peakTime.getType())) {
+            int totalPeakTime = totalPeakTime(scheduleDateTime, teacher.getId());
+            logger.info("The teacher id: {}, total PeakTime: {}", teacher.getId(), totalPeakTime);
+
+            if (totalPeakTime <= PEAKTIME_TIMESLOT_DEFAULT_COUNT) {
+                modelMap.put("action", false);
+                modelMap.put("error", BookingsResult.PEAKTIM_LESS_15);
+                return modelMap;
+            }
+        }
+
+        /* 更新OnlineClass状态 */
+
+        if (ClassStatus.isAvailable(onlineClass.getStatus())) {
+            onlineClassDao.updateStatus(onlineClass.getId(), ClassStatus.REMOVED);
+
+            /* 记录操作日志 */
+            Map<String, Object> replaceMap = Maps.newHashMap();
+            replaceMap.put("teacherId", teacher.getId());
+            replaceMap.put("onlineClassId", onlineClass.getId());
+
+            Instant instant = Calendar.getInstance().toInstant();
+            replaceMap.put("createTime", DateUtils.formatTo(instant, DateUtils.FMT_YMD_HMS));
+            replaceMap.put("scheduleDatetime", onlineClass.getScheduledDateTime());
+
+            String content = FilesUtils.readLogTemplete(ApplicationConstant.AuditCategory.ONLINE_CLASS_DELETE,
+                            replaceMap);
+            auditDao.saveAudit(ApplicationConstant.AuditCategory.ONLINE_CLASS_DELETE, "INFO", content,
+                            teacher.getRealName(), onlineClassDao, IpUtils.getRemoteIP());
+
+            modelMap.put("action", true);
+        } else {
+            modelMap.put("action", false);
+            modelMap.put("error", BookingsResult.TIMESLOT_NOT_AVAILABLE);
+        }
+
+        return modelMap;
+    }
+
+    /**
+     * 查询老师的某个日期所在星期的PeakTime总数
+     *
+     * @param scheduleDateTime
+     * @param teacherId
+     * @return int
+     */
+    public int totalPeakTime(Timestamp scheduleDateTime, long teacherId) {
+        Date date = new Date(scheduleDateTime.getTime());
+
+        Calendar startCalendar = Calendar.getInstance();
+        startCalendar.setTime(date);
+        startCalendar.setFirstDayOfWeek(Calendar.MONDAY);
+        startCalendar.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
+        startCalendar.set(Calendar.HOUR_OF_DAY, 0);
+        startCalendar.set(Calendar.MINUTE, 0);
+        startCalendar.set(Calendar.SECOND, 0);
+        startCalendar.set(Calendar.MILLISECOND, 0);
+
+        Calendar endCalendar = Calendar.getInstance();
+        endCalendar.setTime(date);
+        endCalendar.setFirstDayOfWeek(Calendar.MONDAY);
+        endCalendar.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
+        endCalendar.set(Calendar.HOUR_OF_DAY, 23);
+        endCalendar.set(Calendar.MINUTE, 59);
+        endCalendar.set(Calendar.SECOND, 59);
+        endCalendar.set(Calendar.MILLISECOND, 0);
+
+        return peakTimeDao.countDaoByTeacherIdAndFromWithToTime(startCalendar.getTime(), endCalendar.getTime(),
+                        teacherId);
     }
 
 }
