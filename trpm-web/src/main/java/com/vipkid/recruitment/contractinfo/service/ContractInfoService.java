@@ -85,9 +85,6 @@ public class ContractInfoService {
         return false;
     }
 
-
-
-
     public boolean checkW9(Teacher teacher){
         TeacherTaxpayerForm teacherTaxpayerForm = teacherTaxpayerFormDao.findByTeacherIdAndType(teacher.getId(), TeacherEnum.FormType.W9.val());
         List<TeacherContractFile> teacherContractFiles = teacherContractFileDao.findByTeacherIdAndTeacherApplicationId(teacher.getId(), CONTRACT_FILE_LATEST_APPLICATION_ID);
@@ -103,6 +100,28 @@ public class ContractInfoService {
             return isNeedUploadW9(teacher);
         }
         return false;
+    }
+
+    public boolean hasW9(Teacher teacher){
+        if(null == teacher) {
+            logger.warn("Teacher is null");
+            new Throwable("Teacher is null");
+        }
+        logger.info("check if {} has uploaded w9 and not be audited yet.", teacher.getId());
+        TeacherTaxpayerForm teacherTaxpayerForm = teacherTaxpayerFormDao.findByTeacherIdAndType(teacher.getId(), TeacherEnum.FormType.W9.val());
+        List<TeacherContractFile> teacherContractFiles = teacherContractFileDao.findByTeacherIdAndTeacherApplicationId(teacher.getId(), CONTRACT_FILE_LATEST_APPLICATION_ID);
+        List<TeacherContractFile> tax = Lists.newArrayList();
+        if(CollectionUtils.isNotEmpty(teacherContractFiles)) {
+            teacherContractFiles.forEach(obj -> {
+                if (obj.getFileType() == TeacherApplicationEnum.ContractFileType.CONTRACT_W9.val()) {
+                    tax.add(obj);
+                }
+            });
+        }
+        if (teacherTaxpayerForm == null || CollectionUtils.isEmpty(tax)) {
+            return false;
+        }
+        return true;
     }
 
 
