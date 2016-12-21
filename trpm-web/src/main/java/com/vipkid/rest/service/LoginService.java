@@ -270,7 +270,7 @@ public class LoginService {
         }else{
             courseTypes = JsonTools.readValue(json, new TypeReference<List<String>>() {});
         }
-        return courseTypes.contains(CourseType.PRACTICUM);
+        return courseTypes.contains(CourseType.PRACTICUM.toString());
     }
         
     /**
