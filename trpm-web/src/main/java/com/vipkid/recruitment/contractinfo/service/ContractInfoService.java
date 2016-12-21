@@ -122,7 +122,9 @@ public class ContractInfoService {
         List<TeacherContractFile> identifications = Lists.newArrayList();
         if(CollectionUtils.isNotEmpty(teacherContractFiles)) {
             teacherContractFiles.forEach(obj -> {
-                if (obj.getFileType() == TeacherApplicationEnum.ContractFileType.IDENTIFICATION.val()) {
+                if (obj.getFileType() == TeacherApplicationEnum.ContractFileType.IDENTIFICATION.val()
+                        ||obj.getFileType() == TeacherApplicationEnum.ContractFileType.DRIVER.val()
+                        ||obj.getFileType() == TeacherApplicationEnum.ContractFileType.PASSPORT.val()) {
                     identifications.add(obj);
                 }
             });
@@ -130,6 +132,7 @@ public class ContractInfoService {
         if (CollectionUtils.isEmpty(identifications)) {
             return false;
         }
+        logger.info("{} has uploaded identification and not be audited yet.", teacher.getId());
         return true;
     }
 
