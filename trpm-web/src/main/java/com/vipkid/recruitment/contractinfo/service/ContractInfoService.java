@@ -136,6 +136,86 @@ public class ContractInfoService {
         return true;
     }
 
+    public boolean hasDiploma(Teacher teacher){
+        if(null == teacher) {
+            logger.warn("Teacher is null");
+            new Throwable("Teacher is null");
+        }
+        logger.info("check if {} has uploaded diplomas and not be audited yet.", teacher.getId());
+        List<TeacherContractFile> teacherContractFiles = teacherContractFileDao.findByTeacherIdAndTeacherApplicationId(teacher.getId(), CONTRACT_FILE_LATEST_APPLICATION_ID);
+        List<TeacherContractFile> diplomas = Lists.newArrayList();
+        if(CollectionUtils.isNotEmpty(teacherContractFiles)) {
+            teacherContractFiles.forEach(obj -> {
+                if (obj.getFileType() == TeacherApplicationEnum.ContractFileType.DIPLOMA.val()) {
+                    diplomas.add(obj);
+                }
+            });
+        }
+        if (CollectionUtils.isEmpty(diplomas)) {
+            return false;
+        }
+        logger.info("{} has uploaded diplomas and not be audited yet.", teacher.getId());
+        return true;
+    }
+
+    public boolean hasContract(Teacher teacher){
+        if(null == teacher) {
+            logger.warn("Teacher is null");
+            new Throwable("Teacher is null");
+        }
+        logger.info("check if {} has uploaded contracts and not be audited yet.", teacher.getId());
+        List<TeacherContractFile> teacherContractFiles = teacherContractFileDao.findByTeacherIdAndTeacherApplicationId(teacher.getId(), CONTRACT_FILE_LATEST_APPLICATION_ID);
+        List<TeacherContractFile> contracts = Lists.newArrayList();
+        if(CollectionUtils.isNotEmpty(teacherContractFiles)) {
+            teacherContractFiles.forEach(obj -> {
+                if (obj.getFileType() == TeacherApplicationEnum.ContractFileType.CONTRACT.val()) {
+                    contracts.add(obj);
+                }
+            });
+        }
+        if (CollectionUtils.isEmpty(contracts)) {
+            return false;
+        }
+        logger.info("{} has uploaded contracts and not be audited yet.", teacher.getId());
+        return true;
+    }
+
+    public int queryDegreeFilesCount(Teacher teacher){
+        if(null == teacher) {
+            logger.warn("Teacher is null");
+            new Throwable("Teacher is null");
+        }
+        logger.info("check {} has uploaded how many degrees and not be audited yet.", teacher.getId());
+        List<TeacherContractFile> teacherContractFiles = teacherContractFileDao.findByTeacherIdAndTeacherApplicationId(teacher.getId(), CONTRACT_FILE_LATEST_APPLICATION_ID);
+        List<TeacherContractFile> degrees = Lists.newArrayList();
+        if(CollectionUtils.isNotEmpty(teacherContractFiles)) {
+            teacherContractFiles.forEach(obj -> {
+                if (obj.getFileType() == TeacherApplicationEnum.ContractFileType.OTHER_DEGREES.val()) {
+                    degrees.add(obj);
+                }
+            });
+        }
+        return degrees.size();
+    }
+
+    public int queryCertFileCount(Teacher teacher){
+        if(null == teacher) {
+            logger.warn("Teacher is null");
+            new Throwable("Teacher is null");
+        }
+        logger.info("check {} has uploaded how many degrees and not be audited yet.", teacher.getId());
+        List<TeacherContractFile> teacherContractFiles = teacherContractFileDao.findByTeacherIdAndTeacherApplicationId(teacher.getId(), CONTRACT_FILE_LATEST_APPLICATION_ID);
+        List<TeacherContractFile> certifications = Lists.newArrayList();
+        if(CollectionUtils.isNotEmpty(teacherContractFiles)) {
+            teacherContractFiles.forEach(obj -> {
+                if (obj.getFileType() == TeacherApplicationEnum.ContractFileType.CERTIFICATIONFILES.val()) {
+                    certifications.add(obj);
+                }
+            });
+        }
+        return certifications.size();
+    }
+
     /**
      * 在TeacherApplication中加入一条带审核数据
      *
