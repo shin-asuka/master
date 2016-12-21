@@ -55,6 +55,9 @@ public class ContractInfoController extends RestfulController {
 
     private static Logger logger = LoggerFactory.getLogger(ContractInfoController.class);
 
+    private static final int MAX_CERT_FILE_NUM = 4;
+    private static final int MAX_DEGREE_FILE_NUM = 4;
+
     @Autowired
     private AwsFileService awsFileService;
 
@@ -720,6 +723,13 @@ public class ContractInfoController extends RestfulController {
         try {
             Teacher teacher = getTeacher(request);
             logger.info("用户：{}，upload Identification file = {}", teacher.getId(), file);
+
+            boolean hasDiploma = contractInfoService.hasDiploma(teacher);
+            if(hasDiploma) {
+                logger.error("{} has diplomas uploaded and not yet be audited!", teacher.getId());
+                return ReturnMapUtils.returnFail("You have already uploaded, please refresh the page!");
+            }
+
             if (file != null) {
                 String fileName = file.getOriginalFilename();
                 if (StringUtils.isNotBlank(fileName)) {
@@ -768,6 +778,13 @@ public class ContractInfoController extends RestfulController {
         try {
             Teacher teacher = getTeacher(request);
             logger.info("用户：{}，upload Identification file = {}", teacher.getId(), file);
+
+            boolean hasContract = contractInfoService.hasContract(teacher);
+            if(hasContract) {
+                logger.error("{} has contracts uploaded and not yet be audited!", teacher.getId());
+                return ReturnMapUtils.returnFail("You have already uploaded, please refresh the page!");
+            }
+
             if (file != null) {
                 String fileName = file.getOriginalFilename();
                 if (StringUtils.isNotBlank(fileName)) {
@@ -876,6 +893,13 @@ public class ContractInfoController extends RestfulController {
         try {
             Teacher teacher = getTeacher(request);
             logger.info("用户：{}，upload Identification file = {}", teacher.getId(), file);
+
+            int fileCount = contractInfoService.queryCertFileCount(teacher);
+            if(fileCount >= MAX_CERT_FILE_NUM) {
+                logger.error("{} has uploaded {} certification files and not yet be audited!", teacher.getId(), fileCount);
+                return ReturnMapUtils.returnFail("You have already uploaded, please refresh the page!");
+            }
+
             if (file != null) {
                 String fileName = file.getOriginalFilename();
                 if (StringUtils.isNotBlank(fileName)) {
@@ -922,6 +946,13 @@ public class ContractInfoController extends RestfulController {
         try {
             Teacher teacher = getTeacher(request);
             logger.info("用户：{}，upload Identification file = {}", teacher.getId(), file);
+
+            int fileCount = contractInfoService.queryDegreeFilesCount(teacher);
+            if(fileCount >= MAX_DEGREE_FILE_NUM) {
+                logger.error("{} has uploaded {} degree files and not yet be audited!", teacher.getId(), fileCount);
+                return ReturnMapUtils.returnFail("You have already uploaded, please refresh the page!");
+            }
+
             if (file != null) {
                 String fileName = file.getOriginalFilename();
                 if (StringUtils.isNotBlank(fileName)) {
