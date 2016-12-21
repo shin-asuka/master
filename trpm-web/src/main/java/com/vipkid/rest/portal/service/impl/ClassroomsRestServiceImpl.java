@@ -20,6 +20,7 @@ import com.google.api.client.util.Lists;
 import com.google.common.collect.Maps;
 import com.vipkid.enums.OnlineClassEnum.CourseType;
 import com.vipkid.http.service.AssessmentHttpService;
+import com.vipkid.http.utils.JsonUtils;
 import com.vipkid.http.vo.OnlineClassVo;
 import com.vipkid.http.vo.StudentUnitAssessment;
 import com.vipkid.recruitment.dao.TeacherApplicationDao;
@@ -257,8 +258,9 @@ public class ClassroomsRestServiceImpl implements ClassroomsRestService{
 			modelMap.put("curPage", page);
 
 			/* 查询统计数据 */
-			modelMap.put("stateList",
-					onlineClassDao.findStatPracticumFinishTypeBy(teacher.getId(), teacher.getTimezone(), monthOfYear));
+			List<Map<String, Object>> stateList = onlineClassDao.findStatPracticumFinishTypeBy(teacher.getId(), teacher.getTimezone(), monthOfYear);
+			rebuildStateList(stateList);
+			modelMap.put("stateList", stateList);
 		} else {
 			Map<String, Object> totalLineMap = classroomsService.majorTotal(teacher, monthOfYear);
 			int totalLine = (int) totalLineMap.get("totalLine");
@@ -278,13 +280,31 @@ public class ClassroomsRestServiceImpl implements ClassroomsRestService{
 			modelMap.put("curPage", page);
 
 			/* 查询统计数据 */
-			modelMap.put("stateList",
-					onlineClassDao.findStatMajorFinishTypeBy(teacher.getId(), teacher.getTimezone(), monthOfYear));
+			List<Map<String, Object>> stateList = onlineClassDao.findStatMajorFinishTypeBy(teacher.getId(), teacher.getTimezone(), monthOfYear);
+			rebuildStateList(stateList);
+			modelMap.put("stateList",stateList);
 		}
 
 		return modelMap;
 	}
-
+	
+	//修复SQL查询出的stateList数据缺陷
+	private void rebuildStateList(List<Map<String, Object>> stateList){
+		if(null != stateList && !stateList.isEmpty()){
+			int i = 0;
+			int size = stateList.size();
+			for (; i < size; i++) {
+				String finishType = (String) stateList.get(i).get("finishType");
+				if(StringUtils.isEmpty(finishType)){
+					break;
+				}
+			}
+			if(i < size){
+				stateList.remove(i);
+			}
+		}
+	}
+	
 	/**
 	 * 生成并重新包装classrooms接口的dataList属性
 	 * 
