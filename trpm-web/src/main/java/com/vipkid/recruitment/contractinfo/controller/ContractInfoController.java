@@ -195,14 +195,14 @@ public class ContractInfoController extends RestfulController {
             //check contract files
             boolean isContractFileValid = checkContractFile(teacherId, idList);
             if (!isContractFileValid) {
-                return ReturnMapUtils.returnFail("Not all the contract files has been uploaded successfully, please try again!");
+                return ReturnMapUtils.returnFail("Your files are being uploaded. Please wait a moment.");
 
             }
             logger.info("Check Teacher 的 file id{}", idList);
             //check personal info
             boolean isPersonalInfoValid = checkPersonInfo(teacherId);
             if (!isPersonalInfoValid) {
-                return ReturnMapUtils.returnFail("Not all the personal files have been uploaded successfully, please try again!");
+                return ReturnMapUtils.returnFail("Your files are being uploaded. Please wait a moment.");
             }
 
             logger.info("update Teacher's introduction: {}", bio);
