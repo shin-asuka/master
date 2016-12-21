@@ -2,12 +2,14 @@ package com.vipkid.portal.service;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.vipkid.portal.entity.ScheduledRequest;
 import com.vipkid.portal.entity.TimePoint;
 import com.vipkid.portal.entity.TimeSlot;
 import com.vipkid.portal.entity.ZoneTime;
 import com.vipkid.trpm.constant.ApplicationConstant;
 import com.vipkid.trpm.dao.*;
 import com.vipkid.trpm.entity.PeakTime;
+import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.proxy.RedisProxy;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.collections.CollectionUtils;
@@ -451,10 +453,15 @@ public class BookingsService {
         }
     }
 
-    public Map<String, Object> doSchedule(int weekOffset, long teacherId, String timezone, String courseType) {
+    public Map<String, Object> doSchedule(ScheduledRequest scheduledRequest, Teacher teacher) {
+        String timezone = teacher.getTimezone();
+        long teacherId = teacher.getId();
+
         Map<String, Object> modelMap = Maps.newHashMap();
         modelMap.put("timezone", timezone);
 
+        int weekOffset = scheduledRequest.getWeekOffset();
+        String courseType = scheduledRequest.getType();
         /* 获取日期所在星期 */
         List<Date> daysOfWeek = getDaysOfWeek(weekOffset);
         modelMap.put("daysOfWeek", daysOfWeek);

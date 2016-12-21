@@ -7,8 +7,9 @@ import com.vipkid.http.utils.JsonUtils;
 import com.vipkid.portal.entity.ScheduledRequest;
 import com.vipkid.portal.service.BookingsService;
 import com.vipkid.rest.config.RestfulConfig;
-import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.service.rest.LoginService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -26,6 +27,8 @@ import java.util.Map;
 @RequestMapping("/portal")
 public class BookingsController {
 
+    private static final Logger logger = LoggerFactory.getLogger(BookingsController.class);
+
     @Autowired
     private BookingsService bookingsService;
 
@@ -34,24 +37,21 @@ public class BookingsController {
 
     @RequestMapping(value = "/scheduled", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
     public Map<String, Object> scheduled(@RequestBody String body, HttpServletResponse response) {
+        Map<String, Object> resultMap = Maps.newHashMap();
         try {
+            logger.info("Invocation scheduled() params: {}", body);
             ScheduledRequest scheduledRequest = JsonUtils.toBean(body, ScheduledRequest.class);
-            Preconditions.checkArgument(StringUtils.isNotBlank(scheduledRequest.getType()));
 
-            Teacher teacher = loginService.getTeacher();
-            return bookingsService.doSchedule(scheduledRequest.getWeekOffset(), teacher.getId(), teacher.getTimezone(),
-                            scheduledRequest.getType());
+            Preconditions.checkArgument(StringUtils.isNotBlank(scheduledRequest.getType()));
+            return bookingsService.doSchedule(scheduledRequest, loginService.getTeacher());
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
-            Map<String, Object> resultMap = Maps.newHashMap();
             resultMap.put("error", "Wrong params format");
-            return resultMap;
         } catch (Exception e) {
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            Map<String, Object> resultMap = Maps.newHashMap();
             resultMap.put("error", "Server error");
-            return resultMap;
         }
+        return resultMap;
     }
 
 }
