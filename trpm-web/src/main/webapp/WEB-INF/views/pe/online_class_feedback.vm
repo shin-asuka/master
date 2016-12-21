@@ -31,18 +31,18 @@
 	                <div class='commentDiv'>
 	                	<input onclick="require('pe').showFinshType()" type='button' value='ReSchedule' class='ui blue button submitBtn'/>
 	                	#if($!{teacherPe.lessonName} == "Practicum Lesson One")
-	                    	<input id="Practicum2" onclick="require('pe').doAudit('PRACTICUM2')" type='button' value='Practicum2' class='ui blue button submitBtn disabled'/>
+	                    	<input id="Practicum2" onclick="require('pe').doAudit('PRACTICUM2')" type='button' value='Mock Class 2' class='ui blue button submitBtn disabled'/>
 	                    #end
 	                </div>
                 </div>
             </div>
             <hr>
             <div style='margin: 5px 0 0 20px;'>
-                <p><strong>Pass</strong> – This button allows the candidate to finish the practicum stage and become a new VIPKID Teacher.</p>
-            	<p><strong>Fail</strong> – This button will send this practicum lesson to a Practicum Evaluator Supervisor for result confirmation. Choose this option if the candidate does not meet the requirements needed to be a VIPKID Teacher.</p>
-            	<p><strong>Reschedule</strong> – This button reschedules the practicum due to technical or scheduling issues.</p>
+                <p><strong>Pass</strong> – This button allows the candidate to finish the Mock Class stage and become a new VIPKID Teacher.</p>
+            	<p><strong>Fail</strong> – This button will send this Mock Class to a Mock Class Senior Mentor for result confirmation. Choose this option if the candidate does not meet the requirements needed to be a VIPKID Teacher.</p>
+            	<p><strong>Reschedule</strong> – This button reschedules the Mock Class due to technical or scheduling issues.</p>
                 #if($!{teacherPe.lessonName} == "Practicum Lesson One")
-                <p><strong>Practicum 2</strong> – This button tells the candidate to schedule a second practicum.</p>
+                <p><strong>Mock Class 2</strong> – This button tells the candidate to schedule a second Mock Class.</p>
                 #end
             </div> 
         </div>          

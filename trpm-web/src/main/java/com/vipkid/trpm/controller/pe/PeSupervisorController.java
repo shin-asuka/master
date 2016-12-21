@@ -1,12 +1,16 @@
 package com.vipkid.trpm.controller.pe;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import com.vipkid.enums.TeacherApplicationEnum.Result;
+import com.vipkid.enums.TeacherApplicationEnum.Status;
+import com.vipkid.recruitment.dao.TeacherApplicationDao;
+import com.vipkid.recruitment.entity.TeacherApplication;
+import com.vipkid.rest.service.LoginService;
+import com.vipkid.trpm.constant.ApplicationConstant.FinishType;
+import com.vipkid.trpm.entity.Teacher;
+import com.vipkid.trpm.entity.TeacherPe;
+import com.vipkid.trpm.service.pe.AppserverPracticumService;
+import com.vipkid.trpm.service.pe.PeSupervisorService;
+import com.vipkid.trpm.service.portal.OnlineClassService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,16 +20,11 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.ServletRequestUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.vipkid.trpm.constant.ApplicationConstant.FinishType;
-import com.vipkid.trpm.dao.TeacherApplicationDao;
-import com.vipkid.trpm.entity.Teacher;
-import com.vipkid.trpm.entity.TeacherApplication;
-import com.vipkid.trpm.entity.TeacherPe;
-import com.vipkid.trpm.service.passport.IndexService;
-import com.vipkid.trpm.service.pe.AppserverPracticumService;
-import com.vipkid.trpm.service.pe.PeSupervisorService;
-import com.vipkid.trpm.service.portal.OnlineClassService;
-import com.vipkid.trpm.service.rest.LoginService;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 @Controller
 public class PeSupervisorController extends AbstractPeController {
@@ -34,9 +33,6 @@ public class PeSupervisorController extends AbstractPeController {
 
     @Autowired
     private PeSupervisorService peSupervisorService;
-
-    @Autowired
-    private IndexService indexService;
 
     @Autowired
     private OnlineClassService onlineclassService;
@@ -49,7 +45,7 @@ public class PeSupervisorController extends AbstractPeController {
 
     @Autowired
     private LoginService loginService;
-    
+
     @RequestMapping("/pesupervisor")
     public String peSupervisor(HttpServletRequest request, HttpServletResponse response,
             Model model) {
@@ -90,7 +86,7 @@ public class PeSupervisorController extends AbstractPeController {
             }
 
             List<TeacherApplication> list = teacherApplicationDao
-                    .findApplictionForStatusResult(teacherApplication.getTeacherId(),TeacherApplicationDao.Status.PRACTICUM.toString(),TeacherApplicationDao.Result.PRACTICUM2.toString());
+                    .findApplictionForStatusResult(teacherApplication.getTeacherId(),Status.PRACTICUM.toString(),Result.PRACTICUM2.toString());
             if (list != null && list.size() > 0) {
                 model.addAttribute("practicum2", true);
             } else {
@@ -111,11 +107,6 @@ public class PeSupervisorController extends AbstractPeController {
      *
      * @Author:ALong
      * @Title: doAudit
-     * @param type 完成类型
-     * @param onlineClassId 课程Id
-     * @param studentId 学生Id
-     * @param comments 备注
-     * @param finishType 完成类型
      * @return String
      * @date 2016年1月11日
      */
@@ -133,15 +124,14 @@ public class PeSupervisorController extends AbstractPeController {
         Map<String, Object> modelMap = peSupervisorService.updateAudit(peSupervisor,
                 teacherApplication, type, finishType, peId);
         model.addAllAttributes(modelMap);
-
+        Teacher recruitTeacher = (Teacher) modelMap.get("recruitTeacher");
         // Finish课程
         if ((Boolean) modelMap.get("result")) {
-            onlineclassService.finishPracticum(teacherApplication.getOnlineClassId(), finishType);
+            onlineclassService.finishPracticum(teacherApplication, finishType, peSupervisor, recruitTeacher);
         }
 
         // 并异步调用AppServer发送邮件及消息
         Long teacherApplicationId = (Long) modelMap.get("teacherApplicationId");
-        Teacher recruitTeacher = (Teacher) modelMap.get("recruitTeacher");
         if (Objects.nonNull(teacherApplicationId) && Objects.nonNull(recruitTeacher)) {
             appserverPracticumService.finishPracticumProcess(teacherApplicationId, recruitTeacher);
         }

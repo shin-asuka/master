@@ -19,7 +19,7 @@ li[role] a {
     #@teachedPracticum()
     #set($showClassroomsLayer = $showLayer)
     <li role="presentation" #tabActive($courseType, "PRACTICUM")>
-      <a href="javascript:;" id="practicum">Practicum</a>
+      <a href="javascript:;" id="practicum">Mock Class</a>
     </li>
     #end
   </ul>

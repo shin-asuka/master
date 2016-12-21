@@ -17,10 +17,10 @@ public class TeacherNationalityCodeDao extends MapperDaoTemplate<TeacherNational
 	public TeacherNationalityCodeDao(SqlSessionTemplate sqlSessionTemplate) {
 		super(sqlSessionTemplate, TeacherNationalityCode.class);
 	}
-
+	
 	public List<TeacherNationalityCode> getTeacherNationalityCodes() {
-		return super.selectList(new TeacherNationalityCode());
-	}
+        return super.selectList(new TeacherNationalityCode());
+    }
 
 	public TeacherNationalityCode getTeacherNationalityCode(int id, String code) {
 		if (StringUtils.isEmpty(code) || 0 == id) {

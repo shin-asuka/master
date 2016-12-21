@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 import com.google.api.client.util.Maps;
 import com.vipkid.email.EmailEngine;
 import com.vipkid.email.handle.EmailConfig.EmailFormEnum;
-import com.vipkid.email.templete.TempleteUtils;
+import com.vipkid.email.template.TemplateUtils;
 import com.vipkid.trpm.dao.TeacherDao;
 import com.vipkid.trpm.dao.TeacherPeDao;
 import com.vipkid.trpm.entity.Teacher;
@@ -127,7 +127,7 @@ public class PracticumScheduled {
                     Map<String, String> paramsMap = Maps.newHashMap();
                     paramsMap.put("tableDetails", tableDetails.toString());
 
-                    Map<String, String> emailMap = new TempleteUtils().readTemplete(
+                    Map<String, String> emailMap = new TemplateUtils().readTemplate(
                             "PracticumRemiderTQ.html", paramsMap, "PracticumRemiderTQ-Title.html");
 
                     new EmailEngine().addMailPool("practicum@vipkid.com.cn", emailMap,
@@ -191,9 +191,9 @@ public class PracticumScheduled {
             paramsMap.put("teachingExperience",
                     String.valueOf(peSupervisor.getTeachingExperience()));
 
-            TempleteUtils templeteUtils = new TempleteUtils();
+            TemplateUtils templateUtils = new TemplateUtils();
             Map<String, String> emailMap =
-                    templeteUtils.readTemplete(contentTempateName, paramsMap, titleTemplateName);
+                    templateUtils.readTemplate(contentTempateName, paramsMap, titleTemplateName);
 
             new EmailEngine().addMailPool(peSupervisor.getEmail(), emailMap,
                     EmailFormEnum.TEACHVIP);

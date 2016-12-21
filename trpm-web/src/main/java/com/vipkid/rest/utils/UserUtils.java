@@ -19,7 +19,6 @@ public class UserUtils {
 	public static User getUser(HttpServletRequest request){
 		User user = null;
 		String token = AppContext.getToken(request);
-		
 		logger.info("Auth url = {} , token = {}",request.getRequestURI(),token);
 		if(StringUtils.isNotBlank(token)){
 			user = userDao.findByToken(token);

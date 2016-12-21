@@ -1,7 +1,6 @@
 package com.vipkid.trpm.service.pe;
 
 import java.sql.Timestamp;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -15,31 +14,29 @@ import org.springframework.stereotype.Service;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
+import com.vipkid.enums.OnlineClassEnum.ClassStatus;
 import com.vipkid.enums.TbdResultEnum;
-import com.vipkid.rest.config.RestfulConfig.RoleClass;
+import com.vipkid.enums.TeacherApplicationEnum;
+import com.vipkid.enums.TeacherApplicationEnum.Result;
+import com.vipkid.enums.TeacherApplicationEnum.Status;
+import com.vipkid.enums.TeacherModuleEnum.RoleClass;
+import com.vipkid.recruitment.dao.TeacherApplicationDao;
+import com.vipkid.recruitment.entity.TeacherApplication;
 import com.vipkid.trpm.constant.ApplicationConstant;
-import com.vipkid.trpm.constant.ApplicationConstant.ClassStatus;
-import com.vipkid.trpm.constant.ApplicationConstant.RecruitmentResult;
-import com.vipkid.trpm.constant.ApplicationConstant.RecruitmentStatus;
-import com.vipkid.trpm.constant.ApplicationConstant.TeacherLifeCycle;
-import com.vipkid.trpm.constant.ApplicationConstant.TeacherType;
 import com.vipkid.trpm.dao.AuditDao;
 import com.vipkid.trpm.dao.LessonDao;
 import com.vipkid.trpm.dao.OnlineClassDao;
-import com.vipkid.trpm.dao.TeacherApplicationDao;
 import com.vipkid.trpm.dao.TeacherDao;
 import com.vipkid.trpm.dao.TeacherModuleDao;
 import com.vipkid.trpm.dao.TeacherPeDao;
-import com.vipkid.trpm.dao.TeacherQuizDao;
 import com.vipkid.trpm.dao.UserDao;
 import com.vipkid.trpm.entity.Lesson;
 import com.vipkid.trpm.entity.OnlineClass;
 import com.vipkid.trpm.entity.Teacher;
-import com.vipkid.trpm.entity.TeacherApplication;
 import com.vipkid.trpm.entity.TeacherModule;
 import com.vipkid.trpm.entity.TeacherPe;
 import com.vipkid.trpm.entity.User;
-import com.vipkid.trpm.proxy.ClassroomProxy;
+import com.vipkid.trpm.proxy.OnlineClassProxy;
 import com.vipkid.trpm.util.DateUtils;
 import com.vipkid.trpm.util.FilesUtils;
 import com.vipkid.trpm.util.IpUtils;
@@ -72,9 +69,6 @@ public class PeSupervisorService {
 
     @Autowired
     private TeacherModuleDao teacherModuleDao;
-    
-    @Autowired
-    private TeacherQuizDao teacherQuizDao;
 
     public int totalPe(long teacherId) {
         return teacherPeDao.countByTeacherId(teacherId);
@@ -100,27 +94,26 @@ public class PeSupervisorService {
 
     public String getClassRoomUrl(TeacherPe teacherPe) {
         OnlineClass onlineClass = onlineClassDao.findById(teacherPe.getOnlineClassId());
-        String url = ClassroomProxy.generateRoomEnterUrl(String.valueOf(teacherPe.getStudentId()),
-                teacherPe.getStudentName(), onlineClass.getClassroom(), ClassroomProxy.ROLE_STUDENT,
-                onlineClass.getSupplierCode());
-        return url;
+        Map<String,Object> result = OnlineClassProxy.generateRoomEnterUrl(String.valueOf(teacherPe.getStudentId()),
+                teacherPe.getStudentName(), onlineClass.getClassroom(), OnlineClassProxy.RoomRole.STUDENT,
+                onlineClass.getSupplierCode(),onlineClass.getId(),OnlineClassProxy.ClassType.PRACTICUM);
+        return result.get("url")+"";
     }
 
     /**
      * 结束Practicum课操作
      *
      * @Author:ALong
-     * @param teacher 操作老师(学生角色)
-     * @param onlineClassId 上课Id
+     * @param peSupervisor 操作老师(学生角色)
+     * @param currTeacherApplication 上课Id
      * @param result 结果
-     * @param studentId 学生Id
-     * @param comments 备注
      * @param finishType 完成类型
+     * @param peId peId
      * @return Map<String,Object>
      * @date 2016年1月11日
      */
     public Map<String, Object> updateAudit(Teacher peSupervisor,
-            TeacherApplication currTeacherApplication, String result, String finishType, int peId) {
+                                           TeacherApplication currTeacherApplication, String result, String finishType, int peId) {
         // 默认操作状态
         Map<String, Object> modelMap = Maps.newHashMap();
         modelMap.put("result", false);
@@ -140,7 +133,7 @@ public class PeSupervisorService {
         }
 
         // 1.finishType 如果为null，则抛出错误信息
-        if (StringUtils.isEmpty(finishType)) {
+        if (StringUtils.isBlank(finishType)) {
             logger.info("Finish Type is null ");
             modelMap.put("msg", "Please select an finish type first！");
             return modelMap;
@@ -148,16 +141,36 @@ public class PeSupervisorService {
 
         // 2.验证 teacherApplications 是否为空
         long onlineClassId = currTeacherApplication.getOnlineClassId();
-        TeacherApplication teacherApplication = teacherApplicationDao
-                .findApplictionByOlineclassId(onlineClassId, peSupervisor.getId());
+        
+        OnlineClass onlineClass = onlineClassDao.findById(onlineClassId);
+        
+        if(onlineClass == null){
+        	modelMap.put("msg", "Not exist the online-class recruitment info ！");
+            logger.info(" Online Class is null onlineClassId:{} , status is PRACTICUM ",
+                    onlineClassId);
+        }
+        //查询ta信息
+        /*TeacherApplication teacherApplication = teacherApplicationDao
+                .findApplictionByOlineclassId(onlineClassId, peSupervisor.getId());*/
+        TeacherApplication teacherApplication = teacherApplicationDao.findApplictionById(currTeacherApplication.getId());
+        
         if (teacherApplication == null) {
-            modelMap.put("msg", "Not exis the online-class recruitment info ！");
+            modelMap.put("msg", "Not exist the online-class recruitment info ！");
             logger.info(" TeacherApplication is null onlineClassId:{} , status is PRACTICUM ",
                     onlineClassId);
             return modelMap;
         }
+        
+        // 3.如果result 不等于null 则返回错误
+        if (!StringUtils.isBlank(teacherApplication.getResult())) {
+            logger.info(
+                    "Teacher application already end or recruitment process step already end, class id is : {},status is {}",
+                    onlineClass.getId(), onlineClass.getStatus());
+            modelMap.put("msg", " The recruitment process already end.");
+            return modelMap;
+        }
 
-        // 3.验证 recruitTeacher 是否存在
+        // 4.验证 recruitTeacher 是否存在
         Teacher recruitTeacher = teacherDao.findById(teacherApplication.getTeacherId());
         if (recruitTeacher == null) {
             modelMap.put("msg", "System error！");
@@ -166,20 +179,10 @@ public class PeSupervisorService {
             return modelMap;
         }
 
-        OnlineClass onlineClass = onlineClassDao.findById(onlineClassId);
-        // 4.如果result 不等于null 则返回错误
-        if (!StringUtils.isEmpty(teacherApplication.getResult())) {
-            logger.info(
-                    "Teacher application already end or recruitment process step already end, class id is : {},status is {}",
-                    onlineClass.getId(), onlineClass.getStatus());
-            modelMap.put("msg", " The recruitment process already end.");
-            return modelMap;
-        }
-
         // 5.practicum2 判断是否存在
-        if (ApplicationConstant.RecruitmentResult.PRACTICUM2.equals(result)) {
+        if (TeacherApplicationEnum.Result.PRACTICUM2.toString().equals(result)) {
             List<TeacherApplication> list = teacherApplicationDao
-                    .findApplictionForStatusResult(teacherApplication.getTeacherId(),TeacherApplicationDao.Status.PRACTICUM.toString(),TeacherApplicationDao.Result.PRACTICUM2.toString());
+                    .findApplictionForStatusResult(teacherApplication.getTeacherId(),Status.PRACTICUM.toString(),Result.PRACTICUM2.toString());
             if (list != null && list.size() > 0) {
                 logger.info(
                         "The teacher is already in practicum 2., class id is : {},status is {},recruitTeacher:{}",
@@ -207,7 +210,7 @@ public class PeSupervisorService {
                     currTeacherApplication);
             // 日志 1
             String content = FilesUtils
-                    .readLogTemplete(ApplicationConstant.AuditCategory.PRACTICUM_AUDIT, parmMap);
+                    .readLogTemplate(ApplicationConstant.AuditCategory.PRACTICUM_AUDIT, parmMap);
             auditDao.saveAudit(ApplicationConstant.AuditCategory.PRACTICUM_AUDIT, "INFO", content,
                     peSupervisor.getRealName(), recruitTeacher, IpUtils.getRemoteIP());
 
@@ -249,7 +252,7 @@ public class PeSupervisorService {
      * @date 2016年1月14日
      */
     private Map<String, Object> updateTeacherApplication(Teacher recruitTeacher, Teacher pes,
-            String result, String comments, TeacherApplication teacherApplication) {
+                                                         String result, String comments, TeacherApplication teacherApplication) {
 
         Map<String, Object> modelMap = Maps.newHashMap();
 
@@ -263,17 +266,17 @@ public class PeSupervisorService {
         teacherApplication.setTeacherId(recruitTeacher.getId());
         teacherApplication.setCurrent(1);
         // 如果是PASS操作，则ta状态修改为FINISH，教师状态修改为REGULAR
-        if (RecruitmentResult.PASS.equals(result)) {
-            teacherApplication.setStatus(RecruitmentStatus.FINISHED);
+//        if (TeacherApplicationEnum.Result.PASS.toString().equals(result)) {
+            //teacherApplication.setStatus(TeacherApplicationEnum.Status.FINISHED.toString());
             // 2.教师状态更新
-            recruitTeacher.setLifeCycle(TeacherLifeCycle.REGULAR);
+            //recruitTeacher.setLifeCycle(LifeCycle.REGULAR.toString());
             // 3.新增教师入职时间
-            recruitTeacher.setEntryDate(new Date());
-            recruitTeacher.setType(TeacherType.PART_TIME);
-            this.teacherDao.update(recruitTeacher);
+            //recruitTeacher.setEntryDate(new Date());
+            //recruitTeacher.setType(TeacherEnum.Type.PART_TIME.toString());
+            //this.teacherDao.update(recruitTeacher);
             // 增加quiz的考试记录
-            teacherQuizDao.insertQuiz(recruitTeacher.getId(),pes.getId());
-        }
+            //teacherQuizDao.insertQuiz(recruitTeacher.getId(),pes.getId());
+//        }
         // 3.更新teacherApplication
         this.teacherApplicationDao.update(teacherApplication);
 
@@ -292,12 +295,12 @@ public class PeSupervisorService {
     /**
      * 处理PE的Practicum操作
      *
-     * @param teacher
+     * @param pe
      * @param teacherApplication
      * @return
      */
     public Map<String, Object> doPracticumForPE(Teacher pe, TeacherApplication teacherApplication,
-            String result) {
+                                                String result) {
         Preconditions.checkArgument(0 != teacherApplication.getId());
         Preconditions.checkArgument(StringUtils.isNotEmpty(result));
 
@@ -320,10 +323,10 @@ public class PeSupervisorService {
 
         // 判断当前用户是否拥有PE Supervisor权限
         if (CollectionUtils.isNotEmpty(teacherModules)
-                && RecruitmentResult.TBD_FAIL.equals(result)) {
+                && TeacherApplicationEnum.Result.TBD_FAIL.toString().equals(result)) {
             // 拥有PE Supervisor权限
             // 更新当前Application记录的结果为FAIL
-            teacherApplication.setResult(RecruitmentResult.FAIL);
+            teacherApplication.setResult(TeacherApplicationEnum.Result.FAIL.toString());
             teacherApplication.setAuditorId(pe.getId());
             teacherApplication.setAuditDateTime(new Timestamp(System.currentTimeMillis()));
             teacherApplication.setContractUrl("PE-Supervisor");
@@ -348,7 +351,7 @@ public class PeSupervisorService {
                         currentTeacherApplications.stream().findFirst();
                 TeacherApplication enabledTeacherApplication = optionalTeacherApplication.get();
 
-                if (RecruitmentStatus.PRACTICUM.equals(enabledTeacherApplication.getStatus())) {
+                if (TeacherApplicationEnum.Status.PRACTICUM.toString().equals(enabledTeacherApplication.getStatus())) {
                     // 开始插入当前Application记录的副本
                     enabledTeacherApplication.setId(0);
                     enabledTeacherApplication.setContractUrl("PE-Supervisor");

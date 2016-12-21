@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import com.vipkid.email.handle.EmailConfig.EmailFormEnum;
 import com.vipkid.email.handle.EmailHandle;
+import com.vipkid.email.template.TemplateUtils;
 
 /**
  * <b>邮件发送线程调度引擎类</b> <br/>
@@ -33,11 +34,11 @@ public class EmailEngine {
      * @Author:ALong (ZengWeiLong)
      * @param toEmail 发送到目标地址
      * @param map （必须包含邮件标题 <span style="color:red;"> title</span>，邮件内容 <span style="color:red;">
-     *        content</span>） 通过 {@link com.vipkid.email.templete.TempleteUtils} 的静态方法 readTemplete可以得到
+     *        content</span>） 通过 {@link TemplateUtils} 的静态方法 readTemplate可以得到
      * @param emailForm 使用发送者
      * @date 2016年4月23日
      */
-    public void addMailPool(String toEmail, Map<String, String> map, EmailFormEnum emailForm) {
+    public static void addMailPool(String toEmail, Map<String, String> map, EmailFormEnum emailForm) {
         logger.info("异步发送邮件：" + toEmail);
         ExecutorService executorService = Executors.newSingleThreadExecutor();
         executorService.submit(() -> {
@@ -53,12 +54,12 @@ public class EmailEngine {
      * @Author:ALong (ZengWeiLong)
      * @param toEmail 发送到目标地址
      * @param map （必须包含邮件标题 <span style="color:red;"> title</span>，邮件内容 <span style="color:red;">
-     *        content</span>） 通过 {@link com.vipkid.email.templete.TempleteUtils} 的静态方法 readTemplete可以得到
+     *        content</span>） 通过 {@link TemplateUtils} 的静态方法 readTemplate可以得到
      * @param emailForm 使用发送者
      * @throws InterruptedException void
      * @date 2016年4月23日
      */
-    public void addMail(String toEmail, Map<String, String> map, EmailFormEnum emailForm) {
+    public static void addMail(String toEmail, Map<String, String> map, EmailFormEnum emailForm) {
         logger.info("同步发送邮件：" + toEmail);
         EmailHandle.switchMail(toEmail,map.get("title"), map.get("content"), emailForm);
         logger.info("同步发送邮件结束：" + toEmail);

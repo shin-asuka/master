@@ -1,18 +1,21 @@
 package com.vipkid.mq.service.impl;
 
-import java.sql.Timestamp;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
-import javax.jms.Destination;
-
 import com.alibaba.fastjson.JSON;
 import com.vipkid.enums.OnlineClassEnum;
-
+import com.vipkid.mq.message.FinishOnlineClassMessage;
+import com.vipkid.mq.message.FinishOnlineClassMessage.OperatorType;
+import com.vipkid.mq.message.LessonMessage;
+import com.vipkid.mq.message.OnlineClassMessage;
+import com.vipkid.mq.producer.ProducerService;
+import com.vipkid.mq.service.PayrollMessageService;
+import com.vipkid.payroll.service.StudentService;
+import com.vipkid.trpm.dao.CourseDao;
+import com.vipkid.trpm.dao.LessonDao;
+import com.vipkid.trpm.dao.OnlineClassDao;
+import com.vipkid.trpm.dao.TeacherDao;
+import com.vipkid.trpm.entity.*;
 import com.vipkid.trpm.entity.teachercomment.TeacherComment;
 import net.sf.json.JSONObject;
-
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,20 +23,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
-import com.vipkid.mq.message.FinishOnlineClassMessage;
-import com.vipkid.mq.message.FinishOnlineClassMessage.OperatorType;
-import com.vipkid.mq.message.LessonMessage;
-import com.vipkid.mq.message.OnlineClassMessage;
-import com.vipkid.mq.producer.ProducerService;
-import com.vipkid.mq.service.PayrollMessageService;
-import com.vipkid.payroll.service.AssessmentReportService;
-import com.vipkid.payroll.service.StudentService;
-import com.vipkid.payroll.utils.DateUtils;
-import com.vipkid.trpm.dao.CourseDao;
-import com.vipkid.trpm.dao.LessonDao;
-import com.vipkid.trpm.dao.OnlineClassDao;
-import com.vipkid.trpm.dao.TeacherDao;
-import com.vipkid.trpm.entity.*;
+import javax.annotation.Resource;
+import javax.jms.Destination;
+import java.sql.Timestamp;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 结束课程，发送消息服务
@@ -162,8 +156,8 @@ public class PayrollMessageServiceImpl implements PayrollMessageService {
         try {
             OnlineClass onlineClass = onlineClassDao.findById(onlineClassId);
             if (null != onlineClass
-                    && !StringUtils.equals(OnlineClassEnum.Status.FINISHED.toString(), onlineClass.getStatus())
-                    && !StringUtils.equals(OnlineClassEnum.Status.INVALID.toString(), onlineClass.getStatus())) {
+                    && !StringUtils.equals(OnlineClassEnum.ClassStatus.FINISHED.toString(), onlineClass.getStatus())
+                    && !StringUtils.equals(OnlineClassEnum.ClassStatus.INVALID.toString(), onlineClass.getStatus())) {
                 logger.info("OnlineClass 状态非Finished或者Invalid，不发送消息，onlineClassId = {}", onlineClassId);
                 return message;
             }

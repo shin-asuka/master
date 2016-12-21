@@ -6,7 +6,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.community.tools.JsonTools;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,12 +14,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.google.api.client.util.Maps;
 import com.google.common.collect.Lists;
-import com.vipkid.rest.config.RestfulConfig.RoleClass;
+import com.google.common.collect.Maps;
+import com.vipkid.enums.OnlineClassEnum.CourseType;
+import com.vipkid.enums.TeacherModuleEnum.RoleClass;
 import com.vipkid.trpm.constant.ApplicationConstant;
 import com.vipkid.trpm.constant.ApplicationConstant.CookieKey;
-import com.vipkid.trpm.constant.ApplicationConstant.CourseType;
 import com.vipkid.trpm.dao.CourseDao;
 import com.vipkid.trpm.dao.StaffDao;
 import com.vipkid.trpm.dao.TeacherDao;
@@ -34,7 +34,7 @@ import com.vipkid.trpm.proxy.RedisProxy;
 import com.vipkid.trpm.util.CacheUtils;
 import com.vipkid.trpm.util.CookieUtils;
 import com.vipkid.trpm.util.IpUtils;
-
+@Deprecated
 @Service
 public class IndexService {
 
@@ -66,27 +66,27 @@ public class IndexService {
      *
      * @return Teacher
      */
-    /*public Teacher getTeacher(HttpServletRequest request) {
+    public Teacher getTeacher(HttpServletRequest request) {
         User user = getUser(request);
         Teacher teacher = teacherDao.findById(user.getId());
 
         return teacher;
-    }*/
+    }
     
-    /*public Staff getStaff(Long id){
+    public Staff getStaff(Long id){
     	Staff staff = null;
     	if(id!=null){
     		staff = staffDao.findById(id);
     	}
     	return staff;
-    }*/
+    }
 
     /**
      * 获取当前登录用户
      *
      * @return User
      */
-    /*public User getUser(HttpServletRequest request) {
+    public User getUser(HttpServletRequest request) {
         String token = CookieUtils.getValue(request, CookieKey.TRPM_TOKEN);
         String key = CacheUtils.getUserTokenKey(token);
         
@@ -97,7 +97,7 @@ public class IndexService {
             user = userDao.findById(user.getId());
         }
         return user;
-    }*/
+    }
 
     /**
      * 判断User是否有PE权限
@@ -107,7 +107,7 @@ public class IndexService {
      * @return boolean
      * @date 2016年7月4日
      */
-    /*public Map<String,Object> getAllRole(long teacherId) {
+    public Map<String,Object> getAllRole(long teacherId) {
         String result = teacherModuleDao.findByTeacherModule(teacherId);
         Map<String,Object> roles = Maps.newHashMap();
         roles.put(RoleClass.PES, false);
@@ -123,7 +123,7 @@ public class IndexService {
             roles.put(RoleClass.TES,true);
         }
         return roles;
-    }*/
+    }
 
     /**
      * 查询老师可以教的课程类型列表
@@ -131,14 +131,14 @@ public class IndexService {
      * @param teacherId
      * @return List<String>
      */
-    /*public List<String> getCourseType(long teacherId) {
+    public List<String> getCourseType(long teacherId) {
         List<String> courseTypes = Lists.newArrayList();
 
         courseDao.findByTeacherId(teacherId).stream().forEach((course) -> {
             courseTypes.add(course.getType());
         });
         return courseTypes;
-    }*/
+    }
 
     /**
      * 处理不显示提示Layer逻辑
@@ -147,11 +147,11 @@ public class IndexService {
      *
      * @param pageLogin
      */
-    /*public void doDisableLayer(TeacherPageLogin pageLogin) {
+    public void doDisableLayer(TeacherPageLogin pageLogin) {
         teacherLoginTypeDao.saveTeacherPageLogin(pageLogin);
-    }*/
+    }
 
-    /*public User getStaff(String username, String password) {
+    public User getStaff(String username, String password) {
         return userDao.selectOne(new User().setUsername(username).setPassword(password));
     }
 
@@ -161,9 +161,9 @@ public class IndexService {
 
     public User getLoginUser(String username) {
         return userDao.findByLogin(username);
-    }*/
+    }
 
-    /*public void setLoginCooke(HttpServletResponse response, User user) {
+    public void setLoginCooke(HttpServletResponse response, User user) {
         String token = CacheUtils.getTokenId();
         String key = CacheUtils.getUserTokenKey(token);
         
@@ -175,30 +175,30 @@ public class IndexService {
         }
         logger.info("setLoginCooke 设置登录Cookie ,teacherID = {},token = {} , key = {}",user.getId(),token,key);
         CookieUtils.setCookie(response, CookieKey.TRPM_TOKEN, token, null);
-    }*/
+    }
 
-    /*public void removeLoginCooke(HttpServletRequest request, HttpServletResponse response) {
+    public void removeLoginCooke(HttpServletRequest request, HttpServletResponse response) {
         String token = CookieUtils.getValue(request, CookieKey.TRPM_TOKEN);
         String key = CacheUtils.getUserTokenKey(token);
         if(StringUtils.isNotBlank(key)){
             redisProxy.del(key);
         }
         CookieUtils.removeCookie(response, CookieKey.TRPM_TOKEN, null, null);
-    }*/
+    }
 
-    /*public void setCourseTypes(long userId, List<String> courseTypes) {
+    public void setCourseTypes(long userId, List<String> courseTypes) {
         String key = CacheUtils.getCoursesKey(userId);
         redisProxy.set(key, JsonTools.getJson(courseTypes));
-    }*/
+    }
 
-    /*public boolean enabledPracticum(long userId) {
+    public boolean enabledPracticum(long userId) {
         String key = CacheUtils.getCoursesKey(userId);
         String json = redisProxy.get(key);
         List<String> courseTypes = JsonTools.readValue(json, new TypeReference<List<String>>() {});
         return courseTypes.contains(CourseType.PRACTICUM);
-    }*/
+    }
 
-    /*public User findUserById(long id) {
+    public User findUserById(long id) {
         return this.userDao.findById(id);
     }
 
@@ -208,7 +208,7 @@ public class IndexService {
 
     public Teacher findTeacherById(long id) {
         return this.teacherDao.findById(id);
-    }*/
+    }
 
     /**
      * 根据recruitmentId 查询Teacher
@@ -218,7 +218,7 @@ public class IndexService {
      * @return Teacher
      * @date 2016年3月2日
      */
-    /*public Teacher findTeacherByRecruitmentId(String recruitmentId) {
+    public Teacher findTeacherByRecruitmentId(String recruitmentId) {
         if (StringUtils.isEmpty(recruitmentId)) {
             return null;
         }
@@ -237,6 +237,6 @@ public class IndexService {
                     ApplicationConstant.CookieKey.TRPM_CHANGE_WINDOW, null);
         }
 
-    }*/
+    }
 
 }

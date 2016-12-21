@@ -14,21 +14,18 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.google.api.client.util.Maps;
 import com.google.common.collect.Lists;
 import com.vipkid.email.EmailEngine;
-import com.vipkid.email.handle.EmailHandle;
 import com.vipkid.email.handle.EmailConfig.EmailFormEnum;
-import com.vipkid.email.templete.TempleteUtils;
+import com.vipkid.email.template.TemplateUtils;
 import com.vipkid.http.service.AssessmentHttpService;
 import com.vipkid.http.utils.JsonUtils;
 import com.vipkid.http.vo.OnlineClassVo;
 import com.vipkid.task.utils.UADateUtils;
 import com.vipkid.trpm.dao.LessonDao;
 import com.vipkid.trpm.dao.OnlineClassDao;
-import com.vipkid.trpm.util.DateUtils;
 
 /**
  * @author zouqinghua
@@ -148,7 +145,7 @@ public class UnitAssesssmentService {
 
 	}
 
-	public void sendEmail(OnlineClassVo onlineClassVoUnSubmit,Map<Long,OnlineClassVo> ocMap,String contentTemplete,String titleTemplete){
+	public void sendEmail(OnlineClassVo onlineClassVoUnSubmit,Map<Long,OnlineClassVo> ocMap,String contentTemplate,String titleTemplate){
 		if(onlineClassVoUnSubmit!=null && CollectionUtils.isNotEmpty(onlineClassVoUnSubmit.getIdList())){
 			List<Long> idList = onlineClassVoUnSubmit.getIdList();
 			for (Long id : idList) {
@@ -159,18 +156,18 @@ public class UnitAssesssmentService {
 					String timezone = oc.getTimezone();
 					
 					//email = "yangchao@vipkid.com.cn"; //
-					logger.info("send Email to teacher name= {},email = {} , contentTemplete = {}, titleTemplete = {}",name,email,contentTemplete,titleTemplete);
+					logger.info("send Email to teacher name= {},email = {} , contentTemplate = {}, titleTemplate = {}",name,email,contentTemplate,titleTemplate);
 					String scheduledDateTime = UADateUtils.format(oc.getScheduledDateTime(), "MM/dd/YYYY",timezone) ;
 					scheduledDateTime +=" at "+UADateUtils.format(oc.getScheduledDateTime(), "HH:mm",timezone) ;
 					try {
 	                    Map<String, String> paramsMap = Maps.newHashMap();
 	                    paramsMap.put("scheduledDateTime", scheduledDateTime);
 
-	                    Map<String, String> emailMap = new TempleteUtils().readTemplete(contentTemplete, paramsMap, titleTemplete);
+	                    Map<String, String> emailMap = new TemplateUtils().readTemplate(contentTemplate, paramsMap, titleTemplate);
 	                    new EmailEngine().addMailPool(email, emailMap,EmailFormEnum.EDUCATION);
 	                    //EmailHandle emailHandle = new EmailHandle(email, emailMap.get("title"), emailMap.get("content"), EmailFormEnum.TEACHVIP);
 	                    //emailHandle.sendMail();  
-	                    logger.info("send Email success  teacher = {},email = {},contentTemplete = {}, titleTemplete = {}",name,email,contentTemplete,titleTemplete);
+	                    logger.info("send Email success  teacher = {},email = {},contentTemplate = {}, titleTemplate = {}",name,email,contentTemplate,titleTemplate);
 	                } catch (Exception e) {
 	                    logger.error("Send TQ mail error", e);
 	                }

@@ -1,0 +1,209 @@
+{
+	"engaged":{
+		"5":{
+			"score":"2",
+			"comments":"Teacher was tired, monotone, did not smile, did not use variety of techniques to engage the student.",
+			"feedback":"Engaging the student is important to build student's interest in learning. Try different approaches to engage students to find one that you are comfortable with."
+		},
+		"6":{
+			"score":"4",
+			"comments":"Teacher was somewhat energetic, little variety in techniques to engage student.",
+			"feedback":"Practice different techniques to engage the student's attention and find one that you are comfortable with, and one that works with different students."
+		},
+		"7":{
+			"score":"6",
+			"comments":"Teacher was energetic, smiled and praised often, but needs more variety in techniques to engage the student.",
+			"feedback":"Use different approaches to engage different students."
+		},
+		"8":{
+			"score":"8",
+			"comments":"Teacher was energetic, smiled and praised often, used a variety of techniques to engage the student.",
+			"feedback":"Adjust your techniques for engagement based on age and level as well."
+		}
+	},
+	"timeManagementScore":{
+		"5":{
+			"score":"2",
+			"comments":"Pacing not consistent, too rushed or too slow in some parts, needed  extra 5 mins to finish, or taught for less than 5 min.",
+			"feedback":"It is important to prepare for class to keep your TM consistent. Use a timer to keep track of time and practice the lesson a few times before class."
+		},
+		"6":{
+			"score":"4",
+			"comments":"Rushed a little to finish, transitions not very smooth, needed extra or was under 2 minutes to finish.",
+			"feedback":"It is important to prepare for class to keep your TM consistent. Use a timer to keep track of time and practice the lesson a few times before class"
+		},
+		"7":{
+			"score":"6",
+			"comments":"Started and finished class in a clear manner, transitions were smooth. Pacing was appropriate, but needed extra or was under 30 sec-1 minute to finish.",
+			"feedback":"Use a timer to keep track of time and to ensure pacing consistency."
+		},
+		"8":{
+			"score":"8",
+			"comments":"Started and finished in a clear manner, transitions were smooth, excellent pacing, excellent time management.",
+			"feedback":"It is important to continue preparing for classed to keep your time management consistent."
+		}
+	},
+	"lessonObjectivesScore":{
+		"5":{
+			"score":"2",
+			"comments":"Did not attempt to accomplish lesson objectives.",
+			"feedback":"Carefully go through the materials provided for the lesson. Lessons are sequential for students, so it is important to make sure the lesson objectives are covered."
+		},
+		"6":{
+			"score":"4",
+			"comments":"Attempted, but only fulfilled 70% of lesson objectives.",
+			"feedback":"Have the lesson objectives printed out to reference throughout class and to make sure you are covering all points."
+		},
+		"7":{
+			"score":"6",
+			"comments":"Attempted, but only fulfilled 90% of lesson objectives.",
+			"feedback":"Have the lesson objectives printed out to reference throughout class and to make sure you are covering all points."
+		},
+		"8":{
+			"score":"8",
+			"comments":"Achieved the lesson objective, taught vocabulary, sentence patterns and completed all activities with the student.",
+			"feedback":"In a real class, if time allows, try to extend content with the student to enhance student's learning experience."
+		}
+	},
+	"teachingMethod":{
+		"5":{
+			"score":"2",
+			"comments":"Low level of energy for teaching children.",
+			"feedback":"Be more generous with your praises. Students respond to positive energy. It is important to adapt your energy level to your student's."
+		},
+		"6":{
+			"score":"4",
+			"comments":"Some smiling and praising. Energy level is not consistent throughout the lesson. Energy level is sometimes appropriate to encourage the student.",
+			"feedback":"Be more generous with your praises. Students respond to positive energy. It is important to adapt your energy level to your student's." 
+		},
+		"7":{
+			"score":"6",
+			"comments":"Smiles and praises, excited when student gets something right. Energy level is appropriate most of the time.",
+			"feedback":"Having an appropriate level of energy helps keep the student engaged in class. Make sure you have other tools available to engage students of different levels and ages."
+		},
+		"8":{
+			"score":"8",
+			"comments":"Smiles a lot, praises the student, excited when student gets something right, appropriate energy level all the time to encourage student to participate.",
+			"feedback":"Having an appropriate level of energy helps keep the student engaged in class. Make sure you have other tools available to engage students of different levels and ages."
+		}
+	},
+	"preparationPlanningScore":{
+		"5":{
+			"score":"2",
+			"comments":"Did not use reward system nor tools to achieve better learning result.",
+			"feedback":"Props and tools are a great way to enhance a lesson. They make the class both dynamic and engaging. It is highly recommended to use props to improve the student's learning experience."
+		},
+		"6":{
+			"score":"4",
+			"comments":"Used the reward system and/or tools in an appropriate way.",
+			"feedback":"Look through the lesson before class and see where and how you can use props and the reward system to improve the student's learning experience." 
+		},
+		"7":{
+			"score":"6",
+			"comments":"Used reward system and tools outstandingly to achieve the learning objective.",
+			"feedback":"Make sure you have different tools and reward systems for different ages and levels as well."
+		}
+	},
+	"englishLanguageScore":{
+		"5":{
+			"score":"2",
+			"comments":"Not proficient in TPR usage.",
+			"feedback":"Speech should be complemented with TPR as much as possible, especially for lower-level learners. The more visual cues provided to the student, the more likely it will be that the student will understand the message."
+		},
+		"6":{
+			"score":"4",
+			"comments":"TPR usage is good but needs more practice.",
+			"feedback":"Use TPR often in class and keep gestures consistent." 
+		},
+		"7":{
+			"score":"6",
+			"comments":"TPR usage in a natural and fluent way.",
+			"feedback":"Remember to adjust TPR for different ages and levels."
+		}
+	},
+	"interactionRapportScore":{
+		"5":{
+			"score":"2",
+			"comments":"Spoke too fast, instructions were not clear enough for a 5-year-old foundation level.",
+			"feedback":"When working with lower-level learners, it is important to minimize the use of “extra” language that either isn’t directly necessary for teaching the material at hand or that the student is not likely to understand. Keep in mind that the more things said in the classroom, the higher the likelihood that the student will not understand something that was said."
+		},
+		"6":{
+			"score":"4",
+			"comments":"Talking pace was slow and clear, but instructions were not always simplified enough for 5-year-old foundation level student.",
+			"feedback":"Avoid incidental language and complicated words. Keep in mind that the more things said in the classroom, the higher the likelihood that the student will not understand something that was said." 
+		},
+		"7":{
+			"score":"6",
+			"comments":"Spoke slowly, clearly, and in a simplified way. Could be easily understood by a 5-year-old foundation level student.",
+			"feedback":"Remember to adjust instructions for different ages and levels."
+		}
+	},
+	"studentOutputScore":{
+		"5":{
+			"score":"2",
+			"comments":"Teacher did not encourage student to speak.",
+			"feedback":"A teacher is unable to assess student's ability if there is no student output. Give students more opportunities to speak in class and encourage the use of full-sentences."
+		},
+		"6":{
+			"score":"4",
+			"comments":"Student spoke in most slides but not all.",
+			"feedback":"Give students more opportunities to speak in class and encourage the use of full-sentences." 
+		},
+		"7":{
+			"score":"6",
+			"comments":"Student was encouraged to, and spoke on every slide.",
+			"feedback":"If time allows, feel free to extend on topics student is interested in. For higher level students, engage in more discussions rather than repetition activities."
+		}
+	},
+	"appearanceScore":{
+		"5":{
+			"score":"2",
+			"comments":"Not familiar with the lesson, no reward system, no props prepared.",
+			"feedback":"Review materials and prepare props and tools for class."
+		},
+		"6":{
+			"score":"4",
+			"comments":"Reward system and props may be prepared, somewhat familiarized with every lesson objective.",
+			"feedback":"Review material and feel free to use props and reward system that you are comfortable with."
+		},
+		"7":{
+			"score":"6",
+			"comments":"Prepared reward system, props, knew the lesson well.",
+			"feedback":"Have tool backups to adjust class to different ages and levels."
+		}
+	},
+	"accent":{
+		"2":{
+			"score":"5",
+			"label":"Bachelor's"
+		},
+		"3":{
+			"score":"8",
+			"label":"Master's and Above"
+		}
+	},
+	"phonics":{
+		"3":{
+			"score":"10",
+			"label":"Other teaching"
+		},
+		"4":{
+			"score":"20",
+			"label":"K12 or ESL"
+		},
+		"5":{
+			"score":"25",
+			"label":"K12 + ESL"
+		}
+	},
+	"positive":{
+		"2":{
+			"score":"0",
+			"label":"No"
+		},
+		"3":{
+			"score":"5",
+			"label":"Yes"
+		}
+	}
+}

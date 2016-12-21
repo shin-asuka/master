@@ -3,10 +3,16 @@
  */
 package com.vipkid.task.service;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
+import com.alibaba.fastjson.JSONObject;
+import com.google.api.client.util.Maps;
+import com.google.common.collect.Lists;
+import com.vipkid.email.EmailEngine;
+import com.vipkid.email.handle.EmailConfig.EmailFormEnum;
+import com.vipkid.email.template.TemplateUtils;
+import com.vipkid.http.utils.JsonUtils;
+import com.vipkid.http.vo.OnlineClassVo;
+import com.vipkid.task.utils.UADateUtils;
+import com.vipkid.trpm.dao.OnlineClassDao;
 import com.vipkid.trpm.entity.teachercomment.TeacherCommentResult;
 import com.vipkid.trpm.service.portal.TeacherService;
 import org.apache.commons.collections.CollectionUtils;
@@ -16,16 +22,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.alibaba.fastjson.JSONObject;
-import com.google.api.client.util.Maps;
-import com.google.common.collect.Lists;
-import com.vipkid.email.EmailEngine;
-import com.vipkid.email.handle.EmailConfig.EmailFormEnum;
-import com.vipkid.email.templete.TempleteUtils;
-import com.vipkid.http.utils.JsonUtils;
-import com.vipkid.http.vo.OnlineClassVo;
-import com.vipkid.task.utils.UADateUtils;
-import com.vipkid.trpm.dao.OnlineClassDao;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author xingxuelin
@@ -96,7 +95,7 @@ public class CheckTeacherCommentService {
 						Map<String, String> paramsMap = Maps.newHashMap();
 						paramsMap.put("scheduledDateTime", scheduledDateTime);
 
-						Map<String, String> emailMap = new TempleteUtils().readTemplete(contentTemplete, paramsMap, titleTemplete);
+						Map<String, String> emailMap = new TemplateUtils().readTemplate(contentTemplete, paramsMap, titleTemplete);
 						new EmailEngine().addMailPool(email, emailMap,EmailFormEnum.EDUCATION);
 						//EmailHandle emailHandle = new EmailHandle(email, emailMap.get("title"), emailMap.get("content"), EmailFormEnum.TEACHVIP);
 						//emailHandle.sendMail();

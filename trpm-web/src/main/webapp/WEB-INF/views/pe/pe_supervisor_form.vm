@@ -73,7 +73,7 @@
         <td width="76">&nbsp;</td>
     </tr>
     <tr>
-        <td width="*">&middot;Accepts feedback and applies it the remaining portion of the practicum (if applicable).</td>
+        <td width="*">&middot;Accepts feedback and applies it the remaining portion of the Mock Class (if applicable).</td>
         <td width="20">&nbsp;</td>
         <td width="76" valign="top"><input type="radio" name="kidTeachingExperience" #if(0 == ${teacherApplication.kidTeachingExperience})checked="checked"#end value="0" />
             <input type="radio" name="kidTeachingExperience" #if(1 == ${teacherApplication.kidTeachingExperience})checked="checked"#end value="1" />

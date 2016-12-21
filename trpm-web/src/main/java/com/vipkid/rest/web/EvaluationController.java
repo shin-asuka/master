@@ -14,18 +14,19 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.google.api.client.util.Maps;
+import com.vipkid.enums.TeacherEnum.LifeCycle;
+import com.vipkid.enums.TeacherPageLoginEnum.LoginType;
+import com.vipkid.recruitment.utils.ReturnMapUtils;
 import com.vipkid.rest.RestfulController;
 import com.vipkid.rest.config.RestfulConfig;
-import com.vipkid.rest.interceptor.RestInterface;
-import com.vipkid.trpm.constant.ApplicationConstant.LoginType;
-import com.vipkid.trpm.constant.ApplicationConstant.TeacherLifeCycle;
+import com.vipkid.rest.interceptor.annotation.RestInterface;
+import com.vipkid.rest.service.EvaluationService;
+import com.vipkid.rest.service.LoginService;
+import com.vipkid.rest.service.TeacherPageLoginService;
 import com.vipkid.trpm.entity.User;
-import com.vipkid.trpm.service.rest.EvaluationService;
-import com.vipkid.trpm.service.rest.LoginService;
-import com.vipkid.trpm.service.rest.TeacherPageLoginService;
 
 @RestController
-@RestInterface(lifeCycle=TeacherLifeCycle.REGULAR)
+@RestInterface(lifeCycle=LifeCycle.REGULAR)
 @RequestMapping("/evaluation")
 public class EvaluationController extends RestfulController{
     
@@ -42,69 +43,49 @@ public class EvaluationController extends RestfulController{
     
     @RequestMapping(value = "/getTags", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
     public Map<String,Object> getTags(HttpServletRequest request, HttpServletResponse response){
-        Map<String,Object> result = Maps.newHashMap();
-        result.put("status", false);
         try{
             User user = getUser(request);
             logger.info("userId:" + user.getId());
-            result = evaluationService.findTags();
-            return result;
+            return ReturnMapUtils.returnSuccess(evaluationService.findTags());
         } catch (IllegalArgumentException e) {
-            result.put("info",e.getMessage());
-            result.put("status", false);
-            logger.error("内部参数转化异常:"+e.getMessage());
             response.setStatus(HttpStatus.BAD_REQUEST.value());
+            return ReturnMapUtils.returnFail(e.getMessage());
         } catch (Exception e) {
-            result.put("info",e.getMessage());
-            result.put("status", false);
-            logger.error(e.getMessage(), e);
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-        }  
-        return result;
+            return ReturnMapUtils.returnFail(e.getMessage());
+        }
     }
     
     
     @RequestMapping(value = "/getTeacherBio", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
     public Map<String,Object> getTeacherBio(HttpServletRequest request, HttpServletResponse response, long teacherId){
-        Map<String,Object> result = Maps.newHashMap();
         try{
             User user = getUser(request);
             logger.info("userId:" + user.getId());
-            result = evaluationService.findTeacherBio(teacherId);
-            return result;
+            return ReturnMapUtils.returnSuccess(evaluationService.findTeacherBio(teacherId));
         } catch (IllegalArgumentException e) {
-            result.put("info",e.getMessage());
-            result.put("status", false);
-            logger.error("内部参数转化异常:"+e.getMessage());
             response.setStatus(HttpStatus.BAD_REQUEST.value());
+            return ReturnMapUtils.returnFail(e.getMessage());
         } catch (Exception e) {
-            result.put("info",e.getMessage());
-            result.put("status", false);
-            logger.error(e.getMessage(), e);
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-        }        
-        return result;
+            return ReturnMapUtils.returnFail(e.getMessage());
+        }
     }
     
     @RequestMapping(value = "/saveClick", method = RequestMethod.POST, produces = RestfulConfig.JSON_UTF_8)
     public Map<String,Object> saveClick(HttpServletRequest request, HttpServletResponse response){
-        Map<String,Object> result = Maps.newHashMap();
         try{
             User user = getUser(request);
             logger.info("userId:" + user.getId());
+            Map<String,Object> result = Maps.newHashMap();
             result.put("result",this.teacherPageLoginService.saveTeacherPageLogin(user.getId(),LoginType.EVALUATION_CLICK));
-            return result;
+            return ReturnMapUtils.returnSuccess(result);
         } catch (IllegalArgumentException e) {
-            result.put("info",e.getMessage());
-            result.put("status", false);
-            logger.error("内部参数转化异常:"+e.getMessage());
             response.setStatus(HttpStatus.BAD_REQUEST.value());
+            return ReturnMapUtils.returnFail(e.getMessage());
         } catch (Exception e) {
-            result.put("info",e.getMessage());
-            result.put("status", false);
-            logger.error(e.getMessage(), e);
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-        }  
-        return result;
+            return ReturnMapUtils.returnFail(e.getMessage());
+        }
     }
 }
