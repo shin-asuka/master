@@ -106,6 +106,32 @@ public class ContractInfoService {
     }
 
 
+    /**
+     * 判断老师是否已经上传了 Identification 文件
+     *
+     * @param teacher
+     * @return
+     */
+    public boolean hasIdentification(Teacher teacher){
+        if(null == teacher) {
+            logger.warn("Teacher is null");
+            new Throwable("Teacher is null");
+        }
+        logger.info("check if {} has uploaded identification and not be audited yet.", teacher.getId());
+        List<TeacherContractFile> teacherContractFiles = teacherContractFileDao.findByTeacherIdAndTeacherApplicationId(teacher.getId(), CONTRACT_FILE_LATEST_APPLICATION_ID);
+        List<TeacherContractFile> identifications = Lists.newArrayList();
+        if(CollectionUtils.isNotEmpty(teacherContractFiles)) {
+            teacherContractFiles.forEach(obj -> {
+                if (obj.getFileType() == TeacherApplicationEnum.ContractFileType.IDENTIFICATION.val()) {
+                    identifications.add(obj);
+                }
+            });
+        }
+        if (CollectionUtils.isEmpty(identifications)) {
+            return false;
+        }
+        return true;
+    }
 
     /**
      * 在TeacherApplication中加入一条带审核数据

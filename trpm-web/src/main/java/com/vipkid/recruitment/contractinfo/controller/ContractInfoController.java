@@ -653,6 +653,13 @@ public class ContractInfoController extends RestfulController {
         try {
             Teacher teacher = getTeacher(request);
             logger.info("用户：{}，upload Identification file = {}", teacher.getId(), file);
+
+            boolean hasIdentification = contractInfoService.hasIdentification(teacher);
+            if(hasIdentification) {
+                logger.error("{} has identification uploaded and not yet be audited!", teacher.getId());
+                return ReturnMapUtils.returnFail("You have already uploaded, please refresh the page!");
+            }
+
             if (file != null) {
                 String fileName = file.getOriginalFilename();
                 if (StringUtils.isNotBlank(fileName)) {
