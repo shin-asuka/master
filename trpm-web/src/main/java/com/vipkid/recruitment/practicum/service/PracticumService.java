@@ -126,7 +126,8 @@ public class PracticumService {
         Lesson lesson = lessonDao.findById(onlineClass.getLessonId());
         
         if(lesson != null){
-        	result.put("lessonName",lesson.getName());
+        	result.put("lessonName",lesson.getName().replace("Practicum","Mock Class"));
+        	result.put("lessonSN",lesson.getSerialNumber());
         }
         
         String logpix = "onlineclassId:"+onlineClassId+";teacherId:"+teacher.getId();
