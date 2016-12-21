@@ -152,11 +152,9 @@ public class PracticumService {
         	return result;
         }
 
-        result = OnlineClassProxy.generateRoomEnterUrl(teacher.getId()+"", teacher.getRealName(),onlineClass.getClassroom(), OnlineClassProxy.RoomRole.TEACHER, onlineClass.getSupplierCode(),onlineClassId,OnlineClassProxy.ClassType.PRACTICUM);
-        
-        if(lesson != null){
-        	result.put("lessonName",lesson.getName());
-        }
+        Map<String,Object> urlResult = OnlineClassProxy.generateRoomEnterUrl(teacher.getId()+"", teacher.getRealName(),onlineClass.getClassroom(), OnlineClassProxy.RoomRole.TEACHER, onlineClass.getSupplierCode(),onlineClassId,OnlineClassProxy.ClassType.PRACTICUM);
+
+        result.putAll(urlResult);
         
         return result;
     }

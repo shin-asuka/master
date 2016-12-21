@@ -149,12 +149,10 @@ public class InterviewService {
         	result.putAll(ReturnMapUtils.returnFail("The classroom without creating",logpix));
         	return result;
         }
-        
-        result = OnlineClassProxy.generateRoomEnterUrl(teacher.getId()+"", teacher.getRealName(),onlineClass.getClassroom(), OnlineClassProxy.RoomRole.TEACHER, onlineClass.getSupplierCode(),onlineClassId,OnlineClassProxy.ClassType.TEACHER_RECRUITMENT);
 
-        if(lesson != null){
-        	result.put("lessonName",lesson.getName());
-        }
+        Map<String,Object> urlResult = OnlineClassProxy.generateRoomEnterUrl(teacher.getId()+"", teacher.getRealName(),onlineClass.getClassroom(), OnlineClassProxy.RoomRole.TEACHER, onlineClass.getSupplierCode(),onlineClassId,OnlineClassProxy.ClassType.TEACHER_RECRUITMENT);
+
+        result.putAll(urlResult);
         
         return result;
     }
