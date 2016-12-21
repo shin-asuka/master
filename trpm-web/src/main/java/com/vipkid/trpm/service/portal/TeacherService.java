@@ -61,6 +61,9 @@ public class TeacherService {
 
 	private static final String API_TEACHER_COMMENT_INSERT = "/api/teacher/comment/insertOne";
 
+
+	private static final int QUERY_LIMIT_SIZE = 200;
+
 	@Autowired
 	private CourseDao courseDao;
 
@@ -311,16 +314,34 @@ public class TeacherService {
 	}
 
 	public List<TeacherCommentResult> batchGetByOnlineClassIds(List<Long> onlineClassIds){
-		Map<String, String> paramsMap = Maps.newHashMap();
-		paramsMap.put("onlineClassIdList", Joiner.on(',').join(onlineClassIds));
-		paramsMap.put("needFeedback","true");
-		List<TeacherCommentResult> teacherCommentList = getTeacherCommentResult(paramsMap,
-				API_TEACHER_COMMENT_QUERY_CLASSIDLIST);
-		if (CollectionUtils.isEmpty(teacherCommentList)) {
-			return null;
-		}else{
-			return teacherCommentList;
+		List<TeacherCommentResult> teacherCommentList = Lists.newArrayList();
+		if (CollectionUtils.isNotEmpty(onlineClassIds)) {
+			List<Long> onlineClassIdList = Lists.newArrayList(onlineClassIds);
+			//防止onlineClassId过多,分批查询,每次200个
+			int idListSize = onlineClassIdList.size();
+			int queryTimes = (idListSize % QUERY_LIMIT_SIZE) == 0 ?
+				idListSize / QUERY_LIMIT_SIZE :
+				idListSize / QUERY_LIMIT_SIZE + 1;
+			for (int i = 0; i < queryTimes; i++) {
+				int toIndex = i * QUERY_LIMIT_SIZE + QUERY_LIMIT_SIZE;
+				if (toIndex > idListSize - 1) {
+					toIndex = idListSize;
+				}
+				List<Long> subIds = onlineClassIdList.subList(i * QUERY_LIMIT_SIZE, toIndex);
+				Map<String, String> paramsMap = Maps.newHashMap();
+				paramsMap.put("onlineClassIdList", Joiner.on(',').join(subIds));
+				paramsMap.put("needFeedback", "true");
+
+				List<TeacherCommentResult> teacherCommentListPart =
+					getTeacherCommentResult(paramsMap, API_TEACHER_COMMENT_QUERY_CLASSIDLIST);
+				if (CollectionUtils.isNotEmpty(teacherCommentListPart)) {
+					teacherCommentList.addAll(teacherCommentListPart);
+				}
+			}
+
 		}
+
+		return teacherCommentList;
 	}
 
 	public boolean updateTeacherComment(TeacherCommentUpdateDto inputDto) {
