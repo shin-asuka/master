@@ -97,7 +97,7 @@ public class ContractInfoUploadReminderJob {
 
 		if (auditTime.after(startTime) && auditTime.before(endTime)){
 			//userDao.doLock(teacher.getId());
-			//teacherLockLogDao.save(new TeacherLockLog(teacher.getId(), TeacherLockLogEnum.Reason.CONTRACT_INFO_NO_UPLOAD.toString(), TeacherEnum.LifeCycle.CONTRACT_INFO.toString()));
+			//teacherLockLogDao.save(new TeacherLockLog(teacher.getId(), TeacherLockLogEnum.Reason.CONTRACT_INFO_UPLOAD.toString(), TeacherEnum.LifeCycle.CONTRACT_INFO.toString()));
 			logger.info("【JOB.EMAIL.ContractInfoUploadReminderJob】LOCK: Cost {}ms. teacherId = {}, teacherEmail = {}", stopwatch.elapsed(TimeUnit.MILLISECONDS), teacher.getId(), teacher.getEmail());
 		} else {
 			String email = teacher.getEmail();
