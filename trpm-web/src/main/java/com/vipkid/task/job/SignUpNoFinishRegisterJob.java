@@ -96,8 +96,8 @@ public class SignUpNoFinishRegisterJob {
 		Date endTime = UADateUtils.parse(time.get("endTime"));
 
 		if (registerTime.after(startTime) && registerTime.before(endTime)){
-			userDao.doLock(teacher.getId());
-			teacherLockLogDao.save(new TeacherLockLog(teacher.getId(), TeacherLockLogEnum.Reason.NO_FINISH_REGISTER.toString(), TeacherEnum.LifeCycle.SIGNUP.toString()));
+			//userDao.doLock(teacher.getId());
+			//teacherLockLogDao.save(new TeacherLockLog(teacher.getId(), TeacherLockLogEnum.Reason.NO_FINISH_REGISTER.toString(), TeacherEnum.LifeCycle.SIGNUP.toString()));
 			logger.info("【JOB.EMAIL.SignUpNoFinishRegister】LOCK: Cost {}ms. teacherId = {}, teacherEmail = {}", stopwatch.elapsed(TimeUnit.MILLISECONDS), teacher.getId(), teacher.getEmail());
 		} else {
 			String email = teacher.getEmail();

@@ -87,8 +87,8 @@ public class PracticumNoRescheduleJob {
         Date endTime = UADateUtils.parse(time.get("endTime"));
 
         if (auditTime.after(startTime) && auditTime.before(endTime)){
-            userDao.doLock(teacher.getId());
-            teacherLockLogDao.save(new TeacherLockLog(teacher.getId(), TeacherLockLogEnum.Reason.PRACTICUM_NO_RESCHEDULE.toString(), TeacherEnum.LifeCycle.PRACTICUM.toString()));
+            //userDao.doLock(teacher.getId());
+            //teacherLockLogDao.save(new TeacherLockLog(teacher.getId(), TeacherLockLogEnum.Reason.PRACTICUM_NO_RESCHEDULE.toString(), TeacherEnum.LifeCycle.PRACTICUM.toString()));
             logger.info("【JOB.EMAIL.PracticumNoRescheduleJob】LOCK: Cost {}ms. teacherId = {}, teacherEmail = {}", stopwatch.elapsed(TimeUnit.MILLISECONDS), teacher.getId(), teacher.getEmail());
         } else {
             String email = teacher.getEmail();
