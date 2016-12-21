@@ -947,7 +947,7 @@ public class ContractInfoController extends RestfulController {
             Teacher teacher = getTeacher(request);
             logger.info("用户：{}，upload Identification file = {}", teacher.getId(), file);
 
-            int fileCount = contractInfoService.queryCertFileCount(teacher);
+            int fileCount = contractInfoService.queryDegreeFilesCount(teacher);
             if(fileCount >= MAX_DEGREE_FILE_NUM) {
                 logger.error("{} has uploaded {} degree files and not yet be audited!", teacher.getId(), fileCount);
                 return ReturnMapUtils.returnFail("You have already uploaded, please refresh the page!");
