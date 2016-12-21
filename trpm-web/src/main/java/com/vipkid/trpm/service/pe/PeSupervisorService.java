@@ -29,7 +29,6 @@ import com.vipkid.trpm.dao.OnlineClassDao;
 import com.vipkid.trpm.dao.TeacherDao;
 import com.vipkid.trpm.dao.TeacherModuleDao;
 import com.vipkid.trpm.dao.TeacherPeDao;
-import com.vipkid.trpm.dao.TeacherQuizDao;
 import com.vipkid.trpm.dao.UserDao;
 import com.vipkid.trpm.entity.Lesson;
 import com.vipkid.trpm.entity.OnlineClass;
@@ -134,7 +133,7 @@ public class PeSupervisorService {
         }
 
         // 1.finishType 如果为null，则抛出错误信息
-        if (StringUtils.isEmpty(finishType)) {
+        if (StringUtils.isBlank(finishType)) {
             logger.info("Finish Type is null ");
             modelMap.put("msg", "Please select an finish type first！");
             return modelMap;
@@ -142,31 +141,41 @@ public class PeSupervisorService {
 
         // 2.验证 teacherApplications 是否为空
         long onlineClassId = currTeacherApplication.getOnlineClassId();
-        TeacherApplication teacherApplication = teacherApplicationDao
-                .findApplictionByOlineclassId(onlineClassId, peSupervisor.getId());
+        
+        OnlineClass onlineClass = onlineClassDao.findById(onlineClassId);
+        
+        if(onlineClass == null){
+        	modelMap.put("msg", "Not exist the online-class recruitment info ！");
+            logger.info(" Online Class is null onlineClassId:{} , status is PRACTICUM ",
+                    onlineClassId);
+        }
+        //查询ta信息
+        /*TeacherApplication teacherApplication = teacherApplicationDao
+                .findApplictionByOlineclassId(onlineClassId, peSupervisor.getId());*/
+        TeacherApplication teacherApplication = teacherApplicationDao.findApplictionById(currTeacherApplication.getId());
+        
         if (teacherApplication == null) {
             modelMap.put("msg", "Not exist the online-class recruitment info ！");
             logger.info(" TeacherApplication is null onlineClassId:{} , status is PRACTICUM ",
                     onlineClassId);
             return modelMap;
         }
+        
+        // 3.如果result 不等于null 则返回错误
+        if (!StringUtils.isBlank(teacherApplication.getResult())) {
+            logger.info(
+                    "Teacher application already end or recruitment process step already end, class id is : {},status is {}",
+                    onlineClass.getId(), onlineClass.getStatus());
+            modelMap.put("msg", " The recruitment process already end.");
+            return modelMap;
+        }
 
-        // 3.验证 recruitTeacher 是否存在
+        // 4.验证 recruitTeacher 是否存在
         Teacher recruitTeacher = teacherDao.findById(teacherApplication.getTeacherId());
         if (recruitTeacher == null) {
             modelMap.put("msg", "System error！");
             logger.info(" Recruitment Teacher is null , teacher id is {}",
                     teacherApplication.getTeacherId());
-            return modelMap;
-        }
-
-        OnlineClass onlineClass = onlineClassDao.findById(onlineClassId);
-        // 4.如果result 不等于null 则返回错误
-        if (!StringUtils.isEmpty(teacherApplication.getResult())) {
-            logger.info(
-                    "Teacher application already end or recruitment process step already end, class id is : {},status is {}",
-                    onlineClass.getId(), onlineClass.getStatus());
-            modelMap.put("msg", " The recruitment process already end.");
             return modelMap;
         }
 
