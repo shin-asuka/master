@@ -7,6 +7,7 @@ import com.vipkid.enums.OnlineClassEnum;
 import com.vipkid.rest.service.LoginService;
 import com.vipkid.trpm.dao.StudentExamDao;
 import com.vipkid.trpm.entity.*;
+import com.vipkid.trpm.entity.teachercomment.SubmitTeacherCommentDto;
 import com.vipkid.trpm.entity.teachercomment.TeacherComment;
 import com.vipkid.trpm.entity.teachercomment.TeacherCommentResult;
 import com.vipkid.trpm.service.portal.ReportService;
@@ -268,7 +269,7 @@ public class ReportController extends AbstractPortalController {
      */
     @RequestMapping("/commentSubmit")
     public String feedbackSubmit(HttpServletRequest request, HttpServletResponse response,
-            TeacherComment teacherComment, Model model) {
+        SubmitTeacherCommentDto teacherComment, Model model) {
         Stopwatch stopwatch = Stopwatch.createStarted();
         String serialNumber = request.getParameter("serialNumber");
         String scheduledDateTime = request.getParameter("scheduledDateTime");
