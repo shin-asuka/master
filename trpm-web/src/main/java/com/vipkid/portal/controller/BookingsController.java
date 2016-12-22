@@ -88,7 +88,7 @@ public class BookingsController {
     }
 
     /* 取消 TimeSlot 接口 */
-    @RequestMapping(value = "/cancelTimeSlot", method = RequestMethod.POST, produces = RestfulConfig.JSON_UTF_8)
+    @RequestMapping(value = "/cancelTimeSlot", method = RequestMethod.DELETE, produces = RestfulConfig.JSON_UTF_8)
     public Map<String, Object> cancelTimeSlot(@RequestBody String body, HttpServletResponse response) {
         Map<String, Object> resultMap = Maps.newHashMap();
         try {
@@ -112,16 +112,17 @@ public class BookingsController {
         return resultMap;
     }
 
-    @RequestMapping(value = "/set24Hour", method = RequestMethod.PUT, produces = RestfulConfig.JSON_UTF_8)
-    public Map<String, Object> set24Hour(@RequestBody String body, HttpServletResponse response) {
+    @RequestMapping(value = "/set24Hours", method = RequestMethod.PUT, produces = RestfulConfig.JSON_UTF_8)
+    public Map<String, Object> set24Hours(@RequestBody String body, HttpServletResponse response) {
         Map<String, Object> resultMap = Maps.newHashMap();
         try {
-            logger.info("Invocation set24Hour() arguments: {}", body);
+            logger.info("Invocation set24Hours() arguments: {}", body);
             Set24HourRequest set24HourRequest = JsonUtils.toBean(body, Set24HourRequest.class);
 
-            Preconditions.checkArgument(0 != set24HourRequest.getOnlineClassId());
+            Preconditions.checkArgument(CollectionUtils.isNotEmpty(set24HourRequest.getOnlineClassIds()));
+            Preconditions.checkArgument(!set24HourRequest.getOnlineClassIds().stream().anyMatch(id -> 0 == id));
 
-            return bookingsService.doSet24Hour(set24HourRequest, loginService.getTeacher());
+            return bookingsService.doSet24Hours(set24HourRequest, loginService.getTeacher());
         } catch (IllegalArgumentException e) {
             logger.error("Illegal arguments error", e);
 
@@ -144,7 +145,7 @@ public class BookingsController {
             Delete24HourRequest delete24HourRequest = JsonUtils.toBean(body, Delete24HourRequest.class);
 
             Preconditions.checkArgument(CollectionUtils.isNotEmpty(delete24HourRequest.getOnlineClassIds()));
-            Preconditions.checkArgument(delete24HourRequest.getOnlineClassIds().stream().anyMatch(id -> 0 == id));
+            Preconditions.checkArgument(!delete24HourRequest.getOnlineClassIds().stream().anyMatch(id -> 0 == id));
 
             return bookingsService.doDelete24Hours(delete24HourRequest, loginService.getTeacher());
         } catch (IllegalArgumentException e) {

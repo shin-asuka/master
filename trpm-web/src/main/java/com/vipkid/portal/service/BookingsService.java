@@ -666,6 +666,7 @@ public class BookingsService {
             String timePoint = formatTo(scheduleDateTime.toInstant(), teacher.getTimezone(), FMT_HMA_US);
 
             modelMap.put("onlineClassId", onlineClass.getId());
+            modelMap.put("classType", onlineClass.getClassType());
             modelMap.put("timePoint", timePoint);
             modelMap.put("action", true);
         } else {

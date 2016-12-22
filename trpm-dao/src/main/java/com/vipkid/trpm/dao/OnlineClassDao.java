@@ -25,7 +25,7 @@ public class OnlineClassDao extends MapperDaoTemplate<OnlineClass> {
 
 	/**
 	 * 通过老师id及时区，开始时间，结束时间查找
-	 * 
+	 *
 	 * @param teacherId
 	 * @param fromTime
 	 * @param toTime
@@ -46,7 +46,7 @@ public class OnlineClassDao extends MapperDaoTemplate<OnlineClass> {
 
 	/**
 	 * 通过老师id及时区，开始时间，结束时间查找 TimeSlot 数量
-	 * 
+	 *
 	 * @param teacherId
 	 * @param fromTime
 	 * @param toTime
@@ -66,7 +66,7 @@ public class OnlineClassDao extends MapperDaoTemplate<OnlineClass> {
 
 	/**
 	 * 通过onlineClassId查询上课的学生数量
-	 * 
+	 *
 	 * @param onlineClassId
 	 * @return int
 	 */
@@ -80,7 +80,7 @@ public class OnlineClassDao extends MapperDaoTemplate<OnlineClass> {
 
 	/**
 	 * 通过TeacherId，ScheduleDateTime查询课程列表
-	 * 
+	 *
 	 * @param teacherId
 	 * @param scheduleDateTime
 	 * @return List<OnlineClass>
@@ -95,7 +95,7 @@ public class OnlineClassDao extends MapperDaoTemplate<OnlineClass> {
 
 	/**
 	 * 通过onlineClassId查询课程
-	 * 
+	 *
 	 * @param onlineClassId
 	 * @return OnlineClass
 	 */
@@ -108,7 +108,7 @@ public class OnlineClassDao extends MapperDaoTemplate<OnlineClass> {
 
 	/**
 	 * 更新OnlineClass课程状态
-	 * 
+	 *
 	 * @param onlineClassId
 	 * @param status
 	 */
@@ -120,7 +120,7 @@ public class OnlineClassDao extends MapperDaoTemplate<OnlineClass> {
 
 	/**
 	 * 更新教师进入教室时间
-	 * 
+	 *
 	 * @param onlineClassId
 	 * @param enterTime
 	 */
@@ -139,7 +139,7 @@ public class OnlineClassDao extends MapperDaoTemplate<OnlineClass> {
 
 	/**
 	 * 通过OnlineClassId更新lessonId
-	 * 
+	 *
 	 * @param onlineClassId
 	 * @param lessonId
 	 */
@@ -151,7 +151,7 @@ public class OnlineClassDao extends MapperDaoTemplate<OnlineClass> {
 
 	/**
 	 * 查询Major的classrooms的分页总行数
-	 * 
+	 *
 	 * @param teacherId
 	 * @param timezone
 	 * @param monthOfYear
@@ -169,7 +169,7 @@ public class OnlineClassDao extends MapperDaoTemplate<OnlineClass> {
 
 	/**
 	 * 分页查询Major的classrooms列表
-	 * 
+	 *
 	 * @param teacherId
 	 * @param timezone
 	 * @param monthOfYear
@@ -191,7 +191,7 @@ public class OnlineClassDao extends MapperDaoTemplate<OnlineClass> {
 
 	/**
 	 * 查询Major从当前日期开始的总行数
-	 * 
+	 *
 	 * @param teacherId
 	 * @param timezone
 	 * @param monthOfYear
@@ -209,7 +209,7 @@ public class OnlineClassDao extends MapperDaoTemplate<OnlineClass> {
 
 	/**
 	 * 查询统计Major的FinishType数据
-	 * 
+	 *
 	 * @param teacherId
 	 * @param timezone
 	 * @param monthOfYear
@@ -227,7 +227,7 @@ public class OnlineClassDao extends MapperDaoTemplate<OnlineClass> {
 
 	/**
 	 * 查询Practicum的classrooms的分页总行数
-	 * 
+	 *
 	 * @param teacherId
 	 * @param timezone
 	 * @param monthOfYear
@@ -245,7 +245,7 @@ public class OnlineClassDao extends MapperDaoTemplate<OnlineClass> {
 
 	/**
 	 * 分页查询Practicum的classrooms列表
-	 * 
+	 *
 	 * @param teacherId
 	 * @param timezone
 	 * @param monthOfYear
@@ -267,7 +267,7 @@ public class OnlineClassDao extends MapperDaoTemplate<OnlineClass> {
 
 	/**
 	 * 查询Practicum从当前日期开始的总行数
-	 * 
+	 *
 	 * @param teacherId
 	 * @param timezone
 	 * @param monthOfYear
@@ -285,7 +285,7 @@ public class OnlineClassDao extends MapperDaoTemplate<OnlineClass> {
 
 	/**
 	 * 查询统计Practicum的FinishType数据
-	 * 
+	 *
 	 * @param teacherId
 	 * @param timezone
 	 * @param monthOfYear
@@ -303,7 +303,7 @@ public class OnlineClassDao extends MapperDaoTemplate<OnlineClass> {
 
 	/**
 	 * 根据开始和结束时间查询需要显示的INVALID课程列表
-	 * 
+	 *
 	 * @author John
 	 *
 	 * @param teacherId
@@ -325,7 +325,7 @@ public class OnlineClassDao extends MapperDaoTemplate<OnlineClass> {
 
 	/**
 	 * 查询指定时间内所有booked的课
-	 * 
+	 *
 	 * @Author:ALong (ZengWeiLong)
 	 * @param startTime
 	 * @param endTime
@@ -338,7 +338,7 @@ public class OnlineClassDao extends MapperDaoTemplate<OnlineClass> {
 
 	/**
 	 * 查询指定时间内所有booed的课
-	 * 
+	 *
 	 * @Author:ALong (ZengWeiLong)
 	 * @param startTime
 	 * @param endTime
