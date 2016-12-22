@@ -3,6 +3,7 @@ package com.vipkid.trpm.interceptor;
 import com.vipkid.http.utils.JsonUtils;
 import com.vipkid.http.vo.StandardJsonObject;
 import com.vipkid.rest.RestfulController;
+import com.vipkid.rest.config.RestfulConfig;
 import com.vipkid.rest.security.AppContext;
 import com.vipkid.rest.service.LoginService;
 import com.vipkid.trpm.dao.TeacherTokenDao;
@@ -44,66 +45,77 @@ public class H5CookieExpiredHandleInterceptor extends HandlerInterceptorAdapter 
 			throws IOException {
 	    logger.info("IP:{},发起请求:{}",IpUtils.getIpAddress(request),request.getRequestURI());
 
-		boolean isFilter = PropertyConfigurer.booleanValue("h5.cookie.check");
-		if(!isFilter){
-			//自测调试代码
-			logger.info("配置[h5.cookie.check]={}不拦截,默认登录老师id是1890513",isFilter);
-			Teacher teacher = loginService.findTeacherById(1890513);
-			AppContext.setTeacher(teacher);
-			User user = loginService.findUserById(teacher.getId());
+	    try{
+			boolean isFilter = PropertyConfigurer.booleanValue("h5.cookie.check");
+			if(!isFilter){
+				//自测调试代码
+				logger.info("配置[h5.cookie.check]={}不拦截,默认登录老师id是1890513",isFilter);
+				Teacher teacher = loginService.findTeacherById(1890513);
+				AppContext.setTeacher(teacher);
+				User user = loginService.findUserById(teacher.getId());
+				AppContext.setUser(user);
+				return true;
+			}
+	
+			String token = request.getHeader(RestfulController.AUTOKEN);
+			String ip = IpUtils.getRequestRemoteIP();
+	
+			logger.info("preHandleRequest 用户  request token = {} ,ip = {}, url = {} ",token ,ip,request.getRequestURL());
+	
+			if(StringUtils.isBlank(token)){
+				response.setStatus(HttpStatus.UNAUTHORIZED.value());
+				setErrorResponse(response);
+				logger.info("TOKEN为空 无效");
+				return false;
+			}
+			//String teacherId = redisProxy.get(key);
+			TeacherToken teacherToken = teacherTokenDao.findByToken(token);
+			if(teacherToken==null || teacherToken.getTeacherId()==null){
+				response.setStatus(HttpStatus.UNAUTHORIZED.value());
+				setErrorResponse(response);
+				logger.info("TOKEN{} 无效",token);
+				return false;
+			}
+			Long teacherId = teacherToken.getTeacherId();
+			logger.info("preHandleUserInfo teacherId = {} ",teacherId);
+	
+			User user = loginService.findUserById(teacherId);
+			logger.info("preHandleUserInfo token = {} ,ip,user = {}, url = {} ", token, ip,
+				user == null ? null : (user.getId() + "|" + user.getUsername()), request.getRequestURL());
+			if (user == null) {
+				logger.info("IP:{},用户为NULL。。。", IpUtils.getIpAddress(request));
+	
+				response.setStatus(HttpStatus.UNAUTHORIZED.value());
+				setErrorResponse(response);
+	
+				return false;
+			}
+	
 			AppContext.setUser(user);
-			return true;
-		}
+	
+			logger.info("IP:{},user:{},发起请求:{}", IpUtils.getIpAddress(request), user.getId(),
+				request.getRequestURI());
+	
+			Teacher teacher = loginService.findTeacherById(teacherId);
+			if (teacher == null) {
+				logger.info("IP:{},Teacher is NULL。。。", request.getRemoteAddr());
+				response.setStatus(HttpStatus.UNAUTHORIZED.value());
+				setErrorResponse(response);
+				return false;
+			}
+	
+			AppContext.setTeacher(teacher);
 
-		String token = request.getHeader(RestfulController.AUTOKEN);
-		String ip = IpUtils.getRequestRemoteIP();
-
-		logger.info("preHandleRequest 用户  request token = {} ,ip = {}, url = {} ",token ,ip,request.getRequestURL());
-
-		if(StringUtils.isBlank(token)){
-			response.setStatus(HttpStatus.UNAUTHORIZED.value());
-			setErrorResponse(response);
-			logger.info("TOKEN为空 无效");
-			return false;
-		}
-		//String teacherId = redisProxy.get(key);
-		TeacherToken teacherToken = teacherTokenDao.findByToken(token);
-		if(teacherToken==null || teacherToken.getTeacherId()==null){
-			response.setStatus(HttpStatus.UNAUTHORIZED.value());
-			setErrorResponse(response);
-			logger.info("TOKEN{} 无效",token);
-			return false;
-		}
-		Long teacherId = teacherToken.getTeacherId();
-		logger.info("preHandleUserInfo teacherId = {} ",teacherId);
-
-		User user = loginService.findUserById(teacherId);
-		logger.info("preHandleUserInfo token = {} ,ip,user = {}, url = {} ", token, ip,
-			user == null ? null : (user.getId() + "|" + user.getUsername()), request.getRequestURL());
-		if (user == null) {
-			logger.info("IP:{},用户为NULL。。。", IpUtils.getIpAddress(request));
-
-			response.setStatus(HttpStatus.UNAUTHORIZED.value());
-			setErrorResponse(response);
-
-			return false;
-		}
-
-		AppContext.setUser(user);
-
-		logger.info("IP:{},user:{},发起请求:{}", IpUtils.getIpAddress(request), user.getId(),
-			request.getRequestURI());
-
-		Teacher teacher = loginService.findTeacherById(teacherId);
-		if (teacher == null) {
-			logger.info("IP:{},Teacher is NULL。。。", request.getRemoteAddr());
-			response.setStatus(HttpStatus.UNAUTHORIZED.value());
-			setErrorResponse(response);
-			return false;
-		}
-
-		AppContext.setTeacher(teacher);
-
+		}catch(IllegalArgumentException e){
+	        logger.error(e.getMessage(), e);
+	        response.setStatus(HttpStatus.BAD_REQUEST.value());
+	        response.setContentType(RestfulConfig.JSON_UTF_8);
+	        return false;
+	    } catch (Exception e) {
+	        logger.error(e.getMessage(), e);
+	        response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+	        return false;
+	    }
 
 		logger.info("通过拦截");
 		return true;
