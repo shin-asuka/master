@@ -4,10 +4,7 @@ import com.vipkid.http.service.TeacherAppService;
 import com.vipkid.http.utils.JsonUtils;
 import com.vipkid.rest.security.AppContext;
 import com.vipkid.rest.utils.ApiResponseUtils;
-import com.vipkid.trpm.entity.teachercomment.QueryTeacherCommentOutputDto;
-import com.vipkid.trpm.entity.teachercomment.StudentAbilityLevelRule;
-import com.vipkid.trpm.entity.teachercomment.SubmitTeacherCommentInputDto;
-import com.vipkid.trpm.entity.teachercomment.TeacherComment;
+import com.vipkid.trpm.entity.teachercomment.*;
 import com.vipkid.trpm.service.portal.ReportService;
 import com.vipkid.trpm.service.portal.TeacherService;
 import org.apache.commons.lang.StringUtils;
@@ -53,22 +50,22 @@ public class TeacherCommentController {
 
     @ResponseBody
     @RequestMapping(value = "/submit")
-    public Object updateStatus(String submitDto) {
-        logger.info("updateStatus input={}",submitDto);
-        if (StringUtils.isBlank(submitDto)) {
+    public Object updateStatus(SubmitTeacherCommentDto submitDto) {
+
+        if (submitDto==null) {
             return ApiResponseUtils.buildErrorResp(-1, "参数不能为空!");
         }
-        SubmitTeacherCommentInputDto inputDto = JsonUtils.toBean(submitDto, SubmitTeacherCommentInputDto.class);
-        if (inputDto == null || !NumberUtils.isNumber(inputDto.getTeacherCommentId())
-                || StringUtils.isBlank(inputDto.getTeacherFeedback())) {
+        logger.info("updateStatus input={}",JsonUtils.toJSONString(submitDto));
+
+        if (StringUtils.isBlank(submitDto.getTeacherFeedback())) {
             return ApiResponseUtils.buildErrorResp(-1, "参数格式错误!");
         }
 
-        TeacherComment tcuDto = new TeacherComment(inputDto);
-        tcuDto.setSubmitSource("APP");
+        //TeacherComment tcuDto = new TeacherComment(inputDto);
+        submitDto.setSubmitSource("APP");
         //boolean result = teacherService.updateTeacherComment(tcuDto);
-        Map<String, Object> parmMap = reportService.submitTeacherComment(tcuDto, AppContext.getUser(),
-            inputDto.getClassNumber(),null,true);
+        Map<String, Object> parmMap = reportService.submitTeacherComment(submitDto, AppContext.getUser(),
+            submitDto.getClassNumber(),null,true);
 
 
         if(parmMap!=null && parmMap.get("result")!=null&&((Boolean) parmMap.get("result"))){

@@ -1,7 +1,6 @@
 package com.vipkid.trpm.entity.teachercomment;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
 
 import java.util.Date;
 
@@ -149,31 +148,31 @@ public class TeacherCommentUpdateDto {
 
     private String delFlag; // 删除标记（0：正常；1：删除）
 
-    public TeacherCommentUpdateDto(SubmitTeacherCommentInputDto inputDto) {
-        if(NumberUtils.isNumber(inputDto.getTeacherCommentId())){
-            id = Integer.valueOf(inputDto.getTeacherCommentId());
-        }
-        if(StringUtils.isNotBlank(inputDto.getTeacherFeedback())){
-            teacherFeedback = inputDto.getTeacherFeedback();
-        }
-        if(NumberUtils.isNumber(inputDto.getLevelOfdifficulty())){
-            performance = Integer.valueOf(inputDto.getLevelOfdifficulty());
-        }
-        if(StringUtils.isNotBlank(inputDto.getTipsForOtherTeachers())){
-            tipsForOtherTeachers = inputDto.getTipsForOtherTeachers();
-        }
-        if(StringUtils.isNotBlank(inputDto.getTrialLevelResult())){
-            trialLevelResult = inputDto.getTrialLevelResult();
-        }
-        if(inputDto.isSuggestAdjustment()){
-            //建议调整
-            performanceAdjust = 1;
-        }else{
-            //不建议调整
-            performanceAdjust = 0;
-        }
-
-    }
+//    public TeacherCommentUpdateDto(SubmitTeacherCommentInputDto inputDto) {
+//        if(NumberUtils.isNumber(inputDto.getTeacherCommentId())){
+//            id = Integer.valueOf(inputDto.getTeacherCommentId());
+//        }
+//        if(StringUtils.isNotBlank(inputDto.getTeacherFeedback())){
+//            teacherFeedback = inputDto.getTeacherFeedback();
+//        }
+//        if(NumberUtils.isNumber(inputDto.getLevelOfdifficulty())){
+//            performance = Integer.valueOf(inputDto.getLevelOfdifficulty());
+//        }
+//        if(StringUtils.isNotBlank(inputDto.getTipsForOtherTeachers())){
+//            tipsForOtherTeachers = inputDto.getTipsForOtherTeachers();
+//        }
+//        if(StringUtils.isNotBlank(inputDto.getTrialLevelResult())){
+//            trialLevelResult = inputDto.getTrialLevelResult();
+//        }
+//        if(inputDto.isSuggestAdjustment()){
+//            //建议调整
+//            performanceAdjust = 1;
+//        }else{
+//            //不建议调整
+//            performanceAdjust = 0;
+//        }
+//
+//    }
 
     public String getRemarks() {
         return remarks;
@@ -491,7 +490,7 @@ public class TeacherCommentUpdateDto {
 
     }
 
-    public TeacherCommentUpdateDto(TeacherComment teacherComment) {
+    public TeacherCommentUpdateDto(SubmitTeacherCommentDto teacherComment) {
 
         //理论上不会有比int大的
         if (teacherComment.getId() > 0) {
