@@ -9,7 +9,7 @@ import com.vipkid.portal.entity.TimeSlotCancelRequest;
 import com.vipkid.portal.entity.TimeSlotCreateRequest;
 import com.vipkid.portal.service.BookingsService;
 import com.vipkid.rest.config.RestfulConfig;
-import com.vipkid.trpm.service.rest.LoginService;
+import com.vipkid.rest.service.LoginService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
