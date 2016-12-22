@@ -1,5 +1,9 @@
 package com.vipkid.portal.controller;
 
+import com.vipkid.http.utils.JsonUtils;
+import com.vipkid.portal.entity.ScheduledRequest;
+import com.vipkid.rest.service.LoginService;
+import com.vipkid.trpm.entity.User;
 import com.vipkid.trpm.proxy.RedisProxy;
 import com.vipkid.trpm.util.CacheUtils;
 import org.community.tools.JsonTools;
@@ -20,11 +24,6 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
-
-import com.vipkid.http.utils.JsonUtils;
-import com.vipkid.portal.entity.ScheduledRequest;
-import com.vipkid.trpm.entity.User;
-import com.vipkid.trpm.service.rest.LoginService;
 
 /**
  * Created by liuguowen on 2016/12/21.

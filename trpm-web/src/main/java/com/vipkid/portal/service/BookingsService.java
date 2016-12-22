@@ -6,6 +6,7 @@ import com.vipkid.portal.constant.BookingsResult;
 import com.vipkid.portal.entity.*;
 import com.vipkid.trpm.constant.ApplicationConstant;
 import com.vipkid.trpm.constant.ApplicationConstant.*;
+import com.vipkid.enums.OnlineClassEnum.*;
 import com.vipkid.trpm.dao.*;
 import com.vipkid.trpm.entity.OnlineClass;
 import com.vipkid.trpm.entity.PeakTime;
@@ -334,7 +335,7 @@ public class BookingsService {
 
             /* 设置课程类型 */
             int classType = (Integer) teacherSchedule.get("classType");
-            if (ClassType.PRACTICUM == classType) {
+            if (ClassType.PRACTICUM.val() == classType) {
                 teacherSchedule.put("isPracticum", true);
             } else {
                 teacherSchedule.put("isPracticum", false);
@@ -534,7 +535,7 @@ public class BookingsService {
             onlineClass.setTeacherId(teacher.getId());
             onlineClass.setScheduledDateTime(scheduleDateTime);
 
-            onlineClass.setStatus(ClassStatus.AVAILABLE);
+            onlineClass.setStatus(ClassStatus.AVAILABLE.name());
             onlineClass.setSerialNumber(Long.toString(scheduleDateTime.getTime()));
 
             /* 设置为课程开始前1小时 */
@@ -547,7 +548,7 @@ public class BookingsService {
 
             /* 如果是PRACTICUM的课程，则需要指定ClassType */
             if (CourseType.isPracticum(courseType)) {
-                onlineClass.setClassType(ClassType.PRACTICUM);
+                onlineClass.setClassType(ClassType.PRACTICUM.val());
 
                 /* 需要加锁，一次只处理一个请求 */
                 synchronized (teacher) {
@@ -569,7 +570,7 @@ public class BookingsService {
                     List<OnlineClass> tList =
                                     onlineClassDao.findByTeacherIdAndScheduleDateTime(teacher.getId(), minusHour);
 
-                    long count = tList.stream().filter((o) -> o.getClassType() == ClassType.PRACTICUM)
+                    long count = tList.stream().filter((o) -> o.getClassType() == ClassType.PRACTICUM.val())
                                     .filter((o) -> ClassStatus.isBooked(o.getStatus())
                                                     || ClassStatus.isAvailable(o.getStatus()))
                                     .count();
@@ -588,7 +589,7 @@ public class BookingsService {
                 List<OnlineClass> tList = onlineClassDao.findByTeacherIdAndScheduleDateTime(teacher.getId(), minusHour);
 
                 /* 往前半小时只验证PRACTICUM的课程时间 */
-                long count = tList.stream().filter((o) -> o.getClassType() == ClassType.PRACTICUM).filter(
+                long count = tList.stream().filter((o) -> o.getClassType() == ClassType.PRACTICUM.val()).filter(
                                 (o) -> ClassStatus.isBooked(o.getStatus()) || ClassStatus.isAvailable(o.getStatus()))
                                 .count();
 
@@ -610,7 +611,7 @@ public class BookingsService {
             replaceMap.put("createTime", DateUtils.formatTo(instant, DateUtils.FMT_YMD_HMS));
             replaceMap.put("scheduleDatetime", onlineClass.getScheduledDateTime());
 
-            String content = FilesUtils.readLogTemplete(AuditCategory.ONLINE_CLASS_CREATE, replaceMap);
+            String content = FilesUtils.readLogTemplate(AuditCategory.ONLINE_CLASS_CREATE, replaceMap);
             auditDao.saveAudit(AuditCategory.ONLINE_CLASS_CREATE, "INFO", content, teacher.getRealName(),
                             onlineClassDao, IpUtils.getRemoteIP());
 
@@ -692,7 +693,7 @@ public class BookingsService {
         /* 更新OnlineClass状态 */
 
         if (ClassStatus.isAvailable(onlineClass.getStatus())) {
-            onlineClassDao.updateStatus(onlineClass.getId(), ClassStatus.REMOVED);
+            onlineClassDao.updateStatus(onlineClass.getId(), ClassStatus.REMOVED.name());
 
             /* 记录操作日志 */
             Map<String, Object> replaceMap = Maps.newHashMap();
@@ -703,7 +704,7 @@ public class BookingsService {
             replaceMap.put("createTime", DateUtils.formatTo(instant, DateUtils.FMT_YMD_HMS));
             replaceMap.put("scheduleDatetime", onlineClass.getScheduledDateTime());
 
-            String content = FilesUtils.readLogTemplete(AuditCategory.ONLINE_CLASS_DELETE, replaceMap);
+            String content = FilesUtils.readLogTemplate(AuditCategory.ONLINE_CLASS_DELETE, replaceMap);
             auditDao.saveAudit(AuditCategory.ONLINE_CLASS_DELETE, "INFO", content, teacher.getRealName(),
                             onlineClassDao, IpUtils.getRemoteIP());
 
