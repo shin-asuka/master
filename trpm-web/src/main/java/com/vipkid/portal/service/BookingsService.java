@@ -581,6 +581,7 @@ public class BookingsService {
 
         if (canSetSchedule(teacher.getId(), scheduleDateTime)) {
             OnlineClass onlineClass = new OnlineClass();
+            onlineClass.setClassType(ClassType.MAJOR.val());
 
             /* 设置课程的属性 */
             onlineClass.setTeacherId(teacher.getId());
@@ -959,7 +960,8 @@ public class BookingsService {
             logger.info("Send 24Hours response: {}", httpResponse);
 
             HttpEntity responseEntity = httpResponse.getEntity();
-            return null != responseEntity && HttpURLConnection.HTTP_OK == httpResponse.getStatusLine().getStatusCode();
+            return (null != responseEntity
+                            && HttpURLConnection.HTTP_OK == httpResponse.getStatusLine().getStatusCode());
         } catch (Exception e) {
             logger.error("Send 24Hours error: {}", e.getMessage());
             return false;
