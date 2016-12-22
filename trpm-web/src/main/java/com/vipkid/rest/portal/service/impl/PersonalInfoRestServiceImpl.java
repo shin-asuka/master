@@ -37,7 +37,10 @@ public class PersonalInfoRestServiceImpl implements PersonalInfoRestService {
 	private static final Logger logger = LoggerFactory.getLogger(PersonalInfoRestServiceImpl.class);
 	
 	public static final int USERNAME_MIN_SIZE = 6;
-	public static final String USERNAME_PATTERN = "^\\w+$";
+	public static final int USERNAME_MAX_SIZE = 30;
+	public static final String PASSWORD_REGEX1 = "[0-9a-zA-Z]+";//只包含字母与数字
+	public static final String PASSWORD_REGEX2 = "[0-9]+";//只包含数字
+	public static final String PASSWORD_REGEX3 = "[a-zA-Z]+";//只包好字母
 	
 	@Autowired
 	private PersonalInfoService personalInfoService;
@@ -109,7 +112,7 @@ public class PersonalInfoRestServiceImpl implements PersonalInfoRestService {
 		}
 		
 		// 验证密码格式
-		if (null == newPassword || newPassword.length() < USERNAME_MIN_SIZE || !newPassword.matches(USERNAME_PATTERN)) {
+		if (null == newPassword || newPassword.length() < USERNAME_MIN_SIZE || newPassword.length() > USERNAME_MAX_SIZE  || !newPassword.matches(PASSWORD_REGEX1) || newPassword.matches(PASSWORD_REGEX2) || newPassword.matches(PASSWORD_REGEX3)) {
 			logger.warn("老师越过前端限制修改密码，输入非法的密码格式。teacherId = {}, newPassword = {}", teacherId, newPassword);
 			return ApiResponseUtils.buildErrorResp(1001, "非法请求，密码格式不对");
 		}
