@@ -5,10 +5,7 @@ import com.google.common.collect.Maps;
 import com.vipkid.portal.constant.BookingsResult;
 import com.vipkid.portal.entity.*;
 import com.vipkid.trpm.constant.ApplicationConstant;
-import com.vipkid.trpm.constant.ApplicationConstant.ClassStatus;
-import com.vipkid.trpm.constant.ApplicationConstant.ClassType;
-import com.vipkid.trpm.constant.ApplicationConstant.CourseType;
-import com.vipkid.trpm.constant.ApplicationConstant.PeakTimeType;
+import com.vipkid.trpm.constant.ApplicationConstant.*;
 import com.vipkid.trpm.dao.*;
 import com.vipkid.trpm.entity.OnlineClass;
 import com.vipkid.trpm.entity.PeakTime;
@@ -613,10 +610,9 @@ public class BookingsService {
             replaceMap.put("createTime", DateUtils.formatTo(instant, DateUtils.FMT_YMD_HMS));
             replaceMap.put("scheduleDatetime", onlineClass.getScheduledDateTime());
 
-            String content = FilesUtils.readLogTemplete(ApplicationConstant.AuditCategory.ONLINE_CLASS_CREATE,
-                            replaceMap);
-            auditDao.saveAudit(ApplicationConstant.AuditCategory.ONLINE_CLASS_CREATE, "INFO", content,
-                            teacher.getRealName(), onlineClassDao, IpUtils.getRemoteIP());
+            String content = FilesUtils.readLogTemplete(AuditCategory.ONLINE_CLASS_CREATE, replaceMap);
+            auditDao.saveAudit(AuditCategory.ONLINE_CLASS_CREATE, "INFO", content, teacher.getRealName(),
+                            onlineClassDao, IpUtils.getRemoteIP());
 
             /* 返回结果 */
             String timePoint = formatTo(scheduleDateTime.toInstant(), teacher.getTimezone(), FMT_HMA_US);
@@ -707,10 +703,9 @@ public class BookingsService {
             replaceMap.put("createTime", DateUtils.formatTo(instant, DateUtils.FMT_YMD_HMS));
             replaceMap.put("scheduleDatetime", onlineClass.getScheduledDateTime());
 
-            String content = FilesUtils.readLogTemplete(ApplicationConstant.AuditCategory.ONLINE_CLASS_DELETE,
-                            replaceMap);
-            auditDao.saveAudit(ApplicationConstant.AuditCategory.ONLINE_CLASS_DELETE, "INFO", content,
-                            teacher.getRealName(), onlineClassDao, IpUtils.getRemoteIP());
+            String content = FilesUtils.readLogTemplete(AuditCategory.ONLINE_CLASS_DELETE, replaceMap);
+            auditDao.saveAudit(AuditCategory.ONLINE_CLASS_DELETE, "INFO", content, teacher.getRealName(),
+                            onlineClassDao, IpUtils.getRemoteIP());
 
             modelMap.put("action", true);
         } else {

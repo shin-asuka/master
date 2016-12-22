@@ -46,6 +46,7 @@ public class BookingsController {
             ScheduledRequest scheduledRequest = JsonUtils.toBean(body, ScheduledRequest.class);
 
             Preconditions.checkArgument(StringUtils.isNotBlank(scheduledRequest.getType()));
+
             return bookingsService.doSchedule(scheduledRequest, loginService.getTeacher());
         } catch (IllegalArgumentException e) {
             logger.error("Illegal arguments error", e);
@@ -94,6 +95,8 @@ public class BookingsController {
         try {
             logger.info("Invocation cancelTimeSlot() arguments: {}", body);
             TimeSlotCancelRequest timeSlotCancelRequest = JsonUtils.toBean(body, TimeSlotCancelRequest.class);
+
+            Preconditions.checkArgument(0 != timeSlotCancelRequest.getOnlineClassId());
 
             return bookingsService.doCancelTimeSlot(timeSlotCancelRequest, loginService.getTeacher());
         } catch (IllegalArgumentException e) {
