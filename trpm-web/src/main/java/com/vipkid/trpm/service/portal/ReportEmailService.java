@@ -42,12 +42,12 @@ public class ReportEmailService {
                 getTableDetail(serialNumber, scheduledDateTime, ApplicationConstant.LEVEL_OF_DIFFITULTY.get(performance)));
     }
 
-    public void sendEmail4PreVip2CLT(long studentId, String serialNumber,String needParentSupport) {
+    public void sendEmail4PreVip2CLT(long studentId, String serialNumber,Boolean needParentSupport) {
         if (studentId == 0 || StringUtils.isEmpty(serialNumber)){
             logger.info("sendEmail4PreVip2CLT 参数不符 studentId = {}; serialNumber = {} ", studentId, serialNumber);
             return;
         }
-        if(StringUtils.isNotBlank(needParentSupport) && Boolean.valueOf(needParentSupport)){
+        if(needParentSupport !=null && needParentSupport){
             //只要老师勾选需要家长陪同选项就发邮件
             sendEmail2CLT4ParentSupport(getStudentName(studentId));
         }

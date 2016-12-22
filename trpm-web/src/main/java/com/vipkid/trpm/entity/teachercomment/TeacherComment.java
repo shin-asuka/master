@@ -160,20 +160,20 @@ public class TeacherComment extends Entity implements Serializable {
         courseType = teacherCommentResult.getCourseType();
     }
 
-    public TeacherComment(SubmitTeacherCommentInputDto inputDto) {
-
-        id = Integer.valueOf(inputDto.getTeacherCommentId());
-        empty = 0;
-        teacherFeedback = inputDto.getTeacherFeedback();
-        tipsForOtherTeachers = inputDto.getTipsForOtherTeachers();
-        if(NumberUtils.isNumber(inputDto.getLevelOfdifficulty())){
-            performance = Integer.valueOf(inputDto.getLevelOfdifficulty());
-        }
-        if(inputDto.isSuggestAdjustment()!=null && inputDto.isSuggestAdjustment()){
-            performanceAdjust = 1;
-        }
-        trialLevelResult = inputDto.getTrialLevelResult();
-    }
+//    public TeacherComment(SubmitTeacherCommentInputDto inputDto) {
+//
+//        id = Integer.valueOf(inputDto.getTeacherCommentId());
+//        empty = 0;
+//        teacherFeedback = inputDto.getTeacherFeedback();
+//        tipsForOtherTeachers = inputDto.getTipsForOtherTeachers();
+//        if(NumberUtils.isNumber(inputDto.getLevelOfdifficulty())){
+//            performance = Integer.valueOf(inputDto.getLevelOfdifficulty());
+//        }
+//        if(inputDto.isSuggestAdjustment()!=null && inputDto.isSuggestAdjustment()){
+//            performanceAdjust = 1;
+//        }
+//        trialLevelResult = inputDto.getTrialLevelResult();
+//    }
 
     public String getSubmitSource() {
         return submitSource;

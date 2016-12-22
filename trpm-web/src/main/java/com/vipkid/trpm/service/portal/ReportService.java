@@ -15,6 +15,7 @@ import com.vipkid.trpm.entity.*;
 import com.vipkid.trpm.entity.media.UploadResult;
 import com.vipkid.trpm.entity.report.DemoReports;
 import com.vipkid.trpm.entity.report.ReportLevels;
+import com.vipkid.trpm.entity.teachercomment.SubmitTeacherCommentDto;
 import com.vipkid.trpm.entity.teachercomment.TeacherComment;
 import com.vipkid.trpm.entity.teachercomment.TeacherCommentResult;
 import com.vipkid.trpm.entity.teachercomment.TeacherCommentUpdateDto;
@@ -636,17 +637,12 @@ public class ReportService {
      * @param teacherComment
      * @date 2015年12月16日
      */
-    public Map<String, Object> submitTeacherComment(TeacherComment teacherComment, User user,String serialNumber,
+    public Map<String, Object> submitTeacherComment(SubmitTeacherCommentDto teacherComment, User user,String serialNumber,
             String scheduledDateTime,boolean isFromH5) {
         // 如果ID为0 则抛出异常并回滚
         checkArgument(0 != teacherComment.getId(), "Argument teacherComment id equals 0");
 
         teacherComment.setEmpty(0);
-
-        boolean isPreVipkid = false;
-        if(StringUtils.isNotBlank(serialNumber)&&serialNumber.toLowerCase().startsWith("")){
-
-        }
 
         // 日志记录参数准备
         TeacherCommentResult oldtcFromAPI = teacherService
@@ -708,21 +704,42 @@ public class ReportService {
                     OperatorType.ADD_TEACHER_COMMENTS));
         }
 
-        if (teacherComment.getPerformanceAdjust()==1 && teacherComment.getPerformance()!=0){
-            logger.info("判断PerformanceAdjust给CLT发邮件: studentId = {}, serialNumber = {}, scheduledDateTime = {} ",
-                    oldtc.getStudentId(), serialNumber, scheduledDateTime);
-            final String finalScheduledDateTime = scheduledDateTime;
-            sendEmailExecutor.execute(() -> {
-                emailService.sendEmail4PerformanceAdjust2CLT(oldtc.getStudentId(), serialNumber,
-                    finalScheduledDateTime, teacherComment.getPerformance());
-            });
+        boolean isPreVipkid = false;
+        if(StringUtils.isNotBlank(serialNumber)
+            && (serialNumber.toLowerCase().startsWith("mc-l1")
+            ||serialNumber.equalsIgnoreCase("T1-U1-LC1-L0"))){
+            isPreVipkid = true;
         }
 
-        if (teacherComment.getPerformance()==1 || teacherComment.getPerformance()==5){
-            logger.info("检查Performance判断是否给CLT发邮件: studentId = {}, serialNumber = {} ", oldtc.getStudentId(), serialNumber);
-            sendEmailExecutor.execute(() -> {
-                emailService.sendEmail4Performance2CLT(oldtc.getStudentId(), serialNumber);
-            });
+        if(isPreVipkid){
+            if (teacherComment.getPerformance() == 1 || teacherComment.getPerformance() == 5
+                || teacherComment.isNeedParentSupport()) {
+                logger.info(
+                    "previp检查Performance和needParentSupport判断是否给CLT发邮件: studentId = {}, serialNumber = {} ",
+                    oldtc.getStudentId(), serialNumber);
+                sendEmailExecutor.execute(() -> {
+                    emailService.sendEmail4PreVip2CLT(oldtc.getStudentId(), serialNumber,
+                        teacherComment.isNeedParentSupport());
+                });
+            }
+
+        }else{
+            if (teacherComment.getPerformanceAdjust()==1 && teacherComment.getPerformance()!=0){
+                logger.info("判断PerformanceAdjust给CLT发邮件: studentId = {}, serialNumber = {}, scheduledDateTime = {} ",
+                    oldtc.getStudentId(), serialNumber, scheduledDateTime);
+                final String finalScheduledDateTime = scheduledDateTime;
+                sendEmailExecutor.execute(() -> {
+                    emailService.sendEmail4PerformanceAdjust2CLT(oldtc.getStudentId(), serialNumber,
+                        finalScheduledDateTime, teacherComment.getPerformance());
+                });
+            }
+
+            if (teacherComment.getPerformance()==1 || teacherComment.getPerformance()==5){
+                logger.info("检查Performance判断是否给CLT发邮件: studentId = {}, serialNumber = {} ", oldtc.getStudentId(), serialNumber);
+                sendEmailExecutor.execute(() -> {
+                    emailService.sendEmail4Performance2CLT(oldtc.getStudentId(), serialNumber);
+                });
+            }
         }
         return paramMap;
     }
