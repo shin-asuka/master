@@ -635,6 +635,11 @@ public class ReportService {
 
         teacherComment.setEmpty(0);
 
+        boolean isPreVipkid = false;
+        if(StringUtils.isNotBlank(serialNumber)&&serialNumber.toLowerCase().startsWith("")){
+
+        }
+
         // 日志记录参数准备
         TeacherCommentResult oldtcFromAPI = teacherService
                 .findByTeacherCommentId(String.valueOf(teacherComment.getId()));
