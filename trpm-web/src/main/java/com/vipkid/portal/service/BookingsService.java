@@ -6,10 +6,13 @@ import com.google.common.collect.Maps;
 import com.vipkid.enums.OnlineClassEnum.ClassStatus;
 import com.vipkid.enums.OnlineClassEnum.ClassType;
 import com.vipkid.enums.OnlineClassEnum.CourseType;
+import com.vipkid.enums.TeacherPageLoginEnum.LoginType;
 import com.vipkid.portal.constant.BookingsResult;
 import com.vipkid.portal.entity.*;
+import com.vipkid.rest.service.TeacherPageLoginService;
 import com.vipkid.trpm.constant.ApplicationConstant;
 import com.vipkid.trpm.constant.ApplicationConstant.AuditCategory;
+import com.vipkid.trpm.constant.ApplicationConstant.CookieKey;
 import com.vipkid.trpm.constant.ApplicationConstant.PeakTimeType;
 import com.vipkid.trpm.dao.AuditDao;
 import com.vipkid.trpm.dao.OnlineClassDao;
@@ -18,6 +21,7 @@ import com.vipkid.trpm.entity.OnlineClass;
 import com.vipkid.trpm.entity.PeakTime;
 import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.proxy.RedisProxy;
+import com.vipkid.trpm.util.CookieUtils;
 import com.vipkid.trpm.util.DateUtils;
 import com.vipkid.trpm.util.FilesUtils;
 import com.vipkid.trpm.util.IpUtils;
@@ -39,6 +43,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.sql.Timestamp;
@@ -85,23 +92,14 @@ public class BookingsService {
     @Autowired
     private PeakTimeDao peakTimeDao;
 
-    // @Autowired
-    // private LessonDao lessonDao;
-
     @Autowired
     private AuditDao auditDao;
 
-    // @Autowired
-    // private TeacherPageLoginDao teacherLoginTypeDao;
-
-    // @Autowired
-    // private TeacherDao teacherDao;
-
-    // @Autowired
-    // private UserDao userDao;
-
     @Autowired
     private RedisProxy redisProxy;
+
+    @Autowired
+    private TeacherPageLoginService teacherPageLoginService;
 
     /**
      * 计算一天中的所有 TimePoint，每半小时为一个单位
@@ -977,6 +975,43 @@ public class BookingsService {
                 logger.error("HttpClient err: {}", e.getMessage());
             }
         }
+    }
+
+    /**
+     * 获取系统提示
+     * 
+     * @param request
+     * @param response
+     * @param teacher
+     * @return
+     */
+    public Map<String, Object> getTips(HttpServletRequest request, HttpServletResponse response, Teacher teacher) {
+        Map<String, Object> resultMap = Maps.newHashMap();
+
+        // 判断是否显示 AdminQuiz
+        resultMap.put("showAdminQuiz", teacherPageLoginService.isType(teacher.getId(), LoginType.ADMINQUIZ));
+        // 判断是否显示 Evaluation
+        resultMap.put("showEvaluation", teacherPageLoginService.isType(teacher.getId(), LoginType.EVALUATION));
+        // 判断是否需要显示 24 小时提示
+        resultMap.put("show24HoursInfo", isShow24HoursInfo(request, response));
+
+        return resultMap;
+    }
+
+    /**
+     * 判断是否要显示 24 小时提醒
+     * 
+     * @param request
+     * @param response
+     * @return
+     */
+    private boolean isShow24HoursInfo(HttpServletRequest request, HttpServletResponse response) {
+        Cookie cookie = CookieUtils.getCookie(request, CookieKey.TRPM_HOURS_24);
+        if (null != cookie) {
+            CookieUtils.removeCookie(response, CookieKey.TRPM_HOURS_24, null, null);
+            return true;
+        }
+        return false;
     }
 
 }

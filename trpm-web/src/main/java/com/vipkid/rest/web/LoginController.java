@@ -17,11 +17,13 @@ import com.vipkid.rest.service.LoginService;
 import com.vipkid.rest.validation.ValidateUtils;
 import com.vipkid.rest.validation.tools.Result;
 import com.vipkid.trpm.constant.ApplicationConstant.AjaxCode;
+import com.vipkid.trpm.constant.ApplicationConstant.CookieKey;
 import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.entity.User;
 import com.vipkid.trpm.security.SHA256PasswordEncoder;
 import com.vipkid.trpm.service.passport.PassportService;
 import com.vipkid.trpm.util.Bean2Map;
+import com.vipkid.trpm.util.CookieUtils;
 import com.vipkid.trpm.util.IpUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -481,6 +483,10 @@ public class LoginController extends RestfulController {
             Map<String,Object> success = ReturnMapUtils.returnSuccess();
             success.putAll(Bean2Map.toMap(teacherinfo));
             logger.info("返回数据:{}",JsonTools.getJson(success));
+
+            // 设置 24 小时提示 Cookie
+            CookieUtils.setCookie(response, CookieKey.TRPM_HOURS_24, String.valueOf(teacher.getId()), null);
+
             return success;
 
         } catch (IllegalArgumentException e) {
