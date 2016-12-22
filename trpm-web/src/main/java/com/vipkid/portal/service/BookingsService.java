@@ -1,13 +1,19 @@
 package com.vipkid.portal.service;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.vipkid.enums.OnlineClassEnum.ClassStatus;
+import com.vipkid.enums.OnlineClassEnum.ClassType;
+import com.vipkid.enums.OnlineClassEnum.CourseType;
 import com.vipkid.portal.constant.BookingsResult;
 import com.vipkid.portal.entity.*;
 import com.vipkid.trpm.constant.ApplicationConstant;
-import com.vipkid.trpm.constant.ApplicationConstant.*;
-import com.vipkid.enums.OnlineClassEnum.*;
-import com.vipkid.trpm.dao.*;
+import com.vipkid.trpm.constant.ApplicationConstant.AuditCategory;
+import com.vipkid.trpm.constant.ApplicationConstant.PeakTimeType;
+import com.vipkid.trpm.dao.AuditDao;
+import com.vipkid.trpm.dao.OnlineClassDao;
+import com.vipkid.trpm.dao.PeakTimeDao;
 import com.vipkid.trpm.entity.OnlineClass;
 import com.vipkid.trpm.entity.PeakTime;
 import com.vipkid.trpm.entity.Teacher;
@@ -18,6 +24,14 @@ import com.vipkid.trpm.util.IpUtils;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.HttpEntity;
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpDelete;
+import org.apache.http.client.methods.HttpPut;
+import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
 import org.community.http.client.HttpClientProxy;
 import org.community.tools.StringTools;
 import org.slf4j.Logger;
@@ -25,10 +39,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+import java.net.HttpURLConnection;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -43,17 +60,24 @@ public class BookingsService {
 
     private static final Logger logger = LoggerFactory.getLogger(BookingsService.class);
 
-    /* 老师默认PeakTime的TimeSolt数量 */
+    /* 老师默认必须放置的 PeakTime TimeSolt 数量 */
     private static final int PEAKTIME_TIMESLOT_DEFAULT_COUNT = 15;
-
+    /* TimeSolt 创建时的默认锁定时间，单位：秒 */
     private static final int LOCK_TIMESLOT_EXPIRED = 30;
-
+    /* 1 小时的毫秒 */
+    private static final long ONE_HOUR_MILLIS = 1 * 60 * 60 * 1000;
+    /* 半小时的毫秒 */
+    private static final long HALF_HOUR_MILLIS = 30 * 60 * 1000;
     /* 早九点的索引数 */
     private static final int NINE_OF_AM = 17;
     /* 晚九点半的索引数 */
     private static final int NINE_AND_HALF_OF_PM = 44;
-
+    /* 请求默认超时时间 */
     private static final int DEFAULT_TIMEOUT = 15 * 1000;
+
+    private static final RequestConfig DEFAULT_REQUEST_CONFIG =
+                    RequestConfig.custom().setConnectionRequestTimeout(DEFAULT_TIMEOUT)
+                                    .setConnectTimeout(DEFAULT_TIMEOUT).setSocketTimeout(DEFAULT_TIMEOUT).build();
 
     @Autowired
     private OnlineClassDao onlineClassDao;
@@ -61,28 +85,28 @@ public class BookingsService {
     @Autowired
     private PeakTimeDao peakTimeDao;
 
-    @Autowired
-    private LessonDao lessonDao;
+    // @Autowired
+    // private LessonDao lessonDao;
 
     @Autowired
     private AuditDao auditDao;
 
-    @Autowired
-    private TeacherPageLoginDao teacherLoginTypeDao;
+    // @Autowired
+    // private TeacherPageLoginDao teacherLoginTypeDao;
 
-    @Autowired
-    private TeacherDao teacherDao;
+    // @Autowired
+    // private TeacherDao teacherDao;
 
-    @Autowired
-    private UserDao userDao;
+    // @Autowired
+    // private UserDao userDao;
 
     @Autowired
     private RedisProxy redisProxy;
 
     /**
-     * 计算一天中的所有TimePoint，每半小时为一个单位
-     *
-     * @return List<TimePoint>
+     * 计算一天中的所有 TimePoint，每半小时为一个单位
+     * 
+     * @return
      */
     public List<TimePoint> getTimePointsOfDay() {
         Calendar calendar = Calendar.getInstance();
@@ -91,8 +115,7 @@ public class BookingsService {
         calendar.set(Calendar.SECOND, 0);
 
         List<TimePoint> resultList = Lists.newLinkedList();
-
-        IntStream.range(0, HALFHOUR_OF_DAY).forEach(index -> {
+        IntStream.range(0, HALFHOUR_OF_DAY).forEach(n -> {
             resultList.add(new TimePoint(calendar.getTime()));
             calendar.add(Calendar.MINUTE, MINUTE_OF_HALFHOUR);
         });
@@ -100,6 +123,12 @@ public class BookingsService {
         return resultList;
     }
 
+    /**
+     * 根据星期偏移量计算当前礼拜包含的日期
+     * 
+     * @param offsetOfWeek
+     * @return
+     */
     public List<Date> getDaysOfWeek(int offsetOfWeek) {
         Calendar calendar = Calendar.getInstance();
         if (0 != offsetOfWeek) {
@@ -126,10 +155,10 @@ public class BookingsService {
 
     /**
      * 计算整个星期的TimeSlot
-     *
+     * 
      * @param daysOfWeek
      * @param timePoints
-     * @return List<TimeSlot>
+     * @return
      */
     public List<TimeSlot> getTimeSlotsOfWeek(List<Date> daysOfWeek, List<TimePoint> timePoints) {
         List<TimeSlot> timeSlotsOfWeek = Lists.newLinkedList();
@@ -155,22 +184,30 @@ public class BookingsService {
     }
 
     /**
-     * 计算整个星期的ZoneTime
-     *
+     * 计算整个星期的 ZoneTime
+     * 
      * @param timeSlots
      * @param timezone
-     * @return List<ZoneTime>
+     * @return
      */
     public List<ZoneTime> getZoneTimesOfWeek(List<TimeSlot> timeSlots, String timezone) {
         List<ZoneTime> zoneTimesOfWeek = Lists.newLinkedList();
-
         timeSlots.stream().forEach((timeSlot) -> {
             zoneTimesOfWeek.add(new ZoneTime(timeSlot, timezone));
         });
-
         return zoneTimesOfWeek;
     }
 
+    /**
+     * 计算 schedule 表格
+     * 
+     * @param daysOfWeek
+     * @param timezone
+     * @param peakTimeMap
+     * @param courseType
+     * @param onlineClassesMap
+     * @return
+     */
     public Map<TimePoint, List<TimeSlot>> scheduleTable(List<Date> daysOfWeek, String timezone,
                     Map<String, String> peakTimeMap, String courseType,
                     Map<String, Map<String, Object>> onlineClassesMap) {
@@ -225,11 +262,16 @@ public class BookingsService {
         return scheduleTable;
     }
 
+    /**
+     * 设置 TimeSlot 属性
+     * 
+     * @param timeSlot
+     * @param peakType
+     */
     public void setTimeSlotProperties(TimeSlot timeSlot, String peakType) {
-        if (timeSlot.isShow()) {
-            if (!StringUtils.isEmpty(peakType) && !StringUtils.contains(peakType, PeakTimeType.NORMALTIME)) {
-                timeSlot.setPeakTime(true);
-            }
+        if (timeSlot.isShow() && !StringUtils.isEmpty(peakType)
+                        && !StringUtils.contains(peakType, PeakTimeType.NORMALTIME)) {
+            timeSlot.setPeakTime(true);
         }
     }
 
@@ -256,7 +298,7 @@ public class BookingsService {
     }
 
     /**
-     * 判断是否在上课时间段之内，是则显示
+     * 判断是否在上课时间段之内，是则显示；Practicum 课默认全部展示。
      *
      * @param formatToBeiJing
      * @param courseType
@@ -270,6 +312,13 @@ public class BookingsService {
         return true;
     }
 
+    /**
+     * 查询开始时间到结束时间之前的 PeakTime 列表
+     * 
+     * @param fromTime
+     * @param toTime
+     * @return
+     */
     public Map<String, String> getPeakTimeMap(Date fromTime, Date toTime) {
         Map<String, String> peakTimeMap = Maps.newHashMap();
         List<PeakTime> peakTimeList = peakTimeDao.findByFromAndToTime(fromTime, toTime);
@@ -296,20 +345,19 @@ public class BookingsService {
                     String timezone) {
         List<Map<String, Object>> teacherScheduleList =
                         onlineClassDao.findByTeacherIdWithFromAndToTime(teacherId, fromTime, toTime, timezone);
-
         logger.info("Teacher id: {}, Schedule size: {}", teacherId, teacherScheduleList.size());
 
-        /* 根据北京时间构造Map对象 */
+        /* 根据北京时间构造 Map 对象 */
         Map<String, Map<String, Object>> teacherScheduleMap = Maps.newHashMap();
 
-        /* 查询需要显示的INVALID课程列表 */
+        /* 查询需要显示的 INVALID 课程列表 */
         List<Map<String, Object>> invalidScheduleList =
                         onlineClassDao.findInvalidBy(teacherId, fromTime, toTime, timezone);
 
-        /* 查询24小时的课程列表 */
+        /* 查询 24 小时的课程列表 */
         List<String> onlineClassIds = teacherScheduleList.stream().map(map -> String.valueOf(map.get("id")))
                         .collect(Collectors.toList());
-        List<String> idsFor24Hour = get24HourClass(teacherId, onlineClassIds);
+        List<String> idsFor24Hour = get24Hours(teacherId, onlineClassIds);
 
         for (Map<String, Object> teacherSchedule : teacherScheduleList) {
             long onlineClassId = (Long) teacherSchedule.get("id");
@@ -341,14 +389,14 @@ public class BookingsService {
                 teacherSchedule.put("isPracticum", false);
             }
 
-            /* 设置是否是24小时的课程 */
+            /* 设置是否是 24 小时的课程 */
             if (idsFor24Hour.stream().anyMatch(id -> id.equals(String.valueOf(onlineClassId)))) {
                 teacherSchedule.put("is24Hour", true);
             } else {
                 teacherSchedule.put("is24Hour", false);
             }
 
-            /* 设置OPEN课程的学生数量 */
+            /* 设置 OPEN 课程的学生数量 */
             setStudentCount(teacherSchedule);
 
             /* 按优先级过滤课程 */
@@ -368,7 +416,6 @@ public class BookingsService {
     public void setStudentCount(Map<String, Object> teacherSchedule) {
         /* 获取TeacherSchedule的状态 */
         String status = (String) teacherSchedule.get("status");
-
         if (ClassStatus.isOpen(status)) {
             long onlineClassId = (Long) teacherSchedule.get("id");
             teacherSchedule.put("studentCount", onlineClassDao.countStudentByOnlineClassId(onlineClassId));
@@ -376,7 +423,7 @@ public class BookingsService {
     }
 
     /**
-     * 设置TeacherSchedule显示的优先级
+     * 设置 TeacherSchedule 显示的优先级
      *
      * @param teacherScheduleMap
      * @param scheduleKey
@@ -386,65 +433,65 @@ public class BookingsService {
                     Map<String, Object> teacherSchedule) {
         boolean isReplaced = false;
 
-        /* 获取新的TeacherSchedule的状态 */
+        /* 获取新的 TeacherSchedule 的状态 */
         String newStatus = (String) teacherSchedule.get("status");
         String newFinishType = (String) teacherSchedule.get("finishType");
 
         if (teacherScheduleMap.containsKey(scheduleKey)) {
-            /* 获取已有的TeacherSchedule的状态 */
+            /* 获取已有的 TeacherSchedule 的状态 */
             Map<String, Object> exsitTeacherSchedule = teacherScheduleMap.get(scheduleKey);
             String oldStatus = (String) exsitTeacherSchedule.get("status");
             String oldFinishType = (String) exsitTeacherSchedule.get("finishType");
 
             /* 增加新类型替换 */
-            /* 如果老状态为FINISHED */
+            /* 如果老状态为 FINISHED */
             if (ClassStatus.isFinished(oldStatus)) {
-                /* 新状态为BOOKED，则替换 */
+                /* 新状态为 BOOKED，则替换 */
                 if (ClassStatus.isBooked(newStatus)) {
                     isReplaced = true;
                 }
-                /* 新状态为AVAILABLE，老的FinishType为StudentNoShow24则替换 */
+                /* 新状态为 AVAILABLE，老的 FinishType 为 StudentNoShow24 则替换 */
                 if (ClassStatus.isAvailable(newStatus)
                                 && ApplicationConstant.FinishType.isStudentNoShow24(oldFinishType)) {
                     isReplaced = true;
                 }
-                /* 新状态为FINISHED，老的FinishType为StudentNoShow则替换 */
+                /* 新状态为 FINISHED，老的 FinishType 为 StudentNoShow 则替换 */
                 if (ClassStatus.isFinished(newStatus)
                                 && ApplicationConstant.FinishType.isStudentNoShow(oldFinishType)) {
                     isReplaced = true;
                 }
             }
 
-            /* 如果老状态为EXPIRED，新状态为FINISHED，或新状态为BOOKED，则替换 */
+            /* 如果老状态为 EXPIRED，新状态为 FINISHED，或新状态为 BOOKED，则替换 */
             if (ClassStatus.isExpired(oldStatus)) {
                 if (ClassStatus.isFinished(newStatus) || ClassStatus.isBooked(newStatus)) {
                     isReplaced = true;
                 }
             }
 
-            /* 如果老状态为CANCELED，或REMOVED，则替换 */
+            /* 如果老状态为 CANCELED，或 REMOVED，则替换 */
             if (ClassStatus.isCanceled(oldStatus) || ClassStatus.isRemoved(oldStatus)) {
                 isReplaced = true;
             }
 
-            /* 如果老状态为AVAILABLE */
+            /* 如果老状态为 AVAILABLE */
             if (ClassStatus.isAvailable(oldStatus)) {
-                /* 新状态为BOOKED，则替换 */
+                /* 新状态为 BOOKED，则替换 */
                 if (ClassStatus.isBooked(newStatus)) {
                     isReplaced = true;
                 }
-                /* 新FinishType为StudentNoShow，则替换 */
+                /* 新 FinishType 为 StudentNoShow，则替换 */
                 if (ApplicationConstant.FinishType.isStudentNoShow(newFinishType)) {
                     isReplaced = true;
                 }
             }
 
-            /* 如果老状态为INVALID，新状态不为INVALID，则替换 */
+            /* 如果老状态为 INVALID，新状态不为 INVALID，则替换 */
             if (ClassStatus.isInvalid(oldStatus) && !ClassStatus.isInvalid(newStatus)) {
                 isReplaced = true;
             }
         } else {
-            /* 如果新状态不为REMOVED，则替换 */
+            /* 如果新状态不为 REMOVED，则替换 */
             if (!ClassStatus.isRemoved(newStatus)) {
                 isReplaced = true;
             }
@@ -455,6 +502,13 @@ public class BookingsService {
         }
     }
 
+    /**
+     * 处理 schedule 请求
+     * 
+     * @param scheduledRequest
+     * @param teacher
+     * @return
+     */
     public Map<String, Object> doSchedule(ScheduledRequest scheduledRequest, Teacher teacher) {
         String timezone = teacher.getTimezone();
         long teacherId = teacher.getId();
@@ -484,18 +538,23 @@ public class BookingsService {
         return modelMap;
     }
 
-    public List<String> get24HourClass(long teacherId, List<String> onlineClassIds) {
-        Map<String, String> requestHeader = get24HourRequestHeader(teacherId);
-        logger.info("Get 24Hour Request Header: {}", requestHeader.get("Authorization"));
-
+    /**
+     * 查询 24 小时的课程
+     * 
+     * @param teacherId
+     * @param onlineClassIds
+     * @return
+     */
+    public List<String> get24Hours(long teacherId, List<String> onlineClassIds) {
         try {
             Map<String, String> requestParams = Maps.newHashMap();
-            String value = onlineClassIds.stream().collect(Collectors.joining(","));
-            requestParams.put("classIds", value);
+            requestParams.put("classIds", onlineClassIds.stream().collect(Collectors.joining(",")));
+
+            Map<String, String> requestHeader = get24HoursRequestHeader(teacherId);
 
             String requestUrl =
                             ApplicationConstant.TEACHER_24HOUR_URL + "/api/service/public/24HourClass/filterByClass";
-            logger.info("Get 24Hour Request Url: {}", requestUrl);
+            logger.info("Get 24Hours Request Url: {}", requestUrl);
 
             String responseBody = HttpClientProxy.get(requestUrl, requestParams, requestHeader);
             responseBody = StringTools.matchString(responseBody, "\\[(.*?)\\]", Pattern.CASE_INSENSITIVE, 1);
@@ -506,16 +565,8 @@ public class BookingsService {
         }
     }
 
-    public Map<String, String> get24HourRequestHeader(long teacherId) {
-        String t = "TEACHER " + teacherId;
-        Map<String, String> requestHeader = new HashMap<>();
-        requestHeader.put("Authorization",
-                        t + " " + org.apache.commons.codec.binary.Base64.encodeBase64String(DigestUtils.md5(t)));
-        return requestHeader;
-    }
-
     /**
-     * 处理TimeSlot创建逻辑
+     * 处理 TimeSlot 创建逻辑
      *
      * @param teacher
      * @param scheduleTime
@@ -525,7 +576,7 @@ public class BookingsService {
     public Map<String, Object> doCreateTimeSlot(Teacher teacher, String scheduleTime, String courseType) {
         Map<String, Object> modelMap = Maps.newHashMap();
 
-        /* 验证当前时间是否已存在OnlineClass */
+        /* 验证当前时间是否已存在 OnlineClass */
         Timestamp scheduleDateTime = parseFrom(scheduleTime, FMT_YMD_HMS);
 
         if (canSetSchedule(teacher.getId(), scheduleDateTime)) {
@@ -538,22 +589,18 @@ public class BookingsService {
             onlineClass.setStatus(ClassStatus.AVAILABLE.name());
             onlineClass.setSerialNumber(Long.toString(scheduleDateTime.getTime()));
 
-            /* 设置为课程开始前1小时 */
-            long oneHour = 60 * 60 * 1000;
-            onlineClass.setAbleToEnterClassroomDateTime(new Timestamp(scheduleDateTime.getTime() - oneHour));
+            /* 设置为课程开始前 1 小时 */
+            onlineClass.setAbleToEnterClassroomDateTime(new Timestamp(scheduleDateTime.getTime() - ONE_HOUR_MILLIS));
             onlineClass.setLastEditDateTime(new Timestamp(System.currentTimeMillis()));
 
-            /* 变量半小时，用来参与验证时间点是否可以放课时 */
-            long halfHour = 30 * 60 * 1000;
-
-            /* 如果是PRACTICUM的课程，则需要指定ClassType */
+            /* 如果是 PRACTICUM 的课程，则需要指定 ClassType */
             if (CourseType.isPracticum(courseType)) {
                 onlineClass.setClassType(ClassType.PRACTICUM.val());
 
                 /* 需要加锁，一次只处理一个请求 */
                 synchronized (teacher) {
-                    /* 验证PRACTICUM课程的这个时间点是否与MAJOR课时冲突 */
-                    Timestamp plusHour = new Timestamp(scheduleDateTime.getTime() + halfHour);
+                    /* 验证 PRACTICUM 课程的这个时间点是否与MAJOR课时冲突 */
+                    Timestamp plusHour = new Timestamp(scheduleDateTime.getTime() + HALF_HOUR_MILLIS);
 
                     /* 验证往后半小时的课程时间有没有跨天 */
                     LocalDateTime localDateTimeBeiJing = LocalDateTime.ofInstant(plusHour.toInstant(), SHANGHAI);
@@ -566,7 +613,7 @@ public class BookingsService {
                     }
 
                     /* 往前半小时只验证PRACTICUM的课程时间 */
-                    Timestamp minusHour = new Timestamp(scheduleDateTime.getTime() - halfHour);
+                    Timestamp minusHour = new Timestamp(scheduleDateTime.getTime() - HALF_HOUR_MILLIS);
                     List<OnlineClass> tList =
                                     onlineClassDao.findByTeacherIdAndScheduleDateTime(teacher.getId(), minusHour);
 
@@ -584,11 +631,11 @@ public class BookingsService {
                     }
                 }
             } else {
-                /* 验证MAJOR课程的这个时间点是否与PRACTICUM课时冲突 */
-                Timestamp minusHour = new Timestamp(scheduleDateTime.getTime() - halfHour);
+                /* 验证 MAJOR 课程的这个时间点是否与 PRACTICUM 课时冲突 */
+                Timestamp minusHour = new Timestamp(scheduleDateTime.getTime() - HALF_HOUR_MILLIS);
                 List<OnlineClass> tList = onlineClassDao.findByTeacherIdAndScheduleDateTime(teacher.getId(), minusHour);
 
-                /* 往前半小时只验证PRACTICUM的课程时间 */
+                /* 往前半小时只验证 PRACTICUM 的课程时间 */
                 long count = tList.stream().filter((o) -> o.getClassType() == ClassType.PRACTICUM.val()).filter(
                                 (o) -> ClassStatus.isBooked(o.getStatus()) || ClassStatus.isAvailable(o.getStatus()))
                                 .count();
@@ -629,12 +676,19 @@ public class BookingsService {
         return modelMap;
     }
 
+    /**
+     * 以加锁的方式创建 TimeSlot
+     * 
+     * @param timeSlotCreateRequest
+     * @param teacher
+     * @return
+     */
     public Map<String, Object> doCreateTimeSlotWithLock(TimeSlotCreateRequest timeSlotCreateRequest, Teacher teacher) {
         String scheduleTime = timeSlotCreateRequest.getScheduledDateTime();
         String courseType = timeSlotCreateRequest.getType();
 
         Timestamp scheduleDateTime = parseFrom(scheduleTime, FMT_YMD_HMS);
-        String key = "TP:LOCK:" + teacher.getId() + ":" + scheduleDateTime.getTime();
+        final String key = "TP:LOCK:" + teacher.getId() + ":" + scheduleDateTime.getTime();
         try {
             if (redisProxy.lock(key, LOCK_TIMESLOT_EXPIRED)) {
                 return doCreateTimeSlot(teacher, scheduleTime, courseType);
@@ -649,6 +703,13 @@ public class BookingsService {
         }
     }
 
+    /**
+     * 判断老师的这个时间点能否设置 TimeSlot
+     * 
+     * @param teacherId
+     * @param t
+     * @return
+     */
     public boolean canSetSchedule(long teacherId, Timestamp t) {
         List<OnlineClass> tList = onlineClassDao.findByTeacherIdAndScheduleDateTime(teacherId, t);
         long count = tList.stream()
@@ -658,7 +719,7 @@ public class BookingsService {
     }
 
     /**
-     * 处理TimeSlot取消逻辑
+     * 处理 TimeSlot 取消逻辑
      *
      * @param teacher
      * @param onlineClassId
@@ -675,7 +736,7 @@ public class BookingsService {
             modelMap.put("error", BookingsResult.ILLEGAL_ONLINECLASS);
         }
 
-        /* 如果当前取消时间为PeakTime，则不能少于15节课时 */
+        /* 如果当前取消时间为 PeakTime，则不能少于 15 节课时 */
         Timestamp scheduleDateTime = onlineClass.getScheduledDateTime();
         PeakTime peakTime = peakTimeDao.findByTimePoint(scheduleDateTime);
 
@@ -690,8 +751,7 @@ public class BookingsService {
             }
         }
 
-        /* 更新OnlineClass状态 */
-
+        /* 更新 OnlineClass 状态 */
         if (ClassStatus.isAvailable(onlineClass.getStatus())) {
             onlineClassDao.updateStatus(onlineClass.getId(), ClassStatus.REMOVED.name());
 
@@ -718,7 +778,7 @@ public class BookingsService {
     }
 
     /**
-     * 查询老师的某个日期所在星期的PeakTime总数
+     * 查询老师的某个日期所在星期的 PeakTime 总数
      *
      * @param scheduleDateTime
      * @param teacherId
@@ -747,6 +807,173 @@ public class BookingsService {
 
         return peakTimeDao.countDaoByTeacherIdAndFromWithToTime(startCalendar.getTime(), endCalendar.getTime(),
                         teacherId);
+    }
+
+    /**
+     * 处理设置 24 小时
+     * 
+     * @param set24HourRequest
+     * @param teacher
+     * @return
+     */
+    public Map<String, Object> doSet24Hours(Set24HourRequest set24HourRequest, Teacher teacher) {
+        Map<String, Object> resultMap = Maps.newHashMap();
+        resultMap.put("action", false);
+
+        List<OnlineClass> onlineClasses = onlineClassDao.findOnlineClasses(set24HourRequest.getOnlineClassIds());
+        if (checkAnyInOneHour(onlineClasses)) {
+            resultMap.put("error", BookingsResult.ONLINECLASS_IN_ONE_HOUR);
+            return resultMap;
+        }
+
+        if (set24HourRequest.getClassType() == ClassType.MAJOR.val()) {
+            final int weekOffset = set24HourRequest.getWeekOffset();
+
+            if (checkLess15TimeSlots(teacher.getId(), teacher.getTimezone(), weekOffset)) {
+                resultMap.put("error", BookingsResult.TIMESLOT_LESS_15);
+                return resultMap;
+            }
+        }
+
+        resultMap.put("action", set24Hours(set24HourRequest, teacher));
+        return resultMap;
+    }
+
+    /**
+     * 检查是否有课程的开始时间在 1 小时之内
+     * 
+     * @param onlineClass
+     * @return
+     */
+    public boolean checkAnyInOneHour(List<OnlineClass> onlineClasses) {
+        Predicate<OnlineClass> predicate = onlineClass -> onlineClass.getScheduledDateTime().getTime()
+                        - System.currentTimeMillis() <= ONE_HOUR_MILLIS;
+        return onlineClasses.stream().anyMatch(predicate);
+    }
+
+    /**
+     * 检查 Major 课是否少于 15 个 TimeSlot
+     * 
+     * @param teacherId
+     * @param timezone
+     * @param offsetOfWeek
+     * @return
+     */
+    private boolean checkLess15TimeSlots(long teacherId, String timezone, int offsetOfWeek) {
+        List<Date> daysOfWeek = getDaysOfWeek(offsetOfWeek);
+        Date fromTime = daysOfWeek.get(0), toTime = daysOfWeek.get(DAY_OF_WEEK);
+        int count = onlineClassDao.countByTeacherIdWithFromAndToTime(teacherId, fromTime, toTime, timezone);
+        return (count <= PEAKTIME_TIMESLOT_DEFAULT_COUNT) ? true : false;
+    }
+
+    /**
+     * 发送设置 24 小时请求
+     * 
+     * @param set24HourRequest
+     * @param teacher
+     * @return
+     */
+    public boolean set24Hours(Set24HourRequest set24HourRequest, Teacher teacher) {
+        Map<String, String> requestHeader = get24HoursRequestHeader(teacher.getId());
+        String onlineClassIds = set24HourRequest.getOnlineClassIds().stream().map(id -> String.valueOf(id))
+                        .collect(Collectors.joining(","));
+        String requestUrl = ApplicationConstant.TEACHER_24HOUR_URL + "/api/service/public/24HourClass?classIds="
+                        + onlineClassIds;
+        logger.info("Set 24Hours Request Url: {}", requestUrl);
+
+        HttpPut httpPut = new HttpPut(requestUrl);
+        return send24HoursRequest(requestUrl, httpPut, requestHeader);
+    }
+
+    /**
+     * 处理删除 24 小时
+     * 
+     * @param delete24HourRequest
+     * @param teacher
+     * @return
+     */
+    public Map<String, Object> doDelete24Hours(Delete24HourRequest delete24HourRequest, Teacher teacher) {
+        Map<String, Object> resultMap = Maps.newHashMap();
+        resultMap.put("action", delete24Hours(delete24HourRequest, teacher));
+        return resultMap;
+    }
+
+    /**
+     * 发送删除 24 小时请求
+     * 
+     * @param delete24HourRequest
+     * @param teacher
+     * @return
+     */
+    public boolean delete24Hours(Delete24HourRequest delete24HourRequest, Teacher teacher) {
+        Map<String, String> requestHeader = get24HoursRequestHeader(teacher.getId());
+        String onlineClassIds = delete24HourRequest.getOnlineClassIds().stream().map(id -> String.valueOf(id))
+                        .collect(Collectors.joining(","));
+        String requestUrl = ApplicationConstant.TEACHER_24HOUR_URL + "/api/service/public/24HourClass?classIds="
+                        + onlineClassIds;
+        logger.info("Delete 24Hours Request Url: {}", requestUrl);
+
+        HttpDelete httpDelete = new HttpDelete(requestUrl);
+        return send24HoursRequest(requestUrl, httpDelete, requestHeader);
+    }
+
+    /**
+     * 设置 24 小时的请求头
+     * 
+     * @param teacherId
+     * @return
+     */
+    private Map<String, String> get24HoursRequestHeader(long teacherId) {
+        Preconditions.checkArgument(0 != teacherId);
+
+        Map<String, String> requestHeader = new HashMap<>();
+        final String sign = "TEACHER " + teacherId;
+        requestHeader.put("Authorization", sign + " " + Base64.getEncoder().encodeToString(DigestUtils.md5(sign)));
+        return requestHeader;
+    }
+
+    /**
+     * 发送 24 小时请求
+     * 
+     * @param requestUrl
+     * @param httpRequestBase
+     * @param requestHeader
+     * @return
+     */
+    private boolean send24HoursRequest(String requestUrl, HttpRequestBase httpRequestBase,
+                    Map<String, String> requestHeader) {
+        CloseableHttpClient httpClient = null;
+        CloseableHttpResponse httpResponse = null;
+
+        try {
+            httpRequestBase.setConfig(DEFAULT_REQUEST_CONFIG);
+            if (null != requestHeader) {
+                for (String headerName : requestHeader.keySet()) {
+                    httpRequestBase.setHeader(headerName, requestHeader.get(headerName));
+                }
+            }
+
+            httpClient = HttpClients.createDefault();
+            httpResponse = httpClient.execute(httpRequestBase);
+            logger.info("Send 24Hours response: {}", httpResponse);
+
+            HttpEntity responseEntity = httpResponse.getEntity();
+            return null != responseEntity && HttpURLConnection.HTTP_OK == httpResponse.getStatusLine().getStatusCode();
+        } catch (Exception e) {
+            logger.error("Send 24Hours error: {}", e.getMessage());
+            return false;
+        } finally {
+            try {
+                if (null != httpResponse) {
+                    httpResponse.close();
+                }
+                if (null != httpClient) {
+                    httpClient.close();
+                }
+            } catch (IOException e) {
+                logger.error("HttpClient err: {}", e.getMessage());
+            }
+        }
     }
 
 }

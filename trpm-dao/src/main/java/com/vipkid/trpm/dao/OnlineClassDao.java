@@ -1,19 +1,19 @@
 package com.vipkid.trpm.dao;
 
-import static com.google.common.base.Preconditions.checkArgument;
+import com.google.common.collect.Maps;
+import com.vipkid.trpm.entity.OnlineClass;
+import org.community.dao.support.MapperDaoTemplate;
+import org.mybatis.spring.SqlSessionTemplate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.community.dao.support.MapperDaoTemplate;
-import org.mybatis.spring.SqlSessionTemplate;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
 
-import com.google.common.collect.Maps;
-import com.vipkid.trpm.entity.OnlineClass;
+import static com.google.common.base.Preconditions.checkArgument;
 
 @Repository
 public class OnlineClassDao extends MapperDaoTemplate<OnlineClass> {
@@ -410,4 +410,16 @@ public class OnlineClassDao extends MapperDaoTemplate<OnlineClass> {
 		paramsMap.put("onlineClassIds", onlineClassIds);
 		return listEntity("batchGetStatusByOnlineClassIds", paramsMap);
 	}
+
+	/**
+	 * 根据 id 列表批量查询
+	 * @param onlineClassIds
+	 * @return
+     */
+	public List<OnlineClass> findOnlineClasses(List<Long> onlineClassIds){
+		Map<String, Object> paramsMap = new HashMap<>();
+		paramsMap.put("onlineClassIds", onlineClassIds);
+		return selectList("findOnlineClassByIds", paramsMap);
+	}
+
 }

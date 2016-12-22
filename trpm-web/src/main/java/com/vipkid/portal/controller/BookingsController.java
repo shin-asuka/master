@@ -4,12 +4,11 @@ import com.google.api.client.repackaged.com.google.common.base.Preconditions;
 import com.google.api.client.util.Maps;
 import com.vipkid.file.utils.StringUtils;
 import com.vipkid.http.utils.JsonUtils;
-import com.vipkid.portal.entity.ScheduledRequest;
-import com.vipkid.portal.entity.TimeSlotCancelRequest;
-import com.vipkid.portal.entity.TimeSlotCreateRequest;
+import com.vipkid.portal.entity.*;
 import com.vipkid.portal.service.BookingsService;
 import com.vipkid.rest.config.RestfulConfig;
 import com.vipkid.rest.service.LoginService;
+import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -99,6 +98,55 @@ public class BookingsController {
             Preconditions.checkArgument(0 != timeSlotCancelRequest.getOnlineClassId());
 
             return bookingsService.doCancelTimeSlot(timeSlotCancelRequest, loginService.getTeacher());
+        } catch (IllegalArgumentException e) {
+            logger.error("Illegal arguments error", e);
+
+            response.setStatus(HttpStatus.BAD_REQUEST.value());
+            resultMap.put("error", "Illegal arguments format");
+        } catch (Exception e) {
+            logger.error("Internal server error", e);
+
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            resultMap.put("error", "Server error");
+        }
+        return resultMap;
+    }
+
+    @RequestMapping(value = "/set24Hour", method = RequestMethod.PUT, produces = RestfulConfig.JSON_UTF_8)
+    public Map<String, Object> set24Hour(@RequestBody String body, HttpServletResponse response) {
+        Map<String, Object> resultMap = Maps.newHashMap();
+        try {
+            logger.info("Invocation set24Hour() arguments: {}", body);
+            Set24HourRequest set24HourRequest = JsonUtils.toBean(body, Set24HourRequest.class);
+
+            Preconditions.checkArgument(0 != set24HourRequest.getOnlineClassId());
+
+            return bookingsService.doSet24Hour(set24HourRequest, loginService.getTeacher());
+        } catch (IllegalArgumentException e) {
+            logger.error("Illegal arguments error", e);
+
+            response.setStatus(HttpStatus.BAD_REQUEST.value());
+            resultMap.put("error", "Illegal arguments format");
+        } catch (Exception e) {
+            logger.error("Internal server error", e);
+
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            resultMap.put("error", "Server error");
+        }
+        return resultMap;
+    }
+
+    @RequestMapping(value = "/delete24Hours", method = RequestMethod.DELETE, produces = RestfulConfig.JSON_UTF_8)
+    public Map<String, Object> delete24Hours(@RequestBody String body, HttpServletResponse response) {
+        Map<String, Object> resultMap = Maps.newHashMap();
+        try {
+            logger.info("Invocation delete24Hours() arguments: {}", body);
+            Delete24HourRequest delete24HourRequest = JsonUtils.toBean(body, Delete24HourRequest.class);
+
+            Preconditions.checkArgument(CollectionUtils.isNotEmpty(delete24HourRequest.getOnlineClassIds()));
+            Preconditions.checkArgument(delete24HourRequest.getOnlineClassIds().stream().anyMatch(id -> 0 == id));
+
+            return bookingsService.doDelete24Hours(delete24HourRequest, loginService.getTeacher());
         } catch (IllegalArgumentException e) {
             logger.error("Illegal arguments error", e);
 

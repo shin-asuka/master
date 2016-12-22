@@ -721,4 +721,14 @@
 			#{item}
 		</foreach>
 	</select>
+
+	<select id="findOnlineClassByIds" resultMap="onlineClassResultMap" useCache="false">
+		SELECT
+		<include refid="onlineClassColumns" />
+		FROM online_class WHERE id IN
+		<foreach collection="onlineClassIds" item="item" open="(" close=")" separator=",">
+			#{item}
+		</foreach>
+	</select>
+
 </mapper>
