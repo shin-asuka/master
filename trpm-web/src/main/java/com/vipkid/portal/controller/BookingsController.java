@@ -242,4 +242,18 @@ public class BookingsController {
         }
     }
 
+    @RequestMapping(value = "/getTips", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
+    public Map<String, Object> getTips(HttpServletRequest request, HttpServletResponse response) {
+        Map<String, Object> resultMap = Maps.newHashMap();
+        try {
+            return bookingsService.getTips(request, response, loginService.getTeacher());
+        } catch (Exception e) {
+            logger.error("Internal server error", e);
+
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            resultMap.put("error", "Server error");
+        }
+        return resultMap;
+    }
+
 }
