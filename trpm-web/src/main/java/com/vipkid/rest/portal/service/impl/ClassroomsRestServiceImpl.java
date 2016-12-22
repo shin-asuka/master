@@ -360,7 +360,7 @@ public class ClassroomsRestServiceImpl implements ClassroomsRestService{
 		Map<String, Object> coursesTagMap = Maps.newHashMap();
 		Map<String, Object> practicumTagMap = Maps.newHashMap();
 		coursesTagMap.put("tagName", "Courses");
-		practicumTagMap.put("tagName", "Practicum");
+		practicumTagMap.put("tagName", "Mock Class");//Practicum改为Mock Class
 		if (CourseType.isPracticum(courseType)) {
 			coursesTagMap.put("currently", new Boolean(false));
 			practicumTagMap.put("currently", new Boolean(true));
