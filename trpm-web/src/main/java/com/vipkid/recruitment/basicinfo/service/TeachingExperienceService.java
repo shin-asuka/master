@@ -57,6 +57,12 @@ public class TeachingExperienceService {
     }
     
     public long updateTeaching(TeachingExperienceDto bean,User user){
+
+        TeachingExperience teachingExperienceOld = teachingExperienceDao.findById(bean.getId());
+        if(teachingExperienceOld == null || teachingExperienceOld.getTeacherId() != user.getId()){
+            return 0L;
+        }
+
         Preconditions.checkArgument(bean.getId() > 0);
         logger.info("userId is {}, update TeachingExperience,teachingExperienceId is:{}",user.getId(),bean.getId());
         TeachingExperience teachingExperience = new TeachingExperience();

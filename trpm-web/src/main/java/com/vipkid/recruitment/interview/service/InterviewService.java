@@ -83,7 +83,7 @@ public class InterviewService {
      */
     public List<Map<String,Object>> findlistByInterview(){
         String fromTime = LocalDateTime.now().plusHours(1).format(DateUtils.FMT_YMD_HMS);
-        String toTime = LocalDateTime.now().plusDays(InterviewConstant.SHOW_DAYS_EXCLUDE_TODAY).withHour(23).withMinute(59).withSecond(59).format(DateUtils.FMT_YMD_HMS);
+        String toTime = LocalDateTime.now().plusDays(InterviewConstant.SHOW_DAYS_EXCLUDE_TODAY + 1).withHour(23).withMinute(59).withSecond(59).format(DateUtils.FMT_YMD_HMS);
         logger.info("findlistByInterview parameter fromTime:{}, toTime:{}",fromTime, toTime);
         List<Map<String,Object>> list = interviewDao.findlistByInterview(fromTime, toTime);
         if(CollectionUtils.isNotEmpty(list)){

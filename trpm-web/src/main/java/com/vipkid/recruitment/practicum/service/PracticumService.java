@@ -69,7 +69,7 @@ public class PracticumService {
         String fromTime24 = now.plusHours(1).format(DateUtils.FMT_YMD_HMS);
         String toTime24 = now.plusDays(1).format(DateUtils.FMT_YMD_HMS);
         String fromTime = now.plusDays(1).plusSeconds(1).format(DateUtils.FMT_YMD_HMS);
-        String toTime = now.plusDays(PracticumConstant.SHOW_DAYS_EXCLUDE_TODAY).withHour(23).withMinute(59).withSecond(59).format(DateUtils.FMT_YMD_HMS);
+        String toTime = now.plusDays(PracticumConstant.SHOW_DAYS_EXCLUDE_TODAY + 1).withHour(23).withMinute(59).withSecond(59).format(DateUtils.FMT_YMD_HMS);
         logger.info("findTimeListByPracticum parameter fromTime:{}, toTime:{}",fromTime24, toTime);
 
         //1. 查24小时内
