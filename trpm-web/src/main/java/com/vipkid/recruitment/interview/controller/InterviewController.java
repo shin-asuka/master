@@ -1,10 +1,17 @@
 package com.vipkid.recruitment.interview.controller;
 
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import com.google.api.client.util.Maps;
+import com.vipkid.enums.TeacherApplicationEnum.Result;
+import com.vipkid.enums.TeacherApplicationEnum.Status;
+import com.vipkid.enums.TeacherEnum.LifeCycle;
+import com.vipkid.recruitment.common.service.RecruitmentService;
+import com.vipkid.recruitment.interview.InterviewConstant;
+import com.vipkid.recruitment.interview.service.InterviewService;
+import com.vipkid.recruitment.utils.ReturnMapUtils;
+import com.vipkid.rest.RestfulController;
+import com.vipkid.rest.config.RestfulConfig;
+import com.vipkid.rest.interceptor.annotation.RestInterface;
+import com.vipkid.trpm.entity.Teacher;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,17 +22,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.google.api.client.util.Maps;
-import com.vipkid.enums.TeacherApplicationEnum.Result;
-import com.vipkid.enums.TeacherApplicationEnum.Status;
-import com.vipkid.enums.TeacherEnum.LifeCycle;
-import com.vipkid.recruitment.common.service.RecruitmentService;
-import com.vipkid.recruitment.interview.service.InterviewService;
-import com.vipkid.recruitment.utils.ReturnMapUtils;
-import com.vipkid.rest.RestfulController;
-import com.vipkid.rest.config.RestfulConfig;
-import com.vipkid.rest.interceptor.annotation.RestInterface;
-import com.vipkid.trpm.entity.Teacher;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.Map;
 
 @RestController
 @RestInterface(lifeCycle={LifeCycle.INTERVIEW})
@@ -44,6 +43,7 @@ public class InterviewController extends RestfulController {
         try{
             Map<String,Object> result = Maps.newHashMap();
             result.put("list", this.interviewService.findlistByInterview());
+            result.put("days", InterviewConstant.SHOW_DAYS_EXCLUDE_TODAY);
             return ReturnMapUtils.returnSuccess(result);
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
