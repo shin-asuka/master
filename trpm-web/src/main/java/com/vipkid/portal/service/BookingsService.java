@@ -361,7 +361,9 @@ public class BookingsService {
             long onlineClassId = (Long) teacherSchedule.get("id");
 
             /**
-             * 由于查询的列表中包含除了REMOVED之外所有的课程，因此需要过滤不用于显示的INVALID记录； 业务场景：换课时，只显示第一个被换老师的INVALID记录。
+             * 由于查询的列表中包含除了 REMOVED 之外所有的课程，因此需要过滤不用于显示的 INVALID 记录；
+             *
+             * 业务场景：换课时，只显示第一个被换老师的 INVALID 记录。
              */
             String status = (String) teacherSchedule.get("status");
             if (ClassStatus.isInvalid(status)) {
