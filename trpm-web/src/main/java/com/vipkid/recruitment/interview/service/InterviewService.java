@@ -1,19 +1,5 @@
 package com.vipkid.recruitment.interview.service;
 
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.time.DateFormatUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.google.api.client.util.Maps;
 import com.vipkid.email.EmailUtils;
 import com.vipkid.enums.OnlineClassEnum;
@@ -32,17 +18,26 @@ import com.vipkid.recruitment.entity.TeacherApplication;
 import com.vipkid.recruitment.entity.TeacherLockLog;
 import com.vipkid.recruitment.interview.InterviewConstant;
 import com.vipkid.recruitment.utils.ReturnMapUtils;
-import com.vipkid.trpm.dao.LessonDao;
-import com.vipkid.trpm.dao.OnlineClassDao;
-import com.vipkid.trpm.dao.TeacherDao;
-import com.vipkid.trpm.dao.TeacherQuizDao;
-import com.vipkid.trpm.dao.UserDao;
+import com.vipkid.trpm.dao.*;
 import com.vipkid.trpm.entity.Lesson;
 import com.vipkid.trpm.entity.OnlineClass;
 import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.proxy.OnlineClassProxy;
 import com.vipkid.trpm.proxy.OnlineClassProxy.ClassType;
 import com.vipkid.trpm.util.DateUtils;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateFormatUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 @Service
 public class InterviewService {
@@ -88,7 +83,7 @@ public class InterviewService {
      */
     public List<Map<String,Object>> findlistByInterview(){
         String fromTime = LocalDateTime.now().plusHours(1).format(DateUtils.FMT_YMD_HMS);
-        String toTime = LocalDateTime.now().plusDays(2).withHour(23).withMinute(59).withSecond(59).format(DateUtils.FMT_YMD_HMS);
+        String toTime = LocalDateTime.now().plusDays(InterviewConstant.SHOW_DAYS_EXCLUDE_TODAY).withHour(23).withMinute(59).withSecond(59).format(DateUtils.FMT_YMD_HMS);
         logger.info("findlistByInterview parameter fromTime:{}, toTime:{}",fromTime, toTime);
         List<Map<String,Object>> list = interviewDao.findlistByInterview(fromTime, toTime);
         if(CollectionUtils.isNotEmpty(list)){
