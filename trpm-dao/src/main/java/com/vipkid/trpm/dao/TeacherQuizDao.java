@@ -1,6 +1,7 @@
 package com.vipkid.trpm.dao;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Repository;
 
 import com.google.common.collect.Lists;
 import com.vipkid.enums.TeacherQuizEnum;
+import com.vipkid.enums.TeacherQuizEnum.Version;
 import com.vipkid.trpm.entity.TeacherQuiz;
 
 @Repository
@@ -32,15 +34,31 @@ public class TeacherQuizDao extends MapperDaoTemplate<TeacherQuiz>{
      * List<TeacherQuiz>
      * @date 2016年8月18日
      */;
-    public List<TeacherQuiz> getLastQuiz(long teacherId){
+    public List<TeacherQuiz> getLastQuiz(long teacherId,Version version){
         TeacherQuiz teacherQuiz = new TeacherQuiz();
         teacherQuiz.setTeacherId(teacherId);
         teacherQuiz.setAndwhere(" AND status > " + TeacherQuizEnum.Status.NOQUIZ.val());
         teacherQuiz.setStatus(-1);
+        teacherQuiz.setVersion(version.val());
         teacherQuiz.setOrderString(" id DESC ");
         return super.selectList(teacherQuiz);
     }
-    
+
+    /**
+     * 查询是否有需要考试的记录
+     * @Author:ALong (ZengWeiLong)
+     * @param teacherId
+     * @return
+     * List<TeacherQuiz>
+     * @date 2016年8月18日
+     */
+    public List<TeacherQuiz> findAllQuiz(long teacherId){
+        TeacherQuiz teacherQuiz = new TeacherQuiz();
+        teacherQuiz.setTeacherId(teacherId);
+        teacherQuiz.setStatus(-1);
+        return super.selectList(teacherQuiz);
+    }
+
     /**
      * 查询是否有需要考试的记录
      * @Author:ALong (ZengWeiLong)
@@ -70,7 +88,7 @@ public class TeacherQuizDao extends MapperDaoTemplate<TeacherQuiz>{
      * int
      * @date 2016年8月18日
      */
-    public int insertQuiz(long teacherId,long passId){
+    public int insertQuiz(long teacherId,long passId,Version version){
         logger.info("新增一条考试记录:{}",teacherId);
         TeacherQuiz teacherQuiz = new TeacherQuiz();
         teacherQuiz.setTeacherId(teacherId);
@@ -79,6 +97,7 @@ public class TeacherQuizDao extends MapperDaoTemplate<TeacherQuiz>{
         teacherQuiz.setUpdateId(passId);
         teacherQuiz.setUpdateTime(new Date());
         teacherQuiz.setQuizScore(0);
+        teacherQuiz.setVersion(version.val());
         return super.save(teacherQuiz);
     }
     /**
@@ -92,5 +111,12 @@ public class TeacherQuizDao extends MapperDaoTemplate<TeacherQuiz>{
         List<Map<String,Object>> list = Lists.newArrayList();
         list = super.listEntity("findTagsByType", null);
         return list;
+    }
+
+    public List<TeacherQuiz> findTAByAuditTimesStatusResult(List<Map> auditTimes,int status){
+        Map<String, Object> paramsMap = new HashMap<String, Object>();
+        paramsMap.put("auditTimes", auditTimes);
+        paramsMap.put("status", status);
+        return listEntity("findTAByAuditTimesStatusResult", paramsMap);
     }
 }

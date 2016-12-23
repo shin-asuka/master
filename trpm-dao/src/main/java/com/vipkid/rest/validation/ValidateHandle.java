@@ -32,8 +32,11 @@ public class ValidateHandle {
      * @date 2016年10月22日
      */
     public static <T> Result checkForField(T bean,Field field){
-        Ignore ignore = getAnnotation(Ignore.class,bean,field);
         Result result = Result.bulider();
+        if("serialVersionUID".equalsIgnoreCase(field.getName())){
+            return result;
+        }
+        Ignore ignore = getAnnotation(Ignore.class,bean,field);
         if(ignore != null){
             
             Arrays.asList(ignore.type()).stream().forEach(_bean->{logger.info("属性"+field.getName()+",有Ignore注解 type:"+_bean.name());});

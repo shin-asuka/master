@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.google.common.collect.Maps;
+import com.vipkid.enums.TeacherEnum.LifeCycle;
 import com.vipkid.trpm.entity.Teacher;
 
 @Repository
@@ -101,7 +102,7 @@ public class TeacherDao extends MapperDaoTemplate<Teacher> {
         }
     }
 
-    public void insertLifeCycleLog(long teacherId,String fromStatus,String toStatus,long operatorId){
+    public void insertLifeCycleLog(long teacherId,LifeCycle fromStatus,LifeCycle toStatus,long operatorId){
         Map<String,Object> paramMap = Maps.newHashMap();
         paramMap.put("teacherId", teacherId);
         paramMap.put("fromStatus", fromStatus);

@@ -31,6 +31,8 @@ public class TeacherQuiz extends Entity implements Serializable {
     private int status;
     
     private String andwhere;
+    
+    private int version;
 
     public int getId() {
         return id;
@@ -120,5 +122,14 @@ public class TeacherQuiz extends Entity implements Serializable {
     public TeacherQuiz setQuizTime(long quizTime) {
         this.quizTime = quizTime;
         return this;
+    }
+
+    public int getVersion() {
+        return version;
+    }
+
+    public void setVersion(int version) {
+        this.version = version;
     } 
+    
 }

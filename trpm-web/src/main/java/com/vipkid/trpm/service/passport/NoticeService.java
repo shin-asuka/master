@@ -14,7 +14,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.vipkid.email.EmailEngine;
 import com.vipkid.email.handle.EmailConfig.EmailFormEnum;
-import com.vipkid.email.templete.TempleteUtils;
+import com.vipkid.email.template.TemplateUtils;
 import com.vipkid.trpm.dao.*;
 import com.vipkid.trpm.entity.Lesson;
 import com.vipkid.trpm.entity.Student;
@@ -82,7 +82,7 @@ public class NoticeService {
             for (int i = 0; i < list.size(); i++) {
                 Map<String,Object> onlineClassMap = list.get(i);
                 
-                String row = TempleteUtils.NOTE_TEMPLETE.replace("{{time}}", yymmdd.format(onlineClassMap.get("scheduledDateTime")));
+                String row = TemplateUtils.NOTE_TEMPLATE.replace("{{time}}", yymmdd.format(onlineClassMap.get("scheduledDateTime")));
                 Student stu = studentDao.findById(Long.valueOf(onlineClassMap.get("studentId")+""));
                 if(stu != null){
                     row = row.replace("{{ename}}", stu.getEnglishName());
@@ -95,7 +95,7 @@ public class NoticeService {
                     }
                 }
                 Lesson lesson = lessonDao.findById(Long.valueOf(onlineClassMap.get("lessonId")+""));
-                row = row.replace("{{lessonson}}", lesson.getSerialNumber());
+                row = row.replace("{{lessonNo}}", lesson.getSerialNumber());
                 
                 sb.append(row);
                 map.put("mouth-day", mmdd.format(onlineClassMap.get("scheduledDateTime")));
@@ -103,8 +103,8 @@ public class NoticeService {
             map.put("datetime-name-course", sb.toString());
             map.put("count", String.valueOf(list.size()));
             map.put("teacherName", teacher.getRealName());
-            TempleteUtils templete = new TempleteUtils();
-            Map<String, String> tmpMap = templete.readTemplete("UpcomingClassesReminder.html", map,"UpcomingClassesReminder-Title.html");
+            TemplateUtils templateUtils = new TemplateUtils();
+            Map<String, String> tmpMap = templateUtils.readTemplate("UpcomingClassesReminder.html", map, "UpcomingClassesReminder-Title.html");
             new EmailEngine().addMail(teacher.getEmail(), tmpMap,EmailFormEnum.TEACHVIP);
             return true;
         }catch(Exception e){

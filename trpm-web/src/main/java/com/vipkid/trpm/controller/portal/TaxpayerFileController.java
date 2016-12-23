@@ -25,13 +25,12 @@ import com.vipkid.file.utils.ActionHelp;
 import com.vipkid.file.utils.Encodes;
 import com.vipkid.file.utils.StringUtils;
 import com.vipkid.rest.exception.ServiceException;
+import com.vipkid.rest.service.LoginService;
 import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.entity.TeacherTaxpayerForm;
 import com.vipkid.trpm.entity.TeacherTaxpayerFormDetail;
 import com.vipkid.trpm.entity.personal.TaxpayerView;
-import com.vipkid.trpm.service.passport.IndexService;
 import com.vipkid.trpm.service.portal.TeacherTaxpayerFormService;
-import com.vipkid.trpm.service.rest.LoginService;
 import com.vipkid.trpm.util.AwsFileUtils;
 
 /**
@@ -48,8 +47,8 @@ public class TaxpayerFileController extends AbstractPortalController{
 	@Autowired
 	private AwsFileService awsFileService;
 	
-	@Autowired
-	private IndexService indexService;
+/*	@Autowired
+	private IndexService indexService;*/
 	
 	@Autowired
 	private TeacherTaxpayerFormService teacherTaxpayerFormService;

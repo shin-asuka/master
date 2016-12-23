@@ -17,21 +17,22 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.google.api.client.util.Maps;
+import com.vipkid.enums.TeacherEnum.LifeCycle;
 import com.vipkid.enums.TeacherQuizEnum;
 import com.vipkid.rest.RestfulController;
 import com.vipkid.rest.config.RestfulConfig;
-import com.vipkid.rest.interceptor.RestInterface;
+import com.vipkid.rest.interceptor.annotation.RestInterface;
+import com.vipkid.rest.service.AdminQuizService;
+import com.vipkid.rest.service.LoginService;
+import com.vipkid.rest.service.TeacherPageLoginService;
 import com.vipkid.trpm.constant.ApplicationConstant.CookieKey;
-import com.vipkid.trpm.constant.ApplicationConstant.TeacherLifeCycle;
+import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.entity.TeacherQuiz;
 import com.vipkid.trpm.entity.User;
-import com.vipkid.trpm.service.rest.AdminQuizService;
-import com.vipkid.trpm.service.rest.LoginService;
-import com.vipkid.trpm.service.rest.TeacherPageLoginService;
 import com.vipkid.trpm.util.CookieUtils;
 
 @RestController
-@RestInterface(lifeCycle=TeacherLifeCycle.REGULAR)
+@RestInterface(lifeCycle=LifeCycle.REGULAR)
 @RequestMapping("/quiz")
 public class AdminQuizController extends RestfulController {
 
@@ -134,8 +135,8 @@ public class AdminQuizController extends RestfulController {
         result.put("result", false);
         try{
             logger.info("提交分数:{}",grade);
-            User user = getUser(request);
-            result.put("result",this.adminQuizService.saveQuizResult(user.getId(), grade,quizToken));
+            Teacher teacher = getTeacher(request);
+            result.put("result",this.adminQuizService.saveQuizResult(teacher.getId(), grade, quizToken));
             return result;
         } catch (IllegalArgumentException e) {
             logger.error("内部参数转化异常:"+e.getMessage());

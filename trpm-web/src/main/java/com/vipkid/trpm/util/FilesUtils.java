@@ -20,8 +20,6 @@ public class FilesUtils {
 	 * 读取文件内容
 	 * 
 	 * @Author:ALong
-	 * @param templeteName
-	 *            文件名称
 	 * @return 2015年11月5日
 	 */
 	public static String readContent(InputStream inputStream, Charset charSet) {
@@ -66,7 +64,7 @@ public class FilesUtils {
 	 *            参数集合 key value
 	 * @date 2015年12月22日
 	 */
-	public static String readLogTemplete(String name, Map<String, Object> parmMap) {
+	public static String readLogTemplate(String name, Map<String, Object> parmMap) {
 		String content = PropertyConfigurer.stringValue(name);
 		checkArgument(null != content, "The content is null.");
 

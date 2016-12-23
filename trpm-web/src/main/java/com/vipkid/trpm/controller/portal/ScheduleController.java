@@ -1,17 +1,11 @@
 package com.vipkid.trpm.controller.portal;
 
-import com.google.api.client.util.Maps;
-import com.vipkid.trpm.constant.ApplicationConstant;
-import com.vipkid.trpm.constant.ApplicationConstant.CourseType;
-import com.vipkid.trpm.constant.ApplicationConstant.LoginType;
-import com.vipkid.trpm.entity.OnlineClass;
-import com.vipkid.trpm.entity.Teacher;
-import com.vipkid.trpm.service.activity.ActivityService;
-import com.vipkid.trpm.service.passport.IndexService;
-import com.vipkid.trpm.service.portal.OnlineClassService;
-import com.vipkid.trpm.service.portal.ScheduleService;
-import com.vipkid.trpm.service.rest.LoginService;
-import com.vipkid.trpm.service.rest.TeacherPageLoginService;
+import java.util.Base64;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.lang.StringUtils;
 import org.community.config.PropertyConfigurer;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,10 +14,17 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.ServletRequestUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.util.Base64;
-import java.util.Map;
+import com.google.api.client.util.Maps;
+import com.vipkid.enums.OnlineClassEnum.ClassType;
+import com.vipkid.enums.OnlineClassEnum.CourseType;
+import com.vipkid.enums.TeacherPageLoginEnum.LoginType;
+import com.vipkid.rest.service.LoginService;
+import com.vipkid.rest.service.TeacherPageLoginService;
+import com.vipkid.trpm.entity.OnlineClass;
+import com.vipkid.trpm.entity.Teacher;
+import com.vipkid.trpm.service.activity.ActivityService;
+import com.vipkid.trpm.service.portal.OnlineClassService;
+import com.vipkid.trpm.service.portal.ScheduleService;
 
 @Controller
 public class ScheduleController extends AbstractPortalController {
@@ -31,8 +32,8 @@ public class ScheduleController extends AbstractPortalController {
 	@Autowired
 	private ScheduleService scheduleService;
 
-	@Autowired
-	private IndexService indexService;
+/*	@Autowired
+	private IndexService indexService;*/
 	
 	@Autowired
 	private ActivityService activityService;
@@ -49,7 +50,7 @@ public class ScheduleController extends AbstractPortalController {
 	@RequestMapping("/bookings")
 	public String schedule(HttpServletRequest request, HttpServletResponse response, Model model) {
 		/* 当前显示的课程类型 */
-		String courseType = ServletRequestUtils.getStringParameter(request, "courseType", CourseType.MAJOR);
+		String courseType = ServletRequestUtils.getStringParameter(request, "courseType", CourseType.MAJOR.toString());
 		model.addAttribute("courseType", courseType);
 
 		/* 当前星期偏移量 */
@@ -64,7 +65,7 @@ public class ScheduleController extends AbstractPortalController {
 
 		// 判断是否能上Practicum类型的课程
 		model.addAttribute("showPracticum", false);
-		if (loginService.enabledPracticum(teacher.getId())) {
+		if (loginService.isPe(teacher.getId())) {
 		    model.addAttribute("showPracticum", teacherPageLoginService.isType(teacher.getId(), LoginType.PRACTICUM));
 		}
 		//判断是否显示AdminQuiz
@@ -132,7 +133,7 @@ public class ScheduleController extends AbstractPortalController {
 			return jsonView(response, resultMap);
 		}
 
-		if(onlineClass.getClassType()== ApplicationConstant.ClassType.PRACTICUM){
+		if(onlineClass.getClassType()== ClassType.PRACTICUM.val()){
 			resultMap.put("result", scheduleService.set24HourClass(teacher.getId(), onlineClassId));
 		}else{
 			if (scheduleService.checkTimeSlots(teacher.getId(), teacher.getTimezone(), offsetOfWeek)) {

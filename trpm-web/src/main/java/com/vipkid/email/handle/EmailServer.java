@@ -40,7 +40,7 @@ public class EmailServer {
             int result = sendMail(reviceEntity);
             logger.info("Email send end ====>：{}", result);
         } catch (Exception e) {
-            logger.error("Emial send Exceprion:", e);
+            logger.error("Email send Exception:", e);
             return 0;
         }
         logger.info("Email send complete ====>：");
@@ -55,6 +55,7 @@ public class EmailServer {
         Map<String, String> requestParam = Maps.newHashMap();
         requestParam.put("from", mailEntity.getFromMail());
         requestParam.put("to", mailEntity.getToMail());
+        //requestParam.put("to", "13001226942@163.com");
         requestParam.put("subject", mailEntity.getMailSubject());
         requestParam.put("content", mailEntity.getMailBody());
         try {
@@ -70,7 +71,7 @@ public class EmailServer {
                 }
             }
         } catch (Exception e) {
-            logger.error("Emial send Exceprion:", e);
+            logger.error("Email send Exception:", e);
         }
         return 0;
     }
@@ -79,6 +80,7 @@ public class EmailServer {
         StringBuffer content = new StringBuffer();
         content.append(mailEntity.getFromMail());
         content.append(mailEntity.getToMail());
+        //content.append("13001226942@163.com");
         content.append(mailEntity.getMailSubject());
         content.append(mailEntity.getMailBody());
         content.append(EmailConfig.APP_SECRECT);

@@ -1,12 +1,15 @@
 package com.vipkid.trpm.controller.h5;
+
 import com.vipkid.http.service.TeacherAppService;
 import com.vipkid.http.utils.JsonUtils;
 import com.vipkid.rest.security.AppContext;
 import com.vipkid.rest.utils.ApiResponseUtils;
-import com.vipkid.trpm.entity.teachercomment.*;
+import com.vipkid.trpm.entity.teachercomment.QueryTeacherCommentOutputDto;
+import com.vipkid.trpm.entity.teachercomment.StudentAbilityLevelRule;
+import com.vipkid.trpm.entity.teachercomment.SubmitTeacherCommentInputDto;
+import com.vipkid.trpm.entity.teachercomment.TeacherComment;
 import com.vipkid.trpm.service.portal.ReportService;
 import com.vipkid.trpm.service.portal.TeacherService;
-import com.vipkid.trpm.service.rest.LoginService;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.slf4j.Logger;
@@ -47,9 +50,6 @@ public class TeacherCommentController {
 
     @Autowired
     private ReportService reportService;
-
-    @Autowired
-    private LoginService loginService;
 
     @ResponseBody
     @RequestMapping(value = "/submit")

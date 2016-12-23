@@ -17,9 +17,9 @@
         <div class="actionBar"> #**1.课程标题 *#
           <div class="classroomLabelGroup">
             <div class="logo"></div>
-            <div class="classroomLabel">Practicum</div>
+            <div class="classroomLabel">Mock Class</div>
             <div class="lessonName ng-binding" style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis; width:492px;"> 
-              <a href="javascript:;" style="color: white; text-decoration: none;" title="$!{teacherPe.serialNumber} : $!{teacherPe.lessonName}($!{teacherPe.teacherName})"> $!{teacherPe.serialNumber} : $!{teacherPe.lessonName}($!{teacherPe.teacherName}) </a> 
+              <a href="javascript:;" style="color: white; text-decoration: none;" title="$!{teacherPe.serialNumber} : $!{teacherPe.lessonName}($!{teacherPe.teacherName})"> $!{teacherPe.serialNumber} : $!{teacherPe.lessonName.replace("Practicum","Mock Class")}($!{teacherPe.teacherName}) </a>
             </div>
           </div>
           #**2.反馈和退出 *#

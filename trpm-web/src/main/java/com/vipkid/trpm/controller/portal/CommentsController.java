@@ -1,11 +1,11 @@
 package com.vipkid.trpm.controller.portal;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import com.google.common.collect.Maps;
+import com.vipkid.rest.service.LoginService;
+import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.entity.teachercomment.TeacherCommentResult;
 import com.vipkid.trpm.service.portal.TeacherService;
+import com.vipkid.trpm.util.DateUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -13,20 +13,14 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.ServletRequestUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.vipkid.trpm.entity.Teacher;
-import com.vipkid.trpm.service.passport.IndexService;
-import com.vipkid.trpm.service.rest.LoginService;
-import com.vipkid.trpm.util.DateUtils;
-
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Map;
 
 @Controller
 public class CommentsController extends AbstractPortalController {
 
-    @Autowired
-    private IndexService indexService;
-    
     @Autowired
     private LoginService loginService;
 

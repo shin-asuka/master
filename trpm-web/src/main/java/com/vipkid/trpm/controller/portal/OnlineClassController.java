@@ -1,13 +1,19 @@
 package com.vipkid.trpm.controller.portal;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import com.google.common.collect.Maps;
+import com.vipkid.enums.OnlineClassEnum;
+import com.vipkid.enums.TeacherApplicationEnum.Result;
+import com.vipkid.recruitment.common.service.RecruitmentService;
+import com.vipkid.recruitment.dao.TeacherLockLogDao;
+import com.vipkid.recruitment.entity.TeacherApplication;
+import com.vipkid.rest.service.LoginService;
+import com.vipkid.trpm.constant.ApplicationConstant.FinishType;
+import com.vipkid.trpm.dao.UserDao;
+import com.vipkid.trpm.entity.*;
+import com.vipkid.trpm.service.passport.IndexService;
+import com.vipkid.trpm.service.pe.AppserverPracticumService;
+import com.vipkid.trpm.service.pe.PeSupervisorService;
+import com.vipkid.trpm.service.portal.OnlineClassService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,21 +25,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.google.common.collect.Maps;
-import com.vipkid.enums.OnlineClassEnum;
-import com.vipkid.trpm.constant.ApplicationConstant.FinishType;
-import com.vipkid.trpm.constant.ApplicationConstant.RecruitmentResult;
-import com.vipkid.trpm.entity.DemoReport;
-import com.vipkid.trpm.entity.Lesson;
-import com.vipkid.trpm.entity.OnlineClass;
-import com.vipkid.trpm.entity.Teacher;
-import com.vipkid.trpm.entity.TeacherApplication;
-import com.vipkid.trpm.entity.User;
-import com.vipkid.trpm.service.passport.IndexService;
-import com.vipkid.trpm.service.pe.AppserverPracticumService;
-import com.vipkid.trpm.service.pe.PeSupervisorService;
-import com.vipkid.trpm.service.portal.OnlineClassService;
-import com.vipkid.trpm.service.rest.LoginService;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 
 @Controller
 public class OnlineClassController extends AbstractPortalController {
@@ -44,9 +41,6 @@ public class OnlineClassController extends AbstractPortalController {
     private OnlineClassService onlineclassService;
 
     @Autowired
-    private IndexService indexService;
-
-    @Autowired
     private PeSupervisorService peSupervisorService;
 
     @Autowired
@@ -54,7 +48,6 @@ public class OnlineClassController extends AbstractPortalController {
     
     @Autowired
     private LoginService loginService;
-
     /**
      * 进入教室
      *
@@ -122,7 +115,7 @@ public class OnlineClassController extends AbstractPortalController {
             return "error/info";
         }
         // INVALID不允许进入教室
-        if (OnlineClassEnum.Status.INVALID.toString().equals(onlineClass.getStatus())) {
+        if (OnlineClassEnum.ClassStatus.INVALID.toString().equals(onlineClass.getStatus())) {
             logger.error("teacherId:{},没有权限进入教室，原因:onlineClass 状态为：INVALID,onlineClassId:{}",user.getId(), onlineClassId);
             model.addAttribute("info", errorHTML);
             return "error/info";
@@ -142,6 +135,12 @@ public class OnlineClassController extends AbstractPortalController {
         logger.info("TeacherId:{},成功进入教室(INTO),onlineClassId:{},studentId:{}",user.getId(),onlineClassId,studentId);
 
         model.addAttribute("lesson", lesson);
+        //是否已经开始上课
+        if(System.currentTimeMillis() > onlineClass.getScheduledDateTime().getTime()){
+            model.addAttribute("isStarted", true);
+        } else {
+            model.addAttribute("isStarted", false);
+        }
         if (lesson.getSerialNumber().startsWith("P")) {
             model.addAllAttributes(
                     onlineclassService.enterPracticum(onlineClass, studentId, teacher, lesson));
@@ -225,7 +224,7 @@ public class OnlineClassController extends AbstractPortalController {
      *
      * @param request
      * @param response
-     * @param scheduleTime
+     * @param onlineClassId
      * @param model
      * @return
      */
@@ -249,11 +248,7 @@ public class OnlineClassController extends AbstractPortalController {
      *
      * @Author:ALong
      * @Title: doAudit
-     * @param type 完成类型
-     * @param onlineClassId 课程Id
-     * @param studentId 学生Id
-     * @param comments 备注
-     * @param finishType 完成类型
+     * @param teacherApplication 申请
      * @return String
      * @date 2016年1月11日
      */
@@ -265,7 +260,7 @@ public class OnlineClassController extends AbstractPortalController {
         String finishType = ServletRequestUtils.getStringParameter(request, "finishType", "");
 
         Map<String, Object> modelMap = Maps.newHashMap();
-        if (type.startsWith(RecruitmentResult.TBD)) {
+        if (type.startsWith(Result.TBD.toString())) {
             modelMap = peSupervisorService.doPracticumForPE(pe, teacherApplication, type);
         } else {
             if (StringUtils.isEmpty(finishType)) {
@@ -275,8 +270,7 @@ public class OnlineClassController extends AbstractPortalController {
 
             // Finish课程
             if ((Boolean) modelMap.get("result")) {
-                onlineclassService.finishPracticum(teacherApplication.getOnlineClassId(),
-                        finishType);
+                onlineclassService.finishPracticum(teacherApplication, finishType, pe, (Teacher) modelMap.get("recruitTeacher"));
             }
         }
 

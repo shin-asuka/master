@@ -16,7 +16,7 @@ import com.google.common.collect.Maps;
 import com.vipkid.email.EmailEngine;
 import com.vipkid.email.handle.EmailConfig.EmailFormEnum;
 import com.vipkid.email.handle.EmailConfig.EmailTypeEnum;
-import com.vipkid.email.templete.TempleteUtils;
+import com.vipkid.email.template.TemplateUtils;
 import com.vipkid.trpm.constant.ApplicationConstant;
 import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.entity.User;
@@ -41,7 +41,7 @@ public class EmailService {
      * @return Map<String,String>
      * @date 2016年3月31日
      */
-    public Map<String, String> senEmail(User user, Teacher teacher, String type) {
+    public Map<String, String> sendEmail(User user, Teacher teacher, String type) {
         if (EmailTypeEnum.ACTIVATION.toString().equals(type)) {
             return this.sendActivation(user, teacher);
         } else if (EmailTypeEnum.SUBMITBASICINFO.toString().equals(type)) {
@@ -50,7 +50,7 @@ public class EmailService {
             return this.sendClassNote(teacher);
         } else {
             Map<String, String> resultMap = Maps.newHashMap();
-            resultMap.put("info", ApplicationConstant.AjaxCode.ERROR_CODE);
+            resultMap.put("info", ApplicationConstant.AjaxCode.USER_ERROR);
             return resultMap;
         }
 
@@ -88,7 +88,7 @@ public class EmailService {
      */
     private Map<String, String> sendActivation(User user, Teacher teacher) {
         Map<String, String> resultMap = Maps.newHashMap();
-        TempleteUtils templete = new TempleteUtils();
+        TemplateUtils templateUtils = new TemplateUtils();
         Map<String, String> map = Maps.newHashMap();
         if (StringUtils.isEmpty(teacher.getRealName())) {
             map.put("teacherName", NEW_TEACHER_NAME);
@@ -97,11 +97,11 @@ public class EmailService {
         }
         map.put("link", PropertyConfigurer.stringValue("teacher.www") + "activation.shtml?uuid="
                 + teacher.getRecruitmentId());
-        Map<String, String> tmpMap = templete.readTemplete("VIPKIDAccountActivationLink.html", map,
+        Map<String, String> tmpMap = templateUtils.readTemplate("VIPKIDAccountActivationLink.html", map,
                 "VIPKIDAccountActivationLink-Title.html");
 
         new EmailEngine().addMail(user.getUsername(), tmpMap, EmailFormEnum.TEACHVIP);
-        resultMap.put("info", ApplicationConstant.AjaxCode.SUCCESS_CODE);
+        resultMap.put("info", "OK");
 
         return resultMap;
     }
@@ -117,7 +117,7 @@ public class EmailService {
      */
     private Map<String, String> sendApplyThx(User user, Teacher teacher) {
         Map<String, String> resultMap = Maps.newHashMap();
-        TempleteUtils templete = new TempleteUtils();
+        TemplateUtils templateUtils = new TemplateUtils();
         Map<String, String> map = Maps.newHashMap();
         if (StringUtils.isEmpty(teacher.getRealName())) {
             map.put("teacherName", NEW_TEACHER_NAME);
@@ -126,10 +126,10 @@ public class EmailService {
         }
         map.put("loginName", user.getUsername());
         Map<String, String> tmpMap =
-                templete.readTemplete("Step2Apply.html", map, "Step2Apply-Title.html");
+                templateUtils.readTemplate("Step2Apply.html", map, "Step2Apply-Title.html");
 
         new EmailEngine().addMail(user.getUsername(), tmpMap, EmailFormEnum.TEACHVIP);
-        resultMap.put("info", ApplicationConstant.AjaxCode.SUCCESS_CODE);
+        resultMap.put("info", "OK");
 
         return resultMap;
     }

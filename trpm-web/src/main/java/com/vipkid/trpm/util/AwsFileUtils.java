@@ -33,21 +33,43 @@ public class AwsFileUtils {
 	public static Logger logger = LoggerFactory.getLogger(AwsFileUtils.class);
 
 	public static final String TAXPAYER_FORM = "tpinfo"; // W9 form
+	public static final String IDENTIFICATION = "identification";
+	public static final String DIPLOMA = "diploma"; // W9 form
+	public static final String CERTIFICATES = "certificates"; // W9 form
+	public static final String DEGREES = "degrees"; // W9 form
+	public static final String CONTRACT = "contract"; // W9 form
+
 	public static final String TEACHER_AVATAR = "avatar";
 	public static final String TEACHER_LIFE_PICTURE = "picture";
 	public static final String TEACHER_SHORT_VIDEO = "video";
 	
 	public static final Long TAPXPAYER_FILE_MAX_SIZE = 20*1024*1024L; //20M
-	public static final String TAPXPAYER_FILE_TYPE = "pdf,jpg,png,jpeg";
+	public static final String TAPXPAYER_FILE_TYPE = "pdf,jpg,png,jpeg,bmp";
+
+	public static final String CONTRACT_FILE_TYPE = "doc,docx,pdf,jpg,jpeg,png,bmp.";
+	public static final Long CONTRACT_FILE_MAX_SIZE = 20*1024*1024L; //20M
+
+	public static final String IDENTIFICATION_FILE_TYPE = "doc,docx,pdf,jpg,jpeg,png,bmp.";
+	public static final Long IDENTIFICATION_FILE_MAX_SIZE = 20*1024*1024L; //20M
+
+	public static final String DIPLOMA_FILE_TYPE = "doc,docx,pdf,jpg,jpeg,png,bmp.";
+	public static final Long DIPLOMA_FILE_MAX_SIZE = 20*1024*1024L; //20M
+
+	public static final String CERTIFICATES_FILE_TYPE = "doc,docx,pdf,jpg,jpeg,png,bmp.";
+	public static final Long CERTIFICATES_FILE_MAX_SIZE = 20*1024*1024L; //20M
+
+	public static final String DEGREES_FILE_TYPE = "doc,docx,pdf,jpg,jpeg,png,bmp.";
+	public static final Long DEGREES_FILE_MAX_SIZE = 20*1024*1024L; //20M
 
 	public static final Long AVATAR_MAX_SIZE = 20*1024*1024L; //20M
-	public static final String AVATAR_FILE_TYPE = "jpg,png,jpeg";
+	public static final String AVATAR_FILE_TYPE = "pdf,jpg,jpeg,png,bmp";
 
 	public static final Long LIFE_PICTURE_MAX_SIZE = 20*1024*1024L; //20M
-	public static final String LIFE_PICTURE_FILE_TYPE = "jpg,png,jpeg";
+	public static final String LIFE_PICTURE_FILE_TYPE = "pdf,jpg,jpeg,png,bmp";
 
-	public static final Long SHORT_VIDEO_MAX_SIZE = 20*1024*1024L; //20M
-	public static final String SHORT_VIDEO_FILE_TYPE = "mp4,mov,avi";
+	public static final Long SHORT_VIDEO_MIN_SIZE = 0*1024*1024L; //0M
+	public static final Long SHORT_VIDEO_MAX_SIZE = 100*1024*1024L; //100M
+	public static final String SHORT_VIDEO_FILE_TYPE = "mp4,mov,avi,rmvb";
 
 	public static final String TEACHER_S3_ROOT = PropertyConfigurer.stringValue("aws.teacher.dir");
 
@@ -92,7 +114,26 @@ public class AwsFileUtils {
 		String key = buildS3FileKey(TEACHER_SHORT_VIDEO, fileName, null);
 		return key;
 	}
-
+	public static String getContractkey(Long teacherId, String fileName){
+		String key = buildS3FileKey(CONTRACT, fileName, teacherId);
+		return key;
+	}
+	public static String getIdentificationkey(Long teacherId, String fileName){
+		String key = buildS3FileKey(IDENTIFICATION, fileName, teacherId);
+		return key;
+	}
+	public static String getDiplomakey(Long teacherId, String fileName){
+		String key = buildS3FileKey(DIPLOMA, fileName, teacherId);
+		return key;
+	}
+	public static String getDegreeskey(Long teacherId, String fileName){
+		String key = buildS3FileKey(DEGREES, fileName, teacherId);
+		return key;
+	}
+	public static String getCertificateskey(Long teacherId, String fileName){
+		String key = buildS3FileKey(CERTIFICATES, fileName, teacherId);
+		return key;
+	}
 	public static String buildS3FileKey(String subDir, String fileName, Long teacherId){
 		String key = null;
 		try {
@@ -111,14 +152,67 @@ public class AwsFileUtils {
 		}
 		return key;
 	}
-	
+
+	public static Boolean checkContractFileType(String fileName){
+		Boolean flag = checkUploadFileType(CONTRACT_FILE_TYPE, fileName);
+		return flag;
+	}
+
+	public static Boolean checkContractFileSize(Long fileSize){
+		Boolean flag = checkUploadFileSize(null, CONTRACT_FILE_MAX_SIZE, fileSize);
+		return flag;
+	}
+
+	public static Boolean checkIdentificationFileType(String fileName){
+		Boolean flag = checkUploadFileType(IDENTIFICATION_FILE_TYPE, fileName);
+		return flag;
+	}
+
+	public static Boolean checkIdentificationFileSize(Long fileSize){
+		Boolean flag = checkUploadFileSize(null, IDENTIFICATION_FILE_MAX_SIZE, fileSize);
+		return flag;
+	}
+
+	public static Boolean checkDiplomaFileType(String fileName){
+		Boolean flag = checkUploadFileType(DIPLOMA_FILE_TYPE, fileName);
+		return flag;
+	}
+
+	public static Boolean checkDiplomaFileSize(Long fileSize){
+		Boolean flag = checkUploadFileSize(null, DIPLOMA_FILE_MAX_SIZE, fileSize);
+		return flag;
+	}
+
+
+	public static Boolean checkCertificatesFileType(String fileName){
+		Boolean flag = checkUploadFileType(CERTIFICATES_FILE_TYPE, fileName);
+		return flag;
+	}
+
+	public static Boolean checkCertificatesFileSize(Long fileSize){
+		Boolean flag = checkUploadFileSize(null, CERTIFICATES_FILE_MAX_SIZE, fileSize);
+		return flag;
+	}
+
+
+	public static Boolean checkDegreesFileType(String fileName){
+		Boolean flag = checkUploadFileType(DEGREES_FILE_TYPE, fileName);
+		return flag;
+	}
+
+	public static Boolean checkDegreesFileSize(Long fileSize){
+		Boolean flag = checkUploadFileSize(null, DEGREES_FILE_MAX_SIZE, fileSize);
+		return flag;
+	}
+
 	public static Boolean checkTaxPayerFileType(String fileName){
 		Boolean flag = checkUploadFileType(TAPXPAYER_FILE_TYPE, fileName);
 		return flag;
 	}
 
+
 	public static Boolean checkTaxPayerFileSize(Long fileSize){
-		Boolean flag = checkUploadFileSize(TAPXPAYER_FILE_MAX_SIZE, fileSize);
+		Boolean flag = checkUploadFileSize(null, TAPXPAYER_FILE_MAX_SIZE, fileSize);
 		return flag;
 	}
 
@@ -128,7 +222,7 @@ public class AwsFileUtils {
 	}
 
 	public static Boolean checkAvatarFileSize(Long fileSize){
-		Boolean flag = checkUploadFileSize(AVATAR_MAX_SIZE, fileSize);
+		Boolean flag = checkUploadFileSize(null, AVATAR_MAX_SIZE, fileSize);
 		return flag;
 	}
 
@@ -138,7 +232,7 @@ public class AwsFileUtils {
 	}
 
 	public static Boolean checkLifePicFileSize(Long fileSize){
-		Boolean flag = checkUploadFileSize(LIFE_PICTURE_MAX_SIZE, fileSize);
+		Boolean flag = checkUploadFileSize(null, LIFE_PICTURE_MAX_SIZE, fileSize);
 		return flag;
 	}
 
@@ -148,7 +242,7 @@ public class AwsFileUtils {
 	}
 
 	public static Boolean checkShortVideoFileSize(Long fileSize){
-		Boolean flag = checkUploadFileSize(SHORT_VIDEO_MAX_SIZE, fileSize);
+		Boolean flag = checkUploadFileSize(SHORT_VIDEO_MIN_SIZE, SHORT_VIDEO_MAX_SIZE, fileSize);
 		return flag;
 	}
 
@@ -165,13 +259,23 @@ public class AwsFileUtils {
 		return flag;
 	}
 
-	public static Boolean checkUploadFileSize(Long sizeLimit, Long fileSize){
-		Boolean flag = false;
-		if(fileSize != null && fileSize != null && fileSize <= sizeLimit){
-			flag = true;
+	public static Boolean checkUploadFileSize(Long minSizeLimit, Long maxSizeLimit, Long fileSize){
+		if(fileSize == null) {
+			return false;
 		}
-		return flag;
+
+		if(minSizeLimit != null && fileSize <= minSizeLimit){
+			return false;
+		}
+
+		if(maxSizeLimit != null && fileSize >= maxSizeLimit) {
+			return false;
+		}
+
+		return true;
 	}
+
+
 	public static String reNewFileName(String fileName){
 		String name = fileName;
 		if(StringUtils.isNotBlank(fileName)){

@@ -19,4 +19,21 @@ public class TeacherQuizEnum {
             return this.val;
         }
     }
+    
+    public enum Version{
+
+        ADMIN_QUIZ(1),
+        
+        TRINING_QUIZ(2);
+        
+        private int version;
+        
+        private Version(int version){
+            this.version = version;
+        }
+        
+        public int val(){
+            return version;
+        }
+    }
 }

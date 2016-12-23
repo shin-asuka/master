@@ -4,7 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Maps;
 import com.vipkid.email.EmailEngine;
 import com.vipkid.email.handle.EmailConfig;
-import com.vipkid.email.templete.TempleteUtils;
+import com.vipkid.email.template.TemplateUtils;
 import com.vipkid.payroll.service.StudentService;
 import com.vipkid.trpm.constant.ApplicationConstant;
 import com.vipkid.trpm.dao.*;
@@ -91,7 +91,7 @@ public class ReportEmailService {
         paramsMap.put("reason", reason);
         paramsMap.put("tableDetails", tableDetails);
 
-        Map<String, String> emailMap = new TempleteUtils().readTemplete("FeedbackAdjustRemindCLT.html", paramsMap, "FeedbackAdjustRemindCLT-Title.html");
+        Map<String, String> emailMap = new TemplateUtils().readTemplate("FeedbackAdjustRemindCLT.html", paramsMap, "FeedbackAdjustRemindCLT-Title.html");
         new EmailEngine().addMailPool("replacement@vipkid.com.cn", emailMap, EmailConfig.EmailFormEnum.EDUCATION);
     }
 

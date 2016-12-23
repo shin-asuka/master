@@ -105,5 +105,4 @@ public class TeacherAddress extends Entity implements Serializable {
 		this.updateTime = updateTime;
 		return this;
 	}
-
 }

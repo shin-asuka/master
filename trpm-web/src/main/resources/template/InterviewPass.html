@@ -1,0 +1,143 @@
+<div style="margin: 0; padding: 0; font-family: "Times New Roman"; line-height: 1.4rem;">
+<div style="width:80%; min-width: 800px; max-width: 1200px; margin: 0 auto;">
+    <p>Dear {{teacherName}},</p>
+    <p>Welcome to the VIPKID teaching community!</p>
+    <p>Our interviewer found you to be a great teacher, and we would love to have you as a teacher with us. Please find your contract and demo class rubric below.
+    </p>
+    <ul style="margin-lef: 50px;">
+        <li>Your interview and demo class score: <strong style="font-size: 1.2em;">{{all-score}}/100</strong></li>
+        <li>Your minimum payment: <strong style="font-size: 1.2em;">{{basePay}}/30-minute lesson</strong></li>
+        <li>Your incentive payment (up to): extra <strong style="font-size: 1.2em;">2.0 dollars / 30-minute lesson</strong></li>
+        <li>Your contract:&nbsp;<a download="contractUrl" href="{{contractURL}}">Download</a></li>
+    </ul>
+    <p style="line-height: 1.6rem;">There are three deadlines that we suggest you to keep in mind:</p>
+    <p>1) You will have <strong style="color:red;">2 days</strong> days to finish the Teaching Prep stage, where you will watch the very important (and super fun) VIPKID videos and take a quiz for understanding.
+    <p>2) After finishing the Teaching Prep, you will have <strong style="color:red;">6 days</strong> to complete two Mock Classes with a real VIPKID teacher.
+    <p>3) You have <strong style="color:red;">2 days</strong> to upload your signed contract and other documents for us to create your teacher profile for students and parents to book you.
+    <p>Please let us know ASAP if you run into any emergencies that might prevent you from finishing each step on time. Failure to completing these steps on time without prior notification will result in failing the screening process. Please proceed according to the deadlines, and contact us if you encounter any difficulties.</p>
+    <p>Here is what you need to do next:</p>
+    <p>1. Login to <a href="https://t.vipkid.com.cn/login" target="_blank">t.vipkid.com.cn/login</a> to read the Teaching Professional Standards, to watch our Teaching Prep videos and to take the quiz.</p>
+    <p>2. Check your interview rubric below to prepare for the Mock Class stage.</p>
+
+    <table style="width: 600px; border: 2px solid #DDDDDD; border-collapse: collapse; line-height: 2rem; text-indent: 10px;">
+        <tr style="border-top: 2px solid #DDDDDD;">
+            <td colspan=3 style="text-align: left; font-size: 1.6rem; font-weight: bold; line-height: 3rem;">Education and Teaching Experience</td>
+        </tr>
+        <tr style="border-top: 2px solid #DDDDDD; text-align: left; font-weight: bold; background-color: #FFE7E7;">
+            <td style="border-right: 2px solid #DDDDDD;">Result Type</td>
+            <td style="border-right: 2px solid #DDDDDD;">Result</td>
+            <td>Score</td>
+        </tr>
+        <tr style="border-top: 2px solid #DDDDDD; text-align: left;">
+            <td style="border-right: 2px solid #DDDDDD;">Highest Degree</td>
+            <td style="border-right: 2px solid #DDDDDD;">{{accent-label}}</td>
+            <td>{{accent-score}}/8</td>
+        </tr>
+        <tr style="border-top: 2px solid #DDDDDD; text-align: left;">
+            <td style="border-right: 2px solid #DDDDDD;">Teaching Experience</td>
+            <td style="border-right: 2px solid #DDDDDD;">{{phonics-label}}</td>
+            <td>{{phonics-score}}/25</td>
+        </tr>
+        <tr style="border-top: 2px solid #DDDDDD; text-align: left;">
+            <td style="border-right: 2px solid #DDDDDD;">Teaching Certificate</td>
+            <td style="border-right: 2px solid #DDDDDD;">{{positive-label}}</td>
+            <td>{{positive-score}}/5</td>
+        </tr>
+        <tr style="border-top: 2px solid #DDDDDD;font-weight: bold; text-align: left;">
+            <td colspan="2" style="border-right: 2px solid #DDDDDD; font-weight: bold; font-size: 1rem">Education and teaching experience score</td>
+            <td >{{pre-score}}/38</td>
+        </tr>
+    </table>
+
+    <table style="width: 99%; min-width: 800px; max-width: 1200px; border: 2px solid #DDDDDD; border-collapse: collapse; margin-top: 10px; line-height: 2rem;">
+        <tr sryle="line-height: 3rem;">
+            <td colspan="5" style="text-align: center; font-size: 1.8rem; font-weight: bold; line-height: 4rem;"><strong>Demo Lesson Performance</strong></td>
+        </tr>
+        <tr style="border-top: 2px solid #DDDDDD; text-align: left; font-weight: bold; background-color: #FFE7E7;" valign="top" >
+            <td style="border-right: 2px solid #DDDDDD; padding: 10px;">Result Type</td>
+            <td colspan="3" style="border-right: 2px solid #DDDDDD; padding: 10px">Comments about your performance and some helpful feedback</td>
+            <td style="border-right: 2px solid #DDDDDD; padding: 10px;">Score</td>
+        </tr>
+        <tr style="border-top: 2px solid #DDDDDD; text-align: left; background-color: #F0F0F0;" valign="top">
+            <td style="border-right: 2px solid #DDDDDD; padding: 10px;">Engaging Class</td>
+            <td colspan="3" style="border-right: 2px solid #DDDDDD; text-align: left; padding: 10px;">
+                <p><b>Comments:</b>{{engaged-comments}}</p>
+                <p><b>Feedback:</b>{{engaged-feedback}}</p>
+            </td>
+            <td style="border-right: 2px solid #DDDDDD; padding: 10px;">{{engaged-score}}/8</td>
+        </tr>
+        <tr style="border-top: 2px solid #DDDDDD; text-align: left;" valign="top">
+            <td style="border-right: 2px solid #DDDDDD; padding: 10px;">Time Management</td>
+            <td colspan="3" style="border-right: 2px solid #DDDDDD; text-align: left; padding: 10px;">
+                <p><strong>Comments:</strong>{{timeManagementScore-comments}}</p>
+                <p><strong>Feedback:</strong>{{timeManagementScore-feedback}}</p>
+            </td>
+            <td style="border-right: 2px solid #DDDDDD; padding: 10px;">{{timeManagementScore-score}}/8</td>
+        </tr>
+        <tr style="border-top: 2px solid #DDDDDD; text-align: left; background-color: #F0F0F0;" valign="top">
+            <td style="border-right: 2px solid #DDDDDD; padding: 10px;">Attempted to complete the lesson objectives</td>
+            <td colspan="3" style="border-right: 2px solid #DDDDDD; text-align: left; padding: 10px;">
+                <p><strong>Comments:</strong>{{lessonObjectivesScore-comments}}</p>
+                <p><strong>Feedback:</strong>{{lessonObjectivesScore-feedback}}</p>
+            </td>
+            <td style="border-right: 2px solid #DDDDDD; padding: 10px;">{{lessonObjectivesScore-score}}/8</td>
+        </tr>
+        <tr style="border-top: 2px solid #DDDDDD; text-align: left;" valign="top">
+            <td style="border-right: 2px solid #DDDDDD; padding: 10px;">Appropriate EnergyLevel</td>
+            <td colspan="3" style="border-right: 2px solid #DDDDDD; text-align: left; padding: 10px;">
+                <p><strong>Comments:</strong>{{teachingMethod-comments}}</p>
+                <p><p><strong>Feedback:</strong>{{teachingMethod-feedback}}</p>
+            </td>
+            <td style="border-right: 2px solid #DDDDDD; padding: 10px;">{{teachingMethod-score}}/8</td>
+        </tr>
+        <tr style="border-top: 2px solid #DDDDDD; text-align: left; background-color: #F0F0F0;" valign="top">
+            <td style="border-right: 2px solid #DDDDDD; padding: 10px;">Use of Tools</td>
+            <td colspan="3" style="border-right: 2px solid #DDDDDD; text-align: left; padding: 10px;">
+                <p><strong>Comments:</strong>{{preparationPlanningScore-comments}}</p>
+                <p><strong>Feedback:</strong>{{preparationPlanningScore-feedback}}</p>
+            </td>
+            <td style="border-right: 2px solid #DDDDDD; padding: 10px;">{{preparationPlanningScore-score}}/6</td>
+        </tr>
+        <tr style="border-top: 2px solid #DDDDDD; text-align: left;" valign="top">
+            <td style="border-right: 2px solid #DDDDDD; padding: 10px;">Total Physical Response (TPR) Usage</td>
+            <td colspan="3" style="border-right: 2px solid #DDDDDD; text-align: left; padding: 10px;">
+                <p><strong>Comments:</strong>{{englishLanguageScore-comments}}</p>
+                <p><strong>Feedback:</strong>{{englishLanguageScore-feedback}}</p>
+            </td>
+            <td style="border-right: 2px solid #DDDDDD; padding: 10px;">{{englishLanguageScore-score}}/6</td>
+        </tr>
+        <tr style="border-top: 2px solid #DDDDDD; text-align: left; background-color: #F0F0F0;" valign="top">
+            <td style="border-right: 2px solid #DDDDDD; padding: 10px;">Simplified Instructions</td>
+            <td colspan="3" style="border-right: 2px solid #DDDDDD; text-align: left; padding: 10px;">
+                <p><strong>Comments:</strong>{{interactionRapportScore-comments}}</p>
+                <p><strong>Feedback:</strong>{{interactionRapportScore-feedback}}</p>
+            </td>
+            <td style="border-right: 2px solid #DDDDDD; padding: 10px;">{{interactionRapportScore-score}}/6</td>
+        </tr>
+        <tr style="border-top: 2px solid #DDDDDD; text-align: left;" valign="top">
+            <td style="border-right: 2px solid #DDDDDD; padding: 10px;">Student Output</td>
+            <td colspan="3" style="border-right: 2px solid #DDDDDD; text-align: left; padding: 10px;">
+                <p><strong>Comments:</strong>{{studentOutputScore-comments}}</p>
+                <p><strong>Feedback:</strong>{{studentOutputScore-feedback}}</p>
+            </td>
+            <td style="border-right: 2px solid #DDDDDD; padding: 10px;">{{studentOutputScore-score}}/6</td>
+        </tr>
+        <tr style="border-top: 2px solid #DDDDDD; text-align: left; background-color: #F0F0F0;" valign="top">
+            <td style="border-right: 2px solid #DDDDDD; padding: 10px;">Tools' Preparation</td>
+            <td colspan="3" style="border-right: 2px solid #DDDDDD; text-align: left; padding: 10px;">
+                <p><strong>Comments:</strong>{{appearanceScore-comments}}</p>
+                <p><strong>Feedback:</strong>{{appearanceScore-feedback}}</p>
+            </td>
+            <td style="border-right: 2px solid #DDDDDD; padding: 10px;">{{appearanceScore-score}}/6</td>
+        </tr>
+        <tr style="border-top: 2px solid #DDDDDD; text-align: left; font-weight: bold; line-height: 2rem;">
+            <td colspan="4" style="border-right: 2px solid #DDDDDD; font-size: 1rem; padding: 10px;"><strong>Demo lesson performance score</strong></td>
+            <td style="border-right: 2px solid #DDDDDD; padding: 10px;">{{demo-score}}/62</td>
+        </tr>
+    </table>
+    <p>Also, as you are on the way to becoming VIPKID independent contractor please note: if you are a US national or a US tax resident, we need you to submit your W-9 Form in the sign contract stage (after you pass your mock class) in order to issue your Form 1099. In order to teach with VIPKID as an independent contractor, we require this form.</p>
+    <p>Feel free to contact us at <a href="mailto:teachvip@vipkid.com.cn">teachvip@vipkid.com.cn</a> if you have any questions.</p>
+    <p>Best Regards,</p>
+    <p>VIPKID Recruitment Team</p>
+</div>
+</div>

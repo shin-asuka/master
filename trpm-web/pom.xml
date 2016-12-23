@@ -307,15 +307,6 @@
             <version>2.3.1</version>
         </dependency>
         <!-- geoip end -->
-        
-        <!-- geoip start -->
-		<dependency>
-            <groupId>com.maxmind.geoip2</groupId>
-            <artifactId>geoip2</artifactId>
-            <version>2.3.1</version>
-        </dependency>
-        <!-- geoip end -->
-        
 	</dependencies>
 
 	<build>
@@ -343,7 +334,7 @@
 				<activeByDefault>true</activeByDefault>
 			</activation>
 			<properties>
-				<env>a2</env>
+				<env>a11</env>
 				<datasource>local</datasource>
 			</properties>
 			<build>

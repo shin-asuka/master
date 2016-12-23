@@ -1,20 +1,13 @@
 package com.vipkid.trpm.controller.passport;
 
-import com.vipkid.enums.TeacherEnum;
-import com.vipkid.enums.UserEnum;
-import com.vipkid.trpm.constant.ApplicationConstant;
-import com.vipkid.trpm.constant.ApplicationConstant.CookieKey;
-import com.vipkid.trpm.controller.AbstractController;
-import com.vipkid.trpm.entity.Teacher;
-import com.vipkid.trpm.entity.User;
-import com.vipkid.trpm.security.SHA256PasswordEncoder;
-import com.vipkid.trpm.service.passport.IndexService;
-import com.vipkid.trpm.service.passport.PassportService;
-import com.vipkid.trpm.service.passport.RemberService;
-import com.vipkid.trpm.service.rest.LoginService;
-import com.vipkid.trpm.util.AES;
-import com.vipkid.trpm.util.CookieUtils;
-import com.vipkid.trpm.util.IpUtils;
+import java.io.IOException;
+import java.util.Base64;
+import java.util.Map;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.lang.StringUtils;
 import org.community.config.PropertyConfigurer;
 import org.slf4j.Logger;
@@ -27,11 +20,21 @@ import org.springframework.web.bind.ServletRequestUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.Base64;
+import com.vipkid.enums.TeacherEnum;
+import com.vipkid.enums.UserEnum;
+import com.vipkid.recruitment.utils.ReturnMapUtils;
+import com.vipkid.trpm.constant.ApplicationConstant;
+import com.vipkid.trpm.constant.ApplicationConstant.CookieKey;
+import com.vipkid.trpm.controller.AbstractController;
+import com.vipkid.trpm.entity.Teacher;
+import com.vipkid.trpm.entity.User;
+import com.vipkid.trpm.security.SHA256PasswordEncoder;
+import com.vipkid.trpm.service.passport.IndexService;
+import com.vipkid.trpm.service.passport.PassportService;
+import com.vipkid.trpm.service.passport.RemberService;
+import com.vipkid.trpm.util.AES;
+import com.vipkid.trpm.util.CookieUtils;
+import com.vipkid.trpm.util.IpUtils;
 
 @Controller
 @PreAuthorize("permitAll")
@@ -45,14 +48,14 @@ public class PassportController extends AbstractController {
 	@Autowired
 	private PassportService passportService;
 
-	/*@Autowired
-	private IndexService indexService;*/
+	@Autowired
+	private IndexService indexService;
 
 	@Autowired
 	private RemberService remberService;
 
-	@Autowired
-    private LoginService loginService;
+	/*@Autowired
+    private LoginService loginService;*/
 	
 	/**
 	 * 登陆入口
@@ -77,11 +80,11 @@ public class PassportController extends AbstractController {
 		User user = passportService.findUserByUsername(_strEmail);
 		// 密码解密
 		String _strPwd = new String(Base64.getDecoder().decode(strPwd));
-		logger.error(" user checking " + _strEmail + ";password=" + _strPwd);
+		logger.info(" user checking " + _strEmail + ";password=" + _strPwd);
 		// 根据email，检查是否有此账号。
 		if (null == user) {
 			logger.error(" User is Null " + _strEmail + ";password=" + _strPwd);
-			model.addAttribute("info", ApplicationConstant.AjaxCode.ERROR_CODE);
+			model.addAttribute("info", ApplicationConstant.AjaxCode.USER_NULL);
 			return jsonView(response, model.asMap());
 		}
 		if (StringUtils.isEmpty(user.getToken())) {
@@ -94,15 +97,15 @@ public class PassportController extends AbstractController {
 
 		if (remberService.checkNotPassword(request, _remberme, _strPwd, user)) {
 			logger.error(" User 修改密码判断 :" + _strEmail + ";password=" + _strPwd);
-			model.addAttribute("info", ApplicationConstant.AjaxCode.ERROR_CODE);
+			model.addAttribute("info", ApplicationConstant.AjaxCode.USER_ERROR);
 			return jsonView(response, model.asMap());
 		}
 
 		logger.info("user Dtype start!");
 		// 非教师在此登陆
-		if (!UserEnum.Dtype.TEACHER.toString().equals(user.getDtype())) {
+		if (!UserEnum.Dtype.TEACHER.val().equals(user.getDtype())) {
 			logger.error(" Username type error!" + _strEmail + ";password=" + _strPwd);
-			model.addAttribute("info", ApplicationConstant.AjaxCode.TYPE_CODE);
+			model.addAttribute("info", ApplicationConstant.AjaxCode.DTYPE_ERROR);
 			return jsonView(response, model.asMap());
 		}
 
@@ -110,7 +113,7 @@ public class PassportController extends AbstractController {
 		Teacher teacher = this.passportService.findTeacherById(user.getId());
 		if (teacher == null) {
 			logger.error(" Username teacher error!" + _strEmail + ";password=" + _strPwd);
-			model.addAttribute("info", ApplicationConstant.AjaxCode.ERROR_CODE);
+			model.addAttribute("info", ApplicationConstant.AjaxCode.TEACHER_NULL);
 			return jsonView(response, model.asMap());
 		}
 
@@ -118,7 +121,7 @@ public class PassportController extends AbstractController {
 		// 检查老师状态是否FAIL
 		if (TeacherEnum.LifeCycle.FAIL.toString().equals(teacher.getLifeCycle())) {
 			logger.error(" Username fail error!" + _strEmail + ";password=" + _strPwd);
-			model.addAttribute("info", ApplicationConstant.AjaxCode.QUIT_CODE);
+			model.addAttribute("info", ApplicationConstant.AjaxCode.USER_FAIL);
 			return jsonView(response, model.asMap());
 		}
 
@@ -126,7 +129,7 @@ public class PassportController extends AbstractController {
 		// 检查老师状态是否QUIT
 		if (TeacherEnum.LifeCycle.QUIT.toString().equals(teacher.getLifeCycle())) {
 			logger.error(" Username fail error!" + _strEmail + ";password=" + _strPwd);
-			model.addAttribute("info", ApplicationConstant.AjaxCode.QUIT_CODE);
+			model.addAttribute("info", ApplicationConstant.AjaxCode.USER_QUIT);
 			return jsonView(response, model.asMap());
 		}
 
@@ -136,12 +139,12 @@ public class PassportController extends AbstractController {
 			// 新注册的需要激活
 			if (TeacherEnum.LifeCycle.SIGNUP.toString().equals(teacher.getLifeCycle())) {
 				logger.error(" Username 没有激活 error!" + _strEmail + ";password=" + _strPwd);
-				model.addAttribute("info", ApplicationConstant.AjaxCode.LOCKED_CODE);
+				model.addAttribute("info", ApplicationConstant.AjaxCode.USER_ACTIVITY);
 				return jsonView(response, model.asMap());
 			} else {
 				// 否则告诉被锁定
 				logger.error(" Username locked error!" + _strEmail + ";password=" + _strPwd);
-				model.addAttribute("info", ApplicationConstant.AjaxCode.QUIT_CODE);
+				model.addAttribute("info", ApplicationConstant.AjaxCode.USER_LOCKED);
 				return jsonView(response, model.asMap());
 			}
 		}
@@ -149,14 +152,14 @@ public class PassportController extends AbstractController {
 		// 只有教师端老师登陆后才做强制修改密码判断
 		logger.info("登陆  REGULAR start !");
 		if (TeacherEnum.LifeCycle.REGULAR.toString().equals(teacher.getLifeCycle())) {
-			loginService.changePasswordNotice(response, _strPwd);
+			indexService.changePasswordNotice(response, _strPwd);
 		}
 
 		// 如果招聘Id不存在则set进去
 		if (StringUtils.isEmpty(teacher.getRecruitmentId())) {
 			teacher.setRecruitmentId(this.passportService.updateRecruitmentId(teacher));
 		}
-		model.addAttribute("info", ApplicationConstant.AjaxCode.SUCCESS_CODE);
+		model.addAttribute("info", "success-pass");
 		model.addAttribute("uuid",
 				AES.encrypt(user.getToken(), AES.getKey(AES.KEY_LENGTH_128, ApplicationConstant.AES_128_KEY)));
 
@@ -215,18 +218,19 @@ public class PassportController extends AbstractController {
 		User user = passportService.findUserByUsername(email);
 		// 1.用户名存在，反馈
 		if (user != null) {
-			model.addAttribute("info", ApplicationConstant.AjaxCode.ERROR_CODE);
+			model.addAttribute("info", ApplicationConstant.AjaxCode.USER_EXITS);
 			// 2.用户名可用，执行业务，
 		} else {
 			// 执行业务逻辑
 			Object reid = CookieUtils.getValue(request, ApplicationConstant.REFEREEID);
 			Object partnerid = CookieUtils.getValue(request, ApplicationConstant.PARTNERID);
-			model.addAllAttributes(passportService.saveSignUp(email, privateCode, reid, partnerid));
+			model.addAllAttributes(passportService.saveSignUp(email, privateCode, Long.valueOf(reid+""),  Long.valueOf(partnerid+"")));
 			CookieUtils.removeCookie(response, ApplicationConstant.REFEREEID, null, null);
 		}
 		return jsonView(response, model.asMap());
 	}
 
+	@Deprecated
 	@RequestMapping("/activation")
 	public String userActivation(HttpServletRequest request, HttpServletResponse response, Model model,
 			@RequestParam("uuid") String privateCode) throws IOException {
@@ -270,23 +274,23 @@ public class PassportController extends AbstractController {
 		// 根据email，检查是否有此账号。
 		User user = this.passportService.findUserByUsername(strEmail);
 		if (null == user) {
-			model.addAttribute("info", ApplicationConstant.AjaxCode.ERROR_CODE);
+			model.addAttribute("info", ApplicationConstant.AjaxCode.USER_NULL);
 			return jsonView(response, model.asMap());
 		}
 		// 检查用户类型
-		if (!UserEnum.Dtype.TEACHER.toString().equals(user.getDtype())) {
-			model.addAttribute("info", ApplicationConstant.AjaxCode.TYPE_CODE);
+		if (!UserEnum.Dtype.TEACHER.val().equals(user.getDtype())) {
+			model.addAttribute("info", ApplicationConstant.AjaxCode.DTYPE_ERROR);
 			return jsonView(response, model.asMap());
 		}
 
 		Teacher teacher = this.passportService.findTeacherById(user.getId());
 		if (teacher == null) {
-			model.addAttribute("info", ApplicationConstant.AjaxCode.ERROR_CODE);
+			model.addAttribute("info", ApplicationConstant.AjaxCode.TEACHER_NULL);
 			return jsonView(response, model.asMap());
 		}
 		// 检查老师状态是否FAIL
 		if (TeacherEnum.LifeCycle.FAIL.toString().equals(teacher.getLifeCycle())) {
-			model.addAttribute("info", ApplicationConstant.AjaxCode.QUIT_CODE);
+			model.addAttribute("info", ApplicationConstant.AjaxCode.USER_FAIL);
 			return jsonView(response, model.asMap());
 		}
 
@@ -294,17 +298,17 @@ public class PassportController extends AbstractController {
 		if (UserEnum.Status.isLocked(user.getStatus())) {
 			// 新注册的需要激活
 			if (TeacherEnum.LifeCycle.SIGNUP.toString().equals(teacher.getLifeCycle())) {
-				model.addAttribute("info", ApplicationConstant.AjaxCode.LOCKED_CODE);
+				model.addAttribute("info", ApplicationConstant.AjaxCode.USER_ACTIVITY);
 				return jsonView(response, model.asMap());
 			} else {
 				// 否则告诉被锁定
-				model.addAttribute("info", ApplicationConstant.AjaxCode.QUIT_CODE);
+				model.addAttribute("info", ApplicationConstant.AjaxCode.USER_LOCKED);
 				return jsonView(response, model.asMap());
 			}
 		}
 		// 检查老师状态是否QUIT
 		if (TeacherEnum.LifeCycle.QUIT.toString().equals(teacher.getLifeCycle())) {
-			model.addAttribute("info", ApplicationConstant.AjaxCode.QUIT_CODE);
+			model.addAttribute("info", ApplicationConstant.AjaxCode.USER_QUIT);
 			return jsonView(response, model.asMap());
 		} else {
 			model.addAllAttributes(this.passportService.senEmailForPassword(user));
@@ -356,19 +360,21 @@ public class PassportController extends AbstractController {
 	public String modifyPasswordAction(HttpServletRequest request, HttpServletResponse response, Model model,
 			@RequestParam("privateCode") String password, @RequestParam("strToken") String strToken) {
 		// 修改成功后strToken替换成最新
-		model.addAttribute("info", ApplicationConstant.AjaxCode.ERROR_CODE);
 		if (StringUtils.isEmpty(strToken)) {
+		    model.addAttribute("info", ApplicationConstant.AjaxCode.TOKEN_ERROR);
 			return jsonView(response, model.asMap());
 		}
 		if (!this.passportService.checkTokenTimeout(strToken)) {
+		    model.addAttribute("info", ApplicationConstant.AjaxCode.TOKEN_OVERDUE);
 			return jsonView(response, model.asMap());
 		}
 		Teacher teacher = this.passportService.findByRecruitmentId(strToken);
 		if (teacher == null) {
+		    model.addAttribute("info", ApplicationConstant.AjaxCode.TEACHER_NULL);
 			return jsonView(response, model.asMap());
 		}
-		strToken = this.passportService.updatePassword(teacher, password);
-		if (StringUtils.isEmpty(strToken)) {
+		Map<String,Object> retMap = this.passportService.updatePassword(teacher, password);
+		if (ReturnMapUtils.isFail(retMap)) {
 			return jsonView(response, model.asMap());
 		}
 		model.addAttribute("lifeCycle", teacher.getLifeCycle());
@@ -377,7 +383,7 @@ public class PassportController extends AbstractController {
 			webappPath = PropertyConfigurer.stringValue("teacher.www");
 		}
 		model.addAttribute("url", webappPath + "signlogin.shtml?token=" + strToken);
-		model.addAttribute("info", ApplicationConstant.AjaxCode.SUCCESS_CODE);
+		model.addAttribute("info", "OK");
 		return jsonView(response, model.asMap());
 	}
 
@@ -413,6 +419,7 @@ public class PassportController extends AbstractController {
 		return "passport/sign_success";
 	}
 
+	@Deprecated
 	@RequestMapping("/signlogin")
 	public String signlogin(HttpServletRequest request, HttpServletResponse response, Model model) throws IOException {
 		String token = ServletRequestUtils.getStringParameter(request, "token", null);
@@ -423,9 +430,9 @@ public class PassportController extends AbstractController {
 			if (teacher != null && TeacherEnum.LifeCycle.REGULAR.toString().equals(teacher.getLifeCycle())) {
 				this.passportService.updateRecruitmentId(teacher);
 
-				loginService.setLoginCooke(response, user);
+				indexService.setLoginCooke(response, user);
 				/* 设置老师能教的课程类型列表 */
-				loginService.setCourseTypes(user.getId(), loginService.getCourseType(user.getId()));
+				indexService.setCourseTypes(user.getId(), indexService.getCourseType(user.getId()));
 
 				return "redirect:/bookings.shtml";
 			}

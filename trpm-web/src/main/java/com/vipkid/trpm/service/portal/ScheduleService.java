@@ -1,21 +1,35 @@
 package com.vipkid.trpm.service.portal;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.vipkid.trpm.constant.ApplicationConstant;
-import com.vipkid.trpm.constant.ApplicationConstant.*;
-import com.vipkid.trpm.dao.*;
-import com.vipkid.trpm.entity.OnlineClass;
-import com.vipkid.trpm.entity.PeakTime;
-import com.vipkid.trpm.entity.Teacher;
-import com.vipkid.trpm.entity.schedule.TimePoint;
-import com.vipkid.trpm.entity.schedule.TimeSlot;
-import com.vipkid.trpm.entity.schedule.ZoneTime;
-import com.vipkid.trpm.proxy.RedisProxy;
-import com.vipkid.trpm.util.CookieUtils;
-import com.vipkid.trpm.util.DateUtils;
-import com.vipkid.trpm.util.FilesUtils;
-import com.vipkid.trpm.util.IpUtils;
+import static com.vipkid.trpm.util.DateUtils.DAY_OF_WEEK;
+import static com.vipkid.trpm.util.DateUtils.FMT_HMA_US;
+import static com.vipkid.trpm.util.DateUtils.FMT_HMS;
+import static com.vipkid.trpm.util.DateUtils.FMT_YMD_HMS;
+import static com.vipkid.trpm.util.DateUtils.HALFHOUR_OF_DAY;
+import static com.vipkid.trpm.util.DateUtils.MINUTE_OF_HALFHOUR;
+import static com.vipkid.trpm.util.DateUtils.SHANGHAI;
+import static com.vipkid.trpm.util.DateUtils.formatTo;
+import static com.vipkid.trpm.util.DateUtils.parseFrom;
+
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.sql.Timestamp;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Consumer;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -34,21 +48,34 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.sql.Timestamp;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.util.*;
-import java.util.function.Consumer;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-
-import static com.vipkid.trpm.util.DateUtils.*;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.vipkid.enums.OnlineClassEnum.ClassStatus;
+import com.vipkid.enums.OnlineClassEnum.ClassType;
+import com.vipkid.enums.OnlineClassEnum.CourseType;
+import com.vipkid.trpm.constant.ApplicationConstant;
+import com.vipkid.trpm.constant.ApplicationConstant.CookieKey;
+import com.vipkid.trpm.constant.ApplicationConstant.FinishType;
+import com.vipkid.trpm.constant.ApplicationConstant.PeakTimeType;
+import com.vipkid.trpm.constant.ApplicationConstant.SlotStyle;
+import com.vipkid.trpm.dao.AuditDao;
+import com.vipkid.trpm.dao.LessonDao;
+import com.vipkid.trpm.dao.OnlineClassDao;
+import com.vipkid.trpm.dao.PeakTimeDao;
+import com.vipkid.trpm.dao.TeacherDao;
+import com.vipkid.trpm.dao.TeacherPageLoginDao;
+import com.vipkid.trpm.dao.UserDao;
+import com.vipkid.trpm.entity.OnlineClass;
+import com.vipkid.trpm.entity.PeakTime;
+import com.vipkid.trpm.entity.Teacher;
+import com.vipkid.trpm.entity.schedule.TimePoint;
+import com.vipkid.trpm.entity.schedule.TimeSlot;
+import com.vipkid.trpm.entity.schedule.ZoneTime;
+import com.vipkid.trpm.proxy.RedisProxy;
+import com.vipkid.trpm.util.CookieUtils;
+import com.vipkid.trpm.util.DateUtils;
+import com.vipkid.trpm.util.FilesUtils;
+import com.vipkid.trpm.util.IpUtils;
 
 @Service
 public class ScheduleService {
@@ -402,7 +429,7 @@ public class ScheduleService {
 
             /* 设置课程类型 */
             int classType = (Integer) teacherSchedule.get("classType");
-            if (ClassType.PRACTICUM == classType) {
+            if (ClassType.PRACTICUM.val() == classType) {
                 teacherSchedule.put("isPracticum", true);
             } else {
                 teacherSchedule.put("isPracticum", false);
@@ -580,7 +607,7 @@ public class ScheduleService {
             onlineClass.setTeacherId(teacher.getId());
             onlineClass.setScheduledDateTime(scheduleDateTime);
 
-            onlineClass.setStatus(ClassStatus.AVAILABLE);
+            onlineClass.setStatus(ClassStatus.AVAILABLE.toString());
             onlineClass.setSerialNumber(Long.toString(scheduleDateTime.getTime()));
 
             /* 设置为课程开始前1小时 */
@@ -593,7 +620,7 @@ public class ScheduleService {
 
             /* 如果是PRACTICUM的课程，则需要指定ClassType */
             if (CourseType.isPracticum(courseType)) {
-                onlineClass.setClassType(ClassType.PRACTICUM);
+                onlineClass.setClassType(ClassType.PRACTICUM.val());
 
                 /* 需要加锁，一次只处理一个请求 */
                 synchronized (teacher) {
@@ -615,7 +642,7 @@ public class ScheduleService {
                     List<OnlineClass> tList =
                                     onlineClassDao.findByTeacherIdAndScheduleDateTime(teacher.getId(), minusHour);
 
-                    long count = tList.stream().filter((o) -> o.getClassType() == ClassType.PRACTICUM)
+                    long count = tList.stream().filter((o) -> o.getClassType() == ClassType.PRACTICUM.val())
                                     .filter((o) -> ClassStatus.isBooked(o.getStatus())
                                                     || ClassStatus.isAvailable(o.getStatus()))
                                     .count();
@@ -634,7 +661,7 @@ public class ScheduleService {
                 List<OnlineClass> tList = onlineClassDao.findByTeacherIdAndScheduleDateTime(teacher.getId(), minusHour);
 
                 /* 往前半小时只验证PRACTICUM的课程时间 */
-                long count = tList.stream().filter((o) -> o.getClassType() == ClassType.PRACTICUM).filter(
+                long count = tList.stream().filter((o) -> o.getClassType() == ClassType.PRACTICUM.val()).filter(
                                 (o) -> ClassStatus.isBooked(o.getStatus()) || ClassStatus.isAvailable(o.getStatus()))
                                 .count();
 
@@ -656,8 +683,8 @@ public class ScheduleService {
             replaceMap.put("createTime", DateUtils.formatTo(instant, DateUtils.FMT_YMD_HMS));
             replaceMap.put("scheduleDatetime", onlineClass.getScheduledDateTime());
 
-            String content = FilesUtils.readLogTemplete(ApplicationConstant.AuditCategory.ONLINE_CLASS_CREATE,
-                            replaceMap);
+            String content = FilesUtils.readLogTemplate(ApplicationConstant.AuditCategory.ONLINE_CLASS_CREATE,
+                    replaceMap);
             auditDao.saveAudit(ApplicationConstant.AuditCategory.ONLINE_CLASS_CREATE, "INFO", content,
                             teacher.getRealName(), onlineClassDao, IpUtils.getRemoteIP());
 
@@ -743,7 +770,7 @@ public class ScheduleService {
         OnlineClass onlineClass = onlineClassDao.findById(onlineClassId);
 
         if (ClassStatus.isAvailable(onlineClass.getStatus())) {
-            onlineClassDao.updateStatus(onlineClassId, ClassStatus.REMOVED);
+            onlineClassDao.updateStatus(onlineClassId, ClassStatus.REMOVED.toString());
 
             /* 记录操作日志 */
             Map<String, Object> replaceMap = Maps.newHashMap();
@@ -754,8 +781,8 @@ public class ScheduleService {
             replaceMap.put("createTime", DateUtils.formatTo(instant, DateUtils.FMT_YMD_HMS));
             replaceMap.put("scheduleDatetime", onlineClass.getScheduledDateTime());
 
-            String content = FilesUtils.readLogTemplete(ApplicationConstant.AuditCategory.ONLINE_CLASS_DELETE,
-                            replaceMap);
+            String content = FilesUtils.readLogTemplate(ApplicationConstant.AuditCategory.ONLINE_CLASS_DELETE,
+                    replaceMap);
             auditDao.saveAudit(ApplicationConstant.AuditCategory.ONLINE_CLASS_DELETE, "INFO", content,
                             teacher.getRealName(), onlineClassDao, IpUtils.getRemoteIP());
 

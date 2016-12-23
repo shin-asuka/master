@@ -3,16 +3,17 @@ package com.vipkid.task.job;
 import com.google.common.base.Stopwatch;
 import com.vipkid.email.EmailUtils;
 import com.vipkid.enums.TeacherApplicationEnum;
+import com.vipkid.enums.TeacherEnum;
+import com.vipkid.enums.TeacherLockLogEnum;
 import com.vipkid.http.utils.JsonUtils;
+import com.vipkid.recruitment.dao.TeacherApplicationDao;
+import com.vipkid.recruitment.dao.TeacherLockLogDao;
+import com.vipkid.recruitment.entity.TeacherApplication;
+import com.vipkid.recruitment.entity.TeacherLockLog;
 import com.vipkid.task.utils.UADateUtils;
-import com.vipkid.trpm.constant.ApplicationConstant;
-import com.vipkid.trpm.dao.AuditDao;
-import com.vipkid.trpm.dao.TeacherApplicationDao;
 import com.vipkid.trpm.dao.TeacherDao;
 import com.vipkid.trpm.dao.UserDao;
 import com.vipkid.trpm.entity.Teacher;
-import com.vipkid.trpm.entity.TeacherApplication;
-import com.vipkid.trpm.util.IpUtils;
 import com.vipkid.vschedule.client.common.Vschedule;
 import com.vipkid.vschedule.client.schedule.JobContext;
 import org.apache.commons.collections.map.HashedMap;
@@ -39,14 +40,13 @@ public class InterviewNoRescheduleJob {
 	private static final Logger logger = LoggerFactory.getLogger(InterviewNoRescheduleJob.class);
 
 	@Autowired
-	private UserDao userDao;
-	@Autowired
 	private TeacherApplicationDao teacherApplicationDao;
 	@Autowired
 	private TeacherDao teacherDao;
 	@Autowired
-	private AuditDao auditDao;
-
+	private TeacherLockLogDao teacherLockLogDao;
+	@Autowired
+	private UserDao userDao;
 	@Vschedule
 	public void doJob (JobContext jobContext) {
 		logger.info("【JOB.EMAIL.InterviewNoReschedule】START: ==================================================");
@@ -96,14 +96,14 @@ public class InterviewNoRescheduleJob {
 
 		if (auditTime.after(startTime) && auditTime.before(endTime)){
 			//userDao.doLock(teacher.getId());
-			//logger.info("【JOB.EMAIL.InterviewNoReschedule】LOCK: Cost {}ms. teacherId = {}, teacherEmail = {}", stopwatch.elapsed(TimeUnit.MILLISECONDS), teacher.getId(), teacher.getEmail());
-			//auditDao.saveAudit(ApplicationConstant.AuditCategory.TEACHER_LOCK, "INFO", "InterviewNoReschedule: " + teacher.getRealName(), "system", teacher, IpUtils.getRemoteIP());
+			//teacherLockLogDao.save(new TeacherLockLog(teacher.getId(), TeacherLockLogEnum.Reason.INTERVIEW_NO_RESCHEDULE.toString(), TeacherEnum.LifeCycle.INTERVIEW.toString()));
+			logger.info("【JOB.EMAIL.InterviewNoReschedule】LOCK: Cost {}ms. teacherId = {}, teacherEmail = {}", stopwatch.elapsed(TimeUnit.MILLISECONDS), teacher.getId(), teacher.getEmail());
 		} else {
 			String email = teacher.getEmail();
 			String name = teacher.getRealName();
 			String titleTemplate = "InterviewNoRescheduleTitle.html";
 			String contentTemplate = "InterviewNoReschedule.html";
-			EmailUtils.sendEmail4Recruitment(email, name, titleTemplate, contentTemplate);
+			EmailUtils.sendEmail4Recruitment(teacher, titleTemplate, contentTemplate);
 			logger.info("【JOB.EMAIL.InterviewNoReschedule】SEND: Cost {}ms. email = {}, name = {}, titleTemplate = {}, contentTemplate = {}", stopwatch.elapsed(TimeUnit.MILLISECONDS), email, name, titleTemplate, contentTemplate);
 		}
 	}

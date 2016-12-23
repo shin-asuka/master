@@ -8,6 +8,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.vipkid.rest.service.LoginService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,7 +36,6 @@ import com.vipkid.trpm.service.passport.RemberService;
 import com.vipkid.trpm.service.portal.PersonalInfoService;
 import com.vipkid.trpm.service.portal.TeacherAddressService;
 import com.vipkid.trpm.service.portal.TeacherTaxpayerFormService;
-import com.vipkid.trpm.service.rest.LoginService;
 import com.vipkid.trpm.util.CookieUtils;
 import com.vipkid.trpm.validator.ChangePasswordValidator;
 
@@ -280,7 +280,7 @@ public class PersonalInfoController extends AbstractPortalController {
         Map<String, Object> modelMap = personalInfoService.doSetBasicInfo(teacher, basicInfo, teacherAddress);
 
         User user = (User) loginService.getUser();
-        loginService.setLoginCooke(response, user);
+        loginService.setLoginToken(response, user);
         return jsonView(response, modelMap);
     }
 
@@ -339,7 +339,7 @@ public class PersonalInfoController extends AbstractPortalController {
      * @param request
      * @param response
      * @param bankInfo
-     * @param result
+     * @param bankInfo
      * @return
      */
     @RequestMapping(value = "/setBankInfoAction", method = RequestMethod.POST)

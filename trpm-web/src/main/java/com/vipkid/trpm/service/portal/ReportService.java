@@ -1,28 +1,28 @@
 package com.vipkid.trpm.service.portal;
 
-import static com.google.common.base.Preconditions.checkArgument;
-
-import java.nio.charset.StandardCharsets;
-import java.sql.Array;
-import java.sql.Timestamp;
-import java.util.*;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
-import java.util.stream.Collectors;
-
 import com.alibaba.fastjson.JSON;
-import com.sun.org.apache.xpath.internal.operations.Bool;
-import com.vipkid.email.EmailEngine;
-import com.vipkid.email.handle.EmailConfig;
-import com.vipkid.email.templete.TempleteUtils;
+import com.google.common.collect.Maps;
+import com.vipkid.mq.message.FinishOnlineClassMessage.OperatorType;
+import com.vipkid.mq.service.PayrollMessageService;
 import com.vipkid.rest.security.AppContext;
+import com.vipkid.rest.service.LoginService;
+import com.vipkid.trpm.constant.ApplicationConstant;
+import com.vipkid.trpm.constant.ApplicationConstant.MediaType;
+import com.vipkid.trpm.constant.ApplicationConstant.ReportLifeCycle;
+import com.vipkid.trpm.constant.ApplicationConstant.UaReportStatus;
 import com.vipkid.trpm.dao.*;
 import com.vipkid.trpm.entity.*;
+import com.vipkid.trpm.entity.media.UploadResult;
+import com.vipkid.trpm.entity.report.DemoReports;
+import com.vipkid.trpm.entity.report.ReportLevels;
 import com.vipkid.trpm.entity.teachercomment.TeacherComment;
 import com.vipkid.trpm.entity.teachercomment.TeacherCommentResult;
 import com.vipkid.trpm.entity.teachercomment.TeacherCommentUpdateDto;
-import com.vipkid.trpm.service.rest.LoginService;
-import org.apache.commons.collections.CollectionUtils;
+import com.vipkid.trpm.service.media.AbstarctMediaService;
+import com.vipkid.trpm.util.DateUtils;
+import com.vipkid.trpm.util.FilesUtils;
+import com.vipkid.trpm.util.IpUtils;
+import com.vipkid.trpm.util.LessonSerialNumber;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.community.tools.JsonTools;
@@ -33,22 +33,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.google.common.collect.Maps;
-import com.vipkid.mq.message.FinishOnlineClassMessage.OperatorType;
-import com.vipkid.mq.service.PayrollMessageService;
-import com.vipkid.trpm.constant.ApplicationConstant;
-import com.vipkid.trpm.constant.ApplicationConstant.MediaType;
-import com.vipkid.trpm.constant.ApplicationConstant.ReportLifeCycle;
-import com.vipkid.trpm.constant.ApplicationConstant.UaReportStatus;
-import com.vipkid.trpm.entity.media.UploadResult;
-import com.vipkid.trpm.entity.report.DemoReports;
-import com.vipkid.trpm.entity.report.ReportLevels;
-import com.vipkid.trpm.service.media.AbstarctMediaService;
-import com.vipkid.trpm.util.DateUtils;
-import com.vipkid.trpm.util.FilesUtils;
-import com.vipkid.trpm.util.IpUtils;
-import com.vipkid.trpm.util.LessonSerialNumber;
-import com.vipkid.trpm.weixin.MessageTools;
+import java.nio.charset.StandardCharsets;
+import java.sql.Timestamp;
+import java.util.Date;
+import java.util.Map;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+
+import static com.google.common.base.Preconditions.checkArgument;
 
 /**
  * 1.主要负责UAReport、DemoReport、FeebBack等模块的查询和保存、以及UAReport的文件上传<br/>
@@ -186,7 +178,7 @@ public class ReportService {
             assessmentReportDao.save(resultReport);
 
             // 日志记录
-            String content = FilesUtils.readLogTemplete(ApplicationConstant.AuditCategory.REPORT_UA_CREATE, parmMap);
+            String content = FilesUtils.readLogTemplate(ApplicationConstant.AuditCategory.REPORT_UA_CREATE, parmMap);
             auditDao.saveAudit(ApplicationConstant.AuditCategory.REPORT_UA_CREATE, "INFO", content, user.getName(),
                     resultReport, IpUtils.getRemoteIP());
 
@@ -198,7 +190,7 @@ public class ReportService {
             if (UaReportStatus.NEWADD == resultReport.getReaded()
                     || UaReportStatus.RESUBMIT == resultReport.getReaded()) {
                 // 日志记录
-                String content = FilesUtils.readLogTemplete(ApplicationConstant.AuditCategory.REPORT_UA_UPDATE,
+                String content = FilesUtils.readLogTemplate(ApplicationConstant.AuditCategory.REPORT_UA_UPDATE,
                         parmMap);
                 content += "【" + resultReport.getUrl() + " Update to " + upload.getUrl() + "】";
                 auditDao.saveAudit(ApplicationConstant.AuditCategory.REPORT_UA_UPDATE, "INFO", content, user.getName(),
@@ -296,7 +288,7 @@ public class ReportService {
             assessmentReportDao.save(resultReport);
 
             // 日志记录
-            String content = FilesUtils.readLogTemplete(ApplicationConstant.AuditCategory.PRACTICUM_REPORT_CREATE,
+            String content = FilesUtils.readLogTemplate(ApplicationConstant.AuditCategory.PRACTICUM_REPORT_CREATE,
                     parmMap);
             auditDao.saveAudit(ApplicationConstant.AuditCategory.PRACTICUM_REPORT_CREATE, "INFO", content,
                     user.getName(), resultReport, IpUtils.getRemoteIP());
@@ -309,7 +301,7 @@ public class ReportService {
             if (UaReportStatus.NEWADD == resultReport.getReaded()
                     || UaReportStatus.RESUBMIT == resultReport.getReaded()) {
                 // 日志记录
-                String content = FilesUtils.readLogTemplete(ApplicationConstant.AuditCategory.PRACTICUM_REPORT_UPDATE,
+                String content = FilesUtils.readLogTemplate(ApplicationConstant.AuditCategory.PRACTICUM_REPORT_UPDATE,
                         parmMap);
                 content += "【" + resultReport.getUrl() + " Update to " + upload.getUrl() + "】";
                 auditDao.saveAudit(ApplicationConstant.AuditCategory.PRACTICUM_REPORT_UPDATE, "INFO", content,
@@ -369,7 +361,7 @@ public class ReportService {
      */
     public DemoReports getDemoReports() {
         if (demoReports == null) {
-            String contentJson = FilesUtils.readContent(this.getClass().getResourceAsStream("/demoReports.json"),
+            String contentJson = FilesUtils.readContent(this.getClass().getResourceAsStream("data/demoReports.json"),
                     StandardCharsets.UTF_8);
             demoReports = JsonTools.readValue(contentJson, DemoReports.class);
         }
@@ -389,7 +381,7 @@ public class ReportService {
      */
     public ReportLevels getReportLevels() {
         if (reportLevels == null) {
-            String contentJson = FilesUtils.readContent(this.getClass().getResourceAsStream("/levels.json"),
+            String contentJson = FilesUtils.readContent(this.getClass().getResourceAsStream("data/levels.json"),
                     StandardCharsets.UTF_8);
             reportLevels = JsonTools.readValue(contentJson, ReportLevels.class);
         }
@@ -426,9 +418,9 @@ public class ReportService {
      * dbEntity.getTeacherId()); parmMap.put("studentId", dbEntity.getStudentId()); String content = ""; //
      * 提交后状态直接变为SUBMITTED,并且不能再进行保存/提交操作 if (isSubmited) { demoReport.setSubmitDateTime(new
      * Timestamp(System.currentTimeMillis())); demoReport.setLifeCycle(ReportLifeCycle.SUBMITTED); content =
-     * FilesUtils.readLogTemplete (ApplicationConstant.AuditCategory.REPORT_DEMO_SUBMIT, parmMap); } else { //
+     * FilesUtils.readLogTemplate (ApplicationConstant.AuditCategory.REPORT_DEMO_SUBMIT, parmMap); } else { //
      * 保存后状态变为UNFINISHED demoReport.setLifeCycle(ReportLifeCycle.UNFINISHED); content =
-     * FilesUtils.readLogTemplete(ApplicationConstant.AuditCategory.REPORT_DEMO_SAVE , parmMap); } String INFO = "INFO";
+     * FilesUtils.readLogTemplate(ApplicationConstant.AuditCategory.REPORT_DEMO_SAVE , parmMap); } String INFO = "INFO";
      * if (0 != demoReportDao.updateDemoReport(demoReport)) { resultMap.put("result", true); } else { INFO = "ERROR";
      * resultMap.put("msg", "Operation failed.Please contact management!"); } //日志记录 if (isSubmited) {
      * auditDao.saveAudit(ApplicationConstant.AuditCategory .REPORT_DEMO_SUBMIT,INFO,content, user.getName()); }else{
@@ -506,14 +498,14 @@ public class ReportService {
                     || ReportLifeCycle.UNFINISHED.equals(dbEntity.getLifeCycle())) {
                 demoReport.setLifeCycle(ReportLifeCycle.SUBMITTED);
             }
-            content = FilesUtils.readLogTemplete(ApplicationConstant.AuditCategory.REPORT_DEMO_SUBMIT, parmMap);
+            content = FilesUtils.readLogTemplate(ApplicationConstant.AuditCategory.REPORT_DEMO_SUBMIT, parmMap);
         } else {
             // 仅仅为空的时候才将其变为UNFINISHED，其他状态不修其状态
             if (StringUtils.isEmpty(dbEntity.getLifeCycle())) {
                 // 保存后状态变为UNFINISHED
                 demoReport.setLifeCycle(ReportLifeCycle.UNFINISHED);
             }
-            content = FilesUtils.readLogTemplete(ApplicationConstant.AuditCategory.REPORT_DEMO_SAVE, parmMap);
+            content = FilesUtils.readLogTemplate(ApplicationConstant.AuditCategory.REPORT_DEMO_SAVE, parmMap);
         }
 
         String INFO = "INFO";

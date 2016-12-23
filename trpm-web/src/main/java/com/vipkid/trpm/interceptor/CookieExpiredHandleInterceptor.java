@@ -1,14 +1,27 @@
 package com.vipkid.trpm.interceptor;
 
 
-import java.io.IOException;
-import java.util.Map;
-
-import javax.annotation.Resource;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import com.vipkid.enums.TeacherModuleEnum.RoleClass;
+import com.vipkid.enums.TeacherPageLoginEnum.LoginType;
+import com.vipkid.http.service.AnnouncementHttpService;
+import com.vipkid.http.service.FileHttpService;
+import com.vipkid.http.utils.JsonUtils;
+import com.vipkid.http.vo.TeacherFile;
+import com.vipkid.rest.security.AppContext;
+import com.vipkid.rest.service.AdminQuizService;
+import com.vipkid.rest.service.LoginService;
+import com.vipkid.rest.service.TeacherPageLoginService;
+import com.vipkid.trpm.constant.ApplicationConstant;
+import com.vipkid.trpm.constant.ApplicationConstant.CookieKey;
+import com.vipkid.trpm.controller.portal.PersonalInfoController;
+import com.vipkid.trpm.entity.Staff;
+import com.vipkid.trpm.entity.Teacher;
+import com.vipkid.trpm.entity.User;
+import com.vipkid.trpm.proxy.RedisProxy;
+import com.vipkid.trpm.service.portal.LocationService;
+import com.vipkid.trpm.util.CacheUtils;
+import com.vipkid.trpm.util.CookieUtils;
+import com.vipkid.trpm.util.IpUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.community.config.PropertyConfigurer;
 import org.slf4j.Logger;
@@ -20,27 +33,12 @@ import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
-import com.vipkid.http.service.AnnouncementHttpService;
-import com.vipkid.http.service.FileHttpService;
-import com.vipkid.http.utils.JsonUtils;
-import com.vipkid.http.vo.TeacherFile;
-import com.vipkid.rest.config.RestfulConfig.RoleClass;
-import com.vipkid.rest.security.AppContext;
-import com.vipkid.trpm.constant.ApplicationConstant;
-import com.vipkid.trpm.constant.ApplicationConstant.CookieKey;
-import com.vipkid.trpm.constant.ApplicationConstant.LoginType;
-import com.vipkid.trpm.controller.portal.PersonalInfoController;
-import com.vipkid.trpm.entity.Staff;
-import com.vipkid.trpm.entity.Teacher;
-import com.vipkid.trpm.entity.User;
-import com.vipkid.trpm.proxy.RedisProxy;
-import com.vipkid.trpm.service.portal.LocationService;
-import com.vipkid.trpm.service.rest.AdminQuizService;
-import com.vipkid.trpm.service.rest.LoginService;
-import com.vipkid.trpm.service.rest.TeacherPageLoginService;
-import com.vipkid.trpm.util.CacheUtils;
-import com.vipkid.trpm.util.CookieUtils;
-import com.vipkid.trpm.util.IpUtils;
+import javax.annotation.Resource;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.Map;
 
 public class CookieExpiredHandleInterceptor extends HandlerInterceptorAdapter {
 
