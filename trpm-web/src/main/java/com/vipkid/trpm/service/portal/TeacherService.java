@@ -62,7 +62,7 @@ public class TeacherService {
 	private static final String API_TEACHER_COMMENT_INSERT = "/api/teacher/comment/insertOne";
 
 
-	private static final int QUERY_LIMIT_SIZE = 200;
+	private static final int QUERY_LIMIT_SIZE = 10;
 
 	@Autowired
 	private CourseDao courseDao;
@@ -317,7 +317,7 @@ public class TeacherService {
 		List<TeacherCommentResult> teacherCommentList = Lists.newArrayList();
 		if (CollectionUtils.isNotEmpty(onlineClassIds)) {
 			//分批查询,一次200个
-			List<List<Long>> parts = Lists.partition(onlineClassIds, 200);
+			List<List<Long>> parts = Lists.partition(onlineClassIds, QUERY_LIMIT_SIZE);
 
 			parts.stream().forEach(subIds -> {
 				Map<String, String> paramsMap = Maps.newHashMap();
