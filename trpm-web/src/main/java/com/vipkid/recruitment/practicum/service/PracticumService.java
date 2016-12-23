@@ -1,21 +1,5 @@
 package com.vipkid.recruitment.practicum.service;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.map.HashedMap;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.time.DateFormatUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.google.api.client.util.Maps;
 import com.vipkid.email.EmailUtils;
 import com.vipkid.enums.OnlineClassEnum;
@@ -35,11 +19,7 @@ import com.vipkid.recruitment.entity.TeacherApplication;
 import com.vipkid.recruitment.entity.TeacherLockLog;
 import com.vipkid.recruitment.practicum.PracticumConstant;
 import com.vipkid.recruitment.utils.ReturnMapUtils;
-import com.vipkid.trpm.dao.LessonDao;
-import com.vipkid.trpm.dao.OnlineClassDao;
-import com.vipkid.trpm.dao.TeacherDao;
-import com.vipkid.trpm.dao.TeacherQuizDao;
-import com.vipkid.trpm.dao.UserDao;
+import com.vipkid.trpm.dao.*;
 import com.vipkid.trpm.entity.Lesson;
 import com.vipkid.trpm.entity.OnlineClass;
 import com.vipkid.trpm.entity.Teacher;
@@ -47,6 +27,17 @@ import com.vipkid.trpm.entity.TeacherQuiz;
 import com.vipkid.trpm.proxy.OnlineClassProxy;
 import com.vipkid.trpm.proxy.OnlineClassProxy.ClassType;
 import com.vipkid.trpm.util.DateUtils;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.map.HashedMap;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateFormatUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
+import java.util.*;
 
 @Service
 public class PracticumService {
@@ -78,7 +69,7 @@ public class PracticumService {
         String fromTime24 = now.plusHours(1).format(DateUtils.FMT_YMD_HMS);
         String toTime24 = now.plusDays(1).format(DateUtils.FMT_YMD_HMS);
         String fromTime = now.plusDays(1).plusSeconds(1).format(DateUtils.FMT_YMD_HMS);
-        String toTime = now.plusDays(3).withHour(23).withMinute(59).withSecond(59).format(DateUtils.FMT_YMD_HMS);
+        String toTime = now.plusDays(PracticumConstant.SHOW_DAYS_EXCLUDE_TODAY + 1).withHour(23).withMinute(59).withSecond(59).format(DateUtils.FMT_YMD_HMS);
         logger.info("findTimeListByPracticum parameter fromTime:{}, toTime:{}",fromTime24, toTime);
 
         //1. 查24小时内
