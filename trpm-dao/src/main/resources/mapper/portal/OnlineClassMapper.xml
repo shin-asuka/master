@@ -305,7 +305,7 @@
 		AND (online_class.finish_type != 'STUDENT_NO_SHOW_24H' OR online_class.finish_type IS NULL)
 		AND online_class.scheduled_date_time BETWEEN CONVERT_TZ(#{fromTime}, #{toTZOffset}, '+08:00')
 		AND CONVERT_TZ(#{toTime}, #{toTZOffset}, '+08:00')
-		ORDER BY online_class.scheduled_date_time ASC
+		ORDER BY online_class.scheduled_date_time ASC, online_class.id DESC
 	</select>
 	
 	<!-- 通过老师id及时区，开始时间，结束时间查找 TimeSlot 数量 -->
