@@ -62,7 +62,7 @@ public class TeacherService {
 	private static final String API_TEACHER_COMMENT_INSERT = "/api/teacher/comment/insertOne";
 
 
-	private static final int QUERY_LIMIT_SIZE = 10;
+	private static final int QUERY_LIMIT_SIZE = 200;
 
 	@Autowired
 	private CourseDao courseDao;
