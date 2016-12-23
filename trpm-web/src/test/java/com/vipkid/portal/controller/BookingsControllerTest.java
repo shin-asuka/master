@@ -137,4 +137,27 @@ public class BookingsControllerTest {
         }
     }
 
+    @Test
+    public void testGetTips() throws Exception {
+        RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/portal/getTips").header("Authorization", TOKEN);
+        MvcResult mvcResult = mockMvc.perform(requestBuilder).andReturn();
+        if (HttpStatus.OK.value() == mvcResult.getResponse().getStatus()) {
+            logger.info("Result Json {}", mvcResult.getResponse().getContentAsString());
+        } else {
+            logger.info("Result Status {}", mvcResult.getResponse().getStatus());
+        }
+    }
+
+    @Test
+    public void testGetAnnouncements() throws Exception {
+        RequestBuilder requestBuilder =
+                        MockMvcRequestBuilders.get("/portal/getAnnouncements").header("Authorization", TOKEN);
+        MvcResult mvcResult = mockMvc.perform(requestBuilder).andReturn();
+        if (HttpStatus.OK.value() == mvcResult.getResponse().getStatus()) {
+            logger.info("Result Json {}", mvcResult.getResponse().getContentAsString());
+        } else {
+            logger.info("Result Status {}", mvcResult.getResponse().getStatus());
+        }
+    }
+
 }

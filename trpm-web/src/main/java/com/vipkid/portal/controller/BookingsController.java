@@ -3,6 +3,7 @@ package com.vipkid.portal.controller;
 import com.google.api.client.repackaged.com.google.common.base.Preconditions;
 import com.google.api.client.util.Maps;
 import com.vipkid.file.utils.StringUtils;
+import com.vipkid.http.service.AnnouncementHttpService;
 import com.vipkid.http.utils.JsonUtils;
 import com.vipkid.portal.entity.*;
 import com.vipkid.portal.service.BookingsService;
@@ -36,6 +37,9 @@ public class BookingsController {
 
     @Autowired
     private LoginService loginService;
+
+    @Autowired
+    private AnnouncementHttpService announcementHttpService;
 
     /* 获取 Scheduled 详细数据接口 */
     @RequestMapping(value = "/scheduled", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
@@ -168,6 +172,20 @@ public class BookingsController {
         Map<String, Object> resultMap = Maps.newHashMap();
         try {
             return bookingsService.getTips(request, response, loginService.getTeacher());
+        } catch (Exception e) {
+            logger.error("Internal server error", e);
+
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            resultMap.put("error", "Server error");
+        }
+        return resultMap;
+    }
+
+    @RequestMapping(value = "/getAnnouncements", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
+    public Map<String, Object> getAnnouncements(HttpServletRequest request, HttpServletResponse response) {
+        Map<String, Object> resultMap = Maps.newHashMap();
+        try {
+            resultMap.put("datas", announcementHttpService.findAnnouncementList());
         } catch (Exception e) {
             logger.error("Internal server error", e);
 
