@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.TimeZone;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -20,7 +21,6 @@ import com.google.api.client.util.Lists;
 import com.google.common.collect.Maps;
 import com.vipkid.enums.OnlineClassEnum.CourseType;
 import com.vipkid.http.service.AssessmentHttpService;
-import com.vipkid.http.utils.JsonUtils;
 import com.vipkid.http.vo.OnlineClassVo;
 import com.vipkid.http.vo.StudentUnitAssessment;
 import com.vipkid.recruitment.dao.TeacherApplicationDao;
@@ -163,7 +163,7 @@ public class ClassroomsRestServiceImpl implements ClassroomsRestService{
 					nextLessonId = nextLesson.getId();
 					nextLessonSerialNum = nextLesson.getSerialNumber();
 				} else {
-					Lesson nextLesson = lessonList.get(0);// 把第一个当成下一个
+					Lesson nextLesson = lessonList.get(index);// 把当前这个当成下一个
 					nextLessonId = nextLesson.getId();
 					nextLessonSerialNum = nextLesson.getSerialNumber();
 				}
@@ -172,8 +172,8 @@ public class ClassroomsRestServiceImpl implements ClassroomsRestService{
 					preLessonId = preLesson.getId();
 					preLessonSerialNum = preLesson.getSerialNumber();
 				} else {
-					Lesson preLesson = lessonList.get(lessonListSize - 1);
-					preLessonId = preLesson.getId();// 把最后一个当成前一个
+					Lesson preLesson = lessonList.get(index);
+					preLessonId = preLesson.getId();// 把当前这个当成前一个
 					preLessonSerialNum = preLesson.getSerialNumber();
 				}
 			} else {
@@ -322,9 +322,10 @@ public class ClassroomsRestServiceImpl implements ClassroomsRestService{
 		List<Map<String, Object>> dataList = (List<Map<String, Object>>) dataListMap.get("dataList");// 复用以前代码产生的dataList，后面对其重新包装
 		if (dataList == null)
 			return null;
+		int id = 0;//加一个id方便前端排序
 		for (Map<String, Object> eachMap : dataList) {
 			ClassroomDetail classroomDetail = new ClassroomDetail();
-
+			classroomDetail.setId(id);
 			classroomDetail.setFinishType((String) eachMap.get("finishType"));
 			classroomDetail.setIsPaidTrail((int) eachMap.get("isPaidTrail"));
 			classroomDetail.setLearningCycleId((long) eachMap.get("learningCycleId"));
@@ -341,12 +342,14 @@ public class ClassroomsRestServiceImpl implements ClassroomsRestService{
 			Timestamp timeStamp = (Timestamp) eachMap.get("scheduledDateTime");
 			Date date = new Date(timeStamp.getTime());
 			DateFormat df = new SimpleDateFormat("MMM dd yyyy, hh:mma", Locale.ENGLISH);
+			df.setTimeZone(TimeZone.getTimeZone(teacher.getTimezone())); 
 			String scheduledDateTime = df.format(date);
 			classroomDetail.setScheduledDateTime(scheduledDateTime);
 
 			addReportTypeAndStatus(eachMap, date, classroomDetail);
 
 			result.add(classroomDetail);
+			id ++;
 		}
 		return result;
 	}

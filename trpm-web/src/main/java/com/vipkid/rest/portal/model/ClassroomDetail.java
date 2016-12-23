@@ -2,6 +2,7 @@ package com.vipkid.rest.portal.model;
 
 /*classrooms页面的接口返回的每节课的数据模型*/
 public class ClassroomDetail{
+	private Integer id;
 	private Long studentId;
 	private String studentName;
 	private Long lessonId;
@@ -106,6 +107,12 @@ public class ClassroomDetail{
 	}
 	public void setReportStatus(Integer reportStatus) {
 		this.reportStatus = reportStatus;
+	}
+	public Integer getId() {
+		return id;
+	}
+	public void setId(Integer id) {
+		this.id = id;
 	}
 	
 }
