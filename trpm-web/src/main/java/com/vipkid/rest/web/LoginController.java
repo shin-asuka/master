@@ -1,30 +1,10 @@
 package com.vipkid.rest.web;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.community.config.PropertyConfigurer;
-import org.community.tools.JsonTools;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.google.common.collect.Maps;
 import com.vipkid.enums.TeacherEnum;
 import com.vipkid.enums.TeacherEnum.LifeCycle;
 import com.vipkid.enums.UserEnum;
+import com.vipkid.http.service.FileHttpService;
 import com.vipkid.recruitment.utils.ReturnMapUtils;
 import com.vipkid.rest.RestfulController;
 import com.vipkid.rest.config.RestfulConfig;
@@ -43,6 +23,21 @@ import com.vipkid.trpm.security.SHA256PasswordEncoder;
 import com.vipkid.trpm.service.passport.PassportService;
 import com.vipkid.trpm.util.Bean2Map;
 import com.vipkid.trpm.util.IpUtils;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.community.config.PropertyConfigurer;
+import org.community.tools.JsonTools;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/user")
@@ -56,6 +51,9 @@ public class LoginController extends RestfulController {
     
     @Autowired
     private LoginService loginService;
+
+    @Autowired
+    private FileHttpService fileHttpService;
         
 
     /**
@@ -479,6 +477,7 @@ public class LoginController extends RestfulController {
             loginService.findByTeacherModule(teacherinfo,teacher.getLifeCycle());
             //其他信息       
             teacherinfo.setInfo(teacher,user);
+            teacherinfo.setHeadsrc(fileHttpService.queryTeacherFiles(user.getId()).getAvatar());
             Map<String,Object> success = ReturnMapUtils.returnSuccess();
             success.putAll(Bean2Map.toMap(teacherinfo));
             logger.info("返回数据:{}",JsonTools.getJson(success));

@@ -71,7 +71,7 @@ public class TeacherInfo {
 
     public TeacherInfo setHeadsrc(String headsrc) {
         this.headsrc = headsrc;
-        if(StringUtils.isNotBlank(headsrc)){
+        if (StringUtils.isNotBlank(headsrc) && !StringUtils.startsWithIgnoreCase(headsrc,"http")) {
             this.headsrc = PropertyConfigurer.stringValue("oss.url_preffix") + (headsrc.startsWith("/") ? headsrc:"/"+headsrc);
         }
         return this;
