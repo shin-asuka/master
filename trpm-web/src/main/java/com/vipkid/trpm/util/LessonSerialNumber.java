@@ -3,6 +3,7 @@ package com.vipkid.trpm.util;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,5 +56,15 @@ public class LessonSerialNumber {
         }
 
         return lessonNo;
+    }
+
+    public static boolean isPreVipkidLesson(String serialNumber){
+        boolean isPreVipkid = false;
+        if(StringUtils.isNotBlank(serialNumber)
+            && (serialNumber.toLowerCase().startsWith("mc-l1")
+            ||serialNumber.equalsIgnoreCase("T1-U1-LC1-L0"))){
+            isPreVipkid = true;
+        }
+        return isPreVipkid;
     }
 }

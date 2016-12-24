@@ -17,6 +17,7 @@ import com.vipkid.trpm.dao.*;
 import com.vipkid.trpm.entity.*;
 import com.vipkid.trpm.entity.teachercomment.*;
 import com.vipkid.trpm.util.DateUtils;
+import com.vipkid.trpm.util.LessonSerialNumber;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -134,6 +135,8 @@ public class TeacherService {
 				Lesson lesson = lessonDao.findById(teacherComment.getLessonId());
 				if (lesson != null) {
 					result.setTopic(lesson.getTopic());
+					boolean isPreVipkid = LessonSerialNumber.isPreVipkidLesson(lesson.getSerialNumber());
+					result.setPreVip(isPreVipkid);
 				}
 				result.setClassNumber(teacherComment.getLessonSerialNumber());
 
@@ -148,6 +151,40 @@ public class TeacherService {
 		if(course!=null){
 			result.setCourseDisplayName(course.getName());
 		}
+
+		//preVip特有字段
+		if(teacherComment.getNeedParentSupport()!=null){
+			result.setNeedParentSupport(teacherComment.getNeedParentSupport());
+		}
+		if(StringUtils.isNotBlank(teacherComment.getVocabularyRetention())){
+			result.setVocabularyRetention(teacherComment.getVocabularyRetention());
+		}
+		if(StringUtils.isNotBlank(teacherComment.getPronunciation())){
+			result.setPronunciation(teacherComment.getPronunciation());
+		}
+		if(StringUtils.isNotBlank(teacherComment.getAlphabetSkills())){
+			result.setAlphabetSkills(teacherComment.getAlphabetSkills());
+		}
+		if(StringUtils.isNotBlank(teacherComment.getPhonologicalAwareness())){
+			result.setPhonologicalAwareness(teacherComment.getPhonologicalAwareness());
+		}
+		if(StringUtils.isNotBlank(teacherComment.getFollowsInstructions())){
+			result.setFollowsInstructions(teacherComment.getFollowsInstructions());
+		}
+		if(StringUtils.isNotBlank(teacherComment.getParticipatesActively())){
+			result.setParticipatesActively(teacherComment.getParticipatesActively());
+		}
+		if(StringUtils.isNotBlank(teacherComment.getSpeaksClearly())){
+			result.setSpeaksClearly(teacherComment.getSpeaksClearly());
+		}
+		if(StringUtils.isNotBlank(teacherComment.getMouseTouchpadActivities())){
+			result.setMouseTouchpadActivities(teacherComment.getMouseTouchpadActivities());
+		}
+		if(StringUtils.isNotBlank(teacherComment.getDegreeCompletion())){
+			result.setDegreeCompletion(teacherComment.getDegreeCompletion());
+		}
+
+
 
 		//返回已填过的字段
 		result.setEmpty(teacherComment.getEmpty());
@@ -169,6 +206,16 @@ public class TeacherService {
 		result.setTrialLevelResult(trialLevelResultDisplay);
 
 		return result;
+	}
+
+	private boolean isPreVipLesson(String serialNumber){
+		boolean isPreVipkid = false;
+		if(StringUtils.isNotBlank(serialNumber)
+			&& (serialNumber.toLowerCase().startsWith("mc-l1")
+			||serialNumber.equalsIgnoreCase("T1-U1-LC1-L0"))){
+			isPreVipkid = true;
+		}
+		return isPreVipkid;
 	}
 
 	private String findTrialLevelResutl4Display(String trialLevelResult, String studentId,

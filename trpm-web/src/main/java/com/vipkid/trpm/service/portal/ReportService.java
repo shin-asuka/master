@@ -33,6 +33,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import sun.security.x509.SerialNumber;
 
 import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
@@ -598,6 +599,7 @@ public class ReportService {
             tcuDto.setLessonId(lesson.getId());
             tcuDto.setLessonName(lesson.getName());
             tcuDto.setLessonSerialNumber(lesson.getSerialNumber());
+            boolean isPrevip = LessonSerialNumber.isPreVipkidLesson(lesson.getSerialNumber());
             tcuDto.setLearningCycleId(lesson.getLearningCycleId());
             tcuDto.setScheduledDateTime(new Date(onlineClass.getScheduledDateTime().getTime()));
             tcuDto.setCreateTime(new Timestamp(System.currentTimeMillis()));
@@ -617,6 +619,7 @@ public class ReportService {
                 result.setOnlineClassId(onlineClassId);
                 result.setStudentId(studentId);
                 result.setTeacherId(onlineClass.getTeacherId());
+                result.setPreVip(isPrevip);
                 return result;
             }else{
                 return null;
@@ -704,12 +707,7 @@ public class ReportService {
                     OperatorType.ADD_TEACHER_COMMENTS));
         }
 
-        boolean isPreVipkid = false;
-        if(StringUtils.isNotBlank(serialNumber)
-            && (serialNumber.toLowerCase().startsWith("mc-l1")
-            ||serialNumber.equalsIgnoreCase("T1-U1-LC1-L0"))){
-            isPreVipkid = true;
-        }
+        boolean isPreVipkid = LessonSerialNumber.isPreVipkidLesson(serialNumber);
 
         if(isPreVipkid){
             if (teacherComment.getPerformance() == 1 || teacherComment.getPerformance() == 5
