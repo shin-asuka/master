@@ -219,7 +219,9 @@ public class ClassroomsRestServiceImpl implements ClassroomsRestService{
 //			sentencePatternsGroup = sentencePatterns.replace("\n", "").replace("\t", "").replace("<br>", "<br/>")
 //					.split("<br/>");
 //		}
-		sentencePatterns = sentencePatterns.replace("\n", "").replace("\t", "");
+		if(sentencePatterns != null){
+			sentencePatterns = sentencePatterns.replace("\n", "").replace("\t", "");
+		}
 		data.put("lessonSentencePatterns", sentencePatterns);
 
 		result = ApiResponseUtils.buildSuccessDataResp(data);
