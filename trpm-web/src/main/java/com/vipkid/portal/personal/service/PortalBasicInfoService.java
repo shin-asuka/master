@@ -96,7 +96,7 @@ public class PortalBasicInfoService {
         }
 		Map<String,Object> result = Maps.newHashMap();
 		result.put("teacher", personInfo);
-		return ReturnMapUtils.returnSuccess(result);
+		return result;
 	}
 	
 	public Map<String,Object> updateBasicInfo(Teacher teacher,User user,PersonlInfoDto basicInfo){
