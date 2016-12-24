@@ -2,6 +2,7 @@ package com.vipkid.portal.controller;
 
 import com.google.api.client.util.Maps;
 import com.vipkid.enums.OnlineClassEnum.CourseType;
+import com.vipkid.enums.TeacherEnum;
 import com.vipkid.file.utils.StringUtils;
 import com.vipkid.http.service.AnnouncementHttpService;
 import com.vipkid.http.utils.JsonUtils;
@@ -9,6 +10,7 @@ import com.vipkid.http.vo.Announcement;
 import com.vipkid.portal.entity.*;
 import com.vipkid.portal.service.BookingsService;
 import com.vipkid.rest.config.RestfulConfig;
+import com.vipkid.rest.interceptor.annotation.RestInterface;
 import com.vipkid.rest.service.LoginService;
 import com.vipkid.rest.utils.ApiResponseUtils;
 import org.apache.commons.collections.CollectionUtils;
@@ -34,6 +36,7 @@ import static com.vipkid.enums.OnlineClassEnum.ClassType;
  * Created by liuguowen on 2016/12/15.
  */
 @RestController
+@RestInterface(lifeCycle = {TeacherEnum.LifeCycle.REGULAR})
 @RequestMapping("/portal")
 public class BookingsController {
 
@@ -50,10 +53,9 @@ public class BookingsController {
 
     /* 获取 Scheduled 详细数据接口 */
     @RequestMapping(value = "/scheduled", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
-    public Map<String, Object> scheduled(@RequestBody String body, HttpServletResponse response) {
+    public Map<String, Object> scheduled(ScheduledRequest scheduledRequest, HttpServletResponse response) {
         try {
-            logger.info("Invocation scheduled() arguments: {}", body);
-            ScheduledRequest scheduledRequest = JsonUtils.toBean(body, ScheduledRequest.class);
+            logger.info("Invocation scheduled() arguments: {}", JsonUtils.toJSONString(scheduledRequest));
 
             Map<String, Object> checkMap = checkArgumentForType(scheduledRequest.getType());
             if (Objects.nonNull(checkMap.get("errMsg"))) {
