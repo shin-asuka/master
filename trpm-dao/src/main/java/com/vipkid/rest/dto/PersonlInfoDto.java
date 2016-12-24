@@ -2,30 +2,39 @@ package com.vipkid.rest.dto;
 
 import com.vipkid.rest.validation.annotation.NotNull;
 
-@NotNull
+
 public class PersonlInfoDto {
+	
+	private Long teacherId;
 
 	/** 从  aws **/
 	private String avatar;
 	
 	private String email;
 	
+	@NotNull
 	private String gender;
 	
+	@NotNull
 	private String birthday;
 	
 	private String nationality;
 	
-	private String phoneType;
+	@NotNull
+	private Integer phoneType;
 	
+	@NotNull
 	private String phoneNationCode;
 	
-	private String phoneNationId;
+	@NotNull
+	private Integer phoneNationId;
 	
+	@NotNull
 	private String mobile;
 	
 	private String skype;
 	
+	@NotNull
 	private Integer countryId;
 	
 	private String countryName;
@@ -38,19 +47,23 @@ public class PersonlInfoDto {
 	
 	private String cityName;
 	
+	@NotNull
 	private String streetAddress;
 	
+	@NotNull
 	private String zipCode;
 	
+	@NotNull
 	private String timezone;
 	
 	private String university;
 	
+	@NotNull
 	private String highestLevelOfEdu;
 	
+	@NotNull
 	private String introduction;
 	
-	private Long teacherId;
 	
 	private String evaluationBio;
 
@@ -94,11 +107,11 @@ public class PersonlInfoDto {
 		this.nationality = nationality;
 	}
 
-	public String getPhoneType() {
+	public Integer getPhoneType() {
 		return phoneType;
 	}
 
-	public void setPhoneType(String phoneType) {
+	public void setPhoneType(Integer phoneType) {
 		this.phoneType = phoneType;
 	}
 
@@ -110,11 +123,11 @@ public class PersonlInfoDto {
 		this.phoneNationCode = phoneNationCode;
 	}
 
-	public String getPhoneNationId() {
+	public Integer getPhoneNationId() {
 		return phoneNationId;
 	}
 
-	public void setPhoneNationId(String phoneNationId) {
+	public void setPhoneNationId(Integer phoneNationId) {
 		this.phoneNationId = phoneNationId;
 	}
 

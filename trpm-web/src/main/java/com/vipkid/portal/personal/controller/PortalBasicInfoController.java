@@ -22,7 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.google.api.client.util.Maps;
 import com.google.common.base.Preconditions;
-import com.vipkid.enums.TeacherEnum;
+import com.vipkid.enums.TeacherEnum.LifeCycle;
 import com.vipkid.file.model.FileUploadStatus;
 import com.vipkid.file.model.FileVo;
 import com.vipkid.file.service.AwsFileService;
@@ -33,13 +33,14 @@ import com.vipkid.rest.RestfulController;
 import com.vipkid.rest.config.RestfulConfig;
 import com.vipkid.rest.dto.PersonlInfoDto;
 import com.vipkid.rest.interceptor.annotation.RestInterface;
+import com.vipkid.rest.utils.ApiResponseUtils;
 import com.vipkid.rest.validation.ValidateUtils;
 import com.vipkid.rest.validation.tools.Result;
 import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.util.AwsFileUtils;
 
 @RestController
-@RestInterface(lifeCycle = {TeacherEnum.LifeCycle.REGULAR})
+@RestInterface(lifeCycle = LifeCycle.REGULAR)
 @RequestMapping("/portal/personal")
 public class PortalBasicInfoController extends RestfulController{
 	
@@ -83,7 +84,7 @@ public class PortalBasicInfoController extends RestfulController{
                 Teacher teacher = getTeacher(request);
                 if (null == teacher) {
                     response.setStatus(HttpStatus.NOT_FOUND.value());
-                    return ReturnMapUtils.returnFail("This account does not exist.");
+                    return  ApiResponseUtils.buildErrorResp(-2, "This account does not exist.");
                 }
                 Long teacherId = teacher.getId();
                 logger.info("Upload avatar for {}!", teacherId);
@@ -93,24 +94,24 @@ public class PortalBasicInfoController extends RestfulController{
                     FileUploadStatus fileUploadStatus = fileHttpService.uploadAvatar(teacherId, key);
                     result.put("url", fileUploadStatus.getUrl());
                     logger.info("Successful to upload avatar for {}!", teacherId);
-                    return ReturnMapUtils.returnSuccess(result);
+                    ApiResponseUtils.buildSuccessDataResp(result);
                 } else {
                     logger.error("Failed to upload avatar for {}!", teacherId);
                     response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-                    return ReturnMapUtils.returnFail("Upload failed!  Please try again.");
+                    return  ApiResponseUtils.buildErrorResp(-3, "Upload failed!  Please try again.");
                 }
             } catch (IllegalArgumentException e) {
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
                 logger.error("Upload avatar with Exception", e);
-                return ReturnMapUtils.returnFail(e.getMessage(), e);
+                return ApiResponseUtils.buildErrorResp(-4, "Upload failed!  Please try again.");
             } catch (Exception e) {
                 response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
                 logger.error("Upload avatar with Exception", e);
-                return ReturnMapUtils.returnFail(e.getMessage(), e);
+                return ApiResponseUtils.buildErrorResp(-5, "Upload failed!  Please try again.");
             }
         }
         response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-        return ReturnMapUtils.returnFail("Upload failed!  Please try again.");
+        return ApiResponseUtils.buildErrorResp(-6, "Upload failed!  Please try again.");
     }
 	
 	
@@ -118,9 +119,9 @@ public class PortalBasicInfoController extends RestfulController{
 	@RequestMapping(value = "/basicInfo", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
 	public Map<String,Object> getBasicInfo(HttpServletRequest request, HttpServletResponse response){
 		try{
-			Map<String,Object> result = portalBasicInfoService.getBasicInfo(getTeacher(request));
+			Map<String,Object> result = portalBasicInfoService.getBasicInfo(getTeacher(request),getUser(request));
 			if(ReturnMapUtils.isFail(result)){
-				 response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+				 response.setStatus(HttpStatus.FORBIDDEN.value());
 			}
 			return result;
         } catch (IllegalArgumentException e) {
@@ -142,9 +143,9 @@ public class PortalBasicInfoController extends RestfulController{
                 return ReturnMapUtils.returnFail("reslult:"+list.get(0).getName() + "," + list.get(0).getMessages());
             }
             
-			Map<String,Object> result = portalBasicInfoService.getBasicInfo(getTeacher(request));
+			Map<String,Object> result = portalBasicInfoService.updateBasicInfo(getTeacher(request),getUser(request),bean);
 			if(ReturnMapUtils.isFail(result)){
-				 response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+				 response.setStatus(HttpStatus.FORBIDDEN.value());
 			}
 			return result;
         } catch (IllegalArgumentException e) {

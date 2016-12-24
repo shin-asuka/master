@@ -78,6 +78,8 @@
 		<aop:advisor advice-ref="monitorAdvice" pointcut="execution(* com.vipkid.rest.**.*Controller.*(..))" />
 		<aop:advisor advice-ref="monitorAdvice" pointcut="execution(* com.vipkid.recruitment.**.service.*Service.*(..))" />
 		<aop:advisor advice-ref="monitorAdvice" pointcut="execution(* com.vipkid.recruitment.**.controller.*Controller.*(..))" />
+		<aop:advisor advice-ref="monitorAdvice" pointcut="execution(* com.vipkid.portal.**.service.*Service.*(..))" />
+		<aop:advisor advice-ref="monitorAdvice" pointcut="execution(* com.vipkid.portal.**.controller.*Controller.*(..))" />
 	</aop:config>
 
 	<beans:import resource="dataAccessContext.xml" />
