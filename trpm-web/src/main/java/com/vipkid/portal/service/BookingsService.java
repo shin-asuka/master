@@ -608,7 +608,6 @@ public class BookingsService {
                     String formatToBeiJing = localDateTimeBeiJing.format(FMT_YMD_HMS);
 
                     if (!isShow(formatToBeiJing, courseType)) {
-                        modelMap.put("action", false);
                         modelMap.put("error", BookingsResult.DISABLED_PLACE);
                         return modelMap;
                     }
@@ -626,7 +625,6 @@ public class BookingsService {
                     if (canSetSchedule(teacher.getId(), plusHour) && 0 == count) {
                         onlineClassDao.save(onlineClass);
                     } else {
-                        modelMap.put("action", false);
                         modelMap.put("error", BookingsResult.DISABLED_PLACE);
                         return modelMap;
                     }
@@ -644,7 +642,6 @@ public class BookingsService {
                 if (0 == count) {
                     onlineClassDao.save(onlineClass);
                 } else {
-                    modelMap.put("action", false);
                     modelMap.put("error", BookingsResult.DISABLED_PLACE);
                     return modelMap;
                 }
@@ -669,9 +666,7 @@ public class BookingsService {
             modelMap.put("onlineClassId", onlineClass.getId());
             modelMap.put("classType", onlineClass.getClassType());
             modelMap.put("timePoint", timePoint);
-            modelMap.put("action", true);
         } else {
-            modelMap.put("action", false);
             modelMap.put("error", BookingsResult.DISABLED_PLACE);
         }
 
@@ -734,7 +729,6 @@ public class BookingsService {
 
         OnlineClass onlineClass = onlineClassDao.findById(timeSlotCancelRequest.getOnlineClassId());
         if (null == onlineClass) {
-            modelMap.put("action", false);
             modelMap.put("error", BookingsResult.ILLEGAL_ONLINECLASS);
         }
 
@@ -747,7 +741,6 @@ public class BookingsService {
             logger.info("The teacher id: {}, total PeakTime: {}", teacher.getId(), totalPeakTime);
 
             if (totalPeakTime <= PEAKTIME_TIMESLOT_DEFAULT_COUNT) {
-                modelMap.put("action", false);
                 modelMap.put("error", BookingsResult.PEAKTIM_LESS_15);
                 return modelMap;
             }
@@ -770,9 +763,9 @@ public class BookingsService {
             auditDao.saveAudit(AuditCategory.ONLINE_CLASS_DELETE, "INFO", content, teacher.getRealName(),
                             onlineClassDao, IpUtils.getRemoteIP());
 
-            modelMap.put("action", true);
+            modelMap.put("onlineClassId", onlineClass.getId());
+            modelMap.put("status", ClassStatus.REMOVED.name());
         } else {
-            modelMap.put("action", false);
             modelMap.put("error", BookingsResult.TIMESLOT_NOT_AVAILABLE);
         }
 
@@ -820,7 +813,6 @@ public class BookingsService {
      */
     public Map<String, Object> doSet24Hours(Set24HourRequest set24HourRequest, Teacher teacher) {
         Map<String, Object> resultMap = Maps.newHashMap();
-        resultMap.put("action", false);
 
         List<OnlineClass> onlineClasses = onlineClassDao.findOnlineClasses(set24HourRequest.getOnlineClassIds());
         if (checkAnyInOneHour(onlineClasses)) {
@@ -837,7 +829,7 @@ public class BookingsService {
             }
         }
 
-        resultMap.put("action", set24Hours(set24HourRequest, teacher));
+        resultMap.put("result", set24Hours(set24HourRequest, teacher));
         return resultMap;
     }
 
@@ -896,7 +888,7 @@ public class BookingsService {
      */
     public Map<String, Object> doDelete24Hours(Delete24HourRequest delete24HourRequest, Teacher teacher) {
         Map<String, Object> resultMap = Maps.newHashMap();
-        resultMap.put("action", delete24Hours(delete24HourRequest, teacher));
+        resultMap.put("result", delete24Hours(delete24HourRequest, teacher));
         return resultMap;
     }
 

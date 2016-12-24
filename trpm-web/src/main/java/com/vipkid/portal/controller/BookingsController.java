@@ -1,15 +1,17 @@
 package com.vipkid.portal.controller;
 
-import com.google.api.client.repackaged.com.google.common.base.Preconditions;
-import com.google.api.client.util.Maps;
+import com.vipkid.enums.OnlineClassEnum.CourseType;
 import com.vipkid.file.utils.StringUtils;
 import com.vipkid.http.service.AnnouncementHttpService;
 import com.vipkid.http.utils.JsonUtils;
+import com.vipkid.http.vo.Announcement;
 import com.vipkid.portal.entity.*;
 import com.vipkid.portal.service.BookingsService;
 import com.vipkid.rest.config.RestfulConfig;
 import com.vipkid.rest.service.LoginService;
+import com.vipkid.rest.utils.ApiResponseUtils;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +23,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+
+import static com.vipkid.enums.OnlineClassEnum.ClassType;
 
 /**
  * Created by liuguowen on 2016/12/15.
@@ -44,155 +50,166 @@ public class BookingsController {
     /* 获取 Scheduled 详细数据接口 */
     @RequestMapping(value = "/scheduled", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
     public Map<String, Object> scheduled(@RequestBody String body, HttpServletResponse response) {
-        Map<String, Object> resultMap = Maps.newHashMap();
         try {
             logger.info("Invocation scheduled() arguments: {}", body);
             ScheduledRequest scheduledRequest = JsonUtils.toBean(body, ScheduledRequest.class);
 
-            Preconditions.checkArgument(StringUtils.isNotBlank(scheduledRequest.getType()));
+            if (StringUtils.isBlank(scheduledRequest.getType())) {
+                return ApiResponseUtils.buildErrorResp(HttpStatus.BAD_REQUEST.value(), "Argument 'type' is required");
+            } else if (!(CourseType.isMajor(scheduledRequest.getType())
+                            || CourseType.isPracticum(scheduledRequest.getType()))) {
+                return ApiResponseUtils.buildErrorResp(HttpStatus.BAD_REQUEST.value(),
+                                "Argument 'type' value is illegal");
+            }
 
-            return bookingsService.doSchedule(scheduledRequest, loginService.getTeacher());
-        } catch (IllegalArgumentException e) {
-            logger.error("Illegal arguments error", e);
-
-            response.setStatus(HttpStatus.BAD_REQUEST.value());
-            resultMap.put("error", "Illegal arguments format");
+            Map<String, Object> dataMap = bookingsService.doSchedule(scheduledRequest, loginService.getTeacher());
+            return ApiResponseUtils.buildSuccessDataResp(dataMap);
         } catch (Exception e) {
             logger.error("Internal server error", e);
-
-            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            resultMap.put("error", "Server error");
+            return ApiResponseUtils.buildErrorResp(HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                            ExceptionUtils.getFullStackTrace(e));
         }
-        return resultMap;
     }
 
     /* 创建 TimeSlot 接口 */
     @RequestMapping(value = "/createTimeSlot", method = RequestMethod.PUT, produces = RestfulConfig.JSON_UTF_8)
     public Map<String, Object> createTimeSlot(@RequestBody String body, HttpServletResponse response) {
-        Map<String, Object> resultMap = Maps.newHashMap();
         try {
             logger.info("Invocation createTimeSlot() arguments: {}", body);
             TimeSlotCreateRequest timeSlotCreateRequest = JsonUtils.toBean(body, TimeSlotCreateRequest.class);
 
-            Preconditions.checkArgument(StringUtils.isNotBlank(timeSlotCreateRequest.getType()));
-            Preconditions.checkArgument(StringUtils.isNotBlank(timeSlotCreateRequest.getScheduledDateTime()));
+            if (StringUtils.isBlank(timeSlotCreateRequest.getType())) {
+                return ApiResponseUtils.buildErrorResp(HttpStatus.BAD_REQUEST.value(), "Argument 'type' is required");
+            } else if (!(CourseType.isMajor(timeSlotCreateRequest.getType())
+                            || CourseType.isPracticum(timeSlotCreateRequest.getType()))) {
+                return ApiResponseUtils.buildErrorResp(HttpStatus.BAD_REQUEST.value(),
+                                "Argument 'type' value is illegal");
+            }
 
-            return bookingsService.doCreateTimeSlotWithLock(timeSlotCreateRequest, loginService.getTeacher());
-        } catch (IllegalArgumentException e) {
-            logger.error("Illegal arguments error", e);
+            if (StringUtils.isBlank(timeSlotCreateRequest.getScheduledDateTime())) {
+                return ApiResponseUtils.buildErrorResp(HttpStatus.BAD_REQUEST.value(),
+                                "Argument 'scheduledDateTime' is required");
+            }
 
-            response.setStatus(HttpStatus.BAD_REQUEST.value());
-            resultMap.put("error", "Illegal arguments format");
+            Map<String, Object> dataMap =
+                            bookingsService.doCreateTimeSlotWithLock(timeSlotCreateRequest, loginService.getTeacher());
+            if (Objects.nonNull(dataMap.get("error"))) {
+                return ApiResponseUtils.buildErrorResp(HttpStatus.FORBIDDEN.value(), (String) dataMap.get("error"));
+            } else {
+                return ApiResponseUtils.buildSuccessDataResp(dataMap);
+            }
         } catch (Exception e) {
             logger.error("Internal server error", e);
-
-            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            resultMap.put("error", "Server error");
+            return ApiResponseUtils.buildErrorResp(HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                            ExceptionUtils.getFullStackTrace(e));
         }
-        return resultMap;
     }
 
     /* 取消 TimeSlot 接口 */
     @RequestMapping(value = "/cancelTimeSlot", method = RequestMethod.DELETE, produces = RestfulConfig.JSON_UTF_8)
     public Map<String, Object> cancelTimeSlot(@RequestBody String body, HttpServletResponse response) {
-        Map<String, Object> resultMap = Maps.newHashMap();
         try {
             logger.info("Invocation cancelTimeSlot() arguments: {}", body);
             TimeSlotCancelRequest timeSlotCancelRequest = JsonUtils.toBean(body, TimeSlotCancelRequest.class);
 
-            Preconditions.checkArgument(0 != timeSlotCancelRequest.getOnlineClassId());
+            if (0 == timeSlotCancelRequest.getOnlineClassId()) {
+                return ApiResponseUtils.buildErrorResp(HttpStatus.BAD_REQUEST.value(),
+                                "Argument 'onlineClassId' is illegal");
+            }
 
-            return bookingsService.doCancelTimeSlot(timeSlotCancelRequest, loginService.getTeacher());
-        } catch (IllegalArgumentException e) {
-            logger.error("Illegal arguments error", e);
-
-            response.setStatus(HttpStatus.BAD_REQUEST.value());
-            resultMap.put("error", "Illegal arguments format");
+            Map<String, Object> dataMap =
+                            bookingsService.doCancelTimeSlot(timeSlotCancelRequest, loginService.getTeacher());
+            if (Objects.nonNull(dataMap.get("error"))) {
+                return ApiResponseUtils.buildErrorResp(HttpStatus.FORBIDDEN.value(), (String) dataMap.get("error"));
+            } else {
+                return ApiResponseUtils.buildSuccessDataResp(dataMap);
+            }
         } catch (Exception e) {
             logger.error("Internal server error", e);
-
-            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            resultMap.put("error", "Server error");
+            return ApiResponseUtils.buildErrorResp(HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                            ExceptionUtils.getFullStackTrace(e));
         }
-        return resultMap;
     }
 
     @RequestMapping(value = "/set24Hours", method = RequestMethod.PUT, produces = RestfulConfig.JSON_UTF_8)
     public Map<String, Object> set24Hours(@RequestBody String body, HttpServletResponse response) {
-        Map<String, Object> resultMap = Maps.newHashMap();
         try {
             logger.info("Invocation set24Hours() arguments: {}", body);
             Set24HourRequest set24HourRequest = JsonUtils.toBean(body, Set24HourRequest.class);
 
-            Preconditions.checkArgument(CollectionUtils.isNotEmpty(set24HourRequest.getOnlineClassIds()));
-            Preconditions.checkArgument(!set24HourRequest.getOnlineClassIds().stream().anyMatch(id -> 0 == id));
+            if (CollectionUtils.isEmpty(set24HourRequest.getOnlineClassIds())) {
+                return ApiResponseUtils.buildErrorResp(HttpStatus.BAD_REQUEST.value(),
+                                "Argument 'onlineClassIds' is required");
+            } else if (set24HourRequest.getOnlineClassIds().stream().anyMatch(id -> 0 == id)) {
+                return ApiResponseUtils.buildErrorResp(HttpStatus.BAD_REQUEST.value(),
+                                "Argument 'onlineClassIds' is illegal");
+            }
 
-            return bookingsService.doSet24Hours(set24HourRequest, loginService.getTeacher());
-        } catch (IllegalArgumentException e) {
-            logger.error("Illegal arguments error", e);
+            if (!(set24HourRequest.getClassType() == ClassType.MAJOR.val()
+                            || set24HourRequest.getClassType() == ClassType.PRACTICUM.val())) {
+                return ApiResponseUtils.buildErrorResp(HttpStatus.BAD_REQUEST.value(),
+                                "Argument 'classType' is illegal");
+            }
 
-            response.setStatus(HttpStatus.BAD_REQUEST.value());
-            resultMap.put("error", "Illegal arguments format");
+            Map<String, Object> dataMap = bookingsService.doSet24Hours(set24HourRequest, loginService.getTeacher());
+            if (Objects.nonNull(dataMap.get("error"))) {
+                return ApiResponseUtils.buildErrorResp(HttpStatus.FORBIDDEN.value(), (String) dataMap.get("error"));
+            } else {
+                return ApiResponseUtils.buildSuccessDataResp(dataMap);
+            }
         } catch (Exception e) {
             logger.error("Internal server error", e);
-
-            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            resultMap.put("error", "Server error");
+            return ApiResponseUtils.buildErrorResp(HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                            ExceptionUtils.getFullStackTrace(e));
         }
-        return resultMap;
     }
 
     @RequestMapping(value = "/delete24Hours", method = RequestMethod.DELETE, produces = RestfulConfig.JSON_UTF_8)
     public Map<String, Object> delete24Hours(@RequestBody String body, HttpServletResponse response) {
-        Map<String, Object> resultMap = Maps.newHashMap();
         try {
             logger.info("Invocation delete24Hours() arguments: {}", body);
             Delete24HourRequest delete24HourRequest = JsonUtils.toBean(body, Delete24HourRequest.class);
 
-            Preconditions.checkArgument(CollectionUtils.isNotEmpty(delete24HourRequest.getOnlineClassIds()));
-            Preconditions.checkArgument(!delete24HourRequest.getOnlineClassIds().stream().anyMatch(id -> 0 == id));
+            if (CollectionUtils.isEmpty(delete24HourRequest.getOnlineClassIds())) {
+                return ApiResponseUtils.buildErrorResp(HttpStatus.BAD_REQUEST.value(),
+                                "Argument 'onlineClassIds' is required");
+            } else if (delete24HourRequest.getOnlineClassIds().stream().anyMatch(id -> 0 == id)) {
+                return ApiResponseUtils.buildErrorResp(HttpStatus.BAD_REQUEST.value(),
+                                "Argument 'onlineClassIds' is illegal");
+            }
 
-            return bookingsService.doDelete24Hours(delete24HourRequest, loginService.getTeacher());
-        } catch (IllegalArgumentException e) {
-            logger.error("Illegal arguments error", e);
-
-            response.setStatus(HttpStatus.BAD_REQUEST.value());
-            resultMap.put("error", "Illegal arguments format");
+            Map<String, Object> dataMap =
+                            bookingsService.doDelete24Hours(delete24HourRequest, loginService.getTeacher());
+            return ApiResponseUtils.buildSuccessDataResp(dataMap);
         } catch (Exception e) {
             logger.error("Internal server error", e);
-
-            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            resultMap.put("error", "Server error");
+            return ApiResponseUtils.buildErrorResp(HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                            ExceptionUtils.getFullStackTrace(e));
         }
-        return resultMap;
     }
 
     @RequestMapping(value = "/getTips", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
     public Map<String, Object> getTips(HttpServletRequest request, HttpServletResponse response) {
-        Map<String, Object> resultMap = Maps.newHashMap();
         try {
-            return bookingsService.getTips(request, response, loginService.getTeacher());
+            Map<String, Object> dataMap = bookingsService.getTips(request, response, loginService.getTeacher());
+            return ApiResponseUtils.buildSuccessDataResp(dataMap);
         } catch (Exception e) {
             logger.error("Internal server error", e);
-
-            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            resultMap.put("error", "Server error");
+            return ApiResponseUtils.buildErrorResp(HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                            ExceptionUtils.getFullStackTrace(e));
         }
-        return resultMap;
     }
 
     @RequestMapping(value = "/getAnnouncements", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
     public Map<String, Object> getAnnouncements(HttpServletRequest request, HttpServletResponse response) {
-        Map<String, Object> resultMap = Maps.newHashMap();
         try {
-            resultMap.put("datas", announcementHttpService.findAnnouncementList());
+            List<Announcement> announcements = announcementHttpService.findAnnouncementList();
+            return ApiResponseUtils.buildSuccessDataResp(announcements);
         } catch (Exception e) {
             logger.error("Internal server error", e);
-
-            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            resultMap.put("error", "Server error");
+            return ApiResponseUtils.buildErrorResp(HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                            ExceptionUtils.getFullStackTrace(e));
         }
-        return resultMap;
     }
 
 }
