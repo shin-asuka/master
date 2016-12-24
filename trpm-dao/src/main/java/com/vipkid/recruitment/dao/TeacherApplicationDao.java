@@ -1,13 +1,10 @@
 package com.vipkid.recruitment.dao;
 
-import java.sql.Timestamp;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import com.vipkid.enums.OnlineClassEnum.ClassStatus;
 import org.apache.commons.lang3.StringUtils;
 import org.community.dao.support.MapperDaoTemplate;
 import org.mybatis.spring.SqlSessionTemplate;
@@ -15,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.google.common.collect.Lists;
+import com.vipkid.enums.OnlineClassEnum.ClassStatus;
 import com.vipkid.recruitment.entity.TeacherApplication;
 
 @Repository
