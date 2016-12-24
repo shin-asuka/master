@@ -61,11 +61,8 @@ public class BookingsControllerTest {
 
     @Test
     public void testScheduled() throws Exception {
-        ScheduledRequest scheduledRequest = new ScheduledRequest();
-        scheduledRequest.setType("MAJOR");
-
         RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/portal/scheduled").header("Authorization", TOKEN)
-                        .content(JsonUtils.toJSONString(scheduledRequest));
+                        .param("type", "MAJOR");
         MvcResult mvcResult = mockMvc.perform(requestBuilder).andReturn();
         if (HttpStatus.OK.value() == mvcResult.getResponse().getStatus()) {
             logger.info("Result Json {}", mvcResult.getResponse().getContentAsString());
