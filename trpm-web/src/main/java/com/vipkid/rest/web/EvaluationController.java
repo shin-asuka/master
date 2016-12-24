@@ -30,7 +30,7 @@ import com.vipkid.trpm.entity.User;
 @RequestMapping("/evaluation")
 public class EvaluationController extends RestfulController{
     
-    private Logger logger = LoggerFactory.getLogger(PersonalInfoRestController.class);
+    private Logger logger = LoggerFactory.getLogger(EvaluationController.class);
     
     @Autowired
     private LoginService loginService;
