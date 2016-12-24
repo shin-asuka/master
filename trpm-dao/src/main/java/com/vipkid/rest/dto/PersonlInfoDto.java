@@ -47,8 +47,10 @@ public class PersonlInfoDto {
 	
 	private String cityName;
 	
+	@NotNull
 	private String streetAddress;
 	
+	@NotNull
 	private String zipCode;
 	
 	@NotNull
