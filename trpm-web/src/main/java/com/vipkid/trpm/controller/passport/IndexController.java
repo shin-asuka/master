@@ -80,6 +80,7 @@ public class IndexController extends AbstractController {
 	}
 
 	@RequestMapping("/logout")
+	@Deprecated
 	public String logout(HttpServletRequest request, HttpServletResponse response, Model model) {
 		indexService.removeLoginCooke(request, response);
 		return "redirect:/";
@@ -93,6 +94,7 @@ public class IndexController extends AbstractController {
 
 	@RequestMapping("/disableLayer")
 	@PreAuthorize("fullyAuthenticated")
+	@Deprecated
 	public String disableLayer(HttpServletRequest request, HttpServletResponse response, Model model,
 			TeacherPageLogin pageLogin) {
 		Teacher teacher = indexService.getTeacher(request);
