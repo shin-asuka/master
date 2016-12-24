@@ -119,11 +119,7 @@ public class PortalBasicInfoController extends RestfulController{
 	@RequestMapping(value = "/basicInfo", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
 	public Map<String,Object> getBasicInfo(HttpServletRequest request, HttpServletResponse response){
 		try{
-			Map<String,Object> result = portalBasicInfoService.getBasicInfo(getTeacher(request),getUser(request));
-			if(ReturnMapUtils.isFail(result)){
-				 response.setStatus(HttpStatus.FORBIDDEN.value());
-				 return ApiResponseUtils.buildErrorResp(-4,"Data acquisition fails, try again later!");
-			}
+			PersonlInfoDto result = portalBasicInfoService.getBasicInfo(getTeacher(request),getUser(request));
 			return ApiResponseUtils.buildSuccessDataResp(result);
         } catch (IllegalArgumentException e) {
         	logger.error("Exception", e);

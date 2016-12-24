@@ -11,7 +11,6 @@ import org.apache.commons.lang3.time.DateFormatUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.google.api.client.util.Maps;
 import com.vipkid.http.service.FileHttpService;
 import com.vipkid.recruitment.utils.ReturnMapUtils;
 import com.vipkid.rest.dto.PersonlInfoDto;
@@ -43,7 +42,7 @@ public class PortalBasicInfoService {
 	private UserDao userDao;
 	
 	
-	public Map<String,Object> getBasicInfo(Teacher teacher,User user){
+	public PersonlInfoDto getBasicInfo(Teacher teacher,User user){
 		
 		PersonlInfoDto personInfo = new PersonlInfoDto();
 		personInfo.setAvatar(fileHttpService.queryTeacherFiles(teacher.getId()).getAvatar());
@@ -94,9 +93,7 @@ public class PortalBasicInfoService {
             	personInfo.setCityName(currentCity.getName());
             }
         }
-		Map<String,Object> result = Maps.newHashMap();
-		result.put("teacher", personInfo);
-		return result;
+		return personInfo;
 	}
 	
 	public Map<String,Object> updateBasicInfo(Teacher teacher,User user,PersonlInfoDto basicInfo){
