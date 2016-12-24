@@ -122,14 +122,17 @@ public class PortalBasicInfoController extends RestfulController{
 			Map<String,Object> result = portalBasicInfoService.getBasicInfo(getTeacher(request),getUser(request));
 			if(ReturnMapUtils.isFail(result)){
 				 response.setStatus(HttpStatus.FORBIDDEN.value());
+				 return ApiResponseUtils.buildErrorResp(-4,"Data acquisition fails, try again later!");
 			}
-			return result;
+			return ApiResponseUtils.buildSuccessDataResp(result);
         } catch (IllegalArgumentException e) {
+        	logger.error("Exception", e);
             response.setStatus(HttpStatus.BAD_REQUEST.value());
-            return ReturnMapUtils.returnFail(e.getMessage(),e);
+            return ApiResponseUtils.buildErrorResp(-4,e.getMessage());
         } catch (Exception e) {
+        	logger.error("Exception", e);
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            return ReturnMapUtils.returnFail(e.getMessage(), e);
+            return ApiResponseUtils.buildErrorResp(-5,e.getMessage());
         }
 	}
 	
@@ -140,20 +143,22 @@ public class PortalBasicInfoController extends RestfulController{
             List<Result> list = ValidateUtils.checkBean(bean,false);
             if(CollectionUtils.isNotEmpty(list) && list.get(0).isResult()){
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
-                return ReturnMapUtils.returnFail("reslult:"+list.get(0).getName() + "," + list.get(0).getMessages());
+                return ApiResponseUtils.buildErrorResp(0, "reslult:"+list.get(0).getName() + "," + list.get(0).getMessages());
             }
             
 			Map<String,Object> result = portalBasicInfoService.updateBasicInfo(getTeacher(request),getUser(request),bean);
 			if(ReturnMapUtils.isFail(result)){
 				 response.setStatus(HttpStatus.FORBIDDEN.value());
 			}
-			return result;
+			return ApiResponseUtils.buildSuccessDataResp(result);
         } catch (IllegalArgumentException e) {
+        	logger.error("Exception", e);
             response.setStatus(HttpStatus.BAD_REQUEST.value());
-            return ReturnMapUtils.returnFail(e.getMessage(),e);
+            return ApiResponseUtils.buildErrorResp(-4,e.getMessage());
         } catch (Exception e) {
+        	logger.error("Exception", e);
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            return ReturnMapUtils.returnFail(e.getMessage(), e);
+            return ApiResponseUtils.buildErrorResp(-5,e.getMessage());
         }
 	}
 }

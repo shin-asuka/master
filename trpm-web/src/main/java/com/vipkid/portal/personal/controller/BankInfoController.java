@@ -1,14 +1,17 @@
 package com.vipkid.portal.personal.controller;
 
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -18,6 +21,8 @@ import com.vipkid.enums.TeacherEnum.LifeCycle;
 import com.vipkid.rest.RestfulController;
 import com.vipkid.rest.interceptor.annotation.RestInterface;
 import com.vipkid.rest.utils.ApiResponseUtils;
+import com.vipkid.rest.validation.ValidateUtils;
+import com.vipkid.rest.validation.tools.Result;
 import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.entity.TeacherAddress;
 import com.vipkid.trpm.entity.TeacherLocation;
@@ -147,6 +152,12 @@ public class BankInfoController extends RestfulController{
         Map<String, Object> result = Maps.newHashMap();
         long teacherId = 0L;
         try {
+        	List<Result> list = ValidateUtils.checkBean(bankInfo,false);
+            if(CollectionUtils.isNotEmpty(list) && list.get(0).isResult()){
+                response.setStatus(HttpStatus.BAD_REQUEST.value());
+                return ApiResponseUtils.buildErrorResp(0, "reslult:"+list.get(0).getName() + "," + list.get(0).getMessages());
+            }
+            
             Teacher teacher = getTeacher(request);
 
             if (null == teacher) {
