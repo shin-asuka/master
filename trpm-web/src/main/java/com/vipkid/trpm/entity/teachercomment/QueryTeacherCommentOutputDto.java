@@ -44,6 +44,108 @@ public class QueryTeacherCommentOutputDto {
 
     private int stars;
 
+    //preVip的Major课特有字段 START
+    private String vocabularyRetention;
+    private String pronunciation;
+    private String alphabetSkills;
+    private String phonologicalAwareness;
+    private String followsInstructions;
+    private String participatesActively;
+    private String speaksClearly;
+    private String mouseTouchpadActivities;
+    private String degreeCompletion;
+    private Boolean needParentSupport;
+    //preVip的Major课特有字段 END
+    private boolean isPreVip;
+
+    public String getVocabularyRetention() {
+        return vocabularyRetention;
+    }
+
+    public void setVocabularyRetention(String vocabularyRetention) {
+        this.vocabularyRetention = vocabularyRetention;
+    }
+
+    public String getPronunciation() {
+        return pronunciation;
+    }
+
+    public void setPronunciation(String pronunciation) {
+        this.pronunciation = pronunciation;
+    }
+
+    public String getAlphabetSkills() {
+        return alphabetSkills;
+    }
+
+    public void setAlphabetSkills(String alphabetSkills) {
+        this.alphabetSkills = alphabetSkills;
+    }
+
+    public String getPhonologicalAwareness() {
+        return phonologicalAwareness;
+    }
+
+    public void setPhonologicalAwareness(String phonologicalAwareness) {
+        this.phonologicalAwareness = phonologicalAwareness;
+    }
+
+    public String getFollowsInstructions() {
+        return followsInstructions;
+    }
+
+    public void setFollowsInstructions(String followsInstructions) {
+        this.followsInstructions = followsInstructions;
+    }
+
+    public String getParticipatesActively() {
+        return participatesActively;
+    }
+
+    public void setParticipatesActively(String participatesActively) {
+        this.participatesActively = participatesActively;
+    }
+
+    public String getSpeaksClearly() {
+        return speaksClearly;
+    }
+
+    public void setSpeaksClearly(String speaksClearly) {
+        this.speaksClearly = speaksClearly;
+    }
+
+    public String getMouseTouchpadActivities() {
+        return mouseTouchpadActivities;
+    }
+
+    public void setMouseTouchpadActivities(String mouseTouchpadActivities) {
+        this.mouseTouchpadActivities = mouseTouchpadActivities;
+    }
+
+    public String getDegreeCompletion() {
+        return degreeCompletion;
+    }
+
+    public void setDegreeCompletion(String degreeCompletion) {
+        this.degreeCompletion = degreeCompletion;
+    }
+
+    public Boolean getNeedParentSupport() {
+        return needParentSupport;
+    }
+
+    public void setNeedParentSupport(Boolean needParentSupport) {
+        this.needParentSupport = needParentSupport;
+    }
+
+    public boolean isPreVip() {
+        return isPreVip;
+    }
+
+    public void setPreVip(boolean preVip) {
+        isPreVip = preVip;
+    }
+
     public String getCourseDisplayName() {
         return courseDisplayName;
     }
