@@ -23,6 +23,7 @@ import com.vipkid.rest.interceptor.annotation.RestInterface;
 import com.vipkid.rest.utils.ApiResponseUtils;
 import com.vipkid.rest.validation.ValidateUtils;
 import com.vipkid.rest.validation.tools.Result;
+import com.vipkid.trpm.constant.ApplicationConstant;
 import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.entity.TeacherAddress;
 import com.vipkid.trpm.entity.TeacherLocation;
@@ -58,6 +59,22 @@ public class BankInfoController extends RestfulController{
             }
             teacherId = teacher.getId();
             logger.info("获取教师银行信息 teacherId = {}", teacherId);
+
+
+            int identityType =  teacher.getIdentityType();
+            result.put("teacherIdentityType", identityType);
+
+            String bankAddress = teacher.getBankAddress();
+            result.put("teacherBankAddress", bankAddress);
+
+            String passport = teacher.getPassport();
+            if(StringUtils.isNotBlank(passport)) {
+                passport = ApplicationConstant.OSS.URL_PREFFIX + passport;
+                result.put("teacherPassport", passport);
+            }
+
+            String bankName = teacher.getBankName();
+            result.put("teacherBankName", bankName);
 
             String accountName = teacher.getBankAccountName();
 
