@@ -62,7 +62,7 @@ public class TeacherCommentController {
         }
 
         //TeacherComment tcuDto = new TeacherComment(inputDto);
-        submitDto.setSubmitSource("APP");
+        submitDto.setSubmitSource("APP_H5");
         //boolean result = teacherService.updateTeacherComment(tcuDto);
         Map<String, Object> parmMap = reportService.submitTeacherComment(submitDto, AppContext.getUser(),
             submitDto.getClassNumber(),null,true);
