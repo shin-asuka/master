@@ -214,12 +214,13 @@ public class ClassroomsRestServiceImpl implements ClassroomsRestService{
 		data.put("lessonVocabularies", lessonVocabularies);
 
 		String sentencePatterns = lesson.getSentencePatterns();
-		String[] sentencePatternsGroup = null;
-		if (null != sentencePatterns) {
-			sentencePatternsGroup = sentencePatterns.replace("\n", "").replace("\t", "").replace("<br>", "<br/>")
-					.split("<br/>");
-		}
-		data.put("lessonSentencePatterns", sentencePatternsGroup);
+//		String[] sentencePatternsGroup = null;
+//		if (null != sentencePatterns) {
+//			sentencePatternsGroup = sentencePatterns.replace("\n", "").replace("\t", "").replace("<br>", "<br/>")
+//					.split("<br/>");
+//		}
+		sentencePatterns = sentencePatterns.replace("\n", "").replace("\t", "");
+		data.put("lessonSentencePatterns", sentencePatterns);
 
 		result = ApiResponseUtils.buildSuccessDataResp(data);
 		return result;
