@@ -2,14 +2,12 @@ package com.vipkid.rest.portal.service.impl;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Base64;
 import java.util.Date;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +16,7 @@ import org.springframework.stereotype.Service;
 import com.google.api.client.util.Maps;
 import com.vipkid.rest.portal.model.TeachingInfoData;
 import com.vipkid.rest.portal.service.PersonalInfoRestService;
+import com.vipkid.rest.service.LoginService;
 import com.vipkid.rest.utils.ApiResponseUtils;
 import com.vipkid.trpm.constant.ApplicationConstant.CookieKey;
 import com.vipkid.trpm.dao.TeacherDao;
@@ -30,7 +29,6 @@ import com.vipkid.trpm.security.SHA256PasswordEncoder;
 import com.vipkid.trpm.service.passport.RemberService;
 import com.vipkid.trpm.service.portal.PersonalInfoService;
 import com.vipkid.trpm.service.portal.TeacherTaxpayerFormService;
-import com.vipkid.trpm.service.rest.LoginService;
 import com.vipkid.trpm.util.CookieUtils;
 @Service
 public class PersonalInfoRestServiceImpl implements PersonalInfoRestService {
@@ -104,6 +102,7 @@ public class PersonalInfoRestServiceImpl implements PersonalInfoRestService {
 //		if(teacherId != teacher.getId()){
 //			return ApiResponseUtils.buildErrorResp(1001, "教师id非法");
 //		}
+		//TODO
 		User user = userDao.findById(teacherId);
 		Teacher teacher = teacherDao.findById(teacherId);//测试代码
 		
@@ -151,6 +150,7 @@ public class PersonalInfoRestServiceImpl implements PersonalInfoRestService {
 	}
 	
 	public Map<String, Object> getTaxpayerData(long teacherId){
+		//TODO
 		//Teacher teacher = loginService.getTeacher();
 		Teacher teacher = teacherDao.findById(teacherId);//测试代码
 		if(null == teacher){
@@ -164,9 +164,10 @@ public class PersonalInfoRestServiceImpl implements PersonalInfoRestService {
  		TaxpayerView taxpayerView = teacherTaxpayerFormService.getTeacherTaxpayerView(teacherId);
 		
 		if(null != taxpayerView){
-			TeacherTaxpayerForm teacherTaxpayerFormW9 = taxpayerView.getFormW9();
+			TeacherTaxpayerForm teacherTaxpayerFormW9 = taxpayerView.getFormW9();//只返回W9的Taxpayer
 			if(null != teacherTaxpayerFormW9){
 				data = Maps.newHashMap();
+				data.put("id", teacherTaxpayerFormW9.getId());
 				data.put("fileName", teacherTaxpayerFormW9.getFileName());
 				data.put("url", teacherTaxpayerFormW9.getUrl());
 			}
