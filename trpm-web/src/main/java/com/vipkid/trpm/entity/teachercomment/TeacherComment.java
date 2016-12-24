@@ -1,5 +1,6 @@
 package com.vipkid.trpm.entity.teachercomment;
 
+import com.vipkid.trpm.util.LessonSerialNumber;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.community.dao.support.Entity;
@@ -67,6 +68,20 @@ public class TeacherComment extends Entity implements Serializable {
     private String courseType;
 
     private String submitSource;
+
+    //preVip的Major课特有字段 START
+    private String vocabularyRetention;
+    private String pronunciation;
+    private String alphabetSkills;
+    private String phonologicalAwareness;
+    private String followsInstructions;
+    private String participatesActively;
+    private String speaksClearly;
+    private String mouseTouchpadActivities;
+    private String degreeCompletion;
+    private Boolean needParentSupport;
+    //preVip的Major课特有字段 END
+    private Boolean isPreVip;
 
     public TeacherComment(){
 
@@ -158,6 +173,44 @@ public class TeacherComment extends Entity implements Serializable {
         hasComment = StringUtils.isNotBlank(teacherCommentResult.getTeacherFeedback()) ? true : false;
 
         courseType = teacherCommentResult.getCourseType();
+
+
+
+        //preVip的Major课特有字段 START
+        //preVip特有字段
+
+        needParentSupport = teacherCommentResult.getNeedParentSupport();
+
+        if(StringUtils.isNotBlank(teacherCommentResult.getVocabularyRetention())){
+            vocabularyRetention = teacherCommentResult.getVocabularyRetention();
+        }
+        if(StringUtils.isNotBlank(teacherCommentResult.getPronunciation())){
+            pronunciation = teacherCommentResult.getPronunciation();
+        }
+        if(StringUtils.isNotBlank(teacherCommentResult.getAlphabetSkills())){
+            alphabetSkills = teacherCommentResult.getAlphabetSkills();
+        }
+        if(StringUtils.isNotBlank(teacherCommentResult.getPhonologicalAwareness())){
+            phonologicalAwareness = teacherCommentResult.getPhonologicalAwareness();
+        }
+        if(StringUtils.isNotBlank(teacherCommentResult.getFollowsInstructions())){
+            followsInstructions = teacherCommentResult.getFollowsInstructions();
+        }
+        if(StringUtils.isNotBlank(teacherCommentResult.getParticipatesActively())){
+            participatesActively = teacherCommentResult.getParticipatesActively();
+        }
+        if(StringUtils.isNotBlank(teacherCommentResult.getSpeaksClearly())){
+            speaksClearly = teacherCommentResult.getSpeaksClearly();
+        }
+        if(StringUtils.isNotBlank(teacherCommentResult.getMouseTouchpadActivities())){
+            mouseTouchpadActivities = teacherCommentResult.getMouseTouchpadActivities();
+        }
+        if(StringUtils.isNotBlank(teacherCommentResult.getDegreeCompletion())){
+            degreeCompletion = teacherCommentResult.getDegreeCompletion();
+        }
+        isPreVip = LessonSerialNumber.isPreVipkidLesson(teacherCommentResult.getLessonSerialNumber());
+        //preVip的Major课特有字段 END
+
     }
 
 //    public TeacherComment(SubmitTeacherCommentInputDto inputDto) {
@@ -425,4 +478,92 @@ public class TeacherComment extends Entity implements Serializable {
         this.hasComment = hasComment;
     }
 
+
+    public String getVocabularyRetention() {
+        return vocabularyRetention;
+    }
+
+    public void setVocabularyRetention(String vocabularyRetention) {
+        this.vocabularyRetention = vocabularyRetention;
+    }
+
+    public String getPronunciation() {
+        return pronunciation;
+    }
+
+    public void setPronunciation(String pronunciation) {
+        this.pronunciation = pronunciation;
+    }
+
+    public String getAlphabetSkills() {
+        return alphabetSkills;
+    }
+
+    public void setAlphabetSkills(String alphabetSkills) {
+        this.alphabetSkills = alphabetSkills;
+    }
+
+    public String getPhonologicalAwareness() {
+        return phonologicalAwareness;
+    }
+
+    public void setPhonologicalAwareness(String phonologicalAwareness) {
+        this.phonologicalAwareness = phonologicalAwareness;
+    }
+
+    public String getFollowsInstructions() {
+        return followsInstructions;
+    }
+
+    public void setFollowsInstructions(String followsInstructions) {
+        this.followsInstructions = followsInstructions;
+    }
+
+    public String getParticipatesActively() {
+        return participatesActively;
+    }
+
+    public void setParticipatesActively(String participatesActively) {
+        this.participatesActively = participatesActively;
+    }
+
+    public String getSpeaksClearly() {
+        return speaksClearly;
+    }
+
+    public void setSpeaksClearly(String speaksClearly) {
+        this.speaksClearly = speaksClearly;
+    }
+
+    public String getMouseTouchpadActivities() {
+        return mouseTouchpadActivities;
+    }
+
+    public void setMouseTouchpadActivities(String mouseTouchpadActivities) {
+        this.mouseTouchpadActivities = mouseTouchpadActivities;
+    }
+
+    public String getDegreeCompletion() {
+        return degreeCompletion;
+    }
+
+    public void setDegreeCompletion(String degreeCompletion) {
+        this.degreeCompletion = degreeCompletion;
+    }
+
+    public Boolean getNeedParentSupport() {
+        return needParentSupport;
+    }
+
+    public void setNeedParentSupport(Boolean needParentSupport) {
+        this.needParentSupport = needParentSupport;
+    }
+
+    public Boolean getPreVip() {
+        return isPreVip;
+    }
+
+    public void setPreVip(Boolean preVip) {
+        isPreVip = preVip;
+    }
 }
