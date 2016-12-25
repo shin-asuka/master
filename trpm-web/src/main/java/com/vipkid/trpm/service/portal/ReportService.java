@@ -580,47 +580,39 @@ public class ReportService {
      * @date 2015年12月16日
      * @return
      */
-    public TeacherComment findTectBycIdAndStuId(long onlineClassId, long studentId,OnlineClass onlineClass,Lesson lesson) {
-        if (0 == onlineClassId || 0 == studentId || onlineClass==null) {
+    public TeacherComment findTectBycIdAndStuId(long onlineClassId, long studentId,
+        OnlineClass onlineClass,Lesson lesson) {
+        logger.info("onlineClassId：" + onlineClassId + ";studentId:" + studentId);
+        if (0 == onlineClassId || 0 == studentId || onlineClass==null || lesson==null) {
             return null;
         }
-        TeacherComment comment = teacherService.findByStudentIdAndOnlineClassId(studentId, onlineClassId);
-        logger.info("onlineClassId：" + onlineClassId + ";studentId:" + studentId + "; Teacher Comment" + comment);
-        if (comment == null || comment.getId() == 0) {
-            logger.info("正在重新创建 TeacherComment");
+        logger.info("teacherId：" + onlineClass.getTeacherId() + ";lessonId:" + lesson.getId());
+        TeacherCommentUpdateDto tcuDto = new TeacherCommentUpdateDto();
+        tcuDto.setStudentId(studentId);
+        tcuDto.setOnlineClassId(onlineClassId);
+        tcuDto.setTeacherId(onlineClass.getTeacherId());
 
-            TeacherCommentUpdateDto tcuDto = new TeacherCommentUpdateDto();
-            tcuDto.setStudentId(studentId);
-            tcuDto.setOnlineClassId(onlineClassId);
-            tcuDto.setTeacherId(onlineClass.getTeacherId());
+        tcuDto.setLessonId(lesson.getId());
+        tcuDto.setLessonName(lesson.getName());
+        tcuDto.setLessonSerialNumber(lesson.getSerialNumber());
+        tcuDto.setLearningCycleId(lesson.getLearningCycleId());
+        tcuDto.setScheduledDateTime(new Date(onlineClass.getScheduledDateTime().getTime()));
+        tcuDto.setCreateTime(new Timestamp(System.currentTimeMillis()));
 
-            tcuDto.setLessonId(lesson.getId());
-            tcuDto.setLessonName(lesson.getName());
-            tcuDto.setLessonSerialNumber(lesson.getSerialNumber());
-            tcuDto.setLearningCycleId(lesson.getLearningCycleId());
-            tcuDto.setScheduledDateTime(new Date(onlineClass.getScheduledDateTime().getTime()));
-            tcuDto.setCreateTime(new Timestamp(System.currentTimeMillis()));
+        Course course = courseDao.findIdsByLessonId(lesson.getId());
+        tcuDto.setCourseId(course.getId());
+        tcuDto.setCourseType(course.getType());
+        tcuDto.setUnitId(course.getUnitId());
 
-            Course course = courseDao.findIdsByLessonId(lesson.getId());
-            tcuDto.setCourseId(course.getId());
-            tcuDto.setCourseType(course.getType());
-            tcuDto.setUnitId(course.getUnitId());
-
-            tcuDto.setStars(0);
-            tcuDto.setEmpty(true);
-
-            String newId = teacherService.insertOneTeacherComment(tcuDto);
-            if (NumberUtils.isNumber(newId)) {
-                TeacherComment result = new TeacherComment();
-                result.setId(Long.valueOf(newId));
-                result.setOnlineClassId(onlineClassId);
-                result.setStudentId(studentId);
-                result.setTeacherId(onlineClass.getTeacherId());
-                return result;
-            }else{
-                return null;
-            }
+        tcuDto.setStars(0);
+        tcuDto.setEmpty(true);
+        //先按teacher_id和student_id和onlineClassId检索,如果有则返回已存在的,如果没有则插入一条新的
+        TeacherCommentResult tcResult = teacherService.checkExistOrInsertOne(tcuDto);
+        if(tcResult==null){
+            logger.error("进入教室后,老师点击feedback按钮无法获取teacherComment信息!");
+            return null;
         }else{
+            TeacherComment comment = new TeacherComment(tcResult);
             return comment;
         }
     }
