@@ -635,7 +635,7 @@ public class ContractInfoController extends RestfulController {
                 logger.error("awsUpload exception", e);
             }
             if (fileVo != null) {
-                String url = "http://" + bucketName + "/" + key;
+                String url = "https://" + bucketName + "/" + key;
                 fileVo.setUrl(url);
             }
         }

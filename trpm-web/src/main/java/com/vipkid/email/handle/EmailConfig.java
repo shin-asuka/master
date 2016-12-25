@@ -30,7 +30,7 @@ public class EmailConfig {
      * 正式环境识别
      * 
      */
-    public static final String SEND_EMIAL_EVN = "http://t.vipkid.com.cn/";
+    public static final String SEND_EMIAL_EVN = "https://t.vipkid.com.cn/";
 
     /**
      * 测试环境发送地址

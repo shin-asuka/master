@@ -437,7 +437,7 @@ public class ActivityService {
 			logger.error("配置文件中的third_year_anniversary_join_us_url参数值错误");
 			joinUsUrl = PropertyConfigurer.stringValue("teacher.www");
 			if(StringUtils.isEmpty(joinUsUrl)){
-				joinUsUrl="http://t.vipkid.com.cn/";
+				joinUsUrl="https://t.vipkid.com.cn/";
 			}
 		}
 		

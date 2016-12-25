@@ -120,7 +120,7 @@ public class TaxpayerFileController extends AbstractPortalController{
 			fileVo.setName(name);*/
 			//int k =1/0;
 			if(fileVo!=null){
-				String url = "http://"+bucketName+"/"+key;
+				String url = "https://"+bucketName+"/"+key;
 				fileVo.setUrl(url);
 			}
 		}

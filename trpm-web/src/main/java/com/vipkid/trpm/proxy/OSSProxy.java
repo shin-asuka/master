@@ -25,6 +25,7 @@ public class OSSProxy {
 	private static Logger logger = LoggerFactory.getLogger(OSSProxy.class);
 
 	private static final Pattern pattern = Pattern.compile("(http://.*)/(.*)/(.*)\\.(.*)");
+	private static final Pattern patterns = Pattern.compile("(https://.*)/(.*)/(.*)\\.(.*)");
 
 	public static boolean shrink(final String url, final String height, final String width,
 			final String type) {
@@ -117,7 +118,12 @@ public class OSSProxy {
 
 			if (null != httpEntity) {
 				metadata.setContentLength(httpEntity.getContentLength());
-				Matcher matcher = pattern.matcher(url);
+				Matcher matcher;
+				if (url.contains("https:")){
+					matcher = patterns.matcher(url);
+				} else {
+					matcher = pattern.matcher(url);
+				}
 
 				if (matcher.matches()) {
 					String dir = matcher.group(2);
@@ -146,7 +152,12 @@ public class OSSProxy {
 		if (null == url) {
 			return false;
 		} else {
-			Matcher matcher = pattern.matcher(url);
+			Matcher matcher;
+			if (url.contains("https:")){
+				matcher = patterns.matcher(url);
+			} else {
+				matcher = pattern.matcher(url);
+			}
 			return matcher.matches();
 		}
 	}
