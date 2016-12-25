@@ -1,0 +1,70 @@
+<form id="trailFeedbackForm" name="form" action="#springUrl('/commentSubmit.json')" method="post" class="form-horizontal ng-pristine ng-valid">
+	<style>
+		.classroom .trailFeedbackContainer{text-align:left;}
+	</style>
+	#if(!$teacherComment.teacherFeedback || $teacherComment.teacherFeedback == "")
+		#set($elememtDisabled="")
+	#else
+		#set($elememtDisabled="disabled")
+	#end
+	<div>
+		<div id="Required" style="height:530px;overflow-x:hidden; overflow-y:auto;">
+			##<div class="hideFeedbackButton"></div>
+			<div>
+				<div>
+					<label>How did your student do in today's class?<span style="color: red;">*</span></label>
+					<div style="font-weight:normal;color:#666;margin-top:-5px;padding-bottom:5px;">
+					(Remember, this goes to the parents.)</div>
+					<div>
+						<textarea id="teacherFeedbackText" $!elememtDisabled name="teacherFeedback" class="form-control ng-pristine ng-valid">$!teacherComment.teacherFeedback</textarea>
+					</div>
+				</div>
+				
+				<div style="padding-top:10px;">
+					<label>Your tips for the next teacher. </label>
+					<div style="font-weight:normal;color:#666;margin-top:-5px;padding-bottom:5px;">
+					(This goes to the next teacher.)</div>
+					<div>
+						<textarea name="tipsForOtherTeachers" $!elememtDisabled class="form-control ng-pristine ng-valid">$!teacherComment.tipsForOtherTeachers</textarea>
+					</div>
+				</div>
+
+				#if($lesson.serialNumber && ($stringUtils.startsWith($!lesson.serialNumber,'MC')))
+					<div style="padding-top:10px;">
+                        <label>Content Learning</label>
+                        <input type="radio" name="englishLanguageScore" #if(0 == ${teacherApplication.englishLanguageScore})checked="checked"#end value="0" />
+						<label>Level of Difficulty</label>
+						<div style="font-weight:normal;color:#666;margin-top:-5px;padding-bottom:5px;">
+							(This helps us with overall lesson performance/ student ability)</div>
+						<div>
+							<select id="performance" name="performance" field="$!teacherComment.performance" $!elememtDisabled class="ng-pristine ng-valid">
+								<option value="0">Choose From Here</option>
+								<option value="5">Very Easy</option>
+								<option value="4">Slightly Easy</option>
+								<option value="3">On Level</option>
+								<option value="2">Slightly Difficult</option>
+								<option value="1">Very Difficult</option>
+							</select>
+						</div>
+					</div>
+
+					<div style="padding-top:10px;">
+						<input type="checkbox" id="needParentSupport" name="needParentSupport" value="1" $!elememtDisabled #if($!teacherComment.needParentSupport == true) checked #end/>&nbsp;&nbsp;Please check this box if you think the student needs parent support during class
+					</div>
+				#end
+			</div>
+		</div>
+	</div>
+	<div style="text-align:right;padding:8px;">
+		##仅仅没有提交过才能显示提交
+		#if(!$teacherComment.teacherFeedback || $teacherComment.teacherFeedback == "")
+			<button type="button" class="btn btn-gray" onclick="require('feedback').trailCommentClose();">Cancel</button>
+			<input type="hidden" name="id" value="$!{teacherComment.id}" />
+			<input type="hidden" name="serialNumber" value="$!{lesson.serialNumber}" />
+            <input type="hidden" name="scheduledDateTime" value="$!{onlineClass.scheduledDateTime}" />
+			<button type="button" class="btn btn-primary" onclick="require('feedback').trailCommentSubmit();">Submit</button>
+		#else
+			<button type="button" class="btn btn-gray" onclick="require('feedback').trailCommentClose();">Close</button>
+		#end
+	</div>
+</form>

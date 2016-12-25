@@ -249,7 +249,12 @@ public class ReportController extends AbstractPortalController {
         long millis =stopwatch.stop().elapsed(TimeUnit.MILLISECONDS);
         logger.info("执行ReportController: feedback()耗时：{} ", millis);
 
-        return view("online_class_feedback");
+        if(teacherComment.getPreVip()!=null && teacherComment.getPreVip() ){
+            return view("online_class_feedback_previp");
+        }else{
+            return view("online_class_feedback");
+        }
+
     }
 
     @RequestMapping("/unitAssessment")
