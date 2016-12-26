@@ -63,7 +63,7 @@ public class FileController extends AbstractPortalController {
      * @param file
      * @return
      */
-    @RequestMapping(value = "/uploadNormalFile", method = RequestMethod.POST)
+    @RequestMapping(value = "/common/uploadFile", method = RequestMethod.POST)
 	public String uploadFile(MultipartHttpServletRequest request, HttpServletResponse response,
 			@RequestParam("file") MultipartFile file) {
 
