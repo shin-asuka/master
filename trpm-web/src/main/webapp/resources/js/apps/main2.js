@@ -23,7 +23,7 @@ require.config({
 		"jquery-sort" : "libs/jquery.table.sort.min",
 		"jquery-bootstrap" : "libs/jquery.bootstrap",
 		"select2" : "libs/select2/select2.min",
-		"easemob" : "http://kefu.easemob.com/webim/easemob.js?tenantId=20182&hide=false&sat=false",
+		"easemob" : "https://kefu.easemob.com/webim/easemob.js?tenantId=20182&hide=false&sat=false",
 		"jquery-ui" : "libs/jquery-ui.min",
 		"jquery-ajaxfileupload" : "libs/ajaxfileupload",
 		
