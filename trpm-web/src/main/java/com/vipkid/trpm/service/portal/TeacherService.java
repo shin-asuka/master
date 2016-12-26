@@ -1,6 +1,7 @@
 package com.vipkid.trpm.service.portal;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
@@ -365,7 +366,7 @@ public class TeacherService {
 	}
 
 	public TeacherCommentResult checkExistOrInsertOne(TeacherCommentUpdateDto inputDto) {
-		TeacherCommentResult tcResult = null;
+		List<TeacherCommentResult> tcResult = Lists.newArrayList();
 
 			Map<String, String> param = Maps.newHashMap();
 			param.put("teacherComment", JsonUtils.toJSONString(inputDto));
@@ -392,8 +393,8 @@ public class TeacherService {
 				return null;
 			}
 			tcResult = JsonUtils
-				.toBean((String) standardJsonObject.getData().get("result"), TeacherCommentResult.class);
-			if (tcResult == null) {
+				.toBeanList(standardJsonObject.getData().get("result"), TeacherCommentResult.class);
+			if (CollectionUtils.isEmpty(tcResult)) {
 				logger.error("请求checkExistOrInsertOne数据返回为空，请求参数：{}，返回结果：{}", param, response);
 				return null;
 			}
@@ -403,7 +404,7 @@ public class TeacherService {
 			return null;
 		}
 
-		return tcResult;
+		return tcResult.get(0);
 	}
 
 
