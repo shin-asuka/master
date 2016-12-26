@@ -24,7 +24,7 @@ public class ZoneTime {
         Instant instant = timeSlot.toDate().toInstant();
 
         LocalDateTime localDateTimeBeiJing = LocalDateTime.ofInstant(instant, SHANGHAI);
-        this.formatToBeiJing = localDateTimeBeiJing.format(FMT_YMD_HMS);
+        this.formatToBeiJing = localDateTimeBeiJing.format(FMT_YMD_HMA_US);
         this.dateFromBeiJing = Date.from(localDateTimeBeiJing.atZone(SHANGHAI).toInstant());
 
         this.localTime = formatTo(instant, timezone, FMT_YMD_HMA_US);
