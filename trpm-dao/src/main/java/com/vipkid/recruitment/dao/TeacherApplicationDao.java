@@ -153,7 +153,6 @@ public class TeacherApplicationDao extends MapperDaoTemplate<TeacherApplication>
      */
     @Override
     public int update(TeacherApplication teacherApplication) {
-        teacherApplication.setAuditDateTime(new Timestamp(new Date().getTime()));
         return super.update(teacherApplication);
     }
 
