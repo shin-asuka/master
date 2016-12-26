@@ -252,9 +252,11 @@ public class ContractInfoService {
         List<TeacherApplication> list = teacherApplicationDao.findCurrentApplication(teacher.getId());
         if (CollectionUtils.isNotEmpty(list)) {
             //更新上一个版本的 application
+            for (TeacherApplication teacherApplication : list) {
+                teacherApplication.setCurrent(0);
+                teacherApplicationDao.update(teacherApplication, true);
+            }
             TeacherApplication teacherApplication = list.get(0);
-            teacherApplication.setCurrent(0);
-            teacherApplicationDao.update(teacherApplication);
             //设置当前版本的 application 的 failedReason
             String failedReason = teacherApplication.getFailedReason();
             if (teacherApplication.getStatus().equals(TeacherApplicationEnum.Status.CONTRACT_INFO.toString()) && StringUtils.isNotBlank(failedReason)) {
@@ -471,15 +473,11 @@ public class ContractInfoService {
         }
         if (TeacherApplicationEnum.Status.CONTRACT_INFO.toString().equals(listEntity.get(0).getStatus())
                 && TeacherApplicationEnum.Result.PASS.toString().equals(listEntity.get(0).getResult())) {
-            TeacherApplication  teacherApplication = listEntity.get(0);
-           // teacherApplication.setStatus(TeacherApplicationEnum.Status.FINISHED.toString());
-                // 2.教师状态更新
+            // 1.教师状态更新
             teacher.setLifeCycle(TeacherEnum.LifeCycle.REGULAR.toString());
-                // 3.新增教师入职时间
+            // 2.新增教师入职时间
             teacher.setEntryDate(new Date());
             teacher.setType(TeacherEnum.Type.PART_TIME.toString());
-            // 3.更新teacherApplication
-            this.teacherApplicationDao.update(teacherApplication);
 
             this.teacherDao.insertLifeCycleLog(teacher.getId(), TeacherEnum.LifeCycle.CONTRACT_INFO, TeacherEnum.LifeCycle.REGULAR, teacher.getId());
             this.teacherDao.update(teacher);

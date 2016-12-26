@@ -158,6 +158,17 @@ public class TeacherApplicationDao extends MapperDaoTemplate<TeacherApplication>
     }
 
     /**
+     * @param teacherApplication
+     */
+    public int update(TeacherApplication teacherApplication, boolean doNotUpdateAuditTime) {
+        if (doNotUpdateAuditTime) {
+            return super.update(teacherApplication);
+        } else {
+            return this.update(teacherApplication);
+        }
+    }
+
+    /**
      * @param auditorId 通过onlinclass 查teacher application；
      */
     public TeacherApplication findApplictionByOlineclassId(long onlineClassId, long auditorId) {

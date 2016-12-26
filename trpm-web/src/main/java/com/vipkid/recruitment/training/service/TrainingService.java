@@ -96,7 +96,7 @@ public class TrainingService {
                 for (int i = 0; i < old_teacherApplications.size(); i++) {
                     TeacherApplication application = old_teacherApplications.get(i);
                     application.setCurrent(0);
-                    this.teacherApplicationDao.update(application);
+                    this.teacherApplicationDao.update(application, true);
                 }
             }
             // 保存申请时间

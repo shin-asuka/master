@@ -313,7 +313,7 @@ public class InterviewService {
             // 新加Training 申请记录
             List<TeacherApplication> list = teacherApplicationDao.findCurrentApplication(teacher.getId());
             if(CollectionUtils.isNotEmpty(list)){
-               list.stream().forEach(application -> {application.setCurrent(0);teacherApplicationDao.update(application);});
+               list.stream().forEach(application -> {application.setCurrent(0);teacherApplicationDao.update(application, true);});
             }
             
             // 保存申请时间
