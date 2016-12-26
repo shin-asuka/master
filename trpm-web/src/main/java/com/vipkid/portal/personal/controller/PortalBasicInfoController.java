@@ -94,7 +94,7 @@ public class PortalBasicInfoController extends RestfulController{
                     FileUploadStatus fileUploadStatus = fileHttpService.uploadAvatar(teacherId, key);
                     result.put("url", fileUploadStatus.getUrl());
                     logger.info("Successful to upload avatar for {}!", teacherId);
-                    ApiResponseUtils.buildSuccessDataResp(result);
+                    return ApiResponseUtils.buildSuccessDataResp(result);
                 } else {
                     logger.error("Failed to upload avatar for {}!", teacherId);
                     response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
