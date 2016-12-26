@@ -863,7 +863,7 @@ public class OnlineClassService {
         return map;
     }
 
-    public String checkExistOrInsertOne(long studentId, long teacherId, OnlineClass onlineClass, Lesson lesson) {
+    public String createTeacherCommentByEnterClassroom(long studentId, long teacherId, OnlineClass onlineClass, Lesson lesson) {
         try {
             if (studentId > 0 && teacherId > 0 && onlineClass != null && lesson != null) {
                 logger.info(

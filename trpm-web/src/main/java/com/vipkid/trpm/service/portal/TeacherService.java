@@ -166,13 +166,13 @@ public class TeacherService {
 						false);
 		result.setTipsForOtherTeachers(teacherComment.getTipsForOtherTeachers());
 
-		String trialLevelResultDisplay = findTrialLevelResutl4Display(teacherComment.getTrialLevelResult(),studentId,teacherComment.getLessonSerialNumber());
+		String trialLevelResultDisplay = findTrialLevelResult4Display(teacherComment.getTrialLevelResult(),studentId,teacherComment.getLessonSerialNumber());
 		result.setTrialLevelResult(trialLevelResultDisplay);
 
 		return result;
 	}
 
-	private String findTrialLevelResutl4Display(String trialLevelResult, String studentId,
+	private String findTrialLevelResult4Display(String trialLevelResult, String studentId,
 		String lessonSerialNumber) {
 		if (StringUtils.isNotBlank(lessonSerialNumber) && lessonSerialNumber.startsWith("T")) {
 			String trialLevelResultTmp = reportService.handleTeacherComment(trialLevelResult);
