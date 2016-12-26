@@ -119,10 +119,10 @@ public class BookingsController {
 
     /* 取消 TimeSlot 接口 */
     @RequestMapping(value = "/cancelTimeSlot", method = RequestMethod.DELETE, produces = RestfulConfig.JSON_UTF_8)
-    public Map<String, Object> cancelTimeSlot(@RequestBody String body, HttpServletResponse response) {
+    public Map<String, Object> cancelTimeSlot(TimeSlotCancelRequest timeSlotCancelRequest,
+                    HttpServletResponse response) {
         try {
-            logger.info("Invocation cancelTimeSlot() arguments: {}", body);
-            TimeSlotCancelRequest timeSlotCancelRequest = JsonUtils.toBean(body, TimeSlotCancelRequest.class);
+            logger.info("Invocation cancelTimeSlot() arguments: {}", JsonUtils.toJSONString(timeSlotCancelRequest));
 
             if (0 == timeSlotCancelRequest.getOnlineClassId()) {
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
@@ -183,10 +183,9 @@ public class BookingsController {
     }
 
     @RequestMapping(value = "/delete24Hours", method = RequestMethod.DELETE, produces = RestfulConfig.JSON_UTF_8)
-    public Map<String, Object> delete24Hours(@RequestBody String body, HttpServletResponse response) {
+    public Map<String, Object> delete24Hours(Delete24HourRequest delete24HourRequest, HttpServletResponse response) {
         try {
-            logger.info("Invocation delete24Hours() arguments: {}", body);
-            Delete24HourRequest delete24HourRequest = JsonUtils.toBean(body, Delete24HourRequest.class);
+            logger.info("Invocation delete24Hours() arguments: {}", JsonUtils.toJSONString(delete24HourRequest));
 
             Map<String, Object> checkMap = checkArgumentForOnlineClassIds(delete24HourRequest.getOnlineClassIds());
             if (Objects.nonNull(checkMap.get("errMsg"))) {
