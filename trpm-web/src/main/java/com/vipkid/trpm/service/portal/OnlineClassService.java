@@ -466,6 +466,7 @@ public class OnlineClassService {
         teacherApplication.setAuditorId(pe.getId());
         // 设置应聘老师Id
         teacherApplication.setTeacherId(recruitTeacher.getId());
+        teacherApplication.setAuditDateTime(new Timestamp(System.currentTimeMillis()));
         // 如果是PASS操作，则ta状态修改为FINISH，教师状态修改为REGULAR
   //      if (RecruitmentResult.PASS.equals(result)) {
             //teacherApplication.setStatus(RecruitmentStatus.FINISHED);

@@ -265,6 +265,7 @@ public class PeSupervisorService {
         // 设置应聘老师Id
         teacherApplication.setTeacherId(recruitTeacher.getId());
         teacherApplication.setCurrent(1);
+        teacherApplication.setAuditDateTime(new Timestamp(System.currentTimeMillis()));
         // 如果是PASS操作，则ta状态修改为FINISH，教师状态修改为REGULAR
 //        if (TeacherApplicationEnum.Result.PASS.toString().equals(result)) {
             //teacherApplication.setStatus(TeacherApplicationEnum.Status.FINISHED.toString());

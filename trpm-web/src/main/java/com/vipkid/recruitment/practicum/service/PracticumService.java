@@ -297,7 +297,7 @@ public class PracticumService {
 
                 // 4.如果是PASS操作，则ta状态修改为FINISH，教师状态修改为REGULAR
                 teacherApplication.setStatus(Status.FINISHED.toString());
-                teacherApplicationDao.update(teacherApplication, true);
+                teacherApplicationDao.update(teacherApplication);
                 // 5.增加quiz的考试记录
                 List<TeacherQuiz> quizslist = teacherQuizDao.findAllQuiz(teacher.getId());
                 if (CollectionUtils.isEmpty(quizslist)) {

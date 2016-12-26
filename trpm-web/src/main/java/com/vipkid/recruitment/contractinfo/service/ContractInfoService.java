@@ -254,7 +254,7 @@ public class ContractInfoService {
             //更新上一个版本的 application
             for (TeacherApplication teacherApplication : list) {
                 teacherApplication.setCurrent(0);
-                teacherApplicationDao.update(teacherApplication, true);
+                teacherApplicationDao.update(teacherApplication);
             }
             TeacherApplication teacherApplication = list.get(0);
             //设置当前版本的 application 的 failedReason
