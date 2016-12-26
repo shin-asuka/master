@@ -29,6 +29,7 @@ import com.vipkid.trpm.dao.*;
 import com.vipkid.trpm.entity.*;
 import com.vipkid.trpm.entity.teachercomment.QueryTeacherCommentOutputDto;
 import com.vipkid.trpm.entity.teachercomment.TeacherComment;
+import com.vipkid.trpm.entity.teachercomment.TeacherCommentResult;
 import com.vipkid.trpm.entity.teachercomment.TeacherCommentUpdateDto;
 import com.vipkid.trpm.proxy.OnlineClassProxy;
 import com.vipkid.trpm.util.DateUtils;
@@ -862,7 +863,7 @@ public class OnlineClassService {
         return map;
     }
 
-    public String checkAndAddFeedback(long studentId, long teacherId, OnlineClass onlineClass, Lesson lesson) {
+    public String createTeacherCommentByEnterClassroom(long studentId, long teacherId, OnlineClass onlineClass, Lesson lesson) {
         try {
             if (studentId > 0 && teacherId > 0 && onlineClass != null && lesson != null) {
                 logger.info(
@@ -870,11 +871,11 @@ public class OnlineClassService {
                         + "studentId={},teacherId={},onlineClassId={},lessonId={}", studentId,
                     teacherId, onlineClass.getId(), lesson.getId());
 
-                QueryTeacherCommentOutputDto isExist = teacherService
-                    .getTeacherComment(String.valueOf(teacherId), String.valueOf(studentId), String.valueOf(onlineClass.getId()));
-                if (isExist != null) {
-                    return isExist.getTeacherCommentId();
-                }
+//                QueryTeacherCommentOutputDto isExist = teacherService
+//                    .getTeacherComment(String.valueOf(teacherId), String.valueOf(studentId), String.valueOf(onlineClass.getId()));
+//                if (isExist != null) {
+//                    return isExist.getTeacherCommentId();
+//                }
 
                 TeacherCommentUpdateDto tcuDto = new TeacherCommentUpdateDto();
                 tcuDto.setStudentId(studentId);
@@ -896,10 +897,12 @@ public class OnlineClassService {
                 tcuDto.setStars(0);
                 tcuDto.setEmpty(true);
 
-                String newId = teacherService.insertOneTeacherComment(tcuDto);
-                logger.info("teacher enter the classRoom,insert a teacherCommentRecord. newId={}",
-                    newId);
-                return newId;
+                TeacherCommentResult newTC = teacherService.checkExistOrInsertOne(tcuDto);
+                if(newTC!=null){
+                    logger.info("teacher enter the classRoom,checkExistOrInsertOne a teacherCommentRecord. newId={}",
+                        newTC.getId());
+                    return String.valueOf(newTC.getId());
+                }
 
             }
         }catch (Exception e){
