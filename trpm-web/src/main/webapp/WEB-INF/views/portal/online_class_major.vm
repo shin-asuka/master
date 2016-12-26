@@ -168,6 +168,64 @@
 	height:22px;
     background: url("#styleUrl('/resources/images/portal/delete.png')");
 }
+
+.win-pop {
+    position:absolute;
+    border-radius:10px;
+    background:#2B2B2B;
+    color:#FFF;
+    padding:13px 25px;
+    display:-webkit-box;
+    max-width:350px;
+}
+.win-pop:after {
+    content:'';
+    width:14px;
+    position:absolute;
+    bottom:-7px;
+    height:14px;
+    right:60px;
+    -webkit-transform:rotate(-45deg);
+    -moz-transform:rotate(-45deg);
+    -ms-transform:rotate(-45deg);
+    -o-transform:rotate(-45deg);
+    transform:rotate(-45deg);
+    background:#2B2B2B;
+}
+.win-pop p {
+    line-height:22px;
+    font-size:13px;
+    margin:0;
+    padding:0;
+    -webkit-box-flex:1;
+    padding:0 30px 0 0;
+}
+.win-pop span {
+    display:-webkit-box;
+    -webkit-box-align:center;
+    -moz-box-align:center;
+    -ms-box-align:center;
+    box-align:center;
+    -webkit-box-pack:center;
+    -moz-box-pack:center;
+    -ms-box-pack:center;
+    box-pack:center;
+}
+.win-pop span button {
+    padding:6px 24px;
+    border:none;
+    border:1px #888 solid;
+    border-radius:3px;
+    font-size:15px;
+    background:none;
+    color:#FFF;
+    display:block;
+    outline:0;
+}
+.win-pop span button:hover {
+    background:#FFF;
+    color:#000;
+}
 </style>
 
 <div class="js-iframe-score iframe-score">
@@ -176,6 +234,14 @@
 	<iframe frameborder="0" scrolling="auto" width="100%" height="300"  style="filter:Chroma(Color=white);" src="/unit_assessment?onlineClassId=${onlineClassId}"></iframe>
 	<strong></strong>
     </div>
+</div>
+
+<div class="win-pop">
+    <p>Don't know which lesson to teach？Please refer to the computer test result in the "Info" button.
+    </p>
+    <span>
+       <button>OK</button>
+    </span>
 </div>
 
 
