@@ -331,8 +331,18 @@
 			}
 		};
 
+        var closeWinPop = function (){
+            var pop = $('.win-pop');
+
+            pop.on('click', 'button', function (){
+                pop.hide();
+            });
+        };
+
+
 		window.onload = function (){
             setIframe.init();
+            closeWinPop();
 		};
 </script>
 <!--<iframe id="iframe-score" frameborder="0" scrolling="auto" width="100%" height="500"
