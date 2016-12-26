@@ -580,7 +580,7 @@ public class ReportService {
      * @date 2015年12月16日
      * @return
      */
-    public TeacherComment findTectBycIdAndStuId(long onlineClassId, long studentId,
+    public TeacherComment findCFByOnlineClassIdAndStudentIdAndTeacherId(long onlineClassId, long studentId,
         OnlineClass onlineClass,Lesson lesson) {
         logger.info("onlineClassId：" + onlineClassId + ";studentId:" + studentId);
         if (0 == onlineClassId || 0 == studentId || onlineClass==null || lesson==null) {
