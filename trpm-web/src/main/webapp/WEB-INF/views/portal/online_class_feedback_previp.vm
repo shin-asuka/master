@@ -1,4 +1,5 @@
-<form id="trailFeedbackForm" name="form" action="#springUrl('/commentSubmit.json')" method="post" class="form-horizontal ng-pristine ng-valid">
+<form id="trailFeedbackForm" name="form" action="#springUrl('/commentSubmit.json')" method="post"
+      class="form-horizontal ng-pristine ng-valid" xmlns="http://www.w3.org/1999/html">
 	<style>
 		.classroom .trailFeedbackContainer{text-align:left;}
 	</style>
@@ -31,8 +32,82 @@
 
 				#if($lesson.serialNumber && ($stringUtils.startsWith($!lesson.serialNumber,'MC')))
 					<div style="padding-top:10px;">
-                        <label>Content Learning</label>
-                        <input type="radio" name="englishLanguageScore" #if(0 == ${teacherApplication.englishLanguageScore})checked="checked"#end value="0" />
+						<div>
+                            <label>Content Learning</label>
+                            <p>>
+								<span>Vocabulary Rebention</span>
+                                <label><input type="radio" name="vocabularyRetention"  value="Struggling" /></label>
+                                <label><input type="radio" name="vocabularyRetention"  value="Developing" /></label>
+                                <label><input type="radio" name="vocabularyRetention"  value="Mastered" /></label>
+							</p>
+
+                            <p>
+								<span>Pronunciation</span>
+                                <label><input type="radio" name="pronunciation"  value="Struggling" /></label>
+                                <label><input type="radio" name="pronunciation"  value="Developing" /></label>
+                                <label><input type="radio" name="pronunciation"  value="Mastered" /></label>
+							</p
+                            <p>
+								<span>Alphabet skills</span>
+                                <label></label><input type="radio" name="alphabetSkills"  value="Struggling" /></label>
+                                <label><input type="radio" name="alphabetSkills"  value="Developing" /></label>
+                                <label><input type="radio" name="alphabetSkills"  value="Mastered" /></label>
+							</p
+                            <p>
+								<span>phonological Awareness</span>
+                                <label><input type="radio" name="phonologicalAwareness"  value="Struggling" /></label>
+                                <label><input type="radio" name="phonologicalAwareness"  value="Developing" /></label>
+                                <label><input type="radio" name="phonologicalAwareness"  value="Mastered" /></label>
+							</p
+						</div>
+
+						<div>
+                            <label>Classroom Behavior</label>
+							<p>
+								<span>Follows instructions</span>
+                                <label><input type="radio" name="phonologicalAwareness"  value="Rarely" /></label>
+                                <label><input type="radio" name="phonologicalAwareness"  value="Sometimes" /></label>
+                                <label><input type="radio" name="phonologicalAwareness"  value="Oftens" /></label>
+							</p>
+
+                            <p>
+                                <span>Participates actively</span>
+                                <label><input type="radio" name="participatesActively"  value="Rarely" /></label>
+                                <label><input type="radio" name="participatesActively"  value="Sometimes" /></label>
+                                <label><input type="radio" name="participatesActively"  value="Oftens" /></label>
+                            </p>
+
+                            <p>
+                                <span>Speaks clearly</span>
+                                <label><input type="radio" name="speaksClearly"  value="Rarely" /></label>
+                                <label><input type="radio" name="speaksClearly"  value="Sometimes" /></label>
+                                <label><input type="radio" name="speaksClearly"  value="Oftens" /></label>
+                            </p>
+						</div>
+
+						<div>
+                            <label>Computer Skills</label>
+							<p>
+								<span>Mouse\Touchpad activities</span>
+                                <label><input type="radio" name="speaksClearly"  value="Struggling" /></label>
+                                <label><input type="radio" name="speaksClearly"  value="Developing" /></label>
+                                <label><input type="radio" name="speaksClearly"  value="Mastered" /></label>
+							</p>
+						</div>
+
+
+                        <div>
+                            <label>Lesson Completion</label>
+							<p>(Was the amount of material appropriate for 25 minutes?)</p>
+                            <p>
+                                <span>Degree of completion</span>
+                                <label><input type="radio" name="degreeCompletion"  value="Skipped a lot" /></label>
+                                <label><input type="radio" name="degreeCompletion"  value="Skipped a bit" /></label>
+                                <label><input type="radio" name="degreeCompletion"  value="Finished all" /></label>
+                            </p>
+                        </div>
+						##<input type="radio" name="englishLanguageScore" #if(0 == ${teacherApplication.englishLanguageScore})checked="checked"#end value="0" />
+
 						<label>Level of Difficulty</label>
 						<div style="font-weight:normal;color:#666;margin-top:-5px;padding-bottom:5px;">
 							(This helps us with overall lesson performance/ student ability)</div>
