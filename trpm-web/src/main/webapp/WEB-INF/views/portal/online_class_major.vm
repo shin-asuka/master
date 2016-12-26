@@ -209,7 +209,7 @@
     margin:0;
     padding:0;
     -webkit-box-flex:1;
-    padding:0 30px 0 0;
+    padding:0 5px 0 0;
 }
 .win-pop span {
     display:-webkit-box;
