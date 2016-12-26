@@ -70,6 +70,7 @@
 		##body start
 		<div class="container">
 		    <div class="mainContainer" style="margin-top: 45px;position: relative">
+				#if($!isTrial==1)
                 <div class="win-pop">
                     <p>Don't know which lesson to teach？Please refer to the computer test result in the "Info" button.
                     </p>
@@ -77,7 +78,8 @@
 					   <button>OK</button>
 					</span>
                 </div>
-			    ##<!-- 星星展示 info help 和 新学生勋章 -->
+				#end
+			##<!-- 星星展示 info help 和 新学生勋章 -->
 				<div class="classroom2Info">
 				    <button class="infoBtn" id="infoBtn" onclick="require('classmajor').openInfo('$!student.id','$lesson.serialNumber')">Info</button>
 				    <!--
