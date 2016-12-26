@@ -69,7 +69,14 @@
 		
 		##body start
 		<div class="container">
-		    <div class="mainContainer" style="margin-top: 45px;">
+		    <div class="mainContainer" style="margin-top: 45px;position: relative">
+                <div class="win-pop">
+                    <p>Don't know which lesson to teach？Please refer to the computer test result in the "Info" button.
+                    </p>
+					<span>
+					   <button>OK</button>
+					</span>
+                </div>
 			    ##<!-- 星星展示 info help 和 新学生勋章 -->
 				<div class="classroom2Info">
 				    <button class="infoBtn" id="infoBtn" onclick="require('classmajor').openInfo('$!student.id','$lesson.serialNumber')">Info</button>
@@ -170,6 +177,8 @@
 }
 
 .win-pop {
+	top:-122px;
+	left:-15px;
     position:absolute;
     border-radius:10px;
     background:#2B2B2B;
@@ -184,7 +193,7 @@
     position:absolute;
     bottom:-7px;
     height:14px;
-    right:60px;
+    right:29px;
     -webkit-transform:rotate(-45deg);
     -moz-transform:rotate(-45deg);
     -ms-transform:rotate(-45deg);
@@ -236,13 +245,7 @@
     </div>
 </div>
 
-<div class="win-pop">
-    <p>Don't know which lesson to teach？Please refer to the computer test result in the "Info" button.
-    </p>
-    <span>
-       <button>OK</button>
-    </span>
-</div>
+
 
 
 <script>
@@ -333,7 +336,6 @@
 
         var closeWinPop = function (){
             var pop = $('.win-pop');
-
             pop.on('click', 'button', function (){
                 pop.hide();
             });
