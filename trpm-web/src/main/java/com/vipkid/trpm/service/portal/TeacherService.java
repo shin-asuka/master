@@ -1,6 +1,7 @@
 package com.vipkid.trpm.service.portal;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
@@ -60,7 +61,7 @@ public class TeacherService {
 
 	private static final String API_TEACHER_COMMENT_UPDATE = "/api/teacher/comment/updateById";
 
-	private static final String API_TEACHER_COMMENT_INSERT = "/api/teacher/comment/insertOne";
+	private static final String API_TEACHER_COMMENT_INSERT = "/api/teacher/comment/checkExistOrInsertOne";
 
 
 	private static final int QUERY_LIMIT_SIZE = 200;
@@ -202,7 +203,7 @@ public class TeacherService {
 						false);
 		result.setTipsForOtherTeachers(teacherComment.getTipsForOtherTeachers());
 
-		String trialLevelResultDisplay = findTrialLevelResutl4Display(teacherComment.getTrialLevelResult(),studentId,teacherComment.getLessonSerialNumber());
+		String trialLevelResultDisplay = findTrialLevelResult4Display(teacherComment.getTrialLevelResult(),studentId,teacherComment.getLessonSerialNumber());
 		result.setTrialLevelResult(trialLevelResultDisplay);
 
 		return result;
@@ -218,7 +219,7 @@ public class TeacherService {
 		return isPreVipkid;
 	}
 
-	private String findTrialLevelResutl4Display(String trialLevelResult, String studentId,
+	private String findTrialLevelResult4Display(String trialLevelResult, String studentId,
 		String lessonSerialNumber) {
 		if (StringUtils.isNotBlank(lessonSerialNumber) && lessonSerialNumber.startsWith("T")) {
 			String trialLevelResultTmp = reportService.handleTeacherComment(trialLevelResult);
@@ -411,41 +412,46 @@ public class TeacherService {
 		return true;
 	}
 
-	public String insertOneTeacherComment(TeacherCommentUpdateDto inputDto) {
-		Map<String, String> param = Maps.newHashMap();
-		param.put("teacherComment", JsonUtils.toJSONString(inputDto));
+	public TeacherCommentResult checkExistOrInsertOne(TeacherCommentUpdateDto inputDto) {
+		List<TeacherCommentResult> tcResult = Lists.newArrayList();
 
-		logger.info("insertOneTeacherComment http request url = {}; param={}",
-				httpUrlConstant.getApiHomeworkServerUrl() + API_TEACHER_COMMENT_INSERT,JsonUtils.toJSONString(inputDto));
-		String response = httpApiClient
-				.doPost(httpUrlConstant.getApiHomeworkServerUrl() + API_TEACHER_COMMENT_INSERT, param);
-		logger.info("insertOneTeacherComment http response = {}", response);
-
-		StandardJsonObject standardJsonObject = null;
+			Map<String, String> param = Maps.newHashMap();
+			param.put("teacherComment", JsonUtils.toJSONString(inputDto));
 		try {
+			logger.info("checkExistOrInsertOne http request url = {}; param={}",
+				httpUrlConstant.getApiHomeworkServerUrl() + API_TEACHER_COMMENT_INSERT,
+				JsonUtils.toJSONString(inputDto));
+			String response = httpApiClient
+				.doPost(httpUrlConstant.getApiHomeworkServerUrl() + API_TEACHER_COMMENT_INSERT, param);
+			logger.info("checkExistOrInsertOne http response = {}", response);
+
+			StandardJsonObject standardJsonObject = null;
+
+
 			standardJsonObject = JsonUtils.toBean(response, StandardJsonObject.class);
+
+			if (standardJsonObject == null || !standardJsonObject.getRet()) {
+				logger.error("请求checkExistOrInsertOne返回失败，请求参数：{}，返回结果：{}", param, response);
+				return null;
+			}
+			if (standardJsonObject.getData() == null
+				|| standardJsonObject.getData().get("result") == null) {
+				logger.error("请求checkExistOrInsertOne返回数据为空，请求参数：{}，返回结果：{}", param, response);
+				return null;
+			}
+			tcResult = JsonUtils
+				.toBeanList(standardJsonObject.getData().get("result"), TeacherCommentResult.class);
+			if (CollectionUtils.isEmpty(tcResult)) {
+				logger.error("请求checkExistOrInsertOne数据返回为空，请求参数：{}，返回结果：{}", param, response);
+				return null;
+			}
 		} catch (Exception e) {
-			logger.error("请求CF失败，返回数据格式异常，转换StandardJsonObject失败，请求参数：{}，返回结果：{}", param,
-					response, e);
-			return null;
-		}
-		if (standardJsonObject == null || !standardJsonObject.getRet()) {
-			logger.error("请求CF返回失败，请求参数：{}，返回结果：{}", param, response);
-			return null;
-		}
-		if (standardJsonObject.getData() == null || standardJsonObject.getData().get("result") == null) {
-			logger.error("请求CF返回数据为空，请求参数：{}，返回结果：{}", param, response);
+			logger
+				.error("请求checkExistOrInsertOne失败，返回数据格式异常，转换StandardJsonObject失败，请求参数：{}", param, e);
 			return null;
 		}
 
-
-		Object newId = ((Map)standardJsonObject.getData().get("result")).get("id");
-		if(newId==null||StringUtils.isBlank(newId.toString())){
-			logger.error("请求CF插入数据返回id为空，请求参数：{}，返回结果：{}", param, response);
-			return null;
-		}
-
-		return newId.toString();
+		return tcResult.get(0);
 	}
 
 

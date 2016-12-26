@@ -234,7 +234,7 @@ public class ReportController extends AbstractPortalController {
         model.addAttribute("lesson", lesson);
 
         // 查询FeedBack信息
-        TeacherComment teacherComment = reportService.findTectBycIdAndStuId(onlineClassId, studentId,onlineClass,lesson);
+        TeacherComment teacherComment = reportService.findCFByOnlineClassIdAndStudentIdAndTeacherId(onlineClassId, studentId,onlineClass,lesson);
         if(teacherComment!=null){
             String trialLevelResultDisplay = reportService.handleTeacherComment(teacherComment.getTrialLevelResult());
             teacherComment.setTrialLevelResult(trialLevelResultDisplay);

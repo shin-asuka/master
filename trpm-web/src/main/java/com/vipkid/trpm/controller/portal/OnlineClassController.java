@@ -155,7 +155,7 @@ public class OnlineClassController extends AbstractPortalController {
                 model.addAttribute("from", "feedback");
             }
             //只有在Major课老师进教室时，才创建TeacherComment
-            onlineclassService.checkAndAddFeedback(studentId,teacher.getId(),onlineClass,lesson);
+            onlineclassService.createTeacherCommentByEnterClassroom(studentId,teacher.getId(),onlineClass,lesson);
             model.addAllAttributes(
                     onlineclassService.enterMajor(onlineClass, studentId, teacher, lesson));
             return view("online_class_major");
