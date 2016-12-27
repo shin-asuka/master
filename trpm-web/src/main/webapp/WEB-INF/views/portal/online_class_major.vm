@@ -193,6 +193,11 @@
     display:-moz-box;
     max-width:350px;
 }
+@-moz-document url-prefix() {
+    .win-pop {
+        top: -122px;
+    }
+}
 .win-pop:after {
     content:'';
     width:14px;
