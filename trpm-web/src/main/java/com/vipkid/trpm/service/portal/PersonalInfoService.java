@@ -97,7 +97,7 @@ public class PersonalInfoService {
 		Map<String, Object> modelMap = Maps.newHashMap();
 		modelMap.put("action", true);
 
-		int teacherId = (int) teacher.getId();
+		long teacherId = teacher.getId();
 		// bank account info
 		TeacherAddress teacherBankAddress = new TeacherAddress();
 		teacherBankAddress.setTeacherId(teacherId);
