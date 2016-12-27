@@ -1,15 +1,5 @@
 package com.vipkid.portal.pesupervisor.service.impl;
 
-import java.sql.Timestamp;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-
-import org.community.config.PropertyConfigurer;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import com.google.api.client.util.Lists;
 import com.vipkid.portal.pesupervisor.model.PeSupervisorData;
 import com.vipkid.portal.pesupervisor.model.PeSupervisorEachClassInfo;
@@ -18,7 +8,18 @@ import com.vipkid.trpm.dao.TeacherDao;
 import com.vipkid.trpm.dao.TeacherPeDao;
 import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.entity.TeacherPe;
+import org.community.config.PropertyConfigurer;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+
+@Service
 public class PeSupervisorRestServiceImpl implements PeSupervisorRestService{
 	private static final int LINE_PER_PAGE = PropertyConfigurer.intValue("page.linePerPage");
 	
