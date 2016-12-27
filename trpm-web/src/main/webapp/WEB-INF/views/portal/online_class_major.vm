@@ -215,18 +215,8 @@
     padding:0 5px 0 0;
 }
 .win-pop span {
-    display:-webkit-box;
-    display:-ms-box;
-    display:-ms-flexbox;
-    display:-moz-box;
-    -webkit-box-align:center;
-    -moz-box-align:center;
-    -ms-box-align:center;
-    box-align:center;
-    -webkit-box-pack:center;
-    -moz-box-pack:center;
-    -ms-box-pack:center;
-    box-pack:center;
+    display:block;
+    margin:14px 0 0 0;
 }
 .win-pop span button {
     padding:6px 24px;
