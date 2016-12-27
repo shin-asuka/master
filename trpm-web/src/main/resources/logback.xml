@@ -100,13 +100,10 @@
         <appender-ref ref="FILE_FOR_HTTP"/>
     </logger>
 
-    <logger name="org.springframework.web.servlet.DispatcherServlet" level="debug">
-        <appender-ref ref="STDOUT"/>
-    </logger>
-
 
     <!-- 日志输出级别 -->
-    <root level="WARN">
+    <root level="info">
+    	${logback.console.out}
         <appender-ref ref="FILE"/>
         <appender-ref ref="vipkid-trpm-error"/>
     </root>
