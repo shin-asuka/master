@@ -337,7 +337,7 @@
                 #end
                 #if($isPes)
                     <li class="$!{activeClassroomsPe}">
-                        <a href="#springUrl('/pe_supervisor')">PE Supervisor</a>
+                        <a href="#springUrl('/pe_supervisor')">Mock Class Senior Mentor</a>
                     </li>
                 #end
                 <li class="$!{activePayrollInfo}">
