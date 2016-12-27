@@ -322,7 +322,7 @@
                     <a href="#springUrl('/bookings.shtml')">Bookings</a>
                 </li>
                 <li class="$!{activeClassrooms}">
-                    <a href="#springUrl('/classrooms.shtml')">Classrooms</a>
+                    <a href="#springUrl('/classrooms')">Classrooms</a>
                 </li>
                 #**
                 <li><a href="#springUrl('/evaluations')">Evaluations</a>

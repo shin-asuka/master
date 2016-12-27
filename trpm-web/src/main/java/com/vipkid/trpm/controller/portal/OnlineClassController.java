@@ -179,7 +179,7 @@ public class OnlineClassController extends AbstractPortalController {
         Teacher teacher = loginService.getTeacher();
         onlineclassService.exitclassroom(onlineClassId, teacher);
 
-        return "redirect:/classrooms.shtml";
+        return "redirect:/classrooms";
     }
 
     @RequestMapping("/exitClassroomPage")
@@ -362,4 +362,9 @@ public class OnlineClassController extends AbstractPortalController {
         return jsonView();
     }
 
+  //FAQ静态页面的controler
+  	@RequestMapping("/faq")
+  	public String showFAQ(HttpServletRequest request, HttpServletResponse response, Model model) {
+  		return view("faq");
+  	}
 }

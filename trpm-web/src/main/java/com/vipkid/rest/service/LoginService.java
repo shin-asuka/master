@@ -171,7 +171,7 @@ public class LoginService {
     			token = CookieUtils.getValue(request, CookieKey.TRPM_TOKEN);
     		}
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("获取Token时出现异常，token ={}。异常：{}",token,e);
 		}
     	return token;
     }

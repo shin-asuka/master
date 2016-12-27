@@ -33,7 +33,7 @@ li[role] a {
     #end
     </div>
   </div>
-  <form id="classroomsForm" style="display: none;" method="post" action="#springUrl('/classrooms.shtml')">
+  <form id="classroomsForm" style="display: none;" method="post" action="#springUrl('/classrooms')">
     <input type="hidden" id="offsetOfMonth" name="offsetOfMonth" value="$!{offsetOfMonth}" />
     <input type="hidden" id="courseType" name="courseType" value="$!{courseType}" />
     <input type="submit" />
