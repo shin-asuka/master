@@ -1,4 +1,4 @@
-package com.vipkid.portal.controller;
+package com.vipkid.portal.bookings.controller;
 
 import com.google.api.client.util.Maps;
 import com.vipkid.enums.OnlineClassEnum.CourseType;
@@ -7,8 +7,8 @@ import com.vipkid.file.utils.StringUtils;
 import com.vipkid.http.service.AnnouncementHttpService;
 import com.vipkid.http.utils.JsonUtils;
 import com.vipkid.http.vo.Announcement;
-import com.vipkid.portal.entity.*;
-import com.vipkid.portal.service.BookingsService;
+import com.vipkid.portal.bookings.entity.*;
+import com.vipkid.portal.bookings.service.BookingsService;
 import com.vipkid.rest.config.RestfulConfig;
 import com.vipkid.rest.interceptor.annotation.RestInterface;
 import com.vipkid.rest.service.LoginService;
@@ -239,20 +239,6 @@ public class BookingsController {
             return ApiResponseUtils.buildErrorResp(HttpStatus.INTERNAL_SERVER_ERROR.value(),
                             ExceptionUtils.getFullStackTrace(e));
         }
-    }
-
-    @RequestMapping(value = "/getTips", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
-    public Map<String, Object> getTips(HttpServletRequest request, HttpServletResponse response) {
-        Map<String, Object> resultMap = Maps.newHashMap();
-        try {
-            return bookingsService.getTips(request, response, loginService.getTeacher());
-        } catch (Exception e) {
-            logger.error("Internal server error", e);
-
-            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            resultMap.put("error", "Server error");
-        }
-        return resultMap;
     }
 
 }

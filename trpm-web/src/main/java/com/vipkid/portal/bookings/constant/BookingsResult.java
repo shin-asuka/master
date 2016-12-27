@@ -1,4 +1,4 @@
-package com.vipkid.portal.constant;
+package com.vipkid.portal.bookings.constant;
 
 /**
  * Created by liuguowen on 2016/12/21.

@@ -1,4 +1,4 @@
-package com.vipkid.portal.service;
+package com.vipkid.portal.bookings.service;
 
 import org.junit.Test;
 import org.slf4j.Logger;

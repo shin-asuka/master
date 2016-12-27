@@ -1,4 +1,4 @@
-package com.vipkid.portal.entity;
+package com.vipkid.portal.bookings.entity;
 
 import java.util.List;
 

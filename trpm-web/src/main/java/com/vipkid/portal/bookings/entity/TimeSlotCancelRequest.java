@@ -1,4 +1,4 @@
-package com.vipkid.portal.entity;
+package com.vipkid.portal.bookings.entity;
 
 /**
  * Created by liuguowen on 2016/12/21.

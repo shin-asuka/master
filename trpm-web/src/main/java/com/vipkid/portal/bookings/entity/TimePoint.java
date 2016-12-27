@@ -1,4 +1,4 @@
-package com.vipkid.portal.entity;
+package com.vipkid.portal.bookings.entity;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;

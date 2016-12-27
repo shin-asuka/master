@@ -1,8 +1,8 @@
-package com.vipkid.portal.controller;
+package com.vipkid.portal.bookings.controller;
 
 import com.google.common.collect.Lists;
 import com.vipkid.http.utils.JsonUtils;
-import com.vipkid.portal.entity.*;
+import com.vipkid.portal.bookings.entity.*;
 import com.vipkid.rest.service.LoginService;
 import com.vipkid.trpm.entity.User;
 import com.vipkid.trpm.proxy.RedisProxy;

@@ -1,4 +1,4 @@
-package com.vipkid.portal.service;
+package com.vipkid.portal.bookings.service;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
@@ -7,8 +7,8 @@ import com.vipkid.enums.OnlineClassEnum.ClassStatus;
 import com.vipkid.enums.OnlineClassEnum.ClassType;
 import com.vipkid.enums.OnlineClassEnum.CourseType;
 import com.vipkid.enums.TeacherPageLoginEnum.LoginType;
-import com.vipkid.portal.constant.BookingsResult;
-import com.vipkid.portal.entity.*;
+import com.vipkid.portal.bookings.constant.BookingsResult;
+import com.vipkid.portal.bookings.entity.*;
 import com.vipkid.rest.service.TeacherPageLoginService;
 import com.vipkid.trpm.constant.ApplicationConstant;
 import com.vipkid.trpm.constant.ApplicationConstant.AuditCategory;
