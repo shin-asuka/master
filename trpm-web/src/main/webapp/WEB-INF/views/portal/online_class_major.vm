@@ -216,6 +216,8 @@
 }
 .win-pop span {
     display:-webkit-box;
+    display:-ms-box;
+    display:-moz-box;
     -webkit-box-align:center;
     -moz-box-align:center;
     -ms-box-align:center;
