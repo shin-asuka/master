@@ -1,6 +1,6 @@
 package com.vipkid.portal.pesupervisor.model;
 
-public class PeSupervisorEachClassInfo {
+public class PeSupervisorClassDetail {
 	private long id;
 	private long onlineClassId;
 	private String lessonName;

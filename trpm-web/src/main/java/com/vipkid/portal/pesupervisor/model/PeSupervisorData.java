@@ -7,7 +7,7 @@ public class PeSupervisorData {
 	private long teacherId;
 	private int curPage;
 	private int totalPage;
-	private List<PeSupervisorEachClassInfo> dataList;
+	private List<PeSupervisorClassDetail> dataList;
 	
 	public long getTeacherId() {
 		return teacherId;
@@ -18,7 +18,7 @@ public class PeSupervisorData {
 	public int getTotalPage() {
 		return totalPage;
 	}
-	public List<PeSupervisorEachClassInfo> getDataList() {
+	public List<PeSupervisorClassDetail> getDataList() {
 		return dataList;
 	}
 	public void setTeacherId(long teacherId) {
@@ -30,7 +30,7 @@ public class PeSupervisorData {
 	public void setTotalPage(int totalPage) {
 		this.totalPage = totalPage;
 	}
-	public void setDataList(List<PeSupervisorEachClassInfo> dataList) {
+	public void setDataList(List<PeSupervisorClassDetail> dataList) {
 		this.dataList = dataList;
 	}
 }
