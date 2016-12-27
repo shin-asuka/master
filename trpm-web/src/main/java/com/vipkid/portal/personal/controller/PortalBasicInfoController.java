@@ -28,7 +28,6 @@ import com.vipkid.file.model.FileVo;
 import com.vipkid.file.service.AwsFileService;
 import com.vipkid.http.service.FileHttpService;
 import com.vipkid.portal.personal.service.PortalBasicInfoService;
-import com.vipkid.recruitment.utils.ReturnMapUtils;
 import com.vipkid.rest.RestfulController;
 import com.vipkid.rest.config.RestfulConfig;
 import com.vipkid.rest.dto.PersonlInfoDto;
@@ -63,7 +62,7 @@ public class PortalBasicInfoController extends RestfulController{
      * @return
      */
 	@ResponseBody
-    @RequestMapping("/uploadAvatar")
+    @RequestMapping(value="/uploadAvatar",method = RequestMethod.POST, produces = RestfulConfig.JSON_UTF_8)
     public Map<String, Object> uploadAvatar(@RequestParam("file") MultipartFile file, HttpServletRequest request, HttpServletResponse response) {
 		
         Map<String, Object> result = Maps.newHashMap();
@@ -82,10 +81,6 @@ public class PortalBasicInfoController extends RestfulController{
                 Preconditions.checkArgument(AwsFileUtils.checkAvatarFileSize(fileSize), "文件太大，maxSize = " + AwsFileUtils.AVATAR_MAX_SIZE);
 
                 Teacher teacher = getTeacher(request);
-                if (null == teacher) {
-                    response.setStatus(HttpStatus.NOT_FOUND.value());
-                    return  ApiResponseUtils.buildErrorResp(-2, "This account does not exist.");
-                }
                 Long teacherId = teacher.getId();
                 logger.info("Upload avatar for {}!", teacherId);
                 FileVo fileVo = awsFileService.upload(bucketName, key, file.getInputStream(), fileSize);
@@ -133,7 +128,7 @@ public class PortalBasicInfoController extends RestfulController{
 	}
 	
 	@ResponseBody
-	@RequestMapping(value = "/basicInfo", method = RequestMethod.PUT, produces = RestfulConfig.JSON_UTF_8)
+	@RequestMapping(value = "/basicInfo", method = {RequestMethod.PUT,RequestMethod.POST}, produces = RestfulConfig.JSON_UTF_8)
 	public Map<String,Object> updateBasicInfo(@RequestBody PersonlInfoDto bean, HttpServletRequest request, HttpServletResponse response){
 		try{
             List<Result> list = ValidateUtils.checkBean(bean,false);
@@ -142,10 +137,7 @@ public class PortalBasicInfoController extends RestfulController{
                 return ApiResponseUtils.buildErrorResp(0, "reslult:"+list.get(0).getName() + "," + list.get(0).getMessages());
             }
             
-			Map<String,Object> result = portalBasicInfoService.updateBasicInfo(getTeacher(request),getUser(request),bean);
-			if(ReturnMapUtils.isFail(result)){
-				 response.setStatus(HttpStatus.FORBIDDEN.value());
-			}
+			boolean result = portalBasicInfoService.updateBasicInfo(getTeacher(request),getUser(request),bean);
 			return ApiResponseUtils.buildSuccessDataResp(result);
         } catch (IllegalArgumentException e) {
         	logger.error("Exception", e);

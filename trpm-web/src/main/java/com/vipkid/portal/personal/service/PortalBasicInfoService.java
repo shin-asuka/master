@@ -96,7 +96,7 @@ public class PortalBasicInfoService {
 		return personInfo;
 	}
 	
-	public Map<String,Object> updateBasicInfo(Teacher teacher,User user,PersonlInfoDto basicInfo){
+	public boolean updateBasicInfo(Teacher teacher,User user,PersonlInfoDto basicInfo){
 		
 		user.setGender(basicInfo.getGender());
 		
@@ -132,6 +132,6 @@ public class PortalBasicInfoService {
 		this.teacherDao.update(teacher);
 		this.userDao.update(user);
 		
-		return ReturnMapUtils.returnSuccess();
+		return true;
 	}
 }
