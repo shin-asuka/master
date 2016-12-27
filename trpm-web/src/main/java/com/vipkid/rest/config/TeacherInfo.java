@@ -38,7 +38,7 @@ public class TeacherInfo {
     //quanxian
     private boolean evaluationClick = false;
 
-    private boolean isPreVIP = false;
+    private boolean canTeachPrevip = false;
 
     public Map<String, Object> getRoles() {
         return roles;
@@ -96,13 +96,11 @@ public class TeacherInfo {
         this.lifeCycle = lifeCycle;
         return this;
     }
-
-    public boolean isPreVIP() {
-        return isPreVIP;
+    public boolean getCanTeachPrevip() {
+        return canTeachPrevip;
     }
-
-    public void setPreVIP(boolean preVIP) {
-        isPreVIP = preVIP;
+    public void setCanTeachPrevip(boolean preVIP) {
+        canTeachPrevip = preVIP;
     }
     public String getAction() {
         return action;
@@ -152,9 +150,9 @@ public class TeacherInfo {
         this.setHaveChannel(StringUtils.isNotBlank(teacher.getReferee()) || teacher.getPartnerId() > 0 || StringUtils.isNotBlank(teacher.getOtherChannel()));
         String teacherTag = teacher.getTeacherTags();
         if (teacherTag.indexOf("-1")>=0){
-            isPreVIP = true;
+            canTeachPrevip = true;
         }
-        this.setPreVIP(isPreVIP);
+        this.setCanTeachPrevip(canTeachPrevip);
     }
    
 }
