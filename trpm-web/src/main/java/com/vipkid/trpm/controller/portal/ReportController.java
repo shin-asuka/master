@@ -5,6 +5,7 @@ import com.google.common.base.Stopwatch;
 import com.google.common.collect.Maps;
 import com.vipkid.enums.OnlineClassEnum;
 import com.vipkid.rest.service.LoginService;
+import com.vipkid.trpm.constant.ApplicationConstant;
 import com.vipkid.trpm.dao.StudentExamDao;
 import com.vipkid.trpm.entity.*;
 import com.vipkid.trpm.entity.teachercomment.SubmitTeacherCommentDto;
@@ -245,7 +246,16 @@ public class ReportController extends AbstractPortalController {
         model.addAttribute("studentExam", reportService.handleExamLevel(studentExam, lesson.getSerialNumber()));
 
         model.addAttribute("studentId", studentId);
-
+        String isTrial = "0";
+        String isPreVip = "0";
+        if(lesson.getSerialNumber()!=null && lesson.getSerialNumber().startsWith("T1-")){
+            isTrial = "1"; //区分是否Trial课程
+        }
+        if(lesson.getSerialNumber()!=null && lesson.getSerialNumber().trim().equals(ApplicationConstant.TrailLessonConstants.L0)){
+            isPreVip = "1"; //区分是否PreVip课程
+        }
+        model.addAttribute("isPreVip",isPreVip);
+        model.addAttribute("isTrial",isTrial);
         long millis =stopwatch.stop().elapsed(TimeUnit.MILLISECONDS);
         logger.info("执行ReportController: feedback()耗时：{} ", millis);
 

@@ -307,6 +307,20 @@
             <version>2.3.1</version>
         </dependency>
         <!-- geoip end -->
+        
+        <!-- geoip start -->
+		<dependency>
+            <groupId>com.maxmind.geoip2</groupId>
+            <artifactId>geoip2</artifactId>
+            <version>2.3.1</version>
+        </dependency>
+        <!-- geoip end -->
+		<dependency>
+			<groupId>com.qiniu</groupId>
+			<artifactId>qiniu-java-sdk</artifactId>
+			<version>[7.0.0, 7.0.99]</version>
+		</dependency>
+        
 	</dependencies>
 
 	<build>

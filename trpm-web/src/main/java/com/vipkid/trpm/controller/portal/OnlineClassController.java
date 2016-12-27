@@ -128,10 +128,16 @@ public class OnlineClassController extends AbstractPortalController {
             return "error/info";
         }
         String isTrial = "0";
+        String isPreVip = "0";
         if(lesson.getSerialNumber()!=null && lesson.getSerialNumber().startsWith("T1-")){
         	isTrial = "1"; //区分是否Trial课程
         }
+        if(lesson.getSerialNumber()!=null && lesson.getSerialNumber().trim().equals("T1-U1-LC1-L0")){
+            isPreVip = "1"; //区分是否PreVip课程
+        }
+
         model.addAttribute("isTrial", isTrial);
+        model.addAttribute("isPreVip",isPreVip);
         logger.info("TeacherId:{},成功进入教室(INTO),onlineClassId:{},studentId:{}",user.getId(),onlineClassId,studentId);
 
         model.addAttribute("lesson", lesson);
