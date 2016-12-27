@@ -1,4 +1,4 @@
-package com.vipkid.rest.portal.cotroller;
+package com.vipkid.portal.personal.controller;
 
 import java.io.IOException;
 import java.util.Date;
@@ -33,7 +33,7 @@ import com.vipkid.file.service.AwsFileService;
 import com.vipkid.file.utils.ActionHelp;
 import com.vipkid.file.utils.StringUtils;
 import com.vipkid.http.utils.JsonUtils;
-import com.vipkid.rest.portal.service.PersonalInfoRestService;
+import com.vipkid.portal.personal.service.PersonalInfoRestService;
 import com.vipkid.rest.service.LoginService;
 import com.vipkid.rest.utils.ApiResponseUtils;
 import com.vipkid.rest.validation.ValidateUtils;

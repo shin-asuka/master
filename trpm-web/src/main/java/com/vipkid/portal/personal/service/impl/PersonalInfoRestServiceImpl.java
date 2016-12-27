@@ -1,4 +1,4 @@
-package com.vipkid.rest.portal.service.impl;
+package com.vipkid.portal.personal.service.impl;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -14,8 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.google.api.client.util.Maps;
-import com.vipkid.rest.portal.model.TeachingInfoData;
-import com.vipkid.rest.portal.service.PersonalInfoRestService;
+import com.vipkid.portal.personal.model.TeachingInfoData;
+import com.vipkid.portal.personal.service.PersonalInfoRestService;
 import com.vipkid.rest.service.LoginService;
 import com.vipkid.rest.utils.ApiResponseUtils;
 import com.vipkid.trpm.constant.ApplicationConstant.CookieKey;

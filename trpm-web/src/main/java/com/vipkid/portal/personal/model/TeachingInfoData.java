@@ -1,4 +1,4 @@
-package com.vipkid.rest.portal.model;
+package com.vipkid.portal.personal.model;
 
 public class TeachingInfoData {
 	private String teacherSerialNum;

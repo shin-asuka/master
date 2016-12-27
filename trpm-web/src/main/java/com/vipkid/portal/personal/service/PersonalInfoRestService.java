@@ -1,4 +1,4 @@
-package com.vipkid.rest.portal.service;
+package com.vipkid.portal.personal.service;
 
 import java.util.Map;
 
