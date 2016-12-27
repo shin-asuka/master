@@ -29,14 +29,18 @@ public class TeacherBankVO implements Serializable {
     private Integer beneficiaryCityId;
     private String beneficiaryStreetAddress;
     private String beneficiaryZipCode;
-    
+
+    /**
+     * swiftCode and bankABARoutingNumber: 1 in 2
+     */
+    @Ignore
     private String swiftCode;
+    @Ignore
     private String bankABARoutingNumber;
+
     @Ignore
     private String bankACHNumber;
     
-    
-    ////=======
     private Integer idType;
     private String passportURL;
     

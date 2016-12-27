@@ -14,6 +14,7 @@ import org.community.lang.Symbol;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -167,7 +168,8 @@ public class BankInfoController extends RestfulController{
      * @return
      */
     @RequestMapping(value = "/updateBankInfo", method = RequestMethod.POST)
-    public Object setBankInfoAction(HttpServletRequest request, HttpServletResponse response, TeacherBankVO bankInfo) {
+    public Object setBankInfoAction(HttpServletRequest request, HttpServletResponse response,
+                                    @RequestBody TeacherBankVO bankInfo) {
         Map<String, Object> result = Maps.newHashMap();
         long teacherId = 0L;
         try {
