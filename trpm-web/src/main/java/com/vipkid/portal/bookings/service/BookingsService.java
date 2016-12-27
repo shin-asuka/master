@@ -419,6 +419,7 @@ public class BookingsService {
         if (ClassStatus.isOpen(status)) {
             long onlineClassId = (Long) teacherSchedule.get("id");
             teacherSchedule.put("studentCount", onlineClassDao.countStudentByOnlineClassId(onlineClassId));
+            teacherSchedule.put("studentId", 0);
         }
     }
 
