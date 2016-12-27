@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.google.common.base.Stopwatch;
+import com.vipkid.dataSource.annotation.Slave;
 import com.vipkid.enums.TeacherEnum.LifeCycle;
 import com.vipkid.http.utils.JsonUtils;
 import com.vipkid.rest.RestfulController;
@@ -44,6 +45,7 @@ public class ClassroomsRestController extends RestfulController{
 	 * @param page
 	 * @return
 	 */
+	@Slave
 	@RequestMapping(value = "/restClassrooms", method = RequestMethod.GET)
 	public Map<String, Object> classrooms(HttpServletRequest request, HttpServletResponse response,
 			@RequestParam(value="teacherId", required=true) long teacherId,
