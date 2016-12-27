@@ -187,6 +187,9 @@
     color:#FFF;
     padding:13px 25px;
     display:-webkit-box;
+    display:-ms-flexbox;
+    display:-ms-box;
+    display:-moz-box;
     max-width:350px;
 }
 .win-pop:after {
