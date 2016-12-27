@@ -170,15 +170,9 @@ public class AuditEmailService {
     public Map<String,Object> sendPracticumReapply(long teacherId){
         try{
             Teacher teacher  =  teacherDao.findById(teacherId);
-            List<TeacherApplication> listEntity = teacherApplicationDao.findCurrentApplication(teacher.getId());
-            OnlineClass onlineClass = new OnlineClass();
-            if(CollectionUtils.isNotEmpty(listEntity)){
-                TeacherApplication teacherApplication = listEntity.get(0);
-               onlineClass =  onlineClassDao.findById(teacherApplication.getOnlineClassId());
-            }
-            //TODO   FinishType
-           // if(onlineClass.getFinishType().equals(""))
 
+            //TODO   FinishType
+            // if(onlineClass.getFinishType().equals(""))
 
             Map<String, String> paramsMap = Maps.newHashMap();
             if (teacher.getFirstName() != null){
