@@ -600,35 +600,43 @@ public class BookingsService {
                 onlineClass.setClassType(ClassType.PRACTICUM.val());
 
                 /* 需要加锁，一次只处理一个请求 */
-                synchronized (teacher) {
-                    /* 验证 PRACTICUM 课程的这个时间点是否与MAJOR课时冲突 */
-                    Timestamp plusHour = new Timestamp(scheduleDateTime.getTime() + HALF_HOUR_MILLIS);
+                final String key = "TP:LOCK:PRACTICUM:" + teacher.getId();
+                try {
+                    if (redisProxy.lock(key, LOCK_TIMESLOT_EXPIRED)) {
+                        /* 验证 PRACTICUM 课程的这个时间点是否与MAJOR课时冲突 */
+                        Timestamp plusHour = new Timestamp(scheduleDateTime.getTime() + HALF_HOUR_MILLIS);
 
-                    /* 验证往后半小时的课程时间有没有跨天 */
-                    LocalDateTime localDateTimeBeiJing = LocalDateTime.ofInstant(plusHour.toInstant(), SHANGHAI);
-                    String formatToBeiJing = localDateTimeBeiJing.format(FMT_YMD_HMS);
+                        /* 验证往后半小时的课程时间有没有跨天 */
+                        LocalDateTime localDateTimeBeiJing = LocalDateTime.ofInstant(plusHour.toInstant(), SHANGHAI);
+                        String formatToBeiJing = localDateTimeBeiJing.format(FMT_YMD_HMS);
 
-                    if (!isShow(formatToBeiJing, courseType)) {
-                        modelMap.put("error", BookingsResult.DISABLED_PLACE);
-                        return modelMap;
-                    }
+                        if (!isShow(formatToBeiJing, courseType)) {
+                            modelMap.put("error", BookingsResult.DISABLED_PLACE);
+                            return modelMap;
+                        }
 
-                    /* 往前半小时只验证PRACTICUM的课程时间 */
-                    Timestamp minusHour = new Timestamp(scheduleDateTime.getTime() - HALF_HOUR_MILLIS);
-                    List<OnlineClass> tList =
-                                    onlineClassDao.findByTeacherIdAndScheduleDateTime(teacher.getId(), minusHour);
+                        /* 往前半小时只验证PRACTICUM的课程时间 */
+                        Timestamp minusHour = new Timestamp(scheduleDateTime.getTime() - HALF_HOUR_MILLIS);
+                        List<OnlineClass> tList =
+                                        onlineClassDao.findByTeacherIdAndScheduleDateTime(teacher.getId(), minusHour);
 
-                    long count = tList.stream().filter((o) -> o.getClassType() == ClassType.PRACTICUM.val())
-                                    .filter((o) -> ClassStatus.isBooked(o.getStatus())
-                                                    || ClassStatus.isAvailable(o.getStatus()))
-                                    .count();
+                        long count = tList.stream().filter((o) -> o.getClassType() == ClassType.PRACTICUM.val())
+                                        .filter((o) -> ClassStatus.isBooked(o.getStatus())
+                                                        || ClassStatus.isAvailable(o.getStatus()))
+                                        .count();
 
-                    if (canSetSchedule(teacher.getId(), plusHour) && 0 == count) {
-                        onlineClassDao.save(onlineClass);
+                        if (canSetSchedule(teacher.getId(), plusHour) && 0 == count) {
+                            onlineClassDao.save(onlineClass);
+                        } else {
+                            modelMap.put("error", BookingsResult.DISABLED_PLACE);
+                            return modelMap;
+                        }
                     } else {
-                        modelMap.put("error", BookingsResult.DISABLED_PLACE);
+                        modelMap.put("error", BookingsResult.SYNC_DISABLED_PLACE);
                         return modelMap;
                     }
+                } finally {
+                    redisProxy.del(key);
                 }
             } else {
                 /* 验证 MAJOR 课程的这个时间点是否与 PRACTICUM 课时冲突 */
@@ -686,13 +694,12 @@ public class BookingsService {
         String courseType = timeSlotCreateRequest.getType();
 
         Timestamp scheduleDateTime = parseFrom(scheduleTime, FMT_YMD_HMS);
-        final String key = "TP:LOCK:" + teacher.getId() + ":" + scheduleDateTime.getTime();
+        final String key = "TP:LOCK:MAJOR:" + teacher.getId() + ":" + scheduleDateTime.getTime();
         try {
             if (redisProxy.lock(key, LOCK_TIMESLOT_EXPIRED)) {
                 return doCreateTimeSlot(teacher, scheduleTime, courseType);
             } else {
                 Map<String, Object> modelMap = Maps.newHashMap();
-                modelMap.put("action", false);
                 modelMap.put("error", BookingsResult.DISABLED_PLACE);
                 return modelMap;
             }

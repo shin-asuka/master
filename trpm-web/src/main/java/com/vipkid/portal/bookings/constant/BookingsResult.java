@@ -8,6 +8,9 @@ public final class BookingsResult {
     /* 不能放置 TimeSlot */
     public static final String DISABLED_PLACE = "DISABLED_PLACE";
 
+    /* 不能并行的放置 TimeSlot */
+    public static final String SYNC_DISABLED_PLACE = "SYNC_DISABLED_PLACE";
+
     /* TimeSlot 状态不是 Available */
     public static final String TIMESLOT_NOT_AVAILABLE = "TIMESLOT_NOT_AVAILABLE";
 
