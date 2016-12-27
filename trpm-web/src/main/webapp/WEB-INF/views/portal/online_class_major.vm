@@ -179,7 +179,7 @@
 }
 
 .win-pop {
-	top:-108px;
+	top:-99px;
     right:-15px;
     position:absolute;
     border-radius:10px;
