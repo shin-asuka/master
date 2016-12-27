@@ -38,30 +38,33 @@ public class ClassroomsController extends AbstractPortalController {
 	@Slave
 	@RequestMapping("/classrooms")
 	public String classrooms(HttpServletRequest request, HttpServletResponse response, Model model) {
-		/* 月份偏移量 */
-		int offsetOfMonth = ServletRequestUtils.getIntParameter(request, "offsetOfMonth", 0);
-		model.addAttribute("offsetOfMonth", offsetOfMonth);
-
-		/* 用于显示的月份 */
-		model.addAttribute("monthOfYear", DateUtils.monthOfYear(offsetOfMonth, DateUtils.FMT_MMM_YYYY_US));
-
-		/* 当前显示的课程类型 */
-		String courseType = ServletRequestUtils.getStringParameter(request, "courseType", CourseType.MAJOR.toString());
-		model.addAttribute("courseType", courseType);
-		model.addAttribute("linePerPage", LINE_PER_PAGE);
-
-		Teacher teacher = loginService.getTeacher();
-
-		// 判断是否能上Practicum类型的课程
-		if (loginService.isPe(teacher.getId())) {
-			model.addAttribute("showLayer", teacherPageLoginService.isType(teacher.getId(),LoginType.CLASSROOMS));
-		}
-
-		/* 根据不同类型加载不同数据 */
-		String monthOfYear = DateUtils.monthOfYear(offsetOfMonth, DateUtils.FMT_YM);
-		model.addAllAttributes(classroomsService.doClassrooms(teacher, monthOfYear, courseType, LINE_PER_PAGE));
-
-		return view("classrooms");
+    	
+    	return "redirect:/classrooms";//强行重定向前后端分离classrooms页面
+//    	
+//		/* 月份偏移量 */
+//		int offsetOfMonth = ServletRequestUtils.getIntParameter(request, "offsetOfMonth", 0);
+//		model.addAttribute("offsetOfMonth", offsetOfMonth);
+//
+//		/* 用于显示的月份 */
+//		model.addAttribute("monthOfYear", DateUtils.monthOfYear(offsetOfMonth, DateUtils.FMT_MMM_YYYY_US));
+//
+//		/* 当前显示的课程类型 */
+//		String courseType = ServletRequestUtils.getStringParameter(request, "courseType", CourseType.MAJOR.toString());
+//		model.addAttribute("courseType", courseType);
+//		model.addAttribute("linePerPage", LINE_PER_PAGE);
+//
+//		Teacher teacher = loginService.getTeacher();
+//
+//		// 判断是否能上Practicum类型的课程
+//		if (loginService.isPe(teacher.getId())) {
+//			model.addAttribute("showLayer", teacherPageLoginService.isType(teacher.getId(),LoginType.CLASSROOMS));
+//		}
+//
+//		/* 根据不同类型加载不同数据 */
+//		String monthOfYear = DateUtils.monthOfYear(offsetOfMonth, DateUtils.FMT_YM);
+//		model.addAllAttributes(classroomsService.doClassrooms(teacher, monthOfYear, courseType, LINE_PER_PAGE));
+//
+//		return view("classrooms");
 	}
 
     @Deprecated
