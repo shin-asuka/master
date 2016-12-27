@@ -1,4 +1,4 @@
-package com.vipkid.rest.portal.model;
+package com.vipkid.portal.pesupervisor.model;
 
 import java.util.List;
 

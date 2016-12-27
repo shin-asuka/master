@@ -1,4 +1,4 @@
-package com.vipkid.rest.portal.model;
+package com.vipkid.portal.pesupervisor.model;
 
 public class PeSupervisorEachClassInfo {
 	private long id;

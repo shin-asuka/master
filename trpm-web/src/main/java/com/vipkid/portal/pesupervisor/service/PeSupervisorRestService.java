@@ -1,6 +1,6 @@
-package com.vipkid.rest.portal.service;
+package com.vipkid.portal.pesupervisor.service;
 
-import com.vipkid.rest.portal.model.PeSupervisorData;
+import com.vipkid.portal.pesupervisor.model.PeSupervisorData;
 
 public interface PeSupervisorRestService {
 	public PeSupervisorData getPeSupervisorData(long teacherId, int page);

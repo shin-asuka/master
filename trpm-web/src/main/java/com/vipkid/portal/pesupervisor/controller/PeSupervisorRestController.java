@@ -1,4 +1,4 @@
-package com.vipkid.rest.portal.controller;
+package com.vipkid.portal.pesupervisor.controller;
 
 import java.util.concurrent.TimeUnit;
 
@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.google.common.base.Stopwatch;
 import com.vipkid.http.utils.JsonUtils;
-import com.vipkid.rest.portal.model.PeSupervisorData;
-import com.vipkid.rest.portal.service.PeSupervisorRestService;
+import com.vipkid.portal.pesupervisor.model.PeSupervisorData;
+import com.vipkid.portal.pesupervisor.service.PeSupervisorRestService;
 import com.vipkid.trpm.controller.AbstractController;
 
 @RestController
