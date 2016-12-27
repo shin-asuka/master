@@ -276,7 +276,7 @@ public class PersonalInfoController extends AbstractPortalController {
     public String setBasicInfoAction(HttpServletRequest request, HttpServletResponse response, BasicInfo basicInfo,
             TeacherAddress teacherAddress) {
         Teacher teacher = loginService.getTeacher();
-        teacherAddress.setTeacherId((int) teacher.getId());
+        teacherAddress.setTeacherId(teacher.getId());
         Map<String, Object> modelMap = personalInfoService.doSetBasicInfo(teacher, basicInfo, teacherAddress);
 
         User user = (User) loginService.getUser();
