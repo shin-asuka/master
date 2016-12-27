@@ -247,7 +247,7 @@ public class ClassroomsRestServiceImpl implements ClassroomsRestService{
 			int totalLine = (int) totalLineMap.get("totalLine");
 			int totalPage = 1;
 			if (linePerPage != 0) {
-				totalPage = totalLine / linePerPage + 1;
+				totalPage = (totalLine + linePerPage -1) / linePerPage;
 			}
 			modelMap.put("totalPage", totalPage);
 
@@ -269,7 +269,7 @@ public class ClassroomsRestServiceImpl implements ClassroomsRestService{
 			int totalLine = (int) totalLineMap.get("totalLine");
 			int totalPage = 1;
 			if (linePerPage != 0) {
-				totalPage = totalLine / linePerPage + 1;
+				totalPage = (totalLine + linePerPage -1) / linePerPage;
 			}
 			modelMap.put("totalPage", totalPage);
 
