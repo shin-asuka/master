@@ -280,7 +280,7 @@ public class ReportController extends AbstractPortalController {
         String serialNumber = request.getParameter("serialNumber");
         String scheduledDateTime = request.getParameter("scheduledDateTime");
         logger.info("ReportController: feedbackSubmit() 参数为：serialNumber={}, scheduledDateTime={}, teacherComment={}", serialNumber, scheduledDateTime, JSON.toJSONString(teacherComment));
-
+        teacherComment.setSubmitSource("PC");
         Map<String, Object> parmMap = reportService.submitTeacherComment(teacherComment, loginService.getUser(),serialNumber,scheduledDateTime,false);
 
         long millis =stopwatch.stop().elapsed(TimeUnit.MILLISECONDS);
