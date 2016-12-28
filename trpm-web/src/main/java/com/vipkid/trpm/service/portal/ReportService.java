@@ -605,6 +605,7 @@ public class ReportService {
         tcuDto.setCourseId(course.getId());
         tcuDto.setCourseType(course.getType());
         tcuDto.setUnitId(course.getUnitId());
+        boolean isPrevip = LessonSerialNumber.isPreVipkidLesson(lesson.getSerialNumber());
 
         tcuDto.setStars(0);
         tcuDto.setEmpty(true);
@@ -615,6 +616,7 @@ public class ReportService {
             return null;
         }else{
             TeacherComment comment = new TeacherComment(tcResult);
+            comment.setPreVip(isPrevip);
             return comment;
         }
     }

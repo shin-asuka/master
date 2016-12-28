@@ -614,8 +614,8 @@ public class TeacherCommentUpdateDto {
         } else {
             empty = true;
         }
-        if (teacherComment.getFirstDateTime() != null) {
-            submitDateTime = new Date(teacherComment.getFirstDateTime().getTime());
+        if (teacherComment.getLastDateTime() != null) {
+            submitDateTime = new Date(teacherComment.getLastDateTime().getTime());
         }
         if (teacherComment.getLastDateTime() != null) {
             updateTime = new Date(teacherComment.getLastDateTime().getTime());

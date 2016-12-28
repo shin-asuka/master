@@ -117,6 +117,20 @@ public interface ApplicationConstant {
         public static final String FILE = "FILE";
         /* 单元测评 */
         public static final String UNIT_TEST = "UNIT_TEST";
+/*
+        */
+/*歌词*//*
+
+        public static final String LYRICS = "LYRICS";
+        */
+/*Unit Song 视频*//*
+
+        public static final String UNIT_SONG_VIDEO = "SONG_VIDEO";
+        */
+/*Unit Song封面*//*
+
+        public static final String UNIT_SONG_IMAGE = "SONG_VIDEO";
+*/
 
     }
 
@@ -281,6 +295,20 @@ public interface ApplicationConstant {
         public static final String L3 = "T1-U1-LC1-L3";
 
         public static final String L4 = "T1-U1-LC1-L4";
+    }
+
+    public static final class QiNiu{
+
+        public static final String IMG_BUCKET = "vipkid-img";
+        public static final String VIDEO_BUCKET = "vipkid-video";
+        public static final String VIDEO_URL_FIX = "http://video.vipkid.com.cn";
+        public static final String IMG_URL_FIX = "http://image.vipkid.com.cn";
+        public static final String FILE_URL_FIX = "http://file.vipkid.com.cn";
+        public static final String PRECLASS = "preclass/";
+        public static final String PREVIP_SONG = "/previp/unitsong";
+
+        public static final String ACCESS_KEY = "TszxltNAuOVlM2jFhdkPl6_qfXt6YT6TkeBJH8TL";
+        public static final String SECRET_KEY = "1Bv8qVhp0q_Uw9BphceKOHfJUfhL0kbEkG0yoawL";
     }
 
     Map<Integer, String> LEVEL_OF_DIFFITULTY = new HashMap<Integer, String>(){{
