@@ -209,16 +209,6 @@ public class TeacherService {
 		return result;
 	}
 
-	private boolean isPreVipLesson(String serialNumber){
-		boolean isPreVipkid = false;
-		if(StringUtils.isNotBlank(serialNumber)
-			&& (serialNumber.toLowerCase().startsWith("mc-l1")
-			||serialNumber.equalsIgnoreCase("T1-U1-LC1-L0"))){
-			isPreVipkid = true;
-		}
-		return isPreVipkid;
-	}
-
 	private String findTrialLevelResult4Display(String trialLevelResult, String studentId,
 		String lessonSerialNumber) {
 		if (StringUtils.isNotBlank(lessonSerialNumber) && lessonSerialNumber.startsWith("T")) {
