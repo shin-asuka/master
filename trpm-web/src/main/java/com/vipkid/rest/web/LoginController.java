@@ -477,7 +477,11 @@ public class LoginController extends RestfulController {
             teacherinfo.setTeacherId(this.getUser(request).getId());
             //权限判断 start
             loginService.findByTeacherModule(teacherinfo,teacher.getLifeCycle());
-            //其他信息       
+            //其他信息
+            if(0 != teacher.getManager()) {
+                User teacherManager = loginService.findUserById(teacher.getManager());
+                teacherinfo.setTeacherManagerInfo(teacherManager);
+            }
             teacherinfo.setInfo(teacher,user);
             teacherinfo.setHeadsrc(fileHttpService.queryTeacherFiles(user.getId()).getAvatar());
             Map<String,Object> success = ReturnMapUtils.returnSuccess();
