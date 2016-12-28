@@ -9,6 +9,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
 
+import com.vipkid.file.service.QNService;
+import com.vipkid.trpm.constant.ApplicationConstant;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.community.config.PropertyConfigurer;
@@ -84,6 +86,9 @@ public class ClassroomsRestServiceImpl implements ClassroomsRestService{
 
 	@Autowired
 	private LessonDao lessonDao;
+
+	@Autowired
+	private QNService qnService;
 
 	public Map<String, Object> getClassroomsData(long teacherId, int offsetOfMonth, String courseType, int page) {
 		if (!CourseType.isPracticum(courseType)) {// 只要不是"PRACTICUM"，就赋值"MAJOR"
@@ -341,6 +346,22 @@ public class ClassroomsRestServiceImpl implements ClassroomsRestService{
 			classroomDetail.setStudentId((long) eachMap.get("studentId"));
 			classroomDetail.setStudentName((String) eachMap.get("englishName"));
 			classroomDetail.setTeacherId((long) eachMap.get("teacherId"));
+
+			String serialNumber = (String) eachMap.get("serialNumber");
+			if(!StringUtils.isEmpty(serialNumber)){
+				boolean isPrevipLesson = false;
+				if (serialNumber.contains("MC-L1-")){
+					classroomDetail.setPrevipLesson(true);
+				}
+				Map<String,String> showUrl = Maps.newHashMap();
+				if(isPrevipLesson){
+					showUrl = qnService.getShowUrl(serialNumber, ApplicationConstant.MediaType.FILE);
+					String lyricsShowUrl = showUrl.get("lyricsShowUrl");
+					String videoShowUrl = showUrl.get("videoShowUrl");
+					classroomDetail.setLyricsShowUrl(lyricsShowUrl);
+					classroomDetail.setVideoShowUrl(videoShowUrl);
+				}
+			}
 
 			Timestamp timeStamp = (Timestamp) eachMap.get("scheduledDateTime");
 			Date date = new Date(timeStamp.getTime());

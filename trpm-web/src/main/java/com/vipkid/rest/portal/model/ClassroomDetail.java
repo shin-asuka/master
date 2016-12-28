@@ -18,6 +18,35 @@ public class ClassroomDetail{
 	private String finishType;
 	private Integer reportType;
 	private Integer reportStatus;
+
+	private boolean isPrevipLesson;
+	private String lyricsShowUrl;
+	private String videoShowUrl;
+
+	public boolean isPrevipLesson() {
+		return isPrevipLesson;
+	}
+
+	public void setPrevipLesson(boolean previpLesson) {
+		isPrevipLesson = previpLesson;
+	}
+
+	public String getLyricsShowUrl() {
+		return lyricsShowUrl;
+	}
+
+	public void setLyricsShowUrl(String lyricsShowUrl) {
+		this.lyricsShowUrl = lyricsShowUrl;
+	}
+
+	public String getVideoShowUrl() {
+		return videoShowUrl;
+	}
+
+	public void setVideoShowUrl(String videoShowUrl) {
+		this.videoShowUrl = videoShowUrl;
+	}
+
 	public Long getStudentId() {
 		return studentId;
 	}
