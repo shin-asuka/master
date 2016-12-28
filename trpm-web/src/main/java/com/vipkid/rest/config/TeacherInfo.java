@@ -11,6 +11,7 @@ import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.entity.User;
 
 public class TeacherInfo {
+    private static final String PREVIP_TAG = "-1";
 
     @SuppressWarnings("serial")
     private Map<String,Object> roles = new HashMap<String, Object>(){{
@@ -149,7 +150,7 @@ public class TeacherInfo {
         this.setShowName(user.getName());
         this.setHaveChannel(StringUtils.isNotBlank(teacher.getReferee()) || teacher.getPartnerId() > 0 || StringUtils.isNotBlank(teacher.getOtherChannel()));
         String teacherTag = teacher.getTeacherTags();
-        if (teacherTag.indexOf("-1")>=0){
+        if (StringUtils.indexOf(teacherTag,PREVIP_TAG) > -1){
             canTeachPrevip = true;
         }
         this.setCanTeachPrevip(canTeachPrevip);
