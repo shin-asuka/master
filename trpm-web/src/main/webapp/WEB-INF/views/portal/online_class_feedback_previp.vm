@@ -34,30 +34,30 @@
 					<div style="padding-top:10px;">
 						<div>
                             <label>Content Learning</label>
-                            <p>>
+                            <p>
 								<span>Vocabulary Rebention</span>
-                                <label><input type="radio" name="vocabularyRetention"  value="Struggling" $!elememtDisabled #if($vocabularyRetention =='Struggling') checked #end /></label>
-                                <label><input type="radio" name="vocabularyRetention"  value="Developing" $!elememtDisabled #if($vocabularyRetention =='Developing') checked #end /></label>
-                                <label><input type="radio" name="vocabularyRetention"  value="Mastered" $!elememtDisabled #if($vocabularyRetention =='Mastered') checked #end /></label>
+								<label><input type="radio" name="vocabularyRetention"  value="Struggling" $!elememtDisabled #if($teacherComment.vocabularyRetention =='Struggling') checked="checked" #end />Struggling</label>
+                                <label><input type="radio" name="vocabularyRetention"  value="Developing" $!elememtDisabled #if($teacherComment.vocabularyRetention =='Developing') checked="checked" #end />Developing</label>
+                                <label><input type="radio" name="vocabularyRetention"  value="Mastered" $!elememtDisabled #if($teacherComment.vocabularyRetention =='Mastered') checked="checked" #end />Mastered</label>
 							</p>
 
                             <p>
 								<span>Pronunciation</span>
-                                <label><input type="radio" name="pronunciation"  value="Struggling" $!elememtDisabled #if($pronunciation =='Struggling') checked #end /></label>
-                                <label><input type="radio" name="pronunciation"  value="Developing" $!elememtDisabled #if($pronunciation =='Developing') checked #end /></label>
-                                <label><input type="radio" name="pronunciation"  value="Mastered" $!elememtDisabled #if($pronunciation =='Mastered') checked #end /></label>
+                                <label><input type="radio" name="pronunciation"  value="Struggling" $!elememtDisabled #if($teacherComment.pronunciation =='Struggling') checked="checked" #end />Struggling</label>
+                                <label><input type="radio" name="pronunciation"  value="Developing" $!elememtDisabled #if($teacherComment.pronunciation =='Developing') checked="checked" #end />Developing</label>
+                                <label><input type="radio" name="pronunciation"  value="Mastered" $!elememtDisabled #if($teacherComment.pronunciation =='Mastered') checked="checked" #end />Mastered</label>
 							</p
                             <p>
 								<span>Alphabet skills</span>
-                                <label><input type="radio" name="alphabetSkills"  value="Struggling" $!elememtDisabled #if($alphabetSkills =='Struggling') checked #end /></label>
-                                <label><input type="radio" name="alphabetSkills"  value="Developing" $!elememtDisabled #if($alphabetSkills =='Developing') checked #end /></label>
-                                <label><input type="radio" name="alphabetSkills"  value="Mastered"   $!elememtDisabled #if($alphabetSkills =='Mastered') checked #end /></label>
+                                <label><input type="radio" name="alphabetSkills"  value="Struggling" $!elememtDisabled #if($teacherComment.alphabetSkills =='Struggling') checked="checked" #end />Struggling</label>
+                                <label><input type="radio" name="alphabetSkills"  value="Developing" $!elememtDisabled #if($teacherComment.alphabetSkills =='Developing') checked="checked" #end />Developing</label>
+                                <label><input type="radio" name="alphabetSkills"  value="Mastered"   $!elememtDisabled #if($teacherComment.alphabetSkills =='Mastered') checked="checked" #end />Mastered</label>
 							</p
                             <p>
 								<span>phonological Awareness</span>
-                                <label><input type="radio" name="phonologicalAwareness"  value="Struggling" $!elememtDisabled #if($phonologicalAwareness =='Struggling') checked #end /></label>
-                                <label><input type="radio" name="phonologicalAwareness"  value="Developing" $!elememtDisabled #if($phonologicalAwareness =='Developing') checked #end /></label>
-                                <label><input type="radio" name="phonologicalAwareness"  value="Mastered" $!elememtDisabled #if($phonologicalAwareness =='Mastered') checked #end /></label>
+                                <label><input type="radio" name="phonologicalAwareness"  value="Struggling" $!elememtDisabled #if($teacherComment.phonologicalAwareness =='Struggling') checked="checked" #end />Struggling</label>
+                                <label><input type="radio" name="phonologicalAwareness"  value="Developing" $!elememtDisabled #if($teacherComment.phonologicalAwareness =='Developing') checked="checked" #end />Developing</label>
+                                <label><input type="radio" name="phonologicalAwareness"  value="Mastered" $!elememtDisabled #if($teacherComment.phonologicalAwareness =='Mastered') checked="checked" #end />Mastered</label>
 							</p
 						</div>
 
@@ -65,23 +65,23 @@
                             <label>Classroom Behavior</label>
 							<p>
 								<span>Follows instructions</span>
-                                <label><input type="radio" name="followsInstructions"  value="Rarely" $!elememtDisabled #if($followsInstructions =='Rarely') checked #end /></label>
-                                <label><input type="radio" name="followsInstructions"  value="Sometimes" $!elememtDisabled #if($followsInstructions =='Sometimes') checked #end /></label>
-                                <label><input type="radio" name="followsInstructions"  value="Oftens" $!elememtDisabled #if($followsInstructions =='Oftens') checked #end /></label>
+                                <label><input type="radio" name="followsInstructions"  value="Rarely" $!elememtDisabled #if($teacherComment.followsInstructions =='Rarely') checked="checked" #end />Rarely</label>
+                                <label><input type="radio" name="followsInstructions"  value="Sometimes" $!elememtDisabled #if($teacherComment.followsInstructions =='Sometimes') checked="checked" #end />Sometimes</label>
+                                <label><input type="radio" name="followsInstructions"  value="Oftens" $!elememtDisabled #if($teacherComment.followsInstructions =='Oftens') checked="checked" #end />Oftens</label>
 							</p>
 
                             <p>
                                 <span>Participates actively</span>
-                                <label><input type="radio" name="participatesActively"  value="Rarely" $!elememtDisabled #if($participatesActively =='Rarely') checked #end /></label>
-                                <label><input type="radio" name="participatesActively"  value="Sometimes" $!elememtDisabled #if($participatesActively =='Sometimes') checked #end /></label>
-                                <label><input type="radio" name="participatesActively"  value="Oftens" $!elememtDisabled #if($participatesActively =='Oftens') checked #end /></label>
+                                <label><input type="radio" name="participatesActively"  value="Rarely" $!elememtDisabled #if($teacherComment.participatesActively =='Rarely') checked="checked" #end />Rarely</label>
+                                <label><input type="radio" name="participatesActively"  value="Sometimes" $!elememtDisabled #if($teacherComment.participatesActively =='Sometimes') checked="checked" #end />Sometimes</label>
+                                <label><input type="radio" name="participatesActively"  value="Oftens" $!elememtDisabled #if($teacherComment.participatesActively =='Oftens') checked="checked" #end />Oftens</label>
                             </p>
 
                             <p>
                                 <span>Speaks clearly</span>
-                                <label><input type="radio" name="speaksClearly"  value="Rarely" $!elememtDisabled #if($speaksClearly =='Rarely') checked #end /></label>
-                                <label><input type="radio" name="speaksClearly"  value="Sometimes" $!elememtDisabled #if($speaksClearly =='Sometimes') checked #end /></label>
-                                <label><input type="radio" name="speaksClearly"  value="Oftens" $!elememtDisabled #if($speaksClearly =='Oftens') checked #end /></label>
+                                <label><input type="radio" name="speaksClearly"  value="Rarely" $!elememtDisabled #if($teacherComment.speaksClearly =='Rarely') checked="checked" #end />Rarely</label>
+                                <label><input type="radio" name="speaksClearly"  value="Sometimes" $!elememtDisabled #if($teacherComment.speaksClearly =='Sometimes') checked="checked" #end />Sometimes</label>
+                                <label><input type="radio" name="speaksClearly"  value="Oftens" $!elememtDisabled #if($teacherComment.speaksClearly =='Oftens') checked="checked" #end />Oftens</label>
                             </p>
 						</div>
 
@@ -89,9 +89,9 @@
                             <label>Computer Skills</label>
 							<p>
 								<span>Mouse\Touchpad activities</span>
-                                <label><input type="radio" name="speaksClearly"  value="Struggling" $!elememtDisabled #if($speaksClearly =='Struggling') checked #end /></label>
-                                <label><input type="radio" name="speaksClearly"  value="Developing" $!elememtDisabled #if($speaksClearly =='Developing') checked #end /></label>
-                                <label><input type="radio" name="speaksClearly"  value="Mastered" $!elememtDisabled #if($speaksClearly =='Mastered') checked #end /></label>
+                                <label><input type="radio" name="mouseTouchpadActivities"  value="Struggling" $!elememtDisabled #if($teacherComment.speaksClearly =='Struggling') checked="checked" #end />Struggling</label>
+                                <label><input type="radio" name="mouseTouchpadActivities"  value="Developing" $!elememtDisabled #if($teacherComment.speaksClearly =='Developing') checked="checked" #end />Developing</label>
+                                <label><input type="radio" name="mouseTouchpadActivities"  value="Mastered" $!elememtDisabled #if($teacherComment.speaksClearly =='Mastered') checked="checked" #end />Mastered</label>
 							</p>
 						</div>
 
@@ -101,9 +101,9 @@
 							<p>(Was the amount of material appropriate for 25 minutes?)</p>
                             <p>
                                 <span>Degree of completion</span>
-                                <label><input type="radio" name="degreeCompletion"  value="Skipped a lot" $!elememtDisabled #if($degreeCompletion =='Skipped a lot') checked #end/></label>
-                                <label><input type="radio" name="degreeCompletion"  value="Skipped a bit" $!elememtDisabled #if($degreeCompletion =='Skipped a bit') checked #end/></label>
-                                <label><input type="radio" name="degreeCompletion"  value="Finished all" $!elememtDisabled #if($degreeCompletion =='Finished all') checked #end/></label>
+                                <label><input type="radio" name="degreeCompletion"  value="Skipped a lot" $!elememtDisabled #if($teacherComment.degreeCompletion =='Skipped a lot') checked="checked" #end/>Skipped a lot</label>
+                                <label><input type="radio" name="degreeCompletion"  value="Skipped a bit" $!elememtDisabled #if($teacherComment.degreeCompletion =='Skipped a bit') checked="checked" #end/>Skipped a bit</label>
+                                <label><input type="radio" name="degreeCompletion"  value="Finished all" $!elememtDisabled #if($teacherComment.degreeCompletion =='Finished all') checked="checked" #end/>Finished all</label>
                             </p>
                         </div>
 						##<input type="radio" name="englishLanguageScore" #if(0 == ${teacherApplication.englishLanguageScore})checked="checked"#end value="0" />
@@ -124,13 +124,13 @@
 					</div>
 
 					<div style="padding-top:10px;">
-						<input type="checkbox" id="needParentSupport" name="needParentSupport" value="1" $!elememtDisabled #if($!teacherComment.needParentSupport == true) checked #end/>&nbsp;&nbsp;Please check this box if you think the student needs parent support during class
+						<input type="checkbox" id="needParentSupport" name="needParentSupport" value="1" $!elememtDisabled #if($!teacherComment.needParentSupport == true) checked="checked" #end/>&nbsp;&nbsp;Please check this box if you think the student needs parent support during class
 					</div>
 				#end
 			</div>
 		</div>
 	</div>
-	<div style="text-align:right;padding:8px;">
+	<div id = "previp_cf_button" style="text-align:right;padding:8px;">
 		##仅仅没有提交过才能显示提交
 		#if(!$teacherComment.teacherFeedback || $teacherComment.teacherFeedback == "")
 			<button type="button" class="btn btn-gray" onclick="require('feedback').trailCommentClose();">Cancel</button>
