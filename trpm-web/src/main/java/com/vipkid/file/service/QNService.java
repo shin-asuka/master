@@ -22,7 +22,7 @@ public class QNService {
     private static Logger logger = LoggerFactory.getLogger(OnlineClassController.class);
 
     Auth auth = Auth.create(ApplicationConstant.QiNiu.ACCESS_KEY,ApplicationConstant.QiNiu.SECRET_KEY);
-    
+
     private String getPrefix(String fileType) {
         String dir = null;
         switch (fileType) {
@@ -45,11 +45,11 @@ public class QNService {
         Map<String,Object> downloadUrl = Maps.newHashMap();
         Map<String,Object> showUrl = getShowUrl(seriaNum);
         String lyricsDownUrl = showUrl.get("lyricsShowUrl") + "?attname=";
-        String videoDownUrl = showUrl.get("videoShoewUrl") + "?attname=";
+        String videoDownUrl = showUrl.get("videoShowUrl") + "?attname=";
         lyricsDownUrl = download(lyricsDownUrl);
         videoDownUrl = download(videoDownUrl);
-        downloadUrl.put("lyricsDownUrl",lyricsDownUrl);
-        downloadUrl.put("videoDownUrl",videoDownUrl);
+        downloadUrl.put("lyricsDownloadUrl",lyricsDownUrl);
+        downloadUrl.put("videoDownloadUrl",videoDownUrl);
 
 
         return downloadUrl;
@@ -61,7 +61,6 @@ public class QNService {
         Map<String,Object> showUrl = Maps.newHashMap();
         String lyricsUrl= lyricsURL + seriaNum + ".pdf";
         String videoUrl = videoURL + seriaNum + ".mp4";
-        System.out.println(lyricsUrl + "  " + videoUrl);
         showUrl.put("lyricsShowUrl",lyricsUrl);
         showUrl.put("videoShowUrl",videoUrl);
         return showUrl;
