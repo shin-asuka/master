@@ -2,6 +2,7 @@ package com.vipkid.trpm.controller.h5;
 
 import com.vipkid.http.service.TeacherAppService;
 import com.vipkid.http.utils.JsonUtils;
+import com.vipkid.rest.config.RestfulConfig;
 import com.vipkid.rest.security.AppContext;
 import com.vipkid.rest.utils.ApiResponseUtils;
 import com.vipkid.trpm.entity.teachercomment.*;
@@ -13,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -49,8 +51,8 @@ public class TeacherCommentController {
     private ReportService reportService;
 
     @ResponseBody
-    @RequestMapping(value = "/submit")
-    public Object updateStatus(SubmitTeacherCommentDto submitDto) {
+    @RequestMapping(value = "/submit",produces = RestfulConfig.JSON_UTF_8)
+    public Object updateStatus(@RequestBody SubmitTeacherCommentDto submitDto) {
 
         if (submitDto==null) {
             return ApiResponseUtils.buildErrorResp(-1, "参数不能为空!");
