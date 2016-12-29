@@ -97,7 +97,6 @@ public class ClassroomsRestServiceImpl implements ClassroomsRestService{
 
 		ClassroomsData classroomsData = new ClassroomsData();
 
-		//Teacher teacher = teacherdao.findById(teacherId);
 		Teacher teacher = loginService.getTeacher();
 		
 		if(teacher == null){
@@ -347,7 +346,7 @@ public class ClassroomsRestServiceImpl implements ClassroomsRestService{
 			classroomDetail.setTeacherId((long) eachMap.get("teacherId"));
 
 			String serialNumber = (String) eachMap.get("serialNumber");
-			if(!StringUtils.isEmpty(serialNumber)){
+			if(StringUtils.isNotEmpty(serialNumber)){
 				boolean isPrevipLesson = false;
 				int index = serialNumber.lastIndexOf("-");
 				serialNumber = serialNumber.substring(0,index-4);
@@ -414,11 +413,11 @@ public class ClassroomsRestServiceImpl implements ClassroomsRestService{
 		long studentId = (long) data.get("studentId");
 
 		boolean isClassStarted = new Date().after(scheduledDateTime);
-
+        Lesson lesson = lessonDao.findById(classroomsEachClassInfo.getLessonId());
 		if (lessonSerialNumber.startsWith("P")) {// 如果是PracticumReport
 			reportType = ReportType.PracticumReport.getCode();// 代表是PracticumReport
 			reportStatus = getPracticumReportStatus(onlineClassId);
-		} else if (classroomsService.isUaReport(lessonSerialNumber)) {// 如果是UaReport
+		} else if (classroomsService.isUaReport(lesson)) {// 如果是UaReport
 			if (isOldUaReport(onlineClassId, studentId, lessonSerialNumber)) {
 				reportType = ReportType.OldUAReport.getCode();// 代表是旧UaReport
 				Map<String, Object> map = getOldUaReportStatus(onlineClassId, studentId, lessonSerialNumber);
@@ -456,8 +455,8 @@ public class ClassroomsRestServiceImpl implements ClassroomsRestService{
 
 	private boolean isOldUaReport(long onlineClassId, long studentId, String serialNumber) {
 		AssessmentReport assessmentReport = null;
-		long schedDateTime = onlineClassDao.findById(onlineClassId).getScheduledDateTime().getTime();// 此方法可以提速，用时间来判断是不是新UA，如10月份之后的都是新UA
-		if (DateUtils.isSearchById(schedDateTime)) {
+		long scheduleDateTime = onlineClassDao.findById(onlineClassId).getScheduledDateTime().getTime();// 此方法可以提速，用时间来判断是不是新UA，如10月份之后的都是新UA
+		if (DateUtils.isSearchById(scheduleDateTime)) {
 			assessmentReport = assessmentReportDao.findReportByClassId(onlineClassId);
 		} else {
 			assessmentReport = assessmentReportDao.findReportByStudentIdAndName(serialNumber, studentId);

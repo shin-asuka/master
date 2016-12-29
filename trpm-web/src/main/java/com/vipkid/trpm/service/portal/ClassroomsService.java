@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.vipkid.enums.OnlineClassEnum.CourseType;
 import com.vipkid.recruitment.dao.TeacherApplicationDao;
+import com.vipkid.trpm.entity.*;
 import com.vipkid.trpm.entity.teachercomment.TeacherComment;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -22,10 +23,6 @@ import com.vipkid.trpm.dao.DemoReportDao;
 import com.vipkid.trpm.dao.LessonDao;
 import com.vipkid.trpm.dao.OnlineClassDao;
 import com.vipkid.trpm.dao.TeacherPageLoginDao;
-import com.vipkid.trpm.entity.AssessmentReport;
-import com.vipkid.trpm.entity.Course;
-import com.vipkid.trpm.entity.DemoReport;
-import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.util.DateUtils;
 
 /**
@@ -273,7 +270,8 @@ public class ClassroomsService {
          */
         boolean isClassStarted = System.currentTimeMillis() >= scheduledTime;
         // UAReport显示
-        if (isUaReport(serialNumber)) {
+        Lesson lesson = lessonDao.findById(lessonId);
+        if (isUaReport(lesson)) {
             return uaReportEntry(serialNumber, onlineClassId, studentId);
             // DemoReport显示
         } else if (isDemoReport(serialNumber) && isClassStarted) {
@@ -340,12 +338,11 @@ public class ClassroomsService {
     /**
      * 是否是UaReport的课程
      *
-     * @param serialNumber
+     * @param lesson
      * @return boolean
      */
-    public boolean isUaReport(String serialNumber) {
-        return ((serialNumber.startsWith("C") || serialNumber.startsWith("MC"))
-                && (serialNumber.endsWith("6") || serialNumber.endsWith("12")));
+    public boolean isUaReport(Lesson lesson) {
+        return (lesson != null) && (lesson.getIsUnitAssessment() == 1);
     }
 
     /**
