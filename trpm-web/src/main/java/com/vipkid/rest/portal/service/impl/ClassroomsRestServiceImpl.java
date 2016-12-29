@@ -357,10 +357,13 @@ public class ClassroomsRestServiceImpl implements ClassroomsRestService{
 
 				if(isPrevipLesson){
 					Map<String,Object> showUrl = qnService.getShowUrl(serialNumber);
+					Map<String,Object> downloadUrl = qnService.getDownloadUrl(serialNumber);
 					String lyricsShowUrl = (String) showUrl.get("lyricsShowUrl");
 					String videoShowUrl = (String) showUrl.get("videoShowUrl");
+					String videoDownloadUrl = (String)downloadUrl.get("videoDownloadUrl");
 					classroomDetail.setLyricsShowUrl(lyricsShowUrl);
 					classroomDetail.setVideoShowUrl(videoShowUrl);
+					classroomDetail.setVideoDownloadUrl(videoDownloadUrl);
 				}
 			}
 
