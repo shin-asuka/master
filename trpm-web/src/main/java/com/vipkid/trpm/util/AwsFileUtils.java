@@ -1,24 +1,19 @@
 package com.vipkid.trpm.util;
 
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
-
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.vipkid.file.utils.Encodes;
-import com.vipkid.neo.utils.DateTimeUtils;
+import com.vipkid.file.utils.FileUtils;
+import com.vipkid.file.utils.StringUtils;
 import org.community.config.PropertyConfigurer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.amazonaws.services.s3.AmazonS3;
-import org.springframework.security.access.method.P;
-
-import com.vipkid.file.utils.FileUtils;
-import com.vipkid.file.utils.StringUtils;
+import java.util.Date;
+import java.util.List;
+import java.util.UUID;
 
 /**
  * 
