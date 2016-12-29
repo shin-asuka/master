@@ -21,17 +21,6 @@ import java.util.Map;
 public class QNService {
     private static Logger logger = LoggerFactory.getLogger(OnlineClassController.class);
 
-/*    public static final String IMG_BUCKET = "vipkid-img";
-    public static final String VIDEO_BUCKET = "vipkid-video";
-    public static final String VIDEO_URL_FIX = "http://video.vipkid.com.cn/previp/unitsong";
-    public static final String IMG_URL_FIX = "http://image.vipkid.com.cn/previp/unitsong";
-    public static final String FILE_URL_FIX = "http://file.vipkid.com.cn/previp/unitsong";
-    public static final String PRECLASS = "preclass/";
-    public static final String PREVIP_SONG = "/previp/unitsong";
-
-    public static final String ACCESS_KEY = "TszxltNAuOVlM2jFhdkPl6_qfXt6YT6TkeBJH8TL";
-    public static final String SECRET_KEY = "1Bv8qVhp0q_Uw9BphceKOHfJUfhL0kbEkG0yoawL";*/
-
     Auth auth = Auth.create(ApplicationConstant.QiNiu.ACCESS_KEY,ApplicationConstant.QiNiu.SECRET_KEY);
 
     String URL = "http://file.vipkid.com.cn/previp/unitsong/MC-L1-U1.pdf";
@@ -57,36 +46,29 @@ public class QNService {
         return dir;
     }
 
-    public Map<String,String> getDownloadUrl(String seriaNum,String fileType){
-        String URL = getPrefix(fileType);
-        Map<String,String> downloadUrl = Maps.newHashMap();
-        String type = fileType.toString().toLowerCase();
-        //String LyricsUrl= URL + seriaNum;
-        Map<String,String> showUrl = getShowUrl(seriaNum,fileType);
-        String lyricsDownUrl = showUrl.get("LyricsShowUrl") + "?attname=";
-        String videoDownUrl = showUrl.get("VideoShoewUrl") + "?attname=";
-
+    public Map<String,Object> getDownloadUrl(String seriaNum){
+        String lyricsURL = getPrefix(ApplicationConstant.MediaType.FILE);
+        String videoURL = getPrefix(ApplicationConstant.MediaType.VIDEO);
+        Map<String,Object> downloadUrl = Maps.newHashMap();
+        Map<String,Object> showUrl = getShowUrl(seriaNum);
+        String lyricsDownUrl = showUrl.get("lyricsShowUrl") + "?attname=";
+        String videoDownUrl = showUrl.get("videoShoewUrl") + "?attname=";
+        lyricsDownUrl = download(lyricsDownUrl);
+        videoDownUrl = download(videoDownUrl);
         downloadUrl.put("lyricsDownUrl",lyricsDownUrl);
         downloadUrl.put("videoDownUrl",videoDownUrl);
 
-        /*StringBuffer stringBuffer = new StringBuffer(URL);
-        int pos = stringBuffer.indexOf("?");
-        if (pos > 0) {
-            stringBuffer.append("&attname=");
-        } else {
-            stringBuffer.append("?attname=");
-        }
-        URL = download(stringBuffer.toString());
-        return URL;*/
+
         return downloadUrl;
     }
 
-    public Map<String,String> getShowUrl(String seriaNum,String fileType){
-        String URL = getPrefix(fileType);
-        String type = fileType.toString().toLowerCase();
-        Map<String,String> showUrl = Maps.newHashMap();
-        String lyricsUrl= URL + seriaNum + ".pdf";
-        String videoUrl = URL + seriaNum + ".mp4";
+    public Map<String,Object> getShowUrl(String seriaNum){
+        String lyricsURL = getPrefix(ApplicationConstant.MediaType.FILE);
+        String videoURL = getPrefix(ApplicationConstant.MediaType.VIDEO);
+        Map<String,Object> showUrl = Maps.newHashMap();
+        String lyricsUrl= lyricsURL + seriaNum + ".pdf";
+        String videoUrl = videoURL + seriaNum + ".mp4";
+        System.out.println(lyricsUrl + "  " + videoUrl);
         showUrl.put("lyricsShowUrl",lyricsUrl);
         showUrl.put("videoShowUrl",videoUrl);
         return showUrl;
@@ -97,24 +79,4 @@ public class QNService {
         return downloadRUL;
     }
 
-/*
-    public static void main(String[] args) {
-*//*        String URL = "http://file.vipkid.com.cn/previp/unitsong/Unit-song-lyrics.pdf";
-        StringBuffer stringBuffer = new StringBuffer(URL);
-        int pos = stringBuffer.indexOf("?");
-        if (pos > 0) {
-            stringBuffer.append("&attname=");
-        } else {
-            stringBuffer.append("?attname=hahahahaa");
-        }*//*
-        QNService qnService = new QNService();
-        Map<String,String> downUrl =Maps.newHashMap();
-        Map<String,String> showUrl =Maps.newHashMap();
-        showUrl = qnService.getDownloadUrl("Unit-song-lyrics",ApplicationConstant.MediaType.FILE);
-        downUrl =qnService.getShowUrl("Unit-song-lyrics",ApplicationConstant.MediaType.FILE);
-        String lyricsShowUrl = downUrl.get("LyricsShowUrl");
-        String lyricsDownUrl = showUrl.get("lyricsDownUrl");
-        System.out.println(lyricsDownUrl);
-        System.out.println(lyricsShowUrl);
-    }*/
 }

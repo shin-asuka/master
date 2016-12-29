@@ -117,20 +117,6 @@ public interface ApplicationConstant {
         public static final String FILE = "FILE";
         /* 单元测评 */
         public static final String UNIT_TEST = "UNIT_TEST";
-/*
-        */
-/*歌词*//*
-
-        public static final String LYRICS = "LYRICS";
-        */
-/*Unit Song 视频*//*
-
-        public static final String UNIT_SONG_VIDEO = "SONG_VIDEO";
-        */
-/*Unit Song封面*//*
-
-        public static final String UNIT_SONG_IMAGE = "SONG_VIDEO";
-*/
 
     }
 

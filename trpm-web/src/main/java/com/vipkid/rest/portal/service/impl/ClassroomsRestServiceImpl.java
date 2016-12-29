@@ -9,8 +9,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
 
+import com.google.api.client.util.Maps;
 import com.vipkid.file.service.QNService;
-import com.vipkid.trpm.constant.ApplicationConstant;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.community.config.PropertyConfigurer;
@@ -20,7 +20,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.google.api.client.util.Lists;
-import com.google.common.collect.Maps;
 import com.vipkid.enums.OnlineClassEnum.CourseType;
 import com.vipkid.http.service.AssessmentHttpService;
 import com.vipkid.http.vo.OnlineClassVo;
@@ -350,14 +349,17 @@ public class ClassroomsRestServiceImpl implements ClassroomsRestService{
 			String serialNumber = (String) eachMap.get("serialNumber");
 			if(!StringUtils.isEmpty(serialNumber)){
 				boolean isPrevipLesson = false;
+				int index = serialNumber.lastIndexOf("-");
+				serialNumber = serialNumber.substring(0,index-4);
 				if (serialNumber.contains("MC-L1-")){
-					classroomDetail.setPrevipLesson(true);
+					isPrevipLesson = true;
+					classroomDetail.setIsPrevipLesson(isPrevipLesson);
 				}
-				Map<String,String> showUrl = Maps.newHashMap();
+
 				if(isPrevipLesson){
-					showUrl = qnService.getShowUrl(serialNumber, ApplicationConstant.MediaType.FILE);
-					String lyricsShowUrl = showUrl.get("lyricsShowUrl");
-					String videoShowUrl = showUrl.get("videoShowUrl");
+					Map<String,Object> showUrl = qnService.getShowUrl(serialNumber);
+					String lyricsShowUrl = (String) showUrl.get("lyricsShowUrl");
+					String videoShowUrl = (String) showUrl.get("videoShowUrl");
 					classroomDetail.setLyricsShowUrl(lyricsShowUrl);
 					classroomDetail.setVideoShowUrl(videoShowUrl);
 				}

@@ -23,11 +23,11 @@ public class ClassroomDetail{
 	private String lyricsShowUrl;
 	private String videoShowUrl;
 
-	public boolean isPrevipLesson() {
+	public boolean getIsPrevipLesson() {
 		return isPrevipLesson;
 	}
 
-	public void setPrevipLesson(boolean previpLesson) {
+	public void setIsPrevipLesson(boolean previpLesson) {
 		isPrevipLesson = previpLesson;
 	}
 
