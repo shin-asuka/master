@@ -79,6 +79,8 @@ define([ "jquery-form", "jquery-bootstrap", "jquery-load", "tools" ], function()
 				$(this).attr("disabled","disabled");
 			}
 		});
+
+		$("#previp_cf_button").show();
 	};
 
 	/** **public 请求页面 */
