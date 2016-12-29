@@ -589,24 +589,24 @@ public class TeacherCommentUpdateDto {
     public TeacherCommentUpdateDto(SubmitTeacherCommentDto teacherComment) {
 
         //理论上不会有比int大的
-        if (teacherComment.getId() > 0) {
+        if (teacherComment.getId() !=null) {
             id = Integer.valueOf(String.valueOf(teacherComment.getId()));
         }
 
-        if (teacherComment.getAbilityToFollowInstructions() > 0) {
+        if (teacherComment.getAbilityToFollowInstructions() !=null) {
             abilityToFollowInstructions = teacherComment.getAbilityToFollowInstructions();
         }
-        if (teacherComment.getActivelyInteraction() > 0) {
+        if (teacherComment.getActivelyInteraction() !=null) {
             activelyInteraction = teacherComment.getActivelyInteraction();
         }
-        if (teacherComment.getClearPronunciation() > 0) {
+        if (teacherComment.getClearPronunciation() !=null) {
             clearPronunciation = teacherComment.getClearPronunciation();
         }
 
-        if (teacherComment.getCreateDateTime() != null) {
+        if (teacherComment.getCreateDateTime() !=null) {
             createTime = new Date(teacherComment.getCreateDateTime().getTime());
         }
-        if (teacherComment.getEmpty() == 0) {
+        if (teacherComment.getEmpty() !=null && teacherComment.getEmpty() == 0) {
 //            empty	teacher_feedback
 //            0	jjjjjjjjjjlllll
 //            1	None
@@ -621,21 +621,21 @@ public class TeacherCommentUpdateDto {
             updateTime = new Date(teacherComment.getLastDateTime().getTime());
         }
 
-        if (teacherComment.getReadingSkills() > 0) {
+        if (teacherComment.getReadingSkills() !=null) {
             readingSkills = teacherComment.getReadingSkills();
         }
-        if (teacherComment.getRepetition() > 0) {
+        if (teacherComment.getRepetition() !=null) {
             repetition = teacherComment.getRepetition();
         }
 
 
         reportIssues = teacherComment.getReportIssues();
 
-        if (teacherComment.getSpellingAccuracy() > 0) {
+        if (teacherComment.getSpellingAccuracy() !=null) {
             spellingAccuracy = teacherComment.getSpellingAccuracy();
         }
 
-        if (teacherComment.getStars() > 0) {
+        if (teacherComment.getStars() !=null) {
             stars = teacherComment.getStars();
         }
 
@@ -643,36 +643,36 @@ public class TeacherCommentUpdateDto {
         feedbackTranslation = teacherComment.getFeedbackTranslation();
         tipsForOtherTeachers = teacherComment.getTipsForOtherTeachers();
 
-        if (teacherComment.getUrgent() > 0) {
+        if (teacherComment.getUrgent()!=null && teacherComment.getUrgent() > 0) {
             urgent = true;
         } else {
             urgent = false;
         }
 
-        if (teacherComment.getPerformance() > 0) {
+        if (teacherComment.getPerformance() !=null) {
             performance = teacherComment.getPerformance();
         }
 
-        if (teacherComment.getPerformanceAdjust() > 0) {
+        if (teacherComment.getPerformanceAdjust() !=null) {
             performanceAdjust = teacherComment.getPerformanceAdjust();
         }
 
         currentPerformance = teacherComment.getCurrentPerformance();
 
 
-        if (teacherComment.getOnlineClassId() > 0) {
+        if (teacherComment.getOnlineClassId() !=null) {
             onlineClassId = teacherComment.getOnlineClassId();
         }
 
-        if (teacherComment.getStudentId() > 0) {
+        if (teacherComment.getStudentId()!=null) {
             studentId = teacherComment.getStudentId();
         }
 
-        if (teacherComment.getTeacherId() > 0) {
+        if (teacherComment.getTeacherId() !=null) {
             teacherId = teacherComment.getTeacherId();
         }
 
-        if (teacherComment.getOperatorId() > 0) {
+        if (teacherComment.getOperatorId() !=null) {
             createBy = Integer.valueOf(String.valueOf(teacherComment.getOperatorId()));
         }
 
