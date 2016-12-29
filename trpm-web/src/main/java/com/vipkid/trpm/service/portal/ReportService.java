@@ -702,14 +702,20 @@ public class ReportService {
         boolean isPreVipkid = LessonSerialNumber.isPreVipkidLesson(serialNumber);
 
         if(isPreVipkid){
-            if (teacherComment.getPerformance() == 1 || teacherComment.getPerformance() == 5
-                || teacherComment.isNeedParentSupport()) {
+            if (teacherComment.getPerformance() == 1 || teacherComment.getPerformance() == 5) {
                 logger.info(
-                    "previp检查Performance和needParentSupport判断是否给CLT发邮件: studentId = {}, serialNumber = {} ",
+                    "previp检查Performance判断是否给CLT发邮件: studentId = {}, serialNumber = {} ",
                     oldtc.getStudentId(), serialNumber);
                 sendEmailExecutor.execute(() -> {
-                    emailService.sendEmail4PreVip2CLT(oldtc.getStudentId(), serialNumber,
-                        teacherComment.isNeedParentSupport());
+                    emailService.sendEmail4PreVip2CLTByPerformance(oldtc.getStudentId(),serialNumber);
+                });
+            }
+            if (teacherComment.getNeedParentSupport()!=null&&teacherComment.getNeedParentSupport()) {
+                logger.info(
+                    "previp检查needParentSupport判断是否给CLT发邮件: studentId = {}, serialNumber = {} ",
+                    oldtc.getStudentId(), serialNumber);
+                sendEmailExecutor.execute(() -> {
+                    emailService.sendEmail4PreVip2CLTByNeedParent(oldtc.getStudentId());
                 });
             }
 

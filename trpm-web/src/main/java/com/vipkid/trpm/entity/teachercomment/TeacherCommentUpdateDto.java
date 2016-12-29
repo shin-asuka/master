@@ -686,7 +686,7 @@ public class TeacherCommentUpdateDto {
         //preVip的Major课特有字段 START
         //preVip特有字段
 
-        needParentSupport = teacherComment.isNeedParentSupport();
+        needParentSupport = teacherComment.getNeedParentSupport()==null?false:teacherComment.getNeedParentSupport();
 
         if(StringUtils.isNotBlank(teacherComment.getVocabularyRetention())){
             vocabularyRetention = teacherComment.getVocabularyRetention();
