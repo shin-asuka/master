@@ -63,7 +63,9 @@ public class PersonalInfoRestService {
 		data.setStatus(user.getStatus());
 		data.setTeachingExperience(teacher.getTeachingExperience());
 		data.setCertificates(teacher.getCertificateFiles());
-		data.setTrainingProfile((String) map.get("teacherCertificatedCourseName"));
+		if(null != map){
+			data.setTrainingProfile((String) map.get("teacherCertificatedCourseName"));
+		}
 
 		Date contractStartDate = teacher.getContractStartDate();
 		Date contractEndDate = teacher.getContractEndDate();
