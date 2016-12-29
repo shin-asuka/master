@@ -22,14 +22,7 @@ public class QNService {
     private static Logger logger = LoggerFactory.getLogger(OnlineClassController.class);
 
     Auth auth = Auth.create(ApplicationConstant.QiNiu.ACCESS_KEY,ApplicationConstant.QiNiu.SECRET_KEY);
-
-    String URL = "http://file.vipkid.com.cn/previp/unitsong/MC-L1-U1.pdf";
-    //上传文件的路径
-    String filePath = "E://file/PreVIP";
-    UploadManager uploadManager = new UploadManager();
-    //上传到七牛云保存的文件名
-    String Key = "Unit-song-lyrics.pdf";
-
+    
     private String getPrefix(String fileType) {
         String dir = null;
         switch (fileType) {
