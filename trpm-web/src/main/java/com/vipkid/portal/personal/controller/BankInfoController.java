@@ -2,7 +2,6 @@ package com.vipkid.portal.personal.controller;
 
 import java.util.List;
 import java.util.Map;
-import java.util.logging.SimpleFormatter;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -72,7 +71,9 @@ public class BankInfoController extends RestfulController{
 
             String passport = teacher.getPassport();
             if(StringUtils.isNotBlank(passport)) {
-                passport = ApplicationConstant.OSS.URL_PREFFIX + Symbol.SLASH + passport;
+            	if(!StringUtils.startsWith(passport, "http")){
+            		passport = ApplicationConstant.OSS.URL_PREFFIX + Symbol.SLASH + passport;	
+            	}
                 result.put("teacherPassport", passport);
             }
 
