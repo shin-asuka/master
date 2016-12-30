@@ -60,7 +60,7 @@ public class TeacherCommentController {
         logger.info("updateStatus input={}",JsonUtils.toJSONString(submitDto));
 
         if (StringUtils.isBlank(submitDto.getTeacherFeedback())) {
-            return ApiResponseUtils.buildErrorResp(-1, "参数格式错误!");
+            return ApiResponseUtils.buildErrorResp(-1, "feedback can not be blank!");
         }
 
         //TeacherComment tcuDto = new TeacherComment(inputDto);
@@ -73,7 +73,11 @@ public class TeacherCommentController {
         if(parmMap!=null && parmMap.get("result")!=null&&((Boolean) parmMap.get("result"))){
             return ApiResponseUtils.buildSuccessDataResp("提交成功");
         }else{
-            return ApiResponseUtils.buildErrorResp(-1,"提交失败");
+            String submitError = "提交失败";
+            if(parmMap!=null&&parmMap.get("msg")!=null){
+                submitError = String.valueOf(parmMap.get("msg"));
+            }
+            return ApiResponseUtils.buildErrorResp(-1,submitError);
         }
     }
 

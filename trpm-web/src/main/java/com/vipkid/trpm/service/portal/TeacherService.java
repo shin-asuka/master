@@ -519,4 +519,70 @@ public class TeacherService {
 		return teacherCommentList;
 	}
 
+
+	public String inputCheckPrevipMajorCourseTeacherComment(String serialNumber,SubmitTeacherCommentDto input){
+		String errMsg = null;
+		boolean isPreVipkid = LessonSerialNumber.isPreVipkidLesson(serialNumber);
+		if(isPreVipkid && serialNumber.startsWith("M") && input!=null){
+			//previp的Major课才进行check
+			if(StringUtils.isBlank(input.getTeacherFeedback())){
+				errMsg = "teacherFeedback can not be blank";
+				return errMsg;
+			}
+			if(StringUtils.isBlank(input.getVocabularyRetention())){
+				errMsg = "vocabularyRetention can not be blank";
+				return errMsg;
+			}
+			if(StringUtils.isBlank(input.getPronunciation())){
+				errMsg = "pronunciation can not be blank";
+				return errMsg;
+			}
+			if(StringUtils.isBlank(input.getAlphabetSkills())
+				&& !serialNumber.trim().startsWith("MC-L1-U1")
+				&& !serialNumber.trim().startsWith("MC-L1-U2")
+				&& !serialNumber.trim().startsWith("MC-L1-U3")){
+				//u1-u3的课不需要check此项
+				errMsg = "alphabetSkills can not be blank";
+				return errMsg;
+			}
+
+			if(StringUtils.isBlank(input.getPhonologicalAwareness())){
+				errMsg = "phonologicalAwareness can not be blank";
+				return errMsg;
+			}
+
+			if(StringUtils.isBlank(input.getFollowsInstructions())){
+				errMsg = "followsInstructions can not be blank";
+				return errMsg;
+			}
+
+			if(StringUtils.isBlank(input.getParticipatesActively())){
+				errMsg = "participatesActively can not be blank";
+				return errMsg;
+			}
+
+			if(StringUtils.isBlank(input.getSpeaksClearly())){
+				errMsg = "speaksClearly can not be blank";
+				return errMsg;
+			}
+
+			if(StringUtils.isBlank(input.getMouseTouchpadActivities())){
+				errMsg = "mouseTouchpadActivities can not be blank";
+				return errMsg;
+			}
+
+			if(StringUtils.isBlank(input.getDegreeCompletion())){
+				errMsg = "degreeCompletion can not be blank";
+				return errMsg;
+			}
+
+			if(input.getPerformance() != null){
+				errMsg = "level of difficulty can not be blank";
+				return errMsg;
+			}
+		}
+
+		return errMsg;
+	}
+
 }
