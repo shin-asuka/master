@@ -14,6 +14,8 @@ import com.vipkid.trpm.entity.teachercomment.TeacherCommentResult;
 import com.vipkid.trpm.service.portal.ReportService;
 import com.vipkid.trpm.service.portal.TeacherService;
 import com.vipkid.trpm.util.DateUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -251,6 +253,17 @@ public class ReportController extends AbstractPortalController {
         logger.info("执行ReportController: feedback()耗时：{} ", millis);
 
         if(teacherComment.getPreVip()!=null && teacherComment.getPreVip() ){
+            //判断是否unit<4
+            Integer unitNo=0;
+            String [] arrays = StringUtils.split(lesson.getSerialNumber().toLowerCase(),"-");
+            for(String arr : arrays){
+                if(arr.indexOf("u")>-1){
+                    unitNo = NumberUtils.toInt(arr.replace("u", "").trim());
+                }
+            }
+            if(unitNo < 4){
+                model.addAttribute("isBelowU4",true);
+            }
             return view("online_class_feedback_previp");
         }else{
             return view("online_class_feedback");

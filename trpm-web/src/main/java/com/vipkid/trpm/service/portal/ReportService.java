@@ -638,7 +638,13 @@ public class ReportService {
         checkArgument(teacherComment.getId()!=null && 0 != teacherComment.getId(), "Argument teacherComment id equals 0");
 
         teacherComment.setEmpty(0);
-
+        String previpErrorMsg = teacherService.inputCheckPrevipMajorCourseTeacherComment(serialNumber,teacherComment);
+        if(StringUtils.isNotBlank(previpErrorMsg)){
+            Map<String, Object> paramMap = Maps.newHashMap();
+            paramMap.put("result", false);
+            paramMap.put("msg", previpErrorMsg);
+            return paramMap;
+        }
         // 日志记录参数准备
         TeacherCommentResult oldtcFromAPI = teacherService
                 .findByTeacherCommentId(String.valueOf(teacherComment.getId()));
