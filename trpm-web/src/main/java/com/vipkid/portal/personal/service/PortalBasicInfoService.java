@@ -4,7 +4,6 @@ import static com.vipkid.trpm.util.DateUtils.FMT_YMD;
 
 import java.time.LocalDate;
 import java.util.Date;
-import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
@@ -12,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.vipkid.http.service.FileHttpService;
-import com.vipkid.recruitment.utils.ReturnMapUtils;
 import com.vipkid.rest.dto.PersonlInfoDto;
 import com.vipkid.trpm.dao.TeacherAddressDao;
 import com.vipkid.trpm.dao.TeacherDao;
@@ -67,6 +65,7 @@ public class PortalBasicInfoService {
 		personInfo.setHighestLevelOfEdu(teacher.getHighestLevelOfEdu());
 		personInfo.setIntroduction(teacher.getIntroduction());
 		personInfo.setEvaluationBio(teacher.getEvaluationBio());
+		personInfo.setIsRemindEditBankInfo(StringUtils.isBlank(teacher.getBankCardNumber()));
 		
 		TeacherAddress currentAddress = teacherAddressDao.getTeacherAddress(teacher.getCurrentAddressId());
         if (currentAddress != null) {

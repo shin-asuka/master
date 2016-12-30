@@ -64,6 +64,9 @@ public class PersonlInfoDto {
 	
 	
 	private String evaluationBio;
+	
+	
+	private Boolean IsRemindEditBankInfo = false;
 
 	public String getAvatar() {
 		return avatar;
@@ -255,6 +258,14 @@ public class PersonlInfoDto {
 
 	public void setEvaluationBio(String evaluationBio) {
 		this.evaluationBio = evaluationBio;
+	}
+
+	public Boolean getIsRemindEditBankInfo() {
+		return IsRemindEditBankInfo;
+	}
+
+	public void setIsRemindEditBankInfo(Boolean isRemindEditBankInfo) {
+		IsRemindEditBankInfo = isRemindEditBankInfo;
 	}
 	
 }
