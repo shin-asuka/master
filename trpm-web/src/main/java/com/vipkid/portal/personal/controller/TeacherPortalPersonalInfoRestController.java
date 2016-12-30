@@ -305,7 +305,7 @@ public class TeacherPortalPersonalInfoRestController extends RestfulController {
 			// 验证接口入参id的合法性
 			TeacherTaxpayerForm originTeacherTaxpayerForm = teacherTaxpayerFormDao.findById(teacherTaxpayerFormId);
 			if (null != originTeacherTaxpayerForm && originTeacherTaxpayerForm.getTeacherId() != null
-					&& originTeacherTaxpayerForm.getTeacherId() != teacherId) {// 如果id不合法
+					&& !originTeacherTaxpayerForm.getTeacherId().equals(teacherId)) {// 如果id不合法
 				logger.warn("调用restSaveTaxpayer接口,teacherId = {},恶意调用接口，传入非法id = {}。此Id对应的teacherTaxpayerForm并不属于此老师",
 						teacherId, teacherTaxpayerFormId);
 				return ApiResponseUtils.buildErrorResp(1001, "入参Id不合法");
@@ -338,7 +338,7 @@ public class TeacherPortalPersonalInfoRestController extends RestfulController {
 		} catch (Exception e) {
 			logger.error("保存TaxpayerForm失败，抛异常。e = {}", e);
 		}
-		return ApiResponseUtils.buildErrorResp(1001, "抛异常");
+		return ApiResponseUtils.buildErrorResp(1002, "抛异常");
 	}
 
 	private void setTeacherTaxpayerFormInfo(TeacherTaxpayerForm teacherTaxpayerForm, Teacher teacher) {
