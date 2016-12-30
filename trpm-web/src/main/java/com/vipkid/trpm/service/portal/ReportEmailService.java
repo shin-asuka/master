@@ -42,14 +42,18 @@ public class ReportEmailService {
                 getTableDetail(serialNumber, scheduledDateTime, ApplicationConstant.LEVEL_OF_DIFFITULTY.get(performance)));
     }
 
-    public void sendEmail4PreVip2CLT(long studentId, String serialNumber,Boolean needParentSupport) {
+    public void sendEmail4PreVip2CLTByNeedParent(long studentId) {
+        if (studentId == 0 ){
+            logger.info("sendEmail4PreVip2CLTByNeedParent 参数不符 studentId = {} ", studentId);
+            return;
+        }
+        //只要老师勾选需要家长陪同选项就发邮件
+        sendEmail2CLT4ParentSupport(getStudentName(studentId));
+    }
+    public void sendEmail4PreVip2CLTByPerformance(long studentId, String serialNumber) {
         if (studentId == 0 || StringUtils.isEmpty(serialNumber)){
             logger.info("sendEmail4PreVip2CLT 参数不符 studentId = {}; serialNumber = {} ", studentId, serialNumber);
             return;
-        }
-        if(needParentSupport !=null && needParentSupport){
-            //只要老师勾选需要家长陪同选项就发邮件
-            sendEmail2CLT4ParentSupport(getStudentName(studentId));
         }
         //一个学生在每一个unit被标记为very difficult 或者 very easy的
         String lessonSnPrefix = serialNumber.substring(0, serialNumber.indexOf("-LC") + 1).concat("%");

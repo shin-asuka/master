@@ -18,27 +18,27 @@ public class SubmitTeacherCommentDto extends Entity implements Serializable {
 
     private static final long serialVersionUID = -1L;
     /*  */
-    private long id;
+    private Long id;
     /*  */
-    private int abilityToFollowInstructions;
+    private Integer abilityToFollowInstructions;
     /*  */
-    private int activelyInteraction;
+    private Integer activelyInteraction;
     /*  */
-    private int clearPronunciation;
+    private Integer clearPronunciation;
     /*  */
     private Timestamp createDateTime;
     /*  */
-    private int empty;
+    private Integer empty;
     /*  */
-    private int readingSkills;
+    private Integer readingSkills;
     /*  */
-    private int repetition;
+    private Integer repetition;
     /*  */
     private String reportIssues;
     /*  */
-    private int spellingAccuracy;
+    private Integer spellingAccuracy;
     /*  */
-    private int stars;
+    private Integer stars;
     /*  */
     private String teacherFeedback;
     /*  */
@@ -46,21 +46,21 @@ public class SubmitTeacherCommentDto extends Entity implements Serializable {
     /*  */
     private String tipsForOtherTeachers;
     /*  */
-    private int urgent;
+    private Integer urgent;
     /*  */
-    private int performance;
+    private Integer performance;
     /*  根据performance是否建议调整 1为建议调整*/
-    private int performanceAdjust;
+    private Integer performanceAdjust;
     /*  */
     private String currentPerformance;
     /*  */
-    private long onlineClassId;
+    private Long onlineClassId;
     /*  */
-    private long studentId;
+    private Long studentId;
     /*  */
-    private long teacherId;
+    private Long teacherId;
     /*  */
-    private long operatorId;
+    private Long operatorId;
     /*  */
     private String trialLevelResult;
 
@@ -109,8 +109,241 @@ h5页面的原submitdto字段
     private String speaksClearly;
     private String mouseTouchpadActivities;
     private String degreeCompletion;
-    private boolean needParentSupport;
+    private Boolean needParentSupport;
     //preVip的Major课特有字段 END
+
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Integer getAbilityToFollowInstructions() {
+        return abilityToFollowInstructions;
+    }
+
+    public void setAbilityToFollowInstructions(Integer abilityToFollowInstructions) {
+        this.abilityToFollowInstructions = abilityToFollowInstructions;
+    }
+
+    public Integer getActivelyInteraction() {
+        return activelyInteraction;
+    }
+
+    public void setActivelyInteraction(Integer activelyInteraction) {
+        this.activelyInteraction = activelyInteraction;
+    }
+
+    public Integer getClearPronunciation() {
+        return clearPronunciation;
+    }
+
+    public void setClearPronunciation(Integer clearPronunciation) {
+        this.clearPronunciation = clearPronunciation;
+    }
+
+    public Timestamp getCreateDateTime() {
+        return createDateTime;
+    }
+
+    public void setCreateDateTime(Timestamp createDateTime) {
+        this.createDateTime = createDateTime;
+    }
+
+    public Integer getEmpty() {
+        return empty;
+    }
+
+    public void setEmpty(Integer empty) {
+        this.empty = empty;
+    }
+
+    public Integer getReadingSkills() {
+        return readingSkills;
+    }
+
+    public void setReadingSkills(Integer readingSkills) {
+        this.readingSkills = readingSkills;
+    }
+
+    public Integer getRepetition() {
+        return repetition;
+    }
+
+    public void setRepetition(Integer repetition) {
+        this.repetition = repetition;
+    }
+
+    public String getReportIssues() {
+        return reportIssues;
+    }
+
+    public void setReportIssues(String reportIssues) {
+        this.reportIssues = reportIssues;
+    }
+
+    public Integer getSpellingAccuracy() {
+        return spellingAccuracy;
+    }
+
+    public void setSpellingAccuracy(Integer spellingAccuracy) {
+        this.spellingAccuracy = spellingAccuracy;
+    }
+
+    public Integer getStars() {
+        return stars;
+    }
+
+    public void setStars(Integer stars) {
+        this.stars = stars;
+    }
+
+    public String getTeacherFeedback() {
+        return teacherFeedback;
+    }
+
+    public void setTeacherFeedback(String teacherFeedback) {
+        this.teacherFeedback = teacherFeedback;
+    }
+
+    public String getFeedbackTranslation() {
+        return feedbackTranslation;
+    }
+
+    public void setFeedbackTranslation(String feedbackTranslation) {
+        this.feedbackTranslation = feedbackTranslation;
+    }
+
+    public String getTipsForOtherTeachers() {
+        return tipsForOtherTeachers;
+    }
+
+    public void setTipsForOtherTeachers(String tipsForOtherTeachers) {
+        this.tipsForOtherTeachers = tipsForOtherTeachers;
+    }
+
+    public Integer getUrgent() {
+        return urgent;
+    }
+
+    public void setUrgent(Integer urgent) {
+        this.urgent = urgent;
+    }
+
+    public Integer getPerformance() {
+        return performance;
+    }
+
+    public void setPerformance(Integer performance) {
+        this.performance = performance;
+    }
+
+    public Integer getPerformanceAdjust() {
+        return performanceAdjust;
+    }
+
+    public void setPerformanceAdjust(Integer performanceAdjust) {
+        this.performanceAdjust = performanceAdjust;
+    }
+
+    public String getCurrentPerformance() {
+        return currentPerformance;
+    }
+
+    public void setCurrentPerformance(String currentPerformance) {
+        this.currentPerformance = currentPerformance;
+    }
+
+    public Long getOnlineClassId() {
+        return onlineClassId;
+    }
+
+    public void setOnlineClassId(Long onlineClassId) {
+        this.onlineClassId = onlineClassId;
+    }
+
+    public Long getStudentId() {
+        return studentId;
+    }
+
+    public void setStudentId(Long studentId) {
+        this.studentId = studentId;
+    }
+
+    public Long getTeacherId() {
+        return teacherId;
+    }
+
+    public void setTeacherId(Long teacherId) {
+        this.teacherId = teacherId;
+    }
+
+    public Long getOperatorId() {
+        return operatorId;
+    }
+
+    public void setOperatorId(Long operatorId) {
+        this.operatorId = operatorId;
+    }
+
+    public String getTrialLevelResult() {
+        return trialLevelResult;
+    }
+
+    public void setTrialLevelResult(String trialLevelResult) {
+        this.trialLevelResult = trialLevelResult;
+    }
+
+    public Timestamp getFirstDateTime() {
+        return firstDateTime;
+    }
+
+    public void setFirstDateTime(Timestamp firstDateTime) {
+        this.firstDateTime = firstDateTime;
+    }
+
+    public Timestamp getLastDateTime() {
+        return lastDateTime;
+    }
+
+    public void setLastDateTime(Timestamp lastDateTime) {
+        this.lastDateTime = lastDateTime;
+    }
+
+    public Boolean getHasComment() {
+        return hasComment;
+    }
+
+    public void setHasComment(Boolean hasComment) {
+        this.hasComment = hasComment;
+    }
+
+    public String getCourseType() {
+        return courseType;
+    }
+
+    public void setCourseType(String courseType) {
+        this.courseType = courseType;
+    }
+
+    public String getSubmitSource() {
+        return submitSource;
+    }
+
+    public void setSubmitSource(String submitSource) {
+        this.submitSource = submitSource;
+    }
+
+    public String getClassNumber() {
+        return classNumber;
+    }
+
+    public void setClassNumber(String classNumber) {
+        this.classNumber = classNumber;
+    }
 
     public String getVocabularyRetention() {
         return vocabularyRetention;
@@ -184,243 +417,11 @@ h5页面的原submitdto字段
         this.degreeCompletion = degreeCompletion;
     }
 
-    public String getClassNumber() {
-        return classNumber;
-    }
-
-    public void setClassNumber(String classNumber) {
-        this.classNumber = classNumber;
-    }
-
-    public boolean isNeedParentSupport() {
+    public Boolean getNeedParentSupport() {
         return needParentSupport;
     }
 
-    public void setNeedParentSupport(boolean needParentSupport) {
+    public void setNeedParentSupport(Boolean needParentSupport) {
         this.needParentSupport = needParentSupport;
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public int getAbilityToFollowInstructions() {
-        return abilityToFollowInstructions;
-    }
-
-    public void setAbilityToFollowInstructions(int abilityToFollowInstructions) {
-        this.abilityToFollowInstructions = abilityToFollowInstructions;
-    }
-
-    public int getActivelyInteraction() {
-        return activelyInteraction;
-    }
-
-    public void setActivelyInteraction(int activelyInteraction) {
-        this.activelyInteraction = activelyInteraction;
-    }
-
-    public int getClearPronunciation() {
-        return clearPronunciation;
-    }
-
-    public void setClearPronunciation(int clearPronunciation) {
-        this.clearPronunciation = clearPronunciation;
-    }
-
-    public Timestamp getCreateDateTime() {
-        return createDateTime;
-    }
-
-    public void setCreateDateTime(Timestamp createDateTime) {
-        this.createDateTime = createDateTime;
-    }
-
-    public int getEmpty() {
-        return empty;
-    }
-
-    public void setEmpty(int empty) {
-        this.empty = empty;
-    }
-
-    public int getReadingSkills() {
-        return readingSkills;
-    }
-
-    public void setReadingSkills(int readingSkills) {
-        this.readingSkills = readingSkills;
-    }
-
-    public int getRepetition() {
-        return repetition;
-    }
-
-    public void setRepetition(int repetition) {
-        this.repetition = repetition;
-    }
-
-    public String getReportIssues() {
-        return reportIssues;
-    }
-
-    public void setReportIssues(String reportIssues) {
-        this.reportIssues = reportIssues;
-    }
-
-    public int getSpellingAccuracy() {
-        return spellingAccuracy;
-    }
-
-    public void setSpellingAccuracy(int spellingAccuracy) {
-        this.spellingAccuracy = spellingAccuracy;
-    }
-
-    public int getStars() {
-        return stars;
-    }
-
-    public void setStars(int stars) {
-        this.stars = stars;
-    }
-
-    public String getTeacherFeedback() {
-        return teacherFeedback;
-    }
-
-    public void setTeacherFeedback(String teacherFeedback) {
-        this.teacherFeedback = teacherFeedback;
-    }
-
-    public String getFeedbackTranslation() {
-        return feedbackTranslation;
-    }
-
-    public void setFeedbackTranslation(String feedbackTranslation) {
-        this.feedbackTranslation = feedbackTranslation;
-    }
-
-    public String getTipsForOtherTeachers() {
-        return tipsForOtherTeachers;
-    }
-
-    public void setTipsForOtherTeachers(String tipsForOtherTeachers) {
-        this.tipsForOtherTeachers = tipsForOtherTeachers;
-    }
-
-    public int getUrgent() {
-        return urgent;
-    }
-
-    public void setUrgent(int urgent) {
-        this.urgent = urgent;
-    }
-
-    public int getPerformance() {
-        return performance;
-    }
-
-    public void setPerformance(int performance) {
-        this.performance = performance;
-    }
-
-    public int getPerformanceAdjust() {
-        return performanceAdjust;
-    }
-
-    public void setPerformanceAdjust(int performanceAdjust) {
-        this.performanceAdjust = performanceAdjust;
-    }
-
-    public String getCurrentPerformance() {
-        return currentPerformance;
-    }
-
-    public void setCurrentPerformance(String currentPerformance) {
-        this.currentPerformance = currentPerformance;
-    }
-
-    public long getOnlineClassId() {
-        return onlineClassId;
-    }
-
-    public void setOnlineClassId(long onlineClassId) {
-        this.onlineClassId = onlineClassId;
-    }
-
-    public long getStudentId() {
-        return studentId;
-    }
-
-    public void setStudentId(long studentId) {
-        this.studentId = studentId;
-    }
-
-    public long getTeacherId() {
-        return teacherId;
-    }
-
-    public void setTeacherId(long teacherId) {
-        this.teacherId = teacherId;
-    }
-
-    public long getOperatorId() {
-        return operatorId;
-    }
-
-    public void setOperatorId(long operatorId) {
-        this.operatorId = operatorId;
-    }
-
-    public String getTrialLevelResult() {
-        return trialLevelResult;
-    }
-
-    public void setTrialLevelResult(String trialLevelResult) {
-        this.trialLevelResult = trialLevelResult;
-    }
-
-    public Timestamp getFirstDateTime() {
-        return firstDateTime;
-    }
-
-    public void setFirstDateTime(Timestamp firstDateTime) {
-        this.firstDateTime = firstDateTime;
-    }
-
-    public Timestamp getLastDateTime() {
-        return lastDateTime;
-    }
-
-    public void setLastDateTime(Timestamp lastDateTime) {
-        this.lastDateTime = lastDateTime;
-    }
-
-    public Boolean getHasComment() {
-        return hasComment;
-    }
-
-    public void setHasComment(Boolean hasComment) {
-        this.hasComment = hasComment;
-    }
-
-    public String getCourseType() {
-        return courseType;
-    }
-
-    public void setCourseType(String courseType) {
-        this.courseType = courseType;
-    }
-
-    public String getSubmitSource() {
-        return submitSource;
-    }
-
-    public void setSubmitSource(String submitSource) {
-        this.submitSource = submitSource;
     }
 }

@@ -635,7 +635,7 @@ public class ReportService {
     public Map<String, Object> submitTeacherComment(SubmitTeacherCommentDto teacherComment, User user,String serialNumber,
             String scheduledDateTime,boolean isFromH5) {
         // 如果ID为0 则抛出异常并回滚
-        checkArgument(0 != teacherComment.getId(), "Argument teacherComment id equals 0");
+        checkArgument(teacherComment.getId()!=null && 0 != teacherComment.getId(), "Argument teacherComment id equals 0");
 
         teacherComment.setEmpty(0);
 
@@ -702,19 +702,26 @@ public class ReportService {
         boolean isPreVipkid = LessonSerialNumber.isPreVipkidLesson(serialNumber);
 
         if(isPreVipkid){
-            if (teacherComment.getPerformance() == 1 || teacherComment.getPerformance() == 5
-                || teacherComment.isNeedParentSupport()) {
+            if (teacherComment.getPerformance() !=null && (teacherComment.getPerformance() == 1 || teacherComment.getPerformance() == 5)) {
                 logger.info(
-                    "previp检查Performance和needParentSupport判断是否给CLT发邮件: studentId = {}, serialNumber = {} ",
+                    "previp检查Performance判断是否给CLT发邮件: studentId = {}, serialNumber = {} ",
                     oldtc.getStudentId(), serialNumber);
                 sendEmailExecutor.execute(() -> {
-                    emailService.sendEmail4PreVip2CLT(oldtc.getStudentId(), serialNumber,
-                        teacherComment.isNeedParentSupport());
+                    emailService.sendEmail4PreVip2CLTByPerformance(oldtc.getStudentId(),serialNumber);
+                });
+            }
+            if (teacherComment.getNeedParentSupport()!=null&&teacherComment.getNeedParentSupport()) {
+                logger.info(
+                    "previp检查needParentSupport判断是否给CLT发邮件: studentId = {}, serialNumber = {} ",
+                    oldtc.getStudentId(), serialNumber);
+                sendEmailExecutor.execute(() -> {
+                    emailService.sendEmail4PreVip2CLTByNeedParent(oldtc.getStudentId());
                 });
             }
 
         }else{
-            if (teacherComment.getPerformanceAdjust()==1 && teacherComment.getPerformance()!=0){
+            if (teacherComment.getPerformanceAdjust() !=null&& teacherComment.getPerformance()!=null
+                &&(teacherComment.getPerformanceAdjust()==1 && teacherComment.getPerformance()!=0)){
                 logger.info("判断PerformanceAdjust给CLT发邮件: studentId = {}, serialNumber = {}, scheduledDateTime = {} ",
                     oldtc.getStudentId(), serialNumber, scheduledDateTime);
                 final String finalScheduledDateTime = scheduledDateTime;
@@ -724,7 +731,7 @@ public class ReportService {
                 });
             }
 
-            if (teacherComment.getPerformance()==1 || teacherComment.getPerformance()==5){
+            if (teacherComment.getPerformance() !=null &&(teacherComment.getPerformance()==1 || teacherComment.getPerformance()==5)){
                 logger.info("检查Performance判断是否给CLT发邮件: studentId = {}, serialNumber = {} ", oldtc.getStudentId(), serialNumber);
                 sendEmailExecutor.execute(() -> {
                     emailService.sendEmail4Performance2CLT(oldtc.getStudentId(), serialNumber);
