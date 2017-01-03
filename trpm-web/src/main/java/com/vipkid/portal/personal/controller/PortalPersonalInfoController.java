@@ -1,21 +1,18 @@
 package com.vipkid.portal.personal.controller;
 
-import java.io.IOException;
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.community.config.PropertyConfigurer;
-import org.community.tools.JsonTools;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -23,7 +20,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.google.api.client.util.Maps;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Stopwatch;
 import com.vipkid.enums.TeacherEnum;
@@ -31,22 +27,18 @@ import com.vipkid.enums.TeacherEnum.FormType;
 import com.vipkid.enums.TeacherEnum.LifeCycle;
 import com.vipkid.file.model.FileVo;
 import com.vipkid.file.service.AwsFileService;
-import com.vipkid.file.utils.ActionHelp;
-import com.vipkid.file.utils.StringUtils;
 import com.vipkid.http.utils.JsonUtils;
 import com.vipkid.portal.personal.model.TeachingInfoData;
-import com.vipkid.portal.personal.service.PersonalInfoRestService;
+import com.vipkid.portal.personal.service.PortalPersonalInfoService;
 import com.vipkid.rest.RestfulController;
+import com.vipkid.rest.config.RestfulConfig;
 import com.vipkid.rest.interceptor.annotation.RestInterface;
 import com.vipkid.rest.utils.ApiResponseUtils;
-import com.vipkid.rest.validation.ValidateUtils;
-import com.vipkid.rest.validation.tools.Result;
 import com.vipkid.trpm.dao.TeacherTaxpayerFormDao;
 import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.entity.TeacherTaxpayerForm;
 import com.vipkid.trpm.entity.TeacherTaxpayerFormDetail;
 import com.vipkid.trpm.entity.User;
-import com.vipkid.trpm.entity.personal.TaxpayerView;
 import com.vipkid.trpm.security.SHA256PasswordEncoder;
 import com.vipkid.trpm.service.portal.TeacherTaxpayerFormService;
 import com.vipkid.trpm.util.AwsFileUtils;
@@ -59,8 +51,8 @@ import com.vipkid.trpm.util.AwsFileUtils;
 @RestController
 @RestInterface(lifeCycle = LifeCycle.REGULAR)
 @RequestMapping("/portal/personal")
-public class TeacherPortalPersonalInfoRestController extends RestfulController {
-	private final Logger logger = LoggerFactory.getLogger(TeacherPortalPersonalInfoRestController.class);
+public class PortalPersonalInfoController extends RestfulController {
+	private final Logger logger = LoggerFactory.getLogger(PortalPersonalInfoController.class);
 
 	public static final int USERPASSWORD_MIN_SIZE = 6;
 	public static final int USERPASSWORD_MAX_SIZE = 30;
@@ -69,7 +61,7 @@ public class TeacherPortalPersonalInfoRestController extends RestfulController {
 	public static final String PASSWORD_REGEX3 = "[a-zA-Z]+";// 只包含字母
 
 	@Autowired
-	private PersonalInfoRestService personalInfoRestService;
+	private PortalPersonalInfoService portalPersonalInfoService;
 
 	@Autowired
 	private AwsFileService awsFileService;
@@ -83,31 +75,19 @@ public class TeacherPortalPersonalInfoRestController extends RestfulController {
 	@Autowired
 	private TeacherTaxpayerFormDao teacherTaxpayerFormDao;
 
-	@RequestMapping(value = "restTeachingInfo", method = RequestMethod.GET)
-	public Map<String, Object> restTeachingInfo(HttpServletRequest request, HttpServletResponse response,
-			@RequestParam(value = "teacherId", required = true) long teacherId) {
+	@RequestMapping(value = "restTeachingInfo", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
+	public Map<String, Object> restTeachingInfo(HttpServletRequest request, HttpServletResponse response) {
+		Teacher teacher = getTeacher(request); 
+		long teacherId = teacher.getId();
 		try {
 			Stopwatch stopwatch = Stopwatch.createStarted();
 			logger.info("开始调用restTeachingInfo接口。传入参数：teacherId = {}", teacherId);
-
-			Teacher teacher = getTeacher(request);
 			User user = getUser(request);
-			if (teacherId != teacher.getId()) {
-				logger.warn("teacherId = {}。此老师调用restTeachingInfo，使用其他老师的ID {}", teacher.getId(), teacherId);
-				return ApiResponseUtils.buildErrorResp(1001, "教师id非法");
-			}
-			if (null == teacher || null == user) {
-				logger.error("老师通过了拦截器的登陆验证，但restTeachingInfo接口获取不到此老师，getTeacher(request)==null。入参teacherId = {}",
-						teacherId);
-				return ApiResponseUtils.buildErrorResp(1001, "教师未登录");
-			}
-
-			TeachingInfoData data = personalInfoRestService.getTeachingInfoData(teacher, user);
+			TeachingInfoData data = portalPersonalInfoService.getTeachingInfoData(teacher, user);
 			Map<String, Object> ret = ApiResponseUtils.buildSuccessDataResp(data);
 
 			long millis = stopwatch.stop().elapsed(TimeUnit.MILLISECONDS);
-			logger.info("结束调用restTeachingInfo接口。传入参数：teacherId = {}，返回json = {}。用时{}ms", teacherId,
-					JsonUtils.toJSONString(ret), millis);
+			logger.info("结束调用restTeachingInfo接口。传入参数：teacherId = {}，返回json = {}。用时{}ms", teacherId,JsonUtils.toJSONString(ret), millis);
 			return ret;
 		} catch (Exception e) {
 			logger.error("调用restTeachingInfo接口抛异常。传入参数：teacherId = {}，异常 = {}。", teacherId, e);
@@ -115,52 +95,21 @@ public class TeacherPortalPersonalInfoRestController extends RestfulController {
 		return ApiResponseUtils.buildErrorResp(1002, "服务器抛异常");
 	}
 
-	@RequestMapping(value = "restChangePassword", method = RequestMethod.POST)
+	@RequestMapping(value = "restChangePassword", method = RequestMethod.POST, produces = RestfulConfig.JSON_UTF_8)
 	public Map<String, Object> restChangPassword(HttpServletRequest request, HttpServletResponse response,
 			@RequestBody Map<String, Object> param) {
 		try {
 			Stopwatch stopwatch = Stopwatch.createStarted();
-
 			// 验证入参的json
-			List<Result> list = ValidateUtils.checkBean(param, false);
-			if (CollectionUtils.isNotEmpty(list) && list.get(0).isResult()) {
-				response.setStatus(HttpStatus.BAD_REQUEST.value());
-				logger.warn("resultCheck:" + JsonTools.getJson(list));
-				logger.warn("调用restChangePassword接口传入参数json错误。param = {}", JsonUtils.toJSONString(param));
-				return ApiResponseUtils.buildErrorResp(1001, "参数错误");
-			}
-
-			Long teacherId = null;
-			String currentPassword = null;
-			String newPassword = null;
-			try {
-				Integer teacherIdInt = (Integer) param.get("teacherId");
-				teacherId = Long.valueOf(teacherIdInt);
-				currentPassword = (String) param.get("currentPassword");
-				newPassword = (String) param.get("newPassword");
-			} catch (Exception e) {
-				logger.warn("调用restChangePassword接口传入参数错误。param = {}", JsonUtils.toJSONString(param));
-				return ApiResponseUtils.buildErrorResp(1001, "参数错误");
-			}
-
-			logger.info("开始调用restChangPassword接口。传入参数：teacherId = {}", teacherId);
-
+			String	currentPassword = (String)param.get("currentPassword");
+			String	newPassword = (String) param.get("newPassword");
+			logger.info("开始调用restChangPassword接口。传入参数：teacherId = {}", getTeacher(request).getId());
 			Teacher teacher = getTeacher(request);
-			User user = getUser(request);
-			if (teacherId != teacher.getId()) {
-				logger.warn("teacherId = {}的老师非法调用restChangPassword接口，传入teacherId为", teacher.getId(), teacherId);
-				return ApiResponseUtils.buildErrorResp(1001, "教师id非法");
-			}
-
-			if (null == user || null == teacher) {
-				logger.error("调用restChangPassword接口，通过了拦截器的身份验证，但getTeacher(request) == null");
-				return ApiResponseUtils.buildErrorResp(1001, "教师未登录");
-			}
-
+			User user = getUser(request);			
 			Map<String, Object> ret = verifyPassword(currentPassword, newPassword, user, teacher);
 
-			if (null == ret) {// 如果验证通过,
-				Map<String, Object> data = personalInfoRestService.changePassword(teacher, user, currentPassword,
+			if (MapUtils.isEmpty(ret)) {// 如果验证通过,
+				Map<String, Object> data = portalPersonalInfoService.updatePassword(teacher, user, currentPassword,
 						newPassword, request, response);
 				if ((Boolean) data.get("isSuccess")) {
 					ret = ApiResponseUtils.buildSuccessDataResp(data);
@@ -171,32 +120,26 @@ public class TeacherPortalPersonalInfoRestController extends RestfulController {
 
 			long millis = stopwatch.stop().elapsed(TimeUnit.MILLISECONDS);
 			logger.info(
-					"结束调用restChangPassword接口。传入参数：teacherId = {}，currentPassword = 缺省， newPassword = 缺省。返回json = {}。用时{}ms",
-					teacherId, JsonUtils.toJSONString(ret), millis);
+					"结束调用restChangPassword接口。传入参数：teacherId = {}，currentPassword = 缺省， newPassword = 缺省。返回json = {}。用时{}ms",getTeacher(request).getId(), JsonUtils.toJSONString(ret), millis);
 			return ret;
+		} catch (IllegalArgumentException e) {
+			logger.warn("调用restChangePassword接口传入参数错误。param = {}", JsonUtils.toJSONString(param));
+			return ApiResponseUtils.buildErrorResp(1001, "参数错误");
 		} catch (Exception e) {
 			logger.error("调用restChangPassword接口抛异常。传入参数：post json = {}。异常 = {}。", JsonUtils.toJSONString(param), e);
 		}
 		return ApiResponseUtils.buildErrorResp(1002, "抛异常");
 	}
 
-	@RequestMapping(value = "restTaxpayer", method = RequestMethod.GET)
-	public Map<String, Object> restTaxpayer(HttpServletRequest request, HttpServletResponse response,
-			@RequestParam(value = "teacherId", required = true) long teacherId) {
+	@RequestMapping(value = "restTaxpayer", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
+	public Map<String, Object> restTaxpayer(HttpServletRequest request, HttpServletResponse response) {
+		long teacherId = getTeacher(request).getId();
 		try {
 			Stopwatch stopwatch = Stopwatch.createStarted();
 			logger.info("开始调用restTaxpayer接口。传入参数：teacherId = {}", teacherId);
 
-			Teacher teacher = getTeacher(request);
-			if (null == teacher) {
-				return ApiResponseUtils.buildErrorResp(1001, "teacher未登录");
-			}
-			if (teacher.getId() != teacherId) {
-				return ApiResponseUtils.buildErrorResp(1001, "非法teacherId");
-			}
-
-			Map<String, Object> data = personalInfoRestService.getTaxpayerData(teacherId);
-			Map<String, Object> ret = ApiResponseUtils.buildSuccessDataResp(data);
+			Map<String, Object> resultMap = portalPersonalInfoService.getTaxpayerData(teacherId);
+			Map<String, Object> ret = ApiResponseUtils.buildSuccessDataResp(resultMap);
 
 			long millis = stopwatch.stop().elapsed(TimeUnit.MILLISECONDS);
 			logger.info("结束调用restTaxpayer接口。传入参数：teacherId = {}。返回json = {}。用时{}ms", teacherId,
@@ -208,20 +151,14 @@ public class TeacherPortalPersonalInfoRestController extends RestfulController {
 		return ApiResponseUtils.buildErrorResp(1002, "抛异常");
 	}
 
-	@RequestMapping(value = "/restTaxpayerUpload", method = RequestMethod.POST) // 上传文件接口
-	public void taxpayerUpload(@RequestParam("file") MultipartFile file, HttpServletRequest request,
+	@RequestMapping(value = "/restTaxpayerUpload", method = RequestMethod.POST, produces = RestfulConfig.JSON_UTF_8) // 上传文件接口
+	public Map<String,Object> taxpayerUpload(@RequestParam("file") MultipartFile file, HttpServletRequest request,
 			HttpServletResponse response) {
 		logger.info("开始调用restTaxpayerUpload接口上传文件");
 		try {
 			Integer formType = FormType.W9.val();// 目前只有W9一种
-
 			Teacher teacher = getTeacher(request);
-			if (null == teacher) {
-				Map<String, Object> ret = ApiResponseUtils.buildErrorResp(1001, "老师未登录，不能访问此接口");
-				ActionHelp.WriteStrToOut(response, ret);
-				return;
-			}
-			Long teacherId = teacher.getId();
+			long teacherId = teacher.getId();
 			String teacherName = teacher.getRealName();
 
 			logger.info("开始调用restTaxpayerUpload接口，teacherId = {}", teacherId);
@@ -247,70 +184,43 @@ public class TeacherPortalPersonalInfoRestController extends RestfulController {
 				Preconditions.checkArgument(AwsFileUtils.checkTaxPayerFileSize(size),
 						"文件太大，maxSize = " + AwsFileUtils.TAPXPAYER_FILE_MAX_SIZE);
 
-				try {
-					fileVo = awsFileService.upload(bucketName, key, file.getInputStream(), size);
-				} catch (IOException e) {
-					logger.error("上传文件失败。teacherId = {}", teacherId);
-					throw new RuntimeException(e);
-				}
-
+				fileVo = awsFileService.upload(bucketName, key, file.getInputStream(), size);
+				
 				if (fileVo != null) {
 					String url = bucketName + "/" + key;
 					fileVo.setUrl(url);
 				}
 			}
-			Map<String, Object> ret = ApiResponseUtils.buildSuccessDataResp(fileVo);
-			ActionHelp.WriteStrToOut(response, ret); // 解决中文乱码问题
+			return ApiResponseUtils.buildSuccessDataResp(fileVo);
 		} catch (Exception e) {
 			logger.error("调用restTaxpayerUpload接口抛异常，e = ", e);
 		}
-		Map<String, Object> ret = ApiResponseUtils.buildErrorResp(1002, "抛异常");
-		ActionHelp.WriteStrToOut(response, ret);
+		return ApiResponseUtils.buildErrorResp(1002, "抛异常");
 	}
 
-	@RequestMapping(value = "/restSaveTaxpayer", method = RequestMethod.POST)
+	@RequestMapping(value = "/restSaveTaxpayer", method = RequestMethod.POST, produces = RestfulConfig.JSON_UTF_8)
 	public Map<String, Object> saveTaxpayer(HttpServletRequest request, HttpServletResponse response,
 			@RequestBody Map<String, Object> param) {
 
 		logger.info("开始调用restSaveTaxpayer接口，传入参数param = {}", JsonUtils.toJSONString(param));
 		try {
-			// 验证入参的json
-			List<Result> list = ValidateUtils.checkBean(param, false);
-			if (CollectionUtils.isNotEmpty(list) && list.get(0).isResult()) {
-				response.setStatus(HttpStatus.BAD_REQUEST.value());
-				logger.warn("resultCheck:" + JsonTools.getJson(list));
-				logger.warn("调用restChangePassword接口传入参数json错误。param = {}", JsonUtils.toJSONString(param));
-				return ApiResponseUtils.buildErrorResp(1001, "参数错误");
-			}
-
-			Long teacherTaxpayerFormId = null;
-			String url = null;
-			if (null != param) {
-				teacherTaxpayerFormId = Long.valueOf((int) param.get("id"));
-				url = (String) param.get("url");
-			}
-
+			long teacherTaxpayerFormId = Long.valueOf(param.get("id")+"");
+			String url = (String) param.get("url");
 			Integer formType = FormType.W9.val();// 目前只有W9一种formType;
-
+			
 			Teacher teacher = getTeacher(request);
-			if (null == teacher) {
-				logger.error("调用restSaveTaxpayer接口，传入参数param = {}。通过拦截器验证身份，但getTeacher(request) == null",
-						JsonUtils.toJSONString(param));
-				return ApiResponseUtils.buildErrorResp(1001, "老师未登录");
-			}
-			Long teacherId = teacher.getId();
-			logger.info("save taxpayer formType = {},url={},teacherId={},teacherTaxpayerFormId={}", formType, url,
-					teacherId, teacherTaxpayerFormId);
-
+			long teacherId = teacher.getId();
+			
 			// 验证接口入参id的合法性
 			TeacherTaxpayerForm originTeacherTaxpayerForm = teacherTaxpayerFormDao.findById(teacherTaxpayerFormId);
 			if (null != originTeacherTaxpayerForm && originTeacherTaxpayerForm.getTeacherId() != null
 					&& !originTeacherTaxpayerForm.getTeacherId().equals(teacherId)) {// 如果id不合法
 				logger.warn("调用restSaveTaxpayer接口,teacherId = {},恶意调用接口，传入非法id = {}。此Id对应的teacherTaxpayerForm并不属于此老师",
 						teacherId, teacherTaxpayerFormId);
+				
 				return ApiResponseUtils.buildErrorResp(1001, "入参Id不合法");
 			}
-			if (url.equals(originTeacherTaxpayerForm.getUrl())) {
+			if (StringUtils.equals(originTeacherTaxpayerForm.getUrl(), url)) {
 				return ApiResponseUtils.buildSuccessDataResp(null);// 提升效率，直接返回成功
 			}
 
@@ -324,14 +234,13 @@ public class TeacherPortalPersonalInfoRestController extends RestfulController {
 			setTeacherTaxpayerFormInfo(teacherTaxpayerForm, teacher);
 			logger.info("调用restSaveTaxpayer接口，teacherTaxpayerForm = {}", JsonUtils.toJSONString(teacherTaxpayerForm));
 			teacherTaxpayerFormService.saveTeacherTaxpayerForm(teacherTaxpayerForm);
-
+			
 			// 查库验证是否保存成功
 			TeacherTaxpayerForm newTeacherTaxpayerForm = teacherTaxpayerFormDao.findById(teacherTaxpayerFormId);
 			if (url.equals(newTeacherTaxpayerForm.getUrl())) {// 如果url一样，就视为保存成功
 				return ApiResponseUtils.buildSuccessDataResp(null);
 			} else {
-				logger.error("保存TeacherTaxpayerForm失败.teacherId = {},url={},teacherTaxpayerFormId={}", teacherId, url,
-						teacherTaxpayerFormId);
+				logger.error("保存TeacherTaxpayerForm失败.teacherId = {},url={},teacherTaxpayerFormId={}", teacherId, url,teacherTaxpayerFormId);
 				return ApiResponseUtils.buildErrorResp(2001, "保存TeacherTaxpayerForm失败");
 			}
 
@@ -342,9 +251,6 @@ public class TeacherPortalPersonalInfoRestController extends RestfulController {
 	}
 
 	private void setTeacherTaxpayerFormInfo(TeacherTaxpayerForm teacherTaxpayerForm, Teacher teacher) {
-		if (null == teacher || null == teacherTaxpayerForm) {
-			return;
-		}
 		Long teacherId = teacher.getId();
 		String teacherName = teacher.getRealName();
 
@@ -365,27 +271,30 @@ public class TeacherPortalPersonalInfoRestController extends RestfulController {
 	}
 
 	private Map<String, Object> verifyPassword(String currentPassword, String newPassword, User user, Teacher teacher) {
-		// 验证密码格式
-		if (null == newPassword || newPassword.length() < USERPASSWORD_MIN_SIZE
-				|| newPassword.length() > USERPASSWORD_MAX_SIZE || !newPassword.matches(PASSWORD_REGEX1)
-				|| newPassword.matches(PASSWORD_REGEX2) || newPassword.matches(PASSWORD_REGEX3)) {
+		//验证
+		if(StringUtils.isBlank(currentPassword) || StringUtils.isBlank(newPassword)){
+			logger.warn("新密码或原密码不能为空。teacherId = {}", teacher.getId());
+			return ApiResponseUtils.buildErrorResp(1000, "输入密码错误！");
+		}
+		
+		//验证密码格式
+		if (newPassword.length() < USERPASSWORD_MIN_SIZE || newPassword.length() > USERPASSWORD_MAX_SIZE || 
+				!newPassword.matches(PASSWORD_REGEX1) || newPassword.matches(PASSWORD_REGEX2) ||
+				newPassword.matches(PASSWORD_REGEX3)) {
+			
 			logger.warn("老师越过前端限制修改密码，输入非法的密码格式。teacherId = {}, newPassword = {}", teacher.getId(), newPassword);
 			return ApiResponseUtils.buildErrorResp(1001, "非法请求，密码格式不对");
 		}
 
-		// 检查新旧密码是否相同
-		if (newPassword.equals(currentPassword)) {
+		//检查新旧密码是否相同
+		if (StringUtils.equals(newPassword, currentPassword)) {
 			logger.warn("老师越过前端限制修改密码，输入的原密码与新密码相同。teacherId = {}", teacher.getId());
-			return ApiResponseUtils.buildErrorResp(1001, "非法请求，新密码与旧密码相同");
+			return ApiResponseUtils.buildErrorResp(1002, "非法请求，新密码与旧密码相同");
 		}
 
-		// 验证用户密码
-		String encodedPassword = null;
-		if (null != currentPassword) {
-			encodedPassword = mSHA256PasswordEncoder.encode(currentPassword);
-		}
-
-		if (encodedPassword == null || !encodedPassword.equals(user.getPassword())) {
+		//验证用户密码
+		String encodedPassword = mSHA256PasswordEncoder.encode(currentPassword);
+		if (!StringUtils.equals(encodedPassword,user.getPassword())) {
 			return ApiResponseUtils.buildErrorResp(2001, "原密码输入错误");
 		}
 
