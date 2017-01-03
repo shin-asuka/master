@@ -285,16 +285,16 @@ public interface ApplicationConstant {
 
     public static final class QiNiu{
 
-        public static final String IMG_BUCKET = "vipkid-img";
-        public static final String VIDEO_BUCKET = "vipkid-video";
-        public static final String VIDEO_URL_FIX = "http://video.vipkid.com.cn";
-        public static final String IMG_URL_FIX = "http://image.vipkid.com.cn";
-        public static final String FILE_URL_FIX = "http://file.vipkid.com.cn";
-        public static final String PRECLASS = "preclass/";
-        public static final String PREVIP_SONG = "/previp/unitsong";
+        public static final String IMG_BUCKET = PropertyConfigurer.stringValue("IMG_BUCKET");
+        public static final String VIDEO_BUCKET = PropertyConfigurer.stringValue("VIDEO_BUCKET");
+        public static final String VIDEO_URL_FIX = PropertyConfigurer.stringValue("VIDEO_URL_FIX");
+        public static final String IMG_URL_FIX = PropertyConfigurer.stringValue("IMG_URL_FIX");
+        public static final String FILE_URL_FIX = PropertyConfigurer.stringValue("FILE_URL_FIX");
+        public static final String PRECLASS = PropertyConfigurer.stringValue("PRECLASS");
+        public static final String PREVIP_SONG = PropertyConfigurer.stringValue("PREVIP_SONG");
 
-        public static final String ACCESS_KEY = "TszxltNAuOVlM2jFhdkPl6_qfXt6YT6TkeBJH8TL";
-        public static final String SECRET_KEY = "1Bv8qVhp0q_Uw9BphceKOHfJUfhL0kbEkG0yoawL";
+        public static final String ACCESS_KEY = PropertyConfigurer.stringValue("ACCESS_KEY");
+        public static final String SECRET_KEY = PropertyConfigurer.stringValue("SECRET_KEY");
     }
 
     Map<Integer, String> LEVEL_OF_DIFFITULTY = new HashMap<Integer, String>(){{
