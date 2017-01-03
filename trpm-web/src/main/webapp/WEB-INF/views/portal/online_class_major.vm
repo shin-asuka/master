@@ -18,10 +18,10 @@
 		              </a>
 		            </div>
 		        </div>
-		                
+
 		        #**2.反馈和退出 *#
 		        <div class="rightActionBarGroup2">
-					##<!-- 是否显示DemoReport A课并且报告存在则显示 -->	
+					##<!-- 是否显示DemoReport A课并且报告存在则显示 -->
 					#set($isDemoReport = false)
 					#if($stringUtils.startsWith($!{lesson.serialNumber},'A'))
 						#if($currentReport)
@@ -34,26 +34,26 @@
 ##						<div onclick="require('feedback').openUnitAssessment('Required','$!onlineClass.id','$!student.id')">Add Feedback</div>
                         <div class="js-add">Add Feedback</div>
 					##<div onclick="showUADailog('$!onlineClass.id')">Add Feedback</div>
-					
+
 					#else
 						##否则显示feedback
 						<div onclick="require('feedback').openFeedback('Required','$!onlineClass.id','$!student.id')">Add Feedback</div>
 ##                      x<div class="js-add">Add Feedback</div>
 					#end
-					
+
 					##if(!$isReplay)
 					##	<div class="lastAction"><a href="http://help.duobeiyun.com/room/test/?result=http://beta-app-proxy.vipkid.com.cn/api/service/public/ittest/callback&amp;lang=en&amp;role=TEACHER&amp;id=$teacher.id" style="color: red;" target="_blank">Test your computer</a></div>
 					##end
-					
+
 					<div class="lastAction"> <a href="javascript:;" onclick="require('classmajor').confirmExitClassroom($isDemoReport,'$!onlineClass.id', '$!student.id','$lesson.isUnitAssessment')"  style="color: white;">Exit Classroom</a></div>
 		        </div>
-		        
+
 		        #**3.倒计时显示 *#
 		        <div class="rightActionBarGroup">
 		            <label id="countTimeDiv" class="classTime ng-scope ng-binding"> </label> <label class="classTimeLog ng-hide"> </label>
 		        </div>
 		    </div>
-		    
+
 			#** TOP B 显示课程信息 *#
 			<div class="lessonInfoRow" style="overflow: hidden;">
 			    <div class="infoLabelContainer">
@@ -64,9 +64,9 @@
 			    <div class="infoColumn3 info" id="sentencePatterns">$!lesson.sentencePatterns</div>
 			    <div style="clear:both"></div>
 			</div>
-	    </section>         
+	    </section>
 		##---top end
-		
+
 		##body start
 		<div class="container">
 		    <div class="mainContainer" style="margin-top: 45px;position: relative">
@@ -365,7 +365,7 @@
                 <h4 class="modal-title" id="myModalLabel">Unit Assessment Report</h4>
             </div>
             <div class="modal-body" >
-               <iframe id="iframepage" frameborder="0" scrolling="auto" width="100%" height="500" 
+               <iframe id="iframepage" frameborder="0" scrolling="auto" width="100%" height="500"
     				ng-src="/unit_assessment?onlineClassId=${onlineClassId}"></iframe>
             </div>
            <!-- <div class="modal-footer">
@@ -383,13 +383,13 @@
 <link rel="stylesheet" href="#styleUrl('/resources/styles/portal/jquery-ui.min.css')" />
 
 #@requireJs()
-    require(['classmajor'], function(classmajor){        	
-    	classmajor.init("$!serverTime", "$!scheduleTime","$!studentUser.createDateTime");    
+    require(['classmajor'], function(classmajor){
+    	classmajor.init("$!serverTime", "$!scheduleTime","$!studentUser.createDateTime", "$!TRPM_TEACHER.id");
         #if($studentUser.createDateTime)
           classmajor.sendTeacherInClassroom("$!onlineClass.id");
         #end
     });
-    
+
     #if($stringUtils.startsWith($!{lesson.serialNumber},'A'))
 	    #if($currentReport)
 	    	 require(['report-demo','room-demo'], function(report,roomdemo){
@@ -406,8 +406,8 @@
 		 		feedback.openFeedback("Required","$!onlineClass.id","$!student.id");
 		 	#end
 		});
-    #end 
-        
+    #end
+
     ##通道选择加载js
     ## 2代表多贝云 1 xuedianyun 4 duobeiyun 2
     #if(${onlineClass.supplierCode} == 1)
@@ -418,11 +418,11 @@
         require(['dbyproxy'], function(dby){
         dby.initChannel("$!{TRPM_USER.id}", "$!onlineClass.classroom", true, "$!stars");
         });
-    #end  
-	
+    #end
+
 	##UA 报告 弹出框 拖动效果 依赖类库
 	require(['jquery'], function(){ } );
 	require(['jquery-ui'], function(){ } );
-	
+
 #end
 
