@@ -7,6 +7,7 @@ import com.qiniu.util.Auth;
 import com.sun.tools.doclets.formats.html.SourceToHTMLConverter;
 import com.vipkid.trpm.constant.ApplicationConstant;
 import com.vipkid.trpm.controller.portal.OnlineClassController;
+import org.community.config.PropertyConfigurer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -40,8 +41,6 @@ public class QNService {
     }
 
     public Map<String,Object> getDownloadUrl(String seriaNum){
-        String lyricsURL = getPrefix(ApplicationConstant.MediaType.FILE);
-        String videoURL = getPrefix(ApplicationConstant.MediaType.VIDEO);
         Map<String,Object> downloadUrl = Maps.newHashMap();
         Map<String,Object> showUrl = getShowUrl(seriaNum);
         String lyricsDownUrl = showUrl.get("lyricsShowUrl") + "?attname=";
@@ -50,8 +49,6 @@ public class QNService {
         videoDownUrl = download(videoDownUrl);
         downloadUrl.put("lyricsDownloadUrl",lyricsDownUrl);
         downloadUrl.put("videoDownloadUrl",videoDownUrl);
-
-
         return downloadUrl;
     }
 
