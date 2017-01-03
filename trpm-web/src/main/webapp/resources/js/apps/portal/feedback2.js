@@ -158,6 +158,50 @@ define([ "jquery-form", "jquery-bootstrap", "jquery-load", "tools" ], function()
 		var teacherFeedback = $("#teacherFeedbackText").val();
 		var lessonDiff = $("#lessonDiff").val();
 
+		var previp = $("#previp").val();
+		var isPrevipMajor = $("#isMajor").val();
+
+		if(!Tools.isEmpty(previp)&&!Tools.isEmpty(isPrevipMajor)){
+			/** previp的major课的inputcheck,trial课的和旧的保持一致*/
+			var isBelowU4 = $("#isBelowU4").val();
+
+			var vocabularyRetention = $("#vocabularyRetention").val();
+			var pronunciation = $("#pronunciation").val();
+			var alphabetSkills = $("#alphabetSkills").val();
+			var phonologicalAwareness = $("#phonologicalAwareness").val();
+			var followsInstructions = $("#followsInstructions").val();
+			var participatesActively = $("#participatesActively").val();
+			var speaksClearly = $("#speaksClearly").val();
+			var mouseTouchpadActivities = $("#mouseTouchpadActivities").val();
+			var degreeCompletion = $("#degreeCompletion").val();
+			var performance = $("#performance").val();
+			if(Tools.isEmpty(vocabularyRetention)
+				|| Tools.isEmpty(pronunciation)
+				|| (Tools.isEmpty(alphabetSkills) && !Tools.isEmpty(isBelowU4))
+				|| Tools.isEmpty(phonologicalAwareness)
+				|| Tools.isEmpty(followsInstructions)
+				|| Tools.isEmpty(participatesActively)
+				|| Tools.isEmpty(speaksClearly)
+				|| Tools.isEmpty(mouseTouchpadActivities)
+				|| Tools.isEmpty(degreeCompletion)
+				|| Tools.isEmpty(performance)
+				|| performance==0){
+
+				$.alert("confirm", {
+					title : "Prompt",
+					content : "Please fill in the required fields in the feedback form!",
+					cancel:"OK",
+					cancelClass:"primary",
+					style : {
+						"margin-top" : "10%",
+						"width" : "400px"
+					}
+				});
+				return;
+			}
+
+		}
+
 		if (Tools.isEmpty(teacherFeedback) || Tools.isEmpty(lessonDiff) || 0 == lessonDiff) {
 			$.alert("confirm", {
 				title : "Prompt",

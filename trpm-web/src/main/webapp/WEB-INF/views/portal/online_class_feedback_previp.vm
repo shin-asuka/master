@@ -31,86 +31,87 @@
 				</div>
 
 				#if($lesson.serialNumber && ($stringUtils.startsWith($!lesson.serialNumber,'MC')))
+                    <input type="hidden" id="isMajor" name="isMajor" value="isMajor" />
 					<div style="padding-top:10px;">
 						<div>
-                            <label>Content Learning</label>
+                            <label>Content Learning<span style="color: red;">*</span></label>
                             <p>
 								<span>Vocabulary Rebention</span>
-								<label><input type="radio" name="vocabularyRetention" field="$teacherComment.vocabularyRetention" value="Struggling" $!elememtDisabled />Struggling</label>
-                                <label><input type="radio" name="vocabularyRetention" field="$teacherComment.vocabularyRetention" value="Developing" $!elememtDisabled />Developing</label>
-                                <label><input type="radio" name="vocabularyRetention" field="$teacherComment.vocabularyRetention" value="Mastered" $!elememtDisabled />Mastered</label>
+								<label><input type="radio" id="vocabularyRetention" name="vocabularyRetention" field="$teacherComment.vocabularyRetention" value="Struggling" $!elememtDisabled />Struggling</label>
+                                <label><input type="radio" id="vocabularyRetention" name="vocabularyRetention" field="$teacherComment.vocabularyRetention" value="Developing" $!elememtDisabled />Developing</label>
+                                <label><input type="radio" id="vocabularyRetention" name="vocabularyRetention" field="$teacherComment.vocabularyRetention" value="Mastered" $!elememtDisabled />Mastered</label>
 							</p>
 
                             <p>
 								<span>Pronunciation</span>
-                                <label><input type="radio" name="pronunciation" field="$teacherComment.pronunciation"  value="Struggling" $!elememtDisabled />Struggling</label>
-                                <label><input type="radio" name="pronunciation" field="$teacherComment.pronunciation"  value="Developing" $!elememtDisabled />Developing</label>
-                                <label><input type="radio" name="pronunciation" field="$teacherComment.pronunciation"  value="Mastered" $!elememtDisabled />Mastered</label>
+                                <label><input type="radio" id="pronunciation" name="pronunciation" field="$teacherComment.pronunciation"  value="Struggling" $!elememtDisabled />Struggling</label>
+                                <label><input type="radio" id="pronunciation" name="pronunciation" field="$teacherComment.pronunciation"  value="Developing" $!elememtDisabled />Developing</label>
+                                <label><input type="radio" id="pronunciation" name="pronunciation" field="$teacherComment.pronunciation"  value="Mastered" $!elememtDisabled />Mastered</label>
 							</p
 							#if($isBelowU4!=true)
                             <p>
 								<span>Alphabet skills</span>
-                                <label><input type="radio" name="alphabetSkills" field="$teacherComment.alphabetSkills" value="Struggling" $!elememtDisabled />Struggling</label>
-                                <label><input type="radio" name="alphabetSkills" field="$teacherComment.alphabetSkills" value="Developing" $!elememtDisabled />Developing</label>
-                                <label><input type="radio" name="alphabetSkills" field="$teacherComment.alphabetSkills" value="Mastered"   $!elememtDisabled />Mastered</label>
+                                <label><input type="radio" id="alphabetSkills" name="alphabetSkills" field="$teacherComment.alphabetSkills" value="Struggling" $!elememtDisabled />Struggling</label>
+                                <label><input type="radio" id="alphabetSkills" name="alphabetSkills" field="$teacherComment.alphabetSkills" value="Developing" $!elememtDisabled />Developing</label>
+                                <label><input type="radio" id="alphabetSkills" name="alphabetSkills" field="$teacherComment.alphabetSkills" value="Mastered"   $!elememtDisabled />Mastered</label>
 							</p>
 							#end
                             <p>
 								<span>phonological Awareness</span>
-                                <label><input type="radio" name="phonologicalAwareness" field="$teacherComment.phonologicalAwareness" value="Struggling" $!elememtDisabled />Struggling</label>
-                                <label><input type="radio" name="phonologicalAwareness" field="$teacherComment.phonologicalAwareness" value="Developing" $!elememtDisabled />Developing</label>
-                                <label><input type="radio" name="phonologicalAwareness" field="$teacherComment.phonologicalAwareness" value="Mastered" $!elememtDisabled />Mastered</label>
+                                <label><input type="radio" id="phonologicalAwareness" name="phonologicalAwareness" field="$teacherComment.phonologicalAwareness" value="Struggling" $!elememtDisabled />Struggling</label>
+                                <label><input type="radio" id="phonologicalAwareness" name="phonologicalAwareness" field="$teacherComment.phonologicalAwareness" value="Developing" $!elememtDisabled />Developing</label>
+                                <label><input type="radio" id="phonologicalAwareness" name="phonologicalAwareness" field="$teacherComment.phonologicalAwareness" value="Mastered" $!elememtDisabled />Mastered</label>
 							</p
 						</div>
 
 						<div>
-                            <label>Classroom Behavior</label>
+                            <label>Classroom Behavior<span style="color: red;">*</span></label>
 							<p>
 								<span>Follows instructions</span>
-                                <label><input type="radio" name="followsInstructions" field="$teacherComment.followsInstructions" value="Rarely" $!elememtDisabled />Rarely</label>
-                                <label><input type="radio" name="followsInstructions" field="$teacherComment.followsInstructions" value="Sometimes" $!elememtDisabled />Sometimes</label>
-                                <label><input type="radio" name="followsInstructions" field="$teacherComment.followsInstructions" value="Oftens" $!elememtDisabled />Oftens</label>
+                                <label><input type="radio" id="followsInstructions" name="followsInstructions" field="$teacherComment.followsInstructions" value="Rarely" $!elememtDisabled />Rarely</label>
+                                <label><input type="radio" id="followsInstructions" name="followsInstructions" field="$teacherComment.followsInstructions" value="Sometimes" $!elememtDisabled />Sometimes</label>
+                                <label><input type="radio" id="followsInstructions" name="followsInstructions" field="$teacherComment.followsInstructions" value="Oftens" $!elememtDisabled />Oftens</label>
 							</p>
 
                             <p>
                                 <span>Participates actively</span>
-                                <label><input type="radio" name="participatesActively" field="$teacherComment.participatesActively" value="Rarely" $!elememtDisabled />Rarely</label>
-                                <label><input type="radio" name="participatesActively" field="$teacherComment.participatesActively" value="Sometimes" $!elememtDisabled />Sometimes</label>
-                                <label><input type="radio" name="participatesActively" field="$teacherComment.participatesActively" value="Oftens" $!elememtDisabled />Oftens</label>
+                                <label><input type="radio" id="participatesActively" name="participatesActively" field="$teacherComment.participatesActively" value="Rarely" $!elememtDisabled />Rarely</label>
+                                <label><input type="radio" id="participatesActively" name="participatesActively" field="$teacherComment.participatesActively" value="Sometimes" $!elememtDisabled />Sometimes</label>
+                                <label><input type="radio" id="participatesActively" name="participatesActively" field="$teacherComment.participatesActively" value="Oftens" $!elememtDisabled />Oftens</label>
                             </p>
 
                             <p>
                                 <span>Speaks clearly</span>
-                                <label><input type="radio" name="speaksClearly" field="$teacherComment.speaksClearly" value="Rarely" />Rarely</label>
-                                <label><input type="radio" name="speaksClearly" field="$teacherComment.speaksClearly" value="Sometimes" />Sometimes</label>
-                                <label><input type="radio" name="speaksClearly" field="$teacherComment.speaksClearly" value="Oftens" />Oftens</label>
+                                <label><input type="radio" id="speaksClearly" name="speaksClearly" field="$teacherComment.speaksClearly" value="Rarely" />Rarely</label>
+                                <label><input type="radio" id="speaksClearly" name="speaksClearly" field="$teacherComment.speaksClearly" value="Sometimes" />Sometimes</label>
+                                <label><input type="radio" id="speaksClearly" name="speaksClearly" field="$teacherComment.speaksClearly" value="Oftens" />Oftens</label>
                             </p>
 						</div>
 
 						<div>
-                            <label>Computer Skills</label>
+                            <label>Computer Skills<span style="color: red;">*</span></label>
 							<p>
 								<span>Mouse\Touchpad activities</span>
-                                <label><input type="radio" name="mouseTouchpadActivities" field="$teacherComment.mouseTouchpadActivities" value="Struggling" $!elememtDisabled />Struggling</label>
-                                <label><input type="radio" name="mouseTouchpadActivities" field="$teacherComment.mouseTouchpadActivities" value="Developing" $!elememtDisabled />Developing</label>
-                                <label><input type="radio" name="mouseTouchpadActivities" field="$teacherComment.mouseTouchpadActivities" value="Mastered" $!elememtDisabled />Mastered</label>
+                                <label><input type="radio" id="mouseTouchpadActivities" name="mouseTouchpadActivities" field="$teacherComment.mouseTouchpadActivities" value="Struggling" $!elememtDisabled />Struggling</label>
+                                <label><input type="radio" id="mouseTouchpadActivities" name="mouseTouchpadActivities" field="$teacherComment.mouseTouchpadActivities" value="Developing" $!elememtDisabled />Developing</label>
+                                <label><input type="radio" id="mouseTouchpadActivities" name="mouseTouchpadActivities" field="$teacherComment.mouseTouchpadActivities" value="Mastered" $!elememtDisabled />Mastered</label>
 							</p>
 						</div>
 
 
                         <div>
-                            <label>Lesson Completion</label>
+                            <label>Lesson Completion<span style="color: red;">*</span></label>
 							<p>(Was the amount of material appropriate for 25 minutes?)</p>
                             <p>
                                 <span>Degree of completion</span>
-                                <label><input type="radio" name="degreeCompletion" field="$teacherComment.degreeCompletion" value="Skipped a lot" $!elememtDisabled />Skipped a lot</label>
-                                <label><input type="radio" name="degreeCompletion" field="$teacherComment.degreeCompletion" value="Skipped a bit" $!elememtDisabled />Skipped a bit</label>
-                                <label><input type="radio" name="degreeCompletion" field="$teacherComment.degreeCompletion" value="Finished all" $!elememtDisabled />Finished all</label>
+                                <label><input type="radio" id="degreeCompletion" name="degreeCompletion" field="$teacherComment.degreeCompletion" value="Skipped a lot" $!elememtDisabled />Skipped a lot</label>
+                                <label><input type="radio" id="degreeCompletion" name="degreeCompletion" field="$teacherComment.degreeCompletion" value="Skipped a bit" $!elememtDisabled />Skipped a bit</label>
+                                <label><input type="radio" id="degreeCompletion" name="degreeCompletion" field="$teacherComment.degreeCompletion" value="Finished all" $!elememtDisabled />Finished all</label>
                             </p>
                         </div>
 						##<input type="radio" name="englishLanguageScore" #if(0 == ${teacherApplication.englishLanguageScore})checked="checked"#end value="0" />
 
-						<label>Level of Difficulty</label>
+						<label>Level of Difficulty<span style="color: red;">*</span></label>
 						<div style="font-weight:normal;color:#666;margin-top:-5px;padding-bottom:5px;">
 							(This helps us with overall lesson performance/ student ability)</div>
 						<div>
@@ -143,5 +144,8 @@
 		#else
 			<button type="button" class="btn btn-gray" onclick="require('feedback').trailCommentClose();">Close</button>
 		#end
+		##区别是否是previp的提交
+		<input type="hidden" id="previp" name="previp" value="previp" />
+		<input type="hidden" id="isBelowU4" name="isBelowU4" value="$isBelowU4" />
 	</div>
 </form>
