@@ -576,7 +576,7 @@ public class TeacherService {
 				return errMsg;
 			}
 
-			if(input.getPerformance() == null){
+			if(input.getPerformance() == null || input.getPerformance()==0){
 				errMsg = "level of difficulty can not be blank";
 				return errMsg;
 			}
