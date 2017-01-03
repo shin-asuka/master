@@ -7,6 +7,7 @@ import com.google.common.base.Splitter;
 import com.vipkid.file.utils.Encodes;
 import com.vipkid.file.utils.FileUtils;
 import com.vipkid.file.utils.StringUtils;
+
 import org.community.config.PropertyConfigurer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -278,6 +279,18 @@ public class AwsFileUtils {
 			String fileType = FileUtils.getFileType(fileName);
 			if(!fileName.equals(encodeName)){
 				name = DateUtils.formatDate(new Date(), "yyyyMMdd-HHmmss")+"."+fileType;
+			}
+		}
+		return name;
+	}
+	
+	public static String getFileName(String url){
+		String name = "";
+		if(StringUtils.isNotBlank(url)){
+			Integer index = url.lastIndexOf("/");
+			name = url.substring(index+1);
+			if(name.contains("-")){
+				name = name.substring(name.indexOf("-")+1);
 			}
 		}
 		return name;

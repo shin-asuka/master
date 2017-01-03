@@ -189,6 +189,7 @@ public class PortalPersonalInfoController extends RestfulController {
 				if (fileVo != null) {
 					String url = bucketName + "/" + key;
 					fileVo.setUrl(url);
+					fileVo.setName(AwsFileUtils.getFileName(fileVo.getUrl()));
 				}
 			}
 			return ApiResponseUtils.buildSuccessDataResp(fileVo);
