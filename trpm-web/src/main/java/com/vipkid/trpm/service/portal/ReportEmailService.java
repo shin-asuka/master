@@ -157,8 +157,8 @@ public class ReportEmailService {
         String reason;
         switch(reasonNo) {
             case 3 : reason = "3 times in first 3 lessons"; break;
-            case 2 : reason = "2 times in first 4 lessons"; break;
-            case 4 : reason = "4 times in first 8 lessons"; break;
+            case 4 : reason = "2 times in first 4 lessons"; break;
+            case 8 : reason = "4 times in first 8 lessons"; break;
             case 6 : reason = "3 times in first 6 lessons"; break;
             case 12 : reason = "6 times in first 12 lessons"; break;
             default : reason = "老师建议";
