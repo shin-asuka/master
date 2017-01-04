@@ -837,7 +837,7 @@ public class ReportService {
                 if ("l1u0".equals(lowerCase)) {
                     studentExam.setExamLevel("Computer Test result  is Level 0 Unit 0");
                 }else if(lowerCase.equals("l1u1")){
-                    examLevel = "Computer Test result is L1U1(PreVIP)";
+                    examLevel = "Computer Test result is L1U1(PreVIP).";
                 } else if (lowerCase.startsWith("l")) {
                     examLevel= "Computer Test result is " + lowerCase.replaceAll("l", "Level ").replaceAll("u", " Unit ") + ".";
                 }
@@ -845,37 +845,37 @@ public class ReportService {
                     switch (serialNum) {
                         case ApplicationConstant.TrailLessonConstants.L0:
                             if(StringUtils.equals(examLevel,"No Computer Test result.")){
-                                examLevel = examLevel +"Please use the PreVIP courseware.";
+                                examLevel = examLevel +" Please use the PreVIP courseware.";
                             }else{
-                                examLevel = "Please ignore the Computer Test result and use the PreVIP courseware.";
+                                examLevel = " Please ignore the Computer Test result and use the PreVIP courseware.";
                             }
                             break;
                         case ApplicationConstant.TrailLessonConstants.L1:
-                            if(StringUtils.equals(examLevel,"No Computer Test result.")){
-                                examLevel = examLevel +"Please use the Level 2 Unit 01 courseware.";
+                            if(StringUtils.equals(examLevel,"No Computer Test result.") || StringUtils.equals(examLevel,"Computer Test result is L1U1(PreVIP).")){
+                                examLevel = examLevel +" Please use the Level 2 Unit 01 courseware.";
                             }else{
-                                examLevel = examLevel + "please use the "+ lowerCase.replace("l","Level ").replace("u"," Unit ") + " courseware.";
+                                examLevel = examLevel + " Please use the "+ lowerCase.replace("l","Level ").replace("u"," Unit ") + " courseware.";
                             }
                             break;
                         case ApplicationConstant.TrailLessonConstants.L2:
-                            if(StringUtils.equals(examLevel,"No Computer Test result.")){
-                                examLevel = examLevel +"Please use the use Level 2 Unit 04 courseware.";
+                            if(StringUtils.equals(examLevel,"No Computer Test result.")|| StringUtils.equals(examLevel,"Computer Test result is L1U1(PreVIP).")){
+                                examLevel = examLevel +" Please use the use Level 2 Unit 04 courseware.";
                             }else{
-                                examLevel = examLevel + "please use the "+ lowerCase.replace("l","Level ").replace("u"," Unit ") + " courseware.";
+                                examLevel = examLevel + " Please use the "+ lowerCase.replace("l","Level ").replace("u"," Unit ") + " courseware.";
                             }
                             break;
                         case ApplicationConstant.TrailLessonConstants.L3:
-                            if(StringUtils.equals(examLevel,"No Computer Test result.")){
-                                examLevel = examLevel +"Please use the Level 3 Unit 01 courseware.";
+                            if(StringUtils.equals(examLevel,"No Computer Test result.") || StringUtils.equals(examLevel,"Computer Test result is L1U1(PreVIP).")){
+                                examLevel = examLevel +" Please use the Level 3 Unit 01 courseware.";
                             }else{
-                                examLevel = examLevel + "please use the "+ lowerCase.replace("l","Level ").replace("u"," Unit ") + " courseware.";
+                                examLevel = examLevel + " Please use the "+ lowerCase.replace("l","Level ").replace("u"," Unit ") + " courseware.";
                             }
                             break;
                         case ApplicationConstant.TrailLessonConstants.L4:
-                            if(StringUtils.equals(examLevel,"No Computer Test result.")){
-                                examLevel = examLevel +"Please use the Level 4 Unit 01 courseware.";
+                            if(StringUtils.equals(examLevel,"No Computer Test result.") || StringUtils.equals(examLevel,"Computer Test result is L1U1(PreVIP).")){
+                                examLevel = examLevel +" Please use the Level 4 Unit 01 courseware.";
                             }else{
-                                examLevel = examLevel + "please use the "+ lowerCase.replace("l","Level ").replace("u"," Unit ") + " courseware.";
+                                examLevel = examLevel + " Please use the "+ lowerCase.replace("l","Level ").replace("u"," Unit ") + " courseware.";
                             }
                             break;
                         default:
