@@ -849,7 +849,7 @@ public class ReportService {
                             }else{
                                 examLevel = "Please ignore the Computer Test result and use the PreVIP courseware.";
                             }
-
+                            break;
                         case ApplicationConstant.TrailLessonConstants.L1:
                             examLevel = examLevel + " Please use the Level 2 Unit 01 courseware.";
                             break;
