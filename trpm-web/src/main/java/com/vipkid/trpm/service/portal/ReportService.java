@@ -851,16 +851,32 @@ public class ReportService {
                             }
                             break;
                         case ApplicationConstant.TrailLessonConstants.L1:
-                            examLevel = examLevel + " Please use the Level 2 Unit 01 courseware.";
+                            if(StringUtils.equals(examLevel,"No Computer Test result.")){
+                                examLevel = examLevel +"Please use the Level 2 Unit 01 courseware.";
+                            }else{
+                                examLevel = examLevel + "please use the "+ lowerCase.replace("l","Level ").replace("u"," Unit ") + " courseware.";
+                            }
                             break;
                         case ApplicationConstant.TrailLessonConstants.L2:
-                            examLevel = examLevel + "Please use the use Level 2 Unit 04 courseware.";
+                            if(StringUtils.equals(examLevel,"No Computer Test result.")){
+                                examLevel = examLevel +"Please use the use Level 2 Unit 04 courseware.";
+                            }else{
+                                examLevel = examLevel + "please use the "+ lowerCase.replace("l","Level ").replace("u"," Unit ") + " courseware.";
+                            }
                             break;
                         case ApplicationConstant.TrailLessonConstants.L3:
-                            examLevel = examLevel + "Please use the Level 3 Unit 01 courseware.";
+                            if(StringUtils.equals(examLevel,"No Computer Test result.")){
+                                examLevel = examLevel +"Please use the Level 3 Unit 01 courseware.";
+                            }else{
+                                examLevel = examLevel + "please use the "+ lowerCase.replace("l","Level ").replace("u"," Unit ") + " courseware.";
+                            }
                             break;
                         case ApplicationConstant.TrailLessonConstants.L4:
-                            examLevel = examLevel + "Please use the Level 4 Unit 01 courseware.";
+                            if(StringUtils.equals(examLevel,"No Computer Test result.")){
+                                examLevel = examLevel +"Please use the Level 4 Unit 01 courseware.";
+                            }else{
+                                examLevel = examLevel + "please use the "+ lowerCase.replace("l","Level ").replace("u"," Unit ") + " courseware.";
+                            }
                             break;
                         default:
                             break;
