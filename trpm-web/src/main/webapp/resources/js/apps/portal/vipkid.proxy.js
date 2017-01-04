@@ -32,7 +32,7 @@ define(['messenger'], function() {
     });
 
     jQuery(document).ready(function() {
-      messenger.addTarget(document.getElementById('supplierClassRoom').contentWindow, 'xuedianyun');
+      messenger.addTarget(document.getElementById('xuedianyun').contentWindow, 'vipkid_onlineclass');
     });
 
   };
