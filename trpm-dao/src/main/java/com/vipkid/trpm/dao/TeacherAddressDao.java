@@ -31,13 +31,11 @@ public class TeacherAddressDao extends MapperDaoTemplate<TeacherAddress> {
     }
 
     public TeacherAddress updateOrSaveCurrentAddressId(Teacher teacher, int countryId, int stateId, int cityId, String streetAddress, String zipCode) {
-        TeacherAddress teacherAddress = new TeacherAddress();
+        TeacherAddress teacherAddress = null;
         if (teacher.getCurrentAddressId() > 0) {
             teacherAddress = this.findById(teacher.getCurrentAddressId());
-            if(teacherAddress == null){
-            	teacherAddress = new TeacherAddress();
-            }
         }
+        teacherAddress = teacherAddress == null ? new TeacherAddress() : teacherAddress;
         teacherAddress.setTeacherId(teacher.getId());
         teacherAddress.setCountryId(countryId);
         teacherAddress.setStateId(stateId);
@@ -54,7 +52,7 @@ public class TeacherAddressDao extends MapperDaoTemplate<TeacherAddress> {
     }
 
     public int updateOrSave(TeacherAddress teacherAddress) {
-        if (0 == teacherAddress.getId()) {
+        if (teacherAddress.getId() == null || teacherAddress.getId() == 0) {
             return super.save(teacherAddress);
         }
         java.util.Date now = new java.util.Date();
