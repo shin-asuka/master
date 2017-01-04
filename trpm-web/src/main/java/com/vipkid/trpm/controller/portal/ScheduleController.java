@@ -49,45 +49,45 @@ public class ScheduleController extends AbstractPortalController {
 
 	@RequestMapping("/bookings")
 	public String schedule(HttpServletRequest request, HttpServletResponse response, Model model) {
-		return "redirect:/booking/course";//强行重定向前后端分离schedule页面
-//		/* 当前显示的课程类型 */
-//		String courseType = ServletRequestUtils.getStringParameter(request, "courseType", CourseType.MAJOR.toString());
-//		model.addAttribute("courseType", courseType);
-//
-//		/* 当前星期偏移量 */
-//		int offsetOfWeek = ServletRequestUtils.getIntParameter(request, "offsetOfWeek", 0);
-//		model.addAttribute("offsetOfWeek", offsetOfWeek);
-//
-//		/* 获取当前登录的老师信息 */
-//		Teacher teacher = loginService.getTeacher();
-//
-//		model.addAllAttributes(scheduleService.doSchedule(offsetOfWeek, teacher.getId(), teacher.getTimezone(),
-//				courseType));
-//
-//		// 判断是否能上Practicum类型的课程
-//		model.addAttribute("showPracticum", false);
-//		if (loginService.isPe(teacher.getId())) {
-//		    model.addAttribute("showPracticum", teacherPageLoginService.isType(teacher.getId(), LoginType.PRACTICUM));
-//		}
-//		//判断是否显示AdminQuiz
-//		model.addAttribute("showAdminQuiz",teacherPageLoginService.isType(teacher.getId(), LoginType.ADMINQUIZ));
-//
-//		//判断是否显示Evaluation
-//        model.addAttribute("showEvaluation",teacherPageLoginService.isType(teacher.getId(), LoginType.EVALUATION));
-//
-//		// 判断是否需要显示24小时提示
-//		model.addAttribute("show24HoursInfo", scheduleService.isShow24HourInfo(request, response));
-//
-//		//加入三周年活动参数
-//		model.addAttribute("isDuringThirdYeayAnniversary", activityService.isDuringThirdYeayAnniversary());
-//
-//		String thirdYeayAnniversaryWebpageUrl = PropertyConfigurer.stringValue("third_year_anniversary_webpage_url");
-//		if(StringUtils.isEmpty(thirdYeayAnniversaryWebpageUrl)){
-//			thirdYeayAnniversaryWebpageUrl = "t.vipkid.com.cn";
-//		}
-//		model.addAttribute("thirdYeayAnniversaryWebpageUrl", thirdYeayAnniversaryWebpageUrl);
-//
-//		return view("schedule");
+		//return "redirect:/booking/course";//强行重定向前后端分离schedule页面
+		/* 当前显示的课程类型 */
+		String courseType = ServletRequestUtils.getStringParameter(request, "courseType", CourseType.MAJOR.toString());
+		model.addAttribute("courseType", courseType);
+
+		/* 当前星期偏移量 */
+		int offsetOfWeek = ServletRequestUtils.getIntParameter(request, "offsetOfWeek", 0);
+		model.addAttribute("offsetOfWeek", offsetOfWeek);
+
+		/* 获取当前登录的老师信息 */
+		Teacher teacher = loginService.getTeacher();
+
+		model.addAllAttributes(scheduleService.doSchedule(offsetOfWeek, teacher.getId(), teacher.getTimezone(),
+				courseType));
+
+		// 判断是否能上Practicum类型的课程
+		model.addAttribute("showPracticum", false);
+		if (loginService.isPe(teacher.getId())) {
+		    model.addAttribute("showPracticum", teacherPageLoginService.isType(teacher.getId(), LoginType.PRACTICUM));
+		}
+		//判断是否显示AdminQuiz
+		model.addAttribute("showAdminQuiz",teacherPageLoginService.isType(teacher.getId(), LoginType.ADMINQUIZ));
+
+		//判断是否显示Evaluation
+        model.addAttribute("showEvaluation",teacherPageLoginService.isType(teacher.getId(), LoginType.EVALUATION));
+
+		// 判断是否需要显示24小时提示
+		model.addAttribute("show24HoursInfo", scheduleService.isShow24HourInfo(request, response));
+
+		//加入三周年活动参数
+		model.addAttribute("isDuringThirdYeayAnniversary", activityService.isDuringThirdYeayAnniversary());
+
+		String thirdYeayAnniversaryWebpageUrl = PropertyConfigurer.stringValue("third_year_anniversary_webpage_url");
+		if(StringUtils.isEmpty(thirdYeayAnniversaryWebpageUrl)){
+			thirdYeayAnniversaryWebpageUrl = "t.vipkid.com.cn";
+		}
+		model.addAttribute("thirdYeayAnniversaryWebpageUrl", thirdYeayAnniversaryWebpageUrl);
+
+		return view("schedule");
 	}
 
 	@RequestMapping("/createTimeSlot")
