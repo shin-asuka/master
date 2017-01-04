@@ -49,7 +49,7 @@ require.config({
     "duobeiyun": "libs/duobeiyun-js-sdk-0.1.1-min",
     "dbyproxy": "apps/portal/dby.proxy",
     "xdyproxy": "apps/portal/xdy.proxy",
-    "vipkidproxy": "apps/protal/vipkid.proxy",
+    "vipkidproxy": "apps/portal/vipkid.proxy",
     "messenger": "libs/messenger",
     "countdown": "libs/jquery.countdown",
     "signup": "apps/passport/signup",
