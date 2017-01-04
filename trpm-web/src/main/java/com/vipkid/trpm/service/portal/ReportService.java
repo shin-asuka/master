@@ -836,10 +836,10 @@ public class ReportService {
                 String examLevel = "No Computer Test result.";
                 if ("l1u0".equals(lowerCase)) {
                     studentExam.setExamLevel("Computer Test result  is Level 0 Unit 0");
-                } else if (lowerCase.startsWith("l")) {
-                    examLevel= "Computer Test result is " + lowerCase.replaceAll("l", "Level ").replaceAll("u", " Unit ");
                 }else if(lowerCase.equals("l1u1")){
                     examLevel = "Computer Test result is L1U1(PreVIP)";
+                } else if (lowerCase.startsWith("l")) {
+                    examLevel= "Computer Test result is " + lowerCase.replaceAll("l", "Level ").replaceAll("u", " Unit ") + ".";
                 }
                 if (serialNum != null) {
                     switch (serialNum) {
