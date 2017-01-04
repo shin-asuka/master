@@ -70,21 +70,21 @@
 								<span>Follows instructions</span>
                                 <label><input type="radio" id="followsInstructions" name="followsInstructions" field="$teacherComment.followsInstructions" value="Rarely" $!elememtDisabled />Rarely</label>
                                 <label><input type="radio" id="followsInstructions" name="followsInstructions" field="$teacherComment.followsInstructions" value="Sometimes" $!elememtDisabled />Sometimes</label>
-                                <label><input type="radio" id="followsInstructions" name="followsInstructions" field="$teacherComment.followsInstructions" value="Oftens" $!elememtDisabled />Oftens</label>
+                                <label><input type="radio" id="followsInstructions" name="followsInstructions" field="$teacherComment.followsInstructions" value="Often" $!elememtDisabled />Often</label>
 							</p>
 
                             <p>
                                 <span>Participates actively</span>
                                 <label><input type="radio" id="participatesActively" name="participatesActively" field="$teacherComment.participatesActively" value="Rarely" $!elememtDisabled />Rarely</label>
                                 <label><input type="radio" id="participatesActively" name="participatesActively" field="$teacherComment.participatesActively" value="Sometimes" $!elememtDisabled />Sometimes</label>
-                                <label><input type="radio" id="participatesActively" name="participatesActively" field="$teacherComment.participatesActively" value="Oftens" $!elememtDisabled />Oftens</label>
+                                <label><input type="radio" id="participatesActively" name="participatesActively" field="$teacherComment.participatesActively" value="Often" $!elememtDisabled />Often</label>
                             </p>
 
                             <p>
                                 <span>Speaks clearly</span>
                                 <label><input type="radio" id="speaksClearly" name="speaksClearly" field="$teacherComment.speaksClearly" value="Rarely" />Rarely</label>
                                 <label><input type="radio" id="speaksClearly" name="speaksClearly" field="$teacherComment.speaksClearly" value="Sometimes" />Sometimes</label>
-                                <label><input type="radio" id="speaksClearly" name="speaksClearly" field="$teacherComment.speaksClearly" value="Oftens" />Oftens</label>
+                                <label><input type="radio" id="speaksClearly" name="speaksClearly" field="$teacherComment.speaksClearly" value="Often" />Often</label>
                             </p>
 						</div>
 
