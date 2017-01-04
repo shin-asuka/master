@@ -76,17 +76,18 @@ public class PersonalInfoController extends AbstractPortalController {
 
     @RequestMapping("/personalInfo")
     public String personalInfo(HttpServletRequest request, HttpServletResponse response, Model model) {
-        logger.info("页面初始化");
-
-        // 传一个参数给前端，让前端判断是否提醒用户填写bank信息
-        Teacher teacher = loginService.getTeacher();
-        String bankCardNumber = teacher.getBankCardNumber();
-        boolean isRemindEditBankInfo = bankCardNumber == null || bankCardNumber.isEmpty();// 如果没有银行卡号，就提醒
-        model.addAttribute("isRemindEditBankInfo", isRemindEditBankInfo);
-        getBasicinfoView(request, response, model);
-        String param = request.getParameter("p");
-        model.addAttribute("index", param);
-        return view("personal_info");
+        return "redirect:/personal_info/basic_info";//强行重定向前后端分离personalInfo页面
+//        logger.info("页面初始化");
+//
+//        // 传一个参数给前端，让前端判断是否提醒用户填写bank信息
+//        Teacher teacher = loginService.getTeacher();
+//        String bankCardNumber = teacher.getBankCardNumber();
+//        boolean isRemindEditBankInfo = bankCardNumber == null || bankCardNumber.isEmpty();// 如果没有银行卡号，就提醒
+//        model.addAttribute("isRemindEditBankInfo", isRemindEditBankInfo);
+//        getBasicinfoView(request, response, model);
+//        String param = request.getParameter("p");
+//        model.addAttribute("index", param);
+//        return view("personal_info");
     }
 
     /**
