@@ -42,6 +42,59 @@ public class ReportEmailService {
                 getTableDetail(serialNumber, scheduledDateTime, ApplicationConstant.LEVEL_OF_DIFFITULTY.get(performance)));
     }
 
+    public void sendEmail4PreVip2CLTByNeedParent(long studentId) {
+        if (studentId == 0 ){
+            logger.info("sendEmail4PreVip2CLTByNeedParent 参数不符 studentId = {} ", studentId);
+            return;
+        }
+        //只要老师勾选需要家长陪同选项就发邮件
+        sendEmail2CLT4ParentSupport(getStudentName(studentId));
+    }
+    public void sendEmail4PreVip2CLTByPerformance(long studentId, String serialNumber) {
+        if (studentId == 0 || StringUtils.isEmpty(serialNumber)){
+            logger.info("sendEmail4PreVip2CLT 参数不符 studentId = {}; serialNumber = {} ", studentId, serialNumber);
+            return;
+        }
+        //一个学生在每一个unit被标记为very difficult 或者 very easy的
+        String lessonSnPrefix = serialNumber.substring(0, serialNumber.indexOf("-LC") + 1).concat("%");
+        List<Map<String, Object>> lessonSnList = teacherService.findByStudentIdLessonSnPrefix(String.valueOf(studentId), lessonSnPrefix);
+        logger.info("sendEmail4PreVip2CLT findByStudentIdLessonSnPrefix lessonSnList = {} ", lessonSnList);
+        if (CollectionUtils.isNotEmpty(lessonSnList) && lessonSnList.size() >= 2){
+            List<Integer> lessonNoList = new ArrayList<>();
+            StringBuffer tableDetails = new StringBuffer();
+            buildTableTotalLine(lessonSnList,tableDetails,lessonNoList);
+
+            List<Integer>  sortedLessonNoList = lessonNoList.stream().parallel().sorted().collect(Collectors.toList());
+            int size = sortedLessonNoList.size();
+            int[][] rules = {{2,4},{4,8}};
+            //rules[0]: 前4节课，有2节课被标记
+            //rules[1]: 前8节课，有4节课被标记
+            for (int[] rule : rules){
+                if (size >= rule[0] && sortedLessonNoList.get(rule[0]-1) <= rule[1]){
+                    sendEmail2CLT(getStudentName(studentId), getReason(rule[1]), tableDetails.toString());
+                    break;
+                }
+            }
+        }
+
+    }
+
+    private void buildTableTotalLine(List<Map<String, Object>> lessonSnList,
+        StringBuffer tableDetails, List<Integer> lessonNoList) {
+        for (Map<String, Object> lessonSn : lessonSnList) {
+            String sn = lessonSn.get("serial_number").toString();
+            String sDate = lessonSn.get("scheduled_date_time").toString();
+            Object performObj = lessonSn.get("performance");
+            String performStr = performObj == null ? null : performObj.toString();
+            Integer performInt = StringUtils.isEmpty(performStr) ? 0 : Integer.parseInt(performStr);
+            String perform = ApplicationConstant.LEVEL_OF_DIFFITULTY.get(performInt);
+            if (LessonSerialNumber.getLessonNoFromSn(sn) != null) {
+                lessonNoList.add(LessonSerialNumber.getLessonNoFromSn(sn));
+            }
+            tableDetails.append(getTableDetail(sn, sDate, perform));
+        }
+    }
+
     public void sendEmail4Performance2CLT(long studentId, String serialNumber){
         if (studentId == 0 || StringUtils.isEmpty(serialNumber)){
             logger.info("sendEmail4Performance2CLT 参数不符 studentId = {}; serialNumber = {} ", studentId, serialNumber);
@@ -56,19 +109,7 @@ public class ReportEmailService {
 
             List<Integer> lessonNoList = new ArrayList<>();
             StringBuffer tableDetails = new StringBuffer();
-
-            for (Map<String, Object> lessonSn: lessonSnList){
-                String sn = lessonSn.get("serial_number").toString();
-                String sDate = lessonSn.get("scheduled_date_time").toString();
-                Object performObj = lessonSn.get("performance");
-                String performStr = performObj==null ? null : performObj.toString();
-                Integer performInt = StringUtils.isEmpty(performStr) ? 0 : Integer.parseInt(performStr);
-                String perform = ApplicationConstant.LEVEL_OF_DIFFITULTY.get(performInt);
-                if(LessonSerialNumber.getLessonNoFromSn(sn)!=null) {
-                    lessonNoList.add(LessonSerialNumber.getLessonNoFromSn(sn));
-                }
-                tableDetails.append(getTableDetail(sn, sDate, perform));
-            }
+            buildTableTotalLine(lessonSnList,tableDetails,lessonNoList);
 
             List<Integer>  sortedLessonNoList = lessonNoList.stream().parallel().sorted().collect(Collectors.toList());
             int size = sortedLessonNoList.size();
@@ -83,6 +124,14 @@ public class ReportEmailService {
                 }
             }
         }
+    }
+
+    private void sendEmail2CLT4ParentSupport(String studentName) {
+        Map<String, String> paramsMap = Maps.newHashMap();
+        paramsMap.put("studentName", studentName);
+
+        Map<String, String> emailMap = new TemplateUtils().readTemplate("PreVipNeedParentSupport.html", paramsMap, "PreVipNeedParentSupport_Title.html");
+        new EmailEngine().addMailPool("replacement@vipkid.com.cn", emailMap, EmailConfig.EmailFormEnum.EDUCATION);
     }
 
     private void sendEmail2CLT(String studentName, String reason, String tableDetails) {
@@ -108,6 +157,8 @@ public class ReportEmailService {
         String reason;
         switch(reasonNo) {
             case 3 : reason = "3 times in first 3 lessons"; break;
+            case 4 : reason = "2 times in first 4 lessons"; break;
+            case 8 : reason = "4 times in first 8 lessons"; break;
             case 6 : reason = "3 times in first 6 lessons"; break;
             case 12 : reason = "6 times in first 12 lessons"; break;
             default : reason = "老师建议";

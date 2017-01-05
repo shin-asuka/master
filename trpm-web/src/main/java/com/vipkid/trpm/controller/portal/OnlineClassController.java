@@ -67,7 +67,6 @@ public class OnlineClassController extends AbstractPortalController {
         model.addAttribute("submitStatus",submitStatus);
         Teacher teacher = loginService.getTeacher();
         User user = loginService.getUser();
-
         String errorHTML = "You cannot enter this classroom!";
         // 登陆判断
         if (teacher == null || user == null) {
@@ -368,3 +367,5 @@ public class OnlineClassController extends AbstractPortalController {
   		return view("faq");
   	}
 }
+
+

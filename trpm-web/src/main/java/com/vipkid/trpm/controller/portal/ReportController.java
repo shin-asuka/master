@@ -5,13 +5,17 @@ import com.google.common.base.Stopwatch;
 import com.google.common.collect.Maps;
 import com.vipkid.enums.OnlineClassEnum;
 import com.vipkid.rest.service.LoginService;
+import com.vipkid.trpm.constant.ApplicationConstant;
 import com.vipkid.trpm.dao.StudentExamDao;
 import com.vipkid.trpm.entity.*;
+import com.vipkid.trpm.entity.teachercomment.SubmitTeacherCommentDto;
 import com.vipkid.trpm.entity.teachercomment.TeacherComment;
 import com.vipkid.trpm.entity.teachercomment.TeacherCommentResult;
 import com.vipkid.trpm.service.portal.ReportService;
 import com.vipkid.trpm.service.portal.TeacherService;
 import com.vipkid.trpm.util.DateUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -248,7 +252,23 @@ public class ReportController extends AbstractPortalController {
         long millis =stopwatch.stop().elapsed(TimeUnit.MILLISECONDS);
         logger.info("执行ReportController: feedback()耗时：{} ", millis);
 
-        return view("online_class_feedback");
+        if(teacherComment.getPreVip()!=null && teacherComment.getPreVip() ){
+            //判断是否unit<4
+            Integer unitNo=0;
+            String [] arrays = StringUtils.split(lesson.getSerialNumber().toLowerCase(),"-");
+            for(String arr : arrays){
+                if(arr.indexOf("u")>-1){
+                    unitNo = NumberUtils.toInt(arr.replace("u", "").trim());
+                }
+            }
+            if(unitNo < 4){
+                model.addAttribute("isBelowU4",true);
+            }
+            return view("online_class_feedback_previp");
+        }else{
+            return view("online_class_feedback");
+        }
+
     }
 
     @RequestMapping("/unitAssessment")
@@ -268,12 +288,12 @@ public class ReportController extends AbstractPortalController {
      */
     @RequestMapping("/commentSubmit")
     public String feedbackSubmit(HttpServletRequest request, HttpServletResponse response,
-            TeacherComment teacherComment, Model model) {
+        SubmitTeacherCommentDto teacherComment, Model model) {
         Stopwatch stopwatch = Stopwatch.createStarted();
         String serialNumber = request.getParameter("serialNumber");
         String scheduledDateTime = request.getParameter("scheduledDateTime");
         logger.info("ReportController: feedbackSubmit() 参数为：serialNumber={}, scheduledDateTime={}, teacherComment={}", serialNumber, scheduledDateTime, JSON.toJSONString(teacherComment));
-
+        teacherComment.setSubmitSource("PC");
         Map<String, Object> parmMap = reportService.submitTeacherComment(teacherComment, loginService.getUser(),serialNumber,scheduledDateTime,false);
 
         long millis =stopwatch.stop().elapsed(TimeUnit.MILLISECONDS);

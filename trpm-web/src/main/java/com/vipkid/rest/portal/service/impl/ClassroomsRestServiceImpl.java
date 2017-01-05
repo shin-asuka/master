@@ -9,6 +9,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
 
+import com.google.api.client.util.Maps;
+import com.vipkid.file.service.QNService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.community.config.PropertyConfigurer;
@@ -18,7 +20,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.google.api.client.util.Lists;
-import com.google.common.collect.Maps;
 import com.vipkid.enums.OnlineClassEnum.CourseType;
 import com.vipkid.http.service.AssessmentHttpService;
 import com.vipkid.http.vo.OnlineClassVo;
@@ -85,6 +86,9 @@ public class ClassroomsRestServiceImpl implements ClassroomsRestService{
 	@Autowired
 	private LessonDao lessonDao;
 
+	@Autowired
+	private QNService qnService;
+
 	public Map<String, Object> getClassroomsData(long teacherId, int offsetOfMonth, String courseType, int page) {
 		if (!CourseType.isPracticum(courseType)) {// 只要不是"PRACTICUM"，就赋值"MAJOR"
 			courseType = "MAJOR";
@@ -93,7 +97,6 @@ public class ClassroomsRestServiceImpl implements ClassroomsRestService{
 
 		ClassroomsData classroomsData = new ClassroomsData();
 
-		//Teacher teacher = teacherdao.findById(teacherId);
 		Teacher teacher = loginService.getTeacher();
 		
 		if(teacher == null){
@@ -342,6 +345,28 @@ public class ClassroomsRestServiceImpl implements ClassroomsRestService{
 			classroomDetail.setStudentName((String) eachMap.get("englishName"));
 			classroomDetail.setTeacherId((long) eachMap.get("teacherId"));
 
+			String serialNumber = (String) eachMap.get("serialNumber");
+			if(StringUtils.isNotEmpty(serialNumber)){
+				boolean isPrevipLesson = false;
+				int index = serialNumber.lastIndexOf("-");
+				serialNumber = serialNumber.substring(0,index-4);
+				if (serialNumber.contains("MC-L1-")){
+					isPrevipLesson = true;
+					classroomDetail.setIsPrevipLesson(isPrevipLesson);
+				}
+
+				if(isPrevipLesson){
+					Map<String,Object> showUrl = qnService.getShowUrl(serialNumber);
+					Map<String,Object> downloadUrl = qnService.getDownloadUrl(serialNumber);
+					String lyricsShowUrl = (String) showUrl.get("lyricsShowUrl");
+					String videoShowUrl = (String) showUrl.get("videoShowUrl");
+					String videoDownloadUrl = (String)downloadUrl.get("videoDownloadUrl");
+					classroomDetail.setLyricsShowUrl(lyricsShowUrl);
+					classroomDetail.setVideoShowUrl(videoShowUrl);
+					classroomDetail.setVideoDownloadUrl(videoDownloadUrl);
+				}
+			}
+
 			Timestamp timeStamp = (Timestamp) eachMap.get("scheduledDateTime");
 			Date date = new Date(timeStamp.getTime());
 			DateFormat df = new SimpleDateFormat("MMM dd yyyy, hh:mma", Locale.ENGLISH);
@@ -391,11 +416,11 @@ public class ClassroomsRestServiceImpl implements ClassroomsRestService{
 		long studentId = (long) data.get("studentId");
 
 		boolean isClassStarted = new Date().after(scheduledDateTime);
-
+        Lesson lesson = lessonDao.findById(classroomsEachClassInfo.getLessonId());
 		if (lessonSerialNumber.startsWith("P")) {// 如果是PracticumReport
 			reportType = ReportType.PracticumReport.getCode();// 代表是PracticumReport
 			reportStatus = getPracticumReportStatus(onlineClassId);
-		} else if (classroomsService.isUaReport(lessonSerialNumber)) {// 如果是UaReport
+		} else if (classroomsService.isUaReport(lesson)) {// 如果是UaReport
 			if (isOldUaReport(onlineClassId, studentId, lessonSerialNumber)) {
 				reportType = ReportType.OldUAReport.getCode();// 代表是旧UaReport
 				Map<String, Object> map = getOldUaReportStatus(onlineClassId, studentId, lessonSerialNumber);
@@ -433,8 +458,8 @@ public class ClassroomsRestServiceImpl implements ClassroomsRestService{
 
 	private boolean isOldUaReport(long onlineClassId, long studentId, String serialNumber) {
 		AssessmentReport assessmentReport = null;
-		long schedDateTime = onlineClassDao.findById(onlineClassId).getScheduledDateTime().getTime();// 此方法可以提速，用时间来判断是不是新UA，如10月份之后的都是新UA
-		if (DateUtils.isSearchById(schedDateTime)) {
+		long scheduleDateTime = onlineClassDao.findById(onlineClassId).getScheduledDateTime().getTime();// 此方法可以提速，用时间来判断是不是新UA，如10月份之后的都是新UA
+		if (DateUtils.isSearchById(scheduleDateTime)) {
 			assessmentReport = assessmentReportDao.findReportByClassId(onlineClassId);
 		} else {
 			assessmentReport = assessmentReportDao.findReportByStudentIdAndName(serialNumber, studentId);

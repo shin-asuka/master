@@ -82,7 +82,7 @@ define([ "jquery-form", "jquery-bootstrap", "jquery-load", "tools" ], function()
 	};
 
 	/** **public 请求页面 */
-	var openFeedback = function(isRequire, onlineClassId, studentId) {
+	var openFeedback = function(isRequire, onlineClassId, studentId,isPreVip,isTrial) {
 		/** * 已经打开直接返回 */
 		if ($("div.trailFeedbackContainer").children().length > 0) {
 			openShow(isRequire);
@@ -92,7 +92,9 @@ define([ "jquery-form", "jquery-bootstrap", "jquery-load", "tools" ], function()
 		var data = {
 			"type" : "required",
 			"onlineClassId" : onlineClassId,
-			"studentId" : studentId
+			"studentId" : studentId,
+			"isPreVip" : isPreVip,
+			"isTrial" : isTrial
 		};
 		var url = webPath + "/feedback.shtml";
 		Portal.loading("open");
@@ -155,6 +157,50 @@ define([ "jquery-form", "jquery-bootstrap", "jquery-load", "tools" ], function()
 		/** * feedback页面表单提交函数及验证 */
 		var teacherFeedback = $("#teacherFeedbackText").val();
 		var lessonDiff = $("#lessonDiff").val();
+
+		var previp = $("#previp").val();
+		var isPrevipMajor = $("#isMajor").val();
+
+		if(!Tools.isEmpty(previp)&&!Tools.isEmpty(isPrevipMajor)){
+			/** previp的major课的inputcheck,trial课的和旧的保持一致*/
+			var isBelowU4 = $("#isBelowU4").val();
+
+			var vocabularyRetention = $("#vocabularyRetention").val();
+			var pronunciation = $("#pronunciation").val();
+			var alphabetSkills = $("#alphabetSkills").val();
+			var phonologicalAwareness = $("#phonologicalAwareness").val();
+			var followsInstructions = $("#followsInstructions").val();
+			var participatesActively = $("#participatesActively").val();
+			var speaksClearly = $("#speaksClearly").val();
+			var mouseTouchpadActivities = $("#mouseTouchpadActivities").val();
+			var degreeCompletion = $("#degreeCompletion").val();
+			var performance = $("#performance").val();
+			if(Tools.isEmpty(vocabularyRetention)
+				|| Tools.isEmpty(pronunciation)
+				|| (Tools.isEmpty(alphabetSkills) && !Tools.isEmpty(isBelowU4))
+				|| Tools.isEmpty(phonologicalAwareness)
+				|| Tools.isEmpty(followsInstructions)
+				|| Tools.isEmpty(participatesActively)
+				|| Tools.isEmpty(speaksClearly)
+				|| Tools.isEmpty(mouseTouchpadActivities)
+				|| Tools.isEmpty(degreeCompletion)
+				|| Tools.isEmpty(performance)
+				|| performance==0){
+
+				$.alert("confirm", {
+					title : "Prompt",
+					content : "Please fill in the required fields in the feedback form!",
+					cancel:"OK",
+					cancelClass:"primary",
+					style : {
+						"margin-top" : "10%",
+						"width" : "400px"
+					}
+				});
+				return;
+			}
+
+		}
 
 		if (Tools.isEmpty(teacherFeedback) || Tools.isEmpty(lessonDiff) || 0 == lessonDiff) {
 			$.alert("confirm", {
@@ -305,6 +351,7 @@ define([ "jquery-form", "jquery-bootstrap", "jquery-load", "tools" ], function()
 			top:w_height+"px",
 			opacity : 'show'
 		}, 300);
+		$("#previp_cf_button").show();
 	};
 	
 	var openSessionStorage = function(onlineClassId){

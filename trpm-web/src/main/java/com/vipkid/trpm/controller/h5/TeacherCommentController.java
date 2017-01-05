@@ -2,12 +2,10 @@ package com.vipkid.trpm.controller.h5;
 
 import com.vipkid.http.service.TeacherAppService;
 import com.vipkid.http.utils.JsonUtils;
+import com.vipkid.rest.config.RestfulConfig;
 import com.vipkid.rest.security.AppContext;
 import com.vipkid.rest.utils.ApiResponseUtils;
-import com.vipkid.trpm.entity.teachercomment.QueryTeacherCommentOutputDto;
-import com.vipkid.trpm.entity.teachercomment.StudentAbilityLevelRule;
-import com.vipkid.trpm.entity.teachercomment.SubmitTeacherCommentInputDto;
-import com.vipkid.trpm.entity.teachercomment.TeacherComment;
+import com.vipkid.trpm.entity.teachercomment.*;
 import com.vipkid.trpm.service.portal.ReportService;
 import com.vipkid.trpm.service.portal.TeacherService;
 import org.apache.commons.lang.StringUtils;
@@ -16,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -52,29 +51,33 @@ public class TeacherCommentController {
     private ReportService reportService;
 
     @ResponseBody
-    @RequestMapping(value = "/submit")
-    public Object updateStatus(String submitDto) {
-        logger.info("updateStatus input={}",submitDto);
-        if (StringUtils.isBlank(submitDto)) {
+    @RequestMapping(value = "/submit",produces = RestfulConfig.JSON_UTF_8)
+    public Object updateStatus(@RequestBody SubmitTeacherCommentDto submitDto) {
+
+        if (submitDto==null) {
             return ApiResponseUtils.buildErrorResp(-1, "参数不能为空!");
         }
-        SubmitTeacherCommentInputDto inputDto = JsonUtils.toBean(submitDto, SubmitTeacherCommentInputDto.class);
-        if (inputDto == null || !NumberUtils.isNumber(inputDto.getTeacherCommentId())
-                || StringUtils.isBlank(inputDto.getTeacherFeedback())) {
-            return ApiResponseUtils.buildErrorResp(-1, "参数格式错误!");
+        logger.info("updateStatus input={}",JsonUtils.toJSONString(submitDto));
+
+        if (StringUtils.isBlank(submitDto.getTeacherFeedback())) {
+            return ApiResponseUtils.buildErrorResp(-1, "feedback can not be blank!");
         }
 
-        TeacherComment tcuDto = new TeacherComment(inputDto);
-        tcuDto.setSubmitSource("APP");
+        //TeacherComment tcuDto = new TeacherComment(inputDto);
+        submitDto.setSubmitSource("APP_H5");
         //boolean result = teacherService.updateTeacherComment(tcuDto);
-        Map<String, Object> parmMap = reportService.submitTeacherComment(tcuDto, AppContext.getUser(),
-            inputDto.getClassNumber(),null,true);
+        Map<String, Object> parmMap = reportService.submitTeacherComment(submitDto, AppContext.getUser(),
+            submitDto.getClassNumber(),null,true);
 
 
         if(parmMap!=null && parmMap.get("result")!=null&&((Boolean) parmMap.get("result"))){
             return ApiResponseUtils.buildSuccessDataResp("提交成功");
         }else{
-            return ApiResponseUtils.buildErrorResp(-1,"提交失败");
+            String submitError = "提交失败";
+            if(parmMap!=null&&parmMap.get("msg")!=null){
+                submitError = String.valueOf(parmMap.get("msg"));
+            }
+            return ApiResponseUtils.buildErrorResp(-1,submitError);
         }
     }
 

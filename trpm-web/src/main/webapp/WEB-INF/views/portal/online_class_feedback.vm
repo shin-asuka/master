@@ -55,7 +55,7 @@
 				#if($lesson.serialNumber)
 					#if($stringUtils.startsWith($!lesson.serialNumber,'T'))
 					<div id="Suggestion">
-	
+
 						<label Style="margin-top: 20px">Suggest an entry point for this student based on the Student Level Test and in-class assessment. <span style="display:none;" id="result_suggest"></span></label>
 
 						#if($!teacherComment.trialLevelResult)
@@ -88,32 +88,32 @@
 						<hr class="ihr" style="width: 100%;" />
 						<div>
 							<a href="javascript:;" name="level3" class="trialLevel ng-hide-feedback">Level3</a>
-							<a name="level3" class="trialLevelContent ng-hide-feedback">The reading goals in Level 3 start with CVC and CVCe words, and move to vowel 
-								digraphs and initial blends, digraphs blends, moving on to four and five letter words combining all of the above. Reading comprehension 
-								goals include identifying the main topic and key elements of a level-appropriate text, sequencing and retelling stories with teacher 
-								support. Level 3 students also learn tenses: simple present, simple past, and present progressive, while simple future was taught 
-								in Level 2. Grammar including articles, adverbs of frequency, prepositions, noun/verb conjugation, selected adjectives, sentence 
-								types and capitalization and punctuation rules. Level 3 speaking goals begin with the student answering in complete sentences, 
+							<a name="level3" class="trialLevelContent ng-hide-feedback">The reading goals in Level 3 start with CVC and CVCe words, and move to vowel
+								digraphs and initial blends, digraphs blends, moving on to four and five letter words combining all of the above. Reading comprehension
+								goals include identifying the main topic and key elements of a level-appropriate text, sequencing and retelling stories with teacher
+								support. Level 3 students also learn tenses: simple present, simple past, and present progressive, while simple future was taught
+								in Level 2. Grammar including articles, adverbs of frequency, prepositions, noun/verb conjugation, selected adjectives, sentence
+								types and capitalization and punctuation rules. Level 3 speaking goals begin with the student answering in complete sentences,
 								moving on to compound sentences, asking questions, and finally engaging in a free talk-style discussion with the teacher that
-								incorporates taught sentence structures and natural language usage. In level 3, students are required to actively respond 
+								incorporates taught sentence structures and natural language usage. In level 3, students are required to actively respond
 								to multi-step instructions. </a>
 						</div>
 						<hr class="ihr" style="width: 100%;" />
 						<div>
-							<a href="javascript:;" name="level4" class="trialLevel ng-hide-feedback">Level4</a> 
-							<a name="level4" class="trialLevelContent ng-hide-feedback">The reading goals in Level 4 continue to focus on new phonics skills with 
-								irregular spellings, but moves away from learning to read towards “reading to learn.” Students in Level 4 gain information fiction 
-								and non-fiction texts, using these to understand thematic topics with less pictorial support, and are able to discuss key elements 
-								and the language used. Thematically Level 4 begins to address more mature, advanced topics.  Level 4 speaking goals require students 
-								to ask and answer questions, describe their thoughts clearly, and make connections between multiple topics. Students will review 
-								simple future, simple past, simple present, and present continuous tense, and begin to learn the past progressive tense. They do 
+							<a href="javascript:;" name="level4" class="trialLevel ng-hide-feedback">Level4</a>
+							<a name="level4" class="trialLevelContent ng-hide-feedback">The reading goals in Level 4 continue to focus on new phonics skills with
+								irregular spellings, but moves away from learning to read towards “reading to learn.” Students in Level 4 gain information fiction
+								and non-fiction texts, using these to understand thematic topics with less pictorial support, and are able to discuss key elements
+								and the language used. Thematically Level 4 begins to address more mature, advanced topics.  Level 4 speaking goals require students
+								to ask and answer questions, describe their thoughts clearly, and make connections between multiple topics. Students will review
+								simple future, simple past, simple present, and present continuous tense, and begin to learn the past progressive tense. They do
 								not use these tenses at native proficiency. </a>
 						</div>
 						<hr class="ihr" style="width: 100%;" />
 						<div>
-							<a href="javascript:;" name="level5" class="trialLevel ng-hide-feedback">Level5</a> 
-							<a name="level5" class="trialLevelContent ng-hide-feedback">The reading goals in Level 5 practice higher level reading skills, including 
-								identifying the points that an author gives in the text to support claims. By the end of Level 5, students can speak in regular 
+							<a href="javascript:;" name="level5" class="trialLevel ng-hide-feedback">Level5</a>
+							<a name="level5" class="trialLevelContent ng-hide-feedback">The reading goals in Level 5 practice higher level reading skills, including
+								identifying the points that an author gives in the text to support claims. By the end of Level 5, students can speak in regular
 								past tense (including a handful of irregular verbs) and simple forms of the present perfect tense.  </a>
 						</div>
 					</div>

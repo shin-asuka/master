@@ -6,7 +6,7 @@ package com.vipkid.mq.service;
 import com.vipkid.mq.message.FinishOnlineClassMessage;
 import com.vipkid.mq.message.FinishOnlineClassMessage.OperatorType;
 import com.vipkid.trpm.entity.AssessmentReport;
-import com.vipkid.trpm.entity.teachercomment.TeacherComment;
+import com.vipkid.trpm.entity.teachercomment.SubmitTeacherCommentDto;
 
 /**
  * 结束课程消息服务
@@ -24,7 +24,7 @@ public interface PayrollMessageService {
 	 * @param operatorType
 	 * @return
 	 */
-	public FinishOnlineClassMessage sendFinishOnlineClassMessage(TeacherComment teacherComment ,Long onlineClassId, OperatorType operatorType);
+	public FinishOnlineClassMessage sendFinishOnlineClassMessage(SubmitTeacherCommentDto teacherComment ,Long onlineClassId, OperatorType operatorType);
 
 	
 	/**

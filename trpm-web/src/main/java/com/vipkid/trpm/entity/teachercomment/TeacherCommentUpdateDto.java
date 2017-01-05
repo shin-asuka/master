@@ -1,7 +1,6 @@
 package com.vipkid.trpm.entity.teachercomment;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
 
 import java.util.Date;
 
@@ -147,32 +146,128 @@ public class TeacherCommentUpdateDto {
 
     private Date updateTime; // 更新日期
 
-    private String delFlag; // 删除标记（0：正常；1：删除）
+    private String delFlag; // 删除标记（0：正常；1：删除）废弃,现在是物理删除
 
-    public TeacherCommentUpdateDto(SubmitTeacherCommentInputDto inputDto) {
-        if(NumberUtils.isNumber(inputDto.getTeacherCommentId())){
-            id = Integer.valueOf(inputDto.getTeacherCommentId());
-        }
-        if(StringUtils.isNotBlank(inputDto.getTeacherFeedback())){
-            teacherFeedback = inputDto.getTeacherFeedback();
-        }
-        if(NumberUtils.isNumber(inputDto.getLevelOfdifficulty())){
-            performance = Integer.valueOf(inputDto.getLevelOfdifficulty());
-        }
-        if(StringUtils.isNotBlank(inputDto.getTipsForOtherTeachers())){
-            tipsForOtherTeachers = inputDto.getTipsForOtherTeachers();
-        }
-        if(StringUtils.isNotBlank(inputDto.getTrialLevelResult())){
-            trialLevelResult = inputDto.getTrialLevelResult();
-        }
-        if(inputDto.isSuggestAdjustment()){
-            //建议调整
-            performanceAdjust = 1;
-        }else{
-            //不建议调整
-            performanceAdjust = 0;
-        }
 
+    //preVip的Major课特有字段 START
+    private String vocabularyRetention;
+    private String pronunciation;
+    private String alphabetSkills;
+    private String phonologicalAwareness;
+    private String followsInstructions;
+    private String participatesActively;
+    private String speaksClearly;
+    private String mouseTouchpadActivities;
+    private String degreeCompletion;
+    private Boolean needParentSupport;
+    //preVip的Major课特有字段 END
+
+//    public TeacherCommentUpdateDto(SubmitTeacherCommentInputDto inputDto) {
+//        if(NumberUtils.isNumber(inputDto.getTeacherCommentId())){
+//            id = Integer.valueOf(inputDto.getTeacherCommentId());
+//        }
+//        if(StringUtils.isNotBlank(inputDto.getTeacherFeedback())){
+//            teacherFeedback = inputDto.getTeacherFeedback();
+//        }
+//        if(NumberUtils.isNumber(inputDto.getLevelOfdifficulty())){
+//            performance = Integer.valueOf(inputDto.getLevelOfdifficulty());
+//        }
+//        if(StringUtils.isNotBlank(inputDto.getTipsForOtherTeachers())){
+//            tipsForOtherTeachers = inputDto.getTipsForOtherTeachers();
+//        }
+//        if(StringUtils.isNotBlank(inputDto.getTrialLevelResult())){
+//            trialLevelResult = inputDto.getTrialLevelResult();
+//        }
+//        if(inputDto.isSuggestAdjustment()){
+//            //建议调整
+//            performanceAdjust = 1;
+//        }else{
+//            //不建议调整
+//            performanceAdjust = 0;
+//        }
+//
+//    }
+
+
+
+    public String getVocabularyRetention() {
+        return vocabularyRetention;
+    }
+
+    public void setVocabularyRetention(String vocabularyRetention) {
+        this.vocabularyRetention = vocabularyRetention;
+    }
+
+    public String getPronunciation() {
+        return pronunciation;
+    }
+
+    public void setPronunciation(String pronunciation) {
+        this.pronunciation = pronunciation;
+    }
+
+    public String getAlphabetSkills() {
+        return alphabetSkills;
+    }
+
+    public void setAlphabetSkills(String alphabetSkills) {
+        this.alphabetSkills = alphabetSkills;
+    }
+
+    public String getPhonologicalAwareness() {
+        return phonologicalAwareness;
+    }
+
+    public void setPhonologicalAwareness(String phonologicalAwareness) {
+        this.phonologicalAwareness = phonologicalAwareness;
+    }
+
+    public String getFollowsInstructions() {
+        return followsInstructions;
+    }
+
+    public void setFollowsInstructions(String followsInstructions) {
+        this.followsInstructions = followsInstructions;
+    }
+
+    public String getParticipatesActively() {
+        return participatesActively;
+    }
+
+    public void setParticipatesActively(String participatesActively) {
+        this.participatesActively = participatesActively;
+    }
+
+    public String getSpeaksClearly() {
+        return speaksClearly;
+    }
+
+    public void setSpeaksClearly(String speaksClearly) {
+        this.speaksClearly = speaksClearly;
+    }
+
+    public String getMouseTouchpadActivities() {
+        return mouseTouchpadActivities;
+    }
+
+    public void setMouseTouchpadActivities(String mouseTouchpadActivities) {
+        this.mouseTouchpadActivities = mouseTouchpadActivities;
+    }
+
+    public String getDegreeCompletion() {
+        return degreeCompletion;
+    }
+
+    public void setDegreeCompletion(String degreeCompletion) {
+        this.degreeCompletion = degreeCompletion;
+    }
+
+    public Boolean getNeedParentSupport() {
+        return needParentSupport;
+    }
+
+    public void setNeedParentSupport(Boolean needParentSupport) {
+        this.needParentSupport = needParentSupport;
     }
 
     public String getRemarks() {
@@ -491,27 +586,27 @@ public class TeacherCommentUpdateDto {
 
     }
 
-    public TeacherCommentUpdateDto(TeacherComment teacherComment) {
+    public TeacherCommentUpdateDto(SubmitTeacherCommentDto teacherComment) {
 
         //理论上不会有比int大的
-        if (teacherComment.getId() > 0) {
+        if (teacherComment.getId() !=null) {
             id = Integer.valueOf(String.valueOf(teacherComment.getId()));
         }
 
-        if (teacherComment.getAbilityToFollowInstructions() > 0) {
+        if (teacherComment.getAbilityToFollowInstructions() !=null) {
             abilityToFollowInstructions = teacherComment.getAbilityToFollowInstructions();
         }
-        if (teacherComment.getActivelyInteraction() > 0) {
+        if (teacherComment.getActivelyInteraction() !=null) {
             activelyInteraction = teacherComment.getActivelyInteraction();
         }
-        if (teacherComment.getClearPronunciation() > 0) {
+        if (teacherComment.getClearPronunciation() !=null) {
             clearPronunciation = teacherComment.getClearPronunciation();
         }
 
-        if (teacherComment.getCreateDateTime() != null) {
+        if (teacherComment.getCreateDateTime() !=null) {
             createTime = new Date(teacherComment.getCreateDateTime().getTime());
         }
-        if (teacherComment.getEmpty() == 0) {
+        if (teacherComment.getEmpty() !=null && teacherComment.getEmpty() == 0) {
 //            empty	teacher_feedback
 //            0	jjjjjjjjjjlllll
 //            1	None
@@ -526,21 +621,21 @@ public class TeacherCommentUpdateDto {
             updateTime = new Date(teacherComment.getLastDateTime().getTime());
         }
 
-        if (teacherComment.getReadingSkills() > 0) {
+        if (teacherComment.getReadingSkills() !=null) {
             readingSkills = teacherComment.getReadingSkills();
         }
-        if (teacherComment.getRepetition() > 0) {
+        if (teacherComment.getRepetition() !=null) {
             repetition = teacherComment.getRepetition();
         }
 
 
         reportIssues = teacherComment.getReportIssues();
 
-        if (teacherComment.getSpellingAccuracy() > 0) {
+        if (teacherComment.getSpellingAccuracy() !=null) {
             spellingAccuracy = teacherComment.getSpellingAccuracy();
         }
 
-        if (teacherComment.getStars() > 0) {
+        if (teacherComment.getStars() !=null) {
             stars = teacherComment.getStars();
         }
 
@@ -548,36 +643,36 @@ public class TeacherCommentUpdateDto {
         feedbackTranslation = teacherComment.getFeedbackTranslation();
         tipsForOtherTeachers = teacherComment.getTipsForOtherTeachers();
 
-        if (teacherComment.getUrgent() > 0) {
+        if (teacherComment.getUrgent()!=null && teacherComment.getUrgent() > 0) {
             urgent = true;
         } else {
             urgent = false;
         }
 
-        if (teacherComment.getPerformance() > 0) {
+        if (teacherComment.getPerformance() !=null) {
             performance = teacherComment.getPerformance();
         }
 
-        if (teacherComment.getPerformanceAdjust() > 0) {
+        if (teacherComment.getPerformanceAdjust() !=null) {
             performanceAdjust = teacherComment.getPerformanceAdjust();
         }
 
         currentPerformance = teacherComment.getCurrentPerformance();
 
 
-        if (teacherComment.getOnlineClassId() > 0) {
+        if (teacherComment.getOnlineClassId() !=null) {
             onlineClassId = teacherComment.getOnlineClassId();
         }
 
-        if (teacherComment.getStudentId() > 0) {
+        if (teacherComment.getStudentId()!=null) {
             studentId = teacherComment.getStudentId();
         }
 
-        if (teacherComment.getTeacherId() > 0) {
+        if (teacherComment.getTeacherId() !=null) {
             teacherId = teacherComment.getTeacherId();
         }
 
-        if (teacherComment.getOperatorId() > 0) {
+        if (teacherComment.getOperatorId() !=null) {
             createBy = Integer.valueOf(String.valueOf(teacherComment.getOperatorId()));
         }
 
@@ -586,6 +681,41 @@ public class TeacherCommentUpdateDto {
         if(StringUtils.isNotBlank(teacherComment.getSubmitSource())){
             submitSource = teacherComment.getSubmitSource();
         }
+
+
+        //preVip的Major课特有字段 START
+        //preVip特有字段
+
+        needParentSupport = teacherComment.getNeedParentSupport()==null?false:teacherComment.getNeedParentSupport();
+
+        if(StringUtils.isNotBlank(teacherComment.getVocabularyRetention())){
+            vocabularyRetention = teacherComment.getVocabularyRetention();
+        }
+        if(StringUtils.isNotBlank(teacherComment.getPronunciation())){
+            pronunciation = teacherComment.getPronunciation();
+        }
+        if(StringUtils.isNotBlank(teacherComment.getAlphabetSkills())){
+            alphabetSkills = teacherComment.getAlphabetSkills();
+        }
+        if(StringUtils.isNotBlank(teacherComment.getPhonologicalAwareness())){
+            phonologicalAwareness = teacherComment.getPhonologicalAwareness();
+        }
+        if(StringUtils.isNotBlank(teacherComment.getFollowsInstructions())){
+            followsInstructions = teacherComment.getFollowsInstructions();
+        }
+        if(StringUtils.isNotBlank(teacherComment.getParticipatesActively())){
+            participatesActively = teacherComment.getParticipatesActively();
+        }
+        if(StringUtils.isNotBlank(teacherComment.getSpeaksClearly())){
+            speaksClearly = teacherComment.getSpeaksClearly();
+        }
+        if(StringUtils.isNotBlank(teacherComment.getMouseTouchpadActivities())){
+            mouseTouchpadActivities = teacherComment.getMouseTouchpadActivities();
+        }
+        if(StringUtils.isNotBlank(teacherComment.getDegreeCompletion())){
+            degreeCompletion = teacherComment.getDegreeCompletion();
+        }
+        //preVip的Major课特有字段 END
 
     }
 }

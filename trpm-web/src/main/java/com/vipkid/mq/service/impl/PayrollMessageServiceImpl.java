@@ -14,7 +14,7 @@ import com.vipkid.trpm.dao.LessonDao;
 import com.vipkid.trpm.dao.OnlineClassDao;
 import com.vipkid.trpm.dao.TeacherDao;
 import com.vipkid.trpm.entity.*;
-import com.vipkid.trpm.entity.teachercomment.TeacherComment;
+import com.vipkid.trpm.entity.teachercomment.SubmitTeacherCommentDto;
 import net.sf.json.JSONObject;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -64,7 +64,7 @@ public class PayrollMessageServiceImpl implements PayrollMessageService {
     private Destination finishOnlineClassDestination;
 
     @Override
-    public FinishOnlineClassMessage sendFinishOnlineClassMessage(TeacherComment teacherComment, Long onlineClassId,
+    public FinishOnlineClassMessage sendFinishOnlineClassMessage(SubmitTeacherCommentDto teacherComment, Long onlineClassId,
             OperatorType operatorType) {
 
         FinishOnlineClassMessage message = new FinishOnlineClassMessage();

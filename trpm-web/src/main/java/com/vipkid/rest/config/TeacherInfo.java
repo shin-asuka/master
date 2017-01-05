@@ -11,6 +11,7 @@ import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.entity.User;
 
 public class TeacherInfo {
+    private static final String PREVIP_TAG = "-1";
 
     @SuppressWarnings("serial")
     private Map<String,Object> roles = new HashMap<String, Object>(){{
@@ -37,6 +38,8 @@ public class TeacherInfo {
     private boolean evaluation = false;
     //quanxian
     private boolean evaluationClick = false;
+
+    private boolean canTeachPrevip = false;
 
     public Map<String, Object> getRoles() {
         return roles;
@@ -94,7 +97,12 @@ public class TeacherInfo {
         this.lifeCycle = lifeCycle;
         return this;
     }
-
+    public boolean getCanTeachPrevip() {
+        return canTeachPrevip;
+    }
+    public void setCanTeachPrevip(boolean preVIP) {
+        canTeachPrevip = preVIP;
+    }
     public String getAction() {
         return action;
     }
@@ -141,7 +149,11 @@ public class TeacherInfo {
         this.setLifeCycle(teacher.getLifeCycle());
         this.setShowName(user.getName());
         this.setHaveChannel(StringUtils.isNotBlank(teacher.getReferee()) || teacher.getPartnerId() > 0 || StringUtils.isNotBlank(teacher.getOtherChannel()));
-
+        String teacherTag = teacher.getTeacherTags();
+        if (StringUtils.indexOf(teacherTag,PREVIP_TAG) > -1){
+            canTeachPrevip = true;
+        }
+        this.setCanTeachPrevip(canTeachPrevip);
     }
    
 }

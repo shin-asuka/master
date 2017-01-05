@@ -18,6 +18,7 @@ import com.vipkid.trpm.dao.*;
 import com.vipkid.trpm.entity.*;
 import com.vipkid.trpm.entity.teachercomment.*;
 import com.vipkid.trpm.util.DateUtils;
+import com.vipkid.trpm.util.LessonSerialNumber;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -135,6 +136,8 @@ public class TeacherService {
 				Lesson lesson = lessonDao.findById(teacherComment.getLessonId());
 				if (lesson != null) {
 					result.setTopic(lesson.getTopic());
+					boolean isPreVipkid = LessonSerialNumber.isPreVipkidLesson(lesson.getSerialNumber());
+					result.setPreVip(isPreVipkid);
 				}
 				result.setClassNumber(teacherComment.getLessonSerialNumber());
 
@@ -149,6 +152,40 @@ public class TeacherService {
 		if(course!=null){
 			result.setCourseDisplayName(course.getName());
 		}
+
+		//preVip特有字段
+		if(teacherComment.getNeedParentSupport()!=null){
+			result.setNeedParentSupport(teacherComment.getNeedParentSupport());
+		}
+		if(StringUtils.isNotBlank(teacherComment.getVocabularyRetention())){
+			result.setVocabularyRetention(teacherComment.getVocabularyRetention());
+		}
+		if(StringUtils.isNotBlank(teacherComment.getPronunciation())){
+			result.setPronunciation(teacherComment.getPronunciation());
+		}
+		if(StringUtils.isNotBlank(teacherComment.getAlphabetSkills())){
+			result.setAlphabetSkills(teacherComment.getAlphabetSkills());
+		}
+		if(StringUtils.isNotBlank(teacherComment.getPhonologicalAwareness())){
+			result.setPhonologicalAwareness(teacherComment.getPhonologicalAwareness());
+		}
+		if(StringUtils.isNotBlank(teacherComment.getFollowsInstructions())){
+			result.setFollowsInstructions(teacherComment.getFollowsInstructions());
+		}
+		if(StringUtils.isNotBlank(teacherComment.getParticipatesActively())){
+			result.setParticipatesActively(teacherComment.getParticipatesActively());
+		}
+		if(StringUtils.isNotBlank(teacherComment.getSpeaksClearly())){
+			result.setSpeaksClearly(teacherComment.getSpeaksClearly());
+		}
+		if(StringUtils.isNotBlank(teacherComment.getMouseTouchpadActivities())){
+			result.setMouseTouchpadActivities(teacherComment.getMouseTouchpadActivities());
+		}
+		if(StringUtils.isNotBlank(teacherComment.getDegreeCompletion())){
+			result.setDegreeCompletion(teacherComment.getDegreeCompletion());
+		}
+
+
 
 		//返回已填过的字段
 		result.setEmpty(teacherComment.getEmpty());
@@ -480,6 +517,72 @@ public class TeacherService {
 			return null;
 		}
 		return teacherCommentList;
+	}
+
+
+	public String inputCheckPrevipMajorCourseTeacherComment(String serialNumber,SubmitTeacherCommentDto input){
+		String errMsg = null;
+		boolean isPreVipkid = LessonSerialNumber.isPreVipkidLesson(serialNumber);
+		if(isPreVipkid && serialNumber.startsWith("M") && input!=null){
+			//previp的Major课才进行check
+			if(StringUtils.isBlank(input.getTeacherFeedback())){
+				errMsg = "teacherFeedback can not be blank";
+				return errMsg;
+			}
+			if(StringUtils.isBlank(input.getVocabularyRetention())){
+				errMsg = "vocabularyRetention can not be blank";
+				return errMsg;
+			}
+			if(StringUtils.isBlank(input.getPronunciation())){
+				errMsg = "pronunciation can not be blank";
+				return errMsg;
+			}
+			if(StringUtils.isBlank(input.getAlphabetSkills())
+				&& !serialNumber.trim().startsWith("MC-L1-U1")
+				&& !serialNumber.trim().startsWith("MC-L1-U2")
+				&& !serialNumber.trim().startsWith("MC-L1-U3")){
+				//u1-u3的课不需要check此项
+				errMsg = "alphabetSkills can not be blank";
+				return errMsg;
+			}
+
+			if(StringUtils.isBlank(input.getPhonologicalAwareness())){
+				errMsg = "phonologicalAwareness can not be blank";
+				return errMsg;
+			}
+
+			if(StringUtils.isBlank(input.getFollowsInstructions())){
+				errMsg = "followsInstructions can not be blank";
+				return errMsg;
+			}
+
+			if(StringUtils.isBlank(input.getParticipatesActively())){
+				errMsg = "participatesActively can not be blank";
+				return errMsg;
+			}
+
+			if(StringUtils.isBlank(input.getSpeaksClearly())){
+				errMsg = "speaksClearly can not be blank";
+				return errMsg;
+			}
+
+			if(StringUtils.isBlank(input.getMouseTouchpadActivities())){
+				errMsg = "mouseTouchpadActivities can not be blank";
+				return errMsg;
+			}
+
+			if(StringUtils.isBlank(input.getDegreeCompletion())){
+				errMsg = "degreeCompletion can not be blank";
+				return errMsg;
+			}
+
+			if(input.getPerformance() == null || input.getPerformance()==0){
+				errMsg = "level of difficulty can not be blank";
+				return errMsg;
+			}
+		}
+
+		return errMsg;
 	}
 
 }

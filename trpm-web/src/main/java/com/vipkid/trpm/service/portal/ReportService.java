@@ -15,6 +15,7 @@ import com.vipkid.trpm.entity.*;
 import com.vipkid.trpm.entity.media.UploadResult;
 import com.vipkid.trpm.entity.report.DemoReports;
 import com.vipkid.trpm.entity.report.ReportLevels;
+import com.vipkid.trpm.entity.teachercomment.SubmitTeacherCommentDto;
 import com.vipkid.trpm.entity.teachercomment.TeacherComment;
 import com.vipkid.trpm.entity.teachercomment.TeacherCommentResult;
 import com.vipkid.trpm.entity.teachercomment.TeacherCommentUpdateDto;
@@ -32,6 +33,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import sun.security.x509.SerialNumber;
 
 import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
@@ -603,6 +605,7 @@ public class ReportService {
         tcuDto.setCourseId(course.getId());
         tcuDto.setCourseType(course.getType());
         tcuDto.setUnitId(course.getUnitId());
+        boolean isPrevip = LessonSerialNumber.isPreVipkidLesson(lesson.getSerialNumber());
 
         tcuDto.setStars(0);
         tcuDto.setEmpty(true);
@@ -613,6 +616,7 @@ public class ReportService {
             return null;
         }else{
             TeacherComment comment = new TeacherComment(tcResult);
+            comment.setPreVip(isPrevip);
             return comment;
         }
     }
@@ -628,13 +632,19 @@ public class ReportService {
      * @param teacherComment
      * @date 2015年12月16日
      */
-    public Map<String, Object> submitTeacherComment(TeacherComment teacherComment, User user,String serialNumber,
+    public Map<String, Object> submitTeacherComment(SubmitTeacherCommentDto teacherComment, User user,String serialNumber,
             String scheduledDateTime,boolean isFromH5) {
         // 如果ID为0 则抛出异常并回滚
-        checkArgument(0 != teacherComment.getId(), "Argument teacherComment id equals 0");
+        checkArgument(teacherComment.getId()!=null && 0 != teacherComment.getId(), "Argument teacherComment id equals 0");
 
         teacherComment.setEmpty(0);
-
+        String previpErrorMsg = teacherService.inputCheckPrevipMajorCourseTeacherComment(serialNumber,teacherComment);
+        if(StringUtils.isNotBlank(previpErrorMsg)){
+            Map<String, Object> paramMap = Maps.newHashMap();
+            paramMap.put("result", false);
+            paramMap.put("msg", previpErrorMsg);
+            return paramMap;
+        }
         // 日志记录参数准备
         TeacherCommentResult oldtcFromAPI = teacherService
                 .findByTeacherCommentId(String.valueOf(teacherComment.getId()));
@@ -695,21 +705,44 @@ public class ReportService {
                     OperatorType.ADD_TEACHER_COMMENTS));
         }
 
-        if (teacherComment.getPerformanceAdjust()==1 && teacherComment.getPerformance()!=0){
-            logger.info("判断PerformanceAdjust给CLT发邮件: studentId = {}, serialNumber = {}, scheduledDateTime = {} ",
-                    oldtc.getStudentId(), serialNumber, scheduledDateTime);
-            final String finalScheduledDateTime = scheduledDateTime;
-            sendEmailExecutor.execute(() -> {
-                emailService.sendEmail4PerformanceAdjust2CLT(oldtc.getStudentId(), serialNumber,
-                    finalScheduledDateTime, teacherComment.getPerformance());
-            });
-        }
+        boolean isPreVipkid = LessonSerialNumber.isPreVipkidLesson(serialNumber);
 
-        if (teacherComment.getPerformance()==1 || teacherComment.getPerformance()==5){
-            logger.info("检查Performance判断是否给CLT发邮件: studentId = {}, serialNumber = {} ", oldtc.getStudentId(), serialNumber);
-            sendEmailExecutor.execute(() -> {
-                emailService.sendEmail4Performance2CLT(oldtc.getStudentId(), serialNumber);
-            });
+        if(isPreVipkid){
+            if (teacherComment.getPerformance() !=null && (teacherComment.getPerformance() == 1 || teacherComment.getPerformance() == 5)) {
+                logger.info(
+                    "previp检查Performance判断是否给CLT发邮件: studentId = {}, serialNumber = {} ",
+                    oldtc.getStudentId(), serialNumber);
+                sendEmailExecutor.execute(() -> {
+                    emailService.sendEmail4PreVip2CLTByPerformance(oldtc.getStudentId(),serialNumber);
+                });
+            }
+            if (teacherComment.getNeedParentSupport()!=null&&teacherComment.getNeedParentSupport()) {
+                logger.info(
+                    "previp检查needParentSupport判断是否给CLT发邮件: studentId = {}, serialNumber = {} ",
+                    oldtc.getStudentId(), serialNumber);
+                sendEmailExecutor.execute(() -> {
+                    emailService.sendEmail4PreVip2CLTByNeedParent(oldtc.getStudentId());
+                });
+            }
+
+        }else{
+            if (teacherComment.getPerformanceAdjust() !=null&& teacherComment.getPerformance()!=null
+                &&(teacherComment.getPerformanceAdjust()==1 && teacherComment.getPerformance()!=0)){
+                logger.info("判断PerformanceAdjust给CLT发邮件: studentId = {}, serialNumber = {}, scheduledDateTime = {} ",
+                    oldtc.getStudentId(), serialNumber, scheduledDateTime);
+                final String finalScheduledDateTime = scheduledDateTime;
+                sendEmailExecutor.execute(() -> {
+                    emailService.sendEmail4PerformanceAdjust2CLT(oldtc.getStudentId(), serialNumber,
+                        finalScheduledDateTime, teacherComment.getPerformance());
+                });
+            }
+
+            if (teacherComment.getPerformance() !=null &&(teacherComment.getPerformance()==1 || teacherComment.getPerformance()==5)){
+                logger.info("检查Performance判断是否给CLT发邮件: studentId = {}, serialNumber = {} ", oldtc.getStudentId(), serialNumber);
+                sendEmailExecutor.execute(() -> {
+                    emailService.sendEmail4Performance2CLT(oldtc.getStudentId(), serialNumber);
+                });
+            }
         }
         return paramMap;
     }
@@ -795,17 +828,61 @@ public class ReportService {
      */
     public StudentExam handleExamLevel(StudentExam studentExam, String serialNum) {
         logger.info("ReportController: handleExamLevel() 参数为：serialNum={}, studentExam={}", serialNum, JSON.toJSONString(studentExam));
-
         // studentExam 不为空则进行替换逻辑
         if (studentExam != null) {
             // ExamLevel 不为空则进行替换逻辑
             if (studentExam.getExamLevel() != null) {
                 String lowerCase = studentExam.getExamLevel().toLowerCase();
+                String examLevel = "No Computer Test result.";
                 if ("l1u0".equals(lowerCase)) {
-                    studentExam.setExamLevel("Level Test result is Level 0 Unit 0");
+                    studentExam.setExamLevel("Computer Test result  is Level 0 Unit 0");
+                }else if(lowerCase.equals("l1u1")){
+                    examLevel = "Computer Test result is L1U1(PreVIP).";
                 } else if (lowerCase.startsWith("l")) {
-                    studentExam.setExamLevel("Level Test result is " + lowerCase.replaceAll("l", "Level ").replaceAll("u", " Unit "));
+                    examLevel= "Computer Test result is " + lowerCase.replaceAll("l", "Level ").replaceAll("u", " Unit ") + ".";
                 }
+                if (serialNum != null) {
+                    switch (serialNum) {
+                        case ApplicationConstant.TrailLessonConstants.L0:
+                            if(StringUtils.equals(examLevel,"No Computer Test result.")){
+                                examLevel = examLevel +" Please use the PreVIP courseware.";
+                            }else{
+                                examLevel = " Please ignore the Computer Test result and use the PreVIP courseware.";
+                            }
+                            break;
+                        case ApplicationConstant.TrailLessonConstants.L1:
+                            if(StringUtils.equals(examLevel,"No Computer Test result.") || StringUtils.equals(examLevel,"Computer Test result is L1U1(PreVIP).")){
+                                examLevel = examLevel +" Please use the Level 2 Unit 01 courseware.";
+                            }else{
+                                examLevel = examLevel + " Please use the "+ lowerCase.replace("l","Level ").replace("u"," Unit ") + " courseware.";
+                            }
+                            break;
+                        case ApplicationConstant.TrailLessonConstants.L2:
+                            if(StringUtils.equals(examLevel,"No Computer Test result.")|| StringUtils.equals(examLevel,"Computer Test result is L1U1(PreVIP).")){
+                                examLevel = examLevel +" Please use the use Level 2 Unit 04 courseware.";
+                            }else{
+                                examLevel = examLevel + " Please use the "+ lowerCase.replace("l","Level ").replace("u"," Unit ") + " courseware.";
+                            }
+                            break;
+                        case ApplicationConstant.TrailLessonConstants.L3:
+                            if(StringUtils.equals(examLevel,"No Computer Test result.") || StringUtils.equals(examLevel,"Computer Test result is L1U1(PreVIP).")){
+                                examLevel = examLevel +" Please use the Level 3 Unit 01 courseware.";
+                            }else{
+                                examLevel = examLevel + " Please use the "+ lowerCase.replace("l","Level ").replace("u"," Unit ") + " courseware.";
+                            }
+                            break;
+                        case ApplicationConstant.TrailLessonConstants.L4:
+                            if(StringUtils.equals(examLevel,"No Computer Test result.") || StringUtils.equals(examLevel,"Computer Test result is L1U1(PreVIP).")){
+                                examLevel = examLevel +" Please use the Level 4 Unit 01 courseware.";
+                            }else{
+                                examLevel = examLevel + " Please use the "+ lowerCase.replace("l","Level ").replace("u"," Unit ") + " courseware.";
+                            }
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                studentExam.setExamLevel(examLevel);
             }
         } else {
             // studentExam 为空则返回空对象
@@ -813,17 +890,20 @@ public class ReportService {
             // ExamLevel 为空则根据Lession的SerialNum进行处理
             if (serialNum != null) {
                 switch (serialNum) {
-                    case "T1-U1-LC1-L1":
-                        studentExam.setExamLevel("No Computer Test result, use Level 2 Unit 01");
+                    case ApplicationConstant.TrailLessonConstants.L0:
+                        studentExam.setExamLevel("No Computer Test result. Please use the PreVIP courseware.");
                         break;
-                    case "T1-U1-LC1-L2":
-                        studentExam.setExamLevel("No Computer Test result, use Level 2 Unit 04");
+                    case ApplicationConstant.TrailLessonConstants.L1:
+                        studentExam.setExamLevel("No Computer Test result. Please use the Level2 Unit1 courseware.");
                         break;
-                    case "T1-U1-LC1-L3":
-                        studentExam.setExamLevel("No Computer Test result, use Level 3 Unit 01");
+                    case ApplicationConstant.TrailLessonConstants.L2:
+                        studentExam.setExamLevel("No Computer Test result. Please use the Level2 Unit4 courseware.");
                         break;
-                    case "T1-U1-LC1-L4":
-                        studentExam.setExamLevel("No Computer Test result, use Level 4 Unit 01");
+                    case ApplicationConstant.TrailLessonConstants.L3:
+                        studentExam.setExamLevel("No Computer Test result. Please use the Level3 Unit1 courseware.");
+                        break;
+                    case ApplicationConstant.TrailLessonConstants.L4:
+                        studentExam.setExamLevel("No Computer Test result. Please use the Level4 Unit1 courseware.");
                         break;
                     default:
                         break;

@@ -270,6 +270,32 @@ public interface ApplicationConstant {
         public static final int IMAGE_CODE_INVALID_SEC = 120; // 图片验证码失效时间阀值
         public static final int PAYROLL_DISPLAY_MAX_NUM_EXCEED_DAY_SEC = 60 * 60 * 24 * 10 ;//payroll 部分老师可用 10天
     }
+    public static final class TrailLessonConstants{
+
+        public static final String L0 = "T1-U1-LC1-L0";
+
+        public static final String L1 = "T1-U1-LC1-L1";
+
+        public static final String L2 = "T1-U1-LC1-L2";
+
+        public static final String L3 = "T1-U1-LC1-L3";
+
+        public static final String L4 = "T1-U1-LC1-L4";
+    }
+
+    public static final class QiNiu{
+
+        public static final String IMG_BUCKET = PropertyConfigurer.stringValue("IMG_BUCKET");
+        public static final String VIDEO_BUCKET = PropertyConfigurer.stringValue("VIDEO_BUCKET");
+        public static final String VIDEO_URL_FIX = PropertyConfigurer.stringValue("VIDEO_URL_FIX");
+        public static final String IMG_URL_FIX = PropertyConfigurer.stringValue("IMG_URL_FIX");
+        public static final String FILE_URL_FIX = PropertyConfigurer.stringValue("FILE_URL_FIX");
+        public static final String PRECLASS = PropertyConfigurer.stringValue("PRECLASS");
+        public static final String PREVIP_SONG = PropertyConfigurer.stringValue("PREVIP_SONG");
+
+        public static final String ACCESS_KEY = PropertyConfigurer.stringValue("ACCESS_KEY");
+        public static final String SECRET_KEY = PropertyConfigurer.stringValue("SECRET_KEY");
+    }
 
     Map<Integer, String> LEVEL_OF_DIFFITULTY = new HashMap<Integer, String>(){{
         put(1, "Very Difficult");
