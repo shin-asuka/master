@@ -36,31 +36,39 @@
 						<div>
                             <label>Content Learning<span style="color: red;">*</span></label>
                             <p>
-								<span style="display:inline-block;width: 200px">Vocabulary rebention</span>
-								<label margin-left:15px;><input type="radio" id="vocabularyRetention" name="vocabularyRetention" field="$teacherComment.vocabularyRetention" value="Struggling" $!elememtDisabled />Struggling</label>
-                                <label margin-left:15px;><input type="radio" id="vocabularyRetention" name="vocabularyRetention" field="$teacherComment.vocabularyRetention" value="Developing" $!elememtDisabled />Developing</label>
-                                <label margin-left:15px;><input type="radio" id="vocabularyRetention" name="vocabularyRetention" field="$teacherComment.vocabularyRetention" value="Mastered" $!elememtDisabled />Mastered</label>
+								<span style="display:inline-block;width: 200px;">Vocabulary rebention</span>
+								<label margin-left:15px; width:200px><input type="radio" id="vocabularyRetention" name="vocabularyRetention" field="$teacherComment.vocabularyRetention" value="Struggling" $!elememtDisabled />Struggling</label>
+                                <label> </label>
+								<label margin-left:15px;><input type="radio" id="vocabularyRetention" name="vocabularyRetention" field="$teacherComment.vocabularyRetention" value="Developing" $!elememtDisabled />Developing</label>
+                                <label> </label>
+								<label margin-left:15px;><input type="radio" id="vocabularyRetention" name="vocabularyRetention" field="$teacherComment.vocabularyRetention" value="Mastered" $!elememtDisabled />Mastered</label>
 							</p>
 
                             <p>
 								<span style="display:inline-block;width: 200px">Pronunciation</span>
                                 <label margin-left:15px;><input type="radio" id="pronunciation" name="pronunciation" field="$teacherComment.pronunciation"  value="Struggling" $!elememtDisabled />Struggling</label>
-                                <label margin-left:15px;><input type="radio" id="pronunciation" name="pronunciation" field="$teacherComment.pronunciation"  value="Developing" $!elememtDisabled />Developing</label>
-                                <label margin-left:15px;><input type="radio" id="pronunciation" name="pronunciation" field="$teacherComment.pronunciation"  value="Mastered" $!elememtDisabled />Mastered</label>
+                                <label> </label>
+								<label margin-left:15px;><input type="radio" id="pronunciation" name="pronunciation" field="$teacherComment.pronunciation"  value="Developing" $!elememtDisabled />Developing</label>
+                                <label> </label>
+								<label margin-left:15px;><input type="radio" id="pronunciation" name="pronunciation" field="$teacherComment.pronunciation"  value="Mastered" $!elememtDisabled />Mastered</label>
 							</p
 							#if($isBelowU4!=true)
                             <p>
 								<span style="display:inline-block;width: 200px">Alphabet skills</span>
                                 <label margin-left:15px;><input type="radio" id="alphabetSkills" name="alphabetSkills" field="$teacherComment.alphabetSkills" value="Struggling" $!elememtDisabled />Struggling</label>
-                                <label margin-left:15px;><input type="radio" id="alphabetSkills" name="alphabetSkills" field="$teacherComment.alphabetSkills" value="Developing" $!elememtDisabled />Developing</label>
-                                <label margin-left:15px;><input type="radio" id="alphabetSkills" name="alphabetSkills" field="$teacherComment.alphabetSkills" value="Mastered"   $!elememtDisabled />Mastered</label>
+                                <label> </label>
+								<label margin-left:15px;><input type="radio" id="alphabetSkills" name="alphabetSkills" field="$teacherComment.alphabetSkills" value="Developing" $!elememtDisabled />Developing</label>
+                                <label> </label>
+								<label margin-left:15px;><input type="radio" id="alphabetSkills" name="alphabetSkills" field="$teacherComment.alphabetSkills" value="Mastered"   $!elememtDisabled />Mastered</label>
 							</p>
 							#end
                             <p>
 								<span style="display:inline-block;width: 200px">Phonological awareness</span>
                                 <label margin-left:15px;><input type="radio" id="phonologicalAwareness" name="phonologicalAwareness" field="$teacherComment.phonologicalAwareness" value="Struggling" $!elememtDisabled />Struggling</label>
-                                <label margin-left:15px;><input type="radio" id="phonologicalAwareness" name="phonologicalAwareness" field="$teacherComment.phonologicalAwareness" value="Developing" $!elememtDisabled />Developing</label>
-                                <label margin-left:15px;><input type="radio" id="phonologicalAwareness" name="phonologicalAwareness" field="$teacherComment.phonologicalAwareness" value="Mastered" $!elememtDisabled />Mastered</label>
+                                <label> </label>
+								<label margin-left:15px;><input type="radio" id="phonologicalAwareness" name="phonologicalAwareness" field="$teacherComment.phonologicalAwareness" value="Developing" $!elememtDisabled />Developing</label>
+                                <label> </label>
+								<label margin-left:15px;><input type="radio" id="phonologicalAwareness" name="phonologicalAwareness" field="$teacherComment.phonologicalAwareness" value="Mastered" $!elememtDisabled />Mastered</label>
 							</p
 						</div>
 
@@ -69,22 +77,28 @@
 							<p>
 								<span style="display:inline-block;width: 200px">Follows instructions</span>
                                 <label margin-left:15px;><input type="radio" id="followsInstructions" name="followsInstructions" field="$teacherComment.followsInstructions" value="Rarely" $!elememtDisabled />Rarely</label>
-                                <label margin-left:15px;><input type="radio" id="followsInstructions" name="followsInstructions" field="$teacherComment.followsInstructions" value="Sometimes" $!elememtDisabled />Sometimes</label>
-                                <label margin-left:15px;><input type="radio" id="followsInstructions" name="followsInstructions" field="$teacherComment.followsInstructions" value="Often" $!elememtDisabled />Often</label>
+                                <label> </label>
+								<label margin-left:15px;><input type="radio" id="followsInstructions" name="followsInstructions" field="$teacherComment.followsInstructions" value="Sometimes" $!elememtDisabled />Sometimes</label>
+                                <label> </label>
+								<label margin-left:15px;><input type="radio" id="followsInstructions" name="followsInstructions" field="$teacherComment.followsInstructions" value="Often" $!elememtDisabled />Often</label>
 							</p>
 
                             <p>
                                 <span style="display:inline-block;width: 200px">Participates actively</span>
                                 <label margin-left:15px;><input type="radio" id="participatesActively" name="participatesActively" field="$teacherComment.participatesActively" value="Rarely" $!elememtDisabled />Rarely</label>
-                                <label margin-left:15px;><input type="radio" id="participatesActively" name="participatesActively" field="$teacherComment.participatesActively" value="Sometimes" $!elememtDisabled />Sometimes</label>
-                                <label margin-left:15px;><input type="radio" id="participatesActively" name="participatesActively" field="$teacherComment.participatesActively" value="Often" $!elememtDisabled />Often</label>
+                                <label> </label>
+								<label margin-left:15px;><input type="radio" id="participatesActively" name="participatesActively" field="$teacherComment.participatesActively" value="Sometimes" $!elememtDisabled />Sometimes</label>
+                                <label> </label>
+								<label margin-left:15px;><input type="radio" id="participatesActively" name="participatesActively" field="$teacherComment.participatesActively" value="Often" $!elememtDisabled />Often</label>
                             </p>
 
                             <p>
                                 <span style="display:inline-block;width: 200px">Speaks clearly</span>
                                 <label margin-left:15px;><input type="radio" id="speaksClearly" name="speaksClearly" field="$teacherComment.speaksClearly" value="Rarely" />Rarely</label>
-                                <label margin-left:15px;><input type="radio" id="speaksClearly" name="speaksClearly" field="$teacherComment.speaksClearly" value="Sometimes" />Sometimes</label>
-                                <label margin-left:15px;><input type="radio" id="speaksClearly" name="speaksClearly" field="$teacherComment.speaksClearly" value="Often" />Often</label>
+                                <label> </label>
+								<label margin-left:15px;><input type="radio" id="speaksClearly" name="speaksClearly" field="$teacherComment.speaksClearly" value="Sometimes" />Sometimes</label>
+                                <label> </label>
+								<label margin-left:15px;><input type="radio" id="speaksClearly" name="speaksClearly" field="$teacherComment.speaksClearly" value="Often" />Often</label>
                             </p>
 						</div>
 
@@ -93,8 +107,10 @@
 							<p>
 								<span style="display:inline-block;width: 200px">Mouse\Touchpad activities</span>
                                 <label margin-left:15px;><input type="radio" id="mouseTouchpadActivities" name="mouseTouchpadActivities" field="$teacherComment.mouseTouchpadActivities" value="Struggling" $!elememtDisabled />Struggling</label>
-                                <label margin-left:15px;><input type="radio" id="mouseTouchpadActivities" name="mouseTouchpadActivities" field="$teacherComment.mouseTouchpadActivities" value="Developing" $!elememtDisabled />Developing</label>
-                                <label margin-left:15px;><input type="radio" id="mouseTouchpadActivities" name="mouseTouchpadActivities" field="$teacherComment.mouseTouchpadActivities" value="Mastered" $!elememtDisabled />Mastered</label>
+                                <label> </label>
+								<label margin-left:15px;><input type="radio" id="mouseTouchpadActivities" name="mouseTouchpadActivities" field="$teacherComment.mouseTouchpadActivities" value="Developing" $!elememtDisabled />Developing</label>
+                                <label> </label>
+								<label margin-left:15px;><input type="radio" id="mouseTouchpadActivities" name="mouseTouchpadActivities" field="$teacherComment.mouseTouchpadActivities" value="Mastered" $!elememtDisabled />Mastered</label>
 							</p>
 						</div>
 
@@ -105,8 +121,10 @@
                             <p>
                                 <span style="display:inline-block;width: 200px">Degree of completion</span>
                                 <label margin-left:15px;><input type="radio" id="degreeCompletion" name="degreeCompletion" field="$teacherComment.degreeCompletion" value="Skipped a lot" $!elememtDisabled />Skipped a lot</label>
-                                <label margin-left:15px;><input type="radio" id="degreeCompletion" name="degreeCompletion" field="$teacherComment.degreeCompletion" value="Skipped a bit" $!elememtDisabled />Skipped a bit</label>
-                                <label margin-left:15px;><input type="radio" id="degreeCompletion" name="degreeCompletion" field="$teacherComment.degreeCompletion" value="Finished all" $!elememtDisabled />Finished all</label>
+                                <label> </label>
+								<label margin-left:15px;><input type="radio" id="degreeCompletion" name="degreeCompletion" field="$teacherComment.degreeCompletion" value="Skipped a bit" $!elememtDisabled />Skipped a bit</label>
+                                <label> </label>
+								<label margin-left:15px;><input type="radio" id="degreeCompletion" name="degreeCompletion" field="$teacherComment.degreeCompletion" value="Finished all" $!elememtDisabled />Finished all</label>
                             </p>
                         </div>
 						##<input type="radio" name="englishLanguageScore" #if(0 == ${teacherApplication.englishLanguageScore})checked="checked"#end value="0" />
