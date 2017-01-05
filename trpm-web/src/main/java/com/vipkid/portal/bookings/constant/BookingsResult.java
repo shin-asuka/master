@@ -14,9 +14,6 @@ public final class BookingsResult {
     /* TimeSlot 状态不是 Available */
     public static final String TIMESLOT_NOT_AVAILABLE = "TIMESLOT_NOT_AVAILABLE";
 
-    /* 表示 PeakTime 少于15节课时 */
-    public static final String PEAKTIM_LESS_15 = "PEAKTIM_LESS_15";
-
     /* 非法的 OnlineClass */
     public static final String ILLEGAL_ONLINECLASS = "ILLEGAL_ONLINECLASS";
 

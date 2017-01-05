@@ -740,20 +740,6 @@ public class BookingsService {
             modelMap.put("error", BookingsResult.ILLEGAL_ONLINECLASS);
         }
 
-        /* 如果当前取消时间为 PeakTime，则不能少于 15 节课时 */
-        Timestamp scheduleDateTime = onlineClass.getScheduledDateTime();
-        PeakTime peakTime = peakTimeDao.findByTimePoint(scheduleDateTime);
-
-        if (0 == onlineClass.getClassType() && null != peakTime && PeakTimeType.isPeakTime(peakTime.getType())) {
-            int totalPeakTime = totalPeakTime(scheduleDateTime, teacher.getId());
-            logger.info("The teacher id: {}, total PeakTime: {}", teacher.getId(), totalPeakTime);
-
-            if (totalPeakTime <= PEAKTIME_TIMESLOT_DEFAULT_COUNT) {
-                modelMap.put("error", BookingsResult.PEAKTIM_LESS_15);
-                return modelMap;
-            }
-        }
-
         /* 更新 OnlineClass 状态 */
         if (ClassStatus.isAvailable(onlineClass.getStatus())) {
             onlineClassDao.updateStatus(onlineClass.getId(), ClassStatus.REMOVED.name());
