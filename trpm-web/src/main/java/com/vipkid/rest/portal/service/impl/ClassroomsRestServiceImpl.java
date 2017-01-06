@@ -425,7 +425,7 @@ public class ClassroomsRestServiceImpl implements ClassroomsRestService{
 				reportType = ReportType.OldUAReport.getCode();// 代表是旧UaReport
 				Map<String, Object> map = getOldUaReportStatus(onlineClassId, studentId, lessonSerialNumber);
 				reportStatus = (int) map.get("oldUaReportStatus");
-				data.put("UaReportUrl", map.get("UaReportUrl"));// 如果是老UA，会多一个UaReportUrl参数
+				classroomsEachClassInfo.setUaReportUrl((String)map.get("UaReportUrl"));// 如果是老UA，会多一个UaReportUrl参数
 			} else {
 				reportType = ReportType.NewUAReprot.getCode();// 代表是新UaReport
 				reportStatus = getNewUaReportStatus(onlineClassId);
