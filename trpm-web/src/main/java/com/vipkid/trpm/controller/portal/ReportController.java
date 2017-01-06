@@ -252,7 +252,7 @@ public class ReportController extends AbstractPortalController {
         long millis =stopwatch.stop().elapsed(TimeUnit.MILLISECONDS);
         logger.info("执行ReportController: feedback()耗时：{} ", millis);
 
-        if(teacherComment.getPreVip()!=null && teacherComment.getPreVip() ){
+        if(teacherComment!=null && teacherComment.getPreVip()!=null && teacherComment.getPreVip() ){
             //判断是否unit<4
             Integer unitNo=0;
             String [] arrays = StringUtils.split(lesson.getSerialNumber().toLowerCase(),"-");
