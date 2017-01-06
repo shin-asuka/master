@@ -31,7 +31,7 @@
 
 				#if($lesson.serialNumber && ($stringUtils.startsWith($!lesson.serialNumber,'C1') || $stringUtils.startsWith($!lesson.serialNumber,'MC')))
 					<div style="padding-top:10px;">
-						<label>Level of Difficulty</label>
+						<label>Level of Difficulty<span style="color: red;">*</span></label>
 						<div style="font-weight:normal;color:#666;margin-top:-5px;padding-bottom:5px;">
 							(This helps us with overall lesson performance/ student ability)</div>
 						<div>
