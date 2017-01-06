@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.vipkid.http.service.FileHttpService;
-import com.vipkid.rest.dto.PersonlInfoDto;
+import com.vipkid.rest.dto.PersonalInfoDto;
 import com.vipkid.trpm.dao.TeacherAddressDao;
 import com.vipkid.trpm.dao.TeacherDao;
 import com.vipkid.trpm.dao.TeacherLocationDao;
@@ -40,9 +40,9 @@ public class PortalBasicInfoService {
 	private UserDao userDao;
 	
 	
-	public PersonlInfoDto getBasicInfo(Teacher teacher,User user){
+	public PersonalInfoDto getBasicInfo(Teacher teacher, User user){
 		
-		PersonlInfoDto personInfo = new PersonlInfoDto();
+		PersonalInfoDto personInfo = new PersonalInfoDto();
 		personInfo.setAvatar(fileHttpService.queryTeacherFiles(teacher.getId()).getAvatar());
 		personInfo.setTeacherId(user.getId());
 		personInfo.setEmail(user.getUsername());
@@ -95,7 +95,7 @@ public class PortalBasicInfoService {
 		return personInfo;
 	}
 	
-	public boolean updateBasicInfo(Teacher teacher,User user,PersonlInfoDto basicInfo){
+	public boolean updateBasicInfo(Teacher teacher,User user,PersonalInfoDto basicInfo){
 		
 		user.setGender(basicInfo.getGender());
 		

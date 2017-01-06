@@ -30,7 +30,7 @@ import com.vipkid.http.service.FileHttpService;
 import com.vipkid.portal.personal.service.PortalBasicInfoService;
 import com.vipkid.rest.RestfulController;
 import com.vipkid.rest.config.RestfulConfig;
-import com.vipkid.rest.dto.PersonlInfoDto;
+import com.vipkid.rest.dto.PersonalInfoDto;
 import com.vipkid.rest.interceptor.annotation.RestInterface;
 import com.vipkid.rest.utils.ApiResponseUtils;
 import com.vipkid.rest.validation.ValidateUtils;
@@ -114,7 +114,7 @@ public class PortalBasicInfoController extends RestfulController{
 	@RequestMapping(value = "/basicInfo", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
 	public Map<String,Object> getBasicInfo(HttpServletRequest request, HttpServletResponse response){
 		try{
-			PersonlInfoDto result = portalBasicInfoService.getBasicInfo(getTeacher(request),getUser(request));
+			PersonalInfoDto result = portalBasicInfoService.getBasicInfo(getTeacher(request),getUser(request));
 			return ApiResponseUtils.buildSuccessDataResp(result);
         } catch (IllegalArgumentException e) {
         	logger.error("Exception", e);
@@ -129,7 +129,7 @@ public class PortalBasicInfoController extends RestfulController{
 	
 	@ResponseBody
 	@RequestMapping(value = "/basicInfo", method = {RequestMethod.PUT,RequestMethod.POST}, produces = RestfulConfig.JSON_UTF_8)
-	public Map<String,Object> updateBasicInfo(@RequestBody PersonlInfoDto bean, HttpServletRequest request, HttpServletResponse response){
+	public Map<String,Object> updateBasicInfo(@RequestBody PersonalInfoDto bean, HttpServletRequest request, HttpServletResponse response){
 		try{
             List<Result> list = ValidateUtils.checkBean(bean,false);
             if(CollectionUtils.isNotEmpty(list) && list.get(0).isResult()){
