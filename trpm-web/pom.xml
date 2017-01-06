@@ -348,7 +348,7 @@
 				<activeByDefault>true</activeByDefault>
 			</activation>
 			<properties>
-				<env>a11</env>
+				<env>development</env>
 				<datasource>local</datasource>
 			</properties>
 			<build>
