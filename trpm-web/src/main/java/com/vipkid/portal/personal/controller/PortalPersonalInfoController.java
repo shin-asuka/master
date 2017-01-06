@@ -222,7 +222,8 @@ public class PortalPersonalInfoController extends RestfulController {
 				return ApiResponseUtils.buildErrorResp(1001, "入参Id不合法");
 			}
 			if (StringUtils.equals(originTeacherTaxpayerForm.getUrl(), url)) {
-				return ApiResponseUtils.buildSuccessDataResp(null);// 提升效率，直接返回成功
+				Map<String, Object> data = portalPersonalInfoService.getTaxpayerData(teacherId);
+				return ApiResponseUtils.buildSuccessDataResp(data);// 提升效率，直接返回成功
 			}
 
 			Preconditions.checkArgument(StringUtils.isNotBlank(url), "url 不能为空!");
@@ -237,9 +238,9 @@ public class PortalPersonalInfoController extends RestfulController {
 			teacherTaxpayerFormService.saveTeacherTaxpayerForm(teacherTaxpayerForm);
 			
 			// 查库验证是否保存成功
-			TeacherTaxpayerForm newTeacherTaxpayerForm = teacherTaxpayerFormDao.findById(teacherTaxpayerFormId);
-			if (url.equals(newTeacherTaxpayerForm.getUrl())) {// 如果url一样，就视为保存成功
-				return ApiResponseUtils.buildSuccessDataResp(null);
+			Map<String, Object> data = portalPersonalInfoService.getTaxpayerData(teacherId);
+			if (MapUtils.isNotEmpty(data) && StringUtils.equals(url, (String) data.get("url"))) {// 如果url一样，就视为保存成功
+				return ApiResponseUtils.buildSuccessDataResp(data);
 			} else {
 				logger.error("保存TeacherTaxpayerForm失败.teacherId = {},url={},teacherTaxpayerFormId={}", teacherId, url,teacherTaxpayerFormId);
 				return ApiResponseUtils.buildErrorResp(2001, "保存TeacherTaxpayerForm失败");

@@ -18,6 +18,7 @@ public class ClassroomDetail{
 	private String finishType;
 	private Integer reportType;
 	private Integer reportStatus;
+	private String UaReportUrl;
 
 	private boolean isPrevipLesson;
 	private String lyricsShowUrl;
@@ -147,6 +148,14 @@ public class ClassroomDetail{
 	}
 	public void setId(Integer id) {
 		this.id = id;
+	}
+
+	public String getUaReportUrl() {
+		return UaReportUrl;
+	}
+
+	public void setUaReportUrl(String uaReportUrl) {
+		UaReportUrl = uaReportUrl;
 	}
 	
 }
