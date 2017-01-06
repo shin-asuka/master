@@ -1,5 +1,6 @@
 package com.vipkid.portal.bookings.service;
 
+import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -7,6 +8,8 @@ import com.vipkid.enums.OnlineClassEnum.ClassStatus;
 import com.vipkid.enums.OnlineClassEnum.ClassType;
 import com.vipkid.enums.OnlineClassEnum.CourseType;
 import com.vipkid.enums.TeacherPageLoginEnum.LoginType;
+import com.vipkid.http.utils.JsonUtils;
+import com.vipkid.http.utils.WebUtils;
 import com.vipkid.portal.bookings.constant.BookingsResult;
 import com.vipkid.portal.bookings.entity.*;
 import com.vipkid.rest.service.TeacherPageLoginService;
@@ -37,6 +40,7 @@ import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.community.config.PropertyConfigurer;
 import org.community.http.client.HttpClientProxy;
 import org.community.tools.StringTools;
 import org.slf4j.Logger;
@@ -88,6 +92,10 @@ public class BookingsService {
                     RequestConfig.custom().setConnectionRequestTimeout(DEFAULT_TIMEOUT)
                                     .setConnectTimeout(DEFAULT_TIMEOUT).setSocketTimeout(DEFAULT_TIMEOUT).build();
 
+    private static final int SCALPER_SUCCESS_CODE = 0;
+
+    private static final int SCALPER_REFUSED_CODE = 4000;
+
     @Autowired
     private OnlineClassDao onlineClassDao;
 
@@ -102,6 +110,10 @@ public class BookingsService {
 
     @Autowired
     private TeacherPageLoginService teacherPageLoginService;
+
+    private static final String scalperServerAddress =
+            PropertyConfigurer.stringValue("scalper.serverAddress");
+
 
     /**
      * 计算一天中的所有 TimePoint，每半小时为一个单位
@@ -607,9 +619,35 @@ public class BookingsService {
     public Map<String, Object> doCreateTimeSlot(Teacher teacher, String scheduleTime, String courseType) {
         Map<String, Object> modelMap = Maps.newHashMap();
 
-        /* 验证当前时间是否已存在 OnlineClass */
         Timestamp scheduleDateTime = parseFrom(scheduleTime, FMT_YMD_HMS);
 
+        String url = scalperServerAddress + "/createTimeSlot";
+        Map<String, Object> requestMap = new HashMap<String, Object>();
+        requestMap.put("teacherId", teacher.getId());
+        requestMap.put("isPracticum", CourseType.isPracticum(courseType));
+        requestMap.put("scheduleTime", scheduleDateTime.toString());
+        requestMap.put("fromIP", IpUtils.getRemoteIP());
+        String returnData = WebUtils.postNameValuePair(url, requestMap);
+        if (returnData != null) {
+            Map<String, Object> returnModel = (Map<String, Object>) JSONObject.parse(returnData);
+            if ( SCALPER_SUCCESS_CODE ==(int)returnModel.get("code")) {
+                Map<String,Object> data = (Map<String, Object>) returnModel.get("data");
+                modelMap.put("onlineClassId", data.get("onlineClassId"));
+                modelMap.put("classType", data.get("classType"));
+                String timePoint = formatTo(scheduleDateTime.toInstant(), teacher.getTimezone(), FMT_HMA_US);
+                modelMap.put("timePoint", timePoint);
+                logger.info("create timeslot by scalper success, params:{}", requestMap.toString());
+                return modelMap;
+            } else if( SCALPER_REFUSED_CODE ==(int)returnModel.get("code")) {
+                logger.info("create timeslot by scalper refused! ");
+            } else {
+                logger.info("create timeslot by scalper failed! code = {}", returnModel.get("code"));
+            }
+        } else {
+            logger.error("post url={} result = null", url);
+        }
+
+        /* 验证当前时间是否已存在 OnlineClass */
         if (canSetSchedule(teacher.getId(), scheduleDateTime)) {
             OnlineClass onlineClass = new OnlineClass();
             onlineClass.setClassType(ClassType.MAJOR.val());
@@ -764,6 +802,29 @@ public class BookingsService {
      */
     public Map<String, Object> doCancelTimeSlot(TimeSlotCancelRequest timeSlotCancelRequest, Teacher teacher) {
         Map<String, Object> modelMap = Maps.newHashMap();
+
+        String url = scalperServerAddress + "/cancelTimeSlot";
+        Map<String, Object> requestMap = new HashMap<String, Object>();
+        requestMap.put("teacherId", teacher.getId());
+        requestMap.put("onlineClassId", timeSlotCancelRequest.getOnlineClassId());
+        requestMap.put("fromIP", IpUtils.getRemoteIP());
+        String returnData = WebUtils.postNameValuePair(url, requestMap);
+        if (returnData != null) {
+            Map<String, Object> returnModel = (Map<String, Object>) JSONObject.parse(returnData);
+            if ( SCALPER_SUCCESS_CODE == (int)returnModel.get("code") ) {
+                Map<String,Object> data = (Map<String, Object>) returnModel.get("data");
+                    modelMap.put("onlineClassId", data.get("onlineClassId"));
+                    modelMap.put("status", ClassStatus.REMOVED.name());
+                logger.info("cancel timeslot by scalper success, params:{}", requestMap.toString());
+                return modelMap;
+            } else if( SCALPER_REFUSED_CODE == (int)returnModel.get("code") ) {
+                logger.info("cancel timeslot by scalper refused! ");
+            } else {
+                logger.info("cancel timeslot by scalper failed! code = {}", returnModel.get("code"));
+            }
+        } else {
+            logger.error("post url={} result = null", url);
+        }
 
         OnlineClass onlineClass = onlineClassDao.findById(timeSlotCancelRequest.getOnlineClassId());
         if (null == onlineClass) {
