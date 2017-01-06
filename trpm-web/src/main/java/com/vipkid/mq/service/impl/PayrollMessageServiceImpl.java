@@ -1,6 +1,7 @@
 package com.vipkid.mq.service.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.vipkid.enums.OnlineClassEnum;
 import com.vipkid.mq.message.FinishOnlineClassMessage;
 import com.vipkid.mq.message.FinishOnlineClassMessage.OperatorType;
@@ -15,7 +16,6 @@ import com.vipkid.trpm.dao.OnlineClassDao;
 import com.vipkid.trpm.dao.TeacherDao;
 import com.vipkid.trpm.entity.*;
 import com.vipkid.trpm.entity.teachercomment.SubmitTeacherCommentDto;
-import net.sf.json.JSONObject;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -130,7 +130,7 @@ public class PayrollMessageServiceImpl implements PayrollMessageService {
                 }
 
                 logger.info("PayrollMessageService 结束课程，消息发送成功  destination={}, message={} ",
-                        finishOnlineClassDestination, JSONObject.fromObject(message));
+                        finishOnlineClassDestination, JSONObject.toJSON(message));
                 producerService.sendJsonMessage(finishOnlineClassDestination, message);
             } else {
                 logger.info("课程信息为空，不发送消息 onlineClassId = {}", onlineClassId);
@@ -224,7 +224,7 @@ public class PayrollMessageServiceImpl implements PayrollMessageService {
                 onlineClassMessage.setHasAssessmentReport(hasAssessmentReport);
 
                 logger.info("PayrollMessageService 结束课程，消息发送成功  destination={}, message={} ",
-                        finishOnlineClassDestination, JSONObject.fromObject(message));
+                        finishOnlineClassDestination, JSONObject.toJSON(message));
                 logger.info("[onlineClass消息详情]:{}", JSON.toJSONString(onlineClassMessage));
                 producerService.sendJsonMessage(finishOnlineClassDestination, message);
             } else {

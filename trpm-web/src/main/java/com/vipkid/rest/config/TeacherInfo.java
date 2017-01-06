@@ -1,14 +1,13 @@
 package com.vipkid.rest.config;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import org.apache.commons.lang3.StringUtils;
-import org.community.config.PropertyConfigurer;
-
 import com.vipkid.enums.TeacherModuleEnum.RoleClass;
 import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.entity.User;
+import org.apache.commons.lang3.StringUtils;
+import org.community.config.PropertyConfigurer;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class TeacherInfo {
     private static final String PREVIP_TAG = "-1";
@@ -40,6 +39,56 @@ public class TeacherInfo {
     private boolean evaluationClick = false;
 
     private boolean canTeachPrevip = false;
+
+    private String timezone;
+
+    private String realName;
+
+    private String email;
+
+    private String mobile;
+
+    private String managerName;
+
+    public String getManagerName() {
+        return managerName;
+    }
+
+    public void setManagerName(String managerName) {
+        this.managerName = managerName;
+    }
+
+    public String getMobile() {
+        return mobile;
+    }
+
+    public void setMobile(String mobile) {
+        this.mobile = mobile;
+    }
+
+    public String getRealName() {
+        return realName;
+    }
+
+    public void setRealName(String realName) {
+        this.realName = realName;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getTimezone() {
+        return timezone;
+    }
+
+    public void setTimezone(String timezone) {
+        this.timezone = timezone;
+    }
 
     public Map<String, Object> getRoles() {
         return roles;
@@ -149,11 +198,21 @@ public class TeacherInfo {
         this.setLifeCycle(teacher.getLifeCycle());
         this.setShowName(user.getName());
         this.setHaveChannel(StringUtils.isNotBlank(teacher.getReferee()) || teacher.getPartnerId() > 0 || StringUtils.isNotBlank(teacher.getOtherChannel()));
+        this.setTimezone(teacher.getTimezone());
+        this.setRealName(teacher.getRealName());
+        this.setEmail(teacher.getEmail());
+        this.setMobile(teacher.getMobile());
+        this.setCanTeachPrevip(canTeachPrevip);
         String teacherTag = teacher.getTeacherTags();
         if (StringUtils.indexOf(teacherTag,PREVIP_TAG) > -1){
             canTeachPrevip = true;
         }
-        this.setCanTeachPrevip(canTeachPrevip);
+    }
+
+    public void setTeacherManagerInfo(User teacherManager){
+        if(null != teacherManager) {
+            this.setManagerName(teacherManager.getName());
+        }
     }
    
 }
