@@ -106,7 +106,7 @@ public class CookieExpiredHandleInterceptor extends HandlerInterceptorAdapter {
 		}
 
         User user = loginService.getUser();
-        logger.info("preHandleUserInfo token = {} ,ip,user = {}, url = {} ",token ,ip,user==null?null:(user.getId()+"|"+user.getUsername()),request.getRequestURL());
+        logger.info("preHandleUserInfo user = {}, token = {} ,ip = {}, url = {} ",user==null?null:(user.getId()+"|"+user.getUsername()),token ,ip,request.getRequestURL());
         if(user == null){
             logger.info("IP:{},用户为NULL。。。",IpUtils.getIpAddress(request));
             //response.sendRedirect(request.getContextPath() + "/index.shtml");
@@ -116,10 +116,12 @@ public class CookieExpiredHandleInterceptor extends HandlerInterceptorAdapter {
         //判断当前用户所在地区的ip是否变化，如果变化。则返回空用户，用户重新登陆
         Boolean isIpChange = IpUtils.checkUserIpChange(user);
         //isIpChange = true;
+        
+        String currentIp = IpUtils.getRequestRemoteIP();
+    	String uri = request.getRequestURI();
+    	String redisIp = user.getIp();
+        logger.info("userIPInfo user = {}, redisIp = {}, currentIp = {} ,token = {}",user==null?null:(user.getId()+"|"+user.getUsername()),redisIp,currentIp,token );
         if(isIpChange){
-        	String currentIp = IpUtils.getRequestRemoteIP();
-        	String uri = request.getRequestURI();
-        	String redisIp = user.getIp();
         	logger.info("用户IP地址发生变化  getUser userIPChange token = {},uri={},user = {}, redisIp = {}, currentIp = {}",token,uri,user.getId()+"|"+user.getUsername(),redisIp,currentIp);
         	CookieUtils.removeCookie(response, CookieKey.TRPM_TOKEN, null, null);
         	if( StringUtils.contains(xRequestedWith, "XMLHttpRequest")){
