@@ -337,11 +337,11 @@
                 #end
                 #if($isPes)
                     <li class="$!{activeClassroomsPe}">
-                        <a href="#springUrl('/pesupervisor.shtml')">Mock Class Senior Mentor</a>
+                        <a href="#springUrl('/pe_supervisor')">Mock Class Senior Mentor</a>
                     </li>
                 #end
                 <li class="$!{activePayrollInfo}">
-                    <a href="#springUrl('/payment.shtml')">Payment</a>
+                    <a href="#springUrl('/payment/salary')">Payment</a>
                 </li>
                 <li class="it-test">
                     <img src="#springUrl('/resources/images/nav/test-computer-icon.png')">

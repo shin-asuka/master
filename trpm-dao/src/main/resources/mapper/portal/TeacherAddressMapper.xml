@@ -6,20 +6,20 @@
     
     <sql id="teacherAddressWhere">
         <trim prefix="WHERE" prefixOverrides="AND">
-            <if test="id!=0">AND teacher_address.id = #{id}</if>
-            <if test="teacherId!=0">AND teacher_address.teacher_id = #{teacherId}</if>
-            <if test="countryId!=0">AND teacher_address.country_id = #{countryId}</if>
-            <if test="stateId!=0">AND teacher_address.state_id = #{stateId}</if>
-            <if test="city!=0">AND teacher_address.city = #{city}</if>
-            <if test="streetAddress!=null">AND teacher_address.street_address = #{streetAddress}</if>
-            <if test="zipCode!=null">AND teacher_address.zip_code = #{zipCode}</if>
-            <if test="createTime!=null">AND teacher_address.create_time = #{createTime}</if>
-            <if test="updateTime!=null">AND teacher_address.update_time = #{updateTime}</if>
+            <if test="id != null">AND teacher_address.id = #{id}</if>
+            <if test="teacherId != null">AND teacher_address.teacher_id = #{teacherId}</if>
+            <if test="countryId != null">AND teacher_address.country_id = #{countryId}</if>
+            <if test="stateId != null">AND teacher_address.state_id = #{stateId}</if>
+            <if test="city != null">AND teacher_address.city = #{city}</if>
+            <if test="streetAddress != null">AND teacher_address.street_address = #{streetAddress}</if>
+            <if test="zipCode != null">AND teacher_address.zip_code = #{zipCode}</if>
+            <if test="createTime != null">AND teacher_address.create_time = #{createTime}</if>
+            <if test="updateTime != null">AND teacher_address.update_time = #{updateTime}</if>
         </trim>
     </sql>
     
     <sql id="teacherAddressOrder">
-        <if test="orderString!=null">ORDER BY ${orderString}</if>
+        <if test="orderString != null">ORDER BY ${orderString}</if>
     </sql>
     
     <sql id="teacherAddressLimit">LIMIT #{startLine},#{limitLine}</sql>
@@ -70,27 +70,27 @@
     <insert id="saveDao" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO teacher_address
         <trim prefix="(" prefixOverrides=",">
-            <if test="id!=0">,id</if>
-            <if test="teacherId!=0">,teacher_id</if>
-            <if test="countryId!=0">,country_id</if>
-            <if test="stateId!=0">,state_id</if>
-            <if test="city!=0">,city</if>
-            <if test="streetAddress!=null">,street_address</if>
-            <if test="zipCode!=null">,zip_code</if>
-            <if test="createTime!=null">,create_time</if>
-            <if test="updateTime!=null">,update_time</if>
+            <if test="id != null">,id</if>
+            <if test="teacherId != null">,teacher_id</if>
+            <if test="countryId != null">,country_id</if>
+            <if test="stateId != null">,state_id</if>
+            <if test="city != null">,city</if>
+            <if test="streetAddress != null">,street_address</if>
+            <if test="zipCode != null">,zip_code</if>
+            <if test="createTime != null">,create_time</if>
+            <if test="updateTime != null">,update_time</if>
         </trim>
         ) VALUES
         <trim prefix="(" prefixOverrides=",">
-            <if test="id!=0">,#{id}</if>
-            <if test="teacherId!=0">,#{teacherId}</if>
-            <if test="countryId!=0">,#{countryId}</if>
-            <if test="stateId!=0">,#{stateId}</if>
-            <if test="city!=0">,#{city}</if>
-            <if test="streetAddress!=null">,#{streetAddress}</if>
-            <if test="zipCode!=null">,#{zipCode}</if>
-            <if test="createTime!=null">,#{createTime}</if>
-            <if test="updateTime!=null">,#{updateTime}</if>
+            <if test="id != null">,#{id}</if>
+            <if test="teacherId != null">,#{teacherId}</if>
+            <if test="countryId != null">,#{countryId}</if>
+            <if test="stateId != null">,#{stateId}</if>
+            <if test="city != null">,#{city}</if>
+            <if test="streetAddress != null">,#{streetAddress}</if>
+            <if test="zipCode != null">,#{zipCode}</if>
+            <if test="createTime != null">,#{createTime}</if>
+            <if test="updateTime != null">,#{updateTime}</if>
         </trim>
         )
     </insert>
@@ -98,15 +98,15 @@
     <update id="updateDao">
         UPDATE teacher_address
         <trim prefix="SET" prefixOverrides=",">
-            <if test="id!=0">,id = #{id}</if>
-            <if test="teacherId!=0">,teacher_id = #{teacherId}</if>
-            <if test="countryId!=0">,country_id = #{countryId}</if>
-            <if test="stateId!=-1">,state_id = #{stateId}</if>
-            <if test="city!=-1">,city = #{city}</if>
-            <if test="streetAddress!=null">,street_address = #{streetAddress}</if>
-            <if test="zipCode!=null">,zip_code = #{zipCode}</if>
-            <if test="createTime!=null">,create_time = #{createTime}</if>
-            <if test="updateTime!=null">,update_time = #{updateTime}</if>
+            <if test="id != null">,id = #{id}</if>
+            <if test="teacherId != null">,teacher_id = #{teacherId}</if>
+            <if test="countryId != null">,country_id = #{countryId}</if>
+            <if test="stateId != null">,state_id = #{stateId}</if>
+            <if test="city != null">,city = #{city}</if>
+            <if test="streetAddress != null">,street_address = #{streetAddress}</if>
+            <if test="zipCode != null">,zip_code = #{zipCode}</if>
+            <if test="createTime != null">,create_time = #{createTime}</if>
+            <if test="updateTime != null">,update_time = #{updateTime}</if>
         </trim>
         <trim prefix="WHERE" prefixOverrides="AND">AND id = #{id}</trim>
     </update>

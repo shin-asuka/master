@@ -2,6 +2,10 @@ package com.vipkid.trpm.entity.personal;
 
 import java.io.Serializable;
 
+import com.vipkid.rest.validation.annotation.Ignore;
+import com.vipkid.rest.validation.annotation.NotNull;
+
+@NotNull
 public class TeacherBankVO implements Serializable {
 
     /**
@@ -25,13 +29,18 @@ public class TeacherBankVO implements Serializable {
     private Integer beneficiaryCityId;
     private String beneficiaryStreetAddress;
     private String beneficiaryZipCode;
-    
+
+    /**
+     * swiftCode and bankABARoutingNumber: 1 in 2
+     */
+    @Ignore
     private String swiftCode;
+    @Ignore
     private String bankABARoutingNumber;
+
+    @Ignore
     private String bankACHNumber;
     
-    
-    ////=======
     private Integer idType;
     private String passportURL;
     

@@ -1,24 +1,20 @@
 package com.vipkid.trpm.util;
 
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
-
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.vipkid.file.utils.Encodes;
-import com.vipkid.neo.utils.DateTimeUtils;
+import com.vipkid.file.utils.FileUtils;
+import com.vipkid.file.utils.StringUtils;
+
 import org.community.config.PropertyConfigurer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.amazonaws.services.s3.AmazonS3;
-import org.springframework.security.access.method.P;
-
-import com.vipkid.file.utils.FileUtils;
-import com.vipkid.file.utils.StringUtils;
+import java.util.Date;
+import java.util.List;
+import java.util.UUID;
 
 /**
  * 
@@ -282,7 +278,19 @@ public class AwsFileUtils {
 			String encodeName = Encodes.urlEncode(fileName);
 			String fileType = FileUtils.getFileType(fileName);
 			if(!fileName.equals(encodeName)){
-				name = DateTimeUtils.formatDate(new Date(), "yyyyMMdd-HHmmss")+"."+fileType;
+				name = DateUtils.formatDate(new Date(), "yyyyMMdd-HHmmss")+"."+fileType;
+			}
+		}
+		return name;
+	}
+	
+	public static String getFileName(String url){
+		String name = "";
+		if(StringUtils.isNotBlank(url)){
+			Integer index = url.lastIndexOf("/");
+			name = url.substring(index+1);
+			if(name.contains("-")){
+				name = name.substring(name.indexOf("-")+1);
 			}
 		}
 		return name;

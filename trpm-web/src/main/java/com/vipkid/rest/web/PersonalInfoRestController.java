@@ -22,7 +22,7 @@ import com.vipkid.trpm.service.portal.PersonalInfoService;
 import com.vipkid.trpm.service.portal.TeacherService;
 
 //import com.google.common.base.Preconditions;
-
+@Deprecated
 @RestController
 public class PersonalInfoRestController {
 

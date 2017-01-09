@@ -347,7 +347,7 @@ public class FileHttpService extends HttpBaseService {
             if (StringUtils.isNotBlank(this.bucketName)
                     && StringUtils.isNotBlank(this.key)
                     ) {
-                url = "http://" + this.bucketName + "/" + this.key;
+                url = "https://" + this.bucketName + "/" + this.key;
             }
             return url;
         }

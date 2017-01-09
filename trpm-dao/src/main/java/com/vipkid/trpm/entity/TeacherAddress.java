@@ -8,15 +8,15 @@ public class TeacherAddress extends Entity implements Serializable {
 
 	private static final long serialVersionUID = 8200096962489484236L;
 	/*  */
-	private int id;
+	private Integer id;
 	/* teacher id */
-	private long teacherId;
+	private Long teacherId;
 	/* 国家id */
-	private int countryId;
+	private Integer countryId;
 	/* state id */
-	private int stateId;
+	private Integer stateId;
 	/* city id */
-	private int city;
+	private Integer city;
 	/* 地址 */
 	private String streetAddress;
 	/* 邮编 */
@@ -26,46 +26,46 @@ public class TeacherAddress extends Entity implements Serializable {
 	/*  */
 	private java.sql.Timestamp updateTime;
 
-	public int getId() {
+	public Integer getId() {
 		return this.id;
 	}
 
-	public TeacherAddress setId(int id) {
+	public TeacherAddress setId(Integer id) {
 		this.id = id;
 		return this;
 	}
 
-	public long getTeacherId() {
+	public Long getTeacherId() {
 		return this.teacherId;
 	}
 
-	public TeacherAddress setTeacherId(long teacherId) {
+	public TeacherAddress setTeacherId(Long teacherId) {
 		this.teacherId = teacherId;
 		return this;
 	}
 
-	public int getCountryId() {
+	public Integer getCountryId() {
 		return countryId;
 	}
 
-	public void setCountryId(int countryId) {
+	public void setCountryId(Integer countryId) {
 		this.countryId = countryId;
 	}
 
-	public int getStateId() {
+	public Integer getStateId() {
 		return this.stateId;
 	}
 
-	public TeacherAddress setStateId(int stateId) {
+	public TeacherAddress setStateId(Integer stateId) {
 		this.stateId = stateId;
 		return this;
 	}
 
-	public int getCity() {
+	public Integer getCity() {
 		return this.city;
 	}
 
-	public TeacherAddress setCity(int city) {
+	public TeacherAddress setCity(Integer city) {
 		this.city = city;
 		return this;
 	}

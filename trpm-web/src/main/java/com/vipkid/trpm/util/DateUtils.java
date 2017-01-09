@@ -11,6 +11,7 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateFormatUtils;
 
 import com.google.common.collect.Maps;
@@ -274,5 +275,20 @@ public final class DateUtils {
         resultMap.put("startTime", DateFormatUtils.format(startTime, "yyyy-MM-dd HH:mm:ss"));
         resultMap.put("endTime", DateFormatUtils.format(endTime, "yyyy-MM-dd HH:mm:ss"));
         return resultMap;
+    }
+    
+    public static String formatDate(Date date){
+    	return formatDate(date, null);
+    }
+    public static String formatDate(Date date, String format) {
+        String dateStr = null;
+        if (StringUtils.isEmpty(format)) {
+            format = "yyyy-MM-dd HH:mm:ss";
+        }
+        if (date != null) {
+            SimpleDateFormat dateFormat = new SimpleDateFormat(format);
+            dateStr = dateFormat.format(date);
+        }
+        return dateStr;
     }
 }

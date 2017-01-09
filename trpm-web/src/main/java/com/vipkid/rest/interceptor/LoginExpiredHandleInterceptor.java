@@ -198,12 +198,15 @@ public class LoginExpiredHandleInterceptor extends HandlerInterceptorAdapter {
             responseToJson("This account does not exist.","账户不存在或者已经过期."+token,response);
             return false;
         }
+        
+        String currentIp = IpUtils.getRequestRemoteIP();
+    	String redisIp = user.getIp();
+        logger.info("userIPInfo user = {}, redisIp = {}, currentIp = {} ,token = {}",user==null?null:(user.getId()+"|"+user.getUsername()),redisIp,currentIp,token );
+        
         //判断当前用户所在地区的ip是否变化，如果变化。则返回空用户，用户重新登陆
         Boolean isIpChange = IpUtils.checkUserIpChange(user);
         if(isIpChange){
-            String ip = IpUtils.getRequestRemoteIP();
-            String redisIp = user.getIp();
-            logger.info("用户IP地址发生变化  getUser userIPChange token = {},uri={},user = {}, redisIp = {}, currentIp = {}",token,uri,user.getId()+"|"+user.getUsername(),redisIp,ip);
+            logger.info("用户IP地址发生变化  getUser userIPChange token = {},uri={},user = {}, redisIp = {}, currentIp = {}",token,uri,user.getId()+"|"+user.getUsername(),redisIp,currentIp);
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
             CookieUtils.removeCookie(response, CookieKey.TRPM_TOKEN, null, null);
             return false;

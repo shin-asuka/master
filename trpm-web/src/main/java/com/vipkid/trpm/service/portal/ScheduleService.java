@@ -1,36 +1,27 @@
 package com.vipkid.trpm.service.portal;
 
-import static com.vipkid.trpm.util.DateUtils.DAY_OF_WEEK;
-import static com.vipkid.trpm.util.DateUtils.FMT_HMA_US;
-import static com.vipkid.trpm.util.DateUtils.FMT_HMS;
-import static com.vipkid.trpm.util.DateUtils.FMT_YMD_HMS;
-import static com.vipkid.trpm.util.DateUtils.HALFHOUR_OF_DAY;
-import static com.vipkid.trpm.util.DateUtils.MINUTE_OF_HALFHOUR;
-import static com.vipkid.trpm.util.DateUtils.SHANGHAI;
-import static com.vipkid.trpm.util.DateUtils.formatTo;
-import static com.vipkid.trpm.util.DateUtils.parseFrom;
-
-import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.sql.Timestamp;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Consumer;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.vipkid.enums.OnlineClassEnum.ClassStatus;
+import com.vipkid.enums.OnlineClassEnum.ClassType;
+import com.vipkid.enums.OnlineClassEnum.CourseType;
+import com.vipkid.trpm.constant.ApplicationConstant;
+import com.vipkid.trpm.constant.ApplicationConstant.CookieKey;
+import com.vipkid.trpm.constant.ApplicationConstant.FinishType;
+import com.vipkid.trpm.constant.ApplicationConstant.PeakTimeType;
+import com.vipkid.trpm.constant.ApplicationConstant.SlotStyle;
+import com.vipkid.trpm.dao.*;
+import com.vipkid.trpm.entity.OnlineClass;
+import com.vipkid.trpm.entity.PeakTime;
+import com.vipkid.trpm.entity.Teacher;
+import com.vipkid.trpm.entity.schedule.TimePoint;
+import com.vipkid.trpm.entity.schedule.TimeSlot;
+import com.vipkid.trpm.entity.schedule.ZoneTime;
+import com.vipkid.trpm.proxy.RedisProxy;
+import com.vipkid.trpm.util.CookieUtils;
+import com.vipkid.trpm.util.DateUtils;
+import com.vipkid.trpm.util.FilesUtils;
+import com.vipkid.trpm.util.IpUtils;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -48,34 +39,21 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.vipkid.enums.OnlineClassEnum.ClassStatus;
-import com.vipkid.enums.OnlineClassEnum.ClassType;
-import com.vipkid.enums.OnlineClassEnum.CourseType;
-import com.vipkid.trpm.constant.ApplicationConstant;
-import com.vipkid.trpm.constant.ApplicationConstant.CookieKey;
-import com.vipkid.trpm.constant.ApplicationConstant.FinishType;
-import com.vipkid.trpm.constant.ApplicationConstant.PeakTimeType;
-import com.vipkid.trpm.constant.ApplicationConstant.SlotStyle;
-import com.vipkid.trpm.dao.AuditDao;
-import com.vipkid.trpm.dao.LessonDao;
-import com.vipkid.trpm.dao.OnlineClassDao;
-import com.vipkid.trpm.dao.PeakTimeDao;
-import com.vipkid.trpm.dao.TeacherDao;
-import com.vipkid.trpm.dao.TeacherPageLoginDao;
-import com.vipkid.trpm.dao.UserDao;
-import com.vipkid.trpm.entity.OnlineClass;
-import com.vipkid.trpm.entity.PeakTime;
-import com.vipkid.trpm.entity.Teacher;
-import com.vipkid.trpm.entity.schedule.TimePoint;
-import com.vipkid.trpm.entity.schedule.TimeSlot;
-import com.vipkid.trpm.entity.schedule.ZoneTime;
-import com.vipkid.trpm.proxy.RedisProxy;
-import com.vipkid.trpm.util.CookieUtils;
-import com.vipkid.trpm.util.DateUtils;
-import com.vipkid.trpm.util.FilesUtils;
-import com.vipkid.trpm.util.IpUtils;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.sql.Timestamp;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.util.*;
+import java.util.function.Consumer;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
+import static com.vipkid.trpm.util.DateUtils.*;
 
 @Service
 public class ScheduleService {
@@ -976,11 +954,8 @@ public class ScheduleService {
     }
 
     public boolean checkInOneHour(OnlineClass onlineClass) {
-        if (null != onlineClass && (onlineClass.getScheduledDateTime().getTime() - System.currentTimeMillis()) > 1 * 60
-                        * 60 * 1000) {
-            return false;
-        }
-        return true;
+        return !(null != onlineClass && (onlineClass.getScheduledDateTime().getTime() - System.currentTimeMillis()) > 1 * 60
+                * 60 * 1000);
     }
 
 }

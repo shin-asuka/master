@@ -46,6 +46,8 @@ public class PeSupervisorController extends AbstractPeController {
     @Autowired
     private LoginService loginService;
 
+    
+    @Deprecated
     @RequestMapping("/pesupervisor")
     public String peSupervisor(HttpServletRequest request, HttpServletResponse response,
             Model model) {
@@ -55,6 +57,7 @@ public class PeSupervisorController extends AbstractPeController {
         return view("classrooms_pe");
     }
 
+    @Deprecated
     @RequestMapping("/pe/classList")
     public String classList(HttpServletRequest request, HttpServletResponse response, Model model) {
         int curPage = ServletRequestUtils.getIntParameter(request, "curPage", 1);

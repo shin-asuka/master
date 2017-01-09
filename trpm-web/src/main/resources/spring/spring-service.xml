@@ -26,4 +26,9 @@
         <property name="serverAddress" value="${teacherApp.serverAddress}"/>
     </bean>
     
+     <bean id="payrollAppService" class="com.vipkid.http.service.PayrollService">
+        <property name="serverAddress" value="${payrollApp.serverAddress}"/>
+        
+    </bean>
+    
 </beans>

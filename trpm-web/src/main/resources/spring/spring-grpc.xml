@@ -7,12 +7,12 @@
 	    http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd
 	    http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.2.xsd">
 
-	<bean id="neoClient" class="com.vipkid.neo.client.NeoClient">
+	<!-- <bean id="neoClient" class="com.vipkid.neo.client.NeoClient">
 		<constructor-arg name="host" value="${microservice.payroll.host}" />
 		<constructor-arg name="port" value="${microservice.payroll.port}" />
 		<constructor-arg name="timeoutSeconds"
 			value="${microservice.payroll.timeout.seconds}" />
-	</bean>
+	</bean> -->
 
 	<bean id="jobNode" class="com.vipkid.vschedule.client.JobNode"
 		init-method="init">

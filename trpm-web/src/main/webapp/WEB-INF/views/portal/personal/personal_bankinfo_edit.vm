@@ -178,7 +178,7 @@
 				<label><input type="radio" name="identityType" value="4" field="$!identityType"/> Identity card </label><br/>
 				##-----------
 				<div id="passport-input" class="line_input" #if($stringUtils.isNotEmpty($!TRPM_TEACHER.passport) && $stringUtils.isNotBlank($!TRPM_TEACHER.passport)) style="display:none" #end >
-					<form id="passportForm" action="#springUrl('/uploadNormalFile.json')" method="post" enctype="multipart/form-data">
+					<form id="passportForm" action="#springUrl('/common/uploadFile.json')" method="post" enctype="multipart/form-data">
 						<input id="passport-attachfile"  type="button" class="attachfile" value="Attach File"/>
 						<!--
 						<input type='text'  id='passport-textfield' readOnly="readOnly" placeholder="*.jpg,*.jpeg,*.png,*.bmp,*.doc,*.docx,*.pdf," class="textfield" /> 

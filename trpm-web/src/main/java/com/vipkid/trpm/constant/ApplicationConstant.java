@@ -134,7 +134,7 @@ public interface ApplicationConstant {
 
         public static class Template {
             public static final String PPT =
-                    "http://resource.vipkid.com.cn/teaching_resource/ppt/{{lessonSerialNumber}}/index.html";
+                    "https://resource.vipkid.com.cn/teaching_resource/ppt/{{lessonSerialNumber}}/index.html";
         }
 
         public static class Parameter {

@@ -18,17 +18,20 @@ public class TeacherLocationDao extends MapperDaoTemplate<TeacherLocation> {
 		super(sqlSessionTemplate, TeacherLocation.class);
 	}
 
-	public List<TeacherLocation> findByParentId(int parentId, int level) {
-		Preconditions.checkArgument(-1 != parentId);
-
+	public List<TeacherLocation> findByParentId(Integer parentId, int level) {
+		if(parentId == null || parentId == 0){
+			return null;
+		}
 		TeacherLocation teacherLocation = new TeacherLocation().setParentId(parentId);
 		teacherLocation.setLevel(level);
 		teacherLocation.setOrderString("name ASC");
 		return super.selectList(teacherLocation);
 	}
 	
-	public TeacherLocation findById(int id) {
-		Preconditions.checkArgument(0 != id);
+	public TeacherLocation findById(Integer id) {
+		if(id == null || id == 0){
+			return null;
+		}
 		return super.selectOne(new TeacherLocation().setId(id));
 	}
 

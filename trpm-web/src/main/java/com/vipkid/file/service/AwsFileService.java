@@ -62,7 +62,7 @@ public Logger logger = LoggerFactory.getLogger(AwsFileService.class);
         	if(client.doesObjectExist(bucketName, key)){
         		ObjectMetadata objectMetadata = client.getObjectMetadata(bucketName, key);
             	fileVo = FileVo.ObjectMetadataToFileVo(objectMetadata, key);
-            	String url = "http://"+bucketName+"/" + fileVo.getPath();
+            	String url = "https://"+bucketName+"/" + fileVo.getPath();
                 url = FileUtils.EncodeURLFileName(url);
                 fileVo.setUrl(url);
         	}
@@ -81,7 +81,7 @@ public Logger logger = LoggerFactory.getLogger(AwsFileService.class);
         	if(client.doesObjectExist(bucketName, key)){
         		S3Object s3jObect = client.getObject(bucketName, key);
             	fileVo = FileVo.S3ObjectToFileVo(s3jObect);
-            	String url = "http://"+bucketName+"/" + fileVo.getPath();
+            	String url = "https://"+bucketName+"/" + fileVo.getPath();
                 url = FileUtils.EncodeURLFileName(url);
                 fileVo.setUrl(url);
         	}

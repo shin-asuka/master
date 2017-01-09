@@ -250,11 +250,11 @@
 		</dependency>
 
 		<!-- payroll-server -->
-		<dependency>
+		<!-- <dependency>
 			<groupId>com.vipkid</groupId>
 			<artifactId>payroll-client</artifactId>
 			<version>1.0-SNAPSHOT</version>
-		</dependency>
+		</dependency> -->
 		<!-- micro service end -->
 		<dependency>
 			<groupId>org.jsoup</groupId>
@@ -348,7 +348,7 @@
 				<activeByDefault>true</activeByDefault>
 			</activation>
 			<properties>
-				<env>a11</env>
+				<env>development</env>
 				<datasource>local</datasource>
 			</properties>
 			<build>

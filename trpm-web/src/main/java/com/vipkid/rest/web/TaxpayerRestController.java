@@ -195,7 +195,7 @@ public class TaxpayerRestController {
 				e.printStackTrace();
 			}
 			if(fileVo!=null){
-				String url = "http://"+bucketName+"/"+key;
+				String url = "https://"+bucketName+"/"+key;
 				fileVo.setUrl(url);
 			}
 		}
@@ -223,6 +223,8 @@ public class TaxpayerRestController {
 					logger.info("获取文件  url = {}",url);
 					if (path.startsWith("http://")) {
 						path = path.substring(7);
+					} else if (path.startsWith("https://")) {
+						path = path.substring(8);
 					}
 					String bucketName = null;
 					String key = null;
