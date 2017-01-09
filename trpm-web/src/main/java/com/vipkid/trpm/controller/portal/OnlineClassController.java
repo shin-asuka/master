@@ -64,7 +64,13 @@ public class OnlineClassController extends AbstractPortalController {
     public String classroom(HttpServletRequest request, HttpServletResponse response,
             @PathVariable long onlineClassId, @PathVariable long studentId,
             @PathVariable long lessonId,Integer submitStatus, Model model) throws IOException {
-        model.addAttribute("submitStatus",submitStatus);
+		if (StringUtils.equalsIgnoreCase(request.getHeader("x-forwarded-proto"), "https")) {
+			response.sendRedirect(request.getRequestURL().toString().replace("https:", "http:"));
+			logger.info("Enter Classroom change https to http redirect -> header: {}",
+					request.getHeader("x-forwarded-proto"));
+			return null;
+		}
+    	model.addAttribute("submitStatus",submitStatus);
         Teacher teacher = loginService.getTeacher();
         User user = loginService.getUser();
         String errorHTML = "You cannot enter this classroom!";
