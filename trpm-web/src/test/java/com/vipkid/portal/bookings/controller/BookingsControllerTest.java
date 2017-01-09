@@ -2,7 +2,10 @@ package com.vipkid.portal.bookings.controller;
 
 import com.google.common.collect.Lists;
 import com.vipkid.http.utils.JsonUtils;
-import com.vipkid.portal.bookings.entity.*;
+import com.vipkid.portal.bookings.entity.Delete24HourRequest;
+import com.vipkid.portal.bookings.entity.Set24HourRequest;
+import com.vipkid.portal.bookings.entity.TimeSlotCancelRequest;
+import com.vipkid.portal.bookings.entity.TimeSlotCreateRequest;
 import com.vipkid.rest.service.LoginService;
 import com.vipkid.trpm.entity.User;
 import com.vipkid.trpm.proxy.RedisProxy;
@@ -55,14 +58,14 @@ public class BookingsControllerTest {
         mockMvc = MockMvcBuilders.webAppContextSetup(context).build();
 
         String key = CacheUtils.getUserTokenKey(TOKEN);
-        User user = loginService.getLoginUser("lilibo1@vipkid.com.cn");
+        User user = loginService.getLoginUser("baoyuxiao1@vipkid.com.cn");
         redisProxy.set(key, JsonTools.getJson(user), 12 * 60 * 60);
     }
 
     @Test
     public void testScheduled() throws Exception {
         RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/portal/scheduled").header("Authorization", TOKEN)
-                        .param("type", "MAJOR");
+                        .param("type", "PRACTICUM");
         MvcResult mvcResult = mockMvc.perform(requestBuilder).andReturn();
         if (HttpStatus.OK.value() == mvcResult.getResponse().getStatus()) {
             logger.info("Result Json {}", mvcResult.getResponse().getContentAsString());

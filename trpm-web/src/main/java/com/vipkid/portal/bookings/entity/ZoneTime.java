@@ -23,6 +23,8 @@ public class ZoneTime {
 
     private Map<String, Object> onlineClassMap;
 
+    public ZoneTime() {}
+
     public ZoneTime(TimeSlot timeSlot, String timezone) {
         Instant instant = timeSlot.toDate().toInstant();
 
@@ -48,6 +50,22 @@ public class ZoneTime {
 
     public String getBeijingTime() {
         return beijingTime;
+    }
+
+    public void setFormatToBeiJing(String formatToBeiJing) {
+        this.formatToBeiJing = formatToBeiJing;
+    }
+
+    public void setDateFromBeiJing(Date dateFromBeiJing) {
+        this.dateFromBeiJing = dateFromBeiJing;
+    }
+
+    public void setLocalTime(String localTime) {
+        this.localTime = localTime;
+    }
+
+    public void setBeijingTime(String beijingTime) {
+        this.beijingTime = beijingTime;
     }
 
     public Map<String, Object> getOnlineClassMap() {

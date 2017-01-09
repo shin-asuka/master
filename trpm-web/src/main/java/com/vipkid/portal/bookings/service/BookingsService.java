@@ -51,6 +51,7 @@ import java.net.HttpURLConnection;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
@@ -236,6 +237,27 @@ public class BookingsService {
                     setTimeSlotProperties(timeSlot, peakType);
                 }
             });
+
+            if (CollectionUtils.isEmpty(timeSlot.getZoneTime())) {
+                ZoneTime zoneTime = new ZoneTime();
+                zoneTime.setLocalTime(timeSlot.getLocalTime());
+
+                LocalDateTime localDateTimeBeiJing = LocalDateTime.parse(zoneTime.getLocalTime(), FMT_YMD_HMA_US)
+                        .atZone(ZoneId.of(timezone)).withZoneSameInstant(SHANGHAI).toLocalDateTime();
+                zoneTime.setFormatToBeiJing(localDateTimeBeiJing.format(FMT_YMD_HMS));
+                zoneTime.setBeijingTime(localDateTimeBeiJing.format(FMT_YMD_HMA_US));
+                zoneTime.setDateFromBeiJing(Date.from(localDateTimeBeiJing.atZone(SHANGHAI).toInstant()));
+
+                timeSlot.getZoneTime().add(zoneTime);
+                timeSlot.setShow(isShow(zoneTime.getFormatToBeiJing(), courseType));
+
+                /* 设置当前timeSlot是否已过期 */
+                timeSlot.setExpired(zoneTime.getDateFromBeiJing().before(new Date()));
+
+                /* 设置当前timeSlot属性 */
+                String peakType = peakTimeMap.get(zoneTime.getFormatToBeiJing());
+                setTimeSlotProperties(timeSlot, peakType);
+            }
 
         });
 
