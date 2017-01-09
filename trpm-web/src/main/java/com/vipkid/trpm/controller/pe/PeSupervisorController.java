@@ -72,7 +72,7 @@ public class PeSupervisorController extends AbstractPeController {
     public String peReview(HttpServletRequest request, HttpServletResponse response, Model model) {
         if (StringUtils.equalsIgnoreCase(request.getHeader("x-forwarded-proto"), "https")) {
             try {
-                response.sendRedirect(request.getRequestURL().toString().replace("https:", "http:"));
+                response.sendRedirect(request.getRequestURL().toString().replace("https:", "http:")+request.getQueryString());
             } catch (IOException e) {
                 logger.error("Enter pereview Classroom ", e);
             }
