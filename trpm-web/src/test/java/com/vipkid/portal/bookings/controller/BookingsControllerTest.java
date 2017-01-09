@@ -55,14 +55,14 @@ public class BookingsControllerTest {
         mockMvc = MockMvcBuilders.webAppContextSetup(context).build();
 
         String key = CacheUtils.getUserTokenKey(TOKEN);
-        User user = loginService.getLoginUser("lilibo1@vipkid.com.cn");
+        User user = loginService.getLoginUser("baoyuxiao1@vipkid.com.cn");
         redisProxy.set(key, JsonTools.getJson(user), 12 * 60 * 60);
     }
 
     @Test
     public void testScheduled() throws Exception {
         RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/portal/scheduled").header("Authorization", TOKEN)
-                        .param("type", "MAJOR");
+                        .param("type", "PRACTICUM");
         MvcResult mvcResult = mockMvc.perform(requestBuilder).andReturn();
         if (HttpStatus.OK.value() == mvcResult.getResponse().getStatus()) {
             logger.info("Result Json {}", mvcResult.getResponse().getContentAsString());

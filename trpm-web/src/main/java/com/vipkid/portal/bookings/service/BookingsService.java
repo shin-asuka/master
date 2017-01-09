@@ -221,19 +221,25 @@ public class BookingsService {
         timeSlotsOfWeek.stream().forEach((timeSlot) -> {
 
             zoneTimesOfWeek.stream().forEach((zoneTime) -> {
-                zoneTime.setOnlineClassMap(onlineClassesMap.get(zoneTime.getFormatToBeiJing()));
-                timeSlot.getZoneTime().add(zoneTime);
+                if (zoneTime.getLocalTime().equals(timeSlot.getLocalTime())) {
+                    zoneTime.setOnlineClassMap(onlineClassesMap.get(zoneTime.getFormatToBeiJing()));
+                    timeSlot.getZoneTime().add(zoneTime);
 
-                /* 设置当前timeSlot是否显示 */
-                timeSlot.setShow(isShow(zoneTime.getFormatToBeiJing(), courseType));
+                    /* 设置当前timeSlot是否显示 */
+                    timeSlot.setShow(isShow(zoneTime.getFormatToBeiJing(), courseType));
 
-                /* 设置当前timeSlot是否已过期 */
-                timeSlot.setExpired(zoneTime.getDateFromBeiJing().before(new Date()));
+                    /* 设置当前timeSlot是否已过期 */
+                    timeSlot.setExpired(zoneTime.getDateFromBeiJing().before(new Date()));
 
-                /* 设置当前timeSlot属性 */
-                String peakType = peakTimeMap.get(zoneTime.getFormatToBeiJing());
-                setTimeSlotProperties(timeSlot, peakType);
+                    /* 设置当前timeSlot属性 */
+                    String peakType = peakTimeMap.get(zoneTime.getFormatToBeiJing());
+                    setTimeSlotProperties(timeSlot, peakType);
+                }
             });
+
+            if (CollectionUtils.isEmpty(timeSlot.getZoneTime())) {
+                timeSlot.getZoneTime().add(new ZoneTime(timeSlot, timezone));
+            }
 
         });
 
