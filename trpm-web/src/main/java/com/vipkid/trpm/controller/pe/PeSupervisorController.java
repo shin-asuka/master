@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -69,6 +70,17 @@ public class PeSupervisorController extends AbstractPeController {
 
     @RequestMapping("/pereview")
     public String peReview(HttpServletRequest request, HttpServletResponse response, Model model) {
+        if (StringUtils.equalsIgnoreCase(request.getHeader("x-forwarded-proto"), "https")) {
+            try {
+                response.sendRedirect(request.getRequestURL().toString().replace("https:", "http:"));
+            } catch (IOException e) {
+                logger.error("Enter pereview Classroom ", e);
+            }
+            logger.info("Enter pereview Classroom change https to http redirect -> header: {}",
+                    request.getHeader("x-forwarded-proto"));
+            return null;
+        }
+
         Teacher teacher = this.loginService.getTeacher();
         int id = ServletRequestUtils.getIntParameter(request, "id", 0);
         long onlineClassId = ServletRequestUtils.getLongParameter(request, "classId", 0);
