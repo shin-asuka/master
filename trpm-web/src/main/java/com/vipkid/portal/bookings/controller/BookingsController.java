@@ -3,6 +3,7 @@ package com.vipkid.portal.bookings.controller;
 import com.google.api.client.util.Maps;
 import com.vipkid.enums.OnlineClassEnum.CourseType;
 import com.vipkid.enums.TeacherEnum;
+import com.vipkid.file.utils.Encodes;
 import com.vipkid.file.utils.StringUtils;
 import com.vipkid.http.service.AnnouncementHttpService;
 import com.vipkid.http.utils.JsonUtils;
@@ -232,6 +233,15 @@ public class BookingsController {
     public Map<String, Object> getAnnouncements(HttpServletRequest request, HttpServletResponse response) {
         try {
             List<Announcement> announcements = announcementHttpService.findAnnouncementList();
+            if(CollectionUtils.isNotEmpty(announcements)){
+            	for (Announcement announcement : announcements) {
+            		String content = announcement.getContent();
+            		if(StringUtils.isNotBlank(content)){
+            			String unHtml = Encodes.unescapeHtml(content);
+            			announcement.setContent(unHtml);
+            		}
+				}
+            }
             return ApiResponseUtils.buildSuccessDataResp(announcements);
         } catch (Exception e) {
             logger.error("Internal server error", e);
