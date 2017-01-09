@@ -2,7 +2,10 @@ package com.vipkid.portal.bookings.controller;
 
 import com.google.common.collect.Lists;
 import com.vipkid.http.utils.JsonUtils;
-import com.vipkid.portal.bookings.entity.*;
+import com.vipkid.portal.bookings.entity.Delete24HourRequest;
+import com.vipkid.portal.bookings.entity.Set24HourRequest;
+import com.vipkid.portal.bookings.entity.TimeSlotCancelRequest;
+import com.vipkid.portal.bookings.entity.TimeSlotCreateRequest;
 import com.vipkid.rest.service.LoginService;
 import com.vipkid.trpm.entity.User;
 import com.vipkid.trpm.proxy.RedisProxy;
