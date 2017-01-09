@@ -249,7 +249,7 @@ public class BookingsService {
                 zoneTime.setDateFromBeiJing(Date.from(localDateTimeBeiJing.atZone(SHANGHAI).toInstant()));
 
                 timeSlot.getZoneTime().add(zoneTime);
-                timeSlot.setShow(true);
+                timeSlot.setShow(isShow(zoneTime.getFormatToBeiJing(), courseType));
 
                 /* 设置当前timeSlot是否已过期 */
                 timeSlot.setExpired(zoneTime.getDateFromBeiJing().before(new Date()));
