@@ -25,6 +25,7 @@ import com.vipkid.trpm.util.CookieUtils;
 import com.vipkid.trpm.util.DateUtils;
 import com.vipkid.trpm.util.FilesUtils;
 import com.vipkid.trpm.util.IpUtils;
+
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -543,10 +544,15 @@ public class BookingsService {
         String courseType = scheduledRequest.getType();
         /* 获取日期所在星期 */
         List<Date> daysOfWeek = getDaysOfWeek(weekOffset);
+        List<String> daysOfWeekString = Lists.newArrayList();
+        for (Date date : daysOfWeek) {
+        	daysOfWeekString.add(DateUtils.formatDate(date, DateUtils.YYYY_MM_DD));
+		}
         modelMap.put("daysOfWeek", daysOfWeek);
-
+        modelMap.put("daysOfWeekString", daysOfWeekString);
         /* 查询的开始时间和结束时间 */
         Date fromTime = daysOfWeek.get(0), toTime = daysOfWeek.get(DAY_OF_WEEK);
+        
 
         /* 计算Schedule表格 */
         Map<String, String> peakTimeMap = getPeakTimeMap(fromTime, toTime);
@@ -555,8 +561,8 @@ public class BookingsService {
         modelMap.put("scheduleTable", scheduleTable(daysOfWeek, timezone, peakTimeMap, courseType, onlineClassesMap));
 
         /* 设置页面显示日期 */
-        modelMap.put("startDate", daysOfWeek.get(0));
-        modelMap.put("endDate", daysOfWeek.get(DAY_OF_WEEK - 1));
+        modelMap.put("startDate", DateUtils.formatDate(daysOfWeek.get(0),  DateUtils.YYYY_MM_DD));
+        modelMap.put("endDate", DateUtils.formatDate(daysOfWeek.get(DAY_OF_WEEK - 1),  DateUtils.YYYY_MM_DD));
 
         return modelMap;
     }

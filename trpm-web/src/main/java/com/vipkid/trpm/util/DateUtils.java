@@ -22,14 +22,16 @@ import com.vipkid.trpm.constant.ApplicationConstant;
  */
 public final class DateUtils {
 
+	public static final String YYYY_MM_DD = "yyyy-MM-dd";
+
 	public static String AM = "AM";
 
 	public static ZoneId SHANGHAI = ZoneId.of("Asia/Shanghai");
 
 	public static DateTimeFormatter FMT_HMA_US = DateTimeFormatter.ofPattern("hh:mm a").withLocale(Locale.US);
 
-	public static DateTimeFormatter FMT_YMD_US = DateTimeFormatter.ofPattern("yyyy-MM-dd").withLocale(Locale.US);
-	public static DateTimeFormatter FMT_YMD = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+	public static DateTimeFormatter FMT_YMD_US = DateTimeFormatter.ofPattern(YYYY_MM_DD).withLocale(Locale.US);
+	public static DateTimeFormatter FMT_YMD = DateTimeFormatter.ofPattern(YYYY_MM_DD);
 
 	public static DateTimeFormatter FMT_YMD_HMA_US = DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm a").withLocale(Locale.US);
 
