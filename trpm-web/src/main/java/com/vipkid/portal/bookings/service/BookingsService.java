@@ -564,8 +564,8 @@ public class BookingsService {
         modelMap.put("scheduleTable", scheduleTable(daysOfWeek, timezone, peakTimeMap, courseType, onlineClassesMap));
 
         /* 设置页面显示日期 */
-        modelMap.put("startDate", daysOfWeek.get(0));
-        modelMap.put("endDate", daysOfWeek.get(DAY_OF_WEEK - 1));
+        modelMap.put("startDate", daysOfWeekString.add(DateUtils.formatDate(daysOfWeek.get(0), "yyyy-MM-dd")));
+        modelMap.put("endDate", daysOfWeekString.add(DateUtils.formatDate(daysOfWeek.get(DAY_OF_WEEK - 1), "yyyy-MM-dd")));
 
         return modelMap;
     }
