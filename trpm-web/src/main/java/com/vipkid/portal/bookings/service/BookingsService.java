@@ -549,7 +549,7 @@ public class BookingsService {
         List<Date> daysOfWeek = getDaysOfWeek(weekOffset,timezone);
         List<String> daysOfWeekString = Lists.newArrayList();
         for (Date date : daysOfWeek) {
-			DateUtils.formatDate(date, "yyyy-MM-dd");
+        	daysOfWeekString.add(DateUtils.formatDate(date, "yyyy-MM-dd"));
 		}
         modelMap.put("daysOfWeek", daysOfWeek);
         modelMap.put("daysOfWeekString", daysOfWeekString);
