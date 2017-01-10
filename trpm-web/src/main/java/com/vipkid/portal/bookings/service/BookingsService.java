@@ -25,6 +25,7 @@ import com.vipkid.trpm.util.CookieUtils;
 import com.vipkid.trpm.util.DateUtils;
 import com.vipkid.trpm.util.FilesUtils;
 import com.vipkid.trpm.util.IpUtils;
+
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -46,6 +47,7 @@ import org.springframework.stereotype.Service;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.sql.Timestamp;
@@ -126,9 +128,10 @@ public class BookingsService {
      * 根据星期偏移量计算当前礼拜包含的日期
      * 
      * @param offsetOfWeek
+     * @param timezone 
      * @return
      */
-    public List<Date> getDaysOfWeek(int offsetOfWeek) {
+    public List<Date> getDaysOfWeek(int offsetOfWeek, String timezone) {
         Calendar calendar = Calendar.getInstance();
         if (0 != offsetOfWeek) {
             calendar.add(Calendar.DATE, offsetOfWeek * DAY_OF_WEEK);
@@ -138,6 +141,7 @@ public class BookingsService {
         calendar.set(Calendar.MINUTE, 0);
         calendar.set(Calendar.SECOND, 0);
         calendar.set(Calendar.MILLISECOND, 0);
+        calendar.setTimeZone(TimeZone.getTimeZone(timezone));
 
         while (calendar.get(Calendar.DAY_OF_WEEK) != Calendar.MONDAY) {
             calendar.add(Calendar.DATE, -1);
@@ -542,11 +546,12 @@ public class BookingsService {
         int weekOffset = scheduledRequest.getWeekOffset();
         String courseType = scheduledRequest.getType();
         /* 获取日期所在星期 */
-        List<Date> daysOfWeek = getDaysOfWeek(weekOffset);
+        List<Date> daysOfWeek = getDaysOfWeek(weekOffset,timezone);
         modelMap.put("daysOfWeek", daysOfWeek);
 
         /* 查询的开始时间和结束时间 */
         Date fromTime = daysOfWeek.get(0), toTime = daysOfWeek.get(DAY_OF_WEEK);
+        
 
         /* 计算Schedule表格 */
         Map<String, String> peakTimeMap = getPeakTimeMap(fromTime, toTime);
@@ -870,7 +875,7 @@ public class BookingsService {
      * @return
      */
     private boolean checkLess15TimeSlots(long teacherId, String timezone, int offsetOfWeek) {
-        List<Date> daysOfWeek = getDaysOfWeek(offsetOfWeek);
+        List<Date> daysOfWeek = getDaysOfWeek(offsetOfWeek,timezone);
         Date fromTime = daysOfWeek.get(0), toTime = daysOfWeek.get(DAY_OF_WEEK);
         int count = onlineClassDao.countByTeacherIdWithFromAndToTime(teacherId, fromTime, toTime, timezone);
         return (count <= PEAKTIME_TIMESLOT_DEFAULT_COUNT) ? true : false;
