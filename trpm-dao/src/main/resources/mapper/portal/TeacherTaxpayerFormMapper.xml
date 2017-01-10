@@ -36,7 +36,8 @@
 		WHERE 
 			a.del_flag = #{DEL_FLAG_NORMAL}
 		AND	a.teacher_id = #{teacherId}
-		AND a.form_type = #{formType}
+		AND a.form_type = #{formType} 
+		ORDER BY id DESC LIMIT 1
 	</select>
 	
 	<select id="findList" resultType="com.vipkid.trpm.entity.TeacherTaxpayerForm">
