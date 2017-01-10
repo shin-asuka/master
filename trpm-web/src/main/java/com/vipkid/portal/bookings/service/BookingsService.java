@@ -547,7 +547,12 @@ public class BookingsService {
         String courseType = scheduledRequest.getType();
         /* 获取日期所在星期 */
         List<Date> daysOfWeek = getDaysOfWeek(weekOffset,timezone);
+        List<String> daysOfWeekString = Lists.newArrayList();
+        for (Date date : daysOfWeek) {
+			DateUtils.formatDate(date, "yyyy-MM-dd");
+		}
         modelMap.put("daysOfWeek", daysOfWeek);
+        modelMap.put("daysOfWeekString", daysOfWeekString);
 
         /* 查询的开始时间和结束时间 */
         Date fromTime = daysOfWeek.get(0), toTime = daysOfWeek.get(DAY_OF_WEEK);
