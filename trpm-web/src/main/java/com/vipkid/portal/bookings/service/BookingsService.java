@@ -553,7 +553,6 @@ public class BookingsService {
 		}
         modelMap.put("daysOfWeek", daysOfWeek);
         modelMap.put("daysOfWeekString", daysOfWeekString);
-
         /* 查询的开始时间和结束时间 */
         Date fromTime = daysOfWeek.get(0), toTime = daysOfWeek.get(DAY_OF_WEEK);
         
