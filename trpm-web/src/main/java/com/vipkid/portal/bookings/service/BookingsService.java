@@ -549,7 +549,7 @@ public class BookingsService {
         List<Date> daysOfWeek = getDaysOfWeek(weekOffset,timezone);
         List<String> daysOfWeekString = Lists.newArrayList();
         for (Date date : daysOfWeek) {
-        	daysOfWeekString.add(DateUtils.formatDate(date, "yyyy-MM-dd"));
+        	daysOfWeekString.add(DateUtils.formatDate(date, DateUtils.YYYY_MM_DD));
 		}
         modelMap.put("daysOfWeek", daysOfWeek);
         modelMap.put("daysOfWeekString", daysOfWeekString);
@@ -564,8 +564,8 @@ public class BookingsService {
         modelMap.put("scheduleTable", scheduleTable(daysOfWeek, timezone, peakTimeMap, courseType, onlineClassesMap));
 
         /* 设置页面显示日期 */
-        modelMap.put("startDate", DateUtils.formatDate(daysOfWeek.get(0), "yyyy-MM-dd"));
-        modelMap.put("endDate", DateUtils.formatDate(daysOfWeek.get(DAY_OF_WEEK - 1), "yyyy-MM-dd"));
+        modelMap.put("startDate", DateUtils.formatDate(daysOfWeek.get(0),  DateUtils.YYYY_MM_DD));
+        modelMap.put("endDate", DateUtils.formatDate(daysOfWeek.get(DAY_OF_WEEK - 1),  DateUtils.YYYY_MM_DD));
 
         return modelMap;
     }
