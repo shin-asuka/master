@@ -45,9 +45,10 @@ public class OnlineClassController extends AbstractPortalController {
 
     @Autowired
     private AppserverPracticumService appserverPracticumService;
-    
+
     @Autowired
     private LoginService loginService;
+
     /**
      * 进入教室
      *
@@ -61,16 +62,17 @@ public class OnlineClassController extends AbstractPortalController {
      * @throws java.io.IOException
      */
     @RequestMapping("/classroom/{onlineClassId}-{studentId}-{lessonId}")
-    public String classroom(HttpServletRequest request, HttpServletResponse response,
-            @PathVariable long onlineClassId, @PathVariable long studentId,
-            @PathVariable long lessonId,Integer submitStatus, Model model) throws IOException {
-		if (StringUtils.equalsIgnoreCase(request.getHeader("x-forwarded-proto"), "https")) {
-			response.sendRedirect(request.getRequestURL().toString().replace("https:", "http:")+"?"+request.getQueryString());
-			logger.info("Enter Classroom change https to http redirect -> header: {}",
-					request.getHeader("x-forwarded-proto"));
-			return null;
-		}
-    	model.addAttribute("submitStatus",submitStatus);
+    public String classroom(HttpServletRequest request, HttpServletResponse response, @PathVariable long onlineClassId,
+            @PathVariable long studentId, @PathVariable long lessonId, Integer submitStatus, Model model)
+                    throws IOException {
+        if (StringUtils.equalsIgnoreCase(request.getHeader("x-forwarded-proto"), "https")) {
+            response.sendRedirect(
+                    request.getRequestURL().toString().replace("https:", "http:") + "?" + request.getQueryString());
+            logger.info("Enter Classroom change https to http redirect -> header: {}",
+                    request.getHeader("x-forwarded-proto"));
+            return null;
+        }
+        model.addAttribute("submitStatus", submitStatus);
         Teacher teacher = loginService.getTeacher();
         User user = loginService.getUser();
         String errorHTML = "You cannot enter this classroom!";
@@ -86,83 +88,82 @@ public class OnlineClassController extends AbstractPortalController {
         // 参数判断1
         Lesson lesson = onlineclassService.getLesson(lessonId);
         if (lesson == null) {
-            logger.error("teacherId:{},没有权限进入教室，原因:lesson is null,lessonId:{}",user.getId(),lessonId);
+            logger.error("teacherId:{},没有权限进入教室，原因:lesson is null,lessonId:{}", user.getId(), lessonId);
             model.addAttribute("info", errorHTML);
             return "error/info";
         }
         // 参数判断
         OnlineClass onlineClass = onlineclassService.getOnlineClassById(onlineClassId);
         if (onlineClass == null) {
-            logger.error("teacherId:{},没有权限进入教室，原因:onlineClass is null,onlineClassId:{},LessonId:{}",user.getId(),
+            logger.error("teacherId:{},没有权限进入教室，原因:onlineClass is null,onlineClassId:{},LessonId:{}", user.getId(),
                     onlineClassId, lessonId);
             model.addAttribute("info", errorHTML);
             return "error/info";
         }
         // 检查teacherId 与当前登录Id是否匹配
         if (onlineClass.getTeacherId() != teacher.getId()) {
-            logger.error("teacherId:{},没有权限进入教室，原因:teacherId 与当前登录Id不匹配,onlineClassId:{},teacherId:{}",user.getId(),
+            logger.error("teacherId:{},没有权限进入教室，原因:teacherId 与当前登录Id不匹配,onlineClassId:{},teacherId:{}", user.getId(),
                     onlineClassId, teacher.getId());
             model.addAttribute("info", errorHTML);
             return "error/info";
         }
         // 检查lessonId是否匹配 onlineClassId
         if (onlineClass.getLessonId() != lessonId) {
-            logger.error("teacherId:{},没有权限进入教室，原因:lessonId 与 onlineClassId不匹配,onlineClassId:{},lessonId:{}",user.getId(),
-                    onlineClassId, lessonId);
+            logger.error("teacherId:{},没有权限进入教室，原因:lessonId 与 onlineClassId不匹配,onlineClassId:{},lessonId:{}",
+                    user.getId(), onlineClassId, lessonId);
             model.addAttribute("info", errorHTML);
             return "error/info";
         }
         // 检查onlineClassId是否匹配studentId
-        if (!onlineclassService.checkStudentIdClassId(onlineClassId, studentId)) {
-            logger.error("teacherId:{},没有权限进入教室，原因:onlineClassId 与 studentId不匹配,onlineClassId:{},studentId:{}",user.getId(),
-                    onlineClassId, studentId);
+        if (!StringUtils.startsWith(lesson.getSerialNumber(), "OPEN")
+                && !onlineclassService.checkStudentIdClassId(onlineClassId, studentId)) {
+            logger.error("teacherId:{},没有权限进入教室，原因:onlineClassId 与 studentId不匹配,onlineClassId:{},studentId:{}",
+                    user.getId(), onlineClassId, studentId);
             model.addAttribute("info", errorHTML);
             return "error/info";
         }
         // INVALID不允许进入教室
         if (OnlineClassEnum.ClassStatus.INVALID.toString().equals(onlineClass.getStatus())) {
-            logger.error("teacherId:{},没有权限进入教室，原因:onlineClass 状态为：INVALID,onlineClassId:{}",user.getId(), onlineClassId);
+            logger.error("teacherId:{},没有权限进入教室，原因:onlineClass 状态为：INVALID,onlineClassId:{}", user.getId(),
+                    onlineClassId);
             model.addAttribute("info", errorHTML);
             return "error/info";
         }
         // TEACHER_NO_SHOW不允许进入教室
         if ("TEACHER_NO_SHOW".equals(onlineClass.getFinishType())) {
-            logger.error("teacherId:{},没有权限进入教室，原因:onlineClass FinishType为：TEACHER_NO_SHOW,onlineClassId:{}",user.getId(),
-                    onlineClassId);
+            logger.error("teacherId:{},没有权限进入教室，原因:onlineClass FinishType为：TEACHER_NO_SHOW,onlineClassId:{}",
+                    user.getId(), onlineClassId);
             model.addAttribute("info", errorHTML);
             return "error/info";
         }
         String isTrial = "0";
-        if(lesson.getSerialNumber()!=null && lesson.getSerialNumber().startsWith("T1-")){
-        	isTrial = "1"; //区分是否Trial课程
+        if (lesson.getSerialNumber() != null && lesson.getSerialNumber().startsWith("T1-")) {
+            isTrial = "1"; // 区分是否Trial课程
         }
         model.addAttribute("isTrial", isTrial);
-        logger.info("TeacherId:{},成功进入教室(INTO),onlineClassId:{},studentId:{}",user.getId(),onlineClassId,studentId);
+        logger.info("TeacherId:{},成功进入教室(INTO),onlineClassId:{},studentId:{}", user.getId(), onlineClassId, studentId);
 
         model.addAttribute("lesson", lesson);
-        //是否已经开始上课
-        if(System.currentTimeMillis() > onlineClass.getScheduledDateTime().getTime()){
+        // 是否已经开始上课
+        if (System.currentTimeMillis() > onlineClass.getScheduledDateTime().getTime()) {
             model.addAttribute("isStarted", true);
         } else {
             model.addAttribute("isStarted", false);
         }
         if (lesson.getSerialNumber().startsWith("P")) {
-            model.addAllAttributes(
-                    onlineclassService.enterPracticum(onlineClass, studentId, teacher, lesson));
+            model.addAllAttributes(onlineclassService.enterPracticum(onlineClass, studentId, teacher, lesson));
             return view("online_class_practicum");
         } else if (lesson.getSerialNumber().startsWith("OPEN")) {
-            model.addAllAttributes(
-                    onlineclassService.enterOpen(onlineClass, studentId, teacher, lesson));
+            model.addAllAttributes(onlineclassService.enterOpen(onlineClass, studentId, teacher, lesson));
             return view("online_class_open");
         } else {
             /** 是否需要打开feedbackd */
             if ("feedback".equals(request.getParameter("from"))) {
                 model.addAttribute("from", "feedback");
             }
-            //只有在Major课老师进教室时，才创建TeacherComment
-            onlineclassService.createTeacherCommentByEnterClassroom(studentId,teacher.getId(),onlineClass,lesson);
-            model.addAllAttributes(
-                    onlineclassService.enterMajor(onlineClass, studentId, teacher, lesson));
+            // 只有在Major课老师进教室时，才创建TeacherComment
+            onlineclassService.createTeacherCommentByEnterClassroom(studentId, teacher.getId(), onlineClass, lesson);
+            model.addAllAttributes(onlineclassService.enterMajor(onlineClass, studentId, teacher, lesson));
             return view("online_class_major");
         }
     }
@@ -179,8 +180,7 @@ public class OnlineClassController extends AbstractPortalController {
      * @date 2016年1月8日
      */
     @RequestMapping("/exitClassroom")
-    public String exitClassroom(HttpServletRequest request, HttpServletResponse response,
-            long onlineClassId) {
+    public String exitClassroom(HttpServletRequest request, HttpServletResponse response, long onlineClassId) {
         Teacher teacher = loginService.getTeacher();
         onlineclassService.exitclassroom(onlineClassId, teacher);
 
@@ -190,24 +190,24 @@ public class OnlineClassController extends AbstractPortalController {
     @RequestMapping("/exitClassroomPage")
     public String exitClassroomPage(HttpServletRequest request, HttpServletResponse response,
             @RequestParam("onlineClassId") Long onlineClassId) {
-    	logger.info("教师退出在线教室 exitClassroomPage onlineClassId = {}",onlineClassId);
-    	Map<String, Object> modelMap = Maps.newHashMap();
-    	Integer status = 0;
-    	String message = "";
-    	try {
-    		Teacher teacher = loginService.getTeacher();
+        logger.info("教师退出在线教室 exitClassroomPage onlineClassId = {}", onlineClassId);
+        Map<String, Object> modelMap = Maps.newHashMap();
+        Integer status = 0;
+        String message = "";
+        try {
+            Teacher teacher = loginService.getTeacher();
             onlineclassService.exitclassroom(onlineClassId, teacher);
             status = 1;
-		} catch (Exception e) {
-			status = 0;
-			message = "退出在线教室失败";
-			logger.error("退出在线教室失败",e);
-		}
-        modelMap.put("status", status);      
-        modelMap.put("message", message); 
+        } catch (Exception e) {
+            status = 0;
+            message = "退出在线教室失败";
+            logger.error("退出在线教室失败", e);
+        }
+        modelMap.put("status", status);
+        modelMap.put("message", message);
         return jsonView(response, modelMap);
     }
-    
+
     /**
      * 退出OPEN课程教室
      *
@@ -242,8 +242,7 @@ public class OnlineClassController extends AbstractPortalController {
         if (teacher != null) {
             logger.info("teacher : " + teacher.getId() + ",into classroomId:" + onlineClassId);
         }
-        Map<String, Object> modelMap =
-                onlineclassService.sendTeacherInClassroom(requestParams, teacher);
+        Map<String, Object> modelMap = onlineclassService.sendTeacherInClassroom(requestParams, teacher);
         model.addAllAttributes(modelMap);
         return jsonView(response, modelMap);
     }
@@ -275,7 +274,8 @@ public class OnlineClassController extends AbstractPortalController {
 
             // Finish课程
             if ((Boolean) modelMap.get("result")) {
-                onlineclassService.finishPracticum(teacherApplication, finishType, pe, (Teacher) modelMap.get("recruitTeacher"));
+                onlineclassService.finishPracticum(teacherApplication, finishType, pe,
+                        (Teacher) modelMap.get("recruitTeacher"));
             }
         }
 
@@ -300,8 +300,8 @@ public class OnlineClassController extends AbstractPortalController {
      * @return
      */
     @RequestMapping("/isEmpty")
-    public String isEmpty(HttpServletRequest request, HttpServletResponse response,
-            @RequestParam long onlineClassId, @RequestParam long studentId, Model model) {
+    public String isEmpty(HttpServletRequest request, HttpServletResponse response, @RequestParam long onlineClassId,
+            @RequestParam long studentId, Model model) {
         /* 判断当前课程是否为公开课，如果是则设置不显示退出教室提示 */
         Map<String, Object> modelMap = onlineclassService.isEmpty(onlineClassId, studentId);
         model.addAllAttributes(modelMap);
@@ -340,12 +340,11 @@ public class OnlineClassController extends AbstractPortalController {
      * @return
      */
     @RequestMapping("/sendHelp")
-    public String sendHelp(HttpServletRequest request, HttpServletResponse response,
-            @RequestParam String scheduleTime, @RequestParam long onlineClassId, Model model) {
+    public String sendHelp(HttpServletRequest request, HttpServletResponse response, @RequestParam String scheduleTime,
+            @RequestParam long onlineClassId, Model model) {
         /* 计算服务器时间毫秒 */
         Teacher teacher = loginService.getTeacher();
-        Map<String, Object> modelMap =
-                onlineclassService.sendHelp(scheduleTime, onlineClassId, teacher);
+        Map<String, Object> modelMap = onlineclassService.sendHelp(scheduleTime, onlineClassId, teacher);
         model.addAllAttributes(modelMap);
         return jsonView(response, modelMap);
     }
@@ -359,19 +358,16 @@ public class OnlineClassController extends AbstractPortalController {
      * @return
      */
     @RequestMapping("/sendStarLogs")
-    public String sendStarLogs(HttpServletRequest request, HttpServletResponse response,
-            @RequestParam boolean send, @RequestParam long studentId,
-            @RequestParam long onlineClassId, Model model) {
+    public String sendStarLogs(HttpServletRequest request, HttpServletResponse response, @RequestParam boolean send,
+            @RequestParam long studentId, @RequestParam long onlineClassId, Model model) {
         Teacher teacher = loginService.getTeacher();
         onlineclassService.sendStarlogs(send, studentId, onlineClassId, teacher);
         return jsonView();
     }
 
-  //FAQ静态页面的controler
-  	@RequestMapping("/faq")
-  	public String showFAQ(HttpServletRequest request, HttpServletResponse response, Model model) {
-  		return view("faq");
-  	}
+    // FAQ静态页面的controler
+    @RequestMapping("/faq")
+    public String showFAQ(HttpServletRequest request, HttpServletResponse response, Model model) {
+        return view("faq");
+    }
 }
-
-
