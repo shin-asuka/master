@@ -80,7 +80,7 @@
             qq: '',
             phone: '$!{TRPM_TEACHER.mobile}',
             companyName: 'VIPKID',
-            userNickname: '$!{TRPM_TEACHER.realName}(M: $!{TRPM_MANAGER_NAME})',
+            userNickname: '$!{TRPM_TEACHER.realName}',
             description: '老师ID：$!{TRPM_TEACHER.id} , 监控教室Classroom：$!classUrl',
             email: '$!{TRPM_TEACHER.email}'
         },
