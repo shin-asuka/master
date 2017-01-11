@@ -86,6 +86,15 @@
         hide:true,
         appKey: '513276871#teachertest',
         to: 'vipkid_teacher_portal_web',
+        //集成用户体系，验证的方式二选一，必填，另一项为空即可
+        user: {
+            //指定用户名，集成时必填
+            username: '$!{TRPM_TEACHER.id}',
+            //password验证方式
+            password: '$!{TRPM_TEACHER.id}',
+            //token验证方式
+            token: ''
+        },
         visitor: {         //访客信息，以下参数支持变量
             trueName: '$!{TRPM_TEACHER.realName}',
             qq: '',
