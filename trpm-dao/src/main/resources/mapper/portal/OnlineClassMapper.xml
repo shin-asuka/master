@@ -324,6 +324,12 @@
 		WHERE online_class.id = #{id}
 	</select>
 
+    <select id="getRandomStudentFromOpenCourse" resultType="java.util.Map">
+        SELECT student_id AS studentId
+        FROM online_class_student
+        WHERE online_class_id = #{onlineClassId} limit 1
+    </select>
+
 	<!-- 通过OnlineClassId更新lessonId -->
 	<update id="updateLessonByOnlineClassId">
 		UPDATE online_class SET online_class.lesson_id = #{lessonId} WHERE online_class.id = #{id}
