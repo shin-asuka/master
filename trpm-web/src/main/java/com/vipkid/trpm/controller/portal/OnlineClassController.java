@@ -115,8 +115,7 @@ public class OnlineClassController extends AbstractPortalController {
             return "error/info";
         }
         // 检查onlineClassId是否匹配studentId
-        if (!StringUtils.startsWith(lesson.getSerialNumber(), "OPEN")
-                && !onlineclassService.checkStudentIdClassId(onlineClassId, studentId)) {
+        if (!onlineclassService.checkStudentIdClassId(onlineClassId, studentId)) {
             logger.error("teacherId:{},没有权限进入教室，原因:onlineClassId 与 studentId不匹配,onlineClassId:{},studentId:{}",
                     user.getId(), onlineClassId, studentId);
             model.addAttribute("info", errorHTML);
