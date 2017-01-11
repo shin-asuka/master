@@ -83,9 +83,14 @@ public class OnlineClassDao extends MapperDaoTemplate<OnlineClass> {
     public int getRandomStudentFromOpenCourse(long onlineClassId) {
         Map<String, Object> paramsMap = new HashMap<String, Object>();
         paramsMap.put("onlineClassId", onlineClassId);
-        List<Map<String,Integer>> studentList =  listEntity("getRandomStudentFromOpenCourse",paramsMap);
+        List<Map<String,Long>> studentList =  listEntity("getRandomStudentFromOpenCourse",paramsMap);
         if (CollectionUtils.isNotEmpty(studentList)) {
-            return studentList.get(0).get("studentId");
+            Long studentId = studentList.get(0).get("studentId");
+            if (null != studentId) {
+                return studentId.intValue();
+            } else {
+                return 0;
+            }
         } else {
             return 0;
         }
