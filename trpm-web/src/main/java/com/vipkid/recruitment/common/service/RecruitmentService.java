@@ -339,7 +339,7 @@ public class RecruitmentService {
      * boolean
      */
     public TeacherLocation getTeacherLocation(Integer id){
-        if(0 == id||null==id){
+        if(null == id||0==id){
             return null;
         }
         TeacherLocation teacherLocation = teacherLocationDao.findById(id);

@@ -349,7 +349,7 @@ public class PersonalInfoService {
 	}
 
 	public TeacherLocation getLocationById(Integer id) {
-		if (0== id||null==id)
+		if (null== id||0==id)
 			return null;
 		return teacherLocationDao.findById(id);
 	}
