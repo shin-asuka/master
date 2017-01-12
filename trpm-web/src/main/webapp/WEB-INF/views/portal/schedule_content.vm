@@ -85,7 +85,8 @@
     	offDutyType: 'chat',    //下班后消息进入待接入
         hide:true,
         appKey: '513276871#teachertest',
-        to: 'vipkid_teacher_portal_web',
+        //to: 'vipkid_teacher_portal_web',
+        to:'vipkid_app',
         //集成用户体系，验证的方式二选一，必填，另一项为空即可
         user: {
             //指定用户名，集成时必填
