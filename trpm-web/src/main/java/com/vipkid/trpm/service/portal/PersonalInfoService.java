@@ -348,8 +348,8 @@ public class PersonalInfoService {
 		//return teacherLocationDao.getCountrys();
 	}
 
-	public TeacherLocation getLocationById(int id) {
-		if (id == 0)
+	public TeacherLocation getLocationById(Integer id) {
+		if (null== id||0==id)
 			return null;
 		return teacherLocationDao.findById(id);
 	}
