@@ -77,7 +77,7 @@ public class ContractInfoService {
             logger.info("teacherId {},  Country:{}", teacher.getId(),teacher.getCountry());
             TeacherAddress teacherAddress = teacherAddressDao.getTeacherAddress(teacher.getCurrentAddressId());
             //  2497273 = 老师location 为   United States
-            if (teacherAddress != null && teacherAddress.getCountryId() == LOCATION_IS_USA) {
+            if (teacherAddress != null && teacherAddress.getCountryId()!=null && teacherAddress.getCountryId().intValue() == LOCATION_IS_USA) {
                 logger.warn("{} teacher's address's country id is 2497273 (USA) but W9 file is not uploaded!", teacher.getId());
                 return true;
             }

@@ -338,8 +338,8 @@ public class RecruitmentService {
      * @return
      * boolean
      */
-    public TeacherLocation getTeacherLocation(int id){
-        if(id == 0){
+    public TeacherLocation getTeacherLocation(Integer id){
+        if(0 == id||null==id){
             return null;
         }
         TeacherLocation teacherLocation = teacherLocationDao.findById(id);
