@@ -2,6 +2,7 @@ package com.vipkid.trpm.dao;
 
 import com.google.common.collect.Maps;
 import com.vipkid.trpm.entity.OnlineClass;
+import org.apache.commons.collections.CollectionUtils;
 import org.community.dao.support.MapperDaoTemplate;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,6 +74,27 @@ public class OnlineClassDao extends MapperDaoTemplate<OnlineClass> {
 	public int countStudentByOnlineClassId(long onlineClassId) {
 		return selectCount(new OnlineClass().setId(onlineClassId), "countStudentDaoByOnlineClassId");
 	}
+
+    /**
+     * 随机获取公开课预约的学生
+     * @param onlineClassId
+     * @return
+     */
+    public int getRandomStudentFromOpenCourse(long onlineClassId) {
+        Map<String, Object> paramsMap = new HashMap<String, Object>();
+        paramsMap.put("onlineClassId", onlineClassId);
+        List<Map<String,Long>> studentList =  listEntity("getRandomStudentFromOpenCourse",paramsMap);
+        if (CollectionUtils.isNotEmpty(studentList)) {
+            Long studentId = studentList.get(0).get("studentId");
+            if (null != studentId) {
+                return studentId.intValue();
+            } else {
+                return 0;
+            }
+        } else {
+            return 0;
+        }
+    }
 
 	public int updateEntity(OnlineClass onlineClass) {
 		return super.update(onlineClass);
