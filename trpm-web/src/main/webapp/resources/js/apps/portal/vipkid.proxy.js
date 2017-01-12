@@ -1,11 +1,18 @@
-define(["duobeiyun"], function() {
+define(['messenger'], function() {
 
+  var param = {};
+
+  var messenger = new Messenger('parent', 'MessengerChannel', 'vipkid_onlineclass');
+
+  /* 初始化学点云消息通道函数 */
   var initChannel = function(uid, roomId, debug, stars) {
-    Duobeiyun.init({
-      "uid": uid,
-      "roomId": roomId,
-      "debug": debug
-    });
+    param = {
+      'uid': uid,
+      'roomId': roomId,
+      'name': 'sendStar',
+      'value': '1',
+      'fun': 's'
+    };
 
     /* 发送星星 */
     $("#futureStars > div").click(function() {
@@ -23,6 +30,33 @@ define(["duobeiyun"], function() {
         i++
       }
     });
+
+    jQuery(document).ready(function() {
+      messenger.addTarget(document.getElementById('xuedianyun').contentWindow, 'vipkid_onlineclass');
+    });
+
+  };
+
+  var JsonToString = function(o) {
+    var arr = [];
+    var fmt = function(s) {
+      if (typeof s == 'object' && s != null)
+        return JsonToString(s);
+      return /^(string|number)$/.test(typeof s) ? "\"" + s + "\"" : s;
+    };
+
+    if (o instanceof Array) {
+      for (var i in o) {
+        arr.push(fmt(o[i]));
+      }
+      return '[' + arr.join(',') + ']';
+
+    } else {
+      for (var i in o) {
+        arr.push("\"" + i + "\":" + fmt(o[i]));
+      }
+      return '{' + arr.join(',') + '}';
+    }
   };
 
   /* 发送星星函数 */
@@ -38,10 +72,8 @@ define(["duobeiyun"], function() {
       $(curObj).click(function() {
         removeStar($(this));
       });
-
-      Duobeiyun.trigger("sendStar", {
-        'name': 'sendStar'
-      });
+      param.name = "sendStar";
+      messenger.send(JsonToString(param)); // 用信使来发送数据
 
       /* 记录发送星星时的日志 */
       var url = webPath + "/sendStarLogs.json";
@@ -73,9 +105,8 @@ define(["duobeiyun"], function() {
         sendStar($(this));
       });
 
-      Duobeiyun.trigger("removeStar", {
-        'name': 'removeStar'
-      });
+      param.name = "removeStar";
+      messenger.send(JsonToString(param)); // 用信使来发送数据
 
       /* 记录移除星星时的日志 */
       var url = webPath + "/sendStarLogs.json";

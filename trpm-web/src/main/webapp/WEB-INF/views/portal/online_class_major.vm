@@ -40,7 +40,7 @@
 						<div onclick="require('feedback').openFeedback('Required','$!onlineClass.id','$!student.id')">Add Feedback</div>
 ##                      x<div class="js-add">Add Feedback</div>
 					#end
-					
+
 					##if(!$isReplay)
 					##	<div class="lastAction"><a href="http://help.duobeiyun.com/room/test/?result=http://beta-app-proxy.vipkid.com.cn/api/service/public/ittest/callback&amp;lang=en&amp;role=TEACHER&amp;id=$teacher.id" style="color: red;" target="_blank">Test your computer</a></div>
 					##end
@@ -413,11 +413,15 @@
     #if(${onlineClass.supplierCode} == 1)
 	    require(['xdyproxy'], function(xdy){
         xdy.initChannel("$!{TRPM_USER.id}", "$!onlineClass.classroom", true, "$!stars");
-        });
-	#else
-        require(['dbyproxy'], function(dby){
+      });
+    #elseif(${onlineClass.supplierCode} == 5)
+      require(['vipkidproxy'],function(vipkid){
+        vipkid.initChannel("$!{TRPM_USER.id}", "$!onlineClass.classroom", true, "$!stars");
+      })
+    #else
+      require(['dbyproxy'], function(dby){
         dby.initChannel("$!{TRPM_USER.id}", "$!onlineClass.classroom", true, "$!stars");
-        });
+      });
     #end
 
 	##UA 报告 弹出框 拖动效果 依赖类库
@@ -425,4 +429,3 @@
 	require(['jquery-ui'], function(){ } );
 
 #end
-
