@@ -1,6 +1,7 @@
 package com.vipkid.http.service;
 
 import com.vipkid.http.utils.HttpClientUtils;
+import org.apache.http.HttpResponse;
 import org.apache.http.conn.ConnectTimeoutException;
 import org.springframework.stereotype.Component;
 
@@ -41,6 +42,10 @@ public class HttpApiClient {
 
     public String doPostJson(String url, String jsonData) {
         return HttpClientUtils.post(url, jsonData);
+    }
+
+    public HttpResponse doPostRESTful(String url, String jsonData) {
+        return HttpClientUtils.postRESTful(url, jsonData);
     }
 
 
