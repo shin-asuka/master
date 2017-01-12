@@ -216,12 +216,10 @@ public class PersonalInfoService {
 		Map<String, Object> modelMap = Maps.newHashMap();
 
 		logger.info("upload file for filename = {}", file.getOriginalFilename());
-
 		String fileSize = String.valueOf(file.getSize());
 		UploadResult uploadResult = mediaService.handleUpload(file, MediaType.AVATAR, fileSize, null);
 
 		modelMap.put("uploadResult", uploadResult);
-
 		// 成功后，更新数据库
 		if (uploadResult.isResult()) {
 			Teacher teacher = new Teacher();
