@@ -63,9 +63,6 @@ public class LoginController extends RestfulController {
 
     @Autowired
     private HuanxinService huanxinService;
-
-    @Autowired
-    private NoticeService noticeService;
         
 
     /**
@@ -545,17 +542,19 @@ public class LoginController extends RestfulController {
 
 
     @RequestMapping(value = "/inithuanxinid")
-    public Map<String, Object> inithuanxinid(@RequestParam(required = true) String password,String teacherId ) {
+    public Map<String, Object> inithuanxinid(String password,String teacherId ) {
         if(StringUtils.isNotBlank(teacherId)){
             huanxinService.signUpHuanxin(teacherId,teacherId);
             return ReturnMapUtils.returnSuccess();
-        }else if(StringUtils.equals(password,"allregularteacherinithuanxinid")){
+        }
+        //全量注册环信id
+        else if(StringUtils.equals(password,"allregularteacherinithuanxinid")){
 
             Thread thread = new Thread(new Runnable() {
                 @Override
                 public void run() {
                     logger.info("inithuanxinid start!");
-                    List<String> list = noticeService.findAllRegular();
+                    List<String> list = huanxinService.findAllRegularButNoHuanxinId();
                     if(CollectionUtils.isNotEmpty(list)){
                         for(String oneId : list){
                             huanxinService.signUpHuanxin(oneId,oneId);
@@ -569,7 +568,8 @@ public class LoginController extends RestfulController {
             thread.setName("init-huanxinId-thread");
             thread.start();
             return ReturnMapUtils.returnSuccess();
-        }else{
+        }
+        else{
             return ReturnMapUtils.returnFail("no right to request");
         }
 

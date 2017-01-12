@@ -96,6 +96,19 @@ public class TeacherDao extends MapperDaoTemplate<Teacher> {
         return super.listEntity("findAllRegularId", Maps.newHashMap());
     }
 
+    /**
+     * 查询所有没有环信id的Regular老师Id
+     *
+     * @Author:ALong (ZengWeiLong)
+     * @return List<String>
+     * @date 2016年4月21日
+     */
+    public List<String> findAllRegularButNoHuanxinId() {
+        return super.listEntity("findAllRegularButNoHuanxinId", Maps.newHashMap());
+    }
+
+
+
     public Teacher findByEmail(String email) {
         try {
             return selectOne(new Teacher().setEmail(email));

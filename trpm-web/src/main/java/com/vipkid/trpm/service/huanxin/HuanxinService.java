@@ -4,6 +4,7 @@ import com.google.api.client.util.Maps;
 import com.vipkid.file.utils.StringUtils;
 import com.vipkid.http.service.HttpApiClient;
 import com.vipkid.http.utils.JsonUtils;
+import com.vipkid.trpm.dao.TeacherDao;
 import org.apache.http.HttpResponse;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
@@ -11,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -26,7 +28,11 @@ public class HuanxinService {
 
     private Logger logger = LoggerFactory.getLogger(HuanxinService.class);
 
-    @Autowired private HttpApiClient httpApiClient;
+    @Autowired
+    private HttpApiClient httpApiClient;
+
+    @Autowired
+    private TeacherDao teacherDao;
 
     private final static String URL = "https://a1.easemob.com/513276871/teachertest/users";
 
@@ -56,5 +62,9 @@ public class HuanxinService {
         }
 
         return false;
+    }
+
+    public List<String> findAllRegularButNoHuanxinId() {
+        return teacherDao.findAllRegularButNoHuanxinId();
     }
 }
