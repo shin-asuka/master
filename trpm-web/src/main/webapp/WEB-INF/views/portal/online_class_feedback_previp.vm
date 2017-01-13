@@ -36,7 +36,7 @@
 						<div>
                             <label>Content Learning<span style="color: red;">*</span></label>
                             <p>
-								<span style="display:inline-block;width: 200px;">Vocabulary rebention</span>
+								<span style="display:inline-block;width: 200px;">Vocabulary retention</span>
 								<label margin-left:15px; width:200px><input type="radio" id="vocabularyRetention" name="vocabularyRetention" field="$teacherComment.vocabularyRetention" value="Struggling" $!elememtDisabled />Struggling</label>
                                 <label> </label>
 								<label margin-left:15px;><input type="radio" id="vocabularyRetention" name="vocabularyRetention" field="$teacherComment.vocabularyRetention" value="Developing" $!elememtDisabled />Developing</label>
