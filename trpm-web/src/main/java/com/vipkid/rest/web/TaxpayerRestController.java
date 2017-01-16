@@ -65,9 +65,6 @@ public class TaxpayerRestController {
 	private AwsFileService awsFileService;
 
 	@Autowired
-	private IndexService indexService;
-
-	@Autowired
 	private TeacherTaxpayerFormService teacherTaxpayerFormService;
 
 	@Autowired
