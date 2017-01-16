@@ -1,8 +1,8 @@
-define([ "function", "jquery-form", "jquery-bootstrap", "jquery-load","countdown" ], function() {
+define([ "function", "jquery-form", "jquery-bootstrap", "jquery-load","countdown","tools" ], function() {
 
 	var _timeout = 60 * 1000;
 	
-	var _PESupervisor = false;
+	var _PESupervisor = false, _Practicum2 = false;
 
 	var ajaxErrorfunction = function(reponse, status, info) {
 		Portal.loading("close");
@@ -22,11 +22,10 @@ define([ "function", "jquery-form", "jquery-bootstrap", "jquery-load","countdown
 		
 		if(result != "" || action != ""){
 			$(".practicumClassroom input").addClass("disabled");
-			$(".practicumClassroom textarea").attr("disabled","disabled");
-		}
-		
-		if(practicum2){ 
-			$("#Practicum2").addClass("disabled");
+			$(".practicum-tags input").prop("disabled","disabled");
+			$(".practicumClassroom textarea").prop("disabled","disabled");
+		}else{
+			setTags();
 		}
 		
 		/** 教师上课倒计时 */
@@ -41,65 +40,116 @@ define([ "function", "jquery-form", "jquery-bootstrap", "jquery-load","countdown
 		});
 
 		_PESupervisor = PESupervisor;
+		_Practicum2 = practicum2;
 		$(".practicum-table").find("input[type='radio']").click(function(){
 			var _score = 0;
 			$(".practicum-table").find("input[type='radio']:checked").each(function(){
 				_score += parseInt($(this).val());
-			});	
-			
-			if(PESupervisor){
-				if(practicum2){
-					if(_score >= 30){
-						$("#Pass").removeClass("disabled");
-						$("#Tbd-Fail").addClass("disabled");
-					}else{
-						$("#Tbd-Fail").removeClass("disabled");
-						$("#Pass").addClass("disabled");
-					}
-				} else {
-					if(_score >= 32){
-						$("#Pass").removeClass("disabled");
-						$("#Tbd-Fail").addClass("disabled");
-						$("#Practicum2").addClass("disabled");
-					}else if(_score < 26){
-						$("#Tbd-Fail").removeClass("disabled");
-						$("#Pass").addClass("disabled");
-						$("#Practicum2").addClass("disabled");
-					}else{
-						$("#Practicum2").removeClass("disabled");
-						$("#Tbd-Fail").addClass("disabled");
-						$("#Pass").addClass("disabled");
-					}
+			});
+			$("#score").html(_score);
+		});
+	};
+
+	var setTags = function(){
+		$("div.btn-tags").click(function(){
+			if($(this).hasClass("chn-tags")){
+				$(this).removeClass("chn-tags");
+				$(this).find("input").prop("name", "");
+			}else{
+				if($("div.chn-tags").size()>=5){
+					alert("Tags 5 for most!");
+					return;
+				}
+				$(this).addClass("chn-tags");
+				$(this).find("input").prop("name","tags");
+			}
+		});
+	};
+
+	var clearTags = function(){
+		$("div.btn-tags").removeClass("chn-tags");
+	};
+
+	var doSubmit = function(type){
+		if(!_PESupervisor && 22 != $(".practicum-table").find("input[type='radio']:checked").size()){
+			alert("You can't submit the feedback form without finish it.");
+			return;
+		}else if(_PESupervisor && 16 != $(".practicum-table").find("input[type='radio']:checked").size()){
+			alert("You can't submit the feedback form without finish it.");
+			return;
+		}else{
+			$("input[name='totalScore']").val($("#score").html());
+		}
+
+		if(0==$("div.chn-tags").size()){
+			alert("The tags is required!");
+			return;
+		}
+
+		if(Tools.isEmpty($("textarea[name='things']").val())){
+			alert("The comment box is required!");
+			return;
+		}else if($("textarea[name='things']").val()>1000 || $("textarea[name='things']").val()<200){
+			alert("The comment box content length must between 200 and 1000!");
+			return;
+		}
+
+		if(Tools.isEmpty($("textarea[name='areas']").val())){
+			alert("The comment box is required!");
+			return;
+		}else if(length($("textarea[name='areas']").val())>1000 || length($("textarea[name='areas']").val())<200){
+			alert("The comment box content length must between 200 and 1000!");
+			return;
+		}
+
+		if(0==$("input[name='level']:checked").size()){
+			alert("The suggested teaching level is required!");
+			return;
+		}
+
+		$("input[name='submitType']").val(type);
+		var resultType = getMockClassResultType($("#score").html());
+		doAudit(resultType);
+	};
+
+	var length = function(str){
+		return str.replace(/[^\x00-\xff]/g, "**").length;
+	};
+
+	var getMockClassResultType = function(_score){
+		if(_PESupervisor){
+			if(_Practicum2){
+				if(_score >= 30){
+					return "PASS";
+				}else{
+					return "TBD_FAIL";
 				}
 			} else {
-				if(practicum2){
-					if(_score >= 38){
-						$("#Pass").removeClass("disabled");
-						$("#Tbd-Fail").addClass("disabled");
-					}else{
-						$("#Tbd-Fail").removeClass("disabled");
-						$("#Pass").addClass("disabled");
-					}
-				} else {
-					if(_score >= 40){
-						$("#Pass").removeClass("disabled");
-						$("#Tbd-Fail").addClass("disabled");
-						$("#Practicum2").addClass("disabled");
-					}else if(_score < 31){
-						$("#Tbd-Fail").removeClass("disabled");
-						$("#Pass").addClass("disabled");
-						$("#Practicum2").addClass("disabled");
-					}else{
-						$("#Practicum2").removeClass("disabled");
-						$("#Tbd-Fail").addClass("disabled");
-						$("#Pass").addClass("disabled");
-					}
+				if(_score >= 32){
+					return "PASS";
+				}else if(_score < 26){
+					return "TBD_FAIL";
+				}else{
+					return "PRACTICUM2";
 				}
 			}
-			
-			$("#score").html(_score);
-		});	
-		
+		} else {
+			if(_Practicum2){
+				if(_score >= 38){
+					return "PASS";
+				}else{
+					return "TBD_FAIL";
+				}
+			} else {
+				if(_score >= 40){
+					return "PASS";
+				}else if(_score < 31){
+					return "TBD_FAIL";
+				}else{
+					return "PRACTICUM2";
+				}
+			}
+		}
 	};
 
 	/** 向后台声明老师已经进教室 */
@@ -176,26 +226,10 @@ define([ "function", "jquery-form", "jquery-bootstrap", "jquery-load","countdown
 				});
 				return false;
 			}
-		} else {
-			// 判断用户是否选择了所有的题目
-			if(!_PESupervisor && 22 != $(".practicum-table").find("input[type='radio']:checked").size()){
-				alert("You can't submit the feedback form without finish it.");
-				return false;
-			}else if(_PESupervisor && 16 != $(".practicum-table").find("input[type='radio']:checked").size()){
-				alert("You can't submit the feedback form without finish it.");
-				return false;
-			}
 		}
-		$.alert("confirm", {
-			title : "Prompt",
-			content : "Are you sure you want to allow this teacher to [ "+type+" ] ？",
-			button : " Yes ",
-			callback : function() {
-				$("#type").val(type);
-				submitsAudit();
-			}
-		});	
-		
+
+		$("#type").val(type);
+		submitsAudit();
 	};
 	
 	var submitsAudit = function(){
@@ -208,14 +242,24 @@ define([ "function", "jquery-form", "jquery-bootstrap", "jquery-load","countdown
 			success : function(datas) {
 				Portal.loading("close");
 				if (datas && datas.result) {
-					$.alert("info", {
-						title : "Saved successfully!"
-					});
+					if(datas.submitType=="SAVE"){
+						$.alert("info", {
+							title : "Saved successfully!"
+						});
+					}else{
+						$.alert("info", {
+							title : "Submitted successfully!"
+						});
+
+						$(".practicumClassroom input").addClass("disabled");
+						$(".practicum-tags input").prop("disabled","disabled");
+						$("div.btn-tags").unbind("click");
+						$(".practicumClassroom textarea").attr("disabled","disabled");
+						$("input[type=radio]").prop("disabled","disabled");
+					}
+
 					$('#finish-modal').modal('hide');
 					closeFeedBackForm();
-					$(".practicumClassroom input").addClass("disabled");
-					$(".practicumClassroom textarea").attr("disabled","disabled");
-					$("input[type=radio]").prop("disabled","disabled");
 				} else {
 					$.alert("error", {
 						title : datas.msg
@@ -228,7 +272,7 @@ define([ "function", "jquery-form", "jquery-bootstrap", "jquery-load","countdown
 			},
 			statusCode : $.statusCode
 		});
-	}
+	};
 
 	/** 退出教室需要判断DemoReoprt或者FeedBack是否填写过,没有填写过的要询问教师是否要推出教室 */
 	var confirmExitClassroom = function(onlineClassId, studentId) {
@@ -275,7 +319,7 @@ define([ "function", "jquery-form", "jquery-bootstrap", "jquery-load","countdown
 				ajaxErrorfunction(reponse, status, info);
 			}
 		});
-	}
+	};
 	
 	var openSessionStorage = function(onlineClassId){
 		if(window.sessionStorage){
@@ -297,7 +341,9 @@ define([ "function", "jquery-form", "jquery-bootstrap", "jquery-load","countdown
 		doAudit:doAudit,
 		showFeedBackForm : showFeedBackForm,
 		closeFeedBackForm : closeFeedBackForm,
-		openSessionStorage:openSessionStorage
+		openSessionStorage:openSessionStorage,
+		clearTags: clearTags,
+		doSubmit: doSubmit
 	};
 
 });

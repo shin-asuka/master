@@ -1,18 +1,31 @@
 package com.vipkid.trpm.controller;
 
+import org.apache.commons.lang3.StringUtils;
+import org.community.config.PropertyConfigurer;
+import org.community.tools.JsonTools;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.security.access.prepost.PreAuthorize;
+
+import javax.servlet.http.HttpServletResponse;
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.lang3.StringUtils;
-import org.community.config.PropertyConfigurer;
-import org.community.tools.JsonTools;
-import org.springframework.security.access.prepost.PreAuthorize;
-
 @PreAuthorize("fullyAuthenticated")
 public abstract class AbstractController {
+
+    protected static final Logger logger = LoggerFactory.getLogger(AbstractController.class);
+
+    protected static boolean IS_PRODUCTION = true;
+
+    static {
+        try {
+            IS_PRODUCTION = PropertyConfigurer.booleanValue("env.production");
+        } catch (Exception e) {
+            logger.info("Current evn is production");
+        }
+    }
 
     protected static final int LINE_PER_PAGE = PropertyConfigurer.intValue("page.linePerPage");
 

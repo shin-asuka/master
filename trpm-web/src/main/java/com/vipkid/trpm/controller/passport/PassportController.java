@@ -1,28 +1,9 @@
 package com.vipkid.trpm.controller.passport;
 
-import java.io.IOException;
-import java.util.Base64;
-import java.util.Map;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.lang.StringUtils;
-import org.community.config.PropertyConfigurer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.ServletRequestUtils;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-
 import com.vipkid.enums.TeacherEnum;
 import com.vipkid.enums.UserEnum;
 import com.vipkid.recruitment.utils.ReturnMapUtils;
+import com.vipkid.rest.service.LoginService;
 import com.vipkid.trpm.constant.ApplicationConstant;
 import com.vipkid.trpm.constant.ApplicationConstant.CookieKey;
 import com.vipkid.trpm.controller.AbstractController;
@@ -35,6 +16,24 @@ import com.vipkid.trpm.service.passport.RemberService;
 import com.vipkid.trpm.util.AES;
 import com.vipkid.trpm.util.CookieUtils;
 import com.vipkid.trpm.util.IpUtils;
+import org.apache.commons.lang.StringUtils;
+import org.community.config.PropertyConfigurer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.ServletRequestUtils;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.Base64;
+import java.util.Map;
 
 @Controller
 @PreAuthorize("permitAll")
@@ -54,12 +53,12 @@ public class PassportController extends AbstractController {
 	@Autowired
 	private RemberService remberService;
 
-	/*@Autowired
-    private LoginService loginService;*/
-	
+	@Autowired
+    private LoginService loginService;
+
 	/**
 	 * 登陆入口
-	 * 
+	 *
 	 * @Author:ALong (ZengWeiLong)
 	 * @param request
 	 * @param response
@@ -91,24 +90,25 @@ public class PassportController extends AbstractController {
 			user = this.passportService.updateUserToken(user);
 		}
 
-		logger.info("password check start!");
-		// 密码验证
-		String _remberme = CookieUtils.getValue(request, CookieKey.TRPM_PASSPORT);
+		if (IS_PRODUCTION) {
+			logger.info("password check start!");
+			// 密码验证
+			String _remberme = CookieUtils.getValue(request, CookieKey.TRPM_PASSPORT);
 
-		if (remberService.checkNotPassword(request, _remberme, _strPwd, user)) {
-			logger.error(" User 修改密码判断 :" + _strEmail + ";password=" + _strPwd);
-			model.addAttribute("info", ApplicationConstant.AjaxCode.USER_ERROR);
-			return jsonView(response, model.asMap());
+			if (remberService.checkNotPassword(request, _remberme, _strPwd, user)) {
+				logger.error(" User 修改密码判断 :" + _strEmail + ";password=" + _strPwd);
+				model.addAttribute("info", ApplicationConstant.AjaxCode.USER_ERROR);
+				return jsonView(response, model.asMap());
+			}
+
+			logger.info("user Dtype start!");
+			// 非教师在此登陆
+			if (!UserEnum.Dtype.TEACHER.val().equals(user.getDtype())) {
+				logger.error(" Username type error!" + _strEmail + ";password=" + _strPwd);
+				model.addAttribute("info", ApplicationConstant.AjaxCode.DTYPE_ERROR);
+				return jsonView(response, model.asMap());
+			}
 		}
-
-		logger.info("user Dtype start!");
-		// 非教师在此登陆
-		if (!UserEnum.Dtype.TEACHER.val().equals(user.getDtype())) {
-			logger.error(" Username type error!" + _strEmail + ";password=" + _strPwd);
-			model.addAttribute("info", ApplicationConstant.AjaxCode.DTYPE_ERROR);
-			return jsonView(response, model.asMap());
-		}
-
 		logger.info("teacher null start!");
 		Teacher teacher = this.passportService.findTeacherById(user.getId());
 		if (teacher == null) {
@@ -151,8 +151,10 @@ public class PassportController extends AbstractController {
 
 		// 只有教师端老师登陆后才做强制修改密码判断
 		logger.info("登陆  REGULAR start !");
-		if (TeacherEnum.LifeCycle.REGULAR.toString().equals(teacher.getLifeCycle())) {
-			indexService.changePasswordNotice(response, _strPwd);
+		if (IS_PRODUCTION) {
+			if (TeacherEnum.LifeCycle.REGULAR.toString().equals(teacher.getLifeCycle())) {
+				indexService.changePasswordNotice(response, _strPwd);
+			}
 		}
 
 		// 如果招聘Id不存在则set进去
@@ -165,7 +167,7 @@ public class PassportController extends AbstractController {
 
 		logger.info("登陆  remember start !");
 		// 对remberMe的处理
-		remberService.remberMe(remember, _remberme, request, response, user);
+		//remberService.remberMe(remember, _remberme, request, response, user);
 
 		// 写入24小时提示Cookie
 		CookieUtils.setCookie(response, CookieKey.TRPM_HOURS_24, String.valueOf(user.getId()), null);
@@ -177,7 +179,7 @@ public class PassportController extends AbstractController {
 
 	/**
 	 * 注册页面进入
-	 * 
+	 *
 	 * @param request
 	 * @param response
 	 * @param model
@@ -203,7 +205,7 @@ public class PassportController extends AbstractController {
 
 	/**
 	 * 注册逻辑实现
-	 * 
+	 *
 	 * @param request
 	 * @param response
 	 * @param model
@@ -245,7 +247,7 @@ public class PassportController extends AbstractController {
 
 	/**
 	 * 重置密码的请求页面进入
-	 * 
+	 *
 	 * @param request
 	 * @param response
 	 * @param model
@@ -261,7 +263,7 @@ public class PassportController extends AbstractController {
 
 	/**
 	 * 重置密码的响应操作： 发送重置密码邮件，邮件中带有重置密码的url链接 --> modify password
-	 * 
+	 *
 	 * @param request
 	 * @param response
 	 * @param model
@@ -318,7 +320,7 @@ public class PassportController extends AbstractController {
 
 	/**
 	 * 重置密码进入 从邮箱进入
-	 * 
+	 *
 	 * @Author:ALong (ZengWeiLong)
 	 * @param request
 	 * @param response
@@ -345,7 +347,7 @@ public class PassportController extends AbstractController {
 
 	/**
 	 * 执行密码修改
-	 * 
+	 *
 	 * @Author:ALong (ZengWeiLong)
 	 * @param request
 	 * @param response
@@ -389,7 +391,7 @@ public class PassportController extends AbstractController {
 
 	/**
 	 * 用户注册成功
-	 * 
+	 *
 	 * @Author:ALong (ZengWeiLong)
 	 * @param request
 	 * @param response

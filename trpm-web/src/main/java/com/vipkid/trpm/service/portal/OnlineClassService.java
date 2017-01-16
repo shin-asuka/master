@@ -27,7 +27,6 @@ import com.vipkid.trpm.constant.ApplicationConstant;
 import com.vipkid.trpm.constant.ApplicationConstant.FinishType;
 import com.vipkid.trpm.dao.*;
 import com.vipkid.trpm.entity.*;
-import com.vipkid.trpm.entity.teachercomment.QueryTeacherCommentOutputDto;
 import com.vipkid.trpm.entity.teachercomment.TeacherComment;
 import com.vipkid.trpm.entity.teachercomment.TeacherCommentResult;
 import com.vipkid.trpm.entity.teachercomment.TeacherCommentUpdateDto;
@@ -35,7 +34,6 @@ import com.vipkid.trpm.proxy.OnlineClassProxy;
 import com.vipkid.trpm.util.DateUtils;
 import com.vipkid.trpm.util.FilesUtils;
 import com.vipkid.trpm.util.IpUtils;
-
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -110,6 +108,19 @@ public class OnlineClassService {
 
     @Autowired
     private AuditEventHandler auditEventHandler;
+
+    @Autowired
+    private TagsDao tagsDao;
+
+    @Autowired
+    private TeacherPeTagsDao teacherPeTagsDao;
+
+    @Autowired
+    private TeacherPeLevelsDao teacherPeLevelsDao;
+
+    @Autowired
+    private TeacherPeCommentsDao teacherPeCommentsDao;
+
     /**
      * 根据id找online class
      *
@@ -192,6 +203,12 @@ public class OnlineClassService {
         } else {
             modelMap.put("PESupervisor", false);
         }
+
+        int applicationId = Long.valueOf(teacherApplication.getId()).intValue();
+        modelMap.put("tags", tagsDao.getTags());
+        modelMap.put("teacherPeTags", teacherPeTagsDao.getTeacherPeTagsByApplicationId(applicationId));
+        modelMap.put("teacherPeLevels", teacherPeLevelsDao.getTeacherPeLevelsByApplicationId(applicationId));
+        modelMap.put("teacherPeComments", teacherPeCommentsDao.getTeacherPeComments(applicationId));
 
         return modelMap;
     }
@@ -493,6 +510,15 @@ public class OnlineClassService {
 
         modelMap.put("result", true);
         return modelMap;
+    }
+
+    public boolean updateApplications(TeacherApplication teacherApplication){
+        if(0==teacherApplication.getId()){
+            return false;
+        }else {
+            this.teacherApplicationDao.update(teacherApplication);
+            return true;
+        }
     }
 
     /**
