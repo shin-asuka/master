@@ -104,6 +104,7 @@
             description: '老师ID：$!{TRPM_TEACHER.id}',
             email: '$!{TRPM_TEACHER.email}'
         },
+        eventCollector:true,
     };
 </script>
 

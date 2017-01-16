@@ -84,6 +84,7 @@
             description: '老师ID：$!{TRPM_TEACHER.id} , 监控教室Classroom：$!classUrl',
             email: '$!{TRPM_TEACHER.email}'
         },
+        eventCollector:true,
     };
 </script>
 <script type="text/javascript">
