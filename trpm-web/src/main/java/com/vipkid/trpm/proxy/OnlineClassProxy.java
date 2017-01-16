@@ -8,6 +8,8 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import com.google.common.collect.Lists;
+import com.vipkid.rest.security.AppContext;
+import com.vipkid.trpm.constant.ApplicationConstant;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.community.config.PropertyConfigurer;
@@ -76,6 +78,11 @@ public class OnlineClassProxy {
         if (StringUtils.isBlank(roomId)) {
             return ReturnMapUtils.returnFail("fail to get url: classroom ,the classroom is empty");
         }
+
+        String refererKey = String.format(ApplicationConstant.HEADER_REFERER,Thread.currentThread().getId());
+        String referer = (String)AppContext.get(refererKey);
+        header.put("Referer",referer);
+
         String requestUrl = getHttpUrl() + "/api/service/private/supplier/getOnlineClassRoomURL";
         logger.info("用户Id:【{}】以【{}】角色,尝试进入onlineClassId:【{}】的教室，classType:【{}】,supplierCode:【{}】", userId,userRole.toString(),onlineClassId,type.toString(),supplierCode);
         String responseBody = HttpClientProxy.get(requestUrl, params, header);
