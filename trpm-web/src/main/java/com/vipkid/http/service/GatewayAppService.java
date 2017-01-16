@@ -32,11 +32,11 @@ public class GatewayAppService extends HttpBaseService {
 
 	private static final Integer HALF_PAGE_SIZE = 10;//可调整缓存大小
 
-	private static final String  GATEWAY_STUDENT_COMMENT_BATCH_API = "service/student_comment/comments/by/classes?ids=%s";
+	private static final String  GATEWAY_STUDENT_COMMENT_BATCH_API = "/service/student_comment/comments/by/classes?ids=%s";
 
-	private static final String  GATEWAY_STUDENT_COMMENT_BY_TEACHER_API = "service/student_comment/teacher/%s/comments?start=%s&limit=%s&rating_level=%s";
+	private static final String  GATEWAY_STUDENT_COMMENT_BY_TEACHER_API = "/service/student_comment/teacher/%s/comments?start=%s&limit=%s&rating_level=%s";
 
-	private static final String  GATEWAY_STUDENT_COMMENT_TOTAL_BY_TEACHER_API = "service/student_comment/teacher/%d/comments/total";
+	private static final String  GATEWAY_STUDENT_COMMENT_TOTAL_BY_TEACHER_API = "/service/student_comment/teacher/%d/comments/total";
 
 	public List<StudentCommentApi> getStudentCommentListByBatch(String idsStr) {
 
