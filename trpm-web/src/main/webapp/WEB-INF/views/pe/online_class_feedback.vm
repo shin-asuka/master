@@ -20,10 +20,26 @@
             </div>                
             <div style="margin: 10px 0 0 0;">
 	            <b>Total Score: <span id="score">0</span></b>
+                <input type="hidden" name="totalScore" value="0" />
+                <input type="hidden" name="submitType" value="SAVE" />
 	        </div>
-	        <hr />
+                <hr />
+                <div>#parse("/pe/pe_tag.vm")</div>
+                <hr />
             <div calss="row">
                 <div class='btnDiv'>
+					#if(!$!{teacherPeComments})
+					<div>
+                      <input onclick="require('pe').showFinshType()" type='button' value='ReSchedule' class='ui blue button submitBtn'/>
+                    </div>
+					#end
+                    <div style="margin-top: 3px;">
+						#if(!$!{teacherPeComments})
+                        <input type='reset' onclick="require('pe').clearTags()" value='Cancel' class='ui blue button submitBtn' style="margin:0;" />
+                        #end
+						<input type="button" value="Save" onclick="require('pe').doSubmit('SAVE')" class='ui blue button submitBtn' style="margin:0;" />
+                        <input type="button" value="Submit" onclick="require('pe').doSubmit('SUBMIT')" class='ui blue button submitBtn' style="margin:0;" />
+                    </div>
 					#**
 	                <div class='commentDiv'>
 	                    <input id="Pass" onclick="require('pe').doAudit('PASS')" type='button' value='Pass' class='ui blue button submitBtn disabled'/>
