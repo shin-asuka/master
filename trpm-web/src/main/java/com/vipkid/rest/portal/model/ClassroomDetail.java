@@ -19,7 +19,7 @@ public class ClassroomDetail{
 	private Integer reportType;
 	private Integer reportStatus;
 	private String UaReportUrl;
-
+	private boolean hasParentComment;
 	private boolean isPrevipLesson;
 	private String lyricsShowUrl;
 	private String videoShowUrl;
@@ -157,5 +157,12 @@ public class ClassroomDetail{
 	public void setUaReportUrl(String uaReportUrl) {
 		UaReportUrl = uaReportUrl;
 	}
-	
+
+	public boolean isHasParentComment() {
+		return hasParentComment;
+	}
+
+	public void setHasParentComment(boolean hasParentComment) {
+		this.hasParentComment = hasParentComment;
+	}
 }

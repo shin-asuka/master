@@ -30,5 +30,8 @@
         <property name="serverAddress" value="${payrollApp.serverAddress}"/>
         
     </bean>
-    
+
+    <bean id="gatewayAppService" class="com.vipkid.http.service.GatewayAppService">
+        <property name="serverAddress" value="${gateway.serverAddress}"/>
+    </bean>
 </beans>
