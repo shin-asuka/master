@@ -20,6 +20,7 @@ import com.vipkid.trpm.dao.TeacherDao;
 import com.vipkid.trpm.dao.TeacherPeCommentsDao;
 import com.vipkid.trpm.entity.OnlineClass;
 import com.vipkid.trpm.entity.Teacher;
+import com.vipkid.trpm.entity.TeacherPeComments;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -120,6 +121,11 @@ public class AuditEmailService {
             }else if (teacher.getRealName() != null){
                 paramsMap.put("teacherName", teacher.getRealName());
             }
+            TeacherApplication  applicationsList =  teacherApplicationDao.findCurrentApplication(teacherId).stream().findFirst().get();
+            TeacherPeComments teacherPeComments =  teacherPeCommentsDao.getTeacherPeComments(Long.valueOf(applicationsList.getId()).intValue());
+            paramsMap.put("thingsDidWell", teacherPeComments.getThingsDidWell());
+            paramsMap.put("areasImprovement", teacherPeComments.getAreasImprovement());
+            paramsMap.put("totalScore", teacherPeComments.getTotalScore()+"");
 
             List<TeacherApplication> list = teacherApplicationDao.findApplictionForStatusResult(teacher.getId(), TeacherApplicationEnum.Status.SIGN_CONTRACT.toString(), TeacherApplicationEnum.Result.PASS.toString());
             if(CollectionUtils.isNotEmpty(list)){
@@ -155,6 +161,13 @@ public class AuditEmailService {
             }else if (teacher.getRealName() != null){
                 paramsMap.put("teacherName", teacher.getRealName());
             }
+
+            TeacherApplication  applicationsList =  teacherApplicationDao.findCurrentApplication(teacherId).stream().findFirst().get();
+            TeacherPeComments teacherPeComments =  teacherPeCommentsDao.getTeacherPeComments(Long.valueOf(applicationsList.getId()).intValue());
+            paramsMap.put("thingsDidWell", teacherPeComments.getThingsDidWell());
+            paramsMap.put("areasImprovement", teacherPeComments.getAreasImprovement());
+            paramsMap.put("totalScore", teacherPeComments.getTotalScore()+"");
+
             logger.info("【EMAIL.sendPracticum2Start】toAddMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",
                     teacher.getRealName(),teacher.getEmail(),PRACTICUM2_START_TITLE,PRACTICUM2_START_CONTENT);
 
