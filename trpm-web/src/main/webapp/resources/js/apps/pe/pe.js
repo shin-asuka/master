@@ -98,7 +98,7 @@ define(depends, function () {
             if (Tools.isEmpty($("textarea[name='things']").val())) {
                 alert("The comment box is required!");
                 return;
-            } else if ($("textarea[name='things']").val() > 1000 || $("textarea[name='things']").val() < 200) {
+            } else if (length($("textarea[name='things']").val()) > 1000 || length($("textarea[name='things']").val()) < 200) {
                 alert("The comment box content length must between 200 and 1000!");
                 return;
             }
@@ -125,7 +125,7 @@ define(depends, function () {
     };
 
     var length = function (str) {
-        return str.replace(/[^\x00-\xff]/g, "**").length;
+        return str.replace(/[^\x00-\xff]/g, "*").length;
     };
 
     var getMockClassResultType = function (_score) {
