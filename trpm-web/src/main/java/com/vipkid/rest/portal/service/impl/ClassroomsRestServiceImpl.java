@@ -355,6 +355,7 @@ public class ClassroomsRestServiceImpl implements ClassroomsRestService{
 			classroomDetail.setStudentName((String) eachMap.get("englishName"));
             teacherId = (long) eachMap.get("teacherId");
 			classroomDetail.setTeacherId(teacherId);
+
 			String serialNumber = (String) eachMap.get("serialNumber");
 			classroomDetail.setLessonSerialNumber(serialNumber);
 
@@ -382,8 +383,6 @@ public class ClassroomsRestServiceImpl implements ClassroomsRestService{
                 classroomDetail.setStatus(status);
 				classroomDetail.setFinishType(finishType);
             }
-
-			String serialNumber = (String) eachMap.get("serialNumber");
 			if(StringUtils.isNotEmpty(serialNumber)){
 				boolean isPrevipLesson = false;
 				int index = serialNumber.lastIndexOf("-");
