@@ -1,6 +1,7 @@
 package com.vipkid.trpm.interceptor;
 
 
+import com.amazonaws.services.opsworks.model.App;
 import com.vipkid.enums.TeacherModuleEnum.RoleClass;
 import com.vipkid.enums.TeacherPageLoginEnum.LoginType;
 import com.vipkid.http.service.AnnouncementHttpService;
@@ -134,7 +135,15 @@ public class CookieExpiredHandleInterceptor extends HandlerInterceptorAdapter {
         }
         
         AppContext.setUser(user);
-        
+        //设置当前请求的refer
+        String referer = request.getHeader("Referer");
+        String refererKey = String.format(ApplicationConstant.HEADER_REFERER,Thread.currentThread().getId());
+        if (StringUtils.isNotBlank(referer)) {
+            AppContext.put(refererKey,referer);
+        } else {
+            AppContext.put(refererKey,"");
+        }
+
         logger.info("IP:{},user:{},发起请求:{}",IpUtils.getIpAddress(request),user.getId(),request.getRequestURI());
         
         Teacher teacher = loginService.getTeacher();
