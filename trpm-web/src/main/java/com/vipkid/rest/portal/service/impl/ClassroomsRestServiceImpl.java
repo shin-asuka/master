@@ -340,10 +340,10 @@ public class ClassroomsRestServiceImpl implements ClassroomsRestService{
         long teacherId = teacher.getId();
         List<String> idsFor24Hour = Lists.newArrayList();
 		idsFor24Hour = scheduleService.get24HourClass(teacherId, onlineClassIds);
-        boolean is24Hour = false;
 
 		int id = 0;//加一个id方便前端排序
 		for (Map<String, Object> eachMap : dataList) {
+			boolean is24Hour = false;
 			ClassroomDetail classroomDetail = new ClassroomDetail();
 			classroomDetail.setId(id);
 			classroomDetail.setIsPaidTrail((int) eachMap.get("isPaidTrail"));

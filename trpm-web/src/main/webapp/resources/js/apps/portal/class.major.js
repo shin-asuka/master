@@ -498,7 +498,7 @@ define(["function","jquery-bootstrap","jquery-load","countdown" ], function() {
 		}
 		if (oldStatus == "FINISHED" && serialNumber.indexOf("M") == 0){
 			var url = webPath + "/changeClassroom.json";
-			var interval = 4 * 1000;
+			var interval = 60 * 1000;
 			var params = {
 				"scheduledDateTime" : scheduledDateTime
 			};
