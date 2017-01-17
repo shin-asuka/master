@@ -12,7 +12,7 @@
     <tr>
         <td width="*">&middot;Starts and ends class in clear and friendly manner.</td>
         <td width="20">&nbsp;</td>
-        <td width="76" valign="top"><input type="radio" name="delayDays" #if(0 == ${teacherApplication.delayDays} && 0 != $!{teacherApplication.auditorId})checked="checked"#end value="0" />
+        <td width="76" valign="top"><input type="radio" name="delayDays" #if(0 == ${teacherApplication.delayDays} && (0 != $!{teacherApplication.auditorId} || "SAVE"==$!{teacherPeComments.status}))checked="checked"#end value="0" />
             <input type="radio" name="delayDays" #if(1 == ${teacherApplication.delayDays})checked="checked"#end value="1" />
             <input type="radio" name="delayDays" disabled="disabled" value="2" />
             <input type="radio" name="delayDays" disabled="disabled" value="3" /></td>
@@ -159,7 +159,7 @@
     <tr>
         <td width="*">&middot;Encourages student to speak in full sentences whenever possible.</td>
         <td width="20">&nbsp;</td>
-        <td width="76" valign="top"><input type="radio" name="teenagerTeachingExperience" #if(0 == ${teacherApplication.teenagerTeachingExperience})checked="checked"#end value="0" />
+        <td width="76" valign="top"><input type="radio" name="teenagerTeachingExperience" #if(0 == ${teacherApplication.teenagerTeachingExperience} && (0 != $!{teacherApplication.auditorId} || "SAVE"==$!{teacherPeComments.status}))checked="checked"#end value="0" />
             <input type="radio" name="teenagerTeachingExperience" #if(1 == ${teacherApplication.teenagerTeachingExperience})checked="checked"#end value="1" />
             <input type="radio" name="teenagerTeachingExperience" #if(2 == ${teacherApplication.teenagerTeachingExperience})checked="checked"#end value="2" />
             <input type="radio" name="teenagerTeachingExperience" disabled="disabled" value="3" /></td>
@@ -167,7 +167,7 @@
     <tr>
         <td width="*">&middot;Allows the student ample opportunity to speak out (approx 30/70 rule).</td>
         <td width="20">&nbsp;</td>
-        <td width="76" valign="top"><input type="radio" name="teflOrToselCertificate" #if(0 == ${teacherApplication.teflOrToselCertificate})checked="checked"#end value="0" />
+        <td width="76" valign="top"><input type="radio" name="teflOrToselCertificate" #if(0 == ${teacherApplication.teflOrToselCertificate} && (0 != $!{teacherApplication.auditorId} || "SAVE"==$!{teacherPeComments.status}))checked="checked"#end value="0" />
             <input type="radio" name="teflOrToselCertificate" #if(1 == ${teacherApplication.teflOrToselCertificate})checked="checked"#end value="1" />
             <input type="radio" name="teflOrToselCertificate" #if(2 == ${teacherApplication.teflOrToselCertificate})checked="checked"#end value="2" />
             <input type="radio" name="teflOrToselCertificate" #if(3 == ${teacherApplication.teflOrToselCertificate})checked="checked"#end value="3" /></td>
@@ -175,7 +175,7 @@
     <tr>
         <td width="*">&middot;Corrects all student's mistakes.</td>
         <td width="20">&nbsp;</td>
-        <td width="76" valign="top"><input type="radio" name="timeManagementScore" #if(0 == ${teacherApplication.timeManagementScore})checked="checked"#end value="0" />
+        <td width="76" valign="top"><input type="radio" name="timeManagementScore" #if(0 == ${teacherApplication.timeManagementScore} && (0 != $!{teacherApplication.auditorId} || "SAVE"==$!{teacherPeComments.status}))checked="checked"#end value="0" />
             <input type="radio" name="timeManagementScore" #if(1 == ${teacherApplication.timeManagementScore})checked="checked"#end value="1" />
             <input type="radio" name="timeManagementScore" #if(2 == ${teacherApplication.timeManagementScore})checked="checked"#end value="2" />
             <input type="radio" name="timeManagementScore" disabled="disabled" value="3" /></td>
@@ -183,7 +183,7 @@
     <tr>
         <td width="*">&middot;Has student repeat new words/sentence patterns.</td>
         <td width="20">&nbsp;</td>
-        <td width="76" valign="top"><input type="radio" name="accent" #if(0 == ${teacherApplication.accent})checked="checked"#end value="0" />
+        <td width="76" valign="top"><input type="radio" name="accent" #if(0 == ${teacherApplication.accent} && (0 != $!{teacherApplication.auditorId} || "SAVE"==$!{teacherPeComments.status}))checked="checked"#end value="0" />
             <input type="radio" name="accent" #if(1 == ${teacherApplication.accent})checked="checked"#end value="1" />
             <input type="radio" name="accent" #if(2 == ${teacherApplication.accent})checked="checked"#end value="2" />
             <input type="radio" name="accent" disabled="disabled" value="3" /></td>
@@ -196,7 +196,7 @@
     <tr>
         <td width="*">&middot;Is friendly throughout the class and offers positive feedback (rewards).</td>
         <td width="20">&nbsp;</td>
-        <td width="76" valign="top"><input type="radio" name="positive" #if(0 == ${teacherApplication.positive})checked="checked"#end value="0" />
+        <td width="76" valign="top"><input type="radio" name="positive" #if(0 == ${teacherApplication.positive} && (0 != $!{teacherApplication.auditorId} || "SAVE"==$!{teacherPeComments.status}))checked="checked"#end value="0" />
             <input type="radio" name="positive" #if(1 == ${teacherApplication.positive})checked="checked"#end value="1" />
             <input type="radio" name="positive" #if(2 == ${teacherApplication.positive})checked="checked"#end value="2" />
             <input type="radio" name="positive" #if(3 == ${teacherApplication.positive})checked="checked"#end value="3" /></td>
@@ -204,7 +204,7 @@
     <tr>
         <td width="*">&middot;Can tell when the student does not understand and changes method/activity accordingly.</td>
         <td width="20">&nbsp;</td>
-        <td width="76" valign="top"><input type="radio" name="engaged" #if(0 == ${teacherApplication.engaged})checked="checked"#end value="0" />
+        <td width="76" valign="top"><input type="radio" name="engaged" #if(0 == ${teacherApplication.engaged} && (0 != $!{teacherApplication.auditorId} || "SAVE"==$!{teacherPeComments.status}))checked="checked"#end value="0" />
             <input type="radio" name="engaged" #if(1 == ${teacherApplication.engaged})checked="checked"#end value="1" />
             <input type="radio" name="engaged" #if(2 == ${teacherApplication.engaged})checked="checked"#end value="2" />
             <input type="radio" name="engaged" #if(3 == ${teacherApplication.engaged})checked="checked"#end value="3" /></td>
@@ -217,7 +217,7 @@
     <tr>
         <td width="*">&middot;Overall teaching methods work to accomplish lesson objectives.</td>
         <td width="20">&nbsp;</td>
-        <td width="76" valign="top"><input type="radio" name="appearance" #if(0 == ${teacherApplication.appearance})checked="checked"#end value="0" />
+        <td width="76" valign="top"><input type="radio" name="appearance" #if(0 == ${teacherApplication.appearance} && (0 != $!{teacherApplication.auditorId} || "SAVE"==$!{teacherPeComments.status}))checked="checked"#end value="0" />
             <input type="radio" name="appearance" #if(1 == ${teacherApplication.appearance})checked="checked"#end value="1" />
             <input type="radio" name="appearance" #if(2 == ${teacherApplication.appearance})checked="checked"#end value="2" />
             <input type="radio" name="appearance" disabled="disabled" value="3" /></td>
@@ -225,7 +225,7 @@
     <tr>
         <td width="*">&middot;Teacher simplifies /extends material that is too difficult/easy for the student.</td>
         <td width="20">&nbsp;</td>
-        <td width="76" valign="top"><input type="radio" name="phonics" #if(0 == ${teacherApplication.phonics})checked="checked"#end value="0" />
+        <td width="76" valign="top"><input type="radio" name="phonics" #if(0 == ${teacherApplication.phonics} && (0 != $!{teacherApplication.auditorId} || "SAVE"==$!{teacherPeComments.status}))checked="checked"#end value="0" />
             <input type="radio" name="phonics" #if(1 == ${teacherApplication.phonics})checked="checked"#end value="1" />
             <input type="radio" name="phonics" #if(2 == ${teacherApplication.phonics})checked="checked"#end value="2" />
             <input type="radio" name="phonics" disabled="disabled" value="3" /></td>
