@@ -117,6 +117,19 @@ define(depends, function () {
             }
         }else{
             $("input[name='totalScore']").val($("#score").html());
+
+            if (!Tools.isEmpty($("textarea[name='things']").val())) {
+                if (length($("textarea[name='things']").val()) > 1000 || length($("textarea[name='things']").val()) < 200) {
+                    alert("The comment box content length must between 200 and 1000!");
+                    return;
+                }
+            }
+            if (!Tools.isEmpty($("textarea[name='areas']").val())) {
+                if (length($("textarea[name='areas']").val()) > 1000 || length($("textarea[name='areas']").val()) < 200) {
+                    alert("The comment box content length must between 200 and 1000!");
+                    return;
+                }
+            }
         }
 
         $("input[name='submitType']").val(type);

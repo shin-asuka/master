@@ -109,6 +109,19 @@ define(["function", "jquery-form", "jquery-bootstrap", "jquery-load", "countdown
             }
         } else {
             $("input[name='totalScore']").val($("#score").html());
+
+            if (!Tools.isEmpty($("textarea[name='things']").val())) {
+                if (length($("textarea[name='things']").val()) > 1000 || length($("textarea[name='things']").val()) < 200) {
+                    alert("The comment box content length must between 200 and 1000!");
+                    return;
+                }
+            }
+            if (!Tools.isEmpty($("textarea[name='areas']").val())) {
+                if (length($("textarea[name='areas']").val()) > 1000 || length($("textarea[name='areas']").val()) < 200) {
+                    alert("The comment box content length must between 200 and 1000!");
+                    return;
+                }
+            }
         }
 
         $("input[name='submitType']").val(type);
@@ -117,7 +130,7 @@ define(["function", "jquery-form", "jquery-bootstrap", "jquery-load", "countdown
     };
 
     var length = function (str) {
-        return str.replace(/[\u0391-\uFFE5]/g,"aa").length;
+        return str.replace(/[\u0391-\uFFE5]/g, "aa").length;
     };
 
     var getMockClassResultType = function (_score) {
