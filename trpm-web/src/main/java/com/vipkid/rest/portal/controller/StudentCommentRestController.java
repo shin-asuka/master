@@ -8,6 +8,7 @@ import java.util.List;
 import com.vipkid.enums.TeacherEnum.LifeCycle;
 import com.vipkid.http.service.GatewayAppService;
 import com.vipkid.http.utils.JsonUtils;
+import com.vipkid.payroll.service.StudentService;
 import com.vipkid.rest.portal.vo.StudentCommentApi;
 import com.vipkid.rest.RestfulController;
 import com.vipkid.rest.interceptor.annotation.RestInterface;
@@ -17,7 +18,14 @@ import com.vipkid.rest.portal.vo.StudentCommentTotalApi;
 import com.vipkid.rest.service.LoginService;
 import com.vipkid.rest.utils.ApiResponseUtils;
 import com.vipkid.rest.utils.ext.baidu.BaiduTranslateAPI;
+import com.vipkid.trpm.dao.LessonDao;
+import com.vipkid.trpm.entity.Lesson;
+import com.vipkid.trpm.entity.OnlineClass;
+import com.vipkid.trpm.entity.Student;
+import com.vipkid.trpm.service.portal.OnlineClassService;
+import com.vipkid.trpm.util.LessonSerialNumber;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.time.DateFormatUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +46,12 @@ public class StudentCommentRestController extends RestfulController{
 	
 	@Autowired
 	private GatewayAppService gatewayAppService;
-
+	@Autowired
+	private OnlineClassService onlineClassService;
+	@Autowired
+	private StudentService studentService;
+	@Autowired
+	private LessonDao lessonDao;
 	/**
 	 * 获取一个可双向翻页的StudentComment分页
 	 * @param request
@@ -152,7 +165,27 @@ public class StudentCommentRestController extends RestfulController{
 		try {
 			Stopwatch stopwatch = Stopwatch.createStarted();
 			logger.info("【StudentCommentRestController.getStudentCommentByPage】input：teacherId={},start={},limit={},ratingLevel={}",teacherId,start,limit,ratingLevel);
-			StudentCommentPageApi data = gatewayAppService.getStudentCommentListByTeacherId(teacherId,start,limit,ratingLevel);
+			StudentCommentPageApi data = gatewayAppService.getStudentCommentListByTeacherId(teacherId, start, limit, ratingLevel);
+			for(StudentCommentApi stuCommentApi : data.getData()){
+				OnlineClass onlineClass = onlineClassService.getOnlineClassById(stuCommentApi.getClass_id());
+				if(onlineClass!= null) {
+					stuCommentApi.setScheduleDateTime(DateFormatUtils.format(onlineClass.getScheduledDateTime(), "yyyy-MM-dd hh:mm"));
+					//构造OnlineClassName
+					Lesson lesson = lessonDao.findById(onlineClass.getLessonId());
+					if(lesson!=null) {
+						String lessonSn = lesson.getSerialNumber();
+						String onlineClassName = LessonSerialNumber.formatToStudentCommentPattern(lessonSn);
+						onlineClassName = onlineClassName + lesson.getName();
+						stuCommentApi.setOnlineClassName(onlineClassName);
+					}
+					Student student = studentService.getById(stuCommentApi.getStudent_id().longValue());
+					if(student!=null) {
+						stuCommentApi.setStudentAvatar(student.getAvatar());
+						stuCommentApi.setStudentName(student.getEnglishName());
+					}
+				}
+			}
+
 			long millis =stopwatch.stop().elapsed(TimeUnit.MILLISECONDS);
 			logger.info("【StudentCommentRestController.getStudentCommentByPage】output：result={},运行时间={}ms ", JSONObject.toJSONString(data),millis);
 			return ApiResponseUtils.buildSuccessDataResp(data);

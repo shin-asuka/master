@@ -67,4 +67,27 @@ public class LessonSerialNumber {
         }
         return isPreVipkid;
     }
+
+    public static String formatToStudentCommentPattern(String lessonSn){
+        lessonSn = lessonSn.toLowerCase();
+        String[] words = lessonSn.split("-");
+        String unit = "";
+        String lesson = "";
+        for(String word : words){
+            if(word.indexOf("u")>-1){
+                unit = word.replaceAll("u","Unit ");
+            }
+            if(word.indexOf("l")>-1 && word.indexOf("lc") == -1){
+                lesson = word.replaceAll("l","Lesson ");
+            }
+        }
+        if(StringUtils.isNotEmpty(unit) && StringUtils.isNotEmpty(lesson)){
+            StringBuffer sb = new StringBuffer();
+            String ret = sb.append(unit).append(" - ").append(lesson).append(" - ").toString();
+            return ret;
+        }else {
+            logger.error("【formatToStudentCommentPattern】：解析lessonSn失败");
+            return "";
+        }
+    }
 }

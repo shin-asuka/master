@@ -16,7 +16,7 @@ public class StudentCommentApi {
     private Integer rating;
     private String create_time;
     private String studentName;
-    private String studentHeadIcon;
+    private String studentAvatar;
     private String scheduleDateTime;
     private String onlineClassName;
 
@@ -108,14 +108,6 @@ public class StudentCommentApi {
         this.studentName = studentName;
     }
 
-    public String getStudentHeadIcon() {
-        return studentHeadIcon;
-    }
-
-    public void setStudentHeadIcon(String studentHeadIcon) {
-        this.studentHeadIcon = studentHeadIcon;
-    }
-
     public String getScheduleDateTime() {
         return scheduleDateTime;
     }
@@ -130,5 +122,13 @@ public class StudentCommentApi {
 
     public void setOnlineClassName(String onlineClassName) {
         this.onlineClassName = onlineClassName;
+    }
+
+    public String getStudentAvatar() {
+        return studentAvatar;
+    }
+
+    public void setStudentAvatar(String studentAvatar) {
+        this.studentAvatar = studentAvatar;
     }
 }
