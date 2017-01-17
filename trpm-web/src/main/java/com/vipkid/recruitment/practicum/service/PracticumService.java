@@ -26,6 +26,7 @@ import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.entity.TeacherQuiz;
 import com.vipkid.trpm.proxy.OnlineClassProxy;
 import com.vipkid.trpm.proxy.OnlineClassProxy.ClassType;
+import com.vipkid.trpm.service.huanxin.HuanxinService;
 import com.vipkid.trpm.util.DateUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.map.HashedMap;
@@ -61,6 +62,8 @@ public class PracticumService {
     private TeacherApplicationLogDao teacherApplicationLogDao;
     @Autowired
     private RecruitmentService recruitmentService;
+    @Autowired
+    private HuanxinService huanxinService;
 
     private static Logger logger = LoggerFactory.getLogger(PracticumService.class);
 
@@ -303,6 +306,9 @@ public class PracticumService {
                 if (CollectionUtils.isEmpty(quizslist)) {
                     teacherQuizDao.insertQuiz(teacher.getId(), teacher.getId(),Version.ADMIN_QUIZ);
                 }
+                //成为regular老师,需要注册环信id
+                //http://docs.easemob.com/im/100serverintegration/20users
+                huanxinService.signUpHuanxin(String.valueOf(teacher.getId()),String.valueOf(teacher.getId()));
             } else {
                 teacher.setLifeCycle(LifeCycle.CONTRACT_INFO.toString());
             }
