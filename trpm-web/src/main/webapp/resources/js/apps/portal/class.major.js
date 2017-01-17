@@ -492,31 +492,6 @@ define(["function","jquery-bootstrap","jquery-load","countdown" ], function() {
 	  }
 	}
 
-	var show = function (serialNumber,onlineClassId,microserviceURL) {
-		$.ajax({
-			url : webPath+"/changeClassroom",
-			data : {onlineClassId:roomId},
-			type : "GET",
-			cache : false,
-			dataType : "json",
-			success : function(data){
-				if(data!=null){
-					window.location.href = data;
-				}
-			},
-			error : function(){
-				setTimeout(function(){changeClassRoom(scheduleDateTime,serialNumber,oldStatus)}, 3000);
-			}
-		});
-	}
-
-	var  changeClassRoom111 = function (scheduleDateTime,serialNumber,oldStatus) {
-		var interval = 20 * 1000;
-		if (oldStatus == "FINISHED" && serialNumber.indexOf("M") == 0){
-			setInterval(show(),interval);
-		}
-	}
-
 	var changeClassRoom = function(scheduledDateTime,serialNumber,oldStatus) {
 		if(!scheduledDateTime || !serialNumber || !oldStatus){
 			return;
