@@ -4,7 +4,7 @@
 .finishTypeItem, .finishTypeButton { float: right!important; }
 .mainContainer { margin: 0 auto 0 auto!important; }
 </style>
-<form class='feedBackForm' id ='practicumFeedBackForm' action="#springUrl('/doAudit.json')">
+<form class='feedBackForm' id ='practicumFeedBackForm' method="post" action="#springUrl('/doAudit.json')">
     <div class="wrapper"> 
         ##关闭
         <div class='closeBtn' onclick="require('classpracticum').closeFeedBackForm()"></div>
