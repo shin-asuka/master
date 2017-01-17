@@ -169,6 +169,7 @@ define(depends, function () {
                 });
                 return false;
             }
+            $("input[name='submitType']").val("SUBMIT");
         }
 
         $("#type").val(type);

@@ -230,6 +230,7 @@ define(["function", "jquery-form", "jquery-bootstrap", "jquery-load", "countdown
                 });
                 return false;
             }
+            $("input[name='submitType']").val("SUBMIT");
         }
 
         $("#type").val(type);
