@@ -16,6 +16,8 @@ import com.vipkid.rest.portal.vo.StudentCommentPageApi;
 import com.vipkid.rest.portal.vo.StudentCommentTotalApi;
 import com.vipkid.rest.service.LoginService;
 import com.vipkid.rest.utils.ApiResponseUtils;
+import com.vipkid.rest.utils.ext.baidu.BaiduTranslateAPI;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -160,4 +162,24 @@ public class StudentCommentRestController extends RestfulController{
 		return ApiResponseUtils.buildErrorResp(1001, "服务器端错误");
 	}
 
+	@RequestMapping(value = "/translateZhToEn",method = RequestMethod.GET)
+	public Map<String, Object> translateZhToEn(HttpServletRequest request, HttpServletResponse response,
+													   @RequestParam(value="text",required=false,defaultValue = "") String text) {
+		try {
+			Stopwatch stopwatch = Stopwatch.createStarted();
+			Map map = Maps.newHashMap();
+			String retText = "";
+			logger.info("【StudentCommentRestController.translateZhToEn】input：text={}",text);
+			if (StringUtils.isNotBlank(text)) {
+				retText = BaiduTranslateAPI.translate(text);
+				map.put("relText",retText);
+			}
+			long millis = stopwatch.stop().elapsed(TimeUnit.MILLISECONDS);
+			logger.info("【StudentCommentRestController.translateZhToEn】output：result={},运行时间={}ms ", JSONObject.toJSONString(retText),millis);
+			return ApiResponseUtils.buildSuccessDataResp(map);
+		} catch (Exception e) {
+			logger.error("【StudentCommentRestController.getStudentCommentByPage】传入参数：text={}。抛异常: {}",text,e);
+		}
+		return ApiResponseUtils.buildErrorResp(1001, "服务器端错误");
+	}
 }
