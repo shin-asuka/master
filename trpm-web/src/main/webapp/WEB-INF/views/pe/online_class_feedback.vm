@@ -28,15 +28,15 @@
                 <hr />
             <div calss="row">
                 <div class='btnDiv'>
-					#if(0==$!{teacherApplication.auditorId})
+					##if(0==$!{teacherApplication.auditorId})
 					<div>
                       <input onclick="require('pe').showFinshType()" type='button' value='ReSchedule' class='ui blue button submitBtn'/>
                     </div>
-					#end
+					##end
                     <div style="margin-top: 3px;">
-						#if(!$!{teacherPeComments})
+						##if(!$!{teacherPeComments})
                         <input type='reset' onclick="require('pe').clearTags()" value='Cancel' class='ui blue button submitBtn' style="margin:0;" />
-                        #end
+                        ##end
 						<input type="button" value="Save" onclick="require('pe').doSubmit('SAVE')" class='ui blue button submitBtn' style="margin:0;" />
                         <input type="button" value="Submit" onclick="require('pe').doSubmit('SUBMIT')" class='ui blue button submitBtn' style="margin:0;" />
                     </div>
