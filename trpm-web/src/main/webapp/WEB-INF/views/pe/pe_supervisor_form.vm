@@ -12,7 +12,7 @@
     <tr>
         <td width="*">&middot;Activities are clearly planned out ahead of time (teacher has prepared materials to help explain activities clearly).</td>
         <td width="20">&nbsp;</td>
-        <td width="76" valign="top"><input type="radio" name="delayDays" #if(0 == ${teacherApplication.delayDays} && 0 != $!{teacherApplication.auditorId})checked="checked"#end value="0" />
+        <td width="76" valign="top"><input type="radio" name="delayDays" #if(0 == ${teacherApplication.delayDays})checked="checked"#end value="0" />
             <input type="radio" name="delayDays" #if(1 == ${teacherApplication.delayDays})checked="checked"#end value="1" />
             <input type="radio" name="delayDays" #if(2 == ${teacherApplication.delayDays})checked="checked"#end value="2" />
             <input type="radio" name="delayDays" #if(3 == ${teacherApplication.delayDays})checked="checked"#end value="3" /></td>
@@ -154,7 +154,7 @@
     <tr>
         <td width="*">&middot;Is friendly throughout the class and offers positive feedback (rewards).</td>
         <td width="20">&nbsp;</td>
-        <td width="76" valign="top"><input type="radio" name="teenagerTeachingExperience" #if(0 == ${teacherApplication.teenagerTeachingExperience} && 0 != $!{teacherApplication.auditorId})checked="checked"#end value="0" />
+        <td width="76" valign="top"><input type="radio" name="teenagerTeachingExperience" #if(0 == ${teacherApplication.teenagerTeachingExperience})checked="checked"#end value="0" />
             <input type="radio" name="teenagerTeachingExperience" #if(1 == ${teacherApplication.teenagerTeachingExperience})checked="checked"#end value="1" />
             <input type="radio" name="teenagerTeachingExperience" #if(2 == ${teacherApplication.teenagerTeachingExperience})checked="checked"#end value="2" />
             <input type="radio" name="teenagerTeachingExperience" #if(3 == ${teacherApplication.teenagerTeachingExperience})checked="checked"#end value="3" /></td>
@@ -162,7 +162,7 @@
     <tr>
         <td width="*">&middot;Can tell when the student does not understand and changes method/activity accordingly.</td>
         <td width="20">&nbsp;</td>
-        <td width="76" valign="top"><input type="radio" name="teflOrToselCertificate" #if(0 == ${teacherApplication.teflOrToselCertificate} && 0 != $!{teacherApplication.auditorId})checked="checked"#end value="0" />
+        <td width="76" valign="top"><input type="radio" name="teflOrToselCertificate" #if(0 == ${teacherApplication.teflOrToselCertificate})checked="checked"#end value="0" />
             <input type="radio" name="teflOrToselCertificate" #if(1 == ${teacherApplication.teflOrToselCertificate})checked="checked"#end value="1" />
             <input type="radio" name="teflOrToselCertificate" #if(2 == ${teacherApplication.teflOrToselCertificate})checked="checked"#end value="2" />
             <input type="radio" name="teflOrToselCertificate" #if(3 == ${teacherApplication.teflOrToselCertificate})checked="checked"#end value="3" /></td>
