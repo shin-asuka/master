@@ -117,7 +117,7 @@ define(["function", "jquery-form", "jquery-bootstrap", "jquery-load", "countdown
     };
 
     var length = function (str) {
-        return str.replace(/[^\x00-\xff]/g, "*").length;
+        return str.replace(/[\u0391-\uFFE5]/g,"aa").length;
     };
 
     var getMockClassResultType = function (_score) {
