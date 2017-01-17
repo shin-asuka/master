@@ -968,6 +968,7 @@ public class OnlineClassService {
                return  null;
             }else{
                 //return  "/classroom/"+ onlineclassId + "-" + studentId + "-" + lessonId + ".shtml";
+                logger.info("teacherID: {} 24小时取消约课后进入教室{}",teacherId,onlineclassId + "-" + studentId + "-" + lessonId);
                 return  "/classroom/"+ onlineclassId + "-" + studentId + "-" + lessonId + ".shtml";
             }
         }else{

@@ -376,7 +376,7 @@ public class ClassroomsRestServiceImpl implements ClassroomsRestService{
             if (is24Hour && OnlineClassEnum.ClassStatus.isFinished(status)
                     && isCurrent && ApplicationConstant.FinishType.isStudentNoShow(finishType)){
                 classroomDetail.setStatus(OnlineClassEnum.ClassStatus.BOOKED.toString() );
-				classroomDetail.setFinishType(ApplicationConstant.FinishType.AS_SCHEDULED.toString());
+				//classroomDetail.setFinishType(ApplicationConstant.FinishType.AS_SCHEDULED.toString());
             }else {
                 classroomDetail.setStatus(status);
 				classroomDetail.setFinishType(finishType);
