@@ -908,10 +908,10 @@ public class BookingsService {
         if (set24HourRequest.getClassType() == ClassType.MAJOR.val()) {
             final int weekOffset = set24HourRequest.getWeekOffset();
 
-            if (checkLess15TimeSlots(teacher.getId(), teacher.getTimezone(), weekOffset)) {
-                resultMap.put("error", BookingsResult.TIMESLOT_LESS_15);
-                return resultMap;
-            }
+//            if (checkLess15TimeSlots(teacher.getId(), teacher.getTimezone(), weekOffset)) {
+//                resultMap.put("error", BookingsResult.TIMESLOT_LESS_15);
+//                return resultMap;
+//            }
         }
 
         resultMap.put("result", set24Hours(set24HourRequest, teacher));
