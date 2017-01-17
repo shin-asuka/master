@@ -350,12 +350,13 @@ public class ClassroomsRestServiceImpl implements ClassroomsRestService{
 			classroomDetail.setLearningCycleId((long) eachMap.get("learningCycleId"));
 			classroomDetail.setLessonId((long) eachMap.get("lessonId"));
 			classroomDetail.setLessonName((String) eachMap.get("lessonName"));
-			classroomDetail.setLessonSerialNumber((String) eachMap.get("serialNumber"));
 			classroomDetail.setShortNotice((int) eachMap.get("shortNotice"));
 			classroomDetail.setStudentId((long) eachMap.get("studentId"));
 			classroomDetail.setStudentName((String) eachMap.get("englishName"));
             teacherId = (long) eachMap.get("teacherId");
 			classroomDetail.setTeacherId(teacherId);
+			String serialNumber = (String) eachMap.get("serialNumber");
+			classroomDetail.setLessonSerialNumber(serialNumber);
 
             Timestamp timeStamp = (Timestamp) eachMap.get("scheduledDateTime");
             Date date = new Date(timeStamp.getTime());
@@ -373,8 +374,8 @@ public class ClassroomsRestServiceImpl implements ClassroomsRestService{
             String status = (String) eachMap.get("status");
             Date nowTime = new Date();
             boolean isCurrent = date.after(nowTime);
-            if (is24Hour && OnlineClassEnum.ClassStatus.isFinished(status)
-                    && isCurrent && ApplicationConstant.FinishType.isStudentNoShow(finishType)){
+            if (is24Hour && OnlineClassEnum.ClassStatus.isFinished(status) && isCurrent
+					&& ApplicationConstant.FinishType.isStudentNoShow(finishType) && serialNumber.indexOf("M")==0){
                 classroomDetail.setStatus(OnlineClassEnum.ClassStatus.BOOKED.toString() );
 				//classroomDetail.setFinishType(ApplicationConstant.FinishType.AS_SCHEDULED.toString());
             }else {
