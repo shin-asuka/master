@@ -382,6 +382,7 @@ public class ScheduleService {
             return String.valueOf(map.get("id"));
         }).collect(Collectors.toList());
         List<String> idsFor24Hour = get24HourClass(teacherId, onlineClassIds);
+        boolean is24Hour;
 
         for (Map<String, Object> teacherSchedule : teacherScheduleList) {
             long onlineClassId = (Long) teacherSchedule.get("id");
@@ -416,8 +417,10 @@ public class ScheduleService {
             /* 设置是否是24小时的课程 */
             if (idsFor24Hour.stream().anyMatch(id -> id.equals(String.valueOf(onlineClassId)))) {
                 teacherSchedule.put("is24Hour", true);
+
             } else {
                 teacherSchedule.put("is24Hour", false);
+
             }
 
             /* 设置OPEN课程的学生数量 */
@@ -482,6 +485,11 @@ public class ScheduleService {
                 /* 新状态为FINISHED，老的FinishType为StudentNoShow则替换 */
                 if (ClassStatus.isFinished(newStatus) && FinishType.isStudentNoShow(oldFinishType)) {
                     isReplaced = true;
+                }
+                /*学生24小时取消课，老状态为StudentNoShow，ClassStatus为isAvailable，is24Hour为true，将状态改为BOOKED*/
+                boolean is24Hour = (boolean)teacherSchedule.get("is24Hour");
+                if (is24Hour && FinishType.isStudentNoShow(oldFinishType) && ClassStatus.isAvailable(newStatus)){
+                    teacherSchedule.put("status",ClassStatus.BOOKED);
                 }
             }
 

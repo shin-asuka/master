@@ -3,14 +3,14 @@ package com.vipkid.rest.portal.service.impl;
 import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.TimeZone;
+import java.util.*;
 
 import com.google.api.client.util.Maps;
+import com.vipkid.enums.OnlineClassEnum;
 import com.vipkid.file.service.QNService;
+import com.vipkid.trpm.constant.ApplicationConstant;
+import com.vipkid.trpm.service.portal.ScheduleService;
+import javafx.concurrent.ScheduledService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.community.config.PropertyConfigurer;
@@ -88,6 +88,9 @@ public class ClassroomsRestServiceImpl implements ClassroomsRestService{
 
 	@Autowired
 	private QNService qnService;
+
+    @Autowired
+    private ScheduleService scheduleService;
 
 	public Map<String, Object> getClassroomsData(long teacherId, int offsetOfMonth, String courseType, int page) {
 		if (!CourseType.isPracticum(courseType)) {// 只要不是"PRACTICUM"，就赋值"MAJOR"
@@ -328,22 +331,56 @@ public class ClassroomsRestServiceImpl implements ClassroomsRestService{
 		List<Map<String, Object>> dataList = (List<Map<String, Object>>) dataListMap.get("dataList");// 复用以前代码产生的dataList，后面对其重新包装
 		if (dataList == null)
 			return null;
+        List<String> onlineClassIds =Lists.newArrayList();
+
+        for (Map<String, Object> onlineClassMap : dataList) {
+            String onlineClassId = onlineClassMap.get("id").toString();
+            onlineClassIds.add(onlineClassId);
+        }
+        long teacherId = teacher.getId();
+        List<String> idsFor24Hour = Lists.newArrayList();
+		idsFor24Hour = scheduleService.get24HourClass(teacherId, onlineClassIds);
+        boolean is24Hour = false;
+
 		int id = 0;//加一个id方便前端排序
 		for (Map<String, Object> eachMap : dataList) {
 			ClassroomDetail classroomDetail = new ClassroomDetail();
 			classroomDetail.setId(id);
-			classroomDetail.setFinishType((String) eachMap.get("finishType"));
 			classroomDetail.setIsPaidTrail((int) eachMap.get("isPaidTrail"));
 			classroomDetail.setLearningCycleId((long) eachMap.get("learningCycleId"));
 			classroomDetail.setLessonId((long) eachMap.get("lessonId"));
 			classroomDetail.setLessonName((String) eachMap.get("lessonName"));
 			classroomDetail.setLessonSerialNumber((String) eachMap.get("serialNumber"));
-			classroomDetail.setOnlineClassId((long) eachMap.get("id"));
 			classroomDetail.setShortNotice((int) eachMap.get("shortNotice"));
-			classroomDetail.setStatus((String) eachMap.get("status"));
 			classroomDetail.setStudentId((long) eachMap.get("studentId"));
 			classroomDetail.setStudentName((String) eachMap.get("englishName"));
-			classroomDetail.setTeacherId((long) eachMap.get("teacherId"));
+            teacherId = (long) eachMap.get("teacherId");
+			classroomDetail.setTeacherId(teacherId);
+
+            Timestamp timeStamp = (Timestamp) eachMap.get("scheduledDateTime");
+            Date date = new Date(timeStamp.getTime());
+            DateFormat df = new SimpleDateFormat("MMM dd yyyy, hh:mma", Locale.ENGLISH);
+            df.setTimeZone(TimeZone.getTimeZone(teacher.getTimezone()));
+            String scheduledDateTime = df.format(date);
+            classroomDetail.setScheduledDateTime(scheduledDateTime);
+
+            String onlineClassId = String.valueOf(eachMap.get("id"));
+            classroomDetail.setOnlineClassId(Long.parseLong(onlineClassId));
+            if (idsFor24Hour.contains(onlineClassId)){
+                is24Hour = true;
+            }
+            String finishType = (String) eachMap.get("finishType");
+            String status = (String) eachMap.get("status");
+            Date nowTime = new Date();
+            boolean isCurrent = date.after(nowTime);
+            if (is24Hour && OnlineClassEnum.ClassStatus.isFinished(status)
+                    && isCurrent && ApplicationConstant.FinishType.isStudentNoShow(finishType)){
+                classroomDetail.setStatus(OnlineClassEnum.ClassStatus.BOOKED.toString() );
+				classroomDetail.setFinishType(ApplicationConstant.FinishType.AS_SCHEDULED.toString());
+            }else {
+                classroomDetail.setStatus(status);
+				classroomDetail.setFinishType(finishType);
+            }
 
 			String serialNumber = (String) eachMap.get("serialNumber");
 			if(StringUtils.isNotEmpty(serialNumber)){
@@ -366,13 +403,6 @@ public class ClassroomsRestServiceImpl implements ClassroomsRestService{
 					classroomDetail.setVideoDownloadUrl(videoDownloadUrl);
 				}
 			}
-
-			Timestamp timeStamp = (Timestamp) eachMap.get("scheduledDateTime");
-			Date date = new Date(timeStamp.getTime());
-			DateFormat df = new SimpleDateFormat("MMM dd yyyy, hh:mma", Locale.ENGLISH);
-			df.setTimeZone(TimeZone.getTimeZone(teacher.getTimezone())); 
-			String scheduledDateTime = df.format(date);
-			classroomDetail.setScheduledDateTime(scheduledDateTime);
 
 			addReportTypeAndStatus(eachMap, date, classroomDetail);
 

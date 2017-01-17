@@ -22,10 +22,9 @@ define(["function","jquery-bootstrap","jquery-load","countdown" ], function() {
 	};
 
 	/** 初始化 */
-	var init = function(serverTime, scheduleTime,createDateTime, teacherId) {
-
+	var init = function(serverTime, scheduleTime,createDateTime, teacherId,scheduledDateTime,serialNumber,oldStatus) {
 		initInfoMenu();
-
+		changeClassRoom(scheduledDateTime,serialNumber,oldStatus);
 		setTimeout(function() {
 			collectForOnlineClassroom(teacherId);
 		}, 1000*60*2)
@@ -493,6 +492,59 @@ define(["function","jquery-bootstrap","jquery-load","countdown" ], function() {
 	  }
 	}
 
+	var show = function (serialNumber,onlineClassId,microserviceURL) {
+		$.ajax({
+			url : webPath+"/changeClassroom",
+			data : {onlineClassId:roomId},
+			type : "GET",
+			cache : false,
+			dataType : "json",
+			success : function(data){
+				if(data!=null){
+					window.location.href = data;
+				}
+			},
+			error : function(){
+				setTimeout(function(){changeClassRoom(scheduleDateTime,serialNumber,oldStatus)}, 3000);
+			}
+		});
+	}
+
+	var  changeClassRoom111 = function (scheduleDateTime,serialNumber,oldStatus) {
+		var interval = 20 * 1000;
+		if (oldStatus == "FINISHED" && serialNumber.indexOf("M") == 0){
+			setInterval(show(),interval);
+		}
+	}
+
+	var changeClassRoom = function(scheduledDateTime,serialNumber,oldStatus) {
+		if(!scheduledDateTime || !serialNumber || !oldStatus){
+			return;
+		}
+		if (oldStatus == "FINISHED" && serialNumber.indexOf("M") == 0){
+			var url = webPath + "/changeClassroom.json";
+			var interval = 4 * 1000;
+			var params = {
+				"scheduledDateTime" : scheduledDateTime
+			};
+			setInterval(function() {
+				$.ajax({
+					url : url,
+					type : "POST",
+					data : params,
+					success : function(data){
+						if(data!=null){
+							window.location.href = data.data;
+						}
+					},
+					error : function(){
+						setTimeout(function(){changeClassRoom(scheduledDateTime,serialNumber,oldStatus)}, 3000);
+					}
+				});
+			}, interval);
+		}
+	};
+
 	return {
 		init : init,
 		openInfo:openInfo,
@@ -501,7 +553,8 @@ define(["function","jquery-bootstrap","jquery-load","countdown" ], function() {
 		confirmExitClassroom : confirmExitClassroom,
 		clickHelp:clickHelp,
 		clickCancelHelp:clickCancelHelp,
-		clickFAQ:clickFAQ
+		clickFAQ:clickFAQ,
+		changeClassRoom:changeClassRoom
 	};
 
 });

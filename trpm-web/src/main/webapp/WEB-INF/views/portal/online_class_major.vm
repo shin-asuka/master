@@ -79,6 +79,7 @@
 					</span>
                 </div>
 				#end
+
 			##<!-- 星星展示 info help 和 新学生勋章 -->
 				<div class="classroom2Info">
 				    <button class="infoBtn" id="infoBtn" onclick="require('classmajor').openInfo('$!student.id','$lesson.serialNumber')">Info</button>
@@ -384,7 +385,7 @@
 
 #@requireJs()
     require(['classmajor'], function(classmajor){
-    	classmajor.init("$!serverTime", "$!scheduleTime","$!studentUser.createDateTime", "$!TRPM_TEACHER.id");
+    	classmajor.init("$!serverTime", "$!scheduleTime","$!studentUser.createDateTime", "$!TRPM_TEACHER.id","$!onlineClass.scheduledDateTime","$!lesson.serialNumber","$!oldStatus");
         #if($studentUser.createDateTime)
           classmajor.sendTeacherInClassroom("$!onlineClass.id");
         #end

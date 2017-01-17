@@ -4,8 +4,12 @@ import com.google.api.client.util.Lists;
 import com.google.common.collect.Maps;
 import com.vipkid.enums.OnlineClassEnum;
 import com.vipkid.enums.TeacherApplicationEnum.Result;
+import com.vipkid.http.utils.JsonUtils;
+import com.vipkid.recruitment.common.service.RecruitmentService;
+import com.vipkid.recruitment.dao.TeacherLockLogDao;
 import com.vipkid.recruitment.entity.TeacherApplication;
 import com.vipkid.rest.service.LoginService;
+import com.vipkid.rest.utils.ApiResponseUtils;
 import com.vipkid.trpm.constant.ApplicationConstant.FinishType;
 import com.vipkid.trpm.entity.*;
 import com.vipkid.trpm.service.pe.*;
@@ -24,6 +28,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -414,9 +419,17 @@ public class OnlineClassController extends AbstractPortalController {
         return jsonView();
     }
 
-    // FAQ静态页面的controler
-    @RequestMapping("/faq")
-    public String showFAQ(HttpServletRequest request, HttpServletResponse response, Model model) {
-        return view("faq");
+
+    @RequestMapping("/changeClassroom")
+    public Map<String, Object> changeClassroom(HttpServletRequest request, HttpServletResponse response,
+                                  @RequestParam Timestamp scheduledDateTime,Model model){
+        String newClassRoomUrl = onlineclassService.getNewClassRoom(loginService.getTeacherId(),scheduledDateTime);
+        return  ApiResponseUtils.buildSuccessDataResp((Object) newClassRoomUrl);
     }
+
+  //FAQ静态页面的controler
+  	@RequestMapping("/faq")
+  	public String showFAQ(HttpServletRequest request, HttpServletResponse response, Model model) {
+  		return view("faq");
+  	}
 }

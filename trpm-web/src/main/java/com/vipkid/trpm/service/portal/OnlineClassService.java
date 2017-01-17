@@ -262,7 +262,11 @@ public class OnlineClassService {
         } else {
             assessmentReport = assessmentReportDao.findReportByStudentIdAndName(serialNumber, studentId);
         }
+
         modelMap.put("isNewUa", assessmentReport == null ? 1 : 0);
+
+        String status = onlineClass.getStatus();
+        modelMap.put("oldStatus",status);
         return modelMap;
     }
 
@@ -946,5 +950,28 @@ public class OnlineClassService {
         logger.error("checkAndAddFeedback error input param error!studentId={},teacherId={},onlineClass={},lesson={}",
             studentId, teacherId, onlineClass, lesson);
         return null;
+    }
+
+    /**
+     * 根据teacherID和当前课的scheduledDateTime找出新预约学生的教室（24小时学生取消课业务）
+     * @param teacherId
+     * @param scheduledDateTime
+     * @return
+     */
+    public String getNewClassRoom(long teacherId,Timestamp scheduledDateTime){
+        Map<String,Object> onlineClassInfo = onlineClassDao.findOnlineClassByTeacherIDAndScheduleDateTime(teacherId,scheduledDateTime);
+        if (onlineClassInfo != null){
+            String onlineclassId = onlineClassInfo.get("id").toString();
+            String studentId = onlineClassInfo.get("studentId").toString();
+            String lessonId = onlineClassInfo.get("lessonId").toString();
+            if (StringUtils.isEmpty(onlineclassId) || StringUtils.isEmpty(studentId) || StringUtils.isEmpty(Long.toString(teacherId))){
+               return  null;
+            }else{
+                //return  "/classroom/"+ onlineclassId + "-" + studentId + "-" + lessonId + ".shtml";
+                return  "/classroom/"+ onlineclassId + "-" + studentId + "-" + lessonId + ".shtml";
+            }
+        }else{
+            return null;
+        }
     }
 }
