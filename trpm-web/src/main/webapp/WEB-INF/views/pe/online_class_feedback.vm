@@ -28,7 +28,7 @@
                 <hr />
             <div calss="row">
                 <div class='btnDiv'>
-					#if(0!=$!{teacherApplication.auditorId})
+					#if(0==$!{teacherApplication.auditorId})
 					<div>
                       <input onclick="require('pe').showFinshType()" type='button' value='ReSchedule' class='ui blue button submitBtn'/>
                     </div>

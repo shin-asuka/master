@@ -31,7 +31,7 @@
             <hr />
         <div calss="row">
             <div class='btnDiv'>
-                #if(0!=$!{teacherApplication.auditorId})
+                #if(0==$!{teacherApplication.auditorId})
                 <div>
                   <input onclick="require('classpracticum').showFinshType()" type='button' value='ReSchedule' class='ui blue button submitBtn'/>
                 </div>
