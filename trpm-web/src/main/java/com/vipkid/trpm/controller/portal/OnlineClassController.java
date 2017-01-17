@@ -304,35 +304,36 @@ public class OnlineClassController extends AbstractPortalController {
             }
         }
 
-        // 处理 tags 相关逻辑
-        int applicationId = Long.valueOf(teacherApplication.getId()).intValue();
+        if(!StringUtils.equalsIgnoreCase(type,Result.REAPPLY.toString())) {
+            // 处理 tags 相关逻辑
+            int applicationId = Long.valueOf(teacherApplication.getId()).intValue();
 
-        List<TeacherPeTags> teacherPeTags = Lists.newArrayList();
-        for (int tagId : tags) {
-            TeacherPeTags teacherPeTag = new TeacherPeTags();
-            teacherPeTag.setApplicationId(applicationId);
-            teacherPeTag.setTagId(tagId);
-            teacherPeTags.add(teacherPeTag);
+            List<TeacherPeTags> teacherPeTags = Lists.newArrayList();
+            for (int tagId : tags) {
+                TeacherPeTags teacherPeTag = new TeacherPeTags();
+                teacherPeTag.setApplicationId(applicationId);
+                teacherPeTag.setTagId(tagId);
+                teacherPeTags.add(teacherPeTag);
+            }
+            teacherPeTagsService.updatePeTags(applicationId, teacherPeTags);
+
+            List<TeacherPeLevels> teacherPeLevels = Lists.newArrayList();
+            for (int level : levels) {
+                TeacherPeLevels teacherPeLevel = new TeacherPeLevels();
+                teacherPeLevel.setApplicationId(applicationId);
+                teacherPeLevel.setLevel(level);
+                teacherPeLevels.add(teacherPeLevel);
+            }
+            teacherPeLevelsService.updateTeacherPeLevels(applicationId, teacherPeLevels);
+
+            TeacherPeComments teacherPeComment = new TeacherPeComments();
+            teacherPeComment.setApplicationId(applicationId);
+            teacherPeComment.setThingsDidWell(things);
+            teacherPeComment.setAreasImprovement(areas);
+            teacherPeComment.setTotalScore(totalScore);
+            teacherPeComment.setStatus(submitType);
+            teacherPeCommentsService.updateTeacherPeComments(applicationId, teacherPeComment);
         }
-        teacherPeTagsService.updatePeTags(applicationId, teacherPeTags);
-
-        List<TeacherPeLevels> teacherPeLevels = Lists.newArrayList();
-        for (int level : levels) {
-            TeacherPeLevels teacherPeLevel = new TeacherPeLevels();
-            teacherPeLevel.setApplicationId(applicationId);
-            teacherPeLevel.setLevel(level);
-            teacherPeLevels.add(teacherPeLevel);
-        }
-        teacherPeLevelsService.updateTeacherPeLevels(applicationId, teacherPeLevels);
-
-        TeacherPeComments teacherPeComment = new TeacherPeComments();
-        teacherPeComment.setApplicationId(applicationId);
-        teacherPeComment.setThingsDidWell(things);
-        teacherPeComment.setAreasImprovement(areas);
-        teacherPeComment.setTotalScore(totalScore);
-        teacherPeComment.setStatus(submitType);
-        teacherPeCommentsService.updateTeacherPeComments(applicationId, teacherPeComment);
-
         return jsonView(response, modelMap);
     }
 
