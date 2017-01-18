@@ -8,7 +8,6 @@ import com.vipkid.email.EmailEngine;
 import com.vipkid.email.handle.EmailConfig;
 import com.vipkid.email.template.TemplateUtils;
 import com.vipkid.enums.TeacherApplicationEnum;
-import com.vipkid.enums.TeacherEnum;
 import com.vipkid.recruitment.dao.TeacherApplicationDao;
 import com.vipkid.recruitment.dao.TeacherContractFileDao;
 import com.vipkid.recruitment.entity.TeacherApplication;
@@ -18,7 +17,6 @@ import com.vipkid.recruitment.utils.ReturnMapUtils;
 import com.vipkid.trpm.dao.OnlineClassDao;
 import com.vipkid.trpm.dao.TeacherDao;
 import com.vipkid.trpm.dao.TeacherPeCommentsDao;
-import com.vipkid.trpm.entity.OnlineClass;
 import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.entity.TeacherPeComments;
 import org.apache.commons.collections.CollectionUtils;
@@ -27,8 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
+import org.springframework.web.util.HtmlUtils;
 import java.util.List;
 import java.util.Map;
 
@@ -123,8 +120,9 @@ public class AuditEmailService {
             }
             TeacherApplication  applicationsList =  teacherApplicationDao.findCurrentApplication(teacherId).stream().findFirst().get();
             TeacherPeComments teacherPeComments =  teacherPeCommentsDao.getTeacherPeComments(Long.valueOf(applicationsList.getId()).intValue());
-            paramsMap.put("thingsDidWell", teacherPeComments.getThingsDidWell());
-            paramsMap.put("areasImprovement", teacherPeComments.getAreasImprovement());
+
+            paramsMap.put("thingsDidWell", HtmlUtils.htmlUnescape(teacherPeComments.getThingsDidWell()));
+            paramsMap.put("areasImprovement", HtmlUtils.htmlUnescape(teacherPeComments.getAreasImprovement()));
             paramsMap.put("totalScore", teacherPeComments.getTotalScore()+"");
 
             List<TeacherApplication> list = teacherApplicationDao.findApplictionForStatusResult(teacher.getId(), TeacherApplicationEnum.Status.SIGN_CONTRACT.toString(), TeacherApplicationEnum.Result.PASS.toString());
@@ -164,8 +162,8 @@ public class AuditEmailService {
 
             TeacherApplication  applicationsList =  teacherApplicationDao.findCurrentApplication(teacherId).stream().findFirst().get();
             TeacherPeComments teacherPeComments =  teacherPeCommentsDao.getTeacherPeComments(Long.valueOf(applicationsList.getId()).intValue());
-            paramsMap.put("thingsDidWell", teacherPeComments.getThingsDidWell());
-            paramsMap.put("areasImprovement", teacherPeComments.getAreasImprovement());
+            paramsMap.put("thingsDidWell", HtmlUtils.htmlUnescape(teacherPeComments.getThingsDidWell()));
+            paramsMap.put("areasImprovement",  HtmlUtils.htmlUnescape(teacherPeComments.getAreasImprovement()));
             paramsMap.put("totalScore", teacherPeComments.getTotalScore()+"");
 
             logger.info("【EMAIL.sendPracticum2Start】toAddMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",
