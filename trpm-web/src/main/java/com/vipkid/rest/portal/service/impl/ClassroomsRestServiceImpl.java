@@ -359,6 +359,7 @@ public class ClassroomsRestServiceImpl implements ClassroomsRestService{
 
             Timestamp timeStamp = (Timestamp) eachMap.get("scheduledDateTime");
             Date date = new Date(timeStamp.getTime());
+			Date scheduledTime = new Date(timeStamp.getTime() + 30*60*1000);
             DateFormat df = new SimpleDateFormat("MMM dd yyyy, hh:mma", Locale.ENGLISH);
             df.setTimeZone(TimeZone.getTimeZone(teacher.getTimezone()));
             String scheduledDateTime = df.format(date);
@@ -395,7 +396,7 @@ public class ClassroomsRestServiceImpl implements ClassroomsRestService{
 				}
 			}
 			/*设置24小时取消课的显示状态*/
-			set24hoursCancleCourse(finishType,status,is24Hour,date,serialNumber,classroomDetail);
+			set24hoursCancleCourse(finishType,status,is24Hour,scheduledTime,classroomDetail);
 
 			addReportTypeAndStatus(eachMap, date, classroomDetail);
 
@@ -410,17 +411,16 @@ public class ClassroomsRestServiceImpl implements ClassroomsRestService{
 	 * @param finishType
 	 * @param status
 	 * @param is24Hour
-	 * @param date
-	 * @param serialNumber
+	 * @param scheduledTime
 	 * @param classroomDetail
 	 */
 	private void set24hoursCancleCourse(String finishType,String status,boolean is24Hour,
-										Date date, String serialNumber,ClassroomDetail classroomDetail){
+										Date scheduledTime, ClassroomDetail classroomDetail){
 
 		Date nowTime = new Date();
-		boolean isCurrent = date.after(nowTime);
-		if (is24Hour && OnlineClassEnum.ClassStatus.isFinished(status) && isCurrent
-				&& ApplicationConstant.FinishType.isStudentNoShow(finishType) && serialNumber.indexOf("M")==0){
+		boolean isCurrent = scheduledTime.after(nowTime);
+		if (is24Hour && OnlineClassEnum.ClassStatus.isFinished(status)
+				&& isCurrent && ApplicationConstant.FinishType.isStudentNoShow(finishType) ){
 			classroomDetail.setStatus(OnlineClassEnum.ClassStatus.BOOKED.toString() );
 			classroomDetail.setFinishType("");
 			classroomDetail.setIs24Hour(is24Hour);

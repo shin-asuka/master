@@ -488,7 +488,11 @@ public class ScheduleService {
                 }
                 /*学生24小时取消课，老状态为StudentNoShow，ClassStatus为isAvailable，is24Hour为true，将状态改为BOOKED*/
                 boolean is24Hour = (boolean)teacherSchedule.get("is24Hour");
-                if (is24Hour && FinishType.isStudentNoShow(oldFinishType) && ClassStatus.isAvailable(newStatus)){
+                Timestamp timestamp = (Timestamp) teacherSchedule.get("scheduledDateTime");
+                Date scheduledTime = new Date(timestamp.getTime() + 30*60*1000);
+                Date nowTime = new Date();
+                boolean isCurrent = scheduledTime.after(nowTime);
+                if (is24Hour && FinishType.isStudentNoShow(oldFinishType) && ClassStatus.isAvailable(newStatus) && isCurrent){
                     teacherSchedule.put("status",ClassStatus.BOOKED);
                 }
             }
