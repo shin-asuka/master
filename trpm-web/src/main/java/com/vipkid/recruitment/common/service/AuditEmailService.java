@@ -164,7 +164,6 @@ public class AuditEmailService {
 
             logger.info("teacherId:{},application Id{}",teacherId,application.getId());
             TeacherPeComments teacherPeComments =  teacherPeCommentsDao.getTeacherPeComments(Long.valueOf(application.getId()).intValue());
-            logger.info("teacherId:{},teacherPeComments:{}",teacherId,teacherPeComments.getThingsDidWell());
 
             if(teacherPeComments!=null) {
                 paramsMap.put("thingsDidWell", HtmlUtils.htmlUnescape(teacherPeComments.getThingsDidWell()));
