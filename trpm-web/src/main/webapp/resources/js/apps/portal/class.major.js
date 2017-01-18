@@ -22,9 +22,9 @@ define(["function","jquery-bootstrap","jquery-load","countdown" ], function() {
 	};
 
 	/** 初始化 */
-	var init = function(serverTime, scheduleTime,createDateTime, teacherId,scheduledDateTime,serialNumber,oldStatus) {
+	var init = function(serverTime, scheduleTime,createDateTime, teacherId,scheduledDateTime,serialNumber,oldStatus,is24Hour) {
 		initInfoMenu();
-		changeClassRoom(scheduledDateTime,serialNumber,oldStatus);
+		changeClassRoom(scheduledDateTime,serialNumber,oldStatus,is24Hour);
 		setTimeout(function() {
 			collectForOnlineClassroom(teacherId);
 		}, 1000*60*2)
@@ -493,10 +493,12 @@ define(["function","jquery-bootstrap","jquery-load","countdown" ], function() {
 	}
 
 	var changeClassRoom = function(scheduledDateTime,serialNumber,oldStatus,is24Hour) {
+		debugger
 		if(!scheduledDateTime || !serialNumber || !oldStatus){
 			return;
 		}
-		if (oldStatus == "FINISHED" && is24Hour ){
+		if (oldStatus == "FINISHED" ){
+			debugger
 			var url = webPath + "/changeClassroom.json";
 			var interval = 5 * 1000;
 			var params = {
