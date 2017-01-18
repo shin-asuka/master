@@ -338,8 +338,7 @@ public class ClassroomsRestServiceImpl implements ClassroomsRestService{
             onlineClassIds.add(onlineClassId);
         }
         long teacherId = teacher.getId();
-        List<String> idsFor24Hour = Lists.newArrayList();
-		idsFor24Hour = scheduleService.get24HourClass(teacherId, onlineClassIds);
+        List<String> idsFor24Hour = scheduleService.get24HourClass(teacherId, onlineClassIds);
 
 		int id = 0;//加一个id方便前端排序
 		for (Map<String, Object> eachMap : dataList) {
@@ -355,7 +354,6 @@ public class ClassroomsRestServiceImpl implements ClassroomsRestService{
 			classroomDetail.setStudentName((String) eachMap.get("englishName"));
             teacherId = (long) eachMap.get("teacherId");
 			classroomDetail.setTeacherId(teacherId);
-
 			String serialNumber = (String) eachMap.get("serialNumber");
 			classroomDetail.setLessonSerialNumber(serialNumber);
 
@@ -372,17 +370,10 @@ public class ClassroomsRestServiceImpl implements ClassroomsRestService{
                 is24Hour = true;
             }
             String finishType = (String) eachMap.get("finishType");
+			classroomDetail.setFinishType(finishType);
             String status = (String) eachMap.get("status");
-            Date nowTime = new Date();
-            boolean isCurrent = date.after(nowTime);
-            if (is24Hour && OnlineClassEnum.ClassStatus.isFinished(status) && isCurrent
-					&& ApplicationConstant.FinishType.isStudentNoShow(finishType) && serialNumber.indexOf("M")==0){
-                classroomDetail.setStatus(OnlineClassEnum.ClassStatus.BOOKED.toString() );
-				//classroomDetail.setFinishType(ApplicationConstant.FinishType.AS_SCHEDULED.toString());
-            }else {
-                classroomDetail.setStatus(status);
-				classroomDetail.setFinishType(finishType);
-            }
+			classroomDetail.setStatus(status);
+
 			if(StringUtils.isNotEmpty(serialNumber)){
 				boolean isPrevipLesson = false;
 				int index = serialNumber.lastIndexOf("-");
@@ -403,6 +394,8 @@ public class ClassroomsRestServiceImpl implements ClassroomsRestService{
 					classroomDetail.setVideoDownloadUrl(videoDownloadUrl);
 				}
 			}
+			/*设置24小时取消课的显示状态*/
+			set24hoursCancleCourse(finishType,status,is24Hour,date,serialNumber,classroomDetail);
 
 			addReportTypeAndStatus(eachMap, date, classroomDetail);
 
@@ -410,6 +403,27 @@ public class ClassroomsRestServiceImpl implements ClassroomsRestService{
 			id ++;
 		}
 		return result;
+	}
+
+	/**
+	 * 设置24小时取消的的显示逻辑
+	 * @param finishType
+	 * @param status
+	 * @param is24Hour
+	 * @param date
+	 * @param serialNumber
+	 * @param classroomDetail
+	 */
+	private void set24hoursCancleCourse(String finishType,String status,boolean is24Hour,
+										Date date, String serialNumber,ClassroomDetail classroomDetail){
+
+		Date nowTime = new Date();
+		boolean isCurrent = date.after(nowTime);
+		if (is24Hour && OnlineClassEnum.ClassStatus.isFinished(status) && isCurrent
+				&& ApplicationConstant.FinishType.isStudentNoShow(finishType) && serialNumber.indexOf("M")==0){
+			classroomDetail.setStatus(OnlineClassEnum.ClassStatus.BOOKED.toString() );
+			classroomDetail.setFinishType("");
+		}
 	}
 
 	/**
