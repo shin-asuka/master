@@ -493,10 +493,18 @@ define(["function","jquery-bootstrap","jquery-load","countdown" ], function() {
 	}
 
 	var changeClassRoom = function(scheduledDateTime,serialNumber,oldStatus,is24Hour) {
+		var now = new Date();
+		now.setMinutes(now.getDate() - 30);
+		var scheduledTime = scheduledDateTime.replace(/-/g,"/");
+		var scheduledDate = new Date(Date.parse(scheduledTime));
+		var inTime = false;
+		if (now<scheduledDate){
+			inTime = true;
+		}
 		if(!scheduledDateTime || !serialNumber || !oldStatus){
 			return;
 		}
-		if (oldStatus == "FINISHED" && is24Hour){
+		if (oldStatus == "FINISHED" && is24Hour && inTime){
 			var url = webPath + "/changeClassroom.json";
 			var interval = 5 * 1000;
 			var params = {
