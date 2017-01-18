@@ -119,13 +119,12 @@ public class AuditEmailService {
                 paramsMap.put("teacherName", teacher.getRealName());
             }
             TeacherApplication  application =  teacherApplicationDao.findCurrentApplication(teacherId).stream().findFirst().get();
-            logger.info("teacherId:{},application Id{}",teacherId,application.getId());
+            logger.info(" teacherId:{},application Id{}",teacherId,application.getId());
             TeacherPeComments teacherPeComments =  teacherPeCommentsDao.getTeacherPeComments(Long.valueOf(application.getId()).intValue());
-            logger.info("teacherId:{},teacherPeComments:{}",teacherId,teacherPeComments.getThingsDidWell());
+
             if(teacherPeComments!=null) {
                 paramsMap.put("thingsDidWell", HtmlUtils.htmlUnescape(teacherPeComments.getThingsDidWell()));
                 paramsMap.put("areasImprovement", HtmlUtils.htmlUnescape(teacherPeComments.getAreasImprovement()));
-                paramsMap.put("totalScore", teacherPeComments.getTotalScore() + "");
             }
             List<TeacherApplication> list = teacherApplicationDao.findApplictionForStatusResult(teacher.getId(), TeacherApplicationEnum.Status.SIGN_CONTRACT.toString(), TeacherApplicationEnum.Result.PASS.toString());
             if(CollectionUtils.isNotEmpty(list)){
