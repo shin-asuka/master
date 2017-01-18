@@ -160,8 +160,8 @@ public class AuditEmailService {
             }else if (teacher.getRealName() != null){
                 paramsMap.put("teacherName", teacher.getRealName());
             }
-            TeacherApplication  application=  teacherApplicationDao.findCurrentApplication(teacherId).stream().findFirst().get();
 
+            TeacherApplication  application=  teacherApplicationDao.findCurrentApplication(teacherId).stream().findFirst().get();
             logger.info("teacherId:{},application Id{}",teacherId,application.getId());
             TeacherPeComments teacherPeComments =  teacherPeCommentsDao.getTeacherPeComments(Long.valueOf(application.getId()).intValue());
 
