@@ -210,7 +210,7 @@ public class OnlineClassService {
         TeacherPeComments teacherPeComments = teacherPeCommentsDao.getTeacherPeComments(applicationId);
         modelMap.put("teacherPeComments", teacherPeComments);
 
-        if(0!=teacherApplication.getAuditorId() || (null!=teacherPeComments && "SAVE".endsWith(teacherPeComments.getStatus()))){
+        if(0==teacherApplication.getAuditorId() && null==teacherPeComments){
             teacherApplicationDao.initApplicationAnswer(teacherApplication);
             modelMap.put("teacherApplication", teacherApplicationDao.findApplictionById(applicationId));
         }else{

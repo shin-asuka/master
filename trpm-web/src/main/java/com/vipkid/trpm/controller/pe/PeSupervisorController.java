@@ -138,7 +138,7 @@ public class PeSupervisorController extends AbstractPeController {
             TeacherPeComments teacherPeComments = teacherPeCommentsDao.getTeacherPeComments(applicationId);
             model.addAttribute("teacherPeComments", teacherPeComments);
 
-            if(0!=teacherApplication.getAuditorId() || (null!=teacherPeComments && "SAVE".endsWith(teacherPeComments.getStatus()))){
+            if(0==teacherApplication.getAuditorId() && null==teacherPeComments){
                 teacherApplicationDao.initApplicationAnswer(teacherApplication);
                 model.addAttribute("teacherApplication", teacherApplicationDao.findApplictionById(applicationId));
             }else{
