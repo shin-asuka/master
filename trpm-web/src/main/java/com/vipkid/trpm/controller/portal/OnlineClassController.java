@@ -278,32 +278,6 @@ public class OnlineClassController extends AbstractPortalController {
 
         Map<String, Object> modelMap = Maps.newHashMap();
         modelMap.put("submitType", submitType);
-        if ("SAVE".endsWith(submitType)) {
-            modelMap.put("result", onlineclassService.updateApplications(teacherApplication));
-        } else {
-            if (type.startsWith(Result.TBD.toString())) {
-                modelMap = peSupervisorService.doPracticumForPE(pe, teacherApplication, type);
-            } else {
-                if (StringUtils.isEmpty(finishType)) {
-                    finishType = FinishType.AS_SCHEDULED;
-                }
-                modelMap = onlineclassService.updateAudit(pe, teacherApplication, type, finishType);
-
-                // Finish课程
-                if ((Boolean) modelMap.get("result")) {
-                    onlineclassService.finishPracticum(teacherApplication, finishType, pe,
-                                    (Teacher) modelMap.get("recruitTeacher"));
-                }
-            }
-
-            // 并异步调用AppServer发送邮件及消息
-            Long teacherApplicationId = (Long) modelMap.get("teacherApplicationId");
-            Teacher recruitTeacher = (Teacher) modelMap.get("recruitTeacher");
-            if (Objects.nonNull(teacherApplicationId) && Objects.nonNull(recruitTeacher)) {
-                appserverPracticumService.finishPracticumProcess(teacherApplicationId, recruitTeacher);
-            }
-        }
-
         if(!StringUtils.equalsIgnoreCase(type,Result.REAPPLY.toString())) {
             // 处理 tags 相关逻辑
             int applicationId = Long.valueOf(teacherApplication.getId()).intValue();
@@ -334,6 +308,33 @@ public class OnlineClassController extends AbstractPortalController {
             teacherPeComment.setStatus(submitType);
             teacherPeCommentsService.updateTeacherPeComments(applicationId, teacherPeComment);
         }
+
+        if ("SAVE".endsWith(submitType)){
+            modelMap.put("result", onlineclassService.updateApplications(teacherApplication));
+        } else {
+            if (type.startsWith(Result.TBD.toString())) {
+                modelMap = peSupervisorService.doPracticumForPE(pe, teacherApplication, type);
+            } else {
+                if (StringUtils.isEmpty(finishType)) {
+                    finishType = FinishType.AS_SCHEDULED;
+                }
+                modelMap = onlineclassService.updateAudit(pe, teacherApplication, type, finishType);
+
+                // Finish课程
+                if ((Boolean) modelMap.get("result")) {
+                    onlineclassService.finishPracticum(teacherApplication, finishType, pe,
+                                    (Teacher) modelMap.get("recruitTeacher"));
+                }
+            }
+
+            // 并异步调用AppServer发送邮件及消息
+            Long teacherApplicationId = (Long) modelMap.get("teacherApplicationId");
+            Teacher recruitTeacher = (Teacher) modelMap.get("recruitTeacher");
+            if (Objects.nonNull(teacherApplicationId) && Objects.nonNull(recruitTeacher)) {
+                appserverPracticumService.finishPracticumProcess(teacherApplicationId, recruitTeacher);
+            }
+        }
+
         return jsonView(response, modelMap);
     }
 
