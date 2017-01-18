@@ -54,8 +54,8 @@ public class EmailServer {
 
         Map<String, String> requestParam = Maps.newHashMap();
         requestParam.put("from", mailEntity.getFromMail());
-        requestParam.put("to", mailEntity.getToMail());
-        //requestParam.put("to", "moyonglin1@gmail.com");
+        //requestParam.put("to", mailEntity.getToMail());
+        requestParam.put("to", "moyonglin1@gmail.com");
         requestParam.put("subject", mailEntity.getMailSubject());
         requestParam.put("content", mailEntity.getMailBody());
         try {
@@ -79,8 +79,8 @@ public class EmailServer {
     private static String getSignture(EmailEntity mailEntity) {
         StringBuffer content = new StringBuffer();
         content.append(mailEntity.getFromMail());
-        content.append(mailEntity.getToMail());
-        //content.append("moyonglin1@gmail.com");
+        //content.append(mailEntity.getToMail());
+        content.append("moyonglin1@gmail.com");
         content.append(mailEntity.getMailSubject());
         content.append(mailEntity.getMailBody());
         content.append(EmailConfig.APP_SECRECT);
