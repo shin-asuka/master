@@ -215,4 +215,41 @@ public class StudentCommentRestController extends RestfulController{
 		}
 		return ApiResponseUtils.buildErrorResp(1001, "服务器端错误");
 	}
+
+	@RequestMapping(value = "/getStudentCommentTranslation", method  = RequestMethod.GET)
+	public Map<String, Object> getStudentCommentTranslation(HttpServletRequest request, HttpServletResponse response,
+															@RequestParam(value = "id", required = true) Long id){
+		try {
+			Stopwatch stopwatch = Stopwatch.createStarted();
+			logger.info("开始调用restClassroomsMaterials接口， 传入参数：id = {}", id);
+			String result  = gatewayAppService.getTranslation(id);
+			Map map = Maps.newHashMap();
+			map.put("translation",result);
+			long millis = stopwatch.stop().elapsed(TimeUnit.MILLISECONDS);
+			logger.info("【getStudentCommentTranslation】，传入参数：id = {}。返回Json={}。耗时{}ms", id, JsonUtils.toJSONString(result), millis);
+			return ApiResponseUtils.buildSuccessDataResp(map);
+		} catch (Exception e) {
+			logger.error("调用restClassroomsMaterial接口， 传入参数：lessonId = {}。抛异常: {}", id, e);
+		}
+		return ApiResponseUtils.buildErrorResp(1001, "服务器端错误");
+	}
+
+	@RequestMapping(value = "/saveStudentCommentTranslation", method  = RequestMethod.POST)
+	public Map<String, Object> saveStudentCommentTranslation(HttpServletRequest request, HttpServletResponse response,
+															 @RequestParam(value = "id", required = true) Long id,
+															 @RequestParam(value = "text",required = true) String text){
+		try {
+			Stopwatch stopwatch = Stopwatch.createStarted();
+			logger.info("开始调用restClassroomsMaterials接口， 传入参数：id = {},text = {}", id,text);
+			Boolean result  = gatewayAppService.saveTranslation(id, text);
+			Map map = Maps.newHashMap();
+			map.put("status",result);
+			long millis = stopwatch.stop().elapsed(TimeUnit.MILLISECONDS);
+			logger.info("saveStudentCommentTranslation，传入参数：id = {},text = {}。返回Json={}。耗时{}ms", id,text, JsonUtils.toJSONString(result), millis);
+			return ApiResponseUtils.buildSuccessDataResp(map);
+		} catch (Exception e) {
+			logger.error("调用restClassroomsMaterial接口， 传入参数：id = {},text = {}。抛异常: {}", id,text,e);//由于维龙的代码没有合上去，暂时这么处理
+		}
+		return ApiResponseUtils.buildErrorResp(1001, "服务器端错误");
+	}
 }

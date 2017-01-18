@@ -38,6 +38,9 @@ public class GatewayAppService extends HttpBaseService {
 
 	private static final String  GATEWAY_STUDENT_COMMENT_TOTAL_BY_TEACHER_API = "/service/student_comment/teacher/%d/comments/total";
 
+	private static final String  GATEWAY_STUDENT_COMMENT_TRANSLATION_API = "/service/student_comment/comment/%s/translation";
+
+
 	public List<StudentCommentApi> getStudentCommentListByBatch(String idsStr) {
 
 		List<StudentCommentApi> studentCommentApiList = null;
@@ -48,7 +51,7 @@ public class GatewayAppService extends HttpBaseService {
 				studentCommentApiList = JsonUtils.toBeanList(data, StudentCommentApi.class);
 			}
 		} catch (Exception e) {
-			logger.error("获取未提交课程的UA报告失败！",e);
+			logger.error("【GatewayAppService.getStudentCommentListByBatch】调用失败，idsStr：{}",e,idsStr);
 			e.printStackTrace();
 		}
 
@@ -68,7 +71,7 @@ public class GatewayAppService extends HttpBaseService {
 				studentCommentPageApi = JSONObject.parseObject(data, StudentCommentPageApi.class);
 			}
 		} catch (Exception e) {
-			logger.error("获取未提交课程的UA报告失败！",e);
+			logger.error("【GatewayAppService.getStudentCommentListByTeacherId】调用失败，teacherId：{},start:{},limit:{},ratingLevel:{},exception:{}",teacher,start,limit,ratingLevel,e);
 			e.printStackTrace();
 		}
 
@@ -85,13 +88,47 @@ public class GatewayAppService extends HttpBaseService {
 				studentCommentTotalApi = JsonUtils.toBean(data, StudentCommentTotalApi.class);
 			}
 		} catch (Exception e) {
-			logger.error("获取未提交课程的UA报告失败！",e);
+			logger.error("【GatewayAppService.getStudentCommentTotalByTeacherId】调用失败，teacherId：{},exception:{}",teacher,e);
 			e.printStackTrace();
 		}
 
 		return studentCommentTotalApi;
 	}
 
+	public Boolean saveTranslation(Long id,String text){
+		String ret = null;
+		try {
+			JSONObject input = new JSONObject();
+			input.put("translation",text);
+			String data = WebUtils.postJSON(String.format(super.serverAddress + GATEWAY_STUDENT_COMMENT_TRANSLATION_API, id),input);
+			if (data!=null) {
+				JSONObject jb = JSONObject.parseObject(data);
+				if(jb.get("status").equals("OK")){
+					return true;
+				}
+			}
+		} catch (Exception e) {
+			logger.error("【GatewayAppService.saveTranslation】调用失败，id：{},text:{},exception:{}",id,text,e);
+			e.printStackTrace();
+			throw e;
+		}
+		return false;
+	}
+
+	public String getTranslation(Long id){
+		String ret = null;
+		try {
+			String data = WebUtils.simpleGet(String.format(super.serverAddress + GATEWAY_STUDENT_COMMENT_TRANSLATION_API,id));
+			if (data!=null) {
+				JSONObject jb = JSONObject.parseObject(data);
+				ret = (String)jb.get("translation");
+			}
+		} catch (Exception e) {
+			logger.error("【GatewayAppService.getTranslation】调用失败，id：{},exception:{}",id,e);
+			e.printStackTrace();
+		}
+		return ret;
+	}
 	/**
 	 * 计算双向分页
 	 * 默认单边的窗口大小为 10
