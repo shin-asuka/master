@@ -385,7 +385,7 @@
 
 #@requireJs()
     require(['classmajor'], function(classmajor){
-    	classmajor.init("$!serverTime", "$!scheduleTime","$!studentUser.createDateTime", "$!TRPM_TEACHER.id","$!onlineClass.scheduledDateTime","$!lesson.serialNumber","$!oldStatus");
+    	classmajor.init("$!serverTime", "$!scheduleTime","$!studentUser.createDateTime", "$!TRPM_TEACHER.id","$!onlineClass.scheduledDateTime","$!lesson.serialNumber","$!oldStatus","$!is24Hour");
         #if($studentUser.createDateTime)
           classmajor.sendTeacherInClassroom("$!onlineClass.id");
         #end

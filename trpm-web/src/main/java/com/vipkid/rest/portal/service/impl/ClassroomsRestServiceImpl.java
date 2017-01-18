@@ -423,6 +423,7 @@ public class ClassroomsRestServiceImpl implements ClassroomsRestService{
 				&& ApplicationConstant.FinishType.isStudentNoShow(finishType) && serialNumber.indexOf("M")==0){
 			classroomDetail.setStatus(OnlineClassEnum.ClassStatus.BOOKED.toString() );
 			classroomDetail.setFinishType("");
+			classroomDetail.setIs24Hour(is24Hour);
 		}
 	}
 

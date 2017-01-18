@@ -492,11 +492,11 @@ define(["function","jquery-bootstrap","jquery-load","countdown" ], function() {
 	  }
 	}
 
-	var changeClassRoom = function(scheduledDateTime,serialNumber,oldStatus) {
+	var changeClassRoom = function(scheduledDateTime,serialNumber,oldStatus,is24Hour) {
 		if(!scheduledDateTime || !serialNumber || !oldStatus){
 			return;
 		}
-		if (oldStatus == "FINISHED" && serialNumber.indexOf("M") == 0){
+		if (oldStatus == "FINISHED" && is24Hour){
 			var url = webPath + "/changeClassroom.json";
 			var interval = 5 * 1000;
 			var params = {
@@ -508,7 +508,7 @@ define(["function","jquery-bootstrap","jquery-load","countdown" ], function() {
 					type : "POST",
 					data : params,
 					success : function(data){
-						if(data!=null){
+						if(data.data!="No newClassRoom"){
 							window.location.href = data.data;
 						}
 					},

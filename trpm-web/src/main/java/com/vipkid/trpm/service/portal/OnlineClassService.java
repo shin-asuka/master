@@ -965,14 +965,14 @@ public class OnlineClassService {
             String studentId = onlineClassInfo.get("studentId").toString();
             String lessonId = onlineClassInfo.get("lessonId").toString();
             if (StringUtils.isEmpty(onlineclassId) || StringUtils.isEmpty(studentId) || StringUtils.isEmpty(Long.toString(teacherId))){
-               return  null;
+               return  "No newClassRoom";
             }else{
                 //return  "/classroom/"+ onlineclassId + "-" + studentId + "-" + lessonId + ".shtml";
                 logger.info("teacherID: {} 24小时取消约课后进入教室{}",teacherId,onlineclassId + "-" + studentId + "-" + lessonId);
                 return  "/classroom/"+ onlineclassId + "-" + studentId + "-" + lessonId + ".shtml";
             }
         }else{
-            return null;
+            return "No newClassRoom";
         }
     }
 }

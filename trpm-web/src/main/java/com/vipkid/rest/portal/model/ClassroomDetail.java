@@ -25,6 +25,12 @@ public class ClassroomDetail{
 	private String videoShowUrl;
 	private String videoDownloadUrl;
 
+	public boolean getIs24Hour() {return is24Hour;}
+
+	public void setIs24Hour(boolean is24Hour) {this.is24Hour = is24Hour;}
+
+	private boolean is24Hour;
+
 	public String getVideoDownloadUrl() {return videoDownloadUrl;}
 
 	public void setVideoDownloadUrl(String videoDownloadUrl) {this.videoDownloadUrl = videoDownloadUrl;}

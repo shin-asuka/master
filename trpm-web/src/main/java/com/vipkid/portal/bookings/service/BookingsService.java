@@ -503,12 +503,6 @@ public class BookingsService {
                     isReplaced = true;
                 }
 
-                /*老状态为FINISHED的，是24小时可约的课，老的 FinishType 为 StudentNoShow 则将状态改为BOOKED(24小时取消约课)*/
-              /*  if (ClassStatus.isFinished(newStatus) && ApplicationConstant.FinishType.isStudentNoShow(oldFinishType)
-                      && is24Hour  ){
-                    newStatus = ClassStatus.BOOKED.toString();
-                    teacherSchedule.put("status",newStatus);
-                }*/
             }
 
             /* 如果老状态为 EXPIRED，新状态为 FINISHED，或新状态为 BOOKED，则替换 */
@@ -531,6 +525,7 @@ public class BookingsService {
                 }
                 if (ClassStatus.isFinished(newStatus) && ApplicationConstant.FinishType.isStudentNoShow(newFinishType) && is24Hour  ){
                     teacherSchedule.put("status",ClassStatus.BOOKED.toString());
+                    teacherSchedule.put("is24Hour",is24Hour);
                 }
                 /* 新 FinishType 为 StudentNoShow，则替换 */
                 if (ApplicationConstant.FinishType.isStudentNoShow(newFinishType)) {
