@@ -493,11 +493,10 @@ define(["function","jquery-bootstrap","jquery-load","countdown" ], function() {
 	}
 
 	var changeClassRoom = function(scheduledDateTime,serialNumber,oldStatus,is24Hour) {
-		debugger
 		if(!scheduledDateTime || !serialNumber || !oldStatus){
 			return;
 		}
-		if (oldStatus == "FINISHED" ){
+		if (oldStatus == "FINISHED" && is24Hour){
 			debugger
 			var url = webPath + "/changeClassroom.json";
 			var interval = 5 * 1000;
