@@ -497,7 +497,6 @@ define(["function","jquery-bootstrap","jquery-load","countdown" ], function() {
 			return;
 		}
 		if (oldStatus == "FINISHED" && is24Hour){
-			debugger
 			var url = webPath + "/changeClassroom.json";
 			var interval = 5 * 1000;
 			var params = {
