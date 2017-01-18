@@ -1,9 +1,7 @@
 package com.vipkid.trpm.controller.portal;
 
 import com.google.api.client.util.Maps;
-import com.vipkid.enums.OnlineClassEnum;
 import com.vipkid.enums.OnlineClassEnum.ClassType;
-import com.vipkid.enums.TeacherPageLoginEnum;
 import com.vipkid.rest.service.LoginService;
 import com.vipkid.rest.service.TeacherPageLoginService;
 import com.vipkid.trpm.entity.OnlineClass;
@@ -12,8 +10,6 @@ import com.vipkid.trpm.service.activity.ActivityService;
 import com.vipkid.trpm.service.passport.IndexService;
 import com.vipkid.trpm.service.portal.OnlineClassService;
 import com.vipkid.trpm.service.portal.ScheduleService;
-import org.apache.commons.lang3.StringUtils;
-import org.community.config.PropertyConfigurer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -48,53 +44,7 @@ public class ScheduleController extends AbstractPortalController {
 
     @RequestMapping("/bookings")
     public String schedule(HttpServletRequest request, HttpServletResponse response, Model model) {
-        if (IS_PRODUCTION) {
-            return "redirect:/booking/course";// 强行重定向前后端分离schedule页面
-        } else {
-            /* 当前显示的课程类型 */
-            String courseType = ServletRequestUtils.getStringParameter(request, "courseType",
-                            OnlineClassEnum.CourseType.MAJOR.toString());
-            model.addAttribute("courseType", courseType);
-
-            /* 当前星期偏移量 */
-            int offsetOfWeek = ServletRequestUtils.getIntParameter(request, "offsetOfWeek", 0);
-            model.addAttribute("offsetOfWeek", offsetOfWeek);
-
-            /* 获取当前登录的老师信息 */
-            Teacher teacher = loginService.getTeacher();
-
-            model.addAllAttributes(scheduleService.doSchedule(offsetOfWeek, teacher.getId(), teacher.getTimezone(),
-                            courseType));
-
-            // 判断是否能上Practicum类型的课程
-            model.addAttribute("showPracticum", false);
-            if (loginService.isPe(teacher.getId())) {
-                model.addAttribute("showPracticum", teacherPageLoginService.isType(teacher.getId(),
-                                TeacherPageLoginEnum.LoginType.PRACTICUM));
-            }
-            // 判断是否显示AdminQuiz
-            model.addAttribute("showAdminQuiz",
-                            teacherPageLoginService.isType(teacher.getId(), TeacherPageLoginEnum.LoginType.ADMINQUIZ));
-
-            // 判断是否显示Evaluation
-            model.addAttribute("showEvaluation",
-                            teacherPageLoginService.isType(teacher.getId(), TeacherPageLoginEnum.LoginType.EVALUATION));
-
-            // 判断是否需要显示24小时提示
-            model.addAttribute("show24HoursInfo", scheduleService.isShow24HourInfo(request, response));
-
-            // 加入三周年活动参数
-            model.addAttribute("isDuringThirdYeayAnniversary", activityService.isDuringThirdYeayAnniversary());
-
-            String thirdYeayAnniversaryWebpageUrl =
-                            PropertyConfigurer.stringValue("third_year_anniversary_webpage_url");
-            if (StringUtils.isEmpty(thirdYeayAnniversaryWebpageUrl)) {
-                thirdYeayAnniversaryWebpageUrl = "t.vipkid.com.cn";
-            }
-            model.addAttribute("thirdYeayAnniversaryWebpageUrl", thirdYeayAnniversaryWebpageUrl);
-
-            return view("schedule");
-        }
+        return "redirect:/booking/course";// 强行重定向前后端分离schedule页面
     }
 
     @RequestMapping("/createTimeSlot")

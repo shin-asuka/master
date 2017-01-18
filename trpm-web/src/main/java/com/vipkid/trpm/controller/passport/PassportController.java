@@ -90,25 +90,6 @@ public class PassportController extends AbstractController {
 			user = this.passportService.updateUserToken(user);
 		}
 
-		if (IS_PRODUCTION) {
-			logger.info("password check start!");
-			// 密码验证
-			String _remberme = CookieUtils.getValue(request, CookieKey.TRPM_PASSPORT);
-
-			if (remberService.checkNotPassword(request, _remberme, _strPwd, user)) {
-				logger.error(" User 修改密码判断 :" + _strEmail + ";password=" + _strPwd);
-				model.addAttribute("info", ApplicationConstant.AjaxCode.USER_ERROR);
-				return jsonView(response, model.asMap());
-			}
-
-			logger.info("user Dtype start!");
-			// 非教师在此登陆
-			if (!UserEnum.Dtype.TEACHER.val().equals(user.getDtype())) {
-				logger.error(" Username type error!" + _strEmail + ";password=" + _strPwd);
-				model.addAttribute("info", ApplicationConstant.AjaxCode.DTYPE_ERROR);
-				return jsonView(response, model.asMap());
-			}
-		}
 		logger.info("teacher null start!");
 		Teacher teacher = this.passportService.findTeacherById(user.getId());
 		if (teacher == null) {
@@ -151,11 +132,6 @@ public class PassportController extends AbstractController {
 
 		// 只有教师端老师登陆后才做强制修改密码判断
 		logger.info("登陆  REGULAR start !");
-		if (IS_PRODUCTION) {
-			if (TeacherEnum.LifeCycle.REGULAR.toString().equals(teacher.getLifeCycle())) {
-				indexService.changePasswordNotice(response, _strPwd);
-			}
-		}
 
 		// 如果招聘Id不存在则set进去
 		if (StringUtils.isEmpty(teacher.getRecruitmentId())) {

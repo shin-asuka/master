@@ -17,16 +17,6 @@ public abstract class AbstractController {
 
     protected static final Logger logger = LoggerFactory.getLogger(AbstractController.class);
 
-    protected static boolean IS_PRODUCTION = true;
-
-    static {
-        try {
-            IS_PRODUCTION = PropertyConfigurer.booleanValue("env.production");
-        } catch (Exception e) {
-            logger.info("Current evn is production");
-        }
-    }
-
     protected static final int LINE_PER_PAGE = PropertyConfigurer.intValue("page.linePerPage");
 
     protected String nullView() {

@@ -117,7 +117,6 @@ public class PeSupervisorController extends AbstractPeController {
 
             TeacherApplication teacherApplication =
                     peSupervisorService.getTeacherApplication(teacherPe.getTeacherId());
-            model.addAttribute("teacherApplication", teacherApplication);
 
             // 更新审核开始时间
             if (null == teacherPe.getOperatorStartTime()) {
@@ -136,7 +135,15 @@ public class PeSupervisorController extends AbstractPeController {
             model.addAttribute("tags", tagsDao.getTags());
             model.addAttribute("teacherPeTags", teacherPeTagsDao.getTeacherPeTagsByApplicationId(applicationId));
             model.addAttribute("teacherPeLevels", teacherPeLevelsDao.getTeacherPeLevelsByApplicationId(applicationId));
-            model.addAttribute("teacherPeComments", teacherPeCommentsDao.getTeacherPeComments(applicationId));
+            TeacherPeComments teacherPeComments = teacherPeCommentsDao.getTeacherPeComments(applicationId);
+            model.addAttribute("teacherPeComments", teacherPeComments);
+
+            if(0!=teacherApplication.getAuditorId() || "SAVE".endsWith(teacherPeComments.getStatus())){
+                teacherApplicationDao.initApplicationAnswer(teacherApplication);
+                model.addAttribute("teacherApplication", teacherApplicationDao.findApplictionById(applicationId));
+            }else{
+                model.addAttribute("teacherApplication", teacherApplication);
+            }
 
             return view("online_class_pe");
         } else {

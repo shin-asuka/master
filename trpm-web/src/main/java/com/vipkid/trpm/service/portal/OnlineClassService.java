@@ -182,7 +182,6 @@ public class OnlineClassService {
 
         TeacherApplication teacherApplication =
                 teacherApplicationDao.findApplictionByOlineclassId(onlineClass.getId(), student.getId());
-        modelMap.put("teacherApplication", teacherApplication);
         modelMap.putAll(OnlineClassProxy.generateRoomEnterUrl(String.valueOf(student.getId()), student.getRealName(),
                 onlineClass.getClassroom(), OnlineClassProxy.RoomRole.STUDENT, onlineClass.getSupplierCode(),onlineClass.getId(),OnlineClassProxy.ClassType.PRACTICUM));
         modelMap.put("teacherPe", teacherPeDao.findByOnlineClassId(onlineClass.getId()));
@@ -208,7 +207,15 @@ public class OnlineClassService {
         modelMap.put("tags", tagsDao.getTags());
         modelMap.put("teacherPeTags", teacherPeTagsDao.getTeacherPeTagsByApplicationId(applicationId));
         modelMap.put("teacherPeLevels", teacherPeLevelsDao.getTeacherPeLevelsByApplicationId(applicationId));
-        modelMap.put("teacherPeComments", teacherPeCommentsDao.getTeacherPeComments(applicationId));
+        TeacherPeComments teacherPeComments = teacherPeCommentsDao.getTeacherPeComments(applicationId);
+        modelMap.put("teacherPeComments", teacherPeComments);
+
+        if(0!=teacherApplication.getAuditorId() || "SAVE".endsWith(teacherPeComments.getStatus())){
+            teacherApplicationDao.initApplicationAnswer(teacherApplication);
+            modelMap.put("teacherApplication", teacherApplicationDao.findApplictionById(applicationId));
+        }else{
+            modelMap.put("teacherApplication", teacherApplication);
+        }
 
         return modelMap;
     }
