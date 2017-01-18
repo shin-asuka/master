@@ -365,7 +365,9 @@ public class TeacherService {
 
 				List<TeacherCommentResult> teacherCommentListPart =
 					getTeacherCommentResult(paramsMap, API_TEACHER_COMMENT_QUERY_CLASSIDLIST);
-				teacherCommentList.addAll(teacherCommentListPart);
+				if(CollectionUtils.isNotEmpty(teacherCommentListPart)){
+					teacherCommentList.addAll(teacherCommentListPart);
+				}
 			});
 		}
 		return teacherCommentList;
