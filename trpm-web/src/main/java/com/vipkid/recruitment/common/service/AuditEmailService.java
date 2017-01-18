@@ -14,7 +14,6 @@ import com.vipkid.recruitment.entity.TeacherApplication;
 import com.vipkid.recruitment.entity.TeacherContractFile;
 import com.vipkid.recruitment.event.analysis.EmailTemplateTools;
 import com.vipkid.recruitment.utils.ReturnMapUtils;
-import com.vipkid.trpm.dao.OnlineClassDao;
 import com.vipkid.trpm.dao.TeacherDao;
 import com.vipkid.trpm.dao.TeacherPeCommentsDao;
 import com.vipkid.trpm.entity.Teacher;
@@ -44,8 +43,6 @@ public class AuditEmailService {
     @Autowired
     private TeacherApplicationDao teacherApplicationDao;
 
-    @Autowired
-    private OnlineClassDao onlineClassDao;
 
     @Autowired
     private TeacherPeCommentsDao teacherPeCommentsDao;
