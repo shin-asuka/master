@@ -122,8 +122,10 @@ public class AuditEmailService {
             logger.info(" teacherId:{},application Id{}",teacherId,application.getId());
             TeacherPeComments teacherPeComments =  teacherPeCommentsDao.getTeacherPeComments(Long.valueOf(application.getId()).intValue());
 
+            logger.info("teacherPeComments:{}",JSON.toJSONString(teacherPeComments));
             if(teacherPeComments!=null) {
                 paramsMap.put("thingsDidWell", HtmlUtils.htmlUnescape(teacherPeComments.getThingsDidWell()));
+                logger.info("thingsDidWell:{}",HtmlUtils.htmlUnescape(teacherPeComments.getThingsDidWell()));
                 paramsMap.put("areasImprovement", HtmlUtils.htmlUnescape(teacherPeComments.getAreasImprovement()));
             }
             List<TeacherApplication> list = teacherApplicationDao.findApplictionForStatusResult(teacher.getId(), TeacherApplicationEnum.Status.SIGN_CONTRACT.toString(), TeacherApplicationEnum.Result.PASS.toString());
