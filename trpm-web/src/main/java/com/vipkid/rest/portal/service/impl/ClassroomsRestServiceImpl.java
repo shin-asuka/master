@@ -10,7 +10,10 @@ import java.util.Map;
 import java.util.TimeZone;
 
 import com.google.api.client.util.Maps;
+import com.vipkid.enums.OnlineClassEnum;
 import com.vipkid.file.service.QNService;
+import com.vipkid.trpm.constant.ApplicationConstant;
+import com.vipkid.trpm.service.portal.ScheduleService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.community.config.PropertyConfigurer;
@@ -88,6 +91,9 @@ public class ClassroomsRestServiceImpl implements ClassroomsRestService{
 
 	@Autowired
 	private QNService qnService;
+
+    @Autowired
+    private ScheduleService scheduleService;
 
 	public Map<String, Object> getClassroomsData(long teacherId, int offsetOfMonth, String courseType, int page) {
 		if (!CourseType.isPracticum(courseType)) {// 只要不是"PRACTICUM"，就赋值"MAJOR"
@@ -328,24 +334,50 @@ public class ClassroomsRestServiceImpl implements ClassroomsRestService{
 		List<Map<String, Object>> dataList = (List<Map<String, Object>>) dataListMap.get("dataList");// 复用以前代码产生的dataList，后面对其重新包装
 		if (dataList == null)
 			return null;
+        List<String> onlineClassIds =Lists.newArrayList();
+
+        for (Map<String, Object> onlineClassMap : dataList) {
+            String onlineClassId = onlineClassMap.get("id").toString();
+            onlineClassIds.add(onlineClassId);
+        }
+        long teacherId = teacher.getId();
+        List<String> idsFor24Hour = scheduleService.get24HourClass(teacherId, onlineClassIds);
+
 		int id = 0;//加一个id方便前端排序
 		for (Map<String, Object> eachMap : dataList) {
+			boolean is24Hour = false;
 			ClassroomDetail classroomDetail = new ClassroomDetail();
 			classroomDetail.setId(id);
-			classroomDetail.setFinishType((String) eachMap.get("finishType"));
-			classroomDetail.setIsPaidTrail((int) eachMap.get("isPaidTrail"));
-			classroomDetail.setLearningCycleId((long) eachMap.get("learningCycleId"));
-			classroomDetail.setLessonId((long) eachMap.get("lessonId"));
+			classroomDetail.setIsPaidTrail((Integer) eachMap.get("isPaidTrail"));
+			classroomDetail.setLearningCycleId((Long) eachMap.get("learningCycleId"));
+			classroomDetail.setLessonId((Long) eachMap.get("lessonId"));
 			classroomDetail.setLessonName((String) eachMap.get("lessonName"));
-			classroomDetail.setLessonSerialNumber((String) eachMap.get("serialNumber"));
-			classroomDetail.setOnlineClassId((long) eachMap.get("id"));
-			classroomDetail.setShortNotice((int) eachMap.get("shortNotice"));
-			classroomDetail.setStatus((String) eachMap.get("status"));
-			classroomDetail.setStudentId((long) eachMap.get("studentId"));
+			classroomDetail.setShortNotice((Integer) eachMap.get("shortNotice"));
+			classroomDetail.setStudentId((Long) eachMap.get("studentId"));
 			classroomDetail.setStudentName((String) eachMap.get("englishName"));
-			classroomDetail.setTeacherId((long) eachMap.get("teacherId"));
-
+            teacherId = (Long) eachMap.get("teacherId");
+			classroomDetail.setTeacherId(teacherId);
 			String serialNumber = (String) eachMap.get("serialNumber");
+			classroomDetail.setLessonSerialNumber(serialNumber);
+
+            Timestamp timeStamp = (Timestamp) eachMap.get("scheduledDateTime");
+            Date date = new Date(timeStamp.getTime());
+			Date scheduledTime = new Date(timeStamp.getTime() + 30*60*1000);
+            DateFormat df = new SimpleDateFormat("MMM dd yyyy, hh:mma", Locale.ENGLISH);
+            df.setTimeZone(TimeZone.getTimeZone(teacher.getTimezone()));
+            String scheduledDateTime = df.format(date);
+            classroomDetail.setScheduledDateTime(scheduledDateTime);
+
+            String onlineClassId = String.valueOf(eachMap.get("id"));
+            classroomDetail.setOnlineClassId(Long.parseLong(onlineClassId));
+            if (idsFor24Hour.contains(onlineClassId)){
+                is24Hour = true;
+            }
+            String finishType = (String) eachMap.get("finishType");
+			classroomDetail.setFinishType(finishType);
+            String status = (String) eachMap.get("status");
+			classroomDetail.setStatus(status);
+
 			if(StringUtils.isNotEmpty(serialNumber)){
 				boolean isPrevipLesson = false;
 				int index = serialNumber.lastIndexOf("-");
@@ -366,13 +398,8 @@ public class ClassroomsRestServiceImpl implements ClassroomsRestService{
 					classroomDetail.setVideoDownloadUrl(videoDownloadUrl);
 				}
 			}
-
-			Timestamp timeStamp = (Timestamp) eachMap.get("scheduledDateTime");
-			Date date = new Date(timeStamp.getTime());
-			DateFormat df = new SimpleDateFormat("MMM dd yyyy, hh:mma", Locale.ENGLISH);
-			df.setTimeZone(TimeZone.getTimeZone(teacher.getTimezone())); 
-			String scheduledDateTime = df.format(date);
-			classroomDetail.setScheduledDateTime(scheduledDateTime);
+			/*设置24小时取消课的显示状态*/
+			set24hoursCancleCourse(finishType,status,is24Hour,scheduledTime,classroomDetail);
 
 			addReportTypeAndStatus(eachMap, date, classroomDetail);
 
@@ -380,6 +407,26 @@ public class ClassroomsRestServiceImpl implements ClassroomsRestService{
 			id ++;
 		}
 		return result;
+	}
+
+	/**
+	 * 设置24小时取消的的显示逻辑
+	 * @param finishType
+	 * @param status
+	 * @param is24Hour
+	 * @param scheduledTime
+	 * @param classroomDetail
+	 */
+	private void set24hoursCancleCourse(String finishType,String status,boolean is24Hour,
+										Date scheduledTime, ClassroomDetail classroomDetail){
+
+		Date nowTime = new Date();
+		boolean isCurrent = scheduledTime.after(nowTime);
+		if (is24Hour && OnlineClassEnum.ClassStatus.isFinished(status)
+				&& isCurrent && ApplicationConstant.FinishType.isStudentNoShow(finishType) ){
+			classroomDetail.setStatus(OnlineClassEnum.ClassStatus.BOOKED.toString() );
+			classroomDetail.setFinishType("");
+		}
 	}
 
 	/**

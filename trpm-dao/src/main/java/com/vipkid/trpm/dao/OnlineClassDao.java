@@ -444,4 +444,11 @@ public class OnlineClassDao extends MapperDaoTemplate<OnlineClass> {
 		return selectList("findOnlineClassByIds", paramsMap);
 	}
 
+	public Map<String, Object> findOnlineClassByTeacherIDAndScheduleDateTime(long teacherId,Timestamp scheduledDateTime){
+		Map<String, Object> paramsMap = new HashMap<>();
+		paramsMap.put("teacherId", teacherId);
+		paramsMap.put("scheduledDateTime", scheduledDateTime);
+		return selectEntity("findOnlineClassByTeacherIDAndScheduleDateTime", paramsMap);
+	}
+
 }

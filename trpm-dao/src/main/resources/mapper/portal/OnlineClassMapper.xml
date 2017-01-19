@@ -737,4 +737,15 @@
 		</foreach>
 	</select>
 
+	<select id="findOnlineClassByTeacherIDAndScheduleDateTime" resultType="java.util.Map" useCache="false">
+		SELECT
+		oc.id AS id,
+		oc.lesson_id AS  lessonId,
+		os.student_id AS studentId
+		FROM online_class oc
+		LEFT JOIN online_class_student os ON oc.id = os.online_class_id
+		WHERE oc.teacher_id = #{teacherId} AND scheduled_date_time = #{scheduledDateTime}
+		AND oc.status = 'BOOKED'
+	</select>
+
 </mapper>
