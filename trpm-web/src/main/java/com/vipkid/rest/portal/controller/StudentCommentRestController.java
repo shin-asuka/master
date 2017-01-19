@@ -15,13 +15,16 @@ import com.vipkid.rest.interceptor.annotation.RestInterface;
 import com.vipkid.rest.portal.service.ClassroomsRestService;
 import com.vipkid.rest.portal.vo.StudentCommentPageApi;
 import com.vipkid.rest.portal.vo.StudentCommentTotalApi;
+import com.vipkid.rest.security.AppContext;
 import com.vipkid.rest.service.LoginService;
 import com.vipkid.rest.utils.ApiResponseUtils;
+import com.vipkid.rest.utils.UserUtils;
 import com.vipkid.rest.utils.ext.baidu.BaiduTranslateAPI;
 import com.vipkid.trpm.dao.LessonDao;
 import com.vipkid.trpm.entity.Lesson;
 import com.vipkid.trpm.entity.OnlineClass;
 import com.vipkid.trpm.entity.Student;
+import com.vipkid.trpm.entity.User;
 import com.vipkid.trpm.service.portal.OnlineClassService;
 import com.vipkid.trpm.util.LessonSerialNumber;
 import org.apache.commons.lang.StringUtils;
@@ -29,10 +32,7 @@ import org.apache.commons.lang3.time.DateFormatUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -67,7 +67,10 @@ public class StudentCommentRestController extends RestfulController{
 		try {
 			Stopwatch stopwatch = Stopwatch.createStarted();
 			logger.info("【StudentCommentRestController.getStudentCommentByDoublePage】input：onlineClassId={},teacherId={}",onlineClassId, teacherId);
-
+//			User getUser = UserUtils.getUser(request);
+//			if(getUser.getId()!=teacherId){
+//				return ApiResponseUtils.buildErrorResp(1002, "没有数据访问权限");
+//			}
 			StudentCommentPageApi studentCommentPageApi = gatewayAppService.getStudentCommentListByTeacherId(teacherId, null, null, null);
 			Integer[] offsetAndLimit = gatewayAppService.calculateOffsetAndLimit(studentCommentPageApi, onlineClassId);
 			studentCommentPageApi = gatewayAppService.getStudentCommentListByTeacherId(teacherId,offsetAndLimit[0],offsetAndLimit[1],null);
@@ -116,6 +119,10 @@ public class StudentCommentRestController extends RestfulController{
 		try {
 			Stopwatch stopwatch = Stopwatch.createStarted();
 			logger.info("【StudentCommentRestController.getStudentCommentTotal】input：teacherId={}",teacherId);
+//			User getUser = UserUtils.getUser(request);
+//			if(getUser.getId()!=teacherId){
+//				return ApiResponseUtils.buildErrorResp(1002, "没有数据访问权限");
+//			}
 			Map ret = Maps.newHashMap();
 			StudentCommentTotalApi data = gatewayAppService.getStudentCommentTotalByTeacherId(teacherId);
 			Integer allComments = data.getRating_1_count() +
@@ -165,6 +172,10 @@ public class StudentCommentRestController extends RestfulController{
 		try {
 			Stopwatch stopwatch = Stopwatch.createStarted();
 			logger.info("【StudentCommentRestController.getStudentCommentByPage】input：teacherId={},start={},limit={},ratingLevel={}",teacherId,start,limit,ratingLevel);
+//			User getUser = UserUtils.getUser(request);
+//			if(getUser.getId()!=teacherId){
+//				return ApiResponseUtils.buildErrorResp(1002, "没有数据访问权限");
+//			}
 			StudentCommentPageApi data = gatewayAppService.getStudentCommentListByTeacherId(teacherId, start, limit, ratingLevel);
 			for(StudentCommentApi stuCommentApi : data.getData()){
 				OnlineClass onlineClass = onlineClassService.getOnlineClassById(stuCommentApi.getClass_id());
