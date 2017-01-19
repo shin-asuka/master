@@ -493,7 +493,7 @@ define(["function","jquery-bootstrap","jquery-load","countdown" ], function() {
 	}
 
 	var changeClassRoom = function(scheduledDateTime,serialNumber,oldStatus,is24Hour) {
-		var now = new Date();
+        var now = new Date();
 		now.setMinutes(now.getMinutes() - 30);
 		var scheduledTime = scheduledDateTime.replace(/-/g,"/");
 		var scheduledDate = new Date(Date.parse(scheduledTime));

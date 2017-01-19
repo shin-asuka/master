@@ -345,14 +345,14 @@ public class ClassroomsRestServiceImpl implements ClassroomsRestService{
 			boolean is24Hour = false;
 			ClassroomDetail classroomDetail = new ClassroomDetail();
 			classroomDetail.setId(id);
-			classroomDetail.setIsPaidTrail((int) eachMap.get("isPaidTrail"));
-			classroomDetail.setLearningCycleId((long) eachMap.get("learningCycleId"));
-			classroomDetail.setLessonId((long) eachMap.get("lessonId"));
+			classroomDetail.setIsPaidTrail((Integer) eachMap.get("isPaidTrail"));
+			classroomDetail.setLearningCycleId((Long) eachMap.get("learningCycleId"));
+			classroomDetail.setLessonId((Long) eachMap.get("lessonId"));
 			classroomDetail.setLessonName((String) eachMap.get("lessonName"));
-			classroomDetail.setShortNotice((int) eachMap.get("shortNotice"));
-			classroomDetail.setStudentId((long) eachMap.get("studentId"));
+			classroomDetail.setShortNotice((Integer) eachMap.get("shortNotice"));
+			classroomDetail.setStudentId((Long) eachMap.get("studentId"));
 			classroomDetail.setStudentName((String) eachMap.get("englishName"));
-            teacherId = (long) eachMap.get("teacherId");
+            teacherId = (Long) eachMap.get("teacherId");
 			classroomDetail.setTeacherId(teacherId);
 			String serialNumber = (String) eachMap.get("serialNumber");
 			classroomDetail.setLessonSerialNumber(serialNumber);
@@ -423,7 +423,6 @@ public class ClassroomsRestServiceImpl implements ClassroomsRestService{
 				&& isCurrent && ApplicationConstant.FinishType.isStudentNoShow(finishType) ){
 			classroomDetail.setStatus(OnlineClassEnum.ClassStatus.BOOKED.toString() );
 			classroomDetail.setFinishType("");
-			classroomDetail.setIs24Hour(is24Hour);
 		}
 	}
 

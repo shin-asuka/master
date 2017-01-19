@@ -24,11 +24,6 @@ public class ClassroomDetail{
 	private String lyricsShowUrl;
 	private String videoShowUrl;
 	private String videoDownloadUrl;
-	private boolean is24Hour;
-
-	public boolean getIs24Hour() {return is24Hour;}
-
-	public void setIs24Hour(boolean is24Hour) {this.is24Hour = is24Hour;}
 
 
 
