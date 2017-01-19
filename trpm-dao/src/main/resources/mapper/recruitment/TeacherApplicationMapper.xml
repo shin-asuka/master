@@ -382,7 +382,6 @@
 		WHERE online_class_id = #{onlineClassId} AND auditor_id IS NOT NULL
 	</select>
 
-
 	<select id="findFailTeachersByAuditTime" resultType="java.util.HashMap">
 		SELECT
 		ta.status AS status,
@@ -410,7 +409,7 @@
 		</foreach>
 	</select>
 
-		<select id="findTAByAuditTimeCurrentStatusResult" resultMap="teacherApplicationResultMap">
+	<select id="findTAByAuditTimeCurrentStatusResult" resultMap="teacherApplicationResultMap">
 		SELECT
 		<include refid="teacherApplicationColumns" />
 		FROM teacher_application
@@ -422,9 +421,6 @@
 			(audit_date_time BETWEEN #{auditTime.startTime} AND #{auditTime.endTime})
 		</foreach>
 	</select>
-
-
-
 
 	<select id="findTAByTeacherIdsStatusNeResult" resultMap="teacherApplicationResultMap">
 		SELECT
@@ -464,4 +460,33 @@
 			(oc.scheduled_date_time BETWEEN #{auditTime.startTime} AND #{auditTime.endTime})
 		</foreach>
 	</select>
+
+	<update id="initApplicationAnswer">
+		UPDATE teacher_application SET abroad_teaching_experience = -1
+		, appearance_score = -1
+		, delay_days = -1
+		, english_language_score = -1
+		, grade6_teaching_experience = -1
+		, high_school_teaching_experience = -1
+		, home_country_teaching_experience = -1
+		, interaction_rapport_score = -1
+		, kid_teaching_experience = -1
+		, kid_under12_teaching_experience = -1
+		, lesson_objectives_score = -1
+		, online_teaching_experience = -1
+		, preparation_planning_score = -1
+		, student_output_score = -1
+		, teaching_certificate = -1
+		, teaching_method_score = -1
+		, teenager_teaching_experience = -1
+		, tefl_or_tosel_certificate = -1
+		, time_management_score = -1
+		, accent = -1
+		, positive = -1
+		, engaged = -1
+		, appearance = -1
+		, phonics = -1
+		WHERE id = #{id}
+	</update>
+
 </mapper>

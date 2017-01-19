@@ -55,7 +55,7 @@ public class EmailServer {
         Map<String, String> requestParam = Maps.newHashMap();
         requestParam.put("from", mailEntity.getFromMail());
         requestParam.put("to", mailEntity.getToMail());
-        //requestParam.put("to", "13001226942@163.com");
+        //requestParam.put("to", "moyonglin1@gmail.com");
         requestParam.put("subject", mailEntity.getMailSubject());
         requestParam.put("content", mailEntity.getMailBody());
         try {
@@ -80,7 +80,7 @@ public class EmailServer {
         StringBuffer content = new StringBuffer();
         content.append(mailEntity.getFromMail());
         content.append(mailEntity.getToMail());
-        //content.append("13001226942@163.com");
+        //content.append("moyonglin1@gmail.com");
         content.append(mailEntity.getMailSubject());
         content.append(mailEntity.getMailBody());
         content.append(EmailConfig.APP_SECRECT);

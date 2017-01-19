@@ -1,18 +1,14 @@
 package com.vipkid.trpm.controller.portal;
 
+import com.google.api.client.util.Lists;
 import com.google.common.collect.Maps;
 import com.vipkid.enums.OnlineClassEnum;
 import com.vipkid.enums.TeacherApplicationEnum.Result;
-import com.vipkid.recruitment.common.service.RecruitmentService;
-import com.vipkid.recruitment.dao.TeacherLockLogDao;
 import com.vipkid.recruitment.entity.TeacherApplication;
 import com.vipkid.rest.service.LoginService;
 import com.vipkid.trpm.constant.ApplicationConstant.FinishType;
-import com.vipkid.trpm.dao.UserDao;
 import com.vipkid.trpm.entity.*;
-import com.vipkid.trpm.service.passport.IndexService;
-import com.vipkid.trpm.service.pe.AppserverPracticumService;
-import com.vipkid.trpm.service.pe.PeSupervisorService;
+import com.vipkid.trpm.service.pe.*;
 import com.vipkid.trpm.service.portal.OnlineClassService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -29,6 +25,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -49,6 +46,15 @@ public class OnlineClassController extends AbstractPortalController {
     @Autowired
     private LoginService loginService;
 
+    @Autowired
+    private TeacherPeTagsService teacherPeTagsService;
+
+    @Autowired
+    private TeacherPeLevelsService teacherPeLevelsService;
+
+    @Autowired
+    private TeacherPeCommentsService teacherPeCommentsService;
+
     /**
      * 进入教室
      *
@@ -63,13 +69,13 @@ public class OnlineClassController extends AbstractPortalController {
      */
     @RequestMapping("/classroom/{onlineClassId}-{studentId}-{lessonId}")
     public String classroom(HttpServletRequest request, HttpServletResponse response, @PathVariable long onlineClassId,
-            @PathVariable long studentId, @PathVariable long lessonId, Integer submitStatus, Model model)
+                    @PathVariable long studentId, @PathVariable long lessonId, Integer submitStatus, Model model)
                     throws IOException {
         if (StringUtils.equalsIgnoreCase(request.getHeader("x-forwarded-proto"), "https")) {
-            response.sendRedirect(
-                    request.getRequestURL().toString().replace("https:", "http:") + "?" + request.getQueryString());
+            response.sendRedirect(request.getRequestURL().toString().replace("https:", "http:") + "?"
+                            + request.getQueryString());
             logger.info("Enter Classroom change https to http redirect -> header: {}",
-                    request.getHeader("x-forwarded-proto"));
+                            request.getHeader("x-forwarded-proto"));
             return null;
         }
         model.addAttribute("submitStatus", submitStatus);
@@ -96,42 +102,42 @@ public class OnlineClassController extends AbstractPortalController {
         OnlineClass onlineClass = onlineclassService.getOnlineClassById(onlineClassId);
         if (onlineClass == null) {
             logger.error("teacherId:{},没有权限进入教室，原因:onlineClass is null,onlineClassId:{},LessonId:{}", user.getId(),
-                    onlineClassId, lessonId);
+                            onlineClassId, lessonId);
             model.addAttribute("info", errorHTML);
             return "error/info";
         }
         // 检查teacherId 与当前登录Id是否匹配
         if (onlineClass.getTeacherId() != teacher.getId()) {
             logger.error("teacherId:{},没有权限进入教室，原因:teacherId 与当前登录Id不匹配,onlineClassId:{},teacherId:{}", user.getId(),
-                    onlineClassId, teacher.getId());
+                            onlineClassId, teacher.getId());
             model.addAttribute("info", errorHTML);
             return "error/info";
         }
         // 检查lessonId是否匹配 onlineClassId
         if (onlineClass.getLessonId() != lessonId) {
             logger.error("teacherId:{},没有权限进入教室，原因:lessonId 与 onlineClassId不匹配,onlineClassId:{},lessonId:{}",
-                    user.getId(), onlineClassId, lessonId);
+                            user.getId(), onlineClassId, lessonId);
             model.addAttribute("info", errorHTML);
             return "error/info";
         }
         // 检查onlineClassId是否匹配studentId
         if (!onlineclassService.checkStudentIdClassId(onlineClassId, studentId)) {
             logger.error("teacherId:{},没有权限进入教室，原因:onlineClassId 与 studentId不匹配,onlineClassId:{},studentId:{}",
-                    user.getId(), onlineClassId, studentId);
+                            user.getId(), onlineClassId, studentId);
             model.addAttribute("info", errorHTML);
             return "error/info";
         }
         // INVALID不允许进入教室
         if (OnlineClassEnum.ClassStatus.INVALID.toString().equals(onlineClass.getStatus())) {
             logger.error("teacherId:{},没有权限进入教室，原因:onlineClass 状态为：INVALID,onlineClassId:{}", user.getId(),
-                    onlineClassId);
+                            onlineClassId);
             model.addAttribute("info", errorHTML);
             return "error/info";
         }
         // TEACHER_NO_SHOW不允许进入教室
         if ("TEACHER_NO_SHOW".equals(onlineClass.getFinishType())) {
             logger.error("teacherId:{},没有权限进入教室，原因:onlineClass FinishType为：TEACHER_NO_SHOW,onlineClassId:{}",
-                    user.getId(), onlineClassId);
+                            user.getId(), onlineClassId);
             model.addAttribute("info", errorHTML);
             return "error/info";
         }
@@ -188,7 +194,7 @@ public class OnlineClassController extends AbstractPortalController {
 
     @RequestMapping("/exitClassroomPage")
     public String exitClassroomPage(HttpServletRequest request, HttpServletResponse response,
-            @RequestParam("onlineClassId") Long onlineClassId) {
+                    @RequestParam("onlineClassId") Long onlineClassId) {
         logger.info("教师退出在线教室 exitClassroomPage onlineClassId = {}", onlineClassId);
         Map<String, Object> modelMap = Maps.newHashMap();
         Integer status = 0;
@@ -218,7 +224,7 @@ public class OnlineClassController extends AbstractPortalController {
      */
     @RequestMapping("/endThisClass")
     public String endThisClass(HttpServletRequest request, HttpServletResponse response,
-            @RequestParam long onlineClassId, Model model) {
+                    @RequestParam long onlineClassId, Model model) {
         onlineclassService.exitOpenclass(onlineClassId);
         return "redirect:/classrooms.shtml";
     }
@@ -234,7 +240,7 @@ public class OnlineClassController extends AbstractPortalController {
      */
     @RequestMapping("/sendTeacherInClassroom")
     public String sendTeacherInClassroom(HttpServletRequest request, HttpServletResponse response,
-            @RequestParam("onlineClassId") long onlineClassId, Model model) {
+                    @RequestParam("onlineClassId") long onlineClassId, Model model) {
         Map<String, String> requestParams = new HashMap<String, String>();
         requestParams.put("onlineClassId", String.valueOf(onlineClassId));
         Teacher teacher = loginService.getTeacher();
@@ -257,32 +263,76 @@ public class OnlineClassController extends AbstractPortalController {
      */
     @RequestMapping("/doAudit")
     public String doAudit(HttpServletRequest request, HttpServletResponse response,
-            TeacherApplication teacherApplication, Model model) {
+                    TeacherApplication teacherApplication, Model model) {
         Teacher pe = loginService.getTeacher();
         String type = ServletRequestUtils.getStringParameter(request, "type", "");
         String finishType = ServletRequestUtils.getStringParameter(request, "finishType", "");
 
-        Map<String, Object> modelMap = Maps.newHashMap();
-        if (type.startsWith(Result.TBD.toString())) {
-            modelMap = peSupervisorService.doPracticumForPE(pe, teacherApplication, type);
-        } else {
-            if (StringUtils.isEmpty(finishType)) {
-                finishType = FinishType.AS_SCHEDULED;
-            }
-            modelMap = onlineclassService.updateAudit(pe, teacherApplication, type, finishType);
+        // 新增 tags 逻辑
+        int[] tags = ServletRequestUtils.getIntParameters(request, "tags");
+        String things = ServletRequestUtils.getStringParameter(request, "things", null);
+        String areas = ServletRequestUtils.getStringParameter(request, "areas", null);
+        int[] levels = ServletRequestUtils.getIntParameters(request, "level");
+        int totalScore = ServletRequestUtils.getIntParameter(request, "totalScore", 0);
+        String submitType = ServletRequestUtils.getStringParameter(request, "submitType", null);
 
-            // Finish课程
-            if ((Boolean) modelMap.get("result")) {
-                onlineclassService.finishPracticum(teacherApplication, finishType, pe,
-                        (Teacher) modelMap.get("recruitTeacher"));
+        Map<String, Object> modelMap = Maps.newHashMap();
+        modelMap.put("submitType", submitType);
+        if(!StringUtils.equalsIgnoreCase(type,Result.REAPPLY.toString())) {
+            // 处理 tags 相关逻辑
+            int applicationId = Long.valueOf(teacherApplication.getId()).intValue();
+
+            List<TeacherPeTags> teacherPeTags = Lists.newArrayList();
+            for (int tagId : tags) {
+                TeacherPeTags teacherPeTag = new TeacherPeTags();
+                teacherPeTag.setApplicationId(applicationId);
+                teacherPeTag.setTagId(tagId);
+                teacherPeTags.add(teacherPeTag);
             }
+            teacherPeTagsService.updatePeTags(applicationId, teacherPeTags);
+
+            List<TeacherPeLevels> teacherPeLevels = Lists.newArrayList();
+            for (int level : levels) {
+                TeacherPeLevels teacherPeLevel = new TeacherPeLevels();
+                teacherPeLevel.setApplicationId(applicationId);
+                teacherPeLevel.setLevel(level);
+                teacherPeLevels.add(teacherPeLevel);
+            }
+            teacherPeLevelsService.updateTeacherPeLevels(applicationId, teacherPeLevels);
+
+            TeacherPeComments teacherPeComment = new TeacherPeComments();
+            teacherPeComment.setApplicationId(applicationId);
+            teacherPeComment.setThingsDidWell(things);
+            teacherPeComment.setAreasImprovement(areas);
+            teacherPeComment.setTotalScore(totalScore);
+            teacherPeComment.setStatus(submitType);
+            teacherPeCommentsService.updateTeacherPeComments(applicationId, teacherPeComment);
         }
 
-        // 并异步调用AppServer发送邮件及消息
-        Long teacherApplicationId = (Long) modelMap.get("teacherApplicationId");
-        Teacher recruitTeacher = (Teacher) modelMap.get("recruitTeacher");
-        if (Objects.nonNull(teacherApplicationId) && Objects.nonNull(recruitTeacher)) {
-            appserverPracticumService.finishPracticumProcess(teacherApplicationId, recruitTeacher);
+        if ("SAVE".endsWith(submitType)){
+            modelMap.put("result", onlineclassService.updateApplications(teacherApplication));
+        } else {
+            if (type.startsWith(Result.TBD.toString())) {
+                modelMap = peSupervisorService.doPracticumForPE(pe, teacherApplication, type);
+            } else {
+                if (StringUtils.isEmpty(finishType)) {
+                    finishType = FinishType.AS_SCHEDULED;
+                }
+                modelMap = onlineclassService.updateAudit(pe, teacherApplication, type, finishType);
+
+                // Finish课程
+                if ((Boolean) modelMap.get("result")) {
+                    onlineclassService.finishPracticum(teacherApplication, finishType, pe,
+                                    (Teacher) modelMap.get("recruitTeacher"));
+                }
+            }
+
+            // 并异步调用AppServer发送邮件及消息
+            Long teacherApplicationId = (Long) modelMap.get("teacherApplicationId");
+            Teacher recruitTeacher = (Teacher) modelMap.get("recruitTeacher");
+            if (Objects.nonNull(teacherApplicationId) && Objects.nonNull(recruitTeacher)) {
+                appserverPracticumService.finishPracticumProcess(teacherApplicationId, recruitTeacher);
+            }
         }
 
         return jsonView(response, modelMap);
@@ -300,7 +350,7 @@ public class OnlineClassController extends AbstractPortalController {
      */
     @RequestMapping("/isEmpty")
     public String isEmpty(HttpServletRequest request, HttpServletResponse response, @RequestParam long onlineClassId,
-            @RequestParam long studentId, Model model) {
+                    @RequestParam long studentId, Model model) {
         /* 判断当前课程是否为公开课，如果是则设置不显示退出教室提示 */
         Map<String, Object> modelMap = onlineclassService.isEmpty(onlineClassId, studentId);
         model.addAllAttributes(modelMap);
@@ -319,7 +369,7 @@ public class OnlineClassController extends AbstractPortalController {
      */
     @RequestMapping("/getLifeCycle")
     public String getLifeCycle(HttpServletRequest request, HttpServletResponse response,
-            @RequestParam long onlineClassId, @RequestParam long studentId, Model model) {
+                    @RequestParam long onlineClassId, @RequestParam long studentId, Model model) {
         DemoReport demoReport = onlineclassService.getDemoReport(onlineClassId, studentId);
         if (null != demoReport) {
             model.addAttribute("lifeCycle", demoReport.getLifeCycle());
@@ -340,7 +390,7 @@ public class OnlineClassController extends AbstractPortalController {
      */
     @RequestMapping("/sendHelp")
     public String sendHelp(HttpServletRequest request, HttpServletResponse response, @RequestParam String scheduleTime,
-            @RequestParam long onlineClassId, Model model) {
+                    @RequestParam long onlineClassId, Model model) {
         /* 计算服务器时间毫秒 */
         Teacher teacher = loginService.getTeacher();
         Map<String, Object> modelMap = onlineclassService.sendHelp(scheduleTime, onlineClassId, teacher);
@@ -358,7 +408,7 @@ public class OnlineClassController extends AbstractPortalController {
      */
     @RequestMapping("/sendStarLogs")
     public String sendStarLogs(HttpServletRequest request, HttpServletResponse response, @RequestParam boolean send,
-            @RequestParam long studentId, @RequestParam long onlineClassId, Model model) {
+                    @RequestParam long studentId, @RequestParam long onlineClassId, Model model) {
         Teacher teacher = loginService.getTeacher();
         onlineclassService.sendStarlogs(send, studentId, onlineClassId, teacher);
         return jsonView();
