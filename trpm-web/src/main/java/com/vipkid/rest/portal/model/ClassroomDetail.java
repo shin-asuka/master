@@ -25,8 +25,6 @@ public class ClassroomDetail{
 	private String videoShowUrl;
 	private String videoDownloadUrl;
 
-
-
 	public String getVideoDownloadUrl() {return videoDownloadUrl;}
 
 	public void setVideoDownloadUrl(String videoDownloadUrl) {this.videoDownloadUrl = videoDownloadUrl;}
