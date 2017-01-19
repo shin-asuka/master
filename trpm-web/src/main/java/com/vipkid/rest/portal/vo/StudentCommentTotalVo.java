@@ -3,7 +3,7 @@ package com.vipkid.rest.portal.vo;
 /**
  * Created by LP-813 on 2017/1/11.
  */
-public class StudentCommentTotalApi {
+public class StudentCommentTotalVo {
 
     private Integer rating_1_count;
     private Integer rating_2_count;

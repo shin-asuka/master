@@ -71,14 +71,15 @@ public class StudentCommentRestController extends RestfulController{
 //			if(getUser.getId()!=teacherId){
 //				return ApiResponseUtils.buildErrorResp(1002, "没有数据访问权限");
 //			}
-			StudentCommentPageApi studentCommentPageApi = gatewayAppService.getStudentCommentListByTeacherId(teacherId, null, null, null);
+			//取全量评论
+			StudentCommentPageApi studentCommentPageApi = gatewayAppService.getStudentCommentListByTeacherId(teacherId, 0, 3000, null);
+			logger.info("获取全量评论成功：teacherId:{},size:{}",teacherId,studentCommentPageApi.getTotal());
 			Integer[] offsetAndLimit = gatewayAppService.calculateOffsetAndLimit(studentCommentPageApi, onlineClassId);
-			studentCommentPageApi = gatewayAppService.getStudentCommentListByTeacherId(teacherId,offsetAndLimit[0],offsetAndLimit[1],null);
-			//计算当前评价在当前分页中的位置
+			//截取当前窗口数据和前后指针
+			List<StudentCommentApi> stuCommentList = studentCommentPageApi.getData().subList(offsetAndLimit[0],offsetAndLimit[0] + offsetAndLimit[1]);		//计算当前评价在当前分页中的位置
 			Integer currentPosition = 0 ;
 			Integer prevOnlineClassId = -1;
 			Integer nextOnlineClassId = -1;
-			List<StudentCommentApi> stuCommentList = studentCommentPageApi.getData();
 			for(int i=0;i<stuCommentList.size();i++){
 				if(stuCommentList.get(i).getClass_id()==onlineClassId){
 					currentPosition = i;

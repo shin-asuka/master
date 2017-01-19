@@ -4,18 +4,13 @@
 package com.vipkid.http.service;
 
 import com.alibaba.fastjson.JSONObject;
-import com.vipkid.http.constant.HttpUrlConstant;
 import com.vipkid.http.utils.JsonUtils;
 import com.vipkid.http.utils.WebUtils;
-import com.vipkid.rest.portal.vo.StudentCommentApi;
-import com.vipkid.rest.portal.vo.StudentCommentPageApi;
-import com.vipkid.rest.portal.vo.StudentCommentTotalApi;
-import org.apache.commons.lang3.StringUtils;
+import com.vipkid.rest.portal.vo.StudentCommentPageVo;
+import com.vipkid.rest.portal.vo.StudentCommentTotalVo;
+import com.vipkid.rest.portal.vo.StudentCommentVo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 
@@ -26,9 +21,9 @@ import java.util.List;
  *
  */
 
-public class GatewayAppService extends HttpBaseService {
+public class ManageGatewayService extends HttpBaseService {
 
-	private static final Logger logger = LoggerFactory.getLogger(GatewayAppService.class);
+	private static final Logger logger = LoggerFactory.getLogger(ManageGatewayService.class);
 
 	private static final Integer HALF_PAGE_SIZE = 10;//可调整缓存大小
 
@@ -41,26 +36,25 @@ public class GatewayAppService extends HttpBaseService {
 	private static final String  GATEWAY_STUDENT_COMMENT_TRANSLATION_API = "/service/student_comment/comment/%s/translation";
 
 
-	public List<StudentCommentApi> getStudentCommentListByBatch(String idsStr) {
+	public List<StudentCommentVo> getStudentCommentListByBatch(String idsStr) {
 
-		List<StudentCommentApi> studentCommentApiList = null;
+		List<StudentCommentVo> studentCommentApiList = null;
 
 		try {
 			String data = WebUtils.simpleGet(String.format(super.serverAddress + GATEWAY_STUDENT_COMMENT_BATCH_API ,idsStr));
 			if (data!=null) {
-				studentCommentApiList = JsonUtils.toBeanList(data, StudentCommentApi.class);
+				studentCommentApiList = JsonUtils.toBeanList(data, StudentCommentVo.class);
 			}
 		} catch (Exception e) {
 			logger.error("【GatewayAppService.getStudentCommentListByBatch】调用失败，idsStr：{}",e,idsStr);
-			e.printStackTrace();
 		}
 
 		return studentCommentApiList;
 	}
 
-	public StudentCommentPageApi getStudentCommentListByTeacherId(Integer teacher,Integer start,Integer limit,String ratingLevel){
+	public StudentCommentPageVo getStudentCommentListByTeacherId(Integer teacher,Integer start,Integer limit,String ratingLevel){
 
-		StudentCommentPageApi studentCommentPageApi = null;
+		StudentCommentPageVo studentCommentPageApi = null;
 		try {
 			String data = WebUtils.simpleGet(String.format(super.serverAddress + GATEWAY_STUDENT_COMMENT_BY_TEACHER_API,
 															teacher!=null ? String.valueOf(teacher) : "",
@@ -68,28 +62,26 @@ public class GatewayAppService extends HttpBaseService {
 															limit!=null ? String.valueOf(limit) : "",
 															ratingLevel!=null ? String.valueOf(ratingLevel) : ""));
 			if (data!=null) {
-				studentCommentPageApi = JSONObject.parseObject(data, StudentCommentPageApi.class);
+				studentCommentPageApi = JSONObject.parseObject(data, StudentCommentPageVo.class);
 			}
 		} catch (Exception e) {
 			logger.error("【GatewayAppService.getStudentCommentListByTeacherId】调用失败，teacherId：{},start:{},limit:{},ratingLevel:{},exception:{}",teacher,start,limit,ratingLevel,e);
-			e.printStackTrace();
 		}
 
 		return studentCommentPageApi;
 	}
 
-	public StudentCommentTotalApi getStudentCommentTotalByTeacherId(Integer teacher){
+	public StudentCommentTotalVo getStudentCommentTotalByTeacherId(Integer teacher){
 
-		StudentCommentTotalApi studentCommentTotalApi = null;
+		StudentCommentTotalVo studentCommentTotalApi = null;
 
 		try {
 			String data = WebUtils.simpleGet(String.format(super.serverAddress + GATEWAY_STUDENT_COMMENT_TOTAL_BY_TEACHER_API,teacher));
 			if (data!=null) {
-				studentCommentTotalApi = JsonUtils.toBean(data, StudentCommentTotalApi.class);
+				studentCommentTotalApi = JsonUtils.toBean(data, StudentCommentTotalVo.class);
 			}
 		} catch (Exception e) {
 			logger.error("【GatewayAppService.getStudentCommentTotalByTeacherId】调用失败，teacherId：{},exception:{}",teacher,e);
-			e.printStackTrace();
 		}
 
 		return studentCommentTotalApi;
@@ -109,7 +101,6 @@ public class GatewayAppService extends HttpBaseService {
 			}
 		} catch (Exception e) {
 			logger.error("【GatewayAppService.saveTranslation】调用失败，id：{},text:{},exception:{}",id,text,e);
-			e.printStackTrace();
 			throw e;
 		}
 		return false;
@@ -125,7 +116,6 @@ public class GatewayAppService extends HttpBaseService {
 			}
 		} catch (Exception e) {
 			logger.error("【GatewayAppService.getTranslation】调用失败，id：{},exception:{}",id,e);
-			e.printStackTrace();
 		}
 		return ret;
 	}
@@ -135,7 +125,7 @@ public class GatewayAppService extends HttpBaseService {
 	 * 页数 = 左页数 + 1 + 右页数
 	*/
 
-	public Integer[] calculateOffsetAndLimit(StudentCommentPageApi allCommentOfTeacher,Long onlineClassId){
+	public Integer[] calculateOffsetAndLimit(StudentCommentPageVo allCommentOfTeacher,Long onlineClassId){
 		Integer position = 0;
 		Integer[] offsetAndLimit = new Integer[2];
 		for(Integer i=0;i<allCommentOfTeacher.getTotal();i++){

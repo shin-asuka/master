@@ -3,7 +3,7 @@ package com.vipkid.rest.portal.vo;
 /**
  * Created by LP-813 on 2017/1/11.
  */
-public class StudentCommentApi {
+public class StudentCommentVo {
 
     private Integer id;
     private Integer	teacher_id;

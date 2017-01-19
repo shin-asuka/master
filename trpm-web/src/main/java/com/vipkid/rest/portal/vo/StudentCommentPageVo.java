@@ -5,10 +5,10 @@ import java.util.List;
 /**
  * Created by LP-813 on 2017/1/12.
  */
-public class StudentCommentPageApi {
+public class StudentCommentPageVo {
 
     private Integer total;
-    private List<StudentCommentApi> data;
+    private List<StudentCommentVo> data;
 
     public Integer getTotal() {
         return total;
@@ -18,11 +18,11 @@ public class StudentCommentPageApi {
         this.total = total;
     }
 
-    public List<StudentCommentApi> getData() {
+    public List<StudentCommentVo> getData() {
         return data;
     }
 
-    public void setData(List<StudentCommentApi> data) {
+    public void setData(List<StudentCommentVo> data) {
         this.data = data;
     }
 }
