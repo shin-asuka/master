@@ -38,10 +38,10 @@
                 ##end
                 <div style="margin-top: 3px;">
                     ##if(!$!{teacherPeComments})
-                    <input type='reset' onclick="require('classpracticum').clearTags()" value='Cancel' class='ui blue button submitBtn' style="margin:0; width:95x;" />
+                    <input type='reset' onclick="require('classpracticum').clearTags()" value='Cancel' class='ui blue button submitBtn' style="margin:0; width:95px;" />
                     ##end
-                    <input type="button" value="Save" onclick="require('classpracticum').doSubmit('SAVE')" class='ui blue button submitBtn' style="margin:0; width:95x;" />
-                    <input type="button" value="Submit" onclick="require('classpracticum').doSubmit('SUBMIT')" class='ui blue button submitBtn' style="margin:0; width:95x;" />
+                    <input type="button" value="Save" onclick="require('classpracticum').doSubmit('SAVE')" class='ui blue button submitBtn' style="margin:0; width:95px;" />
+                    <input type="button" value="Submit" onclick="require('classpracticum').doSubmit('SUBMIT')" class='ui blue button submitBtn' style="margin:0; width:95px;" />
                 </div>
                 #**
                 <div class='commentDiv'>
