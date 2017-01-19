@@ -13,6 +13,7 @@ import com.vipkid.rest.dto.LoginDto;
 import com.vipkid.rest.dto.RegisterDto;
 import com.vipkid.rest.dto.ResetPasswordDto;
 import com.vipkid.rest.interceptor.annotation.RestInterface;
+import com.vipkid.rest.service.AdminQuizService;
 import com.vipkid.rest.service.LoginService;
 import com.vipkid.rest.validation.ValidateUtils;
 import com.vipkid.rest.validation.tools.Result;
@@ -63,6 +64,9 @@ public class LoginController extends RestfulController {
 
     @Autowired
     private HuanxinService huanxinService;
+
+    @Autowired
+    private AdminQuizService adminQuizService;
         
 
     /**
@@ -366,7 +370,7 @@ public class LoginController extends RestfulController {
                 return ReturnMapUtils.returnFail(AjaxCode.USER_QUIT,"账户已经Quit."+user.getUsername());
             }
             
-            logger.info("重置请求检查完毕-(通过)-正在发送Email:{}",email);
+            logger.info("重置请求检查完毕-(通过)-正在发送Email:{}", email);
             
             Map<String,Object> result = this.passportService.senEmailForPassword(user);
             
@@ -483,7 +487,7 @@ public class LoginController extends RestfulController {
             TeacherInfo teacherinfo = new TeacherInfo();
             teacherinfo.setTeacherId(this.getUser(request).getId());
             //权限判断 start
-            loginService.findByTeacherModule(teacherinfo,teacher.getLifeCycle());
+            loginService.findByTeacherModule(teacherinfo, teacher.getLifeCycle());
             //其他信息
             if(0 != teacher.getManager()) {
                 User teacherManager = loginService.findUserById(teacher.getManager());
@@ -493,7 +497,12 @@ public class LoginController extends RestfulController {
             teacherinfo.setHeadsrc(fileHttpService.queryTeacherFiles(user.getId()).getAvatar());
             Map<String,Object> success = ReturnMapUtils.returnSuccess();
             success.putAll(Bean2Map.toMap(teacherinfo));
-            logger.info("返回数据:{}",JsonTools.getJson(success));
+
+            boolean isNeedQuiz = adminQuizService.findNeedQuiz(teacher.getId());
+            logger.info("Check if {} need to take the quiz and get result {}", teacher.getId(), isNeedQuiz);
+            success.put("isNeedQuiz", isNeedQuiz);
+
+            logger.info("返回数据:{}", JsonTools.getJson(success));
 
             // 设置 24 小时提示 Cookie
             CookieUtils.setCookie(response, CookieKey.TRPM_HOURS_24, String.valueOf(teacher.getId()), null);

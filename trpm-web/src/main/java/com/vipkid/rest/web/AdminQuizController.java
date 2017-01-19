@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -130,13 +131,16 @@ public class AdminQuizController extends RestfulController {
     }
     
     @RequestMapping(value = "/saveQuizResult", method = RequestMethod.POST, produces = RestfulConfig.JSON_UTF_8)
-    public Map<String,Object> saveQuizResult(HttpServletRequest request, HttpServletResponse response,@RequestParam(value="grade") String grade,@RequestParam(value="quizToken") long quizToken){
+    public Map<String,Object> saveQuizResult(HttpServletRequest request, HttpServletResponse response,@RequestBody Map<String,Object> pramMap){
+        Object grade = pramMap.get("grade");
+        Object quizToken = pramMap.get("quizToken");
         Map<String,Object> result = Maps.newHashMap();
         result.put("result", false);
+
         try{
             logger.info("提交分数:{}",grade);
             Teacher teacher = getTeacher(request);
-            result.put("result",this.adminQuizService.saveQuizResult(teacher.getId(), grade, quizToken));
+            result.put("result",this.adminQuizService.saveQuizResult(teacher.getId(), String.valueOf(grade),Long.valueOf(quizToken+"")));
             return result;
         } catch (IllegalArgumentException e) {
             logger.error("内部参数转化异常:"+e.getMessage());
