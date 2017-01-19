@@ -39,7 +39,6 @@ public class TeacherQuizDao extends MapperDaoTemplate<TeacherQuiz>{
         teacherQuiz.setTeacherId(teacherId);
         teacherQuiz.setAndwhere(" AND status > " + TeacherQuizEnum.Status.NOQUIZ.val());
         teacherQuiz.setStatus(-1);
-        teacherQuiz.setVersion(version.val());
         teacherQuiz.setOrderString(" id DESC ");
         return super.selectList(teacherQuiz);
     }
