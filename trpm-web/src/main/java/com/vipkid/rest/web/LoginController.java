@@ -497,14 +497,16 @@ public class LoginController extends RestfulController {
             teacherinfo.setHeadsrc(fileHttpService.queryTeacherFiles(user.getId()).getAvatar());
             Map<String,Object> success = ReturnMapUtils.returnSuccess();
             success.putAll(Bean2Map.toMap(teacherinfo));
+
+            boolean isNeedQuiz = adminQuizService.findNeedQuiz(teacher.getId());
+            logger.info("Check if {} need to take the quiz and get result {}", teacher.getId(), isNeedQuiz);
+            success.put("isNeedQuiz", isNeedQuiz);
+
             logger.info("返回数据:{}", JsonTools.getJson(success));
 
             // 设置 24 小时提示 Cookie
             CookieUtils.setCookie(response, CookieKey.TRPM_HOURS_24, String.valueOf(teacher.getId()), null);
 
-            boolean isNeedQuiz = adminQuizService.findNeedQuiz(teacher.getId());
-            logger.info("Check if {} need to take the quiz and get result {}", teacher.getId(), isNeedQuiz);
-            success.put("isNeedQuiz", isNeedQuiz);
             return success;
 
         } catch (IllegalArgumentException e) {
