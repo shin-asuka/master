@@ -25,7 +25,7 @@ public class ManageGatewayService extends HttpBaseService {
 
 	private static final Logger logger = LoggerFactory.getLogger(ManageGatewayService.class);
 
-	private static final Integer HALF_PAGE_SIZE = 10;//可调整缓存大小
+	private static final Integer PAGE_SIZE = 20;//可调整缓存大小
 
 	private static final String  GATEWAY_STUDENT_COMMENT_BATCH_API = "/service/student_comment/comments/by/classes?ids=%s";
 
@@ -125,23 +125,14 @@ public class ManageGatewayService extends HttpBaseService {
 	 * 页数 = 左页数 + 1 + 右页数
 	*/
 
-	public Integer[] calculateOffsetAndLimit(StudentCommentPageVo allCommentOfTeacher,Long onlineClassId){
-		Integer position = 0;
-		Integer[] offsetAndLimit = new Integer[2];
+	public Integer calculateAbsolutePosition(StudentCommentPageVo allCommentOfTeacher,Long onlineClassId){
+		Integer absolutePosition = 0;
 		for(Integer i=0;i<allCommentOfTeacher.getTotal();i++){
-			if(allCommentOfTeacher.getData().get(i).getClass_id().equals(onlineClassId)){
-				position = i;
+			if(allCommentOfTeacher.getData().get(i).getClass_id().longValue() == onlineClassId){
+				absolutePosition = i;
 				break;
 			}
 		}
-
-		if(position <= HALF_PAGE_SIZE){
-			offsetAndLimit[0] = 0;
-			offsetAndLimit[1] = position + 1 + HALF_PAGE_SIZE;
-		} else {
-			offsetAndLimit[0] = position - HALF_PAGE_SIZE;
-			offsetAndLimit[1] = HALF_PAGE_SIZE + 1 + HALF_PAGE_SIZE;
-		}
-		return offsetAndLimit;
+		return absolutePosition;
 	}
 }

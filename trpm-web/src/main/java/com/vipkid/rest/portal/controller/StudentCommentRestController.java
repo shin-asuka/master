@@ -1,6 +1,7 @@
 package com.vipkid.rest.portal.controller;
 
 import com.alibaba.fastjson.JSONObject;
+import com.google.api.client.util.Lists;
 import com.google.api.client.util.Maps;
 import com.google.common.base.Stopwatch;
 import com.vipkid.http.service.ManageGatewayService;
@@ -12,6 +13,7 @@ import com.vipkid.rest.portal.vo.StudentCommentTotalVo;
 import com.vipkid.rest.portal.vo.StudentCommentVo;
 import com.vipkid.rest.utils.ApiResponseUtils;
 import com.vipkid.rest.utils.ext.baidu.BaiduTranslateAPI;
+import com.vipkid.trpm.constant.ApplicationConstant;
 import com.vipkid.trpm.dao.LessonDao;
 import com.vipkid.trpm.entity.Lesson;
 import com.vipkid.trpm.entity.OnlineClass;
@@ -58,7 +60,8 @@ public class StudentCommentRestController extends RestfulController{
 	@RequestMapping(value = "/getStudentCommentByDoublePage", method = RequestMethod.GET)
 	public Map<String, Object> getStudentCommentByDoublePage(HttpServletRequest request, HttpServletResponse response,
 			@RequestParam(value="onlineClassId", required=true) long onlineClassId,
-			@RequestParam(value="teacherId",required=true) int teacherId) {
+			@RequestParam(value="teacherId",required=true) int teacherId,
+			@RequestParam(value="PageNo",required=false,defaultValue = "-1") Integer pageNo) {
 		try {
 			Stopwatch stopwatch = Stopwatch.createStarted();
 			logger.info("【StudentCommentRestController.getStudentCommentByDoublePage】input：onlineClassId={},teacherId={}",onlineClassId, teacherId);
@@ -67,33 +70,41 @@ public class StudentCommentRestController extends RestfulController{
 //				return ApiResponseUtils.buildErrorResp(1002, "没有数据访问权限");
 //			}
 			//取全量评论
-			StudentCommentPageVo studentCommentPageApi = manageGatewayService.getStudentCommentListByTeacherId(teacherId, 0, 3000, null);
-			logger.info("获取全量评论成功：teacherId:{},size:{}",teacherId,studentCommentPageApi.getTotal());
-			Integer[] offsetAndLimit = manageGatewayService.calculateOffsetAndLimit(studentCommentPageApi, onlineClassId);
-			//截取当前窗口数据和前后指针
-			List<StudentCommentVo> stuCommentList = studentCommentPageApi.getData().subList(offsetAndLimit[0],offsetAndLimit[0] + offsetAndLimit[1]);		//计算当前评价在当前分页中的位置
-			Integer currentPosition = 0 ;
-			Integer prevOnlineClassId = -1;
-			Integer nextOnlineClassId = -1;
-			for(int i=0;i<stuCommentList.size();i++){
-				if(stuCommentList.get(i).getClass_id()==onlineClassId){
-					currentPosition = i;
-					if(i>0) {
-						prevOnlineClassId = stuCommentList.get(i-1).getClass_id();
-					}
-					if(i<stuCommentList.size()-1) {
-						nextOnlineClassId = stuCommentList.get(i+1).getClass_id();
-					}
-					break;
-				}
+			Integer absolutePosition = 0;//在全部评论中的位置
+			Integer position = 0;//在评论分页中的位置
+			List<StudentCommentVo> stuCommentList = Lists.newArrayList();
+			if(pageNo == -1) {// 页号未知需重新定位页号
+				StudentCommentPageVo studentCommentPageVo = manageGatewayService.getStudentCommentListByTeacherId(teacherId, 0, 3000, null);
+				logger.info("获取全量评论成功：teacherId:{},size:{}",teacherId,studentCommentPageVo.getTotal());
+				absolutePosition = manageGatewayService.calculateAbsolutePosition(studentCommentPageVo, onlineClassId);
+				pageNo = absolutePosition / ApplicationConstant.PAGE_SIZE + 1;
 			}
 
+			//根据页号获取老师的评论列表分页
+			StudentCommentPageVo studentCommentPageVo = manageGatewayService.getStudentCommentListByTeacherId(teacherId,(pageNo-1) * ApplicationConstant.PAGE_SIZE,ApplicationConstant.PAGE_SIZE,null);
+			stuCommentList = studentCommentPageVo.getData();
+
+			//定位当前页的相对位置
+			for(StudentCommentVo studentCommentVo :stuCommentList){
+				if(studentCommentVo.getClass_id().longValue() == onlineClassId){
+					break;
+				}
+				position++;
+			}
+
+			StudentCommentTotalVo studentCommentTotalVo = manageGatewayService.getStudentCommentTotalByTeacherId(teacherId);
+			Integer totalPageNo = (studentCommentTotalVo.getRating_1_count() +
+					           studentCommentTotalVo.getRating_2_count() +
+					           studentCommentTotalVo.getRating_3_count() +
+						       studentCommentTotalVo.getRating_4_count() +
+						       studentCommentTotalVo.getRating_5_count()) / ApplicationConstant.PAGE_SIZE + 1;
+
 			Map<String,Object> ret = Maps.newHashMap();
-			ret.put("data",studentCommentPageApi.getData());
-			ret.put("currentOnlineClassId",onlineClassId);
-			ret.put("prevOnlineClassId",prevOnlineClassId);
-			ret.put("nextOnlineClassId",nextOnlineClassId);
-			ret.put("currentPosition",currentPosition);
+			ret.put("data",stuCommentList);
+			ret.put("position",position);
+			ret.put("pageNo",pageNo);
+			ret.put("pageSize",ApplicationConstant.PAGE_SIZE);
+			ret.put("totalPageNo",totalPageNo);
 			long millis =stopwatch.stop().elapsed(TimeUnit.MILLISECONDS);
 			logger.info("【StudentCommentRestController.getStudentCommentByDoublePage】output：result={},运行时间={}ms",ret,millis);
 	        return ApiResponseUtils.buildSuccessDataResp(ret);
