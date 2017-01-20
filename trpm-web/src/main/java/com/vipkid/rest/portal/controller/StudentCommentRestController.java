@@ -69,10 +69,11 @@ public class StudentCommentRestController extends RestfulController{
 //			if(getUser.getId()!=teacherId){
 //				return ApiResponseUtils.buildErrorResp(1002, "没有数据访问权限");
 //			}
-			//取全量评论
+
 			Integer absolutePosition = 0;//在全部评论中的位置
 			Integer position = 0;//在评论分页中的位置
 			List<StudentCommentVo> stuCommentList = Lists.newArrayList();
+
 			if(pageNo == -1) {// 页号未知需重新定位页号
 				StudentCommentPageVo studentCommentPageVo = manageGatewayService.getStudentCommentListByTeacherId(teacherId, 0, 3000, null);
 				logger.info("获取全量评论成功：teacherId:{},size:{}",teacherId,studentCommentPageVo.getTotal());
@@ -81,6 +82,17 @@ public class StudentCommentRestController extends RestfulController{
 					return ApiResponseUtils.buildErrorResp(1003,"未找到该课程的评论");
 				}
 				pageNo = absolutePosition / ApplicationConstant.PAGE_SIZE + 1;
+			}
+
+			//计算总页数
+			StudentCommentTotalVo studentCommentTotalVo = manageGatewayService.getStudentCommentTotalByTeacherId(teacherId);
+			Integer totalPageNo = (studentCommentTotalVo.getRating_1_count() +
+					studentCommentTotalVo.getRating_2_count() +
+					studentCommentTotalVo.getRating_3_count() +
+					studentCommentTotalVo.getRating_4_count() +
+					studentCommentTotalVo.getRating_5_count()) / ApplicationConstant.PAGE_SIZE + 1;
+			if(totalPageNo < pageNo){
+				return ApiResponseUtils.buildErrorResp(1004,"请求的页码超过了总页数");
 			}
 
 			//根据页号获取老师的评论列表分页
@@ -99,14 +111,6 @@ public class StudentCommentRestController extends RestfulController{
 			if(flag == 0){
 				return ApiResponseUtils.buildErrorResp(1003, "未能定位当前页的相对位置");
 			}
-
-
-			StudentCommentTotalVo studentCommentTotalVo = manageGatewayService.getStudentCommentTotalByTeacherId(teacherId);
-			Integer totalPageNo = (studentCommentTotalVo.getRating_1_count() +
-					           studentCommentTotalVo.getRating_2_count() +
-					           studentCommentTotalVo.getRating_3_count() +
-						       studentCommentTotalVo.getRating_4_count() +
-						       studentCommentTotalVo.getRating_5_count()) / ApplicationConstant.PAGE_SIZE + 1;
 
 			Map<String,Object> ret = Maps.newHashMap();
 			ret.put("data",stuCommentList);
