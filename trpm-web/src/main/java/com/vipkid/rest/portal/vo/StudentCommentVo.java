@@ -19,6 +19,7 @@ public class StudentCommentVo {
     private String studentAvatar;
     private String scheduleDateTime;
     private String onlineClassName;
+    private String transaltion;
 
     public Integer getId() {
         return id;
@@ -130,5 +131,13 @@ public class StudentCommentVo {
 
     public void setStudentAvatar(String studentAvatar) {
         this.studentAvatar = studentAvatar;
+    }
+
+    public String getTransaltion() {
+        return transaltion;
+    }
+
+    public void setTransaltion(String transaltion) {
+        this.transaltion = transaltion;
     }
 }

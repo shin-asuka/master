@@ -211,6 +211,8 @@ public class StudentCommentRestController extends RestfulController{
 						stuCommentApi.setStudentName(student.getEnglishName());
 					}
 				}
+				String result = manageGatewayService.getTranslation(stuCommentApi.getId().longValue());
+				stuCommentApi.setTransaltion(StringUtils.isEmpty(result)? "":result);
 			}
 
 			long millis =stopwatch.stop().elapsed(TimeUnit.MILLISECONDS);
@@ -245,13 +247,20 @@ public class StudentCommentRestController extends RestfulController{
 
 	@RequestMapping(value = "/getStudentCommentTranslation", method  = RequestMethod.GET)
 	public Map<String, Object> getStudentCommentTranslation(HttpServletRequest request, HttpServletResponse response,
-															@RequestParam(value = "id", required = true) Long id){
+															@RequestParam(value = "id", required = true) Long id,
+															@RequestParam(value = "text", required = false) String text){
 		try {
 			Stopwatch stopwatch = Stopwatch.createStarted();
 			logger.info("开始调用restClassroomsMaterials接口， 传入参数：id = {}", id);
 			String result  = manageGatewayService.getTranslation(id);
+			Boolean isSaved = false;
+			if(StringUtils.isEmpty(result)){
+				result = BaiduTranslateAPI.translate(text);
+				isSaved = manageGatewayService.saveTranslation(id, result);
+			}
 			Map map = Maps.newHashMap();
 			map.put("translation",result);
+			map.put("isSaved",isSaved);
 			long millis = stopwatch.stop().elapsed(TimeUnit.MILLISECONDS);
 			logger.info("【getStudentCommentTranslation】，传入参数：id = {}。返回Json={}。耗时{}ms", id, JsonUtils.toJSONString(result), millis);
 			return ApiResponseUtils.buildSuccessDataResp(map);
