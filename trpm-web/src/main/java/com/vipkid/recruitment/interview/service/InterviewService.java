@@ -36,6 +36,7 @@ import org.springframework.stereotype.Service;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -151,6 +152,23 @@ public class InterviewService {
         
         return result;
     }
+
+
+    /*加入interviewer scheduler逻辑以后, book 逻辑变动较大, 传入时间而不是传入onlineclassId*/
+    public Map<String,Object> bookInterviewClass(Timestamp timestamp,Teacher teacher) {
+        //1. Dao 1 same day.
+
+        //2. Dao 2 same day.
+
+        //3. join and pick the randomised online class id.
+
+        //4. go to  book.
+        int fakeonlineClassId=0;
+        Map<String,Object> result=new HashMap<>();
+        this.bookInterviewClass(fakeonlineClassId,teacher);
+        return result;
+    }
+
 
     /***
      * BOOK INTERVIEW 
