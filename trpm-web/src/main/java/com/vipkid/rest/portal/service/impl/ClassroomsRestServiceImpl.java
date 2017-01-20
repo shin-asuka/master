@@ -17,7 +17,6 @@ import com.vipkid.rest.portal.vo.StudentCommentVo;
 import com.vipkid.rest.portal.vo.StudentCommentPageVo;
 import com.vipkid.trpm.constant.ApplicationConstant;
 import com.vipkid.trpm.service.portal.ScheduleService;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.community.config.PropertyConfigurer;
@@ -235,7 +234,7 @@ public class ClassroomsRestServiceImpl implements ClassroomsRestService{
 //			sentencePatternsGroup = sentencePatterns.replace("\n", "").replace("\t", "").replace("<br>", "<br/>")
 //					.split("<br/>");
 //		}
-		if(sentencePatterns != null){
+		if(sentencePatterns != null) {
 			sentencePatterns = sentencePatterns.replace("\n", "").replace("\t", "");
 		}
 		data.put("lessonSentencePatterns", sentencePatterns);

@@ -46,7 +46,7 @@ public class ManageGatewayService extends HttpBaseService {
 				studentCommentApiList = JsonUtils.toBeanList(data, StudentCommentVo.class);
 			}
 		} catch (Exception e) {
-			logger.error("【GatewayAppService.getStudentCommentListByBatch】调用失败，idsStr：{}",e,idsStr);
+			logger.error("【ManageGatewayService.getStudentCommentListByBatch】调用失败，idsStr：{}", e, idsStr);
 		}
 
 		return studentCommentApiList;
@@ -65,7 +65,7 @@ public class ManageGatewayService extends HttpBaseService {
 				studentCommentPageApi = JSONObject.parseObject(data, StudentCommentPageVo.class);
 			}
 		} catch (Exception e) {
-			logger.error("【GatewayAppService.getStudentCommentListByTeacherId】调用失败，teacherId：{},start:{},limit:{},ratingLevel:{},exception:{}",teacher,start,limit,ratingLevel,e);
+			logger.error("【ManageGatewayService.getStudentCommentListByTeacherId】调用失败，teacherId：{},start:{},limit:{},ratingLevel:{},exception:{}", teacher, start, limit, ratingLevel,e);
 		}
 
 		return studentCommentPageApi;
@@ -81,7 +81,7 @@ public class ManageGatewayService extends HttpBaseService {
 				studentCommentTotalApi = JsonUtils.toBean(data, StudentCommentTotalVo.class);
 			}
 		} catch (Exception e) {
-			logger.error("【GatewayAppService.getStudentCommentTotalByTeacherId】调用失败，teacherId：{},exception:{}",teacher,e);
+			logger.error("【ManageGatewayService.getStudentCommentTotalByTeacherId】调用失败，teacherId：{},exception:{}", teacher,e);
 		}
 
 		return studentCommentTotalApi;
@@ -100,7 +100,7 @@ public class ManageGatewayService extends HttpBaseService {
 				}
 			}
 		} catch (Exception e) {
-			logger.error("【GatewayAppService.saveTranslation】调用失败，id：{},text:{},exception:{}",id,text,e);
+			logger.error("【ManageGatewayService.saveTranslation】调用失败，id：{},text:{},exception:{}", id, text,e);
 			throw e;
 		}
 		return false;
@@ -115,7 +115,7 @@ public class ManageGatewayService extends HttpBaseService {
 				ret = (String)jb.get("translation");
 			}
 		} catch (Exception e) {
-			logger.error("【GatewayAppService.getTranslation】调用失败，id：{},exception:{}",id,e);
+			logger.error("【ManageGatewayService.getTranslation】调用失败，id：{},exception:{}", id,e);
 		}
 		return ret;
 	}

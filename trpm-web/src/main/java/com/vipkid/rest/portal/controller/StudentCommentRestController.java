@@ -1,30 +1,21 @@
 package com.vipkid.rest.portal.controller;
 
 import com.alibaba.fastjson.JSONObject;
-import com.google.api.client.util.Lists;
 import com.google.api.client.util.Maps;
 import com.google.common.base.Stopwatch;
-import java.util.List;
-import com.vipkid.enums.TeacherEnum.LifeCycle;
-import com.vipkid.http.service.GatewayAppService;
+import com.vipkid.http.service.ManageGatewayService;
 import com.vipkid.http.utils.JsonUtils;
 import com.vipkid.payroll.service.StudentService;
-import com.vipkid.rest.portal.vo.StudentCommentApi;
 import com.vipkid.rest.RestfulController;
-import com.vipkid.rest.interceptor.annotation.RestInterface;
-import com.vipkid.rest.portal.service.ClassroomsRestService;
-import com.vipkid.rest.portal.vo.StudentCommentPageApi;
-import com.vipkid.rest.portal.vo.StudentCommentTotalApi;
-import com.vipkid.rest.security.AppContext;
-import com.vipkid.rest.service.LoginService;
+import com.vipkid.rest.portal.vo.StudentCommentPageVo;
+import com.vipkid.rest.portal.vo.StudentCommentTotalVo;
+import com.vipkid.rest.portal.vo.StudentCommentVo;
 import com.vipkid.rest.utils.ApiResponseUtils;
-import com.vipkid.rest.utils.UserUtils;
 import com.vipkid.rest.utils.ext.baidu.BaiduTranslateAPI;
 import com.vipkid.trpm.dao.LessonDao;
 import com.vipkid.trpm.entity.Lesson;
 import com.vipkid.trpm.entity.OnlineClass;
 import com.vipkid.trpm.entity.Student;
-import com.vipkid.trpm.entity.User;
 import com.vipkid.trpm.service.portal.OnlineClassService;
 import com.vipkid.trpm.util.LessonSerialNumber;
 import org.apache.commons.lang.StringUtils;
@@ -32,10 +23,14 @@ import org.apache.commons.lang3.time.DateFormatUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -45,7 +40,7 @@ public class StudentCommentRestController extends RestfulController{
 	private static final Logger logger = LoggerFactory.getLogger(StudentCommentRestController.class);
 	
 	@Autowired
-	private GatewayAppService gatewayAppService;
+	private ManageGatewayService manageGatewayService;
 	@Autowired
 	private OnlineClassService onlineClassService;
 	@Autowired
@@ -72,11 +67,11 @@ public class StudentCommentRestController extends RestfulController{
 //				return ApiResponseUtils.buildErrorResp(1002, "没有数据访问权限");
 //			}
 			//取全量评论
-			StudentCommentPageApi studentCommentPageApi = gatewayAppService.getStudentCommentListByTeacherId(teacherId, 0, 3000, null);
+			StudentCommentPageVo studentCommentPageApi = manageGatewayService.getStudentCommentListByTeacherId(teacherId, 0, 3000, null);
 			logger.info("获取全量评论成功：teacherId:{},size:{}",teacherId,studentCommentPageApi.getTotal());
-			Integer[] offsetAndLimit = gatewayAppService.calculateOffsetAndLimit(studentCommentPageApi, onlineClassId);
+			Integer[] offsetAndLimit = manageGatewayService.calculateOffsetAndLimit(studentCommentPageApi, onlineClassId);
 			//截取当前窗口数据和前后指针
-			List<StudentCommentApi> stuCommentList = studentCommentPageApi.getData().subList(offsetAndLimit[0],offsetAndLimit[0] + offsetAndLimit[1]);		//计算当前评价在当前分页中的位置
+			List<StudentCommentVo> stuCommentList = studentCommentPageApi.getData().subList(offsetAndLimit[0],offsetAndLimit[0] + offsetAndLimit[1]);		//计算当前评价在当前分页中的位置
 			Integer currentPosition = 0 ;
 			Integer prevOnlineClassId = -1;
 			Integer nextOnlineClassId = -1;
@@ -125,7 +120,7 @@ public class StudentCommentRestController extends RestfulController{
 //				return ApiResponseUtils.buildErrorResp(1002, "没有数据访问权限");
 //			}
 			Map ret = Maps.newHashMap();
-			StudentCommentTotalApi data = gatewayAppService.getStudentCommentTotalByTeacherId(teacherId);
+			StudentCommentTotalVo data = manageGatewayService.getStudentCommentTotalByTeacherId(teacherId);
 			Integer allComments = data.getRating_1_count() +
 								  data.getRating_2_count() +
 					   			  data.getRating_3_count() +
@@ -177,8 +172,8 @@ public class StudentCommentRestController extends RestfulController{
 //			if(getUser.getId()!=teacherId){
 //				return ApiResponseUtils.buildErrorResp(1002, "没有数据访问权限");
 //			}
-			StudentCommentPageApi data = gatewayAppService.getStudentCommentListByTeacherId(teacherId, start, limit, ratingLevel);
-			for(StudentCommentApi stuCommentApi : data.getData()){
+			StudentCommentPageVo data = manageGatewayService.getStudentCommentListByTeacherId(teacherId, start, limit, ratingLevel);
+			for(StudentCommentVo stuCommentApi : data.getData()){
 				OnlineClass onlineClass = onlineClassService.getOnlineClassById(stuCommentApi.getClass_id());
 				if(onlineClass!= null) {
 					stuCommentApi.setScheduleDateTime(DateFormatUtils.format(onlineClass.getScheduledDateTime(), "yyyy-MM-dd hh:mm"));
@@ -234,7 +229,7 @@ public class StudentCommentRestController extends RestfulController{
 		try {
 			Stopwatch stopwatch = Stopwatch.createStarted();
 			logger.info("开始调用restClassroomsMaterials接口， 传入参数：id = {}", id);
-			String result  = gatewayAppService.getTranslation(id);
+			String result  = manageGatewayService.getTranslation(id);
 			Map map = Maps.newHashMap();
 			map.put("translation",result);
 			long millis = stopwatch.stop().elapsed(TimeUnit.MILLISECONDS);
@@ -253,7 +248,7 @@ public class StudentCommentRestController extends RestfulController{
 		try {
 			Stopwatch stopwatch = Stopwatch.createStarted();
 			logger.info("开始调用restClassroomsMaterials接口， 传入参数：id = {},text = {}", id,text);
-			Boolean result  = gatewayAppService.saveTranslation(id, text);
+			Boolean result  = manageGatewayService.saveTranslation(id, text);
 			Map map = Maps.newHashMap();
 			map.put("status",result);
 			long millis = stopwatch.stop().elapsed(TimeUnit.MILLISECONDS);
