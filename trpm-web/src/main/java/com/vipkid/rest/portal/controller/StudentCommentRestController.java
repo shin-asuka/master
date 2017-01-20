@@ -77,6 +77,9 @@ public class StudentCommentRestController extends RestfulController{
 				StudentCommentPageVo studentCommentPageVo = manageGatewayService.getStudentCommentListByTeacherId(teacherId, 0, 3000, null);
 				logger.info("获取全量评论成功：teacherId:{},size:{}",teacherId,studentCommentPageVo.getTotal());
 				absolutePosition = manageGatewayService.calculateAbsolutePosition(studentCommentPageVo, onlineClassId);
+				if(absolutePosition == -1) {//未找到classId;
+					return ApiResponseUtils.buildErrorResp(1003,"未找到该课程的评论");
+				}
 				pageNo = absolutePosition / ApplicationConstant.PAGE_SIZE + 1;
 			}
 
@@ -85,12 +88,18 @@ public class StudentCommentRestController extends RestfulController{
 			stuCommentList = studentCommentPageVo.getData();
 
 			//定位当前页的相对位置
+			Integer flag = 0;
 			for(StudentCommentVo studentCommentVo :stuCommentList){
 				if(studentCommentVo.getClass_id().longValue() == onlineClassId){
+					flag = 1;
 					break;
 				}
 				position++;
 			}
+			if(flag == 0){
+				return ApiResponseUtils.buildErrorResp(1003, "未能定位当前页的相对位置");
+			}
+
 
 			StudentCommentTotalVo studentCommentTotalVo = manageGatewayService.getStudentCommentTotalByTeacherId(teacherId);
 			Integer totalPageNo = (studentCommentTotalVo.getRating_1_count() +

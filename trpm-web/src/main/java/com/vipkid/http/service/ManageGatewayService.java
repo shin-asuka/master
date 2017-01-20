@@ -127,12 +127,18 @@ public class ManageGatewayService extends HttpBaseService {
 
 	public Integer calculateAbsolutePosition(StudentCommentPageVo allCommentOfTeacher,Long onlineClassId){
 		Integer absolutePosition = 0;
+		Integer flag = 0;
 		for(Integer i=0;i<allCommentOfTeacher.getTotal();i++){
 			if(allCommentOfTeacher.getData().get(i).getClass_id().longValue() == onlineClassId){
 				absolutePosition = i;
+				flag = 1;
 				break;
 			}
 		}
-		return absolutePosition;
+		if(flag == 1) {
+			return absolutePosition;
+		}else {
+			return -1;
+		}
 	}
 }
