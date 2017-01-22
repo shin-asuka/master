@@ -120,10 +120,6 @@ public class OnlineClassService {
 
     @Autowired
     private TeacherPeCommentsDao teacherPeCommentsDao;
-
-
-    @Autowired
-    private ScheduleService scheduleService;
     /**
      * 根据id找online class
      *
@@ -265,21 +261,7 @@ public class OnlineClassService {
         } else {
             assessmentReport = assessmentReportDao.findReportByStudentIdAndName(serialNumber, studentId);
         }
-
         modelMap.put("isNewUa", assessmentReport == null ? 1 : 0);
-
-        List<String> onlineClassIds = Lists.newArrayList();
-        onlineClassIds.add(String.valueOf(onlineClassId));
-        long teacherId = teacher.getId();
-        List<String> idsFor24Hour = scheduleService.get24HourClass(teacherId, onlineClassIds);
-        boolean is24Hour = false;
-        if (idsFor24Hour.contains(String.valueOf(onlineClassId))){
-            is24Hour = true;
-        }
-
-        String status = onlineClass.getStatus();
-        modelMap.put("oldStatus",status);
-        modelMap.put("is24Hour",is24Hour);
         return modelMap;
     }
 
