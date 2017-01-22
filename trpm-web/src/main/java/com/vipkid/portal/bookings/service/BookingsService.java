@@ -377,7 +377,6 @@ public class BookingsService {
      */
     public Map<String, Map<String, Object>> getTeacherScheduleMap(long teacherId, Date fromTime, Date toTime,
                     String timezone) {
-        boolean is24Hour = false;
         List<Map<String, Object>> teacherScheduleList =
                         onlineClassDao.findByTeacherIdWithFromAndToTime(teacherId, fromTime, toTime, timezone);
         logger.info("Teacher id: {}, Schedule size: {}", teacherId, teacherScheduleList.size());
@@ -429,10 +428,8 @@ public class BookingsService {
             /* 设置是否是 24 小时的课程 */
             if (idsFor24Hour.stream().anyMatch(id -> id.equals(String.valueOf(onlineClassId)))) {
                 teacherSchedule.put("is24Hour", true);
-                is24Hour = true;
             } else {
                 teacherSchedule.put("is24Hour", false);
-                is24Hour = false;
             }
 
             /* 设置 OPEN 课程的学生数量 */
@@ -441,7 +438,7 @@ public class BookingsService {
             /* 按优先级过滤课程 */
             Date scheduledDateTime = (Date) teacherSchedule.get("scheduledDateTime");
             String scheduleKey = formatTo(scheduledDateTime.toInstant(), FMT_YMD_HMS);
-            setSchedulePriority(teacherScheduleMap, scheduleKey, teacherSchedule,is24Hour);
+            setSchedulePriority(teacherScheduleMap, scheduleKey, teacherSchedule);
         }
 
         return teacherScheduleMap;
@@ -472,7 +469,7 @@ public class BookingsService {
      * @param teacherSchedule
      */
     public void setSchedulePriority(Map<String, Map<String, Object>> teacherScheduleMap, String scheduleKey,
-                    Map<String, Object> teacherSchedule,boolean is24Hour) {
+                    Map<String, Object> teacherSchedule) {
         boolean isReplaced = false;
 
         /* 获取新的 TeacherSchedule 的状态 */
@@ -522,10 +519,6 @@ public class BookingsService {
                 /* 新状态为 BOOKED，则替换 */
                 if (ClassStatus.isBooked(newStatus)) {
                     isReplaced = true;
-                }
-                if (ClassStatus.isFinished(newStatus) && ApplicationConstant.FinishType.isStudentNoShow(newFinishType) && is24Hour  ){
-                    teacherSchedule.put("status",ClassStatus.BOOKED.toString());
-                    teacherSchedule.put("is24Hour",is24Hour);
                 }
                 /* 新 FinishType 为 StudentNoShow，则替换 */
                 if (ApplicationConstant.FinishType.isStudentNoShow(newFinishType)) {
