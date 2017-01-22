@@ -90,16 +90,16 @@ define(["function", "jquery-form", "jquery-bootstrap", "jquery-load", "countdown
             if (Tools.isEmpty($("textarea[name='things']").val())) {
                 alert("The comment box is required!");
                 return;
-            } else if (length($("textarea[name='things']").val()) > 1000 || length($("textarea[name='things']").val()) < 200) {
-                alert("The comment box content length must between 200 and 1000!");
+            } else if (length($("textarea[name='things']").val()) > 3000 || length($("textarea[name='things']").val()) < 200) {
+                alert("The comment box content length must between 200 and 3000!");
                 return;
             }
 
             if (Tools.isEmpty($("textarea[name='areas']").val())) {
                 alert("The comment box is required!");
                 return;
-            } else if (length($("textarea[name='areas']").val()) > 1000 || length($("textarea[name='areas']").val()) < 200) {
-                alert("The comment box content length must between 200 and 1000!");
+            } else if (length($("textarea[name='areas']").val()) > 3000 || length($("textarea[name='areas']").val()) < 200) {
+                alert("The comment box content length must between 200 and 3000!");
                 return;
             }
 
@@ -111,14 +111,14 @@ define(["function", "jquery-form", "jquery-bootstrap", "jquery-load", "countdown
             $("input[name='totalScore']").val($("#score").html());
 
             if (!Tools.isEmpty($("textarea[name='things']").val())) {
-                if (length($("textarea[name='things']").val()) > 1000) {
-                    alert("The comment box content length maximum 1000!");
+                if (length($("textarea[name='things']").val()) > 3000) {
+                    alert("The comment box content length maximum 3000!");
                     return;
                 }
             }
             if (!Tools.isEmpty($("textarea[name='areas']").val())) {
-                if (length($("textarea[name='areas']").val()) > 1000) {
-                    alert("The comment box content length maximum 1000!");
+                if (length($("textarea[name='areas']").val()) > 3000) {
+                    alert("The comment box content length maximum 3000!");
                     return;
                 }
             }
