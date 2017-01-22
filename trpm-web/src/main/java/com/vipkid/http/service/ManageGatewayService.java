@@ -6,11 +6,21 @@ package com.vipkid.http.service;
 import com.alibaba.fastjson.JSONObject;
 import com.vipkid.http.utils.JsonUtils;
 import com.vipkid.http.utils.WebUtils;
+import com.vipkid.payroll.service.StudentService;
 import com.vipkid.rest.portal.vo.StudentCommentPageVo;
 import com.vipkid.rest.portal.vo.StudentCommentTotalVo;
 import com.vipkid.rest.portal.vo.StudentCommentVo;
+import com.vipkid.trpm.dao.LessonDao;
+import com.vipkid.trpm.entity.Lesson;
+import com.vipkid.trpm.entity.OnlineClass;
+import com.vipkid.trpm.entity.Student;
+import com.vipkid.trpm.service.portal.OnlineClassService;
+import com.vipkid.trpm.util.LessonSerialNumber;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.time.DateFormatUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
@@ -35,6 +45,12 @@ public class ManageGatewayService extends HttpBaseService {
 
 	private static final String  GATEWAY_STUDENT_COMMENT_TRANSLATION_API = "/service/student_comment/comment/%s/translation";
 
+	@Autowired
+	private OnlineClassService onlineClassService;
+	@Autowired
+	private StudentService studentService;
+	@Autowired
+	private LessonDao lessonDao;
 
 	public List<StudentCommentVo> getStudentCommentListByBatch(String idsStr) {
 
@@ -63,6 +79,28 @@ public class ManageGatewayService extends HttpBaseService {
 															ratingLevel!=null ? String.valueOf(ratingLevel) : ""));
 			if (data!=null) {
 				studentCommentPageApi = JSONObject.parseObject(data, StudentCommentPageVo.class);
+				for(StudentCommentVo stuCommentApi : studentCommentPageApi.getData()){
+					OnlineClass onlineClass = onlineClassService.getOnlineClassById(stuCommentApi.getClass_id());
+					if(onlineClass!= null) {
+						stuCommentApi.setScheduleDateTime(DateFormatUtils.format(onlineClass.getScheduledDateTime(), "yyyy-MM-dd hh:mm"));
+						//构造OnlineClassName
+						Lesson lesson = lessonDao.findById(onlineClass.getLessonId());
+						if(lesson!=null) {
+							String lessonSn = lesson.getSerialNumber();
+							stuCommentApi.setLessonSn(lessonSn);
+							String onlineClassName = LessonSerialNumber.formatToStudentCommentPattern(lessonSn);
+							onlineClassName = onlineClassName + lesson.getName();
+							stuCommentApi.setOnlineClassName(onlineClassName);
+						}
+						Student student = studentService.getById(stuCommentApi.getStudent_id().longValue());
+						if(student!=null) {
+							stuCommentApi.setStudentAvatar(student.getAvatar());
+							stuCommentApi.setStudentName(student.getEnglishName());
+						}
+					}
+					String result = getTranslation(stuCommentApi.getId().longValue());
+					stuCommentApi.setTransaltion(StringUtils.isEmpty(result)? "":result);
+				}
 			}
 		} catch (Exception e) {
 			logger.error("【ManageGatewayService.getStudentCommentListByTeacherId】调用失败，teacherId：{},start:{},limit:{},ratingLevel:{},exception:{}", teacher, start, limit, ratingLevel,e);

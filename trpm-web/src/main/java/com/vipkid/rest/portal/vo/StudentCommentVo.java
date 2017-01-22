@@ -12,6 +12,7 @@ public class StudentCommentVo {
     private Integer clt_id;
     private Integer course_id;
     private Integer class_id;
+    private String lessonSn;
     private Integer status;
     private Integer rating;
     private String create_time;
@@ -139,5 +140,13 @@ public class StudentCommentVo {
 
     public void setTransaltion(String transaltion) {
         this.transaltion = transaltion;
+    }
+
+    public String getLessonSn() {
+        return lessonSn;
+    }
+
+    public void setLessonSn(String lessonSn) {
+        this.lessonSn = lessonSn;
     }
 }
