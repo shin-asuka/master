@@ -964,27 +964,4 @@ public class OnlineClassService {
             studentId, teacherId, onlineClass, lesson);
         return null;
     }
-
-    /**
-     * 根据teacherID和当前课的scheduledDateTime找出新预约学生的教室（24小时学生取消课业务）
-     * @param teacherId
-     * @param scheduledDateTime
-     * @return
-     */
-    public String getNewClassRoom(long teacherId,Timestamp scheduledDateTime){
-        Map<String,Object> onlineClassInfo = onlineClassDao.findOnlineClassByTeacherIDAndScheduleDateTime(teacherId,scheduledDateTime);
-        if (onlineClassInfo != null){
-            String onlineclassId = onlineClassInfo.get("id").toString();
-            String studentId = onlineClassInfo.get("studentId").toString();
-            String lessonId = onlineClassInfo.get("lessonId").toString();
-            if (StringUtils.isEmpty(onlineclassId) || StringUtils.isEmpty(studentId) || StringUtils.isEmpty(Long.toString(teacherId))){
-               return  "No newClassRoom";
-            }else{
-                logger.info("teacherID: {} 24小时取消约课后进入教室{}",teacherId,onlineclassId + "-" + studentId + "-" + lessonId);
-                return  "/classroom/"+ onlineclassId + "-" + studentId + "-" + lessonId + ".shtml";
-            }
-        }else{
-            return "No newClassRoom";
-        }
-    }
 }
