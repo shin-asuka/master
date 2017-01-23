@@ -22,9 +22,8 @@ define(["function","jquery-bootstrap","jquery-load","countdown" ], function() {
 	};
 
 	/** 初始化 */
-	var init = function(serverTime, scheduleTime,createDateTime, teacherId,scheduledDateTime,serialNumber,oldStatus,is24Hour) {
+	var init = function(serverTime, scheduleTime,createDateTime, teacherId) {
 		initInfoMenu();
-		changeClassRoom(scheduledDateTime,serialNumber,oldStatus,is24Hour);
 		setTimeout(function() {
 			collectForOnlineClassroom(teacherId);
 		}, 1000*60*2)
@@ -491,43 +490,6 @@ define(["function","jquery-bootstrap","jquery-load","countdown" ], function() {
 	    getEpList();
 	  }
 	}
-
-	var changeClassRoom = function(scheduledDateTime,serialNumber,oldStatus,is24Hour) {
-        var now = new Date();
-		now.setMinutes(now.getMinutes() - 30);
-		var scheduledTime = scheduledDateTime.replace(/-/g,"/");
-		var scheduledDate = new Date(Date.parse(scheduledTime));
-		var inTime = false;
-		if (now<scheduledDate){
-			inTime = true;
-		}
-		if(!scheduledDateTime || !serialNumber || !oldStatus){
-			return;
-		}
-		if (oldStatus == "FINISHED" && is24Hour && inTime){
-			var url = webPath + "/changeClassroom.json";
-			var interval = 5 * 1000;
-			var params = {
-				"scheduledDateTime" : scheduledDateTime
-			};
-			setInterval(function() {
-				$.ajax({
-					url : url,
-					type : "POST",
-					data : params,
-					success : function(data){
-						if(data.data!="No newClassRoom"){
-							window.location.href = data.data;
-						}
-					},
-					error : function(){
-						setTimeout(function(){changeClassRoom(scheduledDateTime,serialNumber,oldStatus)}, 3000);
-					}
-				});
-			}, interval);
-		}
-	};
-
 	return {
 		init : init,
 		openInfo:openInfo,
@@ -537,7 +499,6 @@ define(["function","jquery-bootstrap","jquery-load","countdown" ], function() {
 		clickHelp:clickHelp,
 		clickCancelHelp:clickCancelHelp,
 		clickFAQ:clickFAQ,
-		changeClassRoom:changeClassRoom
 	};
 
 });

@@ -415,15 +415,6 @@ public class OnlineClassController extends AbstractPortalController {
         onlineclassService.sendStarlogs(send, studentId, onlineClassId, teacher);
         return jsonView();
     }
-
-
-    @RequestMapping("/changeClassroom")
-    public Map<String, Object> changeClassroom(HttpServletRequest request, HttpServletResponse response,
-                                  @RequestParam Timestamp scheduledDateTime,Model model){
-        String newClassRoomUrl = onlineclassService.getNewClassRoom(loginService.getTeacherId(),scheduledDateTime);
-        return  ApiResponseUtils.buildSuccessDataResp((Object) newClassRoomUrl);
-    }
-
   //FAQ静态页面的controler
   	@RequestMapping("/faq")
   	public String showFAQ(HttpServletRequest request, HttpServletResponse response, Model model) {
