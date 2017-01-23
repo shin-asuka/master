@@ -31,7 +31,7 @@ define(["function","jquery-bootstrap","jquery-load","countdown" ], function() {
 		/** 教师上课倒计时 */
 		$("#countTimeDiv").countdown({
 			staticTime : scheduleTime,
-			serverTime : serverTime,
+			serverTime : 0,
 			server : true,
 			longtime : 60 * 60,
 			before : 30 * 60,

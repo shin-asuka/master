@@ -39,7 +39,7 @@ public class GeoIPService {
         try {
             reader = new DatabaseReader.Builder(database).build();
         } catch (IOException e) {
-            logger.error(e.getMessage());
+            logger.error(e.getMessage(), e);
         }
     }
 

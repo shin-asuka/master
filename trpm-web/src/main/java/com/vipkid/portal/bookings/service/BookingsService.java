@@ -603,7 +603,7 @@ public class BookingsService {
             responseBody = StringTools.matchString(responseBody, "\\[(.*?)\\]", Pattern.CASE_INSENSITIVE, 1);
             return Arrays.asList(StringUtils.split(responseBody, ","));
         } catch (Exception e) {
-            logger.error("HttpClientProxy err: {}", e.getMessage());
+            logger.error("HttpClientProxy err: {}", e);
             return Lists.newArrayList();
         }
     }
@@ -1040,7 +1040,7 @@ public class BookingsService {
             return (null != responseEntity
                             && HttpURLConnection.HTTP_OK == httpResponse.getStatusLine().getStatusCode());
         } catch (Exception e) {
-            logger.error("Send 24Hours error: {}", e.getMessage());
+            logger.error("Send 24Hours error: {}", e);
             return false;
         } finally {
             try {
@@ -1051,7 +1051,7 @@ public class BookingsService {
                     httpClient.close();
                 }
             } catch (IOException e) {
-                logger.error("HttpClient err: {}", e.getMessage());
+                logger.error("HttpClient err: {}", e);
             }
         }
     }

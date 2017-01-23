@@ -16,7 +16,7 @@ public class TbdResultEnum {
             type = type.toUpperCase();
             return ResultEnum.valueOf(type).val;
         } catch (Exception e) {
-            logger.error("未知类型" + e.getMessage());
+            logger.error("未知类型" + e);
             return 2;
         }
     }
@@ -26,7 +26,7 @@ public class TbdResultEnum {
             status = status.toUpperCase();
             return StatusEnum.valueOf(status).val;
         } catch (Exception e) {
-            logger.error("未知状态:" + e.getMessage());
+            logger.error("未知状态:" + e);
             return 5;
         }
     }

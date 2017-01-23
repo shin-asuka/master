@@ -65,7 +65,7 @@ public class AdminQuizController extends RestfulController {
             result.put("openQuiz",this.adminQuizService.openQuiz(user.getId()));
             return result;
         } catch (IllegalArgumentException e) {
-            logger.error("内部参数转化异常:"+e.getMessage());
+            logger.error("内部参数转化异常: ", e);
             response.setStatus(HttpStatus.BAD_REQUEST.value());
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
@@ -84,7 +84,7 @@ public class AdminQuizController extends RestfulController {
             result.put("result",this.adminQuizService.saveOpenQuiz(user.getId()));
             return result;
         } catch (IllegalArgumentException e) {
-            logger.error("内部参数转化异常:"+e.getMessage());
+            logger.error("内部参数转化异常: ", e);
             response.setStatus(HttpStatus.BAD_REQUEST.value());
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
@@ -102,7 +102,7 @@ public class AdminQuizController extends RestfulController {
             result.put("need",this.adminQuizService.findNeedQuiz(user.getId()));
             return result;
         } catch (IllegalArgumentException e) {
-            logger.error("内部参数转化异常:"+e.getMessage());
+            logger.error("内部参数转化异常: "+e);
             response.setStatus(HttpStatus.BAD_REQUEST.value());
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
@@ -121,7 +121,7 @@ public class AdminQuizController extends RestfulController {
             result.put("quizToken",this.adminQuizService.startQuiz(user.getId()));
             return result;
         } catch (IllegalArgumentException e) {
-            logger.error("内部参数转化异常:"+e.getMessage());
+            logger.error("内部参数转化异常: ", e);
             response.setStatus(HttpStatus.BAD_REQUEST.value());
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
@@ -143,7 +143,7 @@ public class AdminQuizController extends RestfulController {
             result.put("result",this.adminQuizService.saveQuizResult(teacher.getId(), String.valueOf(grade),Long.valueOf(quizToken+"")));
             return result;
         } catch (IllegalArgumentException e) {
-            logger.error("内部参数转化异常:"+e.getMessage());
+            logger.error("内部参数转化异常: ", e);
             response.setStatus(HttpStatus.BAD_REQUEST.value());
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
@@ -165,7 +165,7 @@ public class AdminQuizController extends RestfulController {
             result.put("result",rest);
             return result;
         } catch (IllegalArgumentException e) {
-            logger.error("内部参数转化异常:"+e.getMessage());
+            logger.error("内部参数转化异常: ", e);
             response.setStatus(HttpStatus.BAD_REQUEST.value());
         } catch (Exception e) {
             logger.error(e.getMessage(), e);

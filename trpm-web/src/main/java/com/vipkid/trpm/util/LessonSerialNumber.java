@@ -34,7 +34,7 @@ public class LessonSerialNumber {
             }
             logger.error("不需要微信发送的serialNumber：" + serialNumber);
         }catch(Exception e){
-            logger.error("不需要微信发送的serialNumber：" + serialNumber + "，Error:"+e.getMessage());
+            logger.error("不需要微信发送的serialNumber：" + serialNumber + "，Error:", e);
         }
         return null;
     }

@@ -113,7 +113,7 @@ public class WebUtils {
             }
         } catch (Exception e) {
             logger.error("httpPost 网路请求失败 ,url = "+url+", params = "+params+", e= "+e );
-            result.setMessage("httpPost 网路请求失败 " + e.getMessage());
+            result.setMessage("httpPost 网路请求失败 " + e);
             result.setStatus(HttpResult.STATUS_NETWORK_FAIL);
             result.setException(e);
         } finally {

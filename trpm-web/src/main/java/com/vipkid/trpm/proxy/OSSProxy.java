@@ -53,12 +53,12 @@ public class OSSProxy {
 			result = httpClient.execute(httpGet, new ShrinkResponseHandler(url));
 			httpClient.close();
 		} catch (Exception e) {
-			logger.error("exception when processing image: %s", e.getMessage());
+			logger.error("exception when processing image: ", e);
 		} finally {
 			try {
 				httpClient.close();
 			} catch (IOException e) {
-				logger.error("exception when processing image: %s", e.getMessage());
+				logger.error("exception when processing image: ", e);
 			}
 		}
 
@@ -82,13 +82,13 @@ public class OSSProxy {
 			result = httpClient.execute(httpGet, new ShrinkResponseHandler(url));
 			httpClient.close();
 		} catch (Exception e) {
-			logger.error("exception when processing image: %s", e.getMessage());
+			logger.error("exception when processing image: ", e);
 			throw new IOException("exception when processing image:" + e.getMessage());
 		} finally {
 			try {
 				httpClient.close();
 			} catch (IOException e) {
-				logger.error("exception when processing image: %s", e.getMessage());
+				logger.error("exception when processing image: ", e);
 			}
 		}
 
