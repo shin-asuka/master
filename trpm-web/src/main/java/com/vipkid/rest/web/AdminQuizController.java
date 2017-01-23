@@ -102,7 +102,7 @@ public class AdminQuizController extends RestfulController {
             result.put("need",this.adminQuizService.findNeedQuiz(user.getId()));
             return result;
         } catch (IllegalArgumentException e) {
-            logger.error("内部参数转化异常: "+e);
+            logger.error("内部参数转化异常: ",e);
             response.setStatus(HttpStatus.BAD_REQUEST.value());
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
