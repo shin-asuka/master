@@ -4,9 +4,11 @@ import com.alibaba.fastjson.JSONObject;
 import com.google.api.client.util.Lists;
 import com.google.api.client.util.Maps;
 import com.google.common.base.Stopwatch;
+import com.vipkid.enums.TeacherEnum.LifeCycle;
 import com.vipkid.http.service.ManageGatewayService;
 import com.vipkid.http.utils.JsonUtils;
 import com.vipkid.rest.RestfulController;
+import com.vipkid.rest.interceptor.annotation.RestInterface;
 import com.vipkid.rest.portal.vo.StudentCommentPageVo;
 import com.vipkid.rest.portal.vo.StudentCommentTotalVo;
 import com.vipkid.rest.portal.vo.StudentCommentVo;
@@ -29,7 +31,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 @RestController
-//@RestInterface(lifeCycle = LifeCycle.REGULAR)
+@RestInterface(lifeCycle = LifeCycle.REGULAR)
 public class StudentCommentRestController extends RestfulController{
 	private static final Logger logger = LoggerFactory.getLogger(StudentCommentRestController.class);
 	
