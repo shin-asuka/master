@@ -25,4 +25,12 @@ public class InterviewDao extends MapperDaoTemplate<Interview> {
         paramsMap.put("toTime", toTime);
         return listEntity("listByInterview", paramsMap);
     }
+
+    public List<Map<String,Object>> findlistByBookedCount(String scheduleTime, String fromTime,String toTime){
+        Map<String,Object> paramsMap = Maps.newHashMap();
+        paramsMap.put("scheduleTime", scheduleTime);
+        paramsMap.put("fromTime", fromTime);
+        paramsMap.put("toTime", toTime);
+        return listEntity("listByInterviewBookedCount", paramsMap);
+    }
 }

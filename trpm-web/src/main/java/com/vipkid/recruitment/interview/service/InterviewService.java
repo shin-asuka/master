@@ -34,11 +34,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 
 @Service
 public class InterviewService {
@@ -155,18 +155,54 @@ public class InterviewService {
 
 
     /*加入interviewer scheduler逻辑以后, book 逻辑变动较大, 传入时间而不是传入onlineclassId*/
-    public Map<String,Object> bookInterviewClass(Timestamp timestamp,Teacher teacher) {
-        //1. Dao 1 same day.
+    public String randomiseInterviewer(long timestamp, Teacher teacher) {
 
-        //2. Dao 2 same day.
+        logger.info("Timestamp to book the interview:"+timestamp);
 
-        //3. join and pick the randomised online class id.
+        Timestamp ts= new Timestamp(timestamp);
+        String schduledDateTime = ts.toLocalDateTime().format(DateUtils.FMT_YMD_HMS);
+        LocalDateTime schduledDT = ts.toLocalDateTime();
+        logger.info("schduledDateTime to book the interview:"+schduledDateTime);
 
-        //4. go to  book.
-        int fakeonlineClassId=0;
-        Map<String,Object> result=new HashMap<>();
-        this.bookInterviewClass(fakeonlineClassId,teacher);
-        return result;
+        String fromTime_curDate = schduledDT.with(LocalTime.of(0,0,0)).format(DateUtils.FMT_YMD_HMS);
+        String toTime_curDate = schduledDT.with(LocalTime.of(23,59,59)).format(DateUtils.FMT_YMD_HMS);
+        logger.info("bookInterviewClass get least booked teacher fromTime:{}, toTime:{}", fromTime_curDate, toTime_curDate);
+
+        //1. Dao: Pick the least booked for that day.    (online class id -->scheduledTime-->teacher id-->count booked)
+        List<Map<String,Object>> listBookedCount = interviewDao.findlistByBookedCount(schduledDateTime,fromTime_curDate, toTime_curDate);
+
+        if (CollectionUtils.isEmpty(listBookedCount)){
+            return "";
+        }else if (listBookedCount.size()==1){
+            return  listBookedCount.get(0).get("id").toString();
+        }else{
+            System.out.println("listBookedCount size()" + listBookedCount.size());
+            System.out.println("listBookedCount get(0) id" + listBookedCount.get(0).toString());
+            System.out.println("listBookedCount get(0) id" + listBookedCount.get(0).get("id").toString());
+            System.out.println("listBookedCount get(0) id" + listBookedCount.get(0).get("bookedCountByCurrentDate").toString());
+
+            List<Map<String,Object>> targeList=new ArrayList<Map<String,Object>>();
+            int prevCount=Integer.parseInt(listBookedCount.get(0).get("bookedCountByCurrentDate").toString());
+            int curCount=prevCount;
+            for (int i=0;i<listBookedCount.size(); i++){
+                curCount=Integer.parseInt(listBookedCount.get(i).get("bookedCountByCurrentDate").toString());
+
+                if (curCount!= prevCount){
+                   break;
+                }
+
+                targeList.add(listBookedCount.get(i));
+                prevCount=curCount;
+            }
+
+            //Shuffle the new list
+            if(CollectionUtils.isNotEmpty(targeList)){
+                Collections.shuffle(targeList);
+            }
+
+            //Go to the existing booking logic.
+           return listBookedCount.get(0).get("id").toString();
+        }
     }
 
 
