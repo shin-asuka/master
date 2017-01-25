@@ -71,8 +71,10 @@ public class InterviewController extends RestfulController {
                 return ReturnMapUtils.returnFail("This online class does not exist.");
             }
 
+            //Optimise the interviewer randomise process
             String onlineClassIdStr = this.interviewService.randomiseInterviewer(Long.valueOf(onlineClassScheduleTS+""), getTeacher(request));
 
+            //Go to the existing booking logic.
             Map<String,Object> result = this.interviewService.bookInterviewClass(Long.valueOf(onlineClassIdStr+""), getTeacher(request));
 
             if(ReturnMapUtils.isFail(result)){

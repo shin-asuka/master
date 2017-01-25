@@ -154,7 +154,7 @@ public class InterviewService {
     }
 
 
-    /*加入interviewer scheduler逻辑以后, book 逻辑变动较大, 传入时间而不是传入onlineclassId*/
+    /*加入interviewer scheduler逻辑以后, book 逻辑变动较大, 传入时间而不传入onlineclassId*/
     public String randomiseInterviewer(long timestamp, Teacher teacher) {
 
         logger.info("Timestamp to book the interview:"+timestamp);
@@ -168,7 +168,7 @@ public class InterviewService {
         String toTime_curDate = schduledDT.with(LocalTime.of(23,59,59)).format(DateUtils.FMT_YMD_HMS);
         logger.info("bookInterviewClass get least booked teacher fromTime:{}, toTime:{}", fromTime_curDate, toTime_curDate);
 
-        //1. Dao: Pick the least booked for that day.    (online class id -->scheduledTime-->teacher id-->count booked)
+        //取出候选课程对应老师当天BOOK或FINISHED课程数。(online class id , scheduledTime, teacher id, count booked)
         List<Map<String,Object>> listBookedCount = interviewDao.findlistByBookedCount(schduledDateTime,fromTime_curDate, toTime_curDate);
 
         if (CollectionUtils.isEmpty(listBookedCount)){
@@ -176,17 +176,13 @@ public class InterviewService {
         }else if (listBookedCount.size()==1){
             return  listBookedCount.get(0).get("id").toString();
         }else{
-            System.out.println("listBookedCount size()" + listBookedCount.size());
-            System.out.println("listBookedCount get(0) id" + listBookedCount.get(0).toString());
-            System.out.println("listBookedCount get(0) id" + listBookedCount.get(0).get("id").toString());
-            System.out.println("listBookedCount get(0) id" + listBookedCount.get(0).get("bookedCountByCurrentDate").toString());
 
             List<Map<String,Object>> targeList=new ArrayList<Map<String,Object>>();
-            int prevCount=Integer.parseInt(listBookedCount.get(0).get("bookedCountByCurrentDate").toString());
+            int prevCount=Integer.parseInt(listBookedCount.get(0).get("bookedCountByTimeRange").toString());
             int curCount=prevCount;
             for (int i=0;i<listBookedCount.size(); i++){
-                curCount=Integer.parseInt(listBookedCount.get(i).get("bookedCountByCurrentDate").toString());
 
+                curCount=Integer.parseInt(listBookedCount.get(i).get("bookedCountByTimeRange").toString());
                 if (curCount!= prevCount){
                    break;
                 }
@@ -200,7 +196,6 @@ public class InterviewService {
                 Collections.shuffle(targeList);
             }
 
-            //Go to the existing booking logic.
            return listBookedCount.get(0).get("id").toString();
         }
     }
