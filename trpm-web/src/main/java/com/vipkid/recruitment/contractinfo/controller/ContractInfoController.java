@@ -23,6 +23,7 @@ import com.vipkid.rest.interceptor.annotation.RestInterface;
 import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.entity.TeacherTaxpayerForm;
 import com.vipkid.trpm.entity.TeacherTaxpayerFormDetail;
+import com.vipkid.trpm.service.huanxin.HuanxinService;
 import com.vipkid.trpm.service.portal.TeacherTaxpayerFormService;
 import com.vipkid.trpm.util.AwsFileUtils;
 import org.apache.commons.collections.CollectionUtils;
@@ -72,6 +73,9 @@ public class ContractInfoController extends RestfulController {
 
     @Autowired
     private TeacherTaxpayerFormService teacherTaxpayerFormService;
+
+    @Autowired
+    private HuanxinService huanxinService;
 
     /**
      * 进入 PersonalInfo 状态之前, 先查出之前是否有上传资料
@@ -574,6 +578,9 @@ public class ContractInfoController extends RestfulController {
             boolean result = this.contractInfoService.toRegular(teacher);
             if (result) {
                 logger.info("Successfully get TO REGULAR!");
+                //成为regular老师,需要注册环信id
+                //http://docs.easemob.com/im/100serverintegration/20users
+                huanxinService.signUpHuanxin(String.valueOf(teacher.getId()),String.valueOf(teacher.getId()));
                 return ReturnMapUtils.returnSuccess();
             } else {
                 response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
