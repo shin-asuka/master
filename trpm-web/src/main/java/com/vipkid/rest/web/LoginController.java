@@ -13,6 +13,7 @@ import com.vipkid.rest.dto.LoginDto;
 import com.vipkid.rest.dto.RegisterDto;
 import com.vipkid.rest.dto.ResetPasswordDto;
 import com.vipkid.rest.interceptor.annotation.RestInterface;
+import com.vipkid.rest.service.AdminQuizService;
 import com.vipkid.rest.service.LoginService;
 import com.vipkid.rest.validation.ValidateUtils;
 import com.vipkid.rest.validation.tools.Result;
@@ -21,6 +22,8 @@ import com.vipkid.trpm.constant.ApplicationConstant.CookieKey;
 import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.entity.User;
 import com.vipkid.trpm.security.SHA256PasswordEncoder;
+import com.vipkid.trpm.service.huanxin.HuanxinService;
+import com.vipkid.trpm.service.passport.NoticeService;
 import com.vipkid.trpm.service.passport.PassportService;
 import com.vipkid.trpm.util.Bean2Map;
 import com.vipkid.trpm.util.CookieUtils;
@@ -40,6 +43,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.LockSupport;
 
 @RestController
 @RequestMapping("/user")
@@ -56,14 +61,20 @@ public class LoginController extends RestfulController {
 
     @Autowired
     private FileHttpService fileHttpService;
+
+    @Autowired
+    private HuanxinService huanxinService;
+
+    @Autowired
+    private AdminQuizService adminQuizService;
         
 
     /**
      * 1.用户名，密码认证 2.将用户token写入redis 3.将用户token写入Cookie,由客户端调用
      * 
      * @Author:ALong (ZengWeiLong)
-     * @param email 登陆用户
-     * @param password 登陆密码
+     * @param bean 登陆用户
+     * @param bean 登陆密码
      * @return String
      * @date 2016年5月16日
      */
@@ -218,8 +229,8 @@ public class LoginController extends RestfulController {
      * 注册用户注册老师
      * 
      * @Author:ALong (ZengWeiLong)
-     * @param email 注册用户
-     * @param password 注册密码
+     * @param bean 注册用户
+     * @param bean 注册密码
      * @return String code码
      * @date 2016年5月16日
      */
@@ -293,7 +304,7 @@ public class LoginController extends RestfulController {
      * @Author:ALong (ZengWeiLong)
      * @param request
      * @param response
-     * @param email 重置用户
+     * @param pram 重置用户
      * @return String code码
      * @date 2016年5月16日
      */
@@ -359,7 +370,7 @@ public class LoginController extends RestfulController {
                 return ReturnMapUtils.returnFail(AjaxCode.USER_QUIT,"账户已经Quit."+user.getUsername());
             }
             
-            logger.info("重置请求检查完毕-(通过)-正在发送Email:{}",email);
+            logger.info("重置请求检查完毕-(通过)-正在发送Email:{}", email);
             
             Map<String,Object> result = this.passportService.senEmailForPassword(user);
             
@@ -381,8 +392,8 @@ public class LoginController extends RestfulController {
      * @Author:ALong (ZengWeiLong)
      * @param request
      * @param response
-     * @param password 新密码
-     * @param token 修改密码认证
+     * @param bean 新密码
+     * @param bean 修改密码认证
      * @return String code码
      * @date 2016年5月16日
      */
@@ -476,7 +487,7 @@ public class LoginController extends RestfulController {
             TeacherInfo teacherinfo = new TeacherInfo();
             teacherinfo.setTeacherId(this.getUser(request).getId());
             //权限判断 start
-            loginService.findByTeacherModule(teacherinfo,teacher.getLifeCycle());
+            loginService.findByTeacherModule(teacherinfo, teacher.getLifeCycle());
             //其他信息
             if(0 != teacher.getManager()) {
                 User teacherManager = loginService.findUserById(teacher.getManager());
@@ -486,7 +497,12 @@ public class LoginController extends RestfulController {
             teacherinfo.setHeadsrc(fileHttpService.queryTeacherFiles(user.getId()).getAvatar());
             Map<String,Object> success = ReturnMapUtils.returnSuccess();
             success.putAll(Bean2Map.toMap(teacherinfo));
-            logger.info("返回数据:{}",JsonTools.getJson(success));
+
+            boolean isNeedQuiz = adminQuizService.findNeedQuiz(teacher.getId());
+            logger.info("Check if {} need to take the quiz and get result {}", teacher.getId(), isNeedQuiz);
+            success.put("isNeedQuiz", isNeedQuiz);
+
+            logger.info("返回数据:{}", JsonTools.getJson(success));
 
             // 设置 24 小时提示 Cookie
             CookieUtils.setCookie(response, CookieKey.TRPM_HOURS_24, String.valueOf(teacher.getId()), null);
@@ -531,5 +547,40 @@ public class LoginController extends RestfulController {
             }
         }
         return "redirect:/";
+    }
+
+
+    @RequestMapping(value = "/inithuanxinid")
+    public Map<String, Object> inithuanxinid(String password,String teacherId ) {
+        if(StringUtils.isNotBlank(teacherId)){
+            huanxinService.signUpHuanxin(teacherId,teacherId);
+            return ReturnMapUtils.returnSuccess();
+        }
+        //全量注册环信id
+        else if(StringUtils.equals(password,"allregularteacherinithuanxinid")){
+
+            Thread thread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    logger.info("inithuanxinid start!");
+                    List<String> list = huanxinService.findAllRegularButNoHuanxinId();
+                    if(CollectionUtils.isNotEmpty(list)){
+                        for(String oneId : list){
+                            huanxinService.signUpHuanxin(oneId,oneId);
+                            // 0.1秒钟间隔发送请求,环信有ip限流
+                            LockSupport.parkNanos(TimeUnit.NANOSECONDS.convert(100, TimeUnit.MILLISECONDS));
+                        }
+                    }
+                    logger.info("inithuanxinid end!");
+                }
+            });
+            thread.setName("init-huanxinId-thread");
+            thread.start();
+            return ReturnMapUtils.returnSuccess();
+        }
+        else{
+            return ReturnMapUtils.returnFail("no right to request");
+        }
+
     }
 }

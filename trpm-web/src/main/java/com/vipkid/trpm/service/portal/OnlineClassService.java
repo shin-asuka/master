@@ -27,7 +27,6 @@ import com.vipkid.trpm.constant.ApplicationConstant;
 import com.vipkid.trpm.constant.ApplicationConstant.FinishType;
 import com.vipkid.trpm.dao.*;
 import com.vipkid.trpm.entity.*;
-import com.vipkid.trpm.entity.teachercomment.QueryTeacherCommentOutputDto;
 import com.vipkid.trpm.entity.teachercomment.TeacherComment;
 import com.vipkid.trpm.entity.teachercomment.TeacherCommentResult;
 import com.vipkid.trpm.entity.teachercomment.TeacherCommentUpdateDto;
@@ -35,7 +34,6 @@ import com.vipkid.trpm.proxy.OnlineClassProxy;
 import com.vipkid.trpm.util.DateUtils;
 import com.vipkid.trpm.util.FilesUtils;
 import com.vipkid.trpm.util.IpUtils;
-
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -110,6 +108,18 @@ public class OnlineClassService {
 
     @Autowired
     private AuditEventHandler auditEventHandler;
+
+    @Autowired
+    private TagsDao tagsDao;
+
+    @Autowired
+    private TeacherPeTagsDao teacherPeTagsDao;
+
+    @Autowired
+    private TeacherPeLevelsDao teacherPeLevelsDao;
+
+    @Autowired
+    private TeacherPeCommentsDao teacherPeCommentsDao;
     /**
      * 根据id找online class
      *
@@ -171,7 +181,6 @@ public class OnlineClassService {
 
         TeacherApplication teacherApplication =
                 teacherApplicationDao.findApplictionByOlineclassId(onlineClass.getId(), student.getId());
-        modelMap.put("teacherApplication", teacherApplication);
         modelMap.putAll(OnlineClassProxy.generateRoomEnterUrl(String.valueOf(student.getId()), student.getRealName(),
                 onlineClass.getClassroom(), OnlineClassProxy.RoomRole.STUDENT, onlineClass.getSupplierCode(),onlineClass.getId(),OnlineClassProxy.ClassType.PRACTICUM));
         modelMap.put("teacherPe", teacherPeDao.findByOnlineClassId(onlineClass.getId()));
@@ -191,6 +200,20 @@ public class OnlineClassService {
             modelMap.put("PESupervisor", true);
         } else {
             modelMap.put("PESupervisor", false);
+        }
+
+        int applicationId = Long.valueOf(teacherApplication.getId()).intValue();
+        modelMap.put("tags", tagsDao.getTags());
+        modelMap.put("teacherPeTags", teacherPeTagsDao.getTeacherPeTagsByApplicationId(applicationId));
+        modelMap.put("teacherPeLevels", teacherPeLevelsDao.getTeacherPeLevelsByApplicationId(applicationId));
+        TeacherPeComments teacherPeComments = teacherPeCommentsDao.getTeacherPeComments(applicationId);
+        modelMap.put("teacherPeComments", teacherPeComments);
+
+        if(0==teacherApplication.getAuditorId() && null==teacherPeComments){
+            teacherApplicationDao.initApplicationAnswer(teacherApplication);
+            modelMap.put("teacherApplication", teacherApplicationDao.findApplictionById(applicationId));
+        }else{
+            modelMap.put("teacherApplication", teacherApplication);
         }
 
         return modelMap;
@@ -493,6 +516,15 @@ public class OnlineClassService {
 
         modelMap.put("result", true);
         return modelMap;
+    }
+
+    public boolean updateApplications(TeacherApplication teacherApplication){
+        if(0==teacherApplication.getId()){
+            return false;
+        }else {
+            this.teacherApplicationDao.update(teacherApplication);
+            return true;
+        }
     }
 
     /**

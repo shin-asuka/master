@@ -85,7 +85,7 @@ public class TrainingService {
         List<TeacherQuiz> list = this.teacherQuizDao.findAllQuiz(teacherId);
         logger.info("check quiz reslult count:" + list);
         if(CollectionUtils.isEmpty(list)){
-            teacherQuizDao.insertQuiz(teacherId,teacherId,Version.TRINING_QUIZ);
+            teacherQuizDao.insertQuiz(teacherId,teacherId,Version.TRAINING_QUIZ);
         }
         List<TeacherApplication> teacherApplications = teacherApplicationDao.findApplictionForStatusResult(teacherId,TeacherApplicationEnum.Status.TRAINING.toString(),null);
 
@@ -185,7 +185,7 @@ public class TrainingService {
 
                 if(quizScore < RestfulConfig.Quiz.NEW_QUIZ_PASS_SCORE){
                     logger.info("teacehrId:{},提交考试结果，quizId:{} 没通过,新增一条考试记录",teacherId,teacherQuiz.getId(),teacherQuiz.getStatus());
-                    this.teacherQuizDao.insertQuiz(teacherId,teacherId,Version.TRINING_QUIZ);
+                    this.teacherQuizDao.insertQuiz(teacherId,teacherId,Version.TRAINING_QUIZ);
                     new_application.setResult(TeacherApplicationEnum.Result.FAIL.toString());
                     this.teacherApplicationDao.update(new_application);
                 }else if(TeacherApplicationEnum.Status.TRAINING.toString().equalsIgnoreCase(teacher.getLifeCycle())){
@@ -253,7 +253,7 @@ public class TrainingService {
      */
     public List<TeacherQuiz> getLastQuiz(long teacherId){
         logger.info("select quiz list for teacherId is " + teacherId);
-        return this.teacherQuizDao.getLastQuiz(teacherId,Version.TRINING_QUIZ);
+        return this.teacherQuizDao.getLastQuiz(teacherId,Version.TRAINING_QUIZ);
     }
 
 }

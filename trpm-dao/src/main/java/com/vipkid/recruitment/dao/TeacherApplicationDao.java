@@ -1,19 +1,19 @@
 package com.vipkid.recruitment.dao;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-
+import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
+import com.vipkid.enums.OnlineClassEnum.ClassStatus;
+import com.vipkid.recruitment.entity.TeacherApplication;
 import org.apache.commons.lang3.StringUtils;
 import org.community.dao.support.MapperDaoTemplate;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.google.common.collect.Lists;
-import com.vipkid.enums.OnlineClassEnum.ClassStatus;
-import com.vipkid.recruitment.entity.TeacherApplication;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @Repository
 public class TeacherApplicationDao extends MapperDaoTemplate<TeacherApplication> {
@@ -235,4 +235,10 @@ public class TeacherApplicationDao extends MapperDaoTemplate<TeacherApplication>
         paramsMap.put("onlineClassStatus", ClassStatus.BOOKED.toString());
         return listEntity("findRecruitmentBook", paramsMap);
     }
+
+    public void initApplicationAnswer(TeacherApplication teacherApplication){
+        Preconditions.checkArgument(0!=teacherApplication.getId());
+        super.update(teacherApplication, "initApplicationAnswer");
+    }
+
 }

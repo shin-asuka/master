@@ -117,7 +117,7 @@ public class NoticeService {
         return teacherDao.findAllRegular();
     }
     
-    
+
     public Map<String,List<Map<String,Object>>> findBookedClass(String startTime,String endTime){
        List<Map<String, Object>> baseDate = onlineClassDao.findTomorrowAllBook(startTime, endTime);
        return findDbData(baseDate);

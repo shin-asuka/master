@@ -23,9 +23,7 @@ define(["function","jquery-bootstrap","jquery-load","countdown" ], function() {
 
 	/** 初始化 */
 	var init = function(serverTime, scheduleTime,createDateTime, teacherId) {
-
 		initInfoMenu();
-
 		setTimeout(function() {
 			collectForOnlineClassroom(teacherId);
 		}, 1000*60*2)
@@ -492,7 +490,6 @@ define(["function","jquery-bootstrap","jquery-load","countdown" ], function() {
 	    getEpList();
 	  }
 	}
-
 	return {
 		init : init,
 		openInfo:openInfo,
@@ -501,7 +498,7 @@ define(["function","jquery-bootstrap","jquery-load","countdown" ], function() {
 		confirmExitClassroom : confirmExitClassroom,
 		clickHelp:clickHelp,
 		clickCancelHelp:clickCancelHelp,
-		clickFAQ:clickFAQ
+		clickFAQ:clickFAQ,
 	};
 
 });

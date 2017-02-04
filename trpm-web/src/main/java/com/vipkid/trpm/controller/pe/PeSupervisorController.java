@@ -1,15 +1,19 @@
 package com.vipkid.trpm.controller.pe;
 
+import com.google.api.client.util.Lists;
+import com.google.common.collect.Maps;
 import com.vipkid.enums.TeacherApplicationEnum.Result;
 import com.vipkid.enums.TeacherApplicationEnum.Status;
 import com.vipkid.recruitment.dao.TeacherApplicationDao;
 import com.vipkid.recruitment.entity.TeacherApplication;
 import com.vipkid.rest.service.LoginService;
 import com.vipkid.trpm.constant.ApplicationConstant.FinishType;
-import com.vipkid.trpm.entity.Teacher;
-import com.vipkid.trpm.entity.TeacherPe;
-import com.vipkid.trpm.service.pe.AppserverPracticumService;
-import com.vipkid.trpm.service.pe.PeSupervisorService;
+import com.vipkid.trpm.dao.TagsDao;
+import com.vipkid.trpm.dao.TeacherPeCommentsDao;
+import com.vipkid.trpm.dao.TeacherPeLevelsDao;
+import com.vipkid.trpm.dao.TeacherPeTagsDao;
+import com.vipkid.trpm.entity.*;
+import com.vipkid.trpm.service.pe.*;
 import com.vipkid.trpm.service.portal.OnlineClassService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -47,6 +51,26 @@ public class PeSupervisorController extends AbstractPeController {
     @Autowired
     private LoginService loginService;
 
+    @Autowired
+    private TagsDao tagsDao;
+
+    @Autowired
+    private TeacherPeTagsDao teacherPeTagsDao;
+
+    @Autowired
+    private TeacherPeLevelsDao teacherPeLevelsDao;
+
+    @Autowired
+    private TeacherPeCommentsDao teacherPeCommentsDao;
+
+    @Autowired
+    private TeacherPeTagsService teacherPeTagsService;
+
+    @Autowired
+    private TeacherPeLevelsService teacherPeLevelsService;
+
+    @Autowired
+    private TeacherPeCommentsService teacherPeCommentsService;
     
     @Deprecated
     @RequestMapping("/pesupervisor")
@@ -93,7 +117,6 @@ public class PeSupervisorController extends AbstractPeController {
 
             TeacherApplication teacherApplication =
                     peSupervisorService.getTeacherApplication(teacherPe.getTeacherId());
-            model.addAttribute("teacherApplication", teacherApplication);
 
             // 更新审核开始时间
             if (null == teacherPe.getOperatorStartTime()) {
@@ -106,6 +129,20 @@ public class PeSupervisorController extends AbstractPeController {
                 model.addAttribute("practicum2", true);
             } else {
                 model.addAttribute("practicum2", false);
+            }
+
+            int applicationId = Long.valueOf(teacherApplication.getId()).intValue();
+            model.addAttribute("tags", tagsDao.getTags());
+            model.addAttribute("teacherPeTags", teacherPeTagsDao.getTeacherPeTagsByApplicationId(applicationId));
+            model.addAttribute("teacherPeLevels", teacherPeLevelsDao.getTeacherPeLevelsByApplicationId(applicationId));
+            TeacherPeComments teacherPeComments = teacherPeCommentsDao.getTeacherPeComments(applicationId);
+            model.addAttribute("teacherPeComments", teacherPeComments);
+
+            if(0==teacherApplication.getAuditorId() && null==teacherPeComments){
+                teacherApplicationDao.initApplicationAnswer(teacherApplication);
+                model.addAttribute("teacherApplication", teacherApplicationDao.findApplictionById(applicationId));
+            }else{
+                model.addAttribute("teacherApplication", teacherApplication);
             }
 
             return view("online_class_pe");
@@ -133,24 +170,67 @@ public class PeSupervisorController extends AbstractPeController {
         String type = ServletRequestUtils.getStringParameter(request, "type", "");
         String finishType = ServletRequestUtils.getStringParameter(request, "finishType", "");
 
-        if (StringUtils.isEmpty(finishType)) {
-            finishType = FinishType.AS_SCHEDULED;
-        }
-        Map<String, Object> modelMap = peSupervisorService.updateAudit(peSupervisor,
-                teacherApplication, type, finishType, peId);
-        model.addAllAttributes(modelMap);
-        Teacher recruitTeacher = (Teacher) modelMap.get("recruitTeacher");
-        // Finish课程
-        if ((Boolean) modelMap.get("result")) {
-            onlineclassService.finishPracticum(teacherApplication, finishType, peSupervisor, recruitTeacher);
+        // 新增 tags 逻辑
+        int[] tags = ServletRequestUtils.getIntParameters(request, "tags");
+        String things = ServletRequestUtils.getStringParameter(request, "things", null);
+        String areas = ServletRequestUtils.getStringParameter(request, "areas", null);
+        int[] levels = ServletRequestUtils.getIntParameters(request, "level");
+        int totalScore = ServletRequestUtils.getIntParameter(request, "totalScore", 0);
+        String submitType = ServletRequestUtils.getStringParameter(request, "submitType", null);
+
+        Map<String, Object> modelMap = Maps.newHashMap();
+        modelMap.put("submitType", submitType);
+        if(!StringUtils.equalsIgnoreCase(type,Result.REAPPLY.toString())) {
+            // 处理 tags 相关逻辑
+            int applicationId = Long.valueOf(teacherApplication.getId()).intValue();
+
+            List<TeacherPeTags> teacherPeTags = Lists.newArrayList();
+            for (int tagId : tags) {
+                TeacherPeTags teacherPeTag = new TeacherPeTags();
+                teacherPeTag.setApplicationId(applicationId);
+                teacherPeTag.setTagId(tagId);
+                teacherPeTags.add(teacherPeTag);
+            }
+            teacherPeTagsService.updatePeTags(applicationId, teacherPeTags);
+
+            List<TeacherPeLevels> teacherPeLevels = Lists.newArrayList();
+            for (int level : levels) {
+                TeacherPeLevels teacherPeLevel = new TeacherPeLevels();
+                teacherPeLevel.setApplicationId(applicationId);
+                teacherPeLevel.setLevel(level);
+                teacherPeLevels.add(teacherPeLevel);
+            }
+            teacherPeLevelsService.updateTeacherPeLevels(applicationId, teacherPeLevels);
+
+            TeacherPeComments teacherPeComment = new TeacherPeComments();
+            teacherPeComment.setApplicationId(applicationId);
+            teacherPeComment.setThingsDidWell(things);
+            teacherPeComment.setAreasImprovement(areas);
+            teacherPeComment.setTotalScore(totalScore);
+            teacherPeComment.setStatus(submitType);
+            teacherPeCommentsService.updateTeacherPeComments(applicationId, teacherPeComment);
         }
 
-        // 并异步调用AppServer发送邮件及消息
-        Long teacherApplicationId = (Long) modelMap.get("teacherApplicationId");
-        if (Objects.nonNull(teacherApplicationId) && Objects.nonNull(recruitTeacher)) {
-            appserverPracticumService.finishPracticumProcess(teacherApplicationId, recruitTeacher);
-        }
+        if ("SAVE".endsWith(submitType)) {
+            modelMap.put("result", onlineclassService.updateApplications(teacherApplication));
+        } else {
+            if (StringUtils.isEmpty(finishType)) {
+                finishType = FinishType.AS_SCHEDULED;
+            }
+            modelMap = peSupervisorService.updateAudit(peSupervisor,teacherApplication, type, finishType, peId);
+            model.addAllAttributes(modelMap);
+            Teacher recruitTeacher = (Teacher) modelMap.get("recruitTeacher");
+            // Finish课程
+            if ((Boolean) modelMap.get("result")) {
+                onlineclassService.finishPracticum(teacherApplication, finishType, peSupervisor, recruitTeacher);
+            }
 
+            // 并异步调用AppServer发送邮件及消息
+            Long teacherApplicationId = (Long) modelMap.get("teacherApplicationId");
+            if (Objects.nonNull(teacherApplicationId) && Objects.nonNull(recruitTeacher)) {
+                appserverPracticumService.finishPracticumProcess(teacherApplicationId, recruitTeacher);
+            }
+        }
         return jsonView(response, modelMap);
     }
 

@@ -4,7 +4,7 @@
 .finishTypeItem, .finishTypeButton { float: right!important; }
 .mainContainer { margin: 0 auto 0 auto!important; }
 </style>
-<form class='feedBackForm' id ='practicumFeedBackForm' action="#springUrl('/doAudit.json')">
+<form class='feedBackForm' id ='practicumFeedBackForm' method="post" action="#springUrl('/doAudit.json')">
     <div class="wrapper"> 
         ##关闭
         <div class='closeBtn' onclick="require('classpracticum').closeFeedBackForm()"></div>
@@ -23,11 +23,27 @@
         </div>
         <div style="margin: 10px 0 0 0;">
             <b>Total Score: <span id="score">0</span></b>
+            <input type="hidden" name="totalScore" value="0" />
+            <input type="hidden" name="submitType" value="SAVE" />
         </div>
-        <hr />
+            <hr />
+            <div>#parse("/pe/pe_tag.vm")</div>
+            <hr />
         <div calss="row">
             <div class='btnDiv'>
-                
+                ##if(0==$!{teacherApplication.auditorId})
+                <div>
+                  <input onclick="require('classpracticum').showFinshType()" type='button' value='ReSchedule' class='ui blue button submitBtn'/>
+                </div>
+                ##end
+                <div style="margin-top: 3px;">
+                    ##if(!$!{teacherPeComments})
+                    <input type='reset' onclick="require('classpracticum').clearTags()" value='Cancel' class='ui blue button submitBtn' style="margin:0; width:95px;" />
+                    ##end
+                    <input type="button" value="Save" onclick="require('classpracticum').doSubmit('SAVE')" class='ui blue button submitBtn' style="margin:0; width:95px;" />
+                    <input type="button" value="Submit" onclick="require('classpracticum').doSubmit('SUBMIT')" class='ui blue button submitBtn' style="margin:0; width:95px;" />
+                </div>
+                #**
                 <div class='commentDiv'>
                     <input id="Pass" onclick="require('classpracticum').doAudit('PASS')" type='button' value='Pass' class='ui blue button submitBtn disabled'/>
                     <input id="Tbd-Fail" onclick="require('classpracticum').doAudit('TBD_FAIL')" type='button' value='Fail' class='ui blue button submitBtn disabled'/>
@@ -43,11 +59,12 @@
                 <div class='commentDiv'>
                     <input id="Practicum2" onclick="require('classpracticum').doAudit('PRACTICUM2')" type='button' value='Mock Class 2' class='ui blue button submitBtn disabled'/>
                 </div>
-                #end 
+                #end
+                **#
             </div>
         </div>
-        <hr>
         <div style='margin: 5px 0 0 20px;'>
+            #**
             <p><strong>Pass</strong> – This button allows the candidate to finish the Mock Class stage and become a new VIPKID Teacher.</p>
             <p><strong>Fail</strong> – This button will send this Mock Class to a Mock Class Senior Mentor for result confirmation. Choose this option if the candidate does not meet the requirements needed to be a VIPKID Teacher.</p>
             <p><strong>Reschedule</strong> – This button reschedules the Mock Class due to technical or scheduling issues.</p>
@@ -56,7 +73,8 @@
             #end
             #if($!{lesson.name} == "Practicum Lesson One")
             <p><strong>Mock Class 2</strong> – This button tells the candidate to schedule a second Mock Class.</p>
-            #end 
+            #end
+            **#
         </div>
     </div>
     <div class="modal fade" id="finish-modal" style="overflow:hidden;" role="dialog" aria-labelledby="finishModal">

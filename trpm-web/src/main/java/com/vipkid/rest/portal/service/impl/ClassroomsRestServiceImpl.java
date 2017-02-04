@@ -10,7 +10,10 @@ import java.util.Map;
 import java.util.TimeZone;
 
 import com.google.api.client.util.Maps;
+import com.vipkid.enums.OnlineClassEnum;
 import com.vipkid.file.service.QNService;
+import com.vipkid.trpm.constant.ApplicationConstant;
+import com.vipkid.trpm.service.portal.ScheduleService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.community.config.PropertyConfigurer;
@@ -88,6 +91,9 @@ public class ClassroomsRestServiceImpl implements ClassroomsRestService{
 
 	@Autowired
 	private QNService qnService;
+
+    @Autowired
+    private ScheduleService scheduleService;
 
 	public Map<String, Object> getClassroomsData(long teacherId, int offsetOfMonth, String courseType, int page) {
 		if (!CourseType.isPracticum(courseType)) {// 只要不是"PRACTICUM"，就赋值"MAJOR"
@@ -332,20 +338,32 @@ public class ClassroomsRestServiceImpl implements ClassroomsRestService{
 		for (Map<String, Object> eachMap : dataList) {
 			ClassroomDetail classroomDetail = new ClassroomDetail();
 			classroomDetail.setId(id);
-			classroomDetail.setFinishType((String) eachMap.get("finishType"));
-			classroomDetail.setIsPaidTrail((int) eachMap.get("isPaidTrail"));
-			classroomDetail.setLearningCycleId((long) eachMap.get("learningCycleId"));
-			classroomDetail.setLessonId((long) eachMap.get("lessonId"));
+			classroomDetail.setIsPaidTrail((Integer) eachMap.get("isPaidTrail"));
+			classroomDetail.setLearningCycleId((Long) eachMap.get("learningCycleId"));
+			classroomDetail.setLessonId((Long) eachMap.get("lessonId"));
 			classroomDetail.setLessonName((String) eachMap.get("lessonName"));
-			classroomDetail.setLessonSerialNumber((String) eachMap.get("serialNumber"));
-			classroomDetail.setOnlineClassId((long) eachMap.get("id"));
-			classroomDetail.setShortNotice((int) eachMap.get("shortNotice"));
-			classroomDetail.setStatus((String) eachMap.get("status"));
-			classroomDetail.setStudentId((long) eachMap.get("studentId"));
+			classroomDetail.setShortNotice((Integer) eachMap.get("shortNotice"));
+			classroomDetail.setStudentId((Long) eachMap.get("studentId"));
 			classroomDetail.setStudentName((String) eachMap.get("englishName"));
-			classroomDetail.setTeacherId((long) eachMap.get("teacherId"));
-
+            long teacherId = (Long) eachMap.get("teacherId");
+			classroomDetail.setTeacherId(teacherId);
 			String serialNumber = (String) eachMap.get("serialNumber");
+			classroomDetail.setLessonSerialNumber(serialNumber);
+
+            Timestamp timeStamp = (Timestamp) eachMap.get("scheduledDateTime");
+            Date date = new Date(timeStamp.getTime());
+            DateFormat df = new SimpleDateFormat("MMM dd yyyy, hh:mma", Locale.ENGLISH);
+            df.setTimeZone(TimeZone.getTimeZone(teacher.getTimezone()));
+            String scheduledDateTime = df.format(date);
+            classroomDetail.setScheduledDateTime(scheduledDateTime);
+
+            String onlineClassId = String.valueOf(eachMap.get("id"));
+            classroomDetail.setOnlineClassId(Long.parseLong(onlineClassId));
+            String finishType = (String) eachMap.get("finishType");
+			classroomDetail.setFinishType(finishType);
+            String status = (String) eachMap.get("status");
+			classroomDetail.setStatus(status);
+
 			if(StringUtils.isNotEmpty(serialNumber)){
 				boolean isPrevipLesson = false;
 				int index = serialNumber.lastIndexOf("-");
@@ -366,14 +384,6 @@ public class ClassroomsRestServiceImpl implements ClassroomsRestService{
 					classroomDetail.setVideoDownloadUrl(videoDownloadUrl);
 				}
 			}
-
-			Timestamp timeStamp = (Timestamp) eachMap.get("scheduledDateTime");
-			Date date = new Date(timeStamp.getTime());
-			DateFormat df = new SimpleDateFormat("MMM dd yyyy, hh:mma", Locale.ENGLISH);
-			df.setTimeZone(TimeZone.getTimeZone(teacher.getTimezone())); 
-			String scheduledDateTime = df.format(date);
-			classroomDetail.setScheduledDateTime(scheduledDateTime);
-
 			addReportTypeAndStatus(eachMap, date, classroomDetail);
 
 			result.add(classroomDetail);
@@ -381,7 +391,6 @@ public class ClassroomsRestServiceImpl implements ClassroomsRestService{
 		}
 		return result;
 	}
-
 	/**
 	 * 生成classrooms接口的tagList属性
 	 * 

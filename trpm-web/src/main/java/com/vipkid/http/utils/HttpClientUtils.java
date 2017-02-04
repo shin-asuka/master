@@ -285,6 +285,10 @@ public class HttpClientUtils {
         return HttpClientUtils.post(url, jsonData, null, headers);
     }
 
+    public static HttpResponse postRESTful(String url, String jsonData){
+        return HttpClientUtils.postRESTful(url, jsonData, null, null);
+    }
+
     /**
      * 请求特定的url提交Json字符串，使用post方法，返回响应的内容
      *
@@ -311,6 +315,34 @@ public class HttpClientUtils {
             HttpClientUtils.logger.error(String.format("post [%s] happens error ", url), e);
         }
         return content;
+    }
+
+    /**
+     * 请求特定的url提交Json字符串，使用post方法，返回响应的内容
+     *
+     * @param url
+     * @param jsonData
+     * @return
+     */
+    public static HttpResponse postRESTful(String url, String jsonData, String defaultEncoding, Map<String, String> headers) {
+        defaultEncoding = HttpClientUtils.getDefaultEncoding(defaultEncoding);
+        HttpResponse response = null;
+        try {
+            HttpPost post = new HttpPost(url);
+            if(org.apache.commons.collections.MapUtils.isNotEmpty(headers)){
+                for(String key : headers.keySet()){
+                    post.setHeader(key, headers.get(key));
+                }
+            }
+            StringEntity entity = new StringEntity(jsonData, defaultEncoding);
+            entity.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
+            post.setEntity(entity);
+            response = HttpClientUtils.CLIENT.execute(post);
+            //content = EntityUtils.toString(response.getEntity());
+        } catch (Exception e) {
+            HttpClientUtils.logger.error(String.format("post [%s] happens error ", url), e);
+        }
+        return response;
     }
 
     /**

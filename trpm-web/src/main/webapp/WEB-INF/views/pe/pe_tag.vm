@@ -1,0 +1,114 @@
+<style type="text/css">
+    .practicum-tags tr td {
+        padding: 2px;
+    }
+    .btn-tags {
+        float: left;
+        padding: 3px;
+        border: 1px solid #000;
+        background: #fff;
+        color: #000;
+        margin: 3px;
+        cursor: pointer;
+    }
+    .chn-tags {
+        background: #3b83c0;
+        color: #fff;
+    }
+</style>
+<table class="practicum-tags">
+    <tr>
+        <th><strong>Tags:</strong> (5 for most)</th>
+    </tr>
+    <tr>
+        <td>1. Personality Tags</td>
+    </tr>
+    <tr>
+        <td>
+            <div>
+                #foreach($tag in $tags)
+                    #if($tag.type==1 && $tag.parentId==1)
+                        #set($checked=false)
+                        #foreach($peTags in $teacherPeTags)
+                            #if(${peTags.tagId}==${tag.id})
+                                #set($checked=true)
+                                #break
+                            #end
+                        #end
+                        <div class="btn-tags #if($checked)chn-tags#end">${tag.name}
+                            <input type="hidden" name="#if($checked)tags#end" value="${tag.id}" />
+                        </div>
+                    #end
+                #end
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td>2. Academic Tags</td>
+    </tr>
+    <tr>
+        <td>
+            <div>
+                #foreach($tag in $tags)
+                    #if($tag.type==1 && $tag.parentId==2)
+                        #set($checked=false)
+                        #foreach($peTags in $teacherPeTags)
+                            #if(${peTags.tagId}==${tag.id})
+                                #set($checked=true)
+                                #break
+                            #end
+                        #end
+                        <div class="btn-tags #if($!{checked})chn-tags#end">${tag.name}
+                            <input type="hidden" name="#if($!{checked})tags#end" value="${tag.id}" />
+                        </div>
+                    #end
+                #end
+            </div>
+        </td>
+    </tr>
+    <tr><td><hr /></td></tr>
+    <tr>
+        <th><strong>Comments:</strong> (Comment box requires at least 200 characters.)</th>
+    </tr>
+    <tr>
+        <td>1. Things the teacher did well</td>
+    </tr>
+    <tr>
+        <td>
+            <textarea rows="5" cols="40" name="things">$!{teacherPeComments.thingsDidWell}</textarea>
+        </td>
+    </tr>
+    <tr>
+        <td>2. Areas for improvement</td>
+    </tr>
+    <tr>
+        <td>
+            <textarea rows="5" cols="40" name="areas">$!{teacherPeComments.areasImprovement}</textarea>
+        </td>
+    </tr>
+    <tr>
+        <td>3. Suggested Teaching Level (Multiple Choice)</td>
+    </tr>
+    <tr>
+        <td>
+            #foreach($peLevel in $teacherPeLevels)
+                #if(${peLevel.level}==1)
+                    #set($level1=true)
+                #elseif(${peLevel.level}==2)
+                    #set($level2=true)
+                #elseif(${peLevel.level}==3)
+                    #set($level3=true)
+                #elseif(${peLevel.level}==4)
+                    #set($level4=true)
+                #elseif(${peLevel.level}==5)
+                    #set($level5=true)
+                #end
+            #end
+            <input type="checkbox" name="level" value="1" #if($!{level1})checked="checked"#end />Level 1
+            <input type="checkbox" name="level" value="2" #if($!{level2})checked="checked"#end />Level 2
+            <input type="checkbox" name="level" value="3" #if($!{level3})checked="checked"#end />Level 3
+            <input type="checkbox" name="level" value="4" #if($!{level4})checked="checked"#end />Level 4
+            <input type="checkbox" name="level" value="5" #if($!{level5})checked="checked"#end />Level 5
+        </td>
+    </tr>
+</table>

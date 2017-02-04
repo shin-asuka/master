@@ -521,6 +521,14 @@
 		ORDER BY t.real_name
 	</select>
 
+	<select id="findAllRegularButNoHuanxinId" resultType="String">
+		select t.id
+		from teacher t,teacher_token tt
+		where t.life_cycle = 'REGULAR'
+		AND t.id = tt.teacher_id
+		AND tt. app_token is not null
+	</select>
+
 	<select id="findTeacher" resultType="java.util.Map">
 		SELECT DISTINCT t.id as id, t.real_name as name
 		FROM teacher t join user u on u.username = t.email 

@@ -122,6 +122,15 @@ public class LoginService {
     	}
         return teacher; 
     }
+
+    /**
+     * 获取当前登录的老师ID
+     *
+     * @return long
+     */
+    public long getTeacherId() {
+        return getPreUserByRedis().getId();
+    }
     
     /**
      * 获取当前登录用户

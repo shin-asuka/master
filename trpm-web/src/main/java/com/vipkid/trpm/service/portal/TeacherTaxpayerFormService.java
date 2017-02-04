@@ -10,9 +10,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.vipkid.cache.service.TeacherLockService;
 import com.vipkid.enums.TeacherEnum;
 import com.vipkid.enums.TeacherEnum.FormType;
 import com.vipkid.http.utils.JsonUtils;
+import com.vipkid.rest.exception.ServiceException;
 import com.vipkid.trpm.dao.TeacherTaxpayerFormDao;
 import com.vipkid.trpm.dao.TeacherTaxpayerFormDetailDao;
 import com.vipkid.trpm.entity.Page;
@@ -36,6 +38,9 @@ public class TeacherTaxpayerFormService {
 	
 	@Autowired
     private TeacherTaxpayerFormDetailDao teacherTaxpayerFormDetailDao;
+	
+	@Autowired
+    private TeacherLockService teacherLockService;
 	
 	public List<TeacherTaxpayerForm> findListByIds(List<Long> idList){
 		logger.info("查询TeacherTaxpayerForm  findListByIds idList = {}",idList);
@@ -94,44 +99,59 @@ public class TeacherTaxpayerFormService {
 		Integer formType = teacherTaxpayerForm.getFormType();
 		FormType formTypeEnum = TeacherEnum.getFormTypeById(formType);
 		
-		teacherTaxpayerFormId = teacherTaxpayerForm.getId();
-		TeacherTaxpayerForm teacherTaxpayerFormOld = null;
-		if(teacherTaxpayerFormId == null){
-			teacherTaxpayerFormOld = teacherTaxpayerFormDao.findByTeacherIdAndType(teacherId, formType);
+		
+		Boolean isLock = teacherLockService.getTaxpayerLock(teacherId, formType);
+		if(isLock){
+			try {
+				teacherTaxpayerFormId = teacherTaxpayerForm.getId();
+				TeacherTaxpayerForm teacherTaxpayerFormOld = null;
+				if(teacherTaxpayerFormId == null){
+					teacherTaxpayerFormOld = teacherTaxpayerFormDao.findByTeacherIdAndType(teacherId, formType);
+				}else{
+					teacherTaxpayerFormOld = teacherTaxpayerFormDao.findById(teacherTaxpayerFormId);
+				}
+				if(teacherTaxpayerFormOld!=null){
+					teacherTaxpayerForm.setId(teacherTaxpayerFormOld.getId());
+					teacherTaxpayerForm.setCreateTime(teacherTaxpayerFormOld.getCreateTime());
+					teacherTaxpayerForm.setCreateBy(teacherTaxpayerFormOld.getCreateBy());
+				}
+				if(teacherTaxpayerForm.getId()!=null){
+					teacherTaxpayerFormDao.update(teacherTaxpayerForm);
+				}else{
+					teacherTaxpayerFormDao.insert(teacherTaxpayerForm);
+				}
+				
+				teacherTaxpayerFormId = teacherTaxpayerForm.getId();
+				TeacherTaxpayerFormDetail taxpayerFormDetail = teacherTaxpayerForm.getTeacherTaxpayerFormDetail();
+				if(taxpayerFormDetail!=null){ //创建上传记录
+					taxpayerFormDetail.setTaxpayerFormId(teacherTaxpayerFormId);
+					taxpayerFormDetail.setFormName(formTypeEnum.name());
+					taxpayerFormDetail.setFormType(formType);
+					taxpayerFormDetail.setTeacherId(teacherTaxpayerForm.getTeacherId());
+					taxpayerFormDetail.setUploader(teacherTaxpayerForm.getUploader());
+					taxpayerFormDetail.setCreateBy(teacherTaxpayerForm.getUploader());
+					taxpayerFormDetail.setUrl(teacherTaxpayerForm.getUrl());
+					taxpayerFormDetail.setIsNew(teacherTaxpayerForm.getIsNew());
+					if(taxpayerFormDetail.getId()==null){
+						teacherTaxpayerFormDetailDao.insert(taxpayerFormDetail);
+					}
+					Long taxpayerFormDetailId = taxpayerFormDetail.getId();
+					if(taxpayerFormDetailId!=null){ //更新最新文件记录Id
+						teacherTaxpayerForm.setTaxpayerFormDetailId(taxpayerFormDetailId);
+						teacherTaxpayerFormDao.update(teacherTaxpayerForm);
+					}
+				}
+			} catch (Exception e) {
+				logger.error("保存文件转换记录失败",e);
+				throw new ServiceException("保存文件转换记录失败");
+			}finally{
+				teacherLockService.releaseTaxpayerLock(teacherId, formType);
+			}
 		}else{
-			teacherTaxpayerFormOld = teacherTaxpayerFormDao.findById(teacherTaxpayerFormId);
-		}
-		if(teacherTaxpayerFormOld!=null){
-			teacherTaxpayerForm.setId(teacherTaxpayerFormOld.getId());
-			teacherTaxpayerForm.setCreateTime(teacherTaxpayerFormOld.getCreateTime());
-			teacherTaxpayerForm.setCreateBy(teacherTaxpayerFormOld.getCreateBy());
-		}
-		if(teacherTaxpayerForm.getId()!=null){
-			teacherTaxpayerFormDao.update(teacherTaxpayerForm);
-		}else{
-			teacherTaxpayerFormDao.insert(teacherTaxpayerForm);
+			logger.info("获取分布式锁失败  getLockFail teacherId = {}, formType = {}",teacherId,formType);
+			throw new ServiceException("获取分布式锁失败");
 		}
 		
-		teacherTaxpayerFormId = teacherTaxpayerForm.getId();
-		TeacherTaxpayerFormDetail taxpayerFormDetail = teacherTaxpayerForm.getTeacherTaxpayerFormDetail();
-		if(taxpayerFormDetail!=null){ //创建上传记录
-			taxpayerFormDetail.setTaxpayerFormId(teacherTaxpayerFormId);
-			taxpayerFormDetail.setFormName(formTypeEnum.name());
-			taxpayerFormDetail.setFormType(formType);
-			taxpayerFormDetail.setTeacherId(teacherTaxpayerForm.getTeacherId());
-			taxpayerFormDetail.setUploader(teacherTaxpayerForm.getUploader());
-			taxpayerFormDetail.setCreateBy(teacherTaxpayerForm.getUploader());
-			taxpayerFormDetail.setUrl(teacherTaxpayerForm.getUrl());
-			taxpayerFormDetail.setIsNew(teacherTaxpayerForm.getIsNew());
-			if(taxpayerFormDetail.getId()==null){
-				teacherTaxpayerFormDetailDao.insert(taxpayerFormDetail);
-			}
-			Long taxpayerFormDetailId = taxpayerFormDetail.getId();
-			if(taxpayerFormDetailId!=null){ //更新最新文件记录Id
-				teacherTaxpayerForm.setTaxpayerFormDetailId(taxpayerFormDetailId);
-				teacherTaxpayerFormDao.update(teacherTaxpayerForm);
-			}
-		}
 	}
 	
 	public void updateTaxpayerFormStatus(Long teacherId ,Integer formType ,Integer isNew){

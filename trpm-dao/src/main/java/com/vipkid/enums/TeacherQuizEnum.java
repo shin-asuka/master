@@ -24,7 +24,7 @@ public class TeacherQuizEnum {
 
         ADMIN_QUIZ(1),
         
-        TRINING_QUIZ(2);
+        TRAINING_QUIZ(2);
         
         private int version;
         

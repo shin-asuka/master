@@ -18,6 +18,7 @@ import com.vipkid.trpm.entity.TeacherTaxpayerForm;
 
 import com.google.api.client.util.Maps;
 import com.google.common.collect.Lists;
+import com.vipkid.trpm.service.huanxin.HuanxinService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -54,6 +55,9 @@ public class ContractInfoService {
     @Autowired
     private TeacherDao teacherDao;
 
+    @Autowired
+    private HuanxinService huanxinService;
+
     //最新的 contract files 提交记录的 applicationId
     private static int CONTRACT_FILE_LATEST_APPLICATION_ID = 0;
 
@@ -77,7 +81,7 @@ public class ContractInfoService {
             logger.info("teacherId {},  Country:{}", teacher.getId(),teacher.getCountry());
             TeacherAddress teacherAddress = teacherAddressDao.getTeacherAddress(teacher.getCurrentAddressId());
             //  2497273 = 老师location 为   United States
-            if (teacherAddress != null && teacherAddress.getCountryId() == LOCATION_IS_USA) {
+            if (teacherAddress != null && teacherAddress.getCountryId()!=null && teacherAddress.getCountryId().intValue() == LOCATION_IS_USA) {
                 logger.warn("{} teacher's address's country id is 2497273 (USA) but W9 file is not uploaded!", teacher.getId());
                 return true;
             }
@@ -481,6 +485,9 @@ public class ContractInfoService {
 
             this.teacherDao.insertLifeCycleLog(teacher.getId(), TeacherEnum.LifeCycle.CONTRACT_INFO, TeacherEnum.LifeCycle.REGULAR, teacher.getId());
             this.teacherDao.update(teacher);
+            //成为regular老师,需要注册环信id
+            //http://docs.easemob.com/im/100serverintegration/20users
+            huanxinService.signUpHuanxin(String.valueOf(teacher.getId()),String.valueOf(teacher.getId()));
             return true;
         }
         logger.error("current teacherApplication is not CONTRACT_INFO or not PASS, can NOT get into REGULAR !");

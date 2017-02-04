@@ -308,7 +308,7 @@ public class InterviewService {
             this.teacherDao.update(teacher);
             
             // 增加quiz的考试记录
-            teacherQuizDao.insertQuiz(teacher.getId(),teacher.getId(),Version.TRINING_QUIZ);
+            teacherQuizDao.insertQuiz(teacher.getId(),teacher.getId(),Version.TRAINING_QUIZ);
             
             // 新加Training 申请记录
             List<TeacherApplication> list = teacherApplicationDao.findCurrentApplication(teacher.getId());
