@@ -40,6 +40,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 /**
  * ContractInfo -> Regular
@@ -58,6 +60,8 @@ public class ContractInfoController extends RestfulController {
 
     private static final int MAX_CERT_FILE_NUM = 4;
     private static final int MAX_DEGREE_FILE_NUM = 4;
+
+    private static final Executor huanxinExecutor = Executors.newFixedThreadPool(10);
 
     @Autowired
     private AwsFileService awsFileService;
@@ -580,7 +584,9 @@ public class ContractInfoController extends RestfulController {
                 logger.info("Successfully get TO REGULAR!");
                 //成为regular老师,需要注册环信id
                 //http://docs.easemob.com/im/100serverintegration/20users
-                huanxinService.signUpHuanxin(String.valueOf(teacher.getId()),String.valueOf(teacher.getId()));
+                huanxinExecutor.execute(() -> {
+                    huanxinService.signUpHuanxin(String.valueOf(teacher.getId()),String.valueOf(teacher.getId()));
+                });
                 return ReturnMapUtils.returnSuccess();
             } else {
                 response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());

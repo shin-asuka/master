@@ -26,6 +26,8 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 @RestController
 @RestInterface(lifeCycle={LifeCycle.PRACTICUM})
@@ -33,6 +35,8 @@ import java.util.Map;
 public class PracticumController extends RestfulController {
 
     private static Logger logger = LoggerFactory.getLogger(PracticumController.class);
+
+    private static final Executor huanxinExecutor = Executors.newFixedThreadPool(10);
 
     @Autowired
     private PracticumService practicumService;
@@ -129,7 +133,9 @@ public class PracticumController extends RestfulController {
             }else{
                 //成为regular老师,需要注册环信id
                 //http://docs.easemob.com/im/100serverintegration/20users
-                huanxinService.signUpHuanxin(String.valueOf(teacher.getId()),String.valueOf(teacher.getId()));
+                huanxinExecutor.execute(() -> {
+                    huanxinService.signUpHuanxin(String.valueOf(teacher.getId()),String.valueOf(teacher.getId()));
+                });
             }
             return result;
         } catch (IllegalArgumentException e) {
