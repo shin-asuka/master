@@ -72,7 +72,7 @@ public class ManageGatewayService extends HttpBaseService {
 		return studentCommentApiList;
 	}
 
-	public StudentCommentPageVo getStudentCommentListByTeacherId(Integer teacher,Integer start,Integer limit,String ratingLevel){
+	public StudentCommentPageVo getStudentCommentListByTeacherId(Integer teacher,Integer start,Integer limit,String ratings){
 
 		StudentCommentPageVo studentCommentPageApi = null;
 		try {
@@ -80,7 +80,7 @@ public class ManageGatewayService extends HttpBaseService {
 															teacher!=null ? String.valueOf(teacher) : "",
 															start!=null ? String.valueOf(start) : "",
 															limit!=null ? String.valueOf(limit) : "",
-															ratingLevel!=null ? String.valueOf(ratingLevel) : ""));
+															ratings!=null ? String.valueOf(ratings) : ""));
 			if (data!=null) {
 				studentCommentPageApi = JSONObject.parseObject(data, StudentCommentPageVo.class);
 				for(StudentCommentVo stuCommentApi : studentCommentPageApi.getData()){
@@ -107,7 +107,7 @@ public class ManageGatewayService extends HttpBaseService {
 				}
 			}
 		} catch (Exception e) {
-			logger.error("【ManageGatewayService.getStudentCommentListByTeacherId】调用失败，teacherId：{},start:{},limit:{},ratingLevel:{},exception:{}", teacher, start, limit, ratingLevel,e);
+			logger.error("【ManageGatewayService.getStudentCommentListByTeacherId】调用失败，teacherId：{},start:{},limit:{},ratingLevel:{},exception:{}", teacher, start, limit, ratings,e);
 		}
 
 		return studentCommentPageApi;

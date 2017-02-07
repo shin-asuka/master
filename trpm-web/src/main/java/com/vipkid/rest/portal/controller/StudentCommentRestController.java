@@ -36,7 +36,12 @@ import java.util.concurrent.TimeUnit;
 @RestInterface(lifeCycle = LifeCycle.REGULAR)
 public class StudentCommentRestController extends RestfulController{
 	private static final Logger logger = LoggerFactory.getLogger(StudentCommentRestController.class);
-	
+	public static String TEACHER_RATINGS_HIGH = "5";
+	public static String TEACHER_RATINGS_MEDIUM = "4";
+	public static String TEACHER_RATINGS_LOW = "1,2,3";
+	public static String TEACHER_RATINGS_ALL = "1,2,3,4,5";
+
+
 	@Autowired
 	private ManageGatewayService manageGatewayService;
 
@@ -142,9 +147,9 @@ public class StudentCommentRestController extends RestfulController{
 							      data.getRating_4_count() +
 					              data.getRating_5_count();
 
-			Integer satisfied = data.getRating_4_count() + data.getRating_5_count();
-			Integer average = data.getRating_3_count();
-			Integer dislike = data.getRating_1_count() + data.getRating_2_count();
+			Integer satisfied =  data.getRating_5_count();
+			Integer average = data.getRating_4_count();
+			Integer dislike = data.getRating_1_count() + data.getRating_2_count() + data.getRating_3_count();
 
 			String totalGradeStr = "0.0";
 			if(allComments!=0) {
@@ -192,7 +197,16 @@ public class StudentCommentRestController extends RestfulController{
 //			if(getUser.getId()!=teacherId){
 //				return ApiResponseUtils.buildErrorResp(1002, "没有数据访问权限");
 //			}
-			StudentCommentPageVo data = manageGatewayService.getStudentCommentListByTeacherId(teacherId, start, limit, ratingLevel);
+			String ratings = TEACHER_RATINGS_ALL;
+			if(ratingLevel.toLowerCase().equals("high")){
+				ratings = TEACHER_RATINGS_HIGH;
+			}else if(ratingLevel.toLowerCase().equals("medium")){
+				ratings = TEACHER_RATINGS_MEDIUM;
+			}else if(ratingLevel.toLowerCase().equals("low")){
+				ratings = TEACHER_RATINGS_LOW;
+			}
+
+			StudentCommentPageVo data = manageGatewayService.getStudentCommentListByTeacherId(teacherId, start, limit, ratings);
 
 			long millis =stopwatch.stop().elapsed(TimeUnit.MILLISECONDS);
 			logger.info("【StudentCommentRestController.getStudentCommentByPage】output：result={},运行时间={}ms ", JSONObject.toJSONString(data),millis);
