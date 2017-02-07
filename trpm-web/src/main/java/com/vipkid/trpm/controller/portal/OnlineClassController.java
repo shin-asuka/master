@@ -168,9 +168,11 @@ public class OnlineClassController extends AbstractPortalController {
             if ("feedback".equals(request.getParameter("from"))) {
                 model.addAttribute("from", "feedback");
             }
-            // 只有在Major课老师进教室时，才创建TeacherComment
-            onlineclassService.createTeacherCommentByEnterClassroom(studentId, teacher.getId(), onlineClass, lesson);
-            model.addAllAttributes(onlineclassService.enterMajor(onlineClass, studentId, teacher, lesson));
+            //只有在Major课老师进教室时，才创建TeacherComment
+            //学生进教室的时候创建CF记录
+            //onlineclassService.createTeacherCommentByEnterClassroom(studentId,teacher.getId(),onlineClass,lesson);
+            model.addAllAttributes(
+                    onlineclassService.enterMajor(onlineClass, studentId, teacher, lesson));
             return view("online_class_major");
         }
     }

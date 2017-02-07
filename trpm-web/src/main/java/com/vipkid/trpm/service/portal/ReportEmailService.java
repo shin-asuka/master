@@ -9,18 +9,17 @@ import com.vipkid.payroll.service.StudentService;
 import com.vipkid.trpm.constant.ApplicationConstant;
 import com.vipkid.trpm.dao.*;
 import com.vipkid.trpm.entity.*;
+import com.vipkid.trpm.util.DateUtils;
 import com.vipkid.trpm.util.LessonSerialNumber;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -84,6 +83,10 @@ public class ReportEmailService {
         for (Map<String, Object> lessonSn : lessonSnList) {
             String sn = lessonSn.get("serial_number").toString();
             String sDate = lessonSn.get("scheduled_date_time").toString();
+            if(NumberUtils.isNumber(sDate)){
+                Date sDateStr = new Date(Long.valueOf(sDate));
+                sDate = DateUtils.formatDate(sDateStr);
+            }
             Object performObj = lessonSn.get("performance");
             String performStr = performObj == null ? null : performObj.toString();
             Integer performInt = StringUtils.isEmpty(performStr) ? 0 : Integer.parseInt(performStr);
