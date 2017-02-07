@@ -60,6 +60,10 @@ public class ManageGatewayService extends HttpBaseService {
 			String data = WebUtils.simpleGet(String.format(super.serverAddress + GATEWAY_STUDENT_COMMENT_BATCH_API ,idsStr));
 			if (data!=null) {
 				studentCommentApiList = JsonUtils.toBeanList(data, StudentCommentVo.class);
+				for(StudentCommentVo studentCommentVo : studentCommentApiList) {
+					String result = getTranslation(studentCommentVo.getId().longValue());
+					studentCommentVo.setTransaltion(StringUtils.isEmpty(result) ? "" : result);
+				}
 			}
 		} catch (Exception e) {
 			logger.error("【ManageGatewayService.getStudentCommentListByBatch】调用失败，idsStr：{}", e, idsStr);
