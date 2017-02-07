@@ -411,6 +411,7 @@ public class ClassroomsRestServiceImpl implements ClassroomsRestService{
 			StudentCommentVo studentCommentVo = studentCommentApiMap.get(classroomDetail.getOnlineClassId());
 			if(studentCommentVo!=null && studentCommentVo.getStatus()==1){
 				classroomDetail.setHasParentComment(true);
+				classroomDetail.setStudentCommentVo(studentCommentVo);
 			}else{
 				classroomDetail.setHasParentComment(false);
 			}

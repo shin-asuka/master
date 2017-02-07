@@ -26,6 +26,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -144,17 +146,22 @@ public class StudentCommentRestController extends RestfulController{
 			Integer average = data.getRating_3_count();
 			Integer dislike = data.getRating_1_count() + data.getRating_2_count();
 
-			Integer	totalGrade = (1 * data.getRating_1_count() +
-					              2 * data.getRating_2_count() +
-					              3 * data.getRating_3_count() +
-					              4 * data.getRating_4_count() +
-					              5 * data.getRating_5_count())/allComments;
+			String totalGradeStr = "0.0";
+			if(allComments!=0) {
+				Float totalGrade = (1f * data.getRating_1_count() +
+						2f * data.getRating_2_count() +
+						3f * data.getRating_3_count() +
+						4f * data.getRating_4_count() +
+						5f * data.getRating_5_count()) / allComments;
+				totalGradeStr = new DecimalFormat("0.0").format(totalGrade);
+			}
+
 
 			ret.put("allComments",allComments);
 			ret.put("satisfied",satisfied);
 			ret.put("average",average);
 			ret.put("dislike",dislike);
-			ret.put("totalGrade",totalGrade);
+			ret.put("totalGrade",totalGradeStr);
 
 			long millis =stopwatch.stop().elapsed(TimeUnit.MILLISECONDS);
 			logger.info("【StudentCommentRestController.getStudentCommentTotal】output：result={},运行时间={}ms", JSONObject.toJSONString(data),millis);
