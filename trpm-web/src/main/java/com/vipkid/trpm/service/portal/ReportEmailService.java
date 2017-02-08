@@ -145,7 +145,7 @@ public class ReportEmailService {
         paramsMap.put("tableDetails", tableDetails);
 
         Map<String, String> emailMap = new TemplateUtils().readTemplate("FeedbackAdjustRemindCLT.html", paramsMap, "FeedbackAdjustRemindCLT-Title.html");
-        new EmailEngine().addMailPool("replacement@vipkid.com.cn", emailMap, EmailConfig.EmailFormEnum.EDUCATION);
+        new EmailEngine().addMailPool("ninglu@vipkid.com.cn", emailMap, EmailConfig.EmailFormEnum.EDUCATION);
     }
 
     private String getStudentName(long studentId){
