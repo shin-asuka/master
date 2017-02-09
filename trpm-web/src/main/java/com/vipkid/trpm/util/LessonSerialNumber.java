@@ -78,12 +78,12 @@ public class LessonSerialNumber {
                 unit = word.replaceAll("u","Unit ");
             }
             if(word.indexOf("l")>-1 && word.indexOf("lc") == -1){
-                lesson = word.replaceAll("l","Lesson ");
+                lesson = word.replaceAll("l","Lesson ");  //留用
             }
         }
-        if(StringUtils.isNotEmpty(unit) && StringUtils.isNotEmpty(lesson)){
+        if(StringUtils.isNotEmpty(unit)){
             StringBuffer sb = new StringBuffer();
-            String ret = sb.append(unit).append(" - ").append(lesson).append(" - ").toString();
+            String ret = sb.append(unit).append(" - ").toString();
             return ret;
         }else {
             logger.error("【formatToStudentCommentPattern】：解析lessonSn失败");
