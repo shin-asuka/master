@@ -12,6 +12,7 @@ import com.vipkid.rest.interceptor.annotation.RestInterface;
 import com.vipkid.rest.portal.vo.StudentCommentPageVo;
 import com.vipkid.rest.portal.vo.StudentCommentTotalVo;
 import com.vipkid.rest.portal.vo.StudentCommentVo;
+import com.vipkid.rest.portal.vo.TranslationVo;
 import com.vipkid.rest.utils.ApiResponseUtils;
 import com.vipkid.rest.utils.ext.baidu.BaiduTranslateAPI;
 import com.vipkid.trpm.constant.ApplicationConstant;
@@ -19,10 +20,7 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -33,7 +31,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 @RestController
-@RestInterface(lifeCycle = LifeCycle.REGULAR)
+//@RestInterface(lifeCycle = LifeCycle.REGULAR)
 public class StudentCommentRestController extends RestfulController{
 	private static final Logger logger = LoggerFactory.getLogger(StudentCommentRestController.class);
 	public static String TEACHER_RATINGS_HIGH = "5";
@@ -238,11 +236,13 @@ public class StudentCommentRestController extends RestfulController{
 		return ApiResponseUtils.buildErrorResp(1001, "服务器端错误");
 	}
 
-	@RequestMapping(value = "/getStudentCommentTranslation", method  = RequestMethod.POST)
+	@RequestMapping(value = "/getStudentCommentTranslation", method  = RequestMethod.POST,produces="application/json")
 	public Map<String, Object> getStudentCommentTranslation(HttpServletRequest request, HttpServletResponse response,
-															@RequestParam(value = "id", required = true) Long id,
-															@RequestParam(value = "text", required = false) String text){
+															@RequestBody TranslationVo translationVo){
+
 		try {
+			Long id = translationVo.getId();
+			String text = translationVo.getText();
 			Stopwatch stopwatch = Stopwatch.createStarted();
 			logger.info("开始调用restClassroomsMaterials接口， 传入参数：id = {}", id);
 			String result  = manageGatewayService.getTranslation(id);
@@ -258,16 +258,17 @@ public class StudentCommentRestController extends RestfulController{
 			logger.info("【getStudentCommentTranslation】，传入参数：id = {}。返回Json={}。耗时{}ms", id, JsonUtils.toJSONString(result), millis);
 			return ApiResponseUtils.buildSuccessDataResp(map);
 		} catch (Exception e) {
-			logger.error("调用restClassroomsMaterial接口， 传入参数：lessonId = {}。抛异常: {}", id, e);
+			logger.error("调用restClassroomsMaterial接口， 传入参数：lessonId = {}。抛异常: {}", translationVo.getId(), e);
 		}
 		return ApiResponseUtils.buildErrorResp(1001, "服务器端错误");
 	}
 
 	@RequestMapping(value = "/saveStudentCommentTranslation", method  = RequestMethod.POST)
 	public Map<String, Object> saveStudentCommentTranslation(HttpServletRequest request, HttpServletResponse response,
-															 @RequestParam(value = "id", required = true) Long id,
-															 @RequestParam(value = "text",required = true) String text){
+															 @RequestBody TranslationVo translationVo){
 		try {
+			Long id = translationVo.getId();
+			String text = translationVo.getText();
 			Stopwatch stopwatch = Stopwatch.createStarted();
 			logger.info("开始调用restClassroomsMaterials接口， 传入参数：id = {},text = {}", id,text);
 			Boolean result  = manageGatewayService.saveTranslation(id, text);
@@ -277,7 +278,7 @@ public class StudentCommentRestController extends RestfulController{
 			logger.info("saveStudentCommentTranslation，传入参数：id = {},text = {}。返回Json={}。耗时{}ms", id,text, JsonUtils.toJSONString(result), millis);
 			return ApiResponseUtils.buildSuccessDataResp(map);
 		} catch (Exception e) {
-			logger.error("调用restClassroomsMaterial接口， 传入参数：id = {},text = {}。抛异常: {}", id,text,e);//由于维龙的代码没有合上去，暂时这么处理
+			logger.error("调用restClassroomsMaterial接口， 传入参数：id = {},text = {}。抛异常: {}", translationVo.getId(),translationVo.getText(),e);//由于维龙的代码没有合上去，暂时这么处理
 		}
 		return ApiResponseUtils.buildErrorResp(1001, "服务器端错误");
 	}
