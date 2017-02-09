@@ -67,8 +67,8 @@ public class InterviewController extends RestfulController {
 
             //Optimise the interviewer randomise process
             String onlineClassIdStr = this.interviewService.getOnlineClassIdRandomised(Long.valueOf(onlineClassScheduleTS + ""));
-            if (onlineClassIdStr=="")
-            {
+            if (onlineClassIdStr == ""){
+                response.setStatus(HttpStatus.FORBIDDEN.value());
                 return  ReturnMapUtils.returnFail("Oops, someone else just booked this time slot. Please select another.");
             }
 
