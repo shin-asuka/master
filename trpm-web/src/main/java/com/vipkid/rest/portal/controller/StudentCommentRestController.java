@@ -217,7 +217,7 @@ public class StudentCommentRestController extends RestfulController{
 		return ApiResponseUtils.buildErrorResp(1001, "服务器端错误");
 	}
 
-	@RequestMapping(value = "/translateZhToEn",method = RequestMethod.GET)
+	@RequestMapping(value = "/translateZhToEn",method = RequestMethod.POST)
 	public Map<String, Object> translateZhToEn(HttpServletRequest request, HttpServletResponse response,
 													   @RequestParam(value="text",required=false,defaultValue = "") String text) {
 		try {
@@ -238,7 +238,7 @@ public class StudentCommentRestController extends RestfulController{
 		return ApiResponseUtils.buildErrorResp(1001, "服务器端错误");
 	}
 
-	@RequestMapping(value = "/getStudentCommentTranslation", method  = RequestMethod.GET)
+	@RequestMapping(value = "/getStudentCommentTranslation", method  = RequestMethod.POST)
 	public Map<String, Object> getStudentCommentTranslation(HttpServletRequest request, HttpServletResponse response,
 															@RequestParam(value = "id", required = true) Long id,
 															@RequestParam(value = "text", required = false) String text){
