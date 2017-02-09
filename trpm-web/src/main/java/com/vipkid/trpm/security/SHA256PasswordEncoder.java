@@ -25,7 +25,7 @@ public class SHA256PasswordEncoder implements PasswordEncoder {
 			String hexString = Hex.encodeHexString(bytes);
 			return Base64.encodeBase64URLSafeString(hexString.getBytes());
 		} catch (NoSuchAlgorithmException e) {
-			logger.error("SHA256PasswordEncoder encode err: {}", e.getMessage());
+			logger.error("SHA256PasswordEncoder encode err: {}", e);
 			return (null == rawPassword) ? null : rawPassword.toString();
 		}
 	}

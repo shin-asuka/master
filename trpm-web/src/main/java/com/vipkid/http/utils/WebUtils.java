@@ -121,7 +121,7 @@ public class WebUtils {
                 try {
                     response.close();
                 } catch (IOException e) {
-                    logger.error("关闭输出流时出错，url = "+url+", e="+ e);
+                    logger.error("关闭输出流时出错，url = "+url+", e=", e);
                 }
             }
         }

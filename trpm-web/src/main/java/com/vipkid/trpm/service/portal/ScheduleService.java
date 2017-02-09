@@ -844,7 +844,7 @@ public class ScheduleService {
                 return true;
             }
         } catch (Exception e) {
-            logger.error("HttpClient err: {}", e.getMessage());
+            logger.error("HttpClient err: {}", e);
         } finally {
             try {
                 if (null != httpResponse) {
@@ -854,7 +854,7 @@ public class ScheduleService {
                     httpClient.close();
                 }
             } catch (IOException e) {
-                logger.error("HttpClient err: {}", e.getMessage());
+                logger.error("HttpClient err: {}", e);
             }
         }
 
@@ -891,7 +891,7 @@ public class ScheduleService {
                 return true;
             }
         } catch (Exception e) {
-            logger.error("HttpClient err: {}", e.getMessage());
+            logger.error("HttpClient err: {}", e);
         } finally {
             try {
                 if (null != httpResponse) {
@@ -901,7 +901,7 @@ public class ScheduleService {
                     httpClient.close();
                 }
             } catch (IOException e) {
-                logger.error("HttpClient err: {}", e.getMessage());
+                logger.error("HttpClient err: {}", e);
             }
         }
 
@@ -925,7 +925,7 @@ public class ScheduleService {
             responseBody = StringTools.matchString(responseBody, "\\[(.*?)\\]", Pattern.CASE_INSENSITIVE, 1);
             return Arrays.asList(StringUtils.split(responseBody, ","));
         } catch (Exception e) {
-            logger.error("HttpClientProxy err: {}", e.getMessage());
+            logger.error("HttpClientProxy err: {}", e);
             return Lists.newArrayList();
         }
     }
