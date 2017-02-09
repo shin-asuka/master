@@ -67,9 +67,12 @@ public class InterviewController extends RestfulController {
 
             //Optimise the interviewer randomise process
             String onlineClassIdStr = this.interviewService.getOnlineClassIdRandomised(Long.valueOf(onlineClassScheduleTS + ""));
+            if (onlineClassIdStr=="")
+            {
+                return  ReturnMapUtils.returnFail("Oops, someone else just booked this time slot. Please select another.");
+            }
 
-            //Go to the existing booking logic.
-            Map<String,Object> result = this.interviewService.bookInterviewClass(Long.valueOf(onlineClassIdStr+""), getTeacher(request));
+            Map<String, Object> result = this.interviewService.bookInterviewClass(Long.valueOf(onlineClassIdStr + ""), getTeacher(request));
 
             if(ReturnMapUtils.isFail(result)){
                 response.setStatus(HttpStatus.FORBIDDEN.value());
