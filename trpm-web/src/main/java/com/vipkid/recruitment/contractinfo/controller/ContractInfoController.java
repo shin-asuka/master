@@ -51,7 +51,7 @@ import java.util.*;
 @RestController
 @RestInterface(lifeCycle = {TeacherEnum.LifeCycle.CONTRACT_INFO})
 @RequestMapping("/recruitment/contractinfo")
-public class    ContractInfoController extends RestfulController {
+public class ContractInfoController extends RestfulController {
 
     private static Logger logger = LoggerFactory.getLogger(ContractInfoController.class);
 

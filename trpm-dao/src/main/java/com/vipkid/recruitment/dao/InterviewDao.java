@@ -10,6 +10,8 @@ import org.springframework.stereotype.Repository;
 
 import com.google.common.collect.Maps;
 import com.vipkid.recruitment.entity.Interview;
+import com.vipkid.recruitment.entity.InterviewerClassCount;
+
 
 @Repository
 public class InterviewDao extends MapperDaoTemplate<Interview> {
@@ -26,11 +28,20 @@ public class InterviewDao extends MapperDaoTemplate<Interview> {
         return listEntity("listByInterview", paramsMap);
     }
 
-    public List<Map<String,Object>> findlistByBookedCount(String scheduleTime, String fromTime,String toTime){
+//    public List<Map<String,Object>> findlistByBookedCount(String scheduleTime, String fromTime,String toTime){
+//        Map<String,Object> paramsMap = Maps.newHashMap();
+//        paramsMap.put("scheduleTime", scheduleTime);
+//        paramsMap.put("fromTime", fromTime);
+//        paramsMap.put("toTime", toTime);
+//        return listEntity("listByInterviewBookedCount", paramsMap);
+//    }
+
+    public List<InterviewerClassCount> findlistByBookedCount(String scheduleTime, String fromTime,String toTime){
         Map<String,Object> paramsMap = Maps.newHashMap();
         paramsMap.put("scheduleTime", scheduleTime);
         paramsMap.put("fromTime", fromTime);
         paramsMap.put("toTime", toTime);
         return listEntity("listByInterviewBookedCount", paramsMap);
     }
+
 }

@@ -15,6 +15,7 @@ import com.vipkid.recruitment.dao.TeacherApplicationDao;
 import com.vipkid.recruitment.dao.TeacherApplicationLogDao;
 import com.vipkid.recruitment.dao.TeacherLockLogDao;
 import com.vipkid.recruitment.entity.TeacherApplication;
+import com.vipkid.recruitment.entity.InterviewerClassCount;
 import com.vipkid.recruitment.entity.TeacherLockLog;
 import com.vipkid.recruitment.interview.InterviewConstant;
 import com.vipkid.recruitment.utils.ReturnMapUtils;
@@ -39,6 +40,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.lang.StringBuffer;
 
 @Service
 public class InterviewService {
@@ -154,40 +156,45 @@ public class InterviewService {
     }
 
 
-    /*加入interviewer scheduler逻辑以后, book 逻辑变动较大, 传入时间而不传入onlineclassId*/
-    public String randomiseInterviewer(long timestamp, Teacher teacher) {
+    /*加入interviewer scheduler逻辑以后, book 逻辑变动较大, 从接收onlineclassId改为接受前端时间戳*/
+    public String getOnlineClassIdRandomised(long timestamp) {
 
-        logger.info("Timestamp to book the interview:"+timestamp);
+        logger.info("Timestamp to book the interview:" + timestamp);
 
-        Timestamp ts= new Timestamp(timestamp);
+        Timestamp ts = new Timestamp(timestamp);
         String schduledDateTime = ts.toLocalDateTime().format(DateUtils.FMT_YMD_HMS);
         LocalDateTime schduledDT = ts.toLocalDateTime();
-        logger.info("schduledDateTime to book the interview:"+schduledDateTime);
+        logger.info("schduledDateTime to book the interview:" + schduledDateTime);
 
-        String fromTime_curDate = schduledDT.with(LocalTime.of(0,0,0)).format(DateUtils.FMT_YMD_HMS);
-        String toTime_curDate = schduledDT.with(LocalTime.of(23,59,59)).format(DateUtils.FMT_YMD_HMS);
+        String fromTime_curDate = schduledDT.with(LocalTime.of(0, 0, 0)).format(DateUtils.FMT_YMD_HMS);
+        String toTime_curDate = schduledDT.with(LocalTime.of(23, 59, 59)).format(DateUtils.FMT_YMD_HMS);
         logger.info("bookInterviewClass get least booked teacher fromTime:{}, toTime:{}", fromTime_curDate, toTime_curDate);
 
         //取出候选课程对应老师当天BOOK或FINISHED课程数。(online class id , scheduledTime, teacher id, count booked)
-        List<Map<String,Object>> listBookedCount = interviewDao.findlistByBookedCount(schduledDateTime,fromTime_curDate, toTime_curDate);
+        List<InterviewerClassCount> listInterviewers = interviewDao.findlistByBookedCount(schduledDateTime, fromTime_curDate, toTime_curDate);
+        StringBuilder log =new StringBuilder();
+        for (InterviewerClassCount member : listInterviewers){
+            log.append("{id:"+member.getOnlinClassId()+",teacherId:"+member.getTeacherId()+",bookedCount:"+member.getBookedCount()+"} ");
+        }
+        logger.info("listBookedCount: {}", log);
 
-        if (CollectionUtils.isEmpty(listBookedCount)){
+        if (CollectionUtils.isEmpty(listInterviewers)){
             return "";
-        }else if (listBookedCount.size()==1){
-            return  listBookedCount.get(0).get("id").toString();
+        }else if (listInterviewers.size()==1){
+            return  Integer.toString(listInterviewers.get(0).getOnlinClassId());
         }else{
 
-            List<Map<String,Object>> targeList=new ArrayList<Map<String,Object>>();
-            int prevCount=Integer.parseInt(listBookedCount.get(0).get("bookedCountByTimeRange").toString());
+            List<InterviewerClassCount> targeList=new ArrayList<InterviewerClassCount>();
+            int prevCount=listInterviewers.get(0).getBookedCount();
             int curCount=prevCount;
-            for (int i=0;i<listBookedCount.size(); i++){
+            for (int i=0;i< listInterviewers.size(); i++) {
 
-                curCount=Integer.parseInt(listBookedCount.get(i).get("bookedCountByTimeRange").toString());
+                curCount = listInterviewers.get(i).getBookedCount();
                 if (curCount!= prevCount){
                    break;
                 }
 
-                targeList.add(listBookedCount.get(i));
+                targeList.add(listInterviewers.get(i));
                 prevCount=curCount;
             }
 
@@ -196,7 +203,8 @@ public class InterviewService {
                 Collections.shuffle(targeList);
             }
 
-           return listBookedCount.get(0).get("id").toString();
+            logger.info("Top 1 Class Id to be booked: {}", listInterviewers.get(0).getOnlinClassId());
+            return Integer.toString(listInterviewers.get(0).getOnlinClassId());
         }
     }
 
