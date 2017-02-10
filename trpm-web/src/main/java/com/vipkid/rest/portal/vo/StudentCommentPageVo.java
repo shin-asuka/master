@@ -9,6 +9,8 @@ public class StudentCommentPageVo {
 
     private Integer total;
     private List<StudentCommentVo> data;
+    private Integer curPageNo;
+    private Integer totalPageNo;
 
     public Integer getTotal() {
         return total;
@@ -24,5 +26,21 @@ public class StudentCommentPageVo {
 
     public void setData(List<StudentCommentVo> data) {
         this.data = data;
+    }
+
+    public Integer getTotalPageNo() {
+        return totalPageNo;
+    }
+
+    public void setTotalPageNo(Integer totalPageNo) {
+        this.totalPageNo = totalPageNo;
+    }
+
+    public Integer getCurPageNo() {
+        return curPageNo;
+    }
+
+    public void setCurPageNo(Integer curPageNo) {
+        this.curPageNo = curPageNo;
     }
 }

@@ -38,7 +38,7 @@ public class StudentCommentRestController extends RestfulController{
 	public static String TEACHER_RATINGS_MEDIUM = "4";
 	public static String TEACHER_RATINGS_LOW = "1,2,3";
 	public static String TEACHER_RATINGS_ALL = "1,2,3,4,5";
-
+	public static Integer PAGE_SIZE = 10;
 
 	@Autowired
 	private ManageGatewayService manageGatewayService;
@@ -205,7 +205,8 @@ public class StudentCommentRestController extends RestfulController{
 			}
 
 			StudentCommentPageVo data = manageGatewayService.getStudentCommentListByTeacherId(teacherId, start, limit, ratings);
-
+			data.setCurPageNo(start/PAGE_SIZE + 1);
+			data.setTotalPageNo(data.getTotal()/PAGE_SIZE + 1);
 			long millis =stopwatch.stop().elapsed(TimeUnit.MILLISECONDS);
 			logger.info("【StudentCommentRestController.getStudentCommentByPage】output：result={},运行时间={}ms ", JSONObject.toJSONString(data),millis);
 			return ApiResponseUtils.buildSuccessDataResp(data);
