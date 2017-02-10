@@ -1,6 +1,7 @@
 package com.vipkid.recruitment.interview.service;
 
 import com.google.api.client.util.Maps;
+import com.vipkid.dataSource.annotation.Slave;
 import com.vipkid.email.EmailUtils;
 import com.vipkid.enums.OnlineClassEnum;
 import com.vipkid.enums.TeacherApplicationEnum.Result;
@@ -157,6 +158,7 @@ public class InterviewService {
 
 
     /*加入interviewer scheduler逻辑以后, book 逻辑变动较大, 从接收onlineclassId改为接受前端时间戳*/
+    @Slave
     public String getOnlineClassIdRandomised(long timestamp) {
 
         logger.info("Timestamp to book the interview:" + timestamp);
