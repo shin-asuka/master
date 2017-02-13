@@ -274,8 +274,7 @@ public class InterviewService {
         }
         if(ReturnMapUtils.isSuccess(result)){
             result.put("onlineClassId",onlineClass.getId());
-            logger.info("onlineClassId:",onlineClass.getId());
-            logger.info("teacher:{} book Interview success send email",teacher.getId());
+            logger.info("teacher:{} book Interview success send email.  onlineClassId:{}", teacher.getId(), onlineClass.getId());
             EmailUtils.sendEmail4InterviewBook(teacher,onlineClass);
         }
         return result;
