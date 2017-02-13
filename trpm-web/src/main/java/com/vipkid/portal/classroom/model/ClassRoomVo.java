@@ -5,16 +5,16 @@ import com.vipkid.rest.validation.annotation.NotNull;
 @NotNull
 public class ClassRoomVo {
 
-	private Long onlineClassIdLong;
+	private Long onlineClassId;
 	
 	private Long studentId;
 
-	public Long getOnlineClassIdLong() {
-		return onlineClassIdLong;
+	public Long getOnlineClassId() {
+		return onlineClassId;
 	}
 
-	public void setOnlineClassIdLong(Long onlineClassIdLong) {
-		this.onlineClassIdLong = onlineClassIdLong;
+	public void setOnlineClassId(Long onlineClassId) {
+		this.onlineClassId = onlineClassId;
 	}
 
 	public Long getStudentId() {
