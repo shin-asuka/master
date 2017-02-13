@@ -73,7 +73,6 @@ define(['messenger'], function() {
         removeStar($(this));
       });
       param.name = "sendStar";
-      messenger.send(JsonToString(param)); // 用信使来发送数据
 
       /* 记录发送星星时的日志 */
       var url = webPath + "/sendStarLogs.json";
@@ -82,6 +81,7 @@ define(['messenger'], function() {
         data: {
           "onlineClassId": $(curObj).attr("onlineClassId"),
           "studentId": $(curObj).attr("student"),
+          "teacherId" : $(curObj).attr("teacher"),
           "send": true
         },
         url: url,
@@ -89,6 +89,12 @@ define(['messenger'], function() {
         success: function(datas) {
           if (undefined !== console) {
             console.log("send star logs.");
+          }
+          if(200 == datas.code){
+            alert("发送星星成功");
+            messenger.send(JsonToString(param)); // 用信使来发送数据
+          }else{
+            alert("发送星星失败");
           }
         }
       });
@@ -106,7 +112,6 @@ define(['messenger'], function() {
       });
 
       param.name = "removeStar";
-      messenger.send(JsonToString(param)); // 用信使来发送数据
 
       /* 记录移除星星时的日志 */
       var url = webPath + "/sendStarLogs.json";
@@ -115,6 +120,7 @@ define(['messenger'], function() {
         data: {
           "onlineClassId": $(curObj).attr("onlineClassId"),
           "studentId": $(curObj).attr("student"),
+          "teacherId" : $(curObj).attr("teacher"),
           "send": false
         },
         url: url,
@@ -122,6 +128,12 @@ define(['messenger'], function() {
         success: function(datas) {
           if (undefined !== console) {
             console.log("remove star logs.");
+          }
+          if(200 == datas.code){
+            alert("remove星星成功");
+            messenger.send(JsonToString(param)); // 用信使来发送数据
+          }else{
+            alert("remove星星失败");
           }
         }
       });

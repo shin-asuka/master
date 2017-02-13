@@ -39,10 +39,6 @@ define(["duobeiyun"], function() {
         removeStar($(this));
       });
 
-      Duobeiyun.trigger("sendStar", {
-        'name': 'sendStar'
-      });
-
       /* 记录发送星星时的日志 */
       var url = webPath + "/sendStarLogs.json";
 
@@ -50,6 +46,7 @@ define(["duobeiyun"], function() {
         data: {
           "onlineClassId": $(curObj).attr("onlineClassId"),
           "studentId": $(curObj).attr("student"),
+          "teacherId" : $(curObj).attr("teacher"),
           "send": true
         },
         url: url,
@@ -57,6 +54,14 @@ define(["duobeiyun"], function() {
         success: function(datas) {
           if (undefined !== console) {
             console.log("send star logs.");
+          }
+          if(200 == datas.code){
+            alert("发送星星成功");
+            Duobeiyun.trigger("sendStar", {
+              'name': 'sendStar'
+            });
+          }else{
+            alert("发送星星失败");
           }
         }
       });
@@ -73,10 +78,6 @@ define(["duobeiyun"], function() {
         sendStar($(this));
       });
 
-      Duobeiyun.trigger("removeStar", {
-        'name': 'removeStar'
-      });
-
       /* 记录移除星星时的日志 */
       var url = webPath + "/sendStarLogs.json";
 
@@ -84,6 +85,7 @@ define(["duobeiyun"], function() {
         data: {
           "onlineClassId": $(curObj).attr("onlineClassId"),
           "studentId": $(curObj).attr("student"),
+          "teacherId" : $(curObj).attr("teacher"),
           "send": false
         },
         url: url,
@@ -91,6 +93,14 @@ define(["duobeiyun"], function() {
         success: function(datas) {
           if (undefined !== console) {
             console.log("remove star logs.");
+          }
+          if(200 == datas.code){
+            alert("remove星星成功");
+            Duobeiyun.trigger("removeStar", {
+              'name': 'removeStar'
+            });
+          }else{
+            alert("remove星星失败");
           }
         }
       });
