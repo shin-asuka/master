@@ -1,6 +1,7 @@
 package com.vipkid.recruitment.interview.service;
 
 import com.google.api.client.util.Maps;
+import com.vipkid.dataSource.annotation.Slave;
 import com.vipkid.email.EmailUtils;
 import com.vipkid.enums.OnlineClassEnum;
 import com.vipkid.enums.TeacherApplicationEnum.Result;
@@ -15,6 +16,7 @@ import com.vipkid.recruitment.dao.TeacherApplicationDao;
 import com.vipkid.recruitment.dao.TeacherApplicationLogDao;
 import com.vipkid.recruitment.dao.TeacherLockLogDao;
 import com.vipkid.recruitment.entity.TeacherApplication;
+import com.vipkid.recruitment.entity.InterviewerClassCount;
 import com.vipkid.recruitment.entity.TeacherLockLog;
 import com.vipkid.recruitment.interview.InterviewConstant;
 import com.vipkid.recruitment.utils.ReturnMapUtils;
@@ -34,10 +36,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
+import java.lang.StringBuffer;
 
 @Service
 public class InterviewService {
@@ -152,6 +156,61 @@ public class InterviewService {
         return result;
     }
 
+
+    /*加入interviewer scheduler逻辑以后, book 逻辑变动较大, 从接收onlineclassId改为接受前端时间戳*/
+    @Slave
+    public String getOnlineClassIdRandomised(long timestamp) {
+
+        logger.info("Timestamp to book the interview:" + timestamp);
+
+        Timestamp ts = new Timestamp(timestamp);
+        String schduledDateTime = ts.toLocalDateTime().format(DateUtils.FMT_YMD_HMS);
+        LocalDateTime schduledDT = ts.toLocalDateTime();
+        logger.info("schduledDateTime to book the interview:" + schduledDateTime);
+
+        String fromTime_curDate = schduledDT.with(LocalTime.of(0, 0, 0)).format(DateUtils.FMT_YMD_HMS);
+        String toTime_curDate = schduledDT.with(LocalTime.of(23, 59, 59)).format(DateUtils.FMT_YMD_HMS);
+        logger.info("bookInterviewClass get least booked teacher fromTime:{}, toTime:{}", fromTime_curDate, toTime_curDate);
+
+        //取出候选课程对应老师当天BOOK或FINISHED课程数。(online class id , scheduledTime, teacher id, count booked)
+        List<InterviewerClassCount> listInterviewers = interviewDao.findlistByBookedCount(schduledDateTime, fromTime_curDate, toTime_curDate);
+        StringBuilder log =new StringBuilder();
+        for (InterviewerClassCount member : listInterviewers){
+            log.append("{id:"+member.getOnlinClassId()+",teacherId:"+member.getTeacherId()+",bookedCount:"+member.getBookedCount()+"} ");
+        }
+        logger.info("listBookedCount: {}", log);
+
+        if (CollectionUtils.isEmpty(listInterviewers)){
+            return "";
+        }else if (listInterviewers.size()==1){
+            return  Integer.toString(listInterviewers.get(0).getOnlinClassId());
+        }else{
+
+            List<InterviewerClassCount> targeList=new ArrayList<InterviewerClassCount>();
+            int prevCount=listInterviewers.get(0).getBookedCount();
+            int curCount=prevCount;
+            for (int i=0;i< listInterviewers.size(); i++) {
+
+                curCount = listInterviewers.get(i).getBookedCount();
+                if (curCount!= prevCount){
+                   break;
+                }
+
+                targeList.add(listInterviewers.get(i));
+                prevCount=curCount;
+            }
+
+            //Shuffle the new list
+            if(CollectionUtils.isNotEmpty(targeList)){
+                Collections.shuffle(targeList);
+            }
+
+            logger.info("Top 1 Class Id to be booked: {}", listInterviewers.get(0).getOnlinClassId());
+            return Integer.toString(listInterviewers.get(0).getOnlinClassId());
+        }
+    }
+
+
     /***
      * BOOK INTERVIEW 
      * 1.onlineClassId 必须是OPEN 课
@@ -214,7 +273,8 @@ public class InterviewService {
             throw new RuntimeException(result.get("info")+"");
         }
         if(ReturnMapUtils.isSuccess(result)){
-            logger.info("teacher:{} book Interview success send email",teacher.getId());
+            result.put("onlineClassId",onlineClass.getId());
+            logger.info("teacher:{} book Interview success send email.  onlineClassId:{}", teacher.getId(), onlineClass.getId());
             EmailUtils.sendEmail4InterviewBook(teacher,onlineClass);
         }
         return result;

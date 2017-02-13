@@ -58,13 +58,22 @@ public class InterviewController extends RestfulController {
     @RequestMapping(value = "/bookClass", method = RequestMethod.POST, produces = RestfulConfig.JSON_UTF_8)
     public Map<String,Object> bookClass(HttpServletRequest request, HttpServletResponse response,@RequestBody Map<String,Object> pramMap){
         try{
-            Object onlineClassId = pramMap.get("onlineClassId");
-            if(onlineClassId == null || !StringUtils.isNumeric(onlineClassId+"")){
+            //Map<String,Object> result = this.interviewService.bookInterviewClass(Long.valueOf(onlineClassId+""), getTeacher(request));
+            Object onlineClassScheduleTS   = pramMap.get("onlineClassScheduleTS");
+            if(onlineClassScheduleTS == null || !StringUtils.isNumeric(onlineClassScheduleTS+"")){
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
                 return ReturnMapUtils.returnFail("This online class does not exist.");
             }
-            //
-            Map<String,Object> result = this.interviewService.bookInterviewClass(Long.valueOf(onlineClassId+""), getTeacher(request));
+
+            //Optimise the interviewer randomise process
+            String onlineClassIdStr = this.interviewService.getOnlineClassIdRandomised(Long.valueOf(onlineClassScheduleTS + ""));
+            if (onlineClassIdStr == ""){
+                response.setStatus(HttpStatus.FORBIDDEN.value());
+                return  ReturnMapUtils.returnFail("Oops, someone else just booked this time slot. Please select another.");
+            }
+
+            Map<String, Object> result = this.interviewService.bookInterviewClass(Long.valueOf(onlineClassIdStr + ""), getTeacher(request));
+
             if(ReturnMapUtils.isFail(result)){
                 response.setStatus(HttpStatus.FORBIDDEN.value());
             }
