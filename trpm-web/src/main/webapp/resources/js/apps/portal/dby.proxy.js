@@ -79,7 +79,6 @@ define(["duobeiyun","jquery-bootstrap"], function() {
   /* 移除星星函数 */
   var removeStar = function(curObj) {
     if (!$(curObj).prop('disabled')) {
-      $(curObj).removeClass('ownedStar').addClass('futureStar');
       $(curObj).prop('disabled', false);
       $(curObj).unbind('click');
       $(curObj).click(function() {
@@ -106,6 +105,7 @@ define(["duobeiyun","jquery-bootstrap"], function() {
             $.alert("info", {
               title :"Star removed successfully!"
             });
+            $(curObj).removeClass('ownedStar').addClass('futureStar');
             Duobeiyun.trigger("removeStar", {
               'name': 'removeStar'
             });

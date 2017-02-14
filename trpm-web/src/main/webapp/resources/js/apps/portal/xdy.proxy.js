@@ -113,7 +113,6 @@ define([ 'messenger',"jquery-bootstrap" ], function() {
 	/* 移除星星函数 */
 	var removeStar = function(curObj) {
 		if (!$(curObj).prop('disabled')) {
-			$(curObj).removeClass('ownedStar').addClass('futureStar');
 			$(curObj).prop('disabled', false);
 			$(curObj).unbind('click');
 			$(curObj).click(function() {
@@ -142,6 +141,7 @@ define([ 'messenger',"jquery-bootstrap" ], function() {
 						$.alert("info", {
 							title :"Star removed successfully!"
 						});
+						$(curObj).removeClass('ownedStar').addClass('futureStar');
 						messenger.send(JsonToString(param)); // 用信使来发送数据
 					}else{
 						$.alert("error", {
