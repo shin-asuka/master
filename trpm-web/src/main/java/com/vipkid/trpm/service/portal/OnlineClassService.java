@@ -1008,7 +1008,7 @@ public class OnlineClassService {
             if (null != resultJson) {
                 UpdateStarDto updateStarDto = JsonUtils.toBean(resultJson, UpdateStarDto.class);
                 if(updateStarDto.getCode() == HttpStatus.OK.value()){
-                    resultMap.put("result", updateStarDto.getData().isResult());
+                    resultMap.put("result", updateStarDto.isData());
                 } else {
                     resultMap.put("result", false);
                 }
