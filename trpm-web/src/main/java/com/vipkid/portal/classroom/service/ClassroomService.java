@@ -109,6 +109,7 @@ public class ClassroomService {
 		
 		resultDto.setTeacherName(teacher.getRealName());
 		resultDto.setStars(stars);
+		resultDto.setServerTime(new Timestamp(System.currentTimeMillis()));
 		resultDto.setIsReplay(!OnlineClassEnum.ClassStatus.isBooked(onlineClass.getStatus()));
 		
 		return resultDto;

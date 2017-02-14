@@ -212,8 +212,8 @@ public class ClassroomController extends RestfulController{
 	 * @param paramMap
 	 * @return
 	 */
-	@RequestMapping(value = "/send/teacher", method = RequestMethod.POST, produces = RestfulConfig.JSON_UTF_8)
-	public Map<String, Object> sendTeacher(HttpServletRequest request, HttpServletResponse response,Map<String,Object> paramMap){
+	@RequestMapping(value = "/send/help", method = RequestMethod.POST, produces = RestfulConfig.JSON_UTF_8)
+	public Map<String, Object> sendHelp(HttpServletRequest request, HttpServletResponse response,Map<String,Object> paramMap){
 		try{
 			Long onlineClassId = (Long)paramMap.get("onlineClassId");
 			String scheduleTime = (String)paramMap.get("scheduleTime");
