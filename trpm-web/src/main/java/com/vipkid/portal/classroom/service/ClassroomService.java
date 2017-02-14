@@ -3,12 +3,16 @@ package com.vipkid.portal.classroom.service;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
+import org.community.config.PropertyConfigurer;
+import org.community.http.client.HttpClientProxy;
+import org.community.tools.JsonTools;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSON;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.google.api.client.util.Maps;
 import com.vipkid.enums.OnlineClassEnum;
 import com.vipkid.portal.classroom.model.ClassRoomVo;
@@ -180,6 +184,34 @@ public class ClassroomService {
         	result.put("info", urlResult.get("info"));
         	return result;
         }
+    }
+    
+    public Map<String, Object> roomChange(String onlineClassId){
+	    Map<String,Object> resultMap = Maps.newHashMap();
+	    String requestUrl = PropertyConfigurer.stringValue("microservice.url") + "/classroom/onlineClassSupplierCode";
+	    Map<String, String> pram = Maps.newHashMap();
+	    pram.put("onlineClassId", onlineClassId);
+	    String resultBody = HttpClientProxy.get(requestUrl, pram,  Maps.newHashMap());
+	    logger.info("请求URL:"+requestUrl+",参数onlineClassId:" + onlineClassId+",请求结果result:"+resultBody);
+	    if(resultBody != null){
+	       JsonNode jnode = JsonTools.readValue(resultBody);
+	       if(jnode != null && jnode.get("supplierCode") != null){ 
+	           try{
+	               int supplierCode  = jnode.get("supplierCode").asInt();
+	               resultMap.put("supplierCode", supplierCode);
+	           }catch(Exception e){
+	        	   resultMap.put("info","supplierCode:返回参数不是整型,valule="+jnode.get("supplierCode")+",Error-info"+e.getMessage());
+	               logger.error(resultMap.get("info")+",Error-info"+e.getMessage(),e);
+	           }
+	       }else{
+	    	   resultMap.put("info","返回内容为空,resultBody=" + resultBody + ",onlineClassId:" + onlineClassId);
+	           logger.error(""+resultMap.get("info"));
+	       }
+	    }else{
+	    	resultMap.put("info","返回内容为null,resultBody=" + resultBody + ",onlineClassId:" + onlineClassId);
+	        logger.error(""+resultMap.get("info"));
+	    }
+	    return resultMap;
     }
 	
 	

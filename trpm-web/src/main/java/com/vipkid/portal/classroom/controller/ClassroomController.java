@@ -39,7 +39,7 @@ public class ClassroomController extends RestfulController{
 	
 	private static Logger logger = LoggerFactory.getLogger(ClassroomController.class);
 	
-	@RequestMapping(value = "/stars/send", method = RequestMethod.POST)
+	@RequestMapping(value = "/stars/send", method = RequestMethod.POST, produces = RestfulConfig.JSON_UTF_8)
 	public Map<String, Object> starsSend(HttpServletRequest request, HttpServletResponse response, @RequestBody ClassRoomVo bean){		
 		try{
 			//参数校验
@@ -62,7 +62,7 @@ public class ClassroomController extends RestfulController{
         }
 	}
 	
-	@RequestMapping(value = "/stars/remove", method = RequestMethod.POST)
+	@RequestMapping(value = "/stars/remove", method = RequestMethod.POST, produces = RestfulConfig.JSON_UTF_8)
 	public Map<String, Object> starsRemove(HttpServletRequest request, HttpServletResponse response, @RequestBody ClassRoomVo bean){
 		try{
 			//参数校验
@@ -86,7 +86,7 @@ public class ClassroomController extends RestfulController{
 	}
 	
 	@Slave
-	@RequestMapping(value = "/info/room", method = RequestMethod.GET)
+	@RequestMapping(value = "/info/room", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
 	public Map<String, Object> infoRoom(HttpServletRequest request, HttpServletResponse response,@RequestParam("onlineClassId") long onlineClassId, @RequestParam("studentId") long studentId){
 		try{
 			ClassRoomVo bean = new ClassRoomVo();
@@ -105,7 +105,7 @@ public class ClassroomController extends RestfulController{
 	}
 	
 	@Slave
-	@RequestMapping(value = "/info/student", method = RequestMethod.GET)
+	@RequestMapping(value = "/info/student", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
 	public Map<String, Object> infoStudent(HttpServletRequest request, HttpServletResponse response,@RequestParam("serialNum") String serialNum, @RequestParam("studentId") long studentId){
 		try{
 			return ApiResponseUtils.buildSuccessDataResp(this.classroomService.getInfoStudent(studentId, serialNum));
@@ -143,7 +143,7 @@ public class ClassroomController extends RestfulController{
     }
     
     
-	@RequestMapping(value = "/room/time", method = RequestMethod.GET)
+	@RequestMapping(value = "/room/time", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
 	public Map<String, Object> roomTime(HttpServletRequest request, HttpServletResponse response){
 		try{
 			Map<String,Object> maps = Maps.newHashMap();
@@ -160,12 +160,16 @@ public class ClassroomController extends RestfulController{
         }
 	}
 	
-	@RequestMapping(value = "/room/change", method = RequestMethod.GET)
+	@RequestMapping(value = "/room/change", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
 	public Map<String, Object> roomChange(HttpServletRequest request, HttpServletResponse response, @RequestParam("onlineClassId") long onlineClassId, @RequestParam("classroom") String classroom){
 		try{
-			Map<String,Object> maps = Maps.newHashMap();
-			maps.put("supplierCode", 1);
-			return ApiResponseUtils.buildSuccessDataResp(new Object());
+			Map<String,Object> resultMap = this.classroomService.roomChange(onlineClassId+"");
+        	if(resultMap.get("info") == null){
+        		return ApiResponseUtils.buildSuccessDataResp(resultMap);
+        	}else{
+                response.setStatus(HttpStatus.FORBIDDEN.value());
+    			return ApiResponseUtils.buildErrorResp(-5, "错误信息:"+resultMap.get("info"));
+        	}
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
 			logger.error(e.getMessage());
