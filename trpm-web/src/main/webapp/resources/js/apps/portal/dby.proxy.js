@@ -31,8 +31,6 @@ define(["duobeiyun"], function() {
       $(curObj).removeClass('futureStar').addClass('ownedStar');
 
       $(curObj).prop('disabled', true);
-      // 增加发星星效果
-      showStar();
       $(curObj).prop('disabled', false);
       $(curObj).unbind('click');
       $(curObj).click(function() {
@@ -60,6 +58,8 @@ define(["duobeiyun"], function() {
             Duobeiyun.trigger("sendStar", {
               'name': 'sendStar'
             });
+            // 增加发星星效果
+            showStar();
           }else{
             alert("发送星星失败");
           }

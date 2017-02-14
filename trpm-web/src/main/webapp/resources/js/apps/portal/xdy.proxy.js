@@ -66,8 +66,6 @@ define([ 'messenger' ], function() {
 			$(curObj).removeClass('futureStar').addClass('ownedStar');
 
 			$(curObj).prop('disabled', true);
-			// 增加发星星效果
-			showStar();
 			$(curObj).prop('disabled', false);
 			$(curObj).unbind('click');
 			$(curObj).click(function() {
@@ -94,6 +92,8 @@ define([ 'messenger' ], function() {
 					if(200 == datas.code){
 						alert("发送星星成功");
 						messenger.send(JsonToString(param)); // 用信使来发送数据
+						// 增加发星星效果
+						showStar();
 					}else{
 						alert("发送星星失败");
 					}
