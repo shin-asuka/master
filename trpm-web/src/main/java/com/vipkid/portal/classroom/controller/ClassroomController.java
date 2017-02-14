@@ -180,4 +180,58 @@ public class ClassroomController extends RestfulController{
 			return ApiResponseUtils.buildErrorResp(-7, "服务器异常");
         }
 	}
+	
+	
+	@RequestMapping(value = "/send/enter", method = RequestMethod.POST, produces = RestfulConfig.JSON_UTF_8)
+	public Map<String, Object> sendEnter(HttpServletRequest request, HttpServletResponse response,Map<String,Object> paramMap){
+		try{
+			Map<String, String> requestParams = Maps.newHashMap();
+			requestParams.put("onlineClassId", (String)paramMap.get("onlineClassId"));
+			Map<String,Object> resultMap = this.classroomService.sendTeacherInClassroom(requestParams,getTeacher(request));
+        	if(resultMap.get("info") == null){
+        		return ApiResponseUtils.buildSuccessDataResp(resultMap);
+        	}else{
+                response.setStatus(HttpStatus.FORBIDDEN.value());
+    			return ApiResponseUtils.buildErrorResp(-5, "错误信息:"+resultMap.get("info"));
+        	}
+        } catch (IllegalArgumentException e) {
+            response.setStatus(HttpStatus.BAD_REQUEST.value());
+			logger.error(e.getMessage());
+			return ApiResponseUtils.buildErrorResp(-6, "参数类型转化错误");
+        } catch (Exception e) {
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+			logger.error(e.getMessage());
+			return ApiResponseUtils.buildErrorResp(-7, "服务器异常");
+        }
+	}
+	
+	/**
+	 * 发送老师浏览器信息到管理端
+	 * @param request
+	 * @param response
+	 * @param paramMap
+	 * @return
+	 */
+	@RequestMapping(value = "/send/teacher", method = RequestMethod.POST, produces = RestfulConfig.JSON_UTF_8)
+	public Map<String, Object> sendTeacher(HttpServletRequest request, HttpServletResponse response,Map<String,Object> paramMap){
+		try{
+			Long onlineClassId = (Long)paramMap.get("onlineClassId");
+			String scheduleTime = (String)paramMap.get("scheduleTime");
+			Map<String,Object> resultMap = this.classroomService.sendHelp(scheduleTime, onlineClassId, getTeacher(request));
+        	if(resultMap.get("info") == null){
+        		return ApiResponseUtils.buildSuccessDataResp(resultMap);
+        	}else{
+                response.setStatus(HttpStatus.FORBIDDEN.value());
+    			return ApiResponseUtils.buildErrorResp(-5, "错误信息:"+resultMap.get("info"));
+        	}
+        } catch (IllegalArgumentException e) {
+            response.setStatus(HttpStatus.BAD_REQUEST.value());
+			logger.error(e.getMessage());
+			return ApiResponseUtils.buildErrorResp(-6, "参数类型转化错误");
+        } catch (Exception e) {
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+			logger.error(e.getMessage());
+			return ApiResponseUtils.buildErrorResp(-7, "服务器异常");
+        }
+	}
 }

@@ -1,7 +1,10 @@
 package com.vipkid.portal.classroom.service;
 
+import java.sql.Timestamp;
+import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.community.config.PropertyConfigurer;
 import org.community.http.client.HttpClientProxy;
@@ -33,6 +36,7 @@ import com.vipkid.trpm.entity.User;
 import com.vipkid.trpm.entity.teachercomment.TeacherComment;
 import com.vipkid.trpm.proxy.OnlineClassProxy;
 import com.vipkid.trpm.service.portal.TeacherService;
+import com.vipkid.trpm.util.DateUtils;
 
 @Service
 public class ClassroomService {
@@ -110,7 +114,12 @@ public class ClassroomService {
 		return resultDto;
 	}
 	
-	
+	/**
+	 * 获取学生信息 open
+	 * @param studentId
+	 * @param serialNum
+	 * @return
+	 */
 	public Map<String,Object> getInfoStudent(long studentId, String serialNum){
 		
 		Map<String,Object> resultMap = Maps.newHashMap();
@@ -137,9 +146,7 @@ public class ClassroomService {
 	}
 	
 	/**
-     * 用户interview进教室
-     * 1.课程合法性验证
-     * 2.必须是处于Interview的待上课的老师可以获取URL
+	 * 获取教室的URL
      * @param onlineClassId
      * @param teacher
      * @return
@@ -186,6 +193,12 @@ public class ClassroomService {
         }
     }
     
+    
+    /**
+     * 教室变更切换检查
+     * @param onlineClassId
+     * @return
+     */
     public Map<String, Object> roomChange(String onlineClassId){
 	    Map<String,Object> resultMap = Maps.newHashMap();
 	    String requestUrl = PropertyConfigurer.stringValue("microservice.url") + "/classroom/onlineClassSupplierCode";
@@ -213,7 +226,80 @@ public class ClassroomService {
 	    }
 	    return resultMap;
     }
+    
+    
+    /**
+     * 向Appserver发送帮助请求<br/>
+     * 上课期间可以发送帮助请求，非上课期间不能发送
+     *
+     * @Title: sendHelp
+     * @param scheduleTime
+     * @param onlineClassId
+     * @param teacher
+     * @return Map<String,Object>
+     * @date 2016年1月11日
+     */
+    public Map<String, Object> sendHelp(String scheduleTime, long onlineClassId, Teacher teacher) {
+        Map<String, Object> modelMap = Maps.newHashMap();
+        /* 获取服务器时间毫秒 */
+        long serverMillis = System.currentTimeMillis();
+
+        /* 计算schedule时间毫秒 */
+        Timestamp ldtSchedule = DateUtils.parseFrom(scheduleTime, DateUtils.FMT_YMD_HMS);
+        long scheduleMillis = ldtSchedule.getTime();
+
+        /* 判断时间间隔是否在上课时间段之内，如果是则发送帮助请求 */
+        long interval = serverMillis - scheduleMillis;
+
+        /* 在30分钟之内可以发送帮助请求 */
+        if (0 <= interval && interval <= 30 * 60 * 1000) {
+            /* 请求参数 */
+            Map<String, String> requestParams = new HashMap<String, String>();
+            requestParams.put("onlineClassId", String.valueOf(onlineClassId));
+            /* 请求头设置 */
+            String t = "TEACHER " + teacher.getId();
+            Map<String, String> requestHeader = new HashMap<String, String>();
+            requestHeader.put("Authorization", t + " " + DigestUtils.md5Hex(t));
+
+            // Change HTTP POST to Get 2016-11-03
+            String content = HttpClientProxy.get(ApplicationConstant.HELP_URL, requestParams, requestHeader);
+            logger.info("### Request help return content: {}", content);
+            if (StringUtils.isBlank(content)) {
+                modelMap.put("info", "Request failed, please contact manager!");
+            }
+        } else {
+            modelMap.put("info", "Sorry, you can only use this function during class time.");
+        }
+        return modelMap;
+    }
 	
+    
+    /**
+     * 老师进入教室后 ，通过该方法通知appserver
+     *
+     * @Title: sendTeacherInClassroom
+     * @param requestParams
+     * @param teacher
+     * @return Map<String,Object>
+     * @date 2016年1月11日
+     */
+    public Map<String, Object> sendTeacherInClassroom(Map<String, String> requestParams, Teacher teacher) {
+        Map<String, Object> modelMap = Maps.newHashMap();
+        modelMap.put("status", false);
+
+        String t = "TEACHER " + teacher.getId();
+        Map<String, String> requestHeader = new HashMap<String, String>();
+        requestHeader.put("Authorization", t + " " + DigestUtils.md5Hex(t));
+        String content = HttpClientProxy.get(ApplicationConstant.TEACHER_IN_CLASSROOM_URL, requestParams,requestHeader);
+
+        logger.info("### Mark that teacher enter classroom: {}", content);
+        logger.info("### Sent get request to {} with params {}", ApplicationConstant.TEACHER_IN_CLASSROOM_URL,
+                requestParams.get("onlineClassId"));
+        if (StringUtils.isBlank(content)) {
+            modelMap.put("info", "failed to tell the fireman teacher in the classroom!");
+        }
+        return modelMap;
+    }
 	
 	/**
      * 根据serialNum处理 考试的Level名称显示<br/>
