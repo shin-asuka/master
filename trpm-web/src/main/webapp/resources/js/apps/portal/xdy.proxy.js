@@ -1,4 +1,4 @@
-define([ 'messenger' ], function() {
+define([ 'messenger',"jquery-bootstrap" ], function() {
 
 	var param = {};
 
@@ -90,12 +90,16 @@ define([ 'messenger' ], function() {
 						console.log("send star logs.");
 					}
 					if(200 == datas.code){
-						alert("发送星星成功");
+						$.alert("info", {
+							title : "Star sent successfully!"
+						});
 						messenger.send(JsonToString(param)); // 用信使来发送数据
 						// 增加发星星效果
 						showStar();
 					}else{
-						alert("发送星星失败");
+						$.alert("info", {
+							title :"Unsuccessful, please re-send stars!"
+						});
 					}
 				}
 			});

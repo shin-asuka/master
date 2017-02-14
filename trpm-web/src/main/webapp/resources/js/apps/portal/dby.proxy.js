@@ -1,4 +1,4 @@
-define(["duobeiyun"], function() {
+define(["duobeiyun","jquery-bootstrap"], function() {
 
   var initChannel = function(uid, roomId, debug, stars) {
     Duobeiyun.init({
@@ -54,14 +54,18 @@ define(["duobeiyun"], function() {
             console.log("send star logs.");
           }
           if(200 == datas.code){
-            alert("发送星星成功");
+            $.alert("info", {
+              title : "Star sent successfully!"
+            });
             Duobeiyun.trigger("sendStar", {
               'name': 'sendStar'
             });
             // 增加发星星效果
             showStar();
           }else{
-            alert("发送星星失败");
+            $.alert("info", {
+              title :"Unsuccessful, please re-send stars!"
+            });
           }
         }
       });
