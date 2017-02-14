@@ -208,7 +208,7 @@ public class StudentCommentRestController extends RestfulController{
 
 			Integer hasHalfPage = (data.getTotal() % PAGE_SIZE == 0)? 0 : 1;
 
-			data.setCurPageNo(start/PAGE_SIZE);
+			data.setCurPageNo(start/PAGE_SIZE + 1);
 			data.setTotalPageNo(data.getTotal()/PAGE_SIZE + hasHalfPage);
 			long millis =stopwatch.stop().elapsed(TimeUnit.MILLISECONDS);
 			logger.info("【StudentCommentRestController.getStudentCommentByPage】output：result={},运行时间={}ms ", JSONObject.toJSONString(data),millis);
