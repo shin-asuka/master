@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.aspectj.weaver.patterns.ThisOrTargetAnnotationPointcut;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -86,23 +87,6 @@ public class ClassroomController extends RestfulController{
 	}
 	
 	@Slave
-	@RequestMapping(value = "info/student", method = RequestMethod.GET)
-	public Map<String, Object> infoStudent(HttpServletRequest request, HttpServletResponse response,@RequestParam("serialNum") long serialNum, @RequestParam("studentId") long studentId){
-		try{
-
-			return ApiResponseUtils.buildSuccessDataResp(new Object());
-        } catch (IllegalArgumentException e) {
-            response.setStatus(HttpStatus.BAD_REQUEST.value());
-			logger.error(e.getMessage());
-			return ApiResponseUtils.buildErrorResp(-6, "参数类型转化错误");
-        } catch (Exception e) {
-            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-			logger.error(e.getMessage());
-			return ApiResponseUtils.buildErrorResp(-7, "服务器异常");
-        }
-	}
-	
-	@Slave
 	@RequestMapping(value = "info/room", method = RequestMethod.GET)
 	public Map<String, Object> infoRoom(HttpServletRequest request, HttpServletResponse response,@RequestParam("onlineClassId") long onlineClassId, @RequestParam("studentId") long studentId){
 		try{
@@ -120,6 +104,23 @@ public class ClassroomController extends RestfulController{
 			return ApiResponseUtils.buildErrorResp(-7, "服务器异常");
         }
 	}
+	
+	@Slave
+	@RequestMapping(value = "info/student", method = RequestMethod.GET)
+	public Map<String, Object> infoStudent(HttpServletRequest request, HttpServletResponse response,@RequestParam("serialNum") String serialNum, @RequestParam("studentId") long studentId){
+		try{
+			return ApiResponseUtils.buildSuccessDataResp(this.classroomService.getInfoStudent(studentId, serialNum));
+        } catch (IllegalArgumentException e) {
+            response.setStatus(HttpStatus.BAD_REQUEST.value());
+			logger.error(e.getMessage());
+			return ApiResponseUtils.buildErrorResp(-6, "参数类型转化错误");
+        } catch (Exception e) {
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+			logger.error(e.getMessage());
+			return ApiResponseUtils.buildErrorResp(-7, "服务器异常");
+        }
+	}
+
 	
     @RequestMapping(value = "/getClassRoomUrl", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
     public Map<String,Object> getClassRoomUrl(HttpServletRequest request, HttpServletResponse response,@RequestParam("onlineClassId") long onlineClassId){

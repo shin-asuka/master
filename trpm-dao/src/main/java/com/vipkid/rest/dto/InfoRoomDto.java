@@ -24,6 +24,9 @@ public class InfoRoomDto {
 	
 	private Timestamp serverTime;
 	
+	/*学生创建时间*/
+	private Timestamp createrTime;
+	
 	private Boolean isReplay;
 	
 	private Integer stars;
@@ -66,6 +69,14 @@ public class InfoRoomDto {
 
 	public Timestamp getServerTime() {
 		return serverTime;
+	}
+	
+	public Timestamp getCreaterTime() {
+		return createrTime;
+	}
+
+	public void setCreaterTime(Timestamp createrTime) {
+		this.createrTime = createrTime;
 	}
 
 	public Boolean getIsReplay() {

@@ -1,19 +1,30 @@
 package com.vipkid.portal.classroom.service;
 
+import java.util.Map;
+
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.alibaba.fastjson.JSON;
+import com.google.api.client.util.Maps;
+import com.vipkid.enums.OnlineClassEnum;
 import com.vipkid.portal.classroom.model.ClassRoomVo;
 import com.vipkid.rest.dto.InfoRoomDto;
+import com.vipkid.trpm.constant.ApplicationConstant;
 import com.vipkid.trpm.dao.LessonDao;
 import com.vipkid.trpm.dao.OnlineClassDao;
 import com.vipkid.trpm.dao.StudentDao;
+import com.vipkid.trpm.dao.StudentExamDao;
 import com.vipkid.trpm.entity.Lesson;
 import com.vipkid.trpm.entity.OnlineClass;
 import com.vipkid.trpm.entity.Student;
+import com.vipkid.trpm.entity.StudentExam;
 import com.vipkid.trpm.entity.Teacher;
+import com.vipkid.trpm.entity.teachercomment.TeacherComment;
+import com.vipkid.trpm.service.portal.TeacherService;
 
 @Service
 public class ClassroomService {
@@ -29,18 +40,189 @@ public class ClassroomService {
 	@Autowired
 	private LessonDao lessonDao;
 	
+    @Autowired
+    private StudentExamDao studentExamDao;
+	
+    @Autowired
+    private TeacherService teacherService;
+  
 	public InfoRoomDto getInfoRoom(ClassRoomVo bean , Teacher teacher){
-		OnlineClass onlineClass = this.onlineClassDao.findById(bean.getOnlineClassId());
+		
 		Student student = this.studentDao.findById(bean.getStudentId());
-		Lesson lesson = this.lessonDao.findById(onlineClass.getLessonId());
-		
+		//Student Info
 		InfoRoomDto resultDto = new InfoRoomDto();
-		resultDto.setOnlineClassId(onlineClass.getId());
-		resultDto.setStudentId(student.getId());
-		resultDto.setSerialNumber(onlineClass.getSerialNumber());
-		resultDto.setLessonName(lesson.getName());
+		if(student != null){
+			resultDto.setStudentId(student.getId());
+			resultDto.setStudentEnglishName(student.getEnglishName());
+			resultDto.setCreaterTime(student.getCreateDateTime());
+		}else{
+			logger.warn("student is null,onlineClassId:{},studentId:{}",bean.getOnlineClassId(), bean.getStudentId());
+		}
 		
+		//Teacher Info
+		OnlineClass onlineClass = this.onlineClassDao.findById(bean.getOnlineClassId());
+		if(onlineClass != null){
+			resultDto.setOnlineClassId(onlineClass.getId());
+			resultDto.setSerialNumber(onlineClass.getSerialNumber());
+			resultDto.setClassroom(onlineClass.getClassroom());
+			resultDto.setScheduleTime(onlineClass.getScheduledDateTime());
+			resultDto.setSupplierCode(onlineClass.getSupplierCode());
+		}else{
+			logger.warn("onlineClass is null,onlineClassId:{},studentId:{}",bean.getOnlineClassId(), bean.getStudentId());
+		}
 		
-		return null;
+		//Lesson Info
+		Lesson lesson = this.lessonDao.findById(onlineClass.getLessonId());
+		if(lesson != null){
+			resultDto.setLessonName(lesson.getName());
+			resultDto.setObjective(lesson.getObjective());
+			resultDto.setVocabularies(lesson.getVocabularies());
+			resultDto.setSentencePatterns(lesson.getSentencePatterns());
+		}else{
+			logger.warn("lesson is null,onlineClassId:{},studentId:{}",bean.getOnlineClassId(), bean.getStudentId());
+		}
+		
+		//Other Info
+		int stars = 0;
+		TeacherComment comment = teacherService.findByStudentIdAndOnlineClassId(bean.getOnlineClassId(), bean.getStudentId());
+		if(comment != null){
+			stars = comment.getStars();
+		}else{
+			logger.warn("课程还没有TeacherComment,onlineClassId:{},studentId:{}",bean.getOnlineClassId(), bean.getStudentId());
+		}
+		
+		resultDto.setTeacherName(teacher.getRealName());
+		resultDto.setStars(stars);
+		resultDto.setIsReplay(!OnlineClassEnum.ClassStatus.isBooked(onlineClass.getStatus()));
+		
+		return resultDto;
 	}
+	
+	
+	public Map<String,Object> getInfoStudent(long studentId, String serialNum){
+		
+		Map<String,Object> resultMap = Maps.newHashMap();
+		
+		Student student = studentDao.findById(studentId);
+		Map<String,Object> studentMap = Maps.newHashMap();
+		studentMap.put("qq", student.getQq());
+		studentMap.put("englishName", student.getEnglishName());
+		studentMap.put("knowTheStudent", student.getKnowTheStudent());
+        // 查询学生个人信息
+		resultMap.put("student",studentMap);
+
+        // 查询学生考试情况
+        StudentExam studentExam = studentExamDao.findStudentExamByStudentId(studentId);
+
+        // 处理考试名称
+        resultMap.put("studentExam", this.handleExamLevel(studentExam, serialNum));
+
+        // 查询教师评价
+        resultMap.put("teacherComments",teacherService.findTCByStudentIdAndGroupByOnlineClassId(String.valueOf(studentId)));
+        
+        return resultMap;
+		
+	}
+	
+	
+	/**
+     * 根据serialNum处理 考试的Level名称显示<br/>
+     * studentExam 为NULL 则返回一个空对象
+     *
+     * @Author:ALong
+     * @Title: handleExamLevel
+     * @param studentExam
+     * @param serialNum
+     * @return StudentExam
+     * @date 2016年1月12日
+     */
+    public StudentExam handleExamLevel(StudentExam studentExam, String serialNum) {
+        logger.info("ReportController: handleExamLevel() 参数为：serialNum={}, studentExam={}", serialNum, JSON.toJSONString(studentExam));
+        // studentExam 不为空则进行替换逻辑
+        if (studentExam != null) {
+            // ExamLevel 不为空则进行替换逻辑
+            if (studentExam.getExamLevel() != null) {
+                String lowerCase = studentExam.getExamLevel().toLowerCase();
+                String examLevel = "No Computer Test result.";
+                if ("l1u0".equals(lowerCase)) {
+                    studentExam.setExamLevel("Computer Test result  is Level 0 Unit 0");
+                }else if(lowerCase.equals("l1u1")){
+                    examLevel = "Computer Test result is L1U1(PreVIP).";
+                } else if (lowerCase.startsWith("l")) {
+                    examLevel= "Computer Test result is " + lowerCase.replaceAll("l", "Level ").replaceAll("u", " Unit ") + ".";
+                }
+                if (serialNum != null) {
+                    switch (serialNum) {
+                        case ApplicationConstant.TrailLessonConstants.L0:
+                            if(StringUtils.equals(examLevel,"No Computer Test result.")){
+                                examLevel = examLevel +" Please use the PreVIP courseware.";
+                            }else{
+                                examLevel = " Please ignore the Computer Test result and use the PreVIP courseware.";
+                            }
+                            break;
+                        case ApplicationConstant.TrailLessonConstants.L1:
+                            if(StringUtils.equals(examLevel,"No Computer Test result.") || StringUtils.equals(examLevel,"Computer Test result is L1U1(PreVIP).")){
+                                examLevel = examLevel +" Please use the Level 2 Unit 01 courseware.";
+                            }else{
+                                examLevel = examLevel + " Please use the "+ lowerCase.replace("l","Level ").replace("u"," Unit ") + " courseware.";
+                            }
+                            break;
+                        case ApplicationConstant.TrailLessonConstants.L2:
+                            if(StringUtils.equals(examLevel,"No Computer Test result.")|| StringUtils.equals(examLevel,"Computer Test result is L1U1(PreVIP).")){
+                                examLevel = examLevel +" Please use the use Level 2 Unit 04 courseware.";
+                            }else{
+                                examLevel = examLevel + " Please use the "+ lowerCase.replace("l","Level ").replace("u"," Unit ") + " courseware.";
+                            }
+                            break;
+                        case ApplicationConstant.TrailLessonConstants.L3:
+                            if(StringUtils.equals(examLevel,"No Computer Test result.") || StringUtils.equals(examLevel,"Computer Test result is L1U1(PreVIP).")){
+                                examLevel = examLevel +" Please use the Level 3 Unit 01 courseware.";
+                            }else{
+                                examLevel = examLevel + " Please use the "+ lowerCase.replace("l","Level ").replace("u"," Unit ") + " courseware.";
+                            }
+                            break;
+                        case ApplicationConstant.TrailLessonConstants.L4:
+                            if(StringUtils.equals(examLevel,"No Computer Test result.") || StringUtils.equals(examLevel,"Computer Test result is L1U1(PreVIP).")){
+                                examLevel = examLevel +" Please use the Level 4 Unit 01 courseware.";
+                            }else{
+                                examLevel = examLevel + " Please use the "+ lowerCase.replace("l","Level ").replace("u"," Unit ") + " courseware.";
+                            }
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                studentExam.setExamLevel(examLevel);
+            }
+        } else {
+            // studentExam 为空则返回空对象
+            studentExam = new StudentExam();
+            // ExamLevel 为空则根据Lession的SerialNum进行处理
+            if (serialNum != null) {
+                switch (serialNum) {
+                    case ApplicationConstant.TrailLessonConstants.L0:
+                        studentExam.setExamLevel("No Computer Test result. Please use the PreVIP courseware.");
+                        break;
+                    case ApplicationConstant.TrailLessonConstants.L1:
+                        studentExam.setExamLevel("No Computer Test result. Please use the Level2 Unit1 courseware.");
+                        break;
+                    case ApplicationConstant.TrailLessonConstants.L2:
+                        studentExam.setExamLevel("No Computer Test result. Please use the Level2 Unit4 courseware.");
+                        break;
+                    case ApplicationConstant.TrailLessonConstants.L3:
+                        studentExam.setExamLevel("No Computer Test result. Please use the Level3 Unit1 courseware.");
+                        break;
+                    case ApplicationConstant.TrailLessonConstants.L4:
+                        studentExam.setExamLevel("No Computer Test result. Please use the Level4 Unit1 courseware.");
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+        return studentExam;
+    }
+	
+    
+    
 }
