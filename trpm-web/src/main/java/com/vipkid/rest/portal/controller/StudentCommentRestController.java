@@ -205,8 +205,11 @@ public class StudentCommentRestController extends RestfulController{
 			}
 
 			StudentCommentPageVo data = manageGatewayService.getStudentCommentListByTeacherId(teacherId, start, limit, ratings);
-			data.setCurPageNo(start/PAGE_SIZE + 1);
-			data.setTotalPageNo(data.getTotal()/PAGE_SIZE + 1);
+
+			Integer hasHalfPage = (data.getTotal() % PAGE_SIZE == 0)? 0 : 1;
+
+			data.setCurPageNo(start/PAGE_SIZE);
+			data.setTotalPageNo(data.getTotal()/PAGE_SIZE + hasHalfPage);
 			long millis =stopwatch.stop().elapsed(TimeUnit.MILLISECONDS);
 			logger.info("【StudentCommentRestController.getStudentCommentByPage】output：result={},运行时间={}ms ", JSONObject.toJSONString(data),millis);
 			return ApiResponseUtils.buildSuccessDataResp(data);
