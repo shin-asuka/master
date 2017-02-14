@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 @Service
-public class CommentsService {
+public class FeedbackService {
 
-	private static Logger Logger = LoggerFactory.getLogger(CommentsService.class);
+	private static Logger Logger = LoggerFactory.getLogger(FeedbackService.class);
 }

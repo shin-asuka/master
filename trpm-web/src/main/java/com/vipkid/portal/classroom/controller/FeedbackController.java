@@ -10,6 +10,6 @@ import com.vipkid.rest.interceptor.annotation.RestInterface;
 @RestController
 @RestInterface(lifeCycle=LifeCycle.REGULAR)
 @RequestMapping("/portal/comments/")
-public class CommentsController extends RestfulController {
+public class FeedbackController extends RestfulController {
 
 }
