@@ -987,7 +987,7 @@ public class OnlineClassService {
         try {
             // 课程开始之后才能发送星星
             OnlineClass onlineClass = getOnlineClassById(onlineClassId);
-            if(null == onlineClass || onlineClass.getScheduledDateTime().getTime() < System.currentTimeMillis()) {
+            if(null == onlineClass || onlineClass.getScheduledDateTime().getTime() > System.currentTimeMillis()) {
                 resultMap.put("result", false);
                 resultMap.put("code", HttpStatus.BAD_REQUEST.value());
                 return resultMap;
