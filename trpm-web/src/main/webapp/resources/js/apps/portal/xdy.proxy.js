@@ -96,8 +96,12 @@ define([ 'messenger',"jquery-bootstrap" ], function() {
 						messenger.send(JsonToString(param)); // 用信使来发送数据
 						// 增加发星星效果
 						showStar();
+					}else if(602 == datas.code){
+						$.alert("error", {
+							title :"Maximum stars (5) for this class reached!"
+						});
 					}else{
-						$.alert("info", {
+						$.alert("error", {
 							title :"Unsuccessful, please re-send stars!"
 						});
 					}
@@ -135,10 +139,14 @@ define([ 'messenger',"jquery-bootstrap" ], function() {
 						console.log("remove star logs.");
 					}
 					if(200 == datas.code){
-						alert("remove星星成功");
+						$.alert("info", {
+							title :"Star removed successfully!"
+						});
 						messenger.send(JsonToString(param)); // 用信使来发送数据
 					}else{
-						alert("remove星星失败");
+						$.alert("error", {
+							title :"Unsuccessful, please re-remove stars!"
+						});
 					}
 				}
 			});
