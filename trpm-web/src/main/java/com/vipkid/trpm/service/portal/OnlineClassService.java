@@ -962,11 +962,10 @@ public class OnlineClassService {
                 GetStarDto getStarDto = JsonUtils.toBean(resultJson, GetStarDto.class);
                 if(getStarDto.getCode() == HttpStatus.OK.value()){
                     resultMap.put("starNum", getStarDto.getData().getResult());
-                    resultMap.put("code", HttpStatus.OK.value());
                 } else {
                     resultMap.put("starNum", 0);
-                    resultMap.put("code", getStarDto.getCode());
                 }
+                resultMap.put("code", getStarDto.getCode());
             } else {
                 resultMap.put("starNum", 0);
                 resultMap.put("code", HttpStatus.NO_CONTENT.value());
@@ -991,6 +990,7 @@ public class OnlineClassService {
             if(null==onlineClass || onlineClass.getScheduledDateTime().before(new Timestamp(System.currentTimeMillis()))) {
                 resultMap.put("result", false);
                 resultMap.put("code", HttpStatus.BAD_REQUEST.value());
+                return resultMap;
             }
 
             String url = PropertyConfigurer.stringValue("star.server.updateStar");
@@ -1009,11 +1009,10 @@ public class OnlineClassService {
                 UpdateStarDto updateStarDto = JsonUtils.toBean(resultJson, UpdateStarDto.class);
                 if(updateStarDto.getCode() == HttpStatus.OK.value()){
                     resultMap.put("result", updateStarDto.getData().isResult());
-                    resultMap.put("code", HttpStatus.OK.value());
                 } else {
                     resultMap.put("result", false);
-                    resultMap.put("code", updateStarDto.getCode());
                 }
+                resultMap.put("code", updateStarDto.getCode());
             } else {
                 resultMap.put("result", false);
                 resultMap.put("code", HttpStatus.NO_CONTENT.value());
