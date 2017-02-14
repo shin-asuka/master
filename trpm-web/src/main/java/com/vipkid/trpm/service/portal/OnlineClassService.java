@@ -950,7 +950,7 @@ public class OnlineClassService {
             String url = PropertyConfigurer.stringValue("star.server.getStar");
 
             Map<String, String> paramMap = Maps.newHashMap();
-            paramMap.put("onlineClassId", String.valueOf(onlineClassId));
+            paramMap.put("onlineclassId", String.valueOf(onlineClassId));
             paramMap.put("teacherId", String.valueOf(teacherId));
             paramMap.put("studentId", String.valueOf(studentId));
             logger.info("Invoke star server getStar paramMap: {}", JsonUtils.toJSONString(paramMap));
@@ -996,7 +996,7 @@ public class OnlineClassService {
             String url = PropertyConfigurer.stringValue("star.server.updateStar");
 
             Map<String, String> paramMap = Maps.newHashMap();
-            paramMap.put("onlineClassId", String.valueOf(onlineClassId));
+            paramMap.put("onlineclassId", String.valueOf(onlineClassId));
             paramMap.put("teacherId", String.valueOf(teacherId));
             paramMap.put("studentId", String.valueOf(studentId));
             paramMap.put("starNum", String.valueOf(starNum));
