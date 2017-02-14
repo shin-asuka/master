@@ -79,7 +79,6 @@ public class ClassroomService {
 		OnlineClass onlineClass = this.onlineClassDao.findById(bean.getOnlineClassId());
 		if(onlineClass != null){
 			resultDto.setOnlineClassId(onlineClass.getId());
-			resultDto.setSerialNumber(onlineClass.getSerialNumber());
 			resultDto.setClassroom(onlineClass.getClassroom());
 			resultDto.setScheduleTime(onlineClass.getScheduledDateTime());
 			resultDto.setSupplierCode(onlineClass.getSupplierCode());
@@ -91,6 +90,7 @@ public class ClassroomService {
 		Lesson lesson = this.lessonDao.findById(onlineClass.getLessonId());
 		if(lesson != null){
 			resultDto.setLessonName(lesson.getName());
+			resultDto.setSerialNumber(lesson.getSerialNumber());
 			resultDto.setObjective(lesson.getObjective());
 			resultDto.setVocabularies(lesson.getVocabularies());
 			resultDto.setSentencePatterns(lesson.getSentencePatterns());
