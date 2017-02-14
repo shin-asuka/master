@@ -25,6 +25,31 @@
 		<filter-name>EncodingFilter</filter-name>
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
+	<filter>
+		<filter-name>httpRequestMDCFilter</filter-name>
+		<filter-class>com.vipkid.utils.web.HttpRequestMDCFilter</filter-class>
+		<!-- 是否将Cookies添加到MDC中，默认为false -->
+		<init-param>
+			<param-name>mappedCookies</param-name>
+			<param-value>false</param-value>
+		</init-param>
+		<!-- 是否将headers添加到MDC中，默认为false -->
+		<init-param>
+			<param-name>mappedHeaders</param-name>
+			<param-value>true</param-value>
+		</init-param>
+		<!-- 是否将parameters添加到MDC中，默认为false -->
+		<init-param>
+			<param-name>mappedParameters</param-name>
+			<param-value>false</param-value>
+		</init-param>
+	</filter>
+
+	<filter-mapping>
+		<filter-name>httpRequestMDCFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+
 
     <filter>
         <filter-name>GZipServletFilter</filter-name>
