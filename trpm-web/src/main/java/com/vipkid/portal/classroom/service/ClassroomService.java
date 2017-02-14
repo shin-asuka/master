@@ -19,11 +19,13 @@ import com.vipkid.trpm.dao.LessonDao;
 import com.vipkid.trpm.dao.OnlineClassDao;
 import com.vipkid.trpm.dao.StudentDao;
 import com.vipkid.trpm.dao.StudentExamDao;
+import com.vipkid.trpm.dao.UserDao;
 import com.vipkid.trpm.entity.Lesson;
 import com.vipkid.trpm.entity.OnlineClass;
 import com.vipkid.trpm.entity.Student;
 import com.vipkid.trpm.entity.StudentExam;
 import com.vipkid.trpm.entity.Teacher;
+import com.vipkid.trpm.entity.User;
 import com.vipkid.trpm.entity.teachercomment.TeacherComment;
 import com.vipkid.trpm.proxy.OnlineClassProxy;
 import com.vipkid.trpm.service.portal.TeacherService;
@@ -42,6 +44,9 @@ public class ClassroomService {
 	@Autowired
 	private LessonDao lessonDao;
 	
+	@Autowired
+	private UserDao userDao;
+	
     @Autowired
     private StudentExamDao studentExamDao;
 	
@@ -56,7 +61,8 @@ public class ClassroomService {
 		if(student != null){
 			resultDto.setStudentId(student.getId());
 			resultDto.setStudentEnglishName(student.getEnglishName());
-			resultDto.setCreaterTime(student.getCreateDateTime());
+			User userStudent = userDao.findById(student.getId());
+			resultDto.setCreateTime(userStudent.getCreateDateTime());
 		}else{
 			logger.warn("student is null,onlineClassId:{},studentId:{}",bean.getOnlineClassId(), bean.getStudentId());
 		}

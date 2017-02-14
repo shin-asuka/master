@@ -25,7 +25,7 @@ public class InfoRoomDto {
 	private Timestamp serverTime;
 	
 	/*学生创建时间*/
-	private Timestamp createrTime;
+	private Timestamp createTime;
 	
 	private Boolean isReplay;
 	
@@ -71,12 +71,12 @@ public class InfoRoomDto {
 		return serverTime;
 	}
 	
-	public Timestamp getCreaterTime() {
-		return createrTime;
+	public Timestamp getCreateTime() {
+		return createTime;
 	}
 
-	public void setCreaterTime(Timestamp createrTime) {
-		this.createrTime = createrTime;
+	public void setCreateTime(Timestamp createTime) {
+		this.createTime = createTime;
 	}
 
 	public Boolean getIsReplay() {
