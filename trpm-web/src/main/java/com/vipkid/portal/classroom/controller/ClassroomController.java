@@ -125,9 +125,13 @@ public class ClassroomController extends RestfulController{
     @RequestMapping(value = "/getClassRoomUrl", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
     public Map<String,Object> getClassRoomUrl(HttpServletRequest request, HttpServletResponse response,@RequestParam("onlineClassId") long onlineClassId){
         try{
-        	//TODO
-            
-			return ApiResponseUtils.buildSuccessDataResp(new Object());
+        	Map<String,Object> resultMap = this.classroomService.getClassRoomUrl(onlineClassId,getTeacher(request));
+        	if(resultMap.get("info") == null){
+        		return ApiResponseUtils.buildSuccessDataResp(resultMap);
+        	}else{
+                response.setStatus(HttpStatus.FORBIDDEN.value());
+    			return ApiResponseUtils.buildErrorResp(-5, "错误信息:"+resultMap.get("info"));
+        	}
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
 			logger.error(e.getMessage());

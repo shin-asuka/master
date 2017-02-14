@@ -12,6 +12,7 @@ import com.alibaba.fastjson.JSON;
 import com.google.api.client.util.Maps;
 import com.vipkid.enums.OnlineClassEnum;
 import com.vipkid.portal.classroom.model.ClassRoomVo;
+import com.vipkid.recruitment.utils.ReturnMapUtils;
 import com.vipkid.rest.dto.InfoRoomDto;
 import com.vipkid.trpm.constant.ApplicationConstant;
 import com.vipkid.trpm.dao.LessonDao;
@@ -24,6 +25,7 @@ import com.vipkid.trpm.entity.Student;
 import com.vipkid.trpm.entity.StudentExam;
 import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.entity.teachercomment.TeacherComment;
+import com.vipkid.trpm.proxy.OnlineClassProxy;
 import com.vipkid.trpm.service.portal.TeacherService;
 
 @Service
@@ -124,6 +126,56 @@ public class ClassroomService {
 		
 	}
 	
+	/**
+     * 用户interview进教室
+     * 1.课程合法性验证
+     * 2.必须是处于Interview的待上课的老师可以获取URL
+     * @param onlineClassId
+     * @param teacher
+     * @return
+     * Map&lt;String,Object&gt;
+     */
+    public Map<String,Object> getClassRoomUrl(long onlineClassId,Teacher teacher){
+    	
+    	Map<String,Object> result = Maps.newHashMap();
+    	
+        OnlineClass onlineClass = this.onlineClassDao.findById(onlineClassId);
+
+        //课程没有找到，无法book
+        if(onlineClass == null){
+            logger.error(" 教室为空 NULL onlineClassId:{}",onlineClassId);
+            result.put("info", " online class is null. ");
+            return result;
+        }
+
+        //判断教室是否创建好
+        if(StringUtils.isBlank(onlineClass.getClassroom())){
+            logger.error(" 教室为空 NULL onlineClassId:{}",onlineClassId);
+            result.put("info", " online class is not have creater. ");
+            return result;
+        }
+        
+        //判断该教室是否属于该老师
+        if(onlineClass.getTeacherId() != teacher.getId()){
+        	logger.error(" You cannot enter this classroom! onlineClassId:{}",onlineClassId);
+            result.put("info", " You cannot enter this classroom! ");
+            return result;
+        }
+
+        Map<String,Object> urlResult = OnlineClassProxy.generateRoomEnterUrl(String.valueOf(teacher.getId()), teacher.getRealName(),
+                onlineClass.getClassroom(), OnlineClassProxy.RoomRole.TEACHER, onlineClass.getSupplierCode(),onlineClass.getId(),OnlineClassProxy.ClassType.MAJOR);
+        
+        if(ReturnMapUtils.isSuccess(urlResult)){
+        	logger.info(" 获取教室url 成功 onlineClassId:{},url:{}",onlineClassId, urlResult.get("url"));
+        	result.put("link",urlResult.get("url"));
+        	return result;
+        }else{
+        	logger.error(" 获取教室url 失败 onlineClassId:{},info:{}",onlineClassId,urlResult.get("info"));
+        	result.put("info", urlResult.get("info"));
+        	return result;
+        }
+    }
+	
 	
 	/**
      * 根据serialNum处理 考试的Level名称显示<br/>
@@ -136,7 +188,7 @@ public class ClassroomService {
      * @return StudentExam
      * @date 2016年1月12日
      */
-    public StudentExam handleExamLevel(StudentExam studentExam, String serialNum) {
+    private StudentExam handleExamLevel(StudentExam studentExam, String serialNum) {
         logger.info("ReportController: handleExamLevel() 参数为：serialNum={}, studentExam={}", serialNum, JSON.toJSONString(studentExam));
         // studentExam 不为空则进行替换逻辑
         if (studentExam != null) {
