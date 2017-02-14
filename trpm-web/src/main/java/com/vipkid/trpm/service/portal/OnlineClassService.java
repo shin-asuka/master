@@ -955,7 +955,7 @@ public class OnlineClassService {
             paramMap.put("studentId", String.valueOf(studentId));
             logger.info("Invoke star server getStar paramMap: {}", JsonUtils.toJSONString(paramMap));
 
-            String resultJson = HttpClientProxy.get(url, Maps.newHashMap(), paramMap);
+            String resultJson = HttpClientProxy.get(url, paramMap, Maps.newHashMap());
             logger.info("Invoke star server getStar resultJson: {}", resultJson);
 
             if (null != resultJson) {
@@ -1002,7 +1002,7 @@ public class OnlineClassService {
             paramMap.put("starNum", String.valueOf(starNum));
             logger.info("Invoke star server updateStar paramMap: {}", JsonUtils.toJSONString(paramMap));
 
-            String resultJson = HttpClientProxy.post(url, Maps.newHashMap(), paramMap);
+            String resultJson = HttpClientProxy.post(url, paramMap, Maps.newHashMap());
             logger.info("Invoke star server updateStar resultJson: {}", resultJson);
 
             if (null != resultJson) {
