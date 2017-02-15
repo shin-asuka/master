@@ -160,25 +160,27 @@ public class AuditEmailService {
                 paramsMap.put("teacherName", teacher.getRealName());
             }
 
-            TeacherApplication  application=  teacherApplicationDao.findCurrentApplication(teacherId).stream().findFirst().get();
-            logger.info("teacherId:{},application Id{}",teacherId,application.getId());
+            TeacherApplication application = teacherApplicationDao.findCurrentApplication(teacherId).stream().findFirst().get();
+            logger.info("【EMAIL.sendPracticum2Start】teacherId:{}, applicationId:{}", teacherId, application.getId());
             TeacherPeComments teacherPeComments =  teacherPeCommentsDao.getTeacherPeComments(Long.valueOf(application.getId()).intValue());
-            logger.info("teacherPeComments:{}",JSON.toJSONString(teacherPeComments));
-            if(teacherPeComments!=null) {
+
+            if(TeacherApplicationEnum.Result.PRACTICUM2.toString().equals(application.getResult()) && teacherPeComments!=null && "SUBMIT".equalsIgnoreCase(teacherPeComments.getStatus())
+                    && StringUtils.isNotBlank(teacherPeComments.getThingsDidWell()) && StringUtils.isNotBlank(teacherPeComments.getAreasImprovement()) && teacherPeComments.getTotalScore()>0
+            ) {
                 paramsMap.put("thingsDidWell", HtmlUtils.htmlUnescape(teacherPeComments.getThingsDidWell()));
-                logger.info("thingsDidWell:{}",HtmlUtils.htmlUnescape(teacherPeComments.getThingsDidWell()));
                 paramsMap.put("areasImprovement", HtmlUtils.htmlUnescape(teacherPeComments.getAreasImprovement()));
                 paramsMap.put("totalScore", teacherPeComments.getTotalScore() + "");
+
+
+                logger.info("【EMAIL.sendPracticum2Start】toAddMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",
+                        teacher.getRealName(),teacher.getEmail(),PRACTICUM2_START_TITLE,PRACTICUM2_START_CONTENT);
+
+                Map<String, String> emailMap = TemplateUtils.readTemplate(PRACTICUM2_START_CONTENT, paramsMap, PRACTICUM2_START_TITLE);
+                EmailEngine.addMailPool(teacher.getEmail(), emailMap, EmailConfig.EmailFormEnum.TEACHVIP);
+
+                logger.info("【EMAIL.sendPracticum2Start】addedMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",
+                        teacher.getRealName(),teacher.getEmail(),PRACTICUM2_START_TITLE, PRACTICUM2_START_CONTENT);
             }
-
-            logger.info("【EMAIL.sendPracticum2Start】toAddMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",
-                    teacher.getRealName(),teacher.getEmail(),PRACTICUM2_START_TITLE,PRACTICUM2_START_CONTENT);
-
-            Map<String, String> emailMap = TemplateUtils.readTemplate(PRACTICUM2_START_CONTENT, paramsMap, PRACTICUM2_START_TITLE);
-            EmailEngine.addMailPool(teacher.getEmail(), emailMap, EmailConfig.EmailFormEnum.TEACHVIP);
-
-            logger.info("【EMAIL.sendPracticum2Start】addedMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",
-                    teacher.getRealName(),teacher.getEmail(),PRACTICUM2_START_TITLE, PRACTICUM2_START_CONTENT);
             return ReturnMapUtils.returnSuccess();
         } catch (Exception e) {
             logger.error("【EMAIL.sendPracticum2Start】ERROR: {}", e);

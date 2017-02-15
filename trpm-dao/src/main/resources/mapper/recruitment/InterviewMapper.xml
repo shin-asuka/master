@@ -13,5 +13,27 @@
 			  AND online_class.scheduled_date_time BETWEEN #{fromTime} and #{toTime}
 			  ORDER By scheduled_date_time DESC
 	</select>
-	
+
+
+	<!-- most booked and finished teachers list by time -->
+	<select id="listByInterviewBookedCount" resultType="com.vipkid.recruitment.entity.InterviewerClassCount">
+		SELECT
+		oc1.id AS onlinClassId,
+		oc1.scheduled_date_time AS scheduledDateTime,
+		oc1.teacher_id AS teacherId,
+		IFNULL(oc2.bookedCount,0) as bookedCount
+		FROM  online_class oc1 left join
+		(
+		select count(id) as bookedCount, teacher_id from online_class
+		where (Status='BOOKED' or (Status='FINISHED' and finish_type in ('AS_SCHEDULED','STUDENT_NO_SHOW','STUDENT_IT_PROBLEM')))
+		and lesson_id=211705
+		and scheduled_date_time BETWEEN #{fromTime} and #{toTime}
+		group by teacher_id
+		) oc2 on oc1.teacher_id=oc2.teacher_id
+		WHERE oc1.status = 'OPEN'
+		AND oc1.lesson_id = 211705
+		AND oc1.scheduled_date_time = #{scheduleTime}
+		ORDER BY oc2.bookedCount ASC
+	</select>
+
 </mapper>

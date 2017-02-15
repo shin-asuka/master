@@ -21,8 +21,6 @@ import com.vipkid.recruitment.dao.TeacherApplicationDao;
 import com.vipkid.recruitment.dao.TeacherLockLogDao;
 import com.vipkid.recruitment.entity.TeacherApplication;
 import com.vipkid.recruitment.entity.TeacherLockLog;
-import com.vipkid.recruitment.event.AuditEvent;
-import com.vipkid.recruitment.event.AuditEventHandler;
 import com.vipkid.trpm.constant.ApplicationConstant;
 import com.vipkid.trpm.constant.ApplicationConstant.FinishType;
 import com.vipkid.trpm.dao.*;
@@ -45,6 +43,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
 import java.time.Instant;
@@ -86,9 +86,6 @@ public class OnlineClassService {
     private TeacherModuleDao teacherModuleDao;
 
     @Autowired
-    private TeacherQuizDao teacherQuizDao;
-
-    @Autowired
     private AssessmentHttpService assessmentHttpService;
 
     @Autowired
@@ -105,9 +102,6 @@ public class OnlineClassService {
 
     @Autowired
     private TeacherLockLogDao teacherLockLogDao;
-
-    @Autowired
-    private AuditEventHandler auditEventHandler;
 
     @Autowired
     private TagsDao tagsDao;
@@ -753,9 +747,6 @@ public class OnlineClassService {
                     }
                 }
             }
-            //发邮件
-            auditEventHandler.onAuditEvent(new AuditEvent(recruitTeacher.getId(), LifeCycle.PRACTICUM.toString(), teacherApplication.getResult()));
-
         }
     }
 

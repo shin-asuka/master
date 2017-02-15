@@ -166,7 +166,7 @@ public class OSSMediaService extends AbstarctMediaService {
 						        strShrink, avatarLargeStyle);
 					}
 				} catch (Exception e) {
-					logger.error("ImageProcessAPI has error:" + e.getMessage());
+					logger.error("ImageProcessAPI has error:", e);
 				}
 			}).start();
 		}

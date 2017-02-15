@@ -17,6 +17,8 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
@@ -121,7 +123,7 @@ public class WebUtils {
                 try {
                     response.close();
                 } catch (IOException e) {
-                    logger.error("关闭输出流时出错，url = "+url+", e="+ e);
+                    logger.error("关闭输出流时出错，url = "+url+", e=", e);
                 }
             }
         }
@@ -233,5 +235,35 @@ public class WebUtils {
         }
 		return null;
 	}
-    
+
+    public static String postJSON(String url, JSONObject json) {
+        logger.info("Post data,url = {},params = {}", url, json);
+        CloseableHttpResponse response = null;
+        try {
+            HttpPost httpPost = new HttpPost(url);
+            StringEntity stringEntity = new StringEntity(json.toString(),"utf-8");//解决中文乱码问题
+            stringEntity.setContentEncoding("UTF-8");
+            stringEntity.setContentType("application/json");
+            httpPost.setEntity(stringEntity);
+            logger.info("Post data map,url = {},params = {}", url, json);
+
+            CloseableHttpClient httpclient = HttpClients.createDefault();
+            response = httpclient.execute(httpPost);
+            logger.info("Post data,response status line = {}",response.getStatusLine());
+            HttpEntity entity = response.getEntity();
+            String rt = EntityUtils.toString(entity);
+            return rt;
+        } catch (Exception e) {
+            logger.error("Post data error,url = {},params = {}",url,json,e);
+        } finally {
+            if (null != response) {
+                try {
+                    response.close();
+                } catch (IOException e) {
+                    logger.error("关闭输出流时出错，url = {}",url,e);
+                }
+            }
+        }
+        return null;
+    }
 }

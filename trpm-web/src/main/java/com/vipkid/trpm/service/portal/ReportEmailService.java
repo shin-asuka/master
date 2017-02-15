@@ -9,18 +9,17 @@ import com.vipkid.payroll.service.StudentService;
 import com.vipkid.trpm.constant.ApplicationConstant;
 import com.vipkid.trpm.dao.*;
 import com.vipkid.trpm.entity.*;
+import com.vipkid.trpm.util.DateUtils;
 import com.vipkid.trpm.util.LessonSerialNumber;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -38,7 +37,7 @@ public class ReportEmailService {
             logger.info("sendEmail4PerformanceAdjust2CLT 参数不符 studentId = {}; serialNumber = {}; scheduledDateTime = {} ", studentId, serialNumber, scheduledDateTime);
             return;
         }
-        sendEmail2CLT(getStudentName(studentId), getReason(1),
+        sendEmail2CLT(getStudentName(studentId), String.valueOf(studentId),getReason(1),
                 getTableDetail(serialNumber, scheduledDateTime, ApplicationConstant.LEVEL_OF_DIFFITULTY.get(performance)));
     }
 
@@ -71,7 +70,7 @@ public class ReportEmailService {
             //rules[1]: 前8节课，有4节课被标记
             for (int[] rule : rules){
                 if (size >= rule[0] && sortedLessonNoList.get(rule[0]-1) <= rule[1]){
-                    sendEmail2CLT(getStudentName(studentId), getReason(rule[1]), tableDetails.toString());
+                    sendEmail2CLT(getStudentName(studentId), String.valueOf(studentId), getReason(rule[1]), tableDetails.toString());
                     break;
                 }
             }
@@ -84,6 +83,10 @@ public class ReportEmailService {
         for (Map<String, Object> lessonSn : lessonSnList) {
             String sn = lessonSn.get("serial_number").toString();
             String sDate = lessonSn.get("scheduled_date_time").toString();
+            if(NumberUtils.isNumber(sDate)){
+                Date sDateStr = new Date(Long.valueOf(sDate));
+                sDate = DateUtils.formatDate(sDateStr);
+            }
             Object performObj = lessonSn.get("performance");
             String performStr = performObj == null ? null : performObj.toString();
             Integer performInt = StringUtils.isEmpty(performStr) ? 0 : Integer.parseInt(performStr);
@@ -119,7 +122,7 @@ public class ReportEmailService {
             //rules[2]: 前12节课，有6节课被标记
             for (int[] rule : rules){
                 if (size >= rule[0] && sortedLessonNoList.get(rule[0]-1) <= rule[1]){
-                    sendEmail2CLT(getStudentName(studentId), getReason(rule[1]), tableDetails.toString());
+                    sendEmail2CLT(getStudentName(studentId), String.valueOf(studentId), getReason(rule[1]), tableDetails.toString());
                     break;
                 }
             }
@@ -134,9 +137,10 @@ public class ReportEmailService {
         new EmailEngine().addMailPool("replacement@vipkid.com.cn", emailMap, EmailConfig.EmailFormEnum.EDUCATION);
     }
 
-    private void sendEmail2CLT(String studentName, String reason, String tableDetails) {
+    private void sendEmail2CLT(String studentName, String studentId, String reason, String tableDetails) {
         Map<String, String> paramsMap = Maps.newHashMap();
         paramsMap.put("studentName", studentName);
+        paramsMap.put("studentId", studentId);
         paramsMap.put("reason", reason);
         paramsMap.put("tableDetails", tableDetails);
 

@@ -4,9 +4,11 @@ import com.google.api.client.util.Lists;
 import com.google.common.collect.Maps;
 import com.vipkid.enums.OnlineClassEnum;
 import com.vipkid.enums.TeacherApplicationEnum.Result;
+import com.vipkid.enums.TeacherEnum;
 import com.vipkid.recruitment.entity.TeacherApplication;
+import com.vipkid.recruitment.event.AuditEvent;
+import com.vipkid.recruitment.event.AuditEventHandler;
 import com.vipkid.rest.service.LoginService;
-import com.vipkid.rest.utils.ApiResponseUtils;
 import com.vipkid.trpm.constant.ApplicationConstant.FinishType;
 import com.vipkid.trpm.entity.*;
 import com.vipkid.trpm.service.pe.*;
@@ -25,7 +27,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -56,6 +57,9 @@ public class OnlineClassController extends AbstractPortalController {
 
     @Autowired
     private TeacherPeCommentsService teacherPeCommentsService;
+
+    @Autowired
+    private AuditEventHandler auditEventHandler;
 
     /**
      * 进入教室
@@ -168,9 +172,11 @@ public class OnlineClassController extends AbstractPortalController {
             if ("feedback".equals(request.getParameter("from"))) {
                 model.addAttribute("from", "feedback");
             }
-            // 只有在Major课老师进教室时，才创建TeacherComment
-            onlineclassService.createTeacherCommentByEnterClassroom(studentId, teacher.getId(), onlineClass, lesson);
-            model.addAllAttributes(onlineclassService.enterMajor(onlineClass, studentId, teacher, lesson));
+            //只有在Major课老师进教室时，才创建TeacherComment
+            //学生进教室的时候创建CF记录
+            //onlineclassService.createTeacherCommentByEnterClassroom(studentId,teacher.getId(),onlineClass,lesson);
+            model.addAllAttributes(
+                    onlineclassService.enterMajor(onlineClass, studentId, teacher, lesson));
             return view("online_class_major");
         }
     }
@@ -321,11 +327,13 @@ public class OnlineClassController extends AbstractPortalController {
                     finishType = FinishType.AS_SCHEDULED;
                 }
                 modelMap = onlineclassService.updateAudit(pe, teacherApplication, type, finishType);
+                Teacher recruitTeacher = (Teacher) modelMap.get("recruitTeacher");
 
                 // Finish课程
                 if ((Boolean) modelMap.get("result")) {
-                    onlineclassService.finishPracticum(teacherApplication, finishType, pe,
-                                    (Teacher) modelMap.get("recruitTeacher"));
+                    onlineclassService.finishPracticum(teacherApplication, finishType, pe, recruitTeacher);
+                    //发邮件
+                    auditEventHandler.onAuditEvent(new AuditEvent(recruitTeacher.getId(), TeacherEnum.LifeCycle.PRACTICUM.toString(), teacherApplication.getResult()));
                 }
             }
 

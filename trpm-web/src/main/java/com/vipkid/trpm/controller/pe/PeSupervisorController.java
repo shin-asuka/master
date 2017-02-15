@@ -4,8 +4,11 @@ import com.google.api.client.util.Lists;
 import com.google.common.collect.Maps;
 import com.vipkid.enums.TeacherApplicationEnum.Result;
 import com.vipkid.enums.TeacherApplicationEnum.Status;
+import com.vipkid.enums.TeacherEnum;
 import com.vipkid.recruitment.dao.TeacherApplicationDao;
 import com.vipkid.recruitment.entity.TeacherApplication;
+import com.vipkid.recruitment.event.AuditEvent;
+import com.vipkid.recruitment.event.AuditEventHandler;
 import com.vipkid.rest.service.LoginService;
 import com.vipkid.trpm.constant.ApplicationConstant.FinishType;
 import com.vipkid.trpm.dao.TagsDao;
@@ -71,7 +74,10 @@ public class PeSupervisorController extends AbstractPeController {
 
     @Autowired
     private TeacherPeCommentsService teacherPeCommentsService;
-    
+
+    @Autowired
+    private AuditEventHandler auditEventHandler;
+
     @Deprecated
     @RequestMapping("/pesupervisor")
     public String peSupervisor(HttpServletRequest request, HttpServletResponse response,
@@ -223,6 +229,9 @@ public class PeSupervisorController extends AbstractPeController {
             // Finish课程
             if ((Boolean) modelMap.get("result")) {
                 onlineclassService.finishPracticum(teacherApplication, finishType, peSupervisor, recruitTeacher);
+                //发邮件
+                auditEventHandler.onAuditEvent(new AuditEvent(recruitTeacher.getId(), TeacherEnum.LifeCycle.PRACTICUM.toString(), teacherApplication.getResult()));
+
             }
 
             // 并异步调用AppServer发送邮件及消息

@@ -15,6 +15,8 @@ public interface ApplicationConstant {
     
     public static String PARTNERID = "partnerId";
 
+    public static Integer PAGE_SIZE = 20;//Parent Comment双向翻页的每页尺寸
+
     public static String HEADER_REFERER = "referer_%s";
 
     /** Practicum课程 的finishType更新接口地址 */
