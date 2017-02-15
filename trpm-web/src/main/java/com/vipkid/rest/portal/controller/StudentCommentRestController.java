@@ -31,7 +31,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 @RestController
-//@RestInterface(lifeCycle = LifeCycle.REGULAR)
+@RestInterface(lifeCycle = LifeCycle.REGULAR)
 public class StudentCommentRestController extends RestfulController{
 	private static final Logger logger = LoggerFactory.getLogger(StudentCommentRestController.class);
 	public static String TEACHER_RATINGS_HIGH = "5";
