@@ -1,5 +1,6 @@
 package com.vipkid.trpm.entity.teachercomment;
 
+import com.vipkid.portal.classroom.model.TeacherCommentVo;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Date;
@@ -586,7 +587,7 @@ public class TeacherCommentUpdateDto {
 
     }
 
-    public TeacherCommentUpdateDto(SubmitTeacherCommentDto teacherComment) {
+    public TeacherCommentUpdateDto(TeacherCommentVo teacherComment) {
 
         //理论上不会有比int大的
         if (teacherComment.getId() !=null) {
