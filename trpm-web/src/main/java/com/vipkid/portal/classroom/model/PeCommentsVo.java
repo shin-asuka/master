@@ -1,9 +1,13 @@
 package com.vipkid.portal.classroom.model;
 
+import java.util.List;
+import java.util.Map;
+
+import com.vipkid.rest.validation.annotation.Ignore;
 import com.vipkid.rest.validation.annotation.NotNull;
 
 @NotNull
-public class PracticumCommentsVo {
+public class PeCommentsVo {
 
 	private Integer id;
 	
@@ -40,7 +44,7 @@ public class PracticumCommentsVo {
 	private Integer teenagerTeachingExperience;
 	
 	private Integer teflOrToselCertificate;
-	// 以下PE 独有
+
 	private Integer timeManagementScore;
 	
 	private Integer accent;
@@ -52,14 +56,24 @@ public class PracticumCommentsVo {
 	private Integer appearance;
 	
 	private Integer phonics;
-	// PE 独有 end
-	private String levels;
 	
-	private String tagIds;
+	@Ignore
+	private List<Map<String,Integer>> levels;
+	
+	@Ignore
+	private List<Map<String,Integer>> tagIds;
 	
 	private String finishType;
 	
 	private String result;
+	
+	private String things;
+	
+	private String areas;
+
+	private Integer totalScore;
+	
+	private String submitType;
 
 	public Integer getId() {
 		return id;
@@ -157,11 +171,11 @@ public class PracticumCommentsVo {
 		return phonics;
 	}
 
-	public String getLevels() {
+	public List<Map<String,Integer>> getLevels() {
 		return levels;
 	}
 
-	public String getTagIds() {
+	public List<Map<String,Integer>> getTagIds() {
 		return tagIds;
 	}
 
@@ -270,11 +284,11 @@ public class PracticumCommentsVo {
 		this.phonics = phonics;
 	}
 
-	public void setLevels(String levels) {
+	public void setLevels(List<Map<String,Integer>> levels) {
 		this.levels = levels;
 	}
 
-	public void setTagIds(String tagIds) {
+	public void setTagIds(List<Map<String,Integer>> tagIds) {
 		this.tagIds = tagIds;
 	}
 
@@ -284,6 +298,38 @@ public class PracticumCommentsVo {
 
 	public void setResult(String result) {
 		this.result = result;
+	}
+
+	public String getThings() {
+		return things;
+	}
+
+	public String getAreas() {
+		return areas;
+	}
+
+	public Integer getTotalScore() {
+		return totalScore;
+	}
+
+	public String getSubmitType() {
+		return submitType;
+	}
+
+	public void setThings(String things) {
+		this.things = things;
+	}
+
+	public void setAreas(String areas) {
+		this.areas = areas;
+	}
+
+	public void setTotalScore(Integer totalScore) {
+		this.totalScore = totalScore;
+	}
+
+	public void setSubmitType(String submitType) {
+		this.submitType = submitType;
 	}
 	
 }
