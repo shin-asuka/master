@@ -12,6 +12,9 @@ import java.util.TimeZone;
 import com.google.api.client.util.Maps;
 import com.vipkid.enums.OnlineClassEnum;
 import com.vipkid.file.service.QNService;
+import com.vipkid.http.service.ManageGatewayService;
+import com.vipkid.rest.portal.vo.StudentCommentVo;
+import com.vipkid.rest.portal.vo.StudentCommentPageVo;
 import com.vipkid.trpm.constant.ApplicationConstant;
 import com.vipkid.trpm.service.portal.ScheduleService;
 import org.apache.commons.collections.CollectionUtils;
@@ -82,6 +85,9 @@ public class ClassroomsRestServiceImpl implements ClassroomsRestService{
 
 	@Autowired
 	private AssessmentHttpService assessmentHttpService;
+
+	@Autowired
+	private ManageGatewayService manageGatewayService;
 
 	@Autowired
 	private CourseDao courseDao;
@@ -228,7 +234,7 @@ public class ClassroomsRestServiceImpl implements ClassroomsRestService{
 //			sentencePatternsGroup = sentencePatterns.replace("\n", "").replace("\t", "").replace("<br>", "<br/>")
 //					.split("<br/>");
 //		}
-		if(sentencePatterns != null){
+		if(sentencePatterns != null) {
 			sentencePatterns = sentencePatterns.replace("\n", "").replace("\t", "");
 		}
 		data.put("lessonSentencePatterns", sentencePatterns);
@@ -332,6 +338,21 @@ public class ClassroomsRestServiceImpl implements ClassroomsRestService{
 			dataListMap = classroomsService.majorList(teacher, monthOfYear, curPage, LINE_PER_PAGE);
 		}
 		List<Map<String, Object>> dataList = (List<Map<String, Object>>) dataListMap.get("dataList");// 复用以前代码产生的dataList，后面对其重新包装
+
+		//收集onlineClassId，批量查询StudentComment
+		List<Long> onlineClassIdList = Lists.newArrayList();
+		Map<Long,StudentCommentVo> studentCommentApiMap = Maps.newHashMap();
+		String ids = "";
+		for (Map<String, Object> eachMap : dataList) {
+			Long id = (Long)eachMap.get("id");
+			onlineClassIdList.add(id);
+		}
+		ids = StringUtils.join(onlineClassIdList,",");
+		List<StudentCommentVo> studentCommentApis = manageGatewayService.getStudentCommentListByBatch(ids);
+		for(StudentCommentVo studentCommentApi : studentCommentApis){
+			studentCommentApiMap.put(studentCommentApi.getClass_id().longValue(),studentCommentApi);
+		}
+
 		if (dataList == null)
 			return null;
 		int id = 0;//加一个id方便前端排序
@@ -385,6 +406,15 @@ public class ClassroomsRestServiceImpl implements ClassroomsRestService{
 				}
 			}
 			addReportTypeAndStatus(eachMap, date, classroomDetail);
+
+			//判断是否包含student_comment
+			StudentCommentVo studentCommentVo = studentCommentApiMap.get(classroomDetail.getOnlineClassId());
+			if(studentCommentVo!=null && studentCommentVo.getStatus()==1){
+				classroomDetail.setHasParentComment(true);
+				classroomDetail.setStudentCommentVo(studentCommentVo);
+			}else{
+				classroomDetail.setHasParentComment(false);
+			}
 
 			result.add(classroomDetail);
 			id ++;
