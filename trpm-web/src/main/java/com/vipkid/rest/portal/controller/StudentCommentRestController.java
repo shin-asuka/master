@@ -31,7 +31,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 @RestController
-//@RestInterface(lifeCycle = LifeCycle.REGULAR)
+@RestInterface(lifeCycle = LifeCycle.REGULAR)
 public class StudentCommentRestController extends RestfulController{
 	private static final Logger logger = LoggerFactory.getLogger(StudentCommentRestController.class);
 	public static String TEACHER_RATINGS_HIGH = "5";
@@ -170,7 +170,8 @@ public class StudentCommentRestController extends RestfulController{
 			logger.info("【StudentCommentRestController.getStudentCommentTotal】output：result={},运行时间={}ms", JSONObject.toJSONString(data),millis);
 			return ApiResponseUtils.buildSuccessDataResp(ret);
 		} catch (Exception e) {
-			logger.error("【StudentCommentRestController.getStudentCommentTotal】input：teacherId={}。Exception: {}", teacherId, e);
+			logger.error("【StudentCommentRestController.getStudentCommentTotal】input：teacherId={}。抛异常", teacherId);
+			logger.error("【StudentCommentRestController.getStudentCommentTotal】接口异常", e);
 		}
 		return ApiResponseUtils.buildErrorResp(1001, "服务器端错误");
 	}
@@ -214,7 +215,8 @@ public class StudentCommentRestController extends RestfulController{
 			logger.info("【StudentCommentRestController.getStudentCommentByPage】output：result={},运行时间={}ms ", JSONObject.toJSONString(data),millis);
 			return ApiResponseUtils.buildSuccessDataResp(data);
 		} catch (Exception e) {
-			logger.error("【StudentCommentRestController.getStudentCommentByPage】传入参数：teacherId={}。抛异常: {}", teacherId, e);
+			logger.error("【StudentCommentRestController.getStudentCommentByPage】传入参数：teacherId={}。抛异常: ", teacherId);
+			logger.error("【StudentCommentRestController.getStudentCommentByPage】接口异常",e);
 		}
 		return ApiResponseUtils.buildErrorResp(1001, "服务器端错误");
 	}
@@ -235,7 +237,8 @@ public class StudentCommentRestController extends RestfulController{
 			logger.info("【StudentCommentRestController.translateZhToEn】output：result={},运行时间={}ms ", JSONObject.toJSONString(retText),millis);
 			return ApiResponseUtils.buildSuccessDataResp(map);
 		} catch (Exception e) {
-			logger.error("【StudentCommentRestController.getStudentCommentByPage】传入参数：text={}。抛异常: {}",text,e);
+			logger.error("【StudentCommentRestController.getStudentCommentByPage】传入参数：text={}。抛异常",text);
+			logger.error("【StudentCommentRestController.getStudentCommentByPage】接口异常",e);
 		}
 		return ApiResponseUtils.buildErrorResp(1001, "服务器端错误");
 	}
@@ -262,7 +265,8 @@ public class StudentCommentRestController extends RestfulController{
 			logger.info("【getStudentCommentTranslation】，传入参数：id = {}。返回Json={}。耗时{}ms", id, JsonUtils.toJSONString(result), millis);
 			return ApiResponseUtils.buildSuccessDataResp(map);
 		} catch (Exception e) {
-			logger.error("调用restClassroomsMaterial接口， 传入参数：lessonId = {}。抛异常: {}", translationVo.getId(), e);
+			logger.error("调用restClassroomsMaterial接口， 传入参数：lessonId = {}。抛异常", translationVo.getId());
+			logger.error("调用restClassroomsMaterial接口， 传入参数：lessonId = {}。接口异常", e);
 		}
 		return ApiResponseUtils.buildErrorResp(1001, "服务器端错误");
 	}
