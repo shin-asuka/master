@@ -1,5 +1,27 @@
 package com.vipkid.trpm.service.portal;
 
+import java.sql.Timestamp;
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.TimeZone;
+
+import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.math.NumberUtils;
+import org.apache.commons.lang.time.DateFormatUtils;
+import org.community.config.PropertyConfigurer;
+import org.community.http.client.HttpClientProxy;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
+
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Preconditions;
@@ -24,8 +46,31 @@ import com.vipkid.recruitment.entity.TeacherApplication;
 import com.vipkid.recruitment.entity.TeacherLockLog;
 import com.vipkid.trpm.constant.ApplicationConstant;
 import com.vipkid.trpm.constant.ApplicationConstant.FinishType;
-import com.vipkid.trpm.dao.*;
-import com.vipkid.trpm.entity.*;
+import com.vipkid.trpm.dao.AssessmentReportDao;
+import com.vipkid.trpm.dao.AuditDao;
+import com.vipkid.trpm.dao.CourseDao;
+import com.vipkid.trpm.dao.DemoReportDao;
+import com.vipkid.trpm.dao.LessonDao;
+import com.vipkid.trpm.dao.OnlineClassDao;
+import com.vipkid.trpm.dao.StudentDao;
+import com.vipkid.trpm.dao.TagsDao;
+import com.vipkid.trpm.dao.TeacherDao;
+import com.vipkid.trpm.dao.TeacherModuleDao;
+import com.vipkid.trpm.dao.TeacherPeCommentsDao;
+import com.vipkid.trpm.dao.TeacherPeDao;
+import com.vipkid.trpm.dao.TeacherPeLevelsDao;
+import com.vipkid.trpm.dao.TeacherPeTagsDao;
+import com.vipkid.trpm.dao.UserDao;
+import com.vipkid.trpm.entity.AssessmentReport;
+import com.vipkid.trpm.entity.Course;
+import com.vipkid.trpm.entity.DemoReport;
+import com.vipkid.trpm.entity.Lesson;
+import com.vipkid.trpm.entity.OnlineClass;
+import com.vipkid.trpm.entity.Student;
+import com.vipkid.trpm.entity.Teacher;
+import com.vipkid.trpm.entity.TeacherModule;
+import com.vipkid.trpm.entity.TeacherPeComments;
+import com.vipkid.trpm.entity.User;
 import com.vipkid.trpm.entity.classroom.GetStarDto;
 import com.vipkid.trpm.entity.classroom.UpdateStarDto;
 import com.vipkid.trpm.entity.teachercomment.TeacherComment;
@@ -35,22 +80,6 @@ import com.vipkid.trpm.proxy.OnlineClassProxy;
 import com.vipkid.trpm.util.DateUtils;
 import com.vipkid.trpm.util.FilesUtils;
 import com.vipkid.trpm.util.IpUtils;
-import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.math.NumberUtils;
-import org.apache.commons.lang.time.DateFormatUtils;
-import org.community.config.PropertyConfigurer;
-import org.community.http.client.HttpClientProxy;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Service;
-
-import java.sql.Timestamp;
-import java.time.Instant;
-import java.util.*;
 
 @Service
 public class OnlineClassService {
