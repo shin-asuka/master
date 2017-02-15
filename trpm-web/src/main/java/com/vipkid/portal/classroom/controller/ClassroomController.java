@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.google.api.client.util.Maps;
+import com.google.common.collect.Lists;
 import com.vipkid.dataSource.annotation.Slave;
 import com.vipkid.enums.TeacherEnum.LifeCycle;
 import com.vipkid.portal.classroom.model.ClassRoomVo;
@@ -39,6 +40,13 @@ public class ClassroomController extends RestfulController{
 	
 	private static Logger logger = LoggerFactory.getLogger(ClassroomController.class);
 	
+	/**
+	 * 移除星星
+	 * @param request
+	 * @param response
+	 * @param bean
+	 * @return
+	 */
 	@RequestMapping(value = "/stars/send", method = RequestMethod.POST, produces = RestfulConfig.JSON_UTF_8)
 	public Map<String, Object> starsSend(HttpServletRequest request, HttpServletResponse response, @RequestBody ClassRoomVo bean){		
 		try{
@@ -62,6 +70,13 @@ public class ClassroomController extends RestfulController{
         }
 	}
 	
+	/**
+	 * 移除星星
+	 * @param request
+	 * @param response
+	 * @param bean
+	 * @return
+	 */
 	@RequestMapping(value = "/stars/remove", method = RequestMethod.POST, produces = RestfulConfig.JSON_UTF_8)
 	public Map<String, Object> starsRemove(HttpServletRequest request, HttpServletResponse response, @RequestBody ClassRoomVo bean){
 		try{
@@ -85,6 +100,14 @@ public class ClassroomController extends RestfulController{
         }
 	}
 	
+	/**
+	 * 教室信息获取
+	 * @param request
+	 * @param response
+	 * @param onlineClassId
+	 * @param studentId
+	 * @return
+	 */
 	@Slave
 	@RequestMapping(value = "/info/room", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
 	public Map<String, Object> infoRoom(HttpServletRequest request, HttpServletResponse response,@RequestParam("onlineClassId") long onlineClassId, @RequestParam("studentId") long studentId){
@@ -104,6 +127,14 @@ public class ClassroomController extends RestfulController{
         }
 	}
 	
+	/**
+	 * 获取Open 学生信息
+	 * @param request
+	 * @param response
+	 * @param serialNum
+	 * @param studentId
+	 * @return
+	 */
 	@Slave
 	@RequestMapping(value = "/info/student", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
 	public Map<String, Object> infoStudent(HttpServletRequest request, HttpServletResponse response,@RequestParam("serialNum") String serialNum, @RequestParam("studentId") long studentId){
@@ -120,7 +151,13 @@ public class ClassroomController extends RestfulController{
         }
 	}
 
-	
+	/**
+	 * 获取教室URL
+	 * @param request
+	 * @param response
+	 * @param onlineClassId
+	 * @return
+	 */
     @RequestMapping(value = "/getClassRoomUrl", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
     public Map<String,Object> getClassRoomUrl(HttpServletRequest request, HttpServletResponse response,@RequestParam("onlineClassId") long onlineClassId){
         try{
@@ -142,7 +179,12 @@ public class ClassroomController extends RestfulController{
         }
     }
     
-    
+    /**
+     * 服务器时间
+     * @param request
+     * @param response
+     * @return
+     */
 	@RequestMapping(value = "/room/time", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
 	public Map<String, Object> roomTime(HttpServletRequest request, HttpServletResponse response){
 		try{
@@ -160,6 +202,14 @@ public class ClassroomController extends RestfulController{
         }
 	}
 	
+	/**
+	 * 定时获取教室是否需要切换
+	 * @param request
+	 * @param response
+	 * @param onlineClassId
+	 * @param classroom
+	 * @return
+	 */
 	@RequestMapping(value = "/room/change", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
 	public Map<String, Object> roomChange(HttpServletRequest request, HttpServletResponse response, @RequestParam("onlineClassId") long onlineClassId, @RequestParam("classroom") String classroom){
 		try{
@@ -181,12 +231,24 @@ public class ClassroomController extends RestfulController{
         }
 	}
 	
-	
+	/**
+	 * 进教室后定时声明老师在教室里面
+	 * @param request
+	 * @param response
+	 * @param paramMap
+	 * @return
+	 */
 	@RequestMapping(value = "/send/enter", method = RequestMethod.POST, produces = RestfulConfig.JSON_UTF_8)
-	public Map<String, Object> sendEnter(HttpServletRequest request, HttpServletResponse response,Map<String,Object> paramMap){
+	public Map<String, Object> sendEnter(HttpServletRequest request, HttpServletResponse response,@RequestBody ClassRoomVo bean){
 		try{
 			Map<String, String> requestParams = Maps.newHashMap();
-			requestParams.put("onlineClassId", (String)paramMap.get("onlineClassId"));
+			List<String> plist = Lists.newArrayList("onlineClassId");
+			List<Result> list = ValidateUtils.checkForField(bean,plist,false);
+			if(CollectionUtils.isNotEmpty(list) && list.get(0).isResult()){
+                response.setStatus(HttpStatus.BAD_REQUEST.value());
+                return ApiResponseUtils.buildErrorResp(-1,"reslult:"+list.get(0).getName() + "," + list.get(0).getMessages());
+            }
+			requestParams.put("onlineClassId", bean.getOnlineClassId()+"");
 			Map<String,Object> resultMap = this.classroomService.sendTeacherInClassroom(requestParams,getTeacher(request));
         	if(resultMap.get("info") == null){
         		return ApiResponseUtils.buildSuccessDataResp(resultMap);
@@ -206,18 +268,22 @@ public class ClassroomController extends RestfulController{
 	}
 	
 	/**
-	 * 发送老师浏览器信息到管理端
+	 * 向Firemen请求帮助
 	 * @param request
 	 * @param response
 	 * @param paramMap
 	 * @return
 	 */
 	@RequestMapping(value = "/send/help", method = RequestMethod.POST, produces = RestfulConfig.JSON_UTF_8)
-	public Map<String, Object> sendHelp(HttpServletRequest request, HttpServletResponse response,Map<String,Object> paramMap){
+	public Map<String, Object> sendHelp(HttpServletRequest request, HttpServletResponse response,@RequestBody ClassRoomVo bean){
 		try{
-			Long onlineClassId = (Long)paramMap.get("onlineClassId");
-			String scheduleTime = (String)paramMap.get("scheduleTime");
-			Map<String,Object> resultMap = this.classroomService.sendHelp(scheduleTime, onlineClassId, getTeacher(request));
+			List<String> plist = Lists.newArrayList("onlineClassId","scheduleTime");
+			List<Result> list = ValidateUtils.checkForField(bean,plist,false);
+			if(CollectionUtils.isNotEmpty(list) && list.get(0).isResult()){
+                response.setStatus(HttpStatus.BAD_REQUEST.value());
+                return ApiResponseUtils.buildErrorResp(-1,"reslult:"+list.get(0).getName() + "," + list.get(0).getMessages());
+            }
+			Map<String,Object> resultMap = this.classroomService.sendHelp(bean.getScheduleTime(), bean.getOnlineClassId(), getTeacher(request));
         	if(resultMap.get("info") == null){
         		return ApiResponseUtils.buildSuccessDataResp(resultMap);
         	}else{
@@ -234,4 +300,5 @@ public class ClassroomController extends RestfulController{
 			return ApiResponseUtils.buildErrorResp(-7, "服务器异常");
         }
 	}
+	
 }

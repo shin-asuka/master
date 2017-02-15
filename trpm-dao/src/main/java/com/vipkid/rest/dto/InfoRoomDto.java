@@ -42,6 +42,10 @@ public class InfoRoomDto {
 	private String vocabularies;
 	
 	private String sentencePatterns;
+	
+	private String sysInfoUrl;
+	
+	private String microserviceUrl;
 
 	public Long getOnlineClassId() {
 		return onlineClassId;
@@ -170,4 +174,21 @@ public class InfoRoomDto {
 	public void setSentencePatterns(String sentencePatterns) {
 		this.sentencePatterns = sentencePatterns;
 	}
+
+	public String getSysInfoUrl() {
+		return sysInfoUrl;
+	}
+
+	public String getMicroserviceUrl() {
+		return microserviceUrl;
+	}
+
+	public void setSysInfoUrl(String sysInfoUrl) {
+		this.sysInfoUrl = sysInfoUrl;
+	}
+
+	public void setMicroserviceUrl(String microserviceUrl) {
+		this.microserviceUrl = microserviceUrl;
+	}
+
 }

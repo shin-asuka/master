@@ -111,8 +111,10 @@ public class ClassroomService {
 		resultDto.setStars(stars);
 		resultDto.setServerTime(new Timestamp(System.currentTimeMillis()));
 		resultDto.setIsReplay(!OnlineClassEnum.ClassStatus.isBooked(onlineClass.getStatus()));
-		
+		resultDto.setSysInfoUrl( PropertyConfigurer.stringValue("sys.info.url"));
+		resultDto.setMicroserviceUrl(PropertyConfigurer.stringValue("microservice.url"));
 		return resultDto;
+		
 	}
 	
 	/**
@@ -285,23 +287,21 @@ public class ClassroomService {
      * @date 2016年1月11日
      */
     public Map<String, Object> sendTeacherInClassroom(Map<String, String> requestParams, Teacher teacher) {
-        Map<String, Object> modelMap = Maps.newHashMap();
-        modelMap.put("status", false);
-
         String t = "TEACHER " + teacher.getId();
         Map<String, String> requestHeader = new HashMap<String, String>();
         requestHeader.put("Authorization", t + " " + DigestUtils.md5Hex(t));
         String content = HttpClientProxy.get(ApplicationConstant.TEACHER_IN_CLASSROOM_URL, requestParams,requestHeader);
 
         logger.info("### Mark that teacher enter classroom: {}", content);
-        logger.info("### Sent get request to {} with params {}", ApplicationConstant.TEACHER_IN_CLASSROOM_URL,
-                requestParams.get("onlineClassId"));
+        logger.info("### Sent get request to {} with params {}", ApplicationConstant.TEACHER_IN_CLASSROOM_URL, requestParams.get("onlineClassId"));
+        
+        Map<String, Object> modelMap = Maps.newHashMap();
         if (StringUtils.isBlank(content)) {
             modelMap.put("info", "failed to tell the fireman teacher in the classroom!");
         }
         return modelMap;
     }
-	
+
 	/**
      * 根据serialNum处理 考试的Level名称显示<br/>
      * studentExam 为NULL 则返回一个空对象
