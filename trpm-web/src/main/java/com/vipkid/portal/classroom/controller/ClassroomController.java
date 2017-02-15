@@ -18,10 +18,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.google.api.client.util.Maps;
-import com.google.common.collect.Lists;
 import com.vipkid.dataSource.annotation.Slave;
 import com.vipkid.enums.TeacherEnum.LifeCycle;
 import com.vipkid.portal.classroom.model.ClassRoomVo;
+import com.vipkid.portal.classroom.model.SendHelpVo;
 import com.vipkid.portal.classroom.service.ClassroomService;
 import com.vipkid.rest.RestfulController;
 import com.vipkid.rest.config.RestfulConfig;
@@ -239,17 +239,15 @@ public class ClassroomController extends RestfulController{
 	 * @return
 	 */
 	@RequestMapping(value = "/send/enter", method = RequestMethod.POST, produces = RestfulConfig.JSON_UTF_8)
-	public Map<String, Object> sendEnter(HttpServletRequest request, HttpServletResponse response,@RequestBody ClassRoomVo bean){
+	public Map<String, Object> sendEnter(HttpServletRequest request, HttpServletResponse response,@RequestBody Map<String,Object> paramMap){
 		try{
-			Map<String, String> requestParams = Maps.newHashMap();
-			List<String> plist = Lists.newArrayList("onlineClassId");
-			List<Result> list = ValidateUtils.checkForField(bean,plist,false);
-			if(CollectionUtils.isNotEmpty(list) && list.get(0).isResult()){
-                response.setStatus(HttpStatus.BAD_REQUEST.value());
-                return ApiResponseUtils.buildErrorResp(-1,"reslult:"+list.get(0).getName() + "," + list.get(0).getMessages());
-            }
-			requestParams.put("onlineClassId", bean.getOnlineClassId()+"");
-			Map<String,Object> resultMap = this.classroomService.sendTeacherInClassroom(requestParams,getTeacher(request));
+			if(paramMap.get("onlineClassId") == null){
+				response.setStatus(HttpStatus.BAD_REQUEST.value());
+                return ApiResponseUtils.buildErrorResp(-1,"reslult:onlineClassId,The field is required !");
+			}
+			Map<String,String>  requestParams = Maps.newHashMap();
+			requestParams.put("onlineClassId", paramMap.get("onlineClassId")+"");
+			Map<String,Object> resultMap = this.classroomService.sendTeacherInClassroom(requestParams, getTeacher(request));
         	if(resultMap.get("info") == null){
         		return ApiResponseUtils.buildSuccessDataResp(resultMap);
         	}else{
@@ -275,10 +273,9 @@ public class ClassroomController extends RestfulController{
 	 * @return
 	 */
 	@RequestMapping(value = "/send/help", method = RequestMethod.POST, produces = RestfulConfig.JSON_UTF_8)
-	public Map<String, Object> sendHelp(HttpServletRequest request, HttpServletResponse response,@RequestBody ClassRoomVo bean){
+	public Map<String, Object> sendHelp(HttpServletRequest request, HttpServletResponse response,@RequestBody SendHelpVo bean){
 		try{
-			List<String> plist = Lists.newArrayList("onlineClassId","scheduleTime");
-			List<Result> list = ValidateUtils.checkForField(bean,plist,false);
+			List<Result> list = ValidateUtils.checkBean(bean, false);
 			if(CollectionUtils.isNotEmpty(list) && list.get(0).isResult()){
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
                 return ApiResponseUtils.buildErrorResp(-1,"reslult:"+list.get(0).getName() + "," + list.get(0).getMessages());
