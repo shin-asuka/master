@@ -181,15 +181,4 @@ public class FeedbackController extends RestfulController {
 			return ApiResponseUtils.buildErrorResp(-7, "服务器异常");
         }
 	}
-	
-	public static void main(String[] args) {
-		PeCommentsVo bean = new PeCommentsVo();
-		List<Result> list = ValidateUtils.checkBean(bean,true);
-        if(CollectionUtils.isNotEmpty(list)){
-        	for (Result result:list) {
-        		System.out.println("reslult:"+result.getName() + "," + result.getMessages());
-			}            
-        }
-	}
-	
 }
