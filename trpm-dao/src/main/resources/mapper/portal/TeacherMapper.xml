@@ -556,4 +556,71 @@
 			<if test="id!=0"> #{id} </if>
 		</foreach>
 	</select>
+
+	<!-- ReferralTeachers查询SQL -->
+	<select id="findReferralTeachers" resultType="com.vipkid.rest.dto.ReferralTeacherDto">
+		SELECT
+		u.id,
+		u.`name`,
+		t.email,
+		u.register_date_time applyDate,
+		t.life_cycle lifeCycle,
+		ta.`status`,
+		ta.result,
+		t.entry_date regularDate,
+		tc.scheduled_date_time scheduledDateTime
+		FROM
+		teacher t
+		LEFT JOIN `user` u ON t.id = u.id
+		LEFT JOIN teacher_application ta ON t.id = ta.teacher_id
+		LEFT JOIN teacher_first_class tc ON t.id = tc.teacher_id
+		WHERE
+		t.referee LIKE CONCAT(#{param.teacherId},',%') AND (ta.current = 1 or ta.current is null)
+		<if test="param.lifeCycle != null"> AND t.life_cycle = #{param.lifeCycle} </if>
+		<if test="param.status != null"> AND ta.`status` = #{param.status} </if>
+		<if test="param.result != null"> AND ta.result = #{param.result} </if>
+		<if test="param.dataType != null">
+			<if test="param.dataType == 1">
+				AND  u.register_date_time BETWEEN #{param.startTime} AND  #{param.endTime}
+			</if>
+			<if test="param.dataType == 2">
+				AND  t.entry_date BETWEEN #{param.startTime} AND  #{param.endTime}
+			</if>
+			<if test="param.dataType == 3">
+				AND  tc.scheduled_date_time BETWEEN #{param.startTime} AND #{param.endTime}
+			</if>
+		</if>
+		<if test="param.name != null"> AND (u.name LIKE CONCAT('%',#{param.name},'%') or t.email LIKE CONCAT('%',#{param.name},'%')) </if>
+		ORDER BY
+		u.register_date_time DESC
+		<if test="param.startRows != null  and param.pageSize != null">
+			LIMIT #{param.startRows},#{param.pageSize}
+		</if>
+	</select>
+
+	<!-- ReferralTeachers count SQL -->
+	<select id="findReferralTeachersCount" resultType="int">
+		SELECT
+		count(1) counts
+		FROM
+		teacher t
+		LEFT JOIN `user` u ON t.id = u.id
+		LEFT JOIN teacher_application ta ON t.id = ta.teacher_id
+		LEFT JOIN teacher_first_class tc ON t.id = tc.teacher_id
+		WHERE
+		t.referee LIKE CONCAT(#{param.teacherId},',%') AND (ta.current = 1 or ta.current is null)
+		<if test="param.lifeCycle != null"> AND t.life_cycle = #{param.lifeCycle} </if>
+		<if test="param.status != null"> AND ta.`status` = #{param.status} </if>
+		<if test="param.result != null"> AND ta.result = #{param.result} </if>
+		<if test="param.dataType == 1">
+			AND  u.register_date_time BETWEEN #{param.startTime} AND  #{param.endTime}
+		</if>
+		<if test="param.dataType == 2">
+			AND  t.entry_date BETWEEN #{param.startTime} AND  #{param.endTime}
+		</if>
+		<if test="param.dataType == 3">
+			AND  tc.scheduled_date_time BETWEEN #{param.startTime} AND #{param.endTime}
+		</if>
+		<if test="param.name != null"> AND (u.name LIKE CONCAT('%',#{param.name},'%') or t.email LIKE CONCAT('%',#{param.name},'%')) </if>
+	</select>
 </mapper>
