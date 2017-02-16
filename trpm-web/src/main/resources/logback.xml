@@ -30,6 +30,26 @@
 
 
 
+    <!--email.alert区域start-->
+    <appender name="email" class="com.vipkid.common.log.SelfSmtpAppender">
+        <smtpHost>smtp.exmail.qq.com</smtpHost>
+        <username>teacher.alert@vipkid.com.cn</username>
+        <password>Alert1</password>
+        <from>teacher.alert@vipkid.com.cn</from>
+        <to>mike.lee.alert@vipkid.com.cn</to>
+
+        <!--采用HTML渲染方式，可以自定义CSS -->
+        <layout class="com.vipkid.common.log.HTMLWrapperLayout">
+            <pattern>%date%level%logger%message</pattern>
+        </layout>
+
+        <filter class="com.vipkid.common.log.AlertLogFilter"/>
+        <evaluator class="com.vipkid.common.log.OnWarnEvalutor"/>
+    </appender>
+
+
+
+
     <!-- 按照每天生成日志文件 -->
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <!--日志文件输出的文件名-->
