@@ -152,7 +152,7 @@ define(["function", "jquery-form", "jquery-bootstrap", "jquery-load", "countdown
             }
         } else {
             if (_Practicum2) {
-                if (_score >= 38) {
+                if (_score >= 39) {
                     return "PASS";
                 } else {
                     return "TBD_FAIL";
