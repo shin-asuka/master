@@ -611,6 +611,7 @@
 		oc.teacher_id as teacherId,
 		oc.scheduled_date_time as scheduledDateTime,
 		oc.lesson_id as lessonId,
+		t.first_name as teacherFirstName,
 		t.real_name as teacherName,
 		t.email as teacherEmail,
 		t.timezone as timezone

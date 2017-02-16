@@ -154,7 +154,6 @@ public class UnitAssesssmentService {
 					String email = oc.getTeacherEmail(); //获取教师邮箱发送邮件
 					String name = oc.getTeacherName();
 					String timezone = oc.getTimezone();
-					
 					//email = "yangchao@vipkid.com.cn"; //
 					logger.info("send Email to teacher name= {},email = {} , contentTemplate = {}, titleTemplate = {}",name,email,contentTemplate,titleTemplate);
 					String scheduledDateTime = UADateUtils.format(oc.getScheduledDateTime(), "MM/dd/YYYY",timezone) ;
@@ -162,7 +161,11 @@ public class UnitAssesssmentService {
 					try {
 	                    Map<String, String> paramsMap = Maps.newHashMap();
 	                    paramsMap.put("scheduledDateTime", scheduledDateTime);
-						paramsMap.put("teacherName", name);
+						if (oc.getTeacherFirstName()!= null){
+							paramsMap.put("teacherName", oc.getTeacherFirstName());
+						}else if (oc.getTeacherName() != null){
+							paramsMap.put("teacherName", oc.getTeacherName());
+						}
 	                    Map<String, String> emailMap = new TemplateUtils().readTemplate(contentTemplate, paramsMap, titleTemplate);
 	                    new EmailEngine().addMailPool(email, emailMap,EmailFormEnum.EDUCATION);
 	                    //EmailHandle emailHandle = new EmailHandle(email, emailMap.get("title"), emailMap.get("content"), EmailFormEnum.TEACHVIP);
@@ -188,6 +191,7 @@ public class UnitAssesssmentService {
 				onlineClassVo.setId(id);
 				onlineClassVo.setTeacherId(jsonObject.getLong("teacherId"));
 				onlineClassVo.setLessonId(jsonObject.getLong("lessonId"));
+				onlineClassVo.setTeacherFirstName(jsonObject.getString("teacherFirstName"));
 				onlineClassVo.setTeacherName(jsonObject.getString("teacherName"));
 				onlineClassVo.setTeacherEmail(jsonObject.getString("teacherEmail"));
 				onlineClassVo.setScheduledDateTime(jsonObject.getDate("scheduledDateTime"));

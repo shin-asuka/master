@@ -94,7 +94,11 @@ public class CheckTeacherCommentService {
 					try {
 						Map<String, String> paramsMap = Maps.newHashMap();
 						paramsMap.put("scheduledDateTime", scheduledDateTime);
-						paramsMap.put("teacherName", name);
+						if (oc.getTeacherFirstName()!= null){
+							paramsMap.put("teacherName", oc.getTeacherFirstName());
+						}else if (oc.getTeacherName() != null){
+							paramsMap.put("teacherName", oc.getTeacherName());
+						}
 						Map<String, String> emailMap = new TemplateUtils().readTemplate(contentTemplete, paramsMap, titleTemplete);
 						new EmailEngine().addMailPool(email, emailMap,EmailFormEnum.EDUCATION);
 						//EmailHandle emailHandle = new EmailHandle(email, emailMap.get("title"), emailMap.get("content"), EmailFormEnum.TEACHVIP);
@@ -120,6 +124,7 @@ public class CheckTeacherCommentService {
 				onlineClassVo.setId(id);
 				onlineClassVo.setTeacherId(jsonObject.getLong("teacherId"));
 				onlineClassVo.setLessonId(jsonObject.getLong("lessonId"));
+				onlineClassVo.setTeacherFirstName(jsonObject.getString("teacherFirstName"));
 				onlineClassVo.setTeacherName(jsonObject.getString("teacherName"));
 				onlineClassVo.setTeacherEmail(jsonObject.getString("teacherEmail"));
 				onlineClassVo.setScheduledDateTime(jsonObject.getDate("scheduledDateTime"));
