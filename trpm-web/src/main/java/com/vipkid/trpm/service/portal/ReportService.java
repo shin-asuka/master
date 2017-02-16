@@ -657,10 +657,7 @@ public class ReportService {
         TeacherComment oldtc = new TeacherComment(oldtcFromAPI);
         if (isFromH5) {
             //从APP的h5页面过来的
-            Teacher teacher = AppContext.getTeacher();
-            scheduledDateTime = DateUtils
-                .formatTo(oldtcFromAPI.getScheduledDateTime().toInstant(), teacher.getTimezone(),
-                    DateUtils.FMT_YMD_HMS);
+            scheduledDateTime = DateUtils.formatDate(oldtcFromAPI.getScheduledDateTime());
         }
 
         Map<String, Object> paramMap = Maps.newHashMap();
