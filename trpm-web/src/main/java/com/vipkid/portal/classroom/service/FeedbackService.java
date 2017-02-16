@@ -71,6 +71,7 @@ public class FeedbackService {
                 teacherPeTag.setTagId(tag.get("id"));
                 teacherPeTags.add(teacherPeTag);
             }
+            
             teacherPeTagsService.updatePeTags(applicationId, teacherPeTags);
             List<TeacherPeLevels> teacherPeLevels = Lists.newArrayList();
             for (Map<String, Integer> level : bean.getLevels()) {
@@ -91,6 +92,8 @@ public class FeedbackService {
         }
         
         TeacherApplication teacherApplication = this.teacherApplicationDao.findApplictionById(applicationId);
+        
+        teacherApplication = setPropertiesForApplication(teacherApplication, bean);
         
         if ("SAVE".endsWith(bean.getSubmitType())){ 
             resultMap.put("result", onlineclassService.updateApplications(teacherApplication));
@@ -113,7 +116,7 @@ public class FeedbackService {
                 }
             }
 
-            // 并异步调用AppServer发送邮件及消息
+            // 并异步调用AppServer 通知
             Long teacherApplicationId = (Long) resultMap.get("teacherApplicationId");
             Teacher recruitTeacher = (Teacher) resultMap.get("recruitTeacher");
             if (Objects.nonNull(teacherApplicationId) && Objects.nonNull(recruitTeacher)) {
@@ -123,4 +126,11 @@ public class FeedbackService {
         
         return resultMap;
 	}
+	
+	public TeacherApplication setPropertiesForApplication(TeacherApplication teacherApplication,PeCommentsVo bean){
+		
+		
+		return teacherApplication;
+	}
+	
  }

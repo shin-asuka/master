@@ -1,10 +1,12 @@
 package com.vipkid.portal.classroom.controller;
 
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +29,8 @@ import com.vipkid.rest.RestfulController;
 import com.vipkid.rest.config.RestfulConfig;
 import com.vipkid.rest.interceptor.annotation.RestInterface;
 import com.vipkid.rest.utils.ApiResponseUtils;
+import com.vipkid.rest.validation.ValidateUtils;
+import com.vipkid.rest.validation.tools.Result;
 import com.vipkid.trpm.entity.Teacher;
 
 @RestController
@@ -50,7 +54,14 @@ public class FeedbackController extends RestfulController {
 	 */
 	@RequestMapping(value = "/pe/save", method = RequestMethod.POST, produces = RestfulConfig.JSON_UTF_8)
 	public Map<String, Object> peSave(HttpServletRequest request, HttpServletResponse response, @RequestBody PeCommentsVo bean){
-		try{			
+		try{
+			//参数校验
+            List<Result> list = ValidateUtils.checkBean(bean,false);
+            if(CollectionUtils.isNotEmpty(list) && list.get(0).isResult()){
+                response.setStatus(HttpStatus.BAD_REQUEST.value());
+                return ApiResponseUtils.buildErrorResp(-1,"reslult:"+list.get(0).getName() + "," + list.get(0).getMessages());
+            }
+			
 			Map<String, Object> resultMap = feedbackService.saveDoPeAudit(getTeacher(request), bean);
 			//发邮件
 			if(resultMap.get("applicationResult") != null){
@@ -103,6 +114,12 @@ public class FeedbackController extends RestfulController {
 	@RequestMapping(value = "/pes/save", method = RequestMethod.POST, produces = RestfulConfig.JSON_UTF_8)
 	public Map<String, Object> pesSave(HttpServletRequest request, HttpServletResponse response, @RequestBody PesCommentsVo bean){
 		try{
+			//参数校验
+            List<Result> list = ValidateUtils.checkBean(bean,false);
+            if(CollectionUtils.isNotEmpty(list) && list.get(0).isResult()){
+                response.setStatus(HttpStatus.BAD_REQUEST.value());
+                return ApiResponseUtils.buildErrorResp(-1,"reslult:"+list.get(0).getName() + "," + list.get(0).getMessages());
+            }
 
 			return ApiResponseUtils.buildSuccessDataResp(new Object());
         } catch (IllegalArgumentException e) {
@@ -126,7 +143,7 @@ public class FeedbackController extends RestfulController {
 	@RequestMapping(value = "/pes/view", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
 	public Map<String, Object> pesView(HttpServletRequest request, HttpServletResponse response, @RequestParam("id") Long id){
 		try{
-
+			
 			return ApiResponseUtils.buildSuccessDataResp(new Object());
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
@@ -165,6 +182,14 @@ public class FeedbackController extends RestfulController {
         }
 	}
 	
-	
+	public static void main(String[] args) {
+		PeCommentsVo bean = new PeCommentsVo();
+		List<Result> list = ValidateUtils.checkBean(bean,true);
+        if(CollectionUtils.isNotEmpty(list)){
+        	for (Result result:list) {
+        		System.out.println("reslult:"+result.getName() + "," + result.getMessages());
+			}            
+        }
+	}
 	
 }
