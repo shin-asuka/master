@@ -42,7 +42,7 @@ public class UnitAssesssmentService {
 	
 	@Autowired
     private LessonDao lessonDao;
-	
+
 	@Autowired
 	private AssessmentHttpService assessmentHttpService;
 	
@@ -162,7 +162,7 @@ public class UnitAssesssmentService {
 					try {
 	                    Map<String, String> paramsMap = Maps.newHashMap();
 	                    paramsMap.put("scheduledDateTime", scheduledDateTime);
-
+						paramsMap.put("teacherName", name);
 	                    Map<String, String> emailMap = new TemplateUtils().readTemplate(contentTemplate, paramsMap, titleTemplate);
 	                    new EmailEngine().addMailPool(email, emailMap,EmailFormEnum.EDUCATION);
 	                    //EmailHandle emailHandle = new EmailHandle(email, emailMap.get("title"), emailMap.get("content"), EmailFormEnum.TEACHVIP);

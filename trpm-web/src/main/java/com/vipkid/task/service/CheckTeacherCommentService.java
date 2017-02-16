@@ -94,7 +94,7 @@ public class CheckTeacherCommentService {
 					try {
 						Map<String, String> paramsMap = Maps.newHashMap();
 						paramsMap.put("scheduledDateTime", scheduledDateTime);
-
+						paramsMap.put("teacherName", name);
 						Map<String, String> emailMap = new TemplateUtils().readTemplate(contentTemplete, paramsMap, titleTemplete);
 						new EmailEngine().addMailPool(email, emailMap,EmailFormEnum.EDUCATION);
 						//EmailHandle emailHandle = new EmailHandle(email, emailMap.get("title"), emailMap.get("content"), EmailFormEnum.TEACHVIP);
