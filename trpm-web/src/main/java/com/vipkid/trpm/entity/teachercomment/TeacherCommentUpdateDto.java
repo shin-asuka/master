@@ -587,7 +587,7 @@ public class TeacherCommentUpdateDto {
 
     }
 
-    public TeacherCommentUpdateDto(TeacherCommentVo teacherComment) {
+    public TeacherCommentUpdateDto(SubmitTeacherCommentDto teacherComment) {
 
         //理论上不会有比int大的
         if (teacherComment.getId() !=null) {
