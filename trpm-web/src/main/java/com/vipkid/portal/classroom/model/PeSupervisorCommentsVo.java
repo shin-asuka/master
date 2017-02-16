@@ -11,6 +11,8 @@ public class PeSupervisorCommentsVo {
 
 	private Integer id;
 	
+	private Integer peId;
+	
 	private Integer onlineClassId;
 	
 	private Integer delayDays;
@@ -153,6 +155,14 @@ public class PeSupervisorCommentsVo {
 
 	public void setId(Integer id) {
 		this.id = id;
+	}
+	
+	public Integer getPeId() {
+		return peId;
+	}
+
+	public void setPeId(Integer peId) {
+		this.peId = peId;
 	}
 
 	public void setOnlineClassId(Integer onlineClassId) {

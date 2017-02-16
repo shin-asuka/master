@@ -120,8 +120,13 @@ public class FeedbackController extends RestfulController {
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
                 return ApiResponseUtils.buildErrorResp(-1,"reslult:"+list.get(0).getName() + "," + list.get(0).getMessages());
             }
-
-			return ApiResponseUtils.buildSuccessDataResp(new Object());
+			Map<String, Object> resultMap = feedbackService.saveDoPeSupervisorAudit(getTeacher(request), bean);
+			//发邮件
+			if(resultMap.get("applicationResult") != null){
+				Teacher recruitTeacher = (Teacher) resultMap.get("recruitTeacher");
+				auditEventHandler.onAuditEvent(new AuditEvent(recruitTeacher.getId(), TeacherEnum.LifeCycle.PRACTICUM.toString(), (String)resultMap.get("applicationResult")));
+			}
+			return ApiResponseUtils.buildSuccessDataResp(resultMap);
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
 			logger.error(e.getMessage());

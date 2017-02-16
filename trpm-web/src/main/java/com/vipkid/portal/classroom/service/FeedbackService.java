@@ -32,7 +32,7 @@ import com.vipkid.trpm.service.portal.OnlineClassService;
 @Service
 public class FeedbackService {
 
-	// private static Logger logger = LoggerFactory.getLogger(FeedbackService.class);
+	private static Logger logger = LoggerFactory.getLogger(FeedbackService.class);
 	
 	@Autowired
 	private TeacherApplicationDao teacherApplicationDao;
@@ -55,6 +55,12 @@ public class FeedbackService {
     @Autowired
     private TeacherPeCommentsService teacherPeCommentsService;
 	
+    /**
+     * Pe 保存 / 提交
+     * @param pe
+     * @param bean
+     * @return
+     */
 	public Map<String, Object> saveDoPeAudit(Teacher pe, PeCommentsVo bean){
 		
 		Map<String, Object> resultMap = Maps.newHashMap();
@@ -71,9 +77,9 @@ public class FeedbackService {
                 teacherPeTag.setApplicationId(applicationId);
                 teacherPeTag.setTagId(tag.get("id"));
                 teacherPeTags.add(teacherPeTag);
-            }
-            
+            }            
             teacherPeTagsService.updatePeTags(applicationId, teacherPeTags);
+            
             List<TeacherPeLevels> teacherPeLevels = Lists.newArrayList();
             for (Map<String, Integer> level : bean.getLevels()) {
                 TeacherPeLevels teacherPeLevel = new TeacherPeLevels();
@@ -96,13 +102,15 @@ public class FeedbackService {
         
         teacherApplication = setPropertiesForPe(teacherApplication, bean);
         
+        logger.info("PE:{} , 页面传入的结果result:{}", bean.getSubmitType(), bean.getResult());
+        
         if ("SAVE".endsWith(bean.getSubmitType())){ 
             resultMap.put("result", onlineclassService.updateApplications(teacherApplication));
         } else {
             if (bean.getResult().startsWith(Result.TBD.toString())) {
                 resultMap = peSupervisorService.doPracticumForPE(pe, teacherApplication, bean.getResult());
             } else {
-                if (StringUtils.isEmpty(bean.getFinishType())) {
+                if (StringUtils.isBlank(bean.getFinishType())) {
                 	bean.setFinishType(FinishType.AS_SCHEDULED);
                 }
                 resultMap = onlineclassService.updateAudit(pe, teacherApplication, bean.getResult(), bean.getFinishType());
@@ -112,12 +120,13 @@ public class FeedbackService {
                 if ((Boolean) resultMap.get("result")) {
                     onlineclassService.finishPracticum(teacherApplication, bean.getFinishType(), pe, recruitTeacher);
                     //发邮件 email
+                    logger.info("需要发送邮件");
                     resultMap.put("recruitTeacher", recruitTeacher);
                     resultMap.put("applicationResult", teacherApplication.getResult());
                 }
             }
 
-            // 并异步调用AppServer 通知
+            // 并异步调用AppServer 通知管理端发送消息
             Long teacherApplicationId = (Long) resultMap.get("teacherApplicationId");
             Teacher recruitTeacher = (Teacher) resultMap.get("recruitTeacher");
             if (Objects.nonNull(teacherApplicationId) && Objects.nonNull(recruitTeacher)) {
@@ -127,7 +136,81 @@ public class FeedbackService {
         return resultMap;
 	}
 	
-	
+	/**
+	 * Pes 保存/提交
+	 * @param peSupervisor
+	 * @param bean
+	 * @return
+	 */
+	public Map<String, Object> saveDoPeSupervisorAudit(Teacher peSupervisor, PeSupervisorCommentsVo bean){
+		
+		Map<String, Object> resultMap = Maps.newHashMap();
+		
+		resultMap.put("submitType", bean.getSubmitType());
+        
+		int applicationId = bean.getId();
+        
+		if(!StringUtils.equalsIgnoreCase(bean.getResult(),Result.REAPPLY.toString())) {
+        	// 处理 tags 相关逻辑
+            List<TeacherPeTags> teacherPeTags = Lists.newArrayList();
+            for (Map<String, Integer> tag : bean.getTagIds()) {
+                TeacherPeTags teacherPeTag = new TeacherPeTags();
+                teacherPeTag.setApplicationId(applicationId);
+                teacherPeTag.setTagId(tag.get("id"));
+                teacherPeTags.add(teacherPeTag);
+            }            
+            teacherPeTagsService.updatePeTags(applicationId, teacherPeTags);
+            
+            List<TeacherPeLevels> teacherPeLevels = Lists.newArrayList();
+            for (Map<String, Integer> level : bean.getLevels()) {
+                TeacherPeLevels teacherPeLevel = new TeacherPeLevels();
+                teacherPeLevel.setApplicationId(applicationId);
+                teacherPeLevel.setLevel(level.get("id"));
+                teacherPeLevels.add(teacherPeLevel);
+            }
+            teacherPeLevelsService.updateTeacherPeLevels(applicationId, teacherPeLevels);
+
+            TeacherPeComments teacherPeComment = new TeacherPeComments();
+            teacherPeComment.setApplicationId(applicationId);
+            teacherPeComment.setThingsDidWell(bean.getThings());
+            teacherPeComment.setAreasImprovement(bean.getAreas());
+            teacherPeComment.setTotalScore(bean.getTotalScore());
+            teacherPeComment.setStatus(bean.getSubmitType());
+            teacherPeCommentsService.updateTeacherPeComments(applicationId, teacherPeComment);
+        }
+
+        TeacherApplication teacherApplication = this.teacherApplicationDao.findApplictionById(applicationId);
+        
+        teacherApplication = setPropertiesForPeSupervisor(teacherApplication, bean);
+		
+        logger.info("PES:{} , 页面传入的结果result:{}", bean.getSubmitType(), bean.getResult());
+        
+		if ("SAVE".endsWith(bean.getSubmitType())){ 
+            resultMap.put("result", onlineclassService.updateApplications(teacherApplication));
+        } else {
+            if (StringUtils.isBlank(bean.getFinishType())) {
+            	bean.setFinishType(FinishType.AS_SCHEDULED);
+            }
+            resultMap = peSupervisorService.updateAudit(peSupervisor,teacherApplication, bean.getResult(), bean.getFinishType(), bean.getPeId());
+
+            Teacher recruitTeacher = (Teacher) resultMap.get("recruitTeacher");
+            // Finish课程
+            if ((Boolean) resultMap.get("result")) {
+                onlineclassService.finishPracticum(teacherApplication, bean.getFinishType(), peSupervisor, recruitTeacher);
+                //发邮件
+                //发邮件 email
+                logger.info("需要发送邮件");
+                resultMap.put("recruitTeacher", recruitTeacher);
+                resultMap.put("applicationResult", teacherApplication.getResult());
+            }
+            // 并异步调用AppServer发送邮件及消息
+            Long teacherApplicationId = (Long) resultMap.get("teacherApplicationId");
+            if (Objects.nonNull(teacherApplicationId) && Objects.nonNull(recruitTeacher)) {
+                appserverPracticumService.finishPracticumProcess(teacherApplicationId, recruitTeacher);
+            }
+        }
+		return resultMap;
+	}
 	
 	
 	private TeacherApplication setPropertiesForPe(TeacherApplication teacherApplication,PeCommentsVo bean){
@@ -156,6 +239,7 @@ public class FeedbackService {
 		teacherApplication.setResult(bean.getResult());	
 		return teacherApplication;
 	}
+	
 	
 	private TeacherApplication setPropertiesForPeSupervisor(TeacherApplication teacherApplication,PeSupervisorCommentsVo bean){
 		teacherApplication.setDelayDays(bean.getDelayDays());
