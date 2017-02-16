@@ -1,6 +1,6 @@
 package com.vipkid.portal.classroom.util;
 
-import com.vipkid.portal.classroom.model.ClassCommentsVo;
+import com.vipkid.portal.classroom.model.MajorCommentsVo;
 import com.vipkid.portal.classroom.model.PrevipCommentsVo;
 import com.vipkid.trpm.entity.teachercomment.SubmitTeacherCommentDto;
 import org.apache.commons.beanutils.BeanUtils;
@@ -24,7 +24,7 @@ public class Convertor {
         return submitTeacherCommentDto;
     }
 
-    public static SubmitTeacherCommentDto toSubmitTeacherCommentDto(ClassCommentsVo classCommentsVo){
+    public static SubmitTeacherCommentDto toSubmitTeacherCommentDto(MajorCommentsVo classCommentsVo){
         SubmitTeacherCommentDto submitTeacherCommentDto = new SubmitTeacherCommentDto();
         try {
             BeanUtils.copyProperties(submitTeacherCommentDto,classCommentsVo);
