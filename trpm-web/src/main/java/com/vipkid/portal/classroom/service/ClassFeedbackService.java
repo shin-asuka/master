@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Maps;
 import com.vipkid.mq.message.FinishOnlineClassMessage;
 import com.vipkid.mq.service.PayrollMessageService;
+import com.vipkid.portal.classroom.model.ClassCommentsVo;
 import com.vipkid.portal.classroom.model.PrevipCommentsVo;
 import com.vipkid.portal.classroom.util.Convertor;
 import com.vipkid.rest.security.AppContext;
@@ -37,7 +38,7 @@ import java.util.concurrent.Executors;
 import static com.google.common.base.Preconditions.checkArgument;
 
 @Service
-public class PrevipFeedbackService {
+public class ClassFeedbackService {
 
     private static Logger logger = LoggerFactory.getLogger(FeedbackService.class);
 
@@ -88,18 +89,10 @@ public class PrevipFeedbackService {
     @Autowired
     private LoginService loginService;
 
-    public Map<String, Object> submitTeacherComment(PrevipCommentsVo teacherComment, User user, String serialNumber,
+    public Map<String, Object> submitTeacherComment(ClassCommentsVo teacherComment, User user, String serialNumber,
                                                     String scheduledDateTime, boolean isFromH5) {
         // 如果ID为0 则抛出异常并回滚
-
         checkArgument(teacherComment.getId() != null && 0 != teacherComment.getId(), "Argument teacherComment id equals 0");
-        String previpErrorMsg = teacherService.inputCheckPrevipMajorCourseTeacherComment(serialNumber, Convertor.toSubmitTeacherCommentDto(teacherComment));
-        if (StringUtils.isNotBlank(previpErrorMsg)) {
-            Map<String, Object> paramMap = Maps.newHashMap();
-            paramMap.put("result", false);
-            paramMap.put("msg", previpErrorMsg);
-            return paramMap;
-        }
 
         teacherComment.setEmpty(0);
         // 日志记录参数准备
@@ -162,20 +155,22 @@ public class PrevipFeedbackService {
                     FinishOnlineClassMessage.OperatorType.ADD_TEACHER_COMMENTS));
         }
 
-        if (teacherComment.getPerformance() != null && (teacherComment.getPerformance() == 1 || teacherComment.getPerformance() == 5)) {
-            logger.info(
-                    "previp检查Performance判断是否给CLT发邮件: studentId = {}, serialNumber = {} ",
-                    oldtc.getStudentId(), serialNumber);
+        //判断PerformanceAdjust给CLT发邮件
+        if (teacherComment.getPerformanceAdjust() != null && teacherComment.getPerformance() != null
+                && (teacherComment.getPerformanceAdjust() == 1 && teacherComment.getPerformance() != 0)) {
+            logger.info("判断PerformanceAdjust给CLT发邮件: studentId = {}, serialNumber = {}, scheduledDateTime = {} ",
+                    oldtc.getStudentId(), serialNumber, scheduledDateTime);
+            final String finalScheduledDateTime = scheduledDateTime;
             sendEmailExecutor.execute(() -> {
-                emailService.sendEmail4PreVip2CLTByPerformance(oldtc.getStudentId(), serialNumber);
+                emailService.sendEmail4PerformanceAdjust2CLT(oldtc.getStudentId(), serialNumber,
+                        finalScheduledDateTime, teacherComment.getPerformance());
             });
         }
-        if (teacherComment.getNeedParentSupport() != null && teacherComment.getNeedParentSupport()) {
-            logger.info(
-                    "previp检查needParentSupport判断是否给CLT发邮件: studentId = {}, serialNumber = {} ",
-                    oldtc.getStudentId(), serialNumber);
+
+        if (teacherComment.getPerformance() != null && (teacherComment.getPerformance() == 1 || teacherComment.getPerformance() == 5)) {
+            logger.info("检查Performance判断是否给CLT发邮件: studentId = {}, serialNumber = {} ", oldtc.getStudentId(), serialNumber);
             sendEmailExecutor.execute(() -> {
-                emailService.sendEmail4PreVip2CLTByNeedParent(oldtc.getStudentId());
+                emailService.sendEmail4Performance2CLT(oldtc.getStudentId(), serialNumber);
             });
         }
 

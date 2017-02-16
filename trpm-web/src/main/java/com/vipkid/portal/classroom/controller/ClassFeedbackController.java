@@ -4,8 +4,9 @@ import com.alibaba.fastjson.JSON;
 import com.google.common.base.Stopwatch;
 import com.google.common.collect.Maps;
 import com.vipkid.enums.TeacherEnum;
+import com.vipkid.portal.classroom.model.ClassCommentsVo;
 import com.vipkid.portal.classroom.model.PrevipCommentsVo;
-import com.vipkid.portal.classroom.service.PrevipFeedbackService;
+import com.vipkid.portal.classroom.service.ClassFeedbackService;
 import com.vipkid.rest.interceptor.annotation.RestInterface;
 import com.vipkid.rest.service.LoginService;
 import com.vipkid.rest.utils.ApiResponseUtils;
@@ -29,61 +30,60 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Created by LP-813 on 2017/2/15.
+ * Created by LP-813 on 2017/2/16.
  */
 @RestController
 @RestInterface(lifeCycle= TeacherEnum.LifeCycle.REGULAR)
 @RequestMapping("/portal/comments/")
-public class PrevipFeedbackController {
+public class ClassFeedbackController {
 
     private static Logger logger = LoggerFactory.getLogger(ClassroomController.class);
 
     @Autowired
-    private PrevipFeedbackService previpFeedbackService;
-    @Autowired
-    private LoginService loginService;
+    private ClassFeedbackService classFeedbackService;
     @Autowired
     private StudentExamDao studentExamDao;
+    @Autowired
+    private LoginService loginService;
 
-    @RequestMapping("/previp/save")
+    @RequestMapping("/class/save")
     public Map<String,Object> feedbackSubmit(HttpServletRequest request, HttpServletResponse response,
-                                  PrevipCommentsVo teacherComment, Model model) {
+                                              ClassCommentsVo teacherComment, Model model) {
         Stopwatch stopwatch = Stopwatch.createStarted();
         String serialNumber = teacherComment.getSerialNumber();
         String scheduledDateTime = teacherComment.getScheduleDateTime();
         logger.info("ReportController: feedbackSubmit() 参数为：serialNumber={}, scheduledDateTime={}, teacherComment={}", serialNumber, scheduledDateTime, JSON.toJSONString(teacherComment));
         teacherComment.setSubmitSource("PC");
-        Map<String, Object> parmMap = previpFeedbackService.submitTeacherComment(teacherComment, loginService.getUser(),serialNumber,scheduledDateTime,false);
-
+        Map<String, Object> parmMap = classFeedbackService.submitTeacherComment(teacherComment, loginService.getUser(),serialNumber,scheduledDateTime,false);
         long millis =stopwatch.stop().elapsed(TimeUnit.MILLISECONDS);
         logger.info("执行ReportController: feedbackSubmit()耗时：{} ", millis);
         return ApiResponseUtils.buildSuccessDataResp(parmMap);
     }
 
-    @RequestMapping("/previp/view")
+    @RequestMapping("/class/view")
     public Map<String,Object> feedbackView(HttpServletRequest request, HttpServletResponse response,
-                                             @RequestParam Long onlineClassId ,@RequestParam Integer studentId) {
+                                           @RequestParam Long onlineClassId ,@RequestParam Integer studentId) {
         Stopwatch stopwatch = Stopwatch.createStarted();
         logger.info("ReportController: feedbackView() 参数为：onlineClassId={}, studentId={}", onlineClassId, studentId);
         Map map = Maps.newHashMap();
         // 查询课程信息
-        OnlineClass onlineClass = previpFeedbackService.findOnlineClassById(onlineClassId);
+        OnlineClass onlineClass = classFeedbackService.findOnlineClassById(onlineClassId);
         map.put("onlineClass", onlineClass);
 
         // 查询Lesson
-        Lesson lesson = previpFeedbackService.findLessonById(onlineClass.getLessonId());
+        Lesson lesson = classFeedbackService.findLessonById(onlineClass.getLessonId());
         map.put("lesson", lesson);
 
         // 查询FeedBack信息
-        TeacherComment teacherComment = previpFeedbackService.findCFByOnlineClassIdAndStudentIdAndTeacherId(onlineClassId, studentId,onlineClass,lesson);
+        TeacherComment teacherComment = classFeedbackService.findCFByOnlineClassIdAndStudentIdAndTeacherId(onlineClassId, studentId,onlineClass,lesson);
         if(teacherComment!=null){
-            String trialLevelResultDisplay = previpFeedbackService.handleTeacherComment(teacherComment.getTrialLevelResult());
+            String trialLevelResultDisplay = classFeedbackService.handleTeacherComment(teacherComment.getTrialLevelResult());
             teacherComment.setTrialLevelResult(trialLevelResultDisplay);
         }
         map.put("teacherComment", teacherComment);
         //查询StudentExam信息
         StudentExam studentExam = studentExamDao.findStudentExamByStudentId(studentId);
-        map.put("studentExam", previpFeedbackService.handleExamLevel(studentExam, lesson.getSerialNumber()));
+        map.put("studentExam", classFeedbackService.handleExamLevel(studentExam, lesson.getSerialNumber()));
 
         map.put("studentId", studentId);
 
@@ -91,6 +91,4 @@ public class PrevipFeedbackController {
         logger.info("执行ReportController: feedbackView()耗时：{} ", millis);
         return ApiResponseUtils.buildSuccessDataResp(map);
     }
-
-
 }

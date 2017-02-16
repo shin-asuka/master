@@ -1,5 +1,6 @@
 package com.vipkid.portal.classroom.util;
 
+import com.vipkid.portal.classroom.model.ClassCommentsVo;
 import com.vipkid.portal.classroom.model.PrevipCommentsVo;
 import com.vipkid.trpm.entity.teachercomment.SubmitTeacherCommentDto;
 import org.apache.commons.beanutils.BeanUtils;
@@ -15,6 +16,18 @@ public class Convertor {
         SubmitTeacherCommentDto submitTeacherCommentDto = new SubmitTeacherCommentDto();
         try {
             BeanUtils.copyProperties(submitTeacherCommentDto,previpCommentsVo);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        }
+        return submitTeacherCommentDto;
+    }
+
+    public static SubmitTeacherCommentDto toSubmitTeacherCommentDto(ClassCommentsVo classCommentsVo){
+        SubmitTeacherCommentDto submitTeacherCommentDto = new SubmitTeacherCommentDto();
+        try {
+            BeanUtils.copyProperties(submitTeacherCommentDto,classCommentsVo);
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         } catch (InvocationTargetException e) {
