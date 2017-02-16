@@ -21,7 +21,7 @@ import com.vipkid.enums.TeacherEnum;
 import com.vipkid.enums.TeacherEnum.LifeCycle;
 import com.vipkid.portal.classroom.model.ClassRoomVo;
 import com.vipkid.portal.classroom.model.PeCommentsVo;
-import com.vipkid.portal.classroom.model.PesCommentsVo;
+import com.vipkid.portal.classroom.model.PeSupervisorCommentsVo;
 import com.vipkid.portal.classroom.service.FeedbackService;
 import com.vipkid.recruitment.event.AuditEvent;
 import com.vipkid.recruitment.event.AuditEventHandler;
@@ -112,7 +112,7 @@ public class FeedbackController extends RestfulController {
 	 * @return
 	 */
 	@RequestMapping(value = "/pes/save", method = RequestMethod.POST, produces = RestfulConfig.JSON_UTF_8)
-	public Map<String, Object> pesSave(HttpServletRequest request, HttpServletResponse response, @RequestBody PesCommentsVo bean){
+	public Map<String, Object> peSupervisorSave(HttpServletRequest request, HttpServletResponse response, @RequestBody PeSupervisorCommentsVo bean){
 		try{
 			//参数校验
             List<Result> list = ValidateUtils.checkBean(bean,false);
@@ -141,7 +141,7 @@ public class FeedbackController extends RestfulController {
 	 * @return
 	 */
 	@RequestMapping(value = "/pes/view", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
-	public Map<String, Object> pesView(HttpServletRequest request, HttpServletResponse response, @RequestParam("id") Long id){
+	public Map<String, Object> peSupervisorView(HttpServletRequest request, HttpServletResponse response, @RequestParam("id") Long id){
 		try{
 			
 			return ApiResponseUtils.buildSuccessDataResp(new Object());

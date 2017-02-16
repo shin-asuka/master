@@ -14,6 +14,7 @@ import com.google.api.client.util.Lists;
 import com.google.common.collect.Maps;
 import com.vipkid.enums.TeacherApplicationEnum.Result;
 import com.vipkid.portal.classroom.model.PeCommentsVo;
+import com.vipkid.portal.classroom.model.PeSupervisorCommentsVo;
 import com.vipkid.recruitment.dao.TeacherApplicationDao;
 import com.vipkid.recruitment.entity.TeacherApplication;
 import com.vipkid.trpm.constant.ApplicationConstant.FinishType;
@@ -31,7 +32,7 @@ import com.vipkid.trpm.service.portal.OnlineClassService;
 @Service
 public class FeedbackService {
 
-	private static Logger logger = LoggerFactory.getLogger(FeedbackService.class);
+	// private static Logger logger = LoggerFactory.getLogger(FeedbackService.class);
 	
 	@Autowired
 	private TeacherApplicationDao teacherApplicationDao;
@@ -93,7 +94,7 @@ public class FeedbackService {
         
         TeacherApplication teacherApplication = this.teacherApplicationDao.findApplictionById(applicationId);
         
-        teacherApplication = setPropertiesForApplication(teacherApplication, bean);
+        teacherApplication = setPropertiesForPe(teacherApplication, bean);
         
         if ("SAVE".endsWith(bean.getSubmitType())){ 
             resultMap.put("result", onlineclassService.updateApplications(teacherApplication));
@@ -122,14 +123,58 @@ public class FeedbackService {
             if (Objects.nonNull(teacherApplicationId) && Objects.nonNull(recruitTeacher)) {
                 appserverPracticumService.finishPracticumProcess(teacherApplicationId, recruitTeacher);
             }
-        }
-        
+        }        
         return resultMap;
 	}
 	
-	public TeacherApplication setPropertiesForApplication(TeacherApplication teacherApplication,PeCommentsVo bean){
-		
-		
+	
+	
+	
+	private TeacherApplication setPropertiesForPe(TeacherApplication teacherApplication,PeCommentsVo bean){
+		teacherApplication.setDelayDays(bean.getDelayDays());
+		teacherApplication.setEnglishLanguageScore(bean.getEnglishLanguageScore());
+		teacherApplication.setGrade6TeachingExperience(bean.getGrade6TeachingExperience());
+		teacherApplication.setHighSchoolTeachingExperience(bean.getHighSchoolTeachingExperience());
+		teacherApplication.setHomeCountryTeachingExperience(bean.getHomeCountryTeachingExperience());
+		teacherApplication.setInteractionRapportScore(bean.getInteractionRapportScore());
+		teacherApplication.setKidTeachingExperience(bean.getKidTeachingExperience());
+		teacherApplication.setKidUnder12TeachingExperience(bean.getKidUnder12TeachingExperience());
+		teacherApplication.setLessonObjectivesScore(bean.getLessonObjectivesScore());
+		teacherApplication.setOnlineTeachingExperience(bean.getOnlineTeachingExperience());
+		teacherApplication.setPreparationPlanningScore(bean.getPreparationPlanningScore());
+		teacherApplication.setStudentOutputScore(bean.getStudentOutputScore());
+		teacherApplication.setTeachingCertificate(bean.getTeachingCertificate());
+		teacherApplication.setTeachingMethodScore(bean.getTeachingMethodScore());
+		teacherApplication.setTeenagerTeachingExperience(bean.getTeenagerTeachingExperience());
+		teacherApplication.setTeflOrToselCertificate(bean.getTeflOrToselCertificate());
+		teacherApplication.setTimeManagementScore(bean.getTimeManagementScore());
+		teacherApplication.setAccent(bean.getAccent());
+		teacherApplication.setPositive(bean.getPositive());
+		teacherApplication.setEngaged(bean.getEngaged());
+		teacherApplication.setAppearance(bean.getAppearance());
+		teacherApplication.setPhonics(bean.getPhonics());
+		teacherApplication.setResult(bean.getResult());	
+		return teacherApplication;
+	}
+	
+	private TeacherApplication setPropertiesForPeSupervisor(TeacherApplication teacherApplication,PeSupervisorCommentsVo bean){
+		teacherApplication.setDelayDays(bean.getDelayDays());
+		teacherApplication.setEnglishLanguageScore(bean.getEnglishLanguageScore());
+		teacherApplication.setGrade6TeachingExperience(bean.getGrade6TeachingExperience());
+		teacherApplication.setHighSchoolTeachingExperience(bean.getHighSchoolTeachingExperience());
+		teacherApplication.setHomeCountryTeachingExperience(bean.getHomeCountryTeachingExperience());
+		teacherApplication.setInteractionRapportScore(bean.getInteractionRapportScore());
+		teacherApplication.setKidTeachingExperience(bean.getKidTeachingExperience());
+		teacherApplication.setKidUnder12TeachingExperience(bean.getKidUnder12TeachingExperience());
+		teacherApplication.setLessonObjectivesScore(bean.getLessonObjectivesScore());
+		teacherApplication.setOnlineTeachingExperience(bean.getOnlineTeachingExperience());
+		teacherApplication.setPreparationPlanningScore(bean.getPreparationPlanningScore());
+		teacherApplication.setStudentOutputScore(bean.getStudentOutputScore());
+		teacherApplication.setTeachingCertificate(bean.getTeachingCertificate());
+		teacherApplication.setTeachingMethodScore(bean.getTeachingMethodScore());
+		teacherApplication.setTeenagerTeachingExperience(bean.getTeenagerTeachingExperience());
+		teacherApplication.setTeflOrToselCertificate(bean.getTeflOrToselCertificate());
+		teacherApplication.setResult(bean.getResult());	
 		return teacherApplication;
 	}
 	

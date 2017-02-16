@@ -7,7 +7,7 @@ import com.vipkid.rest.validation.annotation.Ignore;
 import com.vipkid.rest.validation.annotation.NotNull;
 
 @NotNull
-public class PesCommentsVo {
+public class PeSupervisorCommentsVo {
 
 	private Integer id;
 	
