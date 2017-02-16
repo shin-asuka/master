@@ -47,6 +47,12 @@ public class InfoRoomDto {
 	
 	private String microserviceUrl;
 
+	private boolean previp;
+
+	private boolean ua;
+
+	private String courseType;
+
 	public Long getOnlineClassId() {
 		return onlineClassId;
 	}
@@ -191,4 +197,27 @@ public class InfoRoomDto {
 		this.microserviceUrl = microserviceUrl;
 	}
 
+	public boolean isPrevip() {
+		return previp;
+	}
+
+	public void setPrevip(boolean previp) {
+		this.previp = previp;
+	}
+
+	public boolean isUa() {
+		return ua;
+	}
+
+	public void setUa(boolean ua) {
+		this.ua = ua;
+	}
+
+	public String getCourseType() {
+		return courseType;
+	}
+
+	public void setCourseType(String courseType) {
+		this.courseType = courseType;
+	}
 }

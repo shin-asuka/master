@@ -4,6 +4,7 @@ import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.vipkid.trpm.util.LessonSerialNumber;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.community.config.PropertyConfigurer;
@@ -94,7 +95,10 @@ public class ClassroomService {
 			resultDto.setObjective(lesson.getObjective());
 			resultDto.setVocabularies(lesson.getVocabularies());
 			resultDto.setSentencePatterns(lesson.getSentencePatterns());
-		}else{
+            resultDto.setPrevip(obtainPrevip(lesson.getSerialNumber()));
+            resultDto.setUa(obtainUa(onlineClass.getId()));
+            resultDto.setCourseType(obtainCourseType(lesson.getSerialNumber()));
+        }else{
 			logger.warn("lesson is null,onlineClassId:{},studentId:{}",bean.getOnlineClassId(), bean.getStudentId());
 		}
 		
@@ -399,7 +403,37 @@ public class ClassroomService {
         }
         return studentExam;
     }
-	
-    
-    
+
+    public String obtainCourseType(String lessonSn){
+        lessonSn = lessonSn.toLowerCase();
+        if(lessonSn.startsWith("a1")){
+            return "DemoReport";
+        }else if(lessonSn.startsWith("open")){
+            return "Open";
+        }else if(lessonSn.startsWith("t")){
+            return "Trial";
+        }else if(lessonSn.startsWith("p")){
+            return "Practicum";
+        }else if(lessonSn.startsWith("r")){
+            return "Recruitment";
+        }else if(lessonSn.startsWith("mc")){
+            return "Major2016";
+        }else if(lessonSn.startsWith("c1")){
+            return "Major";
+        }else if(lessonSn.startsWith("it")){
+            return "IT_Test";
+        }else {
+            return "Unknown";
+        }
+    }
+
+    public boolean obtainPrevip(String lessonSn){
+        return LessonSerialNumber.isPreVipkidLesson(lessonSn);
+    }
+
+    public boolean obtainUa(Long onlineClassId){
+        OnlineClass onlineClass = onlineClassDao.findById(onlineClassId);
+        Lesson lesson = lessonDao.findById(onlineClass.getLessonId());
+        return lesson.getIsUnitAssessment()==1?true:false;
+    }
 }
