@@ -46,6 +46,7 @@ public class SelfSmtpAppender extends SMTPAppender {
         return pl;
     }
 
+
     final static int MAX_DELAY_BETWEEN_STATUS_MESSAGES = (int) (1228800 * CoreConstants.MILLIS_IN_ONE_SECOND);
     int delayBetweenStatusMessages = (int) (300 * CoreConstants.MILLIS_IN_ONE_SECOND);
     long lastTrackerStatusPrint = 0;
