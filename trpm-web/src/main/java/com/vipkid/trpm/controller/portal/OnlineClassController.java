@@ -78,11 +78,17 @@ public class OnlineClassController extends AbstractPortalController {
                     @PathVariable long studentId, @PathVariable long lessonId, Integer submitStatus, Model model)
                     throws IOException {
         if (StringUtils.equalsIgnoreCase(request.getHeader("x-forwarded-proto"), "https")) {
-            response.sendRedirect(request.getRequestURL().toString().replace("https:", "http:") + "?"
-                            + request.getQueryString());
-            logger.info("Enter Classroom change https to http redirect -> header: {}",
-                            request.getHeader("x-forwarded-proto"));
-            return null;
+            String url = request.getRequestURL().toString();
+            String httpUrl = url.replace("https:", "http:");
+            String queryString = "";
+            if (StringUtils.isNotBlank(request.getQueryString())){
+                queryString = "?" + request.getQueryString();
+            }
+            String finalUrl = httpUrl + queryString;
+            logger.info("Enter Classroom change https to http redirect -> header: {}; url: {}; httpUrl: {}; queryString: {}; finalUrl: {}",
+                    request.getHeader("x-forwarded-proto"), url, httpUrl, queryString, finalUrl);
+            response.sendRedirect(finalUrl);
+            return finalUrl;
         }
         model.addAttribute("submitStatus", submitStatus);
         Teacher teacher = loginService.getTeacher();

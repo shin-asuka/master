@@ -61,12 +61,15 @@ public class PersonalInfoDto {
 	
 	@NotNull
 	private String introduction;
-	
-	
+
 	private String evaluationBio;
-	
-	
+
 	private Boolean IsRemindEditBankInfo = false;
+
+	private String job;
+
+	private Integer jobHrsPerWeek;
+
 
 	public String getAvatar() {
 		return avatar;
@@ -267,5 +270,20 @@ public class PersonalInfoDto {
 	public void setIsRemindEditBankInfo(Boolean isRemindEditBankInfo) {
 		IsRemindEditBankInfo = isRemindEditBankInfo;
 	}
-	
+
+	public String getJob() {
+		return job;
+	}
+
+	public void setJob(String job) {
+		this.job = job;
+	}
+
+	public Integer getJobHrsPerWeek() {
+		return jobHrsPerWeek;
+	}
+
+	public void setJobHrsPerWeek(Integer jobHrsPerWeek) {
+		this.jobHrsPerWeek = jobHrsPerWeek;
+	}
 }

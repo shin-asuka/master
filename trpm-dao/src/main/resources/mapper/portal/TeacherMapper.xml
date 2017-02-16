@@ -18,7 +18,7 @@
 		teacher_currency, teacher.email AS teacher_email,
 		teacher.extra_class_salary AS teacher_extra_class_salary, teacher.hide
 		AS teacher_hide, teacher.introduction AS teacher_introduction,
-		teacher.job AS teacher_job, teacher.life_cycle AS teacher_life_cycle,
+		teacher.job AS teacher_job, teacher.job_hrs_per_week AS teacher_job_hrs_per_week, teacher.life_cycle AS teacher_life_cycle,
 		teacher.linkedin AS teacher_linkedin, teacher.mobile AS
 		teacher_mobile, teacher.no_show_time AS teacher_no_show_time,
 		teacher.notes AS teacher_notes, teacher.over_time_class_salary AS
@@ -88,6 +88,7 @@
 			<if test="hide!=null">AND teacher.hide = #{hide}</if>
 			<if test="introduction!=null">AND teacher.introduction = #{introduction}</if>
 			<if test="job!=null">AND teacher.job = #{job}</if>
+			<if test="jobHrsPerWeek!=null">AND teacher.job_hrs_per_week = #{jobHrsPerWeek}</if>
 			<if test="lifeCycle!=null">AND teacher.life_cycle = #{lifeCycle}</if>
 			<if test="linkedin!=null">AND teacher.linkedin = #{linkedin}</if>
 			<if test="mobile!=null">AND teacher.mobile = #{mobile}</if>
@@ -176,6 +177,7 @@
 		<result column="teacher_hide" property="hide" />
 		<result column="teacher_introduction" property="introduction" />
 		<result column="teacher_job" property="job" />
+		<result column="teacher_job_hrs_per_week" property="jobHrsPerWeek" />
 		<result column="teacher_life_cycle" property="lifeCycle" />
 		<result column="teacher_linkedin" property="linkedin" />
 		<result column="teacher_mobile" property="mobile" />
@@ -287,6 +289,7 @@
 			<if test="hide!=null">,hide</if>
 			<if test="introduction!=null">,introduction</if>
 			<if test="job!=null">,job</if>
+			<if test="jobHrsPerWeek!=null">,job_hrs_per_week</if>
 			<if test="lifeCycle!=null">,life_cycle</if>
 			<if test="linkedin!=null">,linkedin</if>
 			<if test="mobile!=null">,mobile</if>
@@ -363,6 +366,7 @@
 			<if test="hide!=null">,#{hide}</if>
 			<if test="introduction!=null">,#{introduction}</if>
 			<if test="job!=null">,#{job}</if>
+			<if test="jobHrsPerWeek!=null">,#{jobHrsPerWeek}</if>
 			<if test="lifeCycle!=null">,#{lifeCycle}</if>
 			<if test="linkedin!=null">,#{linkedin}</if>
 			<if test="mobile!=null">,#{mobile}</if>
@@ -449,6 +453,7 @@
 			<if test="hide!=null">,hide = #{hide}</if>
 			<if test="introduction!=null">,introduction = #{introduction}</if>
 			<if test="job!=null">,job = #{job}</if>
+			<if test="jobHrsPerWeek!=null">,job_hrs_per_week = #{jobHrsPerWeek}</if>
 			<if test="lifeCycle!=null">,life_cycle = #{lifeCycle}</if>
 			<if test="linkedin!=null">,linkedin = #{linkedin}</if>
 			<if test="mobile!=null">,mobile = #{mobile}</if>
