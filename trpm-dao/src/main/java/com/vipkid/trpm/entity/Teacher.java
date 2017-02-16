@@ -54,6 +54,8 @@ public class Teacher extends Entity implements Serializable {
 	/*  */
 	private String job;
 	/*  */
+	private Integer jobHrsPerWeek;
+	/*  */
 	private String lifeCycle;
 	/*  */
 	private String linkedin;
@@ -349,6 +351,14 @@ public class Teacher extends Entity implements Serializable {
 	public Teacher setJob(String job) {
 		this.job = job;
 		return this;
+	}
+
+	public Integer getJobHrsPerWeek() {
+		return jobHrsPerWeek;
+	}
+
+	public void setJobHrsPerWeek(Integer jobHrsPerWeek) {
+		this.jobHrsPerWeek = jobHrsPerWeek;
 	}
 
 	public String getLifeCycle() {

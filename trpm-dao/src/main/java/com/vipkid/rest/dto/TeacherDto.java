@@ -57,7 +57,12 @@ public class TeacherDto {
     private String highestLevelOfEdu;
     
     private String teachingIds;
-  
+
+    @Ignore(type=Annotaions.NOT_NULL)
+    private String job;
+
+    @Ignore(type=Annotaions.NOT_NULL)
+    private Integer jobHrsPerWeek;
 
     public String getFirstName() {
         return firstName;
@@ -217,5 +222,21 @@ public class TeacherDto {
 
     public void setTeachingIds(String teachingIds) {
         this.teachingIds = teachingIds;
-    }    
+    }
+
+    public String getJob() {
+        return job;
+    }
+
+    public void setJob(String job) {
+        this.job = job;
+    }
+
+    public Integer getJobHrsPerWeek() {
+        return jobHrsPerWeek;
+    }
+
+    public void setJobHrsPerWeek(Integer jobHrsPerWeek) {
+        this.jobHrsPerWeek = jobHrsPerWeek;
+    }
 }
