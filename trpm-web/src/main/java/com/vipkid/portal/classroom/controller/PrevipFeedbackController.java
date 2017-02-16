@@ -5,8 +5,7 @@ import com.google.common.base.Stopwatch;
 import com.google.common.collect.Maps;
 import com.vipkid.enums.TeacherEnum;
 import com.vipkid.portal.classroom.model.PrevipCommentsVo;
-import com.vipkid.portal.classroom.model.TrialCommentsVo;
-import com.vipkid.portal.classroom.service.FeedbackService;
+import com.vipkid.portal.classroom.service.PrevipFeedbackService;
 import com.vipkid.rest.interceptor.annotation.RestInterface;
 import com.vipkid.rest.service.LoginService;
 import com.vipkid.rest.utils.ApiResponseUtils;
@@ -14,7 +13,6 @@ import com.vipkid.trpm.dao.StudentExamDao;
 import com.vipkid.trpm.entity.Lesson;
 import com.vipkid.trpm.entity.OnlineClass;
 import com.vipkid.trpm.entity.StudentExam;
-import com.vipkid.trpm.entity.teachercomment.SubmitTeacherCommentDto;
 import com.vipkid.trpm.entity.teachercomment.TeacherComment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,7 +39,7 @@ public class PrevipFeedbackController {
     private static Logger logger = LoggerFactory.getLogger(ClassroomController.class);
 
     @Autowired
-    private FeedbackService feedbackService;
+    private PrevipFeedbackService previpFeedbackService;
     @Autowired
     private LoginService loginService;
     @Autowired
@@ -55,7 +53,7 @@ public class PrevipFeedbackController {
         String scheduledDateTime = teacherComment.getScheduleDateTime();
         logger.info("ReportController: feedbackSubmit() 参数为：serialNumber={}, scheduledDateTime={}, teacherComment={}", serialNumber, scheduledDateTime, JSON.toJSONString(teacherComment));
         teacherComment.setSubmitSource("PC");
-        Map<String, Object> parmMap = feedbackService.submitTeacherComment(teacherComment, loginService.getUser(),serialNumber,scheduledDateTime,false,true);
+        Map<String, Object> parmMap = previpFeedbackService.submitTeacherComment(teacherComment, loginService.getUser(),serialNumber,scheduledDateTime,false,true);
 
         long millis =stopwatch.stop().elapsed(TimeUnit.MILLISECONDS);
         logger.info("执行ReportController: feedbackSubmit()耗时：{} ", millis);
@@ -69,23 +67,23 @@ public class PrevipFeedbackController {
         logger.info("ReportController: feedbackView() 参数为：onlineClassId={}, studentId={}", onlineClassId, studentId);
         Map map = Maps.newHashMap();
         // 查询课程信息
-        OnlineClass onlineClass = feedbackService.findOnlineClassById(onlineClassId);
+        OnlineClass onlineClass = previpFeedbackService.findOnlineClassById(onlineClassId);
         map.put("onlineClass", onlineClass);
 
         // 查询Lesson
-        Lesson lesson = feedbackService.findLessonById(onlineClass.getLessonId());
+        Lesson lesson = previpFeedbackService.findLessonById(onlineClass.getLessonId());
         map.put("lesson", lesson);
 
         // 查询FeedBack信息
-        TeacherComment teacherComment = feedbackService.findCFByOnlineClassIdAndStudentIdAndTeacherId(onlineClassId, studentId,onlineClass,lesson);
+        TeacherComment teacherComment = previpFeedbackService.findCFByOnlineClassIdAndStudentIdAndTeacherId(onlineClassId, studentId,onlineClass,lesson);
         if(teacherComment!=null){
-            String trialLevelResultDisplay = feedbackService.handleTeacherComment(teacherComment.getTrialLevelResult());
+            String trialLevelResultDisplay = previpFeedbackService.handleTeacherComment(teacherComment.getTrialLevelResult());
             teacherComment.setTrialLevelResult(trialLevelResultDisplay);
         }
         map.put("teacherComment", teacherComment);
         //查询StudentExam信息
         StudentExam studentExam = studentExamDao.findStudentExamByStudentId(studentId);
-        map.put("studentExam", feedbackService.handleExamLevel(studentExam, lesson.getSerialNumber()));
+        map.put("studentExam", previpFeedbackService.handleExamLevel(studentExam, lesson.getSerialNumber()));
 
         map.put("studentId", studentId);
 
@@ -94,16 +92,5 @@ public class PrevipFeedbackController {
         return ApiResponseUtils.buildSuccessDataResp(map);
     }
 
-    @RequestMapping("/trial/save")
-    public Map<String,Object> feedbackTrialSubmit(HttpServletRequest request, HttpServletResponse response,
-                                             @RequestBody TrialCommentsVo teacherComment, Model model) {
 
-        return ApiResponseUtils.buildSuccessDataResp("OK");
-    }
-
-    @RequestMapping("/trial/view")
-    public Map<String,Object> feedbackTrialView(HttpServletRequest request, HttpServletResponse response,
-                                                  @RequestParam Long onlineClassId ,@RequestParam Integer studentId) {
-        return ApiResponseUtils.buildSuccessDataResp("OK");
-    }
 }
