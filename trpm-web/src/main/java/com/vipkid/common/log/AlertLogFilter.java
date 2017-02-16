@@ -13,7 +13,7 @@ public class AlertLogFilter extends Filter<ILoggingEvent> {
     @Override
     public FilterReply decide(ILoggingEvent event) {
 
-        if(event.getLevel().levelInt < Level.WARN_INT){
+        if(event.getLevel().levelInt < Level.ERROR_INT){
             return FilterReply.DENY;
         }
 
