@@ -471,7 +471,7 @@ public class TeacherService {
 			teacherCommentList = JsonUtils
 					.toBeanList(standardJsonObject.getData().get("result"), TeacherCommentResult.class);
 			if (CollectionUtils.isEmpty(teacherCommentList)) {
-				logger.error("请求CF返回业务数据为空，请求参数：{}，返回结果：{}", requestParam,
+				logger.info("请求CF返回业务数据为空，请求参数：{}，返回结果：{}", requestParam,
 						response);
 				return null;
 			}
