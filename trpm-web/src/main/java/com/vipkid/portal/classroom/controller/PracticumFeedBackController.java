@@ -87,12 +87,14 @@ public class PracticumFeedBackController extends RestfulController {
 	 * @return
 	 */
 	@RequestMapping(value = "/pe/view", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
-	public Map<String, Object> peView(HttpServletRequest request, HttpServletResponse response, @RequestParam("id") Long id){
+	public Map<String, Object> peView(HttpServletRequest request, HttpServletResponse response, @RequestParam("id") Integer id){
 		try{
-			
-			
-
-			return ApiResponseUtils.buildSuccessDataResp(new Object());
+			if(id == null){
+				response.setStatus(HttpStatus.BAD_REQUEST.value());
+				return ApiResponseUtils.buildErrorResp(-5, "参数错误");
+			}
+			PeCommentsVo bean = this.practicumFeedbackService.findPeFromByAppId(id);
+			return ApiResponseUtils.buildSuccessDataResp(bean);
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
 			logger.error(e.getMessage());
@@ -146,10 +148,14 @@ public class PracticumFeedBackController extends RestfulController {
 	 * @return
 	 */
 	@RequestMapping(value = "/pes/view", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
-	public Map<String, Object> peSupervisorView(HttpServletRequest request, HttpServletResponse response, @RequestParam("id") Long id){
+	public Map<String, Object> peSupervisorView(HttpServletRequest request, HttpServletResponse response, @RequestParam("id") Integer id){
 		try{
-			
-			return ApiResponseUtils.buildSuccessDataResp(new Object());
+			if(id == null){
+				response.setStatus(HttpStatus.BAD_REQUEST.value());
+				return ApiResponseUtils.buildErrorResp(-5, "参数错误");
+			}
+			PeSupervisorCommentsVo bean = this.practicumFeedbackService.findPeSupervisorFromByAppId(id);
+			return ApiResponseUtils.buildSuccessDataResp(bean);
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
 			logger.error(e.getMessage());

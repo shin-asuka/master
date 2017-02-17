@@ -1,9 +1,11 @@
 package com.vipkid.portal.classroom.service;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,6 +20,9 @@ import com.vipkid.portal.classroom.model.PeSupervisorCommentsVo;
 import com.vipkid.recruitment.dao.TeacherApplicationDao;
 import com.vipkid.recruitment.entity.TeacherApplication;
 import com.vipkid.trpm.constant.ApplicationConstant.FinishType;
+import com.vipkid.trpm.dao.TeacherPeCommentsDao;
+import com.vipkid.trpm.dao.TeacherPeLevelsDao;
+import com.vipkid.trpm.dao.TeacherPeTagsDao;
 import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.entity.TeacherPeComments;
 import com.vipkid.trpm.entity.TeacherPeLevels;
@@ -54,14 +59,25 @@ public class PracticumFeedbackService {
 
     @Autowired
     private TeacherPeCommentsService teacherPeCommentsService;
+    
+    @Autowired
+    private TeacherPeTagsDao teacherPeTagsDao;
+    
+    @Autowired
+    private TeacherPeLevelsDao teacherPeLevelsDao;
+    
+    @Autowired
+    private TeacherPeCommentsDao teacherPeCommentsDao;
 	
     /**
      * Pe 保存 / 提交
      * @param pe
      * @param bean
      * @return
+     * @throws InvocationTargetException 
+     * @throws IllegalAccessException 
      */
-	public Map<String, Object> saveDoPeAudit(Teacher pe, PeCommentsVo bean){
+	public Map<String, Object> saveDoPeAudit(Teacher pe, PeCommentsVo bean) throws IllegalAccessException, InvocationTargetException{
 		
 		Map<String, Object> resultMap = Maps.newHashMap();
         
@@ -100,7 +116,7 @@ public class PracticumFeedbackService {
         
         TeacherApplication teacherApplication = this.teacherApplicationDao.findApplictionById(applicationId);
         
-        teacherApplication = setPropertiesForPe(teacherApplication, bean);
+        BeanUtils.copyProperties(teacherApplication, bean);
         
         logger.info("PE:{} , 页面传入的结果result:{}", bean.getSubmitType(), bean.getResult());
         
@@ -141,8 +157,10 @@ public class PracticumFeedbackService {
 	 * @param peSupervisor
 	 * @param bean
 	 * @return
+	 * @throws InvocationTargetException 
+	 * @throws IllegalAccessException 
 	 */
-	public Map<String, Object> saveDoPeSupervisorAudit(Teacher peSupervisor, PeSupervisorCommentsVo bean){
+	public Map<String, Object> saveDoPeSupervisorAudit(Teacher peSupervisor, PeSupervisorCommentsVo bean) throws IllegalAccessException, InvocationTargetException{
 		
 		Map<String, Object> resultMap = Maps.newHashMap();
 		
@@ -181,7 +199,7 @@ public class PracticumFeedbackService {
 
         TeacherApplication teacherApplication = this.teacherApplicationDao.findApplictionById(applicationId);
         
-        teacherApplication = setPropertiesForPeSupervisor(teacherApplication, bean);
+        BeanUtils.copyProperties(teacherApplication, bean);
 		
         logger.info("PES:{} , 页面传入的结果result:{}", bean.getSubmitType(), bean.getResult());
         
@@ -213,53 +231,58 @@ public class PracticumFeedbackService {
 	}
 	
 	
-	private TeacherApplication setPropertiesForPe(TeacherApplication teacherApplication,PeCommentsVo bean){
-		teacherApplication.setDelayDays(bean.getDelayDays());
-		teacherApplication.setEnglishLanguageScore(bean.getEnglishLanguageScore());
-		teacherApplication.setGrade6TeachingExperience(bean.getGrade6TeachingExperience());
-		teacherApplication.setHighSchoolTeachingExperience(bean.getHighSchoolTeachingExperience());
-		teacherApplication.setHomeCountryTeachingExperience(bean.getHomeCountryTeachingExperience());
-		teacherApplication.setInteractionRapportScore(bean.getInteractionRapportScore());
-		teacherApplication.setKidTeachingExperience(bean.getKidTeachingExperience());
-		teacherApplication.setKidUnder12TeachingExperience(bean.getKidUnder12TeachingExperience());
-		teacherApplication.setLessonObjectivesScore(bean.getLessonObjectivesScore());
-		teacherApplication.setOnlineTeachingExperience(bean.getOnlineTeachingExperience());
-		teacherApplication.setPreparationPlanningScore(bean.getPreparationPlanningScore());
-		teacherApplication.setStudentOutputScore(bean.getStudentOutputScore());
-		teacherApplication.setTeachingCertificate(bean.getTeachingCertificate());
-		teacherApplication.setTeachingMethodScore(bean.getTeachingMethodScore());
-		teacherApplication.setTeenagerTeachingExperience(bean.getTeenagerTeachingExperience());
-		teacherApplication.setTeflOrToselCertificate(bean.getTeflOrToselCertificate());
-		teacherApplication.setTimeManagementScore(bean.getTimeManagementScore());
-		teacherApplication.setAccent(bean.getAccent());
-		teacherApplication.setPositive(bean.getPositive());
-		teacherApplication.setEngaged(bean.getEngaged());
-		teacherApplication.setAppearance(bean.getAppearance());
-		teacherApplication.setPhonics(bean.getPhonics());
-		teacherApplication.setResult(bean.getResult());	
-		return teacherApplication;
+	public PeCommentsVo findPeFromByAppId(Integer applicationId) throws IllegalAccessException, InvocationTargetException{
+		PeCommentsVo bean = new PeCommentsVo();
+		
+		TeacherApplication application = this.teacherApplicationDao.findApplictionById(applicationId);
+		
+		BeanUtils.copyProperties(bean, application);
+		
+		List<TeacherPeTags> tagsList = teacherPeTagsDao.getTeacherPeTagsByApplicationId(applicationId);
+		List<Map<String,Integer>> taglist = Lists.newArrayList();
+		tagsList.stream().forEach(level -> {Map<String, Integer> maps = Maps.newHashMap();maps.put("id", level.getId()); taglist.add(maps);});
+		bean.setTagIds(taglist);
+		
+		List<TeacherPeLevels> levelsList = teacherPeLevelsDao.getTeacherPeLevelsByApplicationId(applicationId);
+		List<Map<String,Integer>> levellist = Lists.newArrayList();
+		levelsList.stream().forEach(level -> {Map<String, Integer> maps = Maps.newHashMap();maps.put("id", level.getId()); levellist.add(maps);});
+		bean.setLevels(levellist);
+        
+		TeacherPeComments teacherPeComments = teacherPeCommentsDao.getTeacherPeComments(applicationId);
+		
+		bean.setThings(teacherPeComments.getThingsDidWell());
+		bean.setAreas(teacherPeComments.getAreasImprovement());
+		bean.setTotalScore(teacherPeComments.getTotalScore());
+
+		return bean;
 	}
 	
 	
-	private TeacherApplication setPropertiesForPeSupervisor(TeacherApplication teacherApplication,PeSupervisorCommentsVo bean){
-		teacherApplication.setDelayDays(bean.getDelayDays());
-		teacherApplication.setEnglishLanguageScore(bean.getEnglishLanguageScore());
-		teacherApplication.setGrade6TeachingExperience(bean.getGrade6TeachingExperience());
-		teacherApplication.setHighSchoolTeachingExperience(bean.getHighSchoolTeachingExperience());
-		teacherApplication.setHomeCountryTeachingExperience(bean.getHomeCountryTeachingExperience());
-		teacherApplication.setInteractionRapportScore(bean.getInteractionRapportScore());
-		teacherApplication.setKidTeachingExperience(bean.getKidTeachingExperience());
-		teacherApplication.setKidUnder12TeachingExperience(bean.getKidUnder12TeachingExperience());
-		teacherApplication.setLessonObjectivesScore(bean.getLessonObjectivesScore());
-		teacherApplication.setOnlineTeachingExperience(bean.getOnlineTeachingExperience());
-		teacherApplication.setPreparationPlanningScore(bean.getPreparationPlanningScore());
-		teacherApplication.setStudentOutputScore(bean.getStudentOutputScore());
-		teacherApplication.setTeachingCertificate(bean.getTeachingCertificate());
-		teacherApplication.setTeachingMethodScore(bean.getTeachingMethodScore());
-		teacherApplication.setTeenagerTeachingExperience(bean.getTeenagerTeachingExperience());
-		teacherApplication.setTeflOrToselCertificate(bean.getTeflOrToselCertificate());
-		teacherApplication.setResult(bean.getResult());	
-		return teacherApplication;
+	public PeSupervisorCommentsVo findPeSupervisorFromByAppId(Integer applicationId) throws IllegalAccessException, InvocationTargetException{
+		PeSupervisorCommentsVo bean = new PeSupervisorCommentsVo();
+		
+		TeacherApplication application = this.teacherApplicationDao.findApplictionById(applicationId);
+		
+		BeanUtils.copyProperties(bean, application);
+		
+		List<TeacherPeTags> tagsList = teacherPeTagsDao.getTeacherPeTagsByApplicationId(applicationId);
+		List<Map<String,Integer>> taglist = Lists.newArrayList();
+		tagsList.stream().forEach(level -> {Map<String, Integer> maps = Maps.newHashMap();maps.put("id", level.getId()); taglist.add(maps);});
+		bean.setTagIds(taglist);
+		
+		List<TeacherPeLevels> levelsList = teacherPeLevelsDao.getTeacherPeLevelsByApplicationId(applicationId);
+		List<Map<String,Integer>> levellist = Lists.newArrayList();
+		levelsList.stream().forEach(level -> {Map<String, Integer> maps = Maps.newHashMap();maps.put("id", level.getId()); levellist.add(maps);});
+		bean.setLevels(levellist);
+        
+		TeacherPeComments teacherPeComments = teacherPeCommentsDao.getTeacherPeComments(applicationId);
+		
+		bean.setThings(teacherPeComments.getThingsDidWell());
+		bean.setAreas(teacherPeComments.getAreasImprovement());
+		bean.setTotalScore(teacherPeComments.getTotalScore());
+		
+		return bean;
 	}
+	
 	
  }
