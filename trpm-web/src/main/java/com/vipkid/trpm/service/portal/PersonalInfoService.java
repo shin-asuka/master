@@ -133,18 +133,31 @@ public class PersonalInfoService {
 		//
 
 		//
+		String bankAccountName = bankInfo.getBeneficiaryAccountName();
+		String bankSwiftCode = bankInfo.getSwiftCode();
+		String bankABARoutingNumber = bankInfo.getBankABARoutingNumber();
+		String bankACHNumber = bankInfo.getBankACHNumber();
+		String identityNumber = bankInfo.getIdNumber();
 		teacher.setBankName(bankInfo.getBeneficiaryBankName());
-		teacher.setBankAccountName(bankInfo.getBeneficiaryAccountName());
+		if (bankAccountName.indexOf("*")!=-1){
+			teacher.setBankAccountName(bankAccountName);
+		}
 		teacher.setBankCardNumber(bankInfo.getBeneficiaryAccountNumber());
-
-		teacher.setBankSwiftCode(bankInfo.getSwiftCode());
-		teacher.setBankABARoutingNumber(bankInfo.getBankABARoutingNumber());
-		teacher.setBankACHNumber(bankInfo.getBankACHNumber());
+		if (bankSwiftCode.indexOf("*")!=-1){
+			teacher.setBankSwiftCode(bankSwiftCode);
+		}
+		if(bankABARoutingNumber.indexOf("*")!=-1){
+			teacher.setBankABARoutingNumber(bankABARoutingNumber);
+		}
+		if (bankACHNumber.indexOf("*")!=-1){
+			teacher.setBankACHNumber(bankACHNumber);
+		}
 
 		teacher.setIdentityType(bankInfo.getIdType());
 		teacher.setPassport(bankInfo.getPassportURL());
-
-		teacher.setIdentityNumber(bankInfo.getIdNumber());
+		if (identityNumber.indexOf("*")!=-1){
+			teacher.setIdentityNumber(identityNumber);
+		}
 		teacher.setIssuanceCountry(bankInfo.getIssuanceCountryId());
 
 		teacherDao.update(teacher);
