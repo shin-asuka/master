@@ -87,7 +87,7 @@ public class ManageGatewayService extends HttpBaseService {
 				for(StudentCommentVo stuCommentApi : studentCommentPageApi.getData()){
 					OnlineClass onlineClass = onlineClassService.getOnlineClassById(stuCommentApi.getClass_id());
 					if(onlineClass!= null) {
-						stuCommentApi.setScheduleDateTime(DateFormatUtils.format(onlineClass.getScheduledDateTime(), "yyyy-MM-dd hh:mm"));
+						stuCommentApi.setScheduleDateTime(DateFormatUtils.format(onlineClass.getScheduledDateTime(), "yyyy-MM-dd HH:mm"));
 						//构造OnlineClassName
 						Lesson lesson = lessonDao.findById(onlineClass.getLessonId());
 						if(lesson!=null) {
