@@ -5,6 +5,7 @@ import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.filter.Filter;
 import ch.qos.logback.core.spi.FilterReply;
 import com.google.api.client.util.Lists;
+import com.google.common.base.Splitter;
 import org.apache.commons.lang3.StringUtils;
 import org.community.config.PropertyConfigurer;
 
@@ -44,6 +45,18 @@ public class AlertLogFilter extends Filter<ILoggingEvent> {
                 event.getMessage().contains("Using getResponseBodyAsStream instead is recommended.")) {
             return FilterReply.DENY;
         }
+
+//        String filterLogger = PropertyConfigurer.stringValue("logback.filter.logger");
+//        if(StringUtils.isNotBlank(filterLogger)){
+//            Iterable<String> loggerIterable = Splitter.on(";").split(filterLogger);
+//            for(String filterLoggerItem : loggerIterable){
+//                if(event.getLoggerName().contains(filterLoggerItem)){
+//                    return FilterReply.DENY;
+//                }
+//            }
+//        }
+
+
 
 
 

@@ -499,14 +499,14 @@ public class TeacherService {
 			standardJsonObject = JsonUtils.toBean(response, StandardJsonObject.class);
 
 			if (standardJsonObject == null || !standardJsonObject.getRet()) {
-				logger.error("请求CF返回失败，请求参数：{}，返回结果：{}", requestParam, response);
+				logger.warn("请求CF返回失败，请求参数：{}，返回结果：{}", requestParam, response);
 				return null;
 			}
 
 			List<Map> responseList = JsonUtils
 					.toBeanList(standardJsonObject.getData().get("result"), Map.class);
 			if (CollectionUtils.isEmpty(responseList)) {
-				logger.error("请求CF返回业务数据为空，请求参数：{}，返回结果：{}", requestParam,
+				logger.warn("请求CF返回业务数据为空，请求参数：{}，返回结果：{}", requestParam,
 						response);
 				return null;
 			}
