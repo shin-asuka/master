@@ -30,9 +30,9 @@ import com.vipkid.trpm.service.pe.TeacherPeTagsService;
 import com.vipkid.trpm.service.portal.OnlineClassService;
 
 @Service
-public class FeedbackService {
+public class PracticumFeedbackService {
 
-	private static Logger logger = LoggerFactory.getLogger(FeedbackService.class);
+	private static Logger logger = LoggerFactory.getLogger(PracticumFeedbackService.class);
 	
 	@Autowired
 	private TeacherApplicationDao teacherApplicationDao;

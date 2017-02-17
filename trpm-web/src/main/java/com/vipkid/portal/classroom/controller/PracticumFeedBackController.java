@@ -22,7 +22,7 @@ import com.vipkid.enums.TeacherEnum.LifeCycle;
 import com.vipkid.portal.classroom.model.ClassRoomVo;
 import com.vipkid.portal.classroom.model.PeCommentsVo;
 import com.vipkid.portal.classroom.model.PeSupervisorCommentsVo;
-import com.vipkid.portal.classroom.service.FeedbackService;
+import com.vipkid.portal.classroom.service.PracticumFeedbackService;
 import com.vipkid.recruitment.event.AuditEvent;
 import com.vipkid.recruitment.event.AuditEventHandler;
 import com.vipkid.rest.RestfulController;
@@ -42,7 +42,7 @@ public class PracticumFeedBackController extends RestfulController {
     private AuditEventHandler auditEventHandler;
     
     @Autowired
-    private FeedbackService feedbackService;
+    private PracticumFeedbackService practicumFeedbackService;
 	
 	private static Logger logger = LoggerFactory.getLogger(PracticumFeedBackController.class);
 
@@ -62,7 +62,7 @@ public class PracticumFeedBackController extends RestfulController {
                 return ApiResponseUtils.buildErrorResp(-1,"reslult:"+list.get(0).getName() + "," + list.get(0).getMessages());
             }
 			
-			Map<String, Object> resultMap = feedbackService.saveDoPeAudit(getTeacher(request), bean);
+			Map<String, Object> resultMap = practicumFeedbackService.saveDoPeAudit(getTeacher(request), bean);
 			//发邮件
 			if(resultMap.get("applicationResult") != null){
 				Teacher recruitTeacher = (Teacher) resultMap.get("recruitTeacher");
@@ -120,7 +120,7 @@ public class PracticumFeedBackController extends RestfulController {
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
                 return ApiResponseUtils.buildErrorResp(-1,"reslult:"+list.get(0).getName() + "," + list.get(0).getMessages());
             }
-			Map<String, Object> resultMap = feedbackService.saveDoPeSupervisorAudit(getTeacher(request), bean);
+			Map<String, Object> resultMap = practicumFeedbackService.saveDoPeSupervisorAudit(getTeacher(request), bean);
 			//发邮件
 			if(resultMap.get("applicationResult") != null){
 				Teacher recruitTeacher = (Teacher) resultMap.get("recruitTeacher");

@@ -40,7 +40,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 @Service
 public class ClassFeedbackService {
 
-    private static Logger logger = LoggerFactory.getLogger(FeedbackService.class);
+    private static Logger logger = LoggerFactory.getLogger(ClassFeedbackService.class);
 
     private static final Executor executor = Executors.newFixedThreadPool(10);
 
