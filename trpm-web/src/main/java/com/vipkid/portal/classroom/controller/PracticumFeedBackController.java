@@ -36,7 +36,7 @@ import com.vipkid.trpm.entity.Teacher;
 @RestController
 @RestInterface(lifeCycle=LifeCycle.REGULAR)
 @RequestMapping("/portal/comments/")
-public class FeedbackController extends RestfulController {
+public class PracticumFeedBackController extends RestfulController {
 
     @Autowired
     private AuditEventHandler auditEventHandler;
@@ -44,7 +44,7 @@ public class FeedbackController extends RestfulController {
     @Autowired
     private FeedbackService feedbackService;
 	
-	private static Logger logger = LoggerFactory.getLogger(FeedbackController.class);
+	private static Logger logger = LoggerFactory.getLogger(PracticumFeedBackController.class);
 
 	/**
 	 * PE 保存
