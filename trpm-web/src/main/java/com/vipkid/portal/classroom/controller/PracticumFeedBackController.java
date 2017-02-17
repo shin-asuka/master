@@ -28,10 +28,12 @@ import com.vipkid.recruitment.event.AuditEventHandler;
 import com.vipkid.rest.RestfulController;
 import com.vipkid.rest.config.RestfulConfig;
 import com.vipkid.rest.interceptor.annotation.RestInterface;
+import com.vipkid.rest.service.EvaluationService;
 import com.vipkid.rest.utils.ApiResponseUtils;
 import com.vipkid.rest.validation.ValidateUtils;
 import com.vipkid.rest.validation.tools.Result;
 import com.vipkid.trpm.entity.Teacher;
+import com.vipkid.trpm.entity.User;
 
 @RestController
 @RestInterface(lifeCycle=LifeCycle.REGULAR)
@@ -43,9 +45,29 @@ public class PracticumFeedBackController extends RestfulController {
     
     @Autowired
     private PracticumFeedbackService practicumFeedbackService;
+    
+    @Autowired
+    private EvaluationService evaluationService;
 	
 	private static Logger logger = LoggerFactory.getLogger(PracticumFeedBackController.class);
 
+    @RequestMapping(value = "/getTags", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
+    public Map<String,Object> getTags(HttpServletRequest request, HttpServletResponse response){
+        try{
+            User user = getUser(request);
+            logger.info("userId:" + user.getId());
+			return ApiResponseUtils.buildSuccessDataResp(evaluationService.findTags());
+        } catch (IllegalArgumentException e) {
+            response.setStatus(HttpStatus.BAD_REQUEST.value());
+			logger.error(e.getMessage());
+			return ApiResponseUtils.buildErrorResp(-6, "参数类型转化错误");
+        } catch (Exception e) {
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+			logger.error(e.getMessage());
+			return ApiResponseUtils.buildErrorResp(-7, "服务器异常");
+        }
+    }
+	
 	/**
 	 * PE 保存
 	 * @param request
