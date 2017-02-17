@@ -5,6 +5,7 @@ import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.filter.Filter;
 import ch.qos.logback.core.spi.FilterReply;
 import com.google.api.client.util.Lists;
+import org.apache.commons.lang3.StringUtils;
 import org.community.config.PropertyConfigurer;
 
 import java.util.ArrayList;
@@ -16,7 +17,7 @@ import java.util.List;
  */
 public class AlertLogFilter extends Filter<ILoggingEvent> {
 
-    private static final List<String> nonFilterEnvNames = new ArrayList<>(Arrays.asList("preonline", "production"));
+
 
 
 
@@ -24,9 +25,9 @@ public class AlertLogFilter extends Filter<ILoggingEvent> {
     @Override
     public FilterReply decide(ILoggingEvent event) {
 
-        String envName = PropertyConfigurer.stringValue("environment.name");
+        String mailSwitch = PropertyConfigurer.stringValue("log.mail.alert.switch");
 
-        if(!nonFilterEnvNames.contains(envName)){
+        if(StringUtils.equals(mailSwitch,"off")){
             return FilterReply.DENY;
         }
 
