@@ -16,7 +16,7 @@ import java.util.List;
  */
 public class AlertLogFilter extends Filter<ILoggingEvent> {
 
-    private static final List<String> nonFilterEnvNames = new ArrayList<>(Arrays.asList("a", "preonline", "production"));
+    private static final List<String> nonFilterEnvNames = new ArrayList<>(Arrays.asList("preonline", "production"));
 
 
 
