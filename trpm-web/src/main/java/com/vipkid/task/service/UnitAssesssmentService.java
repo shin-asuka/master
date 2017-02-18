@@ -68,7 +68,7 @@ public class UnitAssesssmentService {
 			for (OnlineClassVo oc : onlineClassVos) { //数据格式转换
 				Long id = oc.getId();
 				onlineClassVo.getIdList().add(id);
-				onlineClassVo.setIdListStr(StringUtils.join(onlineClassVo.getIdList()));
+				onlineClassVo.setIdListStr(StringUtils.join(onlineClassVo.getIdList(),","));
 				ocMap.put(id, oc);
 			}
 			
@@ -102,12 +102,12 @@ public class UnitAssesssmentService {
 			for (OnlineClassVo oc : onlineClassVos) { //数据格式转换
 				Long id = oc.getId();
 				onlineClassVo.getIdList().add(id);
-				onlineClassVo.setIdListStr(StringUtils.join(onlineClassVo.getIdList()));
+				onlineClassVo.setIdListStr(StringUtils.join(onlineClassVo.getIdList(),","));
 				ocMap.put(id, oc);
 			}
 			
 			//调用homework服务查询为完成UA报告的课程
-			OnlineClassVo onlineClassVoUnSubmit = assessmentHttpService.findUnSubmitonlineClassVo(onlineClassVo );
+			OnlineClassVo onlineClassVoUnSubmit = assessmentHttpService.findUnSubmitonlineClassVo(onlineClassVo);
 			logger.info("Result unSubmit OnlineClass  = {}",JsonUtils.toJSONString(onlineClassVoUnSubmit));
 			sendEmail(onlineClassVoUnSubmit, ocMap,"UARemindTeacher12hour.html","UARemindTeacher12hourTitle.html");
 		}
@@ -136,7 +136,7 @@ public class UnitAssesssmentService {
 			for (OnlineClassVo oc : onlineClassVos) { //数据格式转换
 				Long id = oc.getId();
 				onlineClassVo.getIdList().add(id);
-				onlineClassVo.setIdListStr(StringUtils.join(onlineClassVo.getIdList()));
+				onlineClassVo.setIdListStr(StringUtils.join(onlineClassVo.getIdList(),","));
 				ocMap.put(id, oc);
 			}
 
