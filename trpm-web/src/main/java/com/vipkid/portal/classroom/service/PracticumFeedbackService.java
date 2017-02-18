@@ -1,12 +1,14 @@
 package com.vipkid.portal.classroom.service;
 
 import java.lang.reflect.InvocationTargetException;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.community.tools.JsonTools;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,19 +22,24 @@ import com.vipkid.portal.classroom.model.PeSupervisorCommentsVo;
 import com.vipkid.recruitment.dao.TeacherApplicationDao;
 import com.vipkid.recruitment.entity.TeacherApplication;
 import com.vipkid.trpm.constant.ApplicationConstant.FinishType;
+import com.vipkid.trpm.dao.DemoReportDao;
 import com.vipkid.trpm.dao.TeacherPeCommentsDao;
 import com.vipkid.trpm.dao.TeacherPeLevelsDao;
 import com.vipkid.trpm.dao.TeacherPeTagsDao;
+import com.vipkid.trpm.entity.DemoReport;
 import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.entity.TeacherPeComments;
 import com.vipkid.trpm.entity.TeacherPeLevels;
 import com.vipkid.trpm.entity.TeacherPeTags;
+import com.vipkid.trpm.entity.report.DemoReports;
+import com.vipkid.trpm.entity.report.ReportLevels;
 import com.vipkid.trpm.service.pe.AppserverPracticumService;
 import com.vipkid.trpm.service.pe.PeSupervisorService;
 import com.vipkid.trpm.service.pe.TeacherPeCommentsService;
 import com.vipkid.trpm.service.pe.TeacherPeLevelsService;
 import com.vipkid.trpm.service.pe.TeacherPeTagsService;
 import com.vipkid.trpm.service.portal.OnlineClassService;
+import com.vipkid.trpm.util.FilesUtils;
 
 @Service
 public class PracticumFeedbackService {
@@ -68,6 +75,14 @@ public class PracticumFeedbackService {
     
     @Autowired
     private TeacherPeCommentsDao teacherPeCommentsDao;
+    
+    @Autowired
+    private DemoReportDao demoReportDao;
+    
+    private static DemoReports demoReports = null;
+
+    private static ReportLevels reportLevels = null;
+
 	
     /**
      * Pe 保存 / 提交
@@ -284,5 +299,60 @@ public class PracticumFeedbackService {
 		return bean;
 	}
 	
-	
+	/**
+     * DemoReport<br/>
+     *
+     * 根据studentId,onlineclassId获取DemoReport对象<br/>
+     *
+     * @Author:ALong
+     * @Title: getDemoReport
+     * @param studentId
+     * @param onlineClassId
+     * @return DemoReport
+     * @date 2015年12月12日
+     */
+    public DemoReport getDemoReport(long studentId, long onlineClassId) {
+        return demoReportDao.findByStudentIdAndOnlineClassId(studentId, onlineClassId);
+    }
+
+    /**
+     * DemoReport<br/>
+     *
+     * 从文件中读取JSON数据<br/>
+     *
+     * @Author:ALong
+     * @Title: getDemoReports
+     * @return DemoReports
+     * @date 2015年12月12日
+     */
+    public DemoReports getDemoReports() {
+        if (demoReports == null) {
+            String contentJson = FilesUtils.readContent(this.getClass().getResourceAsStream("data/demoReports.json"),
+                    StandardCharsets.UTF_8);
+            demoReports = JsonTools.readValue(contentJson, DemoReports.class);
+        }
+
+        return demoReports;
+    }
+
+    /**
+     * DemoReport<br/>
+     *
+     * 从文件中读取JSON数据<br/>
+     *
+     * @Author:ALong
+     * @Title: getReportLevels
+     * @return ReportLevels
+     * @date 2015年12月12日
+     */
+    public ReportLevels getReportLevels() {
+        if (reportLevels == null) {
+            String contentJson = FilesUtils.readContent(this.getClass().getResourceAsStream("data/levels.json"),
+                    StandardCharsets.UTF_8);
+            reportLevels = JsonTools.readValue(contentJson, ReportLevels.class);
+        }
+
+        return reportLevels;
+    }
+    
  }

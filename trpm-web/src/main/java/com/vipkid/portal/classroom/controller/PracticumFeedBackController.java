@@ -17,9 +17,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.google.common.collect.Maps;
+import com.vipkid.dataSource.annotation.Slave;
 import com.vipkid.enums.TeacherEnum;
 import com.vipkid.enums.TeacherEnum.LifeCycle;
-import com.vipkid.portal.classroom.model.ClassRoomVo;
 import com.vipkid.portal.classroom.model.PeCommentsVo;
 import com.vipkid.portal.classroom.model.PeSupervisorCommentsVo;
 import com.vipkid.portal.classroom.service.PracticumFeedbackService;
@@ -32,6 +33,7 @@ import com.vipkid.rest.service.EvaluationService;
 import com.vipkid.rest.utils.ApiResponseUtils;
 import com.vipkid.rest.validation.ValidateUtils;
 import com.vipkid.rest.validation.tools.Result;
+import com.vipkid.trpm.entity.DemoReport;
 import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.entity.User;
 
@@ -50,7 +52,8 @@ public class PracticumFeedBackController extends RestfulController {
     private EvaluationService evaluationService;
 	
 	private static Logger logger = LoggerFactory.getLogger(PracticumFeedBackController.class);
-
+	
+	@Slave
     @RequestMapping(value = "/getTags", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
     public Map<String,Object> getTags(HttpServletRequest request, HttpServletResponse response){
         try{
@@ -108,6 +111,7 @@ public class PracticumFeedBackController extends RestfulController {
 	 * @param response
 	 * @return
 	 */
+	@Slave
 	@RequestMapping(value = "/pe/view", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
 	public Map<String, Object> peView(HttpServletRequest request, HttpServletResponse response, @RequestParam("id") Integer id){
 		try{
@@ -169,6 +173,7 @@ public class PracticumFeedBackController extends RestfulController {
 	 * @param response
 	 * @return
 	 */
+	@Slave
 	@RequestMapping(value = "/pes/view", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
 	public Map<String, Object> peSupervisorView(HttpServletRequest request, HttpServletResponse response, @RequestParam("id") Integer id){
 		try{
@@ -196,14 +201,19 @@ public class PracticumFeedBackController extends RestfulController {
 	 * @param response
 	 * @return
 	 */
+	@Slave
 	@RequestMapping(value = "/demereport/view", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
 	public Map<String, Object> demereportView(HttpServletRequest request, HttpServletResponse response,@RequestParam("onlineClassId") long onlineClassId, @RequestParam("studentId") long studentId){
 		try{
-			ClassRoomVo bean = new ClassRoomVo();
-			bean.setOnlineClassId(onlineClassId);
-            bean.setStudentId(studentId);
-            //TODO
-			return ApiResponseUtils.buildSuccessDataResp(new Object());
+			Map<String,Object> resultMap = Maps.newHashMap();
+            DemoReport currentReport =  practicumFeedbackService.getDemoReport(studentId, onlineClassId);
+            if (currentReport == null)
+                currentReport = new DemoReport();
+            resultMap.put("onlineClassId", onlineClassId);
+            resultMap.put("currentReport", currentReport);
+            resultMap.put("demoReports", practicumFeedbackService.getDemoReports());
+            resultMap.put("reportLevels", practicumFeedbackService.getReportLevels());
+			return ApiResponseUtils.buildSuccessDataResp(resultMap);
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
 			logger.error(e.getMessage());
