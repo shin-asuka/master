@@ -140,42 +140,43 @@ public class PersonalInfoService {
 		String bankACHNumber = bankInfo.getBankACHNumber();
 		String identityNumber = bankInfo.getIdNumber();
 		StringBuffer stringBuffer = new StringBuffer();
-		String bankName = bankInfo.getBeneficiaryBankName();{
-			if (!StringUtils.equals(bankName,teacher.getBankName())){
-				stringBuffer.append("更新bankName:from " + teacher.getBankName() + "to " + bankName);
-			}
+		String bankName = bankInfo.getBeneficiaryBankName();
+		if (!StringUtils.equals(bankName,teacher.getBankName())){
+			stringBuffer.append("更新bankName:from " + teacher.getBankName() + "to " + bankName);
 		}
 		teacher.setBankName(bankName);
-		if (bankAccountName.indexOf("*")!=-1){
+		if (bankAccountName.indexOf("*")==-1){
 			if (!StringUtils.equals(bankAccountName,teacher.getBankAccountName())){
-				stringBuffer.append("更新bankName:from " + hideNameInfo(teacher.getBankAccountName()) + "to " + hideNameInfo(bankAccountName));
+				stringBuffer.append("更新bankAccountName:from " + hideNameInfo(teacher.getBankAccountName()) + "to " + hideNameInfo(bankAccountName));
 			}
 			teacher.setBankAccountName(bankAccountName);
 		}
 		String bankCardNumber = bankInfo.getBeneficiaryAccountNumber();
-		if (!StringUtils.equals(bankCardNumber,teacher.getBankCardNumber())){
-			stringBuffer.append("更新bankName:from " + teacher.getBankCardNumber() + "to " + bankCardNumber);
+		if (bankCardNumber.indexOf("*")==-1){
+			if (!StringUtils.equals(bankCardNumber,teacher.getBankCardNumber())){
+				stringBuffer.append("更新bankCardNumber:from " + teacher.getBankCardNumber() + "to " + bankCardNumber);
+			}
+			teacher.setBankCardNumber(bankInfo.getBeneficiaryAccountNumber());
 		}
-		teacher.setBankCardNumber(bankInfo.getBeneficiaryAccountNumber());
 
-		if (bankSwiftCode.indexOf("*")!=-1){
+		if (bankSwiftCode.indexOf("*")==-1){
 			String swiftCode = teacher.getBankSwiftCode();
 			if (!StringUtils.equals(bankSwiftCode,swiftCode)){
-				stringBuffer.append("更新bankName:from " + hideInfo(swiftCode,0,swiftCode.length()-2)+ "to " + hideInfo(bankSwiftCode,0,bankSwiftCode.length()-2));
+				stringBuffer.append("更新bankSwiftCode:from " + hideInfo(swiftCode,0,swiftCode.length()-2)+ "to " + hideInfo(bankSwiftCode,0,bankSwiftCode.length()-2));
 			}
 			teacher.setBankSwiftCode(bankSwiftCode);
 		}
-		if(bankABARoutingNumber.indexOf("*")!=-1){
+		if(bankABARoutingNumber.indexOf("*")==-1){
 			String ABARoutingNumber = teacher.getBankABARoutingNumber();
 			if (!StringUtils.equals(bankABARoutingNumber,ABARoutingNumber)){
-				stringBuffer.append("更新bankName:from " + hideInfo(ABARoutingNumber,0,ABARoutingNumber.length()-4) + "to " + hideInfo(bankABARoutingNumber,0,bankABARoutingNumber.length()-4));
+				stringBuffer.append("更新bankABARoutingNumber:from " + hideInfo(ABARoutingNumber,0,ABARoutingNumber.length()-4) + "to " + hideInfo(bankABARoutingNumber,0,bankABARoutingNumber.length()-4));
 			}
 			teacher.setBankABARoutingNumber(bankABARoutingNumber);
 		}
-		if (bankACHNumber.indexOf("*")!=-1){
+		if (bankACHNumber.indexOf("*")==-1){
 			String ACHNumber = teacher.getBankACHNumber();
 			if (!StringUtils.equals(bankACHNumber,ACHNumber)){
-				stringBuffer.append("更新bankName:from " + hideInfo(ACHNumber,0,ACHNumber.length()-4) + "to " + hideInfo(bankACHNumber,0,bankACHNumber.length()-4));
+				stringBuffer.append("更新bankACHNumber:from " + hideInfo(ACHNumber,0,ACHNumber.length()-4) + "to " + hideInfo(bankACHNumber,0,bankACHNumber.length()-4));
 			}
 			teacher.setBankACHNumber(bankACHNumber);
 		}
@@ -184,10 +185,10 @@ public class PersonalInfoService {
 		if (!StringUtils.equals(identityType,String.valueOf(teacher.getIdentityType()))){
 			stringBuffer.append("更新bankName:from " + teacher.getIdentityType() + "to " + identityType);
 		}
-		if (identityNumber.indexOf("*")!=-1){
+		if (identityNumber.indexOf("*")==-1){
 			String IdNumber = teacher.getIdentityNumber();
 			if (!StringUtils.equals(identityNumber,IdNumber)){
-				stringBuffer.append("更新bankName:from " + hideInfo(IdNumber,1,IdNumber.length()) + "to " + hideInfo(identityNumber,1,identityNumber.length()));
+				stringBuffer.append("更新identityNumber:from " + hideInfo(IdNumber,1,IdNumber.length()) + "to " + hideInfo(identityNumber,1,identityNumber.length()));
 			}
 			teacher.setIdentityNumber(identityNumber);
 		}
@@ -201,6 +202,7 @@ public class PersonalInfoService {
 		if (!StringUtils.equals(issuanceCountry,String.valueOf(teacher.getIssuanceCountry()))){
 			stringBuffer.append("更新bankName:from " + teacher.getIssuanceCountry() + "to " + issuanceCountry);
 		}
+		logger.info("更新银行信息： {}",stringBuffer.toString());
 		teacher.setIssuanceCountry(bankInfo.getIssuanceCountryId());
 
 		teacherDao.update(teacher);
