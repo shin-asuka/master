@@ -154,7 +154,7 @@ public class PersonalInfoService {
 		String bankCardNumber = bankInfo.getBeneficiaryAccountNumber();
 		if (bankCardNumber.indexOf("*")==-1){
 			if (!StringUtils.equals(bankCardNumber,teacher.getBankCardNumber())){
-				stringBuffer.append("更新bankCardNumber:from " + teacher.getBankCardNumber() + "to " + bankCardNumber);
+				stringBuffer.append("更新bankCardNumber:from " + teacher.getBankCardNumber() + " to " + bankCardNumber);
 			}
 			teacher.setBankCardNumber(bankInfo.getBeneficiaryAccountNumber());
 		}
@@ -162,45 +162,45 @@ public class PersonalInfoService {
 		if (bankSwiftCode.indexOf("*")==-1){
 			String swiftCode = teacher.getBankSwiftCode();
 			if (!StringUtils.equals(bankSwiftCode,swiftCode)){
-				stringBuffer.append("更新bankSwiftCode:from " + hideInfo(swiftCode,0,swiftCode.length()-2)+ "to " + hideInfo(bankSwiftCode,0,bankSwiftCode.length()-2));
+				stringBuffer.append(" bankSwiftCode:from " + hideInfo(swiftCode,0,swiftCode.length()-2)+ " to " + hideInfo(bankSwiftCode,0,bankSwiftCode.length()-2));
 			}
 			teacher.setBankSwiftCode(bankSwiftCode);
 		}
 		if(bankABARoutingNumber.indexOf("*")==-1){
 			String ABARoutingNumber = teacher.getBankABARoutingNumber();
 			if (!StringUtils.equals(bankABARoutingNumber,ABARoutingNumber)){
-				stringBuffer.append("更新bankABARoutingNumber:from " + hideInfo(ABARoutingNumber,0,ABARoutingNumber.length()-4) + "to " + hideInfo(bankABARoutingNumber,0,bankABARoutingNumber.length()-4));
+				stringBuffer.append(" bankABARoutingNumber:from " + hideInfo(ABARoutingNumber,0,ABARoutingNumber.length()-4) + "to " + hideInfo(bankABARoutingNumber,0,bankABARoutingNumber.length()-4));
 			}
 			teacher.setBankABARoutingNumber(bankABARoutingNumber);
 		}
 		if (bankACHNumber.indexOf("*")==-1){
 			String ACHNumber = teacher.getBankACHNumber();
 			if (!StringUtils.equals(bankACHNumber,ACHNumber)){
-				stringBuffer.append("更新bankACHNumber:from " + hideInfo(ACHNumber,0,ACHNumber.length()-4) + "to " + hideInfo(bankACHNumber,0,bankACHNumber.length()-4));
+				stringBuffer.append(" bankACHNumber:from " + hideInfo(ACHNumber,0,ACHNumber.length()-4) + " to " + hideInfo(bankACHNumber,0,bankACHNumber.length()-4));
 			}
 			teacher.setBankACHNumber(bankACHNumber);
 		}
 		String identityType = bankInfo.getIdType().toString();
 		teacher.setIdentityType(bankInfo.getIdType());
 		if (!StringUtils.equals(identityType,String.valueOf(teacher.getIdentityType()))){
-			stringBuffer.append("更新bankName:from " + teacher.getIdentityType() + "to " + identityType);
+			stringBuffer.append(" bankName:from " + teacher.getIdentityType() + " to " + identityType);
 		}
 		if (identityNumber.indexOf("*")==-1){
 			String IdNumber = teacher.getIdentityNumber();
 			if (!StringUtils.equals(identityNumber,IdNumber)){
-				stringBuffer.append("更新identityNumber:from " + hideInfo(IdNumber,1,IdNumber.length()) + "to " + hideInfo(identityNumber,1,identityNumber.length()));
+				stringBuffer.append(" identityNumber:from " + hideInfo(IdNumber,1,IdNumber.length()) + " to " + hideInfo(identityNumber,1,identityNumber.length()));
 			}
 			teacher.setIdentityNumber(identityNumber);
 		}
 		String passPort = bankInfo.getPassportURL();
 		if (!StringUtils.equals(passPort,teacher.getPassport())){
-			stringBuffer.append("更新bankName:from " + teacher.getPassport() + "to " + passPort);
+			stringBuffer.append(" bpassPort:from " + teacher.getPassport() + " to " + passPort);
 		}
 		teacher.setPassport(bankInfo.getPassportURL());
 
 		String issuanceCountry = bankInfo.getIssuanceCountryId().toString();
 		if (!StringUtils.equals(issuanceCountry,String.valueOf(teacher.getIssuanceCountry()))){
-			stringBuffer.append("更新bankName:from " + teacher.getIssuanceCountry() + "to " + issuanceCountry);
+			stringBuffer.append(" ssuanceCountry:from " + teacher.getIssuanceCountry() + " to " + issuanceCountry);
 		}
 		logger.info("更新银行信息： {}",stringBuffer.toString());
 		teacher.setIssuanceCountry(bankInfo.getIssuanceCountryId());
