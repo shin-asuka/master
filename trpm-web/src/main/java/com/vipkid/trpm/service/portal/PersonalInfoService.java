@@ -142,19 +142,19 @@ public class PersonalInfoService {
 		StringBuffer stringBuffer = new StringBuffer();
 		String bankName = bankInfo.getBeneficiaryBankName();
 		if (!StringUtils.equals(bankName,teacher.getBankName())){
-			stringBuffer.append("更新bankName:from " + teacher.getBankName() + "to " + bankName);
+			stringBuffer.append("bankName:from " + teacher.getBankName() + " to " + bankName);
 		}
 		teacher.setBankName(bankName);
 		if (bankAccountName.indexOf("*")==-1){
 			if (!StringUtils.equals(bankAccountName,teacher.getBankAccountName())){
-				stringBuffer.append("更新bankAccountName:from " + hideNameInfo(teacher.getBankAccountName()) + "to " + hideNameInfo(bankAccountName));
+				stringBuffer.append("bankAccountName:from " + hideNameInfo(teacher.getBankAccountName()) + " to " + hideNameInfo(bankAccountName));
 			}
 			teacher.setBankAccountName(bankAccountName);
 		}
 		String bankCardNumber = bankInfo.getBeneficiaryAccountNumber();
 		if (bankCardNumber.indexOf("*")==-1){
 			if (!StringUtils.equals(bankCardNumber,teacher.getBankCardNumber())){
-				stringBuffer.append("更新bankCardNumber:from " + teacher.getBankCardNumber() + " to " + bankCardNumber);
+				stringBuffer.append("bankCardNumber:from " + teacher.getBankCardNumber() + " to " + bankCardNumber);
 			}
 			teacher.setBankCardNumber(bankInfo.getBeneficiaryAccountNumber());
 		}
