@@ -68,6 +68,7 @@ public class UnitAssesssmentService {
 			for (OnlineClassVo oc : onlineClassVos) { //数据格式转换
 				Long id = oc.getId();
 				onlineClassVo.getIdList().add(id);
+				onlineClassVo.setIdListStr(StringUtils.join(onlineClassVo.getIdList()));
 				ocMap.put(id, oc);
 			}
 			
@@ -101,6 +102,7 @@ public class UnitAssesssmentService {
 			for (OnlineClassVo oc : onlineClassVos) { //数据格式转换
 				Long id = oc.getId();
 				onlineClassVo.getIdList().add(id);
+				onlineClassVo.setIdListStr(StringUtils.join(onlineClassVo.getIdList()));
 				ocMap.put(id, oc);
 			}
 			
@@ -134,6 +136,7 @@ public class UnitAssesssmentService {
 			for (OnlineClassVo oc : onlineClassVos) { //数据格式转换
 				Long id = oc.getId();
 				onlineClassVo.getIdList().add(id);
+				onlineClassVo.setIdListStr(StringUtils.join(onlineClassVo.getIdList()));
 				ocMap.put(id, oc);
 			}
 
