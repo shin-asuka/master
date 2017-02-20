@@ -264,11 +264,11 @@ public class PracticumFeedbackService {
 		bean.setLevels(levellist);
         
 		TeacherPeComments teacherPeComments = teacherPeCommentsDao.getTeacherPeComments(applicationId);
-		
-		bean.setThings(teacherPeComments.getThingsDidWell());
-		bean.setAreas(teacherPeComments.getAreasImprovement());
-		bean.setTotalScore(teacherPeComments.getTotalScore());
-
+		if(teacherPeComments != null){
+			bean.setThings(teacherPeComments.getThingsDidWell());
+			bean.setAreas(teacherPeComments.getAreasImprovement());
+			bean.setTotalScore(teacherPeComments.getTotalScore());
+		}
 		return bean;
 	}
 	
@@ -291,11 +291,11 @@ public class PracticumFeedbackService {
 		bean.setLevels(levellist);
         
 		TeacherPeComments teacherPeComments = teacherPeCommentsDao.getTeacherPeComments(applicationId);
-		
-		bean.setThings(teacherPeComments.getThingsDidWell());
-		bean.setAreas(teacherPeComments.getAreasImprovement());
-		bean.setTotalScore(teacherPeComments.getTotalScore());
-		
+		if(teacherPeComments != null){
+			bean.setThings(teacherPeComments.getThingsDidWell());
+			bean.setAreas(teacherPeComments.getAreasImprovement());
+			bean.setTotalScore(teacherPeComments.getTotalScore());
+		}
 		return bean;
 	}
 	
