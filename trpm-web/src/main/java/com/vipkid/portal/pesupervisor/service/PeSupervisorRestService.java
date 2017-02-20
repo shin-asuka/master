@@ -4,17 +4,15 @@ import java.sql.Timestamp;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 import org.community.config.PropertyConfigurer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.google.api.client.util.Lists;
-import com.vipkid.portal.pesupervisor.model.PeSupervisorData;
 import com.vipkid.portal.pesupervisor.model.PeSupervisorClassDetail;
+import com.vipkid.portal.pesupervisor.model.PeSupervisorData;
 import com.vipkid.rest.service.LoginService;
-import com.vipkid.rest.utils.ApiResponseUtils;
 import com.vipkid.trpm.dao.TeacherPeDao;
 import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.entity.TeacherPe;
@@ -72,6 +70,7 @@ public class PeSupervisorRestService {
 			peSupervisorEachClassInfo.setSerialNumber(teacherPe.getSerialNumber());
 			peSupervisorEachClassInfo.setLessonName(teacherPe.getLessonName());
 			peSupervisorEachClassInfo.setStatus(teacherPe.getStatus());
+			peSupervisorEachClassInfo.setTeacehrId(teacherPe.getTeacherId());
 
 			Timestamp timestamp = teacherPe.getScheduleTime();
 			DateTimeFormatter df = DateTimeFormatter.ofPattern("MMM dd yyyy, hh:mma", Locale.ENGLISH);

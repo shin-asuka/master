@@ -2,10 +2,11 @@ package com.vipkid.portal.classroom.service;
 
 import java.sql.Timestamp;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-import com.vipkid.trpm.util.LessonSerialNumber;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.community.config.PropertyConfigurer;
 import org.community.http.client.HttpClientProxy;
@@ -20,6 +21,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.google.api.client.util.Maps;
 import com.vipkid.enums.OnlineClassEnum;
 import com.vipkid.portal.classroom.model.ClassRoomVo;
+import com.vipkid.recruitment.dao.TeacherApplicationDao;
+import com.vipkid.recruitment.entity.TeacherApplication;
 import com.vipkid.recruitment.utils.ReturnMapUtils;
 import com.vipkid.rest.dto.InfoRoomDto;
 import com.vipkid.trpm.constant.ApplicationConstant;
@@ -38,6 +41,7 @@ import com.vipkid.trpm.entity.teachercomment.TeacherComment;
 import com.vipkid.trpm.proxy.OnlineClassProxy;
 import com.vipkid.trpm.service.portal.TeacherService;
 import com.vipkid.trpm.util.DateUtils;
+import com.vipkid.trpm.util.LessonSerialNumber;
 
 @Service
 public class ClassroomService {
@@ -61,6 +65,9 @@ public class ClassroomService {
 	
     @Autowired
     private TeacherService teacherService;
+    
+    @Autowired
+    private TeacherApplicationDao teacherApplicationDao;
   
 	public InfoRoomDto getInfoRoom(ClassRoomVo bean , Teacher teacher){
 		
@@ -98,6 +105,12 @@ public class ClassroomService {
             resultDto.setPrevip(obtainPrevip(lesson.getSerialNumber()));
             resultDto.setUa(obtainUa(onlineClass.getId()));
             resultDto.setCourseType(obtainCourseType(lesson.getSerialNumber()));
+            if(resultDto.getCourseType().equals("Practicum")){
+            	List<TeacherApplication> list = teacherApplicationDao.findCurrentApplication(bean.getStudentId());	
+            	if(CollectionUtils.isNotEmpty(list)){
+            		resultDto.setTeacherApplicationId(list.get(0).getId());
+            	}
+            }
         }else{
 			logger.warn("lesson is null,onlineClassId:{},studentId:{}",bean.getOnlineClassId(), bean.getStudentId());
 		}

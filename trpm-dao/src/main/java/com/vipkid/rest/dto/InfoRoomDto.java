@@ -52,6 +52,8 @@ public class InfoRoomDto {
 	private boolean ua;
 
 	private String courseType;
+	
+	private Long teacherApplicationId;
 
 	public Long getOnlineClassId() {
 		return onlineClassId;
@@ -220,4 +222,13 @@ public class InfoRoomDto {
 	public void setCourseType(String courseType) {
 		this.courseType = courseType;
 	}
+
+	public Long getTeacherApplicationId() {
+		return teacherApplicationId;
+	}
+
+	public void setTeacherApplicationId(Long teacherApplicationId) {
+		this.teacherApplicationId = teacherApplicationId;
+	}
+	
 }

@@ -101,7 +101,7 @@ public class ClassroomController extends RestfulController{
 	}
 	
 	/**
-	 * 教室信息获取
+	 * 教室信息获取 Practicum 课程studentId 为被面试者ID
 	 * @param request
 	 * @param response
 	 * @param onlineClassId
