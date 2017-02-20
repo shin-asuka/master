@@ -55,7 +55,7 @@ public class EmailServer {
         Map<String, String> requestParam = Maps.newHashMap();
         requestParam.put("from", mailEntity.getFromMail());
         requestParam.put("to", mailEntity.getToMail());
-        //requestParam.put("to", "moyonglin1@gmail.com");
+       // requestParam.put("to", "moyonglin1@gmail.com");
         requestParam.put("subject", mailEntity.getMailSubject());
         requestParam.put("content", mailEntity.getMailBody());
         try {

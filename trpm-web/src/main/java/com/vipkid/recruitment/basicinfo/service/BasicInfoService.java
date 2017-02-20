@@ -249,6 +249,8 @@ public class BasicInfoService {
         teacher.setPhoneType(bean.getPhoneType());
         teacher.setSkype(bean.getSkype());
         teacher.setHighestLevelOfEdu(bean.getHighestLevelOfEdu());
+        teacher.setJob(bean.getJob());
+        teacher.setJobHrsPerWeek(bean.getJobHrsPerWeek());
         //已经设置过招聘渠道将不再设置招聘渠道
         if(StringUtils.isNotBlank(teacher.getReferee()) || teacher.getPartnerId() > 0 || StringUtils.isNotBlank(teacher.getOtherChannel())){
             return teacher;

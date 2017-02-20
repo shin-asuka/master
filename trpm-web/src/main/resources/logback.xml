@@ -6,24 +6,47 @@
     <property name="encoding" value="UTF-8"/>
     <!--格式化输出：%d表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度；%M:%L是方法和行号；%msg是日志消息；%n是换行符-->
     <property name="normal-pattern"
-              value="%d{yyyy-MM-dd.HH:mm:ss} %-5level [%thread] %logger{50}.%M:%L - %msg%n"/>
-    <property name="plain-pattern" value="%d{yyyy-MM-dd.HH:mm:ss} %msg%n"/>
+              value="%d{yyyy-MM-dd/HH:mm:ss.SSS}|%X{localIp}|%X{requestId}|%X{requestSeq}|^_^|[%t] %-5level %logger{50} %line - %m%n"/>
+    <property name="plain-pattern"
+              value="%d{yyyy-MM-dd/HH:mm:ss.SSS}|%X{localIp}|%X{requestId}|%X{requestSeq}|^_^|[%t] %-5level %logger{50} %line - %m%n"/>
+
+    <!--email.alert区域start-->
+    <appender name="email" class="com.vipkid.common.log.SelfSmtpAppender">
+        <smtpHost>smtp.exmail.qq.com</smtpHost>
+        <username>teacher.alert@vipkid.com.cn</username>
+        <password>Alert1</password>
+        <from>teacher.alert@vipkid.com.cn</from>
+        <to>mike.lee.alert@vipkid.com.cn,ninglu@vipkid.com.cn,tianwenqi@vipkid.com.cn,zhuzhengyi@vipkid.com.cn,caoxinzhou@vipkid.com.cn,lilibo@vipkid.com.cn,zengweilong@vipkid.com.cn,liuguowen@vipkid.com.cn,xingxuelin@vipkid.com.cn,yangchao@vipkid.com.cn,dengpeng@vipkid.com.cn,zhangzhaojun@vipkid.com.cn</to>
+
+        <!--采用HTML渲染方式，可以自定义CSS -->
+        <layout class="com.vipkid.common.log.HTMLWrapperLayout">
+            <pattern>%date%level%logger%message</pattern>
+        </layout>
+
+        <filter class="com.vipkid.common.log.AlertLogFilter"/>
+        <evaluator class="com.vipkid.common.log.OnWarnEvalutor"/>
+    </appender>
+
+
+
 
     <!-- 按照每天生成日志文件 -->
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <!--日志文件输出的文件名-->
-        <file>${LOG_HOME}/vipkid-trpm.log</file>
+        <file>${LOG_HOME}/tp.log</file>
         <Append>true</Append>
         <prudent>false</prudent>
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
             <!--格式化输出：%d表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度%msg：日志消息，%n是换行符-->
-            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} %line - %msg%n</pattern>
+            <pattern>
+                %d{yyyy-MM-dd/HH:mm:ss.SSS}|%X{localIp}|%X{requestId}|%X{requestSeq}|^_^|[%t] %-5level %logger{50} %line - %m%n
+            </pattern>
         </encoder>
-        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <!--归档日志文件名-->
-            <FileNamePattern>${LOG_HOME}/vipkid-trpm.log.%d{yyyy-MM-dd}</FileNamePattern>
-            <!--日志文件保留个数-->
-            <maxHistory>72</maxHistory>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_HOME}/tp.log.%d{yyyy-MM-dd}.%i</fileNamePattern>
+            <maxFileSize>512MB</maxFileSize>
+            <maxHistory>7</maxHistory>
+            <totalSizeCap>32GB</totalSizeCap>
         </rollingPolicy>
     </appender>
 
@@ -31,7 +54,9 @@
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
             <!--格式化输出：%d表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度%msg：日志消息，%n是换行符-->
-            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50}  %line - %msg%n</pattern>
+            <pattern>
+                %d{yyyy-MM-dd/HH:mm:ss.SSS}|%X{localIp}|%X{requestId}|%X{requestSeq}|^_^|[%t] %-5level %logger{50} %line - %m%n
+            </pattern>
             <!--<pattern>%d{yyyy/MM/dd-HH:mm:ss.SSS} %level [%thread] %class:%line>>%msg%n</pattern>-->
         </encoder>
     </appender>
@@ -41,52 +66,61 @@
         <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
             <level>ERROR</level>
         </filter>
-        <file>${LOG_HOME}/vipkid-trpm-error.log</file>
+        <file>${LOG_HOME}/tp-error.log</file>
         <prudent>false</prudent>
         <Append>true</Append>
         <encoder>
             <pattern>${normal-pattern}</pattern>
             <charset>${encoding}</charset>
         </encoder>
-        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>${LOG_HOME}/vipkid-trpm-error.log.%d{yyyy-MM-dd}</fileNamePattern>
-            <maxHistory>30</maxHistory>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_HOME}/tp-error.log.%d{yyyy-MM-dd}.%i</fileNamePattern>
+            <maxFileSize>512MB</maxFileSize>
+            <maxHistory>7</maxHistory>
+            <totalSizeCap>32GB</totalSizeCap>
         </rollingPolicy>
     </appender>
 
     <!-- MQ 特定的日志文件 -->
     <appender name="FILE_FOR_MQ" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <!--日志文件输出的文件名-->
-        <file>${LOG_HOME}/vipkid-trpm-activemq.log</file>
+        <file>${LOG_HOME}/tp-activemq.log</file>
         <Append>true</Append>
         <prudent>false</prudent>
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
             <!--格式化输出：%d表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度%msg：日志消息，%n是换行符-->
-            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} %line - %msg%n</pattern>
+            <pattern>
+                %d{yyyy-MM-dd/HH:mm:ss.SSS}|%X{localIp}|^_^|[%t] %-5level %logger{50} %line - %m%n
+            </pattern>
         </encoder>
-        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
             <!--归档日志文件名-->
-            <FileNamePattern>${LOG_HOME}/vipkid-trpm-activemq.log.%d{yyyy-MM-dd}</FileNamePattern>
-            <!--日志文件保留个数-->
-            <maxHistory>72</maxHistory>
+            <FileNamePattern>${LOG_HOME}/tp-activemq.log.%d{yyyy-MM-dd}.%i</FileNamePattern>
+            <maxFileSize>512MB</maxFileSize>
+            <maxHistory>7</maxHistory>
+            <totalSizeCap>32GB</totalSizeCap>
         </rollingPolicy>
     </appender>
 
     <!-- http request 接口特定的日志文件 -->
     <appender name="FILE_FOR_HTTP" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <!--日志文件输出的文件名-->
-        <file>${LOG_HOME}/vipkid-trpm-http.log</file>
+        <file>${LOG_HOME}/tp-http.log</file>
         <Append>true</Append>
         <prudent>false</prudent>
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
             <!--格式化输出：%d表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度%msg：日志消息，%n是换行符-->
-            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} %line - %msg%n</pattern>
+            <pattern>
+                %d{yyyy-MM-dd/HH:mm:ss.SSS}|%X{localIp}|%X{requestId}|%X{requestSeq}|^_^|[%t] %-5level %logger{50} %line - %m%n
+            </pattern>
         </encoder>
-        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
             <!--归档日志文件名-->
-            <FileNamePattern>${LOG_HOME}/vipkid-trpm-http.log.%d{yyyy-MM-dd}</FileNamePattern>
+            <FileNamePattern>${LOG_HOME}/tp-http.log.%d{yyyy-MM-dd}.%i</FileNamePattern>
             <!--日志文件保留个数-->
-            <maxHistory>72</maxHistory>
+            <maxFileSize>512MB</maxFileSize>
+            <maxHistory>7</maxHistory>
+            <totalSizeCap>32GB</totalSizeCap>
         </rollingPolicy>
     </appender>
 
@@ -106,5 +140,6 @@
     	${logback.console.out}
         <appender-ref ref="FILE"/>
         <appender-ref ref="vipkid-trpm-error"/>
+        <appender-ref ref="email"/>
     </root>
 </configuration>

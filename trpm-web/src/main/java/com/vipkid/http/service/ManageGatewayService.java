@@ -4,6 +4,7 @@
 package com.vipkid.http.service;
 
 import com.alibaba.fastjson.JSONObject;
+import com.google.api.client.util.Lists;
 import com.vipkid.http.utils.JsonUtils;
 import com.vipkid.http.utils.WebUtils;
 import com.vipkid.payroll.service.StudentService;
@@ -54,7 +55,7 @@ public class ManageGatewayService extends HttpBaseService {
 
 	public List<StudentCommentVo> getStudentCommentListByBatch(String idsStr) {
 
-		List<StudentCommentVo> studentCommentApiList = null;
+		List<StudentCommentVo> studentCommentApiList = Lists.newArrayList();
 
 		try {
 			String data = WebUtils.simpleGet(String.format(super.serverAddress + GATEWAY_STUDENT_COMMENT_BATCH_API ,idsStr));
@@ -74,7 +75,7 @@ public class ManageGatewayService extends HttpBaseService {
 
 	public StudentCommentPageVo getStudentCommentListByTeacherId(Integer teacher,Integer start,Integer limit,String ratings){
 
-		StudentCommentPageVo studentCommentPageApi = null;
+		StudentCommentPageVo studentCommentPageApi = new StudentCommentPageVo();
 		try {
 			String data = WebUtils.simpleGet(String.format(super.serverAddress + GATEWAY_STUDENT_COMMENT_BY_TEACHER_API,
 															teacher!=null ? String.valueOf(teacher) : "",
@@ -86,7 +87,7 @@ public class ManageGatewayService extends HttpBaseService {
 				for(StudentCommentVo stuCommentApi : studentCommentPageApi.getData()){
 					OnlineClass onlineClass = onlineClassService.getOnlineClassById(stuCommentApi.getClass_id());
 					if(onlineClass!= null) {
-						stuCommentApi.setScheduleDateTime(DateFormatUtils.format(onlineClass.getScheduledDateTime(), "yyyy-MM-dd hh:mm"));
+						stuCommentApi.setScheduleDateTime(DateFormatUtils.format(onlineClass.getScheduledDateTime(), "yyyy-MM-dd HH:mm"));
 						//构造OnlineClassName
 						Lesson lesson = lessonDao.findById(onlineClass.getLessonId());
 						if(lesson!=null) {
@@ -105,6 +106,8 @@ public class ManageGatewayService extends HttpBaseService {
 					String result = getTranslation(stuCommentApi.getId().longValue());
 					stuCommentApi.setTransaltion(StringUtils.isEmpty(result)? "":result);
 				}
+			}else{
+				studentCommentPageApi.setTotal(0);
 			}
 		} catch (Exception e) {
 			logger.error("【ManageGatewayService.getStudentCommentListByTeacherId】调用失败，teacherId：{},start:{},limit:{},ratingLevel:{},exception:{}", teacher, start, limit, ratings,e);
@@ -115,7 +118,7 @@ public class ManageGatewayService extends HttpBaseService {
 
 	public StudentCommentTotalVo getStudentCommentTotalByTeacherId(Integer teacher){
 
-		StudentCommentTotalVo studentCommentTotalApi = null;
+		StudentCommentTotalVo studentCommentTotalApi = new StudentCommentTotalVo();
 
 		try {
 			String data = WebUtils.simpleGet(String.format(super.serverAddress + GATEWAY_STUDENT_COMMENT_TOTAL_BY_TEACHER_API,teacher));
@@ -149,7 +152,7 @@ public class ManageGatewayService extends HttpBaseService {
 	}
 
 	public String getTranslation(Long id){
-		String ret = null;
+		String ret = "";
 		try {
 			String data = WebUtils.simpleGet(String.format(super.serverAddress + GATEWAY_STUDENT_COMMENT_TRANSLATION_API,id));
 			if (data!=null) {
