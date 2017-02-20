@@ -28,18 +28,28 @@ public class TeacherEnum {
     }
 
 	public enum LifeCycle {
-	    ALL,
-		SIGNUP, // 注册 + 收集基本信息
-		BASIC_INFO, // 2015-08-08 添加basic-info 状态，从signup分离
-		INTERVIEW, // 面试
-		SIGN_CONTRACT, // 签合同
-		TRAINING, // 教师培训
-		PRACTICUM, // 试讲
-		CONTRACT_INFO, //合同 + 个人信息 (头像, 生活照)
-		REGULAR, // 成为正式老师Ø
-		QUIT, // 离职
-		FAIL // 被剔除的老师，永不录用的那种
+	    ALL("All"),
+		SIGNUP("Sign Up"), // 注册 + 收集基本信息
+		BASIC_INFO("Basic Info"), // 2015-08-08 添加basic-info 状态，从signup分离
+		INTERVIEW("Interview"), // 面试
+		SIGN_CONTRACT("Sign Contract"), // 签合同
+		TRAINING("Teaching Prep"), // 教师培训
+		PRACTICUM("Mock Class"), // 试讲
+		CONTRACT_INFO("Contract Info"), //合同 + 个人信息 (头像, 生活照)
+		REGULAR("Regular"), // 成为正式老师
+		QUIT("Quit"), // 离职
+		FAIL("Fail"); // 被剔除的老师，永不录用的那种
 
+
+		private String value;
+
+		LifeCycle(String value) {
+			this.value = value;
+		}
+
+		public String getVal() {
+			return this.value;
+		}
 	}
 
 	public enum Hide {

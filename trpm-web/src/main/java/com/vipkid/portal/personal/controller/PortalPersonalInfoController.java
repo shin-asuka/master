@@ -1,47 +1,49 @@
 package com.vipkid.portal.personal.controller;
 
-import java.util.Date;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.collections.MapUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.community.config.PropertyConfigurer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
-
 import com.google.common.base.Preconditions;
 import com.google.common.base.Stopwatch;
+import com.google.common.collect.Maps;
 import com.vipkid.enums.TeacherEnum;
 import com.vipkid.enums.TeacherEnum.FormType;
 import com.vipkid.enums.TeacherEnum.LifeCycle;
 import com.vipkid.file.model.FileVo;
 import com.vipkid.file.service.AwsFileService;
 import com.vipkid.http.utils.JsonUtils;
+import com.vipkid.portal.personal.model.ReferralTeacherVo;
 import com.vipkid.portal.personal.model.TeachingInfoData;
 import com.vipkid.portal.personal.service.PortalPersonalInfoService;
 import com.vipkid.rest.RestfulController;
 import com.vipkid.rest.config.RestfulConfig;
 import com.vipkid.rest.interceptor.annotation.RestInterface;
 import com.vipkid.rest.utils.ApiResponseUtils;
+import com.vipkid.rest.validation.ValidateUtils;
+import com.vipkid.rest.validation.tools.Result;
 import com.vipkid.trpm.dao.TeacherTaxpayerFormDao;
 import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.entity.TeacherTaxpayerForm;
 import com.vipkid.trpm.entity.TeacherTaxpayerFormDetail;
 import com.vipkid.trpm.entity.User;
 import com.vipkid.trpm.security.SHA256PasswordEncoder;
+import com.vipkid.trpm.service.portal.TeacherService;
 import com.vipkid.trpm.service.portal.TeacherTaxpayerFormService;
 import com.vipkid.trpm.util.AwsFileUtils;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.community.config.PropertyConfigurer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 
@@ -74,6 +76,9 @@ public class PortalPersonalInfoController extends RestfulController {
 
 	@Autowired
 	private TeacherTaxpayerFormDao teacherTaxpayerFormDao;
+
+	@Autowired
+	private TeacherService teacherService;
 
 	@RequestMapping(value = "restTeachingInfo", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
 	public Map<String, Object> restTeachingInfo(HttpServletRequest request, HttpServletResponse response) {
@@ -302,4 +307,30 @@ public class PortalPersonalInfoController extends RestfulController {
 
 		return null;// 如果验证通过，返回null
 	}
+
+	@RequestMapping(value = "/findReferrals", method = RequestMethod.POST)
+	public Map<String, Object> findReferrals(HttpServletRequest request, HttpServletResponse response,@RequestBody ReferralTeacherVo bean) {
+		try{
+			if(bean.getDataType() != null){
+				if(StringUtils.isBlank(bean.getStartTime()) || StringUtils.isBlank(bean.getEndTime())){
+					response.setStatus(HttpStatus.BAD_REQUEST.value());
+					return ApiResponseUtils.buildErrorResp(1001, "result::[startTime] and [endTime] field is required!");
+				}
+			}
+
+			Teacher teacher = getTeacher(request);
+			bean.setTeacherId(teacher.getId());
+
+			Map<String, Object> resultMap = Maps.newHashMap();
+			resultMap.put("list", teacherService.findReferralTeachers(bean));
+			resultMap.put("count", teacherService.findReferralTeachersCount(bean));
+			return ApiResponseUtils.buildSuccessDataResp(resultMap);
+		} catch (IllegalArgumentException e) {
+			response.setStatus(HttpStatus.BAD_REQUEST.value());
+			return ApiResponseUtils.buildErrorResp(2001,e.getMessage(),e);
+		} catch (Exception e) {
+			response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+			return ApiResponseUtils.buildErrorResp(2002,e.getMessage(),e);
+		}
+ 	}
 }
