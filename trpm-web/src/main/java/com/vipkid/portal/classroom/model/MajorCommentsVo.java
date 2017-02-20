@@ -1,58 +1,36 @@
 package com.vipkid.portal.classroom.model;
 
-import com.vipkid.trpm.entity.teachercomment.SubmitTeacherCommentDto;
-
-import java.sql.Timestamp;
+import com.vipkid.rest.validation.annotation.NotNull;
 
 /**
- * Created by LP-813 on 2017/2/15.
+ * Created by LP-813 on 2017/2/20.
  */
+@NotNull
 public class MajorCommentsVo {
-    private static final long serialVersionUID = -1L;
-    /*  */
-    private Long id;
-    /*  */
-
-    private Timestamp createDateTime;
-    /*  */
-    private Integer empty;
-    /*  */
+    private Long onlineClassId;
+    private Integer studentId;
+    private Integer teacherId;
     private String teacherFeedback;
-    /*  */
     private String tipsForOtherTeachers;
-    private Timestamp firstDateTime;
-    private Timestamp lastDateTime;
     private Integer performance;
-    /*  根据performance是否建议调整 1为建议调整*/
     private Integer performanceAdjust;
-    /*  */
-    private String courseType;
-    private String submitSource;
     private String serialNumber;
     private String scheduleDateTime;
 
-    public Long getId() {
-        return id;
+    public Long getOnlineClassId() {
+        return onlineClassId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setOnlineClassId(Long onlineClassId) {
+        this.onlineClassId = onlineClassId;
     }
 
-    public Timestamp getCreateDateTime() {
-        return createDateTime;
+    public Integer getStudentId() {
+        return studentId;
     }
 
-    public void setCreateDateTime(Timestamp createDateTime) {
-        this.createDateTime = createDateTime;
-    }
-
-    public Integer getEmpty() {
-        return empty;
-    }
-
-    public void setEmpty(Integer empty) {
-        this.empty = empty;
+    public void setStudentId(Integer studentId) {
+        this.studentId = studentId;
     }
 
     public String getTeacherFeedback() {
@@ -87,22 +65,6 @@ public class MajorCommentsVo {
         this.performanceAdjust = performanceAdjust;
     }
 
-    public String getCourseType() {
-        return courseType;
-    }
-
-    public void setCourseType(String courseType) {
-        this.courseType = courseType;
-    }
-
-    public String getSubmitSource() {
-        return submitSource;
-    }
-
-    public void setSubmitSource(String submitSource) {
-        this.submitSource = submitSource;
-    }
-
     public String getSerialNumber() {
         return serialNumber;
     }
@@ -117,21 +79,5 @@ public class MajorCommentsVo {
 
     public void setScheduleDateTime(String scheduleDateTime) {
         this.scheduleDateTime = scheduleDateTime;
-    }
-
-    public Timestamp getFirstDateTime() {
-        return firstDateTime;
-    }
-
-    public void setFirstDateTime(Timestamp firstDateTime) {
-        this.firstDateTime = firstDateTime;
-    }
-
-    public Timestamp getLastDateTime() {
-        return lastDateTime;
-    }
-
-    public void setLastDateTime(Timestamp lastDateTime) {
-        this.lastDateTime = lastDateTime;
     }
 }

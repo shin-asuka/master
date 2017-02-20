@@ -2,6 +2,8 @@ package com.vipkid.portal.classroom.util;
 
 import com.vipkid.portal.classroom.model.MajorCommentsVo;
 import com.vipkid.portal.classroom.model.PrevipCommentsVo;
+import com.vipkid.portal.classroom.model.bo.MajorCommentsBo;
+import com.vipkid.portal.classroom.model.bo.PrevipCommentsBo;
 import com.vipkid.trpm.entity.teachercomment.SubmitTeacherCommentDto;
 import org.apache.commons.beanutils.BeanUtils;
 
@@ -12,7 +14,7 @@ import java.lang.reflect.InvocationTargetException;
  */
 public class Convertor {
 
-    public static SubmitTeacherCommentDto toSubmitTeacherCommentDto(PrevipCommentsVo previpCommentsVo){
+    public static SubmitTeacherCommentDto toSubmitTeacherCommentDto(PrevipCommentsBo previpCommentsVo){
         SubmitTeacherCommentDto submitTeacherCommentDto = new SubmitTeacherCommentDto();
         try {
             BeanUtils.copyProperties(submitTeacherCommentDto,previpCommentsVo);
@@ -24,7 +26,7 @@ public class Convertor {
         return submitTeacherCommentDto;
     }
 
-    public static SubmitTeacherCommentDto toSubmitTeacherCommentDto(MajorCommentsVo classCommentsVo){
+    public static SubmitTeacherCommentDto toSubmitTeacherCommentDto(MajorCommentsBo classCommentsVo){
         SubmitTeacherCommentDto submitTeacherCommentDto = new SubmitTeacherCommentDto();
         try {
             BeanUtils.copyProperties(submitTeacherCommentDto,classCommentsVo);
@@ -34,5 +36,29 @@ public class Convertor {
             e.printStackTrace();
         }
         return submitTeacherCommentDto;
+    }
+
+    public static PrevipCommentsBo toPrevipCommentsBo(PrevipCommentsVo vo){
+        PrevipCommentsBo bo = new PrevipCommentsBo();
+        try {
+            BeanUtils.copyProperties(bo,vo);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        }
+        return bo;
+    }
+
+    public static MajorCommentsBo toMajorCommentsBo(MajorCommentsVo vo){
+        MajorCommentsBo bo = new MajorCommentsBo();
+        try {
+            BeanUtils.copyProperties(bo,vo);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        }
+        return bo;
     }
 }

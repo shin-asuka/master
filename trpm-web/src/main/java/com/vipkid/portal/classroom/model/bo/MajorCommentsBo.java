@@ -1,0 +1,137 @@
+package com.vipkid.portal.classroom.model.bo;
+
+import com.vipkid.trpm.entity.teachercomment.SubmitTeacherCommentDto;
+
+import java.sql.Timestamp;
+
+/**
+ * Created by LP-813 on 2017/2/15.
+ */
+public class MajorCommentsBo {
+    private static final long serialVersionUID = -1L;
+    /*  */
+    private Long id;
+    /*  */
+
+    private Timestamp createDateTime;
+    /*  */
+    private Integer empty;
+    /*  */
+    private String teacherFeedback;
+    /*  */
+    private String tipsForOtherTeachers;
+    private Timestamp firstDateTime;
+    private Timestamp lastDateTime;
+    private Integer performance;
+    /*  根据performance是否建议调整 1为建议调整*/
+    private Integer performanceAdjust;
+    /*  */
+    private String courseType;
+    private String submitSource;
+    private String serialNumber;
+    private String scheduleDateTime;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Timestamp getCreateDateTime() {
+        return createDateTime;
+    }
+
+    public void setCreateDateTime(Timestamp createDateTime) {
+        this.createDateTime = createDateTime;
+    }
+
+    public Integer getEmpty() {
+        return empty;
+    }
+
+    public void setEmpty(Integer empty) {
+        this.empty = empty;
+    }
+
+    public String getTeacherFeedback() {
+        return teacherFeedback;
+    }
+
+    public void setTeacherFeedback(String teacherFeedback) {
+        this.teacherFeedback = teacherFeedback;
+    }
+
+    public String getTipsForOtherTeachers() {
+        return tipsForOtherTeachers;
+    }
+
+    public void setTipsForOtherTeachers(String tipsForOtherTeachers) {
+        this.tipsForOtherTeachers = tipsForOtherTeachers;
+    }
+
+    public Integer getPerformance() {
+        return performance;
+    }
+
+    public void setPerformance(Integer performance) {
+        this.performance = performance;
+    }
+
+    public Integer getPerformanceAdjust() {
+        return performanceAdjust;
+    }
+
+    public void setPerformanceAdjust(Integer performanceAdjust) {
+        this.performanceAdjust = performanceAdjust;
+    }
+
+    public String getCourseType() {
+        return courseType;
+    }
+
+    public void setCourseType(String courseType) {
+        this.courseType = courseType;
+    }
+
+    public String getSubmitSource() {
+        return submitSource;
+    }
+
+    public void setSubmitSource(String submitSource) {
+        this.submitSource = submitSource;
+    }
+
+    public String getSerialNumber() {
+        return serialNumber;
+    }
+
+    public void setSerialNumber(String serialNumber) {
+        this.serialNumber = serialNumber;
+    }
+
+    public String getScheduleDateTime() {
+        return scheduleDateTime;
+    }
+
+    public void setScheduleDateTime(String scheduleDateTime) {
+        this.scheduleDateTime = scheduleDateTime;
+    }
+
+    public Timestamp getFirstDateTime() {
+        return firstDateTime;
+    }
+
+    public void setFirstDateTime(Timestamp firstDateTime) {
+        this.firstDateTime = firstDateTime;
+    }
+
+    public Timestamp getLastDateTime() {
+        return lastDateTime;
+    }
+
+    public void setLastDateTime(Timestamp lastDateTime) {
+        this.lastDateTime = lastDateTime;
+    }
+}

@@ -4,12 +4,13 @@ import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Maps;
 import com.vipkid.mq.message.FinishOnlineClassMessage;
 import com.vipkid.mq.service.PayrollMessageService;
-import com.vipkid.portal.classroom.model.MajorCommentsVo;
+import com.vipkid.portal.classroom.model.bo.MajorCommentsBo;
 import com.vipkid.portal.classroom.util.Convertor;
 import com.vipkid.rest.security.AppContext;
 import com.vipkid.rest.service.LoginService;
 import com.vipkid.trpm.dao.*;
-import com.vipkid.trpm.entity.*;
+import com.vipkid.trpm.entity.Teacher;
+import com.vipkid.trpm.entity.User;
 import com.vipkid.trpm.entity.report.DemoReports;
 import com.vipkid.trpm.entity.report.ReportLevels;
 import com.vipkid.trpm.entity.teachercomment.TeacherComment;
@@ -19,7 +20,6 @@ import com.vipkid.trpm.service.media.AbstarctMediaService;
 import com.vipkid.trpm.service.portal.ReportEmailService;
 import com.vipkid.trpm.service.portal.TeacherService;
 import com.vipkid.trpm.util.DateUtils;
-import com.vipkid.trpm.util.LessonSerialNumber;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,7 +27,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
-import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -86,7 +85,7 @@ public class MajorFeedbackService {
     @Autowired
     private LoginService loginService;
 
-    public Map<String, Object> submitTeacherComment(MajorCommentsVo teacherComment, User user, String serialNumber,
+    public Map<String, Object> submitTeacherComment(MajorCommentsBo teacherComment, User user, String serialNumber,
                                                     String scheduledDateTime, boolean isFromH5) {
         // 如果ID为0 则抛出异常并回滚
         checkArgument(teacherComment.getId() != null && 0 != teacherComment.getId(), "Argument teacherComment id equals 0");

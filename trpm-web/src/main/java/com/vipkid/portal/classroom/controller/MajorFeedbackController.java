@@ -5,8 +5,10 @@ import com.google.common.base.Stopwatch;
 import com.google.common.collect.Maps;
 import com.vipkid.enums.TeacherEnum;
 import com.vipkid.portal.classroom.model.MajorCommentsVo;
+import com.vipkid.portal.classroom.model.bo.MajorCommentsBo;
 import com.vipkid.portal.classroom.service.ClassFeedbackService;
 import com.vipkid.portal.classroom.service.MajorFeedbackService;
+import com.vipkid.portal.classroom.util.Convertor;
 import com.vipkid.rest.interceptor.annotation.RestInterface;
 import com.vipkid.rest.service.LoginService;
 import com.vipkid.rest.utils.ApiResponseUtils;
@@ -19,6 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -47,10 +50,12 @@ public class MajorFeedbackController {
     @Autowired
     private LoginService loginService;
 
+
     @RequestMapping("/class/save")
     public Map<String,Object> feedbackSubmit(HttpServletRequest request, HttpServletResponse response,
-                                              MajorCommentsVo teacherComment, Model model) {
+                                             @RequestBody MajorCommentsVo teacherCommentVo) {
         Stopwatch stopwatch = Stopwatch.createStarted();
+        MajorCommentsBo teacherComment = Convertor.toMajorCommentsBo(teacherCommentVo);
         String serialNumber = teacherComment.getSerialNumber();
         String scheduledDateTime = teacherComment.getScheduleDateTime();
         logger.info("ReportController: feedbackSubmit() 参数为：serialNumber={}, scheduledDateTime={}, teacherComment={}", serialNumber, scheduledDateTime, JSON.toJSONString(teacherComment));

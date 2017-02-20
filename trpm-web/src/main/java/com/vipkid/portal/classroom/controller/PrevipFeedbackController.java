@@ -5,8 +5,10 @@ import com.google.common.base.Stopwatch;
 import com.google.common.collect.Maps;
 import com.vipkid.enums.TeacherEnum;
 import com.vipkid.portal.classroom.model.PrevipCommentsVo;
+import com.vipkid.portal.classroom.model.bo.PrevipCommentsBo;
 import com.vipkid.portal.classroom.service.ClassFeedbackService;
 import com.vipkid.portal.classroom.service.PrevipFeedbackService;
+import com.vipkid.portal.classroom.util.Convertor;
 import com.vipkid.rest.interceptor.annotation.RestInterface;
 import com.vipkid.rest.service.LoginService;
 import com.vipkid.rest.utils.ApiResponseUtils;
@@ -50,8 +52,9 @@ public class PrevipFeedbackController {
 
     @RequestMapping("/previp/save")
     public Map<String,Object> feedbackSubmit(HttpServletRequest request, HttpServletResponse response,
-                                  PrevipCommentsVo teacherComment, Model model) {
+                                  @RequestBody PrevipCommentsVo teacherCommentVo) {
         Stopwatch stopwatch = Stopwatch.createStarted();
+        PrevipCommentsBo teacherComment = Convertor.toPrevipCommentsBo(teacherCommentVo);
         String serialNumber = teacherComment.getSerialNumber();
         String scheduledDateTime = teacherComment.getScheduleDateTime();
         logger.info("ReportController: feedbackSubmit() 参数为：serialNumber={}, scheduledDateTime={}, teacherComment={}", serialNumber, scheduledDateTime, JSON.toJSONString(teacherComment));
