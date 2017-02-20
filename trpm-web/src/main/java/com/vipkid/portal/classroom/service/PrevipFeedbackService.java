@@ -36,7 +36,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 @Service
 public class PrevipFeedbackService {
 
-    private static Logger logger = LoggerFactory.getLogger(FeedbackService.class);
+    private static Logger logger = LoggerFactory.getLogger(PrevipFeedbackService.class);
 
     private static final Executor executor = Executors.newFixedThreadPool(10);
 
