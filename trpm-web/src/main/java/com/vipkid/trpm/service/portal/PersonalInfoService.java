@@ -3,9 +3,9 @@ package com.vipkid.trpm.service.portal;
 import static com.vipkid.trpm.util.DateUtils.FMT_YMD;
 
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -169,7 +169,7 @@ public class PersonalInfoService {
 		if(bankABARoutingNumber.indexOf("*")==-1){
 			String ABARoutingNumber = teacher.getBankABARoutingNumber();
 			if (!StringUtils.equals(bankABARoutingNumber,ABARoutingNumber)){
-				stringBuffer.append(" bankABARoutingNumber:from " + hideInfo(ABARoutingNumber,0,ABARoutingNumber.length()-4) + "to " + hideInfo(bankABARoutingNumber,0,bankABARoutingNumber.length()-4));
+				stringBuffer.append(" bankABARoutingNumber:from " + hideInfo(ABARoutingNumber,0,ABARoutingNumber.length()-4) + " to " + hideInfo(bankABARoutingNumber,0,bankABARoutingNumber.length()-4));
 			}
 			teacher.setBankABARoutingNumber(bankABARoutingNumber);
 		}
@@ -202,7 +202,11 @@ public class PersonalInfoService {
 		if (!StringUtils.equals(issuanceCountry,String.valueOf(teacher.getIssuanceCountry()))){
 			stringBuffer.append(" ssuanceCountry:from " + teacher.getIssuanceCountry() + " to " + issuanceCountry);
 		}
-		logger.info("更新银行信息： {}",stringBuffer.toString());
+		Date currentTime = new Date();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyy-MM-dd HH:mm:ss");
+		String now = sdf.format(currentTime);
+
+		logger.info("Teacher {} 在 {} 更新银行信息： {}",teacherId,now,stringBuffer.toString());
 		teacher.setIssuanceCountry(bankInfo.getIssuanceCountryId());
 
 		teacherDao.update(teacher);
