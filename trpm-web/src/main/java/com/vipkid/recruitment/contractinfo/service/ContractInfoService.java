@@ -462,7 +462,7 @@ public class ContractInfoService {
 
         int effected = teacherDao.update(teacher);
         if (effected > 0) {
-            logger.error("Successful to update teacher {}", teacher);
+            logger.info("Successful to update teacher {}", teacher);
             return true;
         }
 
