@@ -60,7 +60,7 @@ public class BankInfoController extends RestfulController{
             teacherId = teacher.getId();
             logger.info("获取教师银行信息 teacherId = {}", teacherId);
 
-            personalInfoService.setBankInfoOfTeacher(teacher);
+            teacher = personalInfoService.setBankInfoOfTeacher(teacher);
 
             int identityType =  teacher.getIdentityType();
             result.put("teacherIdentityType", identityType);

@@ -507,7 +507,7 @@ public class PersonalInfoService {
 
 	}
 
-	public void setBankInfoOfTeacher(Teacher teacher){
+	public Teacher setBankInfoOfTeacher(Teacher teacher){
 		if (null != teacher) {
 			TeacherBankInfo teacherBankInfo = teacherBankInfoDao.getTeacherBankInfo(teacher.getId());
 
@@ -521,6 +521,7 @@ public class PersonalInfoService {
 				teacher.setBankSwiftCode(teacherBankInfo.getBankSwiftCode());
 			}
 		}
+		return teacher;
 	}
 
 }
