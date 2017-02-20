@@ -382,13 +382,24 @@ public class BookingsService {
         /* 根据北京时间构造 Map 对象 */
         Map<String, Map<String, Object>> teacherScheduleMap = Maps.newHashMap();
 
+        if(org.springframework.util.CollectionUtils.isEmpty(teacherScheduleList)){
+            return teacherScheduleMap;
+        }
+
         /* 查询需要显示的 INVALID 课程列表 */
         List<Map<String, Object>> invalidScheduleList =
                         onlineClassDao.findInvalidBy(teacherId, fromTime, toTime, timezone);
 
+        if(org.springframework.util.CollectionUtils.isEmpty(invalidScheduleList)){
+            return teacherScheduleMap;
+        }
         /* 查询 24 小时的课程列表 */
         List<String> onlineClassIds = teacherScheduleList.stream().map(map -> String.valueOf(map.get("id")))
                         .collect(Collectors.toList());
+
+        if(CollectionUtils.isEmpty(onlineClassIds)){
+            return teacherScheduleMap;
+        }
         List<String> idsFor24Hour = get24Hours(teacherId, onlineClassIds);
 
         for (Map<String, Object> teacherSchedule : teacherScheduleList) {
@@ -600,10 +611,11 @@ public class BookingsService {
             logger.info("Get 24Hours Request Url: {}", requestUrl);
 
             String responseBody = HttpClientProxy.get(requestUrl, requestParams, requestHeader);
+            logger.info("Get 24Hours Response:{}",responseBody);
             responseBody = StringTools.matchString(responseBody, "\\[(.*?)\\]", Pattern.CASE_INSENSITIVE, 1);
             return Arrays.asList(StringUtils.split(responseBody, ","));
         } catch (Exception e) {
-            logger.error("HttpClientProxy err: {}", e);
+            logger.error("HttpClientProxy err:", e);
             return Lists.newArrayList();
         }
     }
