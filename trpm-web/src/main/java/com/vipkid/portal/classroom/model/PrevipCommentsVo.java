@@ -6,8 +6,9 @@ import com.vipkid.rest.validation.annotation.NotNull;
  * Created by LP-813 on 2017/2/20.
  */
 @NotNull
-public class PrevipCommentsVo {
+public class    PrevipCommentsVo {
 
+    private Long id;
     private Long onlineClassId;
     private Long studentId;
     private Integer teacherId;
@@ -22,7 +23,7 @@ public class PrevipCommentsVo {
     private String speaksClearly;
     private String mouseTouchpadActivities;
     private String degreeCompletion;
-    private String performance;
+    private Integer performance;
     private Boolean needParentSupport;
     private String serialNumber;
     private String scheduleDateTime;
@@ -139,11 +140,11 @@ public class PrevipCommentsVo {
         this.degreeCompletion = degreeCompletion;
     }
 
-    public String getPerformance() {
+    public Integer getPerformance() {
         return performance;
     }
 
-    public void setPerformance(String performance) {
+    public void setPerformance(Integer performance) {
         this.performance = performance;
     }
 
@@ -169,5 +170,13 @@ public class PrevipCommentsVo {
 
     public void setTeacherId(Integer teacherId) {
         this.teacherId = teacherId;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 }

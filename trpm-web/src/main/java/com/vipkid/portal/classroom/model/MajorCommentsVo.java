@@ -7,6 +7,7 @@ import com.vipkid.rest.validation.annotation.NotNull;
  */
 @NotNull
 public class MajorCommentsVo {
+    private Long id;
     private Long onlineClassId;
     private Integer studentId;
     private Integer teacherId;
@@ -79,5 +80,21 @@ public class MajorCommentsVo {
 
     public void setScheduleDateTime(String scheduleDateTime) {
         this.scheduleDateTime = scheduleDateTime;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Integer getTeacherId() {
+        return teacherId;
+    }
+
+    public void setTeacherId(Integer teacherId) {
+        this.teacherId = teacherId;
     }
 }
