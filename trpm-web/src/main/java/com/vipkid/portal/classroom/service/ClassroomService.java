@@ -106,9 +106,9 @@ public class ClassroomService {
             resultDto.setUa(obtainUa(onlineClass.getId()));
             resultDto.setCourseType(obtainCourseType(lesson.getSerialNumber()));
             if(resultDto.getCourseType().equals("Practicum")){
-            	List<TeacherApplication> list = teacherApplicationDao.findCurrentApplication(bean.getStudentId());	
-            	if(CollectionUtils.isNotEmpty(list)){
-            		resultDto.setTeacherApplicationId(list.get(0).getId());
+            	TeacherApplication application = teacherApplicationDao.findApplictionByOlineclassId(bean.getOnlineClassId(), teacher.getId());	
+            	if(application != null){
+            		resultDto.setTeacherApplicationId(application.getId());
             	}
             }
         }else{
