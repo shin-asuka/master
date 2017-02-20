@@ -134,4 +134,8 @@ public class ClassCommentsVo {
     public void setLastDateTime(Timestamp lastDateTime) {
         this.lastDateTime = lastDateTime;
     }
+
+    public static long getSerialVersionUID() {
+        return serialVersionUID;
+    }
 }
