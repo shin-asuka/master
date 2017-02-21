@@ -18,6 +18,25 @@ public class TeacherEnum {
 		PART_TIME, // 兼职
 		TEST // test
 	}
+
+	public enum ContractType {
+		ONE("1.0"),
+		TWO_A("2.0A"),
+		TWO_B("2.0B"),
+		THREE_A("3.0A"),
+		THREE_B("3.0B"),
+		FOUR_A("4.0A");
+
+		private String value;
+
+		ContractType(String value) {
+			this.value = value;
+		}
+
+		public String getVal() {
+			return this.value;
+		}
+	}
 	
     /**招募端新增3种渠道分类*/
     public enum RecruitmentChannel {
