@@ -50,7 +50,8 @@ public class AlertLogFilter extends Filter<ILoggingEvent> {
         if(StringUtils.isNotBlank(filterLogger)){
             Iterable<String> loggerIterable = Splitter.on(";").split(filterLogger);
             for(String filterLoggerItem : loggerIterable){
-                if(event.getLoggerName().contains(filterLoggerItem)){
+                System.out.println(String.format("%s|%s|%s",event.getLoggerName(),filterLoggerItem,StringUtils.equals(event.getLoggerName(),filterLoggerItem)));
+                if(StringUtils.equals(event.getLoggerName(),filterLoggerItem)){
                     return FilterReply.DENY;
                 }
             }
