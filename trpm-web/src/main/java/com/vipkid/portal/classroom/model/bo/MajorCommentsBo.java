@@ -10,7 +10,9 @@ public class MajorCommentsBo extends FeedbackBo{
     /*  */
     private Long id;
     /*  */
-
+    private Long onlineClassId;
+    private Long studentId;
+    private Integer teacherId;
     private Timestamp createDateTime;
     /*  */
     private Integer empty;
@@ -131,5 +133,29 @@ public class MajorCommentsBo extends FeedbackBo{
 
     public void setLastDateTime(Timestamp lastDateTime) {
         this.lastDateTime = lastDateTime;
+    }
+
+    public Integer getTeacherId() {
+        return teacherId;
+    }
+
+    public void setTeacherId(Integer teacherId) {
+        this.teacherId = teacherId;
+    }
+
+    public Long getOnlineClassId() {
+        return onlineClassId;
+    }
+
+    public void setOnlineClassId(Long onlineClassId) {
+        this.onlineClassId = onlineClassId;
+    }
+
+    public Long getStudentId() {
+        return studentId;
+    }
+
+    public void setStudentId(Long studentId) {
+        this.studentId = studentId;
     }
 }

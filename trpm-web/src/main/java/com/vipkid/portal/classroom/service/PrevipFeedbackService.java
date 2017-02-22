@@ -35,7 +35,7 @@ import java.util.concurrent.Executors;
 import static com.google.common.base.Preconditions.checkArgument;
 
 @Service
-public class PrevipFeedbackService implements FeedbackService {
+public class PrevipFeedbackService implements FeedbackService{
 
     private static Logger logger = LoggerFactory.getLogger(PrevipFeedbackService.class);
 
@@ -85,20 +85,24 @@ public class PrevipFeedbackService implements FeedbackService {
 
     @Autowired
     private LoginService loginService;
+    @Autowired
+    private ClassFeedbackService classFeedbackService;
 
-    public Map<String, Object> submitTeacherComment(PrevipCommentsBo teacherComment, User user, String serialNumber,
+    @Override
+    public Map<String, Object> submitTeacherComment(FeedbackBo feedbackBo, User user, String serialNumber,
                                                     String scheduledDateTime, boolean isFromH5) {
         // 如果ID为0 则抛出异常并回滚
-        String previpErrorMsg = checkInputArgument(teacherComment, serialNumber);
+        String previpErrorMsg = checkInputArgument(feedbackBo,serialNumber);
         if (StringUtils.isNotBlank(previpErrorMsg)) {
             Map<String, Object> paramMap = Maps.newHashMap();
             paramMap.put("result", false);
             paramMap.put("msg", previpErrorMsg);
             return paramMap;
         }
-
+        PrevipCommentsBo teacherComment = (PrevipCommentsBo) feedbackBo;
         teacherComment.setEmpty(0);
         // 日志记录参数准备
+        classFeedbackService.findTeacherCommentIdByOnlineClassIdAndStudentId(teacherComment.getOnlineClassId(),teacherComment.getStudentId());
         TeacherCommentResult oldtcFromAPI = teacherService
                 .findByTeacherCommentId(String.valueOf(teacherComment.getId()));
         if (oldtcFromAPI == null) {
@@ -147,49 +151,48 @@ public class PrevipFeedbackService implements FeedbackService {
                     JSON.toJSONString(paramMap), user.getUsername(), teacherComment);
             paramMap.put("result", false);
         }
-
+        sendFeedbackMessage(feedbackBo,scheduledDateTime,serialNumber);
         return paramMap;
     }
 
     @Override
-    public String checkInputArgument(FeedbackBo feedbackBo, String serialNumber) {
-        if (feedbackBo instanceof PrevipCommentsBo) {
+    public String checkInputArgument(FeedbackBo feedbackBo,String serialNumber) {
+        if(feedbackBo instanceof PrevipCommentsBo) {
             PrevipCommentsBo teacherComment = (PrevipCommentsBo) feedbackBo;
             checkArgument(teacherComment.getId() != null && 0 != teacherComment.getId(), "Argument teacherComment id equals 0");
             String previpErrorMsg = teacherService.inputCheckPrevipMajorCourseTeacherComment(serialNumber, Convertor.toSubmitTeacherCommentDto(teacherComment));
             return previpErrorMsg;
-        } else {
+        }else{
             return "FeedBack type error!";
         }
     }
 
     @Override
-    public void sendFeedbackMessage(FeedbackBo feedbackBo, Long onlineClassId, Long studentId, String scheduledDateTime, String serialNumber) {
+    public void sendFeedbackMessage(FeedbackBo feedbackBo,String scheduledDateTime,String serialNumber){
         // 填写评语发送消息
-        if (feedbackBo instanceof PrevipCommentsBo) {
+        if(feedbackBo instanceof PrevipCommentsBo) {
             PrevipCommentsBo teacherComment = (PrevipCommentsBo) feedbackBo;
-            if (teacherComment != null && onlineClassId != null && onlineClassId > 0
+            if (teacherComment != null && teacherComment.getOnlineClassId() != null && teacherComment.getOnlineClassId() > 0
                     && teacherComment.getTeacherFeedback() != null) {
-                logger.info("填写评语发送消息  onlineClassId = {} ", onlineClassId);
-
-                executor.execute(() -> payrollMessageService.sendFinishOnlineClassMessage(Convertor.toSubmitTeacherCommentDto(teacherComment), onlineClassId,
+                logger.info("填写评语发送消息  onlineClassId = {} ", teacherComment.getOnlineClassId());
+                executor.execute(() -> payrollMessageService.sendFinishOnlineClassMessage(Convertor.toSubmitTeacherCommentDto(teacherComment), teacherComment.getOnlineClassId(),
                         FinishOnlineClassMessage.OperatorType.ADD_TEACHER_COMMENTS));
             }
 
             if (teacherComment.getPerformance() != null && (teacherComment.getPerformance() == 1 || teacherComment.getPerformance() == 5)) {
                 logger.info(
                         "previp检查Performance判断是否给CLT发邮件: studentId = {}, serialNumber = {} ",
-                        studentId, serialNumber);
+                        teacherComment.getStudentId(), serialNumber);
                 sendEmailExecutor.execute(() -> {
-                    emailService.sendEmail4PreVip2CLTByPerformance(studentId, serialNumber);
+                    emailService.sendEmail4PreVip2CLTByPerformance(teacherComment.getStudentId(), serialNumber);
                 });
             }
             if (teacherComment.getNeedParentSupport() != null && teacherComment.getNeedParentSupport()) {
                 logger.info(
                         "previp检查needParentSupport判断是否给CLT发邮件: studentId = {}, serialNumber = {} ",
-                        studentId, serialNumber);
+                        teacherComment.getStudentId(), serialNumber);
                 sendEmailExecutor.execute(() -> {
-                    emailService.sendEmail4PreVip2CLTByNeedParent(studentId);
+                    emailService.sendEmail4PreVip2CLTByNeedParent(teacherComment.getStudentId());
                 });
             }
         }
