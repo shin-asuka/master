@@ -393,10 +393,7 @@ public class BookingsService {
         List<String> onlineClassIds = teacherScheduleList.stream().map(map -> String.valueOf(map.get("id"))).collect(Collectors.toList());
 
 
-        List<String> idsFor24Hour = Lists.newArrayList();
-        if(CollectionUtils.isNotEmpty(onlineClassIds)){
-            idsFor24Hour = get24Hours(teacherId, onlineClassIds);
-        }
+        List<String> idsFor24Hour = get24Hours(teacherId, onlineClassIds);
 
 
         for (Map<String, Object> teacherSchedule : teacherScheduleList) {
