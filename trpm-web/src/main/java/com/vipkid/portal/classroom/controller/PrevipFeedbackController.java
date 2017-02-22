@@ -68,7 +68,7 @@ public class PrevipFeedbackController {
         Map<String, Object> parmMap = feedbackService.submitTeacherComment(teacherComment, loginService.getUser(),serialNumber,scheduledDateTime,false);
         long millis =stopwatch.stop().elapsed(TimeUnit.MILLISECONDS);
         logger.info("执行ReportController: feedbackSubmit()耗时：{} ", millis);
-        return ApiResponseUtils.buildSuccessDataResp(parmMap);
+        return parmMap;
     }
 
     @RequestMapping("/previp/view")
@@ -100,7 +100,7 @@ public class PrevipFeedbackController {
 
         long millis =stopwatch.stop().elapsed(TimeUnit.MILLISECONDS);
         logger.info("执行ReportController: feedbackView()耗时：{} ", millis);
-        return ApiResponseUtils.buildSuccessDataResp(map);
+        return map;
     }
 
 

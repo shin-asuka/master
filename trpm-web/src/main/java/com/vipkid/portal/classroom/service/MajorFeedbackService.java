@@ -99,7 +99,7 @@ public class MajorFeedbackService implements FeedbackService {
                 .findByTeacherCommentId(String.valueOf(teacherComment.getId()));
         if (oldtcFromAPI == null) {
             Map<String, Object> paramMap = Maps.newHashMap();
-            paramMap.put("result", false);
+            paramMap.put("status", false);
             paramMap.put("msg", "You submit a wrong feedback.");
             return paramMap;
         }
@@ -119,7 +119,7 @@ public class MajorFeedbackService implements FeedbackService {
 
         // 如果已经提交过，则不允许保存
         if (StringUtils.isNotBlank(oldtc.getTeacherFeedback())) {
-            paramMap.put("result", false);
+            paramMap.put("status", false);
             paramMap.put("msg", "You have already submitted feedback.");
             return paramMap;
         }
@@ -137,11 +137,11 @@ public class MajorFeedbackService implements FeedbackService {
         if (success) {
             logger.info("FEEDBACK_SAVE_OK,paramMap = {},teacherName = {},teacherComment ={}",
                     JSON.toJSONString(paramMap), user.getUsername(), teacherComment);
-            paramMap.put("result", true);
+            paramMap.put("status", true);
         } else {
             logger.error("FEEDBACK_SAVE_FAIL,paramMap = {},teacherName = {},teacherComment ={}",
                     JSON.toJSONString(paramMap), user.getUsername(), teacherComment);
-            paramMap.put("result", false);
+            paramMap.put("status", false);
         }
         sendFeedbackMessage(teacherComment, scheduledDateTime, serialNumber);
         return paramMap;

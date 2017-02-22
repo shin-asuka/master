@@ -63,7 +63,7 @@ public class TrialFeedbackController {
         Map<String, Object> parmMap = majorFeedbackService.submitTeacherComment(teacherComment, loginService.getUser(),serialNumber,scheduledDateTime,false);
         long millis =stopwatch.stop().elapsed(TimeUnit.MILLISECONDS);
         logger.info("执行ReportController: feedbackSubmit()耗时：{} ", millis);
-        return ApiResponseUtils.buildSuccessDataResp(parmMap);
+        return parmMap;
     }
 
     @RequestMapping("/trial/view")
@@ -95,6 +95,6 @@ public class TrialFeedbackController {
 
         long millis =stopwatch.stop().elapsed(TimeUnit.MILLISECONDS);
         logger.info("执行ReportController: feedbackView()耗时：{} ", millis);
-        return ApiResponseUtils.buildSuccessDataResp(map);
+        return map;
     }
 }

@@ -65,7 +65,7 @@ public class ClassFeedbackController {
         Map<String, Object> parmMap = feedbackService.submitTeacherComment(teacherComment, loginService.getUser(),serialNumber,scheduledDateTime,false);
         long millis =stopwatch.stop().elapsed(TimeUnit.MILLISECONDS);
         logger.info("执行ReportController: feedbackSubmit()耗时：{} ", millis);
-        return ApiResponseUtils.buildSuccessDataResp(parmMap);
+        return parmMap;
     }
 
     @RequestMapping("/class/view")
@@ -97,6 +97,6 @@ public class ClassFeedbackController {
 
         long millis =stopwatch.stop().elapsed(TimeUnit.MILLISECONDS);
         logger.info("执行ReportController: feedbackView()耗时：{} ", millis);
-        return ApiResponseUtils.buildSuccessDataResp(map);
+        return map;
     }
 }
