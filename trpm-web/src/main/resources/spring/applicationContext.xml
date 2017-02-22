@@ -60,8 +60,7 @@
 		</mvc:interceptor>
 	</mvc:interceptors>
 
-
-	<beans:bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+	<beans:bean id="propertyConfigurer" class="com.vipkid.vconfig.VConfigPropertyPlaceholderConfigurer">
 		<beans:property name="locations">
 			<beans:list>
 				<beans:value>classpath:application.properties</beans:value>
@@ -75,7 +74,6 @@
 			<!--</beans:list>-->
 		<!--</beans:property>-->
 	<!--</beans:bean>-->
-
 
 
 	<beans:bean id="applicationContextHolder" class="org.community.spring.ApplicationContextHolder"
