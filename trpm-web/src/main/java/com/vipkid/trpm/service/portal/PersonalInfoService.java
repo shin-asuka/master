@@ -9,21 +9,19 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.community.tools.JsonTools;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.util.HtmlUtils;
 
-import com.alibaba.druid.util.StringUtils;
 import com.google.api.client.repackaged.com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 import com.vipkid.file.model.FileUploadStatus;
 import com.vipkid.file.model.FileVo;
 import com.vipkid.file.service.AwsFileService;
-import com.vipkid.file.utils.Encodes;
 import com.vipkid.file.utils.FileUtils;
 import com.vipkid.http.service.FileHttpService;
 import com.vipkid.trpm.constant.ApplicationConstant.MediaType;
@@ -139,62 +137,63 @@ public class PersonalInfoService {
 		String bankABARoutingNumber = bankInfo.getBankABARoutingNumber();
 		String bankACHNumber = bankInfo.getBankACHNumber();
 		String identityNumber = bankInfo.getIdNumber();
+		String bankName = bankInfo.getBeneficiaryBankName();
+		String bankCardNumber = bankInfo.getBeneficiaryAccountNumber();
 		StringBuffer modificationLog = new StringBuffer();
 
-		String bankName = bankInfo.getBeneficiaryBankName();
-
-		if (!StringUtils.equals(bankName,teacher.getBankName())){
+		if (!StringUtils.equals(bankName, teacher.getBankName())){
 			modificationLog.append(" bankName:from " + teacher.getBankName() + " to " + bankName);
 		}
 		teacher.setBankName(bankName);
 
 		//1. check if the sensitive fields contain '*'
 		//2. record the bank info modification in logs
-		if (!bankAccountName.contains("*")){
+		if (notContainsAsterisk(bankAccountName)) {
 			if (!StringUtils.equals(bankAccountName,teacher.getBankAccountName())){
-				modificationLog.append(" bankAccountName:from " + hideNameInfo(teacher.getBankAccountName()) + " to " + hideNameInfo(bankAccountName));
+				modificationLog.append(" bankAccountName:from " + teacher.getBankAccountName() + " to " + bankAccountName);
 			}
 			teacher.setBankAccountName(bankAccountName);
 		}
-		String bankCardNumber = bankInfo.getBeneficiaryAccountNumber();
-		if (!bankCardNumber.contains("*")){
+
+		if (notContainsAsterisk(bankCardNumber)){
 			if (!StringUtils.equals(bankCardNumber,teacher.getBankCardNumber())){
 				modificationLog.append(" bankCardNumber:from " + teacher.getBankCardNumber() + " to " + bankCardNumber);
 			}
 			teacher.setBankCardNumber(bankInfo.getBeneficiaryAccountNumber());
 		}
 
-		if (!bankSwiftCode.contains("*")){
+		if (notContainsAsterisk(bankSwiftCode)){
 			String swiftCode = teacher.getBankSwiftCode();
 			if (!StringUtils.equals(bankSwiftCode,swiftCode)){
-				modificationLog.append(" bankSwiftCode:from " + hideInfo(swiftCode,0,swiftCode.length()-2)+ " to " + hideInfo(bankSwiftCode,0,bankSwiftCode.length()-2));
+				modificationLog.append(" bankSwiftCode:from " + swiftCode + " to " + bankSwiftCode);
 			}
 			teacher.setBankSwiftCode(bankSwiftCode);
 		}
-		if(!bankABARoutingNumber.contains("*")){
+		if (notContainsAsterisk(bankABARoutingNumber)){
 			String ABARoutingNumber = teacher.getBankABARoutingNumber();
 			if (!StringUtils.equals(bankABARoutingNumber,ABARoutingNumber)){
-				modificationLog.append(" bankABARoutingNumber:from " + hideInfo(ABARoutingNumber,0,ABARoutingNumber.length()-4) + " to " + hideInfo(bankABARoutingNumber,0,bankABARoutingNumber.length()-4));
+				modificationLog.append(" bankABARoutingNumber:from " + ABARoutingNumber + " to " + bankABARoutingNumber);
 			}
 			teacher.setBankABARoutingNumber(bankABARoutingNumber);
 		}
-		if (!bankACHNumber.contains("*")){
+
+		if (notContainsAsterisk(bankACHNumber)){
 			String ACHNumber = teacher.getBankACHNumber();
 			if (!StringUtils.equals(bankACHNumber,ACHNumber)){
-				modificationLog.append(" bankACHNumber:from " + hideInfo(ACHNumber,0,ACHNumber.length()-4) + " to " + hideInfo(bankACHNumber,0,bankACHNumber.length()-4));
+				modificationLog.append(" bankACHNumber:from " + ACHNumber + " to " + bankACHNumber);
 			}
 			teacher.setBankACHNumber(bankACHNumber);
 		}
-		if (!identityNumber.contains("*")){
+
+		if (notContainsAsterisk(identityNumber)){
 			String IdNumber = teacher.getIdentityNumber();
 			if (!StringUtils.equals(identityNumber,IdNumber)){
-				modificationLog.append(" identityNumber:from " + hideInfo(IdNumber,1,IdNumber.length()) + " to " + hideInfo(identityNumber,1,identityNumber.length()));
+				modificationLog.append(" identityNumber:from " + IdNumber + " to " + identityNumber);
 			}
 			teacher.setIdentityNumber(identityNumber);
 		}
 
-
-		String identityType = bankInfo.getIdType().toString();
+		String identityType = String.valueOf(bankInfo.getIdType());
 		teacher.setIdentityType(bankInfo.getIdType());
 		if (!StringUtils.equals(identityType,String.valueOf(teacher.getIdentityType()))){
 			modificationLog.append(" identityType:from " + teacher.getIdentityType() + " to " + identityType);
@@ -206,7 +205,7 @@ public class PersonalInfoService {
 		}
 		teacher.setPassport(bankInfo.getPassportURL());
 
-		String issuanceCountry = bankInfo.getIssuanceCountryId().toString();
+		String issuanceCountry = String.valueOf(bankInfo.getIssuanceCountryId());
 		if (!StringUtils.equals(issuanceCountry,String.valueOf(teacher.getIssuanceCountry()))){
 			modificationLog.append(" issuanceCountry:from " + teacher.getIssuanceCountry() + " to " + issuanceCountry);
 		}
@@ -214,12 +213,19 @@ public class PersonalInfoService {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyy-MM-dd HH:mm:ss");
 		String now = sdf.format(currentTime);
 
-		logger.info("Teacher {} 在 {} 更新银行信息：{}", teacherId, now, modificationLog.toString());
+		logger.info("#Teacher {} 在 {} 更新银行信息：{}", teacherId, now, modificationLog.toString());
 		teacher.setIssuanceCountry(bankInfo.getIssuanceCountryId());
 
 		teacherDao.update(teacher);
 		modelMap.put("teacher", teacher);
 		return modelMap;
+	}
+
+	private static boolean notContainsAsterisk(String bankInfoField) {
+		if (!StringUtils.contains(bankInfoField, "*")) {
+			return true;
+		}
+		return false;
 	}
 
 	/**
