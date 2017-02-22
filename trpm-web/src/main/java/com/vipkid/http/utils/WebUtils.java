@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package com.vipkid.http.utils;
 
@@ -8,6 +8,7 @@ import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Map;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpEntity;
@@ -33,7 +34,7 @@ import com.vipkid.http.vo.HttpResult;
 
 /**
  * http请求客户端工具类
- * 
+ *
  * @author zouqinghua
  * @date 2016年3月11日 上午10:31:48
  *
@@ -47,9 +48,9 @@ public class WebUtils {
 
     private static final int DEFAULT_TIMEOUT = 2 * 1000;
     private static final RequestConfig DEFAULT_REQUEST_CONFIG = RequestConfig.custom()
-			.setConnectionRequestTimeout(DEFAULT_TIMEOUT).setConnectTimeout(DEFAULT_TIMEOUT)
-			.setSocketTimeout(DEFAULT_TIMEOUT).build();
-    
+            .setConnectionRequestTimeout(DEFAULT_TIMEOUT).setConnectTimeout(DEFAULT_TIMEOUT)
+            .setSocketTimeout(DEFAULT_TIMEOUT).build();
+
     // cookie
     private static final String COOKIE_NAME = "Cookie";
     private static final String COOKIE_SPLIT = ";";
@@ -67,7 +68,7 @@ public class WebUtils {
     }
 
     /**
-     * 
+     *
      * @param url
      * @param params
      * @param heads
@@ -75,7 +76,7 @@ public class WebUtils {
      * @return
      */
     public static HttpResult post(String url, Map<String, String> params, Map<String, String> heads,
-            Map<String, String> cookies) {
+                                  Map<String, String> cookies) {
         logger.info("HTTP Post data,url = "+url+",params = "+params+",heads = "+heads+",cookies = "+cookies);
         HttpResult result = new HttpResult();
         CloseableHttpResponse response = null;
@@ -133,7 +134,7 @@ public class WebUtils {
 
     /**
      * params 由map转换成NameValuePair格式数据
-     * 
+     *
      * @param params
      * @return
      */
@@ -149,7 +150,7 @@ public class WebUtils {
 
     /**
      * cookies 由map转换成http Cookie 数据格式
-     * 
+     *
      * @param cookies
      * @return
      */
@@ -168,21 +169,21 @@ public class WebUtils {
         logger.info("get data,url = "+url );
         CloseableHttpResponse response = null;
         try {
-			HttpGet httpGet = new HttpGet(url);
-			httpGet.setConfig(DEFAULT_REQUEST_CONFIG);
-			CloseableHttpClient httpclient = HttpClients.createDefault();
-			response = httpclient.execute(httpGet);
+            HttpGet httpGet = new HttpGet(url);
+            httpGet.setConfig(DEFAULT_REQUEST_CONFIG);
+            CloseableHttpClient httpclient = HttpClients.createDefault();
+            response = httpclient.execute(httpGet);
             logger.info("get data,response status line = "+response.getStatusLine());
             HttpEntity entity = response.getEntity();
             String rt = EntityUtils.toString(entity);
             if(HttpStatus.OK.value()!=response.getStatusLine().getStatusCode()){
-            	//logger.error("http get error =  "+ rt);
-            	throw new Exception(rt);
-			}
+                logger.error("http get error =  "+ rt);
+                throw new Exception(rt);
+            }
             return rt;
-		} catch (Exception e) {
-			logger.error("get data error,url = "+url, e);
-		} finally {
+        } catch (Exception e) {
+            logger.error("get data error,url = "+url+" e= "+e);
+        } finally {
             if (null != response) {
                 try {
                     response.close();
@@ -191,40 +192,41 @@ public class WebUtils {
                 }
             }
         }
-		return null;
-	}
-    
+        return null;
+    }
+
     public static String postNameValuePair(String url, Object object) {
-    	JSONObject json = JsonUtils.toJSONObject(object);
+//    	JSONObject json = JsonUtils.toJSONObject(object);
+        String json = JsonUtils.toJSONString(object);
         logger.info("Post data,url = {},params = {}", url, json);
         CloseableHttpResponse response = null;
         try {
-			HttpPost httpPost = new HttpPost(url);
-			Map<String, Object> map = MapUtils.parseJsonToMap(json);
-			List<NameValuePair> paramsList = Lists.newArrayList();
-			if( json != null){
+            HttpPost httpPost = new HttpPost(url);
+            Map<String, Object> map = JsonUtils.readJson(json, new TypeReference<Map<String, Object>>() {});
+            List<NameValuePair> paramsList = Lists.newArrayList();
+            if( json != null){
 //				for (String key : json.keySet()) {
 //					String value = json.getString(key);
 //					paramsList.add(new BasicNameValuePair(key, value));
 //				}
-				for (String key : map.keySet()) {
-					String value = map.get(key)==null?null:map.get(key).toString();
-					paramsList.add(new BasicNameValuePair(key, value));
-				}
-			}
-			logger.info("Post data map,url = {},params = {}", url, map);
-			//httpPost.addHeader("Authorization", UserUtils.getAuthorization());
-			httpPost.setEntity(new UrlEncodedFormEntity(paramsList, Charset.forName(DEFAULT_CHARSET)));
-			
-			CloseableHttpClient httpclient = HttpClients.createDefault();
-			response = httpclient.execute(httpPost);
+                for (String key : map.keySet()) {
+                    String value = map.get(key)==null?null:map.get(key).toString();
+                    paramsList.add(new BasicNameValuePair(key, value));
+                }
+            }
+            logger.info("Post data map,url = {},params = {}", url, map);
+            //httpPost.addHeader("Authorization", UserUtils.getAuthorization());
+            httpPost.setEntity(new UrlEncodedFormEntity(paramsList, Charset.forName(DEFAULT_CHARSET)));
+
+            CloseableHttpClient httpclient = HttpClients.createDefault();
+            response = httpclient.execute(httpPost);
             logger.info("Post data,response status line = {}",response.getStatusLine());
             HttpEntity entity = response.getEntity();
             String rt = EntityUtils.toString(entity);
             return rt;
-		} catch (Exception e) {
-			logger.error("Post data error,url = {},params = {}",url,json,e);
-		} finally {
+        } catch (Exception e) {
+            logger.error("Post data error,url = {},params = {}",url,json,e);
+        } finally {
             if (null != response) {
                 try {
                     response.close();
@@ -233,8 +235,8 @@ public class WebUtils {
                 }
             }
         }
-		return null;
-	}
+        return null;
+    }
 
     public static String postJSON(String url, JSONObject json) {
         logger.info("Post data,url = {},params = {}", url, json);

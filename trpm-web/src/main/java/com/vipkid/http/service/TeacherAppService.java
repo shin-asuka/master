@@ -5,6 +5,7 @@ package com.vipkid.http.service;
 
 import java.util.List;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.vipkid.trpm.entity.teachercomment.StudentAbilityLevelRule;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -146,11 +147,11 @@ public class TeacherAppService extends HttpBaseService {
 	public String getData(String respone){
 		String data = null;
 		if(StringUtils.isNotBlank(respone)){
-			JSONObject json = JsonUtils.parseToJSONObject(respone);
+			JsonNode json = JsonUtils.parseObject(respone);
 			if(json!=null){
-				JSON dataObj = (JSON) json.get("data");
+				JsonNode dataObj = json.get("data");
 				if(dataObj != null ){
-					data = dataObj.toJSONString();
+					data = dataObj.toString();
 				}
 			}
 		}
