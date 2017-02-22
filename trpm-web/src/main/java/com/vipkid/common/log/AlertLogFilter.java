@@ -46,15 +46,15 @@ public class AlertLogFilter extends Filter<ILoggingEvent> {
             return FilterReply.DENY;
         }
 
-//        String filterLogger = PropertyConfigurer.stringValue("logback.filter.logger");
-//        if(StringUtils.isNotBlank(filterLogger)){
-//            Iterable<String> loggerIterable = Splitter.on(";").split(filterLogger);
-//            for(String filterLoggerItem : loggerIterable){
-//                if(event.getLoggerName().contains(filterLoggerItem)){
-//                    return FilterReply.DENY;
-//                }
-//            }
-//        }
+        String filterLogger = PropertyConfigurer.stringValue("logback.filter.logger");
+        if(StringUtils.isNotBlank(filterLogger)){
+            Iterable<String> loggerIterable = Splitter.on(";").split(filterLogger);
+            for(String filterLoggerItem : loggerIterable){
+                if(StringUtils.equals(event.getLoggerName(),filterLoggerItem)){
+                    return FilterReply.DENY;
+                }
+            }
+        }
 
 
 
