@@ -89,7 +89,7 @@ public class MajorFeedbackService implements FeedbackService {
     public Map<String, Object> submitTeacherComment(MajorCommentsBo teacherComment, User user, String serialNumber,
                                                     String scheduledDateTime, boolean isFromH5) {
         // 如果ID为0 则抛出异常并回滚
-        String errorMessage = checkInputArgument(teacherComment,serialNumber);
+        String errorMessage = checkInputArgument(teacherComment, serialNumber);
 
         teacherComment.setEmpty(0);
         // 日志记录参数准备
@@ -146,45 +146,47 @@ public class MajorFeedbackService implements FeedbackService {
     }
 
     @Override
-    public String checkInputArgument(FeedbackBo feedbackBo,String serialNumber) {
-        if(feedbackBo instanceof MajorCommentsBo) {
+    public String checkInputArgument(FeedbackBo feedbackBo, String serialNumber) {
+        if (feedbackBo instanceof MajorCommentsBo) {
             MajorCommentsBo teacherComment = (MajorCommentsBo) feedbackBo;
             checkArgument(teacherComment.getId() != null && 0 != teacherComment.getId(), "Argument teacherComment id equals 0");
             return "";
-        }else{
+        } else {
             return "FeedBack type error!";
         }
     }
 
     @Override
-    public void sendFeedbackMessage(FeedbackBo feedbackBo,Long onlineClassId,Long studentId,String scheduledDateTime,String serialNumber) {
+    public void sendFeedbackMessage(FeedbackBo feedbackBo, Long onlineClassId, Long studentId, String scheduledDateTime, String serialNumber) {
         // 填写评语发送消息
-        MajorCommentsBo teacherComment = (MajorCommentsBo) feedbackBo;
-        if (teacherComment != null && onlineClassId != null && onlineClassId > 0
-                && teacherComment.getTeacherFeedback() != null) {
-            logger.info("填写评语发送消息  onlineClassId = {} ", onlineClassId);
+        if (feedbackBo instanceof MajorCommentsBo) {
+            MajorCommentsBo teacherComment = (MajorCommentsBo) feedbackBo;
+            if (teacherComment != null && onlineClassId != null && onlineClassId > 0
+                    && teacherComment.getTeacherFeedback() != null) {
+                logger.info("填写评语发送消息  onlineClassId = {} ", onlineClassId);
 
-            executor.execute(() -> payrollMessageService.sendFinishOnlineClassMessage(Convertor.toSubmitTeacherCommentDto(teacherComment), onlineClassId,
-                    FinishOnlineClassMessage.OperatorType.ADD_TEACHER_COMMENTS));
-        }
+                executor.execute(() -> payrollMessageService.sendFinishOnlineClassMessage(Convertor.toSubmitTeacherCommentDto(teacherComment), onlineClassId,
+                        FinishOnlineClassMessage.OperatorType.ADD_TEACHER_COMMENTS));
+            }
 
-        //判断PerformanceAdjust给CLT发邮件
-        if (teacherComment.getPerformanceAdjust() != null && teacherComment.getPerformance() != null
-                && (teacherComment.getPerformanceAdjust() == 1 && teacherComment.getPerformance() != 0)) {
-            logger.info("判断PerformanceAdjust给CLT发邮件: studentId = {}, serialNumber = {}, scheduledDateTime = {} ",
-                    studentId, serialNumber, scheduledDateTime);
-            final String finalScheduledDateTime = scheduledDateTime;
-            sendEmailExecutor.execute(() -> {
-                emailService.sendEmail4PerformanceAdjust2CLT(studentId, serialNumber,
-                        finalScheduledDateTime, teacherComment.getPerformance());
-            });
-        }
+            //判断PerformanceAdjust给CLT发邮件
+            if (teacherComment.getPerformanceAdjust() != null && teacherComment.getPerformance() != null
+                    && (teacherComment.getPerformanceAdjust() == 1 && teacherComment.getPerformance() != 0)) {
+                logger.info("判断PerformanceAdjust给CLT发邮件: studentId = {}, serialNumber = {}, scheduledDateTime = {} ",
+                        studentId, serialNumber, scheduledDateTime);
+                final String finalScheduledDateTime = scheduledDateTime;
+                sendEmailExecutor.execute(() -> {
+                    emailService.sendEmail4PerformanceAdjust2CLT(studentId, serialNumber,
+                            finalScheduledDateTime, teacherComment.getPerformance());
+                });
+            }
 
-        if (teacherComment.getPerformance() != null && (teacherComment.getPerformance() == 1 || teacherComment.getPerformance() == 5)) {
-            logger.info("检查Performance判断是否给CLT发邮件: studentId = {}, serialNumber = {} ", studentId, serialNumber);
-            sendEmailExecutor.execute(() -> {
-                emailService.sendEmail4Performance2CLT(studentId, serialNumber);
-            });
+            if (teacherComment.getPerformance() != null && (teacherComment.getPerformance() == 1 || teacherComment.getPerformance() == 5)) {
+                logger.info("检查Performance判断是否给CLT发邮件: studentId = {}, serialNumber = {} ", studentId, serialNumber);
+                sendEmailExecutor.execute(() -> {
+                    emailService.sendEmail4Performance2CLT(studentId, serialNumber);
+                });
+            }
         }
     }
 }
