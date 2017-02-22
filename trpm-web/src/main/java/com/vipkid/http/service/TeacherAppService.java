@@ -5,7 +5,6 @@ package com.vipkid.http.service;
 
 import java.util.List;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.vipkid.trpm.entity.teachercomment.StudentAbilityLevelRule;
 import org.apache.commons.lang3.StringUtils;
