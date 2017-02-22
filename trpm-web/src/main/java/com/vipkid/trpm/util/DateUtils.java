@@ -293,4 +293,16 @@ public final class DateUtils {
         }
         return dateStr;
     }
+    
+    public static Date getExpireTime(Date date){
+    	Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        cal.set(Calendar.MONTH,  1);
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.DAY_OF_MONTH,20);
+        Date startTime = cal.getTime();
+        return startTime;
+    }
 }

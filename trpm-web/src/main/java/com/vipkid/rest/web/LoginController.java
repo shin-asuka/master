@@ -27,7 +27,9 @@ import com.vipkid.trpm.service.passport.NoticeService;
 import com.vipkid.trpm.service.passport.PassportService;
 import com.vipkid.trpm.util.Bean2Map;
 import com.vipkid.trpm.util.CookieUtils;
+import com.vipkid.trpm.util.DateUtils;
 import com.vipkid.trpm.util.IpUtils;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.community.config.PropertyConfigurer;
@@ -40,7 +42,10 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import java.io.IOException;
+import java.sql.Timestamp;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -165,11 +170,31 @@ public class LoginController extends RestfulController {
             // 检查老师状态是否QUIT
             logger.info("检查老师状态是否QUIT:{}",bean.getEmail());
             if (TeacherEnum.LifeCycle.QUIT.toString().equals(teacher.getLifeCycle())) {
-                //add
-                passportService.addLoginFailedCount(bean.getEmail());
-                logger.warn(bean.getEmail()+",账户status被QUIT.");
-                response.setStatus(HttpStatus.BAD_REQUEST.value());
-                return ReturnMapUtils.returnFail(AjaxCode.USER_QUIT,"账户已经Quit:"+bean.getEmail());
+            	Timestamp lastEditTime = user.getLastEditDateTime();
+            	Date expireTime = null;
+            	Long editor = user.getLastEditorId();
+            	Date now = new Date();
+            	//Quit 老师登录
+            	boolean canLogin = false;
+				if (editor != user.getId()) {
+					DateUtils.getExpireTime(lastEditTime);
+				}else{
+					DateUtils.getExpireTime(now);
+				}				
+				String exStr = passportService.getQuitTeacherExpiredTime(user.getId(), expireTime.getTime());
+				if(StringUtils.isNotEmpty(exStr)){
+					Long ex = Long.parseLong(exStr);
+					Date exDate = new Date(ex);
+					if (now.before(exDate)) {
+						canLogin = true;
+					}				
+				}
+				if (!canLogin) {
+					passportService.addLoginFailedCount(bean.getEmail());
+					logger.warn(bean.getEmail() + ",账户status被QUIT.");
+					response.setStatus(HttpStatus.BAD_REQUEST.value());
+					return ReturnMapUtils.returnFail(AjaxCode.USER_QUIT, "账户已经Quit:" + bean.getEmail());
+				}
             }
     
             // 检查用户状态是否锁住
@@ -204,6 +229,10 @@ public class LoginController extends RestfulController {
             
             //模拟登陆logger
             Map<String,Object> result = Maps.newHashMap();
+            //Quit 老师登录
+            if (TeacherEnum.LifeCycle.QUIT.toString().equals(teacher.getLifeCycle())) {
+            	result.put("isQuit", true);
+            }
             result.put("loginToken", loginService.setLoginToken(response, user));
             result.put("LifeCycle", teacher.getLifeCycle());
             // 只有正式老师登陆后才做强制修改密码判断

@@ -7,6 +7,7 @@ import com.vipkid.enums.TeacherEnum.RecruitmentChannel;
 import com.vipkid.enums.UserEnum;
 import com.vipkid.recruitment.utils.ReturnMapUtils;
 import com.vipkid.trpm.constant.ApplicationConstant;
+import com.vipkid.trpm.constant.ApplicationConstant.RedisConstants;
 import com.vipkid.trpm.dao.AppRestfulDao;
 import com.vipkid.trpm.dao.TeacherDao;
 import com.vipkid.trpm.dao.UserDao;
@@ -483,5 +484,23 @@ public class PassportService {
         }
         return verifyCodeService.checkVerifyCode(key, imageCode);
     }
-
+    
+	public String getQuitTeacherExpiredTime(Long teacherId, Long expireTime) {
+		String value = null;
+		String key = RedisConstants.QUIT_TEACHER_EXPIRED_TIME + teacherId;
+		try {
+			String existValue = redisProxy.get(key);
+			if (StringUtils.isNoneEmpty(existValue)) {
+				value = existValue;
+			} else {
+				if (expireTime != null) {
+					redisProxy.set(key, expireTime.toString());
+					value = expireTime.toString();
+				}
+			}
+		} catch (Exception e) {
+			logger.error("redis get key = {}", key, e);
+		}
+		return value;
+	}
 }
