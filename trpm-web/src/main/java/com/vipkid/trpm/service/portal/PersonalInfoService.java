@@ -3,9 +3,9 @@ package com.vipkid.trpm.service.portal;
 import static com.vipkid.trpm.util.DateUtils.FMT_YMD;
 
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -67,6 +67,7 @@ public class PersonalInfoService {
 
     @Autowired
     private FileHttpService fileHttpService;
+
     
 	/**
 	 * 处理用户密码修改逻辑
@@ -133,18 +134,87 @@ public class PersonalInfoService {
 		//
 
 		//
-		teacher.setBankName(bankInfo.getBeneficiaryBankName());
-		teacher.setBankAccountName(bankInfo.getBeneficiaryAccountName());
-		teacher.setBankCardNumber(bankInfo.getBeneficiaryAccountNumber());
+		String bankAccountName = bankInfo.getBeneficiaryAccountName();
+		String bankSwiftCode = bankInfo.getSwiftCode();
+		String bankABARoutingNumber = bankInfo.getBankABARoutingNumber();
+		String bankACHNumber = bankInfo.getBankACHNumber();
+		String identityNumber = bankInfo.getIdNumber();
+		StringBuffer modificationLog = new StringBuffer();
 
-		teacher.setBankSwiftCode(bankInfo.getSwiftCode());
-		teacher.setBankABARoutingNumber(bankInfo.getBankABARoutingNumber());
-		teacher.setBankACHNumber(bankInfo.getBankACHNumber());
+		String bankName = bankInfo.getBeneficiaryBankName();
 
+		if (!StringUtils.equals(bankName,teacher.getBankName())){
+			modificationLog.append(" bankName:from " + teacher.getBankName() + " to " + bankName);
+		}
+		teacher.setBankName(bankName);
+
+		//1. check if the sensitive fields contain '*'
+		//2. record the bank info modification in logs
+		if (!bankAccountName.contains("*")){
+			if (!StringUtils.equals(bankAccountName,teacher.getBankAccountName())){
+				modificationLog.append(" bankAccountName:from " + hideNameInfo(teacher.getBankAccountName()) + " to " + hideNameInfo(bankAccountName));
+			}
+			teacher.setBankAccountName(bankAccountName);
+		}
+		String bankCardNumber = bankInfo.getBeneficiaryAccountNumber();
+		if (!bankCardNumber.contains("*")){
+			if (!StringUtils.equals(bankCardNumber,teacher.getBankCardNumber())){
+				modificationLog.append(" bankCardNumber:from " + teacher.getBankCardNumber() + " to " + bankCardNumber);
+			}
+			teacher.setBankCardNumber(bankInfo.getBeneficiaryAccountNumber());
+		}
+
+		if (!bankSwiftCode.contains("*")){
+			String swiftCode = teacher.getBankSwiftCode();
+			if (!StringUtils.equals(bankSwiftCode,swiftCode)){
+				modificationLog.append(" bankSwiftCode:from " + hideInfo(swiftCode,0,swiftCode.length()-2)+ " to " + hideInfo(bankSwiftCode,0,bankSwiftCode.length()-2));
+			}
+			teacher.setBankSwiftCode(bankSwiftCode);
+		}
+		if(!bankABARoutingNumber.contains("*")){
+			String ABARoutingNumber = teacher.getBankABARoutingNumber();
+			if (!StringUtils.equals(bankABARoutingNumber,ABARoutingNumber)){
+				modificationLog.append(" bankABARoutingNumber:from " + hideInfo(ABARoutingNumber,0,ABARoutingNumber.length()-4) + " to " + hideInfo(bankABARoutingNumber,0,bankABARoutingNumber.length()-4));
+			}
+			teacher.setBankABARoutingNumber(bankABARoutingNumber);
+		}
+		if (!bankACHNumber.contains("*")){
+			String ACHNumber = teacher.getBankACHNumber();
+			if (!StringUtils.equals(bankACHNumber,ACHNumber)){
+				modificationLog.append(" bankACHNumber:from " + hideInfo(ACHNumber,0,ACHNumber.length()-4) + " to " + hideInfo(bankACHNumber,0,bankACHNumber.length()-4));
+			}
+			teacher.setBankACHNumber(bankACHNumber);
+		}
+		if (!identityNumber.contains("*")){
+			String IdNumber = teacher.getIdentityNumber();
+			if (!StringUtils.equals(identityNumber,IdNumber)){
+				modificationLog.append(" identityNumber:from " + hideInfo(IdNumber,1,IdNumber.length()) + " to " + hideInfo(identityNumber,1,identityNumber.length()));
+			}
+			teacher.setIdentityNumber(identityNumber);
+		}
+
+
+		String identityType = bankInfo.getIdType().toString();
 		teacher.setIdentityType(bankInfo.getIdType());
+		if (!StringUtils.equals(identityType,String.valueOf(teacher.getIdentityType()))){
+			modificationLog.append(" identityType:from " + teacher.getIdentityType() + " to " + identityType);
+		}
+
+		String passPort = bankInfo.getPassportURL();
+		if (!StringUtils.equals(passPort,teacher.getPassport())){
+			modificationLog.append(" passPort:from " + teacher.getPassport() + " to " + passPort);
+		}
 		teacher.setPassport(bankInfo.getPassportURL());
 
-		teacher.setIdentityNumber(bankInfo.getIdNumber());
+		String issuanceCountry = bankInfo.getIssuanceCountryId().toString();
+		if (!StringUtils.equals(issuanceCountry,String.valueOf(teacher.getIssuanceCountry()))){
+			modificationLog.append(" issuanceCountry:from " + teacher.getIssuanceCountry() + " to " + issuanceCountry);
+		}
+		Date currentTime = new Date();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyy-MM-dd HH:mm:ss");
+		String now = sdf.format(currentTime);
+
+		logger.info("Teacher {} 在 {} 更新银行信息：{}", teacherId, now, modificationLog.toString());
 		teacher.setIssuanceCountry(bankInfo.getIssuanceCountryId());
 
 		teacherDao.update(teacher);

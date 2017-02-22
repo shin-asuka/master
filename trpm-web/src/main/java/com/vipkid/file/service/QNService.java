@@ -4,14 +4,12 @@ import com.qiniu.common.QiniuException;
 import com.qiniu.http.Response;
 import com.qiniu.storage.UploadManager;
 import com.qiniu.util.Auth;
-import com.sun.tools.doclets.formats.html.SourceToHTMLConverter;
 import com.vipkid.trpm.constant.ApplicationConstant;
 import com.vipkid.trpm.controller.portal.OnlineClassController;
 import org.community.config.PropertyConfigurer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Map;
 
