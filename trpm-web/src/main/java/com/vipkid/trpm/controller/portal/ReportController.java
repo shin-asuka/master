@@ -1,11 +1,10 @@
 package com.vipkid.trpm.controller.portal;
 
-import com.alibaba.fastjson.JSON;
 import com.google.common.base.Stopwatch;
 import com.google.common.collect.Maps;
 import com.vipkid.enums.OnlineClassEnum;
+import com.vipkid.http.utils.JsonUtils;
 import com.vipkid.rest.service.LoginService;
-import com.vipkid.trpm.constant.ApplicationConstant;
 import com.vipkid.trpm.dao.StudentExamDao;
 import com.vipkid.trpm.entity.*;
 import com.vipkid.trpm.entity.teachercomment.SubmitTeacherCommentDto;
@@ -70,14 +69,14 @@ public class ReportController extends AbstractPortalController {
      */
     @RequestMapping("/uploadPage")
     public String uaReport(AssessmentReport report, HttpServletRequest request, Model model) {
-        logger.info("ReportController: uaReport() 参数为：AssessmentReport={}", JSON.toJSONString(report));
+        logger.info("ReportController: uaReport() 参数为：AssessmentReport={}", JsonUtils.toJSONString(report));
         model = this.uploadData(report, request, model, "0");
         return view("ua_report_upload");
     }
 
     @RequestMapping("/uaReportShow")
     public String uaReportShow(AssessmentReport report, Long onlineClassId, HttpServletRequest request, Model model) {
-        logger.info("ReportController: uaReportShow() 参数为：AssessmentReport={}, onlineClassId={}", JSON.toJSONString(report), onlineClassId);
+        logger.info("ReportController: uaReportShow() 参数为：AssessmentReport={}, onlineClassId={}", JsonUtils.toJSONString(report), onlineClassId);
 
         model.addAttribute("onlineClassId", onlineClassId);
 
@@ -96,7 +95,7 @@ public class ReportController extends AbstractPortalController {
      */
     @RequestMapping("/uploadPracticum")
     public String practicumReport(AssessmentReport report, HttpServletRequest request, Model model) {
-        logger.info("ReportController: practicumReport() 参数为：AssessmentReport={}", JSON.toJSONString(report));
+        logger.info("ReportController: practicumReport() 参数为：AssessmentReport={}", JsonUtils.toJSONString(report));
         model = this.uploadData(report, request, model, "1");
         return view("practicum_report_upload");
     }
@@ -116,7 +115,7 @@ public class ReportController extends AbstractPortalController {
     @RequestMapping(value = "/uploadReport", method = RequestMethod.POST)
     public String uaReportSubmit(MultipartHttpServletRequest request, HttpServletResponse response,
             AssessmentReport report, @RequestParam("file") MultipartFile file) {
-        logger.info("ReportController: uaReportSubmit() 参数为：AssessmentReport={}", JSON.toJSONString(report));
+        logger.info("ReportController: uaReportSubmit() 参数为：AssessmentReport={}", JsonUtils.toJSONString(report));
 
         String score = request.getParameter("score");
         String onlineClassId = request.getParameter("onlineClassId");
@@ -141,7 +140,7 @@ public class ReportController extends AbstractPortalController {
     @RequestMapping(value = "/uploadPracticumReport", method = RequestMethod.POST)
     public String practicumReportSubmit(MultipartHttpServletRequest request, HttpServletResponse response,
             AssessmentReport report, @RequestParam("file") MultipartFile file) {
-        logger.info("ReportController: practicumReportSubmit() 参数为：AssessmentReport={}", JSON.toJSONString(report));
+        logger.info("ReportController: practicumReportSubmit() 参数为：AssessmentReport={}", JsonUtils.toJSONString(report));
 
         String score = request.getParameter("score");
         String onlineClassId = request.getParameter("onlineClassId");
@@ -204,7 +203,7 @@ public class ReportController extends AbstractPortalController {
     @RequestMapping("/reportSubmit")
     public String demoReportSubmit(HttpServletRequest request, HttpServletResponse response, DemoReport demoReport,
             boolean isSubmited) {
-        logger.info("ReportController: demoReportSubmit() 参数为：demoReport={}, isSubmited={}", JSON.toJSONString(demoReport), isSubmited);
+        logger.info("ReportController: demoReportSubmit() 参数为：demoReport={}, isSubmited={}", JsonUtils.toJSONString(demoReport), isSubmited);
 
         Map<String, Object> map = reportService.saveOrSubmitDemoReport(demoReport, isSubmited,
         		loginService.getUser());
@@ -292,7 +291,7 @@ public class ReportController extends AbstractPortalController {
         Stopwatch stopwatch = Stopwatch.createStarted();
         String serialNumber = request.getParameter("serialNumber");
         String scheduledDateTime = request.getParameter("scheduledDateTime");
-        logger.info("ReportController: feedbackSubmit() 参数为：serialNumber={}, scheduledDateTime={}, teacherComment={}", serialNumber, scheduledDateTime, JSON.toJSONString(teacherComment));
+        logger.info("ReportController: feedbackSubmit() 参数为：serialNumber={}, scheduledDateTime={}, teacherComment={}", serialNumber, scheduledDateTime, JsonUtils.toJSONString(teacherComment));
         teacherComment.setSubmitSource("PC");
         Map<String, Object> parmMap = reportService.submitTeacherComment(teacherComment, loginService.getUser(),serialNumber,scheduledDateTime,false);
 
@@ -385,7 +384,7 @@ public class ReportController extends AbstractPortalController {
 
 
     private Model uploadData(AssessmentReport report, HttpServletRequest request, Model model, String classType) {
-        logger.info("ReportController: uploadData() 参数为：report={}, classType={}", JSON.toJSONString(report), classType);
+        logger.info("ReportController: uploadData() 参数为：report={}, classType={}", JsonUtils.toJSONString(report), classType);
 
         model.addAttribute("template", report);
 

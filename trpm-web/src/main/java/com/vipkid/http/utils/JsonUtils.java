@@ -1,21 +1,18 @@
 /**
- * 
+ *
  */
 package com.vipkid.http.utils;
 
 import java.io.IOException;
 import java.util.List;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.google.api.client.util.Lists;
 import org.apache.commons.lang.StringUtils;
-
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.collect.Lists;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author zouqinghua
@@ -24,78 +21,95 @@ import com.google.common.collect.Lists;
  */
 public class JsonUtils {
 
-    public static String toJSONString(Object object) {
-        String str = null;
-        ObjectMapper mapper = new ObjectMapper();
-        try {
-            str = mapper.writeValueAsString(object);
-        } catch (JsonProcessingException e) {
-        	e.printStackTrace();
-        }
-        return str;
-    }
-    
-    public static <T> T toBean(String json, Class<T> clazz) {
-    	ObjectMapper mapper = new ObjectMapper();
-    	T t = null;
-		try {
-			t = mapper.readValue(json, clazz);
-		} catch (JsonParseException e) {
-			e.printStackTrace();
-		} catch (JsonMappingException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-    	
-    	return t;
-    }
-    
-    public static <T> List<T> toBeanList(Object objects,Class<T> clazz){
-    	List<T> list = null;
-    	if(objects!=null){
-    		String jsons = JSONArray.toJSONString(objects);
-    		list = toBeanList(jsons, clazz);
-    	}
-    	return list;
-    }
-    
-    public static <T> List<T> toBeanList(String jsons,Class<T> clazz){
-    	List<T> list = Lists.newArrayList();
-    	if(StringUtils.isNotBlank(jsons)){
-    		JSONArray jsonArray = JSONArray.parseArray(jsons);
-    		for (Object object : jsonArray) {
-    			//String json = JSON.toJSONString(object);
-    			//T t = toBean(json, clazz);
-    			JSONObject json = (JSONObject) object;
-				T t = JSON.toJavaObject(json, clazz);
-    			list.add(t);
-			}
-    	}
-    	return list;
-    }
+	private static final Logger logger = LoggerFactory.getLogger(JsonUtils.class);
 
-    public static JSONObject toJSONObject(Object object){
-    	JSONObject jsonObject = null;
-    	if(object!=null){
-    		jsonObject = (JSONObject) JSON.toJSON(object);
-    	}
-    	return jsonObject;
-    }
-    
-    public static JSONObject parseToJSONObject(String object){
-    	JSONObject jsonObject = null;
-    	if(object!=null){
-    		jsonObject = JSONObject.parseObject(object);
-    	}
-    	return jsonObject;
-    }
-    
-    public static JSONArray parseToJSONArray(String object){
-    	JSONArray jsonObject = null;
-    	if(object!=null){
-    		jsonObject = JSONArray.parseArray(object);
-    	}
-    	return jsonObject;
-    }
+	private static ObjectMapper mapper = new ObjectMapper();
+
+
+
+	public static String toJSONString(Object object) {
+		if (object == null) {
+			return "";
+		}
+		try {
+			return object instanceof String ? (String) object : mapper.writeValueAsString(object);
+		} catch (Exception e) {
+			String message = String.format("Object to jsonString error;object=%s", object.getClass());
+			logger.error(message, e);
+			return null;
+		}
+	}
+
+	public static <T> T toBean(String json, Class<T> clazz) {
+		if (StringUtils.isBlank(json) || clazz == null) {
+			return null;
+		}
+		try {
+			return clazz.equals(String.class) ? (T) json : mapper.readValue(json, clazz);
+		} catch (Exception e) {
+			String message = String.format("jsonString to Object error;jsonString=%s", json);
+			logger.error(message, e);
+			return null;
+		}
+
+	}
+
+
+	/**
+	 * 将json通过类型转换成对象
+	 *
+	 * @param json          json字符串
+	 * @param typeReference 引用类型
+	 * @return 返回对象
+	 * @throws IOException
+	 */
+	public static <T> T readJson(String json, TypeReference<T> typeReference) {
+
+		if (StringUtils.isBlank(json) || typeReference == null) {
+			return null;
+		}
+		try {
+			return (T) (typeReference.getType().equals(String.class) ? json : mapper.readValue(json, typeReference));
+		} catch (Exception e) {
+			String message = String.format("jsonString to Object error;jsonString=%s", json);
+			logger.error(message, e);
+			return null;
+		}
+	}
+
+
+
+
+	public static JsonNode parseObject(String jsonStr) {
+		try {
+			return mapper.readTree(jsonStr);
+		} catch (Exception e) {
+			String message = String.format("jsonString to JsonNode error;jsonString=%s", jsonStr);
+			logger.error(message, e);
+			return null;
+		}
+	}
+
+
+	@Deprecated
+	public static <T> List<T> toBeanList(Object objects, Class<T> clazz){
+		List<T> list = Lists.newArrayList();
+
+		if (objects ==null || clazz == null) {
+			return list;
+		}
+
+		if(objects instanceof  String){
+			list = readJson((String) objects, new TypeReference<List<T>>() {});
+		}else{
+			list = readJson(toJSONString(objects),new TypeReference<List<T>>() {});
+		}
+		return list;
+	}
+
+
+
+
+
+
 }
