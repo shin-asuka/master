@@ -2,6 +2,8 @@ package com.vipkid.common.log;
 
 import ch.qos.logback.classic.html.HTMLLayout;
 import ch.qos.logback.classic.spi.ILoggingEvent;
+import org.apache.commons.lang3.StringUtils;
+import org.community.config.PropertyConfigurer;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -26,7 +28,12 @@ public class HTMLWrapperLayout extends HTMLLayout {
         protected String getHostName(){
 
             try {
+                String applicationName = PropertyConfigurer.stringValue("application.name");
+                if(StringUtils.isNotBlank(applicationName)){
+                    return applicationName;
+                }
                 return InetAddress.getLocalHost().getHostName();
+
             } catch (UnknownHostException ignored) {}
 
             return "unknown-host";
