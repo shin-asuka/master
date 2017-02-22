@@ -268,6 +268,7 @@ public class PracticumFeedbackService {
 			bean.setThings(teacherPeComments.getThingsDidWell());
 			bean.setAreas(teacherPeComments.getAreasImprovement());
 			bean.setTotalScore(teacherPeComments.getTotalScore());
+			bean.setSubmitType(teacherPeComments.getStatus()); 
 		}
 		return bean;
 	}
@@ -295,6 +296,7 @@ public class PracticumFeedbackService {
 			bean.setThings(teacherPeComments.getThingsDidWell());
 			bean.setAreas(teacherPeComments.getAreasImprovement());
 			bean.setTotalScore(teacherPeComments.getTotalScore());
+			bean.setSubmitType(teacherPeComments.getStatus()); 
 		}
 		return bean;
 	}
