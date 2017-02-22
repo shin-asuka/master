@@ -1,13 +1,11 @@
 package com.vipkid.portal.classroom.model.bo;
 
-import com.vipkid.trpm.entity.teachercomment.SubmitTeacherCommentDto;
-
 import java.sql.Timestamp;
 
 /**
  * Created by LP-813 on 2017/2/15.
  */
-public class PrevipCommentsBo {
+public class PrevipCommentsBo extends FeedbackBo{
     private static final long serialVersionUID = -1L;
     /*  */
     private Long id;

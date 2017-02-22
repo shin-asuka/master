@@ -6,7 +6,7 @@ import com.vipkid.rest.validation.annotation.NotNull;
  * Created by LP-813 on 2017/2/20.
  */
 @NotNull
-public class    PrevipCommentsVo {
+public class PrevipCommentsVo {
 
     private Long id;
     private Long onlineClassId;
@@ -27,6 +27,7 @@ public class    PrevipCommentsVo {
     private Boolean needParentSupport;
     private String serialNumber;
     private String scheduleDateTime;
+    private String trialLevelResult;
 
     public String getScheduleDateTime() {
         return scheduleDateTime;
@@ -178,5 +179,13 @@ public class    PrevipCommentsVo {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getTrialLevelResult() {
+        return trialLevelResult;
+    }
+
+    public void setTrialLevelResult(String trialLevelResult) {
+        this.trialLevelResult = trialLevelResult;
     }
 }

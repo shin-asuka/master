@@ -17,6 +17,7 @@ public class MajorCommentsVo {
     private Integer performanceAdjust;
     private String serialNumber;
     private String scheduleDateTime;
+    private String trialLevelResult;
 
     public Long getOnlineClassId() {
         return onlineClassId;
@@ -96,5 +97,13 @@ public class MajorCommentsVo {
 
     public void setTeacherId(Integer teacherId) {
         this.teacherId = teacherId;
+    }
+
+    public String getTrialLevelResult() {
+        return trialLevelResult;
+    }
+
+    public void setTrialLevelResult(String trialLevelResult) {
+        this.trialLevelResult = trialLevelResult;
     }
 }

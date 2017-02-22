@@ -38,7 +38,7 @@ public class Convertor {
         return submitTeacherCommentDto;
     }
 
-    public static PrevipCommentsBo toPrevipCommentsBo(PrevipCommentsVo vo){
+    public static <T> PrevipCommentsBo toPrevipCommentsBo(T vo){
         PrevipCommentsBo bo = new PrevipCommentsBo();
         try {
             BeanUtils.copyProperties(bo,vo);
@@ -50,7 +50,7 @@ public class Convertor {
         return bo;
     }
 
-    public static MajorCommentsBo toMajorCommentsBo(MajorCommentsVo vo){
+    public static <T> MajorCommentsBo toMajorCommentsBo(T vo){
         MajorCommentsBo bo = new MajorCommentsBo();
         try {
             BeanUtils.copyProperties(bo,vo);

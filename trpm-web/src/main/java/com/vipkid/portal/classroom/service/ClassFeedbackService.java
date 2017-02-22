@@ -1,14 +1,16 @@
 package com.vipkid.portal.classroom.service;
 
 import com.alibaba.fastjson.JSON;
+import com.google.common.collect.Maps;
 import com.vipkid.mq.service.PayrollMessageService;
+import com.vipkid.portal.classroom.model.bo.FeedbackBo;
+import com.vipkid.portal.classroom.model.bo.MajorCommentsBo;
+import com.vipkid.portal.classroom.util.Convertor;
+import com.vipkid.rest.security.AppContext;
 import com.vipkid.rest.service.LoginService;
 import com.vipkid.trpm.constant.ApplicationConstant;
 import com.vipkid.trpm.dao.*;
-import com.vipkid.trpm.entity.Course;
-import com.vipkid.trpm.entity.Lesson;
-import com.vipkid.trpm.entity.OnlineClass;
-import com.vipkid.trpm.entity.StudentExam;
+import com.vipkid.trpm.entity.*;
 import com.vipkid.trpm.entity.report.DemoReports;
 import com.vipkid.trpm.entity.report.ReportLevels;
 import com.vipkid.trpm.entity.teachercomment.TeacherComment;
@@ -17,6 +19,7 @@ import com.vipkid.trpm.entity.teachercomment.TeacherCommentUpdateDto;
 import com.vipkid.trpm.service.media.AbstarctMediaService;
 import com.vipkid.trpm.service.portal.ReportEmailService;
 import com.vipkid.trpm.service.portal.TeacherService;
+import com.vipkid.trpm.util.DateUtils;
 import com.vipkid.trpm.util.LessonSerialNumber;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -26,6 +29,8 @@ import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
@@ -265,4 +270,6 @@ public class ClassFeedbackService {
         }
         return trialLevelResult;
     }
+
+
 }

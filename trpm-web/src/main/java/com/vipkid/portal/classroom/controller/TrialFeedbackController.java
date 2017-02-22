@@ -37,7 +37,7 @@ import java.util.concurrent.TimeUnit;
 @RestController
 @RestInterface(lifeCycle= TeacherEnum.LifeCycle.REGULAR)
 @RequestMapping("/portal/comments/")
-public class MajorFeedbackController {
+public class TrialFeedbackController {
 
     private static Logger logger = LoggerFactory.getLogger(ClassroomController.class);
 
@@ -51,7 +51,7 @@ public class MajorFeedbackController {
     private LoginService loginService;
 
 
-    @RequestMapping("/class/save")
+    @RequestMapping("/trial/save")
     public Map<String,Object> feedbackSubmit(HttpServletRequest request, HttpServletResponse response,
                                              @RequestBody MajorCommentsVo teacherCommentVo) {
         Stopwatch stopwatch = Stopwatch.createStarted();
@@ -66,7 +66,7 @@ public class MajorFeedbackController {
         return ApiResponseUtils.buildSuccessDataResp(parmMap);
     }
 
-    @RequestMapping("/class/view")
+    @RequestMapping("/trial/view")
     public Map<String,Object> feedbackView(HttpServletRequest request, HttpServletResponse response,
                                            @RequestParam Long onlineClassId ,@RequestParam Integer studentId) {
         Stopwatch stopwatch = Stopwatch.createStarted();

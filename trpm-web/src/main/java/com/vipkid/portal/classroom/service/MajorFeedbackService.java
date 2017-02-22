@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Maps;
 import com.vipkid.mq.message.FinishOnlineClassMessage;
 import com.vipkid.mq.service.PayrollMessageService;
+import com.vipkid.portal.classroom.model.bo.FeedbackBo;
 import com.vipkid.portal.classroom.model.bo.MajorCommentsBo;
 import com.vipkid.portal.classroom.util.Convertor;
 import com.vipkid.rest.security.AppContext;
@@ -34,7 +35,7 @@ import java.util.concurrent.Executors;
 import static com.google.common.base.Preconditions.checkArgument;
 
 @Service
-public class MajorFeedbackService {
+public class MajorFeedbackService implements FeedbackService {
 
     private static Logger logger = LoggerFactory.getLogger(MajorFeedbackService.class);
 
@@ -88,7 +89,7 @@ public class MajorFeedbackService {
     public Map<String, Object> submitTeacherComment(MajorCommentsBo teacherComment, User user, String serialNumber,
                                                     String scheduledDateTime, boolean isFromH5) {
         // 如果ID为0 则抛出异常并回滚
-        checkArgument(teacherComment.getId() != null && 0 != teacherComment.getId(), "Argument teacherComment id equals 0");
+        String errorMessage = checkInputArgument(teacherComment,serialNumber);
 
         teacherComment.setEmpty(0);
         // 日志记录参数准备
@@ -141,8 +142,24 @@ public class MajorFeedbackService {
             paramMap.put("result", false);
         }
 
+        return paramMap;
+    }
+
+    @Override
+    public String checkInputArgument(FeedbackBo feedbackBo,String serialNumber) {
+        if(feedbackBo instanceof MajorCommentsBo) {
+            MajorCommentsBo teacherComment = (MajorCommentsBo) feedbackBo;
+            checkArgument(teacherComment.getId() != null && 0 != teacherComment.getId(), "Argument teacherComment id equals 0");
+            return "";
+        }else{
+            return "FeedBack type error!";
+        }
+    }
+
+    @Override
+    public void sendFeedbackMessage(FeedbackBo feedbackBo,Long onlineClassId,Long studentId,String scheduledDateTime,String serialNumber) {
         // 填写评语发送消息
-        Long onlineClassId = oldtc.getOnlineClassId();
+        MajorCommentsBo teacherComment = (MajorCommentsBo) feedbackBo;
         if (teacherComment != null && onlineClassId != null && onlineClassId > 0
                 && teacherComment.getTeacherFeedback() != null) {
             logger.info("填写评语发送消息  onlineClassId = {} ", onlineClassId);
@@ -155,22 +172,19 @@ public class MajorFeedbackService {
         if (teacherComment.getPerformanceAdjust() != null && teacherComment.getPerformance() != null
                 && (teacherComment.getPerformanceAdjust() == 1 && teacherComment.getPerformance() != 0)) {
             logger.info("判断PerformanceAdjust给CLT发邮件: studentId = {}, serialNumber = {}, scheduledDateTime = {} ",
-                    oldtc.getStudentId(), serialNumber, scheduledDateTime);
+                    studentId, serialNumber, scheduledDateTime);
             final String finalScheduledDateTime = scheduledDateTime;
             sendEmailExecutor.execute(() -> {
-                emailService.sendEmail4PerformanceAdjust2CLT(oldtc.getStudentId(), serialNumber,
+                emailService.sendEmail4PerformanceAdjust2CLT(studentId, serialNumber,
                         finalScheduledDateTime, teacherComment.getPerformance());
             });
         }
 
         if (teacherComment.getPerformance() != null && (teacherComment.getPerformance() == 1 || teacherComment.getPerformance() == 5)) {
-            logger.info("检查Performance判断是否给CLT发邮件: studentId = {}, serialNumber = {} ", oldtc.getStudentId(), serialNumber);
+            logger.info("检查Performance判断是否给CLT发邮件: studentId = {}, serialNumber = {} ", studentId, serialNumber);
             sendEmailExecutor.execute(() -> {
-                emailService.sendEmail4Performance2CLT(oldtc.getStudentId(), serialNumber);
+                emailService.sendEmail4Performance2CLT(studentId, serialNumber);
             });
         }
-
-        return paramMap;
     }
-
 }
