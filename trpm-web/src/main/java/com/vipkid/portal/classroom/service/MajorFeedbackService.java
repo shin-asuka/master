@@ -93,7 +93,6 @@ public class MajorFeedbackService implements FeedbackService {
         // 如果ID为0 则抛出异常并回滚
         String errorMessage = checkInputArgument(feedbackBo, serialNumber);
         MajorCommentsBo teacherComment = (MajorCommentsBo) feedbackBo;
-        classFeedbackService.findTeacherCommentIdByOnlineClassIdAndStudentId(teacherComment.getOnlineClassId(),teacherComment.getStudentId());
         teacherComment.setEmpty(0);
         // 日志记录参数准备
         TeacherCommentResult oldtcFromAPI = teacherService
@@ -152,7 +151,9 @@ public class MajorFeedbackService implements FeedbackService {
     public String checkInputArgument(FeedbackBo feedbackBo, String serialNumber) {
         if (feedbackBo instanceof MajorCommentsBo) {
             MajorCommentsBo teacherComment = (MajorCommentsBo) feedbackBo;
-            checkArgument(teacherComment.getId() != null && 0 != teacherComment.getId(), "Argument teacherComment id equals 0");
+            Long id = classFeedbackService.findTeacherCommentIdByOnlineClassIdAndStudentId(teacherComment.getOnlineClassId(),teacherComment.getStudentId());
+            checkArgument(null != id && 0 != id, "Argument teacherComment id equals 0");
+            teacherComment.setId(id);
             return "";
         } else {
             return "FeedBack type error!";

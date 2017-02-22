@@ -102,7 +102,6 @@ public class PrevipFeedbackService implements FeedbackService{
         PrevipCommentsBo teacherComment = (PrevipCommentsBo) feedbackBo;
         teacherComment.setEmpty(0);
         // 日志记录参数准备
-        classFeedbackService.findTeacherCommentIdByOnlineClassIdAndStudentId(teacherComment.getOnlineClassId(),teacherComment.getStudentId());
         TeacherCommentResult oldtcFromAPI = teacherService
                 .findByTeacherCommentId(String.valueOf(teacherComment.getId()));
         if (oldtcFromAPI == null) {
@@ -159,7 +158,8 @@ public class PrevipFeedbackService implements FeedbackService{
     public String checkInputArgument(FeedbackBo feedbackBo,String serialNumber) {
         if(feedbackBo instanceof PrevipCommentsBo) {
             PrevipCommentsBo teacherComment = (PrevipCommentsBo) feedbackBo;
-            checkArgument(teacherComment.getId() != null && 0 != teacherComment.getId(), "Argument teacherComment id equals 0");
+            Long id = classFeedbackService.findTeacherCommentIdByOnlineClassIdAndStudentId(teacherComment.getOnlineClassId(),teacherComment.getStudentId());
+            checkArgument(null != id && 0 != id, "Argument teacherComment id equals 0");
             String previpErrorMsg = teacherService.inputCheckPrevipMajorCourseTeacherComment(serialNumber, Convertor.toSubmitTeacherCommentDto(teacherComment));
             return previpErrorMsg;
         }else{
