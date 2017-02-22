@@ -606,6 +606,9 @@ public class BookingsService {
 
             String responseBody = HttpClientProxy.get(requestUrl, requestParams, requestHeader);
             logger.info("Get 24Hours Response:{}",responseBody);
+            if(StringUtils.isBlank(responseBody)){
+                return Lists.newArrayList();
+            }
             responseBody = StringTools.matchString(responseBody, "\\[(.*?)\\]", Pattern.CASE_INSENSITIVE, 1);
             return Arrays.asList(StringUtils.split(responseBody, ","));
         } catch (Exception e) {
