@@ -1,7 +1,8 @@
 package com.vipkid.trpm.service.portal;
 
-import com.alibaba.fastjson.JSON;
+
 import com.google.common.collect.Maps;
+import com.vipkid.http.utils.JsonUtils;
 import com.vipkid.mq.message.FinishOnlineClassMessage.OperatorType;
 import com.vipkid.mq.service.PayrollMessageService;
 import com.vipkid.rest.security.AppContext;
@@ -680,11 +681,11 @@ public class ReportService {
 
         if (success) {
             logger.info("FEEDBACK_SAVE_OK,paramMap = {},teacherName = {},teacherComment ={}",
-                    JSON.toJSONString(paramMap), user.getUsername(), teacherComment);
+                    JsonUtils.toJSONString(paramMap), user.getUsername(), teacherComment);
             paramMap.put("result", true);
         } else {
             logger.error("FEEDBACK_SAVE_FAIL,paramMap = {},teacherName = {},teacherComment ={}",
-                    JSON.toJSONString(paramMap), user.getUsername(), teacherComment);
+                    JsonUtils.toJSONString(paramMap), user.getUsername(), teacherComment);
             paramMap.put("result", false);
         }
 
@@ -820,7 +821,7 @@ public class ReportService {
      * @date 2016年1月12日
      */
     public StudentExam handleExamLevel(StudentExam studentExam, String serialNum) {
-        logger.info("ReportController: handleExamLevel() 参数为：serialNum={}, studentExam={}", serialNum, JSON.toJSONString(studentExam));
+        logger.info("ReportController: handleExamLevel() 参数为：serialNum={}, studentExam={}", serialNum, JsonUtils.toJSONString(studentExam));
         // studentExam 不为空则进行替换逻辑
         if (studentExam != null) {
             // ExamLevel 不为空则进行替换逻辑
