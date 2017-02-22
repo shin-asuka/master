@@ -718,6 +718,37 @@
 				</filters>
 			</build>
 		</profile>
+		<profile>
+			<id>a27</id>
+			<properties>
+				<env>a27</env>
+				<masterAddressOfMysql>54.222.199.188:3317</masterAddressOfMysql>
+				<slaveAddressOfMysql>54.222.199.188:3317</slaveAddressOfMysql>
+				<targetHost>10.1.5.39</targetHost>
+				<datasource>local</datasource>
+			</properties>
+
+			<build>
+				<filters>
+					<filter>../profile/a.properties</filter>
+				</filters>
+			</build>
+		</profile>
+		<profile>
+			<id>a28</id>
+			<properties>
+				<env>a28</env>
+				<masterAddressOfMysql>54.222.199.188:3318</masterAddressOfMysql>
+				<slaveAddressOfMysql>54.222.199.188:3318</slaveAddressOfMysql>
+				<targetHost>10.1.5.89</targetHost>
+				<datasource>local</datasource>
+			</properties>
+			<build>
+				<filters>
+					<filter>../profile/a.properties</filter>
+				</filters>
+			</build>
+		</profile>
 	</profiles>
 
 </project>
