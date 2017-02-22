@@ -390,17 +390,17 @@ public class BookingsService {
         List<Map<String, Object>> invalidScheduleList =
                         onlineClassDao.findInvalidBy(teacherId, fromTime, toTime, timezone);
 
-        if(org.springframework.util.CollectionUtils.isEmpty(invalidScheduleList)){
-            return teacherScheduleMap;
-        }
+
         /* 查询 24 小时的课程列表 */
         List<String> onlineClassIds = teacherScheduleList.stream().map(map -> String.valueOf(map.get("id")))
                         .collect(Collectors.toList());
 
-        if(CollectionUtils.isEmpty(onlineClassIds)){
-            return teacherScheduleMap;
+
+        List<String> idsFor24Hour = Lists.newArrayList();
+        if(CollectionUtils.isNotEmpty(onlineClassIds)){
+            idsFor24Hour = get24Hours(teacherId, onlineClassIds);
         }
-        List<String> idsFor24Hour = get24Hours(teacherId, onlineClassIds);
+
 
         for (Map<String, Object> teacherSchedule : teacherScheduleList) {
             long onlineClassId = (Long) teacherSchedule.get("id");
