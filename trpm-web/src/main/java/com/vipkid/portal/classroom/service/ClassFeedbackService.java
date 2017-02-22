@@ -86,9 +86,6 @@ public class ClassFeedbackService {
     @Autowired
     private LoginService loginService;
 
-    @Autowired
-    private ClassFeedbackService classFeedbackService;
-
     public OnlineClass findOnlineClassById(long onlineClassId) {
         if (0 == onlineClassId) {
             return null;
@@ -275,16 +272,16 @@ public class ClassFeedbackService {
     }
 
     public Long findTeacherCommentIdByOnlineClassIdAndStudentId(Long onlineClassId,Long studentId){
-        OnlineClass onlineClass = classFeedbackService.findOnlineClassById(onlineClassId);
+        OnlineClass onlineClass = findOnlineClassById(onlineClassId);
         Map map = Maps.newHashMap();
         map.put("onlineClass", onlineClass);
 
         // 查询Lesson
-        Lesson lesson = classFeedbackService.findLessonById(onlineClass.getLessonId());
+        Lesson lesson = findLessonById(onlineClass.getLessonId());
         map.put("lesson", lesson);
 
         // 查询FeedBack信息
-        TeacherComment teacherComment = classFeedbackService.findCFByOnlineClassIdAndStudentIdAndTeacherId(onlineClassId, studentId,onlineClass,lesson);
+        TeacherComment teacherComment = findCFByOnlineClassIdAndStudentIdAndTeacherId(onlineClassId, studentId,onlineClass,lesson);
         return teacherComment.getOnlineClassId();
     }
 }

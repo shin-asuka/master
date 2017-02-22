@@ -10,25 +10,25 @@ import org.springframework.stereotype.Service;
 /**
  * Created by LP-813 on 2017/2/21.
  */
-@Service
-public class FeedbackHandler {
-    private FeedbackBo feedbackBo;
-    private FeedbackService feedbackService;
-    public <T> void init(T feedbackVo){
-        if(feedbackVo instanceof PrevipCommentsVo){
-            feedbackBo = Convertor.toPrevipCommentsBo(feedbackVo);
-        }else {
-            feedbackBo = Convertor.toMajorCommentsBo(feedbackVo);
-        }
-        feedbackService = FeedbackFactory.createFeedbackService(feedbackBo);
-    }
-
-    public FeedbackBo getFeedbackBo() {
-        return feedbackBo;
-    }
-
-    public FeedbackService getFeedbackService() {
-        return feedbackService;
-    }
-
-}
+//@Service
+//public class FeedbackHandler {
+//    private FeedbackBo feedbackBo;
+//    private FeedbackService feedbackService;
+//    public <T> void init(T feedbackVo){
+//        if(feedbackVo instanceof PrevipCommentsVo){
+//            feedbackBo = Convertor.toPrevipCommentsBo(feedbackVo);
+//        }else {
+//            feedbackBo = Convertor.toMajorCommentsBo(feedbackVo);
+//        }
+//        feedbackService = FeedbackFactory.createFeedbackService(feedbackBo);
+//    }
+//
+//    public FeedbackBo getFeedbackBo() {
+//        return feedbackBo;
+//    }
+//
+//    public FeedbackService getFeedbackService() {
+//        return feedbackService;
+//    }
+//
+//}

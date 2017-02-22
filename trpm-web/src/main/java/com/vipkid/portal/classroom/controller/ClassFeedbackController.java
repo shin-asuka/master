@@ -7,6 +7,7 @@ import com.vipkid.enums.TeacherEnum;
 import com.vipkid.portal.classroom.model.MajorCommentsVo;
 import com.vipkid.portal.classroom.model.bo.MajorCommentsBo;
 import com.vipkid.portal.classroom.service.ClassFeedbackService;
+import com.vipkid.portal.classroom.service.FeedbackService;
 import com.vipkid.portal.classroom.service.MajorFeedbackService;
 import com.vipkid.portal.classroom.util.Convertor;
 import com.vipkid.rest.interceptor.annotation.RestInterface;
@@ -20,6 +21,7 @@ import com.vipkid.trpm.entity.teachercomment.TeacherComment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -40,9 +42,9 @@ import java.util.concurrent.TimeUnit;
 public class ClassFeedbackController {
 
     private static Logger logger = LoggerFactory.getLogger(ClassroomController.class);
-
     @Autowired
-    private MajorFeedbackService majorFeedbackService;
+    @Qualifier("majorFeedbackService")
+    private FeedbackService feedbackService;
     @Autowired
     private ClassFeedbackService classFeedbackService;
     @Autowired
@@ -60,7 +62,7 @@ public class ClassFeedbackController {
         String scheduledDateTime = teacherComment.getScheduleDateTime();
         logger.info("ReportController: feedbackSubmit() 参数为：serialNumber={}, scheduledDateTime={}, teacherComment={}", serialNumber, scheduledDateTime, JSON.toJSONString(teacherComment));
         teacherComment.setSubmitSource("PC");
-        Map<String, Object> parmMap = majorFeedbackService.submitTeacherComment(teacherComment, loginService.getUser(),serialNumber,scheduledDateTime,false);
+        Map<String, Object> parmMap = feedbackService.submitTeacherComment(teacherComment, loginService.getUser(),serialNumber,scheduledDateTime,false);
         long millis =stopwatch.stop().elapsed(TimeUnit.MILLISECONDS);
         logger.info("执行ReportController: feedbackSubmit()耗时：{} ", millis);
         return ApiResponseUtils.buildSuccessDataResp(parmMap);
