@@ -141,7 +141,7 @@ public class PersonalInfoService {
 		String bankCardNumber = bankInfo.getBeneficiaryAccountNumber();
 		StringBuffer modificationLog = new StringBuffer();
 
-		if (!StringUtils.equals(bankName,teacher.getBankName())){
+		if (!StringUtils.equals(bankName, teacher.getBankName())){
 			modificationLog.append(" bankName:from " + teacher.getBankName() + " to " + bankName);
 		}
 		teacher.setBankName(bankName);
@@ -150,7 +150,7 @@ public class PersonalInfoService {
 		//2. record the bank info modification in logs
 		if (notContainsAsterisk(bankAccountName)) {
 			if (!StringUtils.equals(bankAccountName,teacher.getBankAccountName())){
-				modificationLog.append(" bankAccountName:from " + hideNameInfo(teacher.getBankAccountName()) + " to " + hideNameInfo(bankAccountName));
+				modificationLog.append(" bankAccountName:from " + teacher.getBankAccountName() + " to " + bankAccountName);
 			}
 			teacher.setBankAccountName(bankAccountName);
 		}
@@ -165,14 +165,14 @@ public class PersonalInfoService {
 		if (notContainsAsterisk(bankSwiftCode)){
 			String swiftCode = teacher.getBankSwiftCode();
 			if (!StringUtils.equals(bankSwiftCode,swiftCode)){
-				modificationLog.append(" bankSwiftCode:from " + hideInfo(swiftCode,0,swiftCode.length()-2)+ " to " + hideInfo(bankSwiftCode,0,bankSwiftCode.length()-2));
+				modificationLog.append(" bankSwiftCode:from " + swiftCode + " to " + bankSwiftCode);
 			}
 			teacher.setBankSwiftCode(bankSwiftCode);
 		}
 		if (notContainsAsterisk(bankABARoutingNumber)){
 			String ABARoutingNumber = teacher.getBankABARoutingNumber();
 			if (!StringUtils.equals(bankABARoutingNumber,ABARoutingNumber)){
-				modificationLog.append(" bankABARoutingNumber:from " + hideInfo(ABARoutingNumber,0,ABARoutingNumber.length()-4) + " to " + hideInfo(bankABARoutingNumber,0,bankABARoutingNumber.length()-4));
+				modificationLog.append(" bankABARoutingNumber:from " + ABARoutingNumber + " to " + bankABARoutingNumber);
 			}
 			teacher.setBankABARoutingNumber(bankABARoutingNumber);
 		}
@@ -180,7 +180,7 @@ public class PersonalInfoService {
 		if (notContainsAsterisk(bankACHNumber)){
 			String ACHNumber = teacher.getBankACHNumber();
 			if (!StringUtils.equals(bankACHNumber,ACHNumber)){
-				modificationLog.append(" bankACHNumber:from " + hideInfo(ACHNumber,0,ACHNumber.length()-4) + " to " + hideInfo(bankACHNumber,0,bankACHNumber.length()-4));
+				modificationLog.append(" bankACHNumber:from " + ACHNumber + " to " + bankACHNumber);
 			}
 			teacher.setBankACHNumber(bankACHNumber);
 		}
@@ -188,14 +188,12 @@ public class PersonalInfoService {
 		if (notContainsAsterisk(identityNumber)){
 			String IdNumber = teacher.getIdentityNumber();
 			if (!StringUtils.equals(identityNumber,IdNumber)){
-				modificationLog.append(" identityNumber:from " + hideInfo(IdNumber,1,IdNumber.length()) + " to " + hideInfo(identityNumber,1,identityNumber.length()));
+				modificationLog.append(" identityNumber:from " + IdNumber + " to " + identityNumber);
 			}
 			teacher.setIdentityNumber(identityNumber);
-		} else {
-
 		}
 
-		String identityType = bankInfo.getIdType().toString();
+		String identityType = String.valueOf(bankInfo.getIdType());
 		teacher.setIdentityType(bankInfo.getIdType());
 		if (!StringUtils.equals(identityType,String.valueOf(teacher.getIdentityType()))){
 			modificationLog.append(" identityType:from " + teacher.getIdentityType() + " to " + identityType);
@@ -207,7 +205,7 @@ public class PersonalInfoService {
 		}
 		teacher.setPassport(bankInfo.getPassportURL());
 
-		String issuanceCountry = bankInfo.getIssuanceCountryId().toString();
+		String issuanceCountry = String.valueOf(bankInfo.getIssuanceCountryId());
 		if (!StringUtils.equals(issuanceCountry,String.valueOf(teacher.getIssuanceCountry()))){
 			modificationLog.append(" issuanceCountry:from " + teacher.getIssuanceCountry() + " to " + issuanceCountry);
 		}
