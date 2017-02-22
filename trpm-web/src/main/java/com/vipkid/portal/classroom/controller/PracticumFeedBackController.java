@@ -202,8 +202,8 @@ public class PracticumFeedBackController extends RestfulController {
 	 * @return
 	 */
 	@Slave
-	@RequestMapping(value = "/demereport/view", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
-	public Map<String, Object> demereportView(HttpServletRequest request, HttpServletResponse response,@RequestParam("onlineClassId") long onlineClassId, @RequestParam("studentId") long studentId){
+	@RequestMapping(value = "/demoReport/view", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
+	public Map<String, Object> demoReportView(HttpServletRequest request, HttpServletResponse response,@RequestParam("onlineClassId") long onlineClassId, @RequestParam("studentId") long studentId){
 		try{
 			Map<String,Object> resultMap = Maps.newHashMap();
             DemoReport currentReport =  practicumFeedbackService.getDemoReport(studentId, onlineClassId);

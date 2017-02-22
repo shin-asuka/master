@@ -202,35 +202,7 @@ public class ClassroomController extends RestfulController{
         }
 	}
 	
-	/**
-	 * 定时获取教室是否需要切换
-	 * @param request
-	 * @param response
-	 * @param onlineClassId
-	 * @param classroom
-	 * @return
-	 */
-	@RequestMapping(value = "/room/change", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
-	public Map<String, Object> roomChange(HttpServletRequest request, HttpServletResponse response, @RequestParam("onlineClassId") long onlineClassId, @RequestParam("classroom") String classroom){
-		try{
-			Map<String,Object> resultMap = this.classroomService.roomChange(onlineClassId+"");
-        	if(resultMap.get("info") == null){
-        		return ApiResponseUtils.buildSuccessDataResp(resultMap);
-        	}else{
-                response.setStatus(HttpStatus.FORBIDDEN.value());
-    			return ApiResponseUtils.buildErrorResp(-5, "错误信息:"+resultMap.get("info"));
-        	}
-        } catch (IllegalArgumentException e) {
-            response.setStatus(HttpStatus.BAD_REQUEST.value());
-			logger.error(e.getMessage());
-			return ApiResponseUtils.buildErrorResp(-6, "参数类型转化错误");
-        } catch (Exception e) {
-            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-			logger.error(e.getMessage());
-			return ApiResponseUtils.buildErrorResp(-7, "服务器异常");
-        }
-	}
-	
+
 	/**
 	 * 进教室后定时声明老师在教室里面
 	 * @param request
