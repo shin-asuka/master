@@ -26,6 +26,13 @@ public class MapUtils {
 	private static Logger logger = LoggerFactory.getLogger(MapUtils.class);
 
 
+
+	public static Map<String, Object> parseJsonToMap(JSONObject jsonObject){
+		return parseJsonToMap(jsonObject, null);
+	}
+
+
+
 	public static Map<String, Object> parseJsonToMap(JSONObject jsonObject,String keyPre){
 		Map<String, Object> map = Maps.newHashMap();
 		if(StringUtils.isNoneBlank(keyPre)){
