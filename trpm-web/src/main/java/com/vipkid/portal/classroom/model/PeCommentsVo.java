@@ -68,10 +68,10 @@ public class PeCommentsVo {
 	
 	private String result;
 	
-	@Length(minLength=200,maxLength=3000)
+	@Length(maxLength=3000)
 	private String things;
 	
-	@Length(minLength=200,maxLength=3000)
+	@Length(maxLength=3000)
 	private String areas;
 
 	private Integer totalScore;

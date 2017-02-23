@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.vipkid.rest.validation.annotation.Ignore;
+import com.vipkid.rest.validation.annotation.Length;
 import com.vipkid.rest.validation.annotation.NotNull;
 
 @NotNull
@@ -57,8 +58,10 @@ public class PeSupervisorCommentsVo {
 	
 	private String result;
 	
+	@Length(maxLength=3000)
 	private String things;
 	
+	@Length(maxLength=3000)
 	private String areas;
 
 	private Integer totalScore;

@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -80,12 +81,20 @@ public class PracticumFeedBackController extends RestfulController {
 	@RequestMapping(value = "/pe/save", method = RequestMethod.POST, produces = RestfulConfig.JSON_UTF_8)
 	public Map<String, Object> peSave(HttpServletRequest request, HttpServletResponse response, @RequestBody PeCommentsVo bean){
 		try{
-			//参数校验
-            List<Result> list = ValidateUtils.checkBean(bean,false);
-            if(CollectionUtils.isNotEmpty(list) && list.get(0).isResult()){
-                response.setStatus(HttpStatus.BAD_REQUEST.value());
-                return ApiResponseUtils.buildErrorResp(-1,"reslult:"+list.get(0).getName() + "," + list.get(0).getMessages());
-            }
+			//通用参数校验
+			if(StringUtils.isBlank(bean.getSubmitType())){
+				response.setStatus(HttpStatus.BAD_REQUEST.value());
+				return ApiResponseUtils.buildErrorResp(-1,"reslult:submitType,The field is required !");
+			}
+			
+			// 如果不是保存 则进行全局check验证
+			if (!"SAVE".endsWith(bean.getSubmitType())){ 
+	            List<Result> list = ValidateUtils.checkBean(bean,false);
+	            if(CollectionUtils.isNotEmpty(list) && list.get(0).isResult()){
+	                response.setStatus(HttpStatus.BAD_REQUEST.value());
+	                return ApiResponseUtils.buildErrorResp(-1,"reslult:"+list.get(0).getName() + "," + list.get(0).getMessages());
+	            }
+			}
 			
 			Map<String, Object> resultMap = practicumFeedbackService.saveDoPeAudit(getTeacher(request), bean);
 			//发邮件
@@ -142,12 +151,21 @@ public class PracticumFeedBackController extends RestfulController {
 	@RequestMapping(value = "/pes/save", method = RequestMethod.POST, produces = RestfulConfig.JSON_UTF_8)
 	public Map<String, Object> peSupervisorSave(HttpServletRequest request, HttpServletResponse response, @RequestBody PeSupervisorCommentsVo bean){
 		try{
-			//参数校验
-            List<Result> list = ValidateUtils.checkBean(bean,false);
-            if(CollectionUtils.isNotEmpty(list) && list.get(0).isResult()){
-                response.setStatus(HttpStatus.BAD_REQUEST.value());
-                return ApiResponseUtils.buildErrorResp(-1,"reslult:"+list.get(0).getName() + "," + list.get(0).getMessages());
-            }
+			//通用参数校验
+			if(StringUtils.isBlank(bean.getSubmitType())){
+				response.setStatus(HttpStatus.BAD_REQUEST.value());
+				return ApiResponseUtils.buildErrorResp(-1,"reslult:submitType,The field is required !");
+			}
+			
+			// 如果不是保存 则进行全局check验证
+			if (!"SAVE".endsWith(bean.getSubmitType())){ 
+	            List<Result> list = ValidateUtils.checkBean(bean,false);
+	            if(CollectionUtils.isNotEmpty(list) && list.get(0).isResult()){
+	                response.setStatus(HttpStatus.BAD_REQUEST.value());
+	                return ApiResponseUtils.buildErrorResp(-1,"reslult:"+list.get(0).getName() + "," + list.get(0).getMessages());
+	            }
+			}
+			
 			Map<String, Object> resultMap = practicumFeedbackService.saveDoPeSupervisorAudit(getTeacher(request), bean);
 			//发邮件
 			if(resultMap.get("applicationResult") != null){
