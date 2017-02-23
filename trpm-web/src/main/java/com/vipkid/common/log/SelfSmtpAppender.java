@@ -9,6 +9,8 @@ import ch.qos.logback.core.CoreConstants;
 import ch.qos.logback.core.Layout;
 import ch.qos.logback.core.boolex.EvaluationException;
 import ch.qos.logback.core.helpers.CyclicBuffer;
+import org.apache.commons.lang3.StringUtils;
+import org.community.config.PropertyConfigurer;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -22,7 +24,8 @@ public class SelfSmtpAppender extends SMTPAppender {
     static {
         try {
             InetAddress localHost = InetAddress.getLocalHost();
-            HOST_NAME = localHost.getHostName();
+            String applicationName = PropertyConfigurer.stringValue("application.name");
+            HOST_NAME = StringUtils.isNotBlank(applicationName)?applicationName:localHost.getHostName();
             HOST_ADDRESS = localHost.getHostAddress();
         } catch (UnknownHostException ignored) {
             HOST_NAME = "unknown-host";

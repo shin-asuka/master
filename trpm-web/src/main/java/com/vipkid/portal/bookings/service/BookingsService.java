@@ -376,21 +376,26 @@ public class BookingsService {
      */
     public Map<String, Map<String, Object>> getTeacherScheduleMap(long teacherId, Date fromTime, Date toTime,
                     String timezone) {
-        List<Map<String, Object>> teacherScheduleList =
-                        onlineClassDao.findByTeacherIdWithFromAndToTime(teacherId, fromTime, toTime, timezone);
+        List<Map<String, Object>> teacherScheduleList = onlineClassDao.findByTeacherIdWithFromAndToTime(teacherId, fromTime, toTime, timezone);
         logger.info("Teacher id: {}, Schedule size: {}", teacherId, teacherScheduleList.size());
 
         /* 根据北京时间构造 Map 对象 */
         Map<String, Map<String, Object>> teacherScheduleMap = Maps.newHashMap();
 
+        if(org.springframework.util.CollectionUtils.isEmpty(teacherScheduleList)){
+            return teacherScheduleMap;
+        }
+
         /* 查询需要显示的 INVALID 课程列表 */
-        List<Map<String, Object>> invalidScheduleList =
-                        onlineClassDao.findInvalidBy(teacherId, fromTime, toTime, timezone);
+        List<Map<String, Object>> invalidScheduleList = onlineClassDao.findInvalidBy(teacherId, fromTime, toTime, timezone);
+
 
         /* 查询 24 小时的课程列表 */
-        List<String> onlineClassIds = teacherScheduleList.stream().map(map -> String.valueOf(map.get("id")))
-                        .collect(Collectors.toList());
+        List<String> onlineClassIds = teacherScheduleList.stream().map(map -> String.valueOf(map.get("id"))).collect(Collectors.toList());
+
+
         List<String> idsFor24Hour = get24Hours(teacherId, onlineClassIds);
+
 
         for (Map<String, Object> teacherSchedule : teacherScheduleList) {
             long onlineClassId = (Long) teacherSchedule.get("id");
@@ -601,10 +606,14 @@ public class BookingsService {
             logger.info("Get 24Hours Request Url: {}", requestUrl);
 
             String responseBody = HttpClientProxy.get(requestUrl, requestParams, requestHeader);
+            logger.info("Get 24Hours Response:{}",responseBody);
+            if(StringUtils.isBlank(responseBody)){
+                return Lists.newArrayList();
+            }
             responseBody = StringTools.matchString(responseBody, "\\[(.*?)\\]", Pattern.CASE_INSENSITIVE, 1);
             return Arrays.asList(StringUtils.split(responseBody, ","));
         } catch (Exception e) {
-            logger.error("HttpClientProxy err: {}", e);
+            logger.error("HttpClientProxy err:", e);
             return Lists.newArrayList();
         }
     }
