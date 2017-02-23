@@ -4,7 +4,9 @@
 package com.vipkid.http.utils;
 
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
@@ -14,6 +16,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.google.common.collect.Maps;
 import org.apache.commons.lang.StringUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -35,28 +38,15 @@ public class JsonUtils {
 		// 设置输出时包含属性的风格
 		mapper.setSerializationInclusion(JsonInclude.Include.ALWAYS);
 
+//		mapper.configure(DeserializationFeature.USE_JAVA_ARRAY_FOR_JSON_ARRAY,false);
 		// 设置输入时忽略在JSON字符串中存在但Java对象实际没有的属性
 		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-		// 禁止把POJO中值为null的字段映射到json字符串中
-		mapper.configure(SerializationFeature.WRITE_NULL_MAP_VALUES,true);
+//		// 禁止把POJO中值为null的字段映射到json字符串中
+//		mapper.configure(SerializationFeature.WRITE_NULL_MAP_VALUES,true);
 	}
 
 
-	public static JSONObject toJSONObject(Object object){
-		JSONObject jsonObject = null;
-		if(object!=null){
-			jsonObject = (JSONObject) JSON.toJSON(object);
-		}
-		return jsonObject;
-	}
 
-	public static JSONObject parseToJSONObject(String object){
-		JSONObject jsonObject = null;
-		if(object!=null){
-			jsonObject = JSONObject.parseObject(object);
-		}
-		return jsonObject;
-	}
 
 
 
@@ -124,6 +114,67 @@ public class JsonUtils {
 		}
 	}
 
+
+	public static Map<String,Object> parseJsonToHttpParams(JsonNode jsonNode){
+	    return parseJsonToMap(jsonNode,null);
+    }
+
+	private static Map<String, Object> parseJsonToMap(JsonNode rootNode, String keyPre){
+		Map<String, Object> map = Maps.newHashMap();
+
+		if(org.apache.commons.lang3.StringUtils.isNoneBlank(keyPre)){
+			keyPre += ".";
+		}else{
+			keyPre ="";
+		}
+
+		if(rootNode == null ){
+			return map;
+		}
+		Iterator<String> fieldNames = rootNode.fieldNames();
+
+		while(fieldNames.hasNext()){
+			String fieldName = fieldNames.next();
+			String key = keyPre+fieldName;
+			JsonNode childNode=rootNode.path(fieldName);
+			put(childNode,key,map);
+
+		}
+		return map;
+	}
+
+	private  static Map<String, Object> parseJsonArrayToMap(JsonNode rootNode,String keyPre){
+		Map<String, Object> map = Maps.newHashMap();
+		if(keyPre == null){
+			keyPre ="";
+		}
+		if(!rootNode.isArray()) {
+			return map;
+		}
+		Iterator<JsonNode> elements = rootNode.elements();
+		Integer index = 0;
+		while(elements.hasNext()) {
+
+			JsonNode element = elements.next();
+			String key = keyPre+"["+index+"]";
+			put(element,key,map);
+			index++;
+
+		}
+		return map;
+	}
+
+	private  static void put(JsonNode jsonNode,String key,Map<String,Object> map){
+		if(jsonNode.isArray()){
+			map.putAll(parseJsonArrayToMap(jsonNode,key));
+		}else if(jsonNode.isTextual()){
+			map.put(key,jsonNode.asText());
+		}else if(jsonNode.isNumber()){
+			map.put(key,jsonNode.numberValue());
+		}else if(jsonNode.isObject()){
+			map.putAll(parseJsonToMap(jsonNode,key));
+		}
+	}
 
 
 
