@@ -260,7 +260,7 @@ public class PracticumFeedbackService {
 		
 		List<TeacherPeLevels> levelsList = teacherPeLevelsDao.getTeacherPeLevelsByApplicationId(applicationId);
 		List<Map<String,Integer>> levellist = Lists.newArrayList();
-		levelsList.stream().forEach(level -> {Map<String, Integer> maps = Maps.newHashMap();maps.put("id", level.getId()); levellist.add(maps);});
+		levelsList.stream().forEach(level -> {Map<String, Integer> maps = Maps.newHashMap();maps.put("id", level.getLevel()); levellist.add(maps);});
 		bean.setLevels(levellist);
         
 		TeacherPeComments teacherPeComments = teacherPeCommentsDao.getTeacherPeComments(applicationId);
@@ -283,12 +283,12 @@ public class PracticumFeedbackService {
 		
 		List<TeacherPeTags> tagsList = teacherPeTagsDao.getTeacherPeTagsByApplicationId(applicationId);
 		List<Map<String,Integer>> taglist = Lists.newArrayList();
-		tagsList.stream().forEach(level -> {Map<String, Integer> maps = Maps.newHashMap();maps.put("id", level.getId()); taglist.add(maps);});
+		tagsList.stream().forEach(tagpe -> {Map<String, Integer> maps = Maps.newHashMap();maps.put("id", tagpe.getTagId()); taglist.add(maps);});
 		bean.setTagIds(taglist);
 		
 		List<TeacherPeLevels> levelsList = teacherPeLevelsDao.getTeacherPeLevelsByApplicationId(applicationId);
 		List<Map<String,Integer>> levellist = Lists.newArrayList();
-		levelsList.stream().forEach(level -> {Map<String, Integer> maps = Maps.newHashMap();maps.put("id", level.getId()); levellist.add(maps);});
+		levelsList.stream().forEach(level -> {Map<String, Integer> maps = Maps.newHashMap();maps.put("id", level.getLevel()); levellist.add(maps);});
 		bean.setLevels(levellist);
         
 		TeacherPeComments teacherPeComments = teacherPeCommentsDao.getTeacherPeComments(applicationId);
