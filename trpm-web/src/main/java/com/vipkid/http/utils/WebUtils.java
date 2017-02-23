@@ -197,11 +197,12 @@ public class WebUtils {
     public static String postNameValuePair(String url, Object object) {
 //    	JSONObject json = JsonUtils.toJSONObject(object);
         String json = JsonUtils.toJSONString(object);
+
         logger.info("Post data,url = {},params = {}", url, json);
         CloseableHttpResponse response = null;
         try {
             HttpPost httpPost = new HttpPost(url);
-            Map<String, Object> map = JsonUtils.readJson(json, new TypeReference<Map<String, Object>>() {});
+            Map<String, Object> map = JsonUtils.parseJsonToHttpParams(JsonUtils.parseObject(json));
 //            Map<String, Object> map = MapUtils.parseJsonToMap(json);
             List<NameValuePair> paramsList = Lists.newArrayList();
             if( json != null){
