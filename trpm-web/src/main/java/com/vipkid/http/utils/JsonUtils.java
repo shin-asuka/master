@@ -38,7 +38,7 @@ public class JsonUtils {
 		// 设置输入时忽略在JSON字符串中存在但Java对象实际没有的属性
 		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 		// 禁止把POJO中值为null的字段映射到json字符串中
-		mapper.configure(SerializationFeature.WRITE_NULL_MAP_VALUES,false);
+		mapper.configure(SerializationFeature.WRITE_NULL_MAP_VALUES,true);
 	}
 
 
