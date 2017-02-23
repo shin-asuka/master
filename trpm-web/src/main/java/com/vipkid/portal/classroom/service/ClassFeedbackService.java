@@ -282,6 +282,6 @@ public class ClassFeedbackService {
 
         // 查询FeedBack信息
         TeacherComment teacherComment = findCFByOnlineClassIdAndStudentIdAndTeacherId(onlineClassId, studentId,onlineClass,lesson);
-        return teacherComment.getOnlineClassId();
+        return teacherComment.getId();
     }
 }
