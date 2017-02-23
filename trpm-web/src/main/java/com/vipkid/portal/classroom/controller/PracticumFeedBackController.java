@@ -88,7 +88,7 @@ public class PracticumFeedBackController extends RestfulController {
 			}
 			
 			// 如果不是保存 则进行全局check验证
-			if (!"SAVE".endsWith(bean.getSubmitType())){ 
+			if (!"SAVE".endsWith(bean.getSubmitType()) && !StringUtils.equalsIgnoreCase(bean.getResult(),com.vipkid.enums.TeacherApplicationEnum.Result.REAPPLY.toString())){
 	            List<Result> list = ValidateUtils.checkBean(bean,false);
 	            if(CollectionUtils.isNotEmpty(list) && list.get(0).isResult()){
 	                response.setStatus(HttpStatus.BAD_REQUEST.value());
@@ -158,7 +158,7 @@ public class PracticumFeedBackController extends RestfulController {
 			}
 			
 			// 如果不是保存 则进行全局check验证
-			if (!"SAVE".endsWith(bean.getSubmitType())){ 
+			if (!"SAVE".endsWith(bean.getSubmitType()) && !StringUtils.equalsIgnoreCase(bean.getResult(),com.vipkid.enums.TeacherApplicationEnum.Result.REAPPLY.toString())){ 
 	            List<Result> list = ValidateUtils.checkBean(bean,false);
 	            if(CollectionUtils.isNotEmpty(list) && list.get(0).isResult()){
 	                response.setStatus(HttpStatus.BAD_REQUEST.value());
