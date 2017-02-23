@@ -190,7 +190,7 @@ public class ClassroomController extends RestfulController{
 		try{
 			Map<String,Object> maps = Maps.newHashMap();
 			maps.put("serverTime", System.currentTimeMillis());
-			return ApiResponseUtils.buildSuccessDataResp(new Object());
+			return ApiResponseUtils.buildSuccessDataResp(maps);
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
 			logger.error(e.getMessage());
