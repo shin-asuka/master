@@ -202,6 +202,7 @@ public class WebUtils {
         try {
             HttpPost httpPost = new HttpPost(url);
             Map<String, Object> map = JsonUtils.readJson(json, new TypeReference<Map<String, Object>>() {});
+//            Map<String, Object> map = MapUtils.parseJsonToMap(json);
             List<NameValuePair> paramsList = Lists.newArrayList();
             if( json != null){
 //				for (String key : json.keySet()) {

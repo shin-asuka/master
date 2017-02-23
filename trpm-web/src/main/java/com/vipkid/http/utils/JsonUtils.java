@@ -11,7 +11,10 @@ import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -40,6 +43,8 @@ public class JsonUtils {
 
 		// 设置输入时忽略在JSON字符串中存在但Java对象实际没有的属性
 		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+		// 禁止把POJO中值为null的字段映射到json字符串中
+		mapper.configure(SerializationFeature.WRITE_NULL_MAP_VALUES,false);
 	}
 
 
