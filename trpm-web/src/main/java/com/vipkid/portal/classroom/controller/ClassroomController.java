@@ -22,6 +22,7 @@ import com.vipkid.dataSource.annotation.Slave;
 import com.vipkid.enums.TeacherEnum.LifeCycle;
 import com.vipkid.portal.classroom.model.ClassRoomVo;
 import com.vipkid.portal.classroom.model.SendHelpVo;
+import com.vipkid.portal.classroom.model.SendSysInfoVo;
 import com.vipkid.portal.classroom.service.ClassroomService;
 import com.vipkid.rest.RestfulController;
 import com.vipkid.rest.config.RestfulConfig;
@@ -253,6 +254,40 @@ public class ClassroomController extends RestfulController{
                 return ApiResponseUtils.buildErrorResp(-1,"reslult:"+list.get(0).getName() + "," + list.get(0).getMessages());
             }
 			Map<String,Object> resultMap = this.classroomService.sendHelp(bean.getScheduleTime(), bean.getOnlineClassId(), getTeacher(request));
+        	if(resultMap.get("info") == null){
+        		return ApiResponseUtils.buildSuccessDataResp(resultMap);
+        	}else{
+                response.setStatus(HttpStatus.FORBIDDEN.value());
+    			return ApiResponseUtils.buildErrorResp(-5, "错误信息:"+resultMap.get("info"));
+        	}
+        } catch (IllegalArgumentException e) {
+            response.setStatus(HttpStatus.BAD_REQUEST.value());
+			logger.error(e.getMessage());
+			return ApiResponseUtils.buildErrorResp(-6, "参数类型转化错误");
+        } catch (Exception e) {
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+			logger.error(e.getMessage());
+			return ApiResponseUtils.buildErrorResp(-7, "服务器异常");
+        }
+	}
+	
+	
+	/**
+	 * 向Firemen请求帮助
+	 * @param request
+	 * @param response
+	 * @param paramMap
+	 * @return
+	 */
+	@RequestMapping(value = "/send/sysinfo", method = RequestMethod.POST, produces = RestfulConfig.JSON_UTF_8)
+	public Map<String, Object> sendSysInfo(HttpServletRequest request, HttpServletResponse response,@RequestBody SendSysInfoVo bean){
+		try{
+			List<Result> list = ValidateUtils.checkBean(bean, false);
+			if(CollectionUtils.isNotEmpty(list) && list.get(0).isResult()){
+                response.setStatus(HttpStatus.BAD_REQUEST.value());
+                return ApiResponseUtils.buildErrorResp(-1,"reslult:"+list.get(0).getName() + "," + list.get(0).getMessages());
+            }
+			Map<String,Object> resultMap = this.classroomService.sendSysInfo(bean,getTeacher(request),request);
         	if(resultMap.get("info") == null){
         		return ApiResponseUtils.buildSuccessDataResp(resultMap);
         	}else{

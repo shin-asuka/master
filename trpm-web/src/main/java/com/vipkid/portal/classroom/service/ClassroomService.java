@@ -2,11 +2,11 @@ package com.vipkid.portal.classroom.service;
 
 import java.sql.Timestamp;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.community.config.PropertyConfigurer;
 import org.community.http.client.HttpClientProxy;
@@ -21,6 +21,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.google.api.client.util.Maps;
 import com.vipkid.enums.OnlineClassEnum;
 import com.vipkid.portal.classroom.model.ClassRoomVo;
+import com.vipkid.portal.classroom.model.SendSysInfoVo;
 import com.vipkid.recruitment.dao.TeacherApplicationDao;
 import com.vipkid.recruitment.entity.TeacherApplication;
 import com.vipkid.recruitment.utils.ReturnMapUtils;
@@ -41,6 +42,7 @@ import com.vipkid.trpm.entity.teachercomment.TeacherComment;
 import com.vipkid.trpm.proxy.OnlineClassProxy;
 import com.vipkid.trpm.service.portal.TeacherService;
 import com.vipkid.trpm.util.DateUtils;
+import com.vipkid.trpm.util.IpUtils;
 import com.vipkid.trpm.util.LessonSerialNumber;
 
 @Service
@@ -128,7 +130,7 @@ public class ClassroomService {
 		resultDto.setStars(stars);
 		resultDto.setServerTime(new Timestamp(System.currentTimeMillis()));
 		resultDto.setIsReplay(!OnlineClassEnum.ClassStatus.isBooked(onlineClass.getStatus()));
-		resultDto.setSysInfoUrl( PropertyConfigurer.stringValue("sys.info.url"));
+		resultDto.setSysInfoUrl(PropertyConfigurer.stringValue("sys.info.url"));
 		resultDto.setMicroserviceUrl(PropertyConfigurer.stringValue("microservice.url"));
 		return resultDto;
 		
@@ -319,6 +321,39 @@ public class ClassroomService {
         return modelMap;
     }
 
+    /**
+     * 老师进入教室后 ，通过该方法发送老师浏览器数据相关信息到 appserver 
+     * @param bean
+     * @param teacher
+     * @param request
+     * @return
+     */
+    public Map<String, Object> sendSysInfo(SendSysInfoVo bean, Teacher teacher,HttpServletRequest request) {
+        String t = "TEACHER " + teacher.getId();
+        Map<String, String> requestHeader = new HashMap<String, String>();
+        requestHeader.put("Authorization", t + " " + DigestUtils.md5Hex(t));
+        
+        requestHeader.put("User-Agent", request.getHeader("User-Agent"));
+        requestHeader.put("x-forwarded-for", IpUtils.getIpAddress(request));
+        
+        Map<String, String> requestParams = Maps.newHashMap();
+        requestParams.put("userId", teacher.getId()+"");
+        requestParams.put("classroom", bean.getClassroom());
+        requestParams.put("onlineClassId", bean.getOnlineClassId()+"");
+        
+        String content = HttpClientProxy.get(ApplicationConstant.TEACHER_SYSTEM_INFO_URL, requestParams,requestHeader);
+
+        logger.info("### Mark that teacher enter classroom: {}", content);
+        logger.info("### Sent get request to {} with params {}", ApplicationConstant.TEACHER_SYSTEM_INFO_URL, requestParams.get("onlineClassId"));
+        
+        Map<String, Object> modelMap = Maps.newHashMap();
+        if (StringUtils.isBlank(content)) {
+            modelMap.put("info", "failed to tell the fireman teacher browser info!");
+        }
+        return modelMap;
+    }
+    
+    
 	/**
      * 根据serialNum处理 考试的Level名称显示<br/>
      * studentExam 为NULL 则返回一个空对象
