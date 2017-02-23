@@ -1,5 +1,6 @@
 package com.vipkid.trpm.service.portal;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -436,8 +437,7 @@ public class TeacherService {
 				logger.error("请求checkExistOrInsertOne返回数据为空，请求参数：{}，返回结果：{}", param, response);
 				return null;
 			}
-			tcResult = JsonUtils
-				.toBeanList(standardJsonObject.getData().get("result"), TeacherCommentResult.class);
+			tcResult = JsonUtils.readJson(JsonUtils.toJSONString(standardJsonObject.getData().get("result")), new TypeReference<List<TeacherCommentResult>>() {});
 			if (CollectionUtils.isEmpty(tcResult)) {
 				logger.error("请求checkExistOrInsertOne数据返回为空，请求参数：{}，返回结果：{}", param, response);
 				return null;
@@ -474,7 +474,7 @@ public class TeacherService {
 			}
 
 			teacherCommentList = JsonUtils
-					.toBeanList(standardJsonObject.getData().get("result"), TeacherCommentResult.class);
+					.readJson(JsonUtils.toJSONString(standardJsonObject.getData().get("result")), new TypeReference<List<TeacherCommentResult>>() {});
 			if (CollectionUtils.isEmpty(teacherCommentList)) {
 				logger.info("请求CF返回业务数据为空，请求参数：{}，返回结果：{}", requestParam,
 						response);
@@ -508,8 +508,8 @@ public class TeacherService {
 				return null;
 			}
 
-			List<Map> responseList = JsonUtils
-					.toBeanList(standardJsonObject.getData().get("result"), Map.class);
+			List<Map<String,Object>> responseList = JsonUtils
+					.readJson(JsonUtils.toJSONString(standardJsonObject.getData().get("result")),new TypeReference<List<Map<String,Object>>>(){} );
 			if (CollectionUtils.isEmpty(responseList)) {
 				logger.warn("请求CF返回业务数据为空，请求参数：{}，返回结果：{}", requestParam,
 						response);

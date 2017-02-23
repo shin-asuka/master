@@ -92,25 +92,6 @@ public class JsonUtils {
 	}
 
 
-	@Deprecated
-	public static <T> List<T> toBeanList(Object objects, Class<T> clazz){
-		List<T> list = Lists.newArrayList();
-
-		if (objects ==null || clazz == null) {
-			return list;
-		}
-
-		if(objects instanceof  String){
-			list = readJson((String) objects, new TypeReference<List<T>>() {});
-		}else{
-			list = readJson(toJSONString(objects),new TypeReference<List<T>>() {});
-		}
-		return list;
-	}
-
-
-
-
 
 
 }
