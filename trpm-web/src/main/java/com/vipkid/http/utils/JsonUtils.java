@@ -6,9 +6,10 @@ package com.vipkid.http.utils;
 import java.io.IOException;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.google.api.client.util.Lists;
 import org.apache.commons.lang.StringUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
@@ -25,7 +26,13 @@ public class JsonUtils {
 	private static final Logger logger = LoggerFactory.getLogger(JsonUtils.class);
 
 	private static ObjectMapper mapper = new ObjectMapper();
+	static{
+		// 设置输出时包含属性的风格
+		mapper.setSerializationInclusion(JsonInclude.Include.ALWAYS);
 
+		// 设置输入时忽略在JSON字符串中存在但Java对象实际没有的属性
+		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+	}
 
 
 	public static String toJSONString(Object object) {
