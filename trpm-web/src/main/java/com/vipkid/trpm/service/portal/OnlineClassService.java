@@ -233,10 +233,16 @@ public class OnlineClassService {
         modelMap.putAll(this.enterBefore(onlineClass, studentId, "BOOKED"));
 
         /** 获取teacherComments中的stars字段的值，并存入model */
-        Map<String, Object> starNumMap = getStarNum(onlineClass.getId(), teacher.getId(), studentId);
-        logger.info("TeacherId:{}, Major Course query stars : {},onlineClassId:{},studentId:{}", teacher.getId(), JsonUtils.toJSONString(starNumMap),
+        int stars = this.findTeacherCommentByOnlineClassId(onlineClass, studentId);
+        logger.info("TeacherId:{}, Major Course query stars : {},onlineClassId:{},studentId:{}", teacher.getId(), stars,
                 onlineClass.getId(), studentId);
-        modelMap.put("stars", starNumMap.get("starNum"));
+        modelMap.put("stars", stars);
+
+        //new solution
+//        Map<String, Object> starNumMap = getStarNum(onlineClass.getId(), teacher.getId(), studentId);
+//        logger.info("TeacherId:{}, Major Course query stars : {},onlineClassId:{},studentId:{}", teacher.getId(), JsonUtils.toJSONString(starNumMap),
+//                onlineClass.getId(), studentId);
+//        modelMap.put("stars", starNumMap.get("starNum"));
         if (lesson.getSerialNumber().startsWith("A")) {
             DemoReport currentReport = demoReportDao.findByStudentIdAndOnlineClassId(studentId, onlineClass.getId());
             modelMap.put("currentReport", currentReport);

@@ -429,8 +429,10 @@ public class OnlineClassController extends AbstractPortalController {
         onlineclassService.sendStarlogs(send, studentId, onlineClassId, teacher);
         Map<String, Object> modelMap;
         if(send){
+            logger.info("Teacher {} send star to {} in class {}", teacherId, studentId, onlineClassId);
             modelMap = onlineclassService.updateStarNum(onlineClassId, teacherId, studentId, 1);
         }else{
+            logger.info("Teacher {} remove star to {} in class {}", teacherId, studentId, onlineClassId);
             modelMap = onlineclassService.updateStarNum(onlineClassId, teacherId, studentId, -1);
         }
         return jsonView(response, modelMap);
