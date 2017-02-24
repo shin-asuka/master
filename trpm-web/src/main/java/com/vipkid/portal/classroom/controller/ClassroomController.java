@@ -57,9 +57,8 @@ public class ClassroomController extends RestfulController{
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
                 return ApiResponseUtils.buildErrorResp(-1,"reslult:"+list.get(0).getName() + "," + list.get(0).getMessages());
             }
-            
-			//TODO
-			return ApiResponseUtils.buildSuccessDataResp(new Object());
+            Map<String,Object> result =  this.classroomService.sendStarlogs(true, bean, getTeacher(request));
+			return ApiResponseUtils.buildSuccessDataResp(result);
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
 			logger.error(e.getMessage());
@@ -87,9 +86,8 @@ public class ClassroomController extends RestfulController{
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
                 return ApiResponseUtils.buildErrorResp(-1,"reslult:"+list.get(0).getName() + "," + list.get(0).getMessages());
             }
-			//TODO
-            
-			return ApiResponseUtils.buildSuccessDataResp(new Object());
+            Map<String,Object> result =  this.classroomService.sendStarlogs(false, bean, getTeacher(request));
+			return ApiResponseUtils.buildSuccessDataResp(result);
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
 			logger.error(e.getMessage());

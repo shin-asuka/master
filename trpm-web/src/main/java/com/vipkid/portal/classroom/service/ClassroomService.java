@@ -392,6 +392,51 @@ public class ClassroomService {
     	onlineClassDao.updateEntity(new OnlineClass().setId(onlineClassId).setStatus("FINISHED").setFinishType("AS_SCHEDULED"));
     }
     
+    
+    /**
+    *
+    * @Title: sendStarlogs
+    * @param send
+    * @param studentId
+    * @param onlineClassId
+    * @param teacher
+    * @date 2016年1月11日
+    */
+   public Map<String,Object> sendStarlogs(boolean send, ClassRoomVo bean, Teacher teacher) {
+	   Map<String,Object> resultMap = Maps.newHashMap();
+       Student student = studentDao.findById(bean.getStudentId());
+       OnlineClass onlineClass = onlineClassDao.findById(bean.getOnlineClassId());
+
+       /* 记录操作日志 */
+       Map<String, Object> parmMap = Maps.newHashMap();
+
+       parmMap.put("teacherId", teacher.getId());
+       parmMap.put("teacherName", teacher.getRealName());
+
+       parmMap.put("studentId", student.getId());
+       parmMap.put("studentName", student.getEnglishName());
+
+       parmMap.put("onlineClassId", onlineClass.getId());
+       parmMap.put("roomId", onlineClass.getClassroom());
+
+       if (send) {
+           String content = FilesUtils.readLogTemplate(ApplicationConstant.AuditCategory.STAR_SEND, parmMap);
+           auditDao.saveAudit(ApplicationConstant.AuditCategory.STAR_SEND, "INFO", content, teacher.getRealName(),
+                   teacher, IpUtils.getRemoteIP());
+           logger.info("Teacher: id={},name={} send star, Student: id={},name={}, onlineClassId: id={},room={}",
+                   teacher.getId(), teacher.getRealName(), bean.getStudentId(), student.getEnglishName(), bean.getOnlineClassId(),
+                   onlineClass.getClassroom());
+       } else {
+           String content = FilesUtils.readLogTemplate(ApplicationConstant.AuditCategory.STAR_REMOVE, parmMap);
+           auditDao.saveAudit(ApplicationConstant.AuditCategory.STAR_REMOVE, "INFO", content, teacher.getRealName(),
+                   teacher, IpUtils.getRemoteIP());
+           logger.info("Teacher: id={},name={} remove star, Student: id={},name={}, onlineClassId: id={},room={}",
+        		   teacher.getId(), teacher.getRealName(), bean.getStudentId(), student.getEnglishName(), bean.getOnlineClassId(),
+                   onlineClass.getClassroom());
+       }
+       return resultMap;
+   }
+    
 	/**
      * 根据serialNum处理 考试的Level名称显示<br/>
      * studentExam 为NULL 则返回一个空对象
