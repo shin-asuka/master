@@ -434,6 +434,7 @@ public class ClassroomService {
         		   teacher.getId(), teacher.getRealName(), bean.getStudentId(), student.getEnglishName(), bean.getOnlineClassId(),
                    onlineClass.getClassroom());
        }
+       resultMap.put("status", true);
        return resultMap;
    }
     
