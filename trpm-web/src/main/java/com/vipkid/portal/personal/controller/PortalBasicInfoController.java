@@ -97,7 +97,7 @@ public class PortalBasicInfoController extends RestfulController{
                 }
             } catch (IllegalArgumentException e) {
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
-                logger.error("Upload avatar with Exception", e);
+                logger.warn("Upload avatar with Exception", e);
                 return ApiResponseUtils.buildErrorResp(-4, "Upload failed!  Please try again.");
             } catch (Exception e) {
                 response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());

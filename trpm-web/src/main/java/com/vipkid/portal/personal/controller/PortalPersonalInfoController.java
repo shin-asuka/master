@@ -199,7 +199,11 @@ public class PortalPersonalInfoController extends RestfulController {
 			}
 			return ApiResponseUtils.buildSuccessDataResp(fileVo);
 		} catch (Exception e) {
-			logger.error("调用restTaxpayerUpload接口抛异常，e = ", e);
+			if(e instanceof IllegalArgumentException){
+				logger.warn("调用restTaxpayerUpload接口发生非法参数异常，参数不合法", e);
+			}else{
+				logger.error("调用restTaxpayerUpload接口抛异常，e = ", e);
+			}
 		}
 		return ApiResponseUtils.buildErrorResp(1002, "抛异常");
 	}
@@ -252,7 +256,11 @@ public class PortalPersonalInfoController extends RestfulController {
 			}
 
 		} catch (Exception e) {
-			logger.error("保存TaxpayerForm失败，抛异常。e = {}", e);
+			if(e instanceof IllegalArgumentException){
+				logger.warn("保存TaxpayerForm失败，发生非法参数异常，参数不合法，参数param = "+JsonUtils.toJSONString(param), e);
+			}else{
+				logger.error("保存TaxpayerForm失败，抛异常。e = {}", e);
+			}
 		}
 		return ApiResponseUtils.buildErrorResp(1002, "抛异常");
 	}

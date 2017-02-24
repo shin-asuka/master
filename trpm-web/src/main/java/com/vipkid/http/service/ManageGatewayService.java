@@ -140,7 +140,7 @@ public class ManageGatewayService extends HttpBaseService {
 			String data = WebUtils.postJSON(String.format(super.serverAddress + GATEWAY_STUDENT_COMMENT_TRANSLATION_API, id),input);
 			if (data!=null) {
 				JSONObject jb = JSONObject.parseObject(data);
-				if(jb.get("status").equals("OK")){
+				if(jb != null && jb.get("status").equals("OK")){
 					return true;
 				}
 			}

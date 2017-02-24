@@ -5,6 +5,7 @@ import javax.jms.Message;
 import javax.jms.MessageListener;
 import javax.jms.TextMessage;
 
+import com.alibaba.druid.support.json.JSONUtils;
 import com.alibaba.fastjson.JSON;
 import com.vipkid.mq.message.FinishOnlineClassMessage;
 import com.vipkid.mq.message.UaReportMessage;
@@ -47,7 +48,11 @@ public class UaReportMessageConsumer implements MessageListener {
                             FinishOnlineClassMessage.OperatorType.ADD_UNIT_ASSESSMENT);
                 }
             } catch (Exception e) {
-                logger.error("接收UA Report消息并发送FinishOnlineClassMessage时出现问题", e);
+                if(e instanceof IllegalArgumentException){
+                    logger.warn("接收UA Report消息并发送FinishOnlineClassMessage发生非法参数异常，参数不合法, message="+ JSONUtils.toJSONString(message), e);
+                }else{
+                    logger.error("接收UA Report消息并发送FinishOnlineClassMessage时出现问题", e);
+                }
             }
         }
     }

@@ -440,7 +440,9 @@ public class ActivityService {
 		}
 		Date dateBeRegularTeacher = getDateBeRegularTeacher(teacherId);
 		DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-		data.setBecomeRegularDate(df.format(dateBeRegularTeacher));//变更为成为正式老师的时间
+		if(dateBeRegularTeacher != null){
+			data.setBecomeRegularDate(df.format(dateBeRegularTeacher));//变更为成为正式老师的时间
+		}
 		List<String> avatarListOrigin = getAvatarListOfReferalsByTeacherId(teacherId);
 		List<String> avatarList = Lists.newArrayList();
 		for (String eachAvatar : avatarListOrigin) {

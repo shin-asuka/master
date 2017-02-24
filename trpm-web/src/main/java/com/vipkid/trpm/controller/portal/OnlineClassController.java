@@ -106,49 +106,49 @@ public class OnlineClassController extends AbstractPortalController {
         // 参数判断1
         Lesson lesson = onlineclassService.getLesson(lessonId);
         if (lesson == null) {
-            logger.error("teacherId:{},没有权限进入教室，原因:lesson is null,lessonId:{}", user.getId(), lessonId);
+            logger.warn("teacherId:{},没有权限进入教室，原因:lesson is null,lessonId:{}", user.getId(), lessonId);
             model.addAttribute("info", errorHTML);
             return "error/info";
         }
         // 参数判断
         OnlineClass onlineClass = onlineclassService.getOnlineClassById(onlineClassId);
         if (onlineClass == null) {
-            logger.error("teacherId:{},没有权限进入教室，原因:onlineClass is null,onlineClassId:{},LessonId:{}", user.getId(),
+            logger.warn("teacherId:{},没有权限进入教室，原因:onlineClass is null,onlineClassId:{},LessonId:{}", user.getId(),
                             onlineClassId, lessonId);
             model.addAttribute("info", errorHTML);
             return "error/info";
         }
         // 检查teacherId 与当前登录Id是否匹配
         if (onlineClass.getTeacherId() != teacher.getId()) {
-            logger.error("teacherId:{},没有权限进入教室，原因:teacherId 与当前登录Id不匹配,onlineClassId:{},teacherId:{}", user.getId(),
+            logger.warn("teacherId:{},没有权限进入教室，原因:teacherId 与当前登录Id不匹配,onlineClassId:{},teacherId:{}", user.getId(),
                             onlineClassId, teacher.getId());
             model.addAttribute("info", errorHTML);
             return "error/info";
         }
         // 检查lessonId是否匹配 onlineClassId
         if (onlineClass.getLessonId() != lessonId) {
-            logger.error("teacherId:{},没有权限进入教室，原因:lessonId 与 onlineClassId不匹配,onlineClassId:{},lessonId:{}",
+            logger.warn("teacherId:{},没有权限进入教室，原因:lessonId 与 onlineClassId不匹配,onlineClassId:{},lessonId:{}",
                             user.getId(), onlineClassId, lessonId);
             model.addAttribute("info", errorHTML);
             return "error/info";
         }
         // 检查onlineClassId是否匹配studentId
         if (!onlineclassService.checkStudentIdClassId(onlineClassId, studentId)) {
-            logger.error("teacherId:{},没有权限进入教室，原因:onlineClassId 与 studentId不匹配,onlineClassId:{},studentId:{}",
+            logger.warn("teacherId:{},没有权限进入教室，原因:onlineClassId 与 studentId不匹配,onlineClassId:{},studentId:{}",
                             user.getId(), onlineClassId, studentId);
             model.addAttribute("info", errorHTML);
             return "error/info";
         }
         // INVALID不允许进入教室
         if (OnlineClassEnum.ClassStatus.INVALID.toString().equals(onlineClass.getStatus())) {
-            logger.error("teacherId:{},没有权限进入教室，原因:onlineClass 状态为：INVALID,onlineClassId:{}", user.getId(),
+            logger.warn("teacherId:{},没有权限进入教室，原因:onlineClass 状态为：INVALID,onlineClassId:{}", user.getId(),
                             onlineClassId);
             model.addAttribute("info", errorHTML);
             return "error/info";
         }
         // TEACHER_NO_SHOW不允许进入教室
         if ("TEACHER_NO_SHOW".equals(onlineClass.getFinishType())) {
-            logger.error("teacherId:{},没有权限进入教室，原因:onlineClass FinishType为：TEACHER_NO_SHOW,onlineClassId:{}",
+            logger.warn("teacherId:{},没有权限进入教室，原因:onlineClass FinishType为：TEACHER_NO_SHOW,onlineClassId:{}",
                             user.getId(), onlineClassId);
             model.addAttribute("info", errorHTML);
             return "error/info";

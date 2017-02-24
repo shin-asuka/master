@@ -463,7 +463,8 @@ public class PassportService {
         try {
             String value = redisProxy.get(key);
             Long ttl = redisProxy.ttl(key);
-            if (value != null && ttl >= 0) {
+            //modified by luojiaoxia 过期时间不能是0
+            if (value != null && ttl > 0) {
                 loginCount = Integer.parseInt(value) + 1; // 登录失败次数
                 redisProxy.setex(key, Integer.parseInt(ttl.toString()), String.valueOf(loginCount));
             } else {

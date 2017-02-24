@@ -176,18 +176,18 @@ public class WebUtils {
             HttpEntity entity = response.getEntity();
             String rt = EntityUtils.toString(entity);
             if(HttpStatus.OK.value()!=response.getStatusLine().getStatusCode()){
-            	logger.error("http get error =  "+ rt);
+            	//logger.error("http get error =  "+ rt);
             	throw new Exception(rt);
 			}
             return rt;
 		} catch (Exception e) {
-			logger.error("get data error,url = "+url+" e= "+e);
+			logger.error("get data error,url = "+url, e);
 		} finally {
             if (null != response) {
                 try {
                     response.close();
                 } catch (IOException e) {
-                    logger.error("关闭输出流时出错，url = "+url+" e= "+e);
+                    logger.error("关闭输出流时出错，url = "+url, e);
                 }
             }
         }

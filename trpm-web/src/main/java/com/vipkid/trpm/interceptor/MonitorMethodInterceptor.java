@@ -28,7 +28,11 @@ public class MonitorMethodInterceptor implements MethodInterceptor {
             Object result = invocation.proceed();
             return result;
         } catch (Exception e) {
-            logger.error("MonitorMethodInterceptor error !",e);
+            if(e instanceof IllegalArgumentException){
+                logger.warn("MonitorMethodInterceptor IllegalArgumentException", e);
+            }else{
+                logger.error("MonitorMethodInterceptor error !",e);
+            }
             throw new RuntimeException(e);
         } finally {
             long endTime = System.nanoTime();

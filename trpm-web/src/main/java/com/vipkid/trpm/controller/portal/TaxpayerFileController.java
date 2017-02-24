@@ -131,11 +131,11 @@ public class TaxpayerFileController extends AbstractPortalController{
 	public String save(Integer formType,Long id,String url,
 			HttpServletRequest request, HttpServletResponse response, Model model){
 		logger.info("save taxpayer formType = {} url={} ",formType,url);
-		
+
+		Preconditions.checkArgument(StringUtils.isNotBlank(url), "url 不能为空!");
+		Preconditions.checkArgument(formType!=null,"formType 不能为空!");
+
 		try {
-			Preconditions.checkArgument(StringUtils.isNotBlank(url), "url 不能为空!");
-			Preconditions.checkArgument(formType!=null,"formType 不能为空!");
-			
 			TeacherTaxpayerForm teacherTaxpayerForm = new TeacherTaxpayerForm();
 			teacherTaxpayerForm.setId(id);
 			teacherTaxpayerForm.setUrl(url);
