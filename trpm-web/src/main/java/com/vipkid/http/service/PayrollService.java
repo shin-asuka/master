@@ -65,6 +65,29 @@ public class PayrollService extends HttpBaseService {
 		return resultString;
 	}
 	
+	public String listReferralWithPage(int slalaryTypeCourseAdditionRule, int teacherId, int month, Page page) {
+		Map<String, String> params = Maps.newHashMap();
+
+		params.put("teacherId", String.valueOf(teacherId));
+		params.put("pageNo",  String.valueOf(page.getPageNo()));
+		params.put("itemType", String.valueOf(slalaryTypeCourseAdditionRule));
+		params.put("month", String.valueOf(month));
+		if (page.getPageSize() != 0) {
+			params.put("pageSize",  String.valueOf(page.getPageSize()));
+		} else {
+			params.put("pageSize", "15");
+		}
+		String url = new StringBuilder(super.serverAddress).append("/public/payroll/listReferral")
+				.toString();
+		logger.info("request 请求payroll service , uri={} ,teacherId={}", url, teacherId);
+		HttpResult result = WebUtils.post(url, params);
+		String resultString = null;
+		if (HttpResult.STATUS_SUCCESS.equals(result.getStatus())) {
+			resultString = result.getResponse().toString();
+		}
+		return resultString;
+	}
+	
 	private JSONObject getResult(Map<String, String> params, String url,int teacherId) {
 		JSONObject jsonObject = null;
 		try {
