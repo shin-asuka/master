@@ -41,6 +41,7 @@ import com.vipkid.trpm.entity.Student;
 import com.vipkid.trpm.entity.StudentExam;
 import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.entity.teachercomment.QueryTeacherCommentOutputDto;
+import com.vipkid.trpm.entity.teachercomment.SubmitTeacherCommentDto;
 import com.vipkid.trpm.entity.teachercomment.TeacherComment;
 import com.vipkid.trpm.entity.teachercomment.TeacherCommentResult;
 import com.vipkid.trpm.entity.teachercomment.TeacherCommentUpdateDto;
@@ -536,7 +537,7 @@ public class TeacherService {
 	}
 
 
-	public String inputCheckPrevipMajorCourseTeacherComment(String serialNumber,TeacherCommentVo input){
+	public String inputCheckPrevipMajorCourseTeacherComment(String serialNumber,SubmitTeacherCommentDto input){
 		String errMsg = null;
 		boolean isPreVipkid = LessonSerialNumber.isPreVipkidLesson(serialNumber);
 		if(isPreVipkid && serialNumber.startsWith("M") && input!=null){
