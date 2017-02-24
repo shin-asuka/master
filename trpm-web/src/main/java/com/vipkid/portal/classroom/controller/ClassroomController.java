@@ -116,6 +116,7 @@ public class ClassroomController extends RestfulController{
 			ClassRoomVo bean = new ClassRoomVo();
 			bean.setOnlineClassId(onlineClassId);
             bean.setStudentId(studentId);
+            logger.info("TeacherId:{}, Enter class onlineClassId:{},studentId:{}",getTeacher(request).getId(), onlineClassId, studentId);
 			return ApiResponseUtils.buildSuccessDataResp(this.classroomService.getInfoRoom(bean, getTeacher(request)));
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
@@ -127,6 +128,8 @@ public class ClassroomController extends RestfulController{
 			return ApiResponseUtils.buildErrorResp(-7, "服务器异常");
         }
 	}
+	
+	
 	
 	/**
 	 * 获取Open 学生信息
@@ -140,6 +143,7 @@ public class ClassroomController extends RestfulController{
 	@RequestMapping(value = "/info/student", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
 	public Map<String, Object> infoStudent(HttpServletRequest request, HttpServletResponse response,@RequestParam("serialNum") String serialNum, @RequestParam("studentId") long studentId){
 		try{
+			logger.info("TeacherId:{},See student info serialNum:{},studentId:{}",getTeacher(request).getId(), serialNum, studentId);
 			return ApiResponseUtils.buildSuccessDataResp(this.classroomService.getInfoStudent(studentId, serialNum));
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
@@ -162,6 +166,7 @@ public class ClassroomController extends RestfulController{
     @RequestMapping(value = "/getClassRoomUrl", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
     public Map<String,Object> getClassRoomUrl(HttpServletRequest request, HttpServletResponse response,@RequestParam("onlineClassId") long onlineClassId){
         try{
+        	logger.info("TeacherId:{},Get classroom url,onlineClassId:{}",getTeacher(request).getId(), onlineClassId);
         	Map<String,Object> resultMap = this.classroomService.getClassRoomUrl(onlineClassId,getTeacher(request));
         	if(resultMap.get("info") == null){
         		return ApiResponseUtils.buildSuccessDataResp(resultMap);
@@ -304,5 +309,4 @@ public class ClassroomController extends RestfulController{
 			return ApiResponseUtils.buildErrorResp(-7, "服务器异常");
         }
 	}
-	
 }

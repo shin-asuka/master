@@ -27,6 +27,7 @@ import com.vipkid.recruitment.entity.TeacherApplication;
 import com.vipkid.recruitment.utils.ReturnMapUtils;
 import com.vipkid.rest.dto.InfoRoomDto;
 import com.vipkid.trpm.constant.ApplicationConstant;
+import com.vipkid.trpm.dao.AuditDao;
 import com.vipkid.trpm.dao.LessonDao;
 import com.vipkid.trpm.dao.OnlineClassDao;
 import com.vipkid.trpm.dao.StudentDao;
@@ -42,6 +43,7 @@ import com.vipkid.trpm.entity.teachercomment.TeacherComment;
 import com.vipkid.trpm.proxy.OnlineClassProxy;
 import com.vipkid.trpm.service.portal.TeacherService;
 import com.vipkid.trpm.util.DateUtils;
+import com.vipkid.trpm.util.FilesUtils;
 import com.vipkid.trpm.util.IpUtils;
 import com.vipkid.trpm.util.LessonSerialNumber;
 
@@ -70,6 +72,10 @@ public class ClassroomService {
     
     @Autowired
     private TeacherApplicationDao teacherApplicationDao;
+    
+    @Autowired
+    private AuditDao auditDao;
+    
   
 	public InfoRoomDto getInfoRoom(ClassRoomVo bean , Teacher teacher){
 		
@@ -106,7 +112,7 @@ public class ClassroomService {
 			resultDto.setSentencePatterns(lesson.getSentencePatterns());
             resultDto.setPrevip(obtainPrevip(lesson.getSerialNumber()));
             resultDto.setUa(obtainUa(onlineClass.getId()));
-            resultDto.setCourseType(obtainCourseType(lesson.getSerialNumber()));
+            resultDto.setCourseType(OnlineClassEnum.CourseName.obtainCourseName(lesson.getSerialNumber()));
             if(resultDto.getCourseType().equals("Practicum")){
             	TeacherApplication application = teacherApplicationDao.findApplictionByOlineclassId(bean.getOnlineClassId(), teacher.getId());	
             	if(application != null){
@@ -353,6 +359,38 @@ public class ClassroomService {
         return modelMap;
     }
     
+    /**
+     * 退出教室，记录日志
+     *
+     * @Author:ALong
+     * @Title: exitclassroom
+     * @param onlineClassId
+     * @param teacher
+     * @return void
+     * @date 2016年1月11日
+     */
+    public void exitclassroom(long onlineClassId, Teacher teacher) {
+        /* 退出教室记录日志 */
+        Map<String, Object> parmMap = Maps.newHashMap();
+        parmMap.put("teacherId", teacher.getId());
+        parmMap.put("teacherName", teacher.getRealName());
+        parmMap.put("onlineClassId", onlineClassId);
+        OnlineClass onlineClass = this.onlineClassDao.findById(onlineClassId);
+        parmMap.put("roomId", onlineClass.getClassroom());
+        String content = FilesUtils.readLogTemplate(ApplicationConstant.AuditCategory.CLASSROOM_EXIT, parmMap);
+        auditDao.saveAudit(ApplicationConstant.AuditCategory.CLASSROOM_EXIT, "INFO", content, teacher.getRealName(),
+                teacher, IpUtils.getRemoteIP());
+    }
+    
+    /**
+     * 修改onlineClass的状态和完成类型
+     *
+     * @param onlineClassId
+     */
+    public void exitOpenclass(long onlineClassId, Teacher teacher) {
+    	this.exitclassroom(onlineClassId, teacher);
+    	onlineClassDao.updateEntity(new OnlineClass().setId(onlineClassId).setStatus("FINISHED").setFinishType("AS_SCHEDULED"));
+    }
     
 	/**
      * 根据serialNum处理 考试的Level名称显示<br/>
@@ -450,29 +488,6 @@ public class ClassroomService {
             }
         }
         return studentExam;
-    }
-
-    public String obtainCourseType(String lessonSn){
-        lessonSn = lessonSn.toLowerCase();
-        if(lessonSn.startsWith("a1")){
-            return "DemoReport";
-        }else if(lessonSn.startsWith("open")){
-            return "Open";
-        }else if(lessonSn.startsWith("t")){
-            return "Trial";
-        }else if(lessonSn.startsWith("p")){
-            return "Practicum";
-        }else if(lessonSn.startsWith("r")){
-            return "Recruitment";
-        }else if(lessonSn.startsWith("mc")){
-            return "Major2016";
-        }else if(lessonSn.startsWith("c1")){
-            return "Major";
-        }else if(lessonSn.startsWith("it")){
-            return "IT_Test";
-        }else {
-            return "Unknown";
-        }
     }
 
     public boolean obtainPrevip(String lessonSn){

@@ -1,24 +1,31 @@
 package com.vipkid.portal.classroom.controller;
 
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.vipkid.enums.TeacherEnum;
 import com.vipkid.http.service.AssessmentHttpService;
 import com.vipkid.http.vo.StudentUnitAssessment;
 import com.vipkid.portal.classroom.service.ClassFeedbackService;
+import com.vipkid.portal.classroom.service.ClassroomService;
+import com.vipkid.rest.RestfulController;
+import com.vipkid.rest.config.RestfulConfig;
 import com.vipkid.rest.interceptor.annotation.RestInterface;
 import com.vipkid.rest.utils.ApiResponseUtils;
 import com.vipkid.trpm.entity.teachercomment.TeacherComment;
 import com.vipkid.trpm.service.portal.TeacherService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.util.Map;
 
 /**
  * Created by LP-813 on 2017/2/20.
@@ -26,7 +33,7 @@ import java.util.Map;
 @RestController
 @RestInterface(lifeCycle= TeacherEnum.LifeCycle.REGULAR)
 @RequestMapping("/portal/classroom")
-public class ExitClassroomController {
+public class ExitClassroomController extends RestfulController {
 
     private static Logger logger = LoggerFactory.getLogger(ExitClassroomController.class);
 
@@ -36,6 +43,9 @@ public class ExitClassroomController {
     private ClassFeedbackService classFeedbackService;
     @Autowired
     private TeacherService teacherService;
+    
+    @Autowired
+    private ClassroomService classroomService;
 
     @RequestMapping("/report/ua")
     public Map<String,Object> getUaSubmitStatus(HttpServletRequest request, HttpServletResponse response,
@@ -71,5 +81,56 @@ public class ExitClassroomController {
             logger.error("获取UA状态失败",e);
             return ApiResponseUtils.buildErrorResp(1002,"[ExitClassroomController.getCfSubmitStatus ERROR]:CF状态获取失败");
         }
+    }
+    
+    /**
+     * @Author:ALong
+     * @Title: exitClassroom
+     * @param request
+     * @param response
+     * @param onlineClassId
+     * @return String
+     * @date 2016年1月8日
+     */
+	@RequestMapping(value = "/exit/classroom", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
+    public Map<String, Object> exitClassroom(HttpServletRequest request, HttpServletResponse response, @RequestParam long onlineClassId) {
+		try{
+			this.classroomService.exitclassroom(onlineClassId, getTeacher(request));
+	        return ApiResponseUtils.buildSuccessDataResp("success");
+	    } catch (IllegalArgumentException e) {
+	        response.setStatus(HttpStatus.BAD_REQUEST.value());
+			logger.error(e.getMessage());
+			return ApiResponseUtils.buildErrorResp(-6, "参数类型转化错误");
+	    } catch (Exception e) {
+	        response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+			logger.error(e.getMessage());
+			return ApiResponseUtils.buildErrorResp(-7, "服务器异常");
+	    }
+    }
+	
+	
+    /**
+     * 退出OPEN课程教室
+     *
+     * @param request
+     * @param response
+     * @param onlineClassId
+     * @param model
+     * @return
+     */
+	@RequestMapping(value = "/exit/OpenClass", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
+    public Map<String,Object> endThisClass(HttpServletRequest request, HttpServletResponse response, @RequestParam long onlineClassId) {
+		try{
+			this.classroomService.exitclassroom(onlineClassId, getTeacher(request));
+	        return ApiResponseUtils.buildSuccessDataResp("success");
+	    } catch (IllegalArgumentException e) {
+	        response.setStatus(HttpStatus.BAD_REQUEST.value());
+			logger.error(e.getMessage());
+			return ApiResponseUtils.buildErrorResp(-6, "参数类型转化错误");
+	    } catch (Exception e) {
+	        response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+			logger.error(e.getMessage());
+			return ApiResponseUtils.buildErrorResp(-7, "服务器异常");
+	    }
     }
 }
