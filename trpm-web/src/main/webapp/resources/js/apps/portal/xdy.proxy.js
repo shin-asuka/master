@@ -62,15 +62,6 @@ define([ 'messenger',"jquery-bootstrap" ], function() {
 
 	/* 发送星星函数 */
 	var sendStar = function(curObj) {
-		if (!$(curObj).prop('disabled')) {
-			$(curObj).removeClass('futureStar').addClass('ownedStar');
-
-			$(curObj).prop('disabled', true);
-			$(curObj).prop('disabled', false);
-			$(curObj).unbind('click');
-			$(curObj).click(function() {
-				removeStar($(this));
-			});
 			param.name = "sendStar";
 
 			/* 记录发送星星时的日志 */
@@ -93,6 +84,11 @@ define([ 'messenger',"jquery-bootstrap" ], function() {
 						$.alert("info", {
 							title : "Star sent successfully!"
 						});
+						$(curObj).unbind('click');
+						$(curObj).click(function() {
+							removeStar($(this));
+						});
+						$(curObj).removeClass('futureStar').addClass('ownedStar');
 						messenger.send(JsonToString(param)); // 用信使来发送数据
 						// 增加发星星效果
 						showStar();
@@ -107,17 +103,10 @@ define([ 'messenger',"jquery-bootstrap" ], function() {
 					}
 				}
 			});
-		}
 	};
 
 	/* 移除星星函数 */
 	var removeStar = function(curObj) {
-		if (!$(curObj).prop('disabled')) {
-			$(curObj).prop('disabled', false);
-			$(curObj).unbind('click');
-			$(curObj).click(function() {
-				sendStar($(this));
-			});
 
 			param.name = "removeStar";
 
@@ -141,6 +130,10 @@ define([ 'messenger',"jquery-bootstrap" ], function() {
 						$.alert("info", {
 							title :"Star removed successfully!"
 						});
+						$(curObj).unbind('click');
+						$(curObj).click(function() {
+							sendStar($(this));
+						});
 						$(curObj).removeClass('ownedStar').addClass('futureStar');
 						messenger.send(JsonToString(param)); // 用信使来发送数据
 					}else{
@@ -150,7 +143,6 @@ define([ 'messenger',"jquery-bootstrap" ], function() {
 					}
 				}
 			});
-		}
 	};
 
 	/* 发送星星特效函数 */
