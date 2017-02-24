@@ -59,7 +59,7 @@ public class OnlineClassEnum {
     
     public enum CourseName{
     	
-    	DEMOREPORT("DemoReport","a1"),
+    	DEMOREPORT("DemoReport","a"),
     	
     	OPEN("Open","open"),
     	
@@ -75,7 +75,7 @@ public class OnlineClassEnum {
     	
     	MAJOR2016("Major2016","mc"),
     	
-    	MAJOR("Major","c1"),
+    	MAJOR("Major","c"),
     	
     	IT_TEST("IT_Test","it"),
     	
