@@ -50,7 +50,7 @@ public class ScalperService extends HttpBaseService {
      * @param requestMap
      * @return
      */
-    public String cancelCourseSuccess(Map<String, Object> requestMap){
+    public String cancelClass(Map<String, Object> requestMap){
         try {
             String url = new StringBuilder(super.serverAddress)
                     .append("/management/finish").toString();

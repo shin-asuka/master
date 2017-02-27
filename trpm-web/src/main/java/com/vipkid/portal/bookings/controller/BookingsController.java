@@ -261,22 +261,22 @@ public class BookingsController {
      */
     @RequestMapping(value = "/cancelClass", method = RequestMethod.POST, produces = RestfulConfig.JSON_UTF_8)
     public Map<String,Object> cancelClass(@RequestBody Map<String, Object> paramMap,HttpServletRequest request, HttpServletResponse response){
+        Object onlineClassId = paramMap.get("onlineClassId");
+        Object teacherId = paramMap.get("teacherId");
         try {
-            Object onlineClassId = paramMap.get("onlineClassId");
-            Object teacherId = paramMap.get("teacherId");
             if(onlineClassId == null || !StringUtils.isNumeric(onlineClassId+"")){
               logger.error("This online class ：{} does not exist.",onlineClassId );
                 return ApiResponseUtils.buildErrorResp(HttpStatus.BAD_REQUEST.value(),"This online class  does not exist.",onlineClassId);
             }
 
-            boolean isSuccess = bookingsService.cancelCourseSuccess(Long.valueOf(onlineClassId+""),Long.valueOf(teacherId+""));
+            boolean isSuccess = bookingsService.cancelClassSuccess(Long.valueOf(onlineClassId+""),Long.valueOf(teacherId+""));
             if(!isSuccess){
-                logger.error("This online class ：{} does not exist.",onlineClassId );
-                return ApiResponseUtils.buildErrorResp(HttpStatus.BAD_REQUEST.value(),"This online class  does not exist.",onlineClassId);
+                logger.error("cancel online class:{} was Failed.",onlineClassId );
+                return ApiResponseUtils.buildErrorResp(HttpStatus.BAD_REQUEST.value(),"cancel online class was Failed.",onlineClassId);
             }
              return ApiResponseUtils.buildSuccessDataResp("This online class was canceled");
         }catch (IllegalArgumentException e){
-            logger.error("Internal server error", e);
+            logger.error("cancel online class:{} is Exception {}",onlineClassId, e);
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
             return ApiResponseUtils.buildErrorResp(HttpStatus.INTERNAL_SERVER_ERROR.value(),
                     ExceptionUtils.getFullStackTrace(e));

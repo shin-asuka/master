@@ -1110,10 +1110,11 @@ public class BookingsService {
      * @param teacherId
      * @return
      */
-    public boolean cancelCourseSuccess(long onlineClassId,long teacherId){
+    public boolean cancelClassSuccess(long onlineClassId,long teacherId){
         boolean flag = false;
         OnlineClass onlineClass = this.onlineClassDao.findById(onlineClassId);
         if(null==onlineClass){
+            logger.warn("This online class ：{} does not exist.",onlineClassId );
             return flag;
         }
         Map<String, Object> requestParams = new HashMap<String, Object>();
@@ -1121,8 +1122,7 @@ public class BookingsService {
         requestParams.put("finishType", ApplicationConstant.FinishType.TEACHER_CANCELLATION.toString());
         requestParams.put("operatorId", teacherId);
         String requestUrl = scalperServerAddress + "/management/finish";
-        //String returnData = WebUtils.postNameValuePair(requestUrl, requestParams);
-        String returnData = scalperService.cancelCourseSuccess(requestParams);
+        String returnData = scalperService.cancelClass(requestParams);
         if (returnData != null) {
             Map<String, Object> returnModel = (Map<String, Object>) JSONObject.parse(returnData);
             if ( SCALPER_SUCCESS_CODE == (int)returnModel.get("code") ) {
