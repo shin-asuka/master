@@ -20,6 +20,7 @@ import com.alibaba.fastjson.JSON;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.api.client.util.Maps;
 import com.vipkid.enums.OnlineClassEnum;
+import com.vipkid.enums.OnlineClassEnum.CourseName;
 import com.vipkid.portal.classroom.model.ClassRoomVo;
 import com.vipkid.portal.classroom.model.SendSysInfoVo;
 import com.vipkid.recruitment.dao.TeacherApplicationDao;
@@ -113,7 +114,7 @@ public class ClassroomService {
             resultDto.setPrevip(obtainPrevip(lesson.getSerialNumber()));
             resultDto.setUa(obtainUa(onlineClass.getId()));
             resultDto.setCourseType(OnlineClassEnum.CourseName.obtainCourseName(lesson.getSerialNumber()));
-            if(resultDto.getCourseType().equals("Practicum")){
+            if(CourseName.PRACTICUM1.show().equals(resultDto.getCourseType()) || CourseName.PRACTICUM2.show().equals(resultDto.getCourseType())){
             	TeacherApplication application = teacherApplicationDao.findApplictionByOlineclassId(bean.getOnlineClassId(), teacher.getId());	
             	if(application != null){
             		resultDto.setTeacherApplicationId(application.getId());
