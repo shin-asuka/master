@@ -14,6 +14,7 @@ import com.vipkid.rest.config.RestfulConfig;
 import com.vipkid.rest.interceptor.annotation.RestInterface;
 import com.vipkid.rest.service.LoginService;
 import com.vipkid.rest.utils.ApiResponseUtils;
+import com.vipkid.trpm.entity.Teacher;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.slf4j.Logger;
@@ -250,5 +251,39 @@ public class BookingsController {
                             ExceptionUtils.getFullStackTrace(e));
         }
     }
+
+    /**
+     * 老师自动取消已经booked的课程
+     * @param paramMap
+     * @param request
+     * @param response
+     * @return
+     */
+    @RequestMapping(value = "/cancelClass", method = RequestMethod.POST, produces = RestfulConfig.JSON_UTF_8)
+    public Map<String,Object> cancelClass(@RequestBody Map<String, Object> paramMap,HttpServletRequest request, HttpServletResponse response){
+        try {
+            Object onlineClassId = paramMap.get("onlineClassId");
+            Object teacherId = paramMap.get("teacherId");
+            if(onlineClassId == null || !StringUtils.isNumeric(onlineClassId+"")){
+              logger.error("This online class ：{} does not exist.",onlineClassId );
+                return ApiResponseUtils.buildErrorResp(HttpStatus.BAD_REQUEST.value(),"This online class  does not exist.",onlineClassId);
+            }
+
+            boolean isSuccess = bookingsService.cancelCourseSuccess(Long.valueOf(onlineClassId+""),Long.valueOf(teacherId+""));
+            if(!isSuccess){
+                logger.error("This online class ：{} does not exist.",onlineClassId );
+                return ApiResponseUtils.buildErrorResp(HttpStatus.BAD_REQUEST.value(),"This online class  does not exist.",onlineClassId);
+            }
+             return ApiResponseUtils.buildSuccessDataResp("This online class was canceled");
+        }catch (IllegalArgumentException e){
+            logger.error("Internal server error", e);
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            return ApiResponseUtils.buildErrorResp(HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                    ExceptionUtils.getFullStackTrace(e));
+        }
+
+
+    }
+
 
 }

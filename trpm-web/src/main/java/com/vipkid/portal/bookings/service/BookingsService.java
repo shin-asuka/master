@@ -8,6 +8,7 @@ import com.vipkid.enums.OnlineClassEnum.ClassStatus;
 import com.vipkid.enums.OnlineClassEnum.ClassType;
 import com.vipkid.enums.OnlineClassEnum.CourseType;
 import com.vipkid.enums.TeacherPageLoginEnum.LoginType;
+import com.vipkid.http.service.ScalperService;
 import com.vipkid.http.utils.WebUtils;
 import com.vipkid.portal.bookings.constant.BookingsResult;
 import com.vipkid.portal.bookings.entity.*;
@@ -109,6 +110,9 @@ public class BookingsService {
 
     @Autowired
     private TeacherPageLoginService teacherPageLoginService;
+
+    @Autowired
+    private ScalperService scalperService;
 
     private static final String scalperServerAddress =
             PropertyConfigurer.stringValue("scalper.serverAddress");
@@ -637,7 +641,7 @@ public class BookingsService {
         requestMap.put("isPracticum", CourseType.isPracticum(courseType));
         requestMap.put("scheduleTime", scheduleDateTime.toString());
         requestMap.put("fromIP", IpUtils.getRemoteIP());
-        String returnData = WebUtils.postNameValuePair(url, requestMap);
+        String returnData =scalperService.createTimeSlot(requestMap);
         if (returnData != null) {
             Map<String, Object> returnModel = (Map<String, Object>) JSONObject.parse(returnData);
             if ( SCALPER_SUCCESS_CODE ==(int)returnModel.get("code")) {
@@ -804,10 +808,6 @@ public class BookingsService {
     /**
      * 处理 TimeSlot 取消逻辑
      *
-     * @param teacher
-     * @param onlineClassId
-     * @param scheduleTime
-     * @param courseType
      * @return Map<String, Object>
      */
     public Map<String, Object> doCancelTimeSlot(TimeSlotCancelRequest timeSlotCancelRequest, Teacher teacher) {
@@ -818,7 +818,8 @@ public class BookingsService {
         requestMap.put("teacherId", teacher.getId());
         requestMap.put("onlineClassId", timeSlotCancelRequest.getOnlineClassId());
         requestMap.put("fromIP", IpUtils.getRemoteIP());
-        String returnData = WebUtils.postNameValuePair(url, requestMap);
+       // String returnData = WebUtils.postNameValuePair(url, requestMap);
+        String returnData = scalperService.cancelTimeSlot(requestMap);
         if (returnData != null) {
             Map<String, Object> returnModel = (Map<String, Object>) JSONObject.parse(returnData);
             if ( SCALPER_SUCCESS_CODE == (int)returnModel.get("code") ) {
@@ -930,8 +931,7 @@ public class BookingsService {
 
     /**
      * 检查是否有课程的开始时间在 1 小时之内
-     * 
-     * @param onlineClass
+     *
      * @return
      */
     public boolean checkAnyInOneHour(List<OnlineClass> onlineClasses) {
@@ -1101,6 +1101,42 @@ public class BookingsService {
             return true;
         }
         return false;
+    }
+
+
+    /**
+     * 自动取消课程
+     * @param onlineClassId
+     * @param teacherId
+     * @return
+     */
+    public boolean cancelCourseSuccess(long onlineClassId,long teacherId){
+        boolean flag = false;
+        OnlineClass onlineClass = this.onlineClassDao.findById(onlineClassId);
+        if(null==onlineClass){
+            return flag;
+        }
+        Map<String, Object> requestParams = new HashMap<String, Object>();
+        requestParams.put("onlineClassId", onlineClassId);
+        requestParams.put("finishType", ApplicationConstant.FinishType.TEACHER_CANCELLATION.toString());
+        requestParams.put("teacherId", teacherId);
+        String requestUrl = scalperServerAddress + "/management/finish";
+        //String returnData = WebUtils.postNameValuePair(requestUrl, requestParams);
+        String returnData = scalperService.cancelCourseSuccess(requestParams);
+        if (returnData != null) {
+            Map<String, Object> returnModel = (Map<String, Object>) JSONObject.parse(returnData);
+            if ( SCALPER_SUCCESS_CODE == (int)returnModel.get("code") ) {
+                logger.info("cancel course by scalper success, params:{}", requestParams.toString());
+                flag = true;
+            } else if( SCALPER_REFUSED_CODE == (int)returnModel.get("code") ) {
+                logger.info("cancel course by scalper refused! ");
+            } else {
+                logger.info("cancel course by scalper failed! code = {}", returnModel.get("code"));
+            }
+        } else {
+            logger.error("post url={} result = null", requestUrl);
+        }
+        return flag;
     }
 
 }
