@@ -356,7 +356,7 @@ public class ClassroomService {
         
         Map<String, Object> modelMap = Maps.newHashMap();
         if (StringUtils.isBlank(content)) {
-        	logger.info("### Failed to tell the fireman teacher browser info Sent get request to {} with params {}", ApplicationConstant.TEACHER_SYSTEM_INFO_URL, requestParams.get("onlineClassId"));
+        	logger.error("### Failed to tell the fireman teacher browser info Sent get request to {} with params {}", ApplicationConstant.TEACHER_SYSTEM_INFO_URL, requestParams.get("onlineClassId"));
             modelMap.put("info", "failed to tell the fireman teacher browser info!");
         }
         return modelMap;
