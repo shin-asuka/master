@@ -212,6 +212,9 @@ public class PortalPersonalInfoController extends RestfulController {
 	public Map<String, Object> saveTaxpayer(HttpServletRequest request, HttpServletResponse response,
 			@RequestBody Map<String, Object> param) {
 
+		//添加参数校验
+		Preconditions.checkArgument(null == param.get("id") || StringUtils.isBlank((String)param.get("id")), "id 不能为空!");
+		Preconditions.checkArgument(null == param.get("url") || StringUtils.isBlank((String)param.get("url")), "url 不能为空!");
 		logger.info("开始调用restSaveTaxpayer接口，传入参数param = {}", JsonUtils.toJSONString(param));
 		try {
 			long teacherTaxpayerFormId = Long.valueOf(param.get("id")+"");
