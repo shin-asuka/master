@@ -297,7 +297,7 @@ public final class DateUtils {
     public static Date getExpireTime(Date date){
     	Calendar cal = Calendar.getInstance();
         cal.setTime(date);
-        cal.set(Calendar.MONTH,  1);
+        cal.add(Calendar.MONTH, 1);
         cal.set(Calendar.HOUR_OF_DAY, 0);
         cal.set(Calendar.MINUTE, 0);
         cal.set(Calendar.SECOND, 0);
