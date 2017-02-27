@@ -222,7 +222,7 @@ public class ClassroomController extends RestfulController{
                 return ApiResponseUtils.buildErrorResp(-1,"reslult:onlineClassId,The field is required !");
 			}
 			Map<String,String>  requestParams = Maps.newHashMap();
-			requestParams.put("onlineClassId", paramMap.get("onlineClassId")+"");
+			requestParams.put("onlineClassId", String.valueOf(paramMap.get("onlineClassId")));
 			Map<String,Object> resultMap = this.classroomService.sendTeacherInClassroom(requestParams, getTeacher(request));
         	if(resultMap.get("info") == null){
         		return ApiResponseUtils.buildSuccessDataResp(resultMap);
