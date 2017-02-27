@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.google.api.client.util.Maps;
 import com.vipkid.enums.TeacherEnum;
 import com.vipkid.http.service.AssessmentHttpService;
 import com.vipkid.http.vo.StudentUnitAssessment;
@@ -96,7 +97,9 @@ public class ExitClassroomController extends RestfulController {
     public Map<String, Object> exitClassroom(HttpServletRequest request, HttpServletResponse response, @RequestParam long onlineClassId) {
 		try{
 			this.classroomService.exitclassroom(onlineClassId, getTeacher(request));
-	        return ApiResponseUtils.buildSuccessDataResp("success");
+			Map<String,Object> maps = Maps.newHashMap();
+			maps.put("status",true);
+	        return ApiResponseUtils.buildSuccessDataResp(maps);
 	    } catch (IllegalArgumentException e) {
 	        response.setStatus(HttpStatus.BAD_REQUEST.value());
 			logger.error(e.getMessage());
@@ -118,11 +121,13 @@ public class ExitClassroomController extends RestfulController {
      * @param model
      * @return
      */
-	@RequestMapping(value = "/exit/OpenClass", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
+	@RequestMapping(value = "/exit/openClass", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
     public Map<String,Object> endThisClass(HttpServletRequest request, HttpServletResponse response, @RequestParam long onlineClassId) {
 		try{
 			this.classroomService.exitclassroom(onlineClassId, getTeacher(request));
-	        return ApiResponseUtils.buildSuccessDataResp("success");
+			Map<String,Object> maps = Maps.newHashMap();
+			maps.put("status",true);
+	        return ApiResponseUtils.buildSuccessDataResp(maps);
 	    } catch (IllegalArgumentException e) {
 	        response.setStatus(HttpStatus.BAD_REQUEST.value());
 			logger.error(e.getMessage());
