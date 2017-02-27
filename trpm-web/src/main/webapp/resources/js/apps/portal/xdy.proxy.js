@@ -62,7 +62,19 @@ define([ 'messenger',"jquery-bootstrap" ], function() {
 
 	/* 发送星星函数 */
 	var sendStar = function(curObj) {
+		if (!$(curObj).prop('disabled')) {
+			$(curObj).removeClass('futureStar').addClass('ownedStar');
+
+			$(curObj).prop('disabled', true);
+			// 增加发星星效果
+			showStar();
+			$(curObj).prop('disabled', false);
+			$(curObj).unbind('click');
+			$(curObj).click(function() {
+				removeStar($(this));
+			});
 			param.name = "sendStar";
+			messenger.send(JsonToString(param)); // 用信使来发送数据
 
 			/* 记录发送星星时的日志 */
 			var url = webPath + "/sendStarLogs.json";
@@ -71,7 +83,6 @@ define([ 'messenger',"jquery-bootstrap" ], function() {
 				data : {
 					"onlineClassId" : $(curObj).attr("onlineClassId"),
 					"studentId" : $(curObj).attr("student"),
-					"teacherId" : $(curObj).attr("teacher"),
 					"send" : true
 				},
 				url : url,
@@ -80,35 +91,23 @@ define([ 'messenger',"jquery-bootstrap" ], function() {
 					if (undefined !== console) {
 						console.log("send star logs.");
 					}
-					if(200 == datas.code){
-						$.alert("info", {
-							title : "Star sent successfully!"
-						});
-						$(curObj).unbind('click');
-						$(curObj).click(function() {
-							removeStar($(this));
-						});
-						$(curObj).removeClass('futureStar').addClass('ownedStar');
-						messenger.send(JsonToString(param)); // 用信使来发送数据
-						// 增加发星星效果
-						showStar();
-					}else if(602 == datas.code){
-						$.alert("error", {
-							title :"Maximum stars (5) for this class reached!"
-						});
-					}else{
-						$.alert("error", {
-							title :"Unsuccessful, please re-send stars!"
-						});
-					}
 				}
 			});
+		}
 	};
 
 	/* 移除星星函数 */
 	var removeStar = function(curObj) {
+		if (!$(curObj).prop('disabled')) {
+			$(curObj).removeClass('ownedStar').addClass('futureStar');
+			$(curObj).prop('disabled', false);
+			$(curObj).unbind('click');
+			$(curObj).click(function() {
+				sendStar($(this));
+			});
 
 			param.name = "removeStar";
+			messenger.send(JsonToString(param)); // 用信使来发送数据
 
 			/* 记录移除星星时的日志 */
 			var url = webPath + "/sendStarLogs.json";
@@ -117,7 +116,6 @@ define([ 'messenger',"jquery-bootstrap" ], function() {
 				data : {
 					"onlineClassId" : $(curObj).attr("onlineClassId"),
 					"studentId" : $(curObj).attr("student"),
-					"teacherId" : $(curObj).attr("teacher"),
 					"send" : false
 				},
 				url : url,
@@ -126,23 +124,9 @@ define([ 'messenger',"jquery-bootstrap" ], function() {
 					if (undefined !== console) {
 						console.log("remove star logs.");
 					}
-					if(200 == datas.code){
-						$.alert("info", {
-							title :"Star removed successfully!"
-						});
-						$(curObj).unbind('click');
-						$(curObj).click(function() {
-							sendStar($(this));
-						});
-						$(curObj).removeClass('ownedStar').addClass('futureStar');
-						messenger.send(JsonToString(param)); // 用信使来发送数据
-					}else{
-						$.alert("error", {
-							title :"Unsuccessful, please re-remove stars!"
-						});
-					}
 				}
 			});
+		}
 	};
 
 	/* 发送星星特效函数 */

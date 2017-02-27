@@ -27,6 +27,22 @@ define(["duobeiyun","jquery-bootstrap"], function() {
 
   /* 发送星星函数 */
   var sendStar = function(curObj) {
+    if (!$(curObj).prop('disabled')) {
+      $(curObj).removeClass('futureStar').addClass('ownedStar');
+
+      $(curObj).prop('disabled', true);
+      // 增加发星星效果
+      showStar();
+      $(curObj).prop('disabled', false);
+      $(curObj).unbind('click');
+      $(curObj).click(function() {
+        removeStar($(this));
+      });
+
+      Duobeiyun.trigger("sendStar", {
+        'name': 'sendStar'
+      });
+
       /* 记录发送星星时的日志 */
       var url = webPath + "/sendStarLogs.json";
 
@@ -34,7 +50,6 @@ define(["duobeiyun","jquery-bootstrap"], function() {
         data: {
           "onlineClassId": $(curObj).attr("onlineClassId"),
           "studentId": $(curObj).attr("student"),
-          "teacherId" : $(curObj).attr("teacher"),
           "send": true
         },
         url: url,
@@ -43,35 +58,25 @@ define(["duobeiyun","jquery-bootstrap"], function() {
           if (undefined !== console) {
             console.log("send star logs.");
           }
-          if(200 == datas.code){
-            $.alert("info", {
-              title : "Star sent successfully!"
-            });
-            Duobeiyun.trigger("sendStar", {
-              'name': 'sendStar'
-            });
-            $(curObj).unbind('click');
-            $(curObj).click(function() {
-              removeStar($(this));
-            });
-            $(curObj).removeClass('futureStar').addClass('ownedStar');
-            // 增加发星星效果
-            showStar();
-          }else if(602 == datas.code){
-            $.alert("error", {
-              title :"Maximum stars (5) for this class reached!"
-            });
-          }else{
-            $.alert("error", {
-              title :"Unsuccessful, please re-send stars!"
-            });
-          }
         }
       });
+    }
   };
 
   /* 移除星星函数 */
   var removeStar = function(curObj) {
+    if (!$(curObj).prop('disabled')) {
+      $(curObj).removeClass('ownedStar').addClass('futureStar');
+      $(curObj).prop('disabled', false);
+      $(curObj).unbind('click');
+      $(curObj).click(function() {
+        sendStar($(this));
+      });
+
+      Duobeiyun.trigger("removeStar", {
+        'name': 'removeStar'
+      });
+
       /* 记录移除星星时的日志 */
       var url = webPath + "/sendStarLogs.json";
 
@@ -79,7 +84,6 @@ define(["duobeiyun","jquery-bootstrap"], function() {
         data: {
           "onlineClassId": $(curObj).attr("onlineClassId"),
           "studentId": $(curObj).attr("student"),
-          "teacherId" : $(curObj).attr("teacher"),
           "send": false
         },
         url: url,
@@ -88,25 +92,9 @@ define(["duobeiyun","jquery-bootstrap"], function() {
           if (undefined !== console) {
             console.log("remove star logs.");
           }
-          if(200 == datas.code){
-            $.alert("info", {
-              title :"Star removed successfully!"
-            });
-            $(curObj).unbind('click');
-            $(curObj).click(function() {
-              sendStar($(this));
-            });
-            $(curObj).removeClass('ownedStar').addClass('futureStar');
-            Duobeiyun.trigger("removeStar", {
-              'name': 'removeStar'
-            });
-          }else{
-            $.alert("error", {
-              title :"Unsuccessful, please re-remove stars!"
-            });
-          }
         }
       });
+    }
   };
 
   /* 发送星星特效函数 */
