@@ -3,6 +3,7 @@ package com.vipkid.rest.web;
 import com.google.common.collect.Maps;
 import com.vipkid.enums.TeacherEnum;
 import com.vipkid.enums.TeacherEnum.LifeCycle;
+import com.vipkid.enums.TeacherEnum.QuitStatusEnum;
 import com.vipkid.enums.UserEnum;
 import com.vipkid.http.service.FileHttpService;
 import com.vipkid.recruitment.utils.ReturnMapUtils;
@@ -56,7 +57,9 @@ import java.util.concurrent.locks.LockSupport;
 public class LoginController extends RestfulController {
     
 
-    private static Logger logger = LoggerFactory.getLogger(LoginController.class);
+    private static final String QUIT_STATUS = "QuitStatus";
+
+	private static Logger logger = LoggerFactory.getLogger(LoginController.class);
 
     @Autowired
     private PassportService passportService;
@@ -253,6 +256,48 @@ public class LoginController extends RestfulController {
             return ReturnMapUtils.returnFail(e.getMessage(),e);
         }
     }
+    @RequestMapping(value = "/isQuitAndExired", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
+	public Map<String, Object> isQuitAndExired(HttpServletRequest request, HttpServletResponse response) {
+		Map<String, Object> result = Maps.newHashMap();
+		
+		try {
+			QuitStatusEnum quitStatus = getQuitStatus();
+			result.put(QUIT_STATUS, quitStatus);
+		} catch (Exception e) {
+			response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+			return ReturnMapUtils.returnFail(e.getMessage(), e);
+		}
+		return result;
+	}
+	private QuitStatusEnum getQuitStatus() {
+		QuitStatusEnum quitStatus = null;
+		Date now = new Date();
+		User user = loginService.getUser();
+		Teacher teacher = loginService.getTeacher();
+		Timestamp lastEditTime = user.getLastEditDateTime();
+		Date expireTime = null;
+		Long editor = user.getLastEditorId();
+		if (!TeacherEnum.LifeCycle.QUIT.toString().equals(teacher.getLifeCycle())) {
+			quitStatus = TeacherEnum.QuitStatusEnum.NORMAL;
+		} else {
+			if (editor != user.getId()) {
+				DateUtils.getExpireTime(lastEditTime);
+			} else {
+				DateUtils.getExpireTime(now);
+			}
+			String exStr = passportService.getQuitTeacherExpiredTime(user.getId(), expireTime.getTime());
+			if (StringUtils.isNotEmpty(exStr)) {
+				Long ex = Long.parseLong(exStr);
+				Date exDate = new Date(ex);
+				if (now.before(exDate)) {
+					quitStatus = TeacherEnum.QuitStatusEnum.QUIT_NOT_EXPIRED;
+				} else {
+					quitStatus = TeacherEnum.QuitStatusEnum.EXPIRED;
+				}
+			}
+		}
+		return quitStatus;
+	}
 
     /**
      * 注册用户注册老师
@@ -499,10 +544,12 @@ public class LoginController extends RestfulController {
     
             // 检查老师状态是否QUIT
             logger.info(user.getUsername()+",Quit检查.");
-            if (TeacherEnum.LifeCycle.QUIT.toString().equals(teacher.getLifeCycle())) {
-                response.setStatus(HttpStatus.BAD_REQUEST.value());
-                return ReturnMapUtils.returnFail(AjaxCode.USER_QUIT,"账户被Quit."+user.getUsername());
-            }
+			if (TeacherEnum.LifeCycle.QUIT.toString().equals(teacher.getLifeCycle())) {
+				if (getQuitStatus() == TeacherEnum.QuitStatusEnum.EXPIRED) {
+					response.setStatus(HttpStatus.BAD_REQUEST.value());
+					return ReturnMapUtils.returnFail(AjaxCode.USER_QUIT, "账户被Quit,并且已经过了登录期了；" + user.getUsername());
+				}
+			}
             
             // 检查用户类型
             logger.info(user.getUsername()+",类型检查.");
