@@ -279,6 +279,7 @@ public class OnlineClassController extends AbstractPortalController {
     public String doAudit(HttpServletRequest request, HttpServletResponse response,
                     TeacherApplication teacherApplication, Model model) {
         Teacher pe = loginService.getTeacher();
+        Map<String, Object> modelMap = Maps.newHashMap();
         String type = ServletRequestUtils.getStringParameter(request, "type", "");
         String finishType = ServletRequestUtils.getStringParameter(request, "finishType", "");
 
@@ -286,11 +287,27 @@ public class OnlineClassController extends AbstractPortalController {
         int[] tags = ServletRequestUtils.getIntParameters(request, "tags");
         String things = ServletRequestUtils.getStringParameter(request, "things", null);
         String areas = ServletRequestUtils.getStringParameter(request, "areas", null);
+
+        //validate things and areas'length
+        if(StringUtils.isNotBlank(things)){
+            if(things.length() > 3000 || things.length() < 200){
+                modelMap.put("result", false);
+                modelMap.put("msg", "The length of things content must between 200 and 3000!");
+                return jsonView(response, modelMap);
+            }
+        }
+        if(StringUtils.isNotBlank(areas)){
+            if(areas.length() > 3000 || areas.length() < 200){
+                modelMap.put("result", false);
+                modelMap.put("msg", "The length of area content must between 200 and 3000!");
+                return jsonView(response, modelMap);
+            }
+        }
         int[] levels = ServletRequestUtils.getIntParameters(request, "level");
         int totalScore = ServletRequestUtils.getIntParameter(request, "totalScore", 0);
         String submitType = ServletRequestUtils.getStringParameter(request, "submitType", null);
 
-        Map<String, Object> modelMap = Maps.newHashMap();
+
         modelMap.put("submitType", submitType);
         if(!StringUtils.equalsIgnoreCase(type,Result.REAPPLY.toString())) {
             // 处理 tags 相关逻辑

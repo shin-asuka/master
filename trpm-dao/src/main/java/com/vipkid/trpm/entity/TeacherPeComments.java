@@ -15,10 +15,8 @@ public final class TeacherPeComments extends Entity implements Serializable {
     /*  */
     private int applicationId;
     /*  */
-    @Length(maxLength = 3000, minLength = 200)
     private String thingsDidWell;
     /*  */
-    @Length(maxLength = 3000, minLength = 200)
     private String areasImprovement;
     /*  */
     private int totalScore;
