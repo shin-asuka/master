@@ -180,9 +180,9 @@ public class LoginController extends RestfulController {
             	//Quit 老师登录
             	boolean canLogin = false;
 				if (editor != user.getId()) {
-					DateUtils.getExpireTime(lastEditTime);
+					expireTime = DateUtils.getExpireTime(lastEditTime);
 				}else{
-					DateUtils.getExpireTime(now);
+					expireTime = DateUtils.getExpireTime(now);
 				}				
 				String exStr = passportService.getQuitTeacherExpiredTime(user.getId(), expireTime.getTime());
 				if(StringUtils.isNotEmpty(exStr)){
