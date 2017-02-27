@@ -1,5 +1,6 @@
 package com.vipkid.trpm.entity;
 
+import com.vipkid.rest.validation.annotation.Length;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.community.dao.support.Entity;
@@ -14,8 +15,10 @@ public final class TeacherPeComments extends Entity implements Serializable {
     /*  */
     private int applicationId;
     /*  */
+    @Length(maxLength = 3000, minLength = 200)
     private String thingsDidWell;
     /*  */
+    @Length(maxLength = 3000, minLength = 200)
     private String areasImprovement;
     /*  */
     private int totalScore;
