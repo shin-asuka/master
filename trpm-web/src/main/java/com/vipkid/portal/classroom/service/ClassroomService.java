@@ -323,6 +323,7 @@ public class ClassroomService {
         
         Map<String, Object> modelMap = Maps.newHashMap();
         if (StringUtils.isBlank(content)) {
+        	logger.info("### Failed to tell the fireman teacher in the classroom Sent get request to {} with params {}", ApplicationConstant.TEACHER_IN_CLASSROOM_URL, requestParams.get("onlineClassId"));
             modelMap.put("info", "failed to tell the fireman teacher in the classroom!");
         }
         return modelMap;
@@ -355,6 +356,7 @@ public class ClassroomService {
         
         Map<String, Object> modelMap = Maps.newHashMap();
         if (StringUtils.isBlank(content)) {
+        	logger.info("### Failed to tell the fireman teacher browser info Sent get request to {} with params {}", ApplicationConstant.TEACHER_SYSTEM_INFO_URL, requestParams.get("onlineClassId"));
             modelMap.put("info", "failed to tell the fireman teacher browser info!");
         }
         return modelMap;
