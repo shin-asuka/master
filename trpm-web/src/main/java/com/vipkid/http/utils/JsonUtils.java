@@ -5,17 +5,16 @@ package com.vipkid.http.utils;
 
 import java.io.IOException;
 import java.util.Iterator;
-import java.util.List;
+
 import java.util.Map;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.core.JsonProcessingException;
+
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.SerializationFeature;
+
 import com.google.common.collect.Maps;
 import org.apache.commons.lang.StringUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -53,14 +52,14 @@ public class JsonUtils {
 
 	public static String toJSONString(Object object) {
 		if (object == null) {
-			return "";
+			return StringUtils.EMPTY;
 		}
 		try {
 			return object instanceof String ? (String) object : mapper.writeValueAsString(object);
 		} catch (Exception e) {
 			String message = String.format("Object to jsonString error;object=%s", object.getClass());
 			logger.error(message, e);
-			return null;
+			return StringUtils.EMPTY;
 		}
 	}
 
