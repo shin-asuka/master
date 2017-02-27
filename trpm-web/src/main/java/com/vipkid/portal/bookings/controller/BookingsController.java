@@ -1,6 +1,7 @@
 package com.vipkid.portal.bookings.controller;
 
 import com.google.api.client.util.Maps;
+import com.google.common.base.Preconditions;
 import com.vipkid.enums.OnlineClassEnum.CourseType;
 import com.vipkid.enums.TeacherEnum;
 import com.vipkid.file.utils.Encodes;
@@ -15,6 +16,7 @@ import com.vipkid.rest.interceptor.annotation.RestInterface;
 import com.vipkid.rest.service.LoginService;
 import com.vipkid.rest.utils.ApiResponseUtils;
 import com.vipkid.trpm.entity.Teacher;
+import com.vipkid.rest.RestfulController;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.slf4j.Logger;
@@ -33,6 +35,7 @@ import java.util.Map;
 import java.util.Objects;
 
 import static com.vipkid.enums.OnlineClassEnum.ClassType;
+import static com.vipkid.rest.RestfulController.TEACHER;
 
 /**
  * Created by liuguowen on 2016/12/15.
@@ -267,6 +270,14 @@ public class BookingsController {
             if(onlineClassId == null || !StringUtils.isNumeric(onlineClassId+"")){
               logger.error("This online class ：{} does not exist.",onlineClassId );
                 return ApiResponseUtils.buildErrorResp(HttpStatus.BAD_REQUEST.value(),"This online class  does not exist.",onlineClassId);
+            }
+
+            Preconditions.checkArgument(request.getAttribute(TEACHER) != null);
+            Teacher teacher = (Teacher) request.getAttribute(TEACHER);
+
+            if(null==teacherId&&!teacherId.equals(teacher.getId())){
+                logger.error("This teacher ：{} have no jurisdiction .",teacherId );
+                return ApiResponseUtils.buildErrorResp(HttpStatus.BAD_REQUEST.value(),"The teacher have no jurisdiction.",teacherId);
             }
 
             boolean isSuccess = bookingsService.cancelClassSuccess(Long.valueOf(onlineClassId+""),Long.valueOf(teacherId+""));
