@@ -1,6 +1,7 @@
 package com.vipkid.trpm.controller.pe;
 
 import com.google.api.client.util.Lists;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 import com.vipkid.enums.TeacherApplicationEnum.Result;
 import com.vipkid.enums.TeacherApplicationEnum.Status;
@@ -183,20 +184,12 @@ public class PeSupervisorController extends AbstractPeController {
         String areas = ServletRequestUtils.getStringParameter(request, "areas", null);
 
         //validate things and areas'length
-        if(StringUtils.isNotBlank(things)){
-            if(things.length() > 3000 || things.length() < 200){
-                modelMap.put("result", false);
-                modelMap.put("msg", "The length of things content must between 200 and 3000!");
-                return jsonView(response, modelMap);
-            }
-        }
-        if(StringUtils.isNotBlank(areas)){
-            if(areas.length() > 3000 || areas.length() < 200){
-                modelMap.put("result", false);
-                modelMap.put("msg", "The length of area content must between 200 and 3000!");
-                return jsonView(response, modelMap);
-            }
-        }
+        Preconditions.checkArgument(com.vipkid.file.utils.StringUtils.isNotBlank(things), "things content can not be null!");
+        Preconditions.checkArgument(com.vipkid.file.utils.StringUtils.isNotBlank(areas), "areas content can not be null!");
+
+        Preconditions.checkArgument(things.length() >= 200 && things.length() <= 3000 , "The length of things content must between 200 and 3000!");
+        Preconditions.checkArgument(areas.length() >= 200 && areas.length() <= 3000, "The length of areas content must between 200 and 3000!");
+
         int[] levels = ServletRequestUtils.getIntParameters(request, "level");
         int totalScore = ServletRequestUtils.getIntParameter(request, "totalScore", 0);
         String submitType = ServletRequestUtils.getStringParameter(request, "submitType", null);
