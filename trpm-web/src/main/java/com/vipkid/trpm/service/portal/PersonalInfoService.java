@@ -218,12 +218,12 @@ public class PersonalInfoService {
 
 		// 更新老师的银行信息
 		TeacherBankInfo teacherBankInfo = new TeacherBankInfo();
-		teacherBankInfo.setBankName(bankInfo.getBeneficiaryBankName());
-		teacherBankInfo.setBankAccountName(bankInfo.getBeneficiaryAccountName());
-		teacherBankInfo.setBankCardNumber(bankInfo.getBeneficiaryAccountNumber());
-		teacherBankInfo.setBankSwiftCode(bankInfo.getSwiftCode());
-		teacherBankInfo.setBankABARoutingNumber(bankInfo.getBankABARoutingNumber());
-		teacherBankInfo.setBankACHNumber(bankInfo.getBankACHNumber());
+		teacherBankInfo.setBankName(teacher.getBankName());
+		teacherBankInfo.setBankAccountName(teacher.getBankAccountName());
+		teacherBankInfo.setBankCardNumber(teacher.getBankCardNumber());
+		teacherBankInfo.setBankSwiftCode(teacher.getBankSwiftCode());
+		teacherBankInfo.setBankABARoutingNumber(teacher.getBankABARoutingNumber());
+		teacherBankInfo.setBankACHNumber(teacher.getBankACHNumber());
 		teacherBankInfoDao.updateTeacherBankInfo(teacher.getId(), teacherBankInfo);
 
 		teacherDao.update(teacher);
@@ -238,10 +238,7 @@ public class PersonalInfoService {
 	}
 
 	private static boolean notContainsAsterisk(String bankInfoField) {
-		if (!StringUtils.contains(bankInfoField, "*")) {
-			return true;
-		}
-		return false;
+		return !StringUtils.contains(bankInfoField, "*");
 	}
 
 	/**
