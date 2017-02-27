@@ -326,7 +326,7 @@
 			<if test="teacherTags!=null">,teacher_tags</if>
 			<if test="vipkidRemarks!=null">,vipkid_remarks</if>
 			<if test="manager!=0">,manager</if>
-			
+			<if test="contractType!=null">,contract_type</if>
 			<if test="identityType!=0">,identity_type</if>
 			<if test="identityNumber!=null">,identity_number</if>
 			<if test="issuanceCountry!=0">,issuance_country</if>
@@ -403,7 +403,7 @@
 			<if test="teacherTags!=null">,#{teacherTags}</if>
 			<if test="vipkidRemarks!=null">,#{vipkidRemarks}</if>
 			<if test="manager!=0">,#{manager}</if>
-			
+			<if test="contractType!=null">,#{contractType}</if>
 			<if test="identityType!=0">,#{identityType}</if>
 			<if test="identityNumber!=null">,#{identityNumber}</if>
 			<if test="issuanceCountry!=0">,#{issuanceCountry}</if>
