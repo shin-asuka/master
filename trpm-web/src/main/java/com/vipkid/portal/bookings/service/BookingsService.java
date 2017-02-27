@@ -1119,7 +1119,7 @@ public class BookingsService {
         Map<String, Object> requestParams = new HashMap<String, Object>();
         requestParams.put("onlineClassId", onlineClassId);
         requestParams.put("finishType", ApplicationConstant.FinishType.TEACHER_CANCELLATION.toString());
-        requestParams.put("teacherId", teacherId);
+        requestParams.put("operatorId", teacherId);
         String requestUrl = scalperServerAddress + "/management/finish";
         //String returnData = WebUtils.postNameValuePair(requestUrl, requestParams);
         String returnData = scalperService.cancelCourseSuccess(requestParams);
