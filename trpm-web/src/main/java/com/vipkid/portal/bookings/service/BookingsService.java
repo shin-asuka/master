@@ -1124,10 +1124,22 @@ public class BookingsService {
             logger.warn("Sorry, you can't cancel after the start time has passed.", logpix);
             return flag;
         }
+        String finishType =StringUtils.EMPTY;
+        long time  = (onlineClass.getScheduledDateTime().getTime()-System.currentTimeMillis())/1000*3600;
+        if(time<2){
+            finishType = ApplicationConstant.FinishType.TEACHER_NO_SHOW_2H;
+        }
+        if(time>=2&&time<=24){
+            finishType = ApplicationConstant.FinishType.TEACHER_CANCELLATION_24H;
+        }
+        if(time>24){
+            finishType = ApplicationConstant.FinishType.TEACHER_CANCELLATION;
+        }
 
-        Map<String, Object> requestParams = new HashMap<String, Object>();
+
+        Map<String, Object> requestParams = new HashMap<>();
         requestParams.put("onlineClassId", onlineClassId);
-        requestParams.put("finishType", ApplicationConstant.FinishType.TEACHER_CANCELLATION.toString());
+        requestParams.put("finishType", finishType);
         requestParams.put("operatorId", teacherId);
         String requestUrl = scalperServerAddress + "/management/finish";
         String returnData = scalperService.cancelClass(requestParams);
