@@ -46,16 +46,22 @@ public class PeCommentsVo {
 	
 	private Integer teflOrToselCertificate;
 
+	@Ignore
 	private Integer timeManagementScore;
 	
+	@Ignore
 	private Integer accent;
 	
+	@Ignore
 	private Integer positive;
 	
+	@Ignore
 	private Integer engaged;
 	
+	@Ignore
 	private Integer appearance;
 	
+	@Ignore
 	private Integer phonics;
 	
 	@Ignore

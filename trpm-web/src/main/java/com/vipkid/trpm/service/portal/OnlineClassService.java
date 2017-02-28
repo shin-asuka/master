@@ -33,6 +33,7 @@ import com.vipkid.enums.TeacherApplicationEnum.Result;
 import com.vipkid.enums.TeacherApplicationEnum.Status;
 import com.vipkid.enums.TeacherEnum.LifeCycle;
 import com.vipkid.enums.TeacherLockLogEnum.Reason;
+import com.vipkid.enums.TeacherModuleEnum;
 import com.vipkid.enums.TeacherModuleEnum.RoleClass;
 import com.vipkid.enums.UserEnum;
 import com.vipkid.http.service.AssessmentHttpService;
@@ -266,7 +267,6 @@ public class OnlineClassService {
         logger.info("TeacherId:{}, Major Course query stars : {},onlineClassId:{},studentId:{}", teacher.getId(), stars,
                 onlineClass.getId(), studentId);
         modelMap.put("stars", stars);
-
         //new solution
 //        Map<String, Object> starNumMap = getStarNum(onlineClass.getId(), teacher.getId(), studentId);
 //        logger.info("TeacherId:{}, Major Course query stars : {},onlineClassId:{},studentId:{}", teacher.getId(), JsonUtils.toJSONString(starNumMap),
@@ -469,9 +469,9 @@ public class OnlineClassService {
             List<TeacherModule> teacherModules = teacherModuleDao.findByTeacherModuleName(pe.getId(), RoleClass.PE);
             // 判断当前用户是否拥有PE Supervisor权限
             if (CollectionUtils.isNotEmpty(teacherModules)) {
-                currTeacherApplication.setContractUrl("PE-Supervisor");
+                currTeacherApplication.setContractUrl(TeacherModuleEnum.RoleClass.PES);
             } else {
-                currTeacherApplication.setContractUrl("PE");
+                currTeacherApplication.setContractUrl(TeacherModuleEnum.RoleClass.PE);
             }
             // 如果课程已经结束
             modelMap = this.updateTeacherApplication(recruitTeacher, pe, result, "", currTeacherApplication);
@@ -1059,5 +1059,4 @@ public class OnlineClassService {
         }
         return resultMap;
     }
-
 }

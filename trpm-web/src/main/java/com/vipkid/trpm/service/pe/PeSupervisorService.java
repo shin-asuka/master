@@ -17,6 +17,7 @@ import com.google.common.collect.Maps;
 import com.vipkid.enums.OnlineClassEnum.ClassStatus;
 import com.vipkid.enums.TbdResultEnum;
 import com.vipkid.enums.TeacherApplicationEnum;
+import com.vipkid.enums.TeacherModuleEnum;
 import com.vipkid.enums.TeacherApplicationEnum.Result;
 import com.vipkid.enums.TeacherApplicationEnum.Status;
 import com.vipkid.enums.TeacherModuleEnum.RoleClass;
@@ -205,7 +206,7 @@ public class PeSupervisorService {
         // 6.先结束online Class，然后操作TeacherApllication
         if (ClassStatus.isBooked(onlineClass.getStatus())
                 || ClassStatus.isFinished(onlineClass.getStatus())) {
-            currTeacherApplication.setContractUrl("PE-Supervisor");
+            currTeacherApplication.setContractUrl(TeacherModuleEnum.RoleClass.PES);
             modelMap = this.updateTeacherApplication(recruitTeacher, peSupervisor, result, "",
                     currTeacherApplication);
             // 日志 1
@@ -330,7 +331,7 @@ public class PeSupervisorService {
             teacherApplication.setResult(TeacherApplicationEnum.Result.FAIL.toString());
             teacherApplication.setAuditorId(pe.getId());
             teacherApplication.setAuditDateTime(new Timestamp(System.currentTimeMillis()));
-            teacherApplication.setContractUrl("PE-Supervisor");
+            teacherApplication.setContractUrl(TeacherModuleEnum.RoleClass.PES);
             teacherApplicationDao.update(teacherApplication);
 
             modelMap.put("result", true);
@@ -355,7 +356,7 @@ public class PeSupervisorService {
                 if (TeacherApplicationEnum.Status.PRACTICUM.toString().equals(enabledTeacherApplication.getStatus())) {
                     // 开始插入当前Application记录的副本
                     enabledTeacherApplication.setId(0);
-                    enabledTeacherApplication.setContractUrl("PE-Supervisor");
+                    enabledTeacherApplication.setContractUrl(TeacherModuleEnum.RoleClass.PES);
                     enabledTeacherApplication.setVersion(2);
                     teacherApplicationDao.save(enabledTeacherApplication);
 
@@ -364,7 +365,7 @@ public class PeSupervisorService {
                     teacherApplication.setAuditorId(pe.getId());
                     teacherApplication.setAuditDateTime(new Timestamp(System.currentTimeMillis()));
                     teacherApplication.setCurrent(0);
-                    teacherApplication.setContractUrl("PE");
+                    teacherApplication.setContractUrl(TeacherModuleEnum.RoleClass.PE);
                     teacherApplicationDao.update(teacherApplication);
 
                     // 自动预分配任务
