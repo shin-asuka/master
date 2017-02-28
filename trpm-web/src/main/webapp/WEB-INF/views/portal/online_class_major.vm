@@ -415,7 +415,7 @@
 	    require(['xdyproxy'], function(xdy){
         xdy.initChannel("$!{TRPM_USER.id}", "$!onlineClass.classroom", true, "$!stars");
       });
-    #elseif(${onlineClass.supplierCode} == 5)
+    #elseif(${onlineClass.supplierCode} == 5 || ${onlineClass.supplierCode} == 6 )
       require(['vipkidproxy'],function(vipkid){
         vipkid.initChannel("$!{TRPM_USER.id}", "$!onlineClass.classroom", true, "$!stars");
       })
