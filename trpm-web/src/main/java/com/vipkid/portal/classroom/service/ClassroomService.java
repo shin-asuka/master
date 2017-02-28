@@ -126,7 +126,7 @@ public class ClassroomService {
 		
 		//Other Info
 		int stars = 0;
-		TeacherComment comment = teacherService.findByStudentIdAndOnlineClassId(bean.getOnlineClassId(), bean.getStudentId());
+		TeacherComment comment = teacherService.findByStudentIdAndOnlineClassId(bean.getStudentId(),bean.getOnlineClassId());
 		if(comment != null){
 			stars = comment.getStars();
 		}else{
