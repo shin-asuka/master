@@ -1118,6 +1118,13 @@ public class BookingsService {
             logger.warn("This online class ：{} does not exist.", onlineClassId);
             return flag;
         }
+        String logpix = "onlineclassId:"+onlineClassId+";teacherId:"+teacherId;
+
+        if(System.currentTimeMillis() > onlineClass.getScheduledDateTime().getTime()){
+            logger.warn("Sorry, you can't cancel after the start time has passed.", logpix);
+            return flag;
+        }
+
         Map<String, Object> requestParams = new HashMap<String, Object>();
         requestParams.put("onlineClassId", onlineClassId);
         requestParams.put("finishType", ApplicationConstant.FinishType.TEACHER_CANCELLATION.toString());
