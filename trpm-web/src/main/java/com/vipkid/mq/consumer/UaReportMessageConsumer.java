@@ -47,12 +47,10 @@ public class UaReportMessageConsumer implements MessageListener {
                             assessmentReport.getOnlineClassId(),
                             FinishOnlineClassMessage.OperatorType.ADD_UNIT_ASSESSMENT);
                 }
+            } catch(IllegalArgumentException e){
+                logger.warn("接收UA Report消息并发送FinishOnlineClassMessage发生非法参数异常，参数不合法, message="+ JSONUtils.toJSONString(message), e);
             } catch (Exception e) {
-                if(e instanceof IllegalArgumentException){
-                    logger.warn("接收UA Report消息并发送FinishOnlineClassMessage发生非法参数异常，参数不合法, message="+ JSONUtils.toJSONString(message), e);
-                }else{
-                    logger.error("接收UA Report消息并发送FinishOnlineClassMessage时出现问题", e);
-                }
+                logger.error("接收UA Report消息并发送FinishOnlineClassMessage时出现问题", e);
             }
         }
     }

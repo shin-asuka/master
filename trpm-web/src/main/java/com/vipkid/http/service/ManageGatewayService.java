@@ -17,7 +17,7 @@ import com.vipkid.trpm.entity.OnlineClass;
 import com.vipkid.trpm.entity.Student;
 import com.vipkid.trpm.service.portal.OnlineClassService;
 import com.vipkid.trpm.util.LessonSerialNumber;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -140,7 +140,7 @@ public class ManageGatewayService extends HttpBaseService {
 			String data = WebUtils.postJSON(String.format(super.serverAddress + GATEWAY_STUDENT_COMMENT_TRANSLATION_API, id),input);
 			if (data!=null) {
 				JSONObject jb = JSONObject.parseObject(data);
-				if(jb != null && jb.get("status").equals("OK")){
+				if(jb != null && jb.get("status") != null && StringUtils.equals((String)jb.get("status"), "OK")){
 					return true;
 				}
 			}

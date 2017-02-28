@@ -132,10 +132,13 @@ public class TaxpayerFileController extends AbstractPortalController{
 			HttpServletRequest request, HttpServletResponse response, Model model){
 		logger.info("save taxpayer formType = {} url={} ",formType,url);
 
-		Preconditions.checkArgument(StringUtils.isNotBlank(url), "url 不能为空!");
-		Preconditions.checkArgument(formType!=null,"formType 不能为空!");
+
 
 		try {
+
+			Preconditions.checkArgument(StringUtils.isNotBlank(url), "url 不能为空!");
+			Preconditions.checkArgument(formType!=null,"formType 不能为空!");
+
 			TeacherTaxpayerForm teacherTaxpayerForm = new TeacherTaxpayerForm();
 			teacherTaxpayerForm.setId(id);
 			teacherTaxpayerForm.setUrl(url);
@@ -148,6 +151,10 @@ public class TaxpayerFileController extends AbstractPortalController{
 			
 			model.addAttribute("status", 1);
 			//int k =1/0;
+		} catch(IllegalArgumentException e){
+			logger.warn("上传文件发生异常，参数不合法，errorMsg=" + e.getMessage(), e);
+			model.addAttribute("status", 0);
+			throw new ServiceException("上传失败");
 		} catch (Exception e) {
 			logger.error("上传失败！",e);
 			model.addAttribute("status", 0);

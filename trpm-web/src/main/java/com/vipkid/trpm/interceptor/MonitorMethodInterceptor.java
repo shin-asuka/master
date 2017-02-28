@@ -27,18 +27,17 @@ public class MonitorMethodInterceptor implements MethodInterceptor {
         try {
             Object result = invocation.proceed();
             return result;
+        } catch (IllegalArgumentException e) {
+            logger.warn("MonitorMethodInterceptor IllegalArgumentException, errorMessage=" + e.getMessage(), e);
+            throw new RuntimeException(e);
         } catch (Exception e) {
-            if(e instanceof IllegalArgumentException){
-                logger.warn("MonitorMethodInterceptor IllegalArgumentException", e);
-            }else{
-                logger.error("MonitorMethodInterceptor error !",e);
-            }
+            logger.error("MonitorMethodInterceptor error !", e);
             throw new RuntimeException(e);
         } finally {
             long endTime = System.nanoTime();
             logger.info("Method: [" + invocation.getMethod().getDeclaringClass().getName() + "."
-                            + invocation.getMethod().getName() + "()], Invocation Time: ["
-                            + MathUtils.divide((endTime - beginTime), (1000 * 1000)) + "] Millis");
+                    + invocation.getMethod().getName() + "()], Invocation Time: ["
+                    + MathUtils.divide((endTime - beginTime), (1000 * 1000)) + "] Millis");
         }
     }
 
