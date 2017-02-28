@@ -46,6 +46,9 @@ public class PeCommentsVo {
 	
 	private Integer teflOrToselCertificate;
 	
+	/**
+	 * 表单类型，1PE表单  2其他表单
+	 */
 	private Integer formType;
 
 	@Ignore
