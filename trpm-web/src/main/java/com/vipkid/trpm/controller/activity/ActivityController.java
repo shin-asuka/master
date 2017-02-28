@@ -9,6 +9,8 @@ import java.util.concurrent.TimeUnit;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.vipkid.http.vo.ActivityShare;
+import com.vipkid.rest.utils.ApiResponseUtils;
 import org.apache.commons.lang.StringUtils;
 import org.community.config.PropertyConfigurer;
 import org.slf4j.Logger;
@@ -148,4 +150,36 @@ public class ActivityController extends AbstractController{
         logger.info("执行方法getData()耗时：{} ", millis);
     	return data;
 	}
+
+    /**
+     * 2017年3月活动分享项目
+     *
+     */
+    @ResponseBody
+    @RequestMapping(value = "/getActivtyShareData", method = RequestMethod.GET)
+    public Object getActivityShareData(HttpServletRequest request, @RequestParam(required = false) String token) {
+        Stopwatch stopwatch = Stopwatch.createStarted();
+        long teacherId = 0;
+        if (StringUtils.isEmpty(token)) {
+            User u;
+            try {
+                u = loginService.getUser();
+            } catch (NullPointerException e) {
+                return ApiResponseUtils.buildErrorResp(1001,"获取身份信息失败");
+            }
+            if (u == null) {
+                return ApiResponseUtils.buildErrorResp(1001,"获取身份信息失败");
+            }
+            teacherId = u.getId();
+        } else {
+            teacherId = activityService.decode(token);
+        }
+        if (teacherId <= 0) {
+            return ApiResponseUtils.buildErrorResp(1001,"获取身份信息失败");
+        }
+        ActivityShare data = activityService.getActivityShareData(teacherId);
+        long millis = stopwatch.stop().elapsed(TimeUnit.MILLISECONDS);
+        logger.info("执行方法getActivityShareData()耗时：{} ", millis);
+        return ApiResponseUtils.buildSuccessDataResp(data);
+    }
 }
