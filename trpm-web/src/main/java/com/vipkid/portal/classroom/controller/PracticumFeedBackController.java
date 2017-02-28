@@ -1,5 +1,6 @@
 package com.vipkid.portal.classroom.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -88,12 +89,21 @@ public class PracticumFeedBackController extends RestfulController {
 			}
 			
 			// 如果不是保存 则进行全局check验证
+			List<Result> list = new ArrayList<Result>();
 			if (!"SAVE".endsWith(bean.getSubmitType()) && !StringUtils.equalsIgnoreCase(bean.getResult(),com.vipkid.enums.TeacherApplicationEnum.Result.REAPPLY.toString())){
-	            List<Result> list = ValidateUtils.checkBean(bean,false);
+	            list = ValidateUtils.checkBean(bean,false);
 	            if(CollectionUtils.isNotEmpty(list) && list.get(0).isResult()){
 	                response.setStatus(HttpStatus.BAD_REQUEST.value());
 	                return ApiResponseUtils.buildErrorResp(-1,"reslult:"+list.get(0).getName() + "," + list.get(0).getMessages());
 	            }
+	            /** 1:pe other pes */
+				if(bean.getFormType() == 1){
+					list = ValidateUtils.checkForField(bean,com.google.common.collect.Lists.newArrayList("timeManagementScore", "accent", "positive", "engaged", "appearance", "phonics"), false);
+		            if(CollectionUtils.isNotEmpty(list) && list.get(0).isResult()){
+		                response.setStatus(HttpStatus.BAD_REQUEST.value());
+		                return ApiResponseUtils.buildErrorResp(-1,"reslult:"+list.get(0).getName() + "," + list.get(0).getMessages());
+		            }
+				}
 			}
 			
 			Map<String, Object> resultMap = practicumFeedbackService.saveDoPeAudit(getTeacher(request), bean);

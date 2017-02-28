@@ -45,6 +45,8 @@ public class PeCommentsVo {
 	private Integer teenagerTeachingExperience;
 	
 	private Integer teflOrToselCertificate;
+	
+	private Integer formType;
 
 	@Ignore
 	private Integer timeManagementScore;
@@ -186,6 +188,14 @@ public class PeCommentsVo {
 
 	public List<Map<String,Integer>> getTagIds() {
 		return tagIds;
+	}
+
+	public Integer getFormType() {
+		return formType;
+	}
+
+	public void setFormType(Integer formType) {
+		this.formType = formType;
 	}
 
 	public String getFinishType() {
