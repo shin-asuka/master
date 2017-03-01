@@ -8,6 +8,7 @@ public class ActivityShare {
     private Integer studentNum;//该老师上过课的学生总数
     private String token;
     private String joinUsUrl;
+    private boolean izApp;
 
     public String getTeacherName() {
         return teacherName;
@@ -55,5 +56,13 @@ public class ActivityShare {
 
     public void setJoinUsUrl(String joinUsUrl) {
         this.joinUsUrl = joinUsUrl;
+    }
+
+    public boolean isIzApp() {
+        return izApp;
+    }
+
+    public void setIzApp(boolean izApp) {
+        this.izApp = izApp;
     }
 }

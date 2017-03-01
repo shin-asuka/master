@@ -167,6 +167,7 @@ public class ActivityController extends AbstractController{
     public Object getActivityShareData(HttpServletRequest request, @RequestParam(required = false) String token) {
         Stopwatch stopwatch = Stopwatch.createStarted();
         long teacherId = 0;
+        boolean izApp = false;
         if (StringUtils.isEmpty(token)) {
             User u;
             try {
@@ -183,6 +184,7 @@ public class ActivityController extends AbstractController{
                     return ApiResponseUtils.buildErrorResp(1001,"获取身份信息失败");
                 }else{
                     teacherId = teacherToken.getTeacherId();
+                    izApp = true;
                 }
             }else{
                 teacherId = u.getId();
@@ -194,6 +196,7 @@ public class ActivityController extends AbstractController{
             return ApiResponseUtils.buildErrorResp(1001,"获取身份信息失败");
         }
         ActivityShare data = activityService.getActivityShareData(teacherId);
+        data.setIzApp(izApp);
         long millis = stopwatch.stop().elapsed(TimeUnit.MILLISECONDS);
         logger.info("执行方法getActivityShareData()耗时：{} ", millis);
         return ApiResponseUtils.buildSuccessDataResp(data);
