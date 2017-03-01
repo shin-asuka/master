@@ -608,15 +608,7 @@ public class ActivityService {
 
 		//生成joinUs链接
 		String joinUsUrl = PropertyConfigurer.stringValue("activity_share_join_us_url");
-		if (StringUtils.isNotEmpty(joinUsUrl) && joinUsUrl.contains("%d")) {
-			joinUsUrl = String.format(joinUsUrl, teacherId);
-		} else {
-			logger.error("配置文件中的activity_share_join_us_url参数值错误");
-			joinUsUrl = PropertyConfigurer.stringValue("teacher.www");
-			if (StringUtils.isEmpty(joinUsUrl)) {
-				joinUsUrl = "https://t.vipkid.com.cn/";
-			}
-		}
+		joinUsUrl = String.format(joinUsUrl, teacherId.intValue());
 		data.setJoinUsUrl(joinUsUrl);
 		int expireSecond = 600;//缓存600秒
 		String redisValue = JsonUtils.toJSONString(data);
