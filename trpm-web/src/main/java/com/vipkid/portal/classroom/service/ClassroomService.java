@@ -407,7 +407,7 @@ public class ClassroomService {
     * @date 2016年1月11日
     */
    public Map<String,Object> updateSendStar(boolean send, ClassRoomVo bean, Teacher teacher) {
-	   Map<String,Object> resultMap = Maps.newHashMap();
+	   Map<String,Object> resultMap = Maps.newHashMap(); 
        Student student = studentDao.findById(bean.getStudentId());
        OnlineClass onlineClass = onlineClassDao.findById(bean.getOnlineClassId());
 
@@ -427,7 +427,7 @@ public class ClassroomService {
            String content = FilesUtils.readLogTemplate(ApplicationConstant.AuditCategory.STAR_SEND, parmMap);
            auditDao.saveAudit(ApplicationConstant.AuditCategory.STAR_SEND, "INFO", content, teacher.getRealName(),
                    teacher, IpUtils.getRemoteIP());
-           this.updateStarNum(bean.getOnlineClassId(), teacher.getId(), bean.getStudentId(), 1);
+           resultMap.putAll(this.updateStarNum(onlineClass, teacher.getId(), bean.getStudentId(), 1));
            logger.info("Teacher: id={},name={} send star, Student: id={},name={}, onlineClassId: id={},room={}",
                    teacher.getId(), teacher.getRealName(), bean.getStudentId(), student.getEnglishName(), bean.getOnlineClassId(),
                    onlineClass.getClassroom());
@@ -435,12 +435,11 @@ public class ClassroomService {
            String content = FilesUtils.readLogTemplate(ApplicationConstant.AuditCategory.STAR_REMOVE, parmMap);
            auditDao.saveAudit(ApplicationConstant.AuditCategory.STAR_REMOVE, "INFO", content, teacher.getRealName(),
                    teacher, IpUtils.getRemoteIP());
-           this.updateStarNum(bean.getOnlineClassId(), teacher.getId(), bean.getStudentId(), -1);
+           resultMap.putAll(this.updateStarNum(onlineClass, teacher.getId(), bean.getStudentId(), -1));
            logger.info("Teacher: id={},name={} remove star, Student: id={},name={}, onlineClassId: id={},room={}",
         		   teacher.getId(), teacher.getRealName(), bean.getStudentId(), student.getEnglishName(), bean.getOnlineClassId(),
                    onlineClass.getClassroom());
        }
-       resultMap.put("status", true);
        return resultMap;
    }
     
@@ -449,13 +448,12 @@ public class ClassroomService {
     * 调用星星服务，设置当前的星星数量
     * @return
     */
-   private Map<String, Object> updateStarNum(long onlineClassId, long teacherId, long studentId, int starNum){
+   private Map<String, Object> updateStarNum(OnlineClass onlineClass, long teacherId, long studentId, int starNum){
        Map<String, Object> resultMap = Maps.newHashMap();
        try {
            // 课程开始之后才能发送星星
-           OnlineClass onlineClass = onlineClassDao.findById(onlineClassId);
            if(null == onlineClass || onlineClass.getScheduledDateTime().getTime() > System.currentTimeMillis()) {
-               resultMap.put("result", false);
+               resultMap.put("status", false);
                resultMap.put("code", HttpStatus.BAD_REQUEST.value());
                return resultMap;
            }
@@ -463,7 +461,7 @@ public class ClassroomService {
            String url = PropertyConfigurer.stringValue("star.server.updateStar");
 
            Map<String, String> paramMap = Maps.newHashMap();
-           paramMap.put("onlineclassId", String.valueOf(onlineClassId));
+           paramMap.put("onlineclassId", onlineClass.getId()+"");
            paramMap.put("teacherId", String.valueOf(teacherId));
            paramMap.put("studentId", String.valueOf(studentId));
            paramMap.put("starNum", String.valueOf(starNum));
@@ -475,18 +473,18 @@ public class ClassroomService {
            if (null != resultJson) {
                UpdateStarDto updateStarDto = JsonUtils.toBean(resultJson, UpdateStarDto.class);
                if(updateStarDto.getCode() == HttpStatus.OK.value()){
-                   resultMap.put("result", updateStarDto.isData());
+                   resultMap.put("status", updateStarDto.isData());
                } else {
-                   resultMap.put("result", false);
+                   resultMap.put("status", false);
                }
                resultMap.put("code", updateStarDto.getCode());
            } else {
-               resultMap.put("result", false);
+               resultMap.put("status", false);
                resultMap.put("code", HttpStatus.NO_CONTENT.value());
            }
        } catch(Exception e) {
            logger.error("Invoke star server updateStar failed", e);
-           resultMap.put("result", false);
+           resultMap.put("status", false);
            resultMap.put("code", HttpStatus.INTERNAL_SERVER_ERROR.value());
        }
        return resultMap;
