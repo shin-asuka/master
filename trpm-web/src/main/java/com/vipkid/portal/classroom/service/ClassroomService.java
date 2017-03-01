@@ -14,6 +14,7 @@ import org.community.tools.JsonTools;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSON;
@@ -21,6 +22,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.google.api.client.util.Maps;
 import com.vipkid.enums.OnlineClassEnum;
 import com.vipkid.enums.OnlineClassEnum.CourseName;
+import com.vipkid.http.utils.JsonUtils;
 import com.vipkid.portal.classroom.model.ClassRoomVo;
 import com.vipkid.portal.classroom.model.SendSysInfoVo;
 import com.vipkid.recruitment.dao.TeacherApplicationDao;
@@ -40,6 +42,7 @@ import com.vipkid.trpm.entity.Student;
 import com.vipkid.trpm.entity.StudentExam;
 import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.entity.User;
+import com.vipkid.trpm.entity.classroom.UpdateStarDto;
 import com.vipkid.trpm.entity.teachercomment.TeacherComment;
 import com.vipkid.trpm.proxy.OnlineClassProxy;
 import com.vipkid.trpm.service.portal.TeacherService;
@@ -397,13 +400,13 @@ public class ClassroomService {
     /**
     *
     * @Title: sendStarlogs
-    * @param send
+    * @param send true是增加  false 是移除
     * @param studentId
     * @param onlineClassId
     * @param teacher
     * @date 2016年1月11日
     */
-   public Map<String,Object> sendStarlogs(boolean send, ClassRoomVo bean, Teacher teacher) {
+   public Map<String,Object> updateSendStar(boolean send, ClassRoomVo bean, Teacher teacher) {
 	   Map<String,Object> resultMap = Maps.newHashMap();
        Student student = studentDao.findById(bean.getStudentId());
        OnlineClass onlineClass = onlineClassDao.findById(bean.getOnlineClassId());
@@ -424,6 +427,7 @@ public class ClassroomService {
            String content = FilesUtils.readLogTemplate(ApplicationConstant.AuditCategory.STAR_SEND, parmMap);
            auditDao.saveAudit(ApplicationConstant.AuditCategory.STAR_SEND, "INFO", content, teacher.getRealName(),
                    teacher, IpUtils.getRemoteIP());
+           this.updateStarNum(bean.getOnlineClassId(), teacher.getId(), bean.getStudentId(), 1);
            logger.info("Teacher: id={},name={} send star, Student: id={},name={}, onlineClassId: id={},room={}",
                    teacher.getId(), teacher.getRealName(), bean.getStudentId(), student.getEnglishName(), bean.getOnlineClassId(),
                    onlineClass.getClassroom());
@@ -431,6 +435,7 @@ public class ClassroomService {
            String content = FilesUtils.readLogTemplate(ApplicationConstant.AuditCategory.STAR_REMOVE, parmMap);
            auditDao.saveAudit(ApplicationConstant.AuditCategory.STAR_REMOVE, "INFO", content, teacher.getRealName(),
                    teacher, IpUtils.getRemoteIP());
+           this.updateStarNum(bean.getOnlineClassId(), teacher.getId(), bean.getStudentId(), -1);
            logger.info("Teacher: id={},name={} remove star, Student: id={},name={}, onlineClassId: id={},room={}",
         		   teacher.getId(), teacher.getRealName(), bean.getStudentId(), student.getEnglishName(), bean.getOnlineClassId(),
                    onlineClass.getClassroom());
@@ -439,6 +444,54 @@ public class ClassroomService {
        return resultMap;
    }
     
+   
+   /**
+    * 调用星星服务，设置当前的星星数量
+    * @return
+    */
+   private Map<String, Object> updateStarNum(long onlineClassId, long teacherId, long studentId, int starNum){
+       Map<String, Object> resultMap = Maps.newHashMap();
+       try {
+           // 课程开始之后才能发送星星
+           OnlineClass onlineClass = onlineClassDao.findById(onlineClassId);
+           if(null == onlineClass || onlineClass.getScheduledDateTime().getTime() > System.currentTimeMillis()) {
+               resultMap.put("result", false);
+               resultMap.put("code", HttpStatus.BAD_REQUEST.value());
+               return resultMap;
+           }
+
+           String url = PropertyConfigurer.stringValue("star.server.updateStar");
+
+           Map<String, String> paramMap = Maps.newHashMap();
+           paramMap.put("onlineclassId", String.valueOf(onlineClassId));
+           paramMap.put("teacherId", String.valueOf(teacherId));
+           paramMap.put("studentId", String.valueOf(studentId));
+           paramMap.put("starNum", String.valueOf(starNum));
+           logger.info("Invoke star server updateStar paramMap: {}", JsonUtils.toJSONString(paramMap));
+
+           String resultJson = HttpClientProxy.post(url, paramMap, Maps.newHashMap());
+           logger.info("Invoke star server updateStar resultJson: {}", resultJson);
+
+           if (null != resultJson) {
+               UpdateStarDto updateStarDto = JsonUtils.toBean(resultJson, UpdateStarDto.class);
+               if(updateStarDto.getCode() == HttpStatus.OK.value()){
+                   resultMap.put("result", updateStarDto.isData());
+               } else {
+                   resultMap.put("result", false);
+               }
+               resultMap.put("code", updateStarDto.getCode());
+           } else {
+               resultMap.put("result", false);
+               resultMap.put("code", HttpStatus.NO_CONTENT.value());
+           }
+       } catch(Exception e) {
+           logger.error("Invoke star server updateStar failed", e);
+           resultMap.put("result", false);
+           resultMap.put("code", HttpStatus.INTERNAL_SERVER_ERROR.value());
+       }
+       return resultMap;
+   }
+   
 	/**
      * 根据serialNum处理 考试的Level名称显示<br/>
      * studentExam 为NULL 则返回一个空对象
