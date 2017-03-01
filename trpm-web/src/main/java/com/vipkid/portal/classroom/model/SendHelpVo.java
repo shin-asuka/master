@@ -7,13 +7,13 @@ public class SendHelpVo {
 
 	private Long onlineClassId;
 	
-	private String scheduleTime;
+	private Long scheduleTime;
 
 	public Long getOnlineClassId() {
 		return onlineClassId;
 	}
 
-	public String getScheduleTime() {
+	public Long getScheduleTime() {
 		return scheduleTime;
 	}
 
@@ -21,7 +21,7 @@ public class SendHelpVo {
 		this.onlineClassId = onlineClassId;
 	}
 
-	public void setScheduleTime(String scheduleTime) {
+	public void setScheduleTime(Long scheduleTime) {
 		this.scheduleTime = scheduleTime;
 	}
 	

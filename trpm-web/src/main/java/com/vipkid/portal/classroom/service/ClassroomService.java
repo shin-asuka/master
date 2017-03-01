@@ -43,7 +43,6 @@ import com.vipkid.trpm.entity.User;
 import com.vipkid.trpm.entity.teachercomment.TeacherComment;
 import com.vipkid.trpm.proxy.OnlineClassProxy;
 import com.vipkid.trpm.service.portal.TeacherService;
-import com.vipkid.trpm.util.DateUtils;
 import com.vipkid.trpm.util.FilesUtils;
 import com.vipkid.trpm.util.IpUtils;
 import com.vipkid.trpm.util.LessonSerialNumber;
@@ -268,14 +267,10 @@ public class ClassroomService {
      * @return Map<String,Object>
      * @date 2016年1月11日
      */
-    public Map<String, Object> sendHelp(String scheduleTime, long onlineClassId, Teacher teacher) {
+    public Map<String, Object> sendHelp(long scheduleMillis, long onlineClassId, Teacher teacher) {
         Map<String, Object> modelMap = Maps.newHashMap();
         /* 获取服务器时间毫秒 */
         long serverMillis = System.currentTimeMillis();
-
-        /* 计算schedule时间毫秒 */
-        Timestamp ldtSchedule = DateUtils.parseFrom(scheduleTime, DateUtils.FMT_YMD_HMS);
-        long scheduleMillis = ldtSchedule.getTime();
 
         /* 判断时间间隔是否在上课时间段之内，如果是则发送帮助请求 */
         long interval = serverMillis - scheduleMillis;
