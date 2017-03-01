@@ -10,7 +10,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.vipkid.http.vo.ActivityShare;
+import com.vipkid.rest.security.AppContext;
 import com.vipkid.rest.utils.ApiResponseUtils;
+import com.vipkid.trpm.dao.UserDao;
 import org.apache.commons.lang.StringUtils;
 import org.community.config.PropertyConfigurer;
 import org.slf4j.Logger;
@@ -48,7 +50,7 @@ public class ActivityController extends AbstractController{
     
     @Autowired
     private LoginService loginService;
-    
+
     //上线时间
     private String searchdate = "2016-04-12 00:00:00";
 
@@ -163,9 +165,15 @@ public class ActivityController extends AbstractController{
         if (StringUtils.isEmpty(token)) {
             User u;
             try {
+                //取PC的token
                 u = loginService.getUser();
             } catch (NullPointerException e) {
                 return ApiResponseUtils.buildErrorResp(1001,"获取身份信息失败");
+            }
+            if (u == null){
+                //取apptoken
+                String appToken =  AppContext.getToken(request);
+                u = loginService.findUserByToken(appToken);
             }
             if (u == null) {
                 return ApiResponseUtils.buildErrorResp(1001,"获取身份信息失败");
