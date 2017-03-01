@@ -170,7 +170,7 @@ public class ClassroomController extends RestfulController{
         		return ApiResponseUtils.buildSuccessDataResp(resultMap);
         	}else{
                 response.setStatus(HttpStatus.FORBIDDEN.value());
-    			return ApiResponseUtils.buildErrorResp(-5, "错误信息:"+resultMap.get("info"));
+    			return ApiResponseUtils.buildErrorResp(-5, resultMap.get("info")+"");
         	}
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
@@ -228,7 +228,7 @@ public class ClassroomController extends RestfulController{
         		return ApiResponseUtils.buildSuccessDataResp(resultMap);
         	}else{
                 response.setStatus(HttpStatus.FORBIDDEN.value());
-    			return ApiResponseUtils.buildErrorResp(-5, "错误信息:"+resultMap.get("info"));
+    			return ApiResponseUtils.buildErrorResp(-5, resultMap.get("info")+"");
         	}
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
@@ -261,7 +261,7 @@ public class ClassroomController extends RestfulController{
         		return ApiResponseUtils.buildSuccessDataResp(resultMap);
         	}else{
                 response.setStatus(HttpStatus.FORBIDDEN.value());
-    			return ApiResponseUtils.buildErrorResp(-5, "错误信息:"+resultMap.get("info"));
+    			return ApiResponseUtils.buildErrorResp(-5, resultMap.get("info")+"");
         	}
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
@@ -295,7 +295,7 @@ public class ClassroomController extends RestfulController{
         		return ApiResponseUtils.buildSuccessDataResp(resultMap);
         	}else{
                 response.setStatus(HttpStatus.FORBIDDEN.value());
-    			return ApiResponseUtils.buildErrorResp(-5, "错误信息:"+resultMap.get("info"));
+    			return ApiResponseUtils.buildErrorResp(-5, resultMap.get("info")+"");
         	}
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
