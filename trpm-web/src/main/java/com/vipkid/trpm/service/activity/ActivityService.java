@@ -585,33 +585,33 @@ public class ActivityService {
 		data.setToken(token);
 		//计算老师的综合评价分数
 		StudentCommentTotalVo scores = manageGatewayService.getStudentCommentTotalByTeacherId(teacherId.intValue());
-		Integer allComments = scores.getRating_1_count() +
-				scores.getRating_2_count() +
-				scores.getRating_3_count() +
-				scores.getRating_4_count() +
-				scores.getRating_5_count();
 		String totalGradeStr = "0.0";
-		if (allComments != 0) {
-			Float totalGrade = (1f * scores.getRating_1_count() +
-					2f * scores.getRating_2_count() +
-					3f * scores.getRating_3_count() +
-					4f * scores.getRating_4_count() +
-					5f * scores.getRating_5_count()) / allComments;
-			totalGradeStr = new DecimalFormat("0.0").format(totalGrade);
+		if(scores == null){
+			logger.error("getActivityShareData()获取老师综合评价分数失败!");
+			data.setRatings("");
+		}else {
+			Integer allComments = scores.getRating_1_count() +
+					scores.getRating_2_count() +
+					scores.getRating_3_count() +
+					scores.getRating_4_count() +
+					scores.getRating_5_count();
+			if (allComments != 0) {
+				Float totalGrade = (1f * scores.getRating_1_count() +
+						2f * scores.getRating_2_count() +
+						3f * scores.getRating_3_count() +
+						4f * scores.getRating_4_count() +
+						5f * scores.getRating_5_count()) / allComments;
+				totalGradeStr = new DecimalFormat("0.0").format(totalGrade);
+			}
+			data.setRatings(totalGradeStr);
 		}
-		data.setRatings(totalGradeStr);
 
-//		暂留，考虑后续是否管理链接
-// 		String joinUsUrl = PropertyConfigurer.stringValue("third_year_anniversary_join_us_url");
-//		if(StringUtils.isNotEmpty(joinUsUrl) && joinUsUrl.contains("%d")){
-//			joinUsUrl = String.format(joinUsUrl, teacherId);
-//		}
 		//生成joinUs链接
-		String joinUsUrl = PropertyConfigurer.stringValue("third_year_anniversary_join_us_url");
+		String joinUsUrl = PropertyConfigurer.stringValue("activity_share_join_us_url");
 		if (StringUtils.isNotEmpty(joinUsUrl) && joinUsUrl.contains("%d")) {
 			joinUsUrl = String.format(joinUsUrl, teacherId);
 		} else {
-			logger.error("配置文件中的third_year_anniversary_join_us_url参数值错误");
+			logger.error("配置文件中的activity_share_join_us_url参数值错误");
 			joinUsUrl = PropertyConfigurer.stringValue("teacher.www");
 			if (StringUtils.isEmpty(joinUsUrl)) {
 				joinUsUrl = "https://t.vipkid.com.cn/";
@@ -621,7 +621,7 @@ public class ActivityService {
 		int expireSecond = 600;//缓存600秒
 		String redisValue = JsonUtils.toJSONString(data);
 		redisProxy.set(redisKey, redisValue, expireSecond);
-		logger.info("getThirdYearAnniversaryData(), teacherId={}, json={} ,查询数据库获取数据，并存入redis", teacherId, redisValue);
+		logger.info("getActivityShareData(), teacherId={}, json={} ,查询数据库获取数据，并存入redis", teacherId, redisValue);
 		return data;
 	}
 }
