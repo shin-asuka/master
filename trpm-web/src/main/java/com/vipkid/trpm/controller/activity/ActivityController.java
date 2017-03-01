@@ -12,12 +12,15 @@ import javax.servlet.http.HttpServletResponse;
 import com.vipkid.http.vo.ActivityShare;
 import com.vipkid.rest.security.AppContext;
 import com.vipkid.rest.utils.ApiResponseUtils;
+import com.vipkid.trpm.dao.TeacherTokenDao;
 import com.vipkid.trpm.dao.UserDao;
+import com.vipkid.trpm.entity.TeacherToken;
 import org.apache.commons.lang.StringUtils;
 import org.community.config.PropertyConfigurer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -51,6 +54,8 @@ public class ActivityController extends AbstractController{
     @Autowired
     private LoginService loginService;
 
+    @Autowired
+    private TeacherTokenDao teacherTokenDao;
     //上线时间
     private String searchdate = "2016-04-12 00:00:00";
 
@@ -173,12 +178,15 @@ public class ActivityController extends AbstractController{
             if (u == null){
                 //取apptoken
                 String appToken =  AppContext.getToken(request);
-                u = loginService.findUserByToken(appToken);
+                TeacherToken teacherToken = teacherTokenDao.findByToken(appToken);
+                if(teacherToken==null || teacherToken.getTeacherId()==null){
+                    return ApiResponseUtils.buildErrorResp(1001,"获取身份信息失败");
+                }else{
+                    teacherId = teacherToken.getTeacherId();
+                }
+            }else{
+                teacherId = u.getId();
             }
-            if (u == null) {
-                return ApiResponseUtils.buildErrorResp(1001,"获取身份信息失败");
-            }
-            teacherId = u.getId();
         } else {
             teacherId = activityService.decode(token);
         }
