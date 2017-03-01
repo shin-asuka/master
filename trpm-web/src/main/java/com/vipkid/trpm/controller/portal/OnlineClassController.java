@@ -424,16 +424,16 @@ public class OnlineClassController extends AbstractPortalController {
      */
     @RequestMapping("/sendStarLogs")
     public String sendStarLogs(HttpServletRequest request, HttpServletResponse response, @RequestParam boolean send,
-                    @RequestParam long studentId, @RequestParam long teacherId, @RequestParam long onlineClassId, Model model) {
+                    @RequestParam long studentId, @RequestParam long onlineClassId, Model model) {
         Teacher teacher = loginService.getTeacher();
         onlineclassService.sendStarlogs(send, studentId, onlineClassId, teacher);
         Map<String, Object> modelMap;
         if(send){
-            logger.info("Teacher {} send star to {} in class {}", teacherId, studentId, onlineClassId);
-            modelMap = onlineclassService.updateStarNum(onlineClassId, teacherId, studentId, 1);
+            logger.info("Teacher {} send star to {} in class {}", teacher.getId(), studentId, onlineClassId);
+            modelMap = onlineclassService.updateStarNum(onlineClassId, teacher.getId(), studentId, 1);
         }else{
-            logger.info("Teacher {} remove star to {} in class {}", teacherId, studentId, onlineClassId);
-            modelMap = onlineclassService.updateStarNum(onlineClassId, teacherId, studentId, -1);
+            logger.info("Teacher {} remove star to {} in class {}", teacher.getId(), studentId, onlineClassId);
+            modelMap = onlineclassService.updateStarNum(onlineClassId, teacher.getId(), studentId, -1);
         }
         return jsonView(response, modelMap);
     }
