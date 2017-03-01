@@ -1,4 +1,4 @@
-define(['messenger'], function() {
+define(['messenger',"jquery-bootstrap"], function() {
 
   var param = {};
 

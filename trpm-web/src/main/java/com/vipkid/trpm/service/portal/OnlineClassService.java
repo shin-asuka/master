@@ -14,6 +14,7 @@ import com.vipkid.enums.TeacherLockLogEnum.Reason;
 import com.vipkid.enums.TeacherModuleEnum.RoleClass;
 import com.vipkid.enums.UserEnum;
 import com.vipkid.http.service.AssessmentHttpService;
+import com.vipkid.http.utils.JsonUtils;
 import com.vipkid.http.vo.OnlineClassVo;
 import com.vipkid.http.vo.StudentUnitAssessment;
 import com.vipkid.recruitment.common.service.RecruitmentService;
@@ -25,6 +26,8 @@ import com.vipkid.trpm.constant.ApplicationConstant;
 import com.vipkid.trpm.constant.ApplicationConstant.FinishType;
 import com.vipkid.trpm.dao.*;
 import com.vipkid.trpm.entity.*;
+import com.vipkid.trpm.entity.classroom.GetStarDto;
+import com.vipkid.trpm.entity.classroom.UpdateStarDto;
 import com.vipkid.trpm.entity.teachercomment.TeacherComment;
 import com.vipkid.trpm.entity.teachercomment.TeacherCommentResult;
 import com.vipkid.trpm.entity.teachercomment.TeacherCommentUpdateDto;
@@ -42,9 +45,8 @@ import org.community.http.client.HttpClientProxy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
 import java.time.Instant;
@@ -235,6 +237,12 @@ public class OnlineClassService {
         logger.info("TeacherId:{}, Major Course query stars : {},onlineClassId:{},studentId:{}", teacher.getId(), stars,
                 onlineClass.getId(), studentId);
         modelMap.put("stars", stars);
+
+        //new solution
+//        Map<String, Object> starNumMap = getStarNum(onlineClass.getId(), teacher.getId(), studentId);
+//        logger.info("TeacherId:{}, Major Course query stars : {},onlineClassId:{},studentId:{}", teacher.getId(), JsonUtils.toJSONString(starNumMap),
+//                onlineClass.getId(), studentId);
+//        modelMap.put("stars", starNumMap.get("starNum"));
         if (lesson.getSerialNumber().startsWith("A")) {
             DemoReport currentReport = demoReportDao.findByStudentIdAndOnlineClassId(studentId, onlineClass.getId());
             modelMap.put("currentReport", currentReport);
@@ -937,4 +945,90 @@ public class OnlineClassService {
             studentId, teacherId, onlineClass, lesson);
         return null;
     }
+
+    /**
+     * 调用星星服务，获取当前的星星数量
+     * @return
+     */
+    public Map<String, Object> getStarNum(long onlineClassId, long teacherId, long studentId){
+        Map<String, Object> resultMap = Maps.newHashMap();
+        try {
+            String url = PropertyConfigurer.stringValue("star.server.getStar");
+
+            Map<String, String> paramMap = Maps.newHashMap();
+            paramMap.put("onlineclassId", String.valueOf(onlineClassId));
+            paramMap.put("teacherId", String.valueOf(teacherId));
+            paramMap.put("studentId", String.valueOf(studentId));
+            logger.info("Invoke star server getStar paramMap: {}", JsonUtils.toJSONString(paramMap));
+
+            String resultJson = HttpClientProxy.get(url, paramMap, Maps.newHashMap());
+            logger.info("Invoke star server getStar resultJson: {}", resultJson);
+
+            if (null != resultJson) {
+                GetStarDto getStarDto = JsonUtils.toBean(resultJson, GetStarDto.class);
+                if(getStarDto.getCode() == HttpStatus.OK.value()){
+                    resultMap.put("starNum", getStarDto.getData().getResult());
+                } else {
+                    resultMap.put("starNum", 0);
+                }
+                resultMap.put("code", getStarDto.getCode());
+            } else {
+                resultMap.put("starNum", 0);
+                resultMap.put("code", HttpStatus.NO_CONTENT.value());
+            }
+        } catch(Exception e) {
+            logger.error("Invoke star server getStar failed", e);
+            resultMap.put("starNum", 0);
+            resultMap.put("code", HttpStatus.INTERNAL_SERVER_ERROR.value());
+        }
+        return resultMap;
+    }
+
+    /**
+     * 调用星星服务，设置当前的星星数量
+     * @return
+     */
+    public Map<String, Object> updateStarNum(long onlineClassId, long teacherId, long studentId, int starNum){
+        Map<String, Object> resultMap = Maps.newHashMap();
+        try {
+            // 课程开始之后才能发送星星
+            OnlineClass onlineClass = getOnlineClassById(onlineClassId);
+            if(null == onlineClass || onlineClass.getScheduledDateTime().getTime() > System.currentTimeMillis()) {
+                resultMap.put("result", false);
+                resultMap.put("code", HttpStatus.BAD_REQUEST.value());
+                return resultMap;
+            }
+
+            String url = PropertyConfigurer.stringValue("star.server.updateStar");
+
+            Map<String, String> paramMap = Maps.newHashMap();
+            paramMap.put("onlineclassId", String.valueOf(onlineClassId));
+            paramMap.put("teacherId", String.valueOf(teacherId));
+            paramMap.put("studentId", String.valueOf(studentId));
+            paramMap.put("starNum", String.valueOf(starNum));
+            logger.info("Invoke star server updateStar paramMap: {}", JsonUtils.toJSONString(paramMap));
+
+            String resultJson = HttpClientProxy.post(url, paramMap, Maps.newHashMap());
+            logger.info("Invoke star server updateStar resultJson: {}", resultJson);
+
+            if (null != resultJson) {
+                UpdateStarDto updateStarDto = JsonUtils.toBean(resultJson, UpdateStarDto.class);
+                if(updateStarDto.getCode() == HttpStatus.OK.value()){
+                    resultMap.put("result", updateStarDto.isData());
+                } else {
+                    resultMap.put("result", false);
+                }
+                resultMap.put("code", updateStarDto.getCode());
+            } else {
+                resultMap.put("result", false);
+                resultMap.put("code", HttpStatus.NO_CONTENT.value());
+            }
+        } catch(Exception e) {
+            logger.error("Invoke star server updateStar failed", e);
+            resultMap.put("result", false);
+            resultMap.put("code", HttpStatus.INTERNAL_SERVER_ERROR.value());
+        }
+        return resultMap;
+    }
+
 }
