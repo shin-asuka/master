@@ -269,6 +269,7 @@ public class BookingsController {
         try {
 
             if (onlineClassId == null || !StringUtils.isNumeric(onlineClassId + "")) {
+                response.setStatus(HttpStatus.BAD_REQUEST.value());
                 logger.error("This online class ：{} does not exist.", onlineClassId);
                 return ApiResponseUtils.buildErrorResp(HttpStatus.BAD_REQUEST.value(), "This online class  does not exist.", onlineClassId);
             }
@@ -278,11 +279,13 @@ public class BookingsController {
 
             if (0 == teacher.getId()) {
                 logger.error("This teacher ：{} have no jurisdiction .", teacher.getId());
+                response.setStatus(HttpStatus.FORBIDDEN.value());
                 return ApiResponseUtils.buildErrorResp(HttpStatus.BAD_REQUEST.value(), "The teacher have no jurisdiction.", teacher.getId());
             }
 
             boolean isSuccess = bookingsService.cancelClassSuccess(Long.valueOf(onlineClassId + ""), teacher.getId());
             if (!isSuccess) {
+                response.setStatus(HttpStatus.BAD_REQUEST.value());
                 logger.error("cancel online class:{} was Failed.", onlineClassId);
                 return ApiResponseUtils.buildErrorResp(HttpStatus.BAD_REQUEST.value(), "cancel online class was Failed.", onlineClassId);
             }
