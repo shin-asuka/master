@@ -572,10 +572,10 @@ public class ActivityService {
 		//如果缓存没有
 		ActivityShare data = new ActivityShare();
 		if (teacherId <= 0) return null;
-		User u = userDao.findById(teacherId);
-		data.setTeacherName(u.getName());
+		Teacher teacher = teacherDao.findById(teacherId);
+		data.setTeacherName(teacher.getFirstName());
 		int totalFinishedClasses = this.getClassNumOfOneTeacher(teacherId);
-		data.setTotalFinishedClassesMin(totalFinishedClasses * 30);
+		data.setTotalFinishedClassesMin(totalFinishedClasses * 25);
 		DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		Date date = Calendar.getInstance().getTime();
 		String yearmd = df.format(date);
