@@ -325,7 +325,7 @@ public class ClassroomService {
         if (!StringUtils.isNotEmpty(content)) {
             modelMap.put("status", true);
         } else {
-            modelMap.put("msg", "failed to tell the fireman teacher in the classroom!");
+            modelMap.put("msg", "Failed to tell the fireman teacher in the classroom!");
         }
         return modelMap;
     }
@@ -358,7 +358,7 @@ public class ClassroomService {
         Map<String, Object> modelMap = Maps.newHashMap();
         if (StringUtils.isBlank(content)) {
         	logger.error("### Failed to tell the fireman teacher browser info Sent get request to {} with params {}", ApplicationConstant.TEACHER_SYSTEM_INFO_URL, requestParams.get("onlineClassId"));
-            modelMap.put("info", "failed to tell the fireman teacher browser info!");
+            modelMap.put("info", "Failed to tell the fireman teacher client info!");
         }
         return modelMap;
     }
