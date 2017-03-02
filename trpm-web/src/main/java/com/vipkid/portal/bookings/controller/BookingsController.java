@@ -263,7 +263,7 @@ public class BookingsController {
      * @param response
      * @return
      */
-    @RequestMapping(value = "/cancelClass", method = RequestMethod.POST, produces = RestfulConfig.JSON_UTF_8)
+    @RequestMapping(value = "/cancelClass", method = RequestMethod.DELETE, produces = RestfulConfig.JSON_UTF_8)
     public Map<String, Object> cancelClass(@RequestBody Map<String, Object> paramMap, HttpServletRequest request, HttpServletResponse response) {
         Object onlineClassId = paramMap.get("onlineClassId");
         try {
