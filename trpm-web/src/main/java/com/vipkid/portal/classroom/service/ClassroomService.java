@@ -192,14 +192,14 @@ public class ClassroomService {
         //课程没有找到，无法book
         if(onlineClass == null){
             logger.error(" 教室为空 NULL onlineClassId:{}",onlineClassId);
-            result.put("info", " online class is null. ");
+            result.put("info", " The classroom was not found. ");
             return result;
         }
 
         //判断教室是否创建好
         if(StringUtils.isBlank(onlineClass.getClassroom())){
             logger.error(" 教室为空 NULL onlineClassId:{}",onlineClassId);
-            result.put("info", " online class is not have creater. ");
+            result.put("info", " Do not create the classroom. ");
             return result;
         }
         
