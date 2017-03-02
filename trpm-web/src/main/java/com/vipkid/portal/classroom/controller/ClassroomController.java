@@ -58,7 +58,7 @@ public class ClassroomController extends RestfulController{
                 return ApiResponseUtils.buildErrorResp(-1,"reslult:"+list.get(0).getName() + "," + list.get(0).getMessages());
             }
             Map<String,Object> result =  this.classroomService.updateSendStar(true, bean, getTeacher(request));
-            if(!(Boolean)result.get("satus")){
+            if(result.get("status") != null && !(Boolean)result.get("status")){
             	 response.setStatus((Integer)result.get("code"));
             }
 			return ApiResponseUtils.buildSuccessDataResp(result);
