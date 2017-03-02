@@ -19,6 +19,7 @@ import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.rest.RestfulController;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
+import org.apache.ibatis.annotations.Param;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -258,15 +259,15 @@ public class BookingsController {
     /**
      * 老师自动取消已经booked的课程
      *
-     * @param paramMap
      * @param request
      * @param response
      * @return
      */
     @RequestMapping(value = "/cancelClass", method = RequestMethod.DELETE, produces = RestfulConfig.JSON_UTF_8)
-    public Map<String, Object> cancelClass(@RequestBody Map<String, Object> paramMap, HttpServletRequest request, HttpServletResponse response) {
-        Object onlineClassId = paramMap.get("onlineClassId");
+    public Map<String, Object> cancelClass(@Param("onlineClassId")String onlineClassId, HttpServletRequest request, HttpServletResponse response) {
+
         try {
+
             if (onlineClassId == null || !StringUtils.isNumeric(onlineClassId + "")) {
                 logger.error("This online class ：{} does not exist.", onlineClassId);
                 return ApiResponseUtils.buildErrorResp(HttpStatus.BAD_REQUEST.value(), "This online class  does not exist.", onlineClassId);
