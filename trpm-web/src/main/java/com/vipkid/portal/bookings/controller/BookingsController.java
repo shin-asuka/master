@@ -266,7 +266,6 @@ public class BookingsController {
     @RequestMapping(value = "/cancelClass", method = RequestMethod.POST, produces = RestfulConfig.JSON_UTF_8)
     public Map<String, Object> cancelClass(@RequestBody Map<String, Object> paramMap, HttpServletRequest request, HttpServletResponse response) {
         Object onlineClassId = paramMap.get("onlineClassId");
-        Object teacherId = paramMap.get("teacherId");
         try {
             if (onlineClassId == null || !StringUtils.isNumeric(onlineClassId + "")) {
                 logger.error("This online class ：{} does not exist.", onlineClassId);
@@ -276,12 +275,12 @@ public class BookingsController {
             Preconditions.checkArgument(request.getAttribute(TEACHER) != null);
             Teacher teacher = (Teacher) request.getAttribute(TEACHER);
 
-            if (null == teacherId && !teacherId.equals(teacher.getId())) {
-                logger.error("This teacher ：{} have no jurisdiction .", teacherId);
-                return ApiResponseUtils.buildErrorResp(HttpStatus.BAD_REQUEST.value(), "The teacher have no jurisdiction.", teacherId);
+            if (0 == teacher.getId()) {
+                logger.error("This teacher ：{} have no jurisdiction .", teacher.getId());
+                return ApiResponseUtils.buildErrorResp(HttpStatus.BAD_REQUEST.value(), "The teacher have no jurisdiction.", teacher.getId());
             }
 
-            boolean isSuccess = bookingsService.cancelClassSuccess(Long.valueOf(onlineClassId + ""), Long.valueOf(teacherId + ""));
+            boolean isSuccess = bookingsService.cancelClassSuccess(Long.valueOf(onlineClassId + ""), teacher.getId());
             if (!isSuccess) {
                 logger.error("cancel online class:{} was Failed.", onlineClassId);
                 return ApiResponseUtils.buildErrorResp(HttpStatus.BAD_REQUEST.value(), "cancel online class was Failed.", onlineClassId);
