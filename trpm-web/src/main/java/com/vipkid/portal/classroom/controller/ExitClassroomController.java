@@ -102,11 +102,11 @@ public class ExitClassroomController extends RestfulController {
 	        return ApiResponseUtils.buildSuccessDataResp(maps);
 	    } catch (IllegalArgumentException e) {
 	        response.setStatus(HttpStatus.BAD_REQUEST.value());
-			logger.error(e.getMessage());
+			logger.error(e.getMessage(),e);
 			return ApiResponseUtils.buildErrorResp(-6, "参数类型转化错误");
 	    } catch (Exception e) {
 	        response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-			logger.error(e.getMessage());
+			logger.error(e.getMessage(),e);
 			return ApiResponseUtils.buildErrorResp(-7, "服务器异常");
 	    }
     }
@@ -130,11 +130,11 @@ public class ExitClassroomController extends RestfulController {
 	        return ApiResponseUtils.buildSuccessDataResp(maps);
 	    } catch (IllegalArgumentException e) {
 	        response.setStatus(HttpStatus.BAD_REQUEST.value());
-			logger.error(e.getMessage());
+			logger.error(e.getMessage(),e);
 			return ApiResponseUtils.buildErrorResp(-6, "参数类型转化错误");
 	    } catch (Exception e) {
 	        response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-			logger.error(e.getMessage());
+			logger.error(e.getMessage(),e);
 			return ApiResponseUtils.buildErrorResp(-7, "服务器异常");
 	    }
     }

@@ -64,11 +64,11 @@ public class PracticumFeedBackController extends RestfulController {
 			return ApiResponseUtils.buildSuccessDataResp(evaluationService.findTags());
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
-			logger.error(e.getMessage());
+			logger.error(e.getMessage(),e);
 			return ApiResponseUtils.buildErrorResp(-6, "参数类型转化错误");
         } catch (Exception e) {
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-			logger.error(e.getMessage());
+			logger.error(e.getMessage(),e);
 			return ApiResponseUtils.buildErrorResp(-7, "服务器异常");
         }
     }
@@ -115,11 +115,11 @@ public class PracticumFeedBackController extends RestfulController {
 			return ApiResponseUtils.buildSuccessDataResp(resultMap);
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
-			logger.error(e.getMessage());
+			logger.error(e.getMessage(),e);
 			return ApiResponseUtils.buildErrorResp(-6, "参数类型转化错误");
         } catch (Exception e) {
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-			logger.error(e.getMessage());
+			logger.error(e.getMessage(),e);
 			return ApiResponseUtils.buildErrorResp(-7, "服务器异常");
         }
 	}
@@ -142,11 +142,11 @@ public class PracticumFeedBackController extends RestfulController {
 			return ApiResponseUtils.buildSuccessDataResp(bean);
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
-			logger.error(e.getMessage());
+			logger.error(e.getMessage(),e);
 			return ApiResponseUtils.buildErrorResp(-6, "参数类型转化错误");
         } catch (Exception e) {
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-			logger.error(e.getMessage());
+			logger.error(e.getMessage(),e);
 			return ApiResponseUtils.buildErrorResp(-7, "服务器异常");
         }
 	}
@@ -185,11 +185,11 @@ public class PracticumFeedBackController extends RestfulController {
 			return ApiResponseUtils.buildSuccessDataResp(resultMap);
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
-			logger.error(e.getMessage());
+			logger.error(e.getMessage(),e);
 			return ApiResponseUtils.buildErrorResp(-6, "参数类型转化错误");
         } catch (Exception e) {
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-			logger.error(e.getMessage());
+			logger.error(e.getMessage(),e);
 			return ApiResponseUtils.buildErrorResp(-7, "服务器异常");
         }
 	}
@@ -213,11 +213,11 @@ public class PracticumFeedBackController extends RestfulController {
 			return ApiResponseUtils.buildSuccessDataResp(bean);
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
-			logger.error(e.getMessage());
+			logger.error(e.getMessage(),e);
 			return ApiResponseUtils.buildErrorResp(-6, "参数类型转化错误");
         } catch (Exception e) {
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-			logger.error(e.getMessage());
+			logger.error(e.getMessage(),e);
 			return ApiResponseUtils.buildErrorResp(-7, "服务器异常");
         }
 	}
@@ -244,11 +244,11 @@ public class PracticumFeedBackController extends RestfulController {
 			return ApiResponseUtils.buildSuccessDataResp(resultMap);
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
-			logger.error(e.getMessage());
+			logger.error(e.getMessage(),e);
 			return ApiResponseUtils.buildErrorResp(-6, "参数类型转化错误");
         } catch (Exception e) {
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-			logger.error(e.getMessage());
+			logger.error(e.getMessage(),e);
 			return ApiResponseUtils.buildErrorResp(-7, "服务器异常");
         }
 	}
