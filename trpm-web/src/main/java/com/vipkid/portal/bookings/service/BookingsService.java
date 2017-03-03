@@ -589,12 +589,6 @@ public class BookingsService {
         Map<String, String> peakTimeMap = getPeakTimeMap(fromTime, toTime);
         Map<String, Map<String, Object>> onlineClassesMap =
                 getTeacherScheduleMap(teacherId, fromTime, toTime, timezone);
-
-        for ( Map.Entry<String, Map<String, Object>> entry : onlineClassesMap.entrySet()) {
-
-
-        }
-
         modelMap.put("scheduleTable", scheduleTable(daysOfWeek, timezone, peakTimeMap, courseType, onlineClassesMap));
 
         /* 设置页面显示日期 */
