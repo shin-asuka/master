@@ -149,6 +149,17 @@ public class LoginService {
         return currentUser;
     }
     
+    public User getUserFromDB() {
+    	
+		User user = getPreUserByRedis();
+		User currentUser = userDao.findById(user.getId());
+		if (currentUser != null) {
+			currentUser.setIp(user.getIp());
+		}
+
+		return currentUser;
+    }
+    
     /**
      * 从redis中获取用户ID
      * 

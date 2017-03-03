@@ -232,10 +232,6 @@ public class LoginController extends RestfulController {
             
             //模拟登陆logger
             Map<String,Object> result = Maps.newHashMap();
-            //Quit 老师登录
-//            if (TeacherEnum.LifeCycle.QUIT.toString().equals(teacher.getLifeCycle())) {
-//            	result.put("isQuit", true);
-//            }
             result.put("loginToken", loginService.setLoginToken(response, user));
             result.put("LifeCycle", teacher.getLifeCycle());
             // 只有正式老师登陆后才做强制修改密码判断
