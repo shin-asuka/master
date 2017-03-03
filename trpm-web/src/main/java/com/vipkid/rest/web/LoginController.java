@@ -235,12 +235,13 @@ public class LoginController extends RestfulController {
             result.put("loginToken", loginService.setLoginToken(response, user));
             result.put("LifeCycle", teacher.getLifeCycle());
             // 只有正式老师登陆后才做强制修改密码判断
-            if(LifeCycle.REGULAR.toString().equalsIgnoreCase(teacher.getLifeCycle())){
-                logger.warn(bean.getEmail()+",登陆状态为REGULAR");
-                loginService.changePasswordNotice(response, bean.getPassword());
-                /* 设置老师能教的课程类型列表 */
-                loginService.setCourseTypes(user.getId(), loginService.getCourseType(user.getId()));
-            }
+			if (LifeCycle.REGULAR.toString().equalsIgnoreCase(teacher.getLifeCycle())
+					|| LifeCycle.QUIT.toString().equalsIgnoreCase(teacher.getLifeCycle())) {
+				logger.warn(bean.getEmail() + ",登陆状态为REGULAR");
+				loginService.changePasswordNotice(response, bean.getPassword());
+				/* 设置老师能教的课程类型列表 */
+				loginService.setCourseTypes(user.getId(), loginService.getCourseType(user.getId()));
+			}
             logger.info(bean.getEmail()+",登陆成功，LifeCycle="+teacher.getLifeCycle());
             
             return ReturnMapUtils.returnSuccess(result);
