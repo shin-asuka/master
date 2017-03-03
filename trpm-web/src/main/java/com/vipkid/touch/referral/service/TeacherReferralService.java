@@ -41,7 +41,7 @@ public class TeacherReferralService {
             return page;
         }
         List<ReferralTeacherDto> list = teacherDao.listReferralSucceedTeachers(paramsMap);
-        if(CollectionUtils.isEmpty(page.getList())){
+        if(CollectionUtils.isEmpty(list)){
             return page;
         }
         for(ReferralTeacherDto teacher : list){
