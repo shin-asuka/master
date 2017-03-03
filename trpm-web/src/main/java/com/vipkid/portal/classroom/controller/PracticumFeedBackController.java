@@ -83,10 +83,14 @@ public class PracticumFeedBackController extends RestfulController {
 	public Map<String, Object> peSave(HttpServletRequest request, HttpServletResponse response, @RequestBody PeCommentsVo bean){
 		try{
 			//通用参数校验
-			if(StringUtils.isBlank(bean.getSubmitType())){
-				response.setStatus(HttpStatus.BAD_REQUEST.value());
-				return ApiResponseUtils.buildErrorResp(-1,"reslult:submitType,The field is required !");
-			}
+			List<String> listProperties = new ArrayList<String>();
+			listProperties.add("id");
+			listProperties.add("submitType");
+			List<Result> checkRestult = ValidateUtils.checkForField(bean, listProperties, false);
+            if(CollectionUtils.isNotEmpty(checkRestult) && checkRestult.get(0).isResult()){
+                response.setStatus(HttpStatus.BAD_REQUEST.value());
+                return ApiResponseUtils.buildErrorResp(-1,"reslult:"+checkRestult.get(0).getName() + "," + checkRestult.get(0).getMessages());
+            }
 			
 			// 如果不是保存 则进行全局check验证
 			List<Result> list = new ArrayList<Result>();
@@ -162,10 +166,14 @@ public class PracticumFeedBackController extends RestfulController {
 	public Map<String, Object> peSupervisorSave(HttpServletRequest request, HttpServletResponse response, @RequestBody PeSupervisorCommentsVo bean){
 		try{
 			//通用参数校验
-			if(StringUtils.isBlank(bean.getSubmitType())){
-				response.setStatus(HttpStatus.BAD_REQUEST.value());
-				return ApiResponseUtils.buildErrorResp(-1,"reslult:submitType,The field is required !");
-			}
+			List<String> listProperties = new ArrayList<String>();
+			listProperties.add("id");
+			listProperties.add("submitType");
+			List<Result> checkRestult = ValidateUtils.checkForField(bean, listProperties, false);
+            if(CollectionUtils.isNotEmpty(checkRestult) && checkRestult.get(0).isResult()){
+                response.setStatus(HttpStatus.BAD_REQUEST.value());
+                return ApiResponseUtils.buildErrorResp(-1,"reslult:"+checkRestult.get(0).getName() + "," + checkRestult.get(0).getMessages());
+            }
 			
 			// 如果不是保存 则进行全局check验证
 			if (!"SAVE".endsWith(bean.getSubmitType()) && !StringUtils.equalsIgnoreCase(bean.getResult(),com.vipkid.enums.TeacherApplicationEnum.Result.REAPPLY.toString())){ 
@@ -175,7 +183,7 @@ public class PracticumFeedBackController extends RestfulController {
 	                return ApiResponseUtils.buildErrorResp(-1,"reslult:"+list.get(0).getName() + "," + list.get(0).getMessages());
 	            }
 			}
-			
+						
 			Map<String, Object> resultMap = practicumFeedbackService.saveDoPeSupervisorAudit(getTeacher(request), bean);
 			//发邮件
 			if(resultMap.get("applicationResult") != null){
