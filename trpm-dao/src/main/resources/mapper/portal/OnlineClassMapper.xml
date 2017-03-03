@@ -747,6 +747,9 @@
 		JOIN learning_cycle lc ON lc.id = l.learning_cycle_id
 		JOIN unit u ON u.id = lc.unit_id
 		JOIN course c ON c.id = u.course_id
+		<if test="onlineClassId != null and onlineClassId!= ''">
+		AND oc.id = #{onlineClassId}
+		</if>
 		</select>
 
 </mapper>
