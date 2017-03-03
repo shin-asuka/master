@@ -233,9 +233,9 @@ public class LoginController extends RestfulController {
             //模拟登陆logger
             Map<String,Object> result = Maps.newHashMap();
             //Quit 老师登录
-            if (TeacherEnum.LifeCycle.QUIT.toString().equals(teacher.getLifeCycle())) {
-            	result.put("isQuit", true);
-            }
+//            if (TeacherEnum.LifeCycle.QUIT.toString().equals(teacher.getLifeCycle())) {
+//            	result.put("isQuit", true);
+//            }
             result.put("loginToken", loginService.setLoginToken(response, user));
             result.put("LifeCycle", teacher.getLifeCycle());
             // 只有正式老师登陆后才做强制修改密码判断
@@ -545,10 +545,33 @@ public class LoginController extends RestfulController {
             // 检查老师状态是否QUIT
             logger.info(user.getUsername()+",Quit检查.");
 			if (TeacherEnum.LifeCycle.QUIT.toString().equals(teacher.getLifeCycle())) {
-				if (getQuitStatus() == TeacherEnum.QuitStatusEnum.EXPIRED) {
+				Timestamp lastEditTime = user.getLastEditDateTime();
+            	Date expireTime = null;
+            	Long editor = user.getLastEditorId();
+            	Date now = new Date();
+            	//Quit 老师登录
+            	boolean canLogin = false;
+				if (editor != user.getId()) {
+					expireTime = DateUtils.getExpireTime(lastEditTime);
+				}else{
+					expireTime = DateUtils.getExpireTime(now);
+				}				
+				String exStr = passportService.getQuitTeacherExpiredTime(user.getId(), expireTime.getTime());
+				if(StringUtils.isNotEmpty(exStr)){
+					Long ex = Long.parseLong(exStr);
+					Date exDate = new Date(ex);
+					if (now.before(exDate)) {
+						canLogin = true;
+					}				
+				}
+				if (!canLogin) {
 					response.setStatus(HttpStatus.BAD_REQUEST.value());
 					return ReturnMapUtils.returnFail(AjaxCode.USER_QUIT, "账户被Quit,并且已经过了登录期了；" + user.getUsername());
 				}
+//				if (getQuitStatus() == TeacherEnum.QuitStatusEnum.EXPIRED) {
+//					response.setStatus(HttpStatus.BAD_REQUEST.value());
+//					return ReturnMapUtils.returnFail(AjaxCode.USER_QUIT, "账户被Quit,并且已经过了登录期了；" + user.getUsername());
+//				}
 			}
             
             // 检查用户类型
