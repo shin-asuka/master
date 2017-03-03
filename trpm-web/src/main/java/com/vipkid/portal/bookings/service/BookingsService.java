@@ -1111,19 +1111,19 @@ public class BookingsService {
      * @param teacherId
      * @return
      */
-    public boolean cancelClassSuccess(long onlineClassId, long teacherId) {
+    public boolean cancelClassSuccess(long onlineClassId, long teacherId,String cancelReason) {
         boolean flag = false;
-
        String finishType =getFinishType(onlineClassId,teacherId);
         if(StringUtils.isBlank(finishType)){
             logger.warn("This online class ：{} does not exist.", onlineClassId);
             return flag;
         }
-
         Map<String, Object> requestParams = new HashMap<>();
         requestParams.put("onlineClassId", onlineClassId);
         requestParams.put("finishType", finishType);
         requestParams.put("operatorId", teacherId);
+        logger.info("scalper param :  onlineClassId:{} , finishType:{},operatorId:{},cancelReason:{}",
+                onlineClassId , finishType, teacherId,cancelReason);
         String requestUrl = scalperServerAddress + "/management/finish";
         String returnData = scalperService.cancelClass(requestParams);
         if (returnData != null) {
