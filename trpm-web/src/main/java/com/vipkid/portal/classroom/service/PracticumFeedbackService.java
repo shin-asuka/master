@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.community.tools.JsonTools;
 import org.slf4j.Logger;
@@ -19,6 +18,7 @@ import com.google.common.collect.Maps;
 import com.vipkid.enums.TeacherApplicationEnum.Result;
 import com.vipkid.portal.classroom.model.PeCommentsVo;
 import com.vipkid.portal.classroom.model.PeSupervisorCommentsVo;
+import com.vipkid.portal.classroom.util.BeanUtils;
 import com.vipkid.recruitment.dao.TeacherApplicationDao;
 import com.vipkid.recruitment.entity.TeacherApplication;
 import com.vipkid.trpm.constant.ApplicationConstant.FinishType;
@@ -131,7 +131,7 @@ public class PracticumFeedbackService {
         
         TeacherApplication teacherApplication = this.teacherApplicationDao.findApplictionById(applicationId);
         
-        BeanUtils.copyProperties(teacherApplication, bean);
+        BeanUtils.copyPropertys(bean,teacherApplication);
         
         logger.info("PE:{} , 页面传入的结果result:{}", bean.getSubmitType(), bean.getResult());
         
@@ -214,8 +214,8 @@ public class PracticumFeedbackService {
 
         TeacherApplication teacherApplication = this.teacherApplicationDao.findApplictionById(applicationId);
         
-        BeanUtils.copyProperties(teacherApplication, bean);
-		
+        BeanUtils.copyPropertys(bean,teacherApplication);
+        
         logger.info("PES:{} , 页面传入的结果result:{}", bean.getSubmitType(), bean.getResult());
         
 		if ("SAVE".endsWith(bean.getSubmitType())){ 
@@ -249,9 +249,9 @@ public class PracticumFeedbackService {
 	public PeCommentsVo findPeFromByAppId(Integer applicationId) throws IllegalAccessException, InvocationTargetException{
 		PeCommentsVo bean = new PeCommentsVo();
 		
-		TeacherApplication application = this.teacherApplicationDao.findApplictionById(applicationId);
-		
-		BeanUtils.copyProperties(bean, application);
+		TeacherApplication teacherApplication = this.teacherApplicationDao.findApplictionById(applicationId);
+	
+		BeanUtils.copyPropertys(teacherApplication,bean);
 		
 		List<TeacherPeTags> tagsList = teacherPeTagsDao.getTeacherPeTagsByApplicationId(applicationId);
 		List<Map<String,Integer>> taglist = Lists.newArrayList();
@@ -277,9 +277,9 @@ public class PracticumFeedbackService {
 	public PeSupervisorCommentsVo findPeSupervisorFromByAppId(Integer applicationId) throws IllegalAccessException, InvocationTargetException{
 		PeSupervisorCommentsVo bean = new PeSupervisorCommentsVo();
 		
-		TeacherApplication application = this.teacherApplicationDao.findApplictionById(applicationId);
-		
-		BeanUtils.copyProperties(bean, application);
+		TeacherApplication teacherApplication = this.teacherApplicationDao.findApplictionById(applicationId);
+
+		BeanUtils.copyPropertys(teacherApplication,bean);
 		
 		List<TeacherPeTags> tagsList = teacherPeTagsDao.getTeacherPeTagsByApplicationId(applicationId);
 		List<Map<String,Integer>> taglist = Lists.newArrayList();
