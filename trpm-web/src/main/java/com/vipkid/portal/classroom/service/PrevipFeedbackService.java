@@ -159,6 +159,7 @@ public class PrevipFeedbackService implements FeedbackService{
         if(feedbackBo instanceof PrevipCommentsBo) {
             PrevipCommentsBo teacherComment = (PrevipCommentsBo) feedbackBo;
             Long id = classFeedbackService.findTeacherCommentIdByOnlineClassIdAndStudentId(teacherComment.getOnlineClassId(),teacherComment.getStudentId());
+            teacherComment.setId(id);
             checkArgument(null != id && 0 != id, "Argument teacherComment id equals 0");
             String previpErrorMsg = teacherService.inputCheckPrevipMajorCourseTeacherComment(serialNumber, Convertor.toSubmitTeacherCommentDto(teacherComment));
             return previpErrorMsg;
