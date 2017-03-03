@@ -1113,29 +1113,12 @@ public class BookingsService {
      */
     public boolean cancelClassSuccess(long onlineClassId, long teacherId) {
         boolean flag = false;
-        OnlineClass onlineClass = this.onlineClassDao.findById(onlineClassId);
-        if (null == onlineClass) {
+
+       String finishType =getFinishType(onlineClassId,teacherId);
+        if(StringUtils.isBlank(finishType)){
             logger.warn("This online class ：{} does not exist.", onlineClassId);
             return flag;
         }
-        String logpix = "onlineclassId:"+onlineClassId+";teacherId:"+teacherId;
-
-        if(System.currentTimeMillis() > onlineClass.getScheduledDateTime().getTime()){
-            logger.warn("Sorry, you can't cancel after the start time has passed.", logpix);
-            return flag;
-        }
-        String finishType =StringUtils.EMPTY;
-        long time  = (onlineClass.getScheduledDateTime().getTime()-System.currentTimeMillis())/1000*3600;
-        if(time<2){
-            finishType = ApplicationConstant.FinishType.TEACHER_NO_SHOW_2H;
-        }
-        if(time>=2&&time<=24){
-            finishType = ApplicationConstant.FinishType.TEACHER_CANCELLATION_24H;
-        }
-        if(time>24){
-            finishType = ApplicationConstant.FinishType.TEACHER_CANCELLATION;
-        }
-
 
         Map<String, Object> requestParams = new HashMap<>();
         requestParams.put("onlineClassId", onlineClassId);
@@ -1158,5 +1141,39 @@ public class BookingsService {
         }
         return flag;
     }
+
+    /**
+     * 获得finishType
+     * @param onlineClassId
+     * @param teacherId
+     * @return
+     */
+
+    public String  getFinishType(long onlineClassId,long teacherId){
+        OnlineClass onlineClass = this.onlineClassDao.findById(onlineClassId);
+        if (null == onlineClass) {
+            logger.warn("This online class ：{} does not exist.", onlineClassId);
+            return null;
+        }
+        String logpix = "onlineclassId:"+onlineClassId+";teacherId:"+teacherId;
+
+        if(System.currentTimeMillis() > onlineClass.getScheduledDateTime().getTime()){
+            logger.warn("Sorry, you can't cancel after the start time has passed.", logpix);
+            return null;
+        }
+        String finishType =StringUtils.EMPTY;
+        long time  = (onlineClass.getScheduledDateTime().getTime()-System.currentTimeMillis())/1000*3600;
+        if(time<2){
+            finishType = ApplicationConstant.FinishType.TEACHER_NO_SHOW_2H;
+        }
+        if(time>=2&&time<=24){
+            finishType = ApplicationConstant.FinishType.TEACHER_CANCELLATION_24H;
+        }
+        if(time>24){
+            finishType = ApplicationConstant.FinishType.TEACHER_CANCELLATION;
+        }
+        return finishType;
+    }
+
 
 }

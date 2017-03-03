@@ -273,7 +273,6 @@ public class BookingsController {
                 logger.error("This online class ：{} does not exist.", onlineClassId);
                 return ApiResponseUtils.buildErrorResp(HttpStatus.BAD_REQUEST.value(), "This online class  does not exist.", onlineClassId);
             }
-
             Preconditions.checkArgument(request.getAttribute(TEACHER) != null);
             Teacher teacher = (Teacher) request.getAttribute(TEACHER);
 
@@ -297,6 +296,47 @@ public class BookingsController {
                     ExceptionUtils.getFullStackTrace(e));
         }
 
+
+    }
+
+
+    /**
+     * 查询finishType
+     * @param onlineClassId
+     * @param request
+     * @param response
+     * @return
+     */
+    @RequestMapping(value = "/queryFinishType", method = RequestMethod.POST, produces = RestfulConfig.JSON_UTF_8)
+    public Map<String, Object> queryFinishType(@Param("onlineClassId")String onlineClassId, HttpServletRequest request, HttpServletResponse response) {
+        try {
+            if (onlineClassId == null || !StringUtils.isNumeric(onlineClassId + "")) {
+                response.setStatus(HttpStatus.BAD_REQUEST.value());
+                logger.error("This online class ：{} does not exist.", onlineClassId);
+                return ApiResponseUtils.buildErrorResp(HttpStatus.BAD_REQUEST.value(), "This online class  does not exist.", onlineClassId);
+            }
+            Preconditions.checkArgument(request.getAttribute(TEACHER) != null);
+            Teacher teacher = (Teacher) request.getAttribute(TEACHER);
+
+            if (0 == teacher.getId()) {
+                logger.error("This teacher ：{} have no jurisdiction .", teacher.getId());
+                response.setStatus(HttpStatus.FORBIDDEN.value());
+                return ApiResponseUtils.buildErrorResp(HttpStatus.BAD_REQUEST.value(), "The teacher have no jurisdiction.", teacher.getId());
+            }
+
+            String finishType = bookingsService.getFinishType(Long.valueOf(onlineClassId + ""), teacher.getId());
+            if (StringUtils.isBlank(finishType)) {
+                response.setStatus(HttpStatus.BAD_REQUEST.value());
+                logger.error("This online class ：{} does not exist.", onlineClassId);
+                return ApiResponseUtils.buildErrorResp(HttpStatus.BAD_REQUEST.value(), "This online class  does not exist.", onlineClassId);
+            }
+            return ApiResponseUtils.buildSuccessDataResp(finishType);
+        }catch (IllegalArgumentException e) {
+        logger.error("Get online class:{} finishType is Exception {}", onlineClassId, e);
+        response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+        return ApiResponseUtils.buildErrorResp(HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                ExceptionUtils.getFullStackTrace(e));
+    }
 
     }
 
