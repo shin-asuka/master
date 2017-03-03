@@ -125,7 +125,18 @@ public class ClassroomController extends RestfulController{
 			bean.setOnlineClassId(onlineClassId);
             bean.setStudentId(studentId);
             logger.info("TeacherId:{}, Enter class onlineClassId:{},studentId:{}",getTeacher(request).getId(), onlineClassId, studentId);
-			return ApiResponseUtils.buildSuccessDataResp(this.classroomService.getInfoRoom(bean, getTeacher(request)));
+            Map<String,Object> resultMap = this.classroomService.getInfoRoom(bean, getTeacher(request));
+            if(resultMap.get("info") != null){
+				response.setStatus(HttpStatus.FORBIDDEN.value());
+				return ApiResponseUtils.buildErrorResp(-1, resultMap.get("info")+"");
+			}else{
+				Object dataObject = resultMap.get("data");
+				if(dataObject != null){
+					return ApiResponseUtils.buildSuccessDataResp(dataObject);
+				}
+				response.setStatus(HttpStatus.FORBIDDEN.value());
+				return ApiResponseUtils.buildErrorResp(-2, "No more data");
+			}
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
 			logger.error(e.getMessage(),e);
@@ -152,7 +163,18 @@ public class ClassroomController extends RestfulController{
 	public Map<String, Object> infoStudent(HttpServletRequest request, HttpServletResponse response,@RequestParam("serialNum") String serialNum, @RequestParam("studentId") long studentId){
 		try{
 			logger.info("TeacherId:{},See student info serialNum:{},studentId:{}",getTeacher(request).getId(), serialNum, studentId);
-			return ApiResponseUtils.buildSuccessDataResp(this.classroomService.getInfoStudent(studentId, serialNum));
+			Map<String,Object> resultMap = this.classroomService.getInfoStudent(studentId, serialNum);
+			if(resultMap.get("info") != null){
+				response.setStatus(HttpStatus.FORBIDDEN.value());
+				return ApiResponseUtils.buildErrorResp(-1, resultMap.get("info")+"");
+			}else{
+				Object dataObject = resultMap.get("data");
+				if(dataObject != null){
+					return ApiResponseUtils.buildSuccessDataResp(dataObject);
+				}
+				response.setStatus(HttpStatus.FORBIDDEN.value());
+				return ApiResponseUtils.buildErrorResp(-2, "No more data");
+			}
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
 			logger.error(e.getMessage(),e);

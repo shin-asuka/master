@@ -7,6 +7,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.community.config.PropertyConfigurer;
 import org.community.http.client.HttpClientProxy;
@@ -80,7 +81,9 @@ public class ClassroomService {
     private AuditDao auditDao;
     
   
-	public InfoRoomDto getInfoRoom(ClassRoomVo bean , Teacher teacher){
+	public Map<String,Object> getInfoRoom(ClassRoomVo bean , Teacher teacher){
+		
+		Map<String,Object> resultMap = Maps.newHashMap();
 		
 		Student student = this.studentDao.findById(bean.getStudentId());
 		//Student Info
@@ -103,6 +106,18 @@ public class ClassroomService {
 			resultDto.setSupplierCode(onlineClass.getSupplierCode());
 		}else{
 			logger.warn("onlineClass is null,onlineClassId:{},studentId:{}",bean.getOnlineClassId(), bean.getStudentId());
+		}
+		
+		if(onlineClass.getTeacherId() != teacher.getId()){
+			logger.info("没有权限获取数据,teacehrId 不匹配.");
+			resultMap.put("info", "Parameters (onlineClassId,teaceherId) with the request data does not match.");
+			return resultMap;
+		}
+		
+		if(CollectionUtils.isEmpty(onlineClassDao.findOnlineClassIdAndStudentId(onlineClass.getId(), bean.getStudentId()))){
+			logger.info("没有权限获取数据,studentId 与 onlineClassId 不匹配");
+			resultMap.put("info", "Parameters (onlineClassId,studentId) with the request data does not match.");
+			return resultMap;
 		}
 		
 		//Lesson Info
@@ -141,7 +156,8 @@ public class ClassroomService {
 		resultDto.setIsReplay(!OnlineClassEnum.ClassStatus.isBooked(onlineClass.getStatus()));
 		resultDto.setSysInfoUrl(PropertyConfigurer.stringValue("sys.info.url"));
 		resultDto.setMicroserviceUrl(PropertyConfigurer.stringValue("microservice.url"));
-		return resultDto;
+		resultMap.put("data", resultDto);
+		return resultMap;
 		
 	}
 	
@@ -156,14 +172,25 @@ public class ClassroomService {
 		Map<String,Object> resultMap = Maps.newHashMap();
 		
 		Student student = studentDao.findById(studentId);
+		
+		if(student == null){
+			logger.info("没有找到学生信息，检查学生ID是否正确。");
+			resultMap.put("info", "Found no student information, check whether the student ID is correct.");
+			return resultMap;
+		}
+		
 		Map<String,Object> studentMap = Maps.newHashMap();
+		
 		studentMap.put("qq", student.getQq());
+		
 		studentMap.put("englishName", student.getEnglishName());
+		
 		studentMap.put("knowTheStudent", student.getKnowTheStudent());
-        // 查询学生个人信息
+        
+		// 查询学生个人信息
 		resultMap.put("student",studentMap);
-
-        // 查询学生考试情况
+        
+		// 查询学生考试情况
         StudentExam studentExam = studentExamDao.findStudentExamByStudentId(studentId);
 
         // 处理考试名称
@@ -171,7 +198,7 @@ public class ClassroomService {
 
         // 查询教师评价
         resultMap.put("teacherComments",teacherService.findTCByStudentIdAndGroupByOnlineClassId(String.valueOf(studentId)));
-        
+
         return resultMap;
 		
 	}
