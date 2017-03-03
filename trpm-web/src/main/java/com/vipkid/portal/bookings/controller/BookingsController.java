@@ -302,13 +302,14 @@ public class BookingsController {
 
     /**
      * 查询finishType
-     * @param onlineClassId
      * @param request
      * @param response
      * @return
      */
     @RequestMapping(value = "/queryFinishType", method = RequestMethod.POST, produces = RestfulConfig.JSON_UTF_8)
-    public Map<String, Object> queryFinishType(@Param("onlineClassId")String onlineClassId, HttpServletRequest request, HttpServletResponse response) {
+    public Map<String, Object> queryFinishType(@RequestBody Map<String, Object> paramMap, HttpServletRequest request, HttpServletResponse response) {
+
+        Object  onlineClassId = paramMap.get("onlineClassId");
         try {
             if (onlineClassId == null || !StringUtils.isNumeric(onlineClassId + "")) {
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
