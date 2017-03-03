@@ -30,7 +30,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 @RestController
-@RestInterface(lifeCycle = LifeCycle.REGULAR)
+@RestInterface(lifeCycle = {LifeCycle.REGULAR,LifeCycle.QUIT})
 public class ClassroomsRestController extends RestfulController{
 	private static final Logger logger = LoggerFactory.getLogger(ClassroomsRestController.class);
 	public static final long MILLS_24_HOURS = 24*60*60*1000;
