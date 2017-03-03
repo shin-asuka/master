@@ -1162,7 +1162,7 @@ public class BookingsService {
             return null;
         }
         String finishType =StringUtils.EMPTY;
-        long time  = (onlineClass.getScheduledDateTime().getTime()-System.currentTimeMillis())/1000*3600;
+        long time  = (onlineClass.getScheduledDateTime().getTime()-System.currentTimeMillis())/3600000;
         if(time<2){
             finishType = ApplicationConstant.FinishType.TEACHER_NO_SHOW_2H;
         }
