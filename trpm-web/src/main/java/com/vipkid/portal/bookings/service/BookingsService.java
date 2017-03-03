@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.vipkid.enums.OnlineClassEnum;
 import com.vipkid.enums.OnlineClassEnum.ClassStatus;
 import com.vipkid.enums.OnlineClassEnum.ClassType;
 import com.vipkid.enums.OnlineClassEnum.CourseType;
@@ -546,6 +547,12 @@ public class BookingsService {
         }
 
         if (isReplaced) {
+            String finishType= (String) teacherSchedule.get("finishType");
+            if(ApplicationConstant.FinishType.TEACHER_CANCELLATION.toString().equalsIgnoreCase(finishType)
+                    ||ApplicationConstant.FinishType.TEACHER_CANCELLATION_24H.toString().equalsIgnoreCase(finishType)
+                    ||ApplicationConstant.FinishType.TEACHER_NO_SHOW_2H.equalsIgnoreCase(finishType)){
+                teacherSchedule.put("status", ClassStatus.CANCELED.toString());
+            }
             teacherScheduleMap.put(scheduleKey, teacherSchedule);
         }
     }
@@ -582,6 +589,12 @@ public class BookingsService {
         Map<String, String> peakTimeMap = getPeakTimeMap(fromTime, toTime);
         Map<String, Map<String, Object>> onlineClassesMap =
                 getTeacherScheduleMap(teacherId, fromTime, toTime, timezone);
+
+        for ( Map.Entry<String, Map<String, Object>> entry : onlineClassesMap.entrySet()) {
+
+
+        }
+
         modelMap.put("scheduleTable", scheduleTable(daysOfWeek, timezone, peakTimeMap, courseType, onlineClassesMap));
 
         /* 设置页面显示日期 */
@@ -1148,11 +1161,23 @@ public class BookingsService {
      * @param teacherId
      * @return
      */
-
     public String  getFinishType(long onlineClassId,long teacherId){
         OnlineClass onlineClass = this.onlineClassDao.findById(onlineClassId);
         if (null == onlineClass) {
             logger.warn("This online class ：{} does not exist.", onlineClassId);
+            return null;
+        }
+        String courseType =  onlineClassDao.findOnlineClassCourseType(onlineClassId);
+        List<String> courseCancel = Lists.newArrayList();
+        courseCancel.add("GA");
+        courseCancel.add("Major Course");
+        courseCancel.add("Trial");
+        courseCancel.add("Major Course 2016");
+        courseCancel.add("Assessment");
+        courseCancel.add("Assessment2");
+
+        if(!courseCancel.contains(courseType)){
+            logger.warn("Sorry, you can't cancel the class:{} Because courseType is :{} .",onlineClassId, courseType);
             return null;
         }
         String logpix = "onlineclassId:"+onlineClassId+";teacherId:"+teacherId;
@@ -1162,7 +1187,7 @@ public class BookingsService {
             return null;
         }
         String finishType =StringUtils.EMPTY;
-        long time  = (onlineClass.getScheduledDateTime().getTime()-System.currentTimeMillis())/3600000;
+        long time  = (onlineClass.getScheduledDateTime().getTime()-System.currentTimeMillis())/1000*3600;
         if(time<2){
             finishType = ApplicationConstant.FinishType.TEACHER_NO_SHOW_2H;
         }

@@ -128,6 +128,14 @@ public class ClassroomsRestServiceImpl implements ClassroomsRestService{
 		List<Map<String, Object>> tagList = getTagList(courseType, teacher.getId());
 		classroomsData.setTagList(tagList);
 
+		for(ClassroomDetail classroomDetail:classroomsData.getDataList()){
+			String finishType  = classroomDetail.getFinishType();
+			if(ApplicationConstant.FinishType.TEACHER_CANCELLATION.toString().equalsIgnoreCase(finishType)
+					||ApplicationConstant.FinishType.TEACHER_CANCELLATION_24H.toString().equalsIgnoreCase(finishType)
+					||ApplicationConstant.FinishType.TEACHER_NO_SHOW_2H.equalsIgnoreCase(finishType)){
+				classroomDetail.setStatus(OnlineClassEnum.ClassStatus.CANCELED.toString());
+			}
+		}
 		result = ApiResponseUtils.buildSuccessDataResp(classroomsData);
 		return result;
 	}

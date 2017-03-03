@@ -443,4 +443,11 @@ public class OnlineClassDao extends MapperDaoTemplate<OnlineClass> {
 		paramsMap.put("onlineClassIds", onlineClassIds);
 		return selectList("findOnlineClassByIds", paramsMap);
 	}
+
+	public String  findOnlineClassCourseType(long onlineClassId){
+		Map<String, Object> paramsMap = new HashMap<>();
+		paramsMap.put("onlineClassId", onlineClassId);
+		return selectEntity("findOnlineClassCourseType",paramsMap);
+
+	}
 }
