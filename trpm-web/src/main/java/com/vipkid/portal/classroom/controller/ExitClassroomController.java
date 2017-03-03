@@ -124,7 +124,7 @@ public class ExitClassroomController extends RestfulController {
 	@RequestMapping(value = "/exit/openClass", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
     public Map<String,Object> endThisClass(HttpServletRequest request, HttpServletResponse response, @RequestParam long onlineClassId) {
 		try{
-			this.classroomService.exitclassroom(onlineClassId, getTeacher(request));
+			this.classroomService.exitOpenclass(onlineClassId, getTeacher(request));
 			Map<String,Object> maps = Maps.newHashMap();
 			maps.put("status",true);
 	        return ApiResponseUtils.buildSuccessDataResp(maps);
