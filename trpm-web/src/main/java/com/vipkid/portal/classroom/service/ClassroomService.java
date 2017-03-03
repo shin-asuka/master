@@ -199,7 +199,7 @@ public class ClassroomService {
         //判断教室是否创建好
         if(StringUtils.isBlank(onlineClass.getClassroom())){
             logger.error(" 教室为空 NULL onlineClassId:{}",onlineClassId);
-            result.put("info", " Do not create the classroom. ");
+            result.put("info", " Classroom not created! ");
             return result;
         }
         
