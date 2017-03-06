@@ -267,6 +267,7 @@ public class BookingsController {
     public Map<String, Object> cancelClass(@RequestBody Map<String, Object> paramMap, HttpServletRequest request, HttpServletResponse response) {
         Object  onlineClassId = paramMap.get("onlineClassId");
         Object   cancelReason = paramMap.get("cancelReason");
+
         try {
 
             if (onlineClassId == null || !StringUtils.isNumeric(onlineClassId + "")) {
@@ -275,10 +276,10 @@ public class BookingsController {
                 return ApiResponseUtils.buildErrorResp(HttpStatus.BAD_REQUEST.value(), "This online class  does not exist.", onlineClassId);
             }
 
-            if(cancelReason ==null){
+            if(String.valueOf(cancelReason).length() >100){
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
-                logger.error("This cancelReason ：{} is Empty.", cancelReason);
-                return ApiResponseUtils.buildErrorResp(HttpStatus.BAD_REQUEST.value(), "This cancelReason ：{} is Empty.", onlineClassId);
+                logger.error("This cancelReason ：{} is too long.", cancelReason);
+                return ApiResponseUtils.buildErrorResp(HttpStatus.BAD_REQUEST.value(), "This cancelReason ：{} is too long.", onlineClassId);
             }
             Preconditions.checkArgument(request.getAttribute(TEACHER) != null);
             Teacher teacher = (Teacher) request.getAttribute(TEACHER);
