@@ -84,7 +84,7 @@ public class StudentCommentRestController extends RestfulController{
 	        return ApiResponseUtils.buildSuccessDataResp(ret);
 		} catch (Exception e) {
 			String errorMessage = String.format("调用【StudentCommentRestController.getStudentCommentListByBatch】接口抛异常，传入参数：onlineClassId=%d",onlineClassId);
-	        logger.error(errorMessage, e);//由于维龙的代码没有合上去，暂时这么处理
+	        logger.error(errorMessage, e);
 		}
 		return ApiResponseUtils.buildErrorResp(1001, "服务器端错误");
 	}
