@@ -1166,13 +1166,8 @@ public class BookingsService {
      */
     public String  getFinishType(long onlineClassId,long teacherId){
         OnlineClass onlineClass = this.onlineClassDao.findById(onlineClassId);
-        if (null == onlineClass) {
-            logger.warn("This online class ：{} does not exist.", onlineClassId);
-            return null;
-        }
-        String logpix = "onlineclassId:"+onlineClassId+";teacherId:"+teacherId;
-        if(System.currentTimeMillis()-15*60*1000 > onlineClass.getScheduledDateTime().getTime()){
-            logger.warn("Sorry, you can't cancel after the start time has passed.", logpix);
+        if(!isCancelCourse(onlineClassId,teacherId)){
+            logger.error("cancel online class:{} was Failed.", onlineClassId);
             return null;
         }
         String finishType =StringUtils.EMPTY;
