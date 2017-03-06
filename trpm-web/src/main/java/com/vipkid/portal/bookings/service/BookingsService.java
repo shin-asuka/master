@@ -118,6 +118,14 @@ public class BookingsService {
     private static final String scalperServerAddress =
             PropertyConfigurer.stringValue("scalper.serverAddress");
 
+    private static  List<String> courseCancel = Lists.newArrayList();
+    static{
+        courseCancel.add("GA");
+        courseCancel.add("Major Course");
+        courseCancel.add("Major Course 2016");
+        courseCancel.add("Assessment");
+        courseCancel.add("Assessment2");
+    }
 
     /**
      * 计算一天中的所有 TimePoint，每半小时为一个单位
@@ -1162,22 +1170,8 @@ public class BookingsService {
             logger.warn("This online class ：{} does not exist.", onlineClassId);
             return null;
         }
-        String courseType =  onlineClassDao.findOnlineClassCourseType(onlineClassId);
-        List<String> courseCancel = Lists.newArrayList();
-        courseCancel.add("GA");
-        courseCancel.add("Major Course");
-        courseCancel.add("Trial");
-        courseCancel.add("Major Course 2016");
-        courseCancel.add("Assessment");
-        courseCancel.add("Assessment2");
-
-        if(!courseCancel.contains(courseType)){
-            logger.warn("Sorry, you can't cancel the class:{} Because courseType is :{} .",onlineClassId, courseType);
-            return null;
-        }
         String logpix = "onlineclassId:"+onlineClassId+";teacherId:"+teacherId;
-
-        if(System.currentTimeMillis() > onlineClass.getScheduledDateTime().getTime()){
+        if(System.currentTimeMillis()-15*60*1000 > onlineClass.getScheduledDateTime().getTime()){
             logger.warn("Sorry, you can't cancel after the start time has passed.", logpix);
             return null;
         }
@@ -1194,6 +1188,37 @@ public class BookingsService {
         }
         return finishType;
     }
+
+    /**
+     * 取消课程的判断
+     * @param onlineClassId
+     * @param teacherId
+     * @return
+     */
+    public boolean isCancelCourse(long onlineClassId,long teacherId){
+        boolean flag = false;
+        OnlineClass onlineClass = this.onlineClassDao.findById(onlineClassId);
+        if (null == onlineClass) {
+            logger.warn("This online class ：{} does not exist.", onlineClassId);
+            return flag;
+        }
+
+        String courseType =  onlineClassDao.findOnlineClassCourseType(onlineClassId);
+        String logpix = "onlineclassId:"+onlineClassId+";teacherId:"+teacherId;
+        if(System.currentTimeMillis()-15*60*1000 > onlineClass.getScheduledDateTime().getTime()){
+            logger.warn("Sorry, you can't cancel after the start time has passed.", logpix);
+            return false;
+        }
+
+        if(!courseCancel.contains(courseType)){
+            logger.warn("Sorry, you can't cancel the class:{} Because courseType is :{} .",onlineClassId, courseType);
+            return false;
+        }
+
+        return true;
+
+    }
+
 
 
 }

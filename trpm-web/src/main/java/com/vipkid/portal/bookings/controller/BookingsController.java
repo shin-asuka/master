@@ -265,8 +265,8 @@ public class BookingsController {
      */
     @RequestMapping(value = "/cancelClass", method = RequestMethod.POST, produces = RestfulConfig.JSON_UTF_8)
     public Map<String, Object> cancelClass(@RequestBody Map<String, Object> paramMap, HttpServletRequest request, HttpServletResponse response) {
-        Object  onlineClassId = paramMap.get("onlineClassId");
-        Object   cancelReason = paramMap.get("cancelReason");
+        Object onlineClassId = paramMap.get("onlineClassId");
+        Object cancelReason = paramMap.get("cancelReason");
 
         try {
 
@@ -276,7 +276,7 @@ public class BookingsController {
                 return ApiResponseUtils.buildErrorResp(HttpStatus.BAD_REQUEST.value(), "This online class  does not exist.", onlineClassId);
             }
 
-            if(String.valueOf(cancelReason).length() >1000&&String.valueOf(cancelReason).length()<=0){
+            if (String.valueOf(cancelReason).length() > 1000 && String.valueOf(cancelReason).length() <= 0) {
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
                 logger.error("This cancelReason ：{} is too long.", cancelReason);
                 return ApiResponseUtils.buildErrorResp(HttpStatus.BAD_REQUEST.value(), "This cancelReason ：{} is too long.", onlineClassId);
@@ -290,7 +290,7 @@ public class BookingsController {
                 return ApiResponseUtils.buildErrorResp(HttpStatus.BAD_REQUEST.value(), "The teacher have no jurisdiction.", teacher.getId());
             }
 
-            boolean isSuccess = bookingsService.cancelClassSuccess(Long.valueOf(onlineClassId + ""), teacher.getId(),String.valueOf(cancelReason));
+            boolean isSuccess = bookingsService.cancelClassSuccess(Long.valueOf(onlineClassId + ""), teacher.getId(), String.valueOf(cancelReason));
             if (!isSuccess) {
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
                 logger.error("cancel online class:{} was Failed.", onlineClassId);
@@ -310,6 +310,7 @@ public class BookingsController {
 
     /**
      * 查询finishType
+     *
      * @param request
      * @param response
      * @return
@@ -317,7 +318,7 @@ public class BookingsController {
     @RequestMapping(value = "/queryFinishType", method = RequestMethod.POST, produces = RestfulConfig.JSON_UTF_8)
     public Map<String, Object> queryFinishType(@RequestBody Map<String, Object> paramMap, HttpServletRequest request, HttpServletResponse response) {
         Map<String, Object> dataMap = Maps.newHashMap();
-        Object  onlineClassId = paramMap.get("onlineClassId");
+        Object onlineClassId = paramMap.get("onlineClassId");
         try {
             if (onlineClassId == null || !StringUtils.isNumeric(onlineClassId + "")) {
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
@@ -339,17 +340,59 @@ public class BookingsController {
                 logger.error("This online class ：{} does not exist.", onlineClassId);
                 return ApiResponseUtils.buildErrorResp(HttpStatus.BAD_REQUEST.value(), "This online class  does not exist.", onlineClassId);
             }
-            dataMap.put("finishType",finishType);
+            dataMap.put("finishType", finishType);
 
             return ApiResponseUtils.buildSuccessDataResp(dataMap);
-        }catch (IllegalArgumentException e) {
-        logger.error("Get online class:{} finishType is Exception {}", onlineClassId, e);
-        response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-        return ApiResponseUtils.buildErrorResp(HttpStatus.INTERNAL_SERVER_ERROR.value(),
-                ExceptionUtils.getFullStackTrace(e));
-    }
+        } catch (IllegalArgumentException e) {
+            logger.error("Get online class:{} finishType is Exception {}", onlineClassId, e);
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            return ApiResponseUtils.buildErrorResp(HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                    ExceptionUtils.getFullStackTrace(e));
+        }
 
     }
 
+    /**
+     * @param paramMap
+     * @param request
+     * @param response
+     * @return
+     */
+
+    @RequestMapping(value = "/isCancelCourse", method = RequestMethod.POST, produces = RestfulConfig.JSON_UTF_8)
+    public Map<String, Object> isCancelCourse(@RequestBody Map<String, Object> paramMap, HttpServletRequest request, HttpServletResponse response) {
+        Map<String, Object> dataMap = Maps.newHashMap();
+        Object onlineClassId = paramMap.get("onlineClassId");
+        try {
+
+            if (onlineClassId == null || !StringUtils.isNumeric(onlineClassId + "")) {
+                response.setStatus(HttpStatus.BAD_REQUEST.value());
+                logger.error("This online class ：{} does not exist.", onlineClassId);
+                return ApiResponseUtils.buildErrorResp(HttpStatus.BAD_REQUEST.value(), "This online class  does not exist.", onlineClassId);
+            }
+
+            Preconditions.checkArgument(request.getAttribute(TEACHER) != null);
+            Teacher teacher = (Teacher) request.getAttribute(TEACHER);
+
+            if (0 == teacher.getId()) {
+                logger.error("This teacher ：{} have no jurisdiction .", teacher.getId());
+                response.setStatus(HttpStatus.FORBIDDEN.value());
+                return ApiResponseUtils.buildErrorResp(HttpStatus.BAD_REQUEST.value(), "The teacher have no jurisdiction.", teacher.getId());
+            }
+            boolean isCancel = bookingsService.isCancelCourse(Long.valueOf(onlineClassId + ""), teacher.getId());
+            dataMap.put("isCancel", isCancel);
+            if (!isCancel) {
+                response.setStatus(HttpStatus.BAD_REQUEST.value());
+                logger.warn("This online class ：{} cannot be cancelled.", onlineClassId);
+                return ApiResponseUtils.buildErrorResp(HttpStatus.BAD_REQUEST.value(), "This online class cannot be cancelled.", dataMap);
+            }
+            return ApiResponseUtils.buildSuccessDataResp(dataMap);
+        } catch (IllegalArgumentException e) {
+            logger.error("This online class :{} cannot be cancelled {}", onlineClassId, e);
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            return ApiResponseUtils.buildErrorResp(HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                    ExceptionUtils.getFullStackTrace(e));
+        }
+    }
 
 }
