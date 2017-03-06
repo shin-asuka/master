@@ -276,7 +276,7 @@ public class BookingsController {
                 return ApiResponseUtils.buildErrorResp(HttpStatus.BAD_REQUEST.value(), "This online class  does not exist.", onlineClassId);
             }
 
-            if(String.valueOf(cancelReason).length() >100){
+            if(String.valueOf(cancelReason).length() >100&&String.valueOf(cancelReason).length()<=0){
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
                 logger.error("This cancelReason ：{} is too long.", cancelReason);
                 return ApiResponseUtils.buildErrorResp(HttpStatus.BAD_REQUEST.value(), "This cancelReason ：{} is too long.", onlineClassId);
@@ -316,7 +316,7 @@ public class BookingsController {
      */
     @RequestMapping(value = "/queryFinishType", method = RequestMethod.POST, produces = RestfulConfig.JSON_UTF_8)
     public Map<String, Object> queryFinishType(@RequestBody Map<String, Object> paramMap, HttpServletRequest request, HttpServletResponse response) {
-
+        Map<String, Object> dataMap = Maps.newHashMap();
         Object  onlineClassId = paramMap.get("onlineClassId");
         try {
             if (onlineClassId == null || !StringUtils.isNumeric(onlineClassId + "")) {
@@ -339,7 +339,9 @@ public class BookingsController {
                 logger.error("This online class ：{} does not exist.", onlineClassId);
                 return ApiResponseUtils.buildErrorResp(HttpStatus.BAD_REQUEST.value(), "This online class  does not exist.", onlineClassId);
             }
-            return ApiResponseUtils.buildSuccessDataResp(finishType);
+            dataMap.put("finishType",finishType);
+
+            return ApiResponseUtils.buildSuccessDataResp(dataMap);
         }catch (IllegalArgumentException e) {
         logger.error("Get online class:{} finishType is Exception {}", onlineClassId, e);
         response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());

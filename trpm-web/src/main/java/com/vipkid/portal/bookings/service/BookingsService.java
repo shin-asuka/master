@@ -1129,6 +1129,7 @@ public class BookingsService {
         requestParams.put("onlineClassId", onlineClassId);
         requestParams.put("finishType", finishType);
         requestParams.put("operatorId", teacherId);
+       // requestParams.put("finishReason", cancelReason);
         logger.info("scalper param :  onlineClassId:{} , finishType:{},operatorId:{},cancelReason:{}",
                 onlineClassId , finishType, teacherId,cancelReason);
         String requestUrl = scalperServerAddress + "/management/finish";
