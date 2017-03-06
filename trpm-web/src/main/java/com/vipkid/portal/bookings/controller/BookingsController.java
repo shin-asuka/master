@@ -276,7 +276,7 @@ public class BookingsController {
                 return ApiResponseUtils.buildErrorResp(HttpStatus.BAD_REQUEST.value(), "This online class  does not exist.", onlineClassId);
             }
 
-            if (String.valueOf(cancelReason).length() > 1000 && String.valueOf(cancelReason).length() <= 0) {
+            if (String.valueOf(cancelReason).length() > 1000 || String.valueOf(cancelReason).length() <= 0) {
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
                 logger.error("This cancelReason ：{} is too long.", cancelReason);
                 return ApiResponseUtils.buildErrorResp(HttpStatus.BAD_REQUEST.value(), "This cancelReason ：{} is too long.", onlineClassId);
@@ -353,6 +353,7 @@ public class BookingsController {
     }
 
     /**
+     * 判断课程是否能被取消
      * @param paramMap
      * @param request
      * @param response
