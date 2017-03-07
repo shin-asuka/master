@@ -209,16 +209,17 @@ public class PortalPersonalInfoController extends RestfulController {
 	@RequestMapping(value = "/restSaveTaxpayer", method = RequestMethod.POST, produces = RestfulConfig.JSON_UTF_8)
 	public Map<String, Object> saveTaxpayer(HttpServletRequest request, HttpServletResponse response,
 			@RequestBody Map<String, Object> param) {
-
-		//添加参数校验
-		Preconditions.checkArgument(null == param.get("id") || StringUtils.isBlank((String)param.get("id")), "id 不能为空!");
-		Preconditions.checkArgument(null == param.get("url") || StringUtils.isBlank((String)param.get("url")), "url 不能为空!");
 		logger.info("开始调用restSaveTaxpayer接口，传入参数param = {}", JsonUtils.toJSONString(param));
 		try {
-			long teacherTaxpayerFormId = Long.valueOf(param.get("id")+"");
+			//添加参数校验
+			Preconditions.checkArgument(StringUtils.isNotBlank((String)param.get("id")), "id 不能为空!");
+
 			String url = (String) param.get("url");
 			Integer formType = FormType.W9.val();// 目前只有W9一种formType;
-			
+			Preconditions.checkArgument(StringUtils.isNotBlank(url), "url 不能为空!");
+			Preconditions.checkArgument(formType != null, "formType 不能为空!");
+
+			long teacherTaxpayerFormId = Long.valueOf(param.get("id")+"");
 			Teacher teacher = getTeacher(request);
 			long teacherId = teacher.getId();
 			
@@ -236,8 +237,7 @@ public class PortalPersonalInfoController extends RestfulController {
 				return ApiResponseUtils.buildSuccessDataResp(data);// 提升效率，直接返回成功
 			}
 
-			Preconditions.checkArgument(StringUtils.isNotBlank(url), "url 不能为空!");
-			Preconditions.checkArgument(formType != null, "formType 不能为空!");
+
 
 			TeacherTaxpayerForm teacherTaxpayerForm = new TeacherTaxpayerForm();
 			teacherTaxpayerForm.setId(teacherTaxpayerFormId);
@@ -258,10 +258,11 @@ public class PortalPersonalInfoController extends RestfulController {
 
 		} catch(IllegalArgumentException e){
 			logger.warn("保存TaxpayerForm失败，发生非法参数异常，参数不合法，参数param = "+JsonUtils.toJSONString(param), e);
+			return ApiResponseUtils.buildErrorResp(1002, "参数不合法");
 		} catch (Exception e) {
 			logger.error("保存TaxpayerForm失败，抛异常。e = {}", e);
+			return ApiResponseUtils.buildErrorResp(1002, "抛异常");
 		}
-		return ApiResponseUtils.buildErrorResp(1002, "抛异常");
 	}
 
 	private void setTeacherTaxpayerFormInfo(TeacherTaxpayerForm teacherTaxpayerForm, Teacher teacher) {
