@@ -337,8 +337,8 @@ public class BookingsController {
             String finishType = bookingsService.getFinishType(Long.valueOf(onlineClassId + ""), teacher.getId());
             if (StringUtils.isBlank(finishType)) {
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
-                logger.error("This online class ：{} does not exist.", onlineClassId);
-                return ApiResponseUtils.buildErrorResp(HttpStatus.BAD_REQUEST.value(), "This online class  does not exist.", onlineClassId);
+                logger.error("This online class ：{} cannot cancel.", onlineClassId);
+                return ApiResponseUtils.buildErrorResp(HttpStatus.BAD_REQUEST.value(), "This online class  cannot cancel.", onlineClassId);
             }
             dataMap.put("finishType", finishType);
 
