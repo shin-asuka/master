@@ -74,6 +74,7 @@ public class MockClassControllerTest {
         peViewOutputDto.setToCoordinatorComment("to coordinator comment");
         peViewOutputDto.setTotalScore(20);
         peViewOutputDto.setStatus("SAVE");
+        peViewOutputDto.setApplicationId(16535);
 
         List<PeTagsDto> tagsList = Lists.newArrayList();
         PeTagsDto peTagsDto = new PeTagsDto();

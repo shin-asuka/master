@@ -22,7 +22,17 @@ public class PeViewOutputDto {
 
     private List<PeLevelsDto> levelsList;
 
+    private Integer applicationId;
+
     private String status;
+
+    public Integer getApplicationId() {
+        return applicationId;
+    }
+
+    public void setApplicationId(Integer applicationId) {
+        this.applicationId = applicationId;
+    }
 
     public String getStatus() {
         return status;
