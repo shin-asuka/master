@@ -14,8 +14,8 @@ public class MockClassControllerTest {
     private static final Logger logger = LoggerFactory.getLogger(MockClassControllerTest.class);
 
     @Test
-    public void testPeViewOutputDto(){
-        PeViewOutputDto peViewOutputDto=new PeViewOutputDto();
+    public void testPeViewOutputDto() {
+        PeViewOutputDto peViewOutputDto = new PeViewOutputDto();
 
         // options
         List<PeOptionDto> optionList = Lists.newArrayList();
@@ -42,7 +42,8 @@ public class MockClassControllerTest {
         peCriteriaDto.setOptionList(optionList);
         peCriteriaDto.setId(1);
         peCriteriaDto.setPoints(1);
-        peCriteriaDto.setTitle("The class background creates a learning atmosphere (visible props, designated area, and optimized for teaching).");
+        peCriteriaDto.setTitle(
+                        "The class background creates a learning atmosphere (visible props, designated area, and optimized for teaching).");
         peCriteriaDto.setType("radio");
         peCriteriaDto.setSeq(1);
         criteriaList.add(peCriteriaDto);
@@ -50,7 +51,7 @@ public class MockClassControllerTest {
         // set peSectionDto
         List<PeSectionDto> sectionList = Lists.newArrayList();
 
-        PeSectionDto peSectionDto=new PeSectionDto();
+        PeSectionDto peSectionDto = new PeSectionDto();
         peSectionDto.setCriteriaList(criteriaList);
         peSectionDto.setId(1);
         peSectionDto.setName("Background");
@@ -75,17 +76,14 @@ public class MockClassControllerTest {
         peViewOutputDto.setTotalScore(20);
         peViewOutputDto.setStatus("SAVE");
         peViewOutputDto.setApplicationId(16535);
+        peViewOutputDto.setTeachTrailClass(0);
 
-        List<PeTagsDto> tagsList = Lists.newArrayList();
-        PeTagsDto peTagsDto = new PeTagsDto();
-        peTagsDto.setTagId(12);
-        tagsList.add(peTagsDto);
+        List<Integer> tagsList = Lists.newArrayList();
+        tagsList.add(12);
         peViewOutputDto.setTagsList(tagsList);
 
-        List<PeLevelsDto> levelsList = Lists.newArrayList();
-        PeLevelsDto peLevelsDto = new PeLevelsDto();
-        peLevelsDto.setLevel(10);
-        levelsList.add(peLevelsDto);
+        List<Integer> levelsList = Lists.newArrayList();
+        levelsList.add(10);
         peViewOutputDto.setLevelsList(levelsList);
 
         logger.info(JsonUtils.toJSONString(peViewOutputDto));

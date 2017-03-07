@@ -18,9 +18,9 @@ public class PeViewOutputDto {
 
     private Integer totalScore;
 
-    private List<PeTagsDto> tagsList;
+    private List<Integer> tagsList;
 
-    private List<PeLevelsDto> levelsList;
+    private List<Integer> levelsList;
 
     private Integer applicationId;
 
@@ -98,19 +98,19 @@ public class PeViewOutputDto {
         this.totalScore = totalScore;
     }
 
-    public List<PeTagsDto> getTagsList() {
+    public List<Integer> getTagsList() {
         return tagsList;
     }
 
-    public void setTagsList(List<PeTagsDto> tagsList) {
+    public void setTagsList(List<Integer> tagsList) {
         this.tagsList = tagsList;
     }
 
-    public List<PeLevelsDto> getLevelsList() {
+    public List<Integer> getLevelsList() {
         return levelsList;
     }
 
-    public void setLevelsList(List<PeLevelsDto> levelsList) {
+    public void setLevelsList(List<Integer> levelsList) {
         this.levelsList = levelsList;
     }
 
