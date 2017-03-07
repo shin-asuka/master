@@ -52,6 +52,9 @@ public class MockClassService {
     @Autowired
     private TeacherPeOptionDao teacherPeOptionDao;
 
+    @Autowired
+    private TeacherPeResultDao teacherPeResultDao;
+
     public PeViewOutputDto doPeView(Integer applicationId) {
         TeacherApplication teacherApplication = teacherApplicationDao.findApplictionById(applicationId);
         Preconditions.checkNotNull(teacherApplication, "Teacher application is not found!");
@@ -72,9 +75,11 @@ public class MockClassService {
         }
         BeanUtils.copyPropertys(teacherPeComments, peViewOutputDto);
 
-        // 查询 rubric 列表
-        List<PeRubricDto> rubricDtoList = listPeRubric(teacherPeComments.getTemplateId());
         // 查询 result 列表
+        List<TeacherPeResult> peResultList = teacherPeResultDao.listTeacherPeResult(applicationId);
+        // 查询 rubric 列表
+        List<PeRubricDto> rubricDtoList = listPeRubric(teacherPeComments.getTemplateId(), peResultList);
+        peViewOutputDto.setRubricList(rubricDtoList);
 
         // set tags
         List<TeacherPeTags> peTagsList = teacherPeTagsDao.getTeacherPeTagsByApplicationId(applicationId);
@@ -87,7 +92,8 @@ public class MockClassService {
         // set levels
         List<TeacherPeLevels> peLevelsList = teacherPeLevelsDao.getTeacherPeLevelsByApplicationId(applicationId);
         if (CollectionUtils.isNotEmpty(peLevelsList)) {
-            List<Integer> levelIds = peLevelsList.stream().map(peLevels->new Integer(peLevels.getId())).collect(Collectors.toList());
+            List<Integer> levelIds = peLevelsList.stream().map(peLevels -> new Integer(peLevels.getId()))
+                            .collect(Collectors.toList());
             peViewOutputDto.setLevelsList(levelIds);
         }
 
@@ -104,7 +110,7 @@ public class MockClassService {
         return Preconditions.checkNotNull(teacherPeTemplate, "Pe template is not found!");
     }
 
-    public List<PeRubricDto> listPeRubric(Integer templateId) {
+    public List<PeRubricDto> listPeRubric(Integer templateId, List<TeacherPeResult> peResultList) {
         List<PeRubricDto> rubricDtoList = Lists.newLinkedList();
         List<TeacherPeRubric> peRubricList = teacherPeRubricDao.listTeacherPeRubric(templateId);
 
@@ -129,7 +135,16 @@ public class MockClassService {
                                     for (TeacherPeOption peOption : peOptionList) {
                                         // set option
                                         PeOptionDto peOptionDto = new PeOptionDto();
+                                        peOptionDto.setChecked(false);
                                         BeanUtils.copyPropertys(peOption, peOptionDto);
+
+                                        if (CollectionUtils.isNotEmpty(peResultList)) {
+                                            peResultList.stream().forEach(peResult -> {
+                                                if (peResult.getId() == peOptionDto.getId()) {
+                                                    peOptionDto.setChecked(true);
+                                                }
+                                            });
+                                        }
                                         peOptionDtoList.add(peOptionDto);
                                     }
                                 }

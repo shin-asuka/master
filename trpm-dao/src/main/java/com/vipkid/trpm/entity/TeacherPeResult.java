@@ -2,10 +2,11 @@ package com.vipkid.trpm.entity;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+import org.community.dao.support.Entity;
 
 import java.io.Serializable;
 
-public final class TeacherPeResult implements Serializable {
+public final class TeacherPeResult extends Entity implements Serializable {
 
     private static final long serialVersionUID = -4267208041853771241L;
     /*  */
