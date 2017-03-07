@@ -55,7 +55,7 @@ public class MockClassService {
     @Autowired
     private TeacherPeResultDao teacherPeResultDao;
 
-    public PeViewOutputDto doPeView(Integer applicationId) {
+    public PeViewOutputDto doPeReview(Integer applicationId) {
         TeacherApplication teacherApplication = teacherApplicationDao.findApplictionById(applicationId);
         Preconditions.checkNotNull(teacherApplication, "Teacher application is not found!");
 

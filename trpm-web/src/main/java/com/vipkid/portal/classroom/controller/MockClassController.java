@@ -31,18 +31,18 @@ public class MockClassController extends RestfulController {
     @Autowired
     private MockClassService mockClassService;
 
-    @RequestMapping(value = "/pe/view", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
-    public Map<String, Object> peView(HttpServletRequest request, HttpServletResponse response,
+    @RequestMapping(value = "/pe/review", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
+    public Map<String, Object> peReview(HttpServletRequest request, HttpServletResponse response,
                     @RequestParam("applicationId") Integer applicationId) {
         try {
-            logger.info("Invocation peView() applicationId: {}", applicationId);
+            logger.info("Invocation peReview() applicationId: {}", applicationId);
 
             if (null == applicationId || 0 == applicationId) {
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
                 return ApiResponseUtils.buildErrorResp(HttpStatus.BAD_REQUEST.value(), "Argument 'applicationId' is illegal");
             }
 
-            PeViewOutputDto peViewOutputDto = mockClassService.doPeView(applicationId);
+            PeViewOutputDto peViewOutputDto = mockClassService.doPeReview(applicationId);
             return ApiResponseUtils.buildSuccessDataResp(peViewOutputDto);
         } catch (Exception e) {
             logger.error("Internal server error", e);
