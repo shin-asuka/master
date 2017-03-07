@@ -1166,10 +1166,24 @@ public class BookingsService {
      */
     public String  getFinishType(long onlineClassId,long teacherId){
         OnlineClass onlineClass = this.onlineClassDao.findById(onlineClassId);
-        if(!isCancelCourse(onlineClassId,teacherId)){
-            logger.error("cancel online class:{} was Failed.", onlineClassId);
+
+        if (null == onlineClass) {
+            logger.warn("This online class ：{} does not exist.", onlineClassId);
             return null;
         }
+
+        String courseType =  onlineClassDao.findOnlineClassCourseType(onlineClassId);
+        String logpix = "onlineclassId:"+onlineClassId+";teacherId:"+teacherId;
+        if(System.currentTimeMillis()> onlineClass.getScheduledDateTime().getTime()){
+            logger.warn("Sorry, you can't cancel after the start time has passed.", logpix);
+            return null;
+        }
+
+        if(!courseCancel.contains(courseType)){
+            logger.warn("Sorry, you can't cancel the class:{} Because courseType is :{} .",onlineClassId, courseType);
+            return null;
+        }
+
         String finishType =StringUtils.EMPTY;
         long time  = (onlineClass.getScheduledDateTime().getTime()-System.currentTimeMillis())/3600000;
         if(time<2){
@@ -1182,36 +1196,6 @@ public class BookingsService {
             finishType = ApplicationConstant.FinishType.TEACHER_CANCELLATION;
         }
         return finishType;
-    }
-
-    /**
-     * 取消课程的判断
-     * @param onlineClassId
-     * @param teacherId
-     * @return
-     */
-    public boolean isCancelCourse(long onlineClassId,long teacherId){
-        boolean flag = false;
-        OnlineClass onlineClass = this.onlineClassDao.findById(onlineClassId);
-        if (null == onlineClass) {
-            logger.warn("This online class ：{} does not exist.", onlineClassId);
-            return flag;
-        }
-
-        String courseType =  onlineClassDao.findOnlineClassCourseType(onlineClassId);
-        String logpix = "onlineclassId:"+onlineClassId+";teacherId:"+teacherId;
-        if(System.currentTimeMillis()-15*60*1000 > onlineClass.getScheduledDateTime().getTime()){
-            logger.warn("Sorry, you can't cancel after the start time has passed.", logpix);
-            return false;
-        }
-
-        if(!courseCancel.contains(courseType)){
-            logger.warn("Sorry, you can't cancel the class:{} Because courseType is :{} .",onlineClassId, courseType);
-            return false;
-        }
-
-        return true;
-
     }
 
 

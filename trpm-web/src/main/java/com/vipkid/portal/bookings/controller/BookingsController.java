@@ -279,7 +279,7 @@ public class BookingsController {
             if (  cancelReason==null|| String.valueOf(cancelReason).length() > 1000 ) {
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
                 logger.error("This cancelReason ：{} is too long or is Empty.", cancelReason);
-                return ApiResponseUtils.buildErrorResp(HttpStatus.BAD_REQUEST.value(), "This cancelReason ：{} is too long.", onlineClassId);
+                return ApiResponseUtils.buildErrorResp(HttpStatus.BAD_REQUEST.value(), "This cancelReason ：{} is too long or is Empty.", onlineClassId);
             }
             Preconditions.checkArgument(request.getAttribute(TEACHER) != null);
             Teacher teacher = (Teacher) request.getAttribute(TEACHER);
@@ -351,49 +351,4 @@ public class BookingsController {
         }
 
     }
-
-    /**
-     * 判断课程是否能被取消
-     * @param paramMap
-     * @param request
-     * @param response
-     * @return
-     */
-
-    @RequestMapping(value = "/isCancelCourse", method = RequestMethod.POST, produces = RestfulConfig.JSON_UTF_8)
-    public Map<String, Object> isCancelCourse(@RequestBody Map<String, Object> paramMap, HttpServletRequest request, HttpServletResponse response) {
-        Map<String, Object> dataMap = Maps.newHashMap();
-        Object onlineClassId = paramMap.get("onlineClassId");
-        try {
-
-            if (onlineClassId == null || !StringUtils.isNumeric(onlineClassId + "")) {
-                response.setStatus(HttpStatus.BAD_REQUEST.value());
-                logger.error("This online class ：{} does not exist.", onlineClassId);
-                return ApiResponseUtils.buildErrorResp(HttpStatus.BAD_REQUEST.value(), "This online class  does not exist.", onlineClassId);
-            }
-
-            Preconditions.checkArgument(request.getAttribute(TEACHER) != null);
-            Teacher teacher = (Teacher) request.getAttribute(TEACHER);
-
-            if (0 == teacher.getId()) {
-                logger.error("This teacher ：{} have no jurisdiction .", teacher.getId());
-                response.setStatus(HttpStatus.FORBIDDEN.value());
-                return ApiResponseUtils.buildErrorResp(HttpStatus.BAD_REQUEST.value(), "The teacher have no jurisdiction.", teacher.getId());
-            }
-            boolean isCancel = bookingsService.isCancelCourse(Long.valueOf(onlineClassId + ""), teacher.getId());
-            dataMap.put("isCancel", isCancel);
-            if (!isCancel) {
-                response.setStatus(HttpStatus.BAD_REQUEST.value());
-                logger.warn("This online class ：{} cannot be cancelled.", onlineClassId);
-                return ApiResponseUtils.buildErrorResp(HttpStatus.BAD_REQUEST.value(), "This online class cannot be cancelled.", dataMap);
-            }
-            return ApiResponseUtils.buildSuccessDataResp(dataMap);
-        } catch (IllegalArgumentException e) {
-            logger.error("This online class :{} cannot be cancelled {}", onlineClassId, e);
-            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            return ApiResponseUtils.buildErrorResp(HttpStatus.INTERNAL_SERVER_ERROR.value(),
-                    ExceptionUtils.getFullStackTrace(e));
-        }
-    }
-
 }
