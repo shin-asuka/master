@@ -22,7 +22,57 @@ public final class TeacherPeComments extends Entity implements Serializable {
     private int totalScore;
     /*  */
     private String status;
-    
+
+    private int toCoordinator;
+    /*  */
+    private String toCoordinatorComment;
+    /*  */
+    private int teachTrailClass;
+    /*  */
+    private String stateReason;
+    /*  */
+    private int templateId;
+
+    public int getToCoordinator() {
+        return toCoordinator;
+    }
+
+    public void setToCoordinator(int toCoordinator) {
+        this.toCoordinator = toCoordinator;
+    }
+
+    public String getToCoordinatorComment() {
+        return toCoordinatorComment;
+    }
+
+    public void setToCoordinatorComment(String toCoordinatorComment) {
+        this.toCoordinatorComment = toCoordinatorComment;
+    }
+
+    public int getTeachTrailClass() {
+        return teachTrailClass;
+    }
+
+    public void setTeachTrailClass(int teachTrailClass) {
+        this.teachTrailClass = teachTrailClass;
+    }
+
+    public String getStateReason() {
+        return stateReason;
+    }
+
+    public void setStateReason(String stateReason) {
+        this.stateReason = stateReason;
+    }
+
+    public int getTemplateId() {
+        return templateId;
+    }
+
+    public void setTemplateId(int templateId) {
+        this.templateId = templateId;
+    }
+
     public int getId() {
         return this.id;
     }

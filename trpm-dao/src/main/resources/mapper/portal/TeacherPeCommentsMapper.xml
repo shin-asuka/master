@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="TeacherPeCommentsMapper">
-    
-    <sql id="teacherPeCommentsColumns">teacher_pe_comments.id AS id, teacher_pe_comments.application_id AS application_id, teacher_pe_comments.things_did_well AS things_did_well, teacher_pe_comments.areas_improvement AS areas_improvement, teacher_pe_comments.total_score AS total_score, teacher_pe_comments.status AS status</sql>
-    
+
+    <sql id="teacherPeCommentsColumns">teacher_pe_comments.id AS id, teacher_pe_comments.application_id AS application_id, teacher_pe_comments.things_did_well AS things_did_well, teacher_pe_comments.areas_improvement AS areas_improvement, teacher_pe_comments.total_score AS total_score, teacher_pe_comments.status AS status, teacher_pe_comments.to_coordinator AS to_coordinator, teacher_pe_comments.to_coordinator_comment AS to_coordinator_comment, teacher_pe_comments.teach_trail_class AS teach_trail_class, teacher_pe_comments.state_reason AS state_reason, teacher_pe_comments.template_id AS template_id</sql>
+
     <sql id="teacherPeCommentsWhere">
         <trim prefix="WHERE" prefixOverrides="AND">
             <if test="id != 0">AND teacher_pe_comments.id = #{id}</if>
@@ -12,54 +12,66 @@
             <if test="areasImprovement != null">AND teacher_pe_comments.areas_improvement = #{areasImprovement}</if>
             <if test="totalScore != 0">AND teacher_pe_comments.total_score = #{totalScore}</if>
             <if test="status != null">AND teacher_pe_comments.status = #{status}</if>
+            <if test="toCoordinator != 0">AND teacher_pe_comments.to_coordinator = #{toCoordinator}</if>
+            <if test="toCoordinatorComment != null">AND teacher_pe_comments.to_coordinator_comment =
+                #{toCoordinatorComment}
+            </if>
+            <if test="teachTrailClass != 0">AND teacher_pe_comments.teach_trail_class = #{teachTrailClass}</if>
+            <if test="stateReason != null">AND teacher_pe_comments.state_reason = #{stateReason}</if>
+            <if test="templateId != 0">AND teacher_pe_comments.template_id = #{templateId}</if>
         </trim>
     </sql>
-    
+
     <sql id="teacherPeCommentsOrder">
         <if test="orderString != null">ORDER BY ${orderString}</if>
     </sql>
-    
+
     <sql id="teacherPeCommentsLimit">LIMIT #{startLine}, #{limitLine}</sql>
-    
+
     <resultMap type="com.vipkid.trpm.entity.TeacherPeComments" id="teacherPeCommentsResultMap">
-        <id column="id" property="id" />
-        <result column="application_id" property="applicationId" />
-        <result column="things_did_well" property="thingsDidWell" />
-        <result column="areas_improvement" property="areasImprovement" />
-        <result column="total_score" property="totalScore" />
-        <result column="status" property="status" />
+        <id column="id" property="id"/>
+        <result column="application_id" property="applicationId"/>
+        <result column="things_did_well" property="thingsDidWell"/>
+        <result column="areas_improvement" property="areasImprovement"/>
+        <result column="total_score" property="totalScore"/>
+        <result column="status" property="status"/>
+        <result column="to_coordinator" property="toCoordinator"/>
+        <result column="to_coordinator_comment" property="toCoordinatorComment"/>
+        <result column="teach_trail_class" property="teachTrailClass"/>
+        <result column="state_reason" property="stateReason"/>
+        <result column="template_id" property="templateId"/>
     </resultMap>
-    
+
     <select id="findDao" resultMap="teacherPeCommentsResultMap">
         SELECT
-        <include refid="teacherPeCommentsColumns" />
+        <include refid="teacherPeCommentsColumns"/>
         FROM teacher_pe_comments
-        <include refid="teacherPeCommentsWhere" />
+        <include refid="teacherPeCommentsWhere"/>
     </select>
-    
+
     <select id="countDao" resultType="int">
         SELECT COUNT(*) FROM teacher_pe_comments
-        <include refid="teacherPeCommentsWhere" />
+        <include refid="teacherPeCommentsWhere"/>
     </select>
-    
+
     <select id="pageDao" resultMap="teacherPeCommentsResultMap">
         SELECT
-        <include refid="teacherPeCommentsColumns" />
+        <include refid="teacherPeCommentsColumns"/>
         FROM teacher_pe_comments
-        <include refid="teacherPeCommentsWhere" />
-        <include refid="teacherPeCommentsOrder" />
-        <include refid="teacherPeCommentsLimit" />
+        <include refid="teacherPeCommentsWhere"/>
+        <include refid="teacherPeCommentsOrder"/>
+        <include refid="teacherPeCommentsLimit"/>
     </select>
-    
+
     <select id="limitDao" resultMap="teacherPeCommentsResultMap">
         SELECT
-        <include refid="teacherPeCommentsColumns" />
+        <include refid="teacherPeCommentsColumns"/>
         FROM teacher_pe_comments
-        <include refid="teacherPeCommentsWhere" />
-        <include refid="teacherPeCommentsOrder" />
-        <include refid="teacherPeCommentsLimit" />
+        <include refid="teacherPeCommentsWhere"/>
+        <include refid="teacherPeCommentsOrder"/>
+        <include refid="teacherPeCommentsLimit"/>
     </select>
-    
+
     <insert id="saveDao" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO teacher_pe_comments
         <trim prefix="(" prefixOverrides=",">
@@ -69,6 +81,11 @@
             <if test="areasImprovement != null">,areas_improvement</if>
             <if test="totalScore != 0">,total_score</if>
             <if test="status != null">,status</if>
+            <if test="toCoordinator != 0">,to_coordinator</if>
+            <if test="toCoordinatorComment != null">,to_coordinator_comment</if>
+            <if test="teachTrailClass != 0">,teach_trail_class</if>
+            <if test="stateReason != null">,state_reason</if>
+            <if test="templateId != 0">,template_id</if>
         </trim>
         ) VALUES
         <trim prefix="(" prefixOverrides=",">
@@ -78,23 +95,32 @@
             <if test="areasImprovement != null">,#{areasImprovement}</if>
             <if test="totalScore != 0">,#{totalScore}</if>
             <if test="status != null">,#{status}</if>
+            <if test="toCoordinator != 0">,#{toCoordinator}</if>
+            <if test="toCoordinatorComment != null">,#{toCoordinatorComment}</if>
+            <if test="teachTrailClass != 0">,#{teachTrailClass}</if>
+            <if test="stateReason != null">,#{stateReason}</if>
+            <if test="templateId != 0">,#{templateId}</if>
         </trim>
         )
     </insert>
-    
+
     <update id="updateDao">
         UPDATE teacher_pe_comments
         <trim prefix="SET" prefixOverrides=",">
-            <if test="id != 0">,id = #{id}</if>
             <if test="applicationId != 0">,application_id = #{applicationId}</if>
             <if test="thingsDidWell != null">,things_did_well = #{thingsDidWell}</if>
             <if test="areasImprovement != null">,areas_improvement = #{areasImprovement}</if>
             <if test="totalScore != 0">,total_score = #{totalScore}</if>
             <if test="status != null">,status = #{status}</if>
+            <if test="toCoordinator != 0">,to_coordinator = #{toCoordinator}</if>
+            <if test="toCoordinatorComment != null">,to_coordinator_comment = #{toCoordinatorComment}</if>
+            <if test="teachTrailClass != 0">,teach_trail_class = #{teachTrailClass}</if>
+            <if test="stateReason != null">,state_reason = #{stateReason}</if>
+            <if test="templateId != 0">,template_id = #{templateId}</if>
         </trim>
         <trim prefix="WHERE" prefixOverrides="AND">AND id = #{id}</trim>
     </update>
-    
+
     <delete id="deleteDao">
         DELETE FROM teacher_pe_comments
         <trim prefix="WHERE" prefixOverrides="AND">AND id = #{id}</trim>
@@ -103,5 +129,5 @@
     <delete id="deleteByApplicationId">
         DELETE FROM teacher_pe_comments WHERE application_id = #{applicationId}
     </delete>
-    
+
 </mapper>
