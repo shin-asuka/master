@@ -70,7 +70,7 @@ public class PeSupervisorRestService {
 			peSupervisorEachClassInfo.setSerialNumber(teacherPe.getSerialNumber());
 			peSupervisorEachClassInfo.setLessonName(teacherPe.getLessonName());
 			peSupervisorEachClassInfo.setStatus(teacherPe.getStatus());
-			peSupervisorEachClassInfo.setTeacehrId(teacherPe.getTeacherId());
+			peSupervisorEachClassInfo.setTeacherId(teacherPe.getTeacherId());
 			peSupervisorEachClassInfo.setStudentId(teacherPe.getStudentId());
 			peSupervisorEachClassInfo.setStudentName(teacherPe.getStudentName());
 
