@@ -7,7 +7,7 @@ public class PeSupervisorClassDetail {
 	private String serialNumber;
 	private String scheduleTime;
 	private String teacherName;
-	private long teacehrId;
+	private long teacherId;
 	private long studentId;
 	private String studentName;
 	private int status;
@@ -54,12 +54,15 @@ public class PeSupervisorClassDetail {
 	public void setStatus(int status) {
 		this.status = status;
 	}
-	public long getTeacehrId() {
-		return teacehrId;
+
+	public long getTeacherId() {
+		return teacherId;
 	}
-	public void setTeacehrId(long teacehrId) {
-		this.teacehrId = teacehrId;
+
+	public void setTeacherId(long teacherId) {
+		this.teacherId = teacherId;
 	}
+
 	public long getStudentId() {
 		return studentId;
 	}
