@@ -212,7 +212,7 @@ public class PortalPersonalInfoController extends RestfulController {
 		logger.info("开始调用restSaveTaxpayer接口，传入参数param = {}", JsonUtils.toJSONString(param));
 		try {
 			//添加参数校验
-			Preconditions.checkArgument(StringUtils.isNotBlank((String)param.get("id")), "id 不能为空!");
+			Preconditions.checkArgument(null != param.get("id"), "id 不能为空!");
 
 			String url = (String) param.get("url");
 			Integer formType = FormType.W9.val();// 目前只有W9一种formType;
