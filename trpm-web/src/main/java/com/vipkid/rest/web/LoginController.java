@@ -173,25 +173,7 @@ public class LoginController extends RestfulController {
             // 检查老师状态是否QUIT
             logger.info("检查老师状态是否QUIT:{}",bean.getEmail());
             if (TeacherEnum.LifeCycle.QUIT.toString().equals(teacher.getLifeCycle())) {
-            	Timestamp lastEditTime = user.getLastEditDateTime();
-            	Date expireTime = null;
-            	Long editor = user.getLastEditorId();
-            	Date now = new Date();
-            	//Quit 老师登录
-            	boolean canLogin = false;
-				if (editor != user.getId()) {
-					expireTime = DateUtils.getExpireTime(lastEditTime);
-				}else{
-					expireTime = DateUtils.getExpireTime(now);
-				}				
-				String exStr = passportService.getQuitTeacherExpiredTime(user.getId(), expireTime.getTime());
-				if(StringUtils.isNotEmpty(exStr)){
-					Long ex = Long.parseLong(exStr);
-					Date exDate = new Date(ex);
-					if (now.before(exDate)) {
-						canLogin = true;
-					}				
-				}
+            	boolean canLogin = getQuitStatus(user);
 				if (!canLogin) {
 					passportService.addLoginFailedCount(bean.getEmail());
 					logger.warn(bean.getEmail() + ",账户status被QUIT.");
@@ -253,48 +235,31 @@ public class LoginController extends RestfulController {
             return ReturnMapUtils.returnFail(e.getMessage(),e);
         }
     }
-    @RequestMapping(value = "/isQuitAndExired", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
-	public Map<String, Object> isQuitAndExired(HttpServletRequest request, HttpServletResponse response) {
-		Map<String, Object> result = Maps.newHashMap();
-		
-		try {
-			QuitStatusEnum quitStatus = getQuitStatus();
-			result.put(QUIT_STATUS, quitStatus);
-		} catch (Exception e) {
-			response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-			return ReturnMapUtils.returnFail(e.getMessage(), e);
-		}
-		return result;
-	}
-	private QuitStatusEnum getQuitStatus() {
-		QuitStatusEnum quitStatus = null;
-		Date now = new Date();
-		User user = loginService.getUser();
-		Teacher teacher = loginService.getTeacher();
+
+	private boolean getQuitStatus(User user) {
 		Timestamp lastEditTime = user.getLastEditDateTime();
 		Date expireTime = null;
 		Long editor = user.getLastEditorId();
-		if (!TeacherEnum.LifeCycle.QUIT.toString().equals(teacher.getLifeCycle())) {
-			quitStatus = TeacherEnum.QuitStatusEnum.NORMAL;
-		} else {
-			if (editor != user.getId()) {
-				DateUtils.getExpireTime(lastEditTime);
-			} else {
-				DateUtils.getExpireTime(now);
-			}
-			String exStr = passportService.getQuitTeacherExpiredTime(user.getId(), expireTime.getTime());
-			if (StringUtils.isNotEmpty(exStr)) {
-				Long ex = Long.parseLong(exStr);
-				Date exDate = new Date(ex);
-				if (now.before(exDate)) {
-					quitStatus = TeacherEnum.QuitStatusEnum.QUIT_NOT_EXPIRED;
-				} else {
-					quitStatus = TeacherEnum.QuitStatusEnum.EXPIRED;
-				}
-			}
+		Date now = new Date();
+		//Quit 老师登录
+		boolean canLogin = false;
+		if (editor != user.getId()) {
+			expireTime = DateUtils.getExpireTime(lastEditTime);
+		}else{
+			expireTime = DateUtils.getExpireTime(now);
+		}				
+		String exStr = passportService.getQuitTeacherExpiredTime(user.getId(), expireTime.getTime());
+		if(StringUtils.isNotEmpty(exStr)){
+			Long ex = Long.parseLong(exStr);
+			Date exDate = new Date(ex);
+			if (now.before(exDate)) {
+				canLogin = true;
+			}				
 		}
-		return quitStatus;
+		return canLogin;
 	}
+   
+	
 
     /**
      * 注册用户注册老师
@@ -437,8 +402,11 @@ public class LoginController extends RestfulController {
             logger.info("检查用户状态是否QUIT:{}",email);
             
             if (TeacherEnum.LifeCycle.QUIT.toString().equals(teacher.getLifeCycle())) {
-                response.setStatus(HttpStatus.BAD_REQUEST.value());
-                return ReturnMapUtils.returnFail(AjaxCode.USER_QUIT,"账户已经Quit."+user.getUsername());
+            	boolean canLogin = getQuitStatus(user);
+				if (!canLogin) {
+					response.setStatus(HttpStatus.BAD_REQUEST.value());
+	                return ReturnMapUtils.returnFail(AjaxCode.USER_QUIT,"账户已经Quit."+user.getUsername());
+				}                
             }
             
             logger.info("重置请求检查完毕-(通过)-正在发送Email:{}", email);
@@ -542,25 +510,7 @@ public class LoginController extends RestfulController {
             // 检查老师状态是否QUIT
             logger.info(user.getUsername()+",Quit检查.");
 			if (TeacherEnum.LifeCycle.QUIT.toString().equals(teacher.getLifeCycle())) {
-				Timestamp lastEditTime = user.getLastEditDateTime();
-            	Date expireTime = null;
-            	Long editor = user.getLastEditorId();
-            	Date now = new Date();
-            	//Quit 老师登录
-            	boolean canLogin = false;
-				if (editor != user.getId()) {
-					expireTime = DateUtils.getExpireTime(lastEditTime);
-				}else{
-					expireTime = DateUtils.getExpireTime(now);
-				}				
-				String exStr = passportService.getQuitTeacherExpiredTime(user.getId(), expireTime.getTime());
-				if(StringUtils.isNotEmpty(exStr)){
-					Long ex = Long.parseLong(exStr);
-					Date exDate = new Date(ex);
-					if (now.before(exDate)) {
-						canLogin = true;
-					}				
-				}
+				boolean canLogin = getQuitStatus(user);
 				if (!canLogin) {
 					response.setStatus(HttpStatus.BAD_REQUEST.value());
 					return ReturnMapUtils.returnFail(AjaxCode.USER_QUIT, "账户被Quit,并且已经过了登录期了；" + user.getUsername());
