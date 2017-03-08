@@ -107,13 +107,6 @@ public class ClassroomService {
 		}else{
 			logger.warn("onlineClass is null,onlineClassId:{},studentId:{}",bean.getOnlineClassId(), bean.getStudentId());
 		}
-		
-//		if(onlineClass.getTeacherId() != teacher.getId()){
-//			logger.info("没有权限获取数据,teacehrId 不匹配.");
-//			resultMap.put("info", "Parameters (onlineClassId,teaceherId) with the request data does not match.");
-//			return resultMap;
-//		}
-		
 		if(CollectionUtils.isEmpty(onlineClassDao.findOnlineClassIdAndStudentId(onlineClass.getId(), bean.getStudentId()))){
 			logger.info("没有权限获取数据,studentId 与 onlineClassId 不匹配");
 			resultMap.put("info", "Parameters (onlineClassId,studentId) with the request data does not match.");
