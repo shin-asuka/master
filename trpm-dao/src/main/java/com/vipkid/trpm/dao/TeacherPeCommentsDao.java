@@ -20,16 +20,20 @@ public class TeacherPeCommentsDao extends MapperDaoTemplate<TeacherPeComments> {
 
     public int deleteTeacherPeComments(int applicationId) {
         Preconditions.checkArgument(0 != applicationId);
-        return super.delete(new TeacherPeComments().setApplicationId(applicationId), "deleteByApplicationId");
+        TeacherPeComments teacherPeComments = new TeacherPeComments();
+        teacherPeComments.setApplicationId(applicationId);
+        return super.delete(teacherPeComments, "deleteByApplicationId");
     }
 
     public void saveTeacherPeComments(TeacherPeComments teacherPeComments) {
         super.save(teacherPeComments);
     }
 
-    public TeacherPeComments getTeacherPeComments(int applicationId){
+    public TeacherPeComments getTeacherPeComments(int applicationId) {
         Preconditions.checkArgument(0 != applicationId);
-        return super.selectOne(new TeacherPeComments().setApplicationId(applicationId));
+        TeacherPeComments teacherPeComments = new TeacherPeComments();
+        teacherPeComments.setApplicationId(applicationId);
+        return super.selectOne(teacherPeComments);
     }
 
 }

@@ -1,7 +1,7 @@
 package com.vipkid.portal.classroom.controller;
 
 import com.vipkid.enums.TeacherEnum;
-import com.vipkid.portal.classroom.model.mockclass.PeViewOutputDto;
+import com.vipkid.portal.classroom.model.mockclass.PeReviewOutputDto;
 import com.vipkid.portal.classroom.service.MockClassService;
 import com.vipkid.rest.RestfulController;
 import com.vipkid.rest.config.RestfulConfig;
@@ -23,7 +23,7 @@ import java.util.Map;
 
 @RestController
 @RestInterface(lifeCycle = TeacherEnum.LifeCycle.REGULAR)
-@RequestMapping("/portal/mockclass/")
+@RequestMapping("/portal/mockclass")
 public class MockClassController extends RestfulController {
 
     private static Logger logger = LoggerFactory.getLogger(MockClassController.class);
@@ -42,8 +42,8 @@ public class MockClassController extends RestfulController {
                 return ApiResponseUtils.buildErrorResp(HttpStatus.BAD_REQUEST.value(), "Argument 'applicationId' is illegal");
             }
 
-            PeViewOutputDto peViewOutputDto = mockClassService.doPeReview(applicationId);
-            return ApiResponseUtils.buildSuccessDataResp(peViewOutputDto);
+            PeReviewOutputDto peReviewOutputDto = mockClassService.doPeReview(applicationId);
+            return ApiResponseUtils.buildSuccessDataResp(peReviewOutputDto);
         } catch (Exception e) {
             logger.error("Internal server error", e);
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());

@@ -11,33 +11,81 @@ public final class TeacherPeComments extends Entity implements Serializable {
 
     private static final long serialVersionUID = 6611553613271690756L;
     /*  */
-    private int id;
+    private Integer id;
     /*  */
-    private int applicationId;
+    private Integer applicationId;
     /*  */
     private String thingsDidWell;
     /*  */
     private String areasImprovement;
     /*  */
-    private int totalScore;
+    private Integer totalScore;
     /*  */
     private String status;
 
-    private int toCoordinator;
+    private Integer toCoordinator;
     /*  */
     private String toCoordinatorComment;
     /*  */
-    private int teachTrailClass;
+    private Integer teachTrailClass;
     /*  */
     private String stateReason;
     /*  */
-    private int templateId;
+    private Integer templateId;
 
-    public int getToCoordinator() {
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public Integer getApplicationId() {
+        return applicationId;
+    }
+
+    public void setApplicationId(Integer applicationId) {
+        this.applicationId = applicationId;
+    }
+
+    public String getThingsDidWell() {
+        return thingsDidWell;
+    }
+
+    public void setThingsDidWell(String thingsDidWell) {
+        this.thingsDidWell = thingsDidWell;
+    }
+
+    public String getAreasImprovement() {
+        return areasImprovement;
+    }
+
+    public void setAreasImprovement(String areasImprovement) {
+        this.areasImprovement = areasImprovement;
+    }
+
+    public Integer getTotalScore() {
+        return totalScore;
+    }
+
+    public void setTotalScore(Integer totalScore) {
+        this.totalScore = totalScore;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public Integer getToCoordinator() {
         return toCoordinator;
     }
 
-    public void setToCoordinator(int toCoordinator) {
+    public void setToCoordinator(Integer toCoordinator) {
         this.toCoordinator = toCoordinator;
     }
 
@@ -49,11 +97,11 @@ public final class TeacherPeComments extends Entity implements Serializable {
         this.toCoordinatorComment = toCoordinatorComment;
     }
 
-    public int getTeachTrailClass() {
+    public Integer getTeachTrailClass() {
         return teachTrailClass;
     }
 
-    public void setTeachTrailClass(int teachTrailClass) {
+    public void setTeachTrailClass(Integer teachTrailClass) {
         this.teachTrailClass = teachTrailClass;
     }
 
@@ -65,71 +113,17 @@ public final class TeacherPeComments extends Entity implements Serializable {
         this.stateReason = stateReason;
     }
 
-    public int getTemplateId() {
+    public Integer getTemplateId() {
         return templateId;
     }
 
-    public void setTemplateId(int templateId) {
+    public void setTemplateId(Integer templateId) {
         this.templateId = templateId;
     }
 
-    public int getId() {
-        return this.id;
+    @Override
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
     }
-
-    public TeacherPeComments setId(int id) {
-        this.id = id;
-        return this;
-    }
-    
-    public int getApplicationId() {
-        return this.applicationId;
-    }
-
-    public TeacherPeComments setApplicationId(int applicationId) {
-        this.applicationId = applicationId;
-        return this;
-    }
-    
-    public String getThingsDidWell() {
-        return this.thingsDidWell;
-    }
-
-    public TeacherPeComments setThingsDidWell(String thingsDidWell) {
-        this.thingsDidWell = thingsDidWell;
-        return this;
-    }
-    
-    public String getAreasImprovement() {
-        return this.areasImprovement;
-    }
-
-    public TeacherPeComments setAreasImprovement(String areasImprovement) {
-        this.areasImprovement = areasImprovement;
-        return this;
-    }
-    
-    public int getTotalScore() {
-        return this.totalScore;
-    }
-
-    public TeacherPeComments setTotalScore(int totalScore) {
-        this.totalScore = totalScore;
-        return this;
-    }
-    
-    public String getStatus() {
-        return this.status;
-    }
-
-    public TeacherPeComments setStatus(String status) {
-        this.status = status;
-        return this;
-    }
-
-	@Override
-	public String toString() {
-		return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
-	}
 
 }

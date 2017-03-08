@@ -14,8 +14,8 @@ public class MockClassControllerTest {
     private static final Logger logger = LoggerFactory.getLogger(MockClassControllerTest.class);
 
     @Test
-    public void testPeViewOutputDto() {
-        PeViewOutputDto peViewOutputDto = new PeViewOutputDto();
+    public void testpeReviewOutputDto() {
+        PeReviewOutputDto peReviewOutputDto = new PeReviewOutputDto();
 
         // options
         List<PeOptionDto> optionList = Lists.newArrayList();
@@ -68,25 +68,25 @@ public class MockClassControllerTest {
         peRubricDto.setSeq(1);
         rubricList.add(peRubricDto);
 
-        peViewOutputDto.setRubricList(rubricList);
-        peViewOutputDto.setThingsDidWell("things did well");
-        peViewOutputDto.setAreasImprovement("areas improvement");
-        peViewOutputDto.setToCoordinator(1);
-        peViewOutputDto.setToCoordinatorComment("to coordinator comment");
-        peViewOutputDto.setTotalScore(20);
-        peViewOutputDto.setStatus("SAVE");
-        peViewOutputDto.setApplicationId(16535);
-        peViewOutputDto.setTeachTrailClass(0);
+        peReviewOutputDto.setRubricList(rubricList);
+        peReviewOutputDto.setThingsDidWell("things did well");
+        peReviewOutputDto.setAreasImprovement("areas improvement");
+        peReviewOutputDto.setToCoordinator(1);
+        peReviewOutputDto.setToCoordinatorComment("to coordinator comment");
+        peReviewOutputDto.setTotalScore(20);
+        peReviewOutputDto.setStatus("SAVE");
+        peReviewOutputDto.setApplicationId(16535);
+        peReviewOutputDto.setTeachTrailClass(0);
 
         List<Integer> tagsList = Lists.newArrayList();
         tagsList.add(12);
-        peViewOutputDto.setTagsList(tagsList);
+        peReviewOutputDto.setTagsList(tagsList);
 
         List<Integer> levelsList = Lists.newArrayList();
         levelsList.add(10);
-        peViewOutputDto.setLevelsList(levelsList);
+        peReviewOutputDto.setLevelsList(levelsList);
 
-        logger.info(JsonUtils.toJSONString(peViewOutputDto));
+        logger.info(JsonUtils.toJSONString(peReviewOutputDto));
     }
 
 }

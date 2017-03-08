@@ -55,15 +55,15 @@ public class MockClassService {
     @Autowired
     private TeacherPeResultDao teacherPeResultDao;
 
-    public PeViewOutputDto doPeReview(Integer applicationId) {
+    public PeReviewOutputDto doPeReview(Integer applicationId) {
         TeacherApplication teacherApplication = teacherApplicationDao.findApplictionById(applicationId);
         Preconditions.checkNotNull(teacherApplication, "Teacher application is not found!");
 
-        PeViewOutputDto peViewOutputDto = new PeViewOutputDto();
+        PeReviewOutputDto peReviewOutputDto = new PeReviewOutputDto();
         // 如果结果是 REAPPLY 则直接返回
         if (StringUtils.equals(teacherApplication.getResult(), REAPPLY.name())) {
-            peViewOutputDto.setStatus(teacherApplication.getResult());
-            return peViewOutputDto;
+            peReviewOutputDto.setStatus(teacherApplication.getResult());
+            return peReviewOutputDto;
         }
 
         TeacherPeComments teacherPeComments = teacherPeCommentsDao.getTeacherPeComments(applicationId);
@@ -72,21 +72,23 @@ public class MockClassService {
             teacherPeComments = new TeacherPeComments();
             teacherPeComments.setApplicationId(applicationId);
             teacherPeComments.setTemplateId(getCurrentPeTemplate().getId());
+            teacherPeCommentsDao.saveTeacherPeComments(teacherPeComments);
         }
-        BeanUtils.copyPropertys(teacherPeComments, peViewOutputDto);
+        BeanUtils.copyPropertys(teacherPeComments, peReviewOutputDto);
 
         // 查询 result 列表
         List<TeacherPeResult> peResultList = teacherPeResultDao.listTeacherPeResult(applicationId);
+
         // 查询 rubric 列表
         List<PeRubricDto> rubricDtoList = listPeRubric(teacherPeComments.getTemplateId(), peResultList);
-        peViewOutputDto.setRubricList(rubricDtoList);
+        peReviewOutputDto.setRubricList(rubricDtoList);
 
         // set tags
         List<TeacherPeTags> peTagsList = teacherPeTagsDao.getTeacherPeTagsByApplicationId(applicationId);
         if (CollectionUtils.isNotEmpty(peTagsList)) {
             List<Integer> tagIds =
                             peTagsList.stream().map(peTags -> new Integer(peTags.getId())).collect(Collectors.toList());
-            peViewOutputDto.setTagsList(tagIds);
+            peReviewOutputDto.setTagsList(tagIds);
         }
 
         // set levels
@@ -94,10 +96,10 @@ public class MockClassService {
         if (CollectionUtils.isNotEmpty(peLevelsList)) {
             List<Integer> levelIds = peLevelsList.stream().map(peLevels -> new Integer(peLevels.getId()))
                             .collect(Collectors.toList());
-            peViewOutputDto.setLevelsList(levelIds);
+            peReviewOutputDto.setLevelsList(levelIds);
         }
 
-        return peViewOutputDto;
+        return peReviewOutputDto;
     }
 
     public TeacherPeTemplate getCurrentPeTemplate() {

@@ -2,9 +2,11 @@ package com.vipkid.portal.classroom.model.mockclass;
 
 import java.util.List;
 
-public class PeViewOutputDto {
+public class PeDto {
 
-    private List<PeRubricDto> rubricList;
+    private List<Integer> tagsList;
+
+    private List<Integer> levelsList;
 
     private String thingsDidWell;
 
@@ -16,15 +18,25 @@ public class PeViewOutputDto {
 
     private Integer teachTrailClass;
 
-    private Integer totalScore;
-
-    private List<Integer> tagsList;
-
-    private List<Integer> levelsList;
-
     private Integer applicationId;
 
     private String status;
+
+    public List<Integer> getTagsList() {
+        return tagsList;
+    }
+
+    public void setTagsList(List<Integer> tagsList) {
+        this.tagsList = tagsList;
+    }
+
+    public List<Integer> getLevelsList() {
+        return levelsList;
+    }
+
+    public void setLevelsList(List<Integer> levelsList) {
+        this.levelsList = levelsList;
+    }
 
     public Integer getApplicationId() {
         return applicationId;
@@ -40,14 +52,6 @@ public class PeViewOutputDto {
 
     public void setStatus(String status) {
         this.status = status;
-    }
-
-    public List<PeRubricDto> getRubricList() {
-        return rubricList;
-    }
-
-    public void setRubricList(List<PeRubricDto> rubricList) {
-        this.rubricList = rubricList;
     }
 
     public String getThingsDidWell() {
@@ -88,30 +92,6 @@ public class PeViewOutputDto {
 
     public void setTeachTrailClass(Integer teachTrailClass) {
         this.teachTrailClass = teachTrailClass;
-    }
-
-    public Integer getTotalScore() {
-        return totalScore;
-    }
-
-    public void setTotalScore(Integer totalScore) {
-        this.totalScore = totalScore;
-    }
-
-    public List<Integer> getTagsList() {
-        return tagsList;
-    }
-
-    public void setTagsList(List<Integer> tagsList) {
-        this.tagsList = tagsList;
-    }
-
-    public List<Integer> getLevelsList() {
-        return levelsList;
-    }
-
-    public void setLevelsList(List<Integer> levelsList) {
-        this.levelsList = levelsList;
     }
 
 }

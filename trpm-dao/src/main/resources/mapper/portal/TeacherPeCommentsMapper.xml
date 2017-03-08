@@ -6,19 +6,19 @@
 
     <sql id="teacherPeCommentsWhere">
         <trim prefix="WHERE" prefixOverrides="AND">
-            <if test="id != 0">AND teacher_pe_comments.id = #{id}</if>
-            <if test="applicationId != 0">AND teacher_pe_comments.application_id = #{applicationId}</if>
+            <if test="id != null">AND teacher_pe_comments.id = #{id}</if>
+            <if test="applicationId != null">AND teacher_pe_comments.application_id = #{applicationId}</if>
             <if test="thingsDidWell != null">AND teacher_pe_comments.things_did_well = #{thingsDidWell}</if>
             <if test="areasImprovement != null">AND teacher_pe_comments.areas_improvement = #{areasImprovement}</if>
-            <if test="totalScore != 0">AND teacher_pe_comments.total_score = #{totalScore}</if>
+            <if test="totalScore != null">AND teacher_pe_comments.total_score = #{totalScore}</if>
             <if test="status != null">AND teacher_pe_comments.status = #{status}</if>
-            <if test="toCoordinator != 0">AND teacher_pe_comments.to_coordinator = #{toCoordinator}</if>
+            <if test="toCoordinator != null">AND teacher_pe_comments.to_coordinator = #{toCoordinator}</if>
             <if test="toCoordinatorComment != null">AND teacher_pe_comments.to_coordinator_comment =
                 #{toCoordinatorComment}
             </if>
-            <if test="teachTrailClass != 0">AND teacher_pe_comments.teach_trail_class = #{teachTrailClass}</if>
+            <if test="teachTrailClass != null">AND teacher_pe_comments.teach_trail_class = #{teachTrailClass}</if>
             <if test="stateReason != null">AND teacher_pe_comments.state_reason = #{stateReason}</if>
-            <if test="templateId != 0">AND teacher_pe_comments.template_id = #{templateId}</if>
+            <if test="templateId != null">AND teacher_pe_comments.template_id = #{templateId}</if>
         </trim>
     </sql>
 
@@ -75,31 +75,31 @@
     <insert id="saveDao" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO teacher_pe_comments
         <trim prefix="(" prefixOverrides=",">
-            <if test="id != 0">,id</if>
-            <if test="applicationId != 0">,application_id</if>
+            <if test="id != null">,id</if>
+            <if test="applicationId != null">,application_id</if>
             <if test="thingsDidWell != null">,things_did_well</if>
             <if test="areasImprovement != null">,areas_improvement</if>
-            <if test="totalScore != 0">,total_score</if>
+            <if test="totalScore != null">,total_score</if>
             <if test="status != null">,status</if>
-            <if test="toCoordinator != 0">,to_coordinator</if>
+            <if test="toCoordinator != null">,to_coordinator</if>
             <if test="toCoordinatorComment != null">,to_coordinator_comment</if>
-            <if test="teachTrailClass != 0">,teach_trail_class</if>
+            <if test="teachTrailClass != null">,teach_trail_class</if>
             <if test="stateReason != null">,state_reason</if>
-            <if test="templateId != 0">,template_id</if>
+            <if test="templateId != null">,template_id</if>
         </trim>
         ) VALUES
         <trim prefix="(" prefixOverrides=",">
-            <if test="id != 0">,#{id}</if>
-            <if test="applicationId != 0">,#{applicationId}</if>
+            <if test="id != null">,#{id}</if>
+            <if test="applicationId != null">,#{applicationId}</if>
             <if test="thingsDidWell != null">,#{thingsDidWell}</if>
             <if test="areasImprovement != null">,#{areasImprovement}</if>
-            <if test="totalScore != 0">,#{totalScore}</if>
+            <if test="totalScore != null">,#{totalScore}</if>
             <if test="status != null">,#{status}</if>
-            <if test="toCoordinator != 0">,#{toCoordinator}</if>
+            <if test="toCoordinator != null">,#{toCoordinator}</if>
             <if test="toCoordinatorComment != null">,#{toCoordinatorComment}</if>
-            <if test="teachTrailClass != 0">,#{teachTrailClass}</if>
+            <if test="teachTrailClass != null">,#{teachTrailClass}</if>
             <if test="stateReason != null">,#{stateReason}</if>
-            <if test="templateId != 0">,#{templateId}</if>
+            <if test="templateId != null">,#{templateId}</if>
         </trim>
         )
     </insert>
@@ -107,16 +107,16 @@
     <update id="updateDao">
         UPDATE teacher_pe_comments
         <trim prefix="SET" prefixOverrides=",">
-            <if test="applicationId != 0">,application_id = #{applicationId}</if>
+            <if test="applicationId != null">,application_id = #{applicationId}</if>
             <if test="thingsDidWell != null">,things_did_well = #{thingsDidWell}</if>
             <if test="areasImprovement != null">,areas_improvement = #{areasImprovement}</if>
-            <if test="totalScore != 0">,total_score = #{totalScore}</if>
+            <if test="totalScore != null">,total_score = #{totalScore}</if>
             <if test="status != null">,status = #{status}</if>
-            <if test="toCoordinator != 0">,to_coordinator = #{toCoordinator}</if>
+            <if test="toCoordinator != null">,to_coordinator = #{toCoordinator}</if>
             <if test="toCoordinatorComment != null">,to_coordinator_comment = #{toCoordinatorComment}</if>
-            <if test="teachTrailClass != 0">,teach_trail_class = #{teachTrailClass}</if>
+            <if test="teachTrailClass != null">,teach_trail_class = #{teachTrailClass}</if>
             <if test="stateReason != null">,state_reason = #{stateReason}</if>
-            <if test="templateId != 0">,template_id = #{templateId}</if>
+            <if test="templateId != null">,template_id = #{templateId}</if>
         </trim>
         <trim prefix="WHERE" prefixOverrides="AND">AND id = #{id}</trim>
     </update>
