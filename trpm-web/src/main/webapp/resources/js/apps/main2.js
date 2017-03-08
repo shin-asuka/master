@@ -46,7 +46,7 @@ require.config({
     "classopen": "apps/portal/class.open",
     "classpracticum": "apps/portal/class.practicum",
     "checkalive": "apps/portal/check.alive",
-    "duobeiyun": "libs/duobeiyun-js-sdk-0.1.1-min",
+    "duobeiyun": "libs/duobeiyun-js-sdk-0.1.3",
     "dbyproxy": "apps/portal/dby.proxy",
     "xdyproxy": "apps/portal/xdy.proxy",
     "vipkidproxy": "apps/portal/vipkid.proxy",
@@ -70,7 +70,7 @@ require.config({
   waitSeconds: 0,
 
   /* 更新JS缓存 */
-  urlArgs: "t=201702201633",
+  urlArgs: "t=201703071244",
 
   /* 加载非AMD规范的JS */
   shim: {

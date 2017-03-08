@@ -1,4 +1,4 @@
-define(["duobeiyun"], function() {
+define(["duobeiyun","jquery-bootstrap"], function() {
 
   var initChannel = function(uid, roomId, debug, stars) {
     Duobeiyun.init({

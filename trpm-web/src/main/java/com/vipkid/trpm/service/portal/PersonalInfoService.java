@@ -1,22 +1,5 @@
 package com.vipkid.trpm.service.portal;
 
-import static com.vipkid.trpm.util.DateUtils.FMT_YMD;
-
-import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.util.*;
-import java.util.stream.Collectors;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.community.tools.JsonTools;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
-
 import com.google.api.client.repackaged.com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 import com.vipkid.file.model.FileUploadStatus;
@@ -33,6 +16,24 @@ import com.vipkid.trpm.entity.personal.TeacherBankVO;
 import com.vipkid.trpm.service.media.AbstarctMediaService;
 import com.vipkid.trpm.service.media.OSSMediaService;
 import com.vipkid.trpm.util.AwsFileUtils;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.community.tools.JsonTools;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import static com.vipkid.trpm.util.DateUtils.FMT_YMD;
 
 @Service
 public class PersonalInfoService {
@@ -66,7 +67,10 @@ public class PersonalInfoService {
     @Autowired
     private FileHttpService fileHttpService;
 
-    
+
+	@Autowired
+	private TeacherBankInfoDao teacherBankInfoDao;
+
 	/**
 	 * 处理用户密码修改逻辑
 	 *
@@ -209,23 +213,32 @@ public class PersonalInfoService {
 		if (!StringUtils.equals(issuanceCountry,String.valueOf(teacher.getIssuanceCountry()))){
 			modificationLog.append(" issuanceCountry:from " + teacher.getIssuanceCountry() + " to " + issuanceCountry);
 		}
-		Date currentTime = new Date();
-		SimpleDateFormat sdf = new SimpleDateFormat("yyy-MM-dd HH:mm:ss");
-		String now = sdf.format(currentTime);
 
-		logger.info("#Teacher {} 在 {} 更新银行信息：{}", teacherId, now, modificationLog.toString());
 		teacher.setIssuanceCountry(bankInfo.getIssuanceCountryId());
+
+		// 更新老师的银行信息
+		TeacherBankInfo teacherBankInfo = new TeacherBankInfo();
+		teacherBankInfo.setBankName(teacher.getBankName());
+		teacherBankInfo.setBankAccountName(teacher.getBankAccountName());
+		teacherBankInfo.setBankCardNumber(teacher.getBankCardNumber());
+		teacherBankInfo.setBankSwiftCode(teacher.getBankSwiftCode());
+		teacherBankInfo.setBankABARoutingNumber(teacher.getBankABARoutingNumber());
+		teacherBankInfo.setBankACHNumber(teacher.getBankACHNumber());
+		teacherBankInfoDao.updateTeacherBankInfo(teacher.getId(), teacherBankInfo);
 
 		teacherDao.update(teacher);
 		modelMap.put("teacher", teacher);
+
+		Date currentTime = new Date();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyy-MM-dd HH:mm:ss");
+		String now = sdf.format(currentTime);
+		logger.info("#Teacher {} 在 {} 更新银行信息：{}", teacherId, now, modificationLog.toString());
+
 		return modelMap;
 	}
 
 	private static boolean notContainsAsterisk(String bankInfoField) {
-		if (!StringUtils.contains(bankInfoField, "*")) {
-			return true;
-		}
-		return false;
+		return !StringUtils.contains(bankInfoField, "*");
 	}
 
 	/**
@@ -489,6 +502,23 @@ public class PersonalInfoService {
 			return name;
 		}
 
+	}
+
+	public Teacher setBankInfoOfTeacher(Teacher teacher){
+		if (null != teacher) {
+			TeacherBankInfo teacherBankInfo = teacherBankInfoDao.getTeacherBankInfo(teacher.getId());
+
+			if (null != teacherBankInfo) {
+				teacher.setBankABARoutingNumber(teacherBankInfo.getBankABARoutingNumber());
+				teacher.setBankAccountName(teacherBankInfo.getBankAccountName());
+				teacher.setBankACHNumber(teacherBankInfo.getBankACHNumber());
+				teacher.setBankAddress(teacherBankInfo.getBankAddress());
+				teacher.setBankCardNumber(teacherBankInfo.getBankCardNumber());
+				teacher.setBankName(teacherBankInfo.getBankName());
+				teacher.setBankSwiftCode(teacherBankInfo.getBankSwiftCode());
+			}
+		}
+		return teacher;
 	}
 
 }

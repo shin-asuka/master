@@ -427,7 +427,15 @@ public class OnlineClassController extends AbstractPortalController {
                     @RequestParam long studentId, @RequestParam long onlineClassId, Model model) {
         Teacher teacher = loginService.getTeacher();
         onlineclassService.sendStarlogs(send, studentId, onlineClassId, teacher);
-        return jsonView();
+        Map<String, Object> modelMap;
+        if(send){
+            logger.info("Teacher {} send star to {} in class {}", teacher.getId(), studentId, onlineClassId);
+            modelMap = onlineclassService.updateStarNum(onlineClassId, teacher.getId(), studentId, 1);
+        }else{
+            logger.info("Teacher {} remove star to {} in class {}", teacher.getId(), studentId, onlineClassId);
+            modelMap = onlineclassService.updateStarNum(onlineClassId, teacher.getId(), studentId, -1);
+        }
+        return jsonView(response, modelMap);
     }
   //FAQ静态页面的controler
   	@RequestMapping("/faq")

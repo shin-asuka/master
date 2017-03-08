@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.google.api.client.util.Lists;
 import com.google.api.client.util.Maps;
 import com.google.common.base.Stopwatch;
+import com.sun.javafx.binding.StringFormatter;
 import com.vipkid.enums.TeacherEnum.LifeCycle;
 import com.vipkid.http.service.ManageGatewayService;
 import com.vipkid.http.utils.JsonUtils;
@@ -16,7 +17,9 @@ import com.vipkid.rest.portal.vo.TranslationVo;
 import com.vipkid.rest.utils.ApiResponseUtils;
 import com.vipkid.rest.utils.ext.baidu.BaiduTranslateAPI;
 import com.vipkid.trpm.constant.ApplicationConstant;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,72 +54,32 @@ public class StudentCommentRestController extends RestfulController{
 	 * @return
 	 */
 
-	@RequestMapping(value = "/getStudentCommentByDoublePage", method = RequestMethod.GET)
-	public Map<String, Object> getStudentCommentByDoublePage(HttpServletRequest request, HttpServletResponse response,
-			@RequestParam(value="onlineClassId", required=true) long onlineClassId,
-			@RequestParam(value="teacherId",required=true) int teacherId,
-			@RequestParam(value="PageNo",required=false,defaultValue = "-1") Integer pageNo) {
+	@RequestMapping(value = "/getStudentCommentByBatch", method = RequestMethod.GET)
+	public Map<String, Object> getStudentCommentByBatch(HttpServletRequest request, HttpServletResponse response,
+			@RequestParam(value="onlineClassId", required=true) long onlineClassId) {
 		try {
 			Stopwatch stopwatch = Stopwatch.createStarted();
-			logger.info("【StudentCommentRestController.getStudentCommentByDoublePage】input：onlineClassId={},teacherId={}",onlineClassId, teacherId);
+			logger.info("【StudentCommentRestController.getStudentCommentListByBatch】input：onlineClassId={}",onlineClassId);
 //			User getUser = UserUtils.getUser(request);
 //			if(getUser.getId()!=teacherId){
 //				return ApiResponseUtils.buildErrorResp(1002, "没有数据访问权限");
 //			}
-
-			Integer absolutePosition = 0;//在全部评论中的位置
-			Integer position = 0;//在评论分页中的位置
-			List<StudentCommentVo> stuCommentList = Lists.newArrayList();
-
-			if(pageNo == -1) {// 页号未知需重新定位页号
-				StudentCommentPageVo studentCommentPageVo = manageGatewayService.getStudentCommentListByTeacherId(teacherId, 0, 3000, null);
-				logger.info("获取全量评论成功：teacherId:{},size:{}",teacherId,studentCommentPageVo.getTotal());
-				absolutePosition = manageGatewayService.calculateAbsolutePosition(studentCommentPageVo, onlineClassId);
-				if(absolutePosition == -1) {//未找到classId;
-					return ApiResponseUtils.buildErrorResp(1003,"未找到该课程的评论");
-				}
-				pageNo = absolutePosition / ApplicationConstant.PAGE_SIZE + 1;
-			}
-
-			//计算总页数
-			StudentCommentTotalVo studentCommentTotalVo = manageGatewayService.getStudentCommentTotalByTeacherId(teacherId);
-			Integer totalPageNo = (studentCommentTotalVo.getRating_1_count() +
-					studentCommentTotalVo.getRating_2_count() +
-					studentCommentTotalVo.getRating_3_count() +
-					studentCommentTotalVo.getRating_4_count() +
-					studentCommentTotalVo.getRating_5_count()) / ApplicationConstant.PAGE_SIZE + 1;
-			if(totalPageNo < pageNo){
-				return ApiResponseUtils.buildErrorResp(1004,"请求的页码超过了总页数");
-			}
-
+			String onlineClassIdStr = Long.toString(onlineClassId);
 			//根据页号获取老师的评论列表分页
-			StudentCommentPageVo studentCommentPageVo = manageGatewayService.getStudentCommentListByTeacherId(teacherId,(pageNo-1) * ApplicationConstant.PAGE_SIZE,ApplicationConstant.PAGE_SIZE,null);
-			stuCommentList = studentCommentPageVo.getData();
-
-			//定位当前页的相对位置
-			Integer flag = 0;
-			for(StudentCommentVo studentCommentVo :stuCommentList){
-				if(studentCommentVo.getClass_id().longValue() == onlineClassId){
-					flag = 1;
-					break;
-				}
-				position++;
-			}
-			if(flag == 0){
-				return ApiResponseUtils.buildErrorResp(1003, "未能定位当前页的相对位置");
-			}
+			List<StudentCommentVo> studentCommentVos = manageGatewayService.getStudentCommentListByBatch(onlineClassIdStr);
+			if(CollectionUtils.isEmpty(studentCommentVos)){
+				return ApiResponseUtils.buildErrorResp(1001,"没有获取到评价信息");
+			};
+			StudentCommentVo studentCommentVo = studentCommentVos.get(0);
 
 			Map<String,Object> ret = Maps.newHashMap();
-			ret.put("data",stuCommentList);
-			ret.put("position",position);
-			ret.put("pageNo",pageNo);
-			ret.put("pageSize",ApplicationConstant.PAGE_SIZE);
-			ret.put("totalPageNo",totalPageNo);
+			ret.put("data",studentCommentVo);
 			long millis =stopwatch.stop().elapsed(TimeUnit.MILLISECONDS);
-			logger.info("【StudentCommentRestController.getStudentCommentByDoublePage】output：result={},运行时间={}ms",ret,millis);
+			logger.info("【StudentCommentRestController.getStudentCommentListByBatch】output：result={},运行时间={}ms",ret,millis);
 	        return ApiResponseUtils.buildSuccessDataResp(ret);
 		} catch (Exception e) {
-	        logger.error("调用restClassrooms接口抛异常，传入参数：teacherId={}。抛异常: {}", teacherId, e);//由于维龙的代码没有合上去，暂时这么处理
+			String errorMessage = String.format("调用【StudentCommentRestController.getStudentCommentListByBatch】接口抛异常，传入参数：onlineClassId=%d",onlineClassId);
+	        logger.error(errorMessage, e);//由于维龙的代码没有合上去，暂时这么处理
 		}
 		return ApiResponseUtils.buildErrorResp(1001, "服务器端错误");
 	}

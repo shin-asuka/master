@@ -672,7 +672,7 @@ public class ContractInfoController extends RestfulController {
 
             boolean hasIdentification = contractInfoService.hasIdentification(teacher);
             if(hasIdentification) {
-                logger.error("{} has identification uploaded and not yet be audited!", teacher.getId());
+                logger.warn("{} has identification uploaded and not yet be audited!", teacher.getId());
                 return ReturnMapUtils.returnFail("You have already uploaded, please refresh the page!");
             }
 
@@ -739,7 +739,7 @@ public class ContractInfoController extends RestfulController {
 
             boolean hasDiploma = contractInfoService.hasDiploma(teacher);
             if(hasDiploma) {
-                logger.error("{} has diplomas uploaded and not yet be audited!", teacher.getId());
+                logger.warn("{} has diplomas uploaded and not yet be audited!", teacher.getId());
                 return ReturnMapUtils.returnFail("You have already uploaded, please refresh the page!");
             }
 
@@ -794,7 +794,7 @@ public class ContractInfoController extends RestfulController {
 
             boolean hasContract = contractInfoService.hasContract(teacher);
             if(hasContract) {
-                logger.error("{} has contracts uploaded and not yet be audited!", teacher.getId());
+                logger.warn("{} has contracts uploaded and not yet be audited!", teacher.getId());
                 return ReturnMapUtils.returnFail("You have already uploaded, please refresh the page!");
             }
 
@@ -850,7 +850,7 @@ public class ContractInfoController extends RestfulController {
 
             boolean hasW9 = contractInfoService.hasW9(teacher);
             if(hasW9) {
-                logger.error("{} has uploaded W9 file and not yet be audited!", teacher.getId());
+                logger.warn("{} has uploaded W9 file and not yet be audited!", teacher.getId());
                 return ReturnMapUtils.returnFail("You have already uploaded, please refresh the page!");
             }
 
@@ -916,7 +916,7 @@ public class ContractInfoController extends RestfulController {
 
             int fileCount = contractInfoService.queryCertFileCount(teacher);
             if(fileCount >= MAX_CERT_FILE_NUM) {
-                logger.error("{} has uploaded {} certification files and not yet be audited!", teacher.getId(), fileCount);
+                logger.warn("{} has uploaded {} certification files and not yet be audited!", teacher.getId(), fileCount);
                 return ReturnMapUtils.returnFail("You have already uploaded, please refresh the page!");
             }
 
@@ -969,7 +969,7 @@ public class ContractInfoController extends RestfulController {
 
             int fileCount = contractInfoService.queryDegreeFilesCount(teacher);
             if(fileCount >= MAX_DEGREE_FILE_NUM) {
-                logger.error("{} has uploaded {} degree files and not yet be audited!", teacher.getId(), fileCount);
+                logger.warn("{} has uploaded {} degree files and not yet be audited!", teacher.getId(), fileCount);
                 return ReturnMapUtils.returnFail("You have already uploaded, please refresh the page!");
             }
 
