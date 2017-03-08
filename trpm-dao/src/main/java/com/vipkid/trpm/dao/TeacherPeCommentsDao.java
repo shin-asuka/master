@@ -36,4 +36,8 @@ public class TeacherPeCommentsDao extends MapperDaoTemplate<TeacherPeComments> {
         return super.selectOne(teacherPeComments);
     }
 
+    public void updateTeacherPeComments(TeacherPeComments teacherPeComments) {
+        super.update(teacherPeComments, "updateByApplicationId");
+    }
+
 }

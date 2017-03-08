@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="TeacherPeOptionMapper">
-    
+
     <sql id="teacherPeOptionColumns">teacher_pe_option.id AS id, teacher_pe_option.criteria_id AS criteria_id, teacher_pe_option.description AS description, teacher_pe_option.points AS points, teacher_pe_option.seq AS seq</sql>
-    
+
     <sql id="teacherPeOptionWhere">
         <trim prefix="WHERE" prefixOverrides="AND">
             <if test="id != null">AND teacher_pe_option.id = #{id}</if>
@@ -13,51 +13,51 @@
             <if test="seq != null">AND teacher_pe_option.seq = #{seq}</if>
         </trim>
     </sql>
-    
+
     <sql id="teacherPeOptionOrder">
         <if test="orderString != null">ORDER BY ${orderString}</if>
     </sql>
-    
+
     <sql id="teacherPeOptionLimit">LIMIT #{startLine}, #{limitLine}</sql>
-    
+
     <resultMap type="com.vipkid.trpm.entity.TeacherPeOption" id="teacherPeOptionResultMap">
-        <id column="id" property="id" />
-        <result column="criteria_id" property="criteriaId" />
-        <result column="description" property="description" />
-        <result column="points" property="points" />
-        <result column="seq" property="seq" />
+        <id column="id" property="id"/>
+        <result column="criteria_id" property="criteriaId"/>
+        <result column="description" property="description"/>
+        <result column="points" property="points"/>
+        <result column="seq" property="seq"/>
     </resultMap>
-    
+
     <select id="findDao" resultMap="teacherPeOptionResultMap">
         SELECT
-        <include refid="teacherPeOptionColumns" />
+        <include refid="teacherPeOptionColumns"/>
         FROM teacher_pe_option
-        <include refid="teacherPeOptionWhere" />
+        <include refid="teacherPeOptionWhere"/>
     </select>
-    
+
     <select id="countDao" resultType="int">
         SELECT COUNT(*) FROM teacher_pe_option
-        <include refid="teacherPeOptionWhere" />
+        <include refid="teacherPeOptionWhere"/>
     </select>
-    
+
     <select id="pageDao" resultMap="teacherPeOptionResultMap">
         SELECT
-        <include refid="teacherPeOptionColumns" />
+        <include refid="teacherPeOptionColumns"/>
         FROM teacher_pe_option
-        <include refid="teacherPeOptionWhere" />
-        <include refid="teacherPeOptionOrder" />
-        <include refid="teacherPeOptionLimit" />
+        <include refid="teacherPeOptionWhere"/>
+        <include refid="teacherPeOptionOrder"/>
+        <include refid="teacherPeOptionLimit"/>
     </select>
-    
+
     <select id="limitDao" resultMap="teacherPeOptionResultMap">
         SELECT
-        <include refid="teacherPeOptionColumns" />
+        <include refid="teacherPeOptionColumns"/>
         FROM teacher_pe_option
-        <include refid="teacherPeOptionWhere" />
-        <include refid="teacherPeOptionOrder" />
-        <include refid="teacherPeOptionLimit" />
+        <include refid="teacherPeOptionWhere"/>
+        <include refid="teacherPeOptionOrder"/>
+        <include refid="teacherPeOptionLimit"/>
     </select>
-    
+
     <insert id="saveDao" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO teacher_pe_option
         <trim prefix="(" prefixOverrides=",">
@@ -77,7 +77,7 @@
         </trim>
         )
     </insert>
-    
+
     <update id="updateDao">
         UPDATE teacher_pe_option
         <trim prefix="SET" prefixOverrides=",">
@@ -88,10 +88,39 @@
         </trim>
         <trim prefix="WHERE" prefixOverrides="AND">AND id = #{id}</trim>
     </update>
-    
+
     <delete id="deleteDao">
         DELETE FROM teacher_pe_option
         <trim prefix="WHERE" prefixOverrides="AND">AND id = #{id}</trim>
     </delete>
-    
+
+    <select id="calculateOptionsPointsDao" resultType="int">
+        SELECT
+        SUM(teacher_pe_option.points)
+        FROM
+        teacher_pe_option
+        JOIN teacher_pe_criteria ON teacher_pe_option.criteria_id = teacher_pe_criteria.id
+        WHERE
+        teacher_pe_criteria.calculated = 1
+        AND teacher_pe_option.id IN
+        <foreach collection="optionIds" open="(" close=")" separator="," item="id">
+            <if test="id != null">#{id}</if>
+        </foreach>
+    </select>
+
+    <select id="calculateOptionsProfessionalismsDao" resultType="int">
+        SELECT
+        COUNT(*)
+        FROM
+        teacher_pe_option
+        JOIN teacher_pe_criteria ON teacher_pe_option.criteria_id = teacher_pe_criteria.id
+        WHERE
+        teacher_pe_criteria.calculated = 0
+        AND teacher_pe_option.id IN
+        <foreach collection="optionIds" open="(" close=")" separator="," item="id">
+            <if test="id != null">#{id}</if>
+        </foreach>
+        AND teacher_pe_option.points = 1
+    </select>
+
 </mapper>

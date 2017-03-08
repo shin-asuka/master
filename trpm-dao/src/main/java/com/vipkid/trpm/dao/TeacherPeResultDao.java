@@ -1,5 +1,6 @@
 package com.vipkid.trpm.dao;
 
+import com.google.common.base.Preconditions;
 import com.vipkid.trpm.entity.TeacherPeResult;
 import org.community.dao.support.MapperDaoTemplate;
 import org.mybatis.spring.SqlSessionTemplate;
@@ -20,6 +21,17 @@ public class TeacherPeResultDao extends MapperDaoTemplate<TeacherPeResult> {
         TeacherPeResult teacherPeResult = new TeacherPeResult();
         teacherPeResult.setApplicationId(applicationId);
         return super.selectList(teacherPeResult);
+    }
+
+    public int deleteTeacherPeResults(int applicationId) {
+        Preconditions.checkArgument(0 != applicationId);
+        TeacherPeResult teacherPeResult = new TeacherPeResult();
+        teacherPeResult.setApplicationId(applicationId);
+        return super.delete(teacherPeResult, "deleteByApplicationId");
+    }
+
+    public void saveTeacherPeResults(List<TeacherPeResult> teacherPeResults) {
+        super.saveBatch(teacherPeResults);
     }
 
 }

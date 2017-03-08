@@ -121,6 +121,22 @@
         <trim prefix="WHERE" prefixOverrides="AND">AND id = #{id}</trim>
     </update>
 
+    <update id="updateByApplicationId">
+        UPDATE teacher_pe_comments
+        <trim prefix="SET" prefixOverrides=",">
+            <if test="thingsDidWell != null">,things_did_well = #{thingsDidWell}</if>
+            <if test="areasImprovement != null">,areas_improvement = #{areasImprovement}</if>
+            <if test="totalScore != null">,total_score = #{totalScore}</if>
+            <if test="status != null">,status = #{status}</if>
+            <if test="toCoordinator != null">,to_coordinator = #{toCoordinator}</if>
+            <if test="toCoordinatorComment != null">,to_coordinator_comment = #{toCoordinatorComment}</if>
+            <if test="teachTrailClass != null">,teach_trail_class = #{teachTrailClass}</if>
+            <if test="stateReason != null">,state_reason = #{stateReason}</if>
+            <if test="templateId != null">,template_id = #{templateId}</if>
+        </trim>
+        <trim prefix="WHERE" prefixOverrides="AND">AND application_id = #{applicationId}</trim>
+    </update>
+
     <delete id="deleteDao">
         DELETE FROM teacher_pe_comments
         <trim prefix="WHERE" prefixOverrides="AND">AND id = #{id}</trim>

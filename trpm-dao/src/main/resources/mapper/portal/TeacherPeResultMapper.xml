@@ -83,5 +83,10 @@
         DELETE FROM teacher_pe_result
         <trim prefix="WHERE" prefixOverrides="AND">AND id = #{id}</trim>
     </delete>
+
+    <delete id="deleteByApplicationId">
+        DELETE FROM teacher_pe_result
+        <trim prefix="WHERE" prefixOverrides="AND">AND application_id = #{applicationId}</trim>
+    </delete>
     
 </mapper>
