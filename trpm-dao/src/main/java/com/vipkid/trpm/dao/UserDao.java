@@ -1,5 +1,6 @@
 package com.vipkid.trpm.dao;
 
+import org.apache.commons.lang3.StringUtils;
 import org.community.dao.support.MapperDaoTemplate;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,5 +69,15 @@ public class UserDao extends MapperDaoTemplate<User> {
 	}
 	public int doLock(long userId) {
 		return update(new User().setId(userId), "doLockUser");
+	}
+
+
+	public int findUserShowNumber(String showName){
+		if(StringUtils.isBlank(showName)){
+			return -1;
+		}
+		Map<String, Object> paramsMap = new HashMap<String, Object>();
+		paramsMap.put("showName",showName);
+		return selectEntity("findUserShowNumber",paramsMap);
 	}
 }

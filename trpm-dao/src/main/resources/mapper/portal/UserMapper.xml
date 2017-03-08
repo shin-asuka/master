@@ -207,4 +207,14 @@
 	<update id="doLockUser">
 		UPDATE user SET status = 'LOCKED' WHERE id = #{id}
 	</update>
+
+	<!--查询用户的showName 数量-->
+
+	<select id="findUserShowNumber" resultType="int">
+		SELECT
+		count(1)
+		FROM user
+		where
+		name = #{showName}
+	</select>
 </mapper>

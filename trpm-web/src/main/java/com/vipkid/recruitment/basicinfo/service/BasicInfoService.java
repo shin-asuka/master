@@ -69,7 +69,25 @@ public class BasicInfoService {
     @Autowired
     private RedisProxy redisProxy;
 
-    /**
+    private static List<String> RandomAB  = Lists.newArrayList();
+    static {
+
+        for(int i='A';i<'A'+26;i++){
+            for(int j='A';j<'A'+26;j++){
+                String s="";
+                s+=(char)i;
+                s+=(char)j;
+                RandomAB.add(s);
+            }
+        }
+    }
+
+    private static List<String>  SensitiveWords = Lists.newArrayList();
+    static {
+        SensitiveWords.add("SB");
+    }
+
+    /**s
      * 查询可用的招聘渠道
      *  
      * @Author:ALong (ZengWeiLong)
@@ -93,7 +111,7 @@ public class BasicInfoService {
      * @Author:ALong (ZengWeiLong)
      * @param bean
      * @param user
-     * @param teacher
+     * @param
      * @return    
      * Map<String,Object>
      * @date 2016年10月17日
@@ -159,6 +177,41 @@ public class BasicInfoService {
         if(name.indexOf(" ") > -1){
             name = name.substring(0,name.indexOf(" ")+2);
         }
+
+        int nameNum;
+        int n =1;
+        List<String> showNameList = Lists.newArrayList();
+        do {
+            String s = StringUtils.EMPTY;
+            if(n!=1){
+                for (int i = 0; i < n; i++) {
+                   s+=  (char) (Math.random() * 26 + 'A');
+                }
+            }else{
+                ++n;
+            }
+            showNameList.add(s);
+            if(CollectionUtils.isEqualCollection(showNameList,RandomAB)){
+                ++n;
+            }
+            name+=s;
+            nameNum = userDao.findUserShowNumber(name);
+            String lastName = name.substring(name.indexOf(" ")+1,name.length());
+/*           SensitiveWords.forEach(str->{
+                if (lastName.indexOf(str) != -1) {
+                    nameNum =1;
+                }
+            });*/
+
+            for(String str:SensitiveWords){
+                if (lastName.indexOf(str) != -1) {
+                    nameNum =1;
+                    break;
+                }
+            }
+        }while (nameNum>0);
+
+
         user.setName(name);
         user.setGender(bean.getGender());
         user.setLastEditorId(user.getId());
@@ -219,7 +272,7 @@ public class BasicInfoService {
     /**
      * 渠道为当前老师的数据初始化<br/>
      * @Author:VIPKID-ZengWeiLong
-     * @param paramMap
+     * @param
      * @return 2015年10月12日
      */
     public List<Map<String, Object>> findTeacher(){
