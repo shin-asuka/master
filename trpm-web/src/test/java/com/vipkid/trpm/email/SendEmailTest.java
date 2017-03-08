@@ -11,6 +11,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.amazonaws.util.json.Jackson;
 import com.google.api.client.json.jackson2.JacksonFactory;
+import com.google.api.client.util.Lists;
 import com.google.api.client.util.Maps;
 import com.google.common.base.Stopwatch;
 import com.google.gson.JsonObject;
@@ -24,6 +25,7 @@ import com.vipkid.recruitment.entity.TeacherApplication;
 import com.vipkid.recruitment.entity.TeacherContractFile;
 import com.vipkid.task.utils.UADateUtils;
 import com.vipkid.trpm.entity.Teacher;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,15 +38,61 @@ import static com.alibaba.fastjson.JSON.parseArray;
  *
  */
 public class SendEmailTest {
+	private static List<String> RandomAB  = Lists.newArrayList();
+	static {
+
+		for(int i='A';i<'A'+26;i++){
+			for(int j='A';j<'A'+26;j++){
+				String s="";
+				s+=(char)i;
+				s+=(char)j;
+				RandomAB.add(s);
+			}
+		}
+	}
+
+	private static List<String>  SensitiveWords = Lists.newArrayList();
+	static {
+		SensitiveWords.add("SB");
+	}
 
 	@Autowired
 	private AuditEmailService auditEmailService;
 	
     public static void main(String[] args) {
-	Map<String,String> map = new HashMap<>();
-		map.put("r","ss");
-		map.put("r","aa");
-		System.out.print(map.get("r"));
+
+		String name = "Test dwada";
+		String showname;
+		int nameNum;
+		int n =1;
+		List<String> showNameList = Lists.newArrayList();
+		do {
+			showname = name.substring(0, name.indexOf(" ")+1);
+			String s = StringUtils.EMPTY;
+			if(n!=1){
+				for (int i = 0; i < n; i++) {
+					s+=  (char) (Math.random() * 26 + 'A');
+				}
+			}else{
+				++n;
+			}
+			showNameList.add(s);
+			if(CollectionUtils.isEqualCollection(showNameList,RandomAB)){
+				++n;
+			}
+			showname+=s;
+			nameNum = 1;
+
+			for(String str:SensitiveWords){
+				if (s.indexOf(str) != -1) {
+					nameNum =1;
+					break;
+				}
+			}
+		}while (nameNum>0);
+
+
+		System.out.print(showname);
 /*
 		Map<String, String> paramsMap1 = Maps.newHashMap();
 		paramsMap1.put("teacherName", "Bel2");
@@ -174,7 +222,7 @@ public class SendEmailTest {
 		new EmailEngine().addMailPool("zhangzhaojun@vipkid.com.cn ", emailMap12 , EmailFormEnum.TEACHVIP);*/
 
 	}
-
+/*
 	//@Test
 	public void dateTest(){
 		//Date date = UADateUtils.getToday(20);
@@ -185,9 +233,9 @@ public class SendEmailTest {
 
 		String dateStr = UADateUtils.format(calendar.getTime(), null);
 		System.out.println(dateStr);
-	}
+	}*/
 
-	@Test
+/*	@Test
 	public void findOnlineClass(){
 		StringBuilder stringBuilder = new StringBuilder();
 		String s = " [{\"id\":\"avatar\",\"name\":\"avatar\",\"result\":\"FAIL\",\"failReason\":\"\",\"url\":\"https://teacher-media.vipkid.com.cn/teacher/avatar/2069783/98bfc1142f4f4de0ad6734a7bbdfbc56/avatar_medium/teacher-avatar-2069783.png\"},{\"id\":\"lifePictures_157\",\"name\":\"lifePictures\",\"result\":\"FAIL\",\"failReason\":\"\",\"url\":\"https://teacher-media.vipkid.com.cn/teacher/lifePicture/2069783/33fa8db95c29425184b038cedb4f550e/life_picture_medium/teacher-lifephoto-2069783.png\"},{\"id\":\"shortVideo\",\"name\":\"shortVideo\",\"result\":\"FAIL\",\"failReason\":\"\",\"url\":\"https://teacher-media.vipkid.com.cn/teacher/shortVideo/2069783/ae59fe5e5ded4fa5b754f1469d542591/short_video_medium/20161208-191858.mp4\"},{\"id\":\"selfIntroduction\",\"name\":\"selfIntroduction\",\"result\":\"FAIL\",\"failReason\":\"\",\"url\":\"dfasfasf\"}]";
@@ -298,7 +346,7 @@ public class SendEmailTest {
 	}
 
 
-	@Test
+/*	@Test
 	public void sendEmail(){
 			String email = "zhaojia3@vipkid.com.cn ";
 			String name = "Bel";
@@ -310,6 +358,13 @@ public class SendEmailTest {
 			EmailUtils.sendEmail4Recruitment(teacher, titleTemplate, contentTemplate);
 
 
+	}*/
+
+
+	@Test
+	public void sendEmail() {
+		String name = "Zhao J ";
+		System.out.print(name.substring(0, name.indexOf(" ")+1));
 	}
 
 }

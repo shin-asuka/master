@@ -177,42 +177,41 @@ public class BasicInfoService {
         if(name.indexOf(" ") > -1){
             name = name.substring(0,name.indexOf(" ")+2);
         }
-
-        int nameNum;
-        int n =1;
-        List<String> showNameList = Lists.newArrayList();
-        do {
-            String s = StringUtils.EMPTY;
-            if(n!=1){
-                for (int i = 0; i < n; i++) {
-                   s+=  (char) (Math.random() * 26 + 'A');
+        if(userDao.findUserShowNumber(name)>0) {
+            String showName;
+            int nameNum;
+            int n = 1;
+            List<String> showNameList = Lists.newArrayList();
+            do {
+                showName = bean.getFirstName()+" ";
+                String s = StringUtils.EMPTY;
+                if (n != 1) {
+                    for (int i = 0; i < n; i++) {
+                        s += (char) (Math.random() * 26 + 'A');
+                    }
+                } else {
+                    ++n;
                 }
-            }else{
-                ++n;
-            }
-            showNameList.add(s);
-            if(CollectionUtils.isEqualCollection(showNameList,RandomAB)){
-                ++n;
-            }
-            name+=s;
-            nameNum = userDao.findUserShowNumber(name);
-            String lastName = name.substring(name.indexOf(" ")+1,name.length());
-/*           SensitiveWords.forEach(str->{
-                if (lastName.indexOf(str) != -1) {
-                    nameNum =1;
+                showNameList.add(s);
+                if (CollectionUtils.isEqualCollection(showNameList, RandomAB)) {
+                    ++n;
                 }
-            });*/
+                showName += s;
+                nameNum = userDao.findUserShowNumber(showName);
 
-            for(String str:SensitiveWords){
-                if (lastName.indexOf(str) != -1) {
-                    nameNum =1;
-                    break;
+                for (String str : SensitiveWords) {
+                    if (s.indexOf(str) != -1) {
+                        nameNum = 1;
+                        break;
+                    }
                 }
-            }
-        }while (nameNum>0);
+            } while (nameNum > 0);
+            user.setName(showName);
+        }else{
+            user.setName(name);
+        }
 
 
-        user.setName(name);
         user.setGender(bean.getGender());
         user.setLastEditorId(user.getId());
         user.setLastEditDateTime(new Timestamp(System.currentTimeMillis()));

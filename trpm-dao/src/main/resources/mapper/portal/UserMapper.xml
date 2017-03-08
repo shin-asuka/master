@@ -217,4 +217,28 @@
 		where
 		name = #{showName}
 	</select>
+
+
+	<select id="findUserShowNameAndIdList" resultType="com.vipkid.trpm.entity.User">
+        SELECT
+		u.id,u.`name`
+		FROM `user` u
+		LEFT JOIN teacher t
+		ON u.id = t.id
+		where t.life_cycle
+		IN("SIGNUP","BASIC_INFO","INTERVIEW","SIGN_CONTRACT","TRAINING","PRACTICUM","CONTRACT_INFO","QUIT","FAIL")
+		GROUP BY id limit #{startLine},500;
+	</select>
+
+
+	<select id="findUserNameListByIdList" resultType="com.vipkid.trpm.entity.User">
+		SELECT
+		id,name
+		FROM user
+		WHERE id in
+		<foreach collection="userIds" item="id" open="(" close=")"
+				 separator=",">
+			#{id}
+		</foreach>
+	</select>
 </mapper>

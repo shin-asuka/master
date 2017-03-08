@@ -80,4 +80,17 @@ public class UserDao extends MapperDaoTemplate<User> {
 		paramsMap.put("showName",showName);
 		return selectEntity("findUserShowNumber",paramsMap);
 	}
+
+	public List<User> findUserShowNameAndIdList(int startLine){
+
+		Map<String, Object> paramsMap = new HashMap<String, Object>();
+		paramsMap.put("startLine",startLine);
+		return listEntity("findUserShowNameAndIdList",paramsMap);
+	}
+
+	public List<User> findUserNameListByIdList(List<Integer> userIds){
+		Map<String, Object> paramsMap = new HashMap<String, Object>();
+		paramsMap.put("userIds",userIds);
+		return listEntity("findUserNameListByIdList",paramsMap);
+	}
 }

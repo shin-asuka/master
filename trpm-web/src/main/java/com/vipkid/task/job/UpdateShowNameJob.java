@@ -1,0 +1,91 @@
+package com.vipkid.task.job;
+
+import com.google.api.client.util.Lists;
+import com.vipkid.trpm.dao.UserDao;
+import com.vipkid.trpm.entity.User;
+import com.vipkid.vschedule.client.common.Vschedule;
+import com.vipkid.vschedule.client.schedule.JobContext;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import java.util.List;
+
+/**
+ * Created by zhangzhaojun on 2017/3/8.
+ */
+@Component
+@Vschedule
+public class UpdateShowNameJob {
+    private static final Logger logger = LoggerFactory.getLogger(UpdateShowNameJob.class);
+    @Autowired
+    private UserDao userDao;
+    private static List<String> RandomAB = Lists.newArrayList();
+
+    static {
+        for (int i = 'A'; i < 'A' + 26; i++) {
+            for (int j = 'A'; j < 'A' + 26; j++) {
+                String s = "";
+                s += (char) i;
+                s += (char) j;
+                RandomAB.add(s);
+            }
+        }
+    }
+
+    private static List<String> SensitiveWords = Lists.newArrayList();
+
+    static {
+        SensitiveWords.add("SB");
+    }
+
+    @Vschedule
+    public void doJob(JobContext jobContext) {
+        logger.info("【updateShowName  】START: ==================================================");
+        for (int i = 0; i < 165709; i = i + 500){
+            List<User> userList = userDao.findUserShowNameAndIdList(i);
+            if(CollectionUtils.isEmpty(userList)){
+                break;
+            }else{
+                for (User user:userList){
+                    String name  = user.getName();
+                    int showNumber = userDao.findUserShowNumber(name);
+                    if(showNumber>0) {
+
+                        String showName;
+                        int nameNum;
+                        int n=2;
+                        List<String> showNameList = Lists.newArrayList();
+
+                        do {
+                            showName = name.substring(0, name.indexOf(" ")+1);
+                            String s = StringUtils.EMPTY;
+                                for (int j = 0; j < n; j++) {
+                                    s += (char) (Math.random() * 26 + 'A');
+                                }
+                            showNameList.add(s);
+                            if (CollectionUtils.isEqualCollection(showNameList, RandomAB)) {
+                                ++n;
+                            }
+                            showName += s;
+                            nameNum = userDao.findUserShowNumber(showName);
+                            for (String str : SensitiveWords) {
+                                if (s.indexOf(str) != -1) {
+                                    nameNum = 1;
+                                    break;
+                                }
+                            }
+                        } while (nameNum > 0);
+                        logger.info("uopdate teacher :{} showName:{}", user.getId(), showName);
+                        user.setName(showName);
+                        userDao.update(user);
+                    }
+                }
+            }
+        }
+        logger.info("【updateShowNmae  】END: ==================================================");
+    }
+}
