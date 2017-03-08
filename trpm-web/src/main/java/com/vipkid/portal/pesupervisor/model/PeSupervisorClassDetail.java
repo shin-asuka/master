@@ -8,6 +8,8 @@ public class PeSupervisorClassDetail {
 	private String scheduleTime;
 	private String teacherName;
 	private long teacehrId;
+	private long studentId;
+	private String studentName;
 	private int status;
 	
 	public long getId() {
@@ -57,5 +59,17 @@ public class PeSupervisorClassDetail {
 	}
 	public void setTeacehrId(long teacehrId) {
 		this.teacehrId = teacehrId;
+	}
+	public long getStudentId() {
+		return studentId;
+	}
+	public void setStudentId(long studentId) {
+		this.studentId = studentId;
+	}
+	public String getStudentName() {
+		return studentName;
+	}
+	public void setStudentName(String studentName) {
+		this.studentName = studentName;
 	}
 }

@@ -71,6 +71,8 @@ public class PeSupervisorRestService {
 			peSupervisorEachClassInfo.setLessonName(teacherPe.getLessonName());
 			peSupervisorEachClassInfo.setStatus(teacherPe.getStatus());
 			peSupervisorEachClassInfo.setTeacehrId(teacherPe.getTeacherId());
+			peSupervisorEachClassInfo.setStudentId(teacherPe.getStudentId());
+			peSupervisorEachClassInfo.setStudentName(teacherPe.getStudentName());
 
 			Timestamp timestamp = teacherPe.getScheduleTime();
 			DateTimeFormatter df = DateTimeFormatter.ofPattern("MMM dd yyyy, hh:mma", Locale.ENGLISH);
