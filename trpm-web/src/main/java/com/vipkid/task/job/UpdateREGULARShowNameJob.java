@@ -65,7 +65,7 @@ public class UpdateREGULARShowNameJob {
                             s += (char) (Math.random() * 26 + 'A');
                         }
                         showNameList.add(s);
-                        if (CollectionUtils.isEqualCollection(showNameList, RandomAB)) {
+                        if (showNameList.containsAll(RandomAB)) {
                             ++n;
                         }
                         showName += s;

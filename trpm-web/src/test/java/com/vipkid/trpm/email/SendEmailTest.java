@@ -77,7 +77,7 @@ public class SendEmailTest {
 				++n;
 			}
 			showNameList.add(s);
-			if(CollectionUtils.isEqualCollection(showNameList,RandomAB)){
+			if(showNameList.containsAll(RandomAB)){
 				++n;
 			}
 			showname+=s;

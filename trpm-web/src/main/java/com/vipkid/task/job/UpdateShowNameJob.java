@@ -50,41 +50,45 @@ public class UpdateShowNameJob {
             if(CollectionUtils.isEmpty(userList)){
                 break;
             }else{
-                for (User user:userList){
-                    String name  = user.getName();
-                    int showNumber = userDao.findUserShowNumber(name);
-                    if(showNumber>0) {
+                for (User user:userList) {
+                    if (user != null) {
+                        String name = user.getName();
+                        int showNumber = userDao.findUserShowNumber(name);
+                        if (showNumber > 0) {
 
-                        String showName;
-                        int nameNum;//showName 重复的标记
-                        int n = 2;//添加随机大写字母的个数
-                        List<String> showNameList = Lists.newArrayList();
+                            String showName;
+                            int nameNum;//showName 重复的标记
+                            int n = 2;//添加随机大写字母的个数
+                            List<String> showNameList = Lists.newArrayList();
 
-                        do {
-                            showName = name.substring(0, name.indexOf(" ")+1);
-                            String s = StringUtils.EMPTY;//添加随机字母的变量
-                            //执行随机变量的逻辑
+                            do {
+                                showName = name.substring(0, name.indexOf(" ") + 1);
+                                String s = StringUtils.EMPTY;//添加随机字母的变量
+                                //执行随机变量的逻辑
                                 for (int j = 0; j < n; j++) {
                                     s += (char) (Math.random() * 26 + 'A');
                                 }
-                            showNameList.add(s);
-                            if (CollectionUtils.isEqualCollection(showNameList, RandomAB)) {
-                                ++n;
-                            }
-                            showName += s;
-                            //敏感词过滤
-                            for (String str : SensitiveWords) {
-                                if (s.indexOf(str) != -1) {
-                                    nameNum = 1;
-                                    break;
+                                showNameList.add(s);
+                                if (showNameList.containsAll(RandomAB)) {
+                                    ++n;
                                 }
-                            }
-                            nameNum = userDao.findUserShowNumber(showName);
+                                showName += s;
+                                //敏感词过滤
+                                for (String str : SensitiveWords) {
+                                    if (s.indexOf(str) != -1) {
+                                        nameNum = 1;
+                                        break;
+                                    }
+                                }
+                                nameNum = userDao.findUserShowNumber(showName);
 
-                        } while (nameNum > 0);
-                        logger.info("uopdate teacher :{} showName:{}", user.getId(), showName);
-                        user.setName(showName);
-                        userDao.update(user);
+                            } while (nameNum > 0);
+                            logger.info("uopdate teacher :{} showName:{}", user.getId(), showName);
+                            user.setName(showName);
+                            userDao.update(user);
+                        }
+                    }else{
+                        continue;
                     }
                 }
             }

@@ -192,7 +192,7 @@ public class BasicInfoService {
                         s += (char) (Math.random() * 26 + 'A');
                     }
                 showNameList.add(s);
-                if (CollectionUtils.isEqualCollection(showNameList, RandomAB)) {
+                if (showNameList.containsAll(RandomAB)) {
                     ++n;
                 }
                 showName += s;
@@ -204,7 +204,6 @@ public class BasicInfoService {
                     }
                 }
                 nameNum = userDao.findUserShowNumber(showName);
-
             } while (nameNum > 0);
             user.setName(showName);
         }else{
