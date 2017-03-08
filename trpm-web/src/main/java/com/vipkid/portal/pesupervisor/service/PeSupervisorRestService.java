@@ -5,6 +5,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Locale;
 
+import com.vipkid.trpm.entity.Student;
+import com.vipkid.trpm.service.portal.OnlineClassService;
 import org.community.config.PropertyConfigurer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,6 +30,8 @@ public class PeSupervisorRestService {
 	@Autowired
 	private LoginService loginService;
 
+	@Autowired
+	private OnlineClassService onlineClassService;
 	/**
 	 * 返回教师端PE Supervisor页面的数据模型
 	 * 
@@ -71,8 +75,10 @@ public class PeSupervisorRestService {
 			peSupervisorEachClassInfo.setLessonName(teacherPe.getLessonName());
 			peSupervisorEachClassInfo.setStatus(teacherPe.getStatus());
 			peSupervisorEachClassInfo.setTeacherId(teacherPe.getTeacherId());
-			peSupervisorEachClassInfo.setStudentId(teacherPe.getStudentId());
-			peSupervisorEachClassInfo.setStudentName(teacherPe.getStudentName());
+			//TODO:请维龙check逻辑
+			Student student = onlineClassService.fetchStudentByOnlineClassId(teacherPe.getOnlineClassId());
+			peSupervisorEachClassInfo.setStudentId(student.getId());
+			peSupervisorEachClassInfo.setStudentName(student.getEnglishName());
 
 			Timestamp timestamp = teacherPe.getScheduleTime();
 			DateTimeFormatter df = DateTimeFormatter.ofPattern("MMM dd yyyy, hh:mma", Locale.ENGLISH);
