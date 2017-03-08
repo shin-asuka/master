@@ -168,7 +168,8 @@ public class ClassroomController extends RestfulController{
 				response.setStatus(HttpStatus.FORBIDDEN.value());
 				return ApiResponseUtils.buildErrorResp(-1, resultMap.get("info")+"");
 			}else{
-				Object dataObject = resultMap.get("data");
+				//TODO:请维龙check
+				Object dataObject = resultMap.get("student");
 				if(dataObject != null){
 					return ApiResponseUtils.buildSuccessDataResp(dataObject);
 				}
