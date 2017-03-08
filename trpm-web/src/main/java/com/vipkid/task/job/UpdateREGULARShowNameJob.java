@@ -46,20 +46,21 @@ public class UpdateREGULARShowNameJob {
     @Vschedule
     public void doJob(JobContext jobContext) {
         logger.info("【updateShowName  】START: ==================================================");
-        List<Integer> userIds = getUserIdList();
+        List<Integer> userIds = getUserIdList();//获得teacherId 集合
         List<User> userList =  userDao.findUserNameListByIdList(userIds);
         if(CollectionUtils.isNotEmpty(userList)){
             for (User user:userList) {
                 if (user != null) {
                     String name = user.getName();
                     String showName;
-                    int nameNum;
-                    int n = 2;
+                    int nameNum;//showName 重复的标记
+                    int n = 2;//添加随机大写字母的个数
                     List<String> showNameList = Lists.newArrayList();
 
                     do {
                         showName = name.substring(0, name.indexOf(" ") + 1);
-                        String s = StringUtils.EMPTY;
+                        String s = StringUtils.EMPTY;//添加随机字母的变量
+                        //执行随机变量的逻辑
                         for (int j = 0; j < n; j++) {
                             s += (char) (Math.random() * 26 + 'A');
                         }
@@ -68,13 +69,15 @@ public class UpdateREGULARShowNameJob {
                             ++n;
                         }
                         showName += s;
-                        nameNum = userDao.findUserShowNumber(showName);
+                        //敏感词过滤
                         for (String str : SensitiveWords) {
                             if (s.indexOf(str) != -1) {
                                 nameNum = 1;
                                 break;
                             }
                         }
+                        nameNum = userDao.findUserShowNumber(showName);
+
                     } while (nameNum > 0);
                     if (!StringUtils.equalsIgnoreCase(showName, name)) {
                         logger.info("uopdate teacher :{} showName:{}", user.getId(), showName);

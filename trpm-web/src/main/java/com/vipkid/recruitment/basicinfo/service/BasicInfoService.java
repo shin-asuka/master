@@ -177,34 +177,34 @@ public class BasicInfoService {
         if(name.indexOf(" ") > -1){
             name = name.substring(0,name.indexOf(" ")+2);
         }
-        if(userDao.findUserShowNumber(name)>0) {
+        int showNumber= userDao.findUserShowNumber(name);
+        //showName 重复执行的逻辑
+        if(showNumber>0) {
             String showName;
-            int nameNum;
-            int n = 1;
+            int nameNum;//showName 重复的标记
+            int n = 2;//添加随机大写字母的个数
             List<String> showNameList = Lists.newArrayList();
             do {
-                showName = bean.getFirstName()+" ";
-                String s = StringUtils.EMPTY;
-                if (n != 1) {
+                showName = name.substring(0, name.indexOf(" ") + 1);
+                String s = StringUtils.EMPTY;//添加随机字母的变量
+                //执行随机变量的逻辑
                     for (int i = 0; i < n; i++) {
                         s += (char) (Math.random() * 26 + 'A');
                     }
-                } else {
-                    ++n;
-                }
                 showNameList.add(s);
                 if (CollectionUtils.isEqualCollection(showNameList, RandomAB)) {
                     ++n;
                 }
                 showName += s;
-                nameNum = userDao.findUserShowNumber(showName);
-
+                //敏感词过滤
                 for (String str : SensitiveWords) {
                     if (s.indexOf(str) != -1) {
                         nameNum = 1;
                         break;
                     }
                 }
+                nameNum = userDao.findUserShowNumber(showName);
+
             } while (nameNum > 0);
             user.setName(showName);
         }else{

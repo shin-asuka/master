@@ -56,13 +56,14 @@ public class UpdateShowNameJob {
                     if(showNumber>0) {
 
                         String showName;
-                        int nameNum;
-                        int n=2;
+                        int nameNum;//showName 重复的标记
+                        int n = 2;//添加随机大写字母的个数
                         List<String> showNameList = Lists.newArrayList();
 
                         do {
                             showName = name.substring(0, name.indexOf(" ")+1);
-                            String s = StringUtils.EMPTY;
+                            String s = StringUtils.EMPTY;//添加随机字母的变量
+                            //执行随机变量的逻辑
                                 for (int j = 0; j < n; j++) {
                                     s += (char) (Math.random() * 26 + 'A');
                                 }
@@ -71,13 +72,15 @@ public class UpdateShowNameJob {
                                 ++n;
                             }
                             showName += s;
-                            nameNum = userDao.findUserShowNumber(showName);
+                            //敏感词过滤
                             for (String str : SensitiveWords) {
                                 if (s.indexOf(str) != -1) {
                                     nameNum = 1;
                                     break;
                                 }
                             }
+                            nameNum = userDao.findUserShowNumber(showName);
+
                         } while (nameNum > 0);
                         logger.info("uopdate teacher :{} showName:{}", user.getId(), showName);
                         user.setName(showName);
