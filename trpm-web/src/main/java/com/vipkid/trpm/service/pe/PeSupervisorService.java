@@ -163,7 +163,7 @@ public class PeSupervisorService {
         // 4.验证 recruitTeacher 是否存在
         Teacher recruitTeacher = teacherDao.findById(currTeacherApplication.getTeacherId());
         if (recruitTeacher == null) {
-            modelMap.put("msg", "System error！");
+            modelMap.put("msg", "Recruitment Teacher is null , teacher id is "+currTeacherApplication.getTeacherId()+"！");
             logger.info(" Recruitment Teacher is null , teacher id is {}",
             		currTeacherApplication.getTeacherId());
             return modelMap;

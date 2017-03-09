@@ -154,6 +154,8 @@ public class PracticumFeedbackService {
                     logger.info("需要发送邮件");
                     resultMap.put("recruitTeacher", recruitTeacher);
                     resultMap.put("applicationResult", teacherApplication.getResult());
+                }else{
+                	throw new RuntimeException(resultMap.get("msg")+"");
                 }
             }
 
@@ -234,6 +236,8 @@ public class PracticumFeedbackService {
                 logger.info("需要发送邮件");
                 resultMap.put("recruitTeacher", recruitTeacher);
                 resultMap.put("applicationResult", teacherApplication.getResult());
+            }else{
+            	throw new RuntimeException(resultMap.get("msg")+"");
             }
             // 并异步调用AppServer发送邮件及消息
             Long teacherApplicationId = (Long) resultMap.get("teacherApplicationId");
