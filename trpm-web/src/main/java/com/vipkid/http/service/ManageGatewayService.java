@@ -107,6 +107,8 @@ public class ManageGatewayService extends HttpBaseService {
 							stuCommentApi.setStudentAvatar(student.getAvatar());
 							stuCommentApi.setStudentName(student.getEnglishName());
 						}
+						Integer classId = stuCommentApi.getClass_id();
+						stuCommentApi.setOcToken(activityService.encode(classId));
 					}
 					String result = getTranslation(stuCommentApi.getId().longValue());
 					stuCommentApi.setTransaltion(StringUtils.isEmpty(result)? "":result);

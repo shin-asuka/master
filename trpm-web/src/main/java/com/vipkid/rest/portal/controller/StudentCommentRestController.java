@@ -78,9 +78,6 @@ public class StudentCommentRestController extends RestfulController{
 				return ApiResponseUtils.buildErrorResp(1001,"没有获取到评价信息");
 			};
 			StudentCommentVo studentCommentVo = studentCommentVos.get(0);
-			Integer classId = studentCommentVo.getClass_id();
-			String token = activityService.encode(classId.longValue());
-			studentCommentVo.setOcToken(token);
 			Map<String,Object> ret = Maps.newHashMap();
 			ret.put("data",studentCommentVo);
 			long millis =stopwatch.stop().elapsed(TimeUnit.MILLISECONDS);
