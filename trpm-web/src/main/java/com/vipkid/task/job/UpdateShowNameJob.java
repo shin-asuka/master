@@ -45,7 +45,7 @@ public class UpdateShowNameJob {
     @Vschedule
     public void doJob(JobContext jobContext) {
         logger.info("【updateShowName  】START: ==================================================");
-        for (int i = 0; i < 50000; i = i + 1000){
+        for (int i = 0; i < 50000; i = i + 500){
             List<User> userList = userDao.findUserShowNameAndIdList(i);
             if(CollectionUtils.isEmpty(userList)){
                 continue;
