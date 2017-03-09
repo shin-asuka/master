@@ -30,6 +30,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -50,10 +51,11 @@ public class StudentCommentRestController extends RestfulController{
 	@Autowired
 	private ActivityService activityService;
 	/**
-	 * 获取一个可双向翻页的StudentComment分页
+	 * 获取一个可翻页的StudentComment分页
 	 * @param request
 	 * @param response
-	 * @param teacherId
+	 * @param onlineClassId
+	 * @param ocToken
 	 * @return
 	 */
 
@@ -169,11 +171,11 @@ public class StudentCommentRestController extends RestfulController{
 				ratings.add(data.get(id));
 			}
 			long millis =stopwatch.stop().elapsed(TimeUnit.MILLISECONDS);
-			logger.info("【StudentCommentRestController.getStudentCommentByPage】output：result={},运行时间={}ms ", JSONObject.toJSONString(data),millis);
+			logger.info("【StudentCommentRestController.getTeacherRatingsAverageByBatch】output：result={},运行时间={}ms ", JSONObject.toJSONString(data),millis);
 			return ApiResponseUtils.buildSuccessDataResp(ratings);
 		} catch (Exception e) {
-			logger.error("【StudentCommentRestController.getStudentCommentByPage】传入参数：teacherIds={}。抛异常: ", teacherIds);
-			logger.error("【StudentCommentRestController.getStudentCommentByPage】接口异常",e);
+			logger.error("【StudentCommentRestController.getTeacherRatingsAverageByBatch】传入参数：teacherIds={}。抛异常: ", teacherIds);
+			logger.error("【StudentCommentRestController.getTeacherRatingsAverageByBatch】接口异常",e);
 		}
 		return ApiResponseUtils.buildErrorResp(1001, "服务器端错误");
 	}
@@ -285,4 +287,33 @@ public class StudentCommentRestController extends RestfulController{
 		}
 		return ApiResponseUtils.buildErrorResp(1001, "服务器端错误");
 	}
+
+	/**
+	 * 获取tags接口
+	 * @param request
+	 * @param response
+	 * @param id
+	 * @return
+	 */
+	@RequestMapping(value = "/getTagsByCommentId",method = RequestMethod.GET)
+	public Map<String, Object> getTagsByCommentId(HttpServletRequest request, HttpServletResponse response,
+															   @RequestParam(value="id",required=true) String id) {
+		try {
+			Stopwatch stopwatch = Stopwatch.createStarted();
+			logger.info("【StudentCommentRestController.getTagsByCommentId】input：id={}",id);
+//			User getUser = UserUtils.getUser(request);
+//			if(getUser.getId()!=teacherId){
+//				return ApiResponseUtils.buildErrorResp(1002, "没有数据访问权限");
+//			}
+			ArrayList data = manageGatewayService.getTagsByCommentId(id);
+			long millis =stopwatch.stop().elapsed(TimeUnit.MILLISECONDS);
+			logger.info("【StudentCommentRestController.getTagsByCommentId】output：result={},运行时间={}ms ", JSONObject.toJSONString(data),millis);
+			return ApiResponseUtils.buildSuccessDataResp(data);
+		} catch (Exception e) {
+			logger.error("【StudentCommentRestController.getTagsByCommentId】传入参数：id={}。抛异常: ", id);
+			logger.error("【StudentCommentRestController.getTagsByCommentId】接口异常",e);
+		}
+		return ApiResponseUtils.buildErrorResp(1001, "服务器端错误");
+	}
+
 }

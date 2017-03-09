@@ -26,6 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -52,6 +53,7 @@ public class ManageGatewayService extends HttpBaseService {
 
 	private static final String  GATEWAY_STUDENT_COMMENT_RATING_AVERAGE = "/service/student_comment/teacher/ratings/average?ids=%s";
 
+	private static final String  GATEWAY_STUDENT_COMMENT_TAGS = "/internal/student_comment/comment/%s";
 
 	@Autowired
 	private OnlineClassService onlineClassService;
@@ -164,6 +166,26 @@ public class ManageGatewayService extends HttpBaseService {
 		return map;
 	}
 
+	/**
+	 * 获取某条评价的标签
+	 * @param id
+	 * @return
+	 */
+	public ArrayList getTagsByCommentId(String id){
+		Map map = Maps.newHashMap();
+		ArrayList tags = Lists.newArrayList();
+		try {
+			String data = WebUtils.simpleGet(String.format(super.serverAddress + GATEWAY_STUDENT_COMMENT_TAGS,id));
+			if (data!=null) {
+				ObjectMapper mapper = new ObjectMapper();
+				map = mapper.readValue(data, Map.class);
+				tags = (ArrayList) map.get("tags");
+			}
+		} catch (Exception e) {
+			logger.error("【ManageGatewayService.getTagsByCommentId】调用失败，id:"+id,e);
+		}
+		return tags;
+	}
 
 	public Boolean saveTranslation(Long id,String text){
 		String ret = null;
