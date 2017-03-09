@@ -221,12 +221,14 @@
 
 	<select id="findUserShowNameAndIdList" resultType="com.vipkid.trpm.entity.User">
         SELECT
-		u.id,u.`name`
-		FROM `user` u
-		LEFT JOIN teacher t
-		ON u.id = t.id
+		u.id,u.name
+		from teacher_application ta
+        LEFT JOIN `teacher` t ON t.id = ta.teacher_id
+		LEFT JOIN `user` u ON u.id = ta.teacher_id
 		where t.life_cycle
-		IN("SIGNUP","BASIC_INFO","INTERVIEW","SIGN_CONTRACT","TRAINING","PRACTICUM","CONTRACT_INFO","QUIT","FAIL")
+		IN ("BASIC_INFO","INTERVIEW","SIGN_CONTRACT","TRAINING","PRACTICUM","CONTRACT_INFO")
+        and ta.result IN("PASS","REAPPLY","PRACTICUM","PRACTICUM2","TBD","TBD_FAIL","CANCEL" )
+        and  ta.current = 1
 		GROUP BY id limit #{startLine},500;
 	</select>
 
