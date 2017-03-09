@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import com.google.api.client.util.Lists;
 import com.google.common.collect.Maps;
 import com.vipkid.enums.TeacherApplicationEnum.Result;
+import com.vipkid.enums.TeacherModuleEnum;
 import com.vipkid.portal.classroom.model.PeCommentsVo;
 import com.vipkid.portal.classroom.model.PeSupervisorCommentsVo;
 import com.vipkid.portal.classroom.util.BeanUtils;
@@ -256,7 +257,10 @@ public class PracticumFeedbackService {
 		
 		TeacherApplication teacherApplication = this.teacherApplicationDao.findApplictionById(applicationId);
 	
-		BeanUtils.copyPropertys(teacherApplication,bean);
+		if(teacherApplication != null){
+			bean.setFormType(TeacherModuleEnum.RoleClass.PE.equalsIgnoreCase(teacherApplication.getContractUrl())?1:2);
+			BeanUtils.copyPropertys(teacherApplication,bean);
+		}
 		
 		List<TeacherPeTags> tagsList = teacherPeTagsDao.getTeacherPeTagsByApplicationId(applicationId);
 		List<Map<String,Integer>> taglist = Lists.newArrayList();
