@@ -55,12 +55,14 @@ public class PayrollController extends AbstractPortalController {
 
 		try {
 			JSONObject jsonObject = payrollService.getPayrollItemByTeacherAndMonth(teacherId, month);
-			for (String key : jsonObject.keySet()) {
-				result.addAttribute(key, jsonObject.get(key));
+			if(jsonObject != null){
+				for (String key : jsonObject.keySet()) {
+					result.addAttribute(key, jsonObject.get(key));
+				}
 			}
 			message = "查询成功";
 		} catch (Exception e) {
-			LOGGER.error("获取工资明细时出现异常 , uri={} ,e={}", request.getRequestURI(), e);
+			LOGGER.error("获取工资明细时出现异常 , uri="+request.getRequestURI(), e);
 			message = "查询失败 ";
 			status = HttpStatus.INTERNAL_SERVER_ERROR.value();
 		} finally {
@@ -100,12 +102,14 @@ public class PayrollController extends AbstractPortalController {
 		try {
 			// 获取某个教师某月份的工资规则列表
 			jsonObject = payrollService.findRuleByTeacherMonth(teacherId, month);
-			for (Object key : jsonObject.keySet()) {
-				result.addAttribute(key.toString(), jsonObject.get(key));
+			if(jsonObject != null){
+				for (Object key : jsonObject.keySet()) {
+					result.addAttribute(key.toString(), jsonObject.get(key));
+				}
 			}
 			message = "查询成功";
 		} catch (Exception e) {
-			LOGGER.error("request 请求PayRollServerProto异常 , uri={} ,e={}", request.getRequestURI(), e);
+			LOGGER.error("request 请求PayRollServerProto异常 , uri="+request.getRequestURI(), e);
 			message = "获取教师工资规则失败 ";
 			status = HttpStatus.INTERNAL_SERVER_ERROR.value();
 		} finally {
@@ -200,7 +204,7 @@ public class PayrollController extends AbstractPortalController {
 			result.addAttribute("offsetOfMonth", offsetOfMonth);
 
 		} catch (Exception e) {
-			LOGGER.error("查询工资明细时出现异常 , uri={} ,e={}", request.getRequestURI(), e);
+			LOGGER.error("查询工资明细时出现异常 , uri="+request.getRequestURI(), e);
 			message = "查询失败 ";
 			status = HttpStatus.INTERNAL_SERVER_ERROR.value();
 		} finally {

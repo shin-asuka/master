@@ -102,6 +102,13 @@ public class StudentCommentRestController extends RestfulController{
 //			}
 			Map ret = Maps.newHashMap();
 			StudentCommentTotalVo data = manageGatewayService.getStudentCommentTotalByTeacherId(teacherId);
+
+			if(null == data){
+				long millis =stopwatch.stop().elapsed(TimeUnit.MILLISECONDS);
+				logger.info("【StudentCommentRestController.getStudentCommentTotal】output：result={},运行时间={}ms", JSONObject.toJSONString(data),millis);
+				return ApiResponseUtils.buildSuccessDataResp(ret);
+			}
+
 			Integer allComments = data.getRating_1_count() +
 								  data.getRating_2_count() +
 					   			  data.getRating_3_count() +
@@ -111,8 +118,8 @@ public class StudentCommentRestController extends RestfulController{
 			Integer satisfied =  data.getRating_5_count();
 			Integer average = data.getRating_4_count();
 			Integer dislike = data.getRating_1_count() + data.getRating_2_count() + data.getRating_3_count();
-
 			String totalGradeStr = "0.0";
+
 			if(allComments!=0) {
 				Float totalGrade = (1f * data.getRating_1_count() +
 						2f * data.getRating_2_count() +

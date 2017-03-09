@@ -369,7 +369,7 @@ public class ContractInfoController extends RestfulController {
                 }
             } catch (IllegalArgumentException e) {
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
-                logger.error("submitContractInfo with Exception", e);
+                logger.warn("submitContractInfo with Exception", e);
                 return ReturnMapUtils.returnFail(e.getMessage(), e);
             } catch (Exception e) {
                 response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
@@ -480,7 +480,7 @@ public class ContractInfoController extends RestfulController {
                 }
             } catch (IllegalArgumentException e) {
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
-                logger.error("uploadVideo exception", e);
+                logger.warn("uploadVideo exception", e);
                 return ReturnMapUtils.returnFail(e.getMessage(), e);
             } catch (Exception e) {
                 response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());

@@ -1,5 +1,6 @@
 package com.vipkid.trpm.entity;
 
+import com.vipkid.rest.validation.annotation.Length;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.community.dao.support.Entity;

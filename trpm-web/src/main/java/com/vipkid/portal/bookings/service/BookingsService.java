@@ -375,7 +375,8 @@ public class BookingsService {
      */
     public Map<String, Map<String, Object>> getTeacherScheduleMap(long teacherId, Date fromTime, Date toTime,
                     String timezone) {
-        List<Map<String, Object>> teacherScheduleList = onlineClassDao.findByTeacherIdWithFromAndToTime(teacherId, fromTime, toTime, timezone);
+        List<Map<String, Object>> teacherScheduleList =
+                        onlineClassDao.findByTeacherIdWithFromAndToTime(teacherId, fromTime, toTime, timezone);
         logger.info("Teacher id: {}, Schedule size: {}", teacherId, teacherScheduleList.size());
 
         /* 根据北京时间构造 Map 对象 */
@@ -386,13 +387,12 @@ public class BookingsService {
         }
 
         /* 查询需要显示的 INVALID 课程列表 */
-        List<Map<String, Object>> invalidScheduleList = onlineClassDao.findInvalidBy(teacherId, fromTime, toTime, timezone);
-
+        List<Map<String, Object>> invalidScheduleList =
+                        onlineClassDao.findInvalidBy(teacherId, fromTime, toTime, timezone);
 
         /* 查询 24 小时的课程列表 */
-        List<String> onlineClassIds = teacherScheduleList.stream().map(map -> String.valueOf(map.get("id"))).collect(Collectors.toList());
-
-
+        List<String> onlineClassIds = teacherScheduleList.stream().map(map -> String.valueOf(map.get("id")))
+                        .collect(Collectors.toList());
         List<String> idsFor24Hour = get24Hours(teacherId, onlineClassIds);
 
 
@@ -609,6 +609,7 @@ public class BookingsService {
             if(StringUtils.isBlank(responseBody)){
                 return Lists.newArrayList();
             }
+
             responseBody = StringTools.matchString(responseBody, "\\[(.*?)\\]", Pattern.CASE_INSENSITIVE, 1);
             return Arrays.asList(StringUtils.split(responseBody, ","));
         } catch (Exception e) {
