@@ -74,7 +74,7 @@ public class PracticumFeedBackController extends RestfulController {
     }
 	
 	/**
-	 * PE 保存
+	 * PE / PES 审核保存
 	 * @param request
 	 * @param response
 	 * @return
@@ -129,7 +129,7 @@ public class PracticumFeedBackController extends RestfulController {
 	}
 	
 	/**
-	 * PE 查看
+	 * PE 审核查看
 	 * @param request
 	 * @param response
 	 * @return
@@ -157,7 +157,7 @@ public class PracticumFeedBackController extends RestfulController {
 	
 	
 	/**
-	 * PES 保存
+	 * PES Review 保存
 	 * @param request
 	 * @param response
 	 * @return
@@ -204,7 +204,7 @@ public class PracticumFeedBackController extends RestfulController {
 	
 	
 	/**
-	 * PES 查看
+	 * PES ( Review / 审核 ) 查看
 	 * @param request
 	 * @param response
 	 * @return
