@@ -15,6 +15,7 @@ import com.vipkid.trpm.dao.LessonDao;
 import com.vipkid.trpm.entity.Lesson;
 import com.vipkid.trpm.entity.OnlineClass;
 import com.vipkid.trpm.entity.Student;
+import com.vipkid.trpm.service.activity.ActivityService;
 import com.vipkid.trpm.service.portal.OnlineClassService;
 import com.vipkid.trpm.util.LessonSerialNumber;
 import org.apache.commons.lang.StringUtils;
@@ -52,6 +53,8 @@ public class ManageGatewayService extends HttpBaseService {
 	private StudentService studentService;
 	@Autowired
 	private LessonDao lessonDao;
+	@Autowired
+	private ActivityService activityService;
 
 	public List<StudentCommentVo> getStudentCommentListByBatch(String idsStr) {
 
@@ -64,6 +67,8 @@ public class ManageGatewayService extends HttpBaseService {
 				for(StudentCommentVo studentCommentVo : studentCommentApiList) {
 					String result = getTranslation(studentCommentVo.getId().longValue());
 					studentCommentVo.setTransaltion(StringUtils.isEmpty(result) ? "" : result);
+					Integer classId = studentCommentVo.getClass_id();
+					studentCommentVo.setOcToken(activityService.encode(classId));
 				}
 			}
 		} catch (Exception e) {
