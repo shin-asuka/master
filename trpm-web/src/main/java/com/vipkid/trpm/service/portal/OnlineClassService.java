@@ -410,25 +410,18 @@ public class OnlineClassService {
 
         // 2.验证 teacherApplications 是否为空
         long onlineClassId = currTeacherApplication.getOnlineClassId();
-        TeacherApplication teacherApplication = teacherApplicationDao.findApplictionByOlineclassId(onlineClassId,
-                currTeacherApplication.getTeacherId());
-        if (teacherApplication == null) {
-            modelMap.put("msg", "Not exis the online-class recruitment info ！");
-            logger.info(" TeacherApplication is null onlineClassId:{} , status is PRACTICUM ", onlineClassId);
-            return modelMap;
-        }
 
         // 3.验证 recruitTeacher 是否存在
-        Teacher recruitTeacher = teacherDao.findById(teacherApplication.getTeacherId());
+        Teacher recruitTeacher = teacherDao.findById(currTeacherApplication.getTeacherId());
         if (recruitTeacher == null) {
             modelMap.put("msg", "System error！");
-            logger.info(" Recruitment Teacher is null , teacher id is {}", teacherApplication.getTeacherId());
+            logger.info(" Recruitment Teacher is null , teacher id is {}", currTeacherApplication.getTeacherId());
             return modelMap;
         }
 
         OnlineClass onlineClass = onlineClassDao.findById(onlineClassId);
         // 4.如果result 不等于null 则返回错误
-        if (!StringUtils.isEmpty(teacherApplication.getResult())) {
+        if (!StringUtils.isEmpty(currTeacherApplication.getResult())) {
             logger.info("Teacher application already end or recruitment process step already end, class id is : {},status is {}",
                     onlineClass.getId(), onlineClass.getStatus());
             modelMap.put("msg", " The recruitment process already end.");
@@ -444,7 +437,7 @@ public class OnlineClassService {
         // 5.practicum2 判断是否存在
         if (TeacherApplicationEnum.Result.PRACTICUM2.toString().equals(result)) {
             List<TeacherApplication> list = teacherApplicationDao
-                    .findApplictionForStatusResult(teacherApplication.getTeacherId(),Status.PRACTICUM.toString(),Result.PRACTICUM2.toString());
+                    .findApplictionForStatusResult(currTeacherApplication.getTeacherId(),Status.PRACTICUM.toString(),Result.PRACTICUM2.toString());
 
             if (list != null && list.size() > 0) {
                 logger.info("The teacher is already in practicum 2., class id is : {},status is {},recruitTeacher:{}",

@@ -150,20 +150,9 @@ public class PeSupervisorService {
             logger.info(" Online Class is null onlineClassId:{} , status is PRACTICUM ",
                     onlineClassId);
         }
-        //查询ta信息
-        /*TeacherApplication teacherApplication = teacherApplicationDao
-                .findApplictionByOlineclassId(onlineClassId, peSupervisor.getId());*/
-        TeacherApplication teacherApplication = teacherApplicationDao.findApplictionById(currTeacherApplication.getId());
-        
-        if (teacherApplication == null) {
-            modelMap.put("msg", "Not exist the online-class recruitment info ！");
-            logger.info(" TeacherApplication is null onlineClassId:{} , status is PRACTICUM ",
-                    onlineClassId);
-            return modelMap;
-        }
-        
+
         // 3.如果result 不等于null 则返回错误
-        if (!StringUtils.isBlank(teacherApplication.getResult())) {
+        if (!StringUtils.isBlank(currTeacherApplication.getResult())) {
             logger.info(
                     "Teacher application already end or recruitment process step already end, class id is : {},status is {}",
                     onlineClass.getId(), onlineClass.getStatus());
@@ -172,18 +161,18 @@ public class PeSupervisorService {
         }
 
         // 4.验证 recruitTeacher 是否存在
-        Teacher recruitTeacher = teacherDao.findById(teacherApplication.getTeacherId());
+        Teacher recruitTeacher = teacherDao.findById(currTeacherApplication.getTeacherId());
         if (recruitTeacher == null) {
             modelMap.put("msg", "System error！");
             logger.info(" Recruitment Teacher is null , teacher id is {}",
-                    teacherApplication.getTeacherId());
+            		currTeacherApplication.getTeacherId());
             return modelMap;
         }
 
         // 5.practicum2 判断是否存在
         if (TeacherApplicationEnum.Result.PRACTICUM2.toString().equals(result)) {
             List<TeacherApplication> list = teacherApplicationDao
-                    .findApplictionForStatusResult(teacherApplication.getTeacherId(),Status.PRACTICUM.toString(),Result.PRACTICUM2.toString());
+                    .findApplictionForStatusResult(currTeacherApplication.getTeacherId(),Status.PRACTICUM.toString(),Result.PRACTICUM2.toString());
             if (list != null && list.size() > 0) {
                 logger.info(
                         "The teacher is already in practicum 2., class id is : {},status is {},recruitTeacher:{}",
@@ -215,12 +204,12 @@ public class PeSupervisorService {
             auditDao.saveAudit(ApplicationConstant.AuditCategory.PRACTICUM_AUDIT, "INFO", content,
                     peSupervisor.getRealName(), recruitTeacher, IpUtils.getRemoteIP());
 
-            if ("true".equals(String.valueOf(modelMap.get("result")))) {
+            if ((Boolean)modelMap.get("result")) {
                 this.teacherPeDao.updateTeacherPeComments(teacherPe, result, "");
 
                 logger.info(
                         "Practicum Online Class[booked] updateAudit,studentId:{},onlineClassId:{},recruitTeacher:{},teacherId:{}",
-                        teacherApplication.getStduentId(), onlineClass.getId(),
+                        currTeacherApplication.getStduentId(), onlineClass.getId(),
                         recruitTeacher.getId(), peSupervisor.getId());
             }
 

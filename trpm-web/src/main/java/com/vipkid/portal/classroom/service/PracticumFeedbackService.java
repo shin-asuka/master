@@ -131,7 +131,7 @@ public class PracticumFeedbackService {
         
         TeacherApplication teacherApplication = this.teacherApplicationDao.findApplictionById(applicationId);
         
-        BeanUtils.copyPropertys(bean,teacherApplication);
+        teacherApplication = BeanUtils.copyPropertys(bean,teacherApplication);
         
         logger.info("PE:{} , 页面传入的结果result:{}", bean.getSubmitType(), bean.getResult());
         
@@ -214,7 +214,7 @@ public class PracticumFeedbackService {
 
         TeacherApplication teacherApplication = this.teacherApplicationDao.findApplictionById(applicationId);
         
-        BeanUtils.copyPropertys(bean,teacherApplication);
+        teacherApplication = BeanUtils.copyPropertys(bean,teacherApplication);
         
         logger.info("PES:{} , 页面传入的结果result:{}", bean.getSubmitType(), bean.getResult());
         
@@ -225,12 +225,11 @@ public class PracticumFeedbackService {
             	bean.setFinishType(FinishType.AS_SCHEDULED);
             }
             resultMap = peSupervisorService.updateAudit(peSupervisor,teacherApplication, bean.getResult(), bean.getFinishType(), bean.getPeId());
-
+            
             Teacher recruitTeacher = (Teacher) resultMap.get("recruitTeacher");
             // Finish课程
             if ((Boolean) resultMap.get("result")) {
                 onlineclassService.finishPracticum(teacherApplication, bean.getFinishType(), peSupervisor, recruitTeacher);
-                //发邮件
                 //发邮件 email
                 logger.info("需要发送邮件");
                 resultMap.put("recruitTeacher", recruitTeacher);
