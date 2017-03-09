@@ -12,7 +12,7 @@
 
     <!--email.alert区域start-->
     <appender name="email" class="com.vipkid.common.log.SelfSmtpAppender">
-        <smtpHost>smtp.exmail.qq.com</smtpHost>
+        <smtpHost>mail.vipkid.com.cn</smtpHost>
         <username>teacher.alert@vipkid.com.cn</username>
         <password>Alert1</password>
         <from>teacher.alert@vipkid.com.cn</from>
