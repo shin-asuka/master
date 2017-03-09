@@ -4,7 +4,9 @@
 package com.vipkid.http.service;
 
 import com.alibaba.fastjson.JSONObject;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.api.client.util.Lists;
+import com.google.api.client.util.Maps;
 import com.vipkid.http.utils.JsonUtils;
 import com.vipkid.http.utils.WebUtils;
 import com.vipkid.payroll.service.StudentService;
@@ -25,6 +27,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -46,6 +49,9 @@ public class ManageGatewayService extends HttpBaseService {
 	private static final String  GATEWAY_STUDENT_COMMENT_TOTAL_BY_TEACHER_API = "/service/student_comment/teacher/%d/comments/total";
 
 	private static final String  GATEWAY_STUDENT_COMMENT_TRANSLATION_API = "/service/student_comment/comment/%s/translation";
+
+	private static final String  GATEWAY_STUDENT_COMMENT_RATING_AVERAGE = "/service/student_comment/teacher/ratings/average?ids=%s";
+
 
 	@Autowired
 	private OnlineClassService onlineClassService;
@@ -138,6 +144,26 @@ public class ManageGatewayService extends HttpBaseService {
 
 		return studentCommentTotalApi;
 	}
+
+	/**
+	 * 批量获取老师三个月内的平均评价分值
+	 * @param teacherIds 按逗号分隔的字符串
+	 * @return
+	 */
+	public Map<String,String> getTeacherRatingsAverageByBatch(String teacherIds){
+		Map<String,String> map = Maps.newHashMap();
+		try {
+			String data = WebUtils.simpleGet(String.format(super.serverAddress + GATEWAY_STUDENT_COMMENT_RATING_AVERAGE,teacherIds));
+			if (data!=null) {
+				ObjectMapper mapper = new ObjectMapper();
+				map = mapper.readValue(data, Map.class);
+			}
+		} catch (Exception e) {
+			logger.error("【ManageGatewayService.getStudentCommentTotalByTeacherId】调用失败，teacherId:"+teacherIds,e);
+		}
+		return map;
+	}
+
 
 	public Boolean saveTranslation(Long id,String text){
 		String ret = null;

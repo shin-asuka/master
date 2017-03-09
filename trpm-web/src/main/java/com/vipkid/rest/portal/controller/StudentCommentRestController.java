@@ -152,6 +152,32 @@ public class StudentCommentRestController extends RestfulController{
 	 * @param response
 	 * @return
 	 */
+	@RequestMapping(value = "/getTeacherRatingsAverageByBatch",method = RequestMethod.GET)
+	public Map<String, Object> getTeacherRatingsAverageByBatch(HttpServletRequest request, HttpServletResponse response,
+													   @RequestParam(value="ids",required=true) String teacherIds) {
+		try {
+			Stopwatch stopwatch = Stopwatch.createStarted();
+			logger.info("【StudentCommentRestController.getTeacherRatingsAverageByBatch】input：teacherIds={}",teacherIds);
+//			User getUser = UserUtils.getUser(request);
+//			if(getUser.getId()!=teacherId){
+//				return ApiResponseUtils.buildErrorResp(1002, "没有数据访问权限");
+//			}
+			Map<String,String> data = manageGatewayService.getTeacherRatingsAverageByBatch(teacherIds);
+			String[] teacherIdArr = StringUtils.split(teacherIds,",");
+			List<String> ratings = Lists.newArrayList();
+			for(String id :teacherIdArr){
+				ratings.add(data.get(id));
+			}
+			long millis =stopwatch.stop().elapsed(TimeUnit.MILLISECONDS);
+			logger.info("【StudentCommentRestController.getStudentCommentByPage】output：result={},运行时间={}ms ", JSONObject.toJSONString(data),millis);
+			return ApiResponseUtils.buildSuccessDataResp(ratings);
+		} catch (Exception e) {
+			logger.error("【StudentCommentRestController.getStudentCommentByPage】传入参数：teacherIds={}。抛异常: ", teacherIds);
+			logger.error("【StudentCommentRestController.getStudentCommentByPage】接口异常",e);
+		}
+		return ApiResponseUtils.buildErrorResp(1001, "服务器端错误");
+	}
+
 	@RequestMapping(value = "/getStudentCommentByPage",method = RequestMethod.GET)
 	public Map<String, Object> getStudentCommentByPage(HttpServletRequest request, HttpServletResponse response,
 													   @RequestParam(value="start",required=false,defaultValue = "0") Integer start ,
