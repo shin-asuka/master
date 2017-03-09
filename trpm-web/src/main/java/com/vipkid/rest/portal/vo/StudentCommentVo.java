@@ -21,6 +21,7 @@ public class StudentCommentVo {
     private String scheduleDateTime;
     private String onlineClassName;
     private String transaltion;
+    private String ocToken;
 
     public Integer getId() {
         return id;
@@ -148,5 +149,13 @@ public class StudentCommentVo {
 
     public void setLessonSn(String lessonSn) {
         this.lessonSn = lessonSn;
+    }
+
+    public String getOcToken() {
+        return ocToken;
+    }
+
+    public void setOcToken(String ocToken) {
+        this.ocToken = ocToken;
     }
 }

@@ -17,6 +17,7 @@ import com.vipkid.rest.portal.vo.TranslationVo;
 import com.vipkid.rest.utils.ApiResponseUtils;
 import com.vipkid.rest.utils.ext.baidu.BaiduTranslateAPI;
 import com.vipkid.trpm.constant.ApplicationConstant;
+import com.vipkid.trpm.service.activity.ActivityService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -46,6 +47,8 @@ public class StudentCommentRestController extends RestfulController{
 	@Autowired
 	private ManageGatewayService manageGatewayService;
 
+	@Autowired
+	private ActivityService activityService;
 	/**
 	 * 获取一个可双向翻页的StudentComment分页
 	 * @param request
@@ -56,7 +59,8 @@ public class StudentCommentRestController extends RestfulController{
 
 	@RequestMapping(value = "/getStudentCommentByBatch", method = RequestMethod.GET)
 	public Map<String, Object> getStudentCommentByBatch(HttpServletRequest request, HttpServletResponse response,
-			@RequestParam(value="onlineClassId", required=true) long onlineClassId) {
+			@RequestParam(value="onlineClassId",defaultValue = "-1") long onlineClassId,
+			@RequestParam(value="ocToken",defaultValue = "") String ocToken) {
 		try {
 			Stopwatch stopwatch = Stopwatch.createStarted();
 			logger.info("【StudentCommentRestController.getStudentCommentListByBatch】input：onlineClassId={}",onlineClassId);
@@ -64,6 +68,9 @@ public class StudentCommentRestController extends RestfulController{
 //			if(getUser.getId()!=teacherId){
 //				return ApiResponseUtils.buildErrorResp(1002, "没有数据访问权限");
 //			}
+			if(StringUtils.isNotEmpty(ocToken)){
+				onlineClassId = activityService.decode(ocToken);
+			}
 			String onlineClassIdStr = Long.toString(onlineClassId);
 			//根据页号获取老师的评论列表分页
 			List<StudentCommentVo> studentCommentVos = manageGatewayService.getStudentCommentListByBatch(onlineClassIdStr);
@@ -71,7 +78,9 @@ public class StudentCommentRestController extends RestfulController{
 				return ApiResponseUtils.buildErrorResp(1001,"没有获取到评价信息");
 			};
 			StudentCommentVo studentCommentVo = studentCommentVos.get(0);
-
+			Integer classId = studentCommentVo.getClass_id();
+			String token = activityService.encode(classId.longValue());
+			studentCommentVo.setOcToken(token);
 			Map<String,Object> ret = Maps.newHashMap();
 			ret.put("data",studentCommentVo);
 			long millis =stopwatch.stop().elapsed(TimeUnit.MILLISECONDS);
