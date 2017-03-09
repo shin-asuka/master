@@ -278,6 +278,10 @@ public class PracticumFeedbackService {
 			bean.setAreas(teacherPeComments.getAreasImprovement());
 			bean.setTotalScore(teacherPeComments.getTotalScore());
 			bean.setSubmitType(teacherPeComments.getStatus()); 
+		}else{
+			if(StringUtils.isNotBlank(teacherApplication.getResult())){
+				bean.setSubmitType("SUBMIT");
+			}
 		}
 		return bean;
 	}
