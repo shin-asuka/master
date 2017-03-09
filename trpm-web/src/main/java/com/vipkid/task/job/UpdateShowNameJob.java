@@ -45,7 +45,7 @@ public class UpdateShowNameJob {
     @Vschedule
     public void doJob(JobContext jobContext) {
         logger.info("【updateShowName  】START: ==================================================");
-        for (int i = 0; i < 165709; i = i + 500){
+        for (int i = 0; i < 179000; i = i + 500){
             List<User> userList = userDao.findUserShowNameAndIdList(i);
             if(CollectionUtils.isEmpty(userList)){
                 break;
@@ -87,7 +87,7 @@ public class UpdateShowNameJob {
                                 nameNum = userDao.findUserShowNumber(showName);
 
                             } while (nameNum > 0);
-                            logger.info("uopdate teacher :{} showName:{}", user.getId(), showName);
+                            logger.info("uopdate teacher :{} showName:{} 编号：{}", user.getId(), showName,i);
                             user.setName(showName);
                             userDao.update(user);
                         }
