@@ -54,7 +54,7 @@ public class UpdateShowNameJob {
                     if (user != null) {
                         String name = user.getName();
                         int showNumber = userDao.findUserShowNumber(name);
-                        if (showNumber > 0) {
+                        if (showNumber > 1) {
 
                             String showName;
                             int nameNum;//showName 重复的标记

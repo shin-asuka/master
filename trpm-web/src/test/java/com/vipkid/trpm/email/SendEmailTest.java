@@ -61,21 +61,21 @@ public class SendEmailTest {
 	
     public static void main(String[] args) {
 
-		String name = "Test dwada";
+		String name = "DaVaughn";
 		String showname;
 		int nameNum;
-		int n =1;
+		int n =2;
 		List<String> showNameList = Lists.newArrayList();
 		do {
 			showname = name.substring(0, name.indexOf(" ")+1);
+			if(StringUtils.isBlank(showname)){
+				showname = name;
+			}
 			String s = StringUtils.EMPTY;
-			if(n!=1){
+
 				for (int i = 0; i < n; i++) {
 					s+=  (char) (Math.random() * 26 + 'A');
 				}
-			}else{
-				++n;
-			}
 			showNameList.add(s);
 			if(showNameList.containsAll(RandomAB)){
 				++n;
