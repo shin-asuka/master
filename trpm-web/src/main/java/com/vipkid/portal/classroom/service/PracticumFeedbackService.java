@@ -136,6 +136,7 @@ public class PracticumFeedbackService {
         logger.info("PE:{} , 页面传入的结果result:{}", bean.getSubmitType(), bean.getResult());
         
         if ("SAVE".endsWith(bean.getSubmitType())){ 
+        	teacherApplication.setResult(null);
             resultMap.put("result", onlineclassService.updateApplications(teacherApplication));
         } else {
             if (bean.getResult().startsWith(Result.TBD.toString())) {
@@ -221,6 +222,7 @@ public class PracticumFeedbackService {
         logger.info("PES:{} , 页面传入的结果result:{}", bean.getSubmitType(), bean.getResult());
         
 		if ("SAVE".endsWith(bean.getSubmitType())){ 
+			teacherApplication.setResult(null);
             resultMap.put("result", onlineclassService.updateApplications(teacherApplication));
         } else {
             if (StringUtils.isBlank(bean.getFinishType())) {
