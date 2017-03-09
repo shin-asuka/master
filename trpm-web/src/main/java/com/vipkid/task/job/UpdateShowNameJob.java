@@ -48,7 +48,7 @@ public class UpdateShowNameJob {
         for (int i = 0; i < 50000; i = i + 1000){
             List<User> userList = userDao.findUserShowNameAndIdList(i);
             if(CollectionUtils.isEmpty(userList)){
-                break;
+                continue;
             }else{
                 for (User user:userList) {
                     if (user != null) {
