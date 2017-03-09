@@ -47,27 +47,27 @@ public class PeCommentsVo {
 	private Integer teflOrToselCertificate;
 	
 	/**
-	 * 表单类型，1PE表单  2其他表单
+	 * 表单类型，1PE表单  2PES表单
 	 */
 	private Integer formType;
 
 	@Ignore
-	private Integer timeManagementScore;
+	private Integer timeManagementScore = -1;
 	
 	@Ignore
-	private Integer accent;
+	private Integer accent = -1;
 	
 	@Ignore
-	private Integer positive;
+	private Integer positive = -1;
 	
 	@Ignore
-	private Integer engaged;
+	private Integer engaged = -1;
 	
 	@Ignore
-	private Integer appearance;
+	private Integer appearance = -1;
 	
 	@Ignore
-	private Integer phonics;
+	private Integer phonics = -1;
 	
 	@Ignore
 	private List<Map<String,Integer>> levels;
