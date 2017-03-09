@@ -43,8 +43,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static com.vipkid.enums.TbdResultEnum.ReScheduleEnum;
-
 @Service
 public class MockClassService {
 
@@ -121,20 +119,22 @@ public class MockClassService {
     @Autowired
     private AuditEventHandler auditEventHandler;
 
+    @Autowired
+    private TeacherModuleDao teacherModuleDao;
+
     public PeReviewOutputDto doPeReview(Integer applicationId) {
         TeacherApplication teacherApplication = teacherApplicationDao.findApplictionById(applicationId);
         Preconditions.checkNotNull(teacherApplication, "Teacher application [" + applicationId + "] not found");
 
         PeReviewOutputDto peReviewOutputDto = new PeReviewOutputDto();
+        TeacherPeComments teacherPeComments = teacherPeCommentsDao.getTeacherPeComments(applicationId);
+
         // 如果结果是 REAPPLY 则直接返回
         if (StringUtils.equals(teacherApplication.getResult(), Result.REAPPLY.name())) {
             peReviewOutputDto.setStatus(teacherApplication.getResult());
+            peReviewOutputDto.setStateReason(teacherPeComments.getStateReason());
             return peReviewOutputDto;
         }
-
-        TeacherPeComments teacherPeComments = teacherPeCommentsDao.getTeacherPeComments(applicationId);
-        Preconditions.checkArgument(0 != teacherPeComments.getTemplateId(),
-                        "This applicationId [" + applicationId + "] is illegal");
 
         // 首次进入初始化 Pe Comments
         if (null == teacherPeComments) {
@@ -142,37 +142,46 @@ public class MockClassService {
             teacherPeComments.setApplicationId(applicationId);
             teacherPeComments.setTemplateId(getCurrentPeTemplate().getId());
             teacherPeCommentsDao.saveTeacherPeComments(teacherPeComments);
+        } else {
+            Preconditions.checkArgument(0 != teacherPeComments.getTemplateId(),
+                            "This applicationId [" + applicationId + "] is illegal");
         }
+
         BeanUtils.copyPropertys(teacherPeComments, peReviewOutputDto);
 
         // 查询 result 列表
         List<TeacherPeResult> peResultList = teacherPeResultDao.listTeacherPeResult(applicationId);
 
         // 查询 rubric 列表
-        List<PeRubricDto> rubricDtoList = listPeRubric(teacherPeComments.getTemplateId(), peResultList);
-        peReviewOutputDto.setRubricList(rubricDtoList);
+        peReviewOutputDto.setRubricList(listPeRubric(teacherPeComments.getTemplateId(), peResultList));
 
         // set tags
         List<TeacherPeTags> peTagsList = teacherPeTagsDao.getTeacherPeTagsByApplicationId(applicationId);
         if (CollectionUtils.isNotEmpty(peTagsList)) {
-            List<Integer> tagIds =
-                            peTagsList.stream().map(peTags -> new Integer(peTags.getId())).collect(Collectors.toList());
-            peReviewOutputDto.setTagsList(tagIds);
+            peReviewOutputDto.setTagsList(peTagsList.stream().map(peTags -> new Integer(peTags.getId()))
+                            .collect(Collectors.toList()));
         }
 
         // set levels
         List<TeacherPeLevels> peLevelsList = teacherPeLevelsDao.getTeacherPeLevelsByApplicationId(applicationId);
         if (CollectionUtils.isNotEmpty(peLevelsList)) {
-            List<Integer> levelIds = peLevelsList.stream().map(peLevels -> new Integer(peLevels.getId()))
-                            .collect(Collectors.toList());
-            peReviewOutputDto.setLevelsList(levelIds);
+            peReviewOutputDto.setLevelsList(peLevelsList.stream().map(peLevels -> new Integer(peLevels.getId()))
+                            .collect(Collectors.toList()));
         }
 
         return peReviewOutputDto;
     }
 
     public String peDoAudit(PeDoAuditInputDto peDoAuditInputDto) {
+        // 判断当前用户是否拥有 PE Supervisor 权限
         Teacher peTeacher = loginService.getTeacher();
+        boolean isPes = false;
+
+        List<TeacherModule> teacherModules = teacherModuleDao.findByTeacherModuleName(peTeacher.getId(), RoleClass.PE);
+        if (CollectionUtils.isNotEmpty(teacherModules)) {
+            isPes = true;
+        }
+
         TeacherPeComments teacherPeComments =
                         teacherPeCommentsDao.getTeacherPeComments(peDoAuditInputDto.getApplicationId());
         BeanUtils.copyPropertys(peDoAuditInputDto, teacherPeComments);
@@ -184,7 +193,8 @@ public class MockClassService {
         }
         teacherPeComments.setTotalScore(totalScore);
 
-        if (!StringUtils.equals(peDoAuditInputDto.getStatus(), ReScheduleEnum.ReSchedule.val())) {
+        // 结果不为 REAPPLY，则处理 tags，levels，results
+        if (!StringUtils.equals(peDoAuditInputDto.getStatus(), Result.REAPPLY.name())) {
             // set tags
             updatePeTags(peDoAuditInputDto.getApplicationId(), peDoAuditInputDto.getTagsList());
             // set levels
@@ -199,8 +209,9 @@ public class MockClassService {
         if (StringUtils.equals(peDoAuditInputDto.getStatus(), MockClassEnum.SAVE.name())) {
             // do save
             logger.info("Pe doAudit save succeed");
+
         } else if (StringUtils.equals(peDoAuditInputDto.getStatus(), MockClassEnum.SUBMIT.name())
-                        || StringUtils.equals(peDoAuditInputDto.getStatus(), ReScheduleEnum.ReSchedule.val())) {
+                        || StringUtils.equals(peDoAuditInputDto.getStatus(), Result.REAPPLY.name())) {
             // do submit or reschedule
             TeacherApplication teacherApplication =
                             teacherApplicationDao.findApplictionById(peDoAuditInputDto.getApplicationId());
@@ -224,12 +235,7 @@ public class MockClassService {
 
             // result 不为 null 则返回错误
             if (StringUtils.isNotBlank(teacherApplication.getResult())) {
-                return "The recruitment process already end.";
-            }
-
-            // 课程是否已经开始 15 分钟
-            if (!DateUtils.count15Mine(onlineClass.getScheduledDateTime().getTime())) {
-                return "Sorry, you can't submit the form within 15min!";
+                return "The recruitment process result already done.";
             }
 
             // 判断 practicum2 是否已经存在
@@ -238,6 +244,25 @@ public class MockClassService {
                                 teacherApplication.getTeacherId(), Status.PRACTICUM.name(), Result.PRACTICUM2.name());
                 if (CollectionUtils.isNotEmpty(practicum2List)) {
                     return "The teacher is already in practicum 2.";
+                }
+            }
+
+            if (isPes) {
+                TeacherPe teacherPe = teacherPeDao.findById(peDoAuditInputDto.getPeId());
+                if (0 != teacherPe.getStatus()) {
+                    return "The recruitment TBD process already end.";
+                }
+
+                if (0 == teacherPe.getPeId()) {
+                    return "The practicum task has be recycled!";
+                }
+
+                // 完成 Pes 任务
+                teacherPeDao.updateTeacherPeComments(teacherPe, result, peTeacher.getRealName());
+            } else {
+                // 课程是否已经开始 15 分钟
+                if (!DateUtils.count15Mine(onlineClass.getScheduledDateTime().getTime())) {
+                    return "Sorry, you can't submit the form within 15min!";
                 }
             }
 
@@ -262,17 +287,21 @@ public class MockClassService {
                 teacherApplicationDao.update(teacherApplication);
                 logger.info("Pe doAudit mockClass, teacherApplication: {}", JsonUtils.toJSONString(teacherApplication));
 
-                // TODO 合并 tags，levels
+                // TODO 合并 tags
 
                 // Finish 课程
-                onlineclassService.finishPracticum(teacherApplication, peDoAuditInputDto.getFinishType(), peTeacher,
-                                recruitTeacher);
+                if (ClassStatus.isBooked(onlineClass.getStatus())) {
+                    onlineclassService.finishPracticum(teacherApplication, peDoAuditInputDto.getFinishType(), peTeacher,
+                                    recruitTeacher);
+                }
+
                 // 发送邮件
                 auditEventHandler.onAuditEvent(
                                 new AuditEvent(recruitTeacher.getId(), LifeCycle.PRACTICUM.name(), result));
 
                 // 更新 last editor
                 updateLastEditor(peTeacher, recruitTeacher);
+
                 // audit logs
                 auditLogs(peTeacher, onlineClass, recruitTeacher, result, peDoAuditInputDto.getFinishType());
             } else {
@@ -494,9 +523,10 @@ public class MockClassService {
 
     public String getShowName(String studentName) {
         // 如果名字里面含有空格，则取到空格后的第一个字符作为 User 的 Name
+        final String EMPTY = " ";
         try {
-            if (studentName.indexOf(" ") > -1) {
-                return studentName.substring(0, studentName.indexOf(" ") + 2);
+            if (-1 != studentName.indexOf(EMPTY)) {
+                return studentName.substring(0, studentName.indexOf(EMPTY) + 2);
             }
         } catch (Exception e) {
             logger.warn("Format pe name failed");

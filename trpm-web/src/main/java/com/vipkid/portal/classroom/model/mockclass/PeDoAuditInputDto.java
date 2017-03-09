@@ -6,16 +6,17 @@ public class PeDoAuditInputDto extends PeDto {
 
     private List<Integer> optionList;
 
-    private String stateReason;
-
     private String finishType;
 
-    public String getStateReason() {
-        return stateReason;
+    // TeacherPe Id
+    private Integer peId;
+
+    public Integer getPeId() {
+        return peId;
     }
 
-    public void setStateReason(String stateReason) {
-        this.stateReason = stateReason;
+    public void setPeId(Integer peId) {
+        this.peId = peId;
     }
 
     public String getFinishType() {

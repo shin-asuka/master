@@ -22,6 +22,16 @@ public class PeDto {
 
     private String status;
 
+    private String stateReason;
+
+    public String getStateReason() {
+        return stateReason;
+    }
+
+    public void setStateReason(String stateReason) {
+        this.stateReason = stateReason;
+    }
+
     public List<Integer> getTagsList() {
         return tagsList;
     }
