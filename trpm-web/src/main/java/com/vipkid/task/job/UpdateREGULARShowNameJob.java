@@ -58,7 +58,11 @@ public class UpdateREGULARShowNameJob {
                     List<String> showNameList = Lists.newArrayList();
 
                     do {
-                        showName = name.substring(0, name.indexOf(" ") + 1);
+                        if(StringUtils.isNotBlank(name)) {
+                            showName = name.substring(0, name.indexOf(" ") + 1);
+                        }else{
+                            showName ="";
+                        }
                         String s = StringUtils.EMPTY;//添加随机字母的变量
                         //执行随机变量的逻辑
                         for (int j = 0; j < n; j++) {
