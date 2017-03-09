@@ -129,13 +129,6 @@ public class MockClassService {
         PeReviewOutputDto peReviewOutputDto = new PeReviewOutputDto();
         TeacherPeComments teacherPeComments = teacherPeCommentsDao.getTeacherPeComments(applicationId);
 
-        // 如果结果是 REAPPLY 则直接返回
-        if (StringUtils.equals(teacherApplication.getResult(), Result.REAPPLY.name())) {
-            peReviewOutputDto.setStatus(teacherApplication.getResult());
-            peReviewOutputDto.setStateReason(teacherPeComments.getStateReason());
-            return peReviewOutputDto;
-        }
-
         // 首次进入初始化 Pe Comments
         if (null == teacherPeComments) {
             teacherPeComments = new TeacherPeComments();

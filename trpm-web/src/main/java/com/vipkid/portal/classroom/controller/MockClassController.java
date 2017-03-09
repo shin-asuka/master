@@ -57,7 +57,7 @@ public class MockClassController extends RestfulController {
         }
     }
 
-    @RequestMapping(value = "/pe/doAudit", method = RequestMethod.POST, produces = RestfulConfig.JSON_UTF_8)
+    @RequestMapping(value = "/pe/doAudit", method = RequestMethod.PUT, produces = RestfulConfig.JSON_UTF_8)
     public Map<String, Object> peDoAudit(HttpServletRequest request, HttpServletResponse response,
                     @RequestBody PeDoAuditInputDto peDoAuditInputDto) {
         try {
@@ -93,7 +93,11 @@ public class MockClassController extends RestfulController {
             }
 
             String msg = mockClassService.peDoAudit(peDoAuditInputDto);
-            return ApiResponseUtils.buildSuccessDataResp(msg);
+            if(HttpStatus.OK.getReasonPhrase().equals(msg)){
+                return ApiResponseUtils.buildSuccessDataResp(HttpStatus.OK);
+            }else{
+                return ApiResponseUtils.buildSuccessDataResp(msg);
+            }
         } catch (Exception e) {
             logger.error("Internal server error", e);
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());

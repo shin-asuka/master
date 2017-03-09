@@ -3,6 +3,7 @@ package com.vipkid.portal.classroom.controller;
 import com.google.common.collect.Lists;
 import com.vipkid.http.utils.JsonUtils;
 import com.vipkid.portal.classroom.model.mockclass.*;
+import com.vipkid.rest.utils.ApiResponseUtils;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -87,6 +88,36 @@ public class MockClassControllerTest {
         peReviewOutputDto.setLevelsList(levelsList);
 
         logger.info(JsonUtils.toJSONString(peReviewOutputDto));
+    }
+
+    @Test
+    public void testPeDoAuditInputDto(){
+        PeDoAuditInputDto peDoAuditInputDto = new PeDoAuditInputDto();
+
+        peDoAuditInputDto.setThingsDidWell("things did well");
+        peDoAuditInputDto.setAreasImprovement("areas improvement");
+        peDoAuditInputDto.setToCoordinator(1);
+        peDoAuditInputDto.setToCoordinatorComment("to coordinator comment");
+        peDoAuditInputDto.setStatus("SAVE");
+        peDoAuditInputDto.setApplicationId(16535);
+        peDoAuditInputDto.setTeachTrailClass(0);
+
+        peDoAuditInputDto.setPeId(132243);
+
+        List<Integer> tagsList = Lists.newArrayList();
+        tagsList.add(12);
+        peDoAuditInputDto.setTagsList(tagsList);
+
+        List<Integer> levelsList = Lists.newArrayList();
+        levelsList.add(10);
+        peDoAuditInputDto.setLevelsList(levelsList);
+
+        List<Integer> optionList = Lists.newArrayList();
+        optionList.add(21);
+        optionList.add(23);
+        peDoAuditInputDto.setOptionList(optionList);
+
+        logger.info(JsonUtils.toJSONString(ApiResponseUtils.buildSuccessDataResp("error msg")));
     }
 
 }
