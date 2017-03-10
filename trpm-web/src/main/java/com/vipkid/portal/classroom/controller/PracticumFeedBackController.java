@@ -142,7 +142,7 @@ public class PracticumFeedBackController extends RestfulController {
 				response.setStatus(HttpStatus.BAD_REQUEST.value());
 				return ApiResponseUtils.buildErrorResp(-5, "参数错误");
 			}
-			PeCommentsVo bean = this.practicumFeedbackService.findPeFromByAppId(id);
+			PeCommentsVo bean = this.practicumFeedbackService.findPeFromByAppId(id,getTeacher(request));
 			return ApiResponseUtils.buildSuccessDataResp(bean);
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());

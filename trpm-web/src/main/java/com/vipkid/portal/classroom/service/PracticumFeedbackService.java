@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.community.tools.JsonTools;
 import org.slf4j.Logger;
@@ -24,11 +25,13 @@ import com.vipkid.recruitment.dao.TeacherApplicationDao;
 import com.vipkid.recruitment.entity.TeacherApplication;
 import com.vipkid.trpm.constant.ApplicationConstant.FinishType;
 import com.vipkid.trpm.dao.DemoReportDao;
+import com.vipkid.trpm.dao.TeacherModuleDao;
 import com.vipkid.trpm.dao.TeacherPeCommentsDao;
 import com.vipkid.trpm.dao.TeacherPeLevelsDao;
 import com.vipkid.trpm.dao.TeacherPeTagsDao;
 import com.vipkid.trpm.entity.DemoReport;
 import com.vipkid.trpm.entity.Teacher;
+import com.vipkid.trpm.entity.TeacherModule;
 import com.vipkid.trpm.entity.TeacherPeComments;
 import com.vipkid.trpm.entity.TeacherPeLevels;
 import com.vipkid.trpm.entity.TeacherPeTags;
@@ -79,6 +82,9 @@ public class PracticumFeedbackService {
     
     @Autowired
     private DemoReportDao demoReportDao;
+    
+    @Autowired
+    private TeacherModuleDao teacherModuleDao;
     
     private static DemoReports demoReports = null;
 
@@ -252,14 +258,18 @@ public class PracticumFeedbackService {
 	}
 	
 	
-	public PeCommentsVo findPeFromByAppId(Integer applicationId) throws IllegalAccessException, InvocationTargetException{
+	public PeCommentsVo findPeFromByAppId(Integer applicationId,Teacher teacher) throws IllegalAccessException, InvocationTargetException{
 		PeCommentsVo bean = new PeCommentsVo();
 		
 		TeacherApplication teacherApplication = this.teacherApplicationDao.findApplictionById(applicationId);
 	
 		if(teacherApplication != null){
-			bean.setFormType(TeacherModuleEnum.RoleClass.PE.equalsIgnoreCase(teacherApplication.getContractUrl())?1:2);
+			bean.setFormType(TeacherModuleEnum.RoleClass.PES.equalsIgnoreCase(teacherApplication.getContractUrl()) ? 2 : 1);
 			BeanUtils.copyPropertys(teacherApplication,bean);
+		}
+		if(StringUtils.isBlank(bean.getFormType()+"")){
+			List<TeacherModule> list = this.teacherModuleDao.findByTeacherModuleName(teacher.getId(), TeacherModuleEnum.RoleClass.PES);
+			bean.setFormType(CollectionUtils.isNotEmpty(list) ? 2 : 1);
 		}
 		
 		List<TeacherPeTags> tagsList = teacherPeTagsDao.getTeacherPeTagsByApplicationId(applicationId);
