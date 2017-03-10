@@ -282,6 +282,21 @@ public class PracticumFeedbackService {
 	
 		if(teacherApplication != null){
 			bean.setFormType(TeacherModuleEnum.RoleClass.PES.equalsIgnoreCase(teacherApplication.getContractUrl()) ? 2 : 1);
+			
+			TeacherPeComments teacherPeComments = teacherPeCommentsDao.getTeacherPeComments(applicationId);
+			if(teacherPeComments != null){
+				bean.setThings(teacherPeComments.getThingsDidWell());
+				bean.setAreas(teacherPeComments.getAreasImprovement());
+				bean.setTotalScore(teacherPeComments.getTotalScore());
+				bean.setSubmitType(teacherPeComments.getStatus()); 
+			}else{
+				if(StringUtils.isBlank(teacherApplication.getResult()) && teacherApplication.getAuditorId() == 0){
+					this.teacherApplicationDao.initApplicationAnswer(teacherApplication);
+				}else{
+					bean.setSubmitType("SUBMIT");
+				}
+			}
+			
 			BeanUtils.copyPropertys(teacherApplication,bean);
 		}
 		if(StringUtils.isBlank(bean.getFormType()+"")){
@@ -299,6 +314,15 @@ public class PracticumFeedbackService {
 		levelsList.stream().forEach(level -> {Map<String, Integer> maps = Maps.newHashMap();maps.put("id", level.getLevel()); levellist.add(maps);});
 		bean.setLevels(levellist);
         
+		return bean;
+	}
+	
+	
+	public PeSupervisorCommentsVo findPeSupervisorFromByAppId(Integer applicationId) throws IllegalAccessException, InvocationTargetException{
+		
+		PeSupervisorCommentsVo bean = new PeSupervisorCommentsVo();		
+		TeacherApplication teacherApplication = this.teacherApplicationDao.findApplictionById(applicationId);
+
 		TeacherPeComments teacherPeComments = teacherPeCommentsDao.getTeacherPeComments(applicationId);
 		if(teacherPeComments != null){
 			bean.setThings(teacherPeComments.getThingsDidWell());
@@ -312,15 +336,7 @@ public class PracticumFeedbackService {
 				bean.setSubmitType("SUBMIT");
 			}
 		}
-		return bean;
-	}
-	
-	
-	public PeSupervisorCommentsVo findPeSupervisorFromByAppId(Integer applicationId) throws IllegalAccessException, InvocationTargetException{
-		PeSupervisorCommentsVo bean = new PeSupervisorCommentsVo();
 		
-		TeacherApplication teacherApplication = this.teacherApplicationDao.findApplictionById(applicationId);
-
 		BeanUtils.copyPropertys(teacherApplication,bean);
 		
 		List<TeacherPeTags> tagsList = teacherPeTagsDao.getTeacherPeTagsByApplicationId(applicationId);
@@ -332,20 +348,7 @@ public class PracticumFeedbackService {
 		List<Map<String,Integer>> levellist = Lists.newArrayList();
 		levelsList.stream().forEach(level -> {Map<String, Integer> maps = Maps.newHashMap();maps.put("id", level.getLevel()); levellist.add(maps);});
 		bean.setLevels(levellist);
-        
-		TeacherPeComments teacherPeComments = teacherPeCommentsDao.getTeacherPeComments(applicationId);
-		if(teacherPeComments != null){
-			bean.setThings(teacherPeComments.getThingsDidWell());
-			bean.setAreas(teacherPeComments.getAreasImprovement());
-			bean.setTotalScore(teacherPeComments.getTotalScore());
-			bean.setSubmitType(teacherPeComments.getStatus()); 
-		}else{
-			if(StringUtils.isBlank(teacherApplication.getResult()) && teacherApplication.getAuditorId() == 0){
-				this.teacherApplicationDao.initApplicationAnswer(teacherApplication);
-			}else{
-				bean.setSubmitType("SUBMIT");
-			}
-		}
+		
 		return bean;
 	}
 	
