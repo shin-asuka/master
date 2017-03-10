@@ -302,7 +302,7 @@ public class StudentCommentRestController extends RestfulController{
 //			if(getUser.getId()!=teacherId){
 //				return ApiResponseUtils.buildErrorResp(1002, "没有数据访问权限");
 //			}
-			ArrayList data = manageGatewayService.getTagsByCommentId(id);
+			List<String> data = manageGatewayService.getTagsByCommentId(id);
 			long millis =stopwatch.stop().elapsed(TimeUnit.MILLISECONDS);
 			logger.info("【StudentCommentRestController.getTagsByCommentId】output：result={},运行时间={}ms ", JSONObject.toJSONString(data),millis);
 			return ApiResponseUtils.buildSuccessDataResp(data);

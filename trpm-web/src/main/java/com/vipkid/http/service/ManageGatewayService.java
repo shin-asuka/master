@@ -176,15 +176,15 @@ public class ManageGatewayService extends HttpBaseService {
 	 * @param id
 	 * @return
 	 */
-	public ArrayList getTagsByCommentId(String id){
+	public List<String> getTagsByCommentId(String id){
 		Map map = Maps.newHashMap();
-		ArrayList tags = Lists.newArrayList();
+		List<String> tags = Lists.newArrayList();
 		try {
 			String data = WebUtils.simpleGet(String.format(super.serverAddress + GATEWAY_STUDENT_COMMENT_TAGS,id));
 			if (data!=null) {
 				ObjectMapper mapper = new ObjectMapper();
 				map = mapper.readValue(data, Map.class);
-				tags = (ArrayList) map.get("tags");
+				tags = (List<String>) map.get("tags");
 			}
 		} catch (Exception e) {
 			logger.error("【ManageGatewayService.getTagsByCommentId】调用失败，id:"+id,e);
