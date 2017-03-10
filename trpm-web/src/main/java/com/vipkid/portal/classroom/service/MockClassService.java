@@ -122,6 +122,9 @@ public class MockClassService {
     @Autowired
     private TeacherModuleDao teacherModuleDao;
 
+    @Autowired
+    private TeacherPeFeedbackDao teacherPeFeedbackDao;
+
     public PeReviewOutputDto doPeReview(Integer applicationId) {
         TeacherApplication teacherApplication = teacherApplicationDao.findApplictionById(applicationId);
         Preconditions.checkNotNull(teacherApplication, "Teacher application [" + applicationId + "] not found");
@@ -305,6 +308,14 @@ public class MockClassService {
         } else {
             throw new IllegalArgumentException("Pe 'status' is not matched");
         }
+
+        return HttpStatus.OK.getReasonPhrase();
+    }
+
+    public String doCandidateFeedback(CandidateFeedbackInputDto candidateFeedbackInputDto) {
+        TeacherPeFeedback teacherPeFeedback = new TeacherPeFeedback();
+        BeanUtils.copyPropertys(candidateFeedbackInputDto, teacherPeFeedback);
+        teacherPeFeedbackDao.saveTeacherPeFeedback(teacherPeFeedback);
 
         return HttpStatus.OK.getReasonPhrase();
     }

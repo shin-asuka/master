@@ -3,7 +3,6 @@ package com.vipkid.portal.classroom.controller;
 import com.google.common.collect.Lists;
 import com.vipkid.http.utils.JsonUtils;
 import com.vipkid.portal.classroom.model.mockclass.*;
-import com.vipkid.rest.utils.ApiResponseUtils;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -91,7 +90,7 @@ public class MockClassControllerTest {
     }
 
     @Test
-    public void testPeDoAuditInputDto(){
+    public void testPeDoAuditInputDto() {
         PeDoAuditInputDto peDoAuditInputDto = new PeDoAuditInputDto();
 
         peDoAuditInputDto.setThingsDidWell("things did well");
@@ -117,7 +116,23 @@ public class MockClassControllerTest {
         optionList.add(23);
         peDoAuditInputDto.setOptionList(optionList);
 
-        logger.info(JsonUtils.toJSONString(ApiResponseUtils.buildSuccessDataResp("error msg")));
+        logger.info(JsonUtils.toJSONString(peDoAuditInputDto));
+    }
+
+    @Test
+    public void testCandidateFeedbackInputDto() {
+        CandidateFeedbackInputDto candidateFeedbackInputDto = new CandidateFeedbackInputDto();
+        candidateFeedbackInputDto.setApplicationId(231123);
+        candidateFeedbackInputDto.setFriendly("friendly");
+        candidateFeedbackInputDto.setHelpful("very helpful");
+        candidateFeedbackInputDto.setInstructions("clear");
+        candidateFeedbackInputDto.setPe("Sara H");
+        candidateFeedbackInputDto.setRate(3);
+        candidateFeedbackInputDto.setSuggestions("suggestions");
+        candidateFeedbackInputDto.setToMentor("to mentor");
+        candidateFeedbackInputDto.setCandidate("Bruce Lee");
+
+        logger.info(JsonUtils.toJSONString(candidateFeedbackInputDto));
     }
 
 }

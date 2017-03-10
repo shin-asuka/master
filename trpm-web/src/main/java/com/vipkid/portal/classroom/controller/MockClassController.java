@@ -2,6 +2,7 @@ package com.vipkid.portal.classroom.controller;
 
 import com.vipkid.enums.TeacherEnum;
 import com.vipkid.http.utils.JsonUtils;
+import com.vipkid.portal.classroom.model.mockclass.CandidateFeedbackInputDto;
 import com.vipkid.portal.classroom.model.mockclass.PeDoAuditInputDto;
 import com.vipkid.portal.classroom.model.mockclass.PeReviewOutputDto;
 import com.vipkid.portal.classroom.service.MockClassService;
@@ -93,9 +94,41 @@ public class MockClassController extends RestfulController {
             }
 
             String msg = mockClassService.peDoAudit(peDoAuditInputDto);
-            if(HttpStatus.OK.getReasonPhrase().equals(msg)){
+            logger.info("Invocation peDoAudit() response body: {}", msg);
+
+            if (HttpStatus.OK.getReasonPhrase().equals(msg)) {
                 return ApiResponseUtils.buildSuccessDataResp(HttpStatus.OK);
-            }else{
+            } else {
+                return ApiResponseUtils.buildSuccessDataResp(msg);
+            }
+        } catch (Exception e) {
+            logger.error("Internal server error", e);
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            return ApiResponseUtils.buildErrorResp(HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                            ExceptionUtils.getFullStackTrace(e));
+        }
+    }
+
+    @RequestMapping(value = "/candidate/feedback", method = RequestMethod.PUT, produces = RestfulConfig.JSON_UTF_8)
+    public Map<String, Object> candidateFeedback(HttpServletRequest request, HttpServletResponse response,
+                    @RequestBody CandidateFeedbackInputDto candidateFeedbackInputDto) {
+        try {
+            logger.info("Invocation candidateFeedback() request body: {}",
+                            JsonUtils.toJSONString(candidateFeedbackInputDto));
+
+            if (null == candidateFeedbackInputDto.getApplicationId()
+                            || 0 == candidateFeedbackInputDto.getApplicationId()) {
+                response.setStatus(HttpStatus.BAD_REQUEST.value());
+                return ApiResponseUtils.buildErrorResp(HttpStatus.BAD_REQUEST.value(),
+                                "Argument 'applicationId' is illegal");
+            }
+
+            String msg = mockClassService.doCandidateFeedback(candidateFeedbackInputDto);
+            logger.info("Invocation candidateFeedback() response body: {}", msg);
+
+            if (HttpStatus.OK.getReasonPhrase().equals(msg)) {
+                return ApiResponseUtils.buildSuccessDataResp(HttpStatus.OK);
+            } else {
                 return ApiResponseUtils.buildSuccessDataResp(msg);
             }
         } catch (Exception e) {
