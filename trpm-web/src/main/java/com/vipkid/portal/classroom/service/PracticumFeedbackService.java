@@ -303,6 +303,12 @@ public class PracticumFeedbackService {
 		}else{
 			if(StringUtils.isNotBlank(teacherApplication.getResult())){
 				bean.setSubmitType("SUBMIT");
+			}else{
+				bean.setDelayDays(bean.getDelayDays() == 0 ? -1 : bean.getDelayDays());
+				bean.setAccent(bean.getAccent() == 0 ? -1 : bean.getAccent());
+				bean.setPositive(bean.getPositive() == 0 ? -1 : bean.getPositive());
+				bean.setEngaged(bean.getEngaged() == 0 ? -1 : bean.getEngaged());
+				bean.setAppearance(bean.getAppearance() == 0 ? -1 : bean.getAppearance());
 			}
 		}
 		return bean;
@@ -332,6 +338,12 @@ public class PracticumFeedbackService {
 			bean.setAreas(teacherPeComments.getAreasImprovement());
 			bean.setTotalScore(teacherPeComments.getTotalScore());
 			bean.setSubmitType(teacherPeComments.getStatus()); 
+		}else{
+			if(StringUtils.isNotBlank(teacherApplication.getResult())){
+				bean.setSubmitType("SUBMIT");
+			}else{
+				bean.setDelayDays(bean.getDelayDays() == 0 ? -1 : bean.getDelayDays());
+			}
 		}
 		return bean;
 	}
