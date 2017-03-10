@@ -309,6 +309,7 @@ public class PracticumFeedbackService {
 				bean.setPositive(bean.getPositive() == 0 ? -1 : bean.getPositive());
 				bean.setEngaged(bean.getEngaged() == 0 ? -1 : bean.getEngaged());
 				bean.setAppearance(bean.getAppearance() == 0 ? -1 : bean.getAppearance());
+				bean.setPhonics(bean.getPhonics() == 0 ? -1 : bean.getPhonics());
 			}
 		}
 		return bean;
