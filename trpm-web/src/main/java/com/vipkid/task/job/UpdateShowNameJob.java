@@ -12,9 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Created by zhangzhaojun on 2017/3/8.
@@ -25,7 +23,7 @@ public class UpdateShowNameJob {
     private static final Logger logger = LoggerFactory.getLogger(UpdateShowNameJob.class);
     @Autowired
     private UserDao userDao;
-    private static Set<String> RandomAB = new HashSet<>();
+    private static List<String> RandomAB = Lists.newArrayList();
 
     static {
         for (int i = 'A'; i < 'A' + 26; i++) {
@@ -38,7 +36,7 @@ public class UpdateShowNameJob {
         }
     }
 
-    private static Set<String> SensitiveWords = new HashSet<>();
+    private static List<String> SensitiveWords = Lists.newArrayList();
 
     static {
         SensitiveWords.add("SB");
@@ -74,12 +72,11 @@ public class UpdateShowNameJob {
                                 //执行随机变量的逻辑
 
                                 if(n==3) {
-                                   for (int j = 0; j < n; j++) {
-                                     s += (char) (Math.random() * 26 + 'A');
-                                 }
+                                  for (int j = 0; j < n; j++) {
+                                    s += (char) (Math.random() * 26 + 'A');
+                                  }
                                 }else{
-                                    if(RandomAB.iterator().hasNext())
-                                    s = RandomAB.iterator().next();
+                                    s = RandomAB.get(num);
                                 }
                                 showNameList.add(s);
                                 if (showNameList.containsAll(RandomAB)) {
