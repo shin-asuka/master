@@ -306,17 +306,10 @@ public class PracticumFeedbackService {
 			bean.setTotalScore(teacherPeComments.getTotalScore());
 			bean.setSubmitType(teacherPeComments.getStatus()); 
 		}else{
-			if(StringUtils.isNotBlank(teacherApplication.getResult())){
-				bean.setSubmitType("SUBMIT");
+			if(StringUtils.isBlank(teacherApplication.getResult()) && teacherApplication.getAuditorId() == 0){
+				this.teacherApplicationDao.initApplicationAnswer(teacherApplication);
 			}else{
-				if(teacherApplication.getAuditorId() != 0){
-					bean.setDelayDays(bean.getDelayDays() == 0 ? -1 : bean.getDelayDays());
-					bean.setAccent(bean.getAccent() == 0 ? -1 : bean.getAccent());
-					bean.setPositive(bean.getPositive() == 0 ? -1 : bean.getPositive());
-					bean.setEngaged(bean.getEngaged() == 0 ? -1 : bean.getEngaged());
-					bean.setAppearance(bean.getAppearance() == 0 ? -1 : bean.getAppearance());
-					bean.setPhonics(bean.getPhonics() == 0 ? -1 : bean.getPhonics());
-				}
+				bean.setSubmitType("SUBMIT");
 			}
 		}
 		return bean;
@@ -347,12 +340,10 @@ public class PracticumFeedbackService {
 			bean.setTotalScore(teacherPeComments.getTotalScore());
 			bean.setSubmitType(teacherPeComments.getStatus()); 
 		}else{
-			if(StringUtils.isNotBlank(teacherApplication.getResult())){
-				bean.setSubmitType("SUBMIT");
+			if(StringUtils.isBlank(teacherApplication.getResult()) && teacherApplication.getAuditorId() == 0){
+				this.teacherApplicationDao.initApplicationAnswer(teacherApplication);
 			}else{
-				if(teacherApplication.getAuditorId() != 0){
-					bean.setDelayDays(bean.getDelayDays() == 0 ? -1 : bean.getDelayDays());
-				}
+				bean.setSubmitType("SUBMIT");
 			}
 		}
 		return bean;
