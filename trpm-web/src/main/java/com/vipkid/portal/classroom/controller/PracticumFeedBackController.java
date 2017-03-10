@@ -111,6 +111,12 @@ public class PracticumFeedBackController extends RestfulController {
 			}
 			
 			Map<String, Object> resultMap = practicumFeedbackService.saveDoPeAudit(getTeacher(request), bean);
+			
+			if(resultMap.get("msg") != null){
+				response.setStatus(HttpStatus.FORBIDDEN.value());
+				return ApiResponseUtils.buildErrorResp(-7, resultMap.get("msg")+"");
+			}
+			
 			//发邮件
 			if(resultMap.get("applicationResult") != null){
 				Teacher recruitTeacher = (Teacher) resultMap.get("recruitTeacher");
@@ -185,6 +191,10 @@ public class PracticumFeedBackController extends RestfulController {
 			}
 						
 			Map<String, Object> resultMap = practicumFeedbackService.saveDoPeSupervisorAudit(getTeacher(request), bean);
+			if(resultMap.get("msg") != null){
+				response.setStatus(HttpStatus.FORBIDDEN.value());
+				return ApiResponseUtils.buildErrorResp(-7, resultMap.get("msg")+"");
+			}
 			//发邮件
 			if(resultMap.get("applicationResult") != null){
 				Teacher recruitTeacher = (Teacher) resultMap.get("recruitTeacher");

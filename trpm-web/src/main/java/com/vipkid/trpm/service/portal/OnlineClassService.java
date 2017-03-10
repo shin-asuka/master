@@ -420,14 +420,6 @@ public class OnlineClassService {
         }
 
         OnlineClass onlineClass = onlineClassDao.findById(onlineClassId);
-        // 4.如果result 不等于null 则返回错误
-        TeacherApplication teacherApplication = this.teacherApplicationDao.findApplictionById(currTeacherApplication.getId());
-        if (!StringUtils.isEmpty(teacherApplication.getResult())) {
-            logger.info("Teacher application already end or recruitment process step already end, class id is : {},status is {}",
-                    onlineClass.getId(), onlineClass.getStatus());
-            modelMap.put("msg", " The recruitment process already end.");
-            return modelMap;
-        }
 
         // 检查课程是否开始15分钟
         if (!DateUtils.count15Mine(onlineClass.getScheduledDateTime().getTime())) {

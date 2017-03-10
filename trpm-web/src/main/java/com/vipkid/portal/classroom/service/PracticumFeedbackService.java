@@ -107,6 +107,14 @@ public class PracticumFeedbackService {
         
 		int applicationId = bean.getId();
 		
+        TeacherApplication teacherApplication = this.teacherApplicationDao.findApplictionById(applicationId);
+        
+        if (StringUtils.isNotBlank(teacherApplication.getResult())) {
+            logger.info("Teacher application already end or recruitment process step already end, class id is : {},result is {}",teacherApplication.getOnlineClassId(), teacherApplication.getResult());
+            resultMap.put("msg", " The recruitment process already end.");
+            return resultMap;
+        }
+		
         if(!StringUtils.equalsIgnoreCase(bean.getResult(),Result.REAPPLY.toString())) {
             // 处理 tags 相关逻辑
             List<TeacherPeTags> teacherPeTags = Lists.newArrayList();
@@ -135,9 +143,7 @@ public class PracticumFeedbackService {
             teacherPeComment.setStatus(bean.getSubmitType());
             teacherPeCommentsService.updateTeacherPeComments(applicationId, teacherPeComment);
         }
-        
-        TeacherApplication teacherApplication = this.teacherApplicationDao.findApplictionById(applicationId);
-        
+                
         teacherApplication = BeanUtils.copyPropertys(bean,teacherApplication);
         
         logger.info("PE:{} , 页面传入的结果result:{}", bean.getSubmitType(), bean.getResult());
@@ -193,6 +199,14 @@ public class PracticumFeedbackService {
         
 		int applicationId = bean.getId();
         
+        TeacherApplication teacherApplication = this.teacherApplicationDao.findApplictionById(applicationId);
+        
+        if (StringUtils.isNotBlank(teacherApplication.getResult())) {
+            logger.info("Teacher application already end or recruitment process step already end, class id is : {},result is {}",teacherApplication.getOnlineClassId(), teacherApplication.getResult());
+            resultMap.put("msg", " The recruitment process already end.");
+            return resultMap;
+        }
+		
 		if(!StringUtils.equalsIgnoreCase(bean.getResult(),Result.REAPPLY.toString())) {
         	// 处理 tags 相关逻辑
             List<TeacherPeTags> teacherPeTags = Lists.newArrayList();
@@ -221,8 +235,6 @@ public class PracticumFeedbackService {
             teacherPeComment.setStatus(bean.getSubmitType());
             teacherPeCommentsService.updateTeacherPeComments(applicationId, teacherPeComment);
         }
-
-        TeacherApplication teacherApplication = this.teacherApplicationDao.findApplictionById(applicationId);
         
         teacherApplication = BeanUtils.copyPropertys(bean,teacherApplication);
         

@@ -150,16 +150,7 @@ public class PeSupervisorService {
             logger.info(" Online Class is null onlineClassId:{} , status is PRACTICUM ",
                     onlineClassId);
         }
-
-        // 3.如果result 不等于null 则返回错误
-        if (!StringUtils.isBlank(currTeacherApplication.getResult())) {
-            logger.info(
-                    "Teacher application already end or recruitment process step already end, class id is : {},status is {}",
-                    onlineClass.getId(), onlineClass.getStatus());
-            modelMap.put("msg", " The recruitment process already end.");
-            return modelMap;
-        }
-
+        
         // 4.验证 recruitTeacher 是否存在
         Teacher recruitTeacher = teacherDao.findById(currTeacherApplication.getTeacherId());
         if (recruitTeacher == null) {
