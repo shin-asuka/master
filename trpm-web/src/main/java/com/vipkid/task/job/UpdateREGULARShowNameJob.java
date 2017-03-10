@@ -45,7 +45,7 @@ public class UpdateREGULARShowNameJob {
 
     @Vschedule
     public void doJob(JobContext jobContext) {
-        logger.info("【updateShowName  】START: ==================================================");
+        logger.info("【UpdateREGULARShowNameJob  】START: ==================================================Time :{}",System.currentTimeMillis());
         List<Integer> userIds = getUserIdList();//获得teacherId 集合
         List<User> userList =  userDao.findUserNameListByIdList(userIds);
         if(CollectionUtils.isNotEmpty(userList)){
@@ -56,12 +56,15 @@ public class UpdateREGULARShowNameJob {
                     int nameNum;//showName 重复的标记
                     int n = 2;//添加随机大写字母的个数
                     List<String> showNameList = Lists.newArrayList();
-
+                    int num = 0;
                     do {
                         if(StringUtils.isNotBlank(name)) {
                             showName = name.substring(0, name.indexOf(" ") + 1);
                         }else{
                             showName ="";
+                        }
+                        if(StringUtils.isBlank(showName)){
+                            showName=name+" ";
                         }
                         String s = StringUtils.EMPTY;//添加随机字母的变量
                         //执行随机变量的逻辑
@@ -74,14 +77,15 @@ public class UpdateREGULARShowNameJob {
                         }
                         showName += s;
                         //敏感词过滤
+                        nameNum = userDao.findUserShowNumber(showName);
                         for (String str : SensitiveWords) {
                             if (s.indexOf(str) != -1) {
                                 nameNum = 1;
                                 break;
                             }
                         }
-                        nameNum = userDao.findUserShowNumber(showName);
-
+                        logger.info("user :{} 循环次数:{}", user.getId(),num);
+                        ++num;
                     } while (nameNum > 0);
                     if (!StringUtils.equalsIgnoreCase(showName, name)) {
                         logger.info("uopdate teacher :{} showName:{}", user.getId(), showName);
@@ -93,6 +97,8 @@ public class UpdateREGULARShowNameJob {
                 }
             }
         }
+
+        logger.info("【UpdateREGULARShowNameJob  】END: ==================================================Time :{}",System.currentTimeMillis());
 
     }
 

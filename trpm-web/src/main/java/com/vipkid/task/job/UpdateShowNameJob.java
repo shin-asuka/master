@@ -44,7 +44,7 @@ public class UpdateShowNameJob {
 
     @Vschedule
     public void doJob(JobContext jobContext) {
-        logger.info("【updateShowName  】START: ==================================================");
+        logger.info("【updateShowName  】START: ==================================================Time :{}",System.currentTimeMillis());
         for (int i = 0; i < 50000; i = i + 1000){
             List<User> userList = userDao.findUserShowNameAndIdList(i);
             if(CollectionUtils.isEmpty(userList)){
@@ -68,7 +68,7 @@ public class UpdateShowNameJob {
                                     showName ="";
                                 }
                                 if(StringUtils.isBlank(showName)){
-                                    showName=name;
+                                    showName=name+" ";
                                 }
                                 String s = StringUtils.EMPTY;//添加随机字母的变量
                                 //执行随机变量的逻辑
@@ -101,6 +101,6 @@ public class UpdateShowNameJob {
                 }
             }
         }
-        logger.info("【updateShowNmae  】END: ==================================================");
+        logger.info("【updateShowNmae  】END: ==================================================Time :{}",System.currentTimeMillis());
     }
 }

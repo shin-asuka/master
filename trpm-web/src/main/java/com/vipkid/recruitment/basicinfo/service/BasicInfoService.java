@@ -201,13 +201,13 @@ public class BasicInfoService {
                 }
                 showName += s;
                 //敏感词过滤
+                nameNum = userDao.findUserShowNumber(showName);
                 for (String str : SensitiveWords) {
                     if (s.indexOf(str) != -1) {
                         nameNum = 1;
                         break;
                     }
                 }
-                nameNum = userDao.findUserShowNumber(showName);
             } while (nameNum > 0);
             user.setName(showName);
         }else{
