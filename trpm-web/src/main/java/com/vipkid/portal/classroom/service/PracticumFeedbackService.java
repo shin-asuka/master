@@ -150,6 +150,9 @@ public class PracticumFeedbackService {
         
         if ("SAVE".endsWith(bean.getSubmitType())){ 
         	teacherApplication.setResult(null);
+			teacherApplication.setResult(null);
+			teacherApplication.setAuditorId(0);
+			teacherApplication.setAuditDateTime(null);
             resultMap.put("result", onlineclassService.updateApplications(teacherApplication));
         } else {
             if (bean.getResult().startsWith(Result.TBD.toString())) {
@@ -242,6 +245,8 @@ public class PracticumFeedbackService {
         
 		if ("SAVE".endsWith(bean.getSubmitType())){ 
 			teacherApplication.setResult(null);
+			teacherApplication.setAuditorId(0);
+			teacherApplication.setAuditDateTime(null);
             resultMap.put("result", onlineclassService.updateApplications(teacherApplication));
         } else {
             if (StringUtils.isBlank(bean.getFinishType())) {
@@ -304,12 +309,14 @@ public class PracticumFeedbackService {
 			if(StringUtils.isNotBlank(teacherApplication.getResult())){
 				bean.setSubmitType("SUBMIT");
 			}else{
-				bean.setDelayDays(bean.getDelayDays() == 0 ? -1 : bean.getDelayDays());
-				bean.setAccent(bean.getAccent() == 0 ? -1 : bean.getAccent());
-				bean.setPositive(bean.getPositive() == 0 ? -1 : bean.getPositive());
-				bean.setEngaged(bean.getEngaged() == 0 ? -1 : bean.getEngaged());
-				bean.setAppearance(bean.getAppearance() == 0 ? -1 : bean.getAppearance());
-				bean.setPhonics(bean.getPhonics() == 0 ? -1 : bean.getPhonics());
+				if(teacherApplication.getAuditorId() != 0){
+					bean.setDelayDays(bean.getDelayDays() == 0 ? -1 : bean.getDelayDays());
+					bean.setAccent(bean.getAccent() == 0 ? -1 : bean.getAccent());
+					bean.setPositive(bean.getPositive() == 0 ? -1 : bean.getPositive());
+					bean.setEngaged(bean.getEngaged() == 0 ? -1 : bean.getEngaged());
+					bean.setAppearance(bean.getAppearance() == 0 ? -1 : bean.getAppearance());
+					bean.setPhonics(bean.getPhonics() == 0 ? -1 : bean.getPhonics());
+				}
 			}
 		}
 		return bean;
@@ -343,7 +350,9 @@ public class PracticumFeedbackService {
 			if(StringUtils.isNotBlank(teacherApplication.getResult())){
 				bean.setSubmitType("SUBMIT");
 			}else{
-				bean.setDelayDays(bean.getDelayDays() == 0 ? -1 : bean.getDelayDays());
+				if(teacherApplication.getAuditorId() != 0){
+					bean.setDelayDays(bean.getDelayDays() == 0 ? -1 : bean.getDelayDays());
+				}
 			}
 		}
 		return bean;
