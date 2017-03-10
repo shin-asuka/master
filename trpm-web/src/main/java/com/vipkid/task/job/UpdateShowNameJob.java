@@ -67,6 +67,9 @@ public class UpdateShowNameJob {
                                 }else{
                                     showName ="";
                                 }
+                                if(StringUtils.isBlank(showName)){
+                                    showName=name;
+                                }
                                 String s = StringUtils.EMPTY;//添加随机字母的变量
                                 //执行随机变量的逻辑
                                 for (int j = 0; j < n; j++) {
