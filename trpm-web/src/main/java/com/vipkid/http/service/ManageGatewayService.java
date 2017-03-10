@@ -77,6 +77,11 @@ public class ManageGatewayService extends HttpBaseService {
 					studentCommentVo.setTransaltion(StringUtils.isEmpty(result) ? "" : result);
 					Integer classId = studentCommentVo.getClass_id();
 					studentCommentVo.setOcToken(activityService.encode(classId));
+					Student student = studentService.getById(studentCommentVo.getStudent_id().longValue());
+					if(student!=null) {
+						studentCommentVo.setStudentAvatar(student.getAvatar());
+						studentCommentVo.setStudentName(student.getEnglishName());
+					}
 				}
 			}
 		} catch (Exception e) {

@@ -3,18 +3,23 @@ package com.vipkid.trpm.controller.activity;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.google.api.client.util.Maps;
+import com.vipkid.http.service.ManageGatewayService;
 import com.vipkid.http.vo.ActivityShare;
+import com.vipkid.rest.portal.vo.StudentCommentVo;
 import com.vipkid.rest.security.AppContext;
 import com.vipkid.rest.utils.ApiResponseUtils;
 import com.vipkid.trpm.dao.TeacherTokenDao;
 import com.vipkid.trpm.dao.UserDao;
 import com.vipkid.trpm.entity.TeacherToken;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.community.config.PropertyConfigurer;
 import org.slf4j.Logger;
@@ -53,7 +58,8 @@ public class ActivityController extends AbstractController{
     
     @Autowired
     private LoginService loginService;
-
+    @Autowired
+    private ManageGatewayService manageGatewayService;
     @Autowired
     private TeacherTokenDao teacherTokenDao;
     //上线时间
@@ -200,5 +206,27 @@ public class ActivityController extends AbstractController{
         long millis = stopwatch.stop().elapsed(TimeUnit.MILLISECONDS);
         logger.info("执行方法getActivityShareData()耗时：{} ", millis);
         return ApiResponseUtils.buildSuccessDataResp(data);
+    }
+
+
+    /**
+     * 评价分享页面
+     */
+    @ResponseBody
+    @RequestMapping(value = "/getParentFeedbackShareData", method = RequestMethod.GET)
+    public Object getParentFeedbackShareData(HttpServletRequest request, @RequestParam(required = true) String ocToken) {
+        Stopwatch stopwatch = Stopwatch.createStarted();
+        long onlineClassId = 0;
+        onlineClassId = activityService.decode(ocToken);
+        List<StudentCommentVo> studentCommentVos = manageGatewayService.getStudentCommentListByBatch(String.valueOf(onlineClassId));
+        if(CollectionUtils.isEmpty(studentCommentVos)){
+            return ApiResponseUtils.buildErrorResp(1001,"没有获取到评价信息");
+        };
+        StudentCommentVo studentCommentVo = studentCommentVos.get(0);
+        Map<String,Object> ret = Maps.newHashMap();
+        ret.put("data",studentCommentVo);
+        long millis = stopwatch.stop().elapsed(TimeUnit.MILLISECONDS);
+        logger.info("执行方法getActivityShareData()耗时：{} ", millis);
+        return ApiResponseUtils.buildSuccessDataResp(ret);
     }
 }

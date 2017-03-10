@@ -70,9 +70,6 @@ public class StudentCommentRestController extends RestfulController{
 //			if(getUser.getId()!=teacherId){
 //				return ApiResponseUtils.buildErrorResp(1002, "没有数据访问权限");
 //			}
-			if(StringUtils.isNotEmpty(ocToken)){
-				onlineClassId = activityService.decode(ocToken);
-			}
 			String onlineClassIdStr = Long.toString(onlineClassId);
 			//根据页号获取老师的评论列表分页
 			List<StudentCommentVo> studentCommentVos = manageGatewayService.getStudentCommentListByBatch(onlineClassIdStr);
