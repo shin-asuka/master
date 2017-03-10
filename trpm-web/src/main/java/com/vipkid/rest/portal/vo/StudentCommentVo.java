@@ -1,5 +1,7 @@
 package com.vipkid.rest.portal.vo;
 
+import java.util.ArrayList;
+
 /**
  * Created by LP-813 on 2017/1/11.
  */
@@ -21,7 +23,8 @@ public class StudentCommentVo {
     private String scheduleDateTime;
     private String onlineClassName;
     private String transaltion;
-
+    private String ocToken;
+    private String tags[];
     public Integer getId() {
         return id;
     }
@@ -148,5 +151,21 @@ public class StudentCommentVo {
 
     public void setLessonSn(String lessonSn) {
         this.lessonSn = lessonSn;
+    }
+
+    public String getOcToken() {
+        return ocToken;
+    }
+
+    public void setOcToken(String ocToken) {
+        this.ocToken = ocToken;
+    }
+
+    public String[] getTags() {
+        return tags;
+    }
+
+    public void setTags(String[] tags) {
+        this.tags = tags;
     }
 }

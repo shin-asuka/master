@@ -530,8 +530,8 @@ public class ActivityService {
 	 * @Author:zhangbole
 	 * @date 2016年10月8日
 	 */
-	private String encode(long teacherId) {
-		return AES.encrypt(String.valueOf(teacherId), AES.getKey(AES.KEY_LENGTH_128, ApplicationConstant.AES_128_KEY));
+	public String encode(long number) {
+		return AES.encrypt(String.valueOf(number), AES.getKey(AES.KEY_LENGTH_128, ApplicationConstant.AES_128_KEY));
 	}
 
 	/**
