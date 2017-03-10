@@ -185,11 +185,11 @@ public class PeSupervisorController extends AbstractPeController {
 
         //validate things and areas'length
         try{
-            Preconditions.checkArgument(com.vipkid.file.utils.StringUtils.isNotBlank(things), "things content can not be null!");
-            Preconditions.checkArgument(com.vipkid.file.utils.StringUtils.isNotBlank(areas), "areas content can not be null!");
+            //Preconditions.checkArgument(com.vipkid.file.utils.StringUtils.isNotBlank(things), "things content can not be null!");
+            //Preconditions.checkArgument(com.vipkid.file.utils.StringUtils.isNotBlank(areas), "areas content can not be null!");
 
-            Preconditions.checkArgument(things.length() >= 200 && things.length() <= 3000 , "The length of things content must between 200 and 3000!");
-            Preconditions.checkArgument(areas.length() >= 200 && areas.length() <= 3000, "The length of areas content must between 200 and 3000!");
+            Preconditions.checkArgument(things.length() <= 3000 , "The length of things content must be less than 3000!");
+            Preconditions.checkArgument(areas.length() <= 3000, "The length of areas content must be less than 3000!");
 
         }catch(IllegalArgumentException e){
             logger.warn("IllegalArgumentException at /doAudit, errorMessage="+e.getMessage(), e);
