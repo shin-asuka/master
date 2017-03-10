@@ -167,15 +167,8 @@ public class ClassroomController extends RestfulController{
 			if(resultMap.get("info") != null){
 				response.setStatus(HttpStatus.FORBIDDEN.value());
 				return ApiResponseUtils.buildErrorResp(-1, resultMap.get("info")+"");
-			}else{
-				//TODO:请维龙check
-				Object dataObject = resultMap.get("student");
-				if(dataObject != null){
-					return ApiResponseUtils.buildSuccessDataResp(dataObject);
-				}
-				response.setStatus(HttpStatus.FORBIDDEN.value());
-				return ApiResponseUtils.buildErrorResp(-2, "No more data");
 			}
+			return ApiResponseUtils.buildSuccessDataResp(resultMap);
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
 			logger.error(e.getMessage(),e);
