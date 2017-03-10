@@ -229,7 +229,7 @@
 		IN ("BASIC_INFO","INTERVIEW","SIGN_CONTRACT","TRAINING","PRACTICUM","CONTRACT_INFO")
         and ta.result IN("PASS","REAPPLY","PRACTICUM","PRACTICUM2","TBD","TBD_FAIL","CANCEL" )
         and  ta.current = 1
-		GROUP BY id limit #{startLine},500;
+		GROUP BY id limit #{startLine},1000;
 	</select>
 
 

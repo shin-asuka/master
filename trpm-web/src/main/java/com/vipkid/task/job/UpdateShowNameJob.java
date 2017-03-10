@@ -12,7 +12,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by zhangzhaojun on 2017/3/8.
@@ -23,7 +25,7 @@ public class UpdateShowNameJob {
     private static final Logger logger = LoggerFactory.getLogger(UpdateShowNameJob.class);
     @Autowired
     private UserDao userDao;
-    private static List<String> RandomAB = Lists.newArrayList();
+    private static Set<String> RandomAB = new HashSet<>();
 
     static {
         for (int i = 'A'; i < 'A' + 26; i++) {
@@ -36,7 +38,7 @@ public class UpdateShowNameJob {
         }
     }
 
-    private static List<String> SensitiveWords = Lists.newArrayList();
+    private static Set<String> SensitiveWords = new HashSet<>();
 
     static {
         SensitiveWords.add("SB");
@@ -45,7 +47,7 @@ public class UpdateShowNameJob {
     @Vschedule
     public void doJob(JobContext jobContext) {
         logger.info("【updateShowName  】START: ==================================================");
-        for (int i = 0; i < 50000; i = i + 500){
+        for (int i = 0; i < 50000; i = i + 1000){
             List<User> userList = userDao.findUserShowNameAndIdList(i);
             if(CollectionUtils.isEmpty(userList)){
                 continue;
@@ -62,6 +64,7 @@ public class UpdateShowNameJob {
                             List<String> showNameList = Lists.newArrayList();
 
                             do {
+                                int num = 0;
                                 if(StringUtils.isNotBlank(name)) {
                                     showName = name.substring(0, name.indexOf(" ") + 1);
                                 }else{
@@ -69,8 +72,14 @@ public class UpdateShowNameJob {
                                 }
                                 String s = StringUtils.EMPTY;//添加随机字母的变量
                                 //执行随机变量的逻辑
-                                for (int j = 0; j < n; j++) {
-                                    s += (char) (Math.random() * 26 + 'A');
+
+                                if(n==3) {
+                                   for (int j = 0; j < n; j++) {
+                                     s += (char) (Math.random() * 26 + 'A');
+                                 }
+                                }else{
+                                    if(RandomAB.iterator().hasNext())
+                                    s = RandomAB.iterator().next();
                                 }
                                 showNameList.add(s);
                                 if (showNameList.containsAll(RandomAB)) {
@@ -78,14 +87,15 @@ public class UpdateShowNameJob {
                                 }
                                 showName += s;
                                 //敏感词过滤
+                                nameNum = userDao.findUserShowNumber(showName);
                                 for (String str : SensitiveWords) {
                                     if (s.indexOf(str) != -1) {
                                         nameNum = 1;
                                         break;
                                     }
                                 }
-                                nameNum = userDao.findUserShowNumber(showName);
-
+                                logger.info("循环次数:{}",num);
+                                ++num;
                             } while (nameNum > 0);
                             logger.info("uopdate teacher :{} showName:{} 编号：{}", user.getId(), showName,i);
                             user.setName(showName);
