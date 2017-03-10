@@ -123,6 +123,22 @@ public class MockClassController extends RestfulController {
                                 "Argument 'applicationId' is illegal");
             }
 
+            if (StringUtils.isBlank(candidateFeedbackInputDto.getCandidate())
+                            || StringUtils.isBlank(candidateFeedbackInputDto.getFriendly())
+                            || StringUtils.isBlank(candidateFeedbackInputDto.getHelpful())
+                            || StringUtils.isBlank(candidateFeedbackInputDto.getInstructions())
+                            || StringUtils.isBlank(candidateFeedbackInputDto.getPe())
+                            || StringUtils.isBlank(candidateFeedbackInputDto.getSuggestions())
+                            || StringUtils.isBlank(candidateFeedbackInputDto.getToMentor())) {
+                response.setStatus(HttpStatus.BAD_REQUEST.value());
+                return ApiResponseUtils.buildErrorResp(HttpStatus.BAD_REQUEST.value(), "Form is not finished");
+            }
+
+            if (null == candidateFeedbackInputDto.getRate() || 0 == candidateFeedbackInputDto.getRate()) {
+                response.setStatus(HttpStatus.BAD_REQUEST.value());
+                return ApiResponseUtils.buildErrorResp(HttpStatus.BAD_REQUEST.value(), "Argument 'rate' is required");
+            }
+
             String msg = mockClassService.doCandidateFeedback(candidateFeedbackInputDto);
             logger.info("Invocation candidateFeedback() response body: {}", msg);
 
