@@ -1,5 +1,5 @@
 /**
- *
+ * 
  */
 package com.vipkid.http.utils;
 
@@ -8,7 +8,6 @@ import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Map;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpEntity;
@@ -18,7 +17,6 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
@@ -34,7 +32,7 @@ import com.vipkid.http.vo.HttpResult;
 
 /**
  * http请求客户端工具类
- *
+ * 
  * @author zouqinghua
  * @date 2016年3月11日 上午10:31:48
  *
@@ -48,9 +46,9 @@ public class WebUtils {
 
     private static final int DEFAULT_TIMEOUT = 2 * 1000;
     private static final RequestConfig DEFAULT_REQUEST_CONFIG = RequestConfig.custom()
-            .setConnectionRequestTimeout(DEFAULT_TIMEOUT).setConnectTimeout(DEFAULT_TIMEOUT)
-            .setSocketTimeout(DEFAULT_TIMEOUT).build();
-
+			.setConnectionRequestTimeout(DEFAULT_TIMEOUT).setConnectTimeout(DEFAULT_TIMEOUT)
+			.setSocketTimeout(DEFAULT_TIMEOUT).build();
+    
     // cookie
     private static final String COOKIE_NAME = "Cookie";
     private static final String COOKIE_SPLIT = ";";
@@ -68,7 +66,7 @@ public class WebUtils {
     }
 
     /**
-     *
+     * 
      * @param url
      * @param params
      * @param heads
@@ -76,7 +74,7 @@ public class WebUtils {
      * @return
      */
     public static HttpResult post(String url, Map<String, String> params, Map<String, String> heads,
-                                  Map<String, String> cookies) {
+            Map<String, String> cookies) {
         logger.info("HTTP Post data,url = "+url+",params = "+params+",heads = "+heads+",cookies = "+cookies);
         HttpResult result = new HttpResult();
         CloseableHttpResponse response = null;
@@ -134,7 +132,7 @@ public class WebUtils {
 
     /**
      * params 由map转换成NameValuePair格式数据
-     *
+     * 
      * @param params
      * @return
      */
@@ -150,7 +148,7 @@ public class WebUtils {
 
     /**
      * cookies 由map转换成http Cookie 数据格式
-     *
+     * 
      * @param cookies
      * @return
      */
@@ -177,18 +175,18 @@ public class WebUtils {
             HttpEntity entity = response.getEntity();
             String rt = EntityUtils.toString(entity);
             if(HttpStatus.OK.value()!=response.getStatusLine().getStatusCode()){
-                logger.error("http get error =  "+ rt);
-                throw new Exception(rt);
-            }
+            	//logger.error("http get error =  "+ rt);
+            	throw new Exception(rt);
+			}
             return rt;
-        } catch (Exception e) {
-            logger.error("get data error,url = "+url+" e= "+e);
-        } finally {
+		} catch (Exception e) {
+			logger.error("get data error,url = "+url, e);
+		} finally {
             if (null != response) {
                 try {
                     response.close();
                 } catch (IOException e) {
-                    logger.error("关闭输出流时出错，url = "+url+" e= "+e);
+                    logger.error("关闭输出流时出错，url = "+url, e);
                 }
             }
         }
