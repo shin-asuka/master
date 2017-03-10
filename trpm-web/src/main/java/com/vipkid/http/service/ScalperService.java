@@ -11,7 +11,7 @@ import java.util.Map;
  * Created by zhangzhaojun on 2017/2/27.
  */
 public class ScalperService extends HttpBaseService {
-    private static final Logger logger = LoggerFactory.getLogger(PayrollService.class);
+    private static final Logger logger = LoggerFactory.getLogger(ScalperService.class);
 
     /**
      * 创建TimeSlot
