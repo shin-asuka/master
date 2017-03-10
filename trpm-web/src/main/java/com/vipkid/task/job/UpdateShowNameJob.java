@@ -60,9 +60,8 @@ public class UpdateShowNameJob {
                             int nameNum;//showName 重复的标记
                             int n = 2;//添加随机大写字母的个数
                             List<String> showNameList = Lists.newArrayList();
-
+                            int num = 0;
                             do {
-                                int num = 0;
                                 if(StringUtils.isNotBlank(name)) {
                                     showName = name.substring(0, name.indexOf(" ") + 1);
                                 }else{
@@ -70,13 +69,8 @@ public class UpdateShowNameJob {
                                 }
                                 String s = StringUtils.EMPTY;//添加随机字母的变量
                                 //执行随机变量的逻辑
-
-                                if(n==3) {
-                                  for (int j = 0; j < n; j++) {
+                                for (int j = 0; j < n; j++) {
                                     s += (char) (Math.random() * 26 + 'A');
-                                  }
-                                }else{
-                                    s = RandomAB.get(num);
                                 }
                                 showNameList.add(s);
                                 if (showNameList.containsAll(RandomAB)) {
@@ -91,7 +85,7 @@ public class UpdateShowNameJob {
                                         break;
                                     }
                                 }
-                                logger.info("循环次数:{}",num);
+                                logger.info("user :{} 循环次数:{}", user.getId(),num);
                                 ++num;
                             } while (nameNum > 0);
                             logger.info("uopdate teacher :{} showName:{} 编号：{}", user.getId(), showName,i);
