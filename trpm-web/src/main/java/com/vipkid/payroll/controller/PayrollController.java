@@ -247,12 +247,8 @@ public class PayrollController extends AbstractPortalController {
 				rePage = (PayrollPage) JsonMapper.fromJsonString(responseAd, rePage.getClass());
 				result.addAttribute(Result.ATTR_COURSE_TOTAL, rePage.getCount());
 				allTotalSalary = rePage.getAllTotalSalary();
-				message = "查询成功";
-			} else {
-				LOGGER.error("查询referral工资明细失败");
-				message = "查询失败";
-				status = HttpStatus.INTERNAL_SERVER_ERROR.value();
 			}
+			message = "查询成功";
 			result.addAttribute(Result.ATTR_PAGE, rePage);
 			result.addAttribute("offsetOfMonth", offsetOfMonth);
 
