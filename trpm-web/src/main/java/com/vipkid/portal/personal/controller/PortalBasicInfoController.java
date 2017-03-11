@@ -39,7 +39,7 @@ import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.util.AwsFileUtils;
 
 @RestController
-@RestInterface(lifeCycle = LifeCycle.REGULAR)
+@RestInterface(lifeCycle = {LifeCycle.REGULAR,LifeCycle.QUIT})
 @RequestMapping("/portal/personal")
 public class PortalBasicInfoController extends RestfulController{
 	

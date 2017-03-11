@@ -36,7 +36,7 @@ import java.util.Map;
  * @author Austin.Cao  Date: 23/12/2016
  */
 @RestController
-@RestInterface(lifeCycle=LifeCycle.REGULAR)
+@RestInterface(lifeCycle = {LifeCycle.REGULAR,LifeCycle.QUIT})
 @RequestMapping("/portal/personal")
 public class BankInfoController extends RestfulController{
 
