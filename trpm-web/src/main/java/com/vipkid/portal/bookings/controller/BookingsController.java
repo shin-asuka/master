@@ -57,6 +57,14 @@ public class BookingsController {
     @Autowired
     private AnnouncementHttpService announcementHttpService;
 
+    private final static String EMERGENCY_CHINESE  ="紧急情况（个人或者家庭成员出现疾病发作、意外事故、突发不测等）";
+    private final static String PERSONAL_REASON_CHINESE ="个人原因（日程冲突、安排不当等）";
+    private final static String UNRELIABLE_INTERNET_ACCESS_CHINESE  ="网络故障（住址搬迁、旅行在途等）";
+
+
+    private final static String EMERGENCY_ENGLISH  ="Emergency (personal or family member sickness, accident, mishap, etc.)";
+    private final static String PERSONAL_REASON_ENGLISH ="Personal reason (schedule conflict, prior oversight, etc.)";
+    private final static String UNRELIABLE_INTERNET_ACCESS_ENGLISH  ="Unreliable internet access (relocation, travel, etc.)";
     /* 获取 Scheduled 详细数据接口 */
     @RequestMapping(value = "/scheduled", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
     public Map<String, Object> scheduled(ScheduledRequest scheduledRequest, HttpServletResponse response) {
@@ -268,7 +276,9 @@ public class BookingsController {
         Object onlineClassId = paramMap.get("onlineClassId");
         Object cancelReason = paramMap.get("cancelReason");
 
+
         try {
+
 
             if (onlineClassId == null || !StringUtils.isNumeric(onlineClassId + "")) {
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
@@ -281,6 +291,19 @@ public class BookingsController {
                 logger.error("This cancelReason ：{} is too long or is Empty.", cancelReason);
                 return ApiResponseUtils.buildErrorResp(HttpStatus.BAD_REQUEST.value(), "This cancelReason ：{} is too long or is Empty.", onlineClassId);
             }
+            String finishReason = String.valueOf(cancelReason);
+            if(StringUtils.equalsIgnoreCase(finishReason,EMERGENCY_ENGLISH)){
+                finishReason = EMERGENCY_CHINESE;
+            }
+
+            if(StringUtils.equalsIgnoreCase(finishReason,PERSONAL_REASON_ENGLISH)){
+                finishReason = PERSONAL_REASON_CHINESE;
+            }
+
+            if(StringUtils.equalsIgnoreCase(finishReason,UNRELIABLE_INTERNET_ACCESS_ENGLISH)){
+                finishReason = UNRELIABLE_INTERNET_ACCESS_CHINESE;
+            }
+
             Preconditions.checkArgument(request.getAttribute(TEACHER) != null);
             Teacher teacher = (Teacher) request.getAttribute(TEACHER);
 
@@ -290,7 +313,7 @@ public class BookingsController {
                 return ApiResponseUtils.buildErrorResp(HttpStatus.BAD_REQUEST.value(), "The teacher have no jurisdiction.", teacher.getId());
             }
 
-            boolean isSuccess = bookingsService.cancelClassSuccess(Long.valueOf(onlineClassId + ""), teacher.getId(), String.valueOf(cancelReason));
+            boolean isSuccess = bookingsService.cancelClassSuccess(Long.valueOf(onlineClassId + ""), teacher.getId(), finishReason);
             if (!isSuccess) {
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
                 logger.error("cancel online class:{} was Failed.", onlineClassId);
