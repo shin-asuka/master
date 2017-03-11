@@ -472,14 +472,15 @@ public class ClassroomService {
        Map<String, Object> resultMap = Maps.newHashMap();
        try {
            // 课程开始之后才能发送星星
-           if(null == onlineClass || onlineClass.getScheduledDateTime().getTime() > System.currentTimeMillis()) {
+           /*
+    	   if(null == onlineClass || onlineClass.getScheduledDateTime().getTime() > System.currentTimeMillis()) {
         	   logger.info("课程开始之后才能发送星星,还未开始不能发送星星");
                resultMap.put("status", false);
                resultMap.put("code", HttpStatus.BAD_REQUEST.value());
                resultMap.put("info", " The a course not start can't send the stars. ");
                return resultMap;
            }
-
+           */
            String url = PropertyConfigurer.stringValue("star.server.updateStar");
 
            Map<String, String> paramMap = Maps.newHashMap();
