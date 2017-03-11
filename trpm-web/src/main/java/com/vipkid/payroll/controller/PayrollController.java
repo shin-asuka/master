@@ -21,6 +21,7 @@ import com.vipkid.http.service.PayrollService;
 import com.vipkid.payroll.model.Page;
 import com.vipkid.payroll.model.PayrollItemVo;
 import com.vipkid.payroll.model.PayrollPage;
+import com.vipkid.payroll.model.ReferralPayrollItem;
 import com.vipkid.payroll.model.Result;
 import com.vipkid.payroll.utils.DateUtils;
 import com.vipkid.payroll.utils.JsonMapper;
@@ -222,7 +223,7 @@ public class PayrollController extends AbstractPortalController {
 			@RequestParam(value = "offsetOfMonth", required = false, defaultValue = "0") Integer offsetOfMonth,
 			 HttpServletRequest request, HttpServletResponse response) {
 
-		PayrollPage<PayrollItemVo> rePage = new PayrollPage<PayrollItemVo>();
+		PayrollPage<ReferralPayrollItem> rePage = new PayrollPage<ReferralPayrollItem>();
 		String message = "";
 		Integer status = HttpStatus.OK.value();
 		Teacher teacher = loginService.getTeacher();
@@ -247,8 +248,8 @@ public class PayrollController extends AbstractPortalController {
 				rePage = (PayrollPage) JsonMapper.fromJsonString(responseAd, rePage.getClass());
 				result.addAttribute(Result.ATTR_COURSE_TOTAL, rePage.getCount());
 				allTotalSalary = rePage.getAllTotalSalary();
+				
 			}
-			message = "查询成功";
 			result.addAttribute(Result.ATTR_PAGE, rePage);
 			result.addAttribute("offsetOfMonth", offsetOfMonth);
 
