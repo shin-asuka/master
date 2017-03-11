@@ -6,6 +6,8 @@ package com.vipkid.http.utils;
 import java.io.IOException;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import org.apache.commons.lang.StringUtils;
 
 import com.alibaba.fastjson.JSON;
@@ -98,4 +100,19 @@ public class JsonUtils {
     	}
     	return jsonObject;
     }
+
+
+	private static ObjectMapper mapper = new ObjectMapper();
+	static{
+		// 设置输出时包含属性的风格
+		mapper.setSerializationInclusion(JsonInclude.Include.ALWAYS);
+
+//		mapper.configure(DeserializationFeature.USE_JAVA_ARRAY_FOR_JSON_ARRAY,false);
+		// 设置输入时忽略在JSON字符串中存在但Java对象实际没有的属性
+		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+//		// 禁止把POJO中值为null的字段映射到json字符串中
+//		mapper.configure(SerializationFeature.WRITE_NULL_MAP_VALUES,true);
+	}
+
+
 }

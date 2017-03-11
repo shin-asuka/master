@@ -1,10 +1,18 @@
 package com.vipkid.background.api.sterling.service;
 
+import com.google.api.client.util.Maps;
+import com.sun.deploy.util.Base64Wrapper;
+import com.sun.xml.internal.messaging.saaj.util.Base64;
 import com.vipkid.background.api.sterling.dto.*;
+import com.vipkid.http.utils.JsonUtils;
+import com.vipkid.http.utils.WebUtils;
+import com.vipkid.http.vo.HttpResult;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
+import sun.misc.BASE64Encoder;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by liyang on 2017/3/11.
@@ -15,6 +23,8 @@ import java.util.List;
  */
 public class SterlingApiUtils {
 
+
+    private static String sterlingHost="https://api-int.kennect.com";
 
     /**
      * 创建一个候选人
@@ -105,11 +115,32 @@ public class SterlingApiUtils {
      * @return
      */
     public static String refreshAccessToken(){
+        String postUrl=sterlingHost+"/oauth/token";
+        Map<String,String> params = Maps.newHashMap();
+        Map<String,String> headers =Maps.newHashMap();
+        headers.put("Authorization",String.format("Basic %s", new sun.misc.BASE64Encoder().encode("APIUser@VIPKID.com:nEtGtGHyqD".getBytes())));
+        headers.put("Content-Type","application/x-www-form-urlencoded");
+        HttpResult result = WebUtils.post(postUrl,params,headers);
+        if(result.getStatus() == 200){
+
+        }
+        return StringUtils.EMPTY;
+    }
+
+
+    /**
+     * 获取AccessToken
+     * @return
+     */
+    public static String getAccessToken(){
         return StringUtils.EMPTY;
     }
 
 
 
+    public static void main(String [] arge){
+        System.out.println(SterlingApiUtils.refreshAccessToken());
+    }
 
 
 }
