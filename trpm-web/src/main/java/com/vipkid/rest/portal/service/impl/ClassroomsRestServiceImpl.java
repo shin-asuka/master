@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.google.api.client.util.Lists;
 import com.google.api.client.util.Maps;
+import com.vipkid.enums.OnlineClassEnum;
 import com.vipkid.enums.OnlineClassEnum.CourseType;
 import com.vipkid.file.service.QNService;
 import com.vipkid.http.service.AssessmentHttpService;
@@ -19,6 +20,7 @@ import com.vipkid.rest.portal.service.ClassroomsRestService;
 import com.vipkid.rest.portal.vo.StudentCommentVo;
 import com.vipkid.rest.service.LoginService;
 import com.vipkid.rest.utils.ApiResponseUtils;
+import com.vipkid.trpm.constant.ApplicationConstant;
 import com.vipkid.trpm.constant.ApplicationConstant.UaReportStatus;
 import com.vipkid.trpm.dao.*;
 import com.vipkid.trpm.entity.*;
@@ -131,7 +133,7 @@ public class ClassroomsRestServiceImpl implements ClassroomsRestService{
 		for(ClassroomDetail classroomDetail:classroomsData.getDataList()){
 			String finishType  = classroomDetail.getFinishType();
 			if(ApplicationConstant.FinishType.TEACHER_CANCELLATION.toString().equalsIgnoreCase(finishType)
-					||ApplicationConstant.FinishType.TEACHER_CANCELLATION_24H.toString().equalsIgnoreCase(finishType)
+					|| ApplicationConstant.FinishType.TEACHER_CANCELLATION_24H.toString().equalsIgnoreCase(finishType)
 					||ApplicationConstant.FinishType.TEACHER_NO_SHOW_2H.equalsIgnoreCase(finishType)){
 				classroomDetail.setStatus(OnlineClassEnum.ClassStatus.CANCELED.toString());
 			}
