@@ -60,6 +60,7 @@ public class ClassroomController extends RestfulController{
             Map<String,Object> result =  this.classroomService.updateSendStar(true, bean, getTeacher(request));
             if(result.get("status") != null && !(Boolean)result.get("status")){
             	 response.setStatus((Integer)result.get("code"));
+            	 return ApiResponseUtils.buildErrorResp((Integer)result.get("code"), result.get("info")+"");
             }
 			return ApiResponseUtils.buildSuccessDataResp(result);
         } catch (IllegalArgumentException e) {

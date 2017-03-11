@@ -473,8 +473,10 @@ public class ClassroomService {
        try {
            // 课程开始之后才能发送星星
            if(null == onlineClass || onlineClass.getScheduledDateTime().getTime() > System.currentTimeMillis()) {
+        	   logger.info("课程开始之后才能发送星星,还未开始不能发送星星");
                resultMap.put("status", false);
                resultMap.put("code", HttpStatus.BAD_REQUEST.value());
+               resultMap.put("info", " The a course not start can't send the stars. ");
                return resultMap;
            }
 
@@ -495,15 +497,20 @@ public class ClassroomService {
                if(updateStarDto.getCode() == HttpStatus.OK.value()){
                    resultMap.put("status", updateStarDto.isData());
                } else {
+            	   resultMap.put("info", " The request error. ");
+            	   logger.info("请求未返回200,code:"+updateStarDto.getCode()+",url:"+url);
                    resultMap.put("status", false);
                }
                resultMap.put("code", updateStarDto.getCode());
            } else {
                resultMap.put("status", false);
+               logger.info("请求未响应,url:"+url);
+               resultMap.put("info", " The backend request without response. ");
                resultMap.put("code", HttpStatus.NO_CONTENT.value());
            }
        } catch(Exception e) {
            logger.error("Invoke star server updateStar failed", e);
+           resultMap.put("info", " Invoke star server updateStar failed." + e.getMessage());
            resultMap.put("status", false);
            resultMap.put("code", HttpStatus.INTERNAL_SERVER_ERROR.value());
        }
