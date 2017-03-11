@@ -36,14 +36,12 @@ import com.vipkid.trpm.dao.LessonDao;
 import com.vipkid.trpm.dao.OnlineClassDao;
 import com.vipkid.trpm.dao.StudentDao;
 import com.vipkid.trpm.dao.StudentExamDao;
-import com.vipkid.trpm.dao.TeacherPeCommentsDao;
 import com.vipkid.trpm.dao.UserDao;
 import com.vipkid.trpm.entity.Lesson;
 import com.vipkid.trpm.entity.OnlineClass;
 import com.vipkid.trpm.entity.Student;
 import com.vipkid.trpm.entity.StudentExam;
 import com.vipkid.trpm.entity.Teacher;
-import com.vipkid.trpm.entity.TeacherPeComments;
 import com.vipkid.trpm.entity.User;
 import com.vipkid.trpm.entity.classroom.UpdateStarDto;
 import com.vipkid.trpm.entity.teachercomment.TeacherComment;
@@ -78,9 +76,6 @@ public class ClassroomService {
     
     @Autowired
     private TeacherApplicationDao teacherApplicationDao;
-    
-    @Autowired
-    private TeacherPeCommentsDao teacherPeCommentsDao;
     
     @Autowired
     private AuditDao auditDao;
@@ -132,10 +127,6 @@ public class ClassroomService {
             if(CourseName.PRACTICUM1.show().equals(resultDto.getCourseType()) || CourseName.PRACTICUM2.show().equals(resultDto.getCourseType())){
             	TeacherApplication application = teacherApplicationDao.findApplictionByOlineclassId(bean.getOnlineClassId(), teacher.getId());	
             	if(application != null){
-            		TeacherPeComments teacherPeComments = teacherPeCommentsDao.getTeacherPeComments(Long.valueOf(application.getId()).intValue());
-            		if(0==application.getAuditorId() && null==teacherPeComments){
-            			teacherApplicationDao.initApplicationAnswer(application);
-            		}
             		resultDto.setTeacherApplicationId(application.getId());
             	}
             }
