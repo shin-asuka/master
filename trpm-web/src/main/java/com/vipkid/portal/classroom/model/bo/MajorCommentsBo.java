@@ -30,6 +30,7 @@ public class MajorCommentsBo extends FeedbackBo{
     private String submitSource;
     private String serialNumber;
     private String scheduleDateTime;
+    private String trialLevelResult;
 
     public Long getId() {
         return id;
@@ -157,5 +158,13 @@ public class MajorCommentsBo extends FeedbackBo{
 
     public void setStudentId(Long studentId) {
         this.studentId = studentId;
+    }
+
+    public String getTrialLevelResult() {
+        return trialLevelResult;
+    }
+
+    public void setTrialLevelResult(String trialLevelResult) {
+        this.trialLevelResult = trialLevelResult;
     }
 }
