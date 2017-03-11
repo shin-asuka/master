@@ -256,7 +256,7 @@ public class PayrollController extends AbstractPortalController {
 				result.addAttribute(Result.ATTR_COURSE_TOTAL, rePage.getCount());
 
 			}
-			result.addAttribute(Result.ATTR_PAGE, responseAd);
+			result.addAttribute(Result.ATTR_PAGE, rePage);
 			result.addAttribute("offsetOfMonth", offsetOfMonth);
 			result.addAttribute("totalSalary",allTotalSalary);
 
