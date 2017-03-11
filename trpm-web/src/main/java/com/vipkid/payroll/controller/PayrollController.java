@@ -241,12 +241,16 @@ public class PayrollController extends AbstractPortalController {
 			param.put("teacherId", teacherId);
 
 			Page payPage = new Page(request, response);
+			if(payPage.getPageNo() == 0){
+				payPage.setPageNo(1);
+			}
 			String responseAd = payrollService.listReferralWithPage(
 					Result.SLALARY_TYPE_OTHER_BONUS_TEACHER_REFERRAL_FEE_RULE, teacherId, month, payPage);
-
+			
+			LOGGER.info("获取referral详情, json str", responseAd);
 			if (responseAd != null) {
 				rePage = (PayrollPage) JsonMapper.fromJsonString(responseAd, rePage.getClass());
-				LOGGER.info("获取referral详情, json str", rePage.getList());
+				
 				result.addAttribute(Result.ATTR_COURSE_TOTAL, rePage.getCount());
 				allTotalSalary = rePage.getAllTotalSalary();
 				
