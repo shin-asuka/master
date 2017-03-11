@@ -246,11 +246,12 @@ public class PayrollController extends AbstractPortalController {
 
 			if (responseAd != null) {
 				rePage = (PayrollPage) JsonMapper.fromJsonString(responseAd, rePage.getClass());
+				LOGGER.info("获取referral详情, json str", rePage.getList());
 				result.addAttribute(Result.ATTR_COURSE_TOTAL, rePage.getCount());
 				allTotalSalary = rePage.getAllTotalSalary();
 				
 			}
-			result.addAttribute(Result.ATTR_PAGE, rePage);
+			result.addAttribute(Result.ATTR_PAGE, responseAd);
 			result.addAttribute("offsetOfMonth", offsetOfMonth);
 
 		} catch (Exception e) {
