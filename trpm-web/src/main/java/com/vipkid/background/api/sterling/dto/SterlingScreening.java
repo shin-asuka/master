@@ -20,6 +20,7 @@ public class SterlingScreening implements Serializable {
     private ScreeningInputDto.CallBack callback;
     private List<SterlingCallBack.AdverseAction> adverseActions;
     private Link links;
+    private List<SterlingError> errors;
 
     public String getId() {
         return id;
@@ -107,6 +108,14 @@ public class SterlingScreening implements Serializable {
 
     public void setLinks(Link links) {
         this.links = links;
+    }
+
+    public List<SterlingError> getErrors() {
+        return errors;
+    }
+
+    public void setErrors(List<SterlingError> errors) {
+        this.errors = errors;
     }
 
     public static class Link implements Serializable{

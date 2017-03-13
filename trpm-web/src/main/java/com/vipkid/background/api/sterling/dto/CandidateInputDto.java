@@ -7,7 +7,9 @@ package com.vipkid.background.api.sterling.dto;
 public class CandidateInputDto implements  java.io.Serializable{
 
     private static final long serialVersionUID = -7994566362552027623L;
+
     private Long teacherId;
+    private String clientReferenceId;
     private String candidateId;
     private String email;
     private String givenName;
@@ -25,6 +27,14 @@ public class CandidateInputDto implements  java.io.Serializable{
 
     public void setTeacherId(Long teacherId) {
         this.teacherId = teacherId;
+    }
+
+    public String getClientReferenceId() {
+        return clientReferenceId;
+    }
+
+    public void setClientReferenceId(String clientReferenceId) {
+        this.clientReferenceId = clientReferenceId;
     }
 
     public String getCandidateId() {

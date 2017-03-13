@@ -8,9 +8,12 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.HttpResponseException;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.entity.EntityBuilder;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
 import org.apache.http.config.Registry;
 import org.apache.http.config.RegistryBuilder;
 import org.apache.http.conn.ConnectTimeoutException;
@@ -20,6 +23,7 @@ import org.apache.http.conn.socket.PlainConnectionSocketFactory;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.conn.ssl.SSLContexts;
 import org.apache.http.conn.ssl.TrustStrategy;
+import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntity;
@@ -259,11 +263,45 @@ public class HttpClientUtils {
         try {
             UrlEncodedFormEntity formEntity = new UrlEncodedFormEntity(nameValues, defaultEncoding);
             post.setEntity(formEntity);
+
             content = HttpClientUtils.CLIENT.execute(post, new CharsetableResponseHandler(defaultEncoding));
         } catch (UnsupportedEncodingException e) {
             throw new RuntimeException("unsupported Encoding " + defaultEncoding, e);
         } catch (SocketTimeoutException e) {
             throw e;
+        } catch (Exception e) {
+            HttpClientUtils.logger.error(String.format("post [%s] happens error ", url), e);
+        }
+        return content;
+    }
+
+
+    public static String postBinaryFile(String url ,byte[] byteArray,Map<String,String> headers){
+        HttpEntity entity = EntityBuilder.create().setContentType(ContentType.TEXT_PLAIN).setBinary(byteArray).build();
+        return postWithEntity(url,entity,null,headers);
+    }
+
+    public static String postWithEntity(String url,HttpEntity entity,String defaultEncoding,Map<String,String> headers){
+        if(null != entity){
+            return null;
+        }
+        defaultEncoding = HttpClientUtils.getDefaultEncoding(defaultEncoding);
+        HttpResponse response = null;
+        String content =null;
+        HttpPost post = new HttpPost(url);
+        if (headers != null) {
+            for (Map.Entry<String, String> entry : headers.entrySet()) {
+                post.addHeader(entry.getKey(), entry.getValue());
+            }
+        }
+        try {
+            post.setEntity(entity);
+            response = HttpClientUtils.CLIENT.execute(post);
+            content = EntityUtils.toString(response.getEntity());
+        }catch (UnsupportedEncodingException e) {
+            throw new RuntimeException("unsupported Encoding " + defaultEncoding, e);
+        } catch (SocketTimeoutException e) {
+            e.printStackTrace();
         } catch (Exception e) {
             HttpClientUtils.logger.error(String.format("post [%s] happens error ", url), e);
         }
@@ -281,9 +319,17 @@ public class HttpClientUtils {
         return HttpClientUtils.post(url, jsonData, null, null);
     }
 
+
     public static String post(String url, String jsonData, Map<String, String> headers) {
         return HttpClientUtils.post(url, jsonData, null, headers);
     }
+
+
+
+    public static String put(String url,String jsonData,Map<String,String> headers){
+        return put(url,jsonData,null,headers);
+    }
+
 
     public static HttpResponse postRESTful(String url, String jsonData){
         return HttpClientUtils.postRESTful(url, jsonData, null, null);
@@ -297,22 +343,57 @@ public class HttpClientUtils {
      * @return
      */
     public static String post(String url, String jsonData, String defaultEncoding, Map<String, String> headers) {
-        defaultEncoding = HttpClientUtils.getDefaultEncoding(defaultEncoding);
         String content = null;
         try {
             HttpPost post = new HttpPost(url);
-            if(org.apache.commons.collections.MapUtils.isNotEmpty(headers)){
-                for(String key : headers.keySet()){
-                    post.setHeader(key, headers.get(key));
-                }
-            }
-            StringEntity entity = new StringEntity(jsonData, defaultEncoding);
-            entity.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
-            post.setEntity(entity);
-            HttpResponse response = HttpClientUtils.CLIENT.execute(post);
-            content = EntityUtils.toString(response.getEntity());
+            content = interaction(post,jsonData,defaultEncoding,headers);
         } catch (Exception e) {
             HttpClientUtils.logger.error(String.format("post [%s] happens error ", url), e);
+        }
+        return content;
+    }
+
+    /**
+     * 请求特定的url提交Json字符串，使用put方法，返回响应的内容
+     * @param url
+     * @param jsonData
+     * @param defaultEncoding
+     * @param headers
+     * @return
+     */
+    public static String put(String url, String jsonData, String defaultEncoding, Map<String, String> headers) {
+        String content = null;
+        try {
+            HttpPut put = new HttpPut(url);
+            content = interaction(put,jsonData,defaultEncoding,headers);
+        } catch (Exception e) {
+            HttpClientUtils.logger.error(String.format("post [%s] happens error ", url), e);
+        }
+        return content;
+    }
+
+
+
+    private static String interaction(HttpEntityEnclosingRequestBase requestBase, String jsonData, String defaultEncoding, Map<String, String> headers){
+        defaultEncoding = HttpClientUtils.getDefaultEncoding(defaultEncoding);
+        String content = null;
+        try {
+
+            if(org.apache.commons.collections.MapUtils.isNotEmpty(headers)){
+                for(String key : headers.keySet()){
+                    requestBase.setHeader(key, headers.get(key));
+                }
+            }
+            if(StringUtils.isNotBlank(jsonData)){
+                StringEntity entity = new StringEntity(jsonData, defaultEncoding);
+                entity.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
+                requestBase.setEntity(entity);
+            }
+
+            HttpResponse response = HttpClientUtils.CLIENT.execute(requestBase);
+            content = EntityUtils.toString(response.getEntity());
+        } catch (Exception e) {
+            HttpClientUtils.logger.error(String.format("post [%s] happens error ", requestBase.getURI()), e);
         }
         return content;
     }
@@ -601,6 +682,29 @@ public class HttpClientUtils {
         return null;
     }
 
+
+
+
+    public static String get(String url,Map<String,String> headers){
+
+        String content = null;
+        HttpGet get =new HttpGet(url);
+        try {
+
+            if(org.apache.commons.collections.MapUtils.isNotEmpty(headers)){
+                for(String key : headers.keySet()){
+                    get.setHeader(key, headers.get(key));
+                }
+            }
+            HttpResponse response = HttpClientUtils.CLIENT.execute(get);
+            content = EntityUtils.toString(response.getEntity());
+        } catch (Exception e) {
+            HttpClientUtils.logger.error(String.format("post [%s] happens error ", url), e);
+        }
+        return content;
+
+    }
+
     /**
      * 对特定的url的post请求，返回响应体
      *
@@ -610,6 +714,7 @@ public class HttpClientUtils {
     public static HttpResponse get(String url) {
         HttpGet get = new HttpGet(url);
         try {
+
             return HttpClientUtils.CLIENT.execute(get);
         } catch (SocketTimeoutException e) {
             logger.error("error when get " + e);

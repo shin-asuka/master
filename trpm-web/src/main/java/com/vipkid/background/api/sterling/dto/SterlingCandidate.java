@@ -1,6 +1,7 @@
 package com.vipkid.background.api.sterling.dto;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * Created by liyang on 2017/3/11.
@@ -9,7 +10,7 @@ import java.io.Serializable;
 public class SterlingCandidate implements Serializable {
 
     private static final long serialVersionUID = 8448794210314339734L;
-    public  String candidateId;
+    private String id;
     private String email;
     private String givenName;
     private String familyName;
@@ -18,14 +19,18 @@ public class SterlingCandidate implements Serializable {
     private String ssn;
     private String phone;
     private CandidateInputDto.Address address;
+    private List<SterlingError> errors;
+    private String message;
 
 
-    public String getCandidateId() {
-        return candidateId;
+
+
+    public String getId() {
+        return id;
     }
 
-    public void setCandidateId(String candidateId) {
-        this.candidateId = candidateId;
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getEmail() {
@@ -90,6 +95,22 @@ public class SterlingCandidate implements Serializable {
 
     public void setAddress(CandidateInputDto.Address address) {
         this.address = address;
+    }
+
+    public List<SterlingError> getErrors() {
+        return errors;
+    }
+
+    public void setErrors(List<SterlingError> errors) {
+        this.errors = errors;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
     }
 
     public static class Address implements  java.io.Serializable{
