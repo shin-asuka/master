@@ -25,6 +25,9 @@ public class StudentCommentVo {
     private String transaltion;
     private String ocToken;
     private String tags[];
+    private String tagsEn[];
+
+
     public Integer getId() {
         return id;
     }
@@ -167,5 +170,13 @@ public class StudentCommentVo {
 
     public void setTags(String[] tags) {
         this.tags = tags;
+    }
+
+    public String[] getTagsEn() {
+        return tagsEn;
+    }
+
+    public void setTagsEn(String[] tagsEn) {
+        this.tagsEn = tagsEn;
     }
 }

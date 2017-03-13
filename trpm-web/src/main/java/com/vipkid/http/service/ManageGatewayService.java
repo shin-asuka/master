@@ -25,7 +25,9 @@ import org.apache.commons.lang3.time.DateFormatUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -36,7 +38,7 @@ import java.util.Map;
  * @date 2017年1月11日  下午17:36:00
  *
  */
-
+@Service
 public class ManageGatewayService extends HttpBaseService {
 
 	private static final Logger logger = LoggerFactory.getLogger(ManageGatewayService.class);
@@ -64,6 +66,20 @@ public class ManageGatewayService extends HttpBaseService {
 	@Autowired
 	private ActivityService activityService;
 
+	public static Map<String,String> tagsMap;
+
+	@PostConstruct
+	public void  init(){
+		tagsMap.put("网络不稳定","Connection");
+		tagsMap.put("上课环境布置差","Classroom setup");
+		tagsMap.put("老师迟到","Late");
+		tagsMap.put("课程未上完","Unfinished");
+		tagsMap.put("课堂气氛不活跃","Fatigued");
+		tagsMap.put("不就重点纠错","Correction");
+		tagsMap.put("不耐心","Impatient");
+		tagsMap.put("肢体语言少","Body language");
+	}
+
 	public List<StudentCommentVo> getStudentCommentListByBatch(String idsStr) {
 
 		List<StudentCommentVo> studentCommentApiList = Lists.newArrayList();
@@ -82,6 +98,7 @@ public class ManageGatewayService extends HttpBaseService {
 						studentCommentVo.setStudentAvatar(student.getAvatar());
 						studentCommentVo.setStudentName(student.getEnglishName());
 					}
+					studentCommentVo.setTagsEn(convertTagsToEn(studentCommentVo.getTags()));
 				}
 			}
 		} catch (Exception e) {
@@ -125,6 +142,7 @@ public class ManageGatewayService extends HttpBaseService {
 					}
 					String result = getTranslation(stuCommentApi.getId().longValue());
 					stuCommentApi.setTransaltion(StringUtils.isEmpty(result)? "":result);
+					stuCommentApi.setTagsEn(convertTagsToEn(stuCommentApi.getTags()));
 				}
 			}else{
 				studentCommentPageApi.setTotal(0);
@@ -246,4 +264,12 @@ public class ManageGatewayService extends HttpBaseService {
 			return -1;
 		}
 	}
+
+	String[] convertTagsToEn(String[] Tags){
+		String[] zhTags = new String[Tags.length];
+		for(int i=0;i<Tags.length;i++){
+			zhTags[i] = tagsMap.get(Tags[i]);
+		}
+		return zhTags;
+	};
 }
