@@ -59,6 +59,8 @@ import com.vipkid.trpm.util.IpUtils;
 public class LoginController extends RestfulController {
     
 
+	private static final int TH_21_DAY = 21;
+
 	private static Logger logger = LoggerFactory.getLogger(LoginController.class);
 
     @Autowired
@@ -244,9 +246,9 @@ public class LoginController extends RestfulController {
 		//Quit 老师登录
 		boolean canLogin = false;
 		if (editor != user.getId()) {
-			expireTime = DateUtils.getExpireTime(lastEditTime);
+			expireTime = DateUtils.getExpireTime(lastEditTime,TH_21_DAY);
 		}else{
-			expireTime = DateUtils.getExpireTime(now);
+			expireTime = DateUtils.getExpireTime(now,TH_21_DAY);
 		}				
 		String exStr = passportService.getQuitTeacherExpiredTime(user.getId(), expireTime.getTime());
 		if(StringUtils.isNotEmpty(exStr)){

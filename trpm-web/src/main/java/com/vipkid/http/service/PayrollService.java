@@ -12,6 +12,7 @@ import com.vipkid.http.vo.HttpResult;
 import com.vipkid.payroll.model.Page;
 
 public class PayrollService extends HttpBaseService {
+	 private int DEFAULT_PAGE_SIZE = 15;
 
 	private static final Logger logger = LoggerFactory.getLogger(PayrollService.class);
 
@@ -65,17 +66,17 @@ public class PayrollService extends HttpBaseService {
 		return resultString;
 	}
 	
-	public String listReferralWithPage(int slalaryTypeCourseAdditionRule, int teacherId, int month, Page page) {
+	public String listReferralWithPage(int salaryTypeCourseAdditionRule, int teacherId, int month, Page page) {
 		Map<String, String> params = Maps.newHashMap();
 
 		params.put("teacherId", String.valueOf(teacherId));
 		params.put("pageNo",  String.valueOf(page.getPageNo()));
-		params.put("itemType", String.valueOf(slalaryTypeCourseAdditionRule));
+		params.put("itemType", String.valueOf(salaryTypeCourseAdditionRule));
 		params.put("month", String.valueOf(month));
 		if (page.getPageSize() != 0) {
 			params.put("pageSize",  String.valueOf(page.getPageSize()));
 		} else {
-			params.put("pageSize", "15");
+			params.put("pageSize",  String.valueOf(DEFAULT_PAGE_SIZE));
 		}
 		String url = new StringBuilder(super.serverAddress).append("/public/payroll/listReferral")
 				.toString();
