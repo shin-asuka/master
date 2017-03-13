@@ -190,4 +190,15 @@ public class TeacherEnum {
 		}
 		return isNew;
 	}
+	
+	public enum QuitStatusEnum {
+		NORMAL(0),QUIT_NOT_EXPIRED(1),EXPIRED(2);
+		private Integer status;  
+		private QuitStatusEnum(Integer status) {
+            this.status = status;
+        }        
+        public Integer getStatus() {
+            return status;
+        }
+	}
 }
