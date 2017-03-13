@@ -1,12 +1,15 @@
 package com.vipkid.trpm.entity;
 
+import org.community.dao.support.Entity;
+
 import java.io.Serializable;
 import java.util.Date;
+import org.community.dao.support.Entity;
 
 /**
  * Created by luning on 2017/3/11.
  */
-public class BackgroundScreening implements Serializable{
+public class BackgroundScreening extends Entity implements Serializable{
     private static final long serialVersionUID = -1L;
     private Long id; // BIGINT NULL,
     private Long teacherId; // BIGINT NULL COMMENT '老师ID'
@@ -35,8 +38,9 @@ public class BackgroundScreening implements Serializable{
         return teacherId;
     }
 
-    public void setTeacherId(Long teacherId) {
+    public BackgroundScreening setTeacherId(Long teacherId) {
         this.teacherId = teacherId;
+        return this;
     }
 
     public String getCandidateId() {

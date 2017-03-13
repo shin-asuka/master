@@ -10,9 +10,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RestInterface
 @RequestMapping("/background")
-public class CommonController extends RestfulController{
+public class BackgroundCommonController extends RestfulController{
     
-    private static Logger logger = LoggerFactory.getLogger(CommonController.class);
+    private static Logger logger = LoggerFactory.getLogger(BackgroundCommonController.class);
     
 
 }

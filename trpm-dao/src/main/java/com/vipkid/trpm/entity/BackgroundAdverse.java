@@ -2,6 +2,7 @@ package com.vipkid.trpm.entity;
 
 import java.io.Serializable;
 import java.util.Date;
+import org.community.dao.support.Entity;
 
 /**
  * Created by luning on 2017/3/11.

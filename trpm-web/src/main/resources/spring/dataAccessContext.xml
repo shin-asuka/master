@@ -15,8 +15,8 @@
         <beans:property name="configLocation" value="classpath:spring/mybatis-config.xml" />
         <beans:property name="mapperLocations">
         	<beans:array>
-        		<beans:value>classpath*:mapper/portal/*.xml</beans:value>
-        		<beans:value>classpath*:mapper/recruitment/*.xml</beans:value>
+        		<beans:value>classpath*:mapper/*/*.xml</beans:value>
+        		<beans:value>classpath*:mapper/*.xml</beans:value>
         	</beans:array>
         </beans:property>
     </beans:bean>
