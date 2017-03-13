@@ -23,7 +23,7 @@ public class SterlingApiController {
     private static final Logger logger = LoggerFactory.getLogger(SterlingApiController.class);
 
 
-    @RequestMapping("/createCandidates.json")
+    @RequestMapping("/createCandidates")
     public Object createCandidates(CandidateInputDto candidateInputDto){
         logger.info(JacksonUtils.toJSONString(candidateInputDto));
 
@@ -32,7 +32,7 @@ public class SterlingApiController {
 
 
 
-    @RequestMapping("/updateCandidates.json")
+    @RequestMapping("/updateCandidates")
     public Object updateCandidates(CandidateInputDto candidateInputDto){
         logger.info(JacksonUtils.toJSONString(candidateInputDto));
 
@@ -40,14 +40,14 @@ public class SterlingApiController {
     }
 
 
-    @RequestMapping("/createScreening.json")
+    @RequestMapping("/createScreening")
     public Object createScreening(Long teacherId){
         logger.info("teacher:{}",teacherId);
         return ApiResponseUtils.buildSuccessDataResp("success");
     }
 
 
-    @RequestMapping("/createPreAdverse.json")
+    @RequestMapping("/createPreAdverse")
     public Object createPreAdverse(Long teacherId){
         logger.info("teacher:{}",teacherId);
         return ApiResponseUtils.buildSuccessDataResp("success");
@@ -55,7 +55,7 @@ public class SterlingApiController {
 
 
 
-    @RequestMapping("/callback.json")
+    @RequestMapping("/callback")
     public Object  callback(HttpServletRequest request){
         String type = request.getParameter("type");
         String payload = request.getParameter("payload");
