@@ -42,12 +42,12 @@ public class PayrollService extends HttpBaseService {
 		return jsonObject;
 	}
 
-	public String findPayrollItemByTypeWithPage(int slalaryTypeCourseAdditionRule, int teacherId, int month, Page page) {
+	public String findPayrollItemByTypeWithPage(int salaryTypeCourseAdditionRule, int teacherId, int month, Page page) {
 		Map<String, String> params = Maps.newHashMap();
 
 		params.put("teacherId", String.valueOf(teacherId));
 		params.put("pageNo",  String.valueOf(page.getPageNo()));
-		params.put("itemType", String.valueOf(slalaryTypeCourseAdditionRule));
+		params.put("itemType", String.valueOf(salaryTypeCourseAdditionRule));
 		params.put("month", String.valueOf(month));
 		if (page.getPageSize() != 0) {
 			params.put("pageSize",  String.valueOf(page.getPageSize()));
