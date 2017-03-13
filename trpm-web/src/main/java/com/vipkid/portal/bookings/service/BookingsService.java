@@ -1185,14 +1185,14 @@ public class BookingsService {
         }
 
         String finishType =StringUtils.EMPTY;
-        long time  = (onlineClass.getScheduledDateTime().getTime()-System.currentTimeMillis())/3600000;
-        if(time<2){
+        long time  = (onlineClass.getScheduledDateTime().getTime()-System.currentTimeMillis());
+        if(time<7200000){
             finishType = ApplicationConstant.FinishType.TEACHER_NO_SHOW_2H;
         }
-        if(time>=2&&time<=24){
+        if(time>=7200000&&time<=86400000){
             finishType = ApplicationConstant.FinishType.TEACHER_CANCELLATION_24H;
         }
-        if(time>24){
+        if(time>86400000){
             finishType = ApplicationConstant.FinishType.TEACHER_CANCELLATION;
         }
         return finishType;
