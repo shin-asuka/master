@@ -294,7 +294,7 @@ public final class DateUtils {
         return dateStr;
     }
     
-    public static Date getExpireTime(Date date, int dayOfMonth){
+    public static Date getTheDayOfNextMonth(Date date, int dayOfMonth){
     	Calendar cal = Calendar.getInstance();
         cal.setTime(date);
         cal.add(Calendar.MONTH, 1);
