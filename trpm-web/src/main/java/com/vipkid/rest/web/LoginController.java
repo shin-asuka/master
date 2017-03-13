@@ -246,9 +246,9 @@ public class LoginController extends RestfulController {
 		//Quit 老师登录
 		boolean canLogin = false;
 		if (editor != user.getId()) {
-			expireTime = DateUtils.getExpireTime(lastEditTime,TH_21_DAY);
+			expireTime = DateUtils.getTheDayOfNextMonth(lastEditTime,TH_21_DAY);
 		}else{
-			expireTime = DateUtils.getExpireTime(now,TH_21_DAY);
+			expireTime = DateUtils.getTheDayOfNextMonth(now,TH_21_DAY);
 		}				
 		String exStr = passportService.getQuitTeacherExpiredTime(user.getId(), expireTime.getTime());
 		if(StringUtils.isNotEmpty(exStr)){
