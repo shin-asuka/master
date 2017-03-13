@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -24,7 +25,7 @@ public class SterlingApiController {
 
 
     @RequestMapping("/createCandidates")
-    public Object createCandidates(CandidateInputDto candidateInputDto){
+    public Object createCandidates(@RequestParam CandidateInputDto candidateInputDto){
         logger.info(JacksonUtils.toJSONString(candidateInputDto));
 
         return ApiResponseUtils.buildSuccessDataResp("success");
@@ -33,7 +34,7 @@ public class SterlingApiController {
 
 
     @RequestMapping("/updateCandidates")
-    public Object updateCandidates(CandidateInputDto candidateInputDto){
+    public Object updateCandidates(@RequestParam CandidateInputDto candidateInputDto){
         logger.info(JacksonUtils.toJSONString(candidateInputDto));
 
         return ApiResponseUtils.buildSuccessDataResp("success");
@@ -41,14 +42,14 @@ public class SterlingApiController {
 
 
     @RequestMapping("/createScreening")
-    public Object createScreening(Long teacherId){
+    public Object createScreening(@RequestParam Long teacherId){
         logger.info("teacher:{}",teacherId);
         return ApiResponseUtils.buildSuccessDataResp("success");
     }
 
 
     @RequestMapping("/createPreAdverse")
-    public Object createPreAdverse(Long teacherId){
+    public Object createPreAdverse(@RequestParam Long teacherId){
         logger.info("teacher:{}",teacherId);
         return ApiResponseUtils.buildSuccessDataResp("success");
     }
