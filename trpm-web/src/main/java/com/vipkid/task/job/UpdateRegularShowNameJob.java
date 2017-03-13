@@ -20,8 +20,8 @@ import java.util.List;
  */
 @Component
 @Vschedule
-public class UpdateREGULARShowNameJob {
-    private static final Logger logger = LoggerFactory.getLogger(UpdateREGULARShowNameJob.class);
+public class UpdateRegularShowNameJob {
+    private static final Logger logger = LoggerFactory.getLogger(UpdateRegularShowNameJob.class);
     @Autowired
     private UserDao userDao;
     private static List<String> RandomAB = Lists.newArrayList();
@@ -45,7 +45,7 @@ public class UpdateREGULARShowNameJob {
 
     @Vschedule
     public void doJob(JobContext jobContext) {
-        logger.info("【UpdateREGULARShowNameJob  】START: ==================================================Time :{}",System.currentTimeMillis());
+        logger.info("【UpdateRegularShowNameJob  】START: ==================================================Time :{}",System.currentTimeMillis());
         List<Integer> userIds = getUserIdList();//获得teacherId 集合
         List<User> userList =  userDao.findUserNameListByIdList(userIds);
         if(CollectionUtils.isNotEmpty(userList)){
@@ -98,7 +98,7 @@ public class UpdateREGULARShowNameJob {
             }
         }
 
-        logger.info("【UpdateREGULARShowNameJob  】END: ==================================================Time :{}",System.currentTimeMillis());
+        logger.info("【UpdateRegularShowNameJob  】END: ==================================================Time :{}",System.currentTimeMillis());
 
     }
 
