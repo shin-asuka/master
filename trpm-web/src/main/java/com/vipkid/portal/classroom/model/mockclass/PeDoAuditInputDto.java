@@ -12,14 +12,14 @@ public class PeDoAuditInputDto extends PeDto implements Serializable {
     private String finishType;
 
     // TeacherPe Id
-    private Integer peId;
+    private Integer teacherPeId;
 
-    public Integer getPeId() {
-        return peId;
+    public Integer getTeacherPeId() {
+        return teacherPeId;
     }
 
-    public void setPeId(Integer peId) {
-        this.peId = peId;
+    public void setTeacherPeId(Integer teacherPeId) {
+        this.teacherPeId = teacherPeId;
     }
 
     public String getFinishType() {
