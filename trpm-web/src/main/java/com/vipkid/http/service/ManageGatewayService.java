@@ -242,34 +242,12 @@ public class ManageGatewayService extends HttpBaseService {
 		}
 		return ret;
 	}
-	/**
-	 * 计算双向分页
-	 * 默认单边的窗口大小为 10
-	 * 页数 = 左页数 + 1 + 右页数
-	*/
 
-	public Integer calculateAbsolutePosition(StudentCommentPageVo allCommentOfTeacher,Long onlineClassId){
-		Integer absolutePosition = 0;
-		Integer flag = 0;
-		for(Integer i=0;i<allCommentOfTeacher.getTotal();i++){
-			if(allCommentOfTeacher.getData().get(i).getClass_id().longValue() == onlineClassId){
-				absolutePosition = i;
-				flag = 1;
-				break;
-			}
+	public String[] convertTagsToEn(String[] zhTags){
+		String[] enTags = new String[zhTags.length];
+		for(int i=0;i<zhTags.length;i++){
+			enTags[i] = tagsMap.get(zhTags[i]);
 		}
-		if(flag == 1) {
-			return absolutePosition;
-		}else {
-			return -1;
-		}
-	}
-
-	String[] convertTagsToEn(String[] Tags){
-		String[] zhTags = new String[Tags.length];
-		for(int i=0;i<Tags.length;i++){
-			zhTags[i] = tagsMap.get(Tags[i]);
-		}
-		return zhTags;
+		return enTags;
 	};
 }
