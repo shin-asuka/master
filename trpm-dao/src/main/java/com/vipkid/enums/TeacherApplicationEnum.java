@@ -67,8 +67,22 @@ public class TeacherApplicationEnum {
         TO_CLASS, // 待上课
         HAS_TIMEOUT //过期
     }
-//1-other_degrees  2-certificationFiles   3-Identification  4-Diploma 5-Contract  6-Passport   7-Driver's license
-	public enum ContractFileType {
+
+	/**
+	 * //教师证书的类型
+	 * 1-other_degrees
+	 * 2-certificationFiles
+	 * 3-Identification
+	 * 4-Diploma
+	 * 5-Contract
+	 * 6-Passport
+	 * 7-Driver's license
+	 * 8-W9
+	 * 9-US background check
+	 * 10-CANADA CPIC form background check
+	 * 11-CANADA ID2 background check
+	 */
+ 	public enum ContractFileType {
 		OTHER_DEGREES(1),
 	    CERTIFICATIONFILES(2),
 	    IDENTIFICATION(3),
@@ -76,7 +90,10 @@ public class TeacherApplicationEnum {
 	    CONTRACT(5),
 	    PASSPORT(6),
 	    DRIVER(7),
-	    CONTRACT_W9(8);
+	    CONTRACT_W9(8),
+		US_BACKGROUND_CHECK(9),
+		CANADA_BACKGROUND_CHECK_CPIC_FORM(10),
+		CANADA_BACKGROUND_CHECK_ID2(11);
 
 	private Integer val;
 
