@@ -170,10 +170,11 @@ public class MockClassService {
 
     public String peDoAudit(PeDoAuditInputDto peDoAuditInputDto) {
         // 判断当前用户是否拥有 PE Supervisor 权限
-        Teacher peTeacher = loginService.getTeacher();
+        Teacher mentorTeacher = loginService.getTeacher();
         boolean isPes = false;
 
-        List<TeacherModule> teacherModules = teacherModuleDao.findByTeacherModuleName(peTeacher.getId(), RoleClass.PE);
+        List<TeacherModule> teacherModules =
+                        teacherModuleDao.findByTeacherModuleName(mentorTeacher.getId(), RoleClass.PE);
         if (CollectionUtils.isNotEmpty(teacherModules)) {
             isPes = true;
         }
@@ -223,7 +224,7 @@ public class MockClassService {
             if (StringUtils.equals(peDoAuditInputDto.getStatus(), MockClassEnum.SUBMIT.name())) {
                 int totalProfessionalisms =
                                 teacherPeOptionDao.calculateOptionsProfessionalisms(peDoAuditInputDto.getOptionList());
-                result = getResult(onlineClass.getSerialNumber(), totalScore, totalProfessionalisms);
+                result = getResult(isPes, onlineClass.getSerialNumber(), totalScore, totalProfessionalisms);
 
                 logger.info("Pe doAudit submit result: {}, totalScore: {}, totalProfessionalisms: {}", result,
                                 totalScore, totalProfessionalisms);
@@ -254,7 +255,7 @@ public class MockClassService {
                 }
 
                 // 完成 Pes 任务
-                teacherPeDao.updateTeacherPeComments(teacherPe, result, peTeacher.getRealName());
+                teacherPeDao.updateTeacherPeComments(teacherPe, result, mentorTeacher.getRealName());
             } else {
                 // 课程是否已经开始 15 分钟
                 if (!DateUtils.count15Mine(onlineClass.getScheduledDateTime().getTime())) {
@@ -264,7 +265,7 @@ public class MockClassService {
 
             // TBD
             if (StringUtils.equals(Result.TBD.name(), result)) {
-                return doTBD(teacherApplication, peTeacher, onlineClass);
+                return doTBD(teacherApplication, mentorTeacher, onlineClass);
             }
 
             // audit
@@ -273,22 +274,28 @@ public class MockClassService {
                 Preconditions.checkNotNull(recruitTeacher,
                                 "Recruitment teacher [" + teacherApplication.getTeacherId() + "] not found");
 
-                teacherApplication.setContractUrl(RoleClass.PE);
+                if (isPes) {
+                    teacherApplication.setContractUrl(RoleClass.PES);
+                } else {
+                    teacherApplication.setContractUrl(RoleClass.PE);
+                }
                 // 设置审核结果
                 teacherApplication.setResult(result);
                 // 设置面试官Id
-                teacherApplication.setAuditorId(peTeacher.getId());
+                teacherApplication.setAuditorId(mentorTeacher.getId());
                 teacherApplication.setAuditDateTime(new Timestamp(System.currentTimeMillis()));
 
                 teacherApplicationDao.update(teacherApplication);
                 logger.info("Pe doAudit mockClass, teacherApplication: {}", JsonUtils.toJSONString(teacherApplication));
 
-                // TODO 合并 tags
+                if (StringUtils.equals(peDoAuditInputDto.getStatus(), MockClassEnum.SUBMIT.name())) {
+                    // TODO 合并 tags ???
+                }
 
                 // Finish 课程
                 if (ClassStatus.isBooked(onlineClass.getStatus())) {
-                    onlineclassService.finishPracticum(teacherApplication, peDoAuditInputDto.getFinishType(), peTeacher,
-                                    recruitTeacher);
+                    onlineclassService.finishPracticum(teacherApplication, peDoAuditInputDto.getFinishType(),
+                                    mentorTeacher, recruitTeacher);
                 }
 
                 // 发送邮件
@@ -296,10 +303,10 @@ public class MockClassService {
                                 new AuditEvent(recruitTeacher.getId(), LifeCycle.PRACTICUM.name(), result));
 
                 // 更新 last editor
-                updateLastEditor(peTeacher, recruitTeacher);
+                updateLastEditor(mentorTeacher, recruitTeacher);
 
                 // audit logs
-                auditLogs(peTeacher, onlineClass, recruitTeacher, result, peDoAuditInputDto.getFinishType());
+                auditLogs(mentorTeacher, onlineClass, recruitTeacher, result, peDoAuditInputDto.getFinishType());
             } else {
                 throw new IllegalStateException("Online class status is not BOOKED or FINISHED");
             }
@@ -320,7 +327,7 @@ public class MockClassService {
         return HttpStatus.OK.getReasonPhrase();
     }
 
-    public String getResult(String serialNumber, int totalScore, int totalProfessionalisms) {
+    public String getResult(boolean isPes, String serialNumber, int totalScore, int totalProfessionalisms) {
         if (StringUtils.equals(MOCK_CLASS_1, serialNumber)) {
             if (totalProfessionalisms < 3 || totalScore < 35) {
                 return Result.FAIL.name();
@@ -330,12 +337,20 @@ public class MockClassService {
                 return Result.PASS.name();
             }
         } else {
-            if (totalProfessionalisms < 3 || totalScore <= 39) {
-                return Result.FAIL.name();
-            } else if (totalProfessionalisms >= 3 && (totalScore >= 40 || totalScore <= 45)) {
-                return Result.TBD.name();
+            if (isPes) {
+                if (totalProfessionalisms >= 3 && totalScore >= 45) {
+                    return Result.PASS.name();
+                } else {
+                    return Result.FAIL.name();
+                }
             } else {
-                return Result.PASS.name();
+                if (totalProfessionalisms < 3 || totalScore <= 39) {
+                    return Result.FAIL.name();
+                } else if (totalProfessionalisms >= 3 && (totalScore >= 40 || totalScore <= 45)) {
+                    return Result.TBD.name();
+                } else {
+                    return Result.PASS.name();
+                }
             }
         }
     }
