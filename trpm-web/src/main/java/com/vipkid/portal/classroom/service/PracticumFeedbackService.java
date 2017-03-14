@@ -281,10 +281,12 @@ public class PracticumFeedbackService {
 		TeacherApplication teacherApplication = this.teacherApplicationDao.findApplictionById(applicationId);
 	
 		if(teacherApplication != null){
+			logger.info(" list 1 === " + teacherApplication.getContractUrl());
 			if(StringUtils.isNotBlank(teacherApplication.getContractUrl())){
 				bean.setFormType(TeacherModuleEnum.RoleClass.PES.equalsIgnoreCase(teacherApplication.getContractUrl()) ? 2 : 1);
 			}else{
 				List<TeacherModule> list = this.teacherModuleDao.findByTeacherModuleName(teacher.getId(), TeacherModuleEnum.RoleClass.PES);
+				logger.info(" list 2 === " + list);
 				bean.setFormType(CollectionUtils.isNotEmpty(list) ? 2 : 1);
 			}
 			TeacherPeComments teacherPeComments = teacherPeCommentsDao.getTeacherPeComments(applicationId);
