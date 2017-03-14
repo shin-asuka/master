@@ -170,11 +170,11 @@ public class MockClassService {
 
     public String peDoAudit(PeDoAuditInputDto peDoAuditInputDto) {
         // 判断当前用户是否拥有 PE Supervisor 权限
-        Teacher mentorTeacher = loginService.getTeacher();
+        Teacher monterTeacher = loginService.getTeacher();
         boolean isPes = false;
 
         List<TeacherModule> teacherModules =
-                        teacherModuleDao.findByTeacherModuleName(mentorTeacher.getId(), RoleClass.PE);
+                        teacherModuleDao.findByTeacherModuleName(monterTeacher.getId(), RoleClass.PE);
         if (CollectionUtils.isNotEmpty(teacherModules)) {
             isPes = true;
         }
@@ -255,7 +255,7 @@ public class MockClassService {
                 }
 
                 // 完成 Pes 任务
-                teacherPeDao.updateTeacherPeComments(teacherPe, result, mentorTeacher.getRealName());
+                teacherPeDao.updateTeacherPeComments(teacherPe, result, monterTeacher.getRealName());
             } else {
                 // 课程是否已经开始 15 分钟
                 if (!DateUtils.count15Mine(onlineClass.getScheduledDateTime().getTime())) {
@@ -265,7 +265,7 @@ public class MockClassService {
 
             // TBD
             if (StringUtils.equals(Result.TBD.name(), result)) {
-                return doTBD(teacherApplication, mentorTeacher, onlineClass);
+                return doTBD(teacherApplication, monterTeacher, onlineClass);
             }
 
             // audit
@@ -282,7 +282,7 @@ public class MockClassService {
                 // 设置审核结果
                 teacherApplication.setResult(result);
                 // 设置面试官Id
-                teacherApplication.setAuditorId(mentorTeacher.getId());
+                teacherApplication.setAuditorId(monterTeacher.getId());
                 teacherApplication.setAuditDateTime(new Timestamp(System.currentTimeMillis()));
 
                 teacherApplicationDao.update(teacherApplication);
@@ -295,18 +295,21 @@ public class MockClassService {
                 // Finish 课程
                 if (ClassStatus.isBooked(onlineClass.getStatus())) {
                     onlineclassService.finishPracticum(teacherApplication, peDoAuditInputDto.getFinishType(),
-                                    mentorTeacher, recruitTeacher);
+                                    monterTeacher, recruitTeacher);
                 }
 
                 // 发送邮件
                 auditEventHandler.onAuditEvent(
                                 new AuditEvent(recruitTeacher.getId(), LifeCycle.PRACTICUM.name(), result));
+                if (isPes) {
+                    // send mail to monter TODO
+                }
 
                 // 更新 last editor
-                updateLastEditor(mentorTeacher, recruitTeacher);
+                updateLastEditor(monterTeacher, recruitTeacher);
 
                 // audit logs
-                auditLogs(mentorTeacher, onlineClass, recruitTeacher, result, peDoAuditInputDto.getFinishType());
+                auditLogs(monterTeacher, onlineClass, recruitTeacher, result, peDoAuditInputDto.getFinishType());
             } else {
                 throw new IllegalStateException("Online class status is not BOOKED or FINISHED");
             }
