@@ -21,10 +21,13 @@ public class BackgroundScreeningDao extends MapperDaoTemplate<BackgroundScreenin
     }
 
     public BackgroundScreening findByTeacherId(Long teacherId) {
-        if (teacherId == 0)
+        if (teacherId == 0) {
             return null;
-        BackgroundScreening backgroundScreening = selectOne(new BackgroundScreening().setTeacherId(teacherId));
-        return backgroundScreening;
+        }
+        BackgroundScreening backgroundScreening = new BackgroundScreening();
+        backgroundScreening.setTeacherId(teacherId);
+
+        return selectOne(backgroundScreening,"findByTeacherId");
     }
 
 }

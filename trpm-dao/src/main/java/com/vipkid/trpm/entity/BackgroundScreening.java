@@ -38,9 +38,8 @@ public class BackgroundScreening extends Entity implements Serializable{
         return teacherId;
     }
 
-    public BackgroundScreening setTeacherId(Long teacherId) {
+    public void setTeacherId(Long teacherId) {
         this.teacherId = teacherId;
-        return this;
     }
 
     public String getCandidateId() {
