@@ -14,7 +14,8 @@
         teacher_contract_file.update_id AS updateId,
         teacher_contract_file.teacher_application_id AS teacherApplicationId,
         teacher_contract_file.fail_reason AS failReason,
-        teacher_contract_file.result AS result
+        teacher_contract_file.result AS result,
+        teacher_contract_file.screening_id AS screeningId
     </sql>
     <insert id="saveDao" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO teacher_contract_file
@@ -30,6 +31,7 @@
             <if test="teacherApplicationId!=-1">,teacher_application_id</if>
             <if test="failReason!=null">,fail_reason</if>
             <if test="result!=null">,result</if>
+            <if test="screeningId!=null">,screening_id</if>
         </trim>
         ) VALUES
         <trim prefix="(" prefixOverrides=",">
@@ -44,6 +46,7 @@
             <if test="teacherApplicationId!=-1">,#{teacherApplicationId}</if>
             <if test="failReason!=null">,#{failReason}</if>
             <if test="result!=null">,#{result}</if>
+            <if test="screeningId!=null">,#{screeningId}</if>
         </trim>
         )
     </insert>

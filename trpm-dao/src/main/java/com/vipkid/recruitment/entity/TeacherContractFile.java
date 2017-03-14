@@ -14,7 +14,7 @@ public class TeacherContractFile extends Entity implements Serializable {
     private long teacherId;
     //教师证书
     private String url;
-    //教师证书的类型  文件类型1-other_degrees  2-certificationFiles   3-Identification  4-Diploma 5-Contract  6-Passport   7-Driver's license
+    //教师证书的类型  文件类型1-other_degrees  2-certificationFiles   3-Identification  4-Diploma 5-Contract  6-Passport   7-Driver's license  8-W9 9-US background check 10-CANADA CPIC form background check 11-CANADA ID2 background check
     private int fileType;
 
 
@@ -26,6 +26,7 @@ public class TeacherContractFile extends Entity implements Serializable {
     private long teacherApplicationId;
     private String failReason;
     private String result;
+    private Long screenId;
 
     public int getId() {
         return id;
@@ -121,5 +122,13 @@ public class TeacherContractFile extends Entity implements Serializable {
 
     public void setTypeName(String typeName) {
         this.typeName = typeName;
+    }
+
+    public Long getScreenId() {
+        return screenId;
+    }
+
+    public void setScreenId(Long screenId) {
+        this.screenId = screenId;
     }
 }
