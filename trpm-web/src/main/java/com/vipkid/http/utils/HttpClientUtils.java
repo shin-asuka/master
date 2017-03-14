@@ -23,10 +23,13 @@ import org.apache.http.conn.socket.PlainConnectionSocketFactory;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.conn.ssl.SSLContexts;
 import org.apache.http.conn.ssl.TrustStrategy;
+import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.entity.ContentType;
+import org.apache.http.entity.FileEntity;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntity;
+import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
@@ -37,10 +40,12 @@ import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.multipart.MultipartFile;
+import sun.misc.BASE64Encoder;
 
 import javax.net.ssl.SSLContext;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.SocketTimeoutException;
 import java.net.URLDecoder;
@@ -275,14 +280,41 @@ public class HttpClientUtils {
         return content;
     }
 
+    public static String postBinaryFile(String url , InputStream file, Map<String,String> headers){
 
-    public static String postBinaryFile(String url ,byte[] byteArray,Map<String,String> headers){
-        HttpEntity entity = EntityBuilder.create().setContentType(ContentType.TEXT_PLAIN).setBinary(byteArray).build();
+
+        HttpEntity entity = EntityBuilder.create()
+                //.setContentEncoding(Consts.UTF_8.name())
+                //.setContentType(ContentType.create("text/plain",Consts.UTF_8))
+                .setStream(file).build();
+        return postWithEntity(url,entity,null,headers);
+    }
+
+
+    public static String postBinaryFile(String url ,File file,Map<String,String> headers){
+
+
+        HttpEntity entity = EntityBuilder.create()
+                //.setContentEncoding(Consts.UTF_8.name())
+                //.setContentType(ContentType.create("text/plain",Consts.UTF_8))
+                .setFile(file).build();
+        return postWithEntity(url,entity,null,headers);
+    }
+
+    public static String postBinaryFile(String url ,byte[] fileByteArray,Map<String,String> headers){
+        BASE64Encoder base64Encoder = new BASE64Encoder();
+        String file = base64Encoder.encode(fileByteArray);
+        System.out.println(file);
+        HttpEntity entity = EntityBuilder.create()
+//                //.setContentEncoding(Consts.UTF_8.name())
+                .setContentType(ContentType.create("text/plain", Consts.UTF_8))
+                .setText(file).build();
+//        HttpEntity entity = new ByteArrayEntity(fileByteArray);
         return postWithEntity(url,entity,null,headers);
     }
 
     public static String postWithEntity(String url,HttpEntity entity,String defaultEncoding,Map<String,String> headers){
-        if(null != entity){
+        if(null == entity){
             return null;
         }
         defaultEncoding = HttpClientUtils.getDefaultEncoding(defaultEncoding);
@@ -294,10 +326,19 @@ public class HttpClientUtils {
                 post.addHeader(entry.getKey(), entry.getValue());
             }
         }
+
         try {
+
             post.setEntity(entity);
+
             response = HttpClientUtils.CLIENT.execute(post);
-            content = EntityUtils.toString(response.getEntity());
+            System.out.println(response.getStatusLine().getStatusCode());
+            if(response.getStatusLine().getStatusCode() == 201){
+                content = EntityUtils.toString(response.getEntity());
+            }else{
+                content = String.valueOf(response.getStatusLine().getStatusCode());
+            }
+
         }catch (UnsupportedEncodingException e) {
             throw new RuntimeException("unsupported Encoding " + defaultEncoding, e);
         } catch (SocketTimeoutException e) {

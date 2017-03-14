@@ -2,6 +2,7 @@ package com.vipkid.background.api.sterling.service;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.vipkid.background.api.sterling.dto.CandidateInputDto;
+import com.vipkid.background.api.sterling.dto.ScreeningInputDto;
 import com.vipkid.background.api.sterling.dto.SterlingAccessToken;
 import com.vipkid.background.api.sterling.dto.SterlingCandidate;
 import com.vipkid.common.utils.ProtostuffUtils;
@@ -9,6 +10,7 @@ import com.vipkid.file.utils.FileUtils;
 import com.vipkid.http.utils.HttpClientUtils;
 import com.vipkid.http.utils.JacksonUtils;
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.util.EntityUtils;
@@ -87,16 +89,32 @@ public class SterlingApiUtilsTest {
                 "}";
         CandidateInputDto candidateInputDto = JacksonUtils.readJson(json, new TypeReference<CandidateInputDto>() {});
         SterlingCandidate sterlingCandidate =  SterlingApiUtils.updateCandidate(candidateInputDto);
+
+        System.out.println(JacksonUtils.toJSONString(sterlingCandidate));
+    }
+
+    @Test
+    public void getCandidateTest(){
+        SterlingCandidate sterlingCandidate = SterlingApiUtils.getCandidate("3180193");
         System.out.println(JacksonUtils.toJSONString(sterlingCandidate));
     }
 
 
     @Test
+    public void createScreeningTest(){
+        ScreeningInputDto screeningInputDto = new ScreeningInputDto();
+        ScreeningInputDto.CallBack callBack =new ScreeningInputDto.CallBack();
+        callBack.setUri("https://a6-t.vipkid.com.cn/api/api/background/sterling/callback.json");
+        screeningInputDto.setCallback(callBack);
+        screeningInputDto.setPackageId("182951");
+        screeningInputDto.setCandidateId("3180193");
+
+        SterlingApiUtils.createScreening(screeningInputDto);
+    }
+
+    @Test
     public void createScreeningDocumentTest(){
         String fileUrl = "https://teacher-data.vipkid.com.cn/teacher/identification/3094294/aa2a3c550b0849ac929c04fcaa6340f7/3094294-20161222-011004.jpg";
-
-        SterlingApiUtils.createScreeningDocument("",fileUrl);
-
-
+        SterlingApiUtils.createScreeningDocument("001000062940459",fileUrl);
     }
 }

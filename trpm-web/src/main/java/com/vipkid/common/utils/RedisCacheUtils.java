@@ -24,7 +24,11 @@ import redis.clients.jedis.JedisPool;
 
 public class RedisCacheUtils {
     private static final Logger logger = LoggerFactory.getLogger(RedisCacheUtils.class);
-    private  static RedisClient redisClient = RedisClient.me();
+
+
+    private static RedisClient redisClient = RedisClient.me();
+
+    private static final String PREFIX = "TP_%s";
 
 
     /**
@@ -41,7 +45,7 @@ public class RedisCacheUtils {
         try {
             jedis = redisClient.getJedisPool().getResource();
             if (jedis != null) {
-                byte[] keyByte = ProtostuffUtils.serializer(key);
+                byte[] keyByte = ProtostuffUtils.serializer(String.format(PREFIX,key));
                 byte[] valueByte = ProtostuffUtils.serializer(t);
                 setOK = jedis.setex(keyByte,seconds,valueByte);
                 if (StringUtils.containsIgnoreCase(setOK, "ok")) {
@@ -76,7 +80,7 @@ public class RedisCacheUtils {
             jedis = redisClient.getJedisPool().getResource();
             byte[] valueByte = null;
             if (jedis != null) {
-                byte[] keyByte = ProtostuffUtils.serializer(key);
+                byte[] keyByte = ProtostuffUtils.serializer(String.format(PREFIX,key));
                 valueByte = jedis.get(keyByte);
             }
             if (ArrayUtils.isEmpty(valueByte)) {
