@@ -44,7 +44,7 @@ public class BackgroundCheckEnum {
         PREADVERSE("Preadverse"),//第一次背调失败，等待老师dispute
         DISPUTE("Dispute"),//正在进行dispute
         CLEAR("Clear"),//背调结果为Clear
-        FALSE("False");//背调的最终结果为失败
+        FALSE("False");//背调的最终结果为失败，超过5天没有进行dispute也是为失败
         private String value;
         BackgroundPhase(String value) {
             this.value = value;

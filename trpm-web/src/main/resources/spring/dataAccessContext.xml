@@ -16,7 +16,6 @@
         <beans:property name="mapperLocations">
         	<beans:array>
         		<beans:value>classpath*:mapper/*/*.xml</beans:value>
-        		<beans:value>classpath*:mapper/*.xml</beans:value>
         	</beans:array>
         </beans:property>
     </beans:bean>

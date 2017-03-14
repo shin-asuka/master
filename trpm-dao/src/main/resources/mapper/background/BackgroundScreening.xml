@@ -43,6 +43,7 @@
         <include refid="backgroundScreeningColumns"/>
         FROM bg_sterling_screening
         WHERE bg_sterling_screening.teacher_id = #{tacherId}
+        ORDER BY id DESC LIMIT 1
     </select>
 
 
