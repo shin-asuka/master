@@ -193,7 +193,7 @@ public class ClassroomController extends RestfulController{
         		return ApiResponseUtils.buildSuccessDataResp(resultMap);
         	}else{
                 response.setStatus(HttpStatus.FORBIDDEN.value());
-    			return ApiResponseUtils.buildErrorResp(-5, resultMap.get("info")+"");
+    			return ApiResponseUtils.buildErrorResp((Integer)resultMap.get("code"), resultMap.get("info")+"");
         	}
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());

@@ -212,6 +212,7 @@ public class ClassroomService {
         //课程没有找到，无法book
         if(onlineClass == null){
             logger.error(" 教室为空 NULL onlineClassId:{}",onlineClassId);
+            result.put("code", -3);
             result.put("info", " The classroom was not found. ");
             return result;
         }
@@ -220,12 +221,14 @@ public class ClassroomService {
         if(StringUtils.isBlank(onlineClass.getClassroom())){
             logger.error(" 教室为空 NULL onlineClassId:{}",onlineClassId);
             result.put("info", " Classroom not created! ");
+            result.put("code", -4);
             return result;
         }
         
         //判断该教室是否属于该老师
         if(onlineClass.getTeacherId() != teacher.getId()){
         	logger.error(" You cannot enter this classroom! onlineClassId:{}",onlineClassId);
+        	result.put("code", -5);
             result.put("info", " You cannot enter this classroom! ");
             return result;
         }
