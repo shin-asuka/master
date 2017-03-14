@@ -10,7 +10,9 @@ import org.community.dao.support.Entity;
  * Created by luning on 2017/3/11.
  */
 public class BackgroundScreening extends Entity implements Serializable{
-    private static final long serialVersionUID = -1L;
+
+    private static final long serialVersionUID = -2648631806530838591L;
+
     private Long id; // BIGINT NULL,
     private Long teacherId; // BIGINT NULL COMMENT '老师ID'
     private String candidateId; // VARCHAR(15) NULL COMMENT 'Sterling 系统的候选人ID'

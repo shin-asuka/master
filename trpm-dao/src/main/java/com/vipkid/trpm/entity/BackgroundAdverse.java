@@ -8,7 +8,9 @@ import org.community.dao.support.Entity;
  * Created by luning on 2017/3/11.
  */
 public class BackgroundAdverse implements Serializable {
-    private static final long serialVersionUID = 1L;
+
+    private static final long serialVersionUID = 943465373052099089L;
+
     private Long id; // BIGINT NULL,
     private String screeningId; // VARCHAR(15) NULL COMMENT 'Sterling 系统的 screening id',
     private Long bgSterlingScreeningId; // BIGINT NULL COMMENT '数据库表 bgSterlingScreening 的主键',

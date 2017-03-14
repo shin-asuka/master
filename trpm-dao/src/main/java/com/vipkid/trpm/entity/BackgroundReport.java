@@ -8,7 +8,9 @@ import org.community.dao.support.Entity;
  * Created by luning on 2017/3/11.
  */
 public class BackgroundReport implements Serializable{
-    private static final long serialVersionUID = -1L;
+
+    private static final long serialVersionUID = -7335906107948580857L;
+
     private Long id; // BIGINT NULL COMMENT '',
     private String reportId; // VARCHAR(15) NULL COMMENT 'Sterling 系统report item id',
     private String screeningId; // VARCHAR(15) NULL COMMENT 'Sterling 系统的screening 的id',

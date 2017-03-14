@@ -59,6 +59,11 @@ public class TeacherContractFileDao extends MapperDaoTemplate<TeacherContractFil
        teacherContractFile.setId(id);
        return super.selectOne(teacherContractFile,"findById");
    }
+    public List<TeacherContractFile> findBackgroundFileByTeacherId(long teacherId){
+        TeacherContractFile teacherContractFile =new TeacherContractFile();
+        teacherContractFile.setTeacherId(teacherId);
+        return super.selectList(teacherContractFile,"findBackgroundFileByTeacherId");
+    }
 }
 
 

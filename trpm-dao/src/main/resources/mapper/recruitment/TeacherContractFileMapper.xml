@@ -105,4 +105,16 @@
         <trim prefix="WHERE" prefixOverrides="AND">AND id = #{id}</trim>
     </delete>
 
+    <select id="findBackgroundFileByTeacherId"  resultType="com.vipkid.recruitment.entity.TeacherContractFile" >
+        SELECT
+        <include refid="teacherContractFileColumns"/>
+        FROM teacher_contract_file
+        WHERE
+        teacher_contract_file.teacher_id =#{teacherId}
+        AND
+        teacher_contract_file.screening_id=#{screeningId}
+        AND teacher_contract_file.file_type IN (9,10,11)
+
+    </select>
+
 </mapper>
