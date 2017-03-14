@@ -242,6 +242,7 @@ public class ClassroomService {
         	return result;
         }else{
         	logger.error(" 获取教室url 失败 onlineClassId:{},info:{}",onlineClassId,urlResult.get("info"));
+        	result.put("code", -2);
         	result.put("info", urlResult.get("info"));
         	return result;
         }
