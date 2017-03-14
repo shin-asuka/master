@@ -13,5 +13,5 @@ public class PracticumConstant {
     /***
      *除了今天还展示几天的timeSlots
      */
-    public static final int SHOW_DAYS_EXCLUDE_TODAY = 5;
+    public static final int SHOW_DAYS_EXCLUDE_TODAY = 4;
 }
