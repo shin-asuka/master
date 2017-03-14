@@ -288,7 +288,7 @@ public class MockClassService {
                 teacherApplicationDao.update(teacherApplication);
                 logger.info("Pe doAudit mockClass, teacherApplication: {}", JsonUtils.toJSONString(teacherApplication));
 
-                if (StringUtils.equals(peDoAuditInputDto.getStatus(), MockClassEnum.SUBMIT.name())) {
+                if (StringUtils.equals(Result.PASS.name(), result)) {
                     // TODO 合并 tags ???
                 }
 
