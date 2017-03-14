@@ -70,6 +70,7 @@ public class ManageGatewayService extends HttpBaseService {
 
 	@PostConstruct
 	public void  init(){
+		tagsMap = Maps.newHashMap();
 		tagsMap.put("网络不稳定","Connection");
 		tagsMap.put("上课环境布置差","Classroom setup");
 		tagsMap.put("老师迟到","Late");
