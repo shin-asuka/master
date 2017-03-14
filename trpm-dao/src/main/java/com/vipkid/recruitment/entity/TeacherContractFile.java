@@ -23,6 +23,7 @@ public class TeacherContractFile extends Entity implements Serializable {
     private Timestamp updateTime;
     private long createId;
     private long updateId;
+    // -9 代表无意义 0 表示当前
     private long teacherApplicationId;
     private String failReason;
     private String result;
