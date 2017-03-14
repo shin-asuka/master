@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.vipkid.enums.AppEnum;
 import com.vipkid.enums.OnlineClassEnum;
 import com.vipkid.enums.OnlineClassEnum.ClassStatus;
 import com.vipkid.enums.OnlineClassEnum.ClassType;
@@ -1176,6 +1177,12 @@ public class BookingsService {
         String logpix = "onlineclassId:"+onlineClassId+";teacherId:"+teacherId;
         if(System.currentTimeMillis()> onlineClass.getScheduledDateTime().getTime()){
             logger.warn("Sorry, you can't cancel after the start time has passed.", logpix);
+            return null;
+        }
+
+
+        if(!StringUtils.equalsIgnoreCase(onlineClass.getStatus(), ClassStatus.BOOKED.toString())){
+            logger.warn("Sorry, you can't cancel this class because it was booked.", logpix);
             return null;
         }
 
