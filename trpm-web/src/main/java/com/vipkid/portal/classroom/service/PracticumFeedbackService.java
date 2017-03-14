@@ -285,7 +285,7 @@ public class PracticumFeedbackService {
 			if(StringUtils.isNotBlank(teacherApplication.getContractUrl())){
 				bean.setFormType(TeacherModuleEnum.RoleClass.PES.equalsIgnoreCase(teacherApplication.getContractUrl()) ? 2 : 1);
 			}else{
-				List<TeacherModule> list = this.teacherModuleDao.findByTeacherModuleName(teacher.getId(), TeacherModuleEnum.RoleClass.PES);
+				List<TeacherModule> list = this.teacherModuleDao.findByTeacherModuleName(teacher.getId(), TeacherModuleEnum.RoleClass.PE);
 				logger.info(" list 2 === " + list);
 				bean.setFormType(CollectionUtils.isNotEmpty(list) ? 2 : 1);
 			}
@@ -306,7 +306,7 @@ public class PracticumFeedbackService {
 			BeanUtils.copyPropertys(teacherApplication,bean);
 		}
 		if(StringUtils.isBlank(bean.getFormType()+"")){
-			List<TeacherModule> list = this.teacherModuleDao.findByTeacherModuleName(teacher.getId(), TeacherModuleEnum.RoleClass.PES);
+			List<TeacherModule> list = this.teacherModuleDao.findByTeacherModuleName(teacher.getId(), TeacherModuleEnum.RoleClass.PE);
 			bean.setFormType(CollectionUtils.isNotEmpty(list) ? 2 : 1);
 		}
 		
