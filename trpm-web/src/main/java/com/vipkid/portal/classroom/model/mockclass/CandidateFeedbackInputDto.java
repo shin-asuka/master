@@ -1,6 +1,10 @@
 package com.vipkid.portal.classroom.model.mockclass;
 
-public class CandidateFeedbackInputDto {
+import java.io.Serializable;
+
+public class CandidateFeedbackInputDto implements Serializable {
+
+    private static final long serialVersionUID = 9122475572141845670L;
 
     private Integer applicationId;
 

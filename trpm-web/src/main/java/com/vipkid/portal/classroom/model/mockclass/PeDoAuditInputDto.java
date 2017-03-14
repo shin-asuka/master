@@ -1,8 +1,11 @@
 package com.vipkid.portal.classroom.model.mockclass;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class PeDoAuditInputDto extends PeDto {
+public class PeDoAuditInputDto extends PeDto implements Serializable {
+
+    private static final long serialVersionUID = 4555770670277027461L;
 
     private List<Integer> optionList;
 
