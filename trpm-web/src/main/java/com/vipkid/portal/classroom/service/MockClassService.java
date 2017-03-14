@@ -247,7 +247,7 @@ public class MockClassService {
             if (isPes) {
                 TeacherPe teacherPe = teacherPeDao.findById(peDoAuditInputDto.getTeacherPeId());
                 if (0 != teacherPe.getStatus()) {
-                    return "The recruitment TBD process already end.";
+                    return "The recruitment TBD process already done.";
                 }
 
                 if (0 == teacherPe.getPeId()) {
