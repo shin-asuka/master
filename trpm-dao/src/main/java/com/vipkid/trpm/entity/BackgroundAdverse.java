@@ -14,7 +14,7 @@ public class BackgroundAdverse implements Serializable {
     private Long bgSterlingScreeningId; // BIGINT NULL COMMENT '数据库表 bgSterlingScreening 的主键',
     private String actionsId; // VARCHAR(15) NULL COMMENT 'Sterling 系统的 actions id',
     private String actionsStatus; // VARCHAR(15) NULL COMMENT 'Sterling 系统 actions status  ：initated,awaiting,complete,cancelled',
-    private String actionsUpdatedAt; // DATE NULL COMMENT 'adverse 最后一次变更的时间',
+    private Date actionsUpdatedAt; // DATE NULL COMMENT 'adverse 最后一次变更的时间',
     private Date createTime; // DATE NULL COMMENT '本记录创建的时间',
     private Date updateTime; // DATE NULL COMMENT '本记录最后一次修改的时间',
 
@@ -58,11 +58,11 @@ public class BackgroundAdverse implements Serializable {
         this.actionsStatus = actionsStatus;
     }
 
-    public String getActionsUpdatedAt() {
+    public Date getActionsUpdatedAt() {
         return actionsUpdatedAt;
     }
 
-    public void setActionsUpdatedAt(String actionsUpdatedAt) {
+    public void setActionsUpdatedAt(Date actionsUpdatedAt) {
         this.actionsUpdatedAt = actionsUpdatedAt;
     }
 

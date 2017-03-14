@@ -147,6 +147,24 @@ public class SterlingApiUtils {
     }
 
 
+    public static SterlingScreening getScreening(String screeningId){
+        if(StringUtils.isBlank(screeningId)){
+            return null;
+        }
+        String getUrl = String.format(sterlingHost + "/v1/screenings/%s",screeningId) ;
+        Map<String,String> headers = Maps.newHashMap();
+        headers.put("Authorization",String.format(BEARER_FORMATE,getAccessToken()));
+        headers.put(HTTP.CONTENT_TYPE,"application/json");
+        String response = HttpClientUtils.get(getUrl,headers);
+        System.out.println(response);
+        if(StringUtils.isBlank(response)){
+            return null;
+        }
+        SterlingScreening sterlingScreening = JacksonUtils.readJson(response, new TypeReference<SterlingScreening>() {});
+        return sterlingScreening;
+    }
+
+
     /**
      * 根据背景调查的ID 获取调查后的report
      * @param screeningId

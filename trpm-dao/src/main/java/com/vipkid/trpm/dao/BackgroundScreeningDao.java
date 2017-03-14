@@ -6,10 +6,6 @@ import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-
-import java.util.List;
-import java.util.Map;
-
 /**
  * Created by luning on 2017/3/11.
  */
@@ -30,4 +26,18 @@ public class BackgroundScreeningDao extends MapperDaoTemplate<BackgroundScreenin
         return selectOne(backgroundScreening,"findByTeacherId");
     }
 
+    public Long insert(BackgroundScreening backgroundScreening) {
+        return null;
+    }
+
+
+
+
+    public int update(BackgroundScreening backgroundScreening){
+        return 0;
+    }
+
+    public BackgroundScreening findByTeacherIdTopOne(Long teacherId) {
+        return null;
+    }
 }
