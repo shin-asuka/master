@@ -32,7 +32,6 @@ public class BackgroundScreeningDao extends MapperDaoTemplate<BackgroundScreenin
 
 
 
-
     public int update(BackgroundScreening backgroundScreening){
         return 0;
     }

@@ -42,9 +42,9 @@ public class BackgroundCommonService {
         currnet.add(Calendar.MONTH, 1);
         BackgroundScreening backgroundScreening = backgroundScreeningDao.findByTeacherId(teacher.getId());
         //没有背调结果，即第一次开始背调
-        if (null == backgroundScreening){
-            result.put("needBackgroundCheck",true);
-            result.put("phase",BackgroundPhase.START);
+        if (null == backgroundScreening) {
+            result.put("needBackgroundCheck", true);
+            result.put("phase", BackgroundPhase.START);
             return result;
         }
         if (teacher.getContractEndDate().after(currnet.getTime()) || StringUtils.equals(teacher.getLifeCycle(), LifeCycle.CONTRACT_INFO.toString())) {
@@ -82,26 +82,26 @@ public class BackgroundCommonService {
                     //背调结果为ALERT，需根据disputeStatus进行判断
                     case "ALERT":
                         //disputeStatus为null
-                        if (null == disputeStatus ){
+                        if (null == disputeStatus) {
                             //在5天内可以进行dispute，超过5天不允许在进行dispute
-                            if (in5Days){
-                                result.put("needBackgroundCheck",true);
-                                result.put("phase",BackgroundPhase.PREADVERSE.getVal());
-                                result.put("result",BackgroundResult.ALERT.getVal());
-                            }else{
-                                result.put("needBackgroundCheck",false);
-                                result.put("result",BackgroundResult.ALERT.getVal());
-                                result.put("phase",BackgroundPhase.FALSE.getVal());
+                            if (in5Days) {
+                                result.put("needBackgroundCheck", true);
+                                result.put("phase", BackgroundPhase.PREADVERSE.getVal());
+                                result.put("result", BackgroundResult.ALERT.getVal());
+                            } else {
+                                result.put("needBackgroundCheck", false);
+                                result.put("result", BackgroundResult.ALERT.getVal());
+                                result.put("phase", BackgroundPhase.FAIL.getVal());
                             }
 
-                        }else {
+                        } else {
                             //diaputeStatus为ACTIVE表明正在进行dispute，为DEACTIVATED表明disputed失败
                             if (StringUtils.equalsIgnoreCase(disputeStatus, DisputeStatus.ACTIVE.toString())) {
                                 result.put("needBackgroundCheck", true);
                                 result.put("phase", BackgroundPhase.DISPUTE.getVal());
                             } else {
                                 result.put("needBackgroundCheck", false);
-                                result.put("phase", BackgroundPhase.FALSE.getVal());
+                                result.put("phase", BackgroundPhase.FAIL.getVal());
                             }
                         }
                         result.put("result", BackgroundResult.ALERT.getVal());
@@ -112,55 +112,67 @@ public class BackgroundCommonService {
 
         return result;
     }
-    public Map<String,Object> getBackgroundFileStatus(long teacherId){
-        Map<String,Object> result = Maps.newHashMap();
+
+    public Map<String, Object> getBackgroundFileStatus(long teacherId, String teacherCountry) {
+        Map<String, Object> result = Maps.newHashMap();
         List<TeacherContractFile> teacherContractFiles = teacherContractFileDao.findBackgroundFileByTeacherId(teacherId);
         Calendar current = Calendar.getInstance();
-        current.add(Calendar.YEAR,1);
+        current.add(Calendar.YEAR, 1);
         boolean hasFile = false;
-        boolean fileResult = false;
-        boolean firstFileResult = false;
-        boolean secondFileResult = false;
+        String UsaFileResult = null;
+        String CanadaFirstFileResult = null;
+        String CanadaSecondFileResult = null;
         List<TeacherContractFile> teacherContractFile = Lists.newArrayList();
-        if(CollectionUtils.isNotEmpty(teacherContractFiles)) {
-            for (TeacherContractFile contractFile:teacherContractFiles){
-                int fileType = contractFile.getFileType();
-                switch(fileType){
-                    case 9:
-                        if(current.getTime().after(contractFile.getUpdateTime())){
-                            fileResult = StringUtils.equalsIgnoreCase(contractFile.getResult(),"PASS");
-                            hasFile = false;
-                        }else{
-                            hasFile = true;
-                        }
-                        break;
-                    case 10:
-                        if(current.getTime().after(contractFile.getUpdateTime())){
-                            hasFile = false;
-                            firstFileResult = StringUtils.equalsIgnoreCase(contractFile.getResult(),"PASS");
-                        }else{
-                            hasFile = true;
-                        }
-                    case 11:
-                        if(current.getTime().after(contractFile.getUpdateTime())){
-                            secondFileResult = StringUtils.equalsIgnoreCase(contractFile.getResult(),"PASS");
-                            hasFile = false;
-                        }else{
-                            hasFile = true;
-                        }
-                        break;
+        if (CollectionUtils.isNotEmpty(teacherContractFiles)) {
+            if (StringUtils.equalsIgnoreCase(teacherCountry, "USA")) {
+                for (TeacherContractFile contractFile : teacherContractFiles) {
+                    hasFile = true;
+                    if (StringUtils.equalsIgnoreCase(contractFile.getResult(), "PASS")) {
+                        UsaFileResult = "pass";
+                    } else if (StringUtils.equalsIgnoreCase(contractFile.getResult(), "FAIL")) {
+                        UsaFileResult = "fail";
+                    } else {
+                        UsaFileResult = "noResult";
+                    }
                 }
-                if (firstFileResult && secondFileResult){
-                    fileResult = true;
+            } else {
+                for (TeacherContractFile contractFile : teacherContractFiles) {
+                    hasFile = true;
+                    int fileType = contractFile.getFileType();
+                    switch (fileType) {
+                        case 10:
+                            if (StringUtils.equalsIgnoreCase(contractFile.getResult(), "PASS")) {
+                                CanadaFirstFileResult = "pass";
+                            } else if (StringUtils.equalsIgnoreCase(contractFile.getResult(), "FAIL")) {
+                                CanadaFirstFileResult = "fail";
+                            } else {
+                                CanadaFirstFileResult = "noResult";
+                            }
+                            break;
+                        case 11:
+                            if (StringUtils.equalsIgnoreCase(contractFile.getResult(), "PASS")) {
+                                CanadaSecondFileResult = "pass";
+                            } else if (StringUtils.equalsIgnoreCase(contractFile.getResult(), "FAIL")) {
+                                CanadaSecondFileResult = "fail";
+                            } else {
+                                CanadaSecondFileResult = "noResult";
+                            }
+                            break;
+                    }
                 }
-                if (hasFile)
-                    break;
-
             }
-
+        } else {
+            hasFile = false;
         }
-        result.put("hasFile",hasFile);
-        result.put("fileResult",fileResult);
+
+        if (StringUtils.equalsIgnoreCase(teacherCountry, "USA")){
+            result.put("UsaFileResult",UsaFileResult);
+        }else{
+            result.put("CanadaFirstFileResult",CanadaFirstFileResult);
+            result.put("CanadaSecondFileResult",CanadaSecondFileResult);
+        }
+
+        result.put("hasFile", hasFile);
         return result;
 
     }
