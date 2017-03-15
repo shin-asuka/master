@@ -114,36 +114,7 @@ public class PracticumFeedbackService {
             resultMap.put("msg", " The recruitment process already end.");
             return resultMap;
         }
-		
-        if(!StringUtils.equalsIgnoreCase(bean.getResult(),Result.REAPPLY.toString())) {
-            // 处理 tags 相关逻辑
-            List<TeacherPeTags> teacherPeTags = Lists.newArrayList();
-            for (Map<String, Integer> tag : bean.getTagIds()) {
-                TeacherPeTags teacherPeTag = new TeacherPeTags();
-                teacherPeTag.setApplicationId(applicationId);
-                teacherPeTag.setTagId(tag.get("id"));
-                teacherPeTags.add(teacherPeTag);
-            }            
-            teacherPeTagsService.updatePeTags(applicationId, teacherPeTags);
-            
-            List<TeacherPeLevels> teacherPeLevels = Lists.newArrayList();
-            for (Map<String, Integer> level : bean.getLevels()) {
-                TeacherPeLevels teacherPeLevel = new TeacherPeLevels();
-                teacherPeLevel.setApplicationId(applicationId);
-                teacherPeLevel.setLevel(level.get("id"));
-                teacherPeLevels.add(teacherPeLevel);
-            }
-            teacherPeLevelsService.updateTeacherPeLevels(applicationId, teacherPeLevels);
-
-            TeacherPeComments teacherPeComment = new TeacherPeComments();
-            teacherPeComment.setApplicationId(applicationId);
-            teacherPeComment.setThingsDidWell(bean.getThings());
-            teacherPeComment.setAreasImprovement(bean.getAreas());
-            teacherPeComment.setTotalScore(bean.getTotalScore());
-            teacherPeComment.setStatus(bean.getSubmitType());
-            teacherPeCommentsService.updateTeacherPeComments(applicationId, teacherPeComment);
-        }
-                
+		  
         teacherApplication = BeanUtils.copyPropertys(bean,teacherApplication);
         
         logger.info("PE:{} , 页面传入的结果result:{}", bean.getSubmitType(), bean.getResult());
@@ -153,34 +124,42 @@ public class PracticumFeedbackService {
 			teacherApplication.setResult(null);
 			teacherApplication.setAuditorId(0);
 			teacherApplication.setAuditDateTime(null);
+			//保存Tag
+			this.savePeAdditional(bean, applicationId);
+			
             resultMap.put("result", onlineclassService.updateApplications(teacherApplication));
         } else {
             if (bean.getResult().startsWith(Result.TBD.toString())) {
+	            //TBD	
                 resultMap = peSupervisorService.doPracticumForPE(pe, teacherApplication, bean.getResult());
             } else {
                 if (StringUtils.isBlank(bean.getFinishType())) {
                 	bean.setFinishType(FinishType.AS_SCHEDULED);
                 }
+                
                 resultMap = onlineclassService.updateAudit(pe, teacherApplication, bean.getResult(), bean.getFinishType());
-                Teacher recruitTeacher = (Teacher) resultMap.get("recruitTeacher");
-
-                // Finish课程
+                
+                // Finish课程成功
                 if ((Boolean) resultMap.get("result")) {
-                    onlineclassService.finishPracticum(teacherApplication, bean.getFinishType(), pe, recruitTeacher);
+                	//保存Tag
+                	this.savePeAdditional(bean, applicationId);
+                	
+                	Teacher recruitTeacher = (Teacher) resultMap.get("recruitTeacher");
+                	
+                	onlineclassService.finishPracticum(teacherApplication, bean.getFinishType(), pe, recruitTeacher);
+                    
+                    // 并异步调用AppServer 通知管理端发送消息
+                    Long teacherApplicationId = (Long) resultMap.get("teacherApplicationId");
+                    if (Objects.nonNull(teacherApplicationId) && Objects.nonNull(recruitTeacher)) {
+                        appserverPracticumService.finishPracticumProcess(teacherApplicationId, recruitTeacher);
+                    }
+                	
                     //发邮件 email
                     logger.info("需要发送邮件");
                     resultMap.put("recruitTeacher", recruitTeacher);
                     resultMap.put("applicationResult", teacherApplication.getResult());
-                }else{
-                	throw new RuntimeException(resultMap.get("msg")+"");
+                    
                 }
-            }
-
-            // 并异步调用AppServer 通知管理端发送消息
-            Long teacherApplicationId = (Long) resultMap.get("teacherApplicationId");
-            Teacher recruitTeacher = (Teacher) resultMap.get("recruitTeacher");
-            if (Objects.nonNull(teacherApplicationId) && Objects.nonNull(recruitTeacher)) {
-                appserverPracticumService.finishPracticumProcess(teacherApplicationId, recruitTeacher);
             }
         }        
         return resultMap;
@@ -209,36 +188,7 @@ public class PracticumFeedbackService {
             resultMap.put("msg", " The recruitment process already end.");
             return resultMap;
         }
-		
-		if(!StringUtils.equalsIgnoreCase(bean.getResult(),Result.REAPPLY.toString())) {
-        	// 处理 tags 相关逻辑
-            List<TeacherPeTags> teacherPeTags = Lists.newArrayList();
-            for (Map<String, Integer> tag : bean.getTagIds()) {
-                TeacherPeTags teacherPeTag = new TeacherPeTags();
-                teacherPeTag.setApplicationId(applicationId);
-                teacherPeTag.setTagId(tag.get("id"));
-                teacherPeTags.add(teacherPeTag);
-            }            
-            teacherPeTagsService.updatePeTags(applicationId, teacherPeTags);
-            
-            List<TeacherPeLevels> teacherPeLevels = Lists.newArrayList();
-            for (Map<String, Integer> level : bean.getLevels()) {
-                TeacherPeLevels teacherPeLevel = new TeacherPeLevels();
-                teacherPeLevel.setApplicationId(applicationId);
-                teacherPeLevel.setLevel(level.get("id"));
-                teacherPeLevels.add(teacherPeLevel);
-            }
-            teacherPeLevelsService.updateTeacherPeLevels(applicationId, teacherPeLevels);
 
-            TeacherPeComments teacherPeComment = new TeacherPeComments();
-            teacherPeComment.setApplicationId(applicationId);
-            teacherPeComment.setThingsDidWell(bean.getThings());
-            teacherPeComment.setAreasImprovement(bean.getAreas());
-            teacherPeComment.setTotalScore(bean.getTotalScore());
-            teacherPeComment.setStatus(bean.getSubmitType());
-            teacherPeCommentsService.updateTeacherPeComments(applicationId, teacherPeComment);
-        }
-        
         teacherApplication = BeanUtils.copyPropertys(bean,teacherApplication);
         
         logger.info("PES:{} , 页面传入的结果result:{}", bean.getSubmitType(), bean.getResult());
@@ -247,6 +197,7 @@ public class PracticumFeedbackService {
 			teacherApplication.setResult(null);
 			teacherApplication.setAuditorId(0);
 			teacherApplication.setAuditDateTime(null);
+			this.savePeSuperviserAdditional(bean, applicationId);
             resultMap.put("result", onlineclassService.updateApplications(teacherApplication));
         } else {
             if (StringUtils.isBlank(bean.getFinishType())) {
@@ -257,18 +208,21 @@ public class PracticumFeedbackService {
             Teacher recruitTeacher = (Teacher) resultMap.get("recruitTeacher");
             // Finish课程
             if ((Boolean) resultMap.get("result")) {
+            	//保存Tag
+            	this.savePeSuperviserAdditional(bean, applicationId);
+                        	
                 onlineclassService.finishPracticum(teacherApplication, bean.getFinishType(), peSupervisor, recruitTeacher);
+            
+                // 并异步调用AppServer发送邮件及消息
+                Long teacherApplicationId = (Long) resultMap.get("teacherApplicationId");
+                if (Objects.nonNull(teacherApplicationId) && Objects.nonNull(recruitTeacher)) {
+                    appserverPracticumService.finishPracticumProcess(teacherApplicationId, recruitTeacher);
+                }
+                
                 //发邮件 email
                 logger.info("需要发送邮件");
                 resultMap.put("recruitTeacher", recruitTeacher);
                 resultMap.put("applicationResult", teacherApplication.getResult());
-            }else{
-            	throw new RuntimeException(resultMap.get("msg")+"");
-            }
-            // 并异步调用AppServer发送邮件及消息
-            Long teacherApplicationId = (Long) resultMap.get("teacherApplicationId");
-            if (Objects.nonNull(teacherApplicationId) && Objects.nonNull(recruitTeacher)) {
-                appserverPracticumService.finishPracticumProcess(teacherApplicationId, recruitTeacher);
             }
         }
 		return resultMap;
@@ -281,12 +235,11 @@ public class PracticumFeedbackService {
 		TeacherApplication teacherApplication = this.teacherApplicationDao.findApplictionById(applicationId);
 	
 		if(teacherApplication != null){
-			logger.info(" list 1 === " + teacherApplication.getContractUrl());
 			if(StringUtils.isNotBlank(teacherApplication.getContractUrl())){
 				bean.setFormType(TeacherModuleEnum.RoleClass.PES.equalsIgnoreCase(teacherApplication.getContractUrl()) ? 2 : 1);
 			}else{
+				//查询PES权限 PES权限指TeacherModule中包含有PE数据
 				List<TeacherModule> list = this.teacherModuleDao.findByTeacherModuleName(teacher.getId(), TeacherModuleEnum.RoleClass.PE);
-				logger.info(" list 2 === " + list);
 				bean.setFormType(CollectionUtils.isNotEmpty(list) ? 2 : 1);
 			}
 			TeacherPeComments teacherPeComments = teacherPeCommentsDao.getTeacherPeComments(applicationId);
@@ -306,6 +259,7 @@ public class PracticumFeedbackService {
 			BeanUtils.copyPropertys(teacherApplication,bean);
 		}
 		if(StringUtils.isBlank(bean.getFormType()+"")){
+			//查询PES权限 PES权限指TeacherModule中包含有PE数据
 			List<TeacherModule> list = this.teacherModuleDao.findByTeacherModuleName(teacher.getId(), TeacherModuleEnum.RoleClass.PE);
 			bean.setFormType(CollectionUtils.isNotEmpty(list) ? 2 : 1);
 		}
@@ -412,6 +366,69 @@ public class PracticumFeedbackService {
         }
 
         return reportLevels;
+    }
+    
+    
+    private void savePeAdditional(PeCommentsVo bean,int applicationId){
+    	if(!StringUtils.equalsIgnoreCase(bean.getResult(),Result.REAPPLY.toString())) {
+            // 处理 tags 相关逻辑
+            List<TeacherPeTags> teacherPeTags = Lists.newArrayList();
+            for (Map<String, Integer> tag : bean.getTagIds()) {
+                TeacherPeTags teacherPeTag = new TeacherPeTags();
+                teacherPeTag.setApplicationId(applicationId);
+                teacherPeTag.setTagId(tag.get("id"));
+                teacherPeTags.add(teacherPeTag);
+            }            
+            teacherPeTagsService.updatePeTags(applicationId, teacherPeTags);
+            
+            List<TeacherPeLevels> teacherPeLevels = Lists.newArrayList();
+            for (Map<String, Integer> level : bean.getLevels()) {
+                TeacherPeLevels teacherPeLevel = new TeacherPeLevels();
+                teacherPeLevel.setApplicationId(applicationId);
+                teacherPeLevel.setLevel(level.get("id"));
+                teacherPeLevels.add(teacherPeLevel);
+            }
+            teacherPeLevelsService.updateTeacherPeLevels(applicationId, teacherPeLevels);
+
+            TeacherPeComments teacherPeComment = new TeacherPeComments();
+            teacherPeComment.setApplicationId(applicationId);
+            teacherPeComment.setThingsDidWell(bean.getThings());
+            teacherPeComment.setAreasImprovement(bean.getAreas());
+            teacherPeComment.setTotalScore(bean.getTotalScore());
+            teacherPeComment.setStatus(bean.getSubmitType());
+            teacherPeCommentsService.updateTeacherPeComments(applicationId, teacherPeComment);
+        }
+    }
+    
+    private void savePeSuperviserAdditional(PeSupervisorCommentsVo bean,int applicationId){
+    	if(!StringUtils.equalsIgnoreCase(bean.getResult(),Result.REAPPLY.toString())) {
+        	// 处理 tags 相关逻辑
+            List<TeacherPeTags> teacherPeTags = Lists.newArrayList();
+            for (Map<String, Integer> tag : bean.getTagIds()) {
+                TeacherPeTags teacherPeTag = new TeacherPeTags();
+                teacherPeTag.setApplicationId(applicationId);
+                teacherPeTag.setTagId(tag.get("id"));
+                teacherPeTags.add(teacherPeTag);
+            }            
+            teacherPeTagsService.updatePeTags(applicationId, teacherPeTags);
+            
+            List<TeacherPeLevels> teacherPeLevels = Lists.newArrayList();
+            for (Map<String, Integer> level : bean.getLevels()) {
+                TeacherPeLevels teacherPeLevel = new TeacherPeLevels();
+                teacherPeLevel.setApplicationId(applicationId);
+                teacherPeLevel.setLevel(level.get("id"));
+                teacherPeLevels.add(teacherPeLevel);
+            }
+            teacherPeLevelsService.updateTeacherPeLevels(applicationId, teacherPeLevels);
+
+            TeacherPeComments teacherPeComment = new TeacherPeComments();
+            teacherPeComment.setApplicationId(applicationId);
+            teacherPeComment.setThingsDidWell(bean.getThings());
+            teacherPeComment.setAreasImprovement(bean.getAreas());
+            teacherPeComment.setTotalScore(bean.getTotalScore());
+            teacherPeComment.setStatus(bean.getSubmitType());
+            teacherPeCommentsService.updateTeacherPeComments(applicationId, teacherPeComment);
+        }
     }
     
  }

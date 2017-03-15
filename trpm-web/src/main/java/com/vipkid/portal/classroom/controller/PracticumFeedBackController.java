@@ -157,7 +157,7 @@ public class PracticumFeedBackController extends RestfulController {
         } catch (Exception e) {
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
 			logger.error(e.getMessage(),e);
-			return ApiResponseUtils.buildErrorResp(-7, "服务器异常");
+			return ApiResponseUtils.buildErrorResp(-7, "服务器异常:" + e.getMessage());
         }
 	}
 	
@@ -208,7 +208,7 @@ public class PracticumFeedBackController extends RestfulController {
         } catch (Exception e) {
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
 			logger.error(e.getMessage(),e);
-			return ApiResponseUtils.buildErrorResp(-7, "服务器异常");
+			return ApiResponseUtils.buildErrorResp(-7, "服务器异常:"+e.getMessage());
         }
 	}
 	
@@ -236,7 +236,7 @@ public class PracticumFeedBackController extends RestfulController {
         } catch (Exception e) {
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
 			logger.error(e.getMessage(),e);
-			return ApiResponseUtils.buildErrorResp(-7, "服务器异常");
+			return ApiResponseUtils.buildErrorResp(-7, "服务器异常:"+e.getMessage());
         }
 	}
 	
@@ -267,7 +267,7 @@ public class PracticumFeedBackController extends RestfulController {
         } catch (Exception e) {
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
 			logger.error(e.getMessage(),e);
-			return ApiResponseUtils.buildErrorResp(-7, "服务器异常");
+			return ApiResponseUtils.buildErrorResp(-7, "服务器异常:"+e.getMessage());
         }
 	}
 }
