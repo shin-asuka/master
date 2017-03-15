@@ -7,5 +7,5 @@ public interface ClassroomsRestService {
 
 	Map<String, Object> getClassroomsMaterialByLessonId(long lessonId);
 
-	int[] getPaidTrailPaymentYearMonth(Long studentId, Long onlineClassId, String scheduledTime);
+	int[] getPaidTrailPaymentYearMonth(Long studentId, Long onlineClassId, long l);
 }
