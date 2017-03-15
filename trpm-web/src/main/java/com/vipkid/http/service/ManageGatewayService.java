@@ -71,14 +71,14 @@ public class ManageGatewayService extends HttpBaseService {
 	@PostConstruct
 	public void  init(){
 		tagsMap = Maps.newHashMap();
-		tagsMap.put("网络不稳定","Connection");
-		tagsMap.put("上课环境布置差","Classroom setup");
-		tagsMap.put("老师迟到","Late");
-		tagsMap.put("课程未上完","Unfinished");
-		tagsMap.put("课堂氛围不活跃","Fatigued");
-		tagsMap.put("不就重点纠错","Correction");
+		tagsMap.put("网络不稳定","Unstable Internet");
+		tagsMap.put("上课环境布置差","Poor class environment");
+		tagsMap.put("老师迟到","Teacher was late");
+		tagsMap.put("课程未上完","Slides Unfinished");
+		tagsMap.put("课堂氛围不活跃","Inactive class");
+		tagsMap.put("不就重点纠错","Lack of correction");
 		tagsMap.put("不耐心","Impatient");
-		tagsMap.put("肢体语言少","Body language");
+		tagsMap.put("肢体语言少","Lack of body language");
 	}
 
 	public List<StudentCommentVo> getStudentCommentListByBatch(String idsStr) {
