@@ -19,6 +19,9 @@ import org.junit.Test;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * Created by liyang on 2017/3/12.
@@ -118,4 +121,21 @@ public class SterlingApiUtilsTest {
         SterlingApiUtils.createScreeningDocument("001000062942500",fileUrl);
         //SterlingApiUtils.createScreeningDocument("001000062940459",fileUrl);
     }
+
+    @Test
+    public void test(){
+        String time ="2017-03-15T09:50:52Z";
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
+        Date d = null;//注意是空格+UTC
+        try {
+            d = format.parse(time.replace("Z", " UTC"));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        System.out.println(d);
+
+
+    }
 }
+
+

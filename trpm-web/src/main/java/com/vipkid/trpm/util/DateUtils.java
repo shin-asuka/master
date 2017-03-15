@@ -120,6 +120,16 @@ public final class DateUtils {
 		return t.atZone(ZoneId.of(fromTZ)).format(FMT_YMD_HMS);
 	}
 
+	public static Date convertzDateTime(String TZ){
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
+		Date date = null;//注意是空格+UTC
+		try {
+			date = format.parse(TZ.replace("Z", " UTC"));
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		return date;
+	}
 	/**
 	 * 获取以当前日期月份为基础，指定月份偏移量的，时区为上海的日期字符串；并以指定的日期格式输出。
 	 * 

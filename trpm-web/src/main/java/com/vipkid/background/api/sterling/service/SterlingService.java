@@ -2,7 +2,6 @@ package com.vipkid.background.api.sterling.service;
 
 
 
-import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import com.vipkid.background.api.sterling.controller.SterlingApiController;
 import com.vipkid.background.api.sterling.dto.*;
@@ -10,28 +9,25 @@ import com.vipkid.background.api.sterling.dto.*;
 import com.vipkid.http.utils.JacksonUtils;
 import com.vipkid.trpm.dao.BackgroundAdverseDao;
 import com.vipkid.trpm.dao.BackgroundReportDao;
-import com.vipkid.trpm.dao.BackgroundScreeningDao;
 import com.vipkid.trpm.dao.BackgroundScreeningV2Dao;
 import com.vipkid.trpm.entity.BackgroundAdverse;
 import com.vipkid.trpm.entity.BackgroundReport;
 import com.vipkid.trpm.entity.BackgroundScreening;
+import com.vipkid.trpm.util.DateUtils;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.community.config.PropertyConfigurer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Nullable;
 import javax.annotation.Resource;
-import java.sql.Timestamp;
+
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
+
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
+
 
 /**
  * Created by liyang on 2017/3/11.
@@ -84,7 +80,7 @@ public class SterlingService {
     }
 
     @Transactional(readOnly = false)
-    public Long createScreening(Long teacherId) {
+    public Long createScreening(Long teacherId,String documentUrl) {
         BackgroundScreening backgroundScreening = backgroundScreeningV2Dao.findByTeacherIdTopOne(teacherId);
         if(backgroundScreening == null ){
             return null;
@@ -104,7 +100,8 @@ public class SterlingService {
             return null;
         }
         //返回字段保存
-        backgroundScreening.setUpdateAt(Timestamp.valueOf(sterlingScreening.getUpdatedAt()));
+        backgroundScreening.setSubmittedAt(DateUtils.convertzDateTime(sterlingScreening.getSubmittedAt()));
+        backgroundScreening.setUpdateAt(DateUtils.convertzDateTime(sterlingScreening.getUpdatedAt()));
         backgroundScreening.setUpdateTime(new Date());
         backgroundScreening.setResult(sterlingScreening.getResult());
         backgroundScreening.setStatus(sterlingScreening.getStatus());
@@ -121,7 +118,7 @@ public class SterlingService {
                 backgroundReport.setReportId(reportItem.getId());
                 backgroundReport.setStatus(reportItem.getStatus());
                 backgroundReport.setResult(reportItem.getStatus());
-                backgroundReport.setUpdateTime(Timestamp.valueOf(reportItem.getUpdatedAt()));
+                backgroundReport.setUpdateTime(DateUtils.convertzDateTime(reportItem.getUpdatedAt()));
                 backgroundReport.setUpdateTime(new Date());
                 backgroundReport.setCreateTime(new Date());
                 backgroundReport.setType(reportItem.getType());
@@ -130,8 +127,12 @@ public class SterlingService {
             int row = backgroundReportDao.batchInsert(backgroundReportList);
         }
 
+        boolean isSuccess = SterlingApiUtils.createScreeningDocument(sterlingScreening.getId(),documentUrl);
+        if(isSuccess){
+            return backgroundScreening.getId();
+        }
 
-        return backgroundScreening.getId();
+        return null;
     }
 
     public Integer createPreAdverse(Long teacherId) {
@@ -163,7 +164,7 @@ public class SterlingService {
                 backgroundAdverse.setScreeningId(sterlingScreening.getId());
                 backgroundAdverse.setActionsId(adverseAction.getId());
                 backgroundAdverse.setActionsStatus(adverseAction.getStatus());
-                backgroundAdverse.setActionsUpdatedAt(Timestamp.valueOf(adverseAction.getUpdatedAt()));
+                backgroundAdverse.setActionsUpdatedAt(DateUtils.convertzDateTime(adverseAction.getUpdatedAt()));
                 backgroundAdverseList.add(backgroundAdverse);
             }
             backgroundAdverseDao.batchInsert(backgroundAdverseList);

@@ -219,7 +219,7 @@ public class SterlingApiUtils {
      * @param documentLink
      * @return
      */
-    public static boolean createScreeningDocument(String screeingId,String documentLink) throws IOException {
+    public static boolean createScreeningDocument(String screeingId,String documentLink){
         if(StringUtils.isBlank(screeingId) || StringUtils.isBlank(documentLink)){
             return false;
         }

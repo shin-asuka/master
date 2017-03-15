@@ -8,9 +8,9 @@
         <result column="bg_sterling_screening_id" jdbcType="INTEGER" property="bgSterlingScreeningId" />
         <result column="status" jdbcType="VARCHAR" property="status" />
         <result column="result" jdbcType="VARCHAR" property="result" />
-        <result column="updated_at" jdbcType="DATE" property="updatedAt" />
-        <result column="create_time" jdbcType="DATE" property="createTime" />
-        <result column="update_time" jdbcType="DATE" property="updateTime" />
+        <result column="updated_at" jdbcType="TIMESTAMP" property="updatedAt" />
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
         <result column="type" jdbcType="LONGVARCHAR" property="type" />
     </resultMap>
 
@@ -50,9 +50,9 @@
             #{report.bgSterlingScreeningId,jdbcType=INTEGER},
             #{report.status,jdbcType=VARCHAR},
             #{report.result,jdbcType=VARCHAR},
-            #{report.updatedAt,jdbcType=DATE},
-            #{report.createTime,jdbcType=DATE},
-            #{report.updateTime,jdbcType=DATE},
+            #{report.updatedAt,jdbcType=TIMESTAMP},
+            #{report.createTime,jdbcType=TIMESTAMP},
+            #{report.updateTime,jdbcType=TIMESTAMP},
             #{report.type,jdbcType=LONGVARCHAR}
             )
 

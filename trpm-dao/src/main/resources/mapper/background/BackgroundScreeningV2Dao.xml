@@ -10,10 +10,10 @@
         <result column="result" jdbcType="VARCHAR" property="result" />
         <result column="dispute_status" jdbcType="VARCHAR" property="disputeStatus" />
         <result column="dispute_created_at" jdbcType="DATE" property="disputeCreatedAt" />
-        <result column="submitted_at" jdbcType="DATE" property="submittedAt" />
-        <result column="update_at" jdbcType="DATE" property="updateAt" />
-        <result column="create_time" jdbcType="DATE" property="createTime" />
-        <result column="update_time" jdbcType="DATE" property="updateTime" />
+        <result column="submitted_at" jdbcType="TIMESTAMP" property="submittedAt" />
+        <result column="update_at" jdbcType="TIMESTAMP" property="updateAt" />
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
         <result column="web_link" jdbcType="LONGVARCHAR" property="webLink" />
         <result column="pdf_link" jdbcType="LONGVARCHAR" property="pdfLink" />
     </resultMap>
@@ -61,63 +61,62 @@
             #{status,jdbcType=VARCHAR},
             #{result,jdbcType=VARCHAR},
             #{disputeStatus,jdbcType=VARCHAR},
-            #{disputeCreatedAt,jdbcType=DATE},
-            #{submittedAt,jdbcType=DATE},
-            #{updateAt,jdbcType=DATE},
-            #{createTime,jdbcType=DATE},
-            #{updateTime,jdbcType=DATE},
+            #{disputeCreatedAt,jdbcType=TIMESTAMP},
+            #{submittedAt,jdbcType=TIMESTAMP},
+            #{updateAt,jdbcType=TIMESTAMP},
+            #{createTime,jdbcType=TIMESTAMP},
+            #{updateTime,jdbcType=TIMESTAMP},
             #{webLink,jdbcType=LONGVARCHAR},
             #{pdfLink,jdbcType=LONGVARCHAR}
         )
     </insert>
 
 
-    <update id="update" parameterType="com.vipkid.trpm.entity.BackgroundScreening">
+    <update id="update" parameterType="com.vipkid.trpm.entity.BackgroundScreening" >
         update bg_sterling_screening
         <set>
-
-            <if test="record.teacherId != null">
-                teacher_id = #{record.teacherId,jdbcType=BIGINT},
+            <if test="teacherId != null">
+                teacher_id = #{teacherId,jdbcType=BIGINT},
             </if>
-            <if test="record.candidateId != null">
-                candidate_id = #{record.candidateId,jdbcType=VARCHAR},
+            <if test="candidateId != null">
+                candidate_id = #{candidateId,jdbcType=VARCHAR},
             </if>
-            <if test="record.screeningId != null">
-                screening_id = #{record.screeningId,jdbcType=VARCHAR},
+            <if test="screeningId != null">
+                screening_id = #{screeningId,jdbcType=VARCHAR},
             </if>
-            <if test="record.status != null">
-                status = #{record.status,jdbcType=VARCHAR},
+            <if test="status != null">
+                status = #{status,jdbcType=VARCHAR},
             </if>
-            <if test="record.result != null">
-                result = #{record.result,jdbcType=VARCHAR},
+            <if test="result != null">
+                result = #{result,jdbcType=VARCHAR},
             </if>
-            <if test="record.disputeStatus != null">
-                dispute_status = #{record.disputeStatus,jdbcType=VARCHAR},
+            <if test="disputeStatus != null">
+                dispute_status = #{disputeStatus,jdbcType=VARCHAR},
             </if>
-            <if test="record.disputeCreatedAt != null">
-                dispute_created_at = #{record.disputeCreatedAt,jdbcType=DATE},
+            <if test="disputeCreatedAt != null">
+                dispute_created_at = #{disputeCreatedAt,jdbcType=TIMESTAMP},
             </if>
-            <if test="record.submittedAt != null">
-                submitted_at = #{record.submittedAt,jdbcType=DATE},
+            <if test="submittedAt != null">
+                submitted_at = #{submittedAt,jdbcType=TIMESTAMP},
             </if>
-            <if test="record.updateAt != null">
-                update_at = #{record.updateAt,jdbcType=DATE},
+            <if test="updateAt != null">
+                update_at = #{updateAt,jdbcType=TIMESTAMP},
             </if>
-            <if test="record.createTime != null">
-                create_time = #{record.createTime,jdbcType=DATE},
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
             </if>
-            <if test="record.updateTime != null">
-                update_time = #{record.updateTime,jdbcType=DATE},
+            <if test="updateTime != null">
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
             </if>
-            <if test="record.webLink != null">
-                web_link = #{record.webLink,jdbcType=LONGVARCHAR},
+            <if test="webLink != null">
+                web_link = #{webLink,jdbcType=LONGVARCHAR},
             </if>
-            <if test="record.pdfLink != null">
-                pdf_link = #{record.pdfLink,jdbcType=LONGVARCHAR},
+            <if test="pdfLink != null">
+                pdf_link = #{pdfLink,jdbcType=LONGVARCHAR},
             </if>
         </set>
 
-        where  id = #{record.id,jdbcType=BIGINT}
+        where  id = #{id,jdbcType=BIGINT}
 
     </update>
     <select id="findByTeacherIdTopOne" resultMap="BackgroundScreeningResult" parameterType="Long">

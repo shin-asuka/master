@@ -84,9 +84,9 @@ public class SterlingApiController {
 
 
     @RequestMapping("/createScreening")
-    public Object createScreening(Long teacherId){
+    public Object createScreening(Long teacherId,String documentUrl){
         logger.info("teacher:{}",teacherId);
-        Long id = sterlingService.createScreening(teacherId);
+        Long id = sterlingService.createScreening(teacherId,documentUrl);
         Map<String,Object> result= Maps.newHashMap();
         result.put("bgSterlingScreeningId",id);
         return ApiResponseUtils.buildSuccessDataResp("success");

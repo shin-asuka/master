@@ -7,9 +7,9 @@
         <result column="bg_sterling_screening_id" jdbcType="BIGINT" property="bgSterlingScreeningId" />
         <result column="actions_id" jdbcType="VARCHAR" property="actionsId" />
         <result column="actions_status" jdbcType="VARCHAR" property="actionsStatus" />
-        <result column="actions_updated_at" jdbcType="DATE" property="actionsUpdatedAt" />
-        <result column="create_time" jdbcType="DATE" property="createTime" />
-        <result column="update_time" jdbcType="DATE" property="updateTime" />
+        <result column="actions_updated_at" jdbcType="TIMESTAMP" property="actionsUpdatedAt" />
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
     </resultMap>
 
 
@@ -35,9 +35,9 @@
           #{adverse.bgSterlingScreeningId,jdbcType=BIGINT},
           #{adverse.actionsId,jdbcType=VARCHAR},
           #{adverse.actionsStatus,jdbcType=VARCHAR},
-          #{adverse.actionsUpdatedAt,jdbcType=DATE},
-          #{adverse.createTime,jdbcType=DATE},
-          #{adverse.updateTime,jdbcType=DATE}
+          #{adverse.actionsUpdatedAt,jdbcType=TIMESTAMP},
+          #{adverse.createTime,jdbcType=TIMESTAMP},
+          #{adverse.updateTime,jdbcType=TIMESTAMP}
       )
 
       </foreach>
