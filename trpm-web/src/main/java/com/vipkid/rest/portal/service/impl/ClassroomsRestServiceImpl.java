@@ -142,7 +142,7 @@ public class ClassroomsRestServiceImpl implements ClassroomsRestService{
 		return result;
 	}
 
-	public int[] getPaidTrailPaymentYearMonth(Long studentId, Long onlineClassId) {
+	public int[] getPaidTrailPaymentYearMonth(Long studentId, Long onlineClassId,String scheduledTime) {
 		if (studentId==null || onlineClassId==null) {
 			return null;
 		}

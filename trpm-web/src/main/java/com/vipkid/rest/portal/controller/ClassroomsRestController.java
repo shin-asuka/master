@@ -85,6 +85,7 @@ public class ClassroomsRestController extends RestfulController{
 							classroomDetail.setIsPaidTrail(0);
 							continue;
 						}
+					
 
 						TeacherComment teacherComment = teacherService.findByStudentIdAndOnlineClassId(classroomDetail.getStudentId(), classroomDetail.getOnlineClassId());
 						if (teacherComment == null || teacherComment.getFirstDateTime() == null || teacherComment.getScheduledDateTime() == null
@@ -92,8 +93,9 @@ public class ClassroomsRestController extends RestfulController{
 							classroomDetail.setIsPaidTrail(0);
 							continue;
 						}
+						logger.info("schedule time ----------------{}",classroomDetail.getScheduledDateTime());
 
-						int[] yearMonth = classroomsRestService.getPaidTrailPaymentYearMonth(classroomDetail.getStudentId(), classroomDetail.getOnlineClassId());
+						int[] yearMonth = classroomsRestService.getPaidTrailPaymentYearMonth(classroomDetail.getStudentId(), classroomDetail.getOnlineClassId(),classroomDetail.getScheduledDateTime());
 						if (yearMonth == null) {
 							classroomDetail.setIsPaidTrail(0);
 							continue;
