@@ -4,8 +4,10 @@ package com.vipkid.background.api.sterling.service;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
+import com.vipkid.background.api.sterling.controller.SterlingApiController;
 import com.vipkid.background.api.sterling.dto.*;
 
+import com.vipkid.http.utils.JacksonUtils;
 import com.vipkid.trpm.dao.BackgroundAdverseDao;
 import com.vipkid.trpm.dao.BackgroundReportDao;
 import com.vipkid.trpm.dao.BackgroundScreeningDao;
@@ -14,7 +16,10 @@ import com.vipkid.trpm.entity.BackgroundAdverse;
 import com.vipkid.trpm.entity.BackgroundReport;
 import com.vipkid.trpm.entity.BackgroundScreening;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.community.config.PropertyConfigurer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,6 +29,7 @@ import javax.annotation.Resource;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -33,6 +39,9 @@ import java.util.stream.Stream;
 
 @Service
 public class SterlingService {
+
+    private static final Logger logger = LoggerFactory.getLogger(SterlingApiController.class);
+
     private static ScreeningInputDto.CallBack callback = null;
 
     static{
@@ -57,17 +66,21 @@ public class SterlingService {
 
     public Long createCandidate(CandidateInputDto candidateInputDto) {
         SterlingCandidate sterlingCandidate = SterlingApiUtils.createCandidate(candidateInputDto);
-        BackgroundScreening backgroundScreening = transformBackgroundScreening(candidateInputDto);
-        backgroundScreening.setCandidateId(sterlingCandidate.getId());
+        if(CollectionUtils.isNotEmpty(sterlingCandidate.getErrors())){
+            logger.warn("param:{},error:{}", JacksonUtils.toJSONString(candidateInputDto),JacksonUtils.toJSONString(sterlingCandidate.getErrors()));
+            return null;
+        }
+
+        BackgroundScreening backgroundScreening = transformBackgroundScreening(candidateInputDto,sterlingCandidate);
 
         return backgroundScreeningV2Dao.insert(backgroundScreening);
     }
 
-    public int updateCandidate(CandidateInputDto candidateInputDto) {
+    public Long updateCandidate(CandidateInputDto candidateInputDto) {
         SterlingCandidate sterlingCandidate = SterlingApiUtils.updateCandidate(candidateInputDto);
-        BackgroundScreening backgroundScreening = transformBackgroundScreening(candidateInputDto);
+        BackgroundScreening backgroundScreening = backgroundScreeningV2Dao.findByTeacherIdTopOne(candidateInputDto.getTeacherId());
 
-        return backgroundScreeningV2Dao.update(backgroundScreening);
+        return backgroundScreening.getId();
     }
 
     @Transactional(readOnly = false)
@@ -83,6 +96,13 @@ public class SterlingService {
 
 
         SterlingScreening sterlingScreening =SterlingApiUtils.createScreening(screeningInputDto);
+        if (sterlingScreening == null) {
+            return null;
+        }
+
+        if (CollectionUtils.isNotEmpty(sterlingScreening.getErrors())) {
+            return null;
+        }
         //返回字段保存
         backgroundScreening.setUpdateAt(Timestamp.valueOf(sterlingScreening.getUpdatedAt()));
         backgroundScreening.setUpdateTime(new Date());
@@ -152,10 +172,16 @@ public class SterlingService {
     }
 
 
+    private BackgroundScreening transformBackgroundScreening(CandidateInputDto candidateInputDto, SterlingCandidate sterlingCandidate) {
+        if (candidateInputDto == null) {
+            return null;
+        }
+        BackgroundScreening backgroundScreening = new BackgroundScreening();
+        backgroundScreening.setTeacherId(candidateInputDto.getTeacherId());
+        backgroundScreening.setCreateTime(new Date());
+        backgroundScreening.setUpdateTime(new Date());
+        backgroundScreening.setCandidateId(sterlingCandidate.getId());
 
-
-    private BackgroundScreening transformBackgroundScreening(CandidateInputDto candidateInputDto){
-
-        return null;
+        return backgroundScreening;
     }
 }

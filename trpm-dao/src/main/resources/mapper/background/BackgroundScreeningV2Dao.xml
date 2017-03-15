@@ -33,7 +33,7 @@
         s.create_time,
         s.update_time,
         s.web_link,
-        s.pdf_links.
+        s.pdf_link
     </sql>
 
 

@@ -14,8 +14,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
@@ -33,7 +35,9 @@ public class SterlingApiController {
     @Autowired
     private SterlingService sterlingService;
     @RequestMapping("/createCandidates")
-    public Object createCandidates(@RequestParam CandidateInputDto candidateInputDto){
+    @ResponseBody
+    public Object createCandidates(@RequestBody  CandidateInputDto candidateInputDto){
+
         logger.info(JacksonUtils.toJSONString(candidateInputDto));
 
         if(candidateInputDto == null ){
@@ -47,6 +51,10 @@ public class SterlingApiController {
         }
 
         Long id = sterlingService.createCandidate(candidateInputDto);
+        if (null == id) {
+            return ApiResponseUtils.buildErrorResp(105002, "执行失败");
+        }
+
         Map<String,Object> result= Maps.newHashMap();
         result.put("bgSterlingScreeningId",id);
         return ApiResponseUtils.buildSuccessDataResp(result);
@@ -55,7 +63,7 @@ public class SterlingApiController {
 
 
     @RequestMapping("/updateCandidates")
-    public Object updateCandidates(@RequestParam CandidateInputDto candidateInputDto){
+    public Object updateCandidates(@RequestBody CandidateInputDto candidateInputDto){
         logger.info(JacksonUtils.toJSONString(candidateInputDto));
 
         if(candidateInputDto == null ){
@@ -68,15 +76,15 @@ public class SterlingApiController {
             return ApiResponseUtils.buildErrorResp(105002,"候选人ID不能为空");
         }
 
-        int row  = sterlingService.updateCandidate(candidateInputDto);
+        Long id  = sterlingService.updateCandidate(candidateInputDto);
         Map<String,Object> result= Maps.newHashMap();
-//        result.put("bgSterlingScreeningId",id);
+        result.put("bgSterlingScreeningId",id);
         return ApiResponseUtils.buildSuccessDataResp(result);
     }
 
 
     @RequestMapping("/createScreening")
-    public Object createScreening(@RequestParam Long teacherId){
+    public Object createScreening(Long teacherId){
         logger.info("teacher:{}",teacherId);
         Long id = sterlingService.createScreening(teacherId);
         Map<String,Object> result= Maps.newHashMap();
@@ -86,7 +94,7 @@ public class SterlingApiController {
 
 
     @RequestMapping("/createPreAdverse")
-    public Object createPreAdverse(@RequestParam Long teacherId){
+    public Object createPreAdverse(Long teacherId){
         logger.info("teacher:{}",teacherId);
         int row = sterlingService.createPreAdverse(teacherId);
         Map<String,Object> result= Maps.newHashMap();

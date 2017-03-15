@@ -1,5 +1,7 @@
 package com.vipkid.background.api.sterling.dto;
 
+import java.util.UUID;
+
 /**
  * Created by liyang on 2017/3/11.
  * 此类用于接收对VIPKID业务线的入参
@@ -9,7 +11,7 @@ public class CandidateInputDto implements  java.io.Serializable{
     private static final long serialVersionUID = -7994566362552027623L;
 
     private Long teacherId;
-    private String clientReferenceId;
+    private String clientReferenceId = UUID.randomUUID().toString();
     private String candidateId;
     private String email;
     private String givenName;
