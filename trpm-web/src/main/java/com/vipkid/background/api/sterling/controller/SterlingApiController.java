@@ -23,7 +23,7 @@ import java.util.Map;
 /**
  * Created by liyang on 2017/3/11.
  */
-@RequestMapping("/api/background/sterling")
+@RequestMapping("/background/sterling")
 @Controller
 public class SterlingApiController {
 
