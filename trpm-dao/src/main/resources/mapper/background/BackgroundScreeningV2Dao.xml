@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.vipkid.trpm.dao.BackgroundScreeningV2Dao">
+    <resultMap id="BackgroundScreeningResult" type="com.vipkid.trpm.entity.BackgroundScreening">
+        <id column="id" jdbcType="BIGINT" property="id" />
+        <result column="teacher_id" jdbcType="BIGINT" property="teacherId" />
+        <result column="candidate_id" jdbcType="VARCHAR" property="candidateId" />
+        <result column="screening_id" jdbcType="VARCHAR" property="screeningId" />
+        <result column="status" jdbcType="VARCHAR" property="status" />
+        <result column="result" jdbcType="VARCHAR" property="result" />
+        <result column="dispute_status" jdbcType="VARCHAR" property="disputeStatus" />
+        <result column="dispute_created_at" jdbcType="DATE" property="disputeCreatedAt" />
+        <result column="submitted_at" jdbcType="DATE" property="submittedAt" />
+        <result column="update_at" jdbcType="DATE" property="updateAt" />
+        <result column="create_time" jdbcType="DATE" property="createTime" />
+        <result column="update_time" jdbcType="DATE" property="updateTime" />
+        <result column="web_link" jdbcType="LONGVARCHAR" property="webLink" />
+        <result column="pdf_link" jdbcType="LONGVARCHAR" property="pdfLink" />
+    </resultMap>
+
+
+    <sql id="backgroundScreeningAllColumn">
+        s.id,
+        s.teacher_id,
+        s.candidate_id,
+        s.screening_id,
+        s.status,
+        s.result,
+        s.dispute_status,
+        s.dispute_created_at,
+        s.submitted_at,
+        s.update_at,
+        s.create_time,
+        s.update_time,
+        s.web_link,
+        s.pdf_links.
+    </sql>
+
+
+
+    <insert id="insert" parameterType="com.vipkid.trpm.entity.BackgroundScreening" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO bg_sterling_screening (
+            teacher_id,
+            candidate_id,
+            screening_id,
+            STATUS,
+            result,
+            dispute_status,
+            dispute_created_at,
+            submitted_at,
+            update_at,
+            create_time,
+            update_time,
+            web_link,
+            pdf_link
+        )
+        VALUES(
+            #{teacherId,jdbcType=BIGINT},
+            #{candidateId,jdbcType=VARCHAR},
+            #{screeningId,jdbcType=VARCHAR},
+            #{status,jdbcType=VARCHAR},
+            #{result,jdbcType=VARCHAR},
+            #{disputeStatus,jdbcType=VARCHAR},
+            #{disputeCreatedAt,jdbcType=DATE},
+            #{submittedAt,jdbcType=DATE},
+            #{updateAt,jdbcType=DATE},
+            #{createTime,jdbcType=DATE},
+            #{updateTime,jdbcType=DATE},
+            #{webLink,jdbcType=LONGVARCHAR},
+            #{pdfLink,jdbcType=LONGVARCHAR}
+        )
+    </insert>
+
+
+    <update id="update" parameterType="com.vipkid.trpm.entity.BackgroundScreening">
+        update bg_sterling_screening
+        <set>
+
+            <if test="record.teacherId != null">
+                teacher_id = #{record.teacherId,jdbcType=BIGINT},
+            </if>
+            <if test="record.candidateId != null">
+                candidate_id = #{record.candidateId,jdbcType=VARCHAR},
+            </if>
+            <if test="record.screeningId != null">
+                screening_id = #{record.screeningId,jdbcType=VARCHAR},
+            </if>
+            <if test="record.status != null">
+                status = #{record.status,jdbcType=VARCHAR},
+            </if>
+            <if test="record.result != null">
+                result = #{record.result,jdbcType=VARCHAR},
+            </if>
+            <if test="record.disputeStatus != null">
+                dispute_status = #{record.disputeStatus,jdbcType=VARCHAR},
+            </if>
+            <if test="record.disputeCreatedAt != null">
+                dispute_created_at = #{record.disputeCreatedAt,jdbcType=DATE},
+            </if>
+            <if test="record.submittedAt != null">
+                submitted_at = #{record.submittedAt,jdbcType=DATE},
+            </if>
+            <if test="record.updateAt != null">
+                update_at = #{record.updateAt,jdbcType=DATE},
+            </if>
+            <if test="record.createTime != null">
+                create_time = #{record.createTime,jdbcType=DATE},
+            </if>
+            <if test="record.updateTime != null">
+                update_time = #{record.updateTime,jdbcType=DATE},
+            </if>
+            <if test="record.webLink != null">
+                web_link = #{record.webLink,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="record.pdfLink != null">
+                pdf_link = #{record.pdfLink,jdbcType=LONGVARCHAR},
+            </if>
+        </set>
+
+        where  id = #{record.id,jdbcType=BIGINT}
+
+    </update>
+    <select id="findByTeacherIdTopOne" resultMap="BackgroundScreeningResult" parameterType="Long">
+        SELECT
+          <include refid="backgroundScreeningAllColumn"/>
+        FROM
+        bg_sterling_screening s
+        WHERE
+        s.teacher_id =#{teacherId}
+        ORDER BY DESC LIMIT 1
+    </select>
+</mapper>

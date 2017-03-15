@@ -68,9 +68,9 @@ public class SterlingApiController {
             return ApiResponseUtils.buildErrorResp(105002,"候选人ID不能为空");
         }
 
-        Long id = sterlingService.updateCandidate(candidateInputDto);
+        int row  = sterlingService.updateCandidate(candidateInputDto);
         Map<String,Object> result= Maps.newHashMap();
-        result.put("bgSterlingScreeningId",id);
+//        result.put("bgSterlingScreeningId",id);
         return ApiResponseUtils.buildSuccessDataResp(result);
     }
 
@@ -88,9 +88,9 @@ public class SterlingApiController {
     @RequestMapping("/createPreAdverse")
     public Object createPreAdverse(@RequestParam Long teacherId){
         logger.info("teacher:{}",teacherId);
-        Long id = sterlingService.createPreAdverse(teacherId);
+        int row = sterlingService.createPreAdverse(teacherId);
         Map<String,Object> result= Maps.newHashMap();
-        result.put("bgSterlingScreeningId",id);
+//        result.put("bgSterlingScreeningId",id);
         return ApiResponseUtils.buildSuccessDataResp("success");
     }
 

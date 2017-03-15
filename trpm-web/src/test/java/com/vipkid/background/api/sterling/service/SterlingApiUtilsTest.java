@@ -113,8 +113,9 @@ public class SterlingApiUtilsTest {
     }
 
     @Test
-    public void createScreeningDocumentTest(){
+    public void createScreeningDocumentTest() throws IOException {
         String fileUrl = "https://teacher-data.vipkid.com.cn/teacher/identification/3094294/aa2a3c550b0849ac929c04fcaa6340f7/3094294-20161222-011004.jpg";
-        SterlingApiUtils.createScreeningDocument("001000062940459",fileUrl);
+        SterlingApiUtils.createScreeningDocument("001000062942500",fileUrl);
+        //SterlingApiUtils.createScreeningDocument("001000062940459",fileUrl);
     }
 }

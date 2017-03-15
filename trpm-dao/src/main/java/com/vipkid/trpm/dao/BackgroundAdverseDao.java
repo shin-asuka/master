@@ -9,9 +9,7 @@ import java.util.List;
  * Created by luning on 2017/3/11.
  *
  */
-public class BackgroundAdverseDao {
+public interface BackgroundAdverseDao {
 
-    public int batchInsert(List<BackgroundAdverse> backgroundAdverseList) {
-        return 0;
-    }
+    int batchInsert(List<BackgroundAdverse> backgroundAdverseList) ;
 }

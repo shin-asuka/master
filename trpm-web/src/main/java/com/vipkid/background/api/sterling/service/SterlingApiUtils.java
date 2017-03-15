@@ -17,19 +17,44 @@ import org.apache.commons.collections.CollectionUtils;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpEntity;
+import org.apache.http.HttpHeaders;
 import org.apache.http.HttpResponse;
+import org.apache.http.config.Registry;
+import org.apache.http.config.RegistryBuilder;
+import org.apache.http.conn.socket.ConnectionSocketFactory;
+import org.apache.http.conn.socket.PlainConnectionSocketFactory;
+import org.apache.http.conn.ssl.NoopHostnameVerifier;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.apache.http.conn.ssl.TrustStrategy;
 import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.entity.mime.content.FileBody;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.protocol.HTTP;
+import org.apache.http.ssl.SSLContextBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.MediaType;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.web.client.RestTemplate;
 import sun.misc.BASE64Decoder;
 import sun.misc.BASE64Encoder;
 
 
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLContext;
+import javax.security.cert.CertificateException;
+import javax.security.cert.X509Certificate;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.Map;
 
@@ -223,26 +248,21 @@ public class SterlingApiUtils {
      * @param documentLink
      * @return
      */
-    public static boolean createScreeningDocument(String screeingId,String documentLink) {
+    public static boolean createScreeningDocument(String screeingId,String documentLink) throws IOException {
         if(StringUtils.isBlank(screeingId) || StringUtils.isBlank(documentLink)){
             return false;
         }
-        //byte[] fileByteArray = FileUtils.webUrlConvertByteArray(documentLink);
-
-
+        byte[] fileByteArray = FileUtils.webUrlConvertByteArray(documentLink);
         String post = String.format(sterlingHost +"/v1/screenings/%s/documents?party=candidate&documentType=end-user-agreement",screeingId);
-        Map<String,String> headers =Maps.newHashMap();
-        headers.put("Authorization", String.format(BEARER_FORMATE, getAccessToken()));
-        headers.put("cache-control", "no-cache");
-        headers.put(HTTP.CONTENT_TYPE,"text/plain");
 
-        MultipartEntityBuilder builder = MultipartEntityBuilder.create();
-        builder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
-        File file= new File("/Users/liyang/Desktop/3094294-20161222-011004.jpg");
-        builder.addPart("aa", new FileBody(file));
+        org.springframework.http.HttpHeaders httpHeaders = new org.springframework.http.HttpHeaders();
+        httpHeaders.add("Authorization", String.format(BEARER_FORMATE, getAccessToken()));
+        httpHeaders.setContentType(MediaType.APPLICATION_OCTET_STREAM);
 
-        String response = HttpClientUtils.postWithEntity(post,builder.build(),null,headers);
-        System.out.println(response);
+        String response = HttpClientUtils.postBinaryFile(post,fileByteArray,httpHeaders);
+        if(StringUtils.isNotBlank(response)){
+            return true;
+        }
         return false;
     }
 
@@ -286,7 +306,7 @@ public class SterlingApiUtils {
      * @return
      */
     public static String getAccessToken(){
-        String result = "{\"error\":null,\"message\":null,\"moreInfo\":null,\"access_token\":\"eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6Ik56VTFORE13UlRFeU1UaEJOME5FUkVGQlJEbEZOMEZETURCRE5UYzVSVUUwUmtaRE5rVTFPQSJ9.eyJuYW1lIjoiQVBJVXNlckBWSVBLSUQuY29tIiwiZW1haWwiOiJBUElVc2VyQFZJUEtJRC5jb20iLCJyb2xlcyI6WyIvaW50djEvR0VUL2hlYWx0aCIsIi9pbnR2MS9HRVQvc3RhdHMiLCIvaW50djEvUE9TVC9jYW5kaWRhdGVzIiwiL2ludHYxL0dFVC9jYW5kaWRhdGVzIiwiL2ludHYxL0dFVC9jYW5kaWRhdGVzL3thbnl9IiwiL2ludHYxL1BVVC9jYW5kaWRhdGVzL3thbnl9IiwiL2ludHYxL1BPU1QvY2FuZGlkYXRlcy97YW55fS9kb2N1bWVudHMiLCIvaW50djEvR0VUL2NhbmRpZGF0ZXMve2FueX0vZG9jdW1lbnRzIiwiL2ludHYxL1BPU1QvY2FuZGlkYXRlcy97YW55fS90cnVzdCIsIi9pbnR2MS9QT1NUL3NjcmVlbmluZ3MiLCIvaW50djEvR0VUL3NjcmVlbmluZ3MiLCIvaW50djEvR0VUL3NjcmVlbmluZ3Mve2FueX0iLCIvaW50djEvUE9TVC9zY3JlZW5pbmdzL3thbnl9L3JlcG9ydC1saW5rcyIsIi9pbnR2MS9QT1NUL3NjcmVlbmluZ3Mve2FueX0vYWR2ZXJzZS1hY3Rpb25zIiwiL2ludHYxL0dFVC9zY3JlZW5pbmdzL3thbnl9L3JlcG9ydCIsIi9pbnR2MS9QT1NUL3NjcmVlbmluZ3Mve2FueX0vZG9jdW1lbnRzIiwiL2ludHYxL0dFVC9zY3JlZW5pbmdzL3thbnl9L2RvY3VtZW50cyIsIi9pbnR2MS9QT1NUL3N1YnNjcmlwdGlvbnMiLCIvaW50djEvUE9TVC9zdWJzY3JpcHRpb25zL3thbnl9IiwiL2ludHYxL0dFVC9zdWJzY3JpcHRpb25zL3thbnl9IiwiL2ludHYxL0dFVC9zdWJzY3JpcHRpb25zL3thbnl9L2V2ZW50cyIsIi9pbnR2MS9HRVQvc3Vic2NyaXB0aW9ucy97YW55fS9wYWNrYWdlcyIsIi9pbnR2MS9QT1NUL3N1YnNjcmlwdGlvbnMve2FueX0vZW5hYmxlIiwiL2ludHYxL1BPU1Qvc3Vic2NyaXB0aW9ucy97YW55fS9kaXNhYmxlIiwiL2ludHYxL1BPU1Qvc3Vic2NyaXB0aW9ucy97YW55fS9qb2IiLCIvaW50djEvREVMRVRFL3N1YnNjcmlwdGlvbnMve2FueX0iLCIvaW50djEvUE9TVC9pZGVudGl0aWVzIiwiL2ludHYxL0dFVC9pZGVudGl0aWVzL3thbnl9IiwiL2ludHYxL1BPU1QvaWRlbnRpdGllcy97YW55fS9yZXRyeSIsIi9pbnR2MS9HRVQvaWRlbnRpdGllcy97YW55fS92ZXJpZmljYXRpb24iLCIvaW50djEvUFVUL2lkZW50aXRpZXMve2FueX0vdmVyaWZpY2F0aW9uIiwiL2ludHYxL1BBVENIL2lkZW50aXRpZXMve2FueX0vdmVyaWZpY2F0aW9uIiwiL2ludHYxL0RFTEVURS9pZGVudGl0aWVzL3thbnl9IiwiL2ludHYxL1BPU1QvdHJ1c3RlZC11c2VycyIsIi9pbnR2MS9HRVQvdHJ1c3RlZC11c2Vycy97YW55fSIsIi9pbnR2MS9ERUxFVEUvdHJ1c3RlZC11c2Vycy97YW55fSIsIi9pbnR2MS9QT1NUL3RydXN0cyIsIi9pbnR2MS9HRVQvdHJ1c3RzL3thbnl9IiwiL2ludHYxL0RFTEVURS90cnVzdHMve2FueX0iLCIvaW50djEvR0VUL29uZXRpbWUtcmVwb3J0LWxpbmtzL3thbnl9IiwiL2ludHYxL0dFVC9wYWNrYWdlcyIsIi9pbnR2MS9HRVQvYWR2ZXJzZS1hY3Rpb25zIiwiL2ludHYxL0dFVC9nb2R6aWxsYS9tZXRyaWNzIiwiL2ludHYxL0dFVC9nb2R6aWxsYS9zdWJzY3JpcHRpb25zLW1ldHJpY3MiXSwiaXNzIjoiaHR0cHM6Ly9zdGVybGluZ2JhY2tjaGVjay5hdXRoMC5jb20vIiwic3ViIjoiYXV0aDB8MTcxMzEyNDQiLCJhdWQiOiJDYkNidENvVmtjSzdMOUFmR1dndnJNT3l5cVVYN0wyQSIsImV4cCI6MTQ4OTUwNjYwMywiaWF0IjoxNDg5NDcwNjAzfQ.XATLzRxIFyKIJZAeGvdLzjDbAgR-UdB233Uc0rzC-TE4bIUxq3DZCnRGrn5hogfpLvCMZdJIf6xr2m7jWruduIFvFQxOYvmMLKH4RAwj1M5CNLCIALnBSJOrenu7DfnzVKwGdmeK55hAxqm4BcVLDY1UCEZXLadxx1_Uin_thNmi6mefncfHAx1CQdkGrTbJ6VnmACAzto8JPLeNgxtm68W5ROk2TMi3H7uxh4DLSXvZsTY-bjFgP8BYFUbwakj-YzuY-EHs1AKwZE7vDpPcWMuM94m60CuIGhh_VaNtmTa_E7uGRzQkVbpHVBKFTe3Y74_6Rdkku_xs4Hdq-xEwHQ\",\"token_type\":\"bearer\",\"expires_in\":36000}";
+        String result = "{\"error\":null,\"message\":null,\"moreInfo\":null,\"access_token\":\"eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6Ik56VTFORE13UlRFeU1UaEJOME5FUkVGQlJEbEZOMEZETURCRE5UYzVSVUUwUmtaRE5rVTFPQSJ9.eyJuYW1lIjoiQVBJVXNlckBWSVBLSUQuY29tIiwiZW1haWwiOiJBUElVc2VyQFZJUEtJRC5jb20iLCJyb2xlcyI6WyIvaW50djEvR0VUL2hlYWx0aCIsIi9pbnR2MS9HRVQvc3RhdHMiLCIvaW50djEvUE9TVC9jYW5kaWRhdGVzIiwiL2ludHYxL0dFVC9jYW5kaWRhdGVzIiwiL2ludHYxL0dFVC9jYW5kaWRhdGVzL3thbnl9IiwiL2ludHYxL1BVVC9jYW5kaWRhdGVzL3thbnl9IiwiL2ludHYxL1BPU1QvY2FuZGlkYXRlcy97YW55fS9kb2N1bWVudHMiLCIvaW50djEvR0VUL2NhbmRpZGF0ZXMve2FueX0vZG9jdW1lbnRzIiwiL2ludHYxL1BPU1QvY2FuZGlkYXRlcy97YW55fS90cnVzdCIsIi9pbnR2MS9QT1NUL3NjcmVlbmluZ3MiLCIvaW50djEvR0VUL3NjcmVlbmluZ3MiLCIvaW50djEvR0VUL3NjcmVlbmluZ3Mve2FueX0iLCIvaW50djEvUE9TVC9zY3JlZW5pbmdzL3thbnl9L3JlcG9ydC1saW5rcyIsIi9pbnR2MS9QT1NUL3NjcmVlbmluZ3Mve2FueX0vYWR2ZXJzZS1hY3Rpb25zIiwiL2ludHYxL0dFVC9zY3JlZW5pbmdzL3thbnl9L3JlcG9ydCIsIi9pbnR2MS9QT1NUL3NjcmVlbmluZ3Mve2FueX0vZG9jdW1lbnRzIiwiL2ludHYxL0dFVC9zY3JlZW5pbmdzL3thbnl9L2RvY3VtZW50cyIsIi9pbnR2MS9QT1NUL3N1YnNjcmlwdGlvbnMiLCIvaW50djEvUE9TVC9zdWJzY3JpcHRpb25zL3thbnl9IiwiL2ludHYxL0dFVC9zdWJzY3JpcHRpb25zL3thbnl9IiwiL2ludHYxL0dFVC9zdWJzY3JpcHRpb25zL3thbnl9L2V2ZW50cyIsIi9pbnR2MS9HRVQvc3Vic2NyaXB0aW9ucy97YW55fS9wYWNrYWdlcyIsIi9pbnR2MS9QT1NUL3N1YnNjcmlwdGlvbnMve2FueX0vZW5hYmxlIiwiL2ludHYxL1BPU1Qvc3Vic2NyaXB0aW9ucy97YW55fS9kaXNhYmxlIiwiL2ludHYxL1BPU1Qvc3Vic2NyaXB0aW9ucy97YW55fS9qb2IiLCIvaW50djEvREVMRVRFL3N1YnNjcmlwdGlvbnMve2FueX0iLCIvaW50djEvUE9TVC9pZGVudGl0aWVzIiwiL2ludHYxL0dFVC9pZGVudGl0aWVzL3thbnl9IiwiL2ludHYxL1BPU1QvaWRlbnRpdGllcy97YW55fS9yZXRyeSIsIi9pbnR2MS9HRVQvaWRlbnRpdGllcy97YW55fS92ZXJpZmljYXRpb24iLCIvaW50djEvUFVUL2lkZW50aXRpZXMve2FueX0vdmVyaWZpY2F0aW9uIiwiL2ludHYxL1BBVENIL2lkZW50aXRpZXMve2FueX0vdmVyaWZpY2F0aW9uIiwiL2ludHYxL0RFTEVURS9pZGVudGl0aWVzL3thbnl9IiwiL2ludHYxL1BPU1QvdHJ1c3RlZC11c2VycyIsIi9pbnR2MS9HRVQvdHJ1c3RlZC11c2Vycy97YW55fSIsIi9pbnR2MS9ERUxFVEUvdHJ1c3RlZC11c2Vycy97YW55fSIsIi9pbnR2MS9QT1NUL3RydXN0cyIsIi9pbnR2MS9HRVQvdHJ1c3RzL3thbnl9IiwiL2ludHYxL0RFTEVURS90cnVzdHMve2FueX0iLCIvaW50djEvR0VUL29uZXRpbWUtcmVwb3J0LWxpbmtzL3thbnl9IiwiL2ludHYxL0dFVC9wYWNrYWdlcyIsIi9pbnR2MS9HRVQvYWR2ZXJzZS1hY3Rpb25zIiwiL2ludHYxL0dFVC9nb2R6aWxsYS9tZXRyaWNzIiwiL2ludHYxL0dFVC9nb2R6aWxsYS9zdWJzY3JpcHRpb25zLW1ldHJpY3MiXSwiaXNzIjoiaHR0cHM6Ly9zdGVybGluZ2JhY2tjaGVjay5hdXRoMC5jb20vIiwic3ViIjoiYXV0aDB8MTcxMzEyNDQiLCJhdWQiOiJDYkNidENvVmtjSzdMOUFmR1dndnJNT3l5cVVYN0wyQSIsImV4cCI6MTQ4OTU3NzAwNiwiaWF0IjoxNDg5NTQxMDA2fQ.SxkIUP1lMkNfiFxGBTiPiZLW8ENkFsF3hUsZ42EllNNXw4RHRJas4-2wV21nT0cYeRtUCxCV1tK8D2LBrY_cRup01NORKAsCVTN8q25YnBorX_U-JiJaeBvLd11ZAOlk2OACOgCwgHaN2UP9zb7k1w3Or2ncuKMfXhaLXttqSsDSPH-3nR3cVq8-ZbmkvdMxzGBOyGXMKGDv5yy8mk2IPjX5ZXQOLnc8KmjjvyR15GJRth7m6CQ9K-1Ot7sEnAI_fsZXr-lYlMZJab-weFAWUUkhFHkTTb60ZWSnXDoA6KgJByC4ls1LCr0rvu4LKsc1m3DxUgmmvWgxvZTAHhBHAw\",\"token_type\":\"bearer\",\"expires_in\":36000}";
         SterlingAccessToken sterlingAccessToken = JacksonUtils.readJson(result, new TypeReference<SterlingAccessToken>() {});
         return sterlingAccessToken.getAccess_token();
     }

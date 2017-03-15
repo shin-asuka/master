@@ -4,6 +4,7 @@ import org.apache.commons.collections.*;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.*;
+import org.apache.http.HttpEntity;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.HttpResponseException;
 import org.apache.http.client.ResponseHandler;
@@ -20,6 +21,7 @@ import org.apache.http.conn.ConnectTimeoutException;
 import org.apache.http.conn.socket.ConnectionSocketFactory;
 import org.apache.http.conn.socket.LayeredConnectionSocketFactory;
 import org.apache.http.conn.socket.PlainConnectionSocketFactory;
+import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.conn.ssl.SSLContexts;
 import org.apache.http.conn.ssl.TrustStrategy;
@@ -31,17 +33,24 @@ import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntity;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.entity.mime.content.FileBody;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.message.BasicHeader;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.HTTP;
+import org.apache.http.ssl.SSLContextBuilder;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.*;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 import sun.misc.BASE64Encoder;
 
+import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
 import java.io.File;
 import java.io.IOException;
@@ -69,6 +78,8 @@ import java.util.Map;
  * @since 2016/11/16 下午2:51
  */
 public class HttpClientUtils {
+
+
 
 
     /**
@@ -111,42 +122,52 @@ public class HttpClientUtils {
 
     private static final int MAX_TOTAL = 400;
 
+    private static HttpComponentsClientHttpRequestFactory clientHttpRequestFactory = null;
+
+    private static RestTemplate restTemplate = null;
+
     static {
         LayeredConnectionSocketFactory ssl = null;
 
-        final SSLContext sslcontext;
-        try {
-            sslcontext = SSLContexts.custom().useTLS().loadTrustMaterial(
-                    KeyStore.getInstance(KeyStore.getDefaultType()), new TrustStrategy() {
 
-                        @Override
-                        public boolean isTrusted(X509Certificate[] chain, String authType)
-                                throws CertificateException {
-                            return true;
-                        }
-                    }).build();
-            ssl = new SSLConnectionSocketFactory(sslcontext,SSLConnectionSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
-        } catch (KeyStoreException e) {
-            throw new RuntimeException(e);
-        } catch (KeyManagementException e) {
-            throw new RuntimeException(e);
+        SSLContext sslContext = null;
+        try {
+            sslContext = new SSLContextBuilder().loadTrustMaterial(null, new TrustStrategy() {
+
+
+                public boolean isTrusted(java.security.cert.X509Certificate[] arg0, String arg1) {
+                    return true;
+                }
+            }).build();
+
         } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
+        } catch (KeyManagementException e) {
+            e.printStackTrace();
+        } catch (KeyStoreException e) {
+            e.printStackTrace();
         }
 
-        final Registry<ConnectionSocketFactory> sfr = RegistryBuilder.<ConnectionSocketFactory>create()
+        final  HostnameVerifier hostnameVerifier = NoopHostnameVerifier.INSTANCE;
+
+        SSLConnectionSocketFactory sslSocketFactory = new SSLConnectionSocketFactory(sslContext, hostnameVerifier);
+        Registry<ConnectionSocketFactory> socketFactoryRegistry = RegistryBuilder.<ConnectionSocketFactory>create()
                 .register("http", PlainConnectionSocketFactory.getSocketFactory())
-                .register("https", ssl)
+                .register("https", sslSocketFactory)
                 .build();
 
-        PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager(sfr);
+        PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager(socketFactoryRegistry);
         connectionManager.setDefaultMaxPerRoute(DEFAULT_MAX_PER_ROUTE);
         connectionManager.setMaxTotal(MAX_TOTAL);
 
-        RequestConfig requestConfig = RequestConfig.custom().setSocketTimeout(READ_TIMEOUT).setConnectTimeout(
-                CONNECTION_TIMEOUT).build();//设置请求和传输超时时间
+        RequestConfig requestConfig = RequestConfig.custom().setSocketTimeout(READ_TIMEOUT).setConnectTimeout(CONNECTION_TIMEOUT).build();//设置请求和传输超时时间
 
-        CLIENT = HttpClientBuilder.create().setDefaultRequestConfig(requestConfig).setConnectionManager(connectionManager).build();
+        HttpClientBuilder b = HttpClientBuilder.create();
+        CLIENT = HttpClientBuilder.create().setSSLContext(sslContext).setDefaultRequestConfig(requestConfig).setConnectionManager(connectionManager).build();
+
+        clientHttpRequestFactory = new HttpComponentsClientHttpRequestFactory(CLIENT);
+
+        restTemplate = new RestTemplate(clientHttpRequestFactory);
 
     }
 
@@ -280,37 +301,15 @@ public class HttpClientUtils {
         return content;
     }
 
-    public static String postBinaryFile(String url , InputStream file, Map<String,String> headers){
 
+    public static String postBinaryFile(String post, byte[] fileByteArray, HttpHeaders httpHeaders) {
+        org.springframework.http.HttpEntity<byte[]> httpEntity = new org.springframework.http.HttpEntity<>(fileByteArray, httpHeaders);
 
-        HttpEntity entity = EntityBuilder.create()
-                //.setContentEncoding(Consts.UTF_8.name())
-                //.setContentType(ContentType.create("text/plain",Consts.UTF_8))
-                .setStream(file).build();
-        return postWithEntity(url,entity,null,headers);
-    }
-
-
-    public static String postBinaryFile(String url ,File file,Map<String,String> headers){
-
-
-        HttpEntity entity = EntityBuilder.create()
-                //.setContentEncoding(Consts.UTF_8.name())
-                //.setContentType(ContentType.create("text/plain",Consts.UTF_8))
-                .setFile(file).build();
-        return postWithEntity(url,entity,null,headers);
-    }
-
-    public static String postBinaryFile(String url ,byte[] fileByteArray,Map<String,String> headers){
-        BASE64Encoder base64Encoder = new BASE64Encoder();
-        String file = base64Encoder.encode(fileByteArray);
-        System.out.println(file);
-        HttpEntity entity = EntityBuilder.create()
-//                //.setContentEncoding(Consts.UTF_8.name())
-                .setContentType(ContentType.create("text/plain", Consts.UTF_8))
-                .setText(file).build();
-//        HttpEntity entity = new ByteArrayEntity(fileByteArray);
-        return postWithEntity(url,entity,null,headers);
+        org.springframework.http.ResponseEntity responseEntity = restTemplate.postForEntity(post, httpEntity, org.springframework.http.ResponseEntity.class);
+        if(responseEntity.getStatusCode().value() == 201){
+            return "success";
+        }
+        return StringUtils.EMPTY;
     }
 
     public static String postWithEntity(String url,HttpEntity entity,String defaultEncoding,Map<String,String> headers){

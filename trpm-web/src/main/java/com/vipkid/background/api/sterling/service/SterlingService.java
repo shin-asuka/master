@@ -9,6 +9,7 @@ import com.vipkid.background.api.sterling.dto.*;
 import com.vipkid.trpm.dao.BackgroundAdverseDao;
 import com.vipkid.trpm.dao.BackgroundReportDao;
 import com.vipkid.trpm.dao.BackgroundScreeningDao;
+import com.vipkid.trpm.dao.BackgroundScreeningV2Dao;
 import com.vipkid.trpm.entity.BackgroundAdverse;
 import com.vipkid.trpm.entity.BackgroundReport;
 import com.vipkid.trpm.entity.BackgroundScreening;
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Nullable;
+import javax.annotation.Resource;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
@@ -38,14 +40,17 @@ public class SterlingService {
         callback.setUri(PropertyConfigurer.stringValue("background.sterling.callback.uri"));
     }
 
-    @Autowired
-    private BackgroundScreeningDao backgroundScreeningDao;
+//    @Resource
+//    private BackgroundScreeningDao backgroundScreeningDao;
 
     @Autowired
     private BackgroundReportDao backgroundReportDao;
 
     @Autowired
     private BackgroundAdverseDao backgroundAdverseDao;
+
+    @Autowired
+    private BackgroundScreeningV2Dao backgroundScreeningDao;
 
 
 
