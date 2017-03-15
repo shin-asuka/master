@@ -43,14 +43,14 @@ public class SterlingService {
 //    @Resource
 //    private BackgroundScreeningDao backgroundScreeningDao;
 
-    @Autowired
+    @Resource
     private BackgroundReportDao backgroundReportDao;
 
-    @Autowired
+    @Resource
     private BackgroundAdverseDao backgroundAdverseDao;
 
-    @Autowired
-    private BackgroundScreeningV2Dao backgroundScreeningDao;
+    @Resource
+    private BackgroundScreeningV2Dao backgroundScreeningV2Dao;
 
 
 
@@ -60,19 +60,19 @@ public class SterlingService {
         BackgroundScreening backgroundScreening = transformBackgroundScreening(candidateInputDto);
         backgroundScreening.setCandidateId(sterlingCandidate.getId());
 
-        return backgroundScreeningDao.insert(backgroundScreening);
+        return backgroundScreeningV2Dao.insert(backgroundScreening);
     }
 
     public int updateCandidate(CandidateInputDto candidateInputDto) {
         SterlingCandidate sterlingCandidate = SterlingApiUtils.updateCandidate(candidateInputDto);
         BackgroundScreening backgroundScreening = transformBackgroundScreening(candidateInputDto);
 
-        return backgroundScreeningDao.update(backgroundScreening);
+        return backgroundScreeningV2Dao.update(backgroundScreening);
     }
 
     @Transactional(readOnly = false)
     public Long createScreening(Long teacherId) {
-        BackgroundScreening backgroundScreening = backgroundScreeningDao.findByTeacherIdTopOne(teacherId);
+        BackgroundScreening backgroundScreening = backgroundScreeningV2Dao.findByTeacherIdTopOne(teacherId);
         if(backgroundScreening == null ){
             return null;
         }
@@ -90,7 +90,7 @@ public class SterlingService {
         backgroundScreening.setStatus(sterlingScreening.getStatus());
         backgroundScreening.setScreeningId(sterlingScreening.getId());
         //更新 bg_sterling_screening 表的数据
-        backgroundScreeningDao.update(backgroundScreening);
+        backgroundScreeningV2Dao.update(backgroundScreening);
         if(CollectionUtils.isNotEmpty(sterlingScreening.getReportItems())){
             //插入report表
             List<BackgroundReport> backgroundReportList = Lists.newArrayList();
@@ -116,7 +116,7 @@ public class SterlingService {
 
     public Integer createPreAdverse(Long teacherId) {
 
-        BackgroundScreening backgroundScreening = backgroundScreeningDao.findByTeacherIdTopOne(teacherId);
+        BackgroundScreening backgroundScreening = backgroundScreeningV2Dao.findByTeacherIdTopOne(teacherId);
         if(backgroundScreening == null){
             return null;
         }

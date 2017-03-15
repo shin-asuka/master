@@ -30,6 +30,12 @@
 		<beans:property name="dataSource" ref="dataSource" />
 	</beans:bean>
 
+	<!-- 扫描basePackage下所有以Dao的接口 -->
+	<bean id="mapperScannerConfigurer" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory" />
+		<property name="basePackage" value="com.vipkid.trpm.dao"/>
+	</bean>
+
 	<tx:advice id="txAdvice" transaction-manager="transactionManager">
 		<tx:attributes>
 			<tx:method name="get*" read-only="true" />
