@@ -127,6 +127,6 @@
         bg_sterling_screening s
         WHERE
         s.teacher_id =#{teacherId}
-        ORDER BY DESC LIMIT 1
+        ORDER BY s.id DESC LIMIT 1
     </select>
 </mapper>

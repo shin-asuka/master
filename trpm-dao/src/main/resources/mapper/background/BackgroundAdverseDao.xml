@@ -42,4 +42,10 @@
 
       </foreach>
     </insert>
+    <select id="findUpdateTimeByScreeningIdTopOne" resultType="java.util.Date">
+        SELECT ba.update_time
+        FROM bg_sterling_adverse ba
+        WHERE  ba.bg_sterling_screening_id = #{screeningId}
+        ORDER BY id DESC LIMIT 1
+    </select>
 </mapper>

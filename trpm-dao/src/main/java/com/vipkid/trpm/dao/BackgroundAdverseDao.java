@@ -12,4 +12,6 @@ import java.util.List;
 public interface BackgroundAdverseDao {
 
     int batchInsert(List<BackgroundAdverse> backgroundAdverseList) ;
+
+    Date  findUpdateTimeByScreeningIdTopOne(long ScreeningId);
 }

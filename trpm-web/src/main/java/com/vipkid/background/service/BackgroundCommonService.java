@@ -9,7 +9,8 @@ import com.vipkid.enums.TeacherApplicationEnum.ContractFileType;
 import com.vipkid.enums.TeacherEnum.LifeCycle;
 import com.vipkid.recruitment.dao.TeacherContractFileDao;
 import com.vipkid.recruitment.entity.TeacherContractFile;
-import com.vipkid.trpm.dao.BackgroundScreeningDao;
+import com.vipkid.trpm.dao.BackgroundAdverseDao;
+import com.vipkid.trpm.dao.BackgroundScreeningV2Dao;
 import com.vipkid.trpm.entity.BackgroundScreening;
 import com.vipkid.trpm.entity.Teacher;
 import org.apache.commons.collections.CollectionUtils;
@@ -29,10 +30,13 @@ import java.util.Map;
 public class BackgroundCommonService {
 
     @Autowired
-    private BackgroundScreeningDao backgroundScreeningDao;
+    private BackgroundScreeningV2Dao backgroundScreeningV2Dao;
 
     @Autowired
     private TeacherContractFileDao teacherContractFileDao;
+
+    @Autowired
+    private BackgroundAdverseDao backgroundAdverseDao;
 
     private static Logger logger = LoggerFactory.getLogger(BackgroundCommonService.class);
 
@@ -40,77 +44,79 @@ public class BackgroundCommonService {
         Map<String, Object> result = Maps.newHashMap();
         Calendar currnet = Calendar.getInstance();
         currnet.add(Calendar.MONTH, 1);
-        BackgroundScreening backgroundScreening = backgroundScreeningDao.findByTeacherId(teacher.getId());
+        BackgroundScreening backgroundScreening = backgroundScreeningV2Dao.findByTeacherIdTopOne(teacher.getId());
         //没有背调结果，即第一次开始背调
         if (null == backgroundScreening) {
             result.put("needBackgroundCheck", true);
             result.put("phase", BackgroundPhase.START);
             return result;
-        }
-        if (teacher.getContractEndDate().after(currnet.getTime()) || StringUtils.equals(teacher.getLifeCycle(), LifeCycle.CONTRACT_INFO.toString())) {
-            boolean in5Days = false;
-            currnet.add(Calendar.MONTH, -1);
-            //TODO
-            Date adverseTime = backgroundScreening.getUpdateTime();
-            currnet.add(Calendar.DATE, 5);
-            if (adverseTime.before(currnet.getTime())) {
-                in5Days = true;
-            }
+        } else {
+            if (teacher.getContractEndDate().after(currnet.getTime()) || StringUtils.equals(teacher.getLifeCycle(), LifeCycle.CONTRACT_INFO.toString())) {
+                boolean in5Days = false;
+                long screeningId = backgroundScreening.getId();
+                currnet.add(Calendar.MONTH, -1);
+                //TODO
+                Date adverseTime = backgroundAdverseDao.findUpdateTimeByScreeningIdTopOne(screeningId);
+                currnet.add(Calendar.DATE, 5);
+                if (adverseTime.before(currnet.getTime())) {
+                    in5Days = true;
+                }
 
-            currnet.add(Calendar.DATE, -5);
-            currnet.add(Calendar.YEAR, -2);
-            //上次背调超过两年需要进行背调，不超过两年需要根据result和disputeStatus进行判断
-            if (currnet.getTime().after(backgroundScreening.getUpdateTime())) {
-                result.put("needBackgroundCheck", true);
-                result.put("phase", BackgroundPhase.START.getVal());
-            } else {
-                String backgroundResult = backgroundScreening.getResult();
-                String disputeStatus = backgroundScreening.getStatus();
-                switch (backgroundResult) {
-                    //开始背调，背调结果结果为N/A
-                    case "N/A":
-                        result.put("needBackgroundCheck", true);
-                        result.put("phase", BackgroundPhase.PENDING.getVal());
-                        result.put("result", BackgroundResult.NA.getVal());
-                        break;
-                    //背调结果为CLEAR，不再需要进行背调
-                    case "CLEAR":
-                        result.put("needBackgroundCheck", false);
-                        result.put("phase", BackgroundPhase.CLEAR.getVal());
-                        result.put("result", BackgroundResult.CLEAR.getVal());
-                        break;
-                    //背调结果为ALERT，需根据disputeStatus进行判断
-                    case "ALERT":
-                        //disputeStatus为null
-                        if (null == disputeStatus) {
-                            //在5天内可以进行dispute，超过5天不允许在进行dispute
-                            if (in5Days) {
-                                result.put("needBackgroundCheck", true);
-                                result.put("phase", BackgroundPhase.PREADVERSE.getVal());
-                                result.put("result", BackgroundResult.ALERT.getVal());
-                            } else {
-                                result.put("needBackgroundCheck", false);
-                                result.put("result", BackgroundResult.ALERT.getVal());
-                                result.put("phase", BackgroundPhase.FAIL.getVal());
-                            }
+                currnet.add(Calendar.DATE, -5);
+                currnet.add(Calendar.YEAR, -2);
+                //上次背调超过两年需要进行背调，不超过两年需要根据result和disputeStatus进行判断
+                if (currnet.getTime().after(backgroundScreening.getUpdateTime())) {
+                    result.put("needBackgroundCheck", true);
+                    result.put("phase", BackgroundPhase.START.getVal());
+                } else {
+                    String backgroundResult = backgroundScreening.getResult();
+                    String disputeStatus = backgroundScreening.getStatus();
+                    switch (backgroundResult) {
+                        //开始背调，背调结果结果为N/A
+                        case "N/A":
+                            result.put("needBackgroundCheck", true);
+                            result.put("phase", BackgroundPhase.PENDING.getVal());
+                            result.put("result", BackgroundResult.NA.getVal());
+                            break;
+                        //背调结果为CLEAR，不再需要进行背调
+                        case "CLEAR":
+                            result.put("needBackgroundCheck", false);
+                            result.put("phase", BackgroundPhase.CLEAR.getVal());
+                            result.put("result", BackgroundResult.CLEAR.getVal());
+                            break;
+                        //背调结果为ALERT，需根据disputeStatus进行判断
+                        case "ALERT":
+                            //disputeStatus为null
+                            if (null == disputeStatus) {
+                                //在5天内可以进行dispute，超过5天不允许在进行dispute
+                                if (in5Days) {
+                                    result.put("needBackgroundCheck", true);
+                                    result.put("phase", BackgroundPhase.PREADVERSE.getVal());
+                                    result.put("result", BackgroundResult.ALERT.getVal());
+                                } else {
+                                    result.put("needBackgroundCheck", false);
+                                    result.put("result", BackgroundResult.ALERT.getVal());
+                                    result.put("phase", BackgroundPhase.FAIL.getVal());
+                                }
 
-                        } else {
-                            //diaputeStatus为ACTIVE表明正在进行dispute，为DEACTIVATED表明disputed失败
-                            if (StringUtils.equalsIgnoreCase(disputeStatus, DisputeStatus.ACTIVE.toString())) {
-                                result.put("needBackgroundCheck", true);
-                                result.put("phase", BackgroundPhase.DISPUTE.getVal());
                             } else {
-                                result.put("needBackgroundCheck", false);
-                                result.put("phase", BackgroundPhase.FAIL.getVal());
+                                //diaputeStatus为ACTIVE表明正在进行dispute，为DEACTIVATED表明disputed失败
+                                if (StringUtils.equalsIgnoreCase(disputeStatus, DisputeStatus.ACTIVE.toString())) {
+                                    result.put("needBackgroundCheck", true);
+                                    result.put("phase", BackgroundPhase.DISPUTE.getVal());
+                                } else {
+                                    result.put("needBackgroundCheck", false);
+                                    result.put("phase", BackgroundPhase.FAIL.getVal());
+                                }
                             }
-                        }
-                        result.put("result", BackgroundResult.ALERT.getVal());
-                        break;
+                            result.put("result", BackgroundResult.ALERT.getVal());
+                            break;
+                    }
                 }
             }
-        }
 
-        return result;
+            return result;
+        }
     }
 
     public Map<String, Object> getBackgroundFileStatus(long teacherId, String teacherCountry) {
@@ -165,11 +171,11 @@ public class BackgroundCommonService {
             hasFile = false;
         }
 
-        if (StringUtils.equalsIgnoreCase(teacherCountry, "USA")){
-            result.put("UsaFileResult",UsaFileResult);
-        }else{
-            result.put("CanadaFirstFileResult",CanadaFirstFileResult);
-            result.put("CanadaSecondFileResult",CanadaSecondFileResult);
+        if (StringUtils.equalsIgnoreCase(teacherCountry, "USA")) {
+            result.put("UsaFileResult", UsaFileResult);
+        } else {
+            result.put("CanadaFirstFileResult", CanadaFirstFileResult);
+            result.put("CanadaSecondFileResult", CanadaSecondFileResult);
         }
 
         result.put("hasFile", hasFile);
