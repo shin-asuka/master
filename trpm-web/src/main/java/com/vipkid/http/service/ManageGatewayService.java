@@ -75,7 +75,7 @@ public class ManageGatewayService extends HttpBaseService {
 		tagsMap.put("上课环境布置差","Classroom setup");
 		tagsMap.put("老师迟到","Late");
 		tagsMap.put("课程未上完","Unfinished");
-		tagsMap.put("课堂气氛不活跃","Fatigued");
+		tagsMap.put("课堂氛围不活跃","Fatigued");
 		tagsMap.put("不就重点纠错","Correction");
 		tagsMap.put("不耐心","Impatient");
 		tagsMap.put("肢体语言少","Body language");
