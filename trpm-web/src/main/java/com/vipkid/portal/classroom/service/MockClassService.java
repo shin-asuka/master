@@ -154,14 +154,14 @@ public class MockClassService {
         // set tags
         List<TeacherPeTags> peTagsList = teacherPeTagsDao.getTeacherPeTagsByApplicationId(applicationId);
         if (CollectionUtils.isNotEmpty(peTagsList)) {
-            peReviewOutputDto.setTagsList(peTagsList.stream().map(peTags -> new Integer(peTags.getId()))
+            peReviewOutputDto.setTagsList(peTagsList.stream().map(peTags -> new Integer(peTags.getTagId()))
                             .collect(Collectors.toList()));
         }
 
         // set levels
         List<TeacherPeLevels> peLevelsList = teacherPeLevelsDao.getTeacherPeLevelsByApplicationId(applicationId);
         if (CollectionUtils.isNotEmpty(peLevelsList)) {
-            peReviewOutputDto.setLevelsList(peLevelsList.stream().map(peLevels -> new Integer(peLevels.getId()))
+            peReviewOutputDto.setLevelsList(peLevelsList.stream().map(peLevels -> new Integer(peLevels.getLevel()))
                             .collect(Collectors.toList()));
         }
 
@@ -288,8 +288,8 @@ public class MockClassService {
                 teacherApplicationDao.update(teacherApplication);
                 logger.info("Pe doAudit mockClass, teacherApplication: {}", JsonUtils.toJSONString(teacherApplication));
 
-                if (StringUtils.equals(Result.PASS.name(), result)) {
-                    // TODO 合并 tags ???
+                if (StringUtils.equals(peDoAuditInputDto.getStatus(), MockClassEnum.SUBMIT.name())) {
+                    // TODO 合并 tags
                 }
 
                 // Finish 课程

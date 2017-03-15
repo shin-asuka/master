@@ -80,10 +80,12 @@ public class MockClassControllerTest {
 
         List<Integer> tagsList = Lists.newArrayList();
         tagsList.add(12);
+        tagsList.add(23);
         peReviewOutputDto.setTagsList(tagsList);
 
         List<Integer> levelsList = Lists.newArrayList();
         levelsList.add(10);
+        levelsList.add(22);
         peReviewOutputDto.setLevelsList(levelsList);
 
         logger.info(JsonUtils.toJSONString(peReviewOutputDto));
@@ -101,7 +103,7 @@ public class MockClassControllerTest {
         peDoAuditInputDto.setApplicationId(16535);
         peDoAuditInputDto.setTeachTrailClass(0);
 
-        peDoAuditInputDto.setPeId(132243);
+        peDoAuditInputDto.setTeacherPeId(132243);
 
         List<Integer> tagsList = Lists.newArrayList();
         tagsList.add(12);
