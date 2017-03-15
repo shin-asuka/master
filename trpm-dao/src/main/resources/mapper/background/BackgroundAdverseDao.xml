@@ -14,7 +14,7 @@
 
 
 
-    <insert id="batchInsert" parameterType="java.util.List">
+    <insert id="batchInsert" parameterType="java.util.List" useGeneratedKeys="true">
 
       INSERT INTO bg_sterling_adverse (
         id,

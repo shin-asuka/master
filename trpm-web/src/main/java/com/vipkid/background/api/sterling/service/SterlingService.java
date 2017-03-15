@@ -60,30 +60,36 @@ public class SterlingService {
 
 
 
-    public Long createCandidate(CandidateInputDto candidateInputDto) {
+    @Transactional(readOnly = false)
+    public CandidateOutputDto createCandidate(CandidateInputDto candidateInputDto) {
         SterlingCandidate sterlingCandidate = SterlingApiUtils.createCandidate(candidateInputDto);
         if(CollectionUtils.isNotEmpty(sterlingCandidate.getErrors())){
             logger.warn("param:{},error:{}", JacksonUtils.toJSONString(candidateInputDto),JacksonUtils.toJSONString(sterlingCandidate.getErrors()));
-            return null;
+            return new CandidateOutputDto(null,Integer.valueOf(sterlingCandidate.getErrors().get(0).getErrorCode()),sterlingCandidate.getErrors().get(0).getErrorMessage());
         }
 
         BackgroundScreening backgroundScreening = transformBackgroundScreening(candidateInputDto,sterlingCandidate);
-
-        return backgroundScreeningV2Dao.insert(backgroundScreening);
-    }
-
-    public Long updateCandidate(CandidateInputDto candidateInputDto) {
-        SterlingCandidate sterlingCandidate = SterlingApiUtils.updateCandidate(candidateInputDto);
-        BackgroundScreening backgroundScreening = backgroundScreeningV2Dao.findByTeacherIdTopOne(candidateInputDto.getTeacherId());
-
-        return backgroundScreening.getId();
+        Long id = backgroundScreeningV2Dao.insert(backgroundScreening);
+        return new CandidateOutputDto(id,null,null);
     }
 
     @Transactional(readOnly = false)
-    public Long createScreening(Long teacherId,String documentUrl) {
+    public CandidateOutputDto updateCandidate(CandidateInputDto candidateInputDto) {
+        SterlingCandidate sterlingCandidate = SterlingApiUtils.updateCandidate(candidateInputDto);
+        if(CollectionUtils.isNotEmpty(sterlingCandidate.getErrors())){
+            logger.warn("param:{},error:{}", JacksonUtils.toJSONString(candidateInputDto),JacksonUtils.toJSONString(sterlingCandidate.getErrors()));
+            return new CandidateOutputDto(null,Integer.valueOf(sterlingCandidate.getErrors().get(0).getErrorCode()),sterlingCandidate.getErrors().get(0).getErrorMessage());
+        }
+        BackgroundScreening backgroundScreening = backgroundScreeningV2Dao.findByTeacherIdTopOne(candidateInputDto.getTeacherId());
+
+        return new CandidateOutputDto(backgroundScreening.getId(),null,null);
+    }
+
+    @Transactional(readOnly = false)
+    public ScreeningOutputDto createScreening(Long teacherId,String documentUrl) {
         BackgroundScreening backgroundScreening = backgroundScreeningV2Dao.findByTeacherIdTopOne(teacherId);
         if(backgroundScreening == null ){
-            return null;
+            return new ScreeningOutputDto(null,10000,"没有找到这个老师");
         }
         ScreeningInputDto screeningInputDto = new ScreeningInputDto();
         screeningInputDto.setPackageId(PropertyConfigurer.stringValue("background.sterling.pakcageId"));
@@ -93,11 +99,11 @@ public class SterlingService {
 
         SterlingScreening sterlingScreening =SterlingApiUtils.createScreening(screeningInputDto);
         if (sterlingScreening == null) {
-            return null;
+            return new ScreeningOutputDto(null,10000,"没有返回结果");
         }
 
         if (CollectionUtils.isNotEmpty(sterlingScreening.getErrors())) {
-            return null;
+            return new ScreeningOutputDto(null,Integer.valueOf(sterlingScreening.getErrors().get(0).getErrorCode()),sterlingScreening.getErrors().get(0).getErrorMessage());
         }
         //返回字段保存
         backgroundScreening.setSubmittedAt(DateUtils.convertzDateTime(sterlingScreening.getSubmittedAt()));
@@ -129,10 +135,10 @@ public class SterlingService {
 
         boolean isSuccess = SterlingApiUtils.createScreeningDocument(sterlingScreening.getId(),documentUrl);
         if(isSuccess){
-            return backgroundScreening.getId();
+            return new ScreeningOutputDto(backgroundScreening.getId(),null,null);
         }
 
-        return null;
+        return new ScreeningOutputDto(null,10000,"上传文档没有成功");
     }
 
     public Integer createPreAdverse(Long teacherId) {

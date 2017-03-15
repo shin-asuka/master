@@ -3,8 +3,7 @@ package com.vipkid.background.api.sterling.controller;
 import com.amazonaws.util.json.Jackson;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.google.common.collect.Maps;
-import com.vipkid.background.api.sterling.dto.CandidateInputDto;
-import com.vipkid.background.api.sterling.dto.SterlingCallBack;
+import com.vipkid.background.api.sterling.dto.*;
 import com.vipkid.background.api.sterling.service.SterlingApiUtils;
 import com.vipkid.background.api.sterling.service.SterlingService;
 import com.vipkid.http.utils.JacksonUtils;
@@ -50,13 +49,13 @@ public class SterlingApiController {
             return ApiResponseUtils.buildErrorResp(105002,"email 为空");
         }
 
-        Long id = sterlingService.createCandidate(candidateInputDto);
-        if (null == id) {
-            return ApiResponseUtils.buildErrorResp(105002, "执行失败");
+        CandidateOutputDto candidateOutputDto = sterlingService.createCandidate(candidateInputDto);
+        if (StringUtils.isNotBlank(candidateOutputDto.getErrorMessage())) {
+            return ApiResponseUtils.buildErrorResp(105003, candidateOutputDto.getErrorMessage());
         }
 
         Map<String,Object> result= Maps.newHashMap();
-        result.put("bgSterlingScreeningId",id);
+        result.put("bgSterlingScreeningId",candidateOutputDto.getId());
         return ApiResponseUtils.buildSuccessDataResp(result);
     }
 
@@ -76,9 +75,12 @@ public class SterlingApiController {
             return ApiResponseUtils.buildErrorResp(105002,"候选人ID不能为空");
         }
 
-        Long id  = sterlingService.updateCandidate(candidateInputDto);
+        CandidateOutputDto candidateOutputDto  = sterlingService.updateCandidate(candidateInputDto);
+        if(StringUtils.isNotBlank(candidateOutputDto.getErrorMessage())){
+            return ApiResponseUtils.buildErrorResp(105003, candidateOutputDto.getErrorMessage());
+        }
         Map<String,Object> result= Maps.newHashMap();
-        result.put("bgSterlingScreeningId",id);
+        result.put("bgSterlingScreeningId",candidateOutputDto.getId());
         return ApiResponseUtils.buildSuccessDataResp(result);
     }
 
@@ -86,9 +88,12 @@ public class SterlingApiController {
     @RequestMapping("/createScreening")
     public Object createScreening(Long teacherId,String documentUrl){
         logger.info("teacher:{}",teacherId);
-        Long id = sterlingService.createScreening(teacherId,documentUrl);
+        ScreeningOutputDto screeningOutputDto = sterlingService.createScreening(teacherId,documentUrl);
+        if(StringUtils.isNotBlank(screeningOutputDto.getErrorMessage())){
+            return ApiResponseUtils.buildErrorResp(screeningOutputDto.getErrorCode(),screeningOutputDto.getErrorMessage());
+        }
         Map<String,Object> result= Maps.newHashMap();
-        result.put("bgSterlingScreeningId",id);
+        result.put("bgSterlingScreeningId",screeningOutputDto.getId());
         return ApiResponseUtils.buildSuccessDataResp("success");
     }
 
