@@ -84,7 +84,24 @@ public class BasicInfoService {
 
     private static List<String>  SensitiveWords = Lists.newArrayList();
     static {
+        SensitiveWords.add("BB");
+        SensitiveWords.add("XX");
         SensitiveWords.add("SB");
+        SensitiveWords.add("BT");
+        SensitiveWords.add("FK");
+        SensitiveWords.add("EG");
+        SensitiveWords.add("FE");
+        SensitiveWords.add("FO");
+        SensitiveWords.add("IC");
+        SensitiveWords.add("IP");
+        SensitiveWords.add("IQ");
+        SensitiveWords.add("NM");
+        SensitiveWords.add("NP");
+        SensitiveWords.add("OT");
+        SensitiveWords.add("OZ");
+        SensitiveWords.add("PO");
+        SensitiveWords.add("RU");
+        SensitiveWords.add("SH");
     }
 
     /**s
