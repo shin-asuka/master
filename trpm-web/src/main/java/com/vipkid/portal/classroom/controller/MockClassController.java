@@ -60,9 +60,10 @@ public class MockClassController extends RestfulController {
 
     @RequestMapping(value = "/pe/doAudit", method = RequestMethod.PUT, produces = RestfulConfig.JSON_UTF_8)
     public Map<String, Object> peDoAudit(HttpServletRequest request, HttpServletResponse response,
-                    @RequestBody PeDoAuditInputDto peDoAuditInputDto) {
+                    @RequestBody String json) {
         try {
-            logger.info("Invocation peDoAudit() request body: {}", JsonUtils.toJSONString(peDoAuditInputDto));
+            logger.info("Invocation peDoAudit() request body: {}", json);
+            PeDoAuditInputDto peDoAuditInputDto = JsonUtils.toBean(json, PeDoAuditInputDto.class);
 
             if (null == peDoAuditInputDto.getApplicationId() || 0 == peDoAuditInputDto.getApplicationId()) {
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
