@@ -78,7 +78,7 @@ public class ManageGatewayService extends HttpBaseService {
 		tagsMap.put("课堂氛围不活跃","Inactive class");
 		tagsMap.put("不就重点纠错","Lack of correction");
 		tagsMap.put("不耐心","Impatient");
-		tagsMap.put("肢体语言少","Lack of body language");
+		tagsMap.put("肢体语言少","lack of TPR");
 	}
 
 	public List<StudentCommentVo> getStudentCommentListByBatch(String idsStr) {
