@@ -29,6 +29,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -66,20 +67,16 @@ public class ManageGatewayService extends HttpBaseService {
 	@Autowired
 	private ActivityService activityService;
 
-	public static Map<String,String> tagsMap;
-
-	@PostConstruct
-	public void  init(){
-		tagsMap = Maps.newHashMap();
-		tagsMap.put("网络不稳定","Unstable Internet");
-		tagsMap.put("上课环境布置差","Poor class environment");
-		tagsMap.put("老师迟到","Teacher was late");
-		tagsMap.put("课程未上完","Slides Unfinished");
-		tagsMap.put("课堂氛围不活跃","Inactive class");
-		tagsMap.put("不就重点纠错","Lack of correction");
-		tagsMap.put("不耐心","Impatient");
-		tagsMap.put("肢体语言少","lack of TPR");
-	}
+	public final static Map<String,String> tagsMap = new HashMap() {{
+		put("网络不稳定","Unstable Internet");
+		put("上课环境布置差","Poor class environment");
+		put("老师迟到","Teacher was late");
+		put("课程未上完","Slides Unfinished");
+		put("课堂氛围不活跃","Inactive class");
+		put("不就重点纠错","Lack of correction");
+		put("不耐心","Impatient");
+		put("肢体语言少","lack of TPR");
+	}};
 
 	public List<StudentCommentVo> getStudentCommentListByBatch(String idsStr) {
 
