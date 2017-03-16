@@ -12,4 +12,6 @@ public interface BackgroundScreeningV2Dao {
     int update(BackgroundScreening backgroundScreening);
 
     BackgroundScreening findByTeacherIdTopOne(Long teacherId);
+
+    BackgroundScreening findById(Long id);
 }

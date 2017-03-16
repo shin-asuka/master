@@ -14,6 +14,8 @@ import com.vipkid.trpm.entity.BackgroundAdverse;
 import com.vipkid.trpm.entity.BackgroundReport;
 import com.vipkid.trpm.entity.BackgroundScreening;
 import com.vipkid.trpm.util.DateUtils;
+import com.vipkid.trpm.util.Function;
+import com.vipkid.trpm.util.MapUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.community.config.PropertyConfigurer;
@@ -24,9 +26,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 
+import java.security.UnresolvedPermission;
 import java.util.Date;
 import java.util.List;
 
+import java.util.Map;
 import java.util.stream.Collectors;
 
 
@@ -74,6 +78,7 @@ public class SterlingService {
         return new CandidateOutputDto(id,null,null);
     }
 
+
     @Transactional(readOnly = false)
     public CandidateOutputDto updateCandidate(CandidateInputDto candidateInputDto) {
         if(StringUtils.isBlank(candidateInputDto.getCandidateId())){
@@ -92,6 +97,85 @@ public class SterlingService {
 
         return new CandidateOutputDto(backgroundScreening.getId(),null,null);
     }
+
+    /**
+     * 修补候选人数据
+     * @param teacherId
+     * @param backgroundSterlingId
+     * @return
+     */
+    public CandidateOutputDto repairDataCandidate(Long teacherId,Long backgroundSterlingId){
+        BackgroundScreening sterlingScreening = backgroundScreeningV2Dao.findByTeacherIdTopOne(teacherId);
+        if(null == sterlingScreening){
+            return new CandidateOutputDto(null,10000,String.format("teacherId:%s,在表中不存在",teacherId));
+        }
+        if(StringUtils.isNotBlank(sterlingScreening.getCandidateId())){
+            return new CandidateOutputDto(null,10000,String.format("Candidate数据不需要修复,teacherId:%s,backgroundSterlingId:%s",teacherId,backgroundSterlingId));
+        }
+        CandidateFilterDto candidateFilterDto =new CandidateFilterDto();
+        //TODO 调用雪林给的接口
+        List<SterlingCandidate> sterlingCandidateList = SterlingApiUtils.getCandidateList(candidateFilterDto);
+        if(CollectionUtils.isEmpty(sterlingCandidateList)){
+            return new CandidateOutputDto(null ,10000,"没有查到");
+        }
+
+        for(SterlingCandidate sterlingCandidate:sterlingCandidateList){
+            BackgroundScreening screening = new BackgroundScreening();
+            screening.setCandidateId(sterlingCandidate.getId());
+            screening.setId(backgroundSterlingId);
+            backgroundScreeningV2Dao.update(screening);
+        }
+        return new CandidateOutputDto(backgroundSterlingId,null,null);
+    }
+
+    /**
+     * 修复Screening 相关的数据
+     * @param backgroundSterlingId
+     * @return
+     */
+    public ScreeningOutputDto repairDateScreeing(Long backgroundSterlingId){
+        BackgroundScreening backgroundScreening = backgroundScreeningV2Dao.findById(backgroundSterlingId);
+
+        if(backgroundScreening == null){
+            return new ScreeningOutputDto(null ,10000,String.format("id:%s 为ID的数据不存在",backgroundSterlingId));
+        }
+
+        if(StringUtils.isBlank(backgroundScreening.getScreeningId())){
+            return new ScreeningOutputDto(null,10000,String.format("id:%s 为ID的数据没有screeningId",backgroundSterlingId));
+        }
+
+        SterlingScreening sterlingScreening = SterlingApiUtils.getScreening(backgroundScreening.getScreeningId());
+        if(null == sterlingScreening){
+            return new ScreeningOutputDto(null,10000,String.format("id:%s 为ID的Screening 在Sterling系统中没有查到",backgroundSterlingId));
+        }
+
+        BackgroundScreening updateBackgroundScreening = new BackgroundScreening();
+        updateBackgroundScreening.setId(backgroundSterlingId);
+        updateBackgroundScreening.setStatus(sterlingScreening.getStatus());
+        updateBackgroundScreening.setResult(sterlingScreening.getResult());
+        updateBackgroundScreening.setUpdateAt(DateUtils.convertzDateTime(sterlingScreening.getUpdatedAt()));
+        updateBackgroundScreening.setUpdateTime(new Date());
+
+        backgroundScreeningV2Dao.update(updateBackgroundScreening);
+
+        if(CollectionUtils.isNotEmpty(sterlingScreening.getAdverseActions())){
+            List<BackgroundAdverse> backgroundAdverseList =  backgroundAdverseDao.findUpdateTimeByBgScreeningId(backgroundScreening.getId());
+            if(CollectionUtils.isEmpty(backgroundAdverseList)){
+                //数据库里没有
+                batchInsertBackgroundAdverse(sterlingScreening,backgroundScreening.getId());
+            }else{
+                batchUpdateBackgroundAdverse(sterlingScreening,backgroundAdverseList);
+
+            }
+        }
+
+        return new ScreeningOutputDto(backgroundSterlingId,null,null);
+
+    }
+
+
+
+
 
     @Transactional(readOnly = false)
     public ScreeningOutputDto createScreening(Long teacherId,String documentUrl) {
@@ -128,15 +212,6 @@ public class SterlingService {
             List<BackgroundReport> backgroundReportList = transformBackgroundReport(sterlingScreening,backgroundScreening.getId());
             int row = backgroundReportDao.batchInsert(backgroundReportList);
         }
-//        else{
-//            SterlingScreening getSterlingScreening = SterlingApiUtils.getScreening(backgroundScreening.getScreeningId());
-//            if (null != getSterlingScreening) {
-//                List<BackgroundReport> backgroundReportList = transformBackgroundReport(getSterlingScreening,backgroundScreening.getId());
-//                if(CollectionUtils.isNotEmpty(backgroundReportList)) {
-//                    int row = backgroundReportDao.batchInsert(backgroundReportList);
-//                }
-//            }
-//        }
 
         boolean isSuccess = SterlingApiUtils.createScreeningDocument(sterlingScreening.getId(),documentUrl);
         if(isSuccess){
@@ -146,44 +221,40 @@ public class SterlingService {
         return new ScreeningOutputDto(null,10000,"上传文档没有成功");
     }
 
-    public Integer createPreAdverse(Long teacherId) {
+    public AdverseOutputDto createPreAdverse(Long teacherId) {
 
         BackgroundScreening backgroundScreening = backgroundScreeningV2Dao.findByTeacherIdTopOne(teacherId);
         if(backgroundScreening == null){
-            return null;
+            return new AdverseOutputDto(null,10000,String.format("teacherId:%s screeing记录不存在",teacherId));
         }
         List<BackgroundReport> backgroundReportList = backgroundReportDao.findByBgSterlingScreeningId(backgroundScreening.getId());
         if(CollectionUtils.isEmpty(backgroundReportList)){
-            return null;
+            return new AdverseOutputDto(null,10000,String.format("bgScreeingId:%s report记录不存在",backgroundScreening.getId()));
         }
 
         List<String> reportItemIdList = backgroundReportList.stream().map(map -> map.getReportId()).collect(Collectors.toList());
 
         boolean preAdverseAction =SterlingApiUtils.preAdverseAction(backgroundScreening.getScreeningId(),reportItemIdList);
+        if(!preAdverseAction){
+            return new AdverseOutputDto(null,10000,String.format("ScreeingId:%s 请求Sterling失败",backgroundScreening.getScreeningId()));
+        }
         SterlingScreening sterlingScreening = SterlingApiUtils.getScreening(backgroundScreening.getScreeningId());
         if(sterlingScreening == null){
-            return null;
+            return new AdverseOutputDto(null,10000,String.format("ScreeingId:%s 请求Sterling失败",backgroundScreening.getScreeningId()));
         }
         if(CollectionUtils.isNotEmpty(sterlingScreening.getAdverseActions())){
-            List<BackgroundAdverse> backgroundAdverseList = Lists.newArrayList();
-
-            for(SterlingCallBack.AdverseAction adverseAction:sterlingScreening.getAdverseActions()){
-                BackgroundAdverse backgroundAdverse =new BackgroundAdverse();
-                backgroundAdverse.setBgSterlingScreeningId(backgroundScreening.getId());
-                backgroundAdverse.setUpdateTime(new Date());
-                backgroundAdverse.setCreateTime(new Date());
-                backgroundAdverse.setScreeningId(sterlingScreening.getId());
-                backgroundAdverse.setActionsId(adverseAction.getId());
-                backgroundAdverse.setActionsStatus(adverseAction.getStatus());
-                backgroundAdverse.setActionsUpdatedAt(DateUtils.convertzDateTime(adverseAction.getUpdatedAt()));
-                backgroundAdverseList.add(backgroundAdverse);
-            }
-            backgroundAdverseDao.batchInsert(backgroundAdverseList);
+            batchInsertBackgroundAdverse(sterlingScreening,backgroundScreening.getId());
         }
-        return 0;
+        return new AdverseOutputDto(teacherId,null,null);
     }
 
 
+    /**
+     *
+     * @param candidateInputDto
+     * @param sterlingCandidate
+     * @return
+     */
     private BackgroundScreening transformBackgroundScreening(CandidateInputDto candidateInputDto, SterlingCandidate sterlingCandidate) {
         if (candidateInputDto == null) {
             return null;
@@ -197,6 +268,12 @@ public class SterlingService {
         return backgroundScreening;
     }
 
+    /**
+     * 转换report表
+     * @param sterlingScreening
+     * @param backgroundScreeningId
+     * @return
+     */
     private List<BackgroundReport> transformBackgroundReport(SterlingScreening sterlingScreening,Long backgroundScreeningId){
         List<BackgroundReport> backgroundReportList = Lists.newArrayList();
         for(SterlingCallBack.ReportItem reportItem:sterlingScreening.getReportItems()){
@@ -214,4 +291,69 @@ public class SterlingService {
         }
         return backgroundReportList;
     }
+
+
+    /**
+     * 批量插入Adverse表
+     * @param sterlingScreening
+     * @param backgroundScreeningId
+     * @return
+     */
+    private int batchInsertBackgroundAdverse(SterlingScreening sterlingScreening,Long backgroundScreeningId){
+        List<BackgroundAdverse> backgroundAdverseList = Lists.newArrayList();
+
+        for(SterlingCallBack.AdverseAction adverseAction:sterlingScreening.getAdverseActions()){
+            BackgroundAdverse backgroundAdverse =new BackgroundAdverse();
+            backgroundAdverse.setBgSterlingScreeningId(backgroundScreeningId);
+            backgroundAdverse.setUpdateTime(new Date());
+            backgroundAdverse.setCreateTime(new Date());
+            backgroundAdverse.setScreeningId(sterlingScreening.getId());
+            backgroundAdverse.setActionsId(adverseAction.getId());
+            backgroundAdverse.setActionsStatus(adverseAction.getStatus());
+            backgroundAdverse.setActionsUpdatedAt(DateUtils.convertzDateTime(adverseAction.getUpdatedAt()));
+            backgroundAdverseList.add(backgroundAdverse);
+        }
+        return backgroundAdverseDao.batchInsert(backgroundAdverseList);
+    }
+
+
+    /**
+     * 批量修改Adverse 表
+     * @param sterlingScreening
+     * @param backgroundAdverseList
+     */
+    private void batchUpdateBackgroundAdverse(SterlingScreening sterlingScreening,List<BackgroundAdverse> backgroundAdverseList) {
+
+        //数据库里有
+        Map<String,SterlingCallBack.AdverseAction> adverseActionMap = MapUtils.transformListToMap(sterlingScreening.getAdverseActions(), new Function<String, SterlingCallBack.AdverseAction>() {
+            @Override
+            public String apply(SterlingCallBack.AdverseAction input) {
+                return input.getId();
+            }
+        });
+        List<BackgroundAdverse> updateBackgroundAdverseList =Lists.newArrayList();
+        for(BackgroundAdverse backgroundAdverse :backgroundAdverseList){
+            SterlingCallBack.AdverseAction remoteAdverseAction = adverseActionMap.get(backgroundAdverse.getActionsId());
+            if(null == remoteAdverseAction){
+                continue;
+            }
+            BackgroundAdverse updateBackgroundAdverse =new BackgroundAdverse();
+            updateBackgroundAdverse.setUpdateTime(new Date());
+            updateBackgroundAdverse.setId(backgroundAdverse.getId());
+            updateBackgroundAdverse.setActionsStatus(remoteAdverseAction.getStatus());
+            updateBackgroundAdverse.setActionsUpdatedAt(DateUtils.convertzDateTime(remoteAdverseAction.getUpdatedAt()));
+            updateBackgroundAdverseList.add(updateBackgroundAdverse);
+        }
+
+        if(CollectionUtils.isEmpty(updateBackgroundAdverseList)){
+            return ;
+        }
+
+        for(BackgroundAdverse backgroundAdverse:updateBackgroundAdverseList){
+            backgroundAdverseDao.update(backgroundAdverse);
+        }
+    }
+
+
+
 }

@@ -101,11 +101,15 @@ public class SterlingApiController {
     @RequestMapping("/createPreAdverse")
     public Object createPreAdverse(Long teacherId){
         logger.info("teacher:{}",teacherId);
-        int row = sterlingService.createPreAdverse(teacherId);
+        AdverseOutputDto adverseOutputDto = sterlingService.createPreAdverse(teacherId);
+        if(StringUtils.isNotBlank(adverseOutputDto.getErrorMessage())){
+            return ApiResponseUtils.buildErrorResp(adverseOutputDto.getErrorCode(),adverseOutputDto.getErrorMessage());
+        }
         Map<String,Object> result= Maps.newHashMap();
-//        result.put("bgSterlingScreeningId",id);
+        result.put("teacherId",adverseOutputDto.getId());
         return ApiResponseUtils.buildSuccessDataResp("success");
     }
+
 
 
 
@@ -117,6 +121,15 @@ public class SterlingApiController {
         SterlingCallBack.Payload  payloadObject= JacksonUtils.readJson(payload, new TypeReference<SterlingCallBack.Payload>() {});
         return ApiResponseUtils.buildSuccessDataResp("success");
     }
+
+//----------下面是测试的
+    @RequestMapping("/repairDateScreeing")
+    public Object repairDataCandidate(Long backgroundSterlingId){
+        ScreeningOutputDto screeningOutputDto = sterlingService.repairDateScreeing(backgroundSterlingId);
+        return ApiResponseUtils.buildSuccessDataResp(screeningOutputDto);
+    }
+
+
 
 
 

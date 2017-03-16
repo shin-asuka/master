@@ -14,4 +14,8 @@ public interface BackgroundAdverseDao {
     int batchInsert(List<BackgroundAdverse> backgroundAdverseList) ;
 
     Date  findUpdateTimeByScreeningIdTopOne(long ScreeningId);
+
+    List<BackgroundAdverse> findUpdateTimeByBgScreeningId(Long bgScreeningId);
+
+    int update(BackgroundAdverse backgroundAdverse);
 }

@@ -2,6 +2,7 @@ package com.vipkid.background.api.sterling.service;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 
+import com.google.api.client.util.Lists;
 import com.google.api.client.util.Maps;
 
 import com.vipkid.background.api.sterling.dto.*;
@@ -129,6 +130,53 @@ public class SterlingApiUtils {
     }
 
 
+    public static List<SterlingCandidate> getCandidateList(CandidateFilterDto candidateFilterDto){
+
+        String getUrl = sterlingHost+"/v1/candidates";
+
+        Map<String,String> headers = Maps.newHashMap();
+        headers.put("Authorization",String.format(BEARER_FORMATE,getAccessToken()));
+
+        Map<String,Object> params = Maps.newHashMap();
+
+        if(StringUtils.isNotBlank(candidateFilterDto.getClientReferenceId())){
+            params.put("clientReferenceId",candidateFilterDto.getClientReferenceId());
+        }
+        if(StringUtils.isNotBlank(candidateFilterDto.getEmail())){
+            params.put("email",candidateFilterDto.getEmail());
+        }
+        if(StringUtils.isNotBlank(candidateFilterDto.getFamilyName())){
+            params.put("familyName",candidateFilterDto.getFamilyName());
+        }
+        if(StringUtils.isNotBlank(candidateFilterDto.getGivenName())){
+            params.put("givenName",candidateFilterDto.getGivenName());
+        }
+        if(null != candidateFilterDto.getLimit()){
+            params.put("limit",candidateFilterDto.getLimit());
+        }
+        if(null != candidateFilterDto.getOffset()){
+            params.put("offset",candidateFilterDto.getOffset());
+        }
+
+        if(org.springframework.util.CollectionUtils.isEmpty(params)){
+            return Lists.newArrayList();
+        }
+        StringBuilder getUrlBuilder = new StringBuilder(getUrl+"?");
+        for (Map.Entry<String, Object> entry: params.entrySet()){
+            getUrlBuilder.append(entry.getKey()).append("=").append(entry.getValue()).append("&");
+        }
+        String requestUrl = getUrlBuilder.substring(0,getUrlBuilder.length()-1);
+        String response = HttpClientUtils.get(requestUrl,headers);
+        if(StringUtils.isBlank(response)){
+            return Lists.newArrayList();
+        }
+
+        List<SterlingCandidate> sterlingCandidateList = JacksonUtils.readJson(response, new TypeReference<List<SterlingCandidate>>() {});
+
+
+        return sterlingCandidateList;
+    }
+
     /**
      * 给一个候选人创建一个"筛选"，用于作背景调查
      * @param screeningInputDto
@@ -170,6 +218,8 @@ public class SterlingApiUtils {
         SterlingScreening sterlingScreening = JacksonUtils.readJson(response, new TypeReference<SterlingScreening>() {});
         return sterlingScreening;
     }
+
+
 
 
     /**
@@ -247,6 +297,10 @@ public class SterlingApiUtils {
         }
         return false;
     }
+
+
+
+
 
 
 
