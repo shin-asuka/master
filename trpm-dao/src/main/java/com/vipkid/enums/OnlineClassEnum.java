@@ -57,6 +57,62 @@ public class OnlineClassEnum {
 
     }
     
+    public enum CourseName{
+    	
+    	DEMOREPORT("DemoReport","a"),
+    	
+    	OPEN("Open","open"),
+    	
+    	TRIAL("Trial","t"),
+    	
+    	PRACTICUM1("Practicum1","l1"),
+    	
+    	PRACTICUM2("Practicum2","l2"),
+    	
+    	PRACTICUM("Practicum","p"),
+    	
+    	RECRUITMENT("Recruitment","r"),
+    	
+    	MAJOR2016("Major2016","mc"),
+    	
+    	MAJOR("Major","c"),
+    	
+    	IT_TEST("IT_Test","it"),
+    	
+    	UNKNOWN("Unknown","unknown");
+    	
+        private String val;
+        
+        private String show;
+        
+        private CourseName(String show,String val) {
+            this.show = show;
+            this.val = val;
+        }        
+        public String val() {
+            return val;
+        }
+        public String show() {
+            return show;
+        }
+        
+        public static String obtainCourseName(String lessonSn){
+            lessonSn = lessonSn.toLowerCase();
+            for (CourseName name:CourseName.values()) {
+	        	if(lessonSn.startsWith(CourseName.PRACTICUM.val())){
+	        		 if(lessonSn.endsWith(CourseName.PRACTICUM1.val())){
+	                 	return CourseName.PRACTICUM1.show();
+	                 }else if(lessonSn.endsWith(CourseName.PRACTICUM2.val())){
+	                 	return CourseName.PRACTICUM2.show();
+	                 }
+	                 return CourseName.PRACTICUM.show();
+	        	}else if(lessonSn.startsWith(name.val())){
+					return name.show();
+				}
+            }
+            return CourseName.UNKNOWN.show();
+		}
+    }
     
 
     /* 课程类型定义 */

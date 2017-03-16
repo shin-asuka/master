@@ -1,8 +1,10 @@
 package com.vipkid.rest.web;
 
 import java.io.IOException;
+
 import java.sql.Timestamp;
 import java.util.Date;
+
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -222,7 +224,7 @@ public class LoginController extends RestfulController {
 			if (LifeCycle.REGULAR.toString().equalsIgnoreCase(teacher.getLifeCycle())
 					|| LifeCycle.QUIT.toString().equalsIgnoreCase(teacher.getLifeCycle())) {
 				logger.warn(bean.getEmail() + ",登陆状态为REGULAR");
-				loginService.changePasswordNotice(response, bean.getPassword());
+				// loginService.changePasswordNotice(response, bean.getPassword());
 				/* 设置老师能教的课程类型列表 */
 				loginService.setCourseTypes(user.getId(), loginService.getCourseType(user.getId()));
 			}

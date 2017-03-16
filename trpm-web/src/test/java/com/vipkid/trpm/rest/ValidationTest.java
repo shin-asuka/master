@@ -5,6 +5,9 @@ import java.util.List;
 import org.community.tools.JsonTools;
 import org.junit.Test;
 
+import com.vipkid.portal.classroom.model.PeCommentsVo;
+import com.vipkid.portal.classroom.util.BeanUtils;
+import com.vipkid.recruitment.entity.TeacherApplication;
 import com.vipkid.rest.dto.TeachingExperienceDto;
 import com.vipkid.rest.validation.ValidateUtils;
 import com.vipkid.rest.validation.tools.Result;
@@ -40,4 +43,22 @@ public class ValidationTest {
         //System.out.println(AppUtils.containsName(AppEnum.Gender.class, "MALE1"));
         
     }
+    
+    
+    public static void main(String[] args) {
+		
+    	TeacherApplication teacherApplication = new TeacherApplication();
+    	teacherApplication.setDelayDays(1);
+    	
+    	PeCommentsVo bean = new PeCommentsVo();
+    	bean.setDelayDays(2);
+    	    	
+    	BeanUtils.copyPropertys(bean,teacherApplication);
+    	
+    	System.out.println("===="+bean.getDelayDays());
+    	System.out.println("===="+teacherApplication.getDelayDays());
+    	
+    	
+
+	}
 }

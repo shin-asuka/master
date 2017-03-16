@@ -30,6 +30,8 @@ public interface ApplicationConstant {
     public static final String TEACHER_IN_CLASSROOM_URL =
             PropertyConfigurer.stringValue("teacher.in.classroom.url");
 
+    public static final String TEACHER_SYSTEM_INFO_URL = PropertyConfigurer.stringValue("sys.info.url");    
+    
     /** 教师24小时放课口地址 */
     public static final String TEACHER_24HOUR_URL =
             PropertyConfigurer.stringValue("http.appServer");
