@@ -26,7 +26,9 @@ public class BackgroundCheckEnum {
 
         CLEAR("Clear"), // 背调结果为 clear
 
-        ALERT("Alert");//背调结果为 Alert
+        ALERT("Alert"),//背调结果为Alert即第一次背调失败
+
+        FAIL("Fail"); //背调结果为Fail
 
         private String value;
 

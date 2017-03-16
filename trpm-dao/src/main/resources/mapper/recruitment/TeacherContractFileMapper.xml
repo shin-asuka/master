@@ -112,9 +112,9 @@
         WHERE
         teacher_contract_file.teacher_id =#{teacherId}
         AND teacher_contract_file.file_type IN (9,10,11)
-        AND teacher_contract_file.screening_id != -1
         AND <![CDATA[ teacher_contract_file.update_time < DATE_ADD(NOW(), INTERVAL 1 YEAR)
         ]]>
+        AND teacher_contract_file.screening_id is NULL
 
     </select>
 
