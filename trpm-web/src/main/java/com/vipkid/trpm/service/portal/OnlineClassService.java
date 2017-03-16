@@ -172,16 +172,17 @@ public class OnlineClassService {
      * @Title: enterOpen
      * @param studentId
      * @param teacher
+     * @param user 
      * @param lesson
      * @return Map<String,Object>
      * @date 2016年1月15日
      */
-    public Map<String, Object> enterOpen(OnlineClass onlineClass, long studentId, Teacher teacher, Lesson lesson) {
+    public Map<String, Object> enterOpen(OnlineClass onlineClass, long studentId, Teacher teacher, User user, Lesson lesson) {
         logger.info("TeacherId:{} Open Course,onlineClassId:{},studentId:{}", teacher.getId(), onlineClass.getId(),
                 studentId);
         Map<String, Object> modelMap = Maps.newHashMap();
         modelMap.putAll(this.enterBefore(onlineClass, studentId, "OPEN"));
-        modelMap.putAll(OnlineClassProxy.generateRoomEnterUrl(String.valueOf(teacher.getId()), teacher.getRealName(),
+        modelMap.putAll(OnlineClassProxy.generateRoomEnterUrl(String.valueOf(teacher.getId()), user.getName(),
                 onlineClass.getClassroom(), OnlineClassProxy.RoomRole.TEACHER, onlineClass.getSupplierCode(),onlineClass.getId(),OnlineClassProxy.ClassType.OPEN));
 
         this.enterAfter(teacher, onlineClass);
@@ -193,11 +194,12 @@ public class OnlineClassService {
      *
      * @Title: enterPracticum
      * @param studentId
+     * @param user 
      * @param lesson
      * @return Map<String,Object>
      * @date 2016年1月15日
      */
-    public Map<String, Object> enterPracticum(OnlineClass onlineClass, long studentId, Teacher student, Lesson lesson) {
+    public Map<String, Object> enterPracticum(OnlineClass onlineClass, long studentId, Teacher student, User user, Lesson lesson) {
         Map<String, Object> modelMap = Maps.newHashMap();
 
         logger.info("TeacherId:{} Practicum Course,onlineClassId:{},studentId:{}", student.getId(), onlineClass.getId(),
@@ -252,11 +254,12 @@ public class OnlineClassService {
      * @Title: enterMajor
      * @param studentId
      * @param teacher
+     * @param user 
      * @param lesson
      * @return Map<String,Object>
      * @date 2016年1月15日
      */
-    public Map<String, Object> enterMajor(OnlineClass onlineClass, long studentId, Teacher teacher, Lesson lesson) {
+    public Map<String, Object> enterMajor(OnlineClass onlineClass, long studentId, Teacher teacher, User user, Lesson lesson) {
         logger.info("TeacherId:{}, Major Course onlineClassId:{},studentId:{}", teacher.getId(), onlineClass.getId(),
                 studentId);
         Map<String, Object> modelMap = Maps.newHashMap();
@@ -267,6 +270,7 @@ public class OnlineClassService {
         logger.info("TeacherId:{}, Major Course query stars : {},onlineClassId:{},studentId:{}", teacher.getId(), stars,
                 onlineClass.getId(), studentId);
         modelMap.put("stars", stars);
+
         //new solution
 //        Map<String, Object> starNumMap = getStarNum(onlineClass.getId(), teacher.getId(), studentId);
 //        logger.info("TeacherId:{}, Major Course query stars : {},onlineClassId:{},studentId:{}", teacher.getId(), JsonUtils.toJSONString(starNumMap),
@@ -276,7 +280,7 @@ public class OnlineClassService {
             DemoReport currentReport = demoReportDao.findByStudentIdAndOnlineClassId(studentId, onlineClass.getId());
             modelMap.put("currentReport", currentReport);
         }
-        modelMap.putAll(OnlineClassProxy.generateRoomEnterUrl(String.valueOf(teacher.getId()), teacher.getRealName(),
+        modelMap.putAll(OnlineClassProxy.generateRoomEnterUrl(String.valueOf(teacher.getId()), user.getName(),
                 onlineClass.getClassroom(), OnlineClassProxy.RoomRole.TEACHER, onlineClass.getSupplierCode(),onlineClass.getId(),OnlineClassProxy.ClassType.MAJOR));
 
         this.enterAfter(teacher, onlineClass);
@@ -1045,4 +1049,5 @@ public class OnlineClassService {
         }
         return resultMap;
     }
+
 }
