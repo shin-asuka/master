@@ -25,8 +25,11 @@ import org.apache.commons.lang3.time.DateFormatUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -36,7 +39,7 @@ import java.util.Map;
  * @date 2017年1月11日  下午17:36:00
  *
  */
-
+@Service
 public class ManageGatewayService extends HttpBaseService {
 
 	private static final Logger logger = LoggerFactory.getLogger(ManageGatewayService.class);
@@ -64,6 +67,17 @@ public class ManageGatewayService extends HttpBaseService {
 	@Autowired
 	private ActivityService activityService;
 
+	public final static Map<String,String> tagsMap = new HashMap() {{
+		put("网络不稳定","Unstable Internet");
+		put("上课环境布置差","Poor class environment");
+		put("老师迟到","Teacher was late");
+		put("课程未上完","Slides Unfinished");
+		put("课堂氛围不活跃","Inactive class");
+		put("不就重点纠错","Lack of correction");
+		put("不耐心","Impatient");
+		put("肢体语言少","lack of TPR");
+	}};
+
 	public List<StudentCommentVo> getStudentCommentListByBatch(String idsStr) {
 
 		List<StudentCommentVo> studentCommentApiList = Lists.newArrayList();
@@ -82,6 +96,7 @@ public class ManageGatewayService extends HttpBaseService {
 						studentCommentVo.setStudentAvatar(student.getAvatar());
 						studentCommentVo.setStudentName(student.getEnglishName());
 					}
+					studentCommentVo.setTagsEn(convertTagsToEn(studentCommentVo.getTags()));
 				}
 			}
 		} catch (Exception e) {
@@ -125,6 +140,7 @@ public class ManageGatewayService extends HttpBaseService {
 					}
 					String result = getTranslation(stuCommentApi.getId().longValue());
 					stuCommentApi.setTransaltion(StringUtils.isEmpty(result)? "":result);
+					stuCommentApi.setTagsEn(convertTagsToEn(stuCommentApi.getTags()));
 				}
 			}else{
 				studentCommentPageApi.setTotal(0);
@@ -224,26 +240,12 @@ public class ManageGatewayService extends HttpBaseService {
 		}
 		return ret;
 	}
-	/**
-	 * 计算双向分页
-	 * 默认单边的窗口大小为 10
-	 * 页数 = 左页数 + 1 + 右页数
-	*/
 
-	public Integer calculateAbsolutePosition(StudentCommentPageVo allCommentOfTeacher,Long onlineClassId){
-		Integer absolutePosition = 0;
-		Integer flag = 0;
-		for(Integer i=0;i<allCommentOfTeacher.getTotal();i++){
-			if(allCommentOfTeacher.getData().get(i).getClass_id().longValue() == onlineClassId){
-				absolutePosition = i;
-				flag = 1;
-				break;
-			}
+	public String[] convertTagsToEn(String[] zhTags){
+		String[] enTags = new String[zhTags.length];
+		for(int i=0;i<zhTags.length;i++){
+			enTags[i] = tagsMap.get(zhTags[i]);
 		}
-		if(flag == 1) {
-			return absolutePosition;
-		}else {
-			return -1;
-		}
-	}
+		return enTags;
+	};
 }
