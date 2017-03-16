@@ -1,5 +1,30 @@
 package com.vipkid.rest.web;
 
+import java.io.IOException;
+import java.sql.Timestamp;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.LockSupport;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.community.config.PropertyConfigurer;
+import org.community.tools.JsonTools;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.google.common.collect.Maps;
 import com.vipkid.enums.TeacherEnum;
 import com.vipkid.enums.TeacherEnum.LifeCycle;
@@ -23,35 +48,20 @@ import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.entity.User;
 import com.vipkid.trpm.security.SHA256PasswordEncoder;
 import com.vipkid.trpm.service.huanxin.HuanxinService;
-import com.vipkid.trpm.service.passport.NoticeService;
 import com.vipkid.trpm.service.passport.PassportService;
 import com.vipkid.trpm.util.Bean2Map;
 import com.vipkid.trpm.util.CookieUtils;
+import com.vipkid.trpm.util.DateUtils;
 import com.vipkid.trpm.util.IpUtils;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.community.config.PropertyConfigurer;
-import org.community.tools.JsonTools;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.*;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.locks.LockSupport;
 
 @RestController
 @RequestMapping("/user")
 public class LoginController extends RestfulController {
     
 
-    private static Logger logger = LoggerFactory.getLogger(LoginController.class);
+	private static final int TH_21_DAY = 21;
+
+	private static Logger logger = LoggerFactory.getLogger(LoginController.class);
 
     @Autowired
     private PassportService passportService;
@@ -165,11 +175,13 @@ public class LoginController extends RestfulController {
             // 检查老师状态是否QUIT
             logger.info("检查老师状态是否QUIT:{}",bean.getEmail());
             if (TeacherEnum.LifeCycle.QUIT.toString().equals(teacher.getLifeCycle())) {
-                //add
-                passportService.addLoginFailedCount(bean.getEmail());
-                logger.warn(bean.getEmail()+",账户status被QUIT.");
-                response.setStatus(HttpStatus.BAD_REQUEST.value());
-                return ReturnMapUtils.returnFail(AjaxCode.USER_QUIT,"账户已经Quit:"+bean.getEmail());
+            	boolean canLogin = getQuitStatus(user);
+				if (!canLogin) {
+					passportService.addLoginFailedCount(bean.getEmail());
+					logger.warn(bean.getEmail() + ",账户status被QUIT.");
+					response.setStatus(HttpStatus.BAD_REQUEST.value());
+					return ReturnMapUtils.returnFail(AjaxCode.USER_QUIT, "账户已经Quit:" + bean.getEmail());
+				}
             }
     
             // 检查用户状态是否锁住
@@ -207,12 +219,13 @@ public class LoginController extends RestfulController {
             result.put("loginToken", loginService.setLoginToken(response, user));
             result.put("LifeCycle", teacher.getLifeCycle());
             // 只有正式老师登陆后才做强制修改密码判断
-            if(LifeCycle.REGULAR.toString().equalsIgnoreCase(teacher.getLifeCycle())){
-                logger.warn(bean.getEmail()+",登陆状态为REGULAR");
-                loginService.changePasswordNotice(response, bean.getPassword());
-                /* 设置老师能教的课程类型列表 */
-                loginService.setCourseTypes(user.getId(), loginService.getCourseType(user.getId()));
-            }
+			if (LifeCycle.REGULAR.toString().equalsIgnoreCase(teacher.getLifeCycle())
+					|| LifeCycle.QUIT.toString().equalsIgnoreCase(teacher.getLifeCycle())) {
+				logger.warn(bean.getEmail() + ",登陆状态为REGULAR");
+				loginService.changePasswordNotice(response, bean.getPassword());
+				/* 设置老师能教的课程类型列表 */
+				loginService.setCourseTypes(user.getId(), loginService.getCourseType(user.getId()));
+			}
             logger.info(bean.getEmail()+",登陆成功，LifeCycle="+teacher.getLifeCycle());
             
             return ReturnMapUtils.returnSuccess(result);
@@ -224,6 +237,31 @@ public class LoginController extends RestfulController {
             return ReturnMapUtils.returnFail(e.getMessage(),e);
         }
     }
+
+	private boolean getQuitStatus(User user) {
+		Timestamp lastEditTime = user.getLastEditDateTime();
+		Date expireTime = null;
+		Long editor = user.getLastEditorId();
+		Date now = new Date();
+		//Quit 老师登录
+		boolean canLogin = false;
+		if (editor != user.getId()) {
+			expireTime = DateUtils.getTheDayOfNextMonth(lastEditTime,TH_21_DAY);
+		}else{
+			expireTime = DateUtils.getTheDayOfNextMonth(now,TH_21_DAY);
+		}				
+		String exStr = passportService.getQuitTeacherExpiredTime(user.getId(), expireTime.getTime());
+		if(StringUtils.isNotEmpty(exStr)){
+			Long ex = Long.parseLong(exStr);
+			Date exDate = new Date(ex);
+			if (now.before(exDate)) {
+				canLogin = true;
+			}				
+		}
+		return canLogin;
+	}
+   
+	
 
     /**
      * 注册用户注册老师
@@ -366,8 +404,11 @@ public class LoginController extends RestfulController {
             logger.info("检查用户状态是否QUIT:{}",email);
             
             if (TeacherEnum.LifeCycle.QUIT.toString().equals(teacher.getLifeCycle())) {
-                response.setStatus(HttpStatus.BAD_REQUEST.value());
-                return ReturnMapUtils.returnFail(AjaxCode.USER_QUIT,"账户已经Quit."+user.getUsername());
+            	boolean canLogin = getQuitStatus(user);
+				if (!canLogin) {
+					response.setStatus(HttpStatus.BAD_REQUEST.value());
+	                return ReturnMapUtils.returnFail(AjaxCode.USER_QUIT,"账户已经Quit."+user.getUsername());
+				}                
             }
             
             logger.info("重置请求检查完毕-(通过)-正在发送Email:{}", email);
@@ -470,10 +511,17 @@ public class LoginController extends RestfulController {
     
             // 检查老师状态是否QUIT
             logger.info(user.getUsername()+",Quit检查.");
-            if (TeacherEnum.LifeCycle.QUIT.toString().equals(teacher.getLifeCycle())) {
-                response.setStatus(HttpStatus.BAD_REQUEST.value());
-                return ReturnMapUtils.returnFail(AjaxCode.USER_QUIT,"账户被Quit."+user.getUsername());
-            }
+			if (TeacherEnum.LifeCycle.QUIT.toString().equals(teacher.getLifeCycle())) {
+				boolean canLogin = getQuitStatus(user);
+				if (!canLogin) {
+					response.setStatus(HttpStatus.BAD_REQUEST.value());
+					return ReturnMapUtils.returnFail(AjaxCode.USER_QUIT, "账户被Quit,并且已经过了登录期了；" + user.getUsername());
+				}
+//				if (getQuitStatus() == TeacherEnum.QuitStatusEnum.EXPIRED) {
+//					response.setStatus(HttpStatus.BAD_REQUEST.value());
+//					return ReturnMapUtils.returnFail(AjaxCode.USER_QUIT, "账户被Quit,并且已经过了登录期了；" + user.getUsername());
+//				}
+			}
             
             // 检查用户类型
             logger.info(user.getUsername()+",类型检查.");

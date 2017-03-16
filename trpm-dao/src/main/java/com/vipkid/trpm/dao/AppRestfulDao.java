@@ -17,7 +17,7 @@ public class AppRestfulDao extends MapperDaoTemplate<AppRestful> {
     
     @Autowired
     public AppRestfulDao(SqlSessionTemplate sqlSessionTemplate) {
-        super(sqlSessionTemplate, AppRestful.class);
+            super(sqlSessionTemplate, AppRestful.class);
     }  
     
     /**

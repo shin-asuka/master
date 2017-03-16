@@ -12,6 +12,7 @@ import com.vipkid.http.vo.HttpResult;
 import com.vipkid.payroll.model.Page;
 
 public class PayrollService extends HttpBaseService {
+	 private int DEFAULT_PAGE_SIZE = 15;
 
 	private static final Logger logger = LoggerFactory.getLogger(PayrollService.class);
 
@@ -42,12 +43,12 @@ public class PayrollService extends HttpBaseService {
 		return jsonObject;
 	}
 
-	public String findPayrollItemByTypeWithPage(int slalaryTypeCourseAdditionRule, int teacherId, int month, Page page) {
+	public String findPayrollItemByTypeWithPage(int salaryTypeCourseAdditionRule, int teacherId, int month, Page page) {
 		Map<String, String> params = Maps.newHashMap();
 
 		params.put("teacherId", String.valueOf(teacherId));
 		params.put("pageNo",  String.valueOf(page.getPageNo()));
-		params.put("itemType", String.valueOf(slalaryTypeCourseAdditionRule));
+		params.put("itemType", String.valueOf(salaryTypeCourseAdditionRule));
 		params.put("month", String.valueOf(month));
 		if (page.getPageSize() != 0) {
 			params.put("pageSize",  String.valueOf(page.getPageSize()));
@@ -55,6 +56,29 @@ public class PayrollService extends HttpBaseService {
 			params.put("pageSize", "15");
 		}
 		String url = new StringBuilder(super.serverAddress).append("/public/payroll/findPayrollItemByTypeWithPage")
+				.toString();
+		logger.info("request 请求payroll service , uri={} ,teacherId={}", url, teacherId);
+		HttpResult result = WebUtils.post(url, params);
+		String resultString = null;
+		if (HttpResult.STATUS_SUCCESS.equals(result.getStatus())) {
+			resultString = result.getResponse().toString();
+		}
+		return resultString;
+	}
+	
+	public String listReferralWithPage(int salaryTypeCourseAdditionRule, int teacherId, int month, Page page) {
+		Map<String, String> params = Maps.newHashMap();
+
+		params.put("teacherId", String.valueOf(teacherId));
+		params.put("pageNo",  String.valueOf(page.getPageNo()));
+		params.put("itemType", String.valueOf(salaryTypeCourseAdditionRule));
+		params.put("month", String.valueOf(month));
+		if (page.getPageSize() != 0) {
+			params.put("pageSize",  String.valueOf(page.getPageSize()));
+		} else {
+			params.put("pageSize",  String.valueOf(DEFAULT_PAGE_SIZE));
+		}
+		String url = new StringBuilder(super.serverAddress).append("/public/payroll/listReferral")
 				.toString();
 		logger.info("request 请求payroll service , uri={} ,teacherId={}", url, teacherId);
 		HttpResult result = WebUtils.post(url, params);

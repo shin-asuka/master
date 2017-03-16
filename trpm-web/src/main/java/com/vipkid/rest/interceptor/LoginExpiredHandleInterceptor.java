@@ -239,11 +239,11 @@ public class LoginExpiredHandleInterceptor extends HandlerInterceptorAdapter {
                 responseToJson("Password or user name is incorrect!","账户Dtype不合法."+user.getUsername(),response);
                 return false; 
             }
-            if(TeacherEnum.LifeCycle.QUIT.toString().equals(teacher.getLifeCycle())){
-                response.setStatus(HttpStatus.UNAUTHORIZED.value());
-                responseToJson("Password or user name is incorrect!","账户被Quit."+user.getUsername(),response);
-                return false; 
-            }
+//            if(TeacherEnum.LifeCycle.QUIT.toString().equals(teacher.getLifeCycle())){
+//                response.setStatus(HttpStatus.UNAUTHORIZED.value());
+//                responseToJson("Password or user name is incorrect!","账户被Quit."+user.getUsername(),response);
+//                return false; 
+//            }
             if(TeacherEnum.LifeCycle.FAIL.toString().equals(teacher.getLifeCycle())){
                 response.setStatus(HttpStatus.UNAUTHORIZED.value());
                 responseToJson("This account has been locked.","账户被Fail."+user.getUsername(),response);

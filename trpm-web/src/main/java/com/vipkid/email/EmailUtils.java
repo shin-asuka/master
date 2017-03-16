@@ -182,7 +182,7 @@ public class EmailUtils {
             map.put("link", PropertyConfigurer.stringValue("teacher.www") + "modifyPassword.shtml?validate_token="+ teacher.getRecruitmentId());
             Map<String, String> sendMap = TemplateUtils.readTemplate("VIPKIDPasswordResetLink.html", map, "VIPKIDPasswordResetLink-Title.html");
             EmailEngine.addMailPool(teacher.getEmail(), sendMap, EmailFormEnum.TEACHVIP);
-            logger.error("【EMAIL.sendActivationEmail】OK: {}", teacher.getEmail());
+            logger.info("【EMAIL.sendActivationEmail】OK: {}", teacher.getEmail());
         } catch (Exception e) {
             logger.error("【EMAIL.sendActivationEmail】ERROR: {}", e);
         }

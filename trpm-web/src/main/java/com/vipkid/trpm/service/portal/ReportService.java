@@ -25,7 +25,6 @@ import com.vipkid.trpm.util.FilesUtils;
 import com.vipkid.trpm.util.IpUtils;
 import com.vipkid.trpm.util.LessonSerialNumber;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
 import org.community.tools.JsonTools;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,15 +32,12 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import sun.security.x509.SerialNumber;
-
 import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
-
 import static com.google.common.base.Preconditions.checkArgument;
 
 /**
@@ -657,10 +653,7 @@ public class ReportService {
         TeacherComment oldtc = new TeacherComment(oldtcFromAPI);
         if (isFromH5) {
             //从APP的h5页面过来的
-            Teacher teacher = AppContext.getTeacher();
-            scheduledDateTime = DateUtils
-                .formatTo(oldtcFromAPI.getScheduledDateTime().toInstant(), teacher.getTimezone(),
-                    DateUtils.FMT_YMD_HMS);
+            scheduledDateTime = DateUtils.formatDate(oldtcFromAPI.getScheduledDateTime());
         }
 
         Map<String, Object> paramMap = Maps.newHashMap();

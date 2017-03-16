@@ -1,5 +1,7 @@
 package com.vipkid.rest.portal.model;
 
+import com.vipkid.rest.portal.vo.StudentCommentVo;
+
 /*classrooms页面的接口返回的每节课的数据模型*/
 public class ClassroomDetail{
 	private Integer id;
@@ -15,15 +17,25 @@ public class ClassroomDetail{
 	private String scheduledDateTime;
 	private String status;
 	private Integer isPaidTrail;
+	private int[] paidTrailPaymentYearMonth;
 	private String finishType;
 	private Integer reportType;
 	private Integer reportStatus;
 	private String UaReportUrl;
-
+	private boolean hasParentComment;
 	private boolean isPrevipLesson;
 	private String lyricsShowUrl;
 	private String videoShowUrl;
 	private String videoDownloadUrl;
+	private StudentCommentVo studentCommentVo;
+
+	public int[] getPaidTrailPaymentYearMonth() {
+		return paidTrailPaymentYearMonth;
+	}
+
+	public void setPaidTrailPaymentYearMonth(int[] paidTrailPaymentYearMonth) {
+		this.paidTrailPaymentYearMonth = paidTrailPaymentYearMonth;
+	}
 
 	public String getVideoDownloadUrl() {return videoDownloadUrl;}
 
@@ -157,5 +169,20 @@ public class ClassroomDetail{
 	public void setUaReportUrl(String uaReportUrl) {
 		UaReportUrl = uaReportUrl;
 	}
-	
+
+	public boolean isHasParentComment() {
+		return hasParentComment;
+	}
+
+	public void setHasParentComment(boolean hasParentComment) {
+		this.hasParentComment = hasParentComment;
+	}
+
+	public StudentCommentVo getStudentCommentVo() {
+		return studentCommentVo;
+	}
+
+	public void setStudentCommentVo(StudentCommentVo studentCommentVo) {
+		this.studentCommentVo = studentCommentVo;
+	}
 }

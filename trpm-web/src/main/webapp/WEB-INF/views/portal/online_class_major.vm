@@ -91,11 +91,11 @@
 					    <div class="stars">
 							<div class="ownedStars" id="ownedStars"></div>
 							<div class="futureStars" id="futureStars">
-								<div class="futureStar" student="$!student.id" onlineClassId="$!onlineClass.id"></div>
-								<div class="futureStar" student="$!student.id" onlineClassId="$!onlineClass.id"></div>
-								<div class="futureStar" student="$!student.id" onlineClassId="$!onlineClass.id"></div>
-								<div class="futureStar" student="$!student.id" onlineClassId="$!onlineClass.id"></div>
-								<div class="futureStar" student="$!student.id" onlineClassId="$!onlineClass.id"></div>
+								<div class="futureStar" teacher="$!TRPM_TEACHER.id" student="$!student.id" onlineClassId="$!onlineClass.id"></div>
+								<div class="futureStar" teacher="$!TRPM_TEACHER.id" student="$!student.id" onlineClassId="$!onlineClass.id"></div>
+								<div class="futureStar" teacher="$!TRPM_TEACHER.id" student="$!student.id" onlineClassId="$!onlineClass.id"></div>
+								<div class="futureStar" teacher="$!TRPM_TEACHER.id" student="$!student.id" onlineClassId="$!onlineClass.id"></div>
+								<div class="futureStar" teacher="$!TRPM_TEACHER.id" student="$!student.id" onlineClassId="$!onlineClass.id"></div>
 							</div>
 							<div id="loading" class="loading" style="display:none;"></div>
 						</div>
@@ -415,7 +415,7 @@
 	    require(['xdyproxy'], function(xdy){
         xdy.initChannel("$!{TRPM_USER.id}", "$!onlineClass.classroom", true, "$!stars");
       });
-    #elseif(${onlineClass.supplierCode} == 5)
+    #elseif(${onlineClass.supplierCode} == 5 || ${onlineClass.supplierCode} == 6 )
       require(['vipkidproxy'],function(vipkid){
         vipkid.initChannel("$!{TRPM_USER.id}", "$!onlineClass.classroom", true, "$!stars");
       })

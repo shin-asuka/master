@@ -12,6 +12,7 @@ import com.vipkid.rest.RestfulController;
 import com.vipkid.rest.config.RestfulConfig;
 import com.vipkid.rest.interceptor.annotation.RestInterface;
 import com.vipkid.trpm.entity.Teacher;
+import com.vipkid.trpm.service.huanxin.HuanxinService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,6 +26,8 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 @RestController
 @RestInterface(lifeCycle={LifeCycle.PRACTICUM})
@@ -33,10 +36,14 @@ public class PracticumController extends RestfulController {
 
     private static Logger logger = LoggerFactory.getLogger(PracticumController.class);
 
+    private static final Executor huanxinExecutor = Executors.newFixedThreadPool(10);
+
     @Autowired
     private PracticumService practicumService;
     @Autowired
     private RecruitmentService recruitmentService;
+    @Autowired
+    private HuanxinService huanxinService;
 
     @RequestMapping(value = "/list", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
     public Map<String,Object> list(HttpServletRequest request, HttpServletResponse response) {
@@ -123,6 +130,12 @@ public class PracticumController extends RestfulController {
             Map<String,Object> result = practicumService.toContract(teacher);
             if(ReturnMapUtils.isFail(result)){
                 response.setStatus(HttpStatus.FORBIDDEN.value());
+            }else{
+                //成为regular老师,需要注册环信id
+                //http://docs.easemob.com/im/100serverintegration/20users
+                huanxinExecutor.execute(() -> {
+                    huanxinService.signUpHuanxin(String.valueOf(teacher.getId()),String.valueOf(teacher.getId()));
+                });
             }
             return result;
         } catch (IllegalArgumentException e) {

@@ -350,145 +350,137 @@ define(["function","jquery-bootstrap","jquery-load","countdown" ], function() {
 	  }
 
 	  //收集用户连接在线教室最优节点的连接时间
-	  function collect(userid, role) {
-	    //EP列表
-	    var ep_list = [];
-	    //每个EP连接时长
-	    var ep_connecting_times = {};
+		function collect (userid, role) {
+		  //EP列表
+		  var ep_list = [];
+		  var suffix = "";
+		  //每个EP连接时长
+		  var ep_connecting_times = {};
 
-	    //从中央dispatcher获取每个EP节点
-	    var getEpList = function() {
-	      $.ajax({
-	        url: 'http://virgo.online-class.vipkid.com.cn/ping/DisCover.php',
-	        dataType: 'jsonp'
-	      })
-	      .done(function(res) {
-	        if (res.info && res.info.length) {
-	          ep_list = res.info;
-	          getConnectingTimes();
-	        }
-	      })
-	      .fail(function(error) {})
-	    }
+		  var epType = Math.round(Math.random() * 100);
 
-	    //获取每个节点的链接时间
-	    //最多获取七次 某一个节点某一次连不通 认为是故障节点 不再统计这个节点
-	    var getConnectingTimes = function() {
-	        /**
-	         * range:每次连接的连接时长
-	         * average_times:连接的平均时长
-	         * isDone 是否完成7次遍历
-	         **/
-	        $.each(ep_list, function(index, ep) {
-	          ep_connecting_times[ep] = {
-	            ranges: [],
-	            average_times: 0,
-	            isDone: false
-	          }
-	        })
+		  console.log(epType);
 
-	        $.each(ep_list, function(index, ep) {
+		  //是否选点结束
+		  var isFinished = false;
 
-	          //连接次数
-	          var times = 0;
+		  //从中央dispatcher获取每个EP节点
+		  var getEpList = function() {
 
-	          var connect = function() {
-	              //最多链接7次
-	              if (times == 7) {
-	                ep_connecting_times[ep]['isDone'] = true;
-	                //计算最短链接时间
-	                computeBestNode()
-	                return;
-	              }
-	              var start_time = new Date().getTime();
-	              $.ajax({
-	                url: "http://" + ep + "/dispatcher/Ping.php",
-	                dataType: 'jsonp'
-	              })
-	              .done(function() {
-	                var end_time = new Date().getTime();
-	                var range = end_time - start_time;
-	                ep_connecting_times[ep]['ranges'].push(range);
-	                times += 1;
-	                //继续下一次连接
-	                connect();
-	              })
-	              .fail(function() {
-	                //删除当前EP节点
-	                delete ep_connecting_times[ep];
-	                //开始计算最优节点
-	                computeBestNode()
-	              })
-	            }
-	            //开始连接
-	          connect();
-	        })
-	      }
-	    //计算最短连接时间
-	    var computeBestNode = function() {
+		    $.ajax({
+		        url: 'http://virgo.online-class.vipkid.com.cn/ping2/get_nodes.php',
+		        data: {
+		          userid:userid,
+		          role:role,
+		          type: epType
+		        },
+		        dataType: 'jsonp'
+		      })
+		      .done(function(res) {
+		        if (res.nodes && res.nodes.length) {
+		          ep_list = res.nodes;
+		          suffix = res.suffix;
+		          getConnectingTimes();
+		        }
+		      })
+		      .fail(function(error) {})
+		  }
 
-	      //是否所有的EP节点都遍历完成了
-	      var isDoneAll = true;
+		  //获取每个节点的链接时间
+		  //最多获取七次 某一个节点某一次连不通 认为是故障节点 不再统计这个节点
+		  var getConnectingTimes = function() {
+		    /**
+		     * range:每次连接的连接时长
+		     * average_times:连接的平均时长
+		     * isDone 是否完成7次遍历
+		     **/
+		    var enableEpLength=ep_list.length;
+		    $.each(ep_list, function(index, ep) {
+		      ep_connecting_times[ep] = {
+		        ranges: 0
+		      }
+		    })
 
-	      $.each(ep_connecting_times, function(ep, item) {
-	        isDoneAll = item.isDone;
-	        if (!isDoneAll) {
-	          return false;
-	        }
-	      })
+		    $.each(ep_list, function(index, ep) {
+		      //连接次数
+		      var times = 0;
+		      var connect = function() {
 
-	      if (!isDoneAll) {
-	        return;
-	      }
+		        //最多链接7次
+		        if (times >7) {
+		          //获取连接的平均时间
+		          var average_times = Math.ceil(ep_connecting_times[ep]['ranges'] / times);
+		          //计算最短链接时间
+		          recordBestEp(ep, average_times)
+		          return;
+		        }
+		        times+=1;
+		        var start_time = new Date().getTime();
 
+		        //自定义cb
+		        var duobeiyun = window['duobeiyun'] = function(res) {
+		          //如果选点已经结束了 就不在需要执行ping请求了
+		          if (isFinished) {
+		            return;
+		          }
+		          var end_time = new Date().getTime();
 
-	      var min_times = 9999; //默认最短链接时间是9999
-	      var best_ep = '';
+		          var range = end_time - start_time;
+		          ep_connecting_times[ep]['ranges'] += range;
+		          //继续下一次连接
+		          connect();
+		        };
 
-	      //删除每个节点链接的一个最长时间和最短时间（防止网络毛刺） 然后取平均值
-	      $.each(ep_connecting_times, function(ep, item) {
-	        var min_time = Math.min.apply(null, item['ranges']);
-	        var min_index = $.inArray(min_time, item['ranges']);
-	        item['ranges'].splice(min_index, 1);
+		        $.ajax({
+		            url: "http://" + ep + suffix,
+		            dataType: 'jsonp',
+		            jsonpCallback: 'duobeiyun',
+		            timeout: 1000,
+		            contentType: 'text/plain'
+		          })
+		          .fail(function() {
+		            try {
+		              if (arguments[1] == 'parsererror') {
+		                duobeiyun({});
+		                return;
+		              } else {
+		                var end_time = new Date().getTime();
 
-	        var max_time = Math.max.apply(null, item['ranges']);
-	        var max_index = $.inArray(max_time, item['ranges']);
-	        item['ranges'].splice(max_index, 1);
+		                enableEpLength--;
 
-	        var total_times = 0;
-	        $.each(item['ranges'], function(index, range) {
-	          total_times += range;
-	        })
+		                if(enableEpLength<=0){
+		                  recordBestEp('empty',10000)
+		                }
 
-	        item['average_times'] = total_times / item['ranges']['length']
+		                window['duobeiyun'] = function() {}
+		              }
+		            } catch (ex) {}
+		          })
+		      };
+		      //开始连接
+		      connect();
+		    })
+		  };
 
-	        if (item['average_times'] < min_times) {
-	          min_times = item['average_times']
-	          best_ep = ep;
-	        }
-	      })
+		  //计算最短连接时间
+		  var recordBestEp = function(best_ep, average_times) {
+		    isFinished = true;
+		    $.ajax({
+		      url: 'http://virgo.online-class.vipkid.com.cn/ping2/ping_report.php',
+		      data: {
+		        userid: userid,
+		        role: role,
+		        ep: best_ep,
+		        ping: average_times,
+		        type:epType
+		      },
+		      dataType: 'jsonp'
+		    })
+		  }
 
-	      //如果没有取到最优节点 return
-	      if (!best_ep) {
-	        return;
-	      }
-	      var time = ep_connecting_times[best_ep]['average_times'];
-	      //将最优节点上报给服务器
-	      $.ajax({
-	        url: 'http://virgo.online-class.vipkid.com.cn/ping/PingResult.php',
-	        data: {
-	          userid: userid,
-	          role: role,
-	          ep: best_ep,
-	          time: ep_connecting_times[best_ep]['average_times']
-	        },
-	        dataType: 'jsonp'
-	      })
-
-	    }
-	    //开始执行
-	    getEpList();
-	  }
+		  //开始执行
+		  getEpList();
+		}
 	}
 	return {
 		init : init,

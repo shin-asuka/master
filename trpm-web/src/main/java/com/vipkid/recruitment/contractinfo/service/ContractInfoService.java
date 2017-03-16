@@ -55,9 +55,6 @@ public class ContractInfoService {
     @Autowired
     private TeacherDao teacherDao;
 
-    @Autowired
-    private HuanxinService huanxinService;
-
     //最新的 contract files 提交记录的 applicationId
     private static int CONTRACT_FILE_LATEST_APPLICATION_ID = 0;
 
@@ -462,7 +459,7 @@ public class ContractInfoService {
 
         int effected = teacherDao.update(teacher);
         if (effected > 0) {
-            logger.error("Successful to update teacher {}", teacher);
+            logger.info("Successful to update teacher {}", teacher);
             return true;
         }
 
@@ -485,9 +482,6 @@ public class ContractInfoService {
 
             this.teacherDao.insertLifeCycleLog(teacher.getId(), TeacherEnum.LifeCycle.CONTRACT_INFO, TeacherEnum.LifeCycle.REGULAR, teacher.getId());
             this.teacherDao.update(teacher);
-            //成为regular老师,需要注册环信id
-            //http://docs.easemob.com/im/100serverintegration/20users
-            huanxinService.signUpHuanxin(String.valueOf(teacher.getId()),String.valueOf(teacher.getId()));
             return true;
         }
         logger.error("current teacherApplication is not CONTRACT_INFO or not PASS, can NOT get into REGULAR !");

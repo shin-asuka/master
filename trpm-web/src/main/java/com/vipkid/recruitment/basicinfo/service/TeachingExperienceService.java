@@ -37,7 +37,7 @@ public class TeachingExperienceService {
     
     public long saveTeaching(TeachingExperienceDto bean,User user){
         TeachingExperience teachingExperience = new TeachingExperience();
-        teachingExperience.setOrganisationName(bean.getOrganisationName());
+        teachingExperience.setOrganisationName(HtmlUtils.htmlEscape(bean.getOrganisationName()));
         teachingExperience.setTeacherId(user.getId());
         teachingExperience.setJobTitle(HtmlUtils.htmlEscape(bean.getJobTitle()));
         teachingExperience.setTimePeriodStart(new Timestamp(bean.getTimePeriodStart()));
@@ -68,7 +68,7 @@ public class TeachingExperienceService {
         TeachingExperience teachingExperience = new TeachingExperience();
         teachingExperience.setId(bean.getId());
         teachingExperience.setOrganisationName(HtmlUtils.htmlEscape(bean.getOrganisationName()));
-        teachingExperience.setJobTitle(bean.getJobTitle());
+        teachingExperience.setJobTitle(HtmlUtils.htmlEscape(bean.getJobTitle()));
         teachingExperience.setTimePeriodStart(new Timestamp(bean.getTimePeriodStart()));
         teachingExperience.setTimePeriodEnd(new Timestamp(bean.getTimePeriodEnd()));
         teachingExperience.setHoursWeek(bean.getHoursPerWeek());
@@ -111,6 +111,12 @@ public class TeachingExperienceService {
     }
     
     public List<TeachingExperience> getTeachingList(long teacherId){
-        return teachingExperienceDao.findTeachingList(teacherId);
+        List<TeachingExperience> list = teachingExperienceDao.findTeachingList(teacherId);
+        for (TeachingExperience te : list) {
+            te.setOrganisationName(HtmlUtils.htmlUnescape(te.getOrganisationName()));
+            te.setJobTitle(HtmlUtils.htmlUnescape(te.getJobTitle()));
+            te.setJobDescription(HtmlUtils.htmlUnescape(te.getJobDescription()));
+        }
+        return list;
     }
 }

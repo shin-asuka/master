@@ -305,12 +305,15 @@ public class ReportController extends AbstractPortalController {
     @RequestMapping("/getComment")
     public String getComment(HttpServletRequest request, HttpServletResponse response, @RequestParam long id) {
         logger.info("ReportController: getComment() 参数为：id={}", id);
+        Map<String, Object> parmMap = Maps.newHashMap();
         // 查询FeedBack信息
         TeacherCommentResult tcFromApi = teacherService.findByTeacherCommentId(String.valueOf(id));
+        if(null == tcFromApi){
+            parmMap.put("status", false);
+            return jsonView(response, parmMap);
+        }
         TeacherComment teacherComment = new TeacherComment(tcFromApi);
 
-
-        Map<String, Object> parmMap = Maps.newHashMap();
         if (Objects.nonNull(teacherComment) && Objects.nonNull(teacherComment.getFirstDateTime())) {
             parmMap.put("status", true);
             parmMap.put("teacherComment", teacherComment);

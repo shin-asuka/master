@@ -13,6 +13,7 @@ import org.community.config.PropertyConfigurer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -22,12 +23,14 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Stopwatch;
+import com.google.common.collect.Maps;
 import com.vipkid.enums.TeacherEnum;
 import com.vipkid.enums.TeacherEnum.FormType;
 import com.vipkid.enums.TeacherEnum.LifeCycle;
 import com.vipkid.file.model.FileVo;
 import com.vipkid.file.service.AwsFileService;
 import com.vipkid.http.utils.JsonUtils;
+import com.vipkid.portal.personal.model.ReferralTeacherVo;
 import com.vipkid.portal.personal.model.TeachingInfoData;
 import com.vipkid.portal.personal.service.PortalPersonalInfoService;
 import com.vipkid.rest.RestfulController;
@@ -40,6 +43,7 @@ import com.vipkid.trpm.entity.TeacherTaxpayerForm;
 import com.vipkid.trpm.entity.TeacherTaxpayerFormDetail;
 import com.vipkid.trpm.entity.User;
 import com.vipkid.trpm.security.SHA256PasswordEncoder;
+import com.vipkid.trpm.service.portal.TeacherService;
 import com.vipkid.trpm.service.portal.TeacherTaxpayerFormService;
 import com.vipkid.trpm.util.AwsFileUtils;
 
@@ -49,7 +53,7 @@ import com.vipkid.trpm.util.AwsFileUtils;
  *
  */
 @RestController
-@RestInterface(lifeCycle = LifeCycle.REGULAR)
+@RestInterface(lifeCycle = {LifeCycle.REGULAR,LifeCycle.QUIT})
 @RequestMapping("/portal/personal")
 public class PortalPersonalInfoController extends RestfulController {
 	private final Logger logger = LoggerFactory.getLogger(PortalPersonalInfoController.class);
@@ -74,6 +78,9 @@ public class PortalPersonalInfoController extends RestfulController {
 
 	@Autowired
 	private TeacherTaxpayerFormDao teacherTaxpayerFormDao;
+
+	@Autowired
+	private TeacherService teacherService;
 
 	@RequestMapping(value = "restTeachingInfo", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
 	public Map<String, Object> restTeachingInfo(HttpServletRequest request, HttpServletResponse response) {
@@ -193,8 +200,10 @@ public class PortalPersonalInfoController extends RestfulController {
 				}
 			}
 			return ApiResponseUtils.buildSuccessDataResp(fileVo);
+		} catch(IllegalArgumentException e){
+			logger.warn("调用restTaxpayerUpload接口发生非法参数异常，参数不合法", e);
 		} catch (Exception e) {
-			logger.error("调用restTaxpayerUpload接口抛异常，e = ", e);
+			logger.error("调用restTaxpayerUpload接口抛异常，errorMessage = "+e.getMessage(), e);
 		}
 		return ApiResponseUtils.buildErrorResp(1002, "抛异常");
 	}
@@ -202,13 +211,17 @@ public class PortalPersonalInfoController extends RestfulController {
 	@RequestMapping(value = "/restSaveTaxpayer", method = RequestMethod.POST, produces = RestfulConfig.JSON_UTF_8)
 	public Map<String, Object> saveTaxpayer(HttpServletRequest request, HttpServletResponse response,
 			@RequestBody Map<String, Object> param) {
-
 		logger.info("开始调用restSaveTaxpayer接口，传入参数param = {}", JsonUtils.toJSONString(param));
 		try {
-			long teacherTaxpayerFormId = Long.valueOf(param.get("id")+"");
+			//添加参数校验
+			Preconditions.checkArgument(null != param.get("id"), "id 不能为空!");
+
 			String url = (String) param.get("url");
 			Integer formType = FormType.W9.val();// 目前只有W9一种formType;
-			
+			Preconditions.checkArgument(StringUtils.isNotBlank(url), "url 不能为空!");
+			Preconditions.checkArgument(formType != null, "formType 不能为空!");
+
+			long teacherTaxpayerFormId = Long.valueOf(param.get("id")+"");
 			Teacher teacher = getTeacher(request);
 			long teacherId = teacher.getId();
 			
@@ -226,8 +239,7 @@ public class PortalPersonalInfoController extends RestfulController {
 				return ApiResponseUtils.buildSuccessDataResp(data);// 提升效率，直接返回成功
 			}
 
-			Preconditions.checkArgument(StringUtils.isNotBlank(url), "url 不能为空!");
-			Preconditions.checkArgument(formType != null, "formType 不能为空!");
+
 
 			TeacherTaxpayerForm teacherTaxpayerForm = new TeacherTaxpayerForm();
 			teacherTaxpayerForm.setId(teacherTaxpayerFormId);
@@ -246,10 +258,13 @@ public class PortalPersonalInfoController extends RestfulController {
 				return ApiResponseUtils.buildErrorResp(2001, "保存TeacherTaxpayerForm失败");
 			}
 
+		} catch(IllegalArgumentException e){
+			logger.warn("保存TaxpayerForm失败，发生非法参数异常，参数不合法，参数param = "+JsonUtils.toJSONString(param), e);
+			return ApiResponseUtils.buildErrorResp(1002, "参数不合法");
 		} catch (Exception e) {
 			logger.error("保存TaxpayerForm失败，抛异常。e = {}", e);
+			return ApiResponseUtils.buildErrorResp(1002, "抛异常");
 		}
-		return ApiResponseUtils.buildErrorResp(1002, "抛异常");
 	}
 
 	private void setTeacherTaxpayerFormInfo(TeacherTaxpayerForm teacherTaxpayerForm, Teacher teacher) {
@@ -302,4 +317,30 @@ public class PortalPersonalInfoController extends RestfulController {
 
 		return null;// 如果验证通过，返回null
 	}
+
+	@RequestMapping(value = "/findReferrals", method = RequestMethod.POST)
+	public Map<String, Object> findReferrals(HttpServletRequest request, HttpServletResponse response,@RequestBody ReferralTeacherVo bean) {
+		try{
+			if(bean.getDataType() != null){
+				if(StringUtils.isBlank(bean.getStartTime()) || StringUtils.isBlank(bean.getEndTime())){
+					response.setStatus(HttpStatus.BAD_REQUEST.value());
+					return ApiResponseUtils.buildErrorResp(1001, "result::[startTime] and [endTime] field is required!");
+				}
+			}
+
+			Teacher teacher = getTeacher(request);
+			bean.setTeacherId(teacher.getId());
+
+			Map<String, Object> resultMap = Maps.newHashMap();
+			resultMap.put("list", teacherService.findReferralTeachers(bean));
+			resultMap.put("count", teacherService.findReferralTeachersCount(bean));
+			return ApiResponseUtils.buildSuccessDataResp(resultMap);
+		} catch (IllegalArgumentException e) {
+			response.setStatus(HttpStatus.BAD_REQUEST.value());
+			return ApiResponseUtils.buildErrorResp(2001,e.getMessage(),e);
+		} catch (Exception e) {
+			response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+			return ApiResponseUtils.buildErrorResp(2002,e.getMessage(),e);
+		}
+ 	}
 }

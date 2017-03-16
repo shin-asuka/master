@@ -34,7 +34,7 @@ public class LessonSerialNumber {
             }
             logger.error("不需要微信发送的serialNumber：" + serialNumber);
         }catch(Exception e){
-            logger.error("不需要微信发送的serialNumber：" + serialNumber + "，Error:"+e.getMessage());
+            logger.error("不需要微信发送的serialNumber：" + serialNumber + "，Error:", e);
         }
         return null;
     }
@@ -66,5 +66,28 @@ public class LessonSerialNumber {
             isPreVipkid = true;
         }
         return isPreVipkid;
+    }
+
+    public static String formatToStudentCommentPattern(String lessonSn){
+        lessonSn = lessonSn.toLowerCase();
+        String[] words = lessonSn.split("-");
+        String unit = "";
+        String lesson = "";
+        for(String word : words){
+            if(word.indexOf("u")>-1){
+                unit = word.replaceAll("u","Unit ");
+            }
+            if(word.indexOf("l")>-1 && word.indexOf("lc") == -1){
+                lesson = word.replaceAll("l","Lesson ");  //留用
+            }
+        }
+        if(StringUtils.isNotEmpty(unit)){
+            StringBuffer sb = new StringBuffer();
+            String ret = sb.append(unit).append(" - ").toString();
+            return ret;
+        }else {
+            logger.error("【formatToStudentCommentPattern】：解析lessonSn失败");
+            return "";
+        }
     }
 }

@@ -15,6 +15,8 @@ public interface ApplicationConstant {
     
     public static String PARTNERID = "partnerId";
 
+    public static Integer PAGE_SIZE = 20;//Parent Comment双向翻页的每页尺寸
+
     public static String HEADER_REFERER = "referer_%s";
 
     /** Practicum课程 的finishType更新接口地址 */
@@ -271,6 +273,9 @@ public interface ApplicationConstant {
 
         public static final int IMAGE_CODE_INVALID_SEC = 120; // 图片验证码失效时间阀值
         public static final int PAYROLL_DISPLAY_MAX_NUM_EXCEED_DAY_SEC = 60 * 60 * 24 * 10 ;//payroll 部分老师可用 10天
+        public static final String QUIT_TEACHER_EXPIRED_TIME = "QUIT_TEACHER_";
+        
+        
     }
     public static final class TrailLessonConstants{
 

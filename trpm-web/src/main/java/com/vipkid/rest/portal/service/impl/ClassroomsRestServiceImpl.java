@@ -1,19 +1,33 @@
 package com.vipkid.rest.portal.service.impl;
 
-import java.sql.Timestamp;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.TimeZone;
-
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.google.api.client.util.Lists;
 import com.google.api.client.util.Maps;
 import com.vipkid.enums.OnlineClassEnum;
+import com.vipkid.enums.OnlineClassEnum.CourseType;
 import com.vipkid.file.service.QNService;
+import com.vipkid.http.service.AssessmentHttpService;
+import com.vipkid.http.service.ManageGatewayService;
+import com.vipkid.http.utils.JsonUtils;
+import com.vipkid.http.utils.WebUtils;
+import com.vipkid.http.vo.OnlineClassVo;
+import com.vipkid.http.vo.StudentUnitAssessment;
+import com.vipkid.recruitment.dao.TeacherApplicationDao;
+import com.vipkid.rest.portal.model.ClassroomDetail;
+import com.vipkid.rest.portal.model.ClassroomsData;
+import com.vipkid.rest.portal.service.ClassroomsRestService;
+import com.vipkid.rest.portal.vo.StudentCommentVo;
+import com.vipkid.rest.service.LoginService;
+import com.vipkid.rest.utils.ApiResponseUtils;
 import com.vipkid.trpm.constant.ApplicationConstant;
-import com.vipkid.trpm.service.portal.ScheduleService;
+import com.vipkid.trpm.constant.ApplicationConstant.UaReportStatus;
+import com.vipkid.trpm.dao.*;
+import com.vipkid.trpm.entity.*;
+import com.vipkid.trpm.entity.teachercomment.TeacherComment;
+import com.vipkid.trpm.service.portal.ClassroomsService;
+import com.vipkid.trpm.service.portal.TeacherService;
+import com.vipkid.trpm.util.DateUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.community.config.PropertyConfigurer;
@@ -22,33 +36,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.google.api.client.util.Lists;
-import com.vipkid.enums.OnlineClassEnum.CourseType;
-import com.vipkid.http.service.AssessmentHttpService;
-import com.vipkid.http.vo.OnlineClassVo;
-import com.vipkid.http.vo.StudentUnitAssessment;
-import com.vipkid.recruitment.dao.TeacherApplicationDao;
-import com.vipkid.rest.portal.model.ClassroomDetail;
-import com.vipkid.rest.portal.model.ClassroomsData;
-import com.vipkid.rest.portal.service.ClassroomsRestService;
-import com.vipkid.rest.service.LoginService;
-import com.vipkid.rest.utils.ApiResponseUtils;
-import com.vipkid.trpm.constant.ApplicationConstant.UaReportStatus;
-import com.vipkid.trpm.dao.AssessmentReportDao;
-import com.vipkid.trpm.dao.CourseDao;
-import com.vipkid.trpm.dao.DemoReportDao;
-import com.vipkid.trpm.dao.LessonDao;
-import com.vipkid.trpm.dao.OnlineClassDao;
-import com.vipkid.trpm.dao.TeacherDao;
-import com.vipkid.trpm.entity.AssessmentReport;
-import com.vipkid.trpm.entity.Course;
-import com.vipkid.trpm.entity.DemoReport;
-import com.vipkid.trpm.entity.Lesson;
-import com.vipkid.trpm.entity.Teacher;
-import com.vipkid.trpm.entity.teachercomment.TeacherComment;
-import com.vipkid.trpm.service.portal.ClassroomsService;
-import com.vipkid.trpm.service.portal.TeacherService;
-import com.vipkid.trpm.util.DateUtils;
+import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @Service
 public class ClassroomsRestServiceImpl implements ClassroomsRestService{
@@ -61,9 +52,6 @@ public class ClassroomsRestServiceImpl implements ClassroomsRestService{
 
 	@Autowired
 	private ClassroomsService classroomsService;
-
-	@Autowired
-	private TeacherDao teacherdao;
 
 	@Autowired
 	private TeacherApplicationDao teacherApplicationDao;
@@ -84,6 +72,9 @@ public class ClassroomsRestServiceImpl implements ClassroomsRestService{
 	private AssessmentHttpService assessmentHttpService;
 
 	@Autowired
+	private ManageGatewayService manageGatewayService;
+
+	@Autowired
 	private CourseDao courseDao;
 
 	@Autowired
@@ -92,8 +83,7 @@ public class ClassroomsRestServiceImpl implements ClassroomsRestService{
 	@Autowired
 	private QNService qnService;
 
-    @Autowired
-    private ScheduleService scheduleService;
+	private static final String goblinServerAddress = PropertyConfigurer.stringValue("goblin.serverAddress");
 
 	public Map<String, Object> getClassroomsData(long teacherId, int offsetOfMonth, String courseType, int page) {
 		if (!CourseType.isPracticum(courseType)) {// 只要不是"PRACTICUM"，就赋值"MAJOR"
@@ -140,8 +130,56 @@ public class ClassroomsRestServiceImpl implements ClassroomsRestService{
 		List<Map<String, Object>> tagList = getTagList(courseType, teacher.getId());
 		classroomsData.setTagList(tagList);
 
+		for(ClassroomDetail classroomDetail:classroomsData.getDataList()){
+			String finishType  = classroomDetail.getFinishType();
+			if(ApplicationConstant.FinishType.TEACHER_CANCELLATION.toString().equalsIgnoreCase(finishType)
+					|| ApplicationConstant.FinishType.TEACHER_CANCELLATION_24H.toString().equalsIgnoreCase(finishType)
+					||ApplicationConstant.FinishType.TEACHER_NO_SHOW_2H.equalsIgnoreCase(finishType)){
+				classroomDetail.setStatus(OnlineClassEnum.ClassStatus.CANCELED.toString());
+			}
+		}
 		result = ApiResponseUtils.buildSuccessDataResp(classroomsData);
 		return result;
+	}
+
+	public int[] getPaidTrailPaymentYearMonth(Long studentId, Long onlineClassId) {
+		if (studentId==null || onlineClassId==null) {
+			return null;
+		}
+		String url = goblinServerAddress + "/api/service/packorder/getPriceGreatorThan500PackOrder";
+		Map<String, Object> requestMap = new HashMap<>();
+		requestMap.put("studentId", studentId);
+		requestMap.put("onlineClassId", onlineClassId);
+
+		try {
+			String returnData = WebUtils.postJSON(url, JSONObject.parseObject(JSON.toJSONString(requestMap)));
+			if (StringUtils.isNotBlank(returnData)) {
+				Map<String, Object> returnModel = (Map<String, Object>) JsonUtils.toBean(returnData, Map.class);
+				if (returnModel != null
+						&& returnModel.get("paidForTrial") != null && (Boolean)returnModel.get("paidForTrial")
+						&& returnModel.get("payTime") != null && (Long)returnModel.get("payTime") > 0) {
+
+					Long payTimeMills = (Long) returnModel.get("payTime");
+					Calendar payTime = Calendar.getInstance();
+					payTime.setTimeInMillis(payTimeMills);
+
+					//月份从0开始；学生付款的下个月trial老师才能得到bonus，故+1
+					payTime.add(Calendar.MONTH, 1);
+					int[] payYearMonth = {payTime.get(Calendar.YEAR), payTime.get(Calendar.MONTH)};
+
+					logger.info("getPriceGreatorThan500PackOrder by goblin success, params:{}", requestMap.toString());
+					return payYearMonth;
+				} else {
+					logger.error("post url={} params:{} payTime = null", url, requestMap.toString());
+				}
+			} else {
+				logger.error("post url={} params:{} result = null", url, requestMap.toString());
+			}
+		} catch (Exception e) {
+			logger.error("调用Goblin接口抛异常，params:{}。抛异常: {}", requestMap.toString(), e);
+		}
+
+		return null;
 	}
 
 	public Map<String, Object> getClassroomsMaterialByLessonId(long lessonId) {
@@ -228,7 +266,7 @@ public class ClassroomsRestServiceImpl implements ClassroomsRestService{
 //			sentencePatternsGroup = sentencePatterns.replace("\n", "").replace("\t", "").replace("<br>", "<br/>")
 //					.split("<br/>");
 //		}
-		if(sentencePatterns != null){
+		if(sentencePatterns != null) {
 			sentencePatterns = sentencePatterns.replace("\n", "").replace("\t", "");
 		}
 		data.put("lessonSentencePatterns", sentencePatterns);
@@ -332,6 +370,21 @@ public class ClassroomsRestServiceImpl implements ClassroomsRestService{
 			dataListMap = classroomsService.majorList(teacher, monthOfYear, curPage, LINE_PER_PAGE);
 		}
 		List<Map<String, Object>> dataList = (List<Map<String, Object>>) dataListMap.get("dataList");// 复用以前代码产生的dataList，后面对其重新包装
+
+		//收集onlineClassId，批量查询StudentComment
+		List<Long> onlineClassIdList = Lists.newArrayList();
+		Map<Long,StudentCommentVo> studentCommentApiMap = Maps.newHashMap();
+		String ids = "";
+		for (Map<String, Object> eachMap : dataList) {
+			Long id = (Long)eachMap.get("id");
+			onlineClassIdList.add(id);
+		}
+		ids = StringUtils.join(onlineClassIdList,",");
+		List<StudentCommentVo> studentCommentApis = manageGatewayService.getStudentCommentListByBatch(ids);
+		for(StudentCommentVo studentCommentApi : studentCommentApis){
+			studentCommentApiMap.put(studentCommentApi.getClass_id().longValue(),studentCommentApi);
+		}
+
 		if (dataList == null)
 			return null;
 		int id = 0;//加一个id方便前端排序
@@ -385,6 +438,15 @@ public class ClassroomsRestServiceImpl implements ClassroomsRestService{
 				}
 			}
 			addReportTypeAndStatus(eachMap, date, classroomDetail);
+
+			//判断是否包含student_comment
+			StudentCommentVo studentCommentVo = studentCommentApiMap.get(classroomDetail.getOnlineClassId());
+			if(studentCommentVo!=null && studentCommentVo.getStatus()==1){
+				classroomDetail.setHasParentComment(true);
+				classroomDetail.setStudentCommentVo(studentCommentVo);
+			}else{
+				classroomDetail.setHasParentComment(false);
+			}
 
 			result.add(classroomDetail);
 			id ++;

@@ -28,6 +28,8 @@ public class HttpUrlConstant {
     @Value("${api.tis.server.url}")
     private String apiTisServerUrl;
 
+    @Value("${api.gateway.server.url}")
+    private String apiGatewayServerUrl;
 
     public String getApiHomeworkServerUrl() {
         return apiHomeworkServerUrl;
@@ -43,5 +45,13 @@ public class HttpUrlConstant {
 
     public void setApiTisServerUrl(String apiTisServerUrl) {
         this.apiTisServerUrl = apiTisServerUrl;
+    }
+
+    public String getApiGatewayServerUrl() {
+        return apiGatewayServerUrl;
+    }
+
+    public void setApiGatewayServerUrl(String apiGatewayServerUrl) {
+        this.apiGatewayServerUrl = apiGatewayServerUrl;
     }
 }

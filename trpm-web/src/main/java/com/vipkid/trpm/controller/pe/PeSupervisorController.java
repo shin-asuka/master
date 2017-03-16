@@ -1,11 +1,15 @@
 package com.vipkid.trpm.controller.pe;
 
 import com.google.api.client.util.Lists;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 import com.vipkid.enums.TeacherApplicationEnum.Result;
 import com.vipkid.enums.TeacherApplicationEnum.Status;
+import com.vipkid.enums.TeacherEnum;
 import com.vipkid.recruitment.dao.TeacherApplicationDao;
 import com.vipkid.recruitment.entity.TeacherApplication;
+import com.vipkid.recruitment.event.AuditEvent;
+import com.vipkid.recruitment.event.AuditEventHandler;
 import com.vipkid.rest.service.LoginService;
 import com.vipkid.trpm.constant.ApplicationConstant.FinishType;
 import com.vipkid.trpm.dao.TagsDao;
@@ -71,7 +75,10 @@ public class PeSupervisorController extends AbstractPeController {
 
     @Autowired
     private TeacherPeCommentsService teacherPeCommentsService;
-    
+
+    @Autowired
+    private AuditEventHandler auditEventHandler;
+
     @Deprecated
     @RequestMapping("/pesupervisor")
     public String peSupervisor(HttpServletRequest request, HttpServletResponse response,
@@ -166,6 +173,7 @@ public class PeSupervisorController extends AbstractPeController {
     public String peDoAudit(HttpServletRequest request, HttpServletResponse response,
             TeacherApplication teacherApplication, Model model) {
         Teacher peSupervisor = loginService.getTeacher();
+        Map<String, Object> modelMap = Maps.newHashMap();
         int peId = ServletRequestUtils.getIntParameter(request, "peId", -1);
         String type = ServletRequestUtils.getStringParameter(request, "type", "");
         String finishType = ServletRequestUtils.getStringParameter(request, "finishType", "");
@@ -174,11 +182,27 @@ public class PeSupervisorController extends AbstractPeController {
         int[] tags = ServletRequestUtils.getIntParameters(request, "tags");
         String things = ServletRequestUtils.getStringParameter(request, "things", null);
         String areas = ServletRequestUtils.getStringParameter(request, "areas", null);
+
+        //validate things and areas'length
+        try{
+            //Preconditions.checkArgument(com.vipkid.file.utils.StringUtils.isNotBlank(things), "things content can not be null!");
+            //Preconditions.checkArgument(com.vipkid.file.utils.StringUtils.isNotBlank(areas), "areas content can not be null!");
+
+            Preconditions.checkArgument(things.length() <= 3000 , "The length of things content must be less than 3000!");
+            Preconditions.checkArgument(areas.length() <= 3000, "The length of areas content must be less than 3000!");
+
+        }catch(IllegalArgumentException e){
+            logger.warn("IllegalArgumentException at /doAudit, errorMessage="+e.getMessage(), e);
+            modelMap.put("result", false);
+            modelMap.put("msg", e.getMessage());
+            return jsonView(response, modelMap);
+        }
+
         int[] levels = ServletRequestUtils.getIntParameters(request, "level");
         int totalScore = ServletRequestUtils.getIntParameter(request, "totalScore", 0);
         String submitType = ServletRequestUtils.getStringParameter(request, "submitType", null);
 
-        Map<String, Object> modelMap = Maps.newHashMap();
+
         modelMap.put("submitType", submitType);
         if(!StringUtils.equalsIgnoreCase(type,Result.REAPPLY.toString())) {
             // 处理 tags 相关逻辑
@@ -223,6 +247,9 @@ public class PeSupervisorController extends AbstractPeController {
             // Finish课程
             if ((Boolean) modelMap.get("result")) {
                 onlineclassService.finishPracticum(teacherApplication, finishType, peSupervisor, recruitTeacher);
+                //发邮件
+                auditEventHandler.onAuditEvent(new AuditEvent(recruitTeacher.getId(), TeacherEnum.LifeCycle.PRACTICUM.toString(), teacherApplication.getResult()));
+
             }
 
             // 并异步调用AppServer发送邮件及消息

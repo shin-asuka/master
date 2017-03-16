@@ -1,18 +1,5 @@
 package com.vipkid.trpm.service.passport;
 
-import java.sql.Timestamp;
-import java.util.Base64;
-import java.util.Map;
-import java.util.UUID;
-
-import org.apache.commons.collections.MapUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.community.config.PropertyConfigurer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.google.common.collect.Maps;
 import com.vipkid.email.EmailUtils;
 import com.vipkid.enums.TeacherEnum;
@@ -20,6 +7,7 @@ import com.vipkid.enums.TeacherEnum.RecruitmentChannel;
 import com.vipkid.enums.UserEnum;
 import com.vipkid.recruitment.utils.ReturnMapUtils;
 import com.vipkid.trpm.constant.ApplicationConstant;
+import com.vipkid.trpm.constant.ApplicationConstant.RedisConstants;
 import com.vipkid.trpm.dao.AppRestfulDao;
 import com.vipkid.trpm.dao.TeacherDao;
 import com.vipkid.trpm.dao.UserDao;
@@ -28,6 +16,18 @@ import com.vipkid.trpm.entity.User;
 import com.vipkid.trpm.proxy.RedisProxy;
 import com.vipkid.trpm.security.SHA256PasswordEncoder;
 import com.vipkid.trpm.util.AES;
+import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.community.config.PropertyConfigurer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.sql.Timestamp;
+import java.util.Base64;
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * 用于passport的主要业务 1.包含Teacher的token更新，SignUp实现
@@ -155,6 +155,7 @@ public class PassportService {
         teacher.setSerialNumber(serialNumber);
         teacher.setRecruitmentId(System.currentTimeMillis() + "-"+ encoder.encode(teacher.getSerialNumber() + "kxoucywejl" + teacher.getEmail()));
         teacher.setCurrency(TeacherEnum.Currency.US_DOLLAR.toString());
+        teacher.setContractType(TeacherEnum.ContractType.FOUR_A.getVal());
         teacher.setHide(TeacherEnum.Hide.NONE.toString());
         // 设置推荐人保存字段
         teacher = this.prerefereeId(teacher, reid, partnerId);
@@ -463,7 +464,8 @@ public class PassportService {
         try {
             String value = redisProxy.get(key);
             Long ttl = redisProxy.ttl(key);
-            if (value != null && ttl >= 0) {
+            //modified by luojiaoxia 过期时间不能是0
+            if (value != null && ttl > 0) {
                 loginCount = Integer.parseInt(value) + 1; // 登录失败次数
                 redisProxy.setex(key, Integer.parseInt(ttl.toString()), String.valueOf(loginCount));
             } else {
@@ -482,5 +484,23 @@ public class PassportService {
         }
         return verifyCodeService.checkVerifyCode(key, imageCode);
     }
-
+    
+	public String getQuitTeacherExpiredTime(Long teacherId, Long expireTime) {
+		String value = null;
+		String key = RedisConstants.QUIT_TEACHER_EXPIRED_TIME + teacherId;
+		try {
+			String existValue = redisProxy.get(key);
+			if (StringUtils.isNoneEmpty(existValue)) {
+				value = existValue;
+			} else {
+				if (expireTime != null) {
+					redisProxy.set(key, expireTime.toString());
+					value = expireTime.toString();
+				}
+			}
+		} catch (Exception e) {
+			logger.error("redis get key = {}", key, e);
+		}
+		return value;
+	}
 }

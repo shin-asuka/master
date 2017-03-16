@@ -50,6 +50,16 @@ public class TeacherInfo {
 
     private String managerName;
 
+    private String contractType;
+
+    public String getContractType() {
+        return contractType;
+    }
+
+    public void setContractType(String contractType) {
+        this.contractType = contractType;
+    }
+
     public String getManagerName() {
         return managerName;
     }
@@ -202,6 +212,7 @@ public class TeacherInfo {
         this.setRealName(teacher.getRealName());
         this.setEmail(teacher.getEmail());
         this.setMobile(teacher.getMobile());
+        this.setContractType(teacher.getContractType());
         this.setCanTeachPrevip(canTeachPrevip);
         String teacherTag = teacher.getTeacherTags();
         if (StringUtils.indexOf(teacherTag,PREVIP_TAG) > -1){

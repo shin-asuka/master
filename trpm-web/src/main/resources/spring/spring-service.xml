@@ -26,9 +26,15 @@
         <property name="serverAddress" value="${teacherApp.serverAddress}"/>
     </bean>
     
-     <bean id="payrollAppService" class="com.vipkid.http.service.PayrollService">
+    <bean id="payrollAppService" class="com.vipkid.http.service.PayrollService">
         <property name="serverAddress" value="${payrollApp.serverAddress}"/>
-        
     </bean>
-    
+
+    <bean id="manageGatewayService" class="com.vipkid.http.service.ManageGatewayService">
+        <property name="serverAddress" value="${gateway.serverAddress}"/>
+    </bean>
+
+    <bean id="scalperService" class="com.vipkid.http.service.ScalperService">
+        <property name="serverAddress" value="${scalper.serverAddress}"/>
+    </bean>
 </beans>

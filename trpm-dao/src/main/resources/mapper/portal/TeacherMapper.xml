@@ -4,12 +4,6 @@
 
 	<sql id="teacherColumns">teacher.id AS teacher_id, teacher.address AS
 		teacher_address, teacher.avatar AS teacher_avatar,
-		teacher.bank_account_name AS teacher_bank_account_name,
-		teacher.bank_address AS teacher_bank_address, teacher.bank_card_number
-		AS teacher_bank_card_number, teacher.bank_name AS teacher_bank_name,
-		teacher.bank_swift_code AS teacher_bank_swift_code, 
-		teacher.bank_aba_routing_number AS teacher_bank_aba_routing_number, 
-		teacher.bank_ach_number AS teacher_bank_ach_number, 
 		teacher.birthday AS teacher_birthday, teacher.certificates AS teacher_certificates,
 		teacher.contract_end_date AS teacher_contract_end_date,
 		teacher.contract_start_date AS teacher_contract_start_date,
@@ -18,7 +12,7 @@
 		teacher_currency, teacher.email AS teacher_email,
 		teacher.extra_class_salary AS teacher_extra_class_salary, teacher.hide
 		AS teacher_hide, teacher.introduction AS teacher_introduction,
-		teacher.job AS teacher_job, teacher.life_cycle AS teacher_life_cycle,
+		teacher.job AS teacher_job, teacher.job_hrs_per_week AS teacher_job_hrs_per_week, teacher.life_cycle AS teacher_life_cycle,
 		teacher.linkedin AS teacher_linkedin, teacher.mobile AS
 		teacher_mobile, teacher.no_show_time AS teacher_no_show_time,
 		teacher.notes AS teacher_notes, teacher.over_time_class_salary AS
@@ -69,13 +63,6 @@
 			<if test="id!=0">AND teacher.id = #{id}</if>
 			<if test="address!=null">AND teacher.address = #{address}</if>
 			<if test="avatar!=null">AND teacher.avatar = #{avatar}</if>
-			<if test="bankAccountName!=null">AND teacher.bank_account_name = #{bankAccountName}</if>
-			<if test="bankAddress!=null">AND teacher.bank_address = #{bankAddress}</if>
-			<if test="bankCardNumber!=null">AND teacher.bank_card_number = #{bankCardNumber}</if>
-			<if test="bankName!=null">AND teacher.bank_name = #{bankName}</if>
-			<if test="bankSwiftCode!=null">AND teacher.bank_swift_code = #{bankSwiftCode}</if>
-			<if test="bankABARoutingNumber!=null">AND teacher.bank_aba_routing_number = #{bankABARoutingNumber}</if>
-			<if test="bankACHNumber!=null">AND teacher.bank_ach_number = #{bankACHNumber}</if>
 			<if test="birthday!=null">AND teacher.birthday = #{birthday}</if>
 			<if test="certificates!=null">AND teacher.certificates = #{certificates}</if>
 			<if test="contractEndDate!=null">AND teacher.contract_end_date = #{contractEndDate}</if>
@@ -88,6 +75,7 @@
 			<if test="hide!=null">AND teacher.hide = #{hide}</if>
 			<if test="introduction!=null">AND teacher.introduction = #{introduction}</if>
 			<if test="job!=null">AND teacher.job = #{job}</if>
+			<if test="jobHrsPerWeek!=null">AND teacher.job_hrs_per_week = #{jobHrsPerWeek}</if>
 			<if test="lifeCycle!=null">AND teacher.life_cycle = #{lifeCycle}</if>
 			<if test="linkedin!=null">AND teacher.linkedin = #{linkedin}</if>
 			<if test="mobile!=null">AND teacher.mobile = #{mobile}</if>
@@ -157,13 +145,6 @@
 		<id column="teacher_id" property="id" />
 		<result column="teacher_address" property="address" />
 		<result column="teacher_avatar" property="avatar" />
-		<result column="teacher_bank_account_name" property="bankAccountName" />
-		<result column="teacher_bank_address" property="bankAddress" />
-		<result column="teacher_bank_card_number" property="bankCardNumber" />
-		<result column="teacher_bank_name" property="bankName" />
-		<result column="teacher_bank_swift_code" property="bankSwiftCode" />
-		<result column="teacher_bank_aba_routing_number" property="bankABARoutingNumber" />
-		<result column="teacher_bank_ach_number" property="bankACHNumber" />
 		<result column="teacher_birthday" property="birthday" />
 		<result column="teacher_certificates" property="certificates" />
 		<result column="teacher_contract_end_date" property="contractEndDate" />
@@ -176,6 +157,7 @@
 		<result column="teacher_hide" property="hide" />
 		<result column="teacher_introduction" property="introduction" />
 		<result column="teacher_job" property="job" />
+		<result column="teacher_job_hrs_per_week" property="jobHrsPerWeek" />
 		<result column="teacher_life_cycle" property="lifeCycle" />
 		<result column="teacher_linkedin" property="linkedin" />
 		<result column="teacher_mobile" property="mobile" />
@@ -269,13 +251,6 @@
 			<if test="id!=0">,id</if>
 			<if test="address!=null">,address</if>
 			<if test="avatar!=null">,avatar</if>
-			<if test="bankAccountName!=null">,bank_account_name</if>
-			<if test="bankAddress!=null">,bank_address</if>
-			<if test="bankCardNumber!=null">,bank_card_number</if>
-			<if test="bankName!=null">,bank_name</if>
-			<if test="bankSwiftCode!=null">,bank_swift_code</if>
-			<if test="bankABARoutingNumber!=null">,bank_aba_routing_number</if>
-			<if test="bankACHNumber!=null">,bank_ach_number</if>
 			<if test="birthday!=null">,birthday</if>
 			<if test="certificates!=null">,certificates</if>
 			<if test="contractEndDate!=null">,contract_end_date</if>
@@ -287,6 +262,7 @@
 			<if test="hide!=null">,hide</if>
 			<if test="introduction!=null">,introduction</if>
 			<if test="job!=null">,job</if>
+			<if test="jobHrsPerWeek!=null">,job_hrs_per_week</if>
 			<if test="lifeCycle!=null">,life_cycle</if>
 			<if test="linkedin!=null">,linkedin</if>
 			<if test="mobile!=null">,mobile</if>
@@ -323,7 +299,7 @@
 			<if test="teacherTags!=null">,teacher_tags</if>
 			<if test="vipkidRemarks!=null">,vipkid_remarks</if>
 			<if test="manager!=0">,manager</if>
-			
+			<if test="contractType!=null">,contract_type</if>
 			<if test="identityType!=0">,identity_type</if>
 			<if test="identityNumber!=null">,identity_number</if>
 			<if test="issuanceCountry!=0">,issuance_country</if>
@@ -345,13 +321,6 @@
 			<if test="id!=0">,#{id}</if>
 			<if test="address!=null">,#{address}</if>
 			<if test="avatar!=null">,#{avatar}</if>
-			<if test="bankAccountName!=null">,#{bankAccountName}</if>
-			<if test="bankAddress!=null">,#{bankAddress}</if>
-			<if test="bankCardNumber!=null">,#{bankCardNumber}</if>
-			<if test="bankName!=null">,#{bankName}</if>
-			<if test="bankSwiftCode!=null">,#{bankSwiftCode}</if>
-			<if test="bankABARoutingNumber!=null">,#{bankABARoutingNumber}</if>
-			<if test="bankACHNumber!=null">,#{bankACHNumber}</if>
 			<if test="birthday!=null">,#{birthday}</if>
 			<if test="certificates!=null">,#{certificates}</if>
 			<if test="contractEndDate!=null">,#{contractEndDate}</if>
@@ -363,6 +332,7 @@
 			<if test="hide!=null">,#{hide}</if>
 			<if test="introduction!=null">,#{introduction}</if>
 			<if test="job!=null">,#{job}</if>
+			<if test="jobHrsPerWeek!=null">,#{jobHrsPerWeek}</if>
 			<if test="lifeCycle!=null">,#{lifeCycle}</if>
 			<if test="linkedin!=null">,#{linkedin}</if>
 			<if test="mobile!=null">,#{mobile}</if>
@@ -399,7 +369,7 @@
 			<if test="teacherTags!=null">,#{teacherTags}</if>
 			<if test="vipkidRemarks!=null">,#{vipkidRemarks}</if>
 			<if test="manager!=0">,#{manager}</if>
-			
+			<if test="contractType!=null">,#{contractType}</if>
 			<if test="identityType!=0">,#{identityType}</if>
 			<if test="identityNumber!=null">,#{identityNumber}</if>
 			<if test="issuanceCountry!=0">,#{issuanceCountry}</if>
@@ -430,13 +400,6 @@
 			<if test="id!=0">,id = #{id}</if>
 			<if test="address!=null">,address = #{address}</if>
 			<if test="avatar!=null">,avatar = #{avatar}</if>
-			<if test="bankAccountName!=null">,bank_account_name = #{bankAccountName}</if>
-			<if test="bankAddress!=null">,bank_address = #{bankAddress}</if>
-			<if test="bankCardNumber!=null">,bank_card_number = #{bankCardNumber}</if>
-			<if test="bankName!=null">,bank_name = #{bankName}</if>
-			<if test="bankSwiftCode!=null">,bank_swift_code = #{bankSwiftCode}</if>
-			<if test="bankABARoutingNumber!=null">,bank_aba_routing_number = #{bankABARoutingNumber}</if>
-			<if test="bankACHNumber!=null">,bank_ach_number = #{bankACHNumber}</if>
 			<if test="birthday!=null">,birthday = #{birthday}</if>
 			<if test="certificates!=null">,certificates = #{certificates}</if>
 			<if test="contractEndDate!=null">,contract_end_date = #{contractEndDate}</if>
@@ -449,6 +412,7 @@
 			<if test="hide!=null">,hide = #{hide}</if>
 			<if test="introduction!=null">,introduction = #{introduction}</if>
 			<if test="job!=null">,job = #{job}</if>
+			<if test="jobHrsPerWeek!=null">,job_hrs_per_week = #{jobHrsPerWeek}</if>
 			<if test="lifeCycle!=null">,life_cycle = #{lifeCycle}</if>
 			<if test="linkedin!=null">,linkedin = #{linkedin}</if>
 			<if test="mobile!=null">,mobile = #{mobile}</if>
@@ -550,5 +514,72 @@
 		<foreach collection="ids" open="(" close=")" separator="," item="id">
 			<if test="id!=0"> #{id} </if>
 		</foreach>
+	</select>
+
+	<!-- ReferralTeachers查询SQL -->
+	<select id="findReferralTeachers" resultType="com.vipkid.rest.dto.ReferralTeacherDto">
+		SELECT
+		u.id,
+		u.`name`,
+		t.email,
+		u.register_date_time applyDate,
+		t.life_cycle lifeCycle,
+		ta.`status`,
+		ta.result,
+		t.entry_date regularDate,
+		tc.scheduled_date_time scheduledDateTime
+		FROM
+		teacher t
+		LEFT JOIN `user` u ON t.id = u.id
+		LEFT JOIN teacher_application ta ON t.id = ta.teacher_id
+		LEFT JOIN teacher_first_class tc ON t.id = tc.teacher_id
+		WHERE
+		t.referee LIKE CONCAT(#{param.teacherId},',%') AND (ta.current = 1 or ta.current is null)
+		<if test="param.lifeCycle != null"> AND t.life_cycle = #{param.lifeCycle} </if>
+		<if test="param.status != null"> AND ta.`status` = #{param.status} </if>
+		<if test="param.result != null"> AND ta.result = #{param.result} </if>
+		<if test="param.dataType != null">
+			<if test="param.dataType == 1">
+				AND  u.register_date_time BETWEEN #{param.startTime} AND  #{param.endTime}
+			</if>
+			<if test="param.dataType == 2">
+				AND  t.entry_date BETWEEN #{param.startTime} AND  #{param.endTime}
+			</if>
+			<if test="param.dataType == 3">
+				AND  tc.scheduled_date_time BETWEEN #{param.startTime} AND #{param.endTime}
+			</if>
+		</if>
+		<if test="param.name != null"> AND (u.name LIKE CONCAT('%',#{param.name},'%') or t.email LIKE CONCAT('%',#{param.name},'%')) </if>
+		ORDER BY
+		u.register_date_time DESC
+		<if test="param.startRows != null  and param.pageSize != null">
+			LIMIT #{param.startRows},#{param.pageSize}
+		</if>
+	</select>
+
+	<!-- ReferralTeachers count SQL -->
+	<select id="findReferralTeachersCount" resultType="int">
+		SELECT
+		count(1) counts
+		FROM
+		teacher t
+		LEFT JOIN `user` u ON t.id = u.id
+		LEFT JOIN teacher_application ta ON t.id = ta.teacher_id
+		LEFT JOIN teacher_first_class tc ON t.id = tc.teacher_id
+		WHERE
+		t.referee LIKE CONCAT(#{param.teacherId},',%') AND (ta.current = 1 or ta.current is null)
+		<if test="param.lifeCycle != null"> AND t.life_cycle = #{param.lifeCycle} </if>
+		<if test="param.status != null"> AND ta.`status` = #{param.status} </if>
+		<if test="param.result != null"> AND ta.result = #{param.result} </if>
+		<if test="param.dataType == 1">
+			AND  u.register_date_time BETWEEN #{param.startTime} AND  #{param.endTime}
+		</if>
+		<if test="param.dataType == 2">
+			AND  t.entry_date BETWEEN #{param.startTime} AND  #{param.endTime}
+		</if>
+		<if test="param.dataType == 3">
+			AND  tc.scheduled_date_time BETWEEN #{param.startTime} AND #{param.endTime}
+		</if>
+		<if test="param.name != null"> AND (u.name LIKE CONCAT('%',#{param.name},'%') or t.email LIKE CONCAT('%',#{param.name},'%')) </if>
 	</select>
 </mapper>

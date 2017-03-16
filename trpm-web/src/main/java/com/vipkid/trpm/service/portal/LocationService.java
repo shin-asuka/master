@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import com.google.api.client.util.Lists;
 import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,6 +36,7 @@ public class LocationService {
 			}
 			logger.info("teacherLocationDao#findByParentId:" + sb.toString());
 		} else {
+			locations = Lists.newArrayList();
 			logger.info("teacherLocationDao#findByParentId: none");
 		}
 		

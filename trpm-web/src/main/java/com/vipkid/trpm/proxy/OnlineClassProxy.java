@@ -141,7 +141,7 @@ public class OnlineClassProxy {
             return ReturnMapUtils.returnSuccess();
         } else {
             logger.warn("用户Id:【{}】,Booked onlineClassId:【{}】失败2,classType:【{}】,classTime:【{}】,原因：接口 "+requestUrl + " 未知【"+responseBody+"】", userId,onlineClassId,type,scheduledDateTime);
-            return ReturnMapUtils.returnFail("Booking failed! Please try again.");
+            return ReturnMapUtils.returnFail("Booking failed! Please check if you have already scheduled.");
         }
     }
     

@@ -364,7 +364,7 @@ public class RecruitmentService {
         
         TeacherApplication bean = list.get(0);
         if(bean.getOnlineClassId() <= 0){
-            logger.error(" OnlineClass id is null,id = {}",bean.getOnlineClassId());
+            logger.warn(" OnlineClass id is null,id = {}",bean.getOnlineClassId());
             return result;
         }
         

@@ -52,7 +52,7 @@ public class HuanxinService {
             } else {
                 String content = EntityUtils.toString(response.getEntity());
                 Map<String, String> contentMap = JsonUtils.toBean(content, Map.class);
-                logger.error(
+                logger.warn(
                     "HuanxinService signUpHuanxin fail!userName={},response status ={},error={}",
                     userName, statusCode, contentMap.get("error"));
             }

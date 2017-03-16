@@ -3,25 +3,62 @@ package com.vipkid.enums;
 public class TeacherApplicationEnum {
     
 	public enum Status {
-		SIGNUP, // 新申请
-		BASIC_INFO,	// 2015-08-08 添加basic-info 状态，从signup分离
-		INTERVIEW, //面试
-		SIGN_CONTRACT, //签合同
-		TRAINING, // 教师培训
-		PRACTICUM,//试讲
-		CONTRACT_INFO, //新增
-		CANCELED, //已取消
-		FINISHED // 已结束
+
+		SIGNUP("Sign Up"), // 新申请
+
+		BASIC_INFO("Basic Info"), // 2015-08-08 添加basic-info 状态，从signup分离
+
+		INTERVIEW("Interview"), //面试
+
+		TRAINING("Teaching Prep"), // 教师培训
+
+		SIGN_CONTRACT("Sign Contract"), //签合同
+
+		PRACTICUM("Mock Class"),//试讲
+
+		CONTRACT_INFO("Contract Info"), //新增
+
+		CANCELED("Canceled"), //已取消
+
+		FINISHED("Finished"); // 已结束
+
+		private String value;
+
+		Status(String value) {
+			this.value = value;
+		}
+
+		public String getVal() {
+			return this.value;
+		}
 	}
 	
 	public enum Result {
-        PASS, // 通过
-        FAIL, // 失败
-        REAPPLY, //重新申请,继续上PRACTICUM1（由于客观原因没能完成面试）
-        PRACTICUM2, //第一次面试没通过，上PRACTICUM2
-		TBD,
-        TBD_FAIL,
-        CANCEL
+		PASS("Pass"),
+
+		FAIL("Fail"),
+
+		REAPPLY("Reapply"),//重新申请,继续上PRACTICUM1（由于客观原因没能完成面试）
+
+		PRACTICUM("Mock Class"),
+
+		PRACTICUM2("Mock Class 2"),//第一次面试没通过，上PRACTICUM2
+
+		TBD("TBD"),
+
+		TBD_FAIL("TBD Fail"),
+
+		CANCEL("Cancel");
+
+		private String value;
+
+		Result(String value) {
+			this.value = value;
+		}
+
+		public String getVal() {
+			return this.value;
+		}
 	}
 	
     public enum AuditStatus {

@@ -3,17 +3,29 @@ package com.vipkid.trpm.controller.activity;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.google.api.client.util.Maps;
+import com.vipkid.http.service.ManageGatewayService;
+import com.vipkid.http.vo.ActivityShare;
+import com.vipkid.rest.portal.vo.StudentCommentVo;
+import com.vipkid.rest.security.AppContext;
+import com.vipkid.rest.utils.ApiResponseUtils;
+import com.vipkid.trpm.dao.TeacherTokenDao;
+import com.vipkid.trpm.dao.UserDao;
+import com.vipkid.trpm.entity.TeacherToken;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.community.config.PropertyConfigurer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -46,7 +58,10 @@ public class ActivityController extends AbstractController{
     
     @Autowired
     private LoginService loginService;
-    
+    @Autowired
+    private ManageGatewayService manageGatewayService;
+    @Autowired
+    private TeacherTokenDao teacherTokenDao;
     //上线时间
     private String searchdate = "2016-04-12 00:00:00";
 
@@ -148,4 +163,70 @@ public class ActivityController extends AbstractController{
         logger.info("执行方法getData()耗时：{} ", millis);
     	return data;
 	}
+
+    /**
+     * 2017年3月活动分享项目
+     *
+     */
+    @ResponseBody
+    @RequestMapping(value = "/getActivtyShareData", method = RequestMethod.GET)
+    public Object getActivityShareData(HttpServletRequest request, @RequestParam(required = false) String token) {
+        Stopwatch stopwatch = Stopwatch.createStarted();
+        long teacherId = 0;
+        boolean izApp = false;
+        if (StringUtils.isEmpty(token)) {
+            User u;
+            try {
+                //取PC的token
+                u = loginService.getUser();
+            } catch (NullPointerException e) {
+                return ApiResponseUtils.buildErrorResp(1001,"获取身份信息失败");
+            }
+            if (u == null){
+                //取apptoken
+                String appToken =  AppContext.getToken(request);
+                TeacherToken teacherToken = teacherTokenDao.findByToken(appToken);
+                if(teacherToken==null || teacherToken.getTeacherId()==null){
+                    return ApiResponseUtils.buildErrorResp(1001,"获取身份信息失败");
+                }else{
+                    teacherId = teacherToken.getTeacherId();
+                    izApp = true;
+                }
+            }else{
+                teacherId = u.getId();
+            }
+        } else {
+            teacherId = activityService.decode(token);
+        }
+        if (teacherId <= 0) {
+            return ApiResponseUtils.buildErrorResp(1001,"获取身份信息失败");
+        }
+        ActivityShare data = activityService.getActivityShareData(teacherId);
+        data.setIzApp(izApp);
+        long millis = stopwatch.stop().elapsed(TimeUnit.MILLISECONDS);
+        logger.info("执行方法getActivityShareData()耗时：{} ", millis);
+        return ApiResponseUtils.buildSuccessDataResp(data);
+    }
+
+
+    /**
+     * 评价分享页面
+     */
+    @ResponseBody
+    @RequestMapping(value = "/getParentFeedbackShareData", method = RequestMethod.GET)
+    public Object getParentFeedbackShareData(HttpServletRequest request, @RequestParam(required = true) String ocToken) {
+        Stopwatch stopwatch = Stopwatch.createStarted();
+        long onlineClassId = 0;
+        onlineClassId = activityService.decode(ocToken);
+        List<StudentCommentVo> studentCommentVos = manageGatewayService.getStudentCommentListByBatch(String.valueOf(onlineClassId));
+        if(CollectionUtils.isEmpty(studentCommentVos)){
+            return ApiResponseUtils.buildErrorResp(1001,"没有获取到评价信息");
+        };
+        StudentCommentVo studentCommentVo = studentCommentVos.get(0);
+        Map<String,Object> ret = Maps.newHashMap();
+        ret.put("data",studentCommentVo);
+        long millis = stopwatch.stop().elapsed(TimeUnit.MILLISECONDS);
+        logger.info("执行方法getActivityShareData()耗时：{} ", millis);
+        return ApiResponseUtils.buildSuccessDataResp(ret);
+    }
 }

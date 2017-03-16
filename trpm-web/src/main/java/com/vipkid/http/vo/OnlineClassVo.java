@@ -16,6 +16,7 @@ public class OnlineClassVo implements Serializable{
 	private Long teacherId;
 	private Integer studentId;
 	private Long lessonId;
+	private String teacherFirstName;
 	private String teacherName;
 	private String teacherEmail;
 	private Date scheduledDateTime;
@@ -91,6 +92,14 @@ public class OnlineClassVo implements Serializable{
 
 	public void setLessonId(Long lessonId) {
 		this.lessonId = lessonId;
+	}
+
+	public String getTeacherFirstName() {
+		return teacherFirstName;
+	}
+
+	public void setTeacherFirstName(String teacherFirstName) {
+		this.teacherFirstName = teacherFirstName;
 	}
 
 	public String getTeacherName() {

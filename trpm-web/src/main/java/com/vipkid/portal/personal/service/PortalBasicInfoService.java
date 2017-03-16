@@ -66,7 +66,9 @@ public class PortalBasicInfoService {
 		personInfo.setIntroduction(teacher.getIntroduction());
 		personInfo.setEvaluationBio(teacher.getEvaluationBio());
 		personInfo.setIsRemindEditBankInfo(StringUtils.isBlank(teacher.getBankCardNumber()));
-		
+		personInfo.setJob(teacher.getJob());
+		personInfo.setJobHrsPerWeek(teacher.getJobHrsPerWeek());
+
 		TeacherAddress currentAddress = teacherAddressDao.getTeacherAddress(teacher.getCurrentAddressId());
         if (currentAddress != null) {
             
@@ -115,7 +117,9 @@ public class PortalBasicInfoService {
 		teacher.setGraduatedFrom(basicInfo.getUniversity());
 		teacher.setHighestLevelOfEdu(basicInfo.getHighestLevelOfEdu());
 		teacher.setEvaluationBio(basicInfo.getEvaluationBio());
-		
+		teacher.setJob(basicInfo.getJob());
+		teacher.setJobHrsPerWeek(basicInfo.getJobHrsPerWeek());
+
 		TeacherAddress teacherAddress = new TeacherAddress();
 		teacherAddress.setId(teacher.getCurrentAddressId());
 		teacherAddress.setCountryId(basicInfo.getCountryId());

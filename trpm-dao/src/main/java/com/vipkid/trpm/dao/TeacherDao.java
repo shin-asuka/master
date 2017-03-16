@@ -1,18 +1,18 @@
 package com.vipkid.trpm.dao;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import com.google.common.collect.Maps;
+import com.vipkid.enums.TeacherEnum.LifeCycle;
+import com.vipkid.rest.dto.ReferralTeacherDto;
+import com.vipkid.trpm.entity.Teacher;
 import org.apache.commons.lang.StringUtils;
 import org.community.dao.support.MapperDaoTemplate;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.google.common.collect.Maps;
-import com.vipkid.enums.TeacherEnum.LifeCycle;
-import com.vipkid.trpm.entity.Teacher;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Repository
 public class TeacherDao extends MapperDaoTemplate<Teacher> {
@@ -130,5 +130,13 @@ public class TeacherDao extends MapperDaoTemplate<Teacher> {
         Map<String, Object> paramsMap = new HashMap<String, Object>();
         paramsMap.put("ids", ids);
         return listEntity("findTeachersByIds", paramsMap);
+    }
+
+    public List<ReferralTeacherDto> findReferralTeachers(Map<String, Object> paramsMap){
+        return listEntity("findReferralTeachers", paramsMap);
+    }
+
+    public Integer findReferralTeachersCount(Map<String, Object> paramsMap){
+        return selectCount("findReferralTeachersCount", paramsMap);
     }
 }

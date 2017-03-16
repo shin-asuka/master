@@ -51,7 +51,7 @@ public class EmailTemplateTools {
             }
             return JSON.get(firstName).get(value.toString());
         }catch(Exception e){
-            logger.error("请检查文件：1.data/interview.json 是否存在  2.文件内容是否符合json规范 3.所查询的节点是否存在:"+e.getMessage());
+            logger.error("请检查文件：1.data/interview.json 是否存在  2.文件内容是否符合json规范 3.所查询的节点是否存在: ", e);
         }
         return null;
     }

@@ -23,6 +23,7 @@ import com.vipkid.rest.interceptor.annotation.RestInterface;
 import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.entity.TeacherTaxpayerForm;
 import com.vipkid.trpm.entity.TeacherTaxpayerFormDetail;
+import com.vipkid.trpm.service.huanxin.HuanxinService;
 import com.vipkid.trpm.service.portal.TeacherTaxpayerFormService;
 import com.vipkid.trpm.util.AwsFileUtils;
 import org.apache.commons.collections.CollectionUtils;
@@ -39,6 +40,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 /**
  * ContractInfo -> Regular
@@ -58,6 +61,8 @@ public class ContractInfoController extends RestfulController {
     private static final int MAX_CERT_FILE_NUM = 4;
     private static final int MAX_DEGREE_FILE_NUM = 4;
 
+    private static final Executor huanxinExecutor = Executors.newFixedThreadPool(10);
+
     @Autowired
     private AwsFileService awsFileService;
 
@@ -72,6 +77,9 @@ public class ContractInfoController extends RestfulController {
 
     @Autowired
     private TeacherTaxpayerFormService teacherTaxpayerFormService;
+
+    @Autowired
+    private HuanxinService huanxinService;
 
     /**
      * 进入 PersonalInfo 状态之前, 先查出之前是否有上传资料
@@ -361,7 +369,7 @@ public class ContractInfoController extends RestfulController {
                 }
             } catch (IllegalArgumentException e) {
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
-                logger.error("submitContractInfo with Exception", e);
+                logger.warn("submitContractInfo with Exception", e);
                 return ReturnMapUtils.returnFail(e.getMessage(), e);
             } catch (Exception e) {
                 response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
@@ -472,7 +480,7 @@ public class ContractInfoController extends RestfulController {
                 }
             } catch (IllegalArgumentException e) {
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
-                logger.error("uploadVideo exception", e);
+                logger.warn("uploadVideo exception", e);
                 return ReturnMapUtils.returnFail(e.getMessage(), e);
             } catch (Exception e) {
                 response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
@@ -574,6 +582,11 @@ public class ContractInfoController extends RestfulController {
             boolean result = this.contractInfoService.toRegular(teacher);
             if (result) {
                 logger.info("Successfully get TO REGULAR!");
+                //成为regular老师,需要注册环信id
+                //http://docs.easemob.com/im/100serverintegration/20users
+                huanxinExecutor.execute(() -> {
+                    huanxinService.signUpHuanxin(String.valueOf(teacher.getId()),String.valueOf(teacher.getId()));
+                });
                 return ReturnMapUtils.returnSuccess();
             } else {
                 response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
@@ -659,7 +672,7 @@ public class ContractInfoController extends RestfulController {
 
             boolean hasIdentification = contractInfoService.hasIdentification(teacher);
             if(hasIdentification) {
-                logger.error("{} has identification uploaded and not yet be audited!", teacher.getId());
+                logger.warn("{} has identification uploaded and not yet be audited!", teacher.getId());
                 return ReturnMapUtils.returnFail("You have already uploaded, please refresh the page!");
             }
 
@@ -726,7 +739,7 @@ public class ContractInfoController extends RestfulController {
 
             boolean hasDiploma = contractInfoService.hasDiploma(teacher);
             if(hasDiploma) {
-                logger.error("{} has diplomas uploaded and not yet be audited!", teacher.getId());
+                logger.warn("{} has diplomas uploaded and not yet be audited!", teacher.getId());
                 return ReturnMapUtils.returnFail("You have already uploaded, please refresh the page!");
             }
 
@@ -781,7 +794,7 @@ public class ContractInfoController extends RestfulController {
 
             boolean hasContract = contractInfoService.hasContract(teacher);
             if(hasContract) {
-                logger.error("{} has contracts uploaded and not yet be audited!", teacher.getId());
+                logger.warn("{} has contracts uploaded and not yet be audited!", teacher.getId());
                 return ReturnMapUtils.returnFail("You have already uploaded, please refresh the page!");
             }
 
@@ -837,7 +850,7 @@ public class ContractInfoController extends RestfulController {
 
             boolean hasW9 = contractInfoService.hasW9(teacher);
             if(hasW9) {
-                logger.error("{} has uploaded W9 file and not yet be audited!", teacher.getId());
+                logger.warn("{} has uploaded W9 file and not yet be audited!", teacher.getId());
                 return ReturnMapUtils.returnFail("You have already uploaded, please refresh the page!");
             }
 
@@ -903,7 +916,7 @@ public class ContractInfoController extends RestfulController {
 
             int fileCount = contractInfoService.queryCertFileCount(teacher);
             if(fileCount >= MAX_CERT_FILE_NUM) {
-                logger.error("{} has uploaded {} certification files and not yet be audited!", teacher.getId(), fileCount);
+                logger.warn("{} has uploaded {} certification files and not yet be audited!", teacher.getId(), fileCount);
                 return ReturnMapUtils.returnFail("You have already uploaded, please refresh the page!");
             }
 
@@ -956,7 +969,7 @@ public class ContractInfoController extends RestfulController {
 
             int fileCount = contractInfoService.queryDegreeFilesCount(teacher);
             if(fileCount >= MAX_DEGREE_FILE_NUM) {
-                logger.error("{} has uploaded {} degree files and not yet be audited!", teacher.getId(), fileCount);
+                logger.warn("{} has uploaded {} degree files and not yet be audited!", teacher.getId(), fileCount);
                 return ReturnMapUtils.returnFail("You have already uploaded, please refresh the page!");
             }
 
