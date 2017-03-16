@@ -350,7 +350,7 @@ public class ReportController extends AbstractPortalController {
         return view("online_class_info");
     }
 
-    @RequestMapping("/findServerTimeaa")
+    @RequestMapping("/findServerTime")
     public String findServerTime(HttpServletResponse response, HttpServletRequest request) {
         Map<String, Object> map = Maps.newHashMap();
         map.put("serverTime", DateUtils.getThisYearMonth(TimeZone.getDefault().getID()));

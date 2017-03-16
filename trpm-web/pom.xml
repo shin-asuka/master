@@ -719,6 +719,21 @@
 			</build>
 		</profile>
 		<profile>
+			<id>a23</id>
+			<properties>
+				<env>a23</env>
+				<masterAddressOfMysql>10.1.6.223:3313</masterAddressOfMysql>
+				<slaveAddressOfMysql>10.1.6.223:3313</slaveAddressOfMysql>
+				<targetHost>10.1.5.34</targetHost>
+				<datasource>local</datasource>
+			</properties>
+			<build>
+				<filters>
+					<filter>profile/a.properties</filter>
+				</filters>
+			</build>
+		</profile>
+		<profile>
 			<id>a27</id>
 			<properties>
 				<env>a27</env>
