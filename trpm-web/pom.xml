@@ -729,7 +729,7 @@
 			</properties>
 			<build>
 				<filters>
-					<filter>profile/a.properties</filter>
+					<filter>../profile/a.properties</filter>
 				</filters>
 			</build>
 		</profile>
