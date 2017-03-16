@@ -246,6 +246,10 @@ public class MockClassService {
 
             if (isPes) {
                 TeacherPe teacherPe = teacherPeDao.findById(peDoAuditInputDto.getTeacherPeId());
+                if(null == teacherPe){
+                    return "Cann't found any teacher PE task!";
+                }
+
                 if (0 != teacherPe.getStatus()) {
                     return "The recruitment TBD process already done.";
                 }
