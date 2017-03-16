@@ -27,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 
 import java.security.UnresolvedPermission;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -67,6 +68,19 @@ public class SterlingService {
 
     @Transactional(readOnly = false)
     public CandidateOutputDto createCandidate(CandidateInputDto candidateInputDto) {
+        if(StringUtils.isNotBlank(candidateInputDto.getCandidateId())){
+            //2年后参数背景调查 update信息，新插入记录
+            SterlingCandidate sterlingCandidate = SterlingApiUtils.updateCandidate(candidateInputDto);
+            if(CollectionUtils.isNotEmpty(sterlingCandidate.getErrors())){
+                logger.warn("param:{},error:{}", JacksonUtils.toJSONString(candidateInputDto),JacksonUtils.toJSONString(sterlingCandidate.getErrors()));
+                return new CandidateOutputDto(null,Integer.valueOf(sterlingCandidate.getErrors().get(0).getErrorCode()),sterlingCandidate.getErrors().get(0).getErrorMessage());
+            }
+            BackgroundScreening backgroundScreening = transformBackgroundScreening(candidateInputDto,sterlingCandidate);
+            Long id = backgroundScreeningV2Dao.insert(backgroundScreening);
+            return new CandidateOutputDto(id,null,null);
+        }
+
+        //新插入
         SterlingCandidate sterlingCandidate = SterlingApiUtils.createCandidate(candidateInputDto);
         if(CollectionUtils.isNotEmpty(sterlingCandidate.getErrors())){
             logger.warn("param:{},error:{}", JacksonUtils.toJSONString(candidateInputDto),JacksonUtils.toJSONString(sterlingCandidate.getErrors()));
@@ -96,6 +110,28 @@ public class SterlingService {
         BackgroundScreening backgroundScreening = backgroundScreeningV2Dao.findByTeacherIdTopOne(candidateInputDto.getTeacherId());
 
         return new CandidateOutputDto(backgroundScreening.getId(),null,null);
+    }
+
+
+    @Transactional(readOnly = false)
+    public CandidateOutputDto saveCandidate(CandidateInputDto candidateInputDto) {
+        BackgroundScreening sterlingScreening = backgroundScreeningV2Dao.findByTeacherIdTopOne(candidateInputDto.getTeacherId());
+        if(null == sterlingScreening){
+            return createCandidate(candidateInputDto);
+        }
+
+        Date updateTime = sterlingScreening.getUpdateTime();
+        Calendar lastTime = Calendar.getInstance();
+        lastTime.setTimeInMillis(updateTime.getTime());
+        Calendar currentTime = Calendar.getInstance();
+        lastTime.add(Calendar.YEAR,2);
+        candidateInputDto.setCandidateId(sterlingScreening.getCandidateId());
+        if(currentTime.after(lastTime)){
+            return createCandidate(candidateInputDto);
+        }
+
+        return updateCandidate(candidateInputDto);
+
     }
 
     /**

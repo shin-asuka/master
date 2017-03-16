@@ -61,6 +61,26 @@ public class SterlingApiController {
 
 
 
+    @RequestMapping("saveCandidate")
+    public Object saveCandidate(@RequestBody CandidateInputDto candidateInputDto){
+        logger.info(JacksonUtils.toJSONString(candidateInputDto));
+
+        if(candidateInputDto == null ){
+            return ApiResponseUtils.buildErrorResp(105001,"参数不正确");
+        }
+        if(StringUtils.isBlank(candidateInputDto.getEmail())){
+            return ApiResponseUtils.buildErrorResp(105002,"email 为空");
+        }
+        CandidateOutputDto candidateOutputDto  = sterlingService.saveCandidate(candidateInputDto);
+        if(StringUtils.isNotBlank(candidateOutputDto.getErrorMessage())){
+            return ApiResponseUtils.buildErrorResp(105003, candidateOutputDto.getErrorMessage());
+        }
+        Map<String,Object> result= Maps.newHashMap();
+        result.put("bgSterlingScreeningId",candidateOutputDto.getId());
+        return ApiResponseUtils.buildSuccessDataResp(result);
+
+    }
+
     @RequestMapping("/updateCandidates")
     public Object updateCandidates(@RequestBody CandidateInputDto candidateInputDto){
         logger.info(JacksonUtils.toJSONString(candidateInputDto));

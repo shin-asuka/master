@@ -127,7 +127,7 @@ public class CandidateInputDto implements  java.io.Serializable{
         private String municipality;
         private String regionCode;
         private String postalCode;
-        private String countryCode;
+        private String countryCode ="US";
 
         public String getAddressLine() {
             return addressLine;
