@@ -16,6 +16,7 @@ public class CandidateInputDto implements  java.io.Serializable{
     private String email;
     private String givenName;
     private String familyName;
+    private String middleName;
     private boolean confirmedNoMiddleName;
     private String dob;
     private String ssn;
@@ -118,6 +119,14 @@ public class CandidateInputDto implements  java.io.Serializable{
 
     public void setRetry(short retry) {
         this.retry = retry;
+    }
+
+    public String getMiddleName() {
+        return middleName;
+    }
+
+    public void setMiddleName(String middleName) {
+        this.middleName = middleName;
     }
 
     public static class Address implements  java.io.Serializable{

@@ -76,8 +76,13 @@ public class SterlingService {
                 return new CandidateOutputDto(null,Integer.valueOf(sterlingCandidate.getErrors().get(0).getErrorCode()),sterlingCandidate.getErrors().get(0).getErrorMessage());
             }
             BackgroundScreening backgroundScreening = transformBackgroundScreening(candidateInputDto,sterlingCandidate);
-            Long id = backgroundScreeningV2Dao.insert(backgroundScreening);
-            return new CandidateOutputDto(id,null,null);
+            Long row = backgroundScreeningV2Dao.insert(backgroundScreening);
+            if(row>0){
+                //优化一下
+                BackgroundScreening newBackgoundScreening = backgroundScreeningV2Dao.findByTeacherIdTopOne(candidateInputDto.getTeacherId());
+                backgroundScreening.setId(newBackgoundScreening.getId());
+            }
+            return new CandidateOutputDto(backgroundScreening.getId(),null,null);
         }
 
         //新插入
@@ -102,6 +107,9 @@ public class SterlingService {
             }
         }
 
+        SterlingCandidate afterSterlingCandidate = SterlingApiUtils.getCandidate(candidateInputDto.getCandidateId());
+        //diffCandidate(candidateInputDto,afterSterlingCandidate);
+
         SterlingCandidate sterlingCandidate = SterlingApiUtils.updateCandidate(candidateInputDto);
         if(CollectionUtils.isNotEmpty(sterlingCandidate.getErrors())){
             logger.warn("param:{},error:{}", JacksonUtils.toJSONString(candidateInputDto),JacksonUtils.toJSONString(sterlingCandidate.getErrors()));
@@ -111,6 +119,14 @@ public class SterlingService {
 
         return new CandidateOutputDto(backgroundScreening.getId(),null,null);
     }
+
+    private Object diffCandidate(CandidateInputDto input,SterlingCandidate sterling){
+        if(StringUtils.equals(input.getEmail(),sterling.getEmail())){
+            input.setEmail(null);
+        }
+        return input;
+    }
+
 
 
     @Transactional(readOnly = false)
@@ -126,6 +142,7 @@ public class SterlingService {
         Calendar currentTime = Calendar.getInstance();
         lastTime.add(Calendar.YEAR,2);
         candidateInputDto.setCandidateId(sterlingScreening.getCandidateId());
+
         if(currentTime.after(lastTime)){
             return createCandidate(candidateInputDto);
         }
@@ -389,6 +406,8 @@ public class SterlingService {
             backgroundAdverseDao.update(backgroundAdverse);
         }
     }
+
+
 
 
 

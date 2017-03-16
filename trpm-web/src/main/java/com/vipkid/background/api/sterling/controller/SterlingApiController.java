@@ -61,7 +61,7 @@ public class SterlingApiController {
 
 
 
-    @RequestMapping("saveCandidate")
+    @RequestMapping("/saveCandidate")
     public Object saveCandidate(@RequestBody CandidateInputDto candidateInputDto){
         logger.info(JacksonUtils.toJSONString(candidateInputDto));
 

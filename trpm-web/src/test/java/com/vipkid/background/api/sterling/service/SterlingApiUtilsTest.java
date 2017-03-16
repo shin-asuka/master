@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 /**
@@ -133,8 +134,23 @@ public class SterlingApiUtilsTest {
             e.printStackTrace();
         }
         System.out.println(d);
+        Calendar lastTime = Calendar.getInstance();
+        Calendar currentTime = Calendar.getInstance();
+        lastTime.add(Calendar.YEAR,2);
+        System.out.println(String.format("%s|%s",lastTime.getTime(),currentTime.getTime()));
 
+    }
 
+    @Test
+    public void creatTestDate(){
+        String jsonTemplet ="{\"teacherId\":4969,\"email\":\"tp.test.%s@example.com\",\"givenName\":\"aa\",\"familyName\":\"aa\",\"confirmedNoMiddleName\":true,\"dob\":\"1998-07-18\",\"ssn\":\"123456%s\",\"phone\":\"+14041231234\",\"address\":{\"addressLine\":\"123MainStreet\",\"municipality\":\"Orlando\",\"regionCode\":\"US-FL\",\"postalCode\":\"12345\",\"countryCode\":\"US\"}}";
+
+        for(int i=100;i<200;i++){
+            String json =String.format(jsonTemplet,i,i);
+        CandidateInputDto candidateInputDto = JacksonUtils.readJson(json, new TypeReference<CandidateInputDto>() {});
+        SterlingCandidate sterlingCandidate =  SterlingApiUtils.createCandidate(candidateInputDto);
+        System.out.println();
+        }
     }
 }
 
