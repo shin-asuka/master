@@ -511,7 +511,7 @@ public class MockClassService {
 
                                         if (CollectionUtils.isNotEmpty(peResultList)) {
                                             peResultList.stream().forEach(peResult -> {
-                                                if (peResult.getId() == peOptionDto.getId()) {
+                                                if (peResult.getOptionId() == peOptionDto.getId()) {
                                                     peOptionDto.setChecked(true);
                                                 }
                                             });
