@@ -44,7 +44,11 @@ public class SterlingApiUtils {
 
     private static final  String MESSAGE_UNAUTHORIZED="Unauthorized";
 
+    private static final String  MESSAGE_AUTHORIZATION = "Authorization";
+
     private static final String STERLING_ACCESS_TOKEN="sterling_access_token";
+
+    private static final short MAX_RETRY=3;
 
     /**
      * 创建一个候选人
@@ -72,7 +76,11 @@ public class SterlingApiUtils {
      * @return
      */
     public static SterlingCandidate updateCandidate(CandidateInputDto candidateInputDto){
-        String postUrl = sterlingHost + "/v1/candidates";
+        if(candidateInputDto.getRetry() >= MAX_RETRY){
+            logger.error("超过三次重新更新:{}",JacksonUtils.toJSONString(candidateInputDto));
+            return null;
+        }
+        String postUrl = String.format(sterlingHost + "/v1/candidates/%s",candidateInputDto.getCandidateId());
         Map<String,String> headers = Maps.newHashMap();
         headers.put("Authorization",String.format(BEARER_FORMATE,getAccessToken()));
         String response = HttpClientUtils.put(postUrl,JacksonUtils.toJSONString(candidateInputDto),headers);
@@ -82,6 +90,9 @@ public class SterlingApiUtils {
         SterlingCandidate sterlingCandidate = JacksonUtils.readJson(response, new TypeReference<SterlingCandidate>() {});
         if(StringUtils.equals(sterlingCandidate.getMessage(),MESSAGE_UNAUTHORIZED)){
 
+        }else if(StringUtils.contains(sterlingCandidate.getMessage(),MESSAGE_AUTHORIZATION)){
+            RedisCacheUtils.del(STERLING_ACCESS_TOKEN);
+            return updateCandidate(candidateInputDto);
         }
         return sterlingCandidate;
     }
@@ -263,11 +274,12 @@ public class SterlingApiUtils {
         headers.put("Authorization",String.format("Basic %s", new sun.misc.BASE64Encoder().encode("APIUser@VIPKID.com:nEtGtGHyqD".getBytes())));
         headers.put(HTTP.CONTENT_TYPE,"application/x-www-form-urlencoded");
         String response = HttpClientUtils.appointHeadersPost(postUrl,params,headers);
-        if(org.apache.commons.lang3.StringUtils.isBlank(response)){
+            if(org.apache.commons.lang3.StringUtils.isBlank(response)){
             return null;
         }
         SterlingAccessToken sterlingAccessToken = JacksonUtils.readJson(response, new TypeReference<SterlingAccessToken>() {});
-        RedisCacheUtils.set(STERLING_ACCESS_TOKEN,sterlingAccessToken,sterlingAccessToken.getExpires_in());
+//        sterlingAccessToken.getExpires_in()
+        RedisCacheUtils.set(STERLING_ACCESS_TOKEN,sterlingAccessToken,60);
         return sterlingAccessToken;
     }
 

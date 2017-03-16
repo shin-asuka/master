@@ -15,6 +15,7 @@ import com.vipkid.trpm.entity.BackgroundReport;
 import com.vipkid.trpm.entity.BackgroundScreening;
 import com.vipkid.trpm.util.DateUtils;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.community.config.PropertyConfigurer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -75,6 +76,13 @@ public class SterlingService {
 
     @Transactional(readOnly = false)
     public CandidateOutputDto updateCandidate(CandidateInputDto candidateInputDto) {
+        if(StringUtils.isBlank(candidateInputDto.getCandidateId())){
+            BackgroundScreening backgroundScreening = backgroundScreeningV2Dao.findByTeacherIdTopOne(candidateInputDto.getTeacherId());
+            if(backgroundScreening != null ){
+                candidateInputDto.setCandidateId(backgroundScreening.getCandidateId());
+            }
+        }
+
         SterlingCandidate sterlingCandidate = SterlingApiUtils.updateCandidate(candidateInputDto);
         if(CollectionUtils.isNotEmpty(sterlingCandidate.getErrors())){
             logger.warn("param:{},error:{}", JacksonUtils.toJSONString(candidateInputDto),JacksonUtils.toJSONString(sterlingCandidate.getErrors()));
@@ -114,24 +122,21 @@ public class SterlingService {
         backgroundScreening.setScreeningId(sterlingScreening.getId());
         //更新 bg_sterling_screening 表的数据
         backgroundScreeningV2Dao.update(backgroundScreening);
+
         if(CollectionUtils.isNotEmpty(sterlingScreening.getReportItems())){
             //插入report表
-            List<BackgroundReport> backgroundReportList = Lists.newArrayList();
-            for(SterlingCallBack.ReportItem reportItem:sterlingScreening.getReportItems()){
-                BackgroundReport backgroundReport =new BackgroundReport();
-                backgroundReport.setBgSterlingScreeningId(backgroundScreening.getId());
-                backgroundReport.setScreeningId(sterlingScreening.getId());
-                backgroundReport.setReportId(reportItem.getId());
-                backgroundReport.setStatus(reportItem.getStatus());
-                backgroundReport.setResult(reportItem.getStatus());
-                backgroundReport.setUpdateTime(DateUtils.convertzDateTime(reportItem.getUpdatedAt()));
-                backgroundReport.setUpdateTime(new Date());
-                backgroundReport.setCreateTime(new Date());
-                backgroundReport.setType(reportItem.getType());
-                backgroundReportList.add(backgroundReport);
-            }
+            List<BackgroundReport> backgroundReportList = transformBackgroundReport(sterlingScreening,backgroundScreening.getId());
             int row = backgroundReportDao.batchInsert(backgroundReportList);
         }
+//        else{
+//            SterlingScreening getSterlingScreening = SterlingApiUtils.getScreening(backgroundScreening.getScreeningId());
+//            if (null != getSterlingScreening) {
+//                List<BackgroundReport> backgroundReportList = transformBackgroundReport(getSterlingScreening,backgroundScreening.getId());
+//                if(CollectionUtils.isNotEmpty(backgroundReportList)) {
+//                    int row = backgroundReportDao.batchInsert(backgroundReportList);
+//                }
+//            }
+//        }
 
         boolean isSuccess = SterlingApiUtils.createScreeningDocument(sterlingScreening.getId(),documentUrl);
         if(isSuccess){
@@ -190,5 +195,23 @@ public class SterlingService {
         backgroundScreening.setCandidateId(sterlingCandidate.getId());
 
         return backgroundScreening;
+    }
+
+    private List<BackgroundReport> transformBackgroundReport(SterlingScreening sterlingScreening,Long backgroundScreeningId){
+        List<BackgroundReport> backgroundReportList = Lists.newArrayList();
+        for(SterlingCallBack.ReportItem reportItem:sterlingScreening.getReportItems()){
+            BackgroundReport backgroundReport =new BackgroundReport();
+            backgroundReport.setBgSterlingScreeningId(backgroundScreeningId);
+            backgroundReport.setScreeningId(sterlingScreening.getId());
+            backgroundReport.setReportId(reportItem.getId());
+            backgroundReport.setStatus(reportItem.getStatus());
+            backgroundReport.setResult(reportItem.getStatus());
+            backgroundReport.setUpdateTime(DateUtils.convertzDateTime(reportItem.getUpdatedAt()));
+            backgroundReport.setUpdateTime(new Date());
+            backgroundReport.setCreateTime(new Date());
+            backgroundReport.setType(reportItem.getType());
+            backgroundReportList.add(backgroundReport);
+        }
+        return backgroundReportList;
     }
 }

@@ -98,4 +98,25 @@ public class RedisCacheUtils {
         return t;
     }
 
+
+    public static Long del(String key){
+        Jedis jedis = null;
+        Long removedSize = 0l;
+        try {
+            jedis = redisClient.getJedisPool().getResource();
+            if (jedis != null) {
+                byte[] keyByte = ProtostuffUtils.serializer(String.format(PREFIX,key));
+                removedSize = jedis.del(keyByte);
+            }
+            return removedSize;
+        } catch (Exception e) {
+            logger.info(String.format("Redis key:%s",key),e);
+        } finally {
+            if (jedis != null) {
+                jedis.close();
+            }
+        }
+        return removedSize;
+    }
+
 }
