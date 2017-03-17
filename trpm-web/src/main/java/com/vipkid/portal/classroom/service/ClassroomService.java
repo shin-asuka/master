@@ -232,9 +232,24 @@ public class ClassroomService {
             result.put("info", " You cannot enter this classroom! ");
             return result;
         }
-
+        
+        //默认以老师身份进入教室
+        OnlineClassProxy.RoomRole role = OnlineClassProxy.RoomRole.TEACHER;
+        Lesson lesson = lessonDao.findById(onlineClass.getLessonId());
+        if(lesson == null){
+        	logger.error(" Lesson is null! onlineClassId:{}",onlineClassId);
+        	result.put("code", -5);
+            result.put("info", " This lesson appeared a small problem! ");
+        }
+        String courseType = OnlineClassEnum.CourseName.obtainCourseName(lesson.getSerialNumber());
+        
+        logger.info("courseType:{}",courseType);
+        //仅PRACTICUM课程老师以学生方式进入
+        if(CourseName.PRACTICUM1.show().equals(courseType) || CourseName.PRACTICUM2.show().equals(courseType)){
+        	role = OnlineClassProxy.RoomRole.STUDENT;
+        }
         Map<String,Object> urlResult = OnlineClassProxy.generateRoomEnterUrl(String.valueOf(teacher.getId()), teacher.getRealName(),
-                onlineClass.getClassroom(), OnlineClassProxy.RoomRole.TEACHER, onlineClass.getSupplierCode(),onlineClass.getId(),OnlineClassProxy.ClassType.MAJOR);
+                onlineClass.getClassroom(), role, onlineClass.getSupplierCode(),onlineClass.getId(),OnlineClassProxy.ClassType.MAJOR);
         
         if(ReturnMapUtils.isSuccess(urlResult)){
         	logger.info(" 获取教室url 成功 onlineClassId:{},url:{}",onlineClassId, urlResult.get("url"));
