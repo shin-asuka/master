@@ -139,7 +139,7 @@ public class SterlingApiController {
 
 
     @RequestMapping("/callback")
-    public Object  callback(HttpServletRequest request){
+    public Object  callback(@RequestBody SterlingCallBack callBack,HttpServletRequest request){
         BufferedReader br = null;
         try {
             br = new BufferedReader(new InputStreamReader(request.getInputStream()));
@@ -155,7 +155,7 @@ public class SterlingApiController {
             e.printStackTrace();
         }
 
-
+        logger.warn(JacksonUtils.toJSONString(callBack));
 
         String type = request.getParameter("type");
         String payload = request.getParameter("payload");
