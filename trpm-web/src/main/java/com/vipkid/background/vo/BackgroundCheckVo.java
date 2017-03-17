@@ -18,26 +18,26 @@ public class BackgroundCheckVo implements Serializable{
 
     private String birthDay;
 
-    /* 国家id */
+    /* 最新国家id */
     private Integer latestCountryId;
-    /* state id */
+    /* 最新state id */
     private Integer latestStateId;
-    /* city id */
+    /* 最新city id */
     private Integer latestCity;
-
+    /* 最新街道名称 */
     private String latestStreet;
-
+    /* 最新zipcode */
     private String latestZipCode;
 
-    /* 国家id */
+    /* 当前国家id */
     private Integer currentCountryId;
-    /* state id */
+    /* 当前state id */
     private Integer currentStateId;
-    /* city id */
+    /* 当前city id */
     private Integer currentCity;
-
+    /* 当前街道名称 */
     private String currentStreet;
-
+    /* 当前zipCode */
     private String currentZipCode;
 
     private String driverLicenseNumber;
@@ -49,6 +49,13 @@ public class BackgroundCheckVo implements Serializable{
     private String socialSecurityNumber;
 
     private String fileUrl;
+
+    private String email;
+
+    /* audit result */
+    private String result;
+    /* audit failed  */
+    private String failReason;
 
     public Long getTeacherId() {
         return teacherId;
@@ -216,5 +223,29 @@ public class BackgroundCheckVo implements Serializable{
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getResult() {
+        return result;
+    }
+
+    public void setResult(String result) {
+        this.result = result;
+    }
+
+    public String getFailReason() {
+        return failReason;
+    }
+
+    public void setFailReason(String failReason) {
+        this.failReason = failReason;
     }
 }

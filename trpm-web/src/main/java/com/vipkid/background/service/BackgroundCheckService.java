@@ -1,5 +1,6 @@
 package com.vipkid.background.service;
 
+import com.vipkid.background.api.sterling.dto.CandidateInputDto;
 import com.vipkid.background.dto.input.BackgroundCheckInput;
 import com.vipkid.background.dto.output.BaseOutput;
 import com.vipkid.background.enums.TeacherPortalCodeEnum;
@@ -66,6 +67,7 @@ public class BackgroundCheckService {
         //save teacher_license
         saveLicense(input);
 
+        //create candidate
         BaseOutput output = new BaseOutput();
         output.setResCode(TeacherPortalCodeEnum.RES_SUCCESS.getCode());
         output.setResMsg(TeacherPortalCodeEnum.RES_SUCCESS.getMsg());
@@ -106,9 +108,12 @@ public class BackgroundCheckService {
         checkInfo.setMiddleName(teacher.getMiddleName());
         checkInfo.setLastName(teacher.getLastName());
         checkInfo.setBirthDay(DateUtils.formatDate(teacher.getBirthday()));
+        checkInfo.setEmail(teacher.getEmail());
         TeacherContractFile file = contractFileDao.findAllowEditOne(teacherId, TeacherApplicationEnum.ContractFileType.US_BACKGROUND_CHECK.val());
         if(file != null){
             checkInfo.setFileUrl(file.getUrl());
+            checkInfo.setResult(file.getResult());
+            checkInfo.setFailReason(file.getFailReason());
         }
         List<TeacherAddress> list = teacherAddressDao.findListByTeacherId(teacherId);
         for(TeacherAddress address : list){
@@ -146,6 +151,16 @@ public class BackgroundCheckService {
         return list;
     }
 
+    private void createCandidate(BackgroundCheckInput checkInput, Teacher teacher){
+        CandidateInputDto candidateInputDto = new CandidateInputDto();
+        candidateInputDto.setTeacherId(teacher.getId());
+        candidateInputDto.setEmail(teacher.getEmail());
+
+        CandidateInputDto.Address address = new CandidateInputDto.Address();
+//        address.set
+//        candidateInputDto.setAddress();
+//        sterlingService.saveCandidate()
+    }
     private int updateUrlAndScreeningId(Long teacherId, Integer fileType, String url, String operateType){
         TeacherContractFile teacherContractFile = new TeacherContractFile();
         teacherContractFile.setTeacherId(teacherId);

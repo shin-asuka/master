@@ -2,6 +2,7 @@ package com.vipkid.background.controller;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
+import com.vipkid.background.api.sterling.service.SterlingService;
 import com.vipkid.background.dto.input.BackgroundCheckInput;
 import com.vipkid.background.dto.output.BaseOutput;
 import com.vipkid.background.enums.TeacherPortalCodeEnum;
@@ -22,8 +23,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
@@ -50,6 +53,9 @@ public class BackgroundCheckController extends RestfulController {
 
     @Autowired
     private TeacherService teacherService;
+
+    @Autowired
+    private SterlingService sterlingService;
 
     /***
      * save background check information for US
@@ -90,6 +96,7 @@ public class BackgroundCheckController extends RestfulController {
             if (!StringUtils.equals(TeacherPortalCodeEnum.RES_SUCCESS.getCode(), output.getResCode())) {
                 return ApiResponseUtils.buildErrorResp(TeacherPortalCodeEnum.SYS_FAIL.getCode(), "Failed to save background check information.");
             }
+
         } catch (IllegalArgumentException e) {
             logger.warn("save background check info for US occur IllegalArgumentException, teacherId=" + teacherId);
             return ApiResponseUtils.buildErrorResp(TeacherPortalCodeEnum.SYS_PARAM_ERROR.getCode(), e.getMessage());
@@ -172,7 +179,7 @@ public class BackgroundCheckController extends RestfulController {
             logger.warn("save background check file for CA occur IllegalArgumentException, teacherId=" + teacherId, e);
             return ApiResponseUtils.buildErrorResp(TeacherPortalCodeEnum.SYS_PARAM_ERROR.getCode(), e.getMessage());
         } catch (Exception e) {
-            logger.warn("save background check file occur exception, teacherId=" + teacherId, e);
+            logger.warn("save background check file for CA  occur exception, teacherId=" + teacherId, e);
             return ApiResponseUtils.buildErrorResp(TeacherPortalCodeEnum.SYS_FAIL.getCode(), TeacherPortalCodeEnum.SYS_FAIL.getMsg());
         }
         return ApiResponseUtils.buildSuccessDataResp(result);

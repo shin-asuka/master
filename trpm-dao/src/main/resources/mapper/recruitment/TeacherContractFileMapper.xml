@@ -90,7 +90,7 @@
         WHERE
         teacher_id =#{teacherId}
         AND file_type =#{fileType}
-        AND screening_id is null
+        AND screening_id is null or screening_id = 0
         limit 1
     </select>
 
