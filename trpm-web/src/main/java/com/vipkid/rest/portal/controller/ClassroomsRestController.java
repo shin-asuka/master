@@ -84,8 +84,7 @@ public class ClassroomsRestController extends RestfulController{
 						)) {
 							classroomDetail.setIsPaidTrail(0);
 							continue;
-						}
-					
+						}					
 
 						TeacherComment teacherComment = teacherService.findByStudentIdAndOnlineClassId(classroomDetail.getStudentId(), classroomDetail.getOnlineClassId());
 						if (teacherComment == null || teacherComment.getFirstDateTime() == null || teacherComment.getScheduledDateTime() == null
