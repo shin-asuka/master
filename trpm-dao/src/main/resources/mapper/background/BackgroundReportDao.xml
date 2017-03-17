@@ -68,6 +68,6 @@
         FROM
         bg_sterling_report r
         WHERE
-        r.id = #{id}
+        r.bg_sterling_screening_id = #{id}
     </select>
 </mapper>

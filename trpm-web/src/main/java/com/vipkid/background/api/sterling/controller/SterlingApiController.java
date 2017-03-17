@@ -29,7 +29,7 @@ import java.util.Map;
 /**
  * Created by liyang on 2017/3/11.
  */
-@RequestMapping("/api/background/sterling")
+
 @Controller
 public class SterlingApiController {
 
@@ -38,7 +38,7 @@ public class SterlingApiController {
 
     @Autowired
     private SterlingService sterlingService;
-    @RequestMapping("/createCandidates")
+    @RequestMapping("/background/sterling/createCandidates")
     @ResponseBody
     public Object createCandidates(@RequestBody  CandidateInputDto candidateInputDto){
 
@@ -66,7 +66,7 @@ public class SterlingApiController {
 
 
 
-    @RequestMapping("/saveCandidate")
+    @RequestMapping("/background/sterling/saveCandidate")
     public Object saveCandidate(@RequestBody CandidateInputDto candidateInputDto){
         logger.info(JacksonUtils.toJSONString(candidateInputDto));
 
@@ -86,7 +86,7 @@ public class SterlingApiController {
 
     }
 
-    @RequestMapping("/updateCandidates")
+    @RequestMapping("/background/sterling/updateCandidates")
     public Object updateCandidates(@RequestBody CandidateInputDto candidateInputDto){
         logger.info(JacksonUtils.toJSONString(candidateInputDto));
 
@@ -110,7 +110,7 @@ public class SterlingApiController {
     }
 
 
-    @RequestMapping("/createScreening")
+    @RequestMapping("/background/sterling/createScreening")
     public Object createScreening(Long teacherId,String documentUrl){
         logger.info("teacher:{}",teacherId);
         ScreeningOutputDto screeningOutputDto = sterlingService.createScreening(teacherId,documentUrl);
@@ -123,7 +123,7 @@ public class SterlingApiController {
     }
 
 
-    @RequestMapping("/createPreAdverse")
+    @RequestMapping("/background/sterling/createPreAdverse")
     public Object createPreAdverse(Long teacherId){
         logger.info("teacher:{}",teacherId);
         AdverseOutputDto adverseOutputDto = sterlingService.createPreAdverse(teacherId);
@@ -138,41 +138,27 @@ public class SterlingApiController {
 
 
 
-    @RequestMapping("/callback")
+    @RequestMapping("/api/background/sterling/callback")
     public Object  callback(@RequestBody SterlingCallBack callBack,HttpServletRequest request){
-        BufferedReader br = null;
-        try {
-            br = new BufferedReader(new InputStreamReader(request.getInputStream()));
-            String line = null;
-            StringBuilder sb = new StringBuilder();
-            // 将资料解码
-            String reqBody = sb.toString();
-            logger.warn(reqBody);
-            while((line = br.readLine())!=null){
-                sb.append(line);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
         logger.warn(JacksonUtils.toJSONString(callBack));
 
-        String type = request.getParameter("type");
-        String payload = request.getParameter("payload");
-        logger.info("type:{},payload:{}",type,payload);
-        SterlingCallBack.Payload  payloadObject= JacksonUtils.readJson(payload, new TypeReference<SterlingCallBack.Payload>() {});
         return ApiResponseUtils.buildSuccessDataResp("success");
     }
 
+
+
+
 //----------下面是测试的
-    @RequestMapping("/repairDateScreeing")
+    @Deprecated
+    @RequestMapping("/background/sterling/repairDateScreeing")
     public Object repairDataCandidate(Long backgroundSterlingId){
         ScreeningOutputDto screeningOutputDto = sterlingService.repairDateScreeing(backgroundSterlingId);
         return ApiResponseUtils.buildSuccessDataResp(screeningOutputDto);
     }
 
 
-    @RequestMapping("/test")
+    @Deprecated
+    @RequestMapping("/background/sterling/test")
     public Object  testDate(){
         sterlingService.saveTestDate();
         return ApiResponseUtils.buildSuccessDataResp("success");

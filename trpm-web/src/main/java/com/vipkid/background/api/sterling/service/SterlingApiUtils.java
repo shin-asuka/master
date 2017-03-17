@@ -328,12 +328,12 @@ public class SterlingApiUtils {
         headers.put("Authorization",String.format("Basic %s", new sun.misc.BASE64Encoder().encode("APIUser@VIPKID.com:nEtGtGHyqD".getBytes())));
         headers.put(HTTP.CONTENT_TYPE,"application/x-www-form-urlencoded");
         String response = HttpClientUtils.appointHeadersPost(postUrl,params,headers);
-            if(org.apache.commons.lang3.StringUtils.isBlank(response)){
+        if(org.apache.commons.lang3.StringUtils.isBlank(response)){
             return null;
         }
         SterlingAccessToken sterlingAccessToken = JacksonUtils.readJson(response, new TypeReference<SterlingAccessToken>() {});
-//        sterlingAccessToken.getExpires_in()
-        RedisCacheUtils.set(STERLING_ACCESS_TOKEN,sterlingAccessToken,60);
+//
+        RedisCacheUtils.set(STERLING_ACCESS_TOKEN,sterlingAccessToken,sterlingAccessToken.getExpires_in());
         return sterlingAccessToken;
     }
 
