@@ -288,7 +288,7 @@ public class BackgroundCommonService {
 
         if (CollectionUtils.isNotEmpty(teacherContractFiles)) {
             hasFile = true;
-            if (StringUtils.equalsIgnoreCase(nationality, "USA")) {
+            if (StringUtils.equalsIgnoreCase(nationality, "United States")) {
                 String fileResult = "";
                 for (TeacherContractFile contractFile : teacherContractFiles) {
 
