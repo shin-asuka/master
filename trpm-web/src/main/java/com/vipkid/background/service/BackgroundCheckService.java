@@ -167,7 +167,7 @@ public class BackgroundCheckService {
         teacherContractFile.setFileType(fileType);
         teacherContractFile.setUrl(url);
         if(StringUtils.equals(operateType, "submit")){
-            teacherContractFile.setScreenId(0L);
+            teacherContractFile.setScreeningId(0L);
         }
         int row = contractFileDao.updateUrlAndScreeningId(teacherContractFile);
         return row;
@@ -181,7 +181,7 @@ public class BackgroundCheckService {
         file.setFileType(fileType);
         file.setUrl(url);
         if(StringUtils.equals(operateType, "submit")){
-            file.setScreenId(0L);
+            file.setScreeningId(0L);
         }
         file.setTeacherApplicationId(-9);//代表无意义
         int row = contractFileDao.save(file);

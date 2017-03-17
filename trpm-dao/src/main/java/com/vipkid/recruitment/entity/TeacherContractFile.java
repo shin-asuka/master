@@ -27,7 +27,7 @@ public class TeacherContractFile extends Entity implements Serializable {
     private long teacherApplicationId;
     private String failReason;
     private String result;
-    private Long screenId;
+    private Long screeningId;
 
     public int getId() {
         return id;
@@ -125,11 +125,11 @@ public class TeacherContractFile extends Entity implements Serializable {
         this.typeName = typeName;
     }
 
-    public Long getScreenId() {
-        return screenId;
+    public Long getScreeningId() {
+        return screeningId;
     }
 
-    public void setScreenId(Long screenId) {
-        this.screenId = screenId;
+    public void setScreeningId(Long screeningId) {
+        this.screeningId = screeningId;
     }
 }
