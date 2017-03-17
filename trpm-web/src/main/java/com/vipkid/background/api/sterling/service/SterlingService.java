@@ -181,8 +181,7 @@ public class SterlingService {
         candidateFilterDto.setGivenName(backgroundCheckVo.getFirstName());
         candidateFilterDto.setLimit(0);
         candidateFilterDto.setOffset(10);
-        //TODO 姣霞 email
-        //candidateFilterDto.setEmail(backgroundCheckVo.getn);
+        candidateFilterDto.setEmail(backgroundCheckVo.getEmail());
 
         List<SterlingCandidate> sterlingCandidateList = SterlingApiUtils.getCandidateList(candidateFilterDto);
         if(CollectionUtils.isEmpty(sterlingCandidateList)){

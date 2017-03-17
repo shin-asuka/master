@@ -414,6 +414,33 @@ public class HttpClientUtils {
 
 
 
+    public static String postResponseStatusCode(String postUrl, String json, Map<String, String> headers) {
+        HttpPost post = new HttpPost(postUrl);
+        String defaultEncoding = HttpClientUtils.getDefaultEncoding(null);
+        String content = null;
+        try {
+
+            if(org.apache.commons.collections.MapUtils.isNotEmpty(headers)){
+                for(String key : headers.keySet()){
+                    post.setHeader(key, headers.get(key));
+                }
+            }
+            if(StringUtils.isNotBlank(json)){
+                StringEntity entity = new StringEntity(json, defaultEncoding);
+                entity.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
+                post.setEntity(entity);
+            }
+
+            HttpResponse response = HttpClientUtils.CLIENT.execute(post);
+
+            content =String.valueOf(response.getStatusLine().getStatusCode());
+
+        } catch (Exception e) {
+            HttpClientUtils.logger.error(String.format("post [%s] happens error ", post.getURI()), e);
+        }
+        return content;
+    }
+
     private static String interaction(HttpEntityEnclosingRequestBase requestBase, String jsonData, String defaultEncoding, Map<String, String> headers){
         defaultEncoding = HttpClientUtils.getDefaultEncoding(defaultEncoding);
         String content = null;
@@ -431,7 +458,9 @@ public class HttpClientUtils {
             }
 
             HttpResponse response = HttpClientUtils.CLIENT.execute(requestBase);
+
             content = EntityUtils.toString(response.getEntity());
+
         } catch (Exception e) {
             HttpClientUtils.logger.error(String.format("post [%s] happens error ", requestBase.getURI()), e);
         }

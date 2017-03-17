@@ -260,17 +260,16 @@ public class SterlingApiUtils {
         Map<String, Object> params = Maps.newHashMap();
         params.put("reportItemIds",reportIdList);
         String postUrl = String.format(sterlingHost+"/v1/screenings/%s/adverse-actions",screeingId);
-        String response = HttpClientUtils.post(postUrl,JacksonUtils.toJSONString(params),headers);
-        if(StringUtils.isBlank(response)){
+        String response = HttpClientUtils.postResponseStatusCode(postUrl,JacksonUtils.toJSONString(params),headers);
+        if(StringUtils.equals("201",response)){
             return true;
         }else{
             SterlingScreening sterlingScreening = JacksonUtils.readJson(response, new TypeReference<SterlingScreening>() {});
             if(CollectionUtils.isNotEmpty(sterlingScreening.getErrors())){
                 logger.warn(JacksonUtils.toJSONString(sterlingScreening.getErrors()));
             }
+            return false;
         }
-
-        return false;
     }
 
 

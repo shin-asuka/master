@@ -23,6 +23,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by liyang on 2017/3/12.
@@ -193,6 +194,28 @@ public class SterlingApiUtilsTest {
                 System.out.println(sterlingScreening.getId());
             }
         }
+    }
+
+
+
+
+    @Test
+    public void preAdverseActionTest(){
+        String screeningIds="[{\"screeningId\":\"001000062954786\",\"reportiD\":\"62954786\"},{\"screeningId\":\"001000062954790\",\"reportiD\":\"62954790\"},{\"screeningId\":\"001000062954792\",\"reportiD\":\"62954792\"},{\"screeningId\":\"001000062954794\",\"reportiD\":\"62954794\"},{\"screeningId\":\"001000062954796\",\"reportiD\":\"62954796\"},{\"screeningId\":\"001000062954798\",\"reportiD\":\"62954798\"},{\"screeningId\":\"001000062954800\",\"reportiD\":\"62954800\"},{\"screeningId\":\"001000062954802\",\"reportiD\":\"62954802\"},{\"screeningId\":\"001000062954804\",\"reportiD\":\"62954804\"},{\"screeningId\":\"001000062954806\",\"reportiD\":\"62954806\"},{\"screeningId\":\"001000062954808\",\"reportiD\":\"62954808\"},{\"screeningId\":\"001000062954812\",\"reportiD\":\"62954812\"},{\"screeningId\":\"001000062954814\",\"reportiD\":\"62954814\"},{\"screeningId\":\"001000062954816\",\"reportiD\":\"62954816\"},{\"screeningId\":\"001000062954818\",\"reportiD\":\"62954818\"},{\"screeningId\":\"001000062954820\",\"reportiD\":\"62954820\"},{\"screeningId\":\"001000062954822\",\"reportiD\":\"62954822\"},{\"screeningId\":\"001000062954824\",\"reportiD\":\"62954824\"},{\"screeningId\":\"001000062954826\",\"reportiD\":\"62954826\"},{\"screeningId\":\"001000062954828\",\"reportiD\":\"62954828\"},{\"screeningId\":\"001000062954830\",\"reportiD\":\"62954830\"},{\"screeningId\":\"001000062954832\",\"reportiD\":\"62954832\"},{\"screeningId\":\"001000062954834\",\"reportiD\":\"62954834\"},{\"screeningId\":\"001000062954836\",\"reportiD\":\"62954836\"},{\"screeningId\":\"001000062954838\",\"reportiD\":\"62954838\"}]";
+        List<Map<String,String>> data = JacksonUtils.readJson(screeningIds, new TypeReference<List<Map<String, String>>>() {});
+
+
+
+        for(Map<String,String> d:data){
+            List<String> reportIds = Lists.newArrayList();
+            reportIds.add(d.get("reportiD"));
+            if(SterlingApiUtils.preAdverseAction(d.get("screeningId"),reportIds)){
+                System.out.println(d.get("screeningId"));
+            }else{
+                System.out.println(String.format("error:%s",d.get("screeningId")));
+            }
+        }
+
     }
 }
 

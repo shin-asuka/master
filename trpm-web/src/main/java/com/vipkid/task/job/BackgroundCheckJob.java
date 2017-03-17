@@ -43,6 +43,13 @@ public class BackgroundCheckJob {
             }
         }
 
+        //TODO 些处逻辑不太准确
+        List<Long> alertBgScreeningIds = backgroundScreeningV2Dao.findIdByResult("alert");
+        if(CollectionUtils.isNotEmpty(alertBgScreeningIds)){
+            for(Long bgScreeningId:alertBgScreeningIds){
+                sterlingService.repairDateScreeing(bgScreeningId);
+            }
+        }
         stopWatch.stop();
         logger.info(String.format("结束获取教师背景调查中调查结果状态更新=======================================用时%s ms",stopWatch.getTime()));
     }
