@@ -8,6 +8,7 @@ import com.vipkid.background.api.sterling.service.SterlingApiUtils;
 import com.vipkid.background.api.sterling.service.SterlingService;
 import com.vipkid.http.utils.JacksonUtils;
 import com.vipkid.rest.utils.ApiResponseUtils;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,12 +20,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 import java.util.Map;
 
 /**
  * Created by liyang on 2017/3/11.
  */
-@RequestMapping("/background/sterling")
+@RequestMapping("/api/background/sterling")
 @Controller
 public class SterlingApiController {
 
@@ -150,8 +152,11 @@ public class SterlingApiController {
     }
 
 
-
-
+    @RequestMapping("/test")
+    public Object  testDate(){
+        sterlingService.saveTestDate();
+        return ApiResponseUtils.buildSuccessDataResp("success");
+    }
 
 
 }

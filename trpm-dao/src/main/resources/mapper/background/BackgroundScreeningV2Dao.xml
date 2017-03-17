@@ -38,7 +38,7 @@
 
 
 
-    <insert id="insert" parameterType="com.vipkid.trpm.entity.BackgroundScreening" useGeneratedKeys="true" keyProperty="id">
+    <insert id="insert"  useGeneratedKeys="true" keyProperty="id">
         INSERT INTO bg_sterling_screening (
             teacher_id,
             candidate_id,
