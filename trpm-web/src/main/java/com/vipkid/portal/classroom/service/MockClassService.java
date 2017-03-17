@@ -181,17 +181,14 @@ public class MockClassService {
 
         TeacherPeComments teacherPeComments =
                         teacherPeCommentsDao.getTeacherPeComments(peDoAuditInputDto.getApplicationId());
-        TeacherPeComments teacherPeCommentsDto = new TeacherPeComments();
-        teacherPeCommentsDto.setId(teacherPeComments.getId());
-
-        BeanUtils.copyPropertys(peDoAuditInputDto, teacherPeCommentsDto);
+        BeanUtils.copyPropertys(peDoAuditInputDto, teacherPeComments);
 
         // set totalScore
         int totalScore = 0;
         if (CollectionUtils.isNotEmpty(peDoAuditInputDto.getOptionList())) {
             totalScore = teacherPeOptionDao.calculateOptionsPoints(peDoAuditInputDto.getOptionList());
         }
-        teacherPeCommentsDto.setTotalScore(totalScore);
+        teacherPeComments.setTotalScore(totalScore);
 
         // 结果不为 REAPPLY，则处理 tags，levels，results
         if (!StringUtils.equals(peDoAuditInputDto.getStatus(), Result.REAPPLY.name())) {
@@ -203,8 +200,8 @@ public class MockClassService {
             updatePeResults(peDoAuditInputDto.getApplicationId(), peDoAuditInputDto.getOptionList());
         }
 
-        teacherPeCommentsDao.updateTeacherPeComments(teacherPeCommentsDto);
-        logger.info("Pe doAudit teacherPeComments: {}", JsonUtils.toJSONString(teacherPeCommentsDto));
+        teacherPeCommentsDao.updateTeacherPeComments(teacherPeComments);
+        logger.info("Pe doAudit teacherPeComments: {}", JsonUtils.toJSONString(teacherPeComments));
 
         if (StringUtils.equals(peDoAuditInputDto.getStatus(), MockClassEnum.SAVE.name())) {
             // do save
@@ -249,7 +246,7 @@ public class MockClassService {
 
             if (isPes) {
                 TeacherPe teacherPe = teacherPeDao.findById(peDoAuditInputDto.getTeacherPeId());
-                if(null == teacherPe){
+                if (null == teacherPe) {
                     return "Cann't found any teacher PE task!";
                 }
 

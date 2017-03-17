@@ -3,6 +3,8 @@ package com.vipkid.portal.classroom.controller;
 import com.google.common.collect.Lists;
 import com.vipkid.http.utils.JsonUtils;
 import com.vipkid.portal.classroom.model.mockclass.*;
+import com.vipkid.portal.classroom.util.BeanUtils;
+import com.vipkid.trpm.entity.TeacherPeComments;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -135,6 +137,19 @@ public class MockClassControllerTest {
         candidateFeedbackInputDto.setCandidate("Bruce Lee");
 
         logger.info(JsonUtils.toJSONString(candidateFeedbackInputDto));
+    }
+
+    @Test
+    public void testBeanUtils() {
+        PeDoAuditInputDto peDoAuditInputDto = new PeDoAuditInputDto();
+        peDoAuditInputDto.setApplicationId(1213720);
+        peDoAuditInputDto.setAreasImprovement("ares");
+        peDoAuditInputDto.setThingsDidWell("did");
+
+        TeacherPeComments teacherPeComments = new TeacherPeComments();
+        BeanUtils.copyPropertys(peDoAuditInputDto, teacherPeComments);
+
+        logger.info(JsonUtils.toJSONString(teacherPeComments));
     }
 
 }
