@@ -200,10 +200,11 @@ public class ClassroomService {
 	 * 获取教室的URL
      * @param onlineClassId
      * @param teacher
+	 * @param user 
      * @return
      * Map&lt;String,Object&gt;
      */
-    public Map<String,Object> getClassRoomUrl(long onlineClassId,Teacher teacher){
+    public Map<String,Object> getClassRoomUrl(long onlineClassId,Teacher teacher, User user){
     	
     	Map<String,Object> result = Maps.newHashMap();
     	
@@ -248,7 +249,7 @@ public class ClassroomService {
         if(CourseName.PRACTICUM1.show().equals(courseType) || CourseName.PRACTICUM2.show().equals(courseType)){
         	role = OnlineClassProxy.RoomRole.STUDENT;
         }
-        Map<String,Object> urlResult = OnlineClassProxy.generateRoomEnterUrl(String.valueOf(teacher.getId()), teacher.getRealName(),
+        Map<String,Object> urlResult = OnlineClassProxy.generateRoomEnterUrl(String.valueOf(teacher.getId()), user.getName(),
                 onlineClass.getClassroom(), role, onlineClass.getSupplierCode(),onlineClass.getId(),OnlineClassProxy.ClassType.MAJOR);
         
         if(ReturnMapUtils.isSuccess(urlResult)){
