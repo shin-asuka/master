@@ -181,14 +181,17 @@ public class MockClassService {
 
         TeacherPeComments teacherPeComments =
                         teacherPeCommentsDao.getTeacherPeComments(peDoAuditInputDto.getApplicationId());
-        BeanUtils.copyPropertys(peDoAuditInputDto, teacherPeComments);
+        TeacherPeComments teacherPeCommentsDto = new TeacherPeComments();
+        teacherPeCommentsDto.setId(teacherPeComments.getId());
+
+        BeanUtils.copyPropertys(peDoAuditInputDto, teacherPeCommentsDto);
 
         // set totalScore
         int totalScore = 0;
         if (CollectionUtils.isNotEmpty(peDoAuditInputDto.getOptionList())) {
             totalScore = teacherPeOptionDao.calculateOptionsPoints(peDoAuditInputDto.getOptionList());
         }
-        teacherPeComments.setTotalScore(totalScore);
+        teacherPeCommentsDto.setTotalScore(totalScore);
 
         // 结果不为 REAPPLY，则处理 tags，levels，results
         if (!StringUtils.equals(peDoAuditInputDto.getStatus(), Result.REAPPLY.name())) {
@@ -200,8 +203,8 @@ public class MockClassService {
             updatePeResults(peDoAuditInputDto.getApplicationId(), peDoAuditInputDto.getOptionList());
         }
 
-        teacherPeCommentsDao.updateTeacherPeComments(teacherPeComments);
-        logger.info("Pe doAudit teacherPeComments: {}", JsonUtils.toJSONString(teacherPeComments));
+        teacherPeCommentsDao.updateTeacherPeComments(teacherPeCommentsDto);
+        logger.info("Pe doAudit teacherPeComments: {}", JsonUtils.toJSONString(teacherPeCommentsDto));
 
         if (StringUtils.equals(peDoAuditInputDto.getStatus(), MockClassEnum.SAVE.name())) {
             // do save
