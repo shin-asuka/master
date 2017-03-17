@@ -24,6 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Stopwatch;
 import com.google.common.collect.Maps;
+import com.vipkid.dataSource.annotation.Slave;
 import com.vipkid.enums.TeacherEnum;
 import com.vipkid.enums.TeacherEnum.FormType;
 import com.vipkid.enums.TeacherEnum.LifeCycle;
@@ -317,7 +318,8 @@ public class PortalPersonalInfoController extends RestfulController {
 
 		return null;// 如果验证通过，返回null
 	}
-
+	
+	@Slave
 	@RequestMapping(value = "/findReferrals", method = RequestMethod.POST)
 	public Map<String, Object> findReferrals(HttpServletRequest request, HttpServletResponse response,@RequestBody ReferralTeacherVo bean) {
 		try{

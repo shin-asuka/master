@@ -169,10 +169,10 @@ public class OnlineClassController extends AbstractPortalController {
             model.addAttribute("isStarted", false);
         }
         if (lesson.getSerialNumber().startsWith("P")) {
-            model.addAllAttributes(onlineclassService.enterPracticum(onlineClass, studentId, teacher, lesson));
+            model.addAllAttributes(onlineclassService.enterPracticum(onlineClass, studentId, teacher,user, lesson));
             return view("online_class_practicum");
         } else if (lesson.getSerialNumber().startsWith("OPEN")) {
-            model.addAllAttributes(onlineclassService.enterOpen(onlineClass, studentId, teacher, lesson));
+            model.addAllAttributes(onlineclassService.enterOpen(onlineClass, studentId, teacher, user,lesson));
             return view("online_class_open");
         } else {
             /** 是否需要打开feedbackd */
@@ -183,7 +183,7 @@ public class OnlineClassController extends AbstractPortalController {
             //学生进教室的时候创建CF记录
             //onlineclassService.createTeacherCommentByEnterClassroom(studentId,teacher.getId(),onlineClass,lesson);
             model.addAllAttributes(
-                    onlineclassService.enterMajor(onlineClass, studentId, teacher, lesson));
+                    onlineclassService.enterMajor(onlineClass, studentId, teacher,user, lesson));
             return view("online_class_major");
         }
     }
