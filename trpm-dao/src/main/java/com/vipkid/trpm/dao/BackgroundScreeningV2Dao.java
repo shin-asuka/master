@@ -9,7 +9,7 @@ import java.util.List;
  */
 public interface BackgroundScreeningV2Dao {
 
-    Long insert(BackgroundScreening backgroundScreening);
+    int insert(BackgroundScreening backgroundScreening);
 
     int update(BackgroundScreening backgroundScreening);
 
@@ -20,4 +20,6 @@ public interface BackgroundScreeningV2Dao {
     List<Long> findIdByResult(String result);
 
     List<Long> findTeacherIdBycandidateIdNone();
+
+    int dynamicInsert(BackgroundScreening backgroundScreening);
 }

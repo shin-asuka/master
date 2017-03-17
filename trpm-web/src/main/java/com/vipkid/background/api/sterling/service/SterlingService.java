@@ -7,6 +7,8 @@ import com.google.common.collect.Lists;
 import com.vipkid.background.api.sterling.controller.SterlingApiController;
 import com.vipkid.background.api.sterling.dto.*;
 
+import com.vipkid.background.service.BackgroundCheckService;
+import com.vipkid.background.vo.BackgroundCheckVo;
 import com.vipkid.http.utils.JacksonUtils;
 import com.vipkid.trpm.dao.BackgroundAdverseDao;
 import com.vipkid.trpm.dao.BackgroundReportDao;
@@ -64,11 +66,20 @@ public class SterlingService {
     @Resource
     private BackgroundScreeningV2Dao backgroundScreeningV2Dao;
 
+    @Resource
+    private BackgroundCheckService backgroundCheckService;
+
 
 
 
     @Transactional(readOnly = false)
     public CandidateOutputDto createCandidate(CandidateInputDto candidateInputDto) {
+
+        BackgroundScreening newBackgroundScreening = new BackgroundScreening();
+        newBackgroundScreening.setTeacherId(candidateInputDto.getTeacherId());
+        newBackgroundScreening.setUpdateTime(new Date());
+        newBackgroundScreening.setCreateTime(new Date());
+        backgroundScreeningV2Dao.dynamicInsert(newBackgroundScreening);
         if(StringUtils.isNotBlank(candidateInputDto.getCandidateId())){
             //2年后参数背景调查 update信息，新插入记录
             SterlingCandidate sterlingCandidate = SterlingApiUtils.updateCandidate(candidateInputDto);
@@ -78,7 +89,8 @@ public class SterlingService {
                         sterlingCandidate.getErrors().get(0).getErrorMessage());
             }
             BackgroundScreening backgroundScreening = transformBackgroundScreening(candidateInputDto,sterlingCandidate);
-            backgroundScreeningV2Dao.insert(backgroundScreening);
+            backgroundScreening.setId(newBackgroundScreening.getId());
+            backgroundScreeningV2Dao.update(backgroundScreening);
             return new CandidateOutputDto(backgroundScreening.getId(),null,null);
         }
 
@@ -91,8 +103,9 @@ public class SterlingService {
         }
 
         BackgroundScreening backgroundScreening = transformBackgroundScreening(candidateInputDto,sterlingCandidate);
-        Long id = backgroundScreeningV2Dao.insert(backgroundScreening);
-        return new CandidateOutputDto(id,null,null);
+        backgroundScreening.setId(newBackgroundScreening.getId());
+        backgroundScreeningV2Dao.update(backgroundScreening);
+        return new CandidateOutputDto(newBackgroundScreening.getId(),null,null);
     }
 
 
@@ -163,7 +176,14 @@ public class SterlingService {
             return new CandidateOutputDto(null,10000,String.format("Candidate数据不需要修复,teacherId:%s",teacherId));
         }
         CandidateFilterDto candidateFilterDto =new CandidateFilterDto();
-        //TODO 调用雪林给的接口
+        BackgroundCheckVo backgroundCheckVo =backgroundCheckService.getInfoForUs(teacherId);
+        candidateFilterDto.setFamilyName(backgroundCheckVo.getLastName());
+        candidateFilterDto.setGivenName(backgroundCheckVo.getFirstName());
+        candidateFilterDto.setLimit(0);
+        candidateFilterDto.setOffset(10);
+        //TODO 姣霞 email
+        //candidateFilterDto.setEmail(backgroundCheckVo.getn);
+
         List<SterlingCandidate> sterlingCandidateList = SterlingApiUtils.getCandidateList(candidateFilterDto);
         if(CollectionUtils.isEmpty(sterlingCandidateList)){
             return new CandidateOutputDto(null ,10000,"没有查到");

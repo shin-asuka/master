@@ -70,6 +70,42 @@
             #{pdfLink,jdbcType=LONGVARCHAR}
         )
     </insert>
+    <insert id="dynamicInsert" useGeneratedKeys="true" keyProperty="id" >
+        INSERT INTO bg_sterling_screening
+        <trim prefix="(" prefixOverrides=",">
+            <if test="teacherId!=0">,teacher_id</if>
+            <if test="candidateId!=null">,candidate_id</if>
+            <if test="screeningId!=null">,screening_id</if>
+            <if test="status!=null">,status</if>
+            <if test="result!=null">,result</if>
+            <if test="disputeStatus!=null">,dispute_status</if>
+            <if test="disputeCreatedAt!=null">,dispute_created_at</if>
+            <if test="submittedAt!=null">,submitted_at</if>
+            <if test="updateAt!=null">,update_at</if>
+            <if test="createTime!=null">,create_time</if>
+            <if test="updateTime!=null">,update_time</if>
+            <if test="webLink!=null">,web_link</if>
+            <if test="pdfLink!=null">,pdf_link</if>
+        </trim>
+        )
+        VALUES
+        <trim prefix="(" prefixOverrides=",">
+            <if test="teacherId!=0">,#{teacherId,jdbcType=BIGINT}</if>
+            <if test="candidateId!=null">,#{candidateId,jdbcType=VARCHAR}</if>
+            <if test="screeningId!=null">,#{screeningId,jdbcType=VARCHAR}</if>
+            <if test="status!=null">,#{status,jdbcType=VARCHAR}</if>
+            <if test="result!=null">,#{result,jdbcType=VARCHAR}</if>
+            <if test="disputeStatus!=null">,#{disputeStatus,jdbcType=VARCHAR}</if>
+            <if test="disputeCreatedAt!=null">,#{disputeCreatedAt,jdbcType=TIMESTAMP}</if>
+            <if test="submittedAt!=null">,#{submittedAt,jdbcType=TIMESTAMP}</if>
+            <if test="updateAt!=null">,#{updateAt,jdbcType=TIMESTAMP}</if>
+            <if test="createTime!=null">,#{createTime,jdbcType=TIMESTAMP}</if>
+            <if test="updateTime!=null">,#{updateTime,jdbcType=TIMESTAMP}</if>
+            <if test="webLink!=null">,#{webLink,jdbcType=LONGVARCHAR}</if>
+            <if test="pdfLink!=null">,#{pdfLink,jdbcType=LONGVARCHAR}</if>
+        </trim>
+        )
+    </insert>
 
 
     <update id="update" parameterType="com.vipkid.trpm.entity.BackgroundScreening" >
