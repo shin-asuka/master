@@ -209,7 +209,7 @@ public class OnlineClassService {
 
         TeacherApplication teacherApplication =
                 teacherApplicationDao.findApplictionByOlineclassId(onlineClass.getId(), student.getId());
-        modelMap.putAll(OnlineClassProxy.generateRoomEnterUrl(String.valueOf(student.getId()), student.getRealName(),
+        modelMap.putAll(OnlineClassProxy.generateRoomEnterUrl(String.valueOf(student.getId()), user.getName(),
                 onlineClass.getClassroom(), OnlineClassProxy.RoomRole.STUDENT, onlineClass.getSupplierCode(),onlineClass.getId(),OnlineClassProxy.ClassType.PRACTICUM));
         modelMap.put("teacherPe", teacherPeDao.findByOnlineClassId(onlineClass.getId()));
         List<TeacherApplication> list = teacherApplicationDao.findApplictionForStatusResult(
