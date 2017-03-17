@@ -1,4 +1,4 @@
-package com.vipkid.background.vo.output;
+package com.vipkid.background.dto.output;
 
 
 public class BaseOutput {

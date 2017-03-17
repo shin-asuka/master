@@ -2,33 +2,42 @@ package com.vipkid.background.controller;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
+import com.vipkid.background.dto.input.BackgroundCheckInput;
+import com.vipkid.background.dto.output.BaseOutput;
 import com.vipkid.background.enums.TeacherPortalCodeEnum;
 import com.vipkid.background.service.BackgroundCheckService;
-import com.vipkid.background.vo.input.BackgroundCheckInput;
-import com.vipkid.background.vo.output.BaseOutput;
+import com.vipkid.background.vo.BackgroundCheckVo;
+import com.vipkid.enums.TeacherApplicationEnum;
+import com.vipkid.file.model.FileVo;
+import com.vipkid.file.service.AwsFileService;
+import com.vipkid.recruitment.entity.TeacherContractFile;
 import com.vipkid.rest.RestfulController;
-import com.vipkid.rest.config.RestfulConfig;
-import com.vipkid.rest.interceptor.annotation.RestInterface;
+import com.vipkid.rest.exception.ServiceException;
 import com.vipkid.rest.utils.ApiResponseUtils;
+import com.vipkid.trpm.entity.Teacher;
+import com.vipkid.trpm.service.portal.TeacherService;
 import com.vipkid.trpm.util.AwsFileUtils;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /***
  * background check for teacher
  */
 @RestController
-@RequestMapping("/backgroundCheck")
+//@RestInterface(lifeCycle = {TeacherEnum.LifeCycle.REGULAR})
+@RequestMapping("/background/info")
 public class BackgroundCheckController extends RestfulController {
 
     private static Logger logger = LoggerFactory.getLogger(BackgroundCheckController.class);
@@ -36,18 +45,25 @@ public class BackgroundCheckController extends RestfulController {
     @Autowired
     private BackgroundCheckService checkService;
 
+    @Autowired
+    private AwsFileService fileService;
+
+    @Autowired
+    private TeacherService teacherService;
+
     /***
-     * save background check information
+     * save background check information for US
      * @param checkInput
      * @param request
      * @param response
      * @return
      */
-    @RequestMapping(value = "/submitCheckInfoForUs", method = RequestMethod.POST)
-    public Map<String, Object> submitCheckInfoForUs(@RequestBody BackgroundCheckInput checkInput, HttpServletRequest request, HttpServletResponse response) {
+    @RequestMapping(value = "/saveCheckInfoForUs", method = RequestMethod.POST)
+    public Map<String, Object> saveCheckInfoForUs(@RequestParam("operateType") String operateType, BackgroundCheckInput checkInput, HttpServletRequest request, HttpServletResponse response) {
         Map<String, Object> result = Maps.newHashMap();
+        //Teacher teacher = getTeacher(request);
         Long teacherId = checkInput.getTeacherId();
-        String maidenName = checkInput.getMaidenName();
+        checkInput.setTeacherId(teacherId);
         Integer countryId = checkInput.getCountryId();
         Integer stateId = checkInput.getStateId();
         Integer cityId = checkInput.getCity();
@@ -55,36 +71,167 @@ public class BackgroundCheckController extends RestfulController {
         String zipCode = checkInput.getZipCode();
 
         String birthday = checkInput.getBirthDay();
-        String driverLicenseNumber = checkInput.getDriverLicenseNumber();
-        String driverLicenseType = checkInput.getDriverLicenseType();
-        String driverLicenseAgency = checkInput.getDriverLicenseAgency();
+        String socialSecurityNo = checkInput.getSocialSecurityNumber();
         String fileUrl = checkInput.getFileUrl();
-        try{
-            Preconditions.checkArgument(teacherId != null, "teacher ID cannot be null");
-            //Preconditions.checkArgument(StringUtils.isNotBlank(maidenName), "maidenName cannot be null");
+        try {
             Preconditions.checkArgument(countryId != null, "countryId cannot be null");
             Preconditions.checkArgument(stateId != null, "stateId cannot be null");
             Preconditions.checkArgument(cityId != null, "cityId cannot be null");
             Preconditions.checkArgument(StringUtils.isNotBlank(street), "street cannot be null");
             Preconditions.checkArgument(StringUtils.isNotBlank(zipCode), "zipCode cannot be null");
             Preconditions.checkArgument(StringUtils.isNotBlank(birthday), "birthday cannot be null");
+            Preconditions.checkArgument(StringUtils.isNotBlank(socialSecurityNo), "socialSecurityNumber cannot be null");
 
-            Preconditions.checkArgument(StringUtils.isNotBlank(driverLicenseNumber), "driverLicenseNumber cannot be null");
-            Preconditions.checkArgument(StringUtils.isNotBlank(driverLicenseType), "driverLicenseType cannot be null");
-            Preconditions.checkArgument(StringUtils.isNotBlank(driverLicenseAgency), "driverLicenseAgency cannot be null");
-            Preconditions.checkArgument(StringUtils.isNotBlank(fileUrl), "fileUrl cannot be null");
-
-            BaseOutput output = checkService.saveBackgroundCheckInfo(checkInput);
-            if(!StringUtils.equals(TeacherPortalCodeEnum.RES_SUCCESS.getCode(), TeacherPortalCodeEnum.RES_SUCCESS.getMsg())){
-                return ApiResponseUtils.buildErrorResp(-2, "Failed to submit background check information.");
+            if(StringUtils.equals(operateType, "submit")){
+                Preconditions.checkArgument(StringUtils.isNotBlank(fileUrl), "fileUrl cannot be null");
             }
-        }catch(Exception e){
-            logger.warn("submit background check info occur exception, ");
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            return ApiResponseUtils.buildErrorResp(-2, "Failed to submit background check information.");
+
+            BaseOutput output = checkService.saveBackgroundCheckInfo(checkInput, operateType);
+            if (!StringUtils.equals(TeacherPortalCodeEnum.RES_SUCCESS.getCode(), output.getResCode())) {
+                return ApiResponseUtils.buildErrorResp(TeacherPortalCodeEnum.SYS_FAIL.getCode(), "Failed to save background check information.");
+            }
+        } catch (IllegalArgumentException e) {
+            logger.warn("save background check info for US occur IllegalArgumentException, teacherId=" + teacherId);
+            return ApiResponseUtils.buildErrorResp(TeacherPortalCodeEnum.SYS_PARAM_ERROR.getCode(), e.getMessage());
+        } catch (ServiceException e) {
+            logger.error("save background check info for US occur ServiceException, teacherId=" + teacherId, e);
+            return ApiResponseUtils.buildErrorResp(TeacherPortalCodeEnum.SYS_FAIL.getCode(), "Failed to save background check information.");
+        } catch (Exception e) {
+            logger.warn("save background check info for US occur exception, teacherId=" + teacherId, e);
+            return ApiResponseUtils.buildErrorResp(TeacherPortalCodeEnum.SYS_FAIL.getCode(), "Failed to save background check information.");
         }
         return ApiResponseUtils.buildSuccessDataResp(result);
     }
 
+    /**
+     * upload background check file
+     */
+    @RequestMapping(value = "/uploadFile", method = RequestMethod.POST)
+    public Map<String, Object> uploadFile(@RequestParam("file") MultipartFile file, Integer type, HttpServletRequest request, HttpServletResponse response) {
+        Map<String, Object> result = new HashMap<>();
+        Long teacherId = null;
+        try {
+            Preconditions.checkArgument(file != null, "文件不能为空");
+            Preconditions.checkArgument(type != null, "文件类型不能为空");
+            Preconditions.checkArgument(type.equals(TeacherApplicationEnum.ContractFileType.US_BACKGROUND_CHECK.val()) && !type.equals(TeacherApplicationEnum.ContractFileType.CANADA_BACKGROUND_CHECK_CPIC_FORM.val()) && !type.equals(TeacherApplicationEnum.ContractFileType.CANADA_BACKGROUND_CHECK_ID2.val()), "文件类型错误");
+            Long size = file.getSize();
+            String fileName = file.getOriginalFilename();
+
+            Preconditions.checkArgument(AwsFileUtils.checkContractFileType(fileName), "文件类型不正确，支持类型为" + AwsFileUtils.CONTRACT_FILE_TYPE);
+            Preconditions.checkArgument(AwsFileUtils.checkContractFileSize(size), "文件太大，maxSize = " + AwsFileUtils.CONTRACT_FILE_MAX_SIZE);
+
+            Teacher teacher = getTeacher(request);
+            teacherId = teacher.getId();
+            if (StringUtils.isNotBlank(fileName)) {
+                fileName = AwsFileUtils.reNewFileName(fileName);
+            }
+            String key = AwsFileUtils.getDegreeskey(teacher.getId(), teacher.getId() + "-" + fileName);
+            FileVo fileVo = fileService.awsUpload(file, teacher.getId(), fileName, key);
+            if (fileVo == null) {
+                return ApiResponseUtils.buildErrorResp(TeacherPortalCodeEnum.SYS_FAIL.getCode(),"Upload failed!  Please try again.");
+            }
+            checkService.saveContractFile(teacherId, type, fileVo.getUrl(), "save");
+            result.put("fileUrl", fileVo.getUrl());
+        } catch (IllegalArgumentException e) {
+            logger.warn("upload background file for US occur IllegalArgumentException, teacherId="+teacherId, e);
+            return ApiResponseUtils.buildErrorResp(TeacherPortalCodeEnum.SYS_PARAM_ERROR.getCode(), e.getMessage());
+        }catch (ServiceException e) {
+            logger.warn("upload background file for US occur ServiceException, teacherId="+teacherId, e);
+            return ApiResponseUtils.buildErrorResp(TeacherPortalCodeEnum.SYS_FAIL.getCode(), "failed to upload file");
+        } catch (Exception e) {
+            logger.warn("upload background file for US occur exception, teacherId="+teacherId, e);
+            return ApiResponseUtils.buildErrorResp(TeacherPortalCodeEnum.SYS_FAIL.getCode(), "failed to upload file");
+        }
+        return ApiResponseUtils.buildSuccessDataResp(result);
+    }
+
+    /**
+     * save background check file for CA
+     */
+    @RequestMapping(value = "/saveCheckInfoForCa", method = RequestMethod.POST)
+    public Map<String, Object> saveCheckInfoForCa(@RequestParam("ipicUrl") String ipicUrl, @RequestParam("id2Url") String id2Url, HttpServletRequest request, HttpServletResponse response) {
+        Map<String, Object> result = new HashMap<>();
+        if (null == ipicUrl || null == id2Url) {
+            return ApiResponseUtils.buildErrorResp(TeacherPortalCodeEnum.SYS_PARAM_ERROR.getCode(),"file cannot be null");
+        }
+        Long teacherId = null;
+        try {
+            Preconditions.checkArgument(StringUtils.isNotBlank(ipicUrl), "IPIC file cannot be null");
+            Preconditions.checkArgument(StringUtils.isNotBlank(ipicUrl), "id2 file cannot be null");
+
+            Teacher teacher = getTeacher(request);
+            teacherId = teacher.getId();
+            logger.info("save background check file for CA, teacherId=" + teacher.getId());
+
+            checkService.saveContractFile(teacherId, TeacherApplicationEnum.ContractFileType.CANADA_BACKGROUND_CHECK_CPIC_FORM.val(), ipicUrl, "submit");
+            checkService.saveContractFile(teacherId, TeacherApplicationEnum.ContractFileType.CANADA_BACKGROUND_CHECK_ID2.val(), id2Url, "submit");
+            result.put("ipicUrl", ipicUrl);
+            result.put("id2Url", id2Url);
+            logger.info("save background check file for CA success, teacherId=" + teacherId );
+        } catch (IllegalArgumentException e) {
+            logger.warn("save background check file for CA occur IllegalArgumentException, teacherId=" + teacherId, e);
+            return ApiResponseUtils.buildErrorResp(TeacherPortalCodeEnum.SYS_PARAM_ERROR.getCode(), e.getMessage());
+        } catch (Exception e) {
+            logger.warn("save background check file occur exception, teacherId=" + teacherId, e);
+            return ApiResponseUtils.buildErrorResp(TeacherPortalCodeEnum.SYS_FAIL.getCode(), TeacherPortalCodeEnum.SYS_FAIL.getMsg());
+        }
+        return ApiResponseUtils.buildSuccessDataResp(result);
+    }
+
+    /***
+     * get USA background check info
+     * @param request
+     * @param response
+     * @return
+     */
+    @RequestMapping(value = "/getCheckInfoForUs", method = RequestMethod.POST)
+    public Map<String, Object> getCheckInfoForUs(HttpServletRequest request, HttpServletResponse response) {
+//        Teacher teacher = getTeacher(request);
+//        Long teacherId = teacher.getId();
+        Long teacherId = 42770L;
+        BackgroundCheckVo info = null;
+        try{
+            info = checkService.getInfoForUs(teacherId);
+        }catch (Exception e) {
+            logger.warn("get background check info occur exception, teacherId=" + teacherId, e);
+            return ApiResponseUtils.buildErrorResp(TeacherPortalCodeEnum.SYS_FAIL.getCode(), TeacherPortalCodeEnum.SYS_FAIL.getMsg());
+        }
+        return ApiResponseUtils.buildSuccessDataResp(info);
+    }
+
+    /***
+     * get CA background check info
+     * @param request
+     * @param response
+     * @return
+     */
+    @RequestMapping(value = "/getCheckInfoForCa", method = RequestMethod.POST)
+    public Map<String, Object> getCheckInfoForCa(HttpServletRequest request, HttpServletResponse response) {
+        Teacher teacher = getTeacher(request);
+        Long teacherId = teacher.getId();
+        Map<String, Object> map = new HashMap<String, Object>();
+        try{
+            Teacher teacherDo = teacherService.get(teacherId);
+            map.put("id1Url", teacherDo.getPassport());
+            List<TeacherContractFile> list = checkService.getInfoForCa(teacherId);
+            if(CollectionUtils.isEmpty(list)){
+                return ApiResponseUtils.buildSuccessDataResp(map);
+            }
+            for(TeacherContractFile file : list){
+                String url = file.getUrl();
+                Integer type = file.getFileType();
+                if(type.equals(TeacherApplicationEnum.ContractFileType.CANADA_BACKGROUND_CHECK_CPIC_FORM.val())){
+                    map.put("cpicUrl", url);
+                }
+                if(type.equals(TeacherApplicationEnum.ContractFileType.CANADA_BACKGROUND_CHECK_ID2.val())){
+                    map.put("id2Url", url);
+                }
+            }
+        }catch (Exception e) {
+            logger.warn("get background check info occur exception, teacherId=" + teacherId, e);
+            return ApiResponseUtils.buildErrorResp(TeacherPortalCodeEnum.SYS_FAIL.getCode(), TeacherPortalCodeEnum.SYS_FAIL.getMsg());
+        }
+        return ApiResponseUtils.buildSuccessDataResp(map);
+    }
 
 }

@@ -1,13 +1,14 @@
 package com.vipkid.background.service;
 
-import com.alibaba.druid.support.json.JSONUtils;
+import com.vipkid.background.dto.input.BackgroundCheckInput;
+import com.vipkid.background.dto.output.BaseOutput;
 import com.vipkid.background.enums.TeacherPortalCodeEnum;
-import com.vipkid.background.vo.input.BackgroundCheckInput;
-import com.vipkid.background.vo.output.BaseOutput;
+import com.vipkid.background.vo.BackgroundCheckVo;
+import com.vipkid.enums.TeacherAddressEnum;
 import com.vipkid.enums.TeacherApplicationEnum;
+import com.vipkid.file.service.AwsFileService;
 import com.vipkid.file.utils.StringUtils;
 import com.vipkid.recruitment.dao.TeacherContractFileDao;
-import com.vipkid.recruitment.entity.TeacherApplication;
 import com.vipkid.recruitment.entity.TeacherContractFile;
 import com.vipkid.rest.exception.ServiceException;
 import com.vipkid.trpm.dao.TeacherAddressDao;
@@ -19,38 +20,50 @@ import com.vipkid.trpm.entity.TeacherLicense;
 import com.vipkid.trpm.util.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.List;
 
 @Service("backgroundCheckService")
 public class BackgroundCheckService {
     private static Logger logger = LoggerFactory.getLogger(BackgroundCheckService.class);
 
+    @Autowired
     private TeacherContractFileDao contractFileDao;
 
+    @Autowired
     private TeacherLicenseDao licenseDao;
 
+    @Autowired
     private TeacherDao teacherDao;
 
+    @Autowired
     private TeacherAddressDao teacherAddressDao;
 
+    @Autowired
+    private AwsFileService fileService;
+
     @Transactional(readOnly = false, propagation = Propagation.REQUIRES_NEW, rollbackFor = Exception.class)
-    public BaseOutput saveBackgroundCheckInfo(BackgroundCheckInput input){
+    public BaseOutput saveBackgroundCheckInfo(BackgroundCheckInput input, String operateType){
         //update teacher
         Teacher teacher = teacherDao.findById(input.getTeacherId());
         updateTeacherBasicIno(teacher, input);
 
-        //insert to teacher_address
+
+        //save teacher_address
         saveLatestAddress(input);
 
-        //insert to teacher_contract_file//
-        saveContractFile(input);
+        if(StringUtils.isNotBlank(input.getFileUrl())){
+            //save teacher_contract_file//
+            saveContractFile(input.getTeacherId(), TeacherApplicationEnum.ContractFileType.US_BACKGROUND_CHECK.val(), input.getFileUrl(), operateType);
+        }
 
-        //insert to teacher_license
+        //save teacher_license
         saveLicense(input);
 
         BaseOutput output = new BaseOutput();
@@ -59,14 +72,117 @@ public class BackgroundCheckService {
         return output;
     }
 
+
+    public void saveContractFile(Long teacherId, Integer fileType, String url, String operateType) throws ServiceException{
+        //update
+        int row = updateUrlAndScreeningId(teacherId, fileType, url, operateType);
+        if(row == 1){
+            logger.info("save background check information, BackgroundCheckService.saveContractFile, update success, teacherId="+teacherId+", fileType="+fileType+", fileUrl="+url);
+            return;
+        }
+        if(row > 1){
+            logger.error("save background check information, BackgroundCheckService.saveContractFile, update failed. return affected row is not one. teacherId="+teacherId+", fileType="+fileType+", fileUrl="+url);
+            throw new ServiceException(TeacherPortalCodeEnum.SYS_FAIL.getCode(), TeacherPortalCodeEnum.SYS_FAIL.getMsg());
+        }
+        //insert
+        logger.info("save background check information, BackgroundCheckService.saveContractFile, the file does not exist, begin insert. teacherId="+teacherId+", fileType="+fileType+", fileUrl="+url);
+        int saveRow = insertContractFile(teacherId, fileType, url, operateType);
+        if(saveRow != 1){
+            logger.error("save background check information, BackgroundCheckService.saveContractFile, insert success, return affected row is not one, teacherId="+teacherId+", fileType="+fileType+", fileUrl="+url);
+            throw new ServiceException(TeacherPortalCodeEnum.SYS_FAIL.getCode(), TeacherPortalCodeEnum.SYS_FAIL.getMsg());
+        }
+        logger.info("save background check information, BackgroundCheckService.saveContractFile, insert success. teacherId="+teacherId+", fileType="+fileType+", fileUrl="+url);
+
+    }
+
+    public BackgroundCheckVo getInfoForUs(Long teacherId){
+        Teacher teacher = teacherDao.findById(teacherId);
+        if(null == teacher){
+            return null;
+        }
+        BackgroundCheckVo checkInfo = new BackgroundCheckVo();
+        checkInfo.setMaidenName(teacher.getMaidenName());
+        checkInfo.setFirstName(teacher.getFirstName());
+        checkInfo.setMiddleName(teacher.getMiddleName());
+        checkInfo.setLastName(teacher.getLastName());
+        checkInfo.setBirthDay(DateUtils.formatDate(teacher.getBirthday()));
+        TeacherContractFile file = contractFileDao.findAllowEditOne(teacherId, TeacherApplicationEnum.ContractFileType.US_BACKGROUND_CHECK.val());
+        if(file != null){
+            checkInfo.setFileUrl(file.getUrl());
+        }
+        List<TeacherAddress> list = teacherAddressDao.findListByTeacherId(teacherId);
+        for(TeacherAddress address : list){
+            if(address.getType().equals(TeacherAddressEnum.AddressType.LATEST.val())){
+                checkInfo.setLatestCity(address.getCity());
+                checkInfo.setLatestCountryId(address.getCountryId());
+                checkInfo.setLatestStateId(address.getStateId());
+                checkInfo.setLatestStreet(address.getStreetAddress());
+                checkInfo.setLatestZipCode(address.getZipCode());
+            }
+            if(address.getType().equals(TeacherAddressEnum.AddressType.NORMAL.val())){
+                checkInfo.setCurrentCity(address.getCity());
+                checkInfo.setCurrentCountryId(address.getCountryId());
+                checkInfo.setCurrentStateId(address.getStateId());
+                checkInfo.setCurrentStreet(address.getStreetAddress());
+                checkInfo.setCurrentZipCode(address.getZipCode());
+            }
+        }
+        TeacherLicense license = licenseDao.findByTeacherId(teacherId);
+        if(license != null){
+            checkInfo.setDriverLicenseNumber(license.getDriverLicense());
+            checkInfo.setDriverLicenseType(license.getDriverLicenseType());
+            checkInfo.setDriverLicenseAgency(license.getDriverLicenseIssuingAgency());
+            if(StringUtils.isNotBlank(license.getSocialNo())){
+                String socialNo = license.getSocialNo().substring(0,2) + "******";
+                checkInfo.setSocialSecurityNumber(socialNo);
+            }
+        }
+        return checkInfo;
+    }
+
+    public List<TeacherContractFile> getInfoForCa(Long teacherId){
+        String types = TeacherApplicationEnum.ContractFileType.CANADA_BACKGROUND_CHECK_CPIC_FORM.val() +","+TeacherApplicationEnum.ContractFileType.CANADA_BACKGROUND_CHECK_ID2.val();
+        List<TeacherContractFile> list = contractFileDao.findListByTypes(teacherId, types);
+        return list;
+    }
+
+    private int updateUrlAndScreeningId(Long teacherId, Integer fileType, String url, String operateType){
+        TeacherContractFile teacherContractFile = new TeacherContractFile();
+        teacherContractFile.setTeacherId(teacherId);
+        teacherContractFile.setFileType(fileType);
+        teacherContractFile.setUrl(url);
+        if(StringUtils.equals(operateType, "submit")){
+            teacherContractFile.setScreenId(0L);
+        }
+        int row = contractFileDao.updateUrlAndScreeningId(teacherContractFile);
+        return row;
+    }
+
+    private int insertContractFile(Long teacherId, Integer fileType, String url, String operateType){
+        TeacherContractFile file = new TeacherContractFile();
+        file.setTeacherId(teacherId);
+        file.setCreateId(teacherId);
+        file.setCreateTime(new Timestamp(new Date().getTime()));
+        file.setFileType(fileType);
+        file.setUrl(url);
+        if(StringUtils.equals(operateType, "submit")){
+            file.setScreenId(0L);
+        }
+        file.setTeacherApplicationId(-9);//代表无意义
+        int row = contractFileDao.save(file);
+        return row;
+    }
+
+
     private void updateTeacherBasicIno(Teacher teacher, BackgroundCheckInput input){
         teacher.setMaidenName(input.getMaidenName());
+        teacher.setMiddleName(input.getMiddleName());
         if(StringUtils.isNotBlank(input.getBirthDay())){
             teacher.setBirthday(DateUtils.parseDate(input.getBirthDay(), DateUtils.DEFAULT_FORMAT_PATTERN));
         }
         int row = teacherDao.update(teacher);
         if(row != 1){
-            logger.warn("submit background check information, update table Teacher, return affected row is not one, param="+ JSONUtils.toJSONString(input));
+            logger.error("save background check information, update table Teacher, return affected row is not one, teacherId="+input.getTeacherId());
             throw new ServiceException(TeacherPortalCodeEnum.SYS_FAIL.getCode(), TeacherPortalCodeEnum.SYS_FAIL.getMsg());
         }
     }
@@ -80,42 +196,56 @@ public class BackgroundCheckService {
         address.setStreetAddress(input.getStreet());
         address.setZipCode(input.getZipCode());
         address.setType(input.getAddressType());
+
+        int row = teacherAddressDao.updateByTeacherIdAndType(address);
+        if(row == 1){
+            logger.info("save background check information, BackgroundCheckService.saveLatestAddress, update success, teacherId="+address.getTeacherId());
+            return;
+        }
+        if(row > 1){
+            logger.error("save background check information for US, BackgroundCheckService.saveLatestAddress, update failed. return affected row is not one. teacherId="+address.getTeacherId());
+            throw new ServiceException(TeacherPortalCodeEnum.SYS_FAIL.getCode(), TeacherPortalCodeEnum.SYS_FAIL.getMsg());
+        }
+        logger.info("save background check information, BackgroundCheckService.saveLatestAddress, the address does not exist, begin insert.teacherId="+address.getTeacherId());
         address.setCreateTime(new Timestamp(new Date().getTime()));
-
-        int row = teacherAddressDao.updateOrSave(address);
-        if(row != 1){
-            logger.warn("submit background check information, insert to table TeacherAddress, return affected row is not one, param="+ JSONUtils.toJSONString(input));
+        //insert
+        int insertRow = teacherAddressDao.updateOrSave(address);
+        if(insertRow != 1){
+            logger.error("save background check information, BackgroundCheckService.saveLatestAddress,insert failed, return affected row is not one, teacherId="+address.getTeacherId());
             throw new ServiceException(TeacherPortalCodeEnum.SYS_FAIL.getCode(), TeacherPortalCodeEnum.SYS_FAIL.getMsg());
         }
-    }
-
-    private void saveContractFile(BackgroundCheckInput input){
-        TeacherContractFile file = new TeacherContractFile();
-        file.setTeacherId(input.getTeacherId());
-        file.setCreateId(input.getTeacherId());
-        file.setCreateTime(new Timestamp(new Date().getTime()));
-        file.setFileType(TeacherApplicationEnum.ContractFileType.US_BACKGROUND_CHECK.val());
-        file.setUrl(input.getFileUrl());
-        file.setTeacherApplicationId(-9);//代表无意义
-        int row = contractFileDao.save(file);
-        if(row != 1){
-            logger.warn("submit background check information, insert to table TeacherContractFile, return affected row is not one, param="+ JSONUtils.toJSONString(input));
-            throw new ServiceException(TeacherPortalCodeEnum.SYS_FAIL.getCode(), TeacherPortalCodeEnum.SYS_FAIL.getMsg());
-        }
+        logger.info("save background check information, BackgroundCheckService.saveLatestAddress, insert success.teacherId="+address.getTeacherId());
     }
 
     private void saveLicense(BackgroundCheckInput input){
         TeacherLicense license = new TeacherLicense();
         license.setTeacherId(input.getTeacherId());
         license.setDriverLicense(input.getDriverLicenseNumber());
-        license.setType(input.getDriverLicenseType());
-        license.setIssuingAgency(input.getDriverLicenseAgency());
-        license.setSecurityNo(input.getSocialSecurityNumber());
-        license.setCreateTime(new Date());
-        int row = licenseDao.save(license);
-        if(row != 1){;
-            logger.warn("submit background check information, insert to table TeacherLicense, return affected row is not one, param="+ JSONUtils.toJSONString(input));
+        license.setDriverLicense(input.getDriverLicenseType());
+        license.setDriverLicenseIssuingAgency(input.getDriverLicenseAgency());
+        if(input.getSocialSecurityNumber().indexOf("*") == -1){
+            license.setSocialNo(input.getSocialSecurityNumber());
+        }
+        license.setUpdateId(input.getTeacherId());
+
+        int updateRow = licenseDao.updateByTeacherId(license);
+        if(updateRow == 1){
+            logger.info("save background check information, BackgroundCheck.saveLicense, insert failed, update success, teacherId="+input.getTeacherId());
+            return;
+        }
+        if(updateRow > 1){
+            logger.error("save background check information, BackgroundCheck.saveLicense, update failed. return affected row is not one. teacherId="+input.getTeacherId());
             throw new ServiceException(TeacherPortalCodeEnum.SYS_FAIL.getCode(), TeacherPortalCodeEnum.SYS_FAIL.getMsg());
         }
+        logger.info("save background check information, BackgroundCheck.saveLicense, the license does not exist, begin insert.teacherId="+input.getTeacherId());
+        license.setCreateTime(new Date());
+        license.setCreateId(input.getTeacherId());
+        int row = licenseDao.insert(license);
+        if(row != 1){
+            logger.error("save background check information, BackgroundCheck.saveLicense, insert failed, return affected row is not one, teacherId="+input.getTeacherId());
+            throw new ServiceException(TeacherPortalCodeEnum.SYS_FAIL.getCode(), TeacherPortalCodeEnum.SYS_FAIL.getMsg());
+        }
+        logger.info("save background check information, BackgroundCheckService.saveLicense, insert success.teacherId="+input.getTeacherId());
+
     }
 }

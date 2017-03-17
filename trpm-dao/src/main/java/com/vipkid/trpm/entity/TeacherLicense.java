@@ -16,16 +16,20 @@ public class TeacherLicense extends Entity implements Serializable {
 	/* driver_license */
 	private String driverLicense;
 
-	/* security_no */
-	private String securityNo;
+	/* social_no */
+	private String socialNo;
 
-	private String type;
+	private String driverLicenseType;
 
-	private String issuingAgency;
+	private String driverLicenseIssuingAgency;
 	/*  */
 	private Date createTime;
 	/*  */
 	private Date updateTime;
+
+	private Long updateId;
+
+	private Long createId;
 
 
 	public Integer getId() {
@@ -52,30 +56,6 @@ public class TeacherLicense extends Entity implements Serializable {
 		this.driverLicense = driverLicense;
 	}
 
-	public String getSecurityNo() {
-		return securityNo;
-	}
-
-	public void setSecurityNo(String securityNo) {
-		this.securityNo = securityNo;
-	}
-
-	public String getType() {
-		return type;
-	}
-
-	public void setType(String type) {
-		this.type = type;
-	}
-
-	public String getIssuingAgency() {
-		return issuingAgency;
-	}
-
-	public void setIssuingAgency(String issuingAgency) {
-		this.issuingAgency = issuingAgency;
-	}
-
 	public Date getCreateTime() {
 		return createTime;
 	}
@@ -90,5 +70,45 @@ public class TeacherLicense extends Entity implements Serializable {
 
 	public void setUpdateTime(Date updateTime) {
 		this.updateTime = updateTime;
+	}
+
+	public String getSocialNo() {
+		return socialNo;
+	}
+
+	public void setSocialNo(String socialNo) {
+		this.socialNo = socialNo;
+	}
+
+	public String getDriverLicenseType() {
+		return driverLicenseType;
+	}
+
+	public void setDriverLicenseType(String driverLicenseType) {
+		this.driverLicenseType = driverLicenseType;
+	}
+
+	public String getDriverLicenseIssuingAgency() {
+		return driverLicenseIssuingAgency;
+	}
+
+	public void setDriverLicenseIssuingAgency(String driverLicenseIssuingAgency) {
+		this.driverLicenseIssuingAgency = driverLicenseIssuingAgency;
+	}
+
+	public Long getUpdateId() {
+		return updateId;
+	}
+
+	public void setUpdateId(Long updateId) {
+		this.updateId = updateId;
+	}
+
+	public Long getCreateId() {
+		return createId;
+	}
+
+	public void setCreateId(Long createId) {
+		this.createId = createId;
 	}
 }

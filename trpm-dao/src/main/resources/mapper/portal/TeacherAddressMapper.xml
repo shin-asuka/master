@@ -73,6 +73,24 @@
         <include refid="teacherAddressOrder" />
         <include refid="teacherAddressLimit" />
     </select>
+
+
+    <select id="findByTeacherIdAndType" resultMap="teacherAddressResultMap">
+        SELECT
+        <include refid="teacherAddressColumns" />
+        FROM teacher_address
+        WHERE teacher_id=#{teacherId}
+        AND type=#{type}
+        LIMIT 1
+    </select>
+
+
+    <select id="findListByTeacherId" resultMap="teacherAddressResultMap">
+        SELECT
+        <include refid="teacherAddressColumns" />
+        FROM teacher_address
+        WHERE teacher_id=#{teacherId}
+    </select>
     
     <insert id="saveDao" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO teacher_address
@@ -119,6 +137,20 @@
             <if test="type != null">,type = #{type}</if>
         </trim>
         <trim prefix="WHERE" prefixOverrides="AND">AND id = #{id}</trim>
+    </update>
+
+
+    <update id="updateByTeacherIdAndType">
+        UPDATE teacher_address
+        <trim prefix="SET" prefixOverrides=",">
+            <if test="countryId != null">,country_id = #{countryId}</if>
+            <if test="stateId != null">,state_id = #{stateId}</if>
+            <if test="city != null">,city = #{city}</if>
+            <if test="streetAddress != null">,street_address = #{streetAddress}</if>
+            <if test="zipCode != null">,zip_code = #{zipCode}</if>
+            <if test="updateTime != null">,update_time = #{updateTime}</if>
+        </trim>
+            WHERE teacher_id=#{teacherId} and type = #{type}
     </update>
     
     <delete id="deleteDao">

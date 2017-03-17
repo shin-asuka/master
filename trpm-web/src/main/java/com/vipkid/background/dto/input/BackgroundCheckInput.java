@@ -1,4 +1,4 @@
-package com.vipkid.background.vo.input;
+package com.vipkid.background.dto.input;
 
 
 import java.io.Serializable;
@@ -7,6 +7,8 @@ public class BackgroundCheckInput implements Serializable{
     private static final long serialVersionUID = 2932585128429730715L;
 
     private Long teacherId;
+
+    private String middleName;
 
     private String maidenName;
 
@@ -22,8 +24,8 @@ public class BackgroundCheckInput implements Serializable{
     private String street;
 
     private String zipCode;
-
-    private Integer addressType;
+    /* 默认为最新地址*/
+    private Integer addressType = 1;
 
     private String driverLicenseNumber;
 
@@ -145,5 +147,13 @@ public class BackgroundCheckInput implements Serializable{
 
     public void setFileUrl(String fileUrl) {
         this.fileUrl = fileUrl;
+    }
+
+    public String getMiddleName() {
+        return middleName;
+    }
+
+    public void setMiddleName(String middleName) {
+        this.middleName = middleName;
     }
 }

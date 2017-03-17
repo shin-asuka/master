@@ -72,6 +72,7 @@
     </select>
 
 
+
     <select id="findById"  resultType="com.vipkid.recruitment.entity.TeacherContractFile" >
         SELECT
         <include refid="teacherContractFileColumns"/>
@@ -80,6 +81,36 @@
         teacher_contract_file.id =#{id}
     </select>
 
+
+
+    <select id="findAllowEditOne"  resultType="com.vipkid.recruitment.entity.TeacherContractFile" >
+        SELECT
+        <include refid="teacherContractFileColumns"/>
+        FROM teacher_contract_file
+        WHERE
+        teacher_id =#{teacherId}
+        AND file_type =#{fileType}
+        AND screening_id is null
+        limit 1
+    </select>
+
+    <select id="findListByTypes"  resultType="com.vipkid.recruitment.entity.TeacherContractFile" >
+        SELECT
+        <include refid="teacherContractFileColumns"/>
+        FROM teacher_contract_file
+        WHERE
+        teacher_id =#{teacherId}
+        AND file_type in (${types})
+    </select>
+
+    <update id="updateUrlAndScreeningId">
+        UPDATE teacher_contract_file
+        set file_url=#{url},
+        <if test="screeningId != null">, screening_id = #{screeningId}</if>
+        WHERE teacher_id =#{teacherId}
+        and file_type =#{fileType}
+        and (screening_id = 0 or screening_id is null)
+    </update>
 
     <update id="updateDao">
         UPDATE teacher_contract_file
@@ -95,6 +126,7 @@
                 <if test="teacherApplicationId!=-1">,teacher_application_id = #{teacherApplicationId}</if>
                 <if test="failReason!=null">,fail_reason = #{failReason}</if>
                 <if test="result!=null">,result = #{result}</if>
+                <if test="screening_id!=null">,screening_id = #{screeningId}</if>
             </trim>
         <trim prefix="WHERE" prefixOverrides="AND">AND id = #{id}</trim>
     </update>

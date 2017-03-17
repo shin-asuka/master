@@ -16,7 +16,10 @@ public enum TeacherPortalCodeEnum {
 	SYS_PARAM_ERROR("TP30002","illegal arguments"),
 
 	//订单不存在
-	ORDER_NOT_EXISTS("TP30003", "the item does not exists");
+	ORDER_NOT_EXISTS("TP30003", "the item does not exists"),
+
+	//订单已经存在
+	ORDER_ALREADY_EXISTED("TP30004", "the item already existed");
 
 	private String code;
 	private String msg;
