@@ -42,7 +42,7 @@ public class BackgroundCommonController extends RestfulController{
                 result = backgroundCommonService.getCanadabackgroundStatus(teacher);
                 result.put("nationality","CANADA");
             }else{
-                result.put("nationality","others");
+                result.put("nationality","OTHERS");
             }
             response.setStatus(HttpStatus.OK.value());
             return ReturnMapUtils.returnSuccess(result);

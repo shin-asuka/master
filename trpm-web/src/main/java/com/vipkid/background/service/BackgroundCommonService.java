@@ -289,6 +289,7 @@ public class BackgroundCommonService {
         if (CollectionUtils.isNotEmpty(teacherContractFiles)) {
             hasFile = true;
             if (StringUtils.equalsIgnoreCase(nationality, "United States")) {
+                result.put("nationality", "USA");
                 String fileResult = "";
                 for (TeacherContractFile contractFile : teacherContractFiles) {
 
@@ -302,6 +303,7 @@ public class BackgroundCommonService {
                 }
                 result.put("fileResult", fileResult);
             } else if (StringUtils.equalsIgnoreCase(nationality, "CANADA")) {
+                result.put("nationality", "CANADA");
                 String canadaFirstFileResult = "";
                 String canadaSecondFileResult = "";
                 for (TeacherContractFile contractFile : teacherContractFiles) {
@@ -339,7 +341,6 @@ public class BackgroundCommonService {
             hasFile = false;
         }
         result.put("hasFile", hasFile);
-        result.put("nationality", nationality);
         return result;
 
     }
