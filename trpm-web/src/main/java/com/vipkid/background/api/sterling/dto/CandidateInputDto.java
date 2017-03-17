@@ -22,6 +22,7 @@ public class CandidateInputDto implements  java.io.Serializable{
     private String ssn;
     private String phone;
     private Address address;
+    private DriversLicense driversLicense;
     private short retry =0;
 
 
@@ -127,6 +128,14 @@ public class CandidateInputDto implements  java.io.Serializable{
 
     public void setMiddleName(String middleName) {
         this.middleName = middleName;
+    }
+
+    public DriversLicense getDriversLicense() {
+        return driversLicense;
+    }
+
+    public void setDriversLicense(DriversLicense driversLicense) {
+        this.driversLicense = driversLicense;
     }
 
     public static class Address implements  java.io.Serializable{

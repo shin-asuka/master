@@ -74,15 +74,11 @@ public class SterlingService {
             SterlingCandidate sterlingCandidate = SterlingApiUtils.updateCandidate(candidateInputDto);
             if(CollectionUtils.isNotEmpty(sterlingCandidate.getErrors())){
                 logger.warn("param:{},error:{}", JacksonUtils.toJSONString(candidateInputDto),JacksonUtils.toJSONString(sterlingCandidate.getErrors()));
-                return new CandidateOutputDto(null,Integer.valueOf(sterlingCandidate.getErrors().get(0).getErrorCode()),sterlingCandidate.getErrors().get(0).getErrorMessage());
+                return new CandidateOutputDto(null,Integer.valueOf(sterlingCandidate.getErrors().get(0).getErrorCode()),
+                        sterlingCandidate.getErrors().get(0).getErrorMessage());
             }
             BackgroundScreening backgroundScreening = transformBackgroundScreening(candidateInputDto,sterlingCandidate);
-            Long row = backgroundScreeningV2Dao.insert(backgroundScreening);
-            if(row>0){
-                //优化一下
-                BackgroundScreening newBackgoundScreening = backgroundScreeningV2Dao.findByTeacherIdTopOne(candidateInputDto.getTeacherId());
-                backgroundScreening.setId(newBackgoundScreening.getId());
-            }
+            backgroundScreeningV2Dao.insert(backgroundScreening);
             return new CandidateOutputDto(backgroundScreening.getId(),null,null);
         }
 
@@ -90,7 +86,8 @@ public class SterlingService {
         SterlingCandidate sterlingCandidate = SterlingApiUtils.createCandidate(candidateInputDto);
         if(CollectionUtils.isNotEmpty(sterlingCandidate.getErrors())){
             logger.warn("param:{},error:{}", JacksonUtils.toJSONString(candidateInputDto),JacksonUtils.toJSONString(sterlingCandidate.getErrors()));
-            return new CandidateOutputDto(null,Integer.valueOf(sterlingCandidate.getErrors().get(0).getErrorCode()),sterlingCandidate.getErrors().get(0).getErrorMessage());
+            return new CandidateOutputDto(null,Integer.valueOf(sterlingCandidate.getErrors().get(0).getErrorCode()),
+                    sterlingCandidate.getErrors().get(0).getErrorMessage());
         }
 
         BackgroundScreening backgroundScreening = transformBackgroundScreening(candidateInputDto,sterlingCandidate);
