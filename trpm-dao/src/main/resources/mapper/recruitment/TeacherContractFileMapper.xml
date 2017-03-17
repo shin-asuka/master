@@ -105,7 +105,7 @@
 
     <update id="updateUrlAndScreeningId">
         UPDATE teacher_contract_file
-        set file_url=#{url},
+        set file_url=#{url}
         <if test="screeningId != null">, screening_id = #{screeningId}</if>
         WHERE teacher_id =#{teacherId}
         and file_type =#{fileType}
