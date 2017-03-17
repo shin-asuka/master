@@ -18,10 +18,10 @@
         c.create_id,
         c.update_id,
         c.create_time,
-        c.update_time.
+        c.update_time
     </sql>
 
-    <select id = "findByTeacherId" resultMap="CanadaBackgroundScreening">
+    <select id = "findByTeacherId" resultMap="CanadaBackgroundScreening" parameterType="Long">
     SELECT
         <include refid="canadaBackgroundScreeningAllColumn"/>
       FROM bg_sterling_screening_ca c

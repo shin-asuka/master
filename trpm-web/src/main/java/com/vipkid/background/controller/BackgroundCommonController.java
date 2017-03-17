@@ -35,7 +35,7 @@ public class BackgroundCommonController extends RestfulController{
             Teacher teacher = getTeacher(request);
             String nationality = teacher.getCountry();
             Map<String ,Object> result = Maps.newHashMap();
-            if (StringUtils.equalsIgnoreCase(nationality,"USA")){
+            if (StringUtils.equalsIgnoreCase(nationality,"United States")){
                  result = backgroundCommonService.getUsaBackgroundStatus(teacher);
                  result.put("nationality","USA");
             }else if (StringUtils.equalsIgnoreCase(nationality,"CANADA")){
@@ -44,6 +44,7 @@ public class BackgroundCommonController extends RestfulController{
             }else{
                 result.put("nationality","others");
             }
+            response.setStatus(HttpStatus.OK.value());
             return ReturnMapUtils.returnSuccess(result);
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
