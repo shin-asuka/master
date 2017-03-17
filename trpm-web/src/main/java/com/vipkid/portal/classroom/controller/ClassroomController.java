@@ -188,8 +188,9 @@ public class ClassroomController extends RestfulController{
     public Map<String,Object> getClassRoomUrl(HttpServletRequest request, HttpServletResponse response,@RequestParam("onlineClassId") long onlineClassId){
         try{
         	logger.info("TeacherId:{},Get classroom url,onlineClassId:{}",getTeacher(request).getId(), onlineClassId);
-        	Map<String,Object> resultMap = this.classroomService.getClassRoomUrl(onlineClassId,getTeacher(request));
-        	if(resultMap.get("info") == null){
+			Map<String, Object> resultMap = this.classroomService.getClassRoomUrl(onlineClassId, getTeacher(request),
+					getUser(request));
+			if (resultMap.get("info") == null) {
         		return ApiResponseUtils.buildSuccessDataResp(resultMap);
         	}else{
                 response.setStatus(HttpStatus.FORBIDDEN.value());
