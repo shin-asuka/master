@@ -20,6 +20,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.List;
 import java.util.Map;
 
@@ -137,6 +140,23 @@ public class SterlingApiController {
 
     @RequestMapping("/callback")
     public Object  callback(HttpServletRequest request){
+        BufferedReader br = null;
+        try {
+            br = new BufferedReader(new InputStreamReader(request.getInputStream()));
+            String line = null;
+            StringBuilder sb = new StringBuilder();
+            // 将资料解码
+            String reqBody = sb.toString();
+            logger.warn(reqBody);
+            while((line = br.readLine())!=null){
+                sb.append(line);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+
         String type = request.getParameter("type");
         String payload = request.getParameter("payload");
         logger.info("type:{},payload:{}",type,payload);
