@@ -117,23 +117,19 @@ public class PayrollMessageServiceImpl implements PayrollMessageService {
                 }
                 // 学生是否在约课月内支付
                 Boolean isPaidForTrial = false;
-				if (isTrialOnly == true) {
-					List<Map<String, Object>> payList = studentService.findPaidByStudentIdAndScheduleDateTime(
-							studentId, onlineClass.getScheduledDateTime());
-					List<Long> ids = studentService.findConfirmedPriceGreaterTan500BeforeThisMonth(studentId,
-							onlineClass.getScheduledDateTime());
-					if (payList != null && payList.size() > 0 && ids.size() == 0) {
-						Object timestamp = payList.get(0).get("confirm_date_time");
-						logger.info("学生Trail课订单确认时间为：{}，studentId = {}", timestamp, studentId);
-						if (null != timestamp && timestamp instanceof Timestamp) {
-							isPaidForTrial = true;
-							onlineClassMessage.setTrialPayTime(((Timestamp) timestamp).getTime());
-						}
-					} else {
-						isPaidForTrial = false;
-					}
-					onlineClassMessage.setPaidForTrial(isPaidForTrial);
-				}
+                if (isTrialOnly == true) {
+                    List<Map<String, Object>> payList = studentService.findPaidByStudentIdAndScheduleDateTime(studentId,
+                            onlineClass.getScheduledDateTime());
+                    if (payList.size() > 0) {
+                        Object timestamp = payList.get(0).get("confirm_date_time");
+                        logger.info("学生Trail课订单确认时间为：{}，studentId = {}",timestamp,studentId);
+                        if (null != timestamp && timestamp instanceof Timestamp) {
+                            isPaidForTrial = true;
+                            onlineClassMessage.setTrialPayTime(((Timestamp) timestamp).getTime());
+                        }
+                    }
+                    onlineClassMessage.setPaidForTrial(isPaidForTrial);
+                }
 
                 logger.info("PayrollMessageService 结束课程，消息发送成功  destination={}, message={} ",
                         finishOnlineClassDestination, JSONObject.toJSON(message));
