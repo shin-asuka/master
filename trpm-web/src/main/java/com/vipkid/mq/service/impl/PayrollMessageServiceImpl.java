@@ -16,7 +16,6 @@ import com.vipkid.trpm.dao.OnlineClassDao;
 import com.vipkid.trpm.dao.TeacherDao;
 import com.vipkid.trpm.entity.*;
 import com.vipkid.trpm.entity.teachercomment.SubmitTeacherCommentDto;
-
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,7 +25,6 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import javax.jms.Destination;
-
 import java.sql.Timestamp;
 import java.util.List;
 import java.util.Map;
