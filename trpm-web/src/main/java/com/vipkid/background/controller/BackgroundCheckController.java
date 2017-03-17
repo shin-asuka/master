@@ -114,7 +114,7 @@ public class BackgroundCheckController extends RestfulController {
      * upload background check file
      */
     @RequestMapping(value = "/uploadFile", method = RequestMethod.POST)
-    public Map<String, Object> uploadFile(@RequestParam("file") MultipartFile file, Integer type, HttpServletRequest request, HttpServletResponse response) {
+    public Map<String, Object> uploadFile(@RequestParam("file") MultipartFile file, @RequestParam("type")Integer type, HttpServletRequest request, HttpServletResponse response) {
         Map<String, Object> result = new HashMap<>();
         Long teacherId = null;
         try {
