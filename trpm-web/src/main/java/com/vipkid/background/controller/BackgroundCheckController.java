@@ -9,11 +9,13 @@ import com.vipkid.background.enums.TeacherPortalCodeEnum;
 import com.vipkid.background.service.BackgroundCheckService;
 import com.vipkid.background.vo.BackgroundCheckVo;
 import com.vipkid.enums.TeacherApplicationEnum;
+import com.vipkid.enums.TeacherEnum;
 import com.vipkid.file.model.FileVo;
 import com.vipkid.file.service.AwsFileService;
 import com.vipkid.recruitment.entity.TeacherContractFile;
 import com.vipkid.rest.RestfulController;
 import com.vipkid.rest.exception.ServiceException;
+import com.vipkid.rest.interceptor.annotation.RestInterface;
 import com.vipkid.rest.utils.ApiResponseUtils;
 import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.service.portal.TeacherService;
@@ -23,6 +25,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -39,7 +42,7 @@ import java.util.Map;
  * background check for teacher
  */
 @RestController
-//@RestInterface(lifeCycle = {TeacherEnum.LifeCycle.REGULAR})
+@RestInterface(lifeCycle = {TeacherEnum.LifeCycle.REGULAR})
 @RequestMapping("/background/info")
 public class BackgroundCheckController extends RestfulController {
 
@@ -94,17 +97,21 @@ public class BackgroundCheckController extends RestfulController {
 
             BaseOutput output = checkService.saveBackgroundCheckInfo(checkInput, operateType);
             if (!StringUtils.equals(TeacherPortalCodeEnum.RES_SUCCESS.getCode(), output.getResCode())) {
+                response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
                 return ApiResponseUtils.buildErrorResp(TeacherPortalCodeEnum.SYS_FAIL.getCode(), "Failed to save background check information.");
             }
 
         } catch (IllegalArgumentException e) {
             logger.warn("save background check info for US occur IllegalArgumentException, teacherId=" + teacherId);
+            response.setStatus(HttpStatus.BAD_REQUEST.value());
             return ApiResponseUtils.buildErrorResp(TeacherPortalCodeEnum.SYS_PARAM_ERROR.getCode(), e.getMessage());
         } catch (ServiceException e) {
             logger.error("save background check info for US occur ServiceException, teacherId=" + teacherId, e);
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
             return ApiResponseUtils.buildErrorResp(TeacherPortalCodeEnum.SYS_FAIL.getCode(), "Failed to save background check information.");
         } catch (Exception e) {
             logger.warn("save background check info for US occur exception, teacherId=" + teacherId, e);
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
             return ApiResponseUtils.buildErrorResp(TeacherPortalCodeEnum.SYS_FAIL.getCode(), "Failed to save background check information.");
         }
         return ApiResponseUtils.buildSuccessDataResp(result);
@@ -135,18 +142,22 @@ public class BackgroundCheckController extends RestfulController {
             String key = AwsFileUtils.getDegreeskey(teacher.getId(), teacher.getId() + "-" + fileName);
             FileVo fileVo = fileService.awsUpload(file, teacher.getId(), fileName, key);
             if (fileVo == null) {
+                response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
                 return ApiResponseUtils.buildErrorResp(TeacherPortalCodeEnum.SYS_FAIL.getCode(),"Upload failed!  Please try again.");
             }
             checkService.saveContractFile(teacherId, type, fileVo.getUrl(), "save");
             result.put("fileUrl", fileVo.getUrl());
         } catch (IllegalArgumentException e) {
             logger.warn("upload background file for US occur IllegalArgumentException, teacherId="+teacherId, e);
+            response.setStatus(HttpStatus.BAD_REQUEST.value());
             return ApiResponseUtils.buildErrorResp(TeacherPortalCodeEnum.SYS_PARAM_ERROR.getCode(), e.getMessage());
         }catch (ServiceException e) {
             logger.warn("upload background file for US occur ServiceException, teacherId="+teacherId, e);
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
             return ApiResponseUtils.buildErrorResp(TeacherPortalCodeEnum.SYS_FAIL.getCode(), "failed to upload file");
         } catch (Exception e) {
             logger.warn("upload background file for US occur exception, teacherId="+teacherId, e);
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
             return ApiResponseUtils.buildErrorResp(TeacherPortalCodeEnum.SYS_FAIL.getCode(), "failed to upload file");
         }
         return ApiResponseUtils.buildSuccessDataResp(result);
@@ -177,9 +188,11 @@ public class BackgroundCheckController extends RestfulController {
             logger.info("save background check file for CA success, teacherId=" + teacherId );
         } catch (IllegalArgumentException e) {
             logger.warn("save background check file for CA occur IllegalArgumentException, teacherId=" + teacherId, e);
+            response.setStatus(HttpStatus.BAD_REQUEST.value());
             return ApiResponseUtils.buildErrorResp(TeacherPortalCodeEnum.SYS_PARAM_ERROR.getCode(), e.getMessage());
         } catch (Exception e) {
             logger.warn("save background check file for CA  occur exception, teacherId=" + teacherId, e);
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
             return ApiResponseUtils.buildErrorResp(TeacherPortalCodeEnum.SYS_FAIL.getCode(), TeacherPortalCodeEnum.SYS_FAIL.getMsg());
         }
         return ApiResponseUtils.buildSuccessDataResp(result);
@@ -201,6 +214,7 @@ public class BackgroundCheckController extends RestfulController {
             info = checkService.getInfoForUs(teacherId);
         }catch (Exception e) {
             logger.warn("get background check info occur exception, teacherId=" + teacherId, e);
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
             return ApiResponseUtils.buildErrorResp(TeacherPortalCodeEnum.SYS_FAIL.getCode(), TeacherPortalCodeEnum.SYS_FAIL.getMsg());
         }
         return ApiResponseUtils.buildSuccessDataResp(info);
@@ -236,6 +250,7 @@ public class BackgroundCheckController extends RestfulController {
             }
         }catch (Exception e) {
             logger.warn("get background check info occur exception, teacherId=" + teacherId, e);
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
             return ApiResponseUtils.buildErrorResp(TeacherPortalCodeEnum.SYS_FAIL.getCode(), TeacherPortalCodeEnum.SYS_FAIL.getMsg());
         }
         return ApiResponseUtils.buildSuccessDataResp(map);
