@@ -2,6 +2,7 @@ package com.vipkid.background.controller;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
+import com.vipkid.background.dto.input.BackgroundCheckCaInputDto;
 import com.vipkid.background.dto.input.BackgroundCheckInputDto;
 import com.vipkid.background.dto.output.BaseOutputDto;
 import com.vipkid.background.enums.TeacherPortalCodeEnum;
@@ -165,8 +166,10 @@ public class BackgroundCheckController extends RestfulController {
      * save background check file for CA
      */
     @RequestMapping(value = "/saveCheckInfoForCa", method = RequestMethod.POST)
-    public Map<String, Object> saveCheckInfoForCa(String ipicUrl, String id2Url, HttpServletRequest request, HttpServletResponse response) {
+    public Map<String, Object> saveCheckInfoForCa(@RequestBody BackgroundCheckCaInputDto input, HttpServletRequest request, HttpServletResponse response) {
         Map<String, Object> result = new HashMap<>();
+        String ipicUrl = input.getIpicUrl();
+        String id2Url = input.getId2Url();
         if (null == ipicUrl || null == id2Url) {
             return ApiResponseUtils.buildErrorResp(TeacherPortalCodeEnum.SYS_PARAM_ERROR.getCode(),"file cannot be null");
         }
