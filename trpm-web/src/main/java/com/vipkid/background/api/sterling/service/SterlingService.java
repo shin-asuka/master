@@ -7,6 +7,7 @@ import com.google.common.collect.Lists;
 import com.vipkid.background.api.sterling.controller.SterlingApiController;
 import com.vipkid.background.api.sterling.dto.*;
 
+import com.vipkid.background.enums.TeacherPortalCodeEnum;
 import com.vipkid.background.service.BackgroundCheckService;
 import com.vipkid.background.vo.BackgroundCheckVo;
 import com.vipkid.http.utils.JacksonUtils;
@@ -85,27 +86,27 @@ public class SterlingService {
             SterlingCandidate sterlingCandidate = SterlingApiUtils.updateCandidate(candidateInputDto);
             if(CollectionUtils.isNotEmpty(sterlingCandidate.getErrors())){
                 logger.warn("param:{},error:{}", JacksonUtils.toJSONString(candidateInputDto),JacksonUtils.toJSONString(sterlingCandidate.getErrors()));
-                return new CandidateOutputDto(null,Integer.valueOf(sterlingCandidate.getErrors().get(0).getErrorCode()),
+                return new CandidateOutputDto(Integer.valueOf(sterlingCandidate.getErrors().get(0).getErrorCode()),
                         sterlingCandidate.getErrors().get(0).getErrorMessage());
             }
             BackgroundScreening backgroundScreening = transformBackgroundScreening(candidateInputDto,sterlingCandidate);
             backgroundScreening.setId(newBackgroundScreening.getId());
             backgroundScreeningV2Dao.update(backgroundScreening);
-            return new CandidateOutputDto(backgroundScreening.getId(),null,null);
+            return new CandidateOutputDto(backgroundScreening.getId());
         }
 
         //新插入
         SterlingCandidate sterlingCandidate = SterlingApiUtils.createCandidate(candidateInputDto);
         if(CollectionUtils.isNotEmpty(sterlingCandidate.getErrors())){
             logger.warn("param:{},error:{}", JacksonUtils.toJSONString(candidateInputDto),JacksonUtils.toJSONString(sterlingCandidate.getErrors()));
-            return new CandidateOutputDto(null,Integer.valueOf(sterlingCandidate.getErrors().get(0).getErrorCode()),
+            return new CandidateOutputDto(Integer.valueOf(sterlingCandidate.getErrors().get(0).getErrorCode()),
                     sterlingCandidate.getErrors().get(0).getErrorMessage());
         }
 
         BackgroundScreening backgroundScreening = transformBackgroundScreening(candidateInputDto,sterlingCandidate);
         backgroundScreening.setId(newBackgroundScreening.getId());
         backgroundScreeningV2Dao.update(backgroundScreening);
-        return new CandidateOutputDto(newBackgroundScreening.getId(),null,null);
+        return new CandidateOutputDto(newBackgroundScreening.getId());
     }
 
 
@@ -124,11 +125,11 @@ public class SterlingService {
         SterlingCandidate sterlingCandidate = SterlingApiUtils.updateCandidate(candidateInputDto);
         if(CollectionUtils.isNotEmpty(sterlingCandidate.getErrors())){
             logger.warn("param:{},error:{}", JacksonUtils.toJSONString(candidateInputDto),JacksonUtils.toJSONString(sterlingCandidate.getErrors()));
-            return new CandidateOutputDto(null,Integer.valueOf(sterlingCandidate.getErrors().get(0).getErrorCode()),sterlingCandidate.getErrors().get(0).getErrorMessage());
+            return new CandidateOutputDto(Integer.valueOf(sterlingCandidate.getErrors().get(0).getErrorCode()),sterlingCandidate.getErrors().get(0).getErrorMessage());
         }
         BackgroundScreening backgroundScreening = backgroundScreeningV2Dao.findByTeacherIdTopOne(candidateInputDto.getTeacherId());
 
-        return new CandidateOutputDto(backgroundScreening.getId(),null,null);
+        return new CandidateOutputDto(backgroundScreening.getId());
     }
 
     private Object diffCandidate(CandidateInputDto input,SterlingCandidate sterling){
@@ -170,10 +171,10 @@ public class SterlingService {
     public CandidateOutputDto repairDataCandidate(Long teacherId){
         BackgroundScreening sterlingScreening = backgroundScreeningV2Dao.findByTeacherIdTopOne(teacherId);
         if(null == sterlingScreening){
-            return new CandidateOutputDto(null,10000,String.format("teacherId:%s,在表中不存在",teacherId));
+            return new CandidateOutputDto(10000,String.format("teacherId:%s,在表中不存在",teacherId));
         }
         if(StringUtils.isNotBlank(sterlingScreening.getCandidateId())){
-            return new CandidateOutputDto(null,10000,String.format("Candidate数据不需要修复,teacherId:%s",teacherId));
+            return new CandidateOutputDto(10000,String.format("Candidate数据不需要修复,teacherId:%s",teacherId));
         }
         CandidateFilterDto candidateFilterDto =new CandidateFilterDto();
         BackgroundCheckVo backgroundCheckVo =backgroundCheckService.getInfoForUs(teacherId);
@@ -185,7 +186,7 @@ public class SterlingService {
 
         List<SterlingCandidate> sterlingCandidateList = SterlingApiUtils.getCandidateList(candidateFilterDto);
         if(CollectionUtils.isEmpty(sterlingCandidateList)){
-            return new CandidateOutputDto(null ,10000,"没有查到");
+            return new CandidateOutputDto(10000,"没有查到");
         }
 
         for(SterlingCandidate sterlingCandidate:sterlingCandidateList){
@@ -194,7 +195,7 @@ public class SterlingService {
             screening.setId(sterlingScreening.getId());
             backgroundScreeningV2Dao.update(screening);
         }
-        return new CandidateOutputDto(sterlingScreening.getId(),null,null);
+        return new CandidateOutputDto(sterlingScreening.getId());
     }
 
     /**
@@ -206,16 +207,16 @@ public class SterlingService {
         BackgroundScreening backgroundScreening = backgroundScreeningV2Dao.findById(backgroundSterlingId);
 
         if(backgroundScreening == null){
-            return new ScreeningOutputDto(null ,10000,String.format("id:%s 为ID的数据不存在",backgroundSterlingId));
+            return new ScreeningOutputDto(10000,String.format("id:%s 为ID的数据不存在",backgroundSterlingId));
         }
 
         if(StringUtils.isBlank(backgroundScreening.getScreeningId())){
-            return new ScreeningOutputDto(null,10000,String.format("id:%s 为ID的数据没有screeningId",backgroundSterlingId));
+            return new ScreeningOutputDto(10000,String.format("id:%s 为ID的数据没有screeningId",backgroundSterlingId));
         }
 
         SterlingScreening sterlingScreening = SterlingApiUtils.getScreening(backgroundScreening.getScreeningId());
         if(null == sterlingScreening){
-            return new ScreeningOutputDto(null,10000,String.format("id:%s 为ID的Screening 在Sterling系统中没有查到",backgroundSterlingId));
+            return new ScreeningOutputDto(10000,String.format("id:%s 为ID的Screening 在Sterling系统中没有查到",backgroundSterlingId));
         }
 
         BackgroundScreening updateBackgroundScreening = new BackgroundScreening();
@@ -238,7 +239,7 @@ public class SterlingService {
             }
         }
 
-        return new ScreeningOutputDto(backgroundSterlingId,null,null);
+        return new ScreeningOutputDto(backgroundSterlingId);
 
     }
 
@@ -250,7 +251,7 @@ public class SterlingService {
     public ScreeningOutputDto createScreening(Long teacherId,String documentUrl) {
         BackgroundScreening backgroundScreening = backgroundScreeningV2Dao.findByTeacherIdTopOne(teacherId);
         if(backgroundScreening == null ){
-            return new ScreeningOutputDto(null,10000,"没有找到这个老师");
+            return new ScreeningOutputDto(10000,"没有找到这个老师");
         }
         ScreeningInputDto screeningInputDto = new ScreeningInputDto();
         screeningInputDto.setPackageId(PropertyConfigurer.stringValue("background.sterling.pakcageId"));
@@ -260,11 +261,11 @@ public class SterlingService {
 
         SterlingScreening sterlingScreening =SterlingApiUtils.createScreening(screeningInputDto);
         if (sterlingScreening == null) {
-            return new ScreeningOutputDto(null,10000,"没有返回结果");
+            return new ScreeningOutputDto(10000,"没有返回结果");
         }
 
         if (CollectionUtils.isNotEmpty(sterlingScreening.getErrors())) {
-            return new ScreeningOutputDto(null,Integer.valueOf(sterlingScreening.getErrors().get(0).getErrorCode()),sterlingScreening.getErrors().get(0).getErrorMessage());
+            return new ScreeningOutputDto(Integer.valueOf(sterlingScreening.getErrors().get(0).getErrorCode()),sterlingScreening.getErrors().get(0).getErrorMessage());
         }
         //返回字段保存
         backgroundScreening.setSubmittedAt(DateUtils.convertzDateTime(sterlingScreening.getSubmittedAt()));
@@ -284,10 +285,10 @@ public class SterlingService {
 
         boolean isSuccess = SterlingApiUtils.createScreeningDocument(sterlingScreening.getId(),documentUrl);
         if(isSuccess){
-            return new ScreeningOutputDto(backgroundScreening.getId(),null,null);
+            return new ScreeningOutputDto(backgroundScreening.getId());
         }
 
-        return new ScreeningOutputDto(null,10000,"上传文档没有成功");
+        return new ScreeningOutputDto(10000,"上传文档没有成功");
     }
 
     public AdverseOutputDto createPreAdverse(Long teacherId) {

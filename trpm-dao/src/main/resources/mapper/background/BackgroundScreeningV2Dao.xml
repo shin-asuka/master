@@ -180,7 +180,7 @@
         WHERE
         s.result = #{result}
     </select>
-    <select id="findTeacherIdBycandidateIdNone" resultType="java.lang.Long">
+    <select id="findTeacherIdBycandidateIdNone" resultType="java.lang.Long" >
         SELECT
           s.teacher_id
         FROM

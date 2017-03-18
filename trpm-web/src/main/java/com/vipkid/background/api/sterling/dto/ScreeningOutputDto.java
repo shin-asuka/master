@@ -1,5 +1,7 @@
 package com.vipkid.background.api.sterling.dto;
 
+import com.vipkid.background.enums.TeacherPortalCodeEnum;
+
 /**
  * Created by liyang on 2017/3/15.
  */
@@ -8,11 +10,17 @@ public class ScreeningOutputDto {
     private Long id;
     private Integer errorCode;
     private String errorMessage;
+    private TeacherPortalCodeEnum resCode;
 
-    public ScreeningOutputDto(Long id,Integer errorCode,String errorMessage){
-        this.id = id;
+    public ScreeningOutputDto(Integer errorCode,String errorMessage){
         this.errorCode = errorCode;
         this.errorMessage = errorMessage;
+        this.resCode = TeacherPortalCodeEnum.SYS_FAIL;
+    }
+
+    public ScreeningOutputDto(Long id){
+        this.id = id;
+        this.resCode = TeacherPortalCodeEnum.RES_SUCCESS;
     }
 
     public Long getId() {
