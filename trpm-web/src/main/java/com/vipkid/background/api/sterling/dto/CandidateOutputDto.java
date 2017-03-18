@@ -18,6 +18,9 @@ public class CandidateOutputDto {
         this.resCode = TeacherPortalCodeEnum.SYS_FAIL;
     }
 
+    public CandidateOutputDto(TeacherPortalCodeEnum resCode){
+        this.resCode = TeacherPortalCodeEnum.SYS_FAIL;
+    }
     public CandidateOutputDto(Long id){
         this.id = id;
         this.resCode = TeacherPortalCodeEnum.RES_SUCCESS;

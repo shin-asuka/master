@@ -170,7 +170,7 @@ public class BackgroundCheckService {
 
 
     private CandidateOutputDto createCandidate(BackgroundCheckInputDto checkInput, Teacher teacher){
-        CandidateOutputDto output = new  CandidateOutputDto(0, "");
+        CandidateOutputDto output = new  CandidateOutputDto(TeacherPortalCodeEnum.SYS_FAIL);
         CandidateInputDto candidateInputDto = new CandidateInputDto();
         candidateInputDto.setTeacherId(teacher.getId());
         candidateInputDto.setEmail(teacher.getEmail());
@@ -197,9 +197,10 @@ public class BackgroundCheckService {
             license.setIssuingAgency(checkInput.getDriverLicenseAgency());
             license.setLicenseNumber(checkInput.getDriverLicenseNumber());
             license.setType(checkInput.getDriverLicenseType());
+            logger.info("submit background check information, begin invoke sterlingService.saveCandidate, teacherId="+teacher.getId());
 
             output = sterlingService.saveCandidate(candidateInputDto);
-            logger.info("submit background check information, invoke sterlingService.saveCandidate, return resCode=");
+            logger.info("submit background check information, invoke sterlingService.saveCandidate,teacherId="+teacher.getId()+", return resCode="+output.getResCode().getCode()+", resMsg="+output.getResCode().getMsg()+", id="+output.getId());
         }catch(Exception e){
             logger.error("submit background check information occur exception, BackgroundCheckService.createCandidate failed, teacherId="+teacher.getId());
         }
