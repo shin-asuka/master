@@ -134,10 +134,13 @@ public class BackgroundCommonService {
     public Map<String,Object> getCanadabackgroundStatus(Teacher teacher){
         Map<String, Object> result = Maps.newHashMap();
         Calendar current = Calendar.getInstance();
-        current.add(Calendar.MONTH, -1);
+        Date  contractEndDate = teacher.getContractEndDate();
+        Calendar  remindTime = Calendar.getInstance();
+        remindTime.setTime(contractEndDate);
+        remindTime.add(Calendar.MONTH,-1);
         BackgroundScreening backgroundScreening = backgroundScreeningV2Dao.findByTeacherIdTopOne(teacher.getId());
-        //合同即将到期需进行背调
-        if (teacher.getContractEndDate().after(current.getTime()) ) {
+        //合同即将到期需进行背调,提前一个月进行弹窗提示
+        if (remindTime.getTime().before(current.getTime()) ) {
             CanadaBackgroundScreening canadaBackgroundScreening = canadaBackgroundScreeningDao.findByTeacherId(teacher.getId());
             //第一次进行背调
             if (null == canadaBackgroundScreening) {
@@ -146,10 +149,9 @@ public class BackgroundCommonService {
                 result.put("result",BackgroundResult.NA.getVal());
                 return result;
             }
-            current.add(Calendar.MONTH,1);
             current.add(Calendar.YEAR, -2);
             //超过两年需要背调，
-            if (!current.getTime().after(backgroundScreening.getUpdateTime())) {
+            if (current.getTime().after(backgroundScreening.getUpdateTime())) {
                 result.put("needBackgroundCheck", true);
                 result.put("phase", BackgroundPhase.START.getVal());
                 result.put("result",BackgroundResult.NA.getVal());
