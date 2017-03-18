@@ -41,7 +41,7 @@ public class BackgroundCheckEnum {
         }
     }
     public  enum BackgroundPhase{
-        START("Start"),//老师提交信息，Sterling还未开始背调
+        START("Start"),//Sterling还未开始背调
         PENDING("Pending"),//Sterling开始背调等待背调的结果
         PREADVERSE("Preadverse"),//第一次背调失败，等待老师dispute
         DISPUTE("Dispute"),//正在进行dispute

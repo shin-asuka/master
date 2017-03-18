@@ -156,10 +156,13 @@ public class BackgroundCommonService {
     public Map<String,Object> getUsaBackgroundStatus(Teacher teacher){
         Map<String, Object> result = Maps.newHashMap();
         Calendar currnet = Calendar.getInstance();
-        currnet.add(Calendar.MONTH, -1);
         BackgroundScreening backgroundScreening = backgroundScreeningV2Dao.findByTeacherIdTopOne(teacher.getId());
-        //合同即将到期需进行背调
-        if (teacher.getContractEndDate().after(currnet.getTime()) ) {
+        Date  contractEndDate = teacher.getContractEndDate();
+        Calendar  remindTime = Calendar.getInstance();
+        remindTime.setTime(contractEndDate);
+        //合同即将到期需进行背调,提前一个月进行弹窗提示
+        remindTime.add(Calendar.MONTH,-1);
+        if (remindTime.getTime().before(currnet.getTime()) ) {
             //没有背调结果，即第一次开始背调
             if (null == backgroundScreening) {
                 result.put("needBackgroundCheck", true);
@@ -168,8 +171,6 @@ public class BackgroundCommonService {
             } else {
                 boolean in5Days = false;
                 long screeningId = backgroundScreening.getId();
-                currnet.add(Calendar.MONTH, 1);
-                //TODO
                 Date adverseTime = backgroundAdverseDao.findUpdateTimeByScreeningIdTopOne(screeningId);
                 currnet.add(Calendar.DATE, 5);
                 if (adverseTime.before(currnet.getTime())) {
