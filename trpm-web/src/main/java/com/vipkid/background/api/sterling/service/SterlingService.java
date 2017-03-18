@@ -253,6 +253,7 @@ public class SterlingService {
         if(backgroundScreening == null ){
             return new ScreeningOutputDto(10000,"没有找到这个老师");
         }
+
         ScreeningInputDto screeningInputDto = new ScreeningInputDto();
         screeningInputDto.setPackageId(PropertyConfigurer.stringValue("background.sterling.pakcageId"));
         screeningInputDto.setCandidateId(backgroundScreening.getCandidateId());

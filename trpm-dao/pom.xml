@@ -151,6 +151,12 @@
 			<groupId>org.community</groupId>
 			<artifactId>thor-dao</artifactId>
 		</dependency>
+
+		<!-- -->
+		<dependency>
+			<groupId>com.github.pagehelper</groupId>
+			<artifactId>pagehelper</artifactId>
+		</dependency>
 	</dependencies>
 
 	<build>

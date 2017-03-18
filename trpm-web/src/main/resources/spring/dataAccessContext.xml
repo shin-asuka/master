@@ -18,7 +18,20 @@
         		<beans:value>classpath*:mapper/*/*.xml</beans:value>
         	</beans:array>
         </beans:property>
-    </beans:bean>
+		<!--<property name="plugins">-->
+			<!--<array>-->
+				<!--<bean class="com.github.pagehelper.PageInterceptor">-->
+					<!--<property name="properties">-->
+						<!--&lt;!&ndash;使用下面的方式配置参数，一行配置一个 &ndash;&gt;-->
+						<!--<value>-->
+							<!--helperDialect=mysql-->
+						<!--</value>-->
+					<!--</property>-->
+				<!--</bean>-->
+			<!--</array>-->
+		<!--</property>-->
+
+	</beans:bean>
 
     <beans:bean id="sqlSessionTemplate" class="org.mybatis.spring.SqlSessionTemplate">
         <beans:constructor-arg index="0" ref="sqlSessionFactory" />

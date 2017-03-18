@@ -46,4 +46,12 @@ public class ScreeningOutputDto {
     public void setErrorMessage(String errorMessage) {
         this.errorMessage = errorMessage;
     }
+
+    public TeacherPortalCodeEnum getResCode() {
+        return resCode;
+    }
+
+    public void setResCode(TeacherPortalCodeEnum resCode) {
+        this.resCode = resCode;
+    }
 }
