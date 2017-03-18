@@ -13,6 +13,7 @@ import com.vipkid.file.utils.FileUtils;
 import com.vipkid.http.utils.HttpClientUtils;
 import com.vipkid.http.utils.JacksonUtils;
 
+import com.vipkid.trpm.util.MapUtils;
 import org.apache.commons.collections.CollectionUtils;
 
 
@@ -60,12 +61,18 @@ public class SterlingApiUtils {
         String postUrl = sterlingHost + "/v1/candidates";
         Map<String,String> headers = Maps.newHashMap();
         headers.put("Authorization",String.format(BEARER_FORMATE,getAccessToken()));
-        String response = HttpClientUtils.post(postUrl,JacksonUtils.toJSONString(candidateInputDto),headers);
+        HttpClientUtils.Response response = HttpClientUtils.timeoutRetryPost(postUrl,JacksonUtils.toJSONString(candidateInputDto),headers,MAX_RETRY);
 
-        if(org.apache.commons.lang3.StringUtils.isBlank(response)){
+        if(response == null){
+            logger.info("Response is null  url:{},header:{},params:{}",postUrl,JacksonUtils.toJSONString(headers),JacksonUtils.toJSONString(candidateInputDto));
             return null;
         }
-        SterlingCandidate sterlingCandidate = JacksonUtils.readJson(response, new TypeReference<SterlingCandidate>() {});
+        if(StringUtils.isBlank(response.getContent())){
+            logger.info("Response.Content is null  url:{},header:{},params:{}",postUrl,JacksonUtils.toJSONString(headers),JacksonUtils.toJSONString(candidateInputDto));
+            return null;
+        }
+
+        SterlingCandidate sterlingCandidate = JacksonUtils.readJson(response.getContent(), new TypeReference<SterlingCandidate>() {});
 
         return sterlingCandidate;
     }
@@ -77,18 +84,21 @@ public class SterlingApiUtils {
      * @return
      */
     public static SterlingCandidate updateCandidate(CandidateInputDto candidateInputDto){
-        if(candidateInputDto.getRetry() >= MAX_RETRY){
-            logger.error("超过三次重新更新:{}",JacksonUtils.toJSONString(candidateInputDto));
-            return null;
-        }
+
         String postUrl = String.format(sterlingHost + "/v1/candidates/%s",candidateInputDto.getCandidateId());
         Map<String,String> headers = Maps.newHashMap();
         headers.put("Authorization",String.format(BEARER_FORMATE,getAccessToken()));
-        String response = HttpClientUtils.put(postUrl,JacksonUtils.toJSONString(candidateInputDto),headers);
-        if(org.apache.commons.lang3.StringUtils.isBlank(response)){
+        HttpClientUtils.Response response = HttpClientUtils.timeoutRetryPut(postUrl,JacksonUtils.toJSONString(candidateInputDto),headers,MAX_RETRY);
+
+        if(response == null){
+            logger.info("Response is null  url:{},header:{},params:{}",postUrl,JacksonUtils.toJSONString(headers),JacksonUtils.toJSONString(candidateInputDto));
             return null;
         }
-        SterlingCandidate sterlingCandidate = JacksonUtils.readJson(response, new TypeReference<SterlingCandidate>() {});
+        if(StringUtils.isBlank(response.getContent())){
+            logger.info("Response.Content is null  url:{},header:{},params:{}",postUrl,JacksonUtils.toJSONString(headers),JacksonUtils.toJSONString(candidateInputDto));
+            return null;
+        }
+        SterlingCandidate sterlingCandidate = JacksonUtils.readJson(response.getContent(), new TypeReference<SterlingCandidate>() {});
         if(StringUtils.equals(sterlingCandidate.getMessage(),MESSAGE_UNAUTHORIZED)){
 
         }else if(StringUtils.contains(sterlingCandidate.getMessage(),MESSAGE_AUTHORIZATION)){
@@ -112,11 +122,20 @@ public class SterlingApiUtils {
         Map<String,String> headers = Maps.newHashMap();
         headers.put("Authorization",String.format(BEARER_FORMATE,getAccessToken()));
 
-        String response = HttpClientUtils.get(getUrl,headers);
-        if(StringUtils.isBlank(response)){
+        HttpClientUtils.Response response = HttpClientUtils.timeoutRetryGet(getUrl,headers,MAX_RETRY);
+
+        if(response == null){
+            logger.info("Response is null  url:{},header:{},params:{}",getUrl,JacksonUtils.toJSONString(headers),candidateId);
             return null;
         }
-        SterlingCandidate sterlingCandidate = JacksonUtils.readJson(response, new TypeReference<SterlingCandidate>() {});
+        if(StringUtils.isBlank(response.getContent())){
+            logger.info("Response.Content is null  url:{},header:{},params:{}",getUrl,JacksonUtils.toJSONString(headers),candidateId);
+            return null;
+        }
+
+
+        SterlingCandidate sterlingCandidate = JacksonUtils.readJson(response.getContent(), new TypeReference<SterlingCandidate>() {});
+
         if(StringUtils.equals(sterlingCandidate.getMessage(),MESSAGE_UNAUTHORIZED)){
             SterlingAccessToken sterlingAccessToken = refreshAccessToken();
             if(StringUtils.isBlank(sterlingAccessToken.getAccess_token())){
@@ -124,7 +143,6 @@ public class SterlingApiUtils {
             }else{
                 sterlingCandidate = getCandidate(candidateId);
             }
-
         }
         return sterlingCandidate;
     }
@@ -166,13 +184,18 @@ public class SterlingApiUtils {
             getUrlBuilder.append(entry.getKey()).append("=").append(entry.getValue()).append("&");
         }
         String requestUrl = getUrlBuilder.substring(0,getUrlBuilder.length()-1);
-        String response = HttpClientUtils.get(requestUrl,headers);
-        if(StringUtils.isBlank(response)){
+        HttpClientUtils.Response response = HttpClientUtils.timeoutRetryGet(requestUrl,headers,MAX_RETRY);
+
+        if(response == null){
+            logger.info("Response is null  url:{},header:{},params:{}",getUrl,JacksonUtils.toJSONString(headers),JacksonUtils.toJSONString(candidateFilterDto));
+            return Lists.newArrayList();
+        }
+        if(StringUtils.isBlank(response.getContent())){
+            logger.info("Response.Content is null  url:{},header:{},params:{}",getUrl,JacksonUtils.toJSONString(headers),JacksonUtils.toJSONString(candidateFilterDto));
             return Lists.newArrayList();
         }
 
-        List<SterlingCandidate> sterlingCandidateList = JacksonUtils.readJson(response, new TypeReference<List<SterlingCandidate>>() {});
-
+        List<SterlingCandidate> sterlingCandidateList = JacksonUtils.readJson(response.getContent(), new TypeReference<List<SterlingCandidate>>() {});
 
         return sterlingCandidateList;
     }
@@ -191,12 +214,17 @@ public class SterlingApiUtils {
         Map<String,String> headers = Maps.newHashMap();
         headers.put("Authorization",String.format(BEARER_FORMATE,getAccessToken()));
 
-        String response = HttpClientUtils.post(postUrl,JacksonUtils.toJSONString(screeningInputDto),headers);
-        System.out.println(response);
-        if(StringUtils.isBlank(response)){
+        HttpClientUtils.Response response = HttpClientUtils.timeoutRetryPost(postUrl,JacksonUtils.toJSONString(screeningInputDto),headers,MAX_RETRY);
+
+        if(response == null){
+            logger.info("Response is null  url:{},header:{},params:{}",postUrl,JacksonUtils.toJSONString(headers),JacksonUtils.toJSONString(screeningInputDto));
             return null;
         }
-        SterlingScreening sterlingScreening = JacksonUtils.readJson(response, new TypeReference<SterlingScreening>() {});
+        if(StringUtils.isBlank(response.getContent())){
+            logger.info("Response.Content is null  url:{},header:{},params:{}",postUrl,JacksonUtils.toJSONString(headers),JacksonUtils.toJSONString(screeningInputDto));
+            return null;
+        }
+        SterlingScreening sterlingScreening = JacksonUtils.readJson(response.getContent(), new TypeReference<SterlingScreening>() {});
 
         return sterlingScreening;
     }
@@ -210,12 +238,18 @@ public class SterlingApiUtils {
         Map<String,String> headers = Maps.newHashMap();
         headers.put("Authorization",String.format(BEARER_FORMATE,getAccessToken()));
         headers.put(HTTP.CONTENT_TYPE,"application/json");
-        String response = HttpClientUtils.get(getUrl,headers);
-        System.out.println(response);
-        if(StringUtils.isBlank(response)){
+        HttpClientUtils.Response response = HttpClientUtils.timeoutRetryGet(getUrl,headers,MAX_RETRY);
+        if(response == null){
+            logger.info("Response is null  url:{},header:{},params:{}",getUrl,JacksonUtils.toJSONString(headers),screeningId);
             return null;
         }
-        SterlingScreening sterlingScreening = JacksonUtils.readJson(response, new TypeReference<SterlingScreening>() {});
+        if(StringUtils.isBlank(response.getContent())){
+            logger.info("Response.Content is null  url:{},header:{},params:{}",getUrl,JacksonUtils.toJSONString(headers),screeningId);
+            return null;
+        }
+
+
+        SterlingScreening sterlingScreening = JacksonUtils.readJson(response.getContent(), new TypeReference<SterlingScreening>() {});
         return sterlingScreening;
     }
 
@@ -236,35 +270,51 @@ public class SterlingApiUtils {
         Map<String,String> headers = Maps.newHashMap();
         headers.put("Authorization",String.format(BEARER_FORMATE,getAccessToken()));
         headers.put(HTTP.CONTENT_TYPE,"application/json");
-        String response = HttpClientUtils.post(postUrl,null,headers);
-        if(StringUtils.isBlank(response)){
+        HttpClientUtils.Response response = HttpClientUtils.timeoutRetryPost(postUrl,null,headers,MAX_RETRY);
+        if(response == null){
+            logger.info("Response is null  url:{},header:{},params:{}",postUrl,JacksonUtils.toJSONString(headers),screeningId);
             return null;
         }
-        SterlingReportLink sterlingReportLink = JacksonUtils.readJson(response, new TypeReference<SterlingReportLink>() {});
+        if(StringUtils.isBlank(response.getContent())){
+            logger.info("Response.Content is null  url:{},header:{},params:{}",postUrl,JacksonUtils.toJSONString(headers),screeningId);
+            return null;
+        }
+
+        SterlingReportLink sterlingReportLink = JacksonUtils.readJson(response.getContent(), new TypeReference<SterlingReportLink>() {});
         return sterlingReportLink;
     }
 
 
     /**
      * 当背景调查的结果是alert时，可以再来一次preAdverseAction
-     * @param screeingId
+     * @param screeningId
      * @param reportIdList
      * @return
      */
-    public static boolean preAdverseAction(String screeingId,List<String> reportIdList){
-        if(StringUtils.isBlank(screeingId) || CollectionUtils.isEmpty(reportIdList)){
+    public static boolean preAdverseAction(String screeningId,List<String> reportIdList){
+        if(StringUtils.isBlank(screeningId) || CollectionUtils.isEmpty(reportIdList)){
             return false;
         }
         Map<String, String> headers = Maps.newHashMap();
         headers.put("Authorization", String.format(BEARER_FORMATE, getAccessToken()));
         Map<String, Object> params = Maps.newHashMap();
         params.put("reportItemIds",reportIdList);
-        String postUrl = String.format(sterlingHost+"/v1/screenings/%s/adverse-actions",screeingId);
-        String response = HttpClientUtils.postResponseStatusCode(postUrl,JacksonUtils.toJSONString(params),headers);
-        if(StringUtils.equals("201",response)){
+        String postUrl = String.format(sterlingHost+"/v1/screenings/%s/adverse-actions",screeningId);
+        HttpClientUtils.Response response = HttpClientUtils.timeoutRetryPost(postUrl,JacksonUtils.toJSONString(params),headers,MAX_RETRY);
+
+        if(response == null){
+            logger.info("Response is null  url:{},header:{},params:{}",postUrl,JacksonUtils.toJSONString(headers),screeningId);
+            return false;
+        }
+        if(StringUtils.isBlank(response.getContent())){
+            logger.info("Response.Content is null  url:{},header:{},params:{}",postUrl,JacksonUtils.toJSONString(headers),screeningId);
+            return false;
+        }
+
+        if(response.getStatusCode() == 201){
             return true;
         }else{
-            SterlingScreening sterlingScreening = JacksonUtils.readJson(response, new TypeReference<SterlingScreening>() {});
+            SterlingScreening sterlingScreening = JacksonUtils.readJson(response.getContent(), new TypeReference<SterlingScreening>() {});
             if(CollectionUtils.isNotEmpty(sterlingScreening.getErrors())){
                 logger.warn(JacksonUtils.toJSONString(sterlingScreening.getErrors()));
             }

@@ -2,6 +2,7 @@ package com.vipkid.http.utils;
 
 import org.apache.commons.collections.*;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.*;
 import org.apache.http.HttpEntity;
@@ -11,10 +12,7 @@ import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.EntityBuilder;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpPut;
+import org.apache.http.client.methods.*;
 import org.apache.http.config.Registry;
 import org.apache.http.config.RegistryBuilder;
 import org.apache.http.conn.ConnectTimeoutException;
@@ -225,6 +223,153 @@ public class HttpClientUtils {
         return null;
     }
 
+
+    public static Response timeoutRetryPost(String url,String jsonData,Map<String,String> header,int retryTimes){
+        if (retryTimes < 0) {
+            throw new IllegalArgumentException("retry times must great than or equal 0");
+        }
+
+        HttpPost post=new HttpPost(url);
+        Response  response = timeoutRetryRequest(post,jsonData,header,retryTimes);
+        if(response == null){
+            post.releaseConnection();
+        }
+
+        return response;
+
+    }
+
+    public static Response timeoutRetryPut(String url,String jsonData,Map<String,String> header,int retryTimes){
+        if (retryTimes < 0) {
+            throw new IllegalArgumentException("retry times must great than or equal 0");
+        }
+
+        HttpPut put=new HttpPut(url);
+        Response  response = timeoutRetryRequest(put,jsonData,header,retryTimes);
+        if(response == null){
+            put.releaseConnection();
+        }
+        return response;
+    }
+
+    public static Response timeoutRetryGet(String url,Map<String,String> header,int retryTimes){
+        if (retryTimes < 0) {
+            throw new IllegalArgumentException("retry times must great than or equal 0");
+        }
+        HttpGet get=new HttpGet(url);
+        Response response = timeoutRetryRequest(get,header,retryTimes);
+        if(response == null){
+            get.releaseConnection();
+        }
+        return response;
+    }
+
+
+    private  static Response timeoutRetryRequest(HttpEntityEnclosingRequestBase requestBase,String jsonData,Map<String,String> header,int retryTimes){
+        Exception ste = null;
+        for (int i = 0; i <= retryTimes; i++) {
+            try {
+                Response result = interaction(requestBase,jsonData,null,header);
+                if (i > 0) {
+                    logger.warn("post [{}] retry {} times", requestBase.getURI(), i);
+                }
+                return result;
+
+            } catch(ConnectTimeoutException e){
+                ste = e;
+            }catch (SocketTimeoutException e) {
+                ste = e;
+            } catch (RuntimeException e){
+                ste =e;
+            } catch (IOException e) {
+                ste =e;
+            }
+        }
+        logger.error(String.format("post [%s] timeout, retry %s times",requestBase.getURI(), retryTimes),  ste);
+        return null;
+    }
+
+
+    private  static Response timeoutRetryRequest(HttpRequestBase requestBase,Map<String,String> header,int retryTimes){
+        Exception ste = null;
+        for (int i = 0; i <= retryTimes; i++) {
+            try {
+                Response result = interaction(requestBase,header);
+                if (i > 0) {
+                    logger.warn("post [{}] retry {} times", requestBase.getURI(), i);
+                }
+                return result;
+
+            } catch(ConnectTimeoutException e){
+                ste = e;
+            }catch (SocketTimeoutException e) {
+                ste = e;
+            } catch (RuntimeException e){
+                ste =e;
+            } catch (IOException e) {
+                ste =e;
+            }
+        }
+
+        logger.error(String.format("post [%s] timeout, retry %s times",requestBase.getURI(), retryTimes),  ste);
+        return null;
+    }
+
+
+    private static Response interaction(HttpEntityEnclosingRequestBase requestBase, String jsonData, String defaultEncoding, Map<String, String> headers) throws IOException {
+        defaultEncoding = HttpClientUtils.getDefaultEncoding(defaultEncoding);
+        try {
+
+            if(ArrayUtils.isEmpty(requestBase.getAllHeaders())){
+                if(org.apache.commons.collections.MapUtils.isNotEmpty(headers)){
+                    for(String key : headers.keySet()){
+                        requestBase.setHeader(key, headers.get(key));
+                    }
+
+
+                }
+                if(StringUtils.isNotBlank(jsonData)){
+                    StringEntity entity = new StringEntity(jsonData, defaultEncoding);
+                    entity.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
+                    requestBase.setEntity(entity);
+                }
+            }
+
+            HttpResponse response = HttpClientUtils.CLIENT.execute(requestBase);
+            int statusCode = response.getStatusLine().getStatusCode();
+            String content = EntityUtils.toString(response.getEntity());
+            return new Response(statusCode,content);
+        }
+        catch (Exception e) {
+            HttpClientUtils.logger.error(String.format("post [%s] happens error ", requestBase.getURI()), e);
+            throw e;
+        }
+
+    }
+
+
+    private static Response interaction(HttpRequestBase requestBase,Map<String,String> headers) throws IOException {
+        try {
+
+            if(ArrayUtils.isEmpty(requestBase.getAllHeaders()) && org.apache.commons.collections.MapUtils.isNotEmpty(headers)){
+                for(String key : headers.keySet()){
+                    requestBase.setHeader(key, headers.get(key));
+                }
+            }
+
+            HttpResponse response = HttpClientUtils.CLIENT.execute(requestBase);
+            int statusCode = response.getStatusLine().getStatusCode();
+            String content = EntityUtils.toString(response.getEntity());
+            return new Response(statusCode,content);
+        }
+        catch (Exception e) {
+            HttpClientUtils.logger.error(String.format("post [%s] happens error ", requestBase.getURI()), e);
+            throw e;
+        }
+
+    }
+
+
     /**
      * 指定headers的post请求
      * @param url
@@ -384,10 +529,15 @@ public class HttpClientUtils {
      */
     public static String post(String url, String jsonData, String defaultEncoding, Map<String, String> headers) {
         String content = null;
+        HttpPost post = new HttpPost(url);
         try {
-            HttpPost post = new HttpPost(url);
-            content = interaction(post,jsonData,defaultEncoding,headers);
+
+            Response response = interaction(post,jsonData,defaultEncoding,headers);
+            if(response != null){
+                content=response.getContent();
+            }
         } catch (Exception e) {
+            post.releaseConnection();
             HttpClientUtils.logger.error(String.format("post [%s] happens error ", url), e);
         }
         return content;
@@ -403,69 +553,23 @@ public class HttpClientUtils {
      */
     public static String put(String url, String jsonData, String defaultEncoding, Map<String, String> headers) {
         String content = null;
+        HttpPut put = new HttpPut(url);
         try {
-            HttpPut put = new HttpPut(url);
-            content = interaction(put,jsonData,defaultEncoding,headers);
+
+            Response response = interaction(put,jsonData,defaultEncoding,headers);
+            if(response != null){
+                content=response.getContent();
+            }
         } catch (Exception e) {
+            put.releaseConnection();
             HttpClientUtils.logger.error(String.format("post [%s] happens error ", url), e);
         }
         return content;
     }
+    
 
 
 
-    public static String postResponseStatusCode(String postUrl, String json, Map<String, String> headers) {
-        HttpPost post = new HttpPost(postUrl);
-        String defaultEncoding = HttpClientUtils.getDefaultEncoding(null);
-        String content = null;
-        try {
-
-            if(org.apache.commons.collections.MapUtils.isNotEmpty(headers)){
-                for(String key : headers.keySet()){
-                    post.setHeader(key, headers.get(key));
-                }
-            }
-            if(StringUtils.isNotBlank(json)){
-                StringEntity entity = new StringEntity(json, defaultEncoding);
-                entity.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
-                post.setEntity(entity);
-            }
-
-            HttpResponse response = HttpClientUtils.CLIENT.execute(post);
-
-            content =String.valueOf(response.getStatusLine().getStatusCode());
-
-        } catch (Exception e) {
-            HttpClientUtils.logger.error(String.format("post [%s] happens error ", post.getURI()), e);
-        }
-        return content;
-    }
-
-    private static String interaction(HttpEntityEnclosingRequestBase requestBase, String jsonData, String defaultEncoding, Map<String, String> headers){
-        defaultEncoding = HttpClientUtils.getDefaultEncoding(defaultEncoding);
-        String content = null;
-        try {
-
-            if(org.apache.commons.collections.MapUtils.isNotEmpty(headers)){
-                for(String key : headers.keySet()){
-                    requestBase.setHeader(key, headers.get(key));
-                }
-            }
-            if(StringUtils.isNotBlank(jsonData)){
-                StringEntity entity = new StringEntity(jsonData, defaultEncoding);
-                entity.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
-                requestBase.setEntity(entity);
-            }
-
-            HttpResponse response = HttpClientUtils.CLIENT.execute(requestBase);
-
-            content = EntityUtils.toString(response.getEntity());
-
-        } catch (Exception e) {
-            HttpClientUtils.logger.error(String.format("post [%s] happens error ", requestBase.getURI()), e);
-        }
-        return content;
-    }
 
     /**
      * 请求特定的url提交Json字符串，使用post方法，返回响应的内容
@@ -829,5 +933,33 @@ public class HttpClientUtils {
             }
         }
         return content;
+    }
+
+
+
+    public static class Response{
+        private int statusCode;
+        private String content;
+
+
+        public Response(int statusCode,String content){
+            this.statusCode =  statusCode;
+            this.content = content;
+        }
+        public int getStatusCode() {
+            return statusCode;
+        }
+
+        public void setStatusCode(int statusCode) {
+            this.statusCode = statusCode;
+        }
+
+        public String getContent() {
+            return content;
+        }
+
+        public void setContent(String content) {
+            this.content = content;
+        }
     }
 }

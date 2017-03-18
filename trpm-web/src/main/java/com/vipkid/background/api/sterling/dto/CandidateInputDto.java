@@ -23,7 +23,7 @@ public class CandidateInputDto implements  java.io.Serializable{
     private String phone;
     private Address address;
     private DriversLicense driversLicense;
-    private short retry =0;
+
 
 
     public Long getTeacherId() {
@@ -112,14 +112,6 @@ public class CandidateInputDto implements  java.io.Serializable{
 
     public void setAddress(Address address) {
         this.address = address;
-    }
-
-    public short getRetry() {
-        return retry;
-    }
-
-    public void setRetry(short retry) {
-        this.retry = retry;
     }
 
     public String getMiddleName() {

@@ -48,11 +48,12 @@ public class SterlingApiUtilsTest {
     @Test
     public void createCandidateTest(){
         String json = "{\n" +
-                "  \"clientReferenceId\": \"vipkid2\",\n" +
+                "  \"clientReferenceId\": \"vipkid3\",\n" +
                 "  \"email\": \"wwww@example.com\",\n" +
                 "  \"givenName\": \"www\",\n" +
                 "  \"familyName\": \"xx\",\n" +
-                "  \"confirmedNoMiddleName\": true,\n" +
+                "  \"middleName\":\"rr\",\n"+
+                "  \"confirmedNoMiddleName\": false,\n" +
                 "  \"dob\": \"1998-07-18\",\n" +
                 "  \"ssn\": \"123456798\",\n" +
                 "  \"phone\": \"+14041231233\",\n" +
@@ -201,7 +202,8 @@ public class SterlingApiUtilsTest {
 
     @Test
     public void preAdverseActionTest(){
-        String screeningIds="[{\"screeningId\":\"001000062954786\",\"reportiD\":\"62954786\"},{\"screeningId\":\"001000062954790\",\"reportiD\":\"62954790\"},{\"screeningId\":\"001000062954792\",\"reportiD\":\"62954792\"},{\"screeningId\":\"001000062954794\",\"reportiD\":\"62954794\"},{\"screeningId\":\"001000062954796\",\"reportiD\":\"62954796\"},{\"screeningId\":\"001000062954798\",\"reportiD\":\"62954798\"},{\"screeningId\":\"001000062954800\",\"reportiD\":\"62954800\"},{\"screeningId\":\"001000062954802\",\"reportiD\":\"62954802\"},{\"screeningId\":\"001000062954804\",\"reportiD\":\"62954804\"},{\"screeningId\":\"001000062954806\",\"reportiD\":\"62954806\"},{\"screeningId\":\"001000062954808\",\"reportiD\":\"62954808\"},{\"screeningId\":\"001000062954812\",\"reportiD\":\"62954812\"},{\"screeningId\":\"001000062954814\",\"reportiD\":\"62954814\"},{\"screeningId\":\"001000062954816\",\"reportiD\":\"62954816\"},{\"screeningId\":\"001000062954818\",\"reportiD\":\"62954818\"},{\"screeningId\":\"001000062954820\",\"reportiD\":\"62954820\"},{\"screeningId\":\"001000062954822\",\"reportiD\":\"62954822\"},{\"screeningId\":\"001000062954824\",\"reportiD\":\"62954824\"},{\"screeningId\":\"001000062954826\",\"reportiD\":\"62954826\"},{\"screeningId\":\"001000062954828\",\"reportiD\":\"62954828\"},{\"screeningId\":\"001000062954830\",\"reportiD\":\"62954830\"},{\"screeningId\":\"001000062954832\",\"reportiD\":\"62954832\"},{\"screeningId\":\"001000062954834\",\"reportiD\":\"62954834\"},{\"screeningId\":\"001000062954836\",\"reportiD\":\"62954836\"},{\"screeningId\":\"001000062954838\",\"reportiD\":\"62954838\"}]";
+//        "[{\"screeningId\":\"001000062954786\",\"reportiD\":\"62954786\"},{\"screeningId\":\"001000062954790\",\"reportiD\":\"62954790\"},{\"screeningId\":\"001000062954792\",\"reportiD\":\"62954792\"},{\"screeningId\":\"001000062954794\",\"reportiD\":\"62954794\"},{\"screeningId\":\"001000062954796\",\"reportiD\":\"62954796\"},{\"screeningId\":\"001000062954798\",\"reportiD\":\"62954798\"},{\"screeningId\":\"001000062954800\",\"reportiD\":\"62954800\"},{\"screeningId\":\"001000062954802\",\"reportiD\":\"62954802\"},{\"screeningId\":\"001000062954804\",\"reportiD\":\"62954804\"},{\"screeningId\":\"001000062954806\",\"reportiD\":\"62954806\"},{\"screeningId\":\"001000062954808\",\"reportiD\":\"62954808\"},{\"screeningId\":\"001000062954812\",\"reportiD\":\"62954812\"},{\"screeningId\":\"001000062954814\",\"reportiD\":\"62954814\"},{\"screeningId\":\"001000062954816\",\"reportiD\":\"62954816\"},{\"screeningId\":\"001000062954818\",\"reportiD\":\"62954818\"},{\"screeningId\":\"001000062954820\",\"reportiD\":\"62954820\"},{\"screeningId\":\"001000062954822\",\"reportiD\":\"62954822\"},{\"screeningId\":\"001000062954824\",\"reportiD\":\"62954824\"},{\"screeningId\":\"001000062954826\",\"reportiD\":\"62954826\"},{\"screeningId\":\"001000062954828\",\"reportiD\":\"62954828\"},{\"screeningId\":\"001000062954830\",\"reportiD\":\"62954830\"},{\"screeningId\":\"001000062954832\",\"reportiD\":\"62954832\"},{\"screeningId\":\"001000062954834\",\"reportiD\":\"62954834\"},{\"screeningId\":\"001000062954836\",\"reportiD\":\"62954836\"},{\"screeningId\":\"001000062954838\",\"reportiD\":\"62954838\"}]";
+        String screeningIds="[{\"screeningId\":\"001000062954842\",\"reportiD\":\"62954842\"}]";
         List<Map<String,String>> data = JacksonUtils.readJson(screeningIds, new TypeReference<List<Map<String, String>>>() {});
 
 

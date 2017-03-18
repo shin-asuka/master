@@ -55,8 +55,6 @@ public class SterlingService {
         callback.setUri(PropertyConfigurer.stringValue("background.sterling.callback.uri"));
     }
 
-//    @Resource
-//    private BackgroundScreeningDao backgroundScreeningDao;
 
     @Resource
     private BackgroundReportDao backgroundReportDao;
@@ -73,7 +71,7 @@ public class SterlingService {
 
 
 
-    @Transactional(readOnly = false)
+
     public CandidateOutputDto createCandidate(CandidateInputDto candidateInputDto) {
 
         BackgroundScreening newBackgroundScreening = new BackgroundScreening();
@@ -99,6 +97,7 @@ public class SterlingService {
         SterlingCandidate sterlingCandidate = SterlingApiUtils.createCandidate(candidateInputDto);
         if(CollectionUtils.isNotEmpty(sterlingCandidate.getErrors())){
             logger.warn("param:{},error:{}", JacksonUtils.toJSONString(candidateInputDto),JacksonUtils.toJSONString(sterlingCandidate.getErrors()));
+            //
             return new CandidateOutputDto(Integer.valueOf(sterlingCandidate.getErrors().get(0).getErrorCode()),
                     sterlingCandidate.getErrors().get(0).getErrorMessage());
         }
@@ -112,32 +111,24 @@ public class SterlingService {
 
     @Transactional(readOnly = false)
     public CandidateOutputDto updateCandidate(CandidateInputDto candidateInputDto) {
+        BackgroundScreening backgroundScreening = backgroundScreeningV2Dao.findByTeacherIdTopOne(candidateInputDto.getTeacherId());
+
         if(StringUtils.isBlank(candidateInputDto.getCandidateId())){
-            BackgroundScreening backgroundScreening = backgroundScreeningV2Dao.findByTeacherIdTopOne(candidateInputDto.getTeacherId());
             if(backgroundScreening != null ){
                 candidateInputDto.setCandidateId(backgroundScreening.getCandidateId());
             }
         }
-
-        SterlingCandidate afterSterlingCandidate = SterlingApiUtils.getCandidate(candidateInputDto.getCandidateId());
-        //diffCandidate(candidateInputDto,afterSterlingCandidate);
 
         SterlingCandidate sterlingCandidate = SterlingApiUtils.updateCandidate(candidateInputDto);
         if(CollectionUtils.isNotEmpty(sterlingCandidate.getErrors())){
             logger.warn("param:{},error:{}", JacksonUtils.toJSONString(candidateInputDto),JacksonUtils.toJSONString(sterlingCandidate.getErrors()));
             return new CandidateOutputDto(Integer.valueOf(sterlingCandidate.getErrors().get(0).getErrorCode()),sterlingCandidate.getErrors().get(0).getErrorMessage());
         }
-        BackgroundScreening backgroundScreening = backgroundScreeningV2Dao.findByTeacherIdTopOne(candidateInputDto.getTeacherId());
 
         return new CandidateOutputDto(backgroundScreening.getId());
     }
 
-    private Object diffCandidate(CandidateInputDto input,SterlingCandidate sterling){
-        if(StringUtils.equals(input.getEmail(),sterling.getEmail())){
-            input.setEmail(null);
-        }
-        return input;
-    }
+
 
 
 
@@ -148,6 +139,9 @@ public class SterlingService {
             return createCandidate(candidateInputDto);
         }
 
+        if(StringUtils.isBlank(sterlingScreening.getCandidateId())){
+            return createCandidate(candidateInputDto);
+        }
         Date updateTime = sterlingScreening.getUpdateTime();
         Calendar lastTime = Calendar.getInstance();
         lastTime.setTimeInMillis(updateTime.getTime());
