@@ -63,7 +63,7 @@
         <trim prefix="(" prefixOverrides=",">
             <if test="id != null">,id</if>
             <if test="teacherId != null">,teacher_id</if>
-            <if test="driverLicense != null">,driverLicense</if>
+            <if test="driverLicense != null">,driver_license</if>
             <if test="socialNo != null">,social_no</if>
             <if test="driverLicenseType != null">,driver_license_type</if>
             <if test="driverLicenseIssuingAgency != null">,driver_license_issuing_agency</if>

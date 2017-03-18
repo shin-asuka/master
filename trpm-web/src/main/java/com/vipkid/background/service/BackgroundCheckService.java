@@ -294,7 +294,7 @@ public class BackgroundCheckService {
         TeacherLicense license = new TeacherLicense();
         license.setTeacherId(input.getTeacherId());
         license.setDriverLicense(input.getDriverLicenseNumber());
-        license.setDriverLicense(input.getDriverLicenseType());
+        license.setDriverLicenseType(input.getDriverLicenseType());
         license.setDriverLicenseIssuingAgency(input.getDriverLicenseAgency());
         if(input.getSocialSecurityNumber().indexOf("*") == -1){
             license.setSocialNo(input.getSocialSecurityNumber());
