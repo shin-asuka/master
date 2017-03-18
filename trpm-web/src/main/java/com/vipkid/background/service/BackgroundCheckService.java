@@ -175,23 +175,23 @@ public class BackgroundCheckService {
         candidateInputDto.setTeacherId(teacher.getId());
         candidateInputDto.setEmail(teacher.getEmail());
         candidateInputDto.setDob(checkInput.getBirthDay());
-        if(StringUtils.isBlank(checkInput.getMaidenName())){
+        if(StringUtils.isBlank(checkInput.getMiddleName())){
             candidateInputDto.setConfirmedNoMiddleName(true);
         }
         candidateInputDto.setGivenName(teacher.getFirstName());
-        candidateInputDto.setMiddleName(teacher.getMiddleName());
+        candidateInputDto.setMiddleName(checkInput.getMiddleName());
         candidateInputDto.setFamilyName(teacher.getLastName());
-        candidateInputDto.setPhone(teacher.getMobile());
+        candidateInputDto.setPhone(teacher.getPhoneNationCode());
         candidateInputDto.setSsn(checkInput.getSocialSecurityNumber());
         CandidateInputDto.Address address = new CandidateInputDto.Address();
-        address.setAddressLine(checkInput.getStreet());
+        address.setAddressLine(checkInput.getLatestStreet());
         address.setCountryCode("US");
         try{
-            TeacherLocation location = locationDao.findById(checkInput.getCity());
+            TeacherLocation location = locationDao.findById(checkInput.getLatestCity());
             if(null != location){
                 address.setMunicipality(location.getName());
             }
-            address.setPostalCode(checkInput.getZipCode());
+            address.setPostalCode(checkInput.getLatestZipCode());
 
             CandidateInputDto.DriversLicense license = new CandidateInputDto.DriversLicense();
             license.setIssuingAgency(checkInput.getDriverLicenseAgency());
@@ -255,19 +255,19 @@ public class BackgroundCheckService {
         if(StringUtils.isNotBlank(currentStreet) || StringUtils.isNotBlank(currentZipCode)){
             TeacherAddress address = new TeacherAddress();
             address.setTeacherId(input.getTeacherId());
-            address.setStreetAddress(input.getStreet());
-            address.setZipCode(input.getZipCode());
+            address.setStreetAddress(input.getCurrentStreet());
+            address.setZipCode(input.getCurrentZipCode());
             address.setType(TeacherAddressEnum.AddressType.NORMAL.val());
             teacherAddressDao.updateByTeacherIdAndType(address);
         }
 
         TeacherAddress address = new TeacherAddress();
         address.setTeacherId(input.getTeacherId());
-        address.setCity(input.getCity());
-        address.setCountryId(input.getCountryId());
-        address.setStateId(input.getStateId());
-        address.setStreetAddress(input.getStreet());
-        address.setZipCode(input.getZipCode());
+        address.setCity(input.getLatestCity());
+        address.setCountryId(input.getLatestCountryId());
+        address.setStateId(input.getLatestStateId());
+        address.setStreetAddress(input.getLatestStreet());
+        address.setZipCode(input.getLatestZipCode());
         address.setType(input.getAddressType());
 
         int row = teacherAddressDao.updateByTeacherIdAndType(address);

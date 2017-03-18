@@ -70,12 +70,13 @@ public class BackgroundCheckController extends RestfulController {
         Map<String, Object> result = Maps.newHashMap();
         Teacher teacher = getTeacher(request);
         Long teacherId = checkInput.getTeacherId();
+        //Long teacherId = 2040456L;
         checkInput.setTeacherId(teacherId);
-        Integer countryId = checkInput.getCountryId();
-        Integer stateId = checkInput.getStateId();
-        Integer cityId = checkInput.getCity();
-        String street = checkInput.getStreet();
-        String zipCode = checkInput.getZipCode();
+        Integer countryId = checkInput.getLatestCountryId();
+        Integer stateId = checkInput.getLatestStateId();
+        Integer cityId = checkInput.getLatestCity();
+        String street = checkInput.getLatestStreet();
+        String zipCode = checkInput.getLatestZipCode();
 
         String birthday = checkInput.getBirthDay();
         String socialSecurityNo = checkInput.getSocialSecurityNumber();
@@ -126,7 +127,7 @@ public class BackgroundCheckController extends RestfulController {
         try {
             Preconditions.checkArgument(file != null, "文件不能为空");
             Preconditions.checkArgument(type != null, "文件类型不能为空");
-            Preconditions.checkArgument(type.equals(TeacherApplicationEnum.ContractFileType.US_BACKGROUND_CHECK.val()) && !type.equals(TeacherApplicationEnum.ContractFileType.CANADA_BACKGROUND_CHECK_CPIC_FORM.val()) && !type.equals(TeacherApplicationEnum.ContractFileType.CANADA_BACKGROUND_CHECK_ID2.val()), "文件类型错误");
+            Preconditions.checkArgument(!type.equals(TeacherApplicationEnum.ContractFileType.US_BACKGROUND_CHECK.val()) && !type.equals(TeacherApplicationEnum.ContractFileType.CANADA_BACKGROUND_CHECK_CPIC_FORM.val()) && !type.equals(TeacherApplicationEnum.ContractFileType.CANADA_BACKGROUND_CHECK_ID2.val()), "文件类型错误");
             Long size = file.getSize();
             String fileName = file.getOriginalFilename();
 

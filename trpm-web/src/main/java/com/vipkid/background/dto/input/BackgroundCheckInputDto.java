@@ -14,16 +14,16 @@ public class BackgroundCheckInputDto implements Serializable{
 
     private String birthDay;
 
-    /* 国家id */
-    private Integer countryId;
-    /* state id */
-    private Integer stateId;
-    /* city id */
-    private Integer city;
-
-    private String street;
-
-    private String zipCode;
+    /* 最新国家id */
+    private Integer latestCountryId;
+    /* 最新state id */
+    private Integer latestStateId;
+    /* 最新city id */
+    private Integer latestCity;
+    /* 最新街道名称 */
+    private String latestStreet;
+    /* 最新zipcode */
+    private String latestZipCode;
 
     /* 当前街道名称 */
     private String currentStreet;
@@ -66,44 +66,44 @@ public class BackgroundCheckInputDto implements Serializable{
         this.birthDay = birthDay;
     }
 
-    public Integer getCountryId() {
-        return countryId;
+    public Integer getLatestCountryId() {
+        return latestCountryId;
     }
 
-    public void setCountryId(Integer countryId) {
-        this.countryId = countryId;
+    public void setLatestCountryId(Integer latestCountryId) {
+        this.latestCountryId = latestCountryId;
     }
 
-    public Integer getStateId() {
-        return stateId;
+    public Integer getLatestStateId() {
+        return latestStateId;
     }
 
-    public void setStateId(Integer stateId) {
-        this.stateId = stateId;
+    public void setLatestStateId(Integer latestStateId) {
+        this.latestStateId = latestStateId;
     }
 
-    public Integer getCity() {
-        return city;
+    public Integer getLatestCity() {
+        return latestCity;
     }
 
-    public void setCity(Integer city) {
-        this.city = city;
+    public void setLatestCity(Integer latestCity) {
+        this.latestCity = latestCity;
     }
 
-    public String getStreet() {
-        return street;
+    public String getLatestStreet() {
+        return latestStreet;
     }
 
-    public void setStreet(String street) {
-        this.street = street;
+    public void setLatestStreet(String latestStreet) {
+        this.latestStreet = latestStreet;
     }
 
-    public String getZipCode() {
-        return zipCode;
+    public String getLatestZipCode() {
+        return latestZipCode;
     }
 
-    public void setZipCode(String zipCode) {
-        this.zipCode = zipCode;
+    public void setLatestZipCode(String latestZipCode) {
+        this.latestZipCode = latestZipCode;
     }
 
     public Integer getAddressType() {
