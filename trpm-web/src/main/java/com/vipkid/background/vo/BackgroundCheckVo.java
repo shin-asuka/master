@@ -57,6 +57,10 @@ public class BackgroundCheckVo implements Serializable{
     /* audit failed  */
     private String failReason;
 
+    private String timezone;
+
+    private String gender;
+
     public Long getTeacherId() {
         return teacherId;
     }
@@ -247,5 +251,21 @@ public class BackgroundCheckVo implements Serializable{
 
     public void setFailReason(String failReason) {
         this.failReason = failReason;
+    }
+
+    public String getTimezone() {
+        return timezone;
+    }
+
+    public void setTimezone(String timezone) {
+        this.timezone = timezone;
+    }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
     }
 }

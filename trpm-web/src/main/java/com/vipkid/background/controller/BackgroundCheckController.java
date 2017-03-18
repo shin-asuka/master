@@ -2,9 +2,8 @@ package com.vipkid.background.controller;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
-import com.vipkid.background.api.sterling.service.SterlingService;
-import com.vipkid.background.dto.input.BackgroundCheckInput;
-import com.vipkid.background.dto.output.BaseOutput;
+import com.vipkid.background.dto.input.BackgroundCheckInputDto;
+import com.vipkid.background.dto.output.BaseOutputDto;
 import com.vipkid.background.enums.TeacherPortalCodeEnum;
 import com.vipkid.background.service.BackgroundCheckService;
 import com.vipkid.background.vo.BackgroundCheckVo;
@@ -18,6 +17,7 @@ import com.vipkid.rest.exception.ServiceException;
 import com.vipkid.rest.interceptor.annotation.RestInterface;
 import com.vipkid.rest.utils.ApiResponseUtils;
 import com.vipkid.trpm.entity.Teacher;
+import com.vipkid.trpm.entity.User;
 import com.vipkid.trpm.service.portal.TeacherService;
 import com.vipkid.trpm.util.AwsFileUtils;
 import org.apache.commons.collections.CollectionUtils;
@@ -57,8 +57,6 @@ public class BackgroundCheckController extends RestfulController {
     @Autowired
     private TeacherService teacherService;
 
-    @Autowired
-    private SterlingService sterlingService;
 
     /***
      * save background check information for US
@@ -68,9 +66,9 @@ public class BackgroundCheckController extends RestfulController {
      * @return
      */
     @RequestMapping(value = "/saveCheckInfoForUs", method = RequestMethod.POST)
-    public Map<String, Object> saveCheckInfoForUs(@RequestParam("operateType") String operateType, BackgroundCheckInput checkInput, HttpServletRequest request, HttpServletResponse response) {
+    public Map<String, Object> saveCheckInfoForUs(@RequestParam("operateType") String operateType, BackgroundCheckInputDto checkInput, HttpServletRequest request, HttpServletResponse response) {
         Map<String, Object> result = Maps.newHashMap();
-        //Teacher teacher = getTeacher(request);
+        Teacher teacher = getTeacher(request);
         Long teacherId = checkInput.getTeacherId();
         checkInput.setTeacherId(teacherId);
         Integer countryId = checkInput.getCountryId();
@@ -95,7 +93,8 @@ public class BackgroundCheckController extends RestfulController {
                 Preconditions.checkArgument(StringUtils.isNotBlank(fileUrl), "fileUrl cannot be null");
             }
 
-            BaseOutput output = checkService.saveBackgroundCheckInfo(checkInput, operateType);
+            BaseOutputDto output = checkService.saveBackgroundCheckInfo(checkInput, operateType);
+
             if (!StringUtils.equals(TeacherPortalCodeEnum.RES_SUCCESS.getCode(), output.getResCode())) {
                 response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
                 return ApiResponseUtils.buildErrorResp(TeacherPortalCodeEnum.SYS_FAIL.getCode(), "Failed to save background check information.");
@@ -204,14 +203,15 @@ public class BackgroundCheckController extends RestfulController {
      * @param response
      * @return
      */
-    @RequestMapping(value = "/getCheckInfoForUs", method = RequestMethod.POST)
+    @RequestMapping(value = "/getCheckInfoForUs", method = RequestMethod.GET)
     public Map<String, Object> getCheckInfoForUs(HttpServletRequest request, HttpServletResponse response) {
-//        Teacher teacher = getTeacher(request);
-//        Long teacherId = teacher.getId();
-        Long teacherId = 42770L;
+        Teacher teacher = getTeacher(request);
+        User user = getUser(request);
+        Long teacherId = teacher.getId();
         BackgroundCheckVo info = null;
         try{
             info = checkService.getInfoForUs(teacherId);
+            info.setGender(user.getGender());
         }catch (Exception e) {
             logger.warn("get background check info occur exception, teacherId=" + teacherId, e);
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
@@ -226,7 +226,7 @@ public class BackgroundCheckController extends RestfulController {
      * @param response
      * @return
      */
-    @RequestMapping(value = "/getCheckInfoForCa", method = RequestMethod.POST)
+    @RequestMapping(value = "/getCheckInfoForCa", method = RequestMethod.GET)
     public Map<String, Object> getCheckInfoForCa(HttpServletRequest request, HttpServletResponse response) {
         Teacher teacher = getTeacher(request);
         Long teacherId = teacher.getId();

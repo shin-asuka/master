@@ -1,7 +1,7 @@
 package com.vipkid.background.dto.output;
 
 
-public class BaseOutput {
+public class BaseOutputDto {
 
     private String resCode;// 返回码
 

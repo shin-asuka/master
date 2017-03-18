@@ -1,13 +1,14 @@
 package com.vipkid.background.service;
 
 import com.vipkid.background.api.sterling.dto.CandidateInputDto;
-import com.vipkid.background.dto.input.BackgroundCheckInput;
-import com.vipkid.background.dto.output.BaseOutput;
+import com.vipkid.background.api.sterling.dto.CandidateOutputDto;
+import com.vipkid.background.api.sterling.service.SterlingService;
+import com.vipkid.background.dto.input.BackgroundCheckInputDto;
+import com.vipkid.background.dto.output.BaseOutputDto;
 import com.vipkid.background.enums.TeacherPortalCodeEnum;
 import com.vipkid.background.vo.BackgroundCheckVo;
 import com.vipkid.enums.TeacherAddressEnum;
 import com.vipkid.enums.TeacherApplicationEnum;
-import com.vipkid.file.service.AwsFileService;
 import com.vipkid.file.utils.StringUtils;
 import com.vipkid.recruitment.dao.TeacherContractFileDao;
 import com.vipkid.recruitment.entity.TeacherContractFile;
@@ -15,9 +16,11 @@ import com.vipkid.rest.exception.ServiceException;
 import com.vipkid.trpm.dao.TeacherAddressDao;
 import com.vipkid.trpm.dao.TeacherDao;
 import com.vipkid.trpm.dao.TeacherLicenseDao;
+import com.vipkid.trpm.dao.TeacherLocationDao;
 import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.entity.TeacherAddress;
 import com.vipkid.trpm.entity.TeacherLicense;
+import com.vipkid.trpm.entity.TeacherLocation;
 import com.vipkid.trpm.util.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,10 +50,13 @@ public class BackgroundCheckService {
     private TeacherAddressDao teacherAddressDao;
 
     @Autowired
-    private AwsFileService fileService;
+    private TeacherLocationDao locationDao;
+
+    @Autowired
+    private SterlingService sterlingService;
 
     @Transactional(readOnly = false, propagation = Propagation.REQUIRES_NEW, rollbackFor = Exception.class)
-    public BaseOutput saveBackgroundCheckInfo(BackgroundCheckInput input, String operateType){
+    public BaseOutputDto saveBackgroundCheckInfo(BackgroundCheckInputDto input, String operateType){
         //update teacher
         Teacher teacher = teacherDao.findById(input.getTeacherId());
         updateTeacherBasicIno(teacher, input);
@@ -67,8 +73,10 @@ public class BackgroundCheckService {
         //save teacher_license
         saveLicense(input);
 
-        //create candidate
-        BaseOutput output = new BaseOutput();
+        if(StringUtils.equals(operateType, "submit")){
+            createCandidate(input, teacher);
+        }
+        BaseOutputDto output = new BaseOutputDto();
         output.setResCode(TeacherPortalCodeEnum.RES_SUCCESS.getCode());
         output.setResMsg(TeacherPortalCodeEnum.RES_SUCCESS.getMsg());
         return output;
@@ -109,6 +117,7 @@ public class BackgroundCheckService {
         checkInfo.setLastName(teacher.getLastName());
         checkInfo.setBirthDay(DateUtils.formatDate(teacher.getBirthday()));
         checkInfo.setEmail(teacher.getEmail());
+        //checkInfo.setGender(teacher.get);
         TeacherContractFile file = contractFileDao.findAllowEditOne(teacherId, TeacherApplicationEnum.ContractFileType.US_BACKGROUND_CHECK.val());
         if(file != null){
             checkInfo.setFileUrl(file.getUrl());
@@ -130,8 +139,15 @@ public class BackgroundCheckService {
                 checkInfo.setCurrentStateId(address.getStateId());
                 checkInfo.setCurrentStreet(address.getStreetAddress());
                 checkInfo.setCurrentZipCode(address.getZipCode());
+
+                //timezone
+                TeacherLocation location = locationDao.findById(address.getCity());
+                if(location != null){
+                    checkInfo.setTimezone(location.getTimezone());
+                }
             }
         }
+
         TeacherLicense license = licenseDao.findByTeacherId(teacherId);
         if(license != null){
             checkInfo.setDriverLicenseNumber(license.getDriverLicense());
@@ -151,15 +167,43 @@ public class BackgroundCheckService {
         return list;
     }
 
-    private void createCandidate(BackgroundCheckInput checkInput, Teacher teacher){
+
+
+    private CandidateOutputDto createCandidate(BackgroundCheckInputDto checkInput, Teacher teacher){
+        CandidateOutputDto output = new  CandidateOutputDto(0, "");
         CandidateInputDto candidateInputDto = new CandidateInputDto();
         candidateInputDto.setTeacherId(teacher.getId());
         candidateInputDto.setEmail(teacher.getEmail());
-
+        candidateInputDto.setDob(checkInput.getBirthDay());
+        if(StringUtils.isBlank(checkInput.getMaidenName())){
+            candidateInputDto.setConfirmedNoMiddleName(true);
+        }
+        candidateInputDto.setGivenName(teacher.getFirstName());
+        candidateInputDto.setMiddleName(teacher.getMiddleName());
+        candidateInputDto.setFamilyName(teacher.getLastName());
+        candidateInputDto.setPhone(teacher.getMobile());
+        candidateInputDto.setSsn(checkInput.getSocialSecurityNumber());
         CandidateInputDto.Address address = new CandidateInputDto.Address();
-//        address.set
-//        candidateInputDto.setAddress();
-//        sterlingService.saveCandidate()
+        address.setAddressLine(checkInput.getStreet());
+        address.setCountryCode("US");
+        try{
+            TeacherLocation location = locationDao.findById(checkInput.getCity());
+            if(null != location){
+                address.setMunicipality(location.getName());
+            }
+            address.setPostalCode(checkInput.getZipCode());
+
+            CandidateInputDto.DriversLicense license = new CandidateInputDto.DriversLicense();
+            license.setIssuingAgency(checkInput.getDriverLicenseAgency());
+            license.setLicenseNumber(checkInput.getDriverLicenseNumber());
+            license.setType(checkInput.getDriverLicenseType());
+
+            output = sterlingService.saveCandidate(candidateInputDto);
+            logger.info("submit background check information, invoke sterlingService.saveCandidate, return resCode=");
+        }catch(Exception e){
+            logger.error("submit background check information occur exception, BackgroundCheckService.createCandidate failed, teacherId="+teacher.getId());
+        }
+        return output;
     }
     private int updateUrlAndScreeningId(Long teacherId, Integer fileType, String url, String operateType){
         TeacherContractFile teacherContractFile = new TeacherContractFile();
@@ -189,7 +233,7 @@ public class BackgroundCheckService {
     }
 
 
-    private void updateTeacherBasicIno(Teacher teacher, BackgroundCheckInput input){
+    private void updateTeacherBasicIno(Teacher teacher, BackgroundCheckInputDto input){
         teacher.setMaidenName(input.getMaidenName());
         teacher.setMiddleName(input.getMiddleName());
         if(StringUtils.isNotBlank(input.getBirthDay())){
@@ -202,7 +246,20 @@ public class BackgroundCheckService {
         }
     }
 
-    private void saveLatestAddress(BackgroundCheckInput input){
+    private void saveLatestAddress(BackgroundCheckInputDto input){
+        String currentStreet = input.getCurrentStreet();
+        String currentZipCode = input.getCurrentZipCode();
+
+        //if currentStreet not null or currentZipCode not null, then update it.
+        if(StringUtils.isNotBlank(currentStreet) || StringUtils.isNotBlank(currentZipCode)){
+            TeacherAddress address = new TeacherAddress();
+            address.setTeacherId(input.getTeacherId());
+            address.setStreetAddress(input.getStreet());
+            address.setZipCode(input.getZipCode());
+            address.setType(TeacherAddressEnum.AddressType.NORMAL.val());
+            teacherAddressDao.updateByTeacherIdAndType(address);
+        }
+
         TeacherAddress address = new TeacherAddress();
         address.setTeacherId(input.getTeacherId());
         address.setCity(input.getCity());
@@ -232,7 +289,7 @@ public class BackgroundCheckService {
         logger.info("save background check information, BackgroundCheckService.saveLatestAddress, insert success.teacherId="+address.getTeacherId());
     }
 
-    private void saveLicense(BackgroundCheckInput input){
+    private void saveLicense(BackgroundCheckInputDto input){
         TeacherLicense license = new TeacherLicense();
         license.setTeacherId(input.getTeacherId());
         license.setDriverLicense(input.getDriverLicenseNumber());

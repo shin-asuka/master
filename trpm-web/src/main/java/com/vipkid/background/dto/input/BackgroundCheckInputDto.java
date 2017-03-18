@@ -3,7 +3,7 @@ package com.vipkid.background.dto.input;
 
 import java.io.Serializable;
 
-public class BackgroundCheckInput implements Serializable{
+public class BackgroundCheckInputDto implements Serializable{
     private static final long serialVersionUID = 2932585128429730715L;
 
     private Long teacherId;
@@ -24,6 +24,11 @@ public class BackgroundCheckInput implements Serializable{
     private String street;
 
     private String zipCode;
+
+    /* 当前街道名称 */
+    private String currentStreet;
+    /* 当前zipCode */
+    private String currentZipCode;
     /* 默认为最新地址*/
     private Integer addressType = 1;
 
@@ -155,5 +160,21 @@ public class BackgroundCheckInput implements Serializable{
 
     public void setMiddleName(String middleName) {
         this.middleName = middleName;
+    }
+
+    public String getCurrentStreet() {
+        return currentStreet;
+    }
+
+    public void setCurrentStreet(String currentStreet) {
+        this.currentStreet = currentStreet;
+    }
+
+    public String getCurrentZipCode() {
+        return currentZipCode;
+    }
+
+    public void setCurrentZipCode(String currentZipCode) {
+        this.currentZipCode = currentZipCode;
     }
 }
