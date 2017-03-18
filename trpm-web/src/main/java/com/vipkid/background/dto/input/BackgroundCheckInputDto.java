@@ -42,6 +42,8 @@ public class BackgroundCheckInputDto implements Serializable{
 
     private String fileUrl;
 
+    private String operateType;
+
     public Long getTeacherId() {
         return teacherId;
     }
@@ -176,5 +178,13 @@ public class BackgroundCheckInputDto implements Serializable{
 
     public void setCurrentZipCode(String currentZipCode) {
         this.currentZipCode = currentZipCode;
+    }
+
+    public String getOperateType() {
+        return operateType;
+    }
+
+    public void setOperateType(String operateType) {
+        this.operateType = operateType;
     }
 }

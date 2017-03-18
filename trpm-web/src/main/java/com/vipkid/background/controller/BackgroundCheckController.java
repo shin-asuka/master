@@ -26,10 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
@@ -66,12 +63,13 @@ public class BackgroundCheckController extends RestfulController {
      * @return
      */
     @RequestMapping(value = "/saveCheckInfoForUs", method = RequestMethod.POST)
-    public Map<String, Object> saveCheckInfoForUs(@RequestParam("operateType") String operateType, BackgroundCheckInputDto checkInput, HttpServletRequest request, HttpServletResponse response) {
+    public Map<String, Object> saveCheckInfoForUs(@RequestBody BackgroundCheckInputDto checkInput, HttpServletRequest request, HttpServletResponse response) {
         Map<String, Object> result = Maps.newHashMap();
         Teacher teacher = getTeacher(request);
         Long teacherId = checkInput.getTeacherId();
         //Long teacherId = 2040456L;
         checkInput.setTeacherId(teacherId);
+        String operateType = checkInput.getOperateType();
         Integer countryId = checkInput.getLatestCountryId();
         Integer stateId = checkInput.getLatestStateId();
         Integer cityId = checkInput.getLatestCity();
@@ -167,7 +165,7 @@ public class BackgroundCheckController extends RestfulController {
      * save background check file for CA
      */
     @RequestMapping(value = "/saveCheckInfoForCa", method = RequestMethod.POST)
-    public Map<String, Object> saveCheckInfoForCa(@RequestParam("ipicUrl") String ipicUrl, @RequestParam("id2Url") String id2Url, HttpServletRequest request, HttpServletResponse response) {
+    public Map<String, Object> saveCheckInfoForCa(String ipicUrl, String id2Url, HttpServletRequest request, HttpServletResponse response) {
         Map<String, Object> result = new HashMap<>();
         if (null == ipicUrl || null == id2Url) {
             return ApiResponseUtils.buildErrorResp(TeacherPortalCodeEnum.SYS_PARAM_ERROR.getCode(),"file cannot be null");
