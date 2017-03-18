@@ -306,10 +306,6 @@ public class SterlingApiUtils {
             logger.info("Response is null  url:{},header:{},params:{}",postUrl,JacksonUtils.toJSONString(headers),screeningId);
             return false;
         }
-        if(StringUtils.isBlank(response.getContent())){
-            logger.info("Response.Content is null  url:{},header:{},params:{}",postUrl,JacksonUtils.toJSONString(headers),screeningId);
-            return false;
-        }
 
         if(response.getStatusCode() == 201){
             return true;
