@@ -192,11 +192,14 @@ public class BackgroundCheckService {
                 address.setMunicipality(location.getName());
             }
             address.setPostalCode(checkInput.getLatestZipCode());
+            candidateInputDto.setAddress(address);
 
             CandidateInputDto.DriversLicense license = new CandidateInputDto.DriversLicense();
             license.setIssuingAgency(checkInput.getDriverLicenseAgency());
             license.setLicenseNumber(checkInput.getDriverLicenseNumber());
             license.setType(checkInput.getDriverLicenseType());
+            candidateInputDto.setDriversLicense(license);
+
             logger.info("submit background check information, begin invoke sterlingService.saveCandidate, teacherId="+teacher.getId());
 
             output = sterlingService.saveCandidate(candidateInputDto);
