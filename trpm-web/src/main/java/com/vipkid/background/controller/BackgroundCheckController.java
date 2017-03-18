@@ -168,23 +168,23 @@ public class BackgroundCheckController extends RestfulController {
     @RequestMapping(value = "/saveCheckInfoForCa", method = RequestMethod.POST)
     public Map<String, Object> saveCheckInfoForCa(@RequestBody BackgroundCheckCaInputDto input, HttpServletRequest request, HttpServletResponse response) {
         Map<String, Object> result = new HashMap<>();
-        String ipicUrl = input.getIpicUrl();
+        String cpicUrl = input.getCpicUrl();
         String id2Url = input.getId2Url();
-        if (null == ipicUrl || null == id2Url) {
+        if (null == cpicUrl || null == id2Url) {
             return ApiResponseUtils.buildErrorResp(TeacherPortalCodeEnum.SYS_PARAM_ERROR.getCode(),"file cannot be null");
         }
         Long teacherId = null;
         try {
-            Preconditions.checkArgument(StringUtils.isNotBlank(ipicUrl), "IPIC file cannot be null");
-            Preconditions.checkArgument(StringUtils.isNotBlank(ipicUrl), "id2 file cannot be null");
+            Preconditions.checkArgument(StringUtils.isNotBlank(cpicUrl), "CPIC file cannot be null");
+            Preconditions.checkArgument(StringUtils.isNotBlank(cpicUrl), "id2 file cannot be null");
 
             Teacher teacher = getTeacher(request);
             teacherId = teacher.getId();
-            logger.info("save background check file for CA, teacherId=" + teacher.getId());
+            logger.info("save background check file for CA, teacherId=" + teacherId);
 
-            checkService.saveContractFile(teacherId, TeacherApplicationEnum.ContractFileType.CANADA_BACKGROUND_CHECK_CPIC_FORM.val(), ipicUrl, "submit");
+            checkService.saveContractFile(teacherId, TeacherApplicationEnum.ContractFileType.CANADA_BACKGROUND_CHECK_CPIC_FORM.val(), cpicUrl, "submit");
             checkService.saveContractFile(teacherId, TeacherApplicationEnum.ContractFileType.CANADA_BACKGROUND_CHECK_ID2.val(), id2Url, "submit");
-            result.put("ipicUrl", ipicUrl);
+            result.put("ipicUrl", cpicUrl);
             result.put("id2Url", id2Url);
             logger.info("save background check file for CA success, teacherId=" + teacherId );
         } catch (IllegalArgumentException e) {

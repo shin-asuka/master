@@ -8,7 +8,7 @@ public class BackgroundCheckCaInputDto implements Serializable{
     private static final long serialVersionUID = 9201707707558364386L;
     private Long teacherId;
 
-    private String ipicUrl;
+    private String cpicUrl;
 
     private String id2Url;
 
@@ -21,12 +21,12 @@ public class BackgroundCheckCaInputDto implements Serializable{
         this.teacherId = teacherId;
     }
 
-    public String getIpicUrl() {
-        return ipicUrl;
+    public String getCpicUrl() {
+        return cpicUrl;
     }
 
-    public void setIpicUrl(String ipicUrl) {
-        this.ipicUrl = ipicUrl;
+    public void setCpicUrl(String cpicUrl) {
+        this.cpicUrl = cpicUrl;
     }
 
     public String getId2Url() {
