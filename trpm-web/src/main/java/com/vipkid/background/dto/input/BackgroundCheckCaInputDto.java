@@ -4,8 +4,8 @@ package com.vipkid.background.dto.input;
 import java.io.Serializable;
 
 public class BackgroundCheckCaInputDto implements Serializable{
-    private static final long serialVersionUID = 2932585128429730715L;
 
+    private static final long serialVersionUID = 9201707707558364386L;
     private Long teacherId;
 
     private String ipicUrl;

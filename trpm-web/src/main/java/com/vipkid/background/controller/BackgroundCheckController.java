@@ -67,7 +67,7 @@ public class BackgroundCheckController extends RestfulController {
     public Map<String, Object> saveCheckInfoForUs(@RequestBody BackgroundCheckInputDto checkInput, HttpServletRequest request, HttpServletResponse response) {
         Map<String, Object> result = Maps.newHashMap();
         Teacher teacher = getTeacher(request);
-        Long teacherId = checkInput.getTeacherId();
+        Long teacherId = teacher.getId();
         //Long teacherId = 2040456L;
         checkInput.setTeacherId(teacherId);
         String operateType = checkInput.getOperateType();
