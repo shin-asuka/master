@@ -6,6 +6,7 @@ import com.vipkid.background.api.sterling.service.SterlingService;
 import com.vipkid.background.dto.input.BackgroundCheckInputDto;
 import com.vipkid.background.dto.output.BaseOutputDto;
 import com.vipkid.background.enums.TeacherPortalCodeEnum;
+import com.vipkid.background.util.WorkThreadPool;
 import com.vipkid.background.vo.BackgroundCheckVo;
 import com.vipkid.enums.TeacherAddressEnum;
 import com.vipkid.enums.TeacherApplicationEnum;
@@ -74,7 +75,7 @@ public class BackgroundCheckService {
         saveLicense(input);
 
         if(StringUtils.equals(operateType, "submit")){
-            createCandidate(input, teacher);
+            createCandidateAsync(input, teacher);
         }
         BaseOutputDto output = new BaseOutputDto();
         output.setResCode(TeacherPortalCodeEnum.RES_SUCCESS.getCode());
@@ -117,7 +118,6 @@ public class BackgroundCheckService {
         checkInfo.setLastName(teacher.getLastName());
         checkInfo.setBirthDay(DateUtils.formatDate(teacher.getBirthday()));
         checkInfo.setEmail(teacher.getEmail());
-        //checkInfo.setGender(teacher.get);
         TeacherContractFile file = contractFileDao.findAllowEditOne(teacherId, TeacherApplicationEnum.ContractFileType.US_BACKGROUND_CHECK.val());
         if(file != null){
             checkInfo.setFileUrl(file.getUrl());
@@ -169,45 +169,50 @@ public class BackgroundCheckService {
 
 
 
-    private CandidateOutputDto createCandidate(BackgroundCheckInputDto checkInput, Teacher teacher){
-        CandidateOutputDto output = new  CandidateOutputDto(TeacherPortalCodeEnum.SYS_FAIL);
-        CandidateInputDto candidateInputDto = new CandidateInputDto();
-        candidateInputDto.setTeacherId(teacher.getId());
-        candidateInputDto.setEmail(teacher.getEmail());
-        candidateInputDto.setDob(checkInput.getBirthDay());
-        if(StringUtils.isBlank(checkInput.getMiddleName())){
-            candidateInputDto.setConfirmedNoMiddleName(true);
-        }
-        candidateInputDto.setGivenName(teacher.getFirstName());
-        candidateInputDto.setMiddleName(checkInput.getMiddleName());
-        candidateInputDto.setFamilyName(teacher.getLastName());
-        candidateInputDto.setPhone(teacher.getPhoneNationCode());
-        candidateInputDto.setSsn(checkInput.getSocialSecurityNumber());
-        CandidateInputDto.Address address = new CandidateInputDto.Address();
-        address.setAddressLine(checkInput.getLatestStreet());
-        address.setCountryCode("US");
-        try{
-            TeacherLocation location = locationDao.findById(checkInput.getLatestCity());
-            if(null != location){
-                address.setMunicipality(location.getName());
+    private void createCandidateAsync(BackgroundCheckInputDto checkInput, Teacher teacher){
+        Runnable thread = new Runnable() {
+            @Override
+            public void run() {
+                CandidateOutputDto output = new  CandidateOutputDto(TeacherPortalCodeEnum.SYS_FAIL);
+                CandidateInputDto candidateInputDto = new CandidateInputDto();
+                candidateInputDto.setTeacherId(teacher.getId());
+                candidateInputDto.setEmail(teacher.getEmail());
+                candidateInputDto.setDob(checkInput.getBirthDay());
+                if(StringUtils.isBlank(checkInput.getMiddleName())){
+                    candidateInputDto.setConfirmedNoMiddleName(true);
+                }
+                candidateInputDto.setGivenName(teacher.getFirstName());
+                candidateInputDto.setMiddleName(checkInput.getMiddleName());
+                candidateInputDto.setFamilyName(teacher.getLastName());
+                candidateInputDto.setPhone(teacher.getPhoneNationCode());
+                candidateInputDto.setSsn(checkInput.getSocialSecurityNumber());
+                CandidateInputDto.Address address = new CandidateInputDto.Address();
+                address.setAddressLine(checkInput.getLatestStreet());
+                address.setCountryCode("US");
+                try{
+                    TeacherLocation location = locationDao.findById(checkInput.getLatestCity());
+                    if(null != location){
+                        address.setMunicipality(location.getName());
+                    }
+                    address.setPostalCode(checkInput.getLatestZipCode());
+                    candidateInputDto.setAddress(address);
+
+                    CandidateInputDto.DriversLicense license = new CandidateInputDto.DriversLicense();
+                    license.setIssuingAgency(checkInput.getDriverLicenseAgency());
+                    license.setLicenseNumber(checkInput.getDriverLicenseNumber());
+                    license.setType(checkInput.getDriverLicenseType());
+                    candidateInputDto.setDriversLicense(license);
+
+                    logger.info("submit background check information, begin invoke sterlingService.saveCandidate by syn, teacherId="+teacher.getId());
+
+                    output = sterlingService.saveCandidate(candidateInputDto);
+                    logger.info("submit background check information, invoke sterlingService.saveCandidate,teacherId="+teacher.getId()+", return resCode="+output.getResCode().getCode()+", resMsg="+output.getResCode().getMsg()+", id="+output.getId());
+                }catch(Exception e){
+                    logger.error("submit background check information occur exception, BackgroundCheckService.createCandidate failed, teacherId="+teacher.getId());
+                }
             }
-            address.setPostalCode(checkInput.getLatestZipCode());
-            candidateInputDto.setAddress(address);
-
-            CandidateInputDto.DriversLicense license = new CandidateInputDto.DriversLicense();
-            license.setIssuingAgency(checkInput.getDriverLicenseAgency());
-            license.setLicenseNumber(checkInput.getDriverLicenseNumber());
-            license.setType(checkInput.getDriverLicenseType());
-            candidateInputDto.setDriversLicense(license);
-
-            logger.info("submit background check information, begin invoke sterlingService.saveCandidate, teacherId="+teacher.getId());
-
-            output = sterlingService.saveCandidate(candidateInputDto);
-            logger.info("submit background check information, invoke sterlingService.saveCandidate,teacherId="+teacher.getId()+", return resCode="+output.getResCode().getCode()+", resMsg="+output.getResCode().getMsg()+", id="+output.getId());
-        }catch(Exception e){
-            logger.error("submit background check information occur exception, BackgroundCheckService.createCandidate failed, teacherId="+teacher.getId());
-        }
-        return output;
+        };
+        WorkThreadPool.fixedThreadPool.submit(thread);
     }
     private int updateUrlAndScreeningId(Long teacherId, Integer fileType, String url, String operateType){
         TeacherContractFile teacherContractFile = new TeacherContractFile();
@@ -324,4 +329,5 @@ public class BackgroundCheckService {
         logger.info("save background check information, BackgroundCheckService.saveLicense, insert success.teacherId="+input.getTeacherId());
 
     }
+
 }

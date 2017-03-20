@@ -3,6 +3,7 @@ package com.vipkid.file.service;
 import java.io.IOException;
 import java.io.InputStream;
 
+import com.vipkid.file.utils.StringUtils;
 import org.community.config.PropertyConfigurer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -126,7 +127,13 @@ public Logger logger = LoggerFactory.getLogger(AwsFileService.class);
 		logger.info("teacher id = {} ", teacherId);
 		FileVo fileVo = null;
 		if (file != null) {
-			String bucketName = PropertyConfigurer.stringValue("aws.bucketName");
+			String bucketName ="";
+			String bucketNameTest = PropertyConfigurer.stringValue("aws.bucketName.test");
+			if(StringUtils.isNotBlank(bucketNameTest)){
+				bucketName = bucketNameTest;
+			}else{
+				bucketName = PropertyConfigurer.stringValue("aws.bucketName");
+			}
 			try {
 				logger.info("文件:{}上传", fileName);
 				fileVo = upload(bucketName, key, file.getInputStream(), file.getSize());
