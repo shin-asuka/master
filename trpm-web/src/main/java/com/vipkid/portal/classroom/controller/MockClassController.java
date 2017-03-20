@@ -1,6 +1,5 @@
 package com.vipkid.portal.classroom.controller;
 
-import com.vipkid.enums.TeacherEnum;
 import com.vipkid.http.utils.JsonUtils;
 import com.vipkid.portal.classroom.model.mockclass.CandidateFeedbackInputDto;
 import com.vipkid.portal.classroom.model.mockclass.PeDoAuditInputDto;
@@ -8,7 +7,6 @@ import com.vipkid.portal.classroom.model.mockclass.PeReviewOutputDto;
 import com.vipkid.portal.classroom.service.MockClassService;
 import com.vipkid.rest.RestfulController;
 import com.vipkid.rest.config.RestfulConfig;
-import com.vipkid.rest.interceptor.annotation.RestInterface;
 import com.vipkid.rest.utils.ApiResponseUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -27,7 +25,6 @@ import static com.vipkid.enums.MockClassEnum.SUBMIT;
 import static com.vipkid.enums.TbdResultEnum.ReScheduleEnum.ReSchedule;
 
 @RestController
-@RestInterface(lifeCycle = TeacherEnum.LifeCycle.REGULAR)
 @RequestMapping("/portal/mockclass")
 public class MockClassController extends RestfulController {
 

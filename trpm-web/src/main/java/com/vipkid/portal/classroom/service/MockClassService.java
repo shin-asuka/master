@@ -329,6 +329,9 @@ public class MockClassService {
     }
 
     public String doCandidateFeedback(CandidateFeedbackInputDto candidateFeedbackInputDto) {
+        if (teacherPeFeedbackDao.hasTeacherPeFeedback(candidateFeedbackInputDto.getApplicationId())) {
+            return "The feedback is submitted!";
+        }
         TeacherPeFeedback teacherPeFeedback = new TeacherPeFeedback();
         BeanUtils.copyPropertys(candidateFeedbackInputDto, teacherPeFeedback);
         teacherPeFeedbackDao.saveTeacherPeFeedback(teacherPeFeedback);
