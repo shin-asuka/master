@@ -588,7 +588,7 @@
 	<select id="listReferralSucceedTeachers" resultType="com.vipkid.rest.dto.ReferralTeacherDto">
 		SELECT
 		u.id,
-		u.`name`,
+		t.real_name name,
 		t.email,
 		u.register_date_time applyDate,
 		t.life_cycle lifeCycle,
@@ -639,7 +639,7 @@
 	<select id="listReferralProcessingTeachers" resultType="com.vipkid.rest.dto.ReferralTeacherDto">
 		SELECT
 		u.id,
-		u.`name`,
+		t.real_name name,
 		t.email,
 		u.register_date_time applyDate,
 		t.life_cycle lifeCycle,
@@ -693,7 +693,7 @@
 	<select id="listReferralFailedTeachers" resultType="com.vipkid.rest.dto.ReferralTeacherDto">
 		SELECT
 		u.id,
-		u.`name`,
+		t.real_name name,
 		t.email,
 		u.register_date_time applyDate,
 		t.life_cycle lifeCycle,
@@ -742,7 +742,7 @@
 	<select id="getReferralTeacher" resultType="com.vipkid.rest.dto.ReferralTeacherDto">
 		SELECT
 		u.id,
-		u.`name`,
+		t.real_name name,
 		t.email,
 		u.register_date_time applyDate,
 		t.life_cycle lifeCycle,

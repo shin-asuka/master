@@ -79,7 +79,8 @@ public class TeacherReferralService {
             String nextStep = getNextStep(teacher.getStatus(), teacher.getLifeCycle());
             teacher.setNextStep(nextStep);
             String currentStatus = null;
-            if(StringUtils.isBlank(currentStatus) && StringUtils.equals(teacher.getLifeCycle(), TeacherEnum.LifeCycle.SIGNUP.name())){
+
+            if(StringUtils.isBlank(teacher.getStatus()) && StringUtils.equals(teacher.getLifeCycle(), TeacherEnum.LifeCycle.SIGNUP.getVal())){
                 currentStatus = TeacherEnum.LifeCycle.SIGNUP.getVal();
                 teacher.setStatus(currentStatus);
             }else{
@@ -114,7 +115,7 @@ public class TeacherReferralService {
         }
         for(ReferralTeacherDto teacher : list){
             String currentStatus = null;
-            if(StringUtils.isBlank(currentStatus) && StringUtils.equals(teacher.getLifeCycle(), TeacherEnum.LifeCycle.SIGNUP.name())){
+            if(StringUtils.isBlank(teacher.getStatus()) && StringUtils.equals(teacher.getLifeCycle(), TeacherEnum.LifeCycle.SIGNUP.getVal())){
                 currentStatus = TeacherEnum.LifeCycle.SIGNUP.getVal();
                 teacher.setStatus(currentStatus);
             }else{
