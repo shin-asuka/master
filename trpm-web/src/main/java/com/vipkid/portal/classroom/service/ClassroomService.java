@@ -43,6 +43,10 @@ import java.util.Map;
 public class ClassroomService {
 
 	private static Logger logger = LoggerFactory.getLogger(ClassroomService.class);
+
+    private static final int MOCK_CLASS_V1 = 1;
+
+    private static final int MOCK_CLASS_V2 = 2;
 	
 	@Autowired
 	private OnlineClassDao onlineClassDao;
@@ -67,7 +71,9 @@ public class ClassroomService {
     
     @Autowired
     private AuditDao auditDao;
-    
+
+    @Autowired
+    private TeacherPeCommentsDao teacherPeCommentsDao;
   
 	public Map<String,Object> getInfoRoom(ClassRoomVo bean , Teacher teacher){
 		
@@ -116,7 +122,17 @@ public class ClassroomService {
             	TeacherApplication application = teacherApplicationDao.findApplicationByOnlineClassId(bean.getOnlineClassId(), teacher.getId());
             	if(application != null){
             		resultDto.setTeacherApplicationId(application.getId());
-            	}
+
+                    // mock class 2.0
+                    resultDto.setVersion(MOCK_CLASS_V2);
+                    TeacherPeComments teacherPeComments = teacherPeCommentsDao.getTeacherPeComments(resultDto.getTeacherApplicationId().intValue());
+                    if(null != teacherPeComments){
+                        if(0 == teacherPeComments.getTemplateId()) {
+                            // mock class 1.0
+                            resultDto.setVersion(MOCK_CLASS_V1);
+                        }
+                    }
+                }
             }
         }else{
 			logger.warn("lesson is null,onlineClassId:{},studentId:{}",bean.getOnlineClassId(), bean.getStudentId());
@@ -134,7 +150,7 @@ public class ClassroomService {
 		}else{
 			logger.warn("课程还没有TeacherComment,onlineClassId:{},studentId:{}",bean.getOnlineClassId(), bean.getStudentId());
 		}
-		
+
 		resultDto.setTeacherName(teacher.getRealName());
 		resultDto.setStars(stars);
 		resultDto.setServerTime(new Timestamp(System.currentTimeMillis()));
