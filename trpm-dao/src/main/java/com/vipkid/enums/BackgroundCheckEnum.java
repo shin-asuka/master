@@ -45,6 +45,7 @@ public class BackgroundCheckEnum {
         PENDING("Pending"),//Sterling开始背调等待背调的结果
         PREADVERSE("Preadverse"),//第一次背调失败，等待老师dispute
         DISPUTE("Dispute"),//正在进行dispute
+        DIDNOTDISPUTE("Didnotdispute"),//超过五天没有进行背调
         CLEAR("Clear"),//背调结果为Clear
         FAIL("Fail");//背调的最终结果为失败，超过5天没有进行dispute也是为失败
         private String value;

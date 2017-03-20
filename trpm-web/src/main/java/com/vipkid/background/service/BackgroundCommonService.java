@@ -50,6 +50,7 @@ public class BackgroundCommonService {
 
 
     public Map<String,Object> getUsaBackgroundStatus(Teacher teacher){
+        logger.info("获取老师: {} 背调信息",teacher.getId());
         Map<String, Object> result = Maps.newHashMap();
         Calendar current = Calendar.getInstance();
         BackgroundScreening backgroundScreening = backgroundScreeningV2Dao.findByTeacherIdTopOne(teacher.getId());
@@ -78,7 +79,7 @@ public class BackgroundCommonService {
                 //上次背调超过两年需要进行背调，不超过两年需要根据result和disputeStatus进行判断
                 if (current.getTime().after(backgroundScreening.getUpdateTime())) {
                     result.put("needBackgroundCheck", true);
-                    result.put("phase", BackgroundPhase.START.getVal());
+                    result.put("phase", BackgroundPhase.START);
                 } else {
                     String backgroundResult = backgroundScreening.getResult();
                     String disputeStatus = backgroundScreening.getDisputeStatus();
@@ -86,14 +87,14 @@ public class BackgroundCommonService {
                         //开始背调，背调结果结果为N/A
                         case "n/a":
                             result.put("needBackgroundCheck", true);
-                            result.put("phase", BackgroundPhase.PENDING.getVal());
-                            result.put("result", BackgroundResult.NA.getVal());
+                            result.put("phase", BackgroundPhase.PENDING);
+                            result.put("result", BackgroundResult.NA);
                             break;
                         //背调结果为CLEAR，不再需要进行背调
                         case "clear":
                             result.put("needBackgroundCheck", false);
                             result.put("phase", BackgroundPhase.CLEAR.getVal());
-                            result.put("result", BackgroundResult.CLEAR.getVal());
+                            result.put("result", BackgroundResult.CLEAR);
                             break;
                         //背调结果为ALERT，需根据disputeStatus进行判断
                         case "alert":
@@ -102,12 +103,13 @@ public class BackgroundCommonService {
                                 //在5天内可以进行dispute，超过5天不允许在进行dispute自动FAIL
                                 if (in5Days) {
                                     result.put("needBackgroundCheck", true);
-                                    result.put("phase", BackgroundPhase.PREADVERSE.getVal());
-                                    result.put("result", BackgroundResult.ALERT.getVal());
+                                    result.put("phase", BackgroundPhase.PREADVERSE);
+                                    result.put("result", BackgroundResult.ALERT);
                                 } else {
+                                    //TODO
                                     result.put("needBackgroundCheck", false);
-                                    result.put("result", BackgroundResult.FAIL.getVal());
-                                    result.put("phase", BackgroundPhase.FAIL.getVal());
+                                    result.put("result", BackgroundResult.FAIL);
+                                    result.put("phase", BackgroundPhase.DIDNOTDISPUTE);
                                 }
 
                             } else {
@@ -135,6 +137,7 @@ public class BackgroundCommonService {
     }
 
     public Map<String,Object> getCanadabackgroundStatus(Teacher teacher){
+        logger.info("获取老师: {} 背调信息",teacher.getId());
         Map<String, Object> result = Maps.newHashMap();
         Calendar current = Calendar.getInstance();
         Date  contractEndDate = teacher.getContractEndDate();
@@ -182,6 +185,7 @@ public class BackgroundCommonService {
     }
 
     public Map<String, Object> getBackgroundFileStatus(long teacherId, String nationality) {
+        logger.info("获取老师: {} 背调文件信息",teacherId);
         Map<String, Object> result = Maps.newHashMap();
         List<TeacherContractFile> teacherContractFiles = teacherContractFileDao.findBackgroundFileByTeacherId(teacherId);
         boolean hasFile = false;
@@ -220,6 +224,7 @@ public class BackgroundCommonService {
                         result.put("fileStatus",FileStatus.SUBMIT);
                     }
                     int fileType = contractFile.getFileType();
+                    //美国的只有一个文件fileType为 9 ，加拿大有两个文件fileType为10 、 11
                     switch (fileType) {
                         case 10:
                             if (StringUtils.equalsIgnoreCase(contractFile.getResult(), "PASS")) {
