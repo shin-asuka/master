@@ -56,4 +56,21 @@ public class BackgroundCheckEnum {
             return this.value;
         }
     }
+    public enum FileStatus{
+        SAVE("Save"),
+        SUBMIT("Submit");
+        private String value;
+        FileStatus(String value){this.value = value;}
+
+        public String getValue(){ return this.value;}
+    }
+    public enum FileResult{
+        PASS("Pass"),
+        FAIL("Fail"),
+        PENDING("Pending");
+        private String value;
+        FileResult(String value){this.value = value;}
+
+        public String getValue(){ return this.value;}
+    }
 }

@@ -2,9 +2,12 @@ package com.vipkid.background.service;
 
 import com.google.api.client.util.Lists;
 import com.google.api.client.util.Maps;
+import com.vipkid.enums.BackgroundCheckEnum;
 import com.vipkid.enums.BackgroundCheckEnum.BackgroundResult;
 import com.vipkid.enums.BackgroundCheckEnum.DisputeStatus;
 import com.vipkid.enums.BackgroundCheckEnum.BackgroundPhase;
+import com.vipkid.enums.BackgroundCheckEnum.FileStatus;
+import com.vipkid.enums.BackgroundCheckEnum.FileResult;
 import com.vipkid.enums.TeacherApplicationEnum.ContractFileType;
 import com.vipkid.enums.TeacherEnum.LifeCycle;
 import com.vipkid.recruitment.dao.TeacherContractFileDao;
@@ -78,22 +81,22 @@ public class BackgroundCommonService {
                     result.put("phase", BackgroundPhase.START.getVal());
                 } else {
                     String backgroundResult = backgroundScreening.getResult();
-                    String disputeStatus = backgroundScreening.getStatus();
+                    String disputeStatus = backgroundScreening.getDisputeStatus();
                     switch (backgroundResult) {
                         //开始背调，背调结果结果为N/A
-                        case "N/A":
+                        case "n/a":
                             result.put("needBackgroundCheck", true);
                             result.put("phase", BackgroundPhase.PENDING.getVal());
                             result.put("result", BackgroundResult.NA.getVal());
                             break;
                         //背调结果为CLEAR，不再需要进行背调
-                        case "CLEAR":
+                        case "clear":
                             result.put("needBackgroundCheck", false);
                             result.put("phase", BackgroundPhase.CLEAR.getVal());
                             result.put("result", BackgroundResult.CLEAR.getVal());
                             break;
                         //背调结果为ALERT，需根据disputeStatus进行判断
-                        case "ALERT":
+                        case "alert":
                             //disputeStatus为null
                             if (null == disputeStatus) {
                                 //在5天内可以进行dispute，超过5天不允许在进行dispute自动FAIL
@@ -145,29 +148,29 @@ public class BackgroundCommonService {
             //第一次进行背调
             if (null == canadaBackgroundScreening) {
                 result.put("needBackgroundCheck", true);
-                result.put("phase", BackgroundPhase.START.getVal());
-                result.put("result",BackgroundResult.NA.getVal());
+                result.put("phase", BackgroundPhase.START);
+                result.put("result",BackgroundResult.NA);
                 return result;
             }
             current.add(Calendar.YEAR, -2);
             //超过两年需要背调，
             if (current.getTime().after(backgroundScreening.getUpdateTime())) {
                 result.put("needBackgroundCheck", true);
-                result.put("phase", BackgroundPhase.START.getVal());
-                result.put("result",BackgroundResult.NA.getVal());
+                result.put("phase", BackgroundPhase.START);
+                result.put("result",BackgroundResult.NA);
             } else { //不超过两年显示result
                 if (StringUtils.equalsIgnoreCase(canadaBackgroundScreening.getResult(),"PASS")){
                     result.put("needBackgroundCheck",false);
-                    result.put("result",BackgroundResult.CLEAR.getVal());
+                    result.put("result",BackgroundResult.CLEAR);
                     result.put("phase",BackgroundPhase.CLEAR.getVal());
                 }else if (StringUtils.equalsIgnoreCase(canadaBackgroundScreening.getResult(),"FAIL")){
                     result.put("needBackgroundCheck",true);
-                    result.put("result",BackgroundResult.ALERT.getVal());
+                    result.put("result",BackgroundResult.ALERT);
                     result.put("phase",BackgroundPhase.FAIL.getVal());
                 }else {
                     result.put("needBackgroundCheck",true);
-                    result.put("result",BackgroundResult.NA.getVal());
-                    result.put("phase",BackgroundPhase.PREADVERSE.getVal());
+                    result.put("result",BackgroundResult.NA);
+                    result.put("phase",BackgroundPhase.PENDING.getVal());
                 }
             }
             return result;
@@ -187,24 +190,35 @@ public class BackgroundCommonService {
             hasFile = true;
             if (StringUtils.equalsIgnoreCase(nationality, "United States")) {
                 result.put("nationality", "USA");
-                String fileResult = "";
-                for (TeacherContractFile contractFile : teacherContractFiles) {
 
+                for (TeacherContractFile contractFile : teacherContractFiles) {
+                    Long screeningId = contractFile.getScreeningId();
+                    if (null == screeningId){
+                        result.put("fileStatus",FileStatus.SAVE);
+                    }else {
+                        result.put("fileStatus",FileStatus.SUBMIT);
+                    }
                     if (StringUtils.equalsIgnoreCase(contractFile.getResult(), "PASS")) {
-                        fileResult = "PASS";
+
+                        result.put("fileResult", FileResult.PASS);
                     } else if (StringUtils.equalsIgnoreCase(contractFile.getResult(), "FAIL")) {
-                        fileResult = "FAIL";
+
+                        result.put("fileResult", FileResult.FAIL);
                     } else {
-                        fileResult = "PENDING";
+                        result.put("fileResult", FileResult.PENDING);
                     }
                 }
-                result.put("fileResult", fileResult);
             } else if (StringUtils.equalsIgnoreCase(nationality, "CANADA")) {
                 result.put("nationality", "CANADA");
                 String canadaFirstFileResult = "";
                 String canadaSecondFileResult = "";
                 for (TeacherContractFile contractFile : teacherContractFiles) {
-
+                    Long screeningId = contractFile.getScreeningId();
+                    if (null == screeningId){
+                        result.put("fileStatus",FileStatus.SAVE);
+                    }else {
+                        result.put("fileStatus",FileStatus.SUBMIT);
+                    }
                     int fileType = contractFile.getFileType();
                     switch (fileType) {
                         case 10:
@@ -227,11 +241,11 @@ public class BackgroundCommonService {
                             break;
                     }
                 }if (StringUtils.equalsIgnoreCase(canadaFirstFileResult,"FAIL") || StringUtils.equalsIgnoreCase(canadaSecondFileResult,"FAIL")){
-                    result.put("fileResult","FAIL");
+                    result.put("fileResult",FileResult.FAIL);
                 }else if (StringUtils.equalsIgnoreCase(canadaFirstFileResult,"PASS") && StringUtils.equalsIgnoreCase(canadaSecondFileResult,"PASS")){
-                    result.put("fileResult","PASS");
+                    result.put("fileResult",FileResult.PASS);
                 }else {
-                    result.put("fileResult","PENDING");
+                    result.put("fileResult",FileResult.PENDING);
                 }
             }
         } else {
