@@ -144,7 +144,7 @@ public class TeacherReferralService {
 
 	private String getNextStep(String currentStatus, String lifeCycle){
 	    String nextStep = "";
-	    if(StringUtils.isBlank(currentStatus) && StringUtils.equals(lifeCycle, TeacherEnum.LifeCycle.SIGNUP.name())){
+	    if(StringUtils.isBlank(currentStatus) && StringUtils.equals(lifeCycle, TeacherEnum.LifeCycle.SIGNUP.getVal())){
             nextStep = TeacherEnum.LifeCycle.BASIC_INFO.getVal();
             return nextStep;
         }
@@ -156,19 +156,19 @@ public class TeacherReferralService {
          Contract Info - Teach 1st Class
          */
 		switch (currentStatus){
-            case "BASIC_INFO":
+            case "Basic Info":
                 nextStep = "Interview";
                 break;
-            case "INTERVIEW":
+            case "Interview":
                 nextStep = "Teaching Prep";
                 break;
-            case "TRAINING":
+            case "Teaching Prep":
                 nextStep = "Mock Class";
                 break;
-            case "PRACTICUM":
+            case "Mock Class":
                 nextStep = "Contract Info";
                 break;
-            case "CONTRACT_INFO":
+            case "Contract Info":
                 nextStep = "Teach 1st Class";
                 break;
         }
