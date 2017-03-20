@@ -205,7 +205,8 @@ public class MockClassService {
 
         if (StringUtils.equals(peDoAuditInputDto.getStatus(), MockClassEnum.SAVE.name())) {
             // do save
-            logger.info("Pe doAudit save succeed");
+            logger.info("Pe doAudit save succeed, applicationId: {}, teacherId: {}",
+                            peDoAuditInputDto.getApplicationId(), monterTeacher.getId());
 
         } else if (StringUtils.equals(peDoAuditInputDto.getStatus(), MockClassEnum.SUBMIT.name())
                         || StringUtils.equals(peDoAuditInputDto.getStatus(), Result.REAPPLY.name())) {
@@ -318,7 +319,8 @@ public class MockClassService {
                 throw new IllegalStateException("Online class status is not BOOKED or FINISHED");
             }
 
-            logger.info("Pe doAudit submit succeed");
+            logger.info("Pe doAudit submit succeed, applicationId: {}, teacherId: {}",
+                            peDoAuditInputDto.getApplicationId(), monterTeacher.getId());
         } else {
             throw new IllegalArgumentException("Pe 'status' is not matched");
         }
