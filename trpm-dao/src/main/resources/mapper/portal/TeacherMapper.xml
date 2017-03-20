@@ -757,6 +757,7 @@
 		LEFT JOIN teacher_first_class tc ON t.id = tc.teacher_id
 		WHERE
 			t.id=#{param.teacherId}
+		AND (ta.current = 1 or ta.current is null)
 		LIMIT 1
 	</select>
 
