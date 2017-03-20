@@ -78,7 +78,13 @@ public class TeacherReferralService {
         for(ReferralTeacherDto teacher : list){
             String nextStep = getNextStep(teacher.getStatus(), teacher.getLifeCycle());
             teacher.setNextStep(nextStep);
-            teacher.setStatus(teacher.getStatus() + ", " + teacher.getResult());
+            String currentStatus = null;
+            if(StringUtils.isBlank(currentStatus) && StringUtils.equals(teacher.getLifeCycle(), TeacherEnum.LifeCycle.SIGNUP.name())){
+                currentStatus = TeacherEnum.LifeCycle.SIGNUP.getVal();
+                teacher.setStatus(currentStatus);
+            }else{
+                teacher.setStatus(teacher.getStatus() + ", " + teacher.getResult());
+            }
         }
         page.setList(list);
 		return page;
