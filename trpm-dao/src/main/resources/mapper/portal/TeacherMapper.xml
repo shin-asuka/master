@@ -656,7 +656,7 @@
 		t.referee LIKE CONCAT(#{param.teacherId},',%')
 		AND (ta.current = 1 or ta.current is null)
 		AND t.life_cycle in('SIGNUP','BASIC_INFO','INTERVIEW', 'TRAINING','PRACTICUM','CONTRACT_INFO','REGULAR')
-		AND ta.result != 'FAIL'
+		AND (ta.result != 'FAIL' or ta.result is null)
 		AND tc.scheduled_date_time is null
 		<if test="param.lifeCycle != null"> AND t.life_cycle = #{param.lifeCycle} </if>
 		<if test="param.status != null"> AND ta.`status` = #{param.status} </if>
@@ -681,7 +681,7 @@
 		t.referee LIKE CONCAT(#{param.teacherId},',%')
 		AND (ta.current = 1 or ta.current is null)
 		AND t.life_cycle in('SIGNUP','BASIC_INFO','INTERVIEW', 'TRAINING','PRACTICUM','CONTRACT_INFO','REGULAR')
-		AND ta.result != 'FAIL'
+		AND (ta.result != 'FAIL' or ta.result is null)
 		AND tc.scheduled_date_time is null
 		<if test="param.lifeCycle != null"> AND t.life_cycle = #{param.lifeCycle} </if>
 		<if test="param.status != null"> AND ta.`status` = #{param.status} </if>
