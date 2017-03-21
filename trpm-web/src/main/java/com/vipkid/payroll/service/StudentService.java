@@ -1,5 +1,6 @@
 package com.vipkid.payroll.service;
 
+import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -7,6 +8,7 @@ import java.util.Map;
 
 import com.vipkid.http.utils.JsonUtils;
 import com.vipkid.payroll.utils.DateUtils;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.time.DateFormatUtils;
 import org.slf4j.Logger;
@@ -70,4 +72,10 @@ public class StudentService {
         logger.info("学生的订单信息为，StudentId = {}，orderList = {}", studentId, JsonUtils.toJSONString(list));
         return list;
     }
+
+	public List<Long> findConfirmedPriceGreaterTan500BeforeThisMonth(Long studentId, Timestamp scheduledDateTime) {
+        List<Long> list = studentDao.findConfirmedPriceGreaterTan500BeforeThisMonth(studentId, scheduledDateTime);
+        logger.info("学生之前的的订单信息为，StudentId = {}，orderList = {}", studentId, JSON.toJSONString(list));
+        return list;
+	}
 }

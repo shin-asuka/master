@@ -114,7 +114,7 @@ public class InterviewController extends RestfulController {
     @RequestMapping(value = "/getClassRoomUrl", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
     public Map<String,Object> getClassRoomUrl(HttpServletRequest request, HttpServletResponse response,long onlineClassId){
         try{
-            Map<String,Object> result = this.interviewService.getClassRoomUrl(onlineClassId, getTeacher(request));
+            Map<String,Object> result = this.interviewService.getClassRoomUrl(onlineClassId, getTeacher(request),getUser(request));
             if(ReturnMapUtils.isFail(result)){
                 response.setStatus(HttpStatus.FORBIDDEN.value());
             }

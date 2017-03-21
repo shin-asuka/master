@@ -49,8 +49,8 @@ public class UnitAssesssmentService {
 	public void remindTeacherUnitAssessmentFor6Hour(){
 		
 		//查询出6个小时以前已经AS_SCHEDULED的课程
-		Date startDate = UADateUtils.getDateByBeforeHours(7);
-		Date endDate = UADateUtils.getDateByBeforeHours(6);
+		Date startDate = UADateUtils.getCFUARemindTimeRange(7);
+		Date endDate = UADateUtils.getCFUARemindTimeRange(6);
 		
 		String startTime = UADateUtils.format(startDate, UADateUtils.defaultFormat) ;
 		String endTime = UADateUtils.format(endDate, UADateUtils.defaultFormat) ;
@@ -83,8 +83,8 @@ public class UnitAssesssmentService {
 	public void remindTeacherUnitAssessmentFor12Hour(){
 		
 		//查询出12个小时以前已经AS_SCHEDULED的课程
-		Date startDate = UADateUtils.getDateByBeforeHours(13);
-		Date endDate = UADateUtils.getDateByBeforeHours(12);
+		Date startDate = UADateUtils.getCFUARemindTimeRange(13);
+		Date endDate = UADateUtils.getCFUARemindTimeRange(12);
 		
 		String startTime = UADateUtils.format(startDate, UADateUtils.defaultFormat) ;
 		String endTime = UADateUtils.format(endDate, UADateUtils.defaultFormat) ;
@@ -117,8 +117,8 @@ public class UnitAssesssmentService {
 	public void remindTeacherUnitAssessmentFor24Hour(){
 
 		//查询出24个小时以前已经AS_SCHEDULED的课程
-		Date startDate = UADateUtils.getDateByBeforeHours(25);
-		Date endDate = UADateUtils.getDateByBeforeHours(24);
+		Date startDate = UADateUtils.getCFUARemindTimeRange(25);
+		Date endDate = UADateUtils.getCFUARemindTimeRange(24);
 
 		String startTime = UADateUtils.format(startDate, UADateUtils.defaultFormat) ;
 		String endTime = UADateUtils.format(endDate, UADateUtils.defaultFormat) ;

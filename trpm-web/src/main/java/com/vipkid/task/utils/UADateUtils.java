@@ -52,6 +52,16 @@ public class UADateUtils {
 		return calendar.getTime();
 	}
 
+	public static Date getCFUARemindTimeRange(int interval ){
+		Calendar calendar = Calendar.getInstance();
+		int hour = calendar.get(Calendar.HOUR_OF_DAY)-interval;
+		calendar.set(Calendar.HOUR_OF_DAY, hour);
+		calendar.set(Calendar.MINUTE,0);
+		calendar.set(Calendar.SECOND,-1);
+		calendar.set(Calendar.MILLISECOND,0);
+		return calendar.getTime();
+	}
+
 	public static Date getDateOclockByBeforeHours(int interval ){
 		Calendar calendar = Calendar.getInstance();
 		int hour = calendar.get(Calendar.HOUR_OF_DAY)-interval;

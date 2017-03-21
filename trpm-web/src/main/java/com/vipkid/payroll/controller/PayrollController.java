@@ -21,6 +21,7 @@ import com.vipkid.http.service.PayrollService;
 import com.vipkid.payroll.model.Page;
 import com.vipkid.payroll.model.PayrollItemVo;
 import com.vipkid.payroll.model.PayrollPage;
+import com.vipkid.payroll.model.ReferralPayrollItem;
 import com.vipkid.payroll.model.Result;
 import com.vipkid.payroll.utils.DateUtils;
 import com.vipkid.payroll.utils.JsonMapper;
@@ -211,6 +212,61 @@ public class PayrollController extends AbstractPortalController {
 			response.setStatus(status);
 			result.addAttribute("message", message);
 
+		}
+		return result.getAttribute();
+	}
+	
+	
+
+	@RequestMapping("/portal/listReferral")
+	public Map<String, Object> listReferral(
+			@RequestParam(value = "offsetOfMonth", required = false, defaultValue = "0") Integer offsetOfMonth,
+			 HttpServletRequest request, HttpServletResponse response) {
+
+		PayrollPage<ReferralPayrollItem> rePage = new PayrollPage<ReferralPayrollItem>();
+		String message = "";
+		Integer status = HttpStatus.OK.value();
+		Teacher teacher = loginService.getTeacher();
+		int teacherId = new Long(teacher.getId()).intValue();
+
+		LocalDateTime monthOfYear = DateUtils.monthOfYear(offsetOfMonth);
+		Result result = new Result();
+		int month = monthOfYear.getYear() * 100 + monthOfYear.getMonthValue();
+		result.addAttribute("offsetOfMonth", offsetOfMonth);
+		int allTotalSalary = 0 ;
+		try {
+			LOGGER.info("获取referral详情, teacherId={} ,month={}", teacherId, month);
+			Map<String, Object> param = Maps.newHashMap();
+			param.put("month", month);
+			param.put("teacherId", teacherId);
+
+			Page payPage = new Page(request, response);
+			if(payPage.getPageNo() == 0){
+				payPage.setPageNo(1);
+			}
+			String responseAd = payrollService.listReferralWithPage(
+					Result.SLALARY_TYPE_OTHER_BONUS_TEACHER_REFERRAL_FEE_RULE, teacherId, month, payPage);
+			
+			LOGGER.info("获取referral详情, json str", responseAd);
+			if (responseAd != null) {
+				JSONObject jObject = JSONObject.parseObject(responseAd);
+				rePage = (PayrollPage) JsonMapper
+						.fromJsonString(jObject.getString(Result.ATTR_PAGE), rePage.getClass());
+				allTotalSalary = jObject.getIntValue("totalSalary");
+				result.addAttribute(Result.ATTR_COURSE_TOTAL, rePage.getCount());
+
+			}
+			result.addAttribute(Result.ATTR_PAGE, rePage);
+			result.addAttribute("offsetOfMonth", offsetOfMonth);
+			result.addAttribute("totalSalary",allTotalSalary);
+
+		} catch (Exception e) {
+			LOGGER.error("查询工资明细时出现异常 , uri={} ,e={}", request.getRequestURI(), e);
+			message = "查询失败 ";
+			status = HttpStatus.INTERNAL_SERVER_ERROR.value();
+		} finally {
+			response.setStatus(status);
+			result.addAttribute("message", message);
 		}
 		return result.getAttribute();
 	}

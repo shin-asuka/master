@@ -17,6 +17,7 @@ import com.vipkid.rest.portal.vo.TranslationVo;
 import com.vipkid.rest.utils.ApiResponseUtils;
 import com.vipkid.rest.utils.ext.baidu.BaiduTranslateAPI;
 import com.vipkid.trpm.constant.ApplicationConstant;
+import com.vipkid.trpm.service.activity.ActivityService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -29,6 +30,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -46,17 +48,21 @@ public class StudentCommentRestController extends RestfulController{
 	@Autowired
 	private ManageGatewayService manageGatewayService;
 
+	@Autowired
+	private ActivityService activityService;
 	/**
-	 * 获取一个可双向翻页的StudentComment分页
+	 * 获取一个可翻页的StudentComment分页
 	 * @param request
 	 * @param response
-	 * @param teacherId
+	 * @param onlineClassId
+	 * @param ocToken
 	 * @return
 	 */
 
 	@RequestMapping(value = "/getStudentCommentByBatch", method = RequestMethod.GET)
 	public Map<String, Object> getStudentCommentByBatch(HttpServletRequest request, HttpServletResponse response,
-			@RequestParam(value="onlineClassId", required=true) long onlineClassId) {
+			@RequestParam(value="onlineClassId",defaultValue = "-1") long onlineClassId,
+			@RequestParam(value="ocToken",defaultValue = "") String ocToken) {
 		try {
 			Stopwatch stopwatch = Stopwatch.createStarted();
 			logger.info("【StudentCommentRestController.getStudentCommentListByBatch】input：onlineClassId={}",onlineClassId);
@@ -71,7 +77,6 @@ public class StudentCommentRestController extends RestfulController{
 				return ApiResponseUtils.buildErrorResp(1001,"没有获取到评价信息");
 			};
 			StudentCommentVo studentCommentVo = studentCommentVos.get(0);
-
 			Map<String,Object> ret = Maps.newHashMap();
 			ret.put("data",studentCommentVo);
 			long millis =stopwatch.stop().elapsed(TimeUnit.MILLISECONDS);
@@ -79,7 +84,7 @@ public class StudentCommentRestController extends RestfulController{
 	        return ApiResponseUtils.buildSuccessDataResp(ret);
 		} catch (Exception e) {
 			String errorMessage = String.format("调用【StudentCommentRestController.getStudentCommentListByBatch】接口抛异常，传入参数：onlineClassId=%d",onlineClassId);
-	        logger.error(errorMessage, e);//由于维龙的代码没有合上去，暂时这么处理
+	        logger.error(errorMessage, e);
 		}
 		return ApiResponseUtils.buildErrorResp(1001, "服务器端错误");
 	}
@@ -153,6 +158,32 @@ public class StudentCommentRestController extends RestfulController{
 	 * @param response
 	 * @return
 	 */
+	@RequestMapping(value = "/getTeacherRatingsAverageByBatch",method = RequestMethod.GET)
+	public Map<String, Object> getTeacherRatingsAverageByBatch(HttpServletRequest request, HttpServletResponse response,
+													   @RequestParam(value="ids",required=true) String teacherIds) {
+		try {
+			Stopwatch stopwatch = Stopwatch.createStarted();
+			logger.info("【StudentCommentRestController.getTeacherRatingsAverageByBatch】input：teacherIds={}",teacherIds);
+//			User getUser = UserUtils.getUser(request);
+//			if(getUser.getId()!=teacherId){
+//				return ApiResponseUtils.buildErrorResp(1002, "没有数据访问权限");
+//			}
+			Map<String,String> data = manageGatewayService.getTeacherRatingsAverageByBatch(teacherIds);
+			String[] teacherIdArr = StringUtils.split(teacherIds,",");
+			List<String> ratings = Lists.newArrayList();
+			for(String id :teacherIdArr){
+				ratings.add(data.get(id));
+			}
+			long millis =stopwatch.stop().elapsed(TimeUnit.MILLISECONDS);
+			logger.info("【StudentCommentRestController.getTeacherRatingsAverageByBatch】output：result={},运行时间={}ms ", JSONObject.toJSONString(data),millis);
+			return ApiResponseUtils.buildSuccessDataResp(ratings);
+		} catch (Exception e) {
+			logger.error("【StudentCommentRestController.getTeacherRatingsAverageByBatch】传入参数：teacherIds={}。抛异常: ", teacherIds);
+			logger.error("【StudentCommentRestController.getTeacherRatingsAverageByBatch】接口异常",e);
+		}
+		return ApiResponseUtils.buildErrorResp(1001, "服务器端错误");
+	}
+
 	@RequestMapping(value = "/getStudentCommentByPage",method = RequestMethod.GET)
 	public Map<String, Object> getStudentCommentByPage(HttpServletRequest request, HttpServletResponse response,
 													   @RequestParam(value="start",required=false,defaultValue = "0") Integer start ,
@@ -260,4 +291,33 @@ public class StudentCommentRestController extends RestfulController{
 		}
 		return ApiResponseUtils.buildErrorResp(1001, "服务器端错误");
 	}
+
+	/**
+	 * 获取tags接口
+	 * @param request
+	 * @param response
+	 * @param id
+	 * @return
+	 */
+	@RequestMapping(value = "/getTagsByCommentId",method = RequestMethod.GET)
+	public Map<String, Object> getTagsByCommentId(HttpServletRequest request, HttpServletResponse response,
+															   @RequestParam(value="id",required=true) String id) {
+		try {
+			Stopwatch stopwatch = Stopwatch.createStarted();
+			logger.info("【StudentCommentRestController.getTagsByCommentId】input：id={}",id);
+//			User getUser = UserUtils.getUser(request);
+//			if(getUser.getId()!=teacherId){
+//				return ApiResponseUtils.buildErrorResp(1002, "没有数据访问权限");
+//			}
+			List<String> data = manageGatewayService.getTagsByCommentId(id);
+			long millis =stopwatch.stop().elapsed(TimeUnit.MILLISECONDS);
+			logger.info("【StudentCommentRestController.getTagsByCommentId】output：result={},运行时间={}ms ", JSONObject.toJSONString(data),millis);
+			return ApiResponseUtils.buildSuccessDataResp(data);
+		} catch (Exception e) {
+			logger.error("【StudentCommentRestController.getTagsByCommentId】传入参数：id={}。抛异常: ", id);
+			logger.error("【StudentCommentRestController.getTagsByCommentId】接口异常",e);
+		}
+		return ApiResponseUtils.buildErrorResp(1001, "服务器端错误");
+	}
+
 }

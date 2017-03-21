@@ -4,8 +4,9 @@
 package com.vipkid.http.service;
 
 import com.alibaba.fastjson.JSONObject;
-import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.api.client.util.Lists;
+import com.google.api.client.util.Maps;
 import com.vipkid.http.utils.JsonUtils;
 import com.vipkid.http.utils.WebUtils;
 import com.vipkid.payroll.service.StudentService;
@@ -16,6 +17,7 @@ import com.vipkid.trpm.dao.LessonDao;
 import com.vipkid.trpm.entity.Lesson;
 import com.vipkid.trpm.entity.OnlineClass;
 import com.vipkid.trpm.entity.Student;
+import com.vipkid.trpm.service.activity.ActivityService;
 import com.vipkid.trpm.service.portal.OnlineClassService;
 import com.vipkid.trpm.util.LessonSerialNumber;
 import org.apache.commons.lang3.StringUtils;
@@ -23,8 +25,13 @@ import org.apache.commons.lang3.time.DateFormatUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -32,7 +39,7 @@ import java.util.List;
  * @date 2017年1月11日  下午17:36:00
  *
  */
-
+@Service
 public class ManageGatewayService extends HttpBaseService {
 
 	private static final Logger logger = LoggerFactory.getLogger(ManageGatewayService.class);
@@ -47,12 +54,29 @@ public class ManageGatewayService extends HttpBaseService {
 
 	private static final String  GATEWAY_STUDENT_COMMENT_TRANSLATION_API = "/service/student_comment/comment/%s/translation";
 
+	private static final String  GATEWAY_STUDENT_COMMENT_RATING_AVERAGE = "/service/student_comment/teacher/ratings/average?ids=%s";
+
+	private static final String  GATEWAY_STUDENT_COMMENT_TAGS = "/internal/student_comment/comment/%s";
+
 	@Autowired
 	private OnlineClassService onlineClassService;
 	@Autowired
 	private StudentService studentService;
 	@Autowired
 	private LessonDao lessonDao;
+	@Autowired
+	private ActivityService activityService;
+
+	public final static Map<String,String> tagsMap = new HashMap() {{
+		put("网络不稳定","Unstable Internet");
+		put("上课环境布置差","Poor class environment");
+		put("老师迟到","Teacher was late");
+		put("课程未上完","Slides Unfinished");
+		put("课堂氛围不活跃","Inactive class");
+		put("不就重点纠错","Lack of correction");
+		put("不耐心","Impatient");
+		put("肢体语言少","lack of TPR");
+	}};
 
 	public List<StudentCommentVo> getStudentCommentListByBatch(String idsStr) {
 
@@ -65,6 +89,14 @@ public class ManageGatewayService extends HttpBaseService {
 				for(StudentCommentVo studentCommentVo : studentCommentApiList) {
 					String result = getTranslation(studentCommentVo.getId().longValue());
 					studentCommentVo.setTransaltion(StringUtils.isEmpty(result) ? "" : result);
+					Integer classId = studentCommentVo.getClass_id();
+					studentCommentVo.setOcToken(activityService.encode(classId));
+					Student student = studentService.getById(studentCommentVo.getStudent_id().longValue());
+					if(student!=null) {
+						studentCommentVo.setStudentAvatar(student.getAvatar());
+						studentCommentVo.setStudentName(student.getEnglishName());
+					}
+					studentCommentVo.setTagsEn(convertTagsToEn(studentCommentVo.getTags()));
 				}
 			}
 		} catch (Exception e) {
@@ -103,9 +135,12 @@ public class ManageGatewayService extends HttpBaseService {
 							stuCommentApi.setStudentAvatar(student.getAvatar());
 							stuCommentApi.setStudentName(student.getEnglishName());
 						}
+						Integer classId = stuCommentApi.getClass_id();
+						stuCommentApi.setOcToken(activityService.encode(classId));
 					}
 					String result = getTranslation(stuCommentApi.getId().longValue());
 					stuCommentApi.setTransaltion(StringUtils.isEmpty(result)? "":result);
+					stuCommentApi.setTagsEn(convertTagsToEn(stuCommentApi.getTags()));
 				}
 			}else{
 				studentCommentPageApi.setTotal(0);
@@ -131,6 +166,46 @@ public class ManageGatewayService extends HttpBaseService {
 		}
 
 		return studentCommentTotalApi;
+	}
+
+	/**
+	 * 批量获取老师三个月内的平均评价分值
+	 * @param teacherIds 按逗号分隔的字符串
+	 * @return
+	 */
+	public Map<String,String> getTeacherRatingsAverageByBatch(String teacherIds){
+		Map<String,String> map = Maps.newHashMap();
+		try {
+			String data = WebUtils.simpleGet(String.format(super.serverAddress + GATEWAY_STUDENT_COMMENT_RATING_AVERAGE,teacherIds));
+			if (data!=null) {
+				ObjectMapper mapper = new ObjectMapper();
+				map = mapper.readValue(data, Map.class);
+			}
+		} catch (Exception e) {
+			logger.error("【ManageGatewayService.getStudentCommentTotalByTeacherId】调用失败，teacherId:"+teacherIds,e);
+		}
+		return map;
+	}
+
+	/**
+	 * 获取某条评价的标签
+	 * @param id
+	 * @return
+	 */
+	public List<String> getTagsByCommentId(String id){
+		Map map = Maps.newHashMap();
+		List<String> tags = Lists.newArrayList();
+		try {
+			String data = WebUtils.simpleGet(String.format(super.serverAddress + GATEWAY_STUDENT_COMMENT_TAGS,id));
+			if (data!=null) {
+				ObjectMapper mapper = new ObjectMapper();
+				map = mapper.readValue(data, Map.class);
+				tags = (List<String>) map.get("tags");
+			}
+		} catch (Exception e) {
+			logger.error("【ManageGatewayService.getTagsByCommentId】调用失败，id:"+id,e);
+		}
+		return tags;
 	}
 
 	public Boolean saveTranslation(Long id,String text){
@@ -165,26 +240,12 @@ public class ManageGatewayService extends HttpBaseService {
 		}
 		return ret;
 	}
-	/**
-	 * 计算双向分页
-	 * 默认单边的窗口大小为 10
-	 * 页数 = 左页数 + 1 + 右页数
-	*/
 
-	public Integer calculateAbsolutePosition(StudentCommentPageVo allCommentOfTeacher,Long onlineClassId){
-		Integer absolutePosition = 0;
-		Integer flag = 0;
-		for(Integer i=0;i<allCommentOfTeacher.getTotal();i++){
-			if(allCommentOfTeacher.getData().get(i).getClass_id().longValue() == onlineClassId){
-				absolutePosition = i;
-				flag = 1;
-				break;
-			}
+	public String[] convertTagsToEn(String[] zhTags){
+		String[] enTags = new String[zhTags.length];
+		for(int i=0;i<zhTags.length;i++){
+			enTags[i] = tagsMap.get(zhTags[i]);
 		}
-		if(flag == 1) {
-			return absolutePosition;
-		}else {
-			return -1;
-		}
-	}
+		return enTags;
+	};
 }

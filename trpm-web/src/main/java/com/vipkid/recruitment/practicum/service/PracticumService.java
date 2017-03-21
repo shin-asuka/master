@@ -24,10 +24,12 @@ import com.vipkid.trpm.entity.Lesson;
 import com.vipkid.trpm.entity.OnlineClass;
 import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.entity.TeacherQuiz;
+import com.vipkid.trpm.entity.User;
 import com.vipkid.trpm.proxy.OnlineClassProxy;
 import com.vipkid.trpm.proxy.OnlineClassProxy.ClassType;
 import com.vipkid.trpm.service.huanxin.HuanxinService;
 import com.vipkid.trpm.util.DateUtils;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang3.StringUtils;
@@ -100,13 +102,14 @@ public class PracticumService {
     }
 
 
-    public Map<String,Object> getClassRoomUrl(long onlineClassId,Teacher teacher){
+    public Map<String,Object> getClassRoomUrl(long onlineClassId,Teacher teacher, User user){
     	
     	Map<String,Object> result = Maps.newHashMap();
         
-        if(teacher == null || teacher.getId() == 0 || StringUtils.isBlank(teacher.getRealName())){
-            return ReturnMapUtils.returnFail("This account doesn't exist");
-        }
+		if (teacher == null || teacher.getId() == 0 || StringUtils.isBlank(teacher.getRealName()) || user == null
+				|| StringUtils.isBlank(user.getName())) {
+			return ReturnMapUtils.returnFail("This account doesn't exist");
+		}
         
         OnlineClass onlineClass = this.onlineClassDao.findById(onlineClassId);
 
@@ -144,7 +147,7 @@ public class PracticumService {
         	return result;
         }
 
-        Map<String,Object> urlResult = OnlineClassProxy.generateRoomEnterUrl(teacher.getId()+"", teacher.getRealName(),onlineClass.getClassroom(), OnlineClassProxy.RoomRole.TEACHER, onlineClass.getSupplierCode(),onlineClassId,OnlineClassProxy.ClassType.PRACTICUM);
+        Map<String,Object> urlResult = OnlineClassProxy.generateRoomEnterUrl(teacher.getId()+"", user.getName(),onlineClass.getClassroom(), OnlineClassProxy.RoomRole.TEACHER, onlineClass.getSupplierCode(),onlineClassId,OnlineClassProxy.ClassType.PRACTICUM);
 
         result.putAll(urlResult);
         

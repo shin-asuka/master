@@ -24,9 +24,11 @@ import com.vipkid.trpm.dao.*;
 import com.vipkid.trpm.entity.Lesson;
 import com.vipkid.trpm.entity.OnlineClass;
 import com.vipkid.trpm.entity.Teacher;
+import com.vipkid.trpm.entity.User;
 import com.vipkid.trpm.proxy.OnlineClassProxy;
 import com.vipkid.trpm.proxy.OnlineClassProxy.ClassType;
 import com.vipkid.trpm.util.DateUtils;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
@@ -102,16 +104,18 @@ public class InterviewService {
      * 2.必须是处于Interview的待上课的老师可以获取URL
      * @param onlineClassId
      * @param teacher
+     * @param user 
      * @return
      * Map&lt;String,Object&gt;
      */
-    public Map<String,Object> getClassRoomUrl(long onlineClassId,Teacher teacher){
+    public Map<String,Object> getClassRoomUrl(long onlineClassId,Teacher teacher, User user){
     	
     	Map<String,Object> result = Maps.newHashMap();
     	
-        if(teacher == null || teacher.getId() == 0 || StringUtils.isBlank(teacher.getRealName())){
-            return ReturnMapUtils.returnFail("This account doesn't exist");
-        }
+		if (teacher == null || teacher.getId() == 0 || user == null || StringUtils.isBlank(teacher.getRealName())
+				|| StringUtils.isBlank(user.getName())) {
+			return ReturnMapUtils.returnFail("This account doesn't exist");
+		}
         
         OnlineClass onlineClass = this.onlineClassDao.findById(onlineClassId);
 
@@ -149,7 +153,7 @@ public class InterviewService {
         	return result;
         }
 
-        Map<String,Object> urlResult = OnlineClassProxy.generateRoomEnterUrl(teacher.getId()+"", teacher.getRealName(),onlineClass.getClassroom(), OnlineClassProxy.RoomRole.TEACHER, onlineClass.getSupplierCode(),onlineClassId,OnlineClassProxy.ClassType.TEACHER_RECRUITMENT);
+        Map<String,Object> urlResult = OnlineClassProxy.generateRoomEnterUrl(teacher.getId()+"", user.getName(),onlineClass.getClassroom(), OnlineClassProxy.RoomRole.TEACHER, onlineClass.getSupplierCode(),onlineClassId,OnlineClassProxy.ClassType.TEACHER_RECRUITMENT);
 
         result.putAll(urlResult);
         

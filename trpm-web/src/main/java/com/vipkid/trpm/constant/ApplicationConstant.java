@@ -30,6 +30,8 @@ public interface ApplicationConstant {
     public static final String TEACHER_IN_CLASSROOM_URL =
             PropertyConfigurer.stringValue("teacher.in.classroom.url");
 
+    public static final String TEACHER_SYSTEM_INFO_URL = PropertyConfigurer.stringValue("sys.info.url");    
+    
     /** 教师24小时放课口地址 */
     public static final String TEACHER_24HOUR_URL =
             PropertyConfigurer.stringValue("http.appServer");
@@ -273,6 +275,9 @@ public interface ApplicationConstant {
 
         public static final int IMAGE_CODE_INVALID_SEC = 120; // 图片验证码失效时间阀值
         public static final int PAYROLL_DISPLAY_MAX_NUM_EXCEED_DAY_SEC = 60 * 60 * 24 * 10 ;//payroll 部分老师可用 10天
+        public static final String QUIT_TEACHER_EXPIRED_TIME = "QUIT_TEACHER_";
+        
+        
     }
     public static final class TrailLessonConstants{
 

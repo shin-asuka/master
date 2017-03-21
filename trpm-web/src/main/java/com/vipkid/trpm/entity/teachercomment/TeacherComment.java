@@ -62,6 +62,8 @@ public class TeacherComment extends Entity implements Serializable {
 
     private Timestamp lastDateTime;
 
+    private Timestamp scheduledDateTime;
+
     //扩展字段
     private Boolean hasComment; //是否已经填写评语
 
@@ -166,8 +168,13 @@ public class TeacherComment extends Entity implements Serializable {
         if (teacherCommentResult.getSubmitDateTime() != null) {
             firstDateTime = new Timestamp(teacherCommentResult.getSubmitDateTime().getTime());
         }
+
         if (teacherCommentResult.getUpdateTime() != null) {
             lastDateTime = new Timestamp(teacherCommentResult.getUpdateTime().getTime());
+        }
+
+        if (teacherCommentResult.getScheduledDateTime() != null) {
+            scheduledDateTime = new Timestamp(teacherCommentResult.getScheduledDateTime().getTime());
         }
 
         hasComment = StringUtils.isNotBlank(teacherCommentResult.getTeacherFeedback()) ? true : false;
@@ -468,6 +475,14 @@ public class TeacherComment extends Entity implements Serializable {
     public TeacherComment setLastDateTime(Timestamp lastDateTime) {
         this.lastDateTime = lastDateTime;
         return this;
+    }
+
+    public Timestamp getScheduledDateTime() {
+        return scheduledDateTime;
+    }
+
+    public void setScheduledDateTime(Timestamp scheduledDateTime) {
+        this.scheduledDateTime = scheduledDateTime;
     }
 
     public Boolean getHasComment() {

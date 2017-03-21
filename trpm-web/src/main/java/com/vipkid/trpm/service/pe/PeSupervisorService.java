@@ -17,6 +17,7 @@ import com.google.common.collect.Maps;
 import com.vipkid.enums.OnlineClassEnum.ClassStatus;
 import com.vipkid.enums.TbdResultEnum;
 import com.vipkid.enums.TeacherApplicationEnum;
+import com.vipkid.enums.TeacherModuleEnum;
 import com.vipkid.enums.TeacherApplicationEnum.Result;
 import com.vipkid.enums.TeacherApplicationEnum.Status;
 import com.vipkid.enums.TeacherModuleEnum.RoleClass;
@@ -149,40 +150,20 @@ public class PeSupervisorService {
             logger.info(" Online Class is null onlineClassId:{} , status is PRACTICUM ",
                     onlineClassId);
         }
-        //查询ta信息
-        /*TeacherApplication teacherApplication = teacherApplicationDao
-                .findApplictionByOlineclassId(onlineClassId, peSupervisor.getId());*/
-        TeacherApplication teacherApplication = teacherApplicationDao.findApplictionById(currTeacherApplication.getId());
         
-        if (teacherApplication == null) {
-            modelMap.put("msg", "Not exist the online-class recruitment info ！");
-            logger.info(" TeacherApplication is null onlineClassId:{} , status is PRACTICUM ",
-                    onlineClassId);
-            return modelMap;
-        }
-        
-        // 3.如果result 不等于null 则返回错误
-        if (!StringUtils.isBlank(teacherApplication.getResult())) {
-            logger.info(
-                    "Teacher application already end or recruitment process step already end, class id is : {},status is {}",
-                    onlineClass.getId(), onlineClass.getStatus());
-            modelMap.put("msg", " The recruitment process already end.");
-            return modelMap;
-        }
-
         // 4.验证 recruitTeacher 是否存在
-        Teacher recruitTeacher = teacherDao.findById(teacherApplication.getTeacherId());
+        Teacher recruitTeacher = teacherDao.findById(currTeacherApplication.getTeacherId());
         if (recruitTeacher == null) {
-            modelMap.put("msg", "System error！");
+            modelMap.put("msg", "Recruitment Teacher is null , teacher id is "+currTeacherApplication.getTeacherId()+"！");
             logger.info(" Recruitment Teacher is null , teacher id is {}",
-                    teacherApplication.getTeacherId());
+            		currTeacherApplication.getTeacherId());
             return modelMap;
         }
 
         // 5.practicum2 判断是否存在
         if (TeacherApplicationEnum.Result.PRACTICUM2.toString().equals(result)) {
             List<TeacherApplication> list = teacherApplicationDao
-                    .findApplictionForStatusResult(teacherApplication.getTeacherId(),Status.PRACTICUM.toString(),Result.PRACTICUM2.toString());
+                    .findApplictionForStatusResult(currTeacherApplication.getTeacherId(),Status.PRACTICUM.toString(),Result.PRACTICUM2.toString());
             if (list != null && list.size() > 0) {
                 logger.info(
                         "The teacher is already in practicum 2., class id is : {},status is {},recruitTeacher:{}",
@@ -205,7 +186,7 @@ public class PeSupervisorService {
         // 6.先结束online Class，然后操作TeacherApllication
         if (ClassStatus.isBooked(onlineClass.getStatus())
                 || ClassStatus.isFinished(onlineClass.getStatus())) {
-            currTeacherApplication.setContractUrl("PE-Supervisor");
+            currTeacherApplication.setContractUrl(TeacherModuleEnum.RoleClass.PES);
             modelMap = this.updateTeacherApplication(recruitTeacher, peSupervisor, result, "",
                     currTeacherApplication);
             // 日志 1
@@ -214,12 +195,12 @@ public class PeSupervisorService {
             auditDao.saveAudit(ApplicationConstant.AuditCategory.PRACTICUM_AUDIT, "INFO", content,
                     peSupervisor.getRealName(), recruitTeacher, IpUtils.getRemoteIP());
 
-            if ("true".equals(String.valueOf(modelMap.get("result")))) {
+            if ((Boolean)modelMap.get("result")) {
                 this.teacherPeDao.updateTeacherPeComments(teacherPe, result, "");
 
                 logger.info(
                         "Practicum Online Class[booked] updateAudit,studentId:{},onlineClassId:{},recruitTeacher:{},teacherId:{}",
-                        teacherApplication.getStduentId(), onlineClass.getId(),
+                        currTeacherApplication.getStduentId(), onlineClass.getId(),
                         recruitTeacher.getId(), peSupervisor.getId());
             }
 
@@ -330,7 +311,7 @@ public class PeSupervisorService {
             teacherApplication.setResult(TeacherApplicationEnum.Result.FAIL.toString());
             teacherApplication.setAuditorId(pe.getId());
             teacherApplication.setAuditDateTime(new Timestamp(System.currentTimeMillis()));
-            teacherApplication.setContractUrl("PE-Supervisor");
+            teacherApplication.setContractUrl(TeacherModuleEnum.RoleClass.PES);
             teacherApplicationDao.update(teacherApplication);
 
             modelMap.put("result", true);
@@ -355,7 +336,7 @@ public class PeSupervisorService {
                 if (TeacherApplicationEnum.Status.PRACTICUM.toString().equals(enabledTeacherApplication.getStatus())) {
                     // 开始插入当前Application记录的副本
                     enabledTeacherApplication.setId(0);
-                    enabledTeacherApplication.setContractUrl("PE-Supervisor");
+                    enabledTeacherApplication.setContractUrl(TeacherModuleEnum.RoleClass.PES);
                     enabledTeacherApplication.setVersion(2);
                     teacherApplicationDao.save(enabledTeacherApplication);
 
@@ -364,7 +345,7 @@ public class PeSupervisorService {
                     teacherApplication.setAuditorId(pe.getId());
                     teacherApplication.setAuditDateTime(new Timestamp(System.currentTimeMillis()));
                     teacherApplication.setCurrent(0);
-                    teacherApplication.setContractUrl("PE");
+                    teacherApplication.setContractUrl(TeacherModuleEnum.RoleClass.PE);
                     teacherApplicationDao.update(teacherApplication);
 
                     // 自动预分配任务

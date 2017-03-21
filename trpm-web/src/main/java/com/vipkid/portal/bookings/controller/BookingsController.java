@@ -1,6 +1,7 @@
 package com.vipkid.portal.bookings.controller;
 
 import com.google.api.client.util.Maps;
+import com.google.common.base.Preconditions;
 import com.vipkid.enums.OnlineClassEnum.CourseType;
 import com.vipkid.enums.TeacherEnum;
 import com.vipkid.file.utils.Encodes;
@@ -14,8 +15,11 @@ import com.vipkid.rest.config.RestfulConfig;
 import com.vipkid.rest.interceptor.annotation.RestInterface;
 import com.vipkid.rest.service.LoginService;
 import com.vipkid.rest.utils.ApiResponseUtils;
+import com.vipkid.trpm.entity.Teacher;
+import com.vipkid.rest.RestfulController;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
+import org.apache.ibatis.annotations.Param;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +36,7 @@ import java.util.Map;
 import java.util.Objects;
 
 import static com.vipkid.enums.OnlineClassEnum.ClassType;
+import static com.vipkid.rest.RestfulController.TEACHER;
 
 /**
  * Created by liuguowen on 2016/12/15.
@@ -52,6 +57,14 @@ public class BookingsController {
     @Autowired
     private AnnouncementHttpService announcementHttpService;
 
+    private final static String EMERGENCY_CHINESE  ="紧急情况（个人或者家庭成员出现疾病发作、意外事故、突发不测等）";
+    private final static String PERSONAL_REASON_CHINESE ="个人原因（日程冲突、安排不当等）";
+    private final static String UNRELIABLE_INTERNET_ACCESS_CHINESE  ="网络故障（住址搬迁、旅行在途等）";
+
+
+    private final static String EMERGENCY_ENGLISH  ="Emergency (personal or family member sickness, accident, mishap, etc.)";
+    private final static String PERSONAL_REASON_ENGLISH ="Personal reason (schedule conflict, prior oversight, etc.)";
+    private final static String UNRELIABLE_INTERNET_ACCESS_ENGLISH  ="Unreliable internet access (relocation, travel, etc.)";
     /* 获取 Scheduled 详细数据接口 */
     @RequestMapping(value = "/scheduled", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
     public Map<String, Object> scheduled(ScheduledRequest scheduledRequest, HttpServletResponse response) {
@@ -70,7 +83,7 @@ public class BookingsController {
             logger.error("Internal server error", e);
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
             return ApiResponseUtils.buildErrorResp(HttpStatus.INTERNAL_SERVER_ERROR.value(),
-                            ExceptionUtils.getFullStackTrace(e));
+                    ExceptionUtils.getFullStackTrace(e));
         }
     }
 
@@ -90,11 +103,11 @@ public class BookingsController {
             if (StringUtils.isBlank(timeSlotCreateRequest.getScheduledDateTime())) {
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
                 return ApiResponseUtils.buildErrorResp(HttpStatus.BAD_REQUEST.value(),
-                                "Argument 'scheduledDateTime' is required");
+                        "Argument 'scheduledDateTime' is required");
             }
 
             Map<String, Object> dataMap =
-                            bookingsService.doCreateTimeSlotWithLock(timeSlotCreateRequest, loginService.getTeacher());
+                    bookingsService.doCreateTimeSlotWithLock(timeSlotCreateRequest, loginService.getTeacher());
             if (Objects.nonNull(dataMap.get("error"))) {
                 response.setStatus(HttpStatus.FORBIDDEN.value());
                 return ApiResponseUtils.buildErrorResp(HttpStatus.FORBIDDEN.value(), (String) dataMap.get("error"));
@@ -105,7 +118,7 @@ public class BookingsController {
             logger.error("Internal server error", e);
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
             return ApiResponseUtils.buildErrorResp(HttpStatus.INTERNAL_SERVER_ERROR.value(),
-                            ExceptionUtils.getFullStackTrace(e));
+                    ExceptionUtils.getFullStackTrace(e));
         }
     }
 
@@ -121,7 +134,7 @@ public class BookingsController {
     /* 取消 TimeSlot 接口 */
     @RequestMapping(value = "/cancelTimeSlot", method = RequestMethod.DELETE, produces = RestfulConfig.JSON_UTF_8)
     public Map<String, Object> cancelTimeSlot(TimeSlotCancelRequest timeSlotCancelRequest,
-                    HttpServletResponse response) {
+                                              HttpServletResponse response) {
         try {
             logger.info("Invocation cancelTimeSlot() arguments: {}", JsonUtils.toJSONString(timeSlotCancelRequest));
 
@@ -129,11 +142,11 @@ public class BookingsController {
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
 
                 return ApiResponseUtils.buildErrorResp(HttpStatus.BAD_REQUEST.value(),
-                                "Argument 'onlineClassId' is illegal");
+                        "Argument 'onlineClassId' is illegal");
             }
 
             Map<String, Object> dataMap =
-                            bookingsService.doCancelTimeSlot(timeSlotCancelRequest, loginService.getTeacher());
+                    bookingsService.doCancelTimeSlot(timeSlotCancelRequest, loginService.getTeacher());
             if (Objects.nonNull(dataMap.get("error"))) {
                 response.setStatus(HttpStatus.FORBIDDEN.value());
                 return ApiResponseUtils.buildErrorResp(HttpStatus.FORBIDDEN.value(), (String) dataMap.get("error"));
@@ -144,7 +157,7 @@ public class BookingsController {
             logger.error("Internal server error", e);
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
             return ApiResponseUtils.buildErrorResp(HttpStatus.INTERNAL_SERVER_ERROR.value(),
-                            ExceptionUtils.getFullStackTrace(e));
+                    ExceptionUtils.getFullStackTrace(e));
         }
     }
 
@@ -161,11 +174,11 @@ public class BookingsController {
             }
 
             if (!(set24HourRequest.getClassType() == ClassType.MAJOR.val()
-                            || set24HourRequest.getClassType() == ClassType.PRACTICUM.val())) {
+                    || set24HourRequest.getClassType() == ClassType.PRACTICUM.val())) {
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
 
                 return ApiResponseUtils.buildErrorResp(HttpStatus.BAD_REQUEST.value(),
-                                "Argument 'classType' is illegal");
+                        "Argument 'classType' is illegal");
             }
 
             Map<String, Object> dataMap = bookingsService.doSet24Hours(set24HourRequest, loginService.getTeacher());
@@ -179,7 +192,7 @@ public class BookingsController {
             logger.error("Internal server error", e);
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
             return ApiResponseUtils.buildErrorResp(HttpStatus.INTERNAL_SERVER_ERROR.value(),
-                            ExceptionUtils.getFullStackTrace(e));
+                    ExceptionUtils.getFullStackTrace(e));
         }
     }
 
@@ -195,23 +208,23 @@ public class BookingsController {
             }
 
             Map<String, Object> dataMap =
-                            bookingsService.doDelete24Hours(delete24HourRequest, loginService.getTeacher());
+                    bookingsService.doDelete24Hours(delete24HourRequest, loginService.getTeacher());
             return ApiResponseUtils.buildSuccessDataResp(dataMap);
         } catch (Exception e) {
             logger.error("Internal server error", e);
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
             return ApiResponseUtils.buildErrorResp(HttpStatus.INTERNAL_SERVER_ERROR.value(),
-                            ExceptionUtils.getFullStackTrace(e));
+                    ExceptionUtils.getFullStackTrace(e));
         }
     }
 
     private Map<String, Object> checkArgumentForOnlineClassIds(List<Long> onlineClassIds) {
         if (CollectionUtils.isEmpty(onlineClassIds)) {
             return ApiResponseUtils.buildErrorResp(HttpStatus.BAD_REQUEST.value(),
-                            "Argument 'onlineClassIds' is required");
+                    "Argument 'onlineClassIds' is required");
         } else if (onlineClassIds.stream().anyMatch(id -> 0 == id)) {
             return ApiResponseUtils.buildErrorResp(HttpStatus.BAD_REQUEST.value(),
-                            "Argument 'onlineClassIds' is illegal");
+                    "Argument 'onlineClassIds' is illegal");
         }
         return Maps.newHashMap();
     }
@@ -225,7 +238,7 @@ public class BookingsController {
             logger.error("Internal server error", e);
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
             return ApiResponseUtils.buildErrorResp(HttpStatus.INTERNAL_SERVER_ERROR.value(),
-                            ExceptionUtils.getFullStackTrace(e));
+                    ExceptionUtils.getFullStackTrace(e));
         }
     }
 
@@ -233,22 +246,132 @@ public class BookingsController {
     public Map<String, Object> getAnnouncements(HttpServletRequest request, HttpServletResponse response) {
         try {
             List<Announcement> announcements = announcementHttpService.findAnnouncementList();
-            if(CollectionUtils.isNotEmpty(announcements)){
-            	for (Announcement announcement : announcements) {
-            		String content = announcement.getContent();
-            		if(StringUtils.isNotBlank(content)){
-            			String unHtml = Encodes.unescapeHtml(content);
-            			announcement.setContent(unHtml);
-            		}
-				}
+            if (CollectionUtils.isNotEmpty(announcements)) {
+                for (Announcement announcement : announcements) {
+                    String content = announcement.getContent();
+                    if (StringUtils.isNotBlank(content)) {
+                        String unHtml = Encodes.unescapeHtml(content);
+                        announcement.setContent(unHtml);
+                    }
+                }
             }
             return ApiResponseUtils.buildSuccessDataResp(announcements);
         } catch (Exception e) {
             logger.error("Internal server error", e);
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
             return ApiResponseUtils.buildErrorResp(HttpStatus.INTERNAL_SERVER_ERROR.value(),
-                            ExceptionUtils.getFullStackTrace(e));
+                    ExceptionUtils.getFullStackTrace(e));
         }
     }
 
+    /**
+     * 老师自动取消已经booked的课程
+     *
+     * @param request
+     * @param response
+     * @return
+     */
+    @RequestMapping(value = "/cancelClass", method = RequestMethod.POST, produces = RestfulConfig.JSON_UTF_8)
+    public Map<String, Object> cancelClass(@RequestBody Map<String, Object> paramMap, HttpServletRequest request, HttpServletResponse response) {
+        Object onlineClassId = paramMap.get("onlineClassId");
+        Object cancelReason = paramMap.get("cancelReason");
+
+
+        try {
+
+
+            if (onlineClassId == null || !StringUtils.isNumeric(onlineClassId + "")) {
+                response.setStatus(HttpStatus.BAD_REQUEST.value());
+                logger.error("This online class ：{} does not exist.", onlineClassId);
+                return ApiResponseUtils.buildErrorResp(HttpStatus.BAD_REQUEST.value(), "This online class  does not exist.", onlineClassId);
+            }
+
+            if (  cancelReason==null|| String.valueOf(cancelReason).length() > 1000 ) {
+                response.setStatus(HttpStatus.BAD_REQUEST.value());
+                logger.error("This cancelReason ：{} is too long or is Empty.", cancelReason);
+                return ApiResponseUtils.buildErrorResp(HttpStatus.BAD_REQUEST.value(), "This cancelReason ：{} is too long or is Empty.", onlineClassId);
+            }
+            String finishReason = String.valueOf(cancelReason);
+            if(StringUtils.equalsIgnoreCase(finishReason,EMERGENCY_ENGLISH)){
+                finishReason = EMERGENCY_CHINESE;
+            }
+
+            if(StringUtils.equalsIgnoreCase(finishReason,PERSONAL_REASON_ENGLISH)){
+                finishReason = PERSONAL_REASON_CHINESE;
+            }
+
+            if(StringUtils.equalsIgnoreCase(finishReason,UNRELIABLE_INTERNET_ACCESS_ENGLISH)){
+                finishReason = UNRELIABLE_INTERNET_ACCESS_CHINESE;
+            }
+
+            Preconditions.checkArgument(request.getAttribute(TEACHER) != null);
+            Teacher teacher = (Teacher) request.getAttribute(TEACHER);
+
+            if (0 == teacher.getId()) {
+                logger.error("This teacher ：{} have no jurisdiction .", teacher.getId());
+                response.setStatus(HttpStatus.FORBIDDEN.value());
+                return ApiResponseUtils.buildErrorResp(HttpStatus.BAD_REQUEST.value(), "The teacher have no jurisdiction.", teacher.getId());
+            }
+
+            boolean isSuccess = bookingsService.cancelClassSuccess(Long.valueOf(onlineClassId + ""), teacher.getId(), finishReason);
+            if (!isSuccess) {
+                response.setStatus(HttpStatus.BAD_REQUEST.value());
+                logger.error("cancel online class:{} was Failed.", onlineClassId);
+                return ApiResponseUtils.buildErrorResp(HttpStatus.BAD_REQUEST.value(), "cancel online class was Failed.", onlineClassId);
+            }
+            return ApiResponseUtils.buildSuccessDataResp("This online class was canceled");
+        } catch (IllegalArgumentException e) {
+            logger.error("cancel online class:{} is Exception {}", onlineClassId, e);
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            return ApiResponseUtils.buildErrorResp(HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                    ExceptionUtils.getFullStackTrace(e));
+        }
+
+
+    }
+
+
+    /**
+     * 查询finishType
+     *
+     * @param request
+     * @param response
+     * @return
+     */
+    @RequestMapping(value = "/queryFinishType", method = RequestMethod.POST, produces = RestfulConfig.JSON_UTF_8)
+    public Map<String, Object> queryFinishType(@RequestBody Map<String, Object> paramMap, HttpServletRequest request, HttpServletResponse response) {
+        Map<String, Object> dataMap = Maps.newHashMap();
+        Object onlineClassId = paramMap.get("onlineClassId");
+        try {
+            if (onlineClassId == null || !StringUtils.isNumeric(onlineClassId + "")) {
+                response.setStatus(HttpStatus.BAD_REQUEST.value());
+                logger.error("This online class ：{} does not exist.", onlineClassId);
+                return ApiResponseUtils.buildErrorResp(HttpStatus.BAD_REQUEST.value(), "This online class  does not exist.", onlineClassId);
+            }
+            Preconditions.checkArgument(request.getAttribute(TEACHER) != null);
+            Teacher teacher = (Teacher) request.getAttribute(TEACHER);
+
+            if (0 == teacher.getId()) {
+                logger.error("This teacher ：{} have no jurisdiction .", teacher.getId());
+                response.setStatus(HttpStatus.FORBIDDEN.value());
+                return ApiResponseUtils.buildErrorResp(HttpStatus.BAD_REQUEST.value(), "The teacher have no jurisdiction.", teacher.getId());
+            }
+
+            String finishType = bookingsService.getFinishType(Long.valueOf(onlineClassId + ""), teacher.getId());
+            if (StringUtils.isBlank(finishType)) {
+                response.setStatus(HttpStatus.BAD_REQUEST.value());
+                logger.error("This online class ：{} cannot cancel.", onlineClassId);
+                return ApiResponseUtils.buildErrorResp(HttpStatus.BAD_REQUEST.value(), "This online class  cannot cancel.", onlineClassId);
+            }
+            dataMap.put("finishType", finishType);
+
+            return ApiResponseUtils.buildSuccessDataResp(dataMap);
+        } catch (IllegalArgumentException e) {
+            logger.error("Get online class:{} finishType is Exception {}", onlineClassId, e);
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            return ApiResponseUtils.buildErrorResp(HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                    ExceptionUtils.getFullStackTrace(e));
+        }
+
+    }
 }

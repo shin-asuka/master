@@ -33,4 +33,8 @@
     <bean id="manageGatewayService" class="com.vipkid.http.service.ManageGatewayService">
         <property name="serverAddress" value="${gateway.serverAddress}"/>
     </bean>
+
+    <bean id="scalperService" class="com.vipkid.http.service.ScalperService">
+        <property name="serverAddress" value="${scalper.serverAddress}"/>
+    </bean>
 </beans>

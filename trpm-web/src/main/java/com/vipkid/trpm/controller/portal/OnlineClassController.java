@@ -169,10 +169,10 @@ public class OnlineClassController extends AbstractPortalController {
             model.addAttribute("isStarted", false);
         }
         if (lesson.getSerialNumber().startsWith("P")) {
-            model.addAllAttributes(onlineclassService.enterPracticum(onlineClass, studentId, teacher, lesson));
+            model.addAllAttributes(onlineclassService.enterPracticum(onlineClass, studentId, teacher,user, lesson));
             return view("online_class_practicum");
         } else if (lesson.getSerialNumber().startsWith("OPEN")) {
-            model.addAllAttributes(onlineclassService.enterOpen(onlineClass, studentId, teacher, lesson));
+            model.addAllAttributes(onlineclassService.enterOpen(onlineClass, studentId, teacher, user,lesson));
             return view("online_class_open");
         } else {
             /** 是否需要打开feedbackd */
@@ -183,7 +183,7 @@ public class OnlineClassController extends AbstractPortalController {
             //学生进教室的时候创建CF记录
             //onlineclassService.createTeacherCommentByEnterClassroom(studentId,teacher.getId(),onlineClass,lesson);
             model.addAllAttributes(
-                    onlineclassService.enterMajor(onlineClass, studentId, teacher, lesson));
+                    onlineclassService.enterMajor(onlineClass, studentId, teacher,user, lesson));
             return view("online_class_major");
         }
     }
@@ -290,11 +290,11 @@ public class OnlineClassController extends AbstractPortalController {
         String areas = ServletRequestUtils.getStringParameter(request, "areas", null);
 
         //validate things and areas'length
-        Preconditions.checkArgument(com.vipkid.file.utils.StringUtils.isNotBlank(things), "things content can not be null!");
-        Preconditions.checkArgument(com.vipkid.file.utils.StringUtils.isNotBlank(areas), "areas content can not be null!");
+        //Preconditions.checkArgument(com.vipkid.file.utils.StringUtils.isNotBlank(things), "things content can not be null!");
+        //Preconditions.checkArgument(com.vipkid.file.utils.StringUtils.isNotBlank(areas), "areas content can not be null!");
 
-        Preconditions.checkArgument(things.length() >= 200 && things.length() <= 3000 , "The length of things content must between 200 and 3000!");
-        Preconditions.checkArgument(areas.length() >= 200 && areas.length() <= 3000, "The length of areas content must between 200 and 3000!");
+        Preconditions.checkArgument(things.length() <= 3000 , "The length of things content must be less than 3000!");
+        Preconditions.checkArgument(areas.length() <= 3000, "The length of areas content must be less than 3000!");
 
         int[] levels = ServletRequestUtils.getIntParameters(request, "level");
         int totalScore = ServletRequestUtils.getIntParameter(request, "totalScore", 0);

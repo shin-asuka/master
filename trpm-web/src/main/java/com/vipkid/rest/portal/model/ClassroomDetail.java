@@ -17,6 +17,7 @@ public class ClassroomDetail{
 	private String scheduledDateTime;
 	private String status;
 	private Integer isPaidTrail;
+	private int[] paidTrailPaymentYearMonth;
 	private String finishType;
 	private Integer reportType;
 	private Integer reportStatus;
@@ -27,6 +28,14 @@ public class ClassroomDetail{
 	private String videoShowUrl;
 	private String videoDownloadUrl;
 	private StudentCommentVo studentCommentVo;
+
+	public int[] getPaidTrailPaymentYearMonth() {
+		return paidTrailPaymentYearMonth;
+	}
+
+	public void setPaidTrailPaymentYearMonth(int[] paidTrailPaymentYearMonth) {
+		this.paidTrailPaymentYearMonth = paidTrailPaymentYearMonth;
+	}
 
 	public String getVideoDownloadUrl() {return videoDownloadUrl;}
 
