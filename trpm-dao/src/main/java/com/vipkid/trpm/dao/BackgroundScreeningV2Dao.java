@@ -1,6 +1,7 @@
 package com.vipkid.trpm.dao;
 
 import com.vipkid.trpm.entity.BackgroundScreening;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -23,5 +24,5 @@ public interface BackgroundScreeningV2Dao {
 
     int dynamicInsert(BackgroundScreening backgroundScreening);
 
-    BackgroundScreening findByScreeningIdAndCandidateId(String screeningId, String candidateId);
+    BackgroundScreening findByScreeningIdAndCandidateId(@Param("screeningId") String screeningId, @Param("candidateId") String candidateId);
 }

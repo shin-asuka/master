@@ -350,11 +350,14 @@ public class SterlingApiUtils {
 
         if(response.getStatusCode() == 201){
             return true;
-        }else{
+        }else if(StringUtils.isNotBlank(response.getContent())){
             SterlingScreening sterlingScreening = JacksonUtils.readJson(response.getContent(), new TypeReference<SterlingScreening>() {});
             if(CollectionUtils.isNotEmpty(sterlingScreening.getErrors())){
                 logger.warn(JacksonUtils.toJSONString(sterlingScreening.getErrors()));
             }
+            return false;
+        }else{
+            logger.warn("return statusCode:{}",response.getStatusCode());
             return false;
         }
     }

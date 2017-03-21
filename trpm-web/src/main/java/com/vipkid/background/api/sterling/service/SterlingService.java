@@ -499,12 +499,18 @@ public class SterlingService {
             updateBackgroundScreening.setDisputeCreatedAt(DateUtils.convertzDateTime(payload.getDispute().getCreatedAt()));
         }
 
-        Date updateAt = DateUtils.convertzDateTime(payload.getUpdatedAt());
-        if(backgroundScreening.getUpdateAt().compareTo(updateAt) != 0){
-            updateBackgroundScreening.setUpdateAt(updateAt);
+        if(null != payload.getLinks()){
+            String web = payload.getLinks().getAdmin().getWeb();
+            String pdf = payload.getLinks().getAdmin().getPdf();
+            updateBackgroundScreening.setPdfLink(pdf);
+            updateBackgroundScreening.setWebLink(web);
         }
 
-        if(null != updateBackgroundScreening.getUpdateAt() || null != updateBackgroundScreening.getDisputeStatus() ||
+        Date updateAt = DateUtils.convertzDateTime(payload.getUpdatedAt());
+        updateBackgroundScreening.setUpdateAt(updateAt);
+
+
+        if(null != updateBackgroundScreening.getDisputeStatus() ||
                 null != updateBackgroundScreening.getStatus() || null != updateBackgroundScreening.getResult()){
             updateBackgroundScreening.setId(backgroundScreening.getId());
             backgroundScreeningV2Dao.update(updateBackgroundScreening);
@@ -523,11 +529,16 @@ public class SterlingService {
                 });
                 updateBackgroundReport(backgroundReportList,remoteBackgroundReportMap);
                 List<BackgroundReport> newBackgroundReportList = transformBackgroundReport(Lists.newArrayList(remoteBackgroundReportMap.values()),backgroundScreening.getId(),backgroundScreening.getScreeningId());
-                backgroundReportDao.batchInsert(newBackgroundReportList);
+                if(CollectionUtils.isNotEmpty(newBackgroundReportList)) {
+                    backgroundReportDao.batchInsert(newBackgroundReportList);
+                }
             }else{
                 //插入
                 List<BackgroundReport> newBackgroundReportList = transformBackgroundReport(payload.getReportItems(),backgroundScreening.getId(),backgroundScreening.getScreeningId());
-                backgroundReportDao.batchInsert(newBackgroundReportList);
+                if(CollectionUtils.isNotEmpty(newBackgroundReportList)) {
+                    backgroundReportDao.batchInsert(newBackgroundReportList);
+                }
+
 
             }
         }

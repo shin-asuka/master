@@ -98,9 +98,9 @@ public class SterlingApiController {
     @RequestMapping(value = "/api/background/sterling/callback",method = RequestMethod.POST)
     public Object  callback(@RequestBody  SterlingCallBack callBack,HttpServletRequest request){
         logger.warn(JacksonUtils.toJSONString(callBack));
-//        if(null != callBack){
-//            sterlingService.updateBackgroundScreening(callBack.getPayload());
-//        }
+        if(null != callBack){
+            sterlingService.updateBackgroundScreening(callBack.getPayload());
+        }
         return ApiResponseUtils.buildSuccessDataResp("success");
     }
 

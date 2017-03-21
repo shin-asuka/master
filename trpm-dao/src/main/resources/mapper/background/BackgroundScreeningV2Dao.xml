@@ -194,6 +194,6 @@
         FROM
         bg_sterling_screening s
         WHERE
-        s.screeningId = #{screeningId} AND s.candidateId = #{candidateId}
+        s.screening_id = #{screeningId} AND s.candidate_id = #{candidateId}
     </select>
 </mapper>
