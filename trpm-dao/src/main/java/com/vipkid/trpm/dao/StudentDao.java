@@ -1,5 +1,6 @@
 package com.vipkid.trpm.dao;
 
+import java.sql.Timestamp;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -44,6 +45,12 @@ public class StudentDao extends MapperDaoTemplate<Student> {
         paramsMap.put("studentId", studentId);      
         paramsMap.put("startDate", DateFormatUtils.format(startDate, "yyyy-MM-dd HH:mm:ss"));
         return listEntity("findOrderListByStudentIdAndPaidDateTime", paramsMap);
+    }
+    public List<Long> findConfirmedPriceGreaterTan500BeforeThisMonth(Long studentId, Timestamp startDate) {
+        Map<String, Object> paramsMap = new HashMap<String, Object>();
+        paramsMap.put("studentId", studentId);      
+        paramsMap.put("startDate", startDate);
+        return listEntity("findConfirmedPriceGreaterTan500BeforeThisMonth", paramsMap);
     }
 
     public List<Map<String, Object>> findWechatBystudentId(long studentId) {

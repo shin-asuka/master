@@ -1,5 +1,18 @@
 package com.vipkid.trpm.service.portal;
 
+import java.sql.Timestamp;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -10,27 +23,30 @@ import com.vipkid.http.constant.HttpUrlConstant;
 import com.vipkid.http.service.HttpApiClient;
 import com.vipkid.http.utils.JsonUtils;
 import com.vipkid.http.vo.StandardJsonObject;
+import com.vipkid.portal.classroom.model.TeacherCommentVo;
 import com.vipkid.portal.personal.model.ReferralTeacherVo;
 import com.vipkid.rest.dto.ReferralTeacherDto;
 import com.vipkid.rest.security.AppContext;
 import com.vipkid.trpm.constant.ApplicationConstant;
-import com.vipkid.trpm.dao.*;
-import com.vipkid.trpm.entity.*;
-import com.vipkid.trpm.entity.teachercomment.*;
+import com.vipkid.trpm.dao.CourseDao;
+import com.vipkid.trpm.dao.LessonDao;
+import com.vipkid.trpm.dao.OnlineClassDao;
+import com.vipkid.trpm.dao.StudentDao;
+import com.vipkid.trpm.dao.StudentExamDao;
+import com.vipkid.trpm.dao.TeacherDao;
+import com.vipkid.trpm.entity.Course;
+import com.vipkid.trpm.entity.Lesson;
+import com.vipkid.trpm.entity.OnlineClass;
+import com.vipkid.trpm.entity.Student;
+import com.vipkid.trpm.entity.StudentExam;
+import com.vipkid.trpm.entity.Teacher;
+import com.vipkid.trpm.entity.teachercomment.QueryTeacherCommentOutputDto;
+import com.vipkid.trpm.entity.teachercomment.SubmitTeacherCommentDto;
+import com.vipkid.trpm.entity.teachercomment.TeacherComment;
+import com.vipkid.trpm.entity.teachercomment.TeacherCommentResult;
+import com.vipkid.trpm.entity.teachercomment.TeacherCommentUpdateDto;
 import com.vipkid.trpm.util.DateUtils;
 import com.vipkid.trpm.util.LessonSerialNumber;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import java.sql.Timestamp;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * @author zouqinghua
@@ -586,14 +602,14 @@ public class TeacherService {
 		return errMsg;
 	}
 
-	@Slave
+	
 	public List<ReferralTeacherDto> findReferralTeachers(ReferralTeacherVo bean){
 		Map<String, Object> paramsMap = Maps.newHashMap();
 		paramsMap.put("param", bean);
 		return this.teacherDao.findReferralTeachers(paramsMap);
 	}
 
-	@Slave
+	
 	public Integer findReferralTeachersCount(ReferralTeacherVo bean){
 		Map<String, Object> paramsMap = Maps.newHashMap();
 		paramsMap.put("param", bean);

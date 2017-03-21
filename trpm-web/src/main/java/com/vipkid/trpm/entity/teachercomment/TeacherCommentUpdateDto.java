@@ -1,5 +1,6 @@
 package com.vipkid.trpm.entity.teachercomment;
 
+import com.vipkid.portal.classroom.model.TeacherCommentVo;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Date;

@@ -268,6 +268,16 @@
 			and a.real_total_price is not null and a.real_total_price>500
 			and a.confirm_date_time >#{startDate}
     </select>
+    
+    <select id="findConfirmedPriceGreaterTan500BeforeThisMonth" resultType="int">
+        select 
+            a.id
+        from pack_order a
+        where a.student_id=#{studentId}
+            and a.status='PAY_CONFIRMED'
+            and a.real_total_price is not null and a.real_total_price>500
+            and a.confirm_date_time &lt;#{startDate}
+    </select>
 
     <select id="findStudentsByIds" resultType="java.util.HashMap">
     	SELECT 
