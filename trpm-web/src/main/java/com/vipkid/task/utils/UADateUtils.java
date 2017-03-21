@@ -52,13 +52,6 @@ public class UADateUtils {
 		return calendar.getTime();
 	}
 
-	public static void main(String [] args){
-		Date bf = getCFUARemindTimeRange(13);
-		Date af = getCFUARemindTimeRange(12);
-		System.out.print(af);
-		System.out.print(bf);
-	}
-
 	public static Date getCFUARemindTimeRange(int interval ){
 		Calendar calendar = Calendar.getInstance();
 		int hour = calendar.get(Calendar.HOUR_OF_DAY)-interval;
