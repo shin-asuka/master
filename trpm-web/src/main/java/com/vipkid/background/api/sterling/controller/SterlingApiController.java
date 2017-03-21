@@ -14,10 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.BufferedReader;
@@ -98,8 +95,8 @@ public class SterlingApiController {
 
 
 
-    @RequestMapping("/api/background/sterling/callback")
-    public Object  callback(SterlingCallBack callBack,HttpServletRequest request){
+    @RequestMapping(value = "/api/background/sterling/callback",method = RequestMethod.POST)
+    public Object  callback(@RequestBody  SterlingCallBack callBack,HttpServletRequest request){
         logger.warn(JacksonUtils.toJSONString(callBack));
 //        if(null != callBack){
 //            sterlingService.updateBackgroundScreening(callBack.getPayload());
