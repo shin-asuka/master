@@ -83,48 +83,52 @@ public class BackgroundCommonService {
                 } else {
                     String backgroundResult = backgroundScreening.getResult();
                     String disputeStatus = backgroundScreening.getDisputeStatus();
-                    switch (backgroundResult) {
-                        //开始背调，背调结果结果为N/A
-                        case "n/a":
-                            result.put("needBackgroundCheck", true);
-                            result.put("phase", BackgroundPhase.PENDING);
-                            result.put("result", BackgroundResult.NA);
-                            break;
-                        //背调结果为CLEAR，不再需要进行背调
-                        case "clear":
-                            result.put("needBackgroundCheck", false);
-                            result.put("phase", BackgroundPhase.CLEAR.getVal());
-                            result.put("result", BackgroundResult.CLEAR);
-                            break;
-                        //背调结果为ALERT，需根据disputeStatus进行判断
-                        case "alert":
-                            //disputeStatus为null
-                            if (null == disputeStatus) {
-                                //在5天内可以进行dispute，超过5天不允许在进行dispute自动FAIL
-                                if (in5Days) {
-                                    result.put("needBackgroundCheck", true);
-                                    result.put("phase", BackgroundPhase.PREADVERSE);
-                                    result.put("result", BackgroundResult.ALERT);
-                                } else {
-                                    //TODO
-                                    result.put("needBackgroundCheck", false);
-                                    result.put("result", BackgroundResult.FAIL);
-                                    result.put("phase", BackgroundPhase.DIDNOTDISPUTE);
-                                }
+                    if (null != backgroundResult) {
+                        switch (backgroundResult) {
+                            //开始背调，背调结果结果为N/A
+                            case "n/a":
+                                result.put("needBackgroundCheck", true);
+                                result.put("phase", BackgroundPhase.PENDING);
+                                result.put("result", BackgroundResult.NA);
+                                break;
+                            //背调结果为CLEAR，不再需要进行背调
+                            case "clear":
+                                result.put("needBackgroundCheck", false);
+                                result.put("phase", BackgroundPhase.CLEAR.getVal());
+                                result.put("result", BackgroundResult.CLEAR);
+                                break;
+                            //背调结果为ALERT，需根据disputeStatus进行判断
+                            case "alert":
+                                //disputeStatus为null
+                                if (null == disputeStatus) {
+                                    //在5天内可以进行dispute，超过5天不允许在进行dispute自动FAIL
+                                    if (in5Days) {
+                                        result.put("needBackgroundCheck", true);
+                                        result.put("phase", BackgroundPhase.PREADVERSE);
+                                        result.put("result", BackgroundResult.ALERT);
+                                    } else {
+                                        result.put("needBackgroundCheck", false);
+                                        result.put("result", BackgroundResult.FAIL);
+                                        result.put("phase", BackgroundPhase.DIDNOTDISPUTE);
+                                    }
 
-                            } else {
-                                //diaputeStatus为ACTIVE表明正在进行dispute，为DEACTIVATED表明disputed失败
-                                if (StringUtils.equalsIgnoreCase(disputeStatus, DisputeStatus.ACTIVE.toString())) {
-                                    result.put("needBackgroundCheck", true);
-                                    result.put("phase", BackgroundPhase.DISPUTE.getVal());
-                                    result.put("result",BackgroundResult.ALERT.getVal());
                                 } else {
-                                    result.put("needBackgroundCheck", false);
-                                    result.put("phase", BackgroundPhase.FAIL.getVal());
-                                    result.put("result",BackgroundResult.FAIL.getVal());
+                                    //diaputeStatus为ACTIVE表明正在进行dispute，为DEACTIVATED表明disputed失败
+                                    if (StringUtils.equalsIgnoreCase(disputeStatus, DisputeStatus.ACTIVE.toString())) {
+                                        result.put("needBackgroundCheck", true);
+                                        result.put("phase", BackgroundPhase.DISPUTE.getVal());
+                                        result.put("result", BackgroundResult.ALERT.getVal());
+                                    } else {
+                                        result.put("needBackgroundCheck", false);
+                                        result.put("phase", BackgroundPhase.FAIL.getVal());
+                                        result.put("result", BackgroundResult.FAIL.getVal());
+                                    }
                                 }
-                            }
-                            break;
+                                break;
+                        }
+                    }else{
+                        result.put("result",BackgroundResult.NA);
+                        result.put("phase",BackgroundPhase.START);
                     }
                 }
 
