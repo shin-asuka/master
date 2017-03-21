@@ -137,6 +137,7 @@ public class PassportController extends AbstractController {
 		if (StringUtils.isEmpty(teacher.getRecruitmentId())) {
 			teacher.setRecruitmentId(this.passportService.updateRecruitmentId(teacher));
 		}
+		model.addAttribute("loginToken", loginService.setLoginToken(response, user));
 		model.addAttribute("info", "success-pass");
 		model.addAttribute("uuid",
 				AES.encrypt(user.getToken(), AES.getKey(AES.KEY_LENGTH_128, ApplicationConstant.AES_128_KEY)));
@@ -328,7 +329,6 @@ public class PassportController extends AbstractController {
 	 * @param request
 	 * @param response
 	 * @param model
-	 * @param privateCode
 	 * @param strToken
 	 * @return String
 	 * @date 2016年3月3日
