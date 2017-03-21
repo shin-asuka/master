@@ -125,6 +125,9 @@ public class MockClassService {
     @Autowired
     private TeacherPeFeedbackDao teacherPeFeedbackDao;
 
+    @Autowired
+    private TeacherTagsDao teacherTagsDao;
+
     public PeReviewOutputDto doPeReview(Integer applicationId) {
         TeacherApplication teacherApplication = teacherApplicationDao.findApplictionById(applicationId);
         Preconditions.checkNotNull(teacherApplication, "Teacher application [" + applicationId + "] not found");
@@ -246,6 +249,10 @@ public class MockClassService {
             }
 
             if (isPes) {
+                if (StringUtils.equals(peDoAuditInputDto.getStatus(), Result.REAPPLY.name())) {
+                    return "The PES cann't do rescheduled!";
+                }
+
                 TeacherPe teacherPe = teacherPeDao.findById(peDoAuditInputDto.getTeacherPeId());
                 if (null == teacherPe) {
                     return "Cann't found any teacher PE task!";
@@ -294,7 +301,8 @@ public class MockClassService {
                 logger.info("Pe doAudit mockClass, teacherApplication: {}", JsonUtils.toJSONString(teacherApplication));
 
                 if (StringUtils.equals(peDoAuditInputDto.getStatus(), MockClassEnum.SUBMIT.name())) {
-                    // TODO 合并 tags
+                    // 合并 tags
+                    mergeTags(Long.valueOf(recruitTeacher.getId()).intValue(), peDoAuditInputDto.getTagsList());
                 }
 
                 // Finish 课程
@@ -326,6 +334,32 @@ public class MockClassService {
         }
 
         return HttpStatus.OK.getReasonPhrase();
+    }
+
+    public void mergeTags(Integer candidateTeacherId, List<Integer> tagsList) {
+        List<TeacherTags> peTags = Lists.newArrayList();
+        List<TeacherTags> teacherTagses = teacherTagsDao.listTeacherTagsByTeacherId(candidateTeacherId);
+
+        if (CollectionUtils.isNotEmpty(teacherTagses)) {
+            List<Integer> interviewTags = teacherTagses.stream().map(o -> o.getTagId()).collect(Collectors.toList());
+
+            tagsList.forEach(tagId -> {
+                if (!interviewTags.contains(tagId)) {
+                    TeacherTags teacherTags = new TeacherTags();
+                    teacherTags.setTagId(tagId);
+                    teacherTags.setTeacherId(candidateTeacherId);
+                    peTags.add(teacherTags);
+                }
+            });
+        } else {
+            tagsList.forEach(tagId -> {
+                TeacherTags teacherTags = new TeacherTags();
+                teacherTags.setTagId(tagId);
+                teacherTags.setTeacherId(candidateTeacherId);
+                peTags.add(teacherTags);
+            });
+        }
+        teacherTagsDao.saveTeacherTags(peTags);
     }
 
     public String doCandidateFeedback(CandidateFeedbackInputDto candidateFeedbackInputDto) {
