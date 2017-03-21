@@ -136,6 +136,8 @@ public class BackgroundCommonService {
             return result;
         }else {
             result.put("needBackgroundCheck", false);
+            result.put("phase","");
+            result.put("result","");
         }
         return result;
     }
@@ -182,7 +184,9 @@ public class BackgroundCommonService {
             }
             return result;
         } else {
-        result.put("needBackgroundCheck", false);
+            result.put("result","");
+            result.put("phase","");
+            result.put("needBackgroundCheck", false);
         }
 
         return result;
@@ -193,7 +197,6 @@ public class BackgroundCommonService {
         Map<String, Object> result = Maps.newHashMap();
         List<TeacherContractFile> teacherContractFiles = teacherContractFileDao.findBackgroundFileByTeacherId(teacherId);
         boolean hasFile = false;
-
         if (CollectionUtils.isNotEmpty(teacherContractFiles)) {
             hasFile = true;
             if (StringUtils.equalsIgnoreCase(nationality, "United States")) {
@@ -258,6 +261,9 @@ public class BackgroundCommonService {
                 }
             }
         } else {
+            result.put("nationality","");
+            result.put("fileResult","");
+            result.put("fileStatus","");
             hasFile = false;
         }
         result.put("hasFile", hasFile);
