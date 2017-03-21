@@ -78,14 +78,8 @@ public class TeacherReferralService {
         for(ReferralTeacherDto teacher : list){
             String nextStep = getNextStep(teacher.getStatus(), teacher.getLifeCycle());
             teacher.setNextStep(nextStep);
-            String currentStatus = null;
-
-            if(StringUtils.isBlank(teacher.getStatus()) && StringUtils.equals(teacher.getLifeCycle(), TeacherEnum.LifeCycle.SIGNUP.getVal())){
-                currentStatus = TeacherEnum.LifeCycle.SIGNUP.getVal();
-                teacher.setStatus(currentStatus);
-            }else{
-                teacher.setStatus(teacher.getStatus() + ", " + teacher.getResult());
-            }
+            String currentStatus = getCurrentStatus(teacher.getStatus(), teacher.getLifeCycle(), teacher.getResult());
+            teacher.setStatus(currentStatus);
         }
         page.setList(list);
 		return page;
@@ -114,13 +108,8 @@ public class TeacherReferralService {
             return page;
         }
         for(ReferralTeacherDto teacher : list){
-            String currentStatus = null;
-            if(StringUtils.isBlank(teacher.getStatus()) && StringUtils.equals(teacher.getLifeCycle(), TeacherEnum.LifeCycle.SIGNUP.getVal())){
-                currentStatus = TeacherEnum.LifeCycle.SIGNUP.getVal();
-                teacher.setStatus(currentStatus);
-            }else{
-                teacher.setStatus(teacher.getStatus() + ", " + teacher.getResult());
-            }
+            String currentStatus = getCurrentStatus(teacher.getStatus(), teacher.getLifeCycle(), teacher.getResult());
+            teacher.setStatus(currentStatus);
         }
         page.setList(list);
 		return page;
@@ -174,4 +163,17 @@ public class TeacherReferralService {
         }
         return nextStep;
 	}
+
+	private String getCurrentStatus(String status, String lifeCycle, String result){
+        String currentStatus = "";
+        if(StringUtils.isBlank(status) && StringUtils.equals(lifeCycle, TeacherEnum.LifeCycle.SIGNUP.getVal())){
+            currentStatus = TeacherEnum.LifeCycle.SIGNUP.getVal();
+        }else{
+            currentStatus = status;
+            if(StringUtils.isNotBlank(result)){
+                currentStatus = currentStatus + ", "+ result;
+            }
+        }
+        return currentStatus;
+    }
 }
