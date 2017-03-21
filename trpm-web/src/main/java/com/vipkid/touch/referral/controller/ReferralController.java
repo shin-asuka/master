@@ -51,9 +51,11 @@ public class ReferralController{
             resultMap.put("totalPage", page.getTotalPage());
             return ApiResponseUtils.buildSuccessDataResp(resultMap);
         } catch (IllegalArgumentException e) {
+            logger.warn("ReferralController.querySucceedReferrals, 参数不合法，teacherId="+bean.getTeacherId());
             response.setStatus(HttpStatus.BAD_REQUEST.value());
             return ApiResponseUtils.buildErrorResp(2001, e.getMessage(), e);
         } catch (Exception e) {
+            logger.warn("ReferralController.querySucceedReferrals, 发生异常，teacherId="+bean.getTeacherId());
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
             return ApiResponseUtils.buildErrorResp(2002, e.getMessage(), e);
         }
@@ -78,9 +80,11 @@ public class ReferralController{
             return ApiResponseUtils.buildSuccessDataResp(resultMap);
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
+            logger.warn("ReferralController.querySucceedCount, 参数不合法，teacherId="+bean.getTeacherId());
             return ApiResponseUtils.buildErrorResp(2001, e.getMessage(), e);
         } catch (Exception e) {
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            logger.warn("ReferralController.querySucceedCount, 发生异常，teacherId="+bean.getTeacherId());
             return ApiResponseUtils.buildErrorResp(2002, e.getMessage(), e);
         }
     }
@@ -109,9 +113,11 @@ public class ReferralController{
             return ApiResponseUtils.buildSuccessDataResp(resultMap);
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
+            logger.warn("ReferralController.queryCount, 参数不合法，teacherId="+bean.getTeacherId());
             return ApiResponseUtils.buildErrorResp(2001, e.getMessage(), e);
         } catch (Exception e) {
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            logger.warn("ReferralController.queryCount, 发生异常，teacherId="+bean.getTeacherId());
             return ApiResponseUtils.buildErrorResp(2002, e.getMessage(), e);
         }
     }
@@ -138,9 +144,11 @@ public class ReferralController{
             return ApiResponseUtils.buildSuccessDataResp(resultMap);
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
+            logger.warn("ReferralController.queryProcessingReferrals, 参数不合法，teacherId="+bean.getTeacherId());
             return ApiResponseUtils.buildErrorResp(2001, e.getMessage(), e);
         } catch (Exception e) {
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            logger.warn("ReferralController.queryProcessingReferrals, 发生异常，teacherId="+bean.getTeacherId());
             return ApiResponseUtils.buildErrorResp(2002, e.getMessage(), e);
         }
     }
@@ -167,9 +175,11 @@ public class ReferralController{
             return ApiResponseUtils.buildSuccessDataResp(resultMap);
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
+            logger.warn("ReferralController.queryFailedReferrals, 参数不合法，teacherId="+bean.getTeacherId());
             return ApiResponseUtils.buildErrorResp(2001, e.getMessage(), e);
         } catch (Exception e) {
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            logger.warn("ReferralController.queryFailedReferrals, 发生异常，teacherId="+bean.getTeacherId());
             return ApiResponseUtils.buildErrorResp(2002, e.getMessage(), e);
         }
     }
@@ -193,9 +203,11 @@ public class ReferralController{
             return ApiResponseUtils.buildSuccessDataResp(resultMap);
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
+            logger.warn("ReferralController.getReferralDetail, 参数不合法，teacherId="+bean.getTeacherId());
             return ApiResponseUtils.buildErrorResp(2001, e.getMessage(), e);
         } catch (Exception e) {
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            logger.warn("ReferralController.getReferralDetail, 发生异常，teacherId="+bean.getTeacherId());
             return ApiResponseUtils.buildErrorResp(2002, e.getMessage(), e);
         }
     }
