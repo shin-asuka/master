@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 
+import com.amazonaws.util.json.Jackson;
 import com.vipkid.http.utils.JsonUtils;
 import com.vipkid.payroll.utils.DateUtils;
 
@@ -75,7 +76,7 @@ public class StudentService {
 
 	public List<Long> findConfirmedPriceGreaterTan500BeforeThisMonth(Long studentId, Timestamp scheduledDateTime) {
         List<Long> list = studentDao.findConfirmedPriceGreaterTan500BeforeThisMonth(studentId, scheduledDateTime);
-        logger.info("学生之前的的订单信息为，StudentId = {}，orderList = {}", studentId, JSON.toJSONString(list));
+        logger.info("学生之前的的订单信息为，StudentId = {}，orderList = {}", studentId, JsonUtils.toJSONString(list));
         return list;
 	}
 }
