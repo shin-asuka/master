@@ -188,4 +188,12 @@
         WHERE
         s.candidate_id IS NULL
     </select>
+    <select id="findByScreeningIdAndCandidateId" resultType="com.vipkid.trpm.entity.BackgroundScreening">
+        SELECT
+        <include refid="backgroundScreeningAllColumn"/>
+        FROM
+        bg_sterling_screening s
+        WHERE
+        s.screeningId = #{screeningId} AND s.candidateId = #{candidateId}
+    </select>
 </mapper>

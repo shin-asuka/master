@@ -39,7 +39,7 @@ public class BackgroundCheckJob {
         List<Long> bgScreeningIds = backgroundScreeningV2Dao.findIdByResult("n/a");
         if(CollectionUtils.isNotEmpty(bgScreeningIds)){
             for(Long bgScreeningId:bgScreeningIds){
-                sterlingService.repairDateScreeing(bgScreeningId);
+                sterlingService.repairDateScreening(bgScreeningId);
             }
         }
 
@@ -47,7 +47,7 @@ public class BackgroundCheckJob {
         List<Long> alertBgScreeningIds = backgroundScreeningV2Dao.findIdByResult("alert");
         if(CollectionUtils.isNotEmpty(alertBgScreeningIds)){
             for(Long bgScreeningId:alertBgScreeningIds){
-                sterlingService.repairDateScreeing(bgScreeningId);
+                sterlingService.repairDateScreening(bgScreeningId);
             }
         }
         stopWatch.stop();

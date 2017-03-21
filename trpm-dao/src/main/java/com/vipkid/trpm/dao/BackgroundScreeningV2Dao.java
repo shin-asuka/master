@@ -22,4 +22,6 @@ public interface BackgroundScreeningV2Dao {
     List<Long> findTeacherIdBycandidateIdNone();
 
     int dynamicInsert(BackgroundScreening backgroundScreening);
+
+    BackgroundScreening findByScreeningIdAndCandidateId(String screeningId, String candidateId);
 }

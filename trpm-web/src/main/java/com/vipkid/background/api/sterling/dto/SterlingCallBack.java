@@ -39,9 +39,12 @@ public class SterlingCallBack implements Serializable{
         private String submittedAt;
         private String updatedAt;
         private String status;
+        private String result;
         private List<ReportItem> reportItems;
         private List<AdverseAction> adverseActions;
         private Dispute dispute;
+        private SterlingScreening.Link links;
+
 
         public String getId() {
             return id;
@@ -113,6 +116,22 @@ public class SterlingCallBack implements Serializable{
 
         public void setDispute(Dispute dispute) {
             this.dispute = dispute;
+        }
+
+        public String getResult() {
+            return result;
+        }
+
+        public void setResult(String result) {
+            this.result = result;
+        }
+
+        public SterlingScreening.Link getLinks() {
+            return links;
+        }
+
+        public void setLinks(SterlingScreening.Link links) {
+            this.links = links;
         }
     }
 

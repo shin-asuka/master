@@ -14,5 +14,7 @@ public interface BackgroundReportDao {
 
     List<BackgroundReport> findByBgSterlingScreeningId(Long id);
 
+    int update(BackgroundReport backgroundReport);
+
 
 }

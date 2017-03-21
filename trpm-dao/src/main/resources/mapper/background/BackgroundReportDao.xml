@@ -60,6 +60,42 @@
 
 
     </insert>
+    <update id="update">
+        UPDATE bg_sterling_report
+          <set>
+            <if test="id != null">
+                id = #{id,jdbcType=BIGINT},
+            </if>
+            <if test="reportId != null">
+                report_id = #{reportId,jdbcType=VARCHAR},
+            </if>
+            <if test="screeningId != null">
+                screening_id = #{screeningId,jdbcType=VARCHAR},
+            </if>
+            <if test="bgSterlingScreeningId != null">
+                bg_sterling_screening_id = #{bgSterlingScreeningId,jdbcType=INTEGER},
+            </if>
+            <if test="status != null">
+                status = #{status,jdbcType=VARCHAR},
+            </if>
+            <if test="result != null">
+                result = #{result,jdbcType=VARCHAR},
+            </if>
+            <if test="updatedAt != null">
+                updated_at = #{updatedAt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="type != null">
+                type = #{type,jdbcType=LONGVARCHAR},
+            </if>
+          </set>
+        WHERE  id = #{id,jdbcType=BIGINT}
+    </update>
 
 
     <select id="findByBgSterlingScreeningId" parameterType="Long" resultMap="BaseResultMap">

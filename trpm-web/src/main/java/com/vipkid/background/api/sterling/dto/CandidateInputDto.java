@@ -25,7 +25,6 @@ public class CandidateInputDto implements  java.io.Serializable{
     private DriversLicense driversLicense;
 
 
-
     public Long getTeacherId() {
         return teacherId;
     }

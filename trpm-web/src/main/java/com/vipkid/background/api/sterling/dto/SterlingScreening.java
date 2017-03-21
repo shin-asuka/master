@@ -22,6 +22,16 @@ public class SterlingScreening implements Serializable {
     private Link links;
     private List<SterlingError> errors;
 
+    private String message;
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
     public String getId() {
         return id;
     }
