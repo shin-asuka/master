@@ -385,7 +385,7 @@ public class MockClassService {
         if (StringUtils.equals(MOCK_CLASS_1, serialNumber)) {
             if (totalProfessionalisms < 3 || totalScore < 35) {
                 return Result.FAIL.name();
-            } else if (totalProfessionalisms >= 3 && (totalScore >= 35 || totalScore <= 44)) {
+            } else if (totalProfessionalisms >= 3 && (totalScore >= 35 && totalScore <= 44)) {
                 return Result.PRACTICUM2.name();
             } else {
                 return Result.PASS.name();
@@ -400,7 +400,7 @@ public class MockClassService {
             } else {
                 if (totalProfessionalisms < 3 || totalScore <= 39) {
                     return Result.FAIL.name();
-                } else if (totalProfessionalisms >= 3 && (totalScore >= 40 || totalScore <= 45)) {
+                } else if (totalProfessionalisms >= 3 && (totalScore >= 40 && totalScore <= 45)) {
                     return Result.TBD.name();
                 } else {
                     return Result.PASS.name();
