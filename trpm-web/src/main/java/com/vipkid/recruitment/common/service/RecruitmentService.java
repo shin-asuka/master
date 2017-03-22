@@ -391,8 +391,10 @@ public class RecruitmentService {
                 result.put("onlineClassId", onlineClass.getId());
                 result.put("isQuickInterview", onlineClass.getClassType() == OnlineClassEnum.ClassType.QUICK_INTERVIEW.val() ? true : false);
                 // mockclass
-                TeacherApplication teacherApplication = teacherApplicationDao.findByOlineclassId(onlineClass.getId());
-                result.put("applicationId", teacherApplication.getId());
+                TeacherApplication teacherApplication = teacherApplicationDao.findApplictionByOlineclassId(onlineClass.getId(), teacher.getId());
+                if(null != teacherApplication) {
+                    result.put("applicationId", teacherApplication.getId());
+                }
             }
         }
         return result;
