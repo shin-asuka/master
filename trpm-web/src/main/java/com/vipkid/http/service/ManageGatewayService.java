@@ -92,6 +92,10 @@ public class ManageGatewayService extends HttpBaseService {
 					Integer classId = studentCommentVo.getClass_id();
 					studentCommentVo.setOcToken(activityService.encode(classId));
 					Student student = studentService.getById(studentCommentVo.getStudent_id().longValue());
+					OnlineClass onlineClass = onlineClassService.getOnlineClassById(classId);
+					if(onlineClass!=null){
+						studentCommentVo.setLessonSn(onlineClass.getSerialNumber());
+					}
 					if(student!=null) {
 						studentCommentVo.setStudentAvatar(student.getAvatar());
 						studentCommentVo.setStudentName(student.getEnglishName());
