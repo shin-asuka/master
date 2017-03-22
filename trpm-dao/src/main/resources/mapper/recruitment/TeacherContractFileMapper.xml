@@ -90,7 +90,7 @@
         WHERE
         teacher_id =#{teacherId}
         AND file_type =#{fileType}
-        AND screening_id is null
+        AND (screening_id is null or screening_id = 0)
         limit 1
     </select>
 
@@ -106,10 +106,10 @@
     <update id="updateUrlAndScreeningId">
         UPDATE teacher_contract_file
         set file_url=#{url}
-        <if test="screeningId != null">, screening_id = #{screeningId}</if>
+        <if test="screeningId != null">, screening_id = #{screeningId}, result=null, fail_reason=null</if>
         WHERE teacher_id =#{teacherId}
         and file_type =#{fileType}
-        and screening_id is null
+        and (screening_id is null or screening_id = 0)
     </update>
 
     <update id="updateDao">
