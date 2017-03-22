@@ -90,7 +90,7 @@
         WHERE
         teacher_id =#{teacherId}
         AND file_type =#{fileType}
-        AND screening_id is null or screening_id = 0
+        AND screening_id is null
         limit 1
     </select>
 
@@ -109,7 +109,7 @@
         <if test="screeningId != null">, screening_id = #{screeningId}</if>
         WHERE teacher_id =#{teacherId}
         and file_type =#{fileType}
-        and (screening_id = 0 or screening_id is null)
+        and screening_id is null
     </update>
 
     <update id="updateDao">

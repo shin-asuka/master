@@ -113,6 +113,7 @@ public class BackgroundCheckController extends RestfulController {
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
             return ApiResponseUtils.buildErrorResp(TeacherPortalCodeEnum.SYS_FAIL.getCode(), "Failed to save background check information.");
         }
+        logger.info("BackgroundCheckController.saveCheckInfoForUs succeed, teacherId="+teacherId);
         return ApiResponseUtils.buildSuccessDataResp(result);
     }
 
@@ -159,6 +160,7 @@ public class BackgroundCheckController extends RestfulController {
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
             return ApiResponseUtils.buildErrorResp(TeacherPortalCodeEnum.SYS_FAIL.getCode(), "failed to upload file");
         }
+        logger.info("BackgroundCheckController.uploadFile succeed, teacherId="+teacherId);
         return ApiResponseUtils.buildSuccessDataResp(result);
     }
 
@@ -196,6 +198,7 @@ public class BackgroundCheckController extends RestfulController {
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
             return ApiResponseUtils.buildErrorResp(TeacherPortalCodeEnum.SYS_FAIL.getCode(), TeacherPortalCodeEnum.SYS_FAIL.getMsg());
         }
+        logger.info("BackgroundCheckController.saveCheckInfoForCa succeed, teacherId="+teacherId);
         return ApiResponseUtils.buildSuccessDataResp(result);
     }
 
@@ -219,6 +222,7 @@ public class BackgroundCheckController extends RestfulController {
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
             return ApiResponseUtils.buildErrorResp(TeacherPortalCodeEnum.SYS_FAIL.getCode(), TeacherPortalCodeEnum.SYS_FAIL.getMsg());
         }
+        logger.info("BackgroundCheckController.getCheckInfoForUs succeed, teacherId="+teacherId);
         return ApiResponseUtils.buildSuccessDataResp(info);
     }
 
@@ -255,6 +259,7 @@ public class BackgroundCheckController extends RestfulController {
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
             return ApiResponseUtils.buildErrorResp(TeacherPortalCodeEnum.SYS_FAIL.getCode(), TeacherPortalCodeEnum.SYS_FAIL.getMsg());
         }
+        logger.info("BackgroundCheckController.getCheckInfoForCa succeed, teacherId="+teacherId);
         return ApiResponseUtils.buildSuccessDataResp(map);
     }
 

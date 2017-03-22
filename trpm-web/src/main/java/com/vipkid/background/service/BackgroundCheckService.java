@@ -64,7 +64,7 @@ public class BackgroundCheckService {
 
 
         //save teacher_address
-        saveLatestAddress(input);
+        saveAddress(input, teacher);
 
         if(StringUtils.isNotBlank(input.getFileUrl())){
             //save teacher_contract_file//
@@ -256,18 +256,21 @@ public class BackgroundCheckService {
         }
     }
 
-    private void saveLatestAddress(BackgroundCheckInputDto input){
+    private void saveAddress(BackgroundCheckInputDto input, Teacher teacher){
         String currentStreet = input.getCurrentStreet();
         String currentZipCode = input.getCurrentZipCode();
 
-        //if currentStreet not null or currentZipCode not null, then update it.
-        if(StringUtils.isNotBlank(currentStreet) || StringUtils.isNotBlank(currentZipCode)){
-            TeacherAddress address = new TeacherAddress();
-            address.setTeacherId(input.getTeacherId());
-            address.setStreetAddress(input.getCurrentStreet());
-            address.setZipCode(input.getCurrentZipCode());
-            address.setType(TeacherAddressEnum.AddressType.NORMAL.val());
-            teacherAddressDao.updateByTeacherIdAndType(address);
+        //if currentStreet or currentZipCode has been changed, then update it.
+        TeacherAddress currentAddress = teacherAddressDao.getTeacherAddress(teacher.getCurrentAddressId());
+        if(currentAddress != null){
+            if(StringUtils.equals(currentAddress.getStreetAddress(), currentStreet) || StringUtils.equals(currentAddress.getZipCode(), currentZipCode)){
+                TeacherAddress address = new TeacherAddress();
+                address.setTeacherId(input.getTeacherId());
+                address.setStreetAddress(currentStreet);
+                address.setZipCode(currentZipCode);
+                address.setType(TeacherAddressEnum.AddressType.NORMAL.val());
+                teacherAddressDao.updateByTeacherIdAndType(address);
+            }
         }
 
         TeacherAddress address = new TeacherAddress();
