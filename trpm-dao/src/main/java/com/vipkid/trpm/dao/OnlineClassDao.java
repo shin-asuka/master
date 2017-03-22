@@ -404,6 +404,17 @@ public class OnlineClassDao extends MapperDaoTemplate<OnlineClass> {
 	public List<Map<String, Object>> findMajorCourseListByCond(HashMap<String,Object> onlineClassVoCond) {
 		return listEntity("findMajorCourseListByCond", onlineClassVoCond);
 	}
+	
+	/**
+	 * 根据老师ID统计老师一共正常上了多少节课程
+	 * @param teacherId
+	 * @return
+	 */
+	public int countClassNumByTeacherId(long teacherId){
+		Map<String, Object> paramsMap = Maps.newHashMap();
+		paramsMap.put("teacherId", teacherId);
+		return this.selectEntity("countClassNumByTeacherId", paramsMap);
+	}
 
 	/**
 	 * 查询指定时间内所有需要填写feedback的课

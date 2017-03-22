@@ -752,4 +752,14 @@
 		</if>
 		</select>
 
+	<select id="countClassNumByTeacherId" resultType="int">		
+		SELECT count(1) 
+		FROM online_class o 
+		WHERE 
+			o.teacher_id = #{teacherId} and 
+			o.`status` = 'FINISHED' and 
+			o.finish_type = 'AS_SCHEDULED' 
+	</select>
+	
+
 </mapper>
