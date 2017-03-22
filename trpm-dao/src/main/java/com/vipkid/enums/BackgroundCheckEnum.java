@@ -22,13 +22,13 @@ public class BackgroundCheckEnum {
     }
 
     public enum BackgroundResult {
-        NA("N/A"), // 背调暂时没有结果
+        NA("n/a"), // 背调暂时没有结果
 
-        CLEAR("Clear"), // 背调结果为 clear
+        CLEAR("clear"), // 背调结果为 clear
 
-        ALERT("Alert"),//背调结果为Alert即第一次背调失败
+        ALERT("alert"),//背调结果为Alert即第一次背调失败
 
-        FAIL("Fail"); //背调结果为Fail
+        FAIL("fail"); //背调结果为Fail
 
         private String value;
 
@@ -45,7 +45,7 @@ public class BackgroundCheckEnum {
         PENDING("Pending"),//Sterling开始背调等待背调的结果
         PREADVERSE("Preadverse"),//第一次背调失败，等待老师dispute
         DISPUTE("Dispute"),//正在进行dispute
-        DIDNOTDISPUTE("Didnotdispute"),//超过五天没有进行背调
+        DIDNOTDISPUTE("Didnotdispute"),//超过5天没有进行dispute
         CLEAR("Clear"),//背调结果为Clear
         FAIL("Fail");//背调的最终结果为失败，超过5天没有进行dispute也是为失败
         private String value;

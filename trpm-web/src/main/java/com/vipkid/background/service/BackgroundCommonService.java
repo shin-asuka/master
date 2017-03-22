@@ -2,6 +2,8 @@ package com.vipkid.background.service;
 
 import com.google.api.client.util.Lists;
 import com.google.api.client.util.Maps;
+import com.vipkid.background.api.sterling.dto.BackgroundFileStatusDto;
+import com.vipkid.background.api.sterling.dto.BackgroundStatusDto;
 import com.vipkid.enums.BackgroundCheckEnum;
 import com.vipkid.enums.BackgroundCheckEnum.BackgroundResult;
 import com.vipkid.enums.BackgroundCheckEnum.DisputeStatus;
@@ -49,9 +51,8 @@ public class BackgroundCommonService {
     private static Logger logger = LoggerFactory.getLogger(BackgroundCommonService.class);
 
 
-    public Map<String,Object> getUsaBackgroundStatus(Teacher teacher){
-
-        Map<String, Object> result = Maps.newHashMap();
+    public BackgroundStatusDto getUsaBackgroundStatus(Teacher teacher){
+        BackgroundStatusDto backgroundStatusDto = new BackgroundStatusDto();
         Calendar current = Calendar.getInstance();
         BackgroundScreening backgroundScreening = backgroundScreeningV2Dao.findByTeacherIdTopOne(teacher.getId());
         Date  contractEndDate = teacher.getContractEndDate();
@@ -62,10 +63,10 @@ public class BackgroundCommonService {
         if (remindTime.getTime().before(current.getTime()) ) {
             //没有背调结果，即第一次开始背调
             if (null == backgroundScreening) {
-                result.put("needBackgroundCheck", true);
-                result.put("phase", BackgroundPhase.START);
-                result.put("result","");
-                return result;
+                backgroundStatusDto.setNeedBackgroundCheck(true);
+                backgroundStatusDto.setPhase(BackgroundPhase.START.getVal());
+                backgroundStatusDto.setResult("");
+                return backgroundStatusDto;
             } else {
                 boolean in5Days = false;
                 long screeningId = backgroundScreening.getId();
@@ -79,9 +80,10 @@ public class BackgroundCommonService {
 
                 //上次背调超过两年需要进行背调，不超过两年需要根据result和disputeStatus进行判断
                 if (current.getTime().after(backgroundScreening.getUpdateTime())) {
-                    result.put("needBackgroundCheck", true);
-                    result.put("phase", BackgroundPhase.START);
-                    result.put("result","");
+                    backgroundStatusDto.setNeedBackgroundCheck(true);
+                    backgroundStatusDto.setPhase(BackgroundPhase.START.getVal());
+                    backgroundStatusDto.setResult("");
+
                 } else {
                     String backgroundResult = backgroundScreening.getResult();
                     String disputeStatus = backgroundScreening.getDisputeStatus();
@@ -89,15 +91,15 @@ public class BackgroundCommonService {
                         switch (backgroundResult) {
                             //开始背调，背调结果结果为N/A
                             case "n/a":
-                                result.put("needBackgroundCheck", true);
-                                result.put("phase", BackgroundPhase.PENDING);
-                                result.put("result", BackgroundResult.NA);
+                                backgroundStatusDto.setNeedBackgroundCheck(true);
+                                backgroundStatusDto.setPhase(BackgroundPhase.PENDING.getVal());
+                                backgroundStatusDto.setResult(BackgroundResult.NA.getVal());
                                 break;
                             //背调结果为CLEAR，不再需要进行背调
                             case "clear":
-                                result.put("needBackgroundCheck", false);
-                                result.put("phase", BackgroundPhase.CLEAR.getVal());
-                                result.put("result", BackgroundResult.CLEAR);
+                                backgroundStatusDto.setNeedBackgroundCheck(false);
+                                backgroundStatusDto.setResult(BackgroundResult.CLEAR.getVal());
+                                backgroundStatusDto.setPhase(BackgroundPhase.CLEAR.getVal());
                                 break;
                             //背调结果为ALERT，需根据disputeStatus进行判断
                             case "alert":
@@ -105,175 +107,169 @@ public class BackgroundCommonService {
                                 if (null == disputeStatus) {
                                     //在5天内可以进行dispute，超过5天不允许在进行dispute自动FAIL
                                     if (in5Days) {
-                                        result.put("needBackgroundCheck", true);
-                                        result.put("phase", BackgroundPhase.PREADVERSE);
-                                        result.put("result", BackgroundResult.ALERT);
+                                        backgroundStatusDto.setPhase(BackgroundPhase.PREADVERSE.getVal());
+                                        backgroundStatusDto.setResult(BackgroundResult.ALERT.getVal());
+                                        backgroundStatusDto.setNeedBackgroundCheck(true);
                                     } else {
-                                        result.put("needBackgroundCheck", false);
-                                        result.put("result", BackgroundResult.FAIL);
-                                        result.put("phase", BackgroundPhase.DIDNOTDISPUTE);
+                                        backgroundStatusDto.setNeedBackgroundCheck(false);
+                                        backgroundStatusDto.setPhase(BackgroundPhase.DIDNOTDISPUTE.getVal());
+                                        backgroundStatusDto.setResult(BackgroundResult.FAIL.getVal());
                                     }
 
                                 } else {
-                                    //diaputeStatus为ACTIVE表明正在进行dispute，为DEACTIVATED表明disputed失败
+                                    //diSputeStatus为ACTIVE表明正在进行dispute，为DEACTIVATED表明disputed失败
                                     if (StringUtils.equalsIgnoreCase(disputeStatus, DisputeStatus.ACTIVE.toString())) {
-                                        result.put("needBackgroundCheck", true);
-                                        result.put("phase", BackgroundPhase.DISPUTE.getVal());
-                                        result.put("result", BackgroundResult.ALERT.getVal());
+                                        backgroundStatusDto.setPhase(BackgroundPhase.DISPUTE.getVal());
+                                        backgroundStatusDto.setResult(BackgroundResult.ALERT.getVal());
+                                        backgroundStatusDto.setNeedBackgroundCheck(true);
                                     } else {
-                                        result.put("needBackgroundCheck", false);
-                                        result.put("phase", BackgroundPhase.FAIL.getVal());
-                                        result.put("result", BackgroundResult.FAIL.getVal());
+                                        backgroundStatusDto.setNeedBackgroundCheck(false);
+                                        backgroundStatusDto.setPhase(BackgroundPhase.FAIL.getVal());
+                                        backgroundStatusDto.setResult(BackgroundResult.FAIL.getVal());
                                     }
                                 }
                                 break;
                         }
                     }else{
-                        result.put("needBackgroundCheck", true);
-                        result.put("result","");
-                        result.put("phase",BackgroundPhase.START);
+                        backgroundStatusDto.setPhase(BackgroundPhase.START.getVal());
+                        backgroundStatusDto.setNeedBackgroundCheck(true);
+                        backgroundStatusDto.setResult("");
                     }
                 }
 
             }
-            logger.info("获取美国老师: {} 背调状态信息 {}",teacher.getId(),result);
-            return result;
+            logger.info("获取美国老师: {} 背调状态信息 {}",teacher.getId(),backgroundStatusDto);
+            return backgroundStatusDto;
         }else {
-            result.put("needBackgroundCheck", false);
-            result.put("phase","");
-            result.put("result","");
+            backgroundStatusDto.setNeedBackgroundCheck(false);
+            backgroundStatusDto.setPhase("");
+            backgroundStatusDto.setResult("");
         }
-        logger.info("获取美国老师: {} 背调状态信息 {}",teacher.getId(),result);
-        return result;
+        logger.info("获取美国老师: {} 背调状态信息 {}",teacher.getId(),backgroundStatusDto);
+        return backgroundStatusDto;
     }
 
-    public Map<String,Object> getCanadabackgroundStatus(Teacher teacher){
-        Map<String, Object> result = Maps.newHashMap();
+    public BackgroundStatusDto getCanadabackgroundStatus(Teacher teacher){
+        BackgroundStatusDto backgroundStatusDto = new BackgroundStatusDto();
         Calendar current = Calendar.getInstance();
         Date  contractEndDate = teacher.getContractEndDate();
         Calendar  remindTime = Calendar.getInstance();
         remindTime.setTime(contractEndDate);
         remindTime.add(Calendar.MONTH,-1);
-        BackgroundScreening backgroundScreening = backgroundScreeningV2Dao.findByTeacherIdTopOne(teacher.getId());
         //合同即将到期需进行背调,提前一个月进行弹窗提示
         if (remindTime.getTime().before(current.getTime()) ) {
             CanadaBackgroundScreening canadaBackgroundScreening = canadaBackgroundScreeningDao.findByTeacherId(teacher.getId());
             //第一次进行背调
             if (null == canadaBackgroundScreening) {
-                result.put("needBackgroundCheck", true);
-                result.put("phase", BackgroundPhase.START);
-                result.put("result","");
-                return result;
+                backgroundStatusDto.setNeedBackgroundCheck(true);
+                backgroundStatusDto.setPhase(BackgroundPhase.START.getVal());
+                backgroundStatusDto.setResult("");
+
+                return backgroundStatusDto;
             }
             current.add(Calendar.YEAR, -2);
             //超过两年需要背调，
-            if (current.getTime().after(backgroundScreening.getUpdateTime())) {
-                result.put("needBackgroundCheck", true);
-                result.put("phase", BackgroundPhase.START);
-                result.put("result","");
+            if (current.getTime().after(canadaBackgroundScreening.getUpdateTime())) {
+                backgroundStatusDto.setNeedBackgroundCheck(true);
+                backgroundStatusDto.setPhase(BackgroundPhase.START.getVal());
+                backgroundStatusDto.setResult("");
             } else { //不超过两年显示result
-                if (StringUtils.equalsIgnoreCase(canadaBackgroundScreening.getResult(),"CLEAR")){
-                    result.put("needBackgroundCheck",false);
-                    result.put("result",BackgroundResult.CLEAR);
-                    result.put("phase",BackgroundPhase.CLEAR);
-                }else if (StringUtils.equalsIgnoreCase(canadaBackgroundScreening.getResult(),"ALERT")){
-                    result.put("needBackgroundCheck",true);
-                    result.put("result",BackgroundResult.ALERT);
-                    result.put("phase",BackgroundPhase.FAIL);
+                if (StringUtils.equalsIgnoreCase(canadaBackgroundScreening.getResult(),BackgroundResult.CLEAR.getVal())){
+                    backgroundStatusDto.setPhase(BackgroundPhase.CLEAR.getVal());
+                    backgroundStatusDto.setResult(BackgroundResult.CLEAR.getVal());
+                    backgroundStatusDto.setNeedBackgroundCheck(false);
+                }else if (StringUtils.equalsIgnoreCase(canadaBackgroundScreening.getResult(),BackgroundResult.ALERT.getVal())){
+                    backgroundStatusDto.setNeedBackgroundCheck(false);
+                    backgroundStatusDto.setPhase(BackgroundPhase.FAIL.getVal());
+                    backgroundStatusDto.setResult(BackgroundResult.FAIL.getVal());
                 }else {
-                    result.put("needBackgroundCheck",true);
-                    result.put("result",BackgroundResult.NA);
-                    result.put("phase",BackgroundPhase.PENDING);
+                    backgroundStatusDto.setNeedBackgroundCheck(true);
+                    backgroundStatusDto.setPhase(BackgroundPhase.PENDING.getVal());
+                    backgroundStatusDto.setResult(BackgroundResult.NA.getVal());
                 }
             }
-            logger.info("获取加拿大老师: {} 背调状态信息 {}",teacher.getId(),result);
-            return result;
+            logger.info("获取加拿大老师: {} 背调状态信息 {}",teacher.getId(),backgroundStatusDto);
+            return backgroundStatusDto;
         } else {
-            result.put("result","");
-            result.put("phase","");
-            result.put("needBackgroundCheck", false);
+            backgroundStatusDto.setPhase("");
+            backgroundStatusDto.setResult("");
+            backgroundStatusDto.setNeedBackgroundCheck(false);
         }
-        logger.info("获取加拿大老师: {} 背调信息 {}",teacher.getId(),result);
-        return result;
+        logger.info("获取加拿大老师: {} 背调信息 {}",teacher.getId(),backgroundStatusDto);
+        return backgroundStatusDto;
     }
 
-    public Map<String, Object> getBackgroundFileStatus(long teacherId, String nationality) {
-        Map<String, Object> result = Maps.newHashMap();
+    public BackgroundFileStatusDto getBackgroundFileStatus(long teacherId, String nationality) {
+        BackgroundFileStatusDto backgroundFileStatusDto = new BackgroundFileStatusDto();
         List<TeacherContractFile> teacherContractFiles = teacherContractFileDao.findBackgroundFileByTeacherId(teacherId);
         boolean hasFile = false;
         if (CollectionUtils.isNotEmpty(teacherContractFiles)) {
             hasFile = true;
             if (StringUtils.equalsIgnoreCase(nationality, "United States")) {
-                result.put("nationality", "USA");
+                backgroundFileStatusDto.setNationality("USA");
 
                 for (TeacherContractFile contractFile : teacherContractFiles) {
                     Long screeningId = contractFile.getScreeningId();
                     if (null == screeningId){
-                        result.put("fileStatus",FileStatus.SAVE);
+                        backgroundFileStatusDto.setFileStatus(FileStatus.SAVE.getValue());
                     }else {
-                        result.put("fileStatus",FileStatus.SUBMIT);
+                        backgroundFileStatusDto.setFileStatus(FileStatus.SUBMIT.getValue());
                     }
                     if (StringUtils.equalsIgnoreCase(contractFile.getResult(), "PASS")) {
-
-                        result.put("fileResult", FileResult.PASS);
+                        backgroundFileStatusDto.setFileResult(FileResult.PASS.getValue());
                     } else if (StringUtils.equalsIgnoreCase(contractFile.getResult(), "FAIL")) {
-
-                        result.put("fileResult", FileResult.FAIL);
+                        backgroundFileStatusDto.setFileResult(FileResult.FAIL.getValue());
                     } else {
-                        result.put("fileResult", FileResult.PENDING);
+                        backgroundFileStatusDto.setFileResult(FileResult.PENDING.getValue());
                     }
                 }
             } else if (StringUtils.equalsIgnoreCase(nationality, "CANADA")) {
-                result.put("nationality", "CANADA");
+                backgroundFileStatusDto.setNationality("CANADA");
                 String canadaFirstFileResult = "";
                 String canadaSecondFileResult = "";
                 for (TeacherContractFile contractFile : teacherContractFiles) {
                     Long screeningId = contractFile.getScreeningId();
                     if (null == screeningId){
-                        result.put("fileStatus",FileStatus.SAVE);
+                        backgroundFileStatusDto.setFileStatus(FileStatus.SAVE.getValue());
                     }else {
-                        result.put("fileStatus",FileStatus.SUBMIT);
+                        backgroundFileStatusDto.setFileStatus(FileStatus.SUBMIT.getValue());
                     }
                     int fileType = contractFile.getFileType();
                     //美国的只有一个文件fileType为 9 ，加拿大有两个文件fileType为10 、 11
-                    switch (fileType) {
-                        case 10:
-                            if (StringUtils.equalsIgnoreCase(contractFile.getResult(), "PASS")) {
-                                canadaFirstFileResult = "PASS";
-                            } else if (StringUtils.equalsIgnoreCase(contractFile.getResult(), "FAIL")) {
-                                canadaFirstFileResult = "FAIL";
-                            } else {
-                                canadaFirstFileResult = "PENDING";
-                            }
-                            break;
-                        case 11:
-                            if (StringUtils.equalsIgnoreCase(contractFile.getResult(), "PASS")) {
-                                canadaSecondFileResult = "PASS";
-                            } else if (StringUtils.equalsIgnoreCase(contractFile.getResult(), "FAIL")) {
-                                canadaSecondFileResult = "FAIL";
-                            } else {
-                                canadaSecondFileResult = "PENDING";
-                            }
-                            break;
+                    if (fileType == ContractFileType.CANADA_BACKGROUND_CHECK_CPIC_FORM.val()){
+                        canadaFirstFileResult = getCanadaFileResult(contractFile.getResult());
+                    }else if (fileType == ContractFileType.CANADA_BACKGROUND_CHECK_ID2.val()){
+                        canadaSecondFileResult = getCanadaFileResult(contractFile.getResult());
                     }
                 }if (StringUtils.equalsIgnoreCase(canadaFirstFileResult,"FAIL") || StringUtils.equalsIgnoreCase(canadaSecondFileResult,"FAIL")){
-                    result.put("fileResult",FileResult.FAIL);
+                    backgroundFileStatusDto.setFileResult(FileResult.FAIL.getValue());
                 }else if (StringUtils.equalsIgnoreCase(canadaFirstFileResult,"PASS") && StringUtils.equalsIgnoreCase(canadaSecondFileResult,"PASS")){
-                    result.put("fileResult",FileResult.PASS);
+                    backgroundFileStatusDto.setFileResult(FileResult.PASS.getValue());
                 }else {
-                    result.put("fileResult",FileResult.PENDING);
+                    backgroundFileStatusDto.setFileResult(FileResult.PENDING.getValue());
                 }
             }
         } else {
-            result.put("nationality","");
-            result.put("fileResult","");
-            result.put("fileStatus","");
-            hasFile = false;
+            backgroundFileStatusDto.setNationality("");
+            backgroundFileStatusDto.setFileResult("");
+            backgroundFileStatusDto.setFileStatus("");
+            backgroundFileStatusDto.setHasFile(false);
         }
-        result.put("hasFile", hasFile);
-        logger.info("获取老师: {} 背调文件信息 {}",teacherId,result);
-        return result;
+        backgroundFileStatusDto.setHasFile(hasFile);
+        logger.info("获取老师: {} 背调文件信息 {}",teacherId,backgroundFileStatusDto);
+        return backgroundFileStatusDto;
 
     }
+
+    public String getCanadaFileResult(String result){
+        if (StringUtils.equalsIgnoreCase(result,FileResult.PASS.getValue())){
+            return FileResult.PASS.getValue();
+        }else if (StringUtils.equalsIgnoreCase(result,FileResult.FAIL.getValue())){
+            return FileResult.FAIL.getValue();
+        }else {
+            return FileResult.PENDING.getValue();
+        }
+    }
+
 
 }

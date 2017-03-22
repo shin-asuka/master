@@ -11,6 +11,15 @@ public class BackgroundStatusDto implements Serializable {
     boolean needBackgroundCheck;
     String phase;
     String result;
+    String nationality;
+
+    public String getNationality() {
+        return nationality;
+    }
+
+    public void setNationality(String nationality) {
+        this.nationality = nationality;
+    }
 
     public boolean isNeedBackgroundCheck() {
         return needBackgroundCheck;
