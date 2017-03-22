@@ -81,12 +81,12 @@ public class BackgroundCheckController extends RestfulController {
         String socialSecurityNo = checkInput.getSocialSecurityNumber();
         String fileUrl = checkInput.getFileUrl();
         try {
-            Preconditions.checkArgument(countryId != null, "countryId cannot be null");
-            Preconditions.checkArgument(stateId != null, "stateId cannot be null");
-            Preconditions.checkArgument(cityId != null, "cityId cannot be null");
-            Preconditions.checkArgument(StringUtils.isNotBlank(street), "street cannot be null");
-            Preconditions.checkArgument(StringUtils.isNotBlank(zipCode), "zipCode cannot be null");
-            Preconditions.checkArgument(StringUtils.isNotBlank(birthday), "birthday cannot be null");
+            Preconditions.checkArgument(countryId != null, "latestCountryId cannot be null");
+            Preconditions.checkArgument(stateId != null, "latestStateId cannot be null");
+            Preconditions.checkArgument(cityId != null, "latestCityId cannot be null");
+            Preconditions.checkArgument(StringUtils.isNotBlank(street), "latestStreet cannot be null");
+            Preconditions.checkArgument(StringUtils.isNotBlank(zipCode), "latestZipCode cannot be null");
+            Preconditions.checkArgument(StringUtils.isNotBlank(birthday), "latestBirthday cannot be null");
             Preconditions.checkArgument(StringUtils.isNotBlank(socialSecurityNo), "socialSecurityNumber cannot be null");
 
             if(StringUtils.equals(operateType, "submit")){
@@ -184,7 +184,7 @@ public class BackgroundCheckController extends RestfulController {
 
             checkService.saveContractFile(teacherId, TeacherApplicationEnum.ContractFileType.CANADA_BACKGROUND_CHECK_CPIC_FORM.val(), cpicUrl, "submit");
             checkService.saveContractFile(teacherId, TeacherApplicationEnum.ContractFileType.CANADA_BACKGROUND_CHECK_ID2.val(), id2Url, "submit");
-            result.put("ipicUrl", cpicUrl);
+            result.put("cpicUrl", cpicUrl);
             result.put("id2Url", id2Url);
             logger.info("save background check file for CA success, teacherId=" + teacherId );
         } catch (IllegalArgumentException e) {

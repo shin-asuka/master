@@ -124,6 +124,20 @@ public class BackgroundCheckService {
             checkInfo.setResult(file.getResult());
             checkInfo.setFailReason(file.getFailReason());
         }
+        Integer addressId = teacher.getCurrentAddressId();
+        TeacherAddress currentAddress = teacherAddressDao.findById(addressId);
+
+        checkInfo.setCurrentCity(currentAddress.getCity());
+        checkInfo.setCurrentCountryId(currentAddress.getCountryId());
+        checkInfo.setCurrentStateId(currentAddress.getStateId());
+        checkInfo.setCurrentStreet(currentAddress.getStreetAddress());
+        checkInfo.setCurrentZipCode(currentAddress.getZipCode());
+
+        //timezone
+        TeacherLocation location = locationDao.findById(currentAddress.getCity());
+        if(location != null){
+            checkInfo.setTimezone(location.getTimezone());
+        }
         List<TeacherAddress> list = teacherAddressDao.findListByTeacherId(teacherId);
         for(TeacherAddress address : list){
             if(address.getType().equals(TeacherAddressEnum.AddressType.LATEST.val())){
@@ -132,19 +146,6 @@ public class BackgroundCheckService {
                 checkInfo.setLatestStateId(address.getStateId());
                 checkInfo.setLatestStreet(address.getStreetAddress());
                 checkInfo.setLatestZipCode(address.getZipCode());
-            }
-            if(address.getType().equals(TeacherAddressEnum.AddressType.NORMAL.val())){
-                checkInfo.setCurrentCity(address.getCity());
-                checkInfo.setCurrentCountryId(address.getCountryId());
-                checkInfo.setCurrentStateId(address.getStateId());
-                checkInfo.setCurrentStreet(address.getStreetAddress());
-                checkInfo.setCurrentZipCode(address.getZipCode());
-
-                //timezone
-                TeacherLocation location = locationDao.findById(address.getCity());
-                if(location != null){
-                    checkInfo.setTimezone(location.getTimezone());
-                }
             }
         }
 

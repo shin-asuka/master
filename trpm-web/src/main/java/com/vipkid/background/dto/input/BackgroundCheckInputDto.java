@@ -172,6 +172,7 @@ public class BackgroundCheckInputDto implements Serializable{
         this.currentStreet = currentStreet;
     }
 
+
     public String getCurrentZipCode() {
         return currentZipCode;
     }
