@@ -6,7 +6,6 @@ import com.vipkid.background.api.sterling.service.SterlingService;
 import com.vipkid.background.dto.input.BackgroundCheckInputDto;
 import com.vipkid.background.dto.output.BaseOutputDto;
 import com.vipkid.background.enums.TeacherPortalCodeEnum;
-import com.vipkid.background.util.WorkThreadPool;
 import com.vipkid.background.vo.BackgroundCheckVo;
 import com.vipkid.enums.TeacherAddressEnum;
 import com.vipkid.enums.TeacherApplicationEnum;
@@ -33,10 +32,14 @@ import org.springframework.transaction.annotation.Transactional;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 @Service("backgroundCheckService")
 public class BackgroundCheckService {
     private static Logger logger = LoggerFactory.getLogger(BackgroundCheckService.class);
+
+    public static ExecutorService fixedThreadPool = Executors.newFixedThreadPool(5);
 
     @Autowired
     private TeacherContractFileDao contractFileDao;
@@ -117,6 +120,7 @@ public class BackgroundCheckService {
         checkInfo.setMiddleName(teacher.getMiddleName());
         checkInfo.setLastName(teacher.getLastName());
         checkInfo.setBirthDay(DateUtils.formatDate(teacher.getBirthday()));
+        //确认是否要脱敏
         checkInfo.setEmail(teacher.getEmail());
         TeacherContractFile file = contractFileDao.findAllowEditOne(teacherId, TeacherApplicationEnum.ContractFileType.US_BACKGROUND_CHECK.val());
         if(file != null){
@@ -125,19 +129,23 @@ public class BackgroundCheckService {
             checkInfo.setFailReason(file.getFailReason());
         }
         Integer addressId = teacher.getCurrentAddressId();
-        TeacherAddress currentAddress = teacherAddressDao.findById(addressId);
+        if(addressId != null){
+            TeacherAddress currentAddress = teacherAddressDao.findById(addressId);
+            if(currentAddress != null){
+                checkInfo.setCurrentCity(currentAddress.getCity());
+                checkInfo.setCurrentCountryId(currentAddress.getCountryId());
+                checkInfo.setCurrentStateId(currentAddress.getStateId());
+                checkInfo.setCurrentStreet(currentAddress.getStreetAddress());
+                checkInfo.setCurrentZipCode(currentAddress.getZipCode());
 
-        checkInfo.setCurrentCity(currentAddress.getCity());
-        checkInfo.setCurrentCountryId(currentAddress.getCountryId());
-        checkInfo.setCurrentStateId(currentAddress.getStateId());
-        checkInfo.setCurrentStreet(currentAddress.getStreetAddress());
-        checkInfo.setCurrentZipCode(currentAddress.getZipCode());
-
-        //timezone
-        TeacherLocation location = locationDao.findById(currentAddress.getCity());
-        if(location != null){
-            checkInfo.setTimezone(location.getTimezone());
+                //timezone
+                TeacherLocation location = locationDao.findById(currentAddress.getCity());
+                if(location != null){
+                    checkInfo.setTimezone(location.getTimezone());
+                }
+            }
         }
+
         List<TeacherAddress> list = teacherAddressDao.findListByTeacherId(teacherId);
         for(TeacherAddress address : list){
             if(address.getType().equals(TeacherAddressEnum.AddressType.LATEST.val())){
@@ -163,7 +171,8 @@ public class BackgroundCheckService {
     }
 
     public List<TeacherContractFile> getInfoForCa(Long teacherId){
-        String types = TeacherApplicationEnum.ContractFileType.CANADA_BACKGROUND_CHECK_CPIC_FORM.val() +","+TeacherApplicationEnum.ContractFileType.CANADA_BACKGROUND_CHECK_ID2.val();
+        String types = TeacherApplicationEnum.ContractFileType.CANADA_BACKGROUND_CHECK_CPIC_FORM.val()
+                +","+TeacherApplicationEnum.ContractFileType.CANADA_BACKGROUND_CHECK_ID2.val();
         List<TeacherContractFile> list = contractFileDao.findListByTypes(teacherId, types);
         return list;
     }
@@ -213,7 +222,7 @@ public class BackgroundCheckService {
                 }
             }
         };
-        WorkThreadPool.fixedThreadPool.submit(thread);
+        fixedThreadPool.submit(thread);
     }
     private int updateUrlAndScreeningId(Long teacherId, Integer fileType, String url, String operateType){
         TeacherContractFile teacherContractFile = new TeacherContractFile();

@@ -68,7 +68,6 @@ public class BackgroundCheckController extends RestfulController {
         Map<String, Object> result = Maps.newHashMap();
         Teacher teacher = getTeacher(request);
         Long teacherId = teacher.getId();
-        //Long teacherId = 2040456L;
         checkInput.setTeacherId(teacherId);
         String operateType = checkInput.getOperateType();
         Integer countryId = checkInput.getLatestCountryId();
@@ -178,7 +177,7 @@ public class BackgroundCheckController extends RestfulController {
         Long teacherId = null;
         try {
             Preconditions.checkArgument(StringUtils.isNotBlank(cpicUrl), "CPIC file cannot be null");
-            Preconditions.checkArgument(StringUtils.isNotBlank(cpicUrl), "id2 file cannot be null");
+            Preconditions.checkArgument(StringUtils.isNotBlank(id2Url), "id2 file cannot be null");
 
             Teacher teacher = getTeacher(request);
             teacherId = teacher.getId();
