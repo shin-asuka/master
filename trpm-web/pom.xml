@@ -739,7 +739,7 @@
 			<properties>
 				<env>a28</env>
 				<masterAddressOfMysql>54.222.199.188:3318</masterAddressOfMysql>
-				<slaveAddressOfMysql>54.222.199.188:3318</slaveAddressOfMysql>
+				<slaveAddressOfMysql>54.222.199.188:3302</slaveAddressOfMysql>
 				<targetHost>10.1.5.89</targetHost>
 				<datasource>local</datasource>
 			</properties>
