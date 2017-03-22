@@ -50,7 +50,7 @@ public class BackgroundCommonService {
 
 
     public Map<String,Object> getUsaBackgroundStatus(Teacher teacher){
-        logger.info("获取老师: {} 背调信息",teacher.getId());
+
         Map<String, Object> result = Maps.newHashMap();
         Calendar current = Calendar.getInstance();
         BackgroundScreening backgroundScreening = backgroundScreeningV2Dao.findByTeacherIdTopOne(teacher.getId());
@@ -133,17 +133,18 @@ public class BackgroundCommonService {
                 }
 
             }
+            logger.info("获取美国老师: {} 背调状态信息 {}",teacher.getId(),result);
             return result;
         }else {
             result.put("needBackgroundCheck", false);
             result.put("phase","");
             result.put("result","");
         }
+        logger.info("获取美国老师: {} 背调状态信息 {}",teacher.getId(),result);
         return result;
     }
 
     public Map<String,Object> getCanadabackgroundStatus(Teacher teacher){
-        logger.info("获取老师: {} 背调信息",teacher.getId());
         Map<String, Object> result = Maps.newHashMap();
         Calendar current = Calendar.getInstance();
         Date  contractEndDate = teacher.getContractEndDate();
@@ -182,18 +183,18 @@ public class BackgroundCommonService {
                     result.put("phase",BackgroundPhase.PENDING.getVal());
                 }
             }
+            logger.info("获取加拿大老师: {} 背调状态信息 {}",teacher.getId(),result);
             return result;
         } else {
             result.put("result","");
             result.put("phase","");
             result.put("needBackgroundCheck", false);
         }
-
+        logger.info("获取加拿大老师: {} 背调信息 {}",teacher.getId(),result);
         return result;
     }
 
     public Map<String, Object> getBackgroundFileStatus(long teacherId, String nationality) {
-        logger.info("获取老师: {} 背调文件信息",teacherId);
         Map<String, Object> result = Maps.newHashMap();
         List<TeacherContractFile> teacherContractFiles = teacherContractFileDao.findBackgroundFileByTeacherId(teacherId);
         boolean hasFile = false;
@@ -267,6 +268,7 @@ public class BackgroundCommonService {
             hasFile = false;
         }
         result.put("hasFile", hasFile);
+        logger.info("获取老师: {} 背调文件信息 {}",teacherId,result);
         return result;
 
     }

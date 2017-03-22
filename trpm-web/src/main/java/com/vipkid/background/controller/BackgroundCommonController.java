@@ -31,8 +31,8 @@ public class BackgroundCommonController extends RestfulController{
     private static Logger logger = LoggerFactory.getLogger(BackgroundCommonController.class);
     @RequestMapping(value = "/queryBackgroundStatus", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
     public Map<String,Object> getBackgoundStatus(HttpServletRequest request, HttpServletResponse response){
+        Teacher teacher = getTeacher(request);
         try{
-            Teacher teacher = getTeacher(request);
             String nationality = teacher.getCountry();
             Map<String ,Object> result = Maps.newHashMap();
             if (StringUtils.equalsIgnoreCase(nationality,"United States")){
@@ -48,9 +48,11 @@ public class BackgroundCommonController extends RestfulController{
             response.setStatus(HttpStatus.OK.value());
             return ReturnMapUtils.returnSuccess(result);
         } catch (IllegalArgumentException e) {
+            logger.error("get teacher {} beckground check status  occur IllegalArgumentException",teacher.getId(),e);
             response.setStatus(HttpStatus.BAD_REQUEST.value());
             return ReturnMapUtils.returnFail(e.getMessage(),e);
         } catch (Exception e) {
+            logger.error("get teacher {} beckground check status  occur Exception",teacher.getId(),e);
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
             return ReturnMapUtils.returnFail(e.getMessage(),e);
         }
@@ -58,16 +60,18 @@ public class BackgroundCommonController extends RestfulController{
     }
     @RequestMapping(value = "/queryBackgroundFileStatus", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
     public Map<String,Object> getBackgoundFileStatus(HttpServletRequest request, HttpServletResponse response){
+        Teacher teacher = getTeacher(request);
         try{
-            Teacher teacher = getTeacher(request);
             long teacherId = teacher.getId();
             String nationality = teacher.getCountry();
             Map<String,Object> result = backgroundCommonService.getBackgroundFileStatus(teacherId,nationality);
             return ReturnMapUtils.returnSuccess(result);
         } catch (IllegalArgumentException e) {
+            logger.error("get teacher {} beckground check file info occur IllegalArgumentException",teacher.getId(),e);
             response.setStatus(HttpStatus.BAD_REQUEST.value());
             return ReturnMapUtils.returnFail(e.getMessage(),e);
         } catch (Exception e) {
+            logger.error("get teacher {} beckground check file info occur Exception",teacher.getId(),e);
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
             return ReturnMapUtils.returnFail(e.getMessage(),e);
         }
