@@ -28,6 +28,7 @@ import com.vipkid.trpm.entity.teachercomment.TeacherComment;
 import com.vipkid.trpm.service.portal.ClassroomsService;
 import com.vipkid.trpm.service.portal.TeacherService;
 import com.vipkid.trpm.util.DateUtils;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.community.config.PropertyConfigurer;
@@ -84,6 +85,8 @@ public class ClassroomsRestServiceImpl implements ClassroomsRestService{
 	private QNService qnService;
 
 	private static final String goblinServerAddress = PropertyConfigurer.stringValue("goblin.serverAddress");
+	
+	private static Long Interval=3*60L*24L*60L*60L*1000L;
 
 	public Map<String, Object> getClassroomsData(long teacherId, int offsetOfMonth, String courseType, int page) {
 		if (!CourseType.isPracticum(courseType)) {// 只要不是"PRACTICUM"，就赋值"MAJOR"
@@ -142,7 +145,7 @@ public class ClassroomsRestServiceImpl implements ClassroomsRestService{
 		return result;
 	}
 
-	public int[] getPaidTrailPaymentYearMonth(Long studentId, Long onlineClassId) {
+	public int[] getPaidTrailPaymentYearMonth(Long studentId, Long onlineClassId,long scheduledTime) {
 		if (studentId==null || onlineClassId==null) {
 			return null;
 		}
@@ -165,6 +168,9 @@ public class ClassroomsRestServiceImpl implements ClassroomsRestService{
 
 					//月份从0开始；学生付款的下个月trial老师才能得到bonus，故+1
 					payTime.add(Calendar.MONTH, 1);
+					if (payTime.getTimeInMillis() - scheduledTime > Interval) {
+						return null;
+					}
 					int[] payYearMonth = {payTime.get(Calendar.YEAR), payTime.get(Calendar.MONTH)};
 
 					logger.info("getPriceGreatorThan500PackOrder by goblin success, params:{}", requestMap.toString());
