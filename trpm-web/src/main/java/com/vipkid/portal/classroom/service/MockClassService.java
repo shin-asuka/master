@@ -228,7 +228,7 @@ public class MockClassService {
             if (StringUtils.equals(peDoAuditInputDto.getStatus(), MockClassEnum.SUBMIT.name())) {
                 int totalProfessionalisms =
                                 teacherPeOptionDao.calculateOptionsProfessionalisms(peDoAuditInputDto.getOptionList());
-                result = getResult(isPes, onlineClass.getSerialNumber(), totalScore, totalProfessionalisms);
+                result = getResult(isPes, onlineClass.getLessonId(), totalScore, totalProfessionalisms);
 
                 logger.info("Pe doAudit submit result: {}, totalScore: {}, totalProfessionalisms: {}", result,
                                 totalScore, totalProfessionalisms);
@@ -381,8 +381,11 @@ public class MockClassService {
         return HttpStatus.OK.getReasonPhrase();
     }
 
-    public String getResult(boolean isPes, String serialNumber, int totalScore, int totalProfessionalisms) {
-        if (StringUtils.equals(MOCK_CLASS_1, serialNumber)) {
+    public String getResult(boolean isPes, long lessonId, int totalScore, int totalProfessionalisms) {
+        Lesson lesson = lessonDao.findById(lessonId);
+        logger.info("Current lesson is: {}",lesson.getSerialNumber());
+
+        if (StringUtils.equals(MOCK_CLASS_1, lesson.getSerialNumber())) {
             if (totalProfessionalisms < 3 || totalScore < 35) {
                 return Result.FAIL.name();
             } else if (totalProfessionalisms >= 3 && (totalScore >= 35 && totalScore <= 44)) {
