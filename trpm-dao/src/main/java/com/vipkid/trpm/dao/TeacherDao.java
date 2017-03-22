@@ -4,10 +4,13 @@ import com.google.common.collect.Maps;
 import com.vipkid.enums.TeacherEnum.LifeCycle;
 import com.vipkid.rest.dto.ReferralTeacherDto;
 import com.vipkid.trpm.entity.Teacher;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.community.dao.support.MapperDaoTemplate;
 import org.mybatis.spring.SqlSessionTemplate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -17,7 +20,9 @@ import java.util.Map;
 
 @Repository
 public class TeacherDao extends MapperDaoTemplate<Teacher> {
-
+	
+	private static Logger logger = LoggerFactory.getLogger(TeacherDao.class);
+	
     @Autowired
     public TeacherDao(SqlSessionTemplate sqlSessionTemplate) {
         super(sqlSessionTemplate, Teacher.class);
@@ -173,4 +178,24 @@ public class TeacherDao extends MapperDaoTemplate<Teacher> {
         }
         return list.get(0);
     }
+
+	/**
+	 * 根据老师ID统计老师一共正常上了多少节课程
+	 * @param teacherId
+	 * @return
+	 */
+	public int findSameTeacherByCity(Integer city,Integer stateId){
+		Map<String, Object> paramsMap = Maps.newHashMap();
+		if(city != null && city != 0){
+			paramsMap.put("city", city);
+		}else{
+			if(stateId != null && stateId != 0){
+				paramsMap.put("stateId", stateId);
+			}else{
+				logger.warn("TeacherDao.countClassNumByTeacherId(int city,int stateId),city:{},stateId:{}",city,stateId);
+				return 0;
+			}
+		}
+		return this.selectEntity("countSameTeacherByCity", paramsMap);
+	}
 }

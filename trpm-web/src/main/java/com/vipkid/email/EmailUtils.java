@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.community.config.PropertyConfigurer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -67,7 +68,7 @@ public class EmailUtils {
 		}
 	}
 
-	public static void sendEmail4InterviewBook(Teacher teacher, OnlineClass onlineclass){
+	public static void sendEmail4InterviewBook(Teacher teacher, OnlineClass onlineclass,String cityName,Integer teacherNumber){
 		try {
 			Map<String,String> paramsMap = new HashMap<String,String>();
 			if (teacher.getFirstName() != null){
@@ -75,6 +76,14 @@ public class EmailUtils {
 			}else if (teacher.getRealName() != null){
 				paramsMap.put("teacherName", teacher.getRealName());
 			}
+			
+			paramsMap.put("referralShow", "none");
+			if(StringUtils.isNotBlank(cityName)){
+				paramsMap.put("referralShow", "block");
+			}
+			
+			paramsMap.put("applicantState", cityName);
+			paramsMap.put("teacherNumber", teacherNumber+"");
 			paramsMap.put("scheduledDateTime", DateUtils.formatTo(onlineclass.getScheduledDateTime().toInstant(), teacher.getTimezone(), DateUtils.FMT_YMD_HM));
 			paramsMap.put("timezone", teacher.getTimezone());
 			logger.info("【EMAIL.sendEmail4InterviewBook】toAddMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",teacher.getRealName(),teacher.getEmail(),"InterviewBookTitle.html","InterviewBook.html");
