@@ -5,6 +5,8 @@ import com.google.common.collect.Lists;
 import com.vipkid.enums.OnlineClassEnum.ClassStatus;
 import com.vipkid.recruitment.entity.TeacherApplication;
 import org.apache.commons.collections.CollectionUtils;
+
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.community.dao.support.MapperDaoTemplate;
 import org.mybatis.spring.SqlSessionTemplate;
@@ -174,6 +176,19 @@ public class TeacherApplicationDao extends MapperDaoTemplate<TeacherApplication>
             return optional.get();
         } else {
             return teacherApplications.stream().findFirst().get();
+        }
+    }
+
+    public TeacherApplication findByOlineclassId(long onlineClassId) {
+        TeacherApplication teacherApplication = new TeacherApplication();
+        teacherApplication.setOrderString("id DESC");
+        List<TeacherApplication> teacherApplications =
+                super.selectList(teacherApplication.setOnlineClassId(onlineClassId));
+
+        if(CollectionUtils.isNotEmpty(teacherApplications)){
+            return teacherApplications.stream().findFirst().get();
+        }else{
+            return teacherApplication;
         }
     }
 
