@@ -582,4 +582,183 @@
 		</if>
 		<if test="param.name != null"> AND (u.name LIKE CONCAT('%',#{param.name},'%') or t.email LIKE CONCAT('%',#{param.name},'%')) </if>
 	</select>
+
+	<!-- 成功的列表和笔数-->
+	<!-- listReferralSucceedTeachers -->
+	<select id="listReferralSucceedTeachers" resultType="com.vipkid.rest.dto.ReferralTeacherDto">
+		SELECT
+		u.id,
+		t.real_name name,
+		t.email,
+		u.register_date_time applyDate,
+		t.life_cycle lifeCycle,
+		ta.`status`,
+		ta.result,
+		t.entry_date regularDate,
+		tc.scheduled_date_time scheduledDateTime
+		FROM
+		teacher t
+		LEFT JOIN `user` u ON t.id = u.id
+		LEFT JOIN teacher_application ta ON t.id = ta.teacher_id
+		LEFT JOIN teacher_first_class tc ON t.id = tc.teacher_id
+		WHERE
+		t.referee LIKE CONCAT(#{param.teacherId},',%')
+		AND (ta.current = 1 or ta.current is null)
+		AND tc.scheduled_date_time is not null
+		<if test="param.lifeCycle != null"> AND t.life_cycle = #{param.lifeCycle} </if>
+		<if test="param.status != null"> AND ta.`status` = #{param.status} </if>
+		<if test="param.result != null"> AND ta.result = #{param.result} </if>
+		ORDER BY
+		u.register_date_time DESC
+		<if test="param.startRows != null  and param.pageSize != null">
+			LIMIT #{param.startRows},#{param.pageSize}
+		</if>
+	</select>
+
+	<!-- countReferralSucceedTeachers -->
+	<select id="countReferralSucceedTeachers" resultType="int">
+		SELECT
+		count(1) counts
+		FROM
+		teacher t
+		LEFT JOIN `user` u ON t.id = u.id
+		LEFT JOIN teacher_application ta ON t.id = ta.teacher_id
+		LEFT JOIN teacher_first_class tc ON t.id = tc.teacher_id
+		WHERE
+		t.referee LIKE CONCAT(#{param.teacherId},',%')
+		AND (ta.current = 1 or ta.current is null)
+		AND tc.scheduled_date_time is not null
+		<if test="param.lifeCycle != null"> AND t.life_cycle = #{param.lifeCycle} </if>
+		<if test="param.status != null"> AND ta.`status` = #{param.status} </if>
+		<if test="param.result != null"> AND ta.result = #{param.result} </if>
+	</select>
+
+
+	<!-- 进行中的列表和笔数 -->
+	<!--  listReferralProcessingTeachers-->
+	<select id="listReferralProcessingTeachers" resultType="com.vipkid.rest.dto.ReferralTeacherDto">
+		SELECT
+		u.id,
+		t.real_name name,
+		t.email,
+		u.register_date_time applyDate,
+		t.life_cycle lifeCycle,
+		ta.`status`,
+		ta.result,
+		t.entry_date regularDate,
+		tc.scheduled_date_time scheduledDateTime
+		FROM
+		teacher t
+		LEFT JOIN `user` u ON t.id = u.id
+		LEFT JOIN teacher_application ta ON t.id = ta.teacher_id
+		LEFT JOIN teacher_first_class tc ON t.id = tc.teacher_id
+		WHERE
+		t.referee LIKE CONCAT(#{param.teacherId},',%')
+		AND (ta.current = 1 or ta.current is null)
+		AND t.life_cycle in('SIGNUP','BASIC_INFO','INTERVIEW', 'TRAINING','PRACTICUM','CONTRACT_INFO','REGULAR')
+		AND (ta.result != 'FAIL' or ta.result is null)
+		AND tc.scheduled_date_time is null
+		<if test="param.lifeCycle != null"> AND t.life_cycle = #{param.lifeCycle} </if>
+		<if test="param.status != null"> AND ta.`status` = #{param.status} </if>
+		<if test="param.result != null"> AND ta.result = #{param.result} </if>
+		ORDER BY
+		u.register_date_time DESC
+		<if test="param.startRows != null  and param.pageSize != null">
+			LIMIT #{param.startRows},#{param.pageSize}
+		</if>
+	</select>
+
+	<!-- countReferralProcessingTeachers-->
+	<select id="countReferralProcessingTeachers" resultType="int">
+		SELECT
+		   count(1) counts
+		FROM
+		teacher t
+		LEFT JOIN `user` u ON t.id = u.id
+		LEFT JOIN teacher_application ta ON t.id = ta.teacher_id
+		LEFT JOIN teacher_first_class tc ON t.id = tc.teacher_id
+		WHERE
+		t.referee LIKE CONCAT(#{param.teacherId},',%')
+		AND (ta.current = 1 or ta.current is null)
+		AND t.life_cycle in('SIGNUP','BASIC_INFO','INTERVIEW', 'TRAINING','PRACTICUM','CONTRACT_INFO','REGULAR')
+		AND (ta.result != 'FAIL' or ta.result is null)
+		AND tc.scheduled_date_time is null
+		<if test="param.lifeCycle != null"> AND t.life_cycle = #{param.lifeCycle} </if>
+		<if test="param.status != null"> AND ta.`status` = #{param.status} </if>
+		<if test="param.result != null"> AND ta.result = #{param.result} </if>
+	</select>
+
+	<!-- 失败列表和失败笔数-->
+	<!--  listReferralFailedTeachers-->
+	<select id="listReferralFailedTeachers" resultType="com.vipkid.rest.dto.ReferralTeacherDto">
+		SELECT
+		u.id,
+		t.real_name name,
+		t.email,
+		u.register_date_time applyDate,
+		t.life_cycle lifeCycle,
+		ta.`status`,
+		ta.result,
+		t.entry_date regularDate,
+		tc.scheduled_date_time scheduledDateTime
+		FROM
+		teacher t
+		LEFT JOIN `user` u ON t.id = u.id
+		LEFT JOIN teacher_application ta ON t.id = ta.teacher_id
+		LEFT JOIN teacher_first_class tc ON t.id = tc.teacher_id
+		WHERE
+		t.referee LIKE CONCAT(#{param.teacherId},',%')
+		AND (ta.current = 1 or ta.current is null)
+		AND ((t.life_cycle in('SIGNUP','BASIC_INFO','INTERVIEW', 'TRAINING','PRACTICUM','CONTRACT_INFO','REGULAR') AND ta.result = 'FAIL') or (t.life_cycle in ('FAIL', 'QUIT') AND tc.scheduled_date_time is null))
+		<if test="param.lifeCycle != null"> AND t.life_cycle = #{param.lifeCycle} </if>
+		<if test="param.status != null"> AND ta.`status` = #{param.status} </if>
+		<if test="param.result != null"> AND ta.result = #{param.result} </if>
+		ORDER BY
+		u.register_date_time DESC
+		<if test="param.startRows != null  and param.pageSize != null">
+			LIMIT #{param.startRows},#{param.pageSize}
+		</if>
+	</select>
+
+	<!-- countReferralFailedTeachers-->
+	<select id="countReferralFailedTeachers" resultType="int">
+		SELECT
+			count(1) counts
+		FROM
+		teacher t
+		LEFT JOIN `user` u ON t.id = u.id
+		LEFT JOIN teacher_application ta ON t.id = ta.teacher_id
+		LEFT JOIN teacher_first_class tc ON t.id = tc.teacher_id
+		WHERE
+		t.referee LIKE CONCAT(#{param.teacherId},',%')
+		AND (ta.current = 1 or ta.current is null)
+		AND ((t.life_cycle in('SIGNUP','BASIC_INFO','INTERVIEW', 'TRAINING','PRACTICUM','CONTRACT_INFO','REGULAR') AND ta.result = 'FAIL') or (t.life_cycle in ('FAIL', 'QUIT') AND tc.scheduled_date_time is null))
+		<if test="param.lifeCycle != null"> AND t.life_cycle = #{param.lifeCycle} </if>
+		<if test="param.status != null"> AND ta.`status` = #{param.status} </if>
+		<if test="param.result != null"> AND ta.result = #{param.result} </if>
+	</select>
+
+	<!-- 查询推荐老师详情-->
+	<select id="getReferralTeacher" resultType="com.vipkid.rest.dto.ReferralTeacherDto">
+		SELECT
+		u.id,
+		t.real_name name,
+		t.email,
+		u.register_date_time applyDate,
+		t.life_cycle lifeCycle,
+		ta.`status`,
+		ta.result,
+		t.entry_date regularDate,
+		tc.scheduled_date_time scheduledDateTime
+		FROM
+		teacher t
+		LEFT JOIN `user` u ON t.id = u.id
+		LEFT JOIN teacher_application ta ON t.id = ta.teacher_id
+		LEFT JOIN teacher_first_class tc ON t.id = tc.teacher_id
+		WHERE
+			t.id=#{param.teacherId}
+		AND (ta.current = 1 or ta.current is null)
+		LIMIT 1
+	</select>
+
 </mapper>
