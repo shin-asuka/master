@@ -203,11 +203,11 @@ public class MockClassService {
             updatePeResults(peDoAuditInputDto.getApplicationId(), peDoAuditInputDto.getOptionList());
         }
 
-        teacherPeCommentsDao.updateTeacherPeComments(teacherPeComments);
         logger.info("Pe doAudit teacherPeComments: {}", JsonUtils.toJSONString(teacherPeComments));
 
         if (StringUtils.equals(peDoAuditInputDto.getStatus(), MockClassEnum.SAVE.name())) {
             // do save
+            teacherPeCommentsDao.updateTeacherPeComments(teacherPeComments);
             logger.info("Pe doAudit save succeed, applicationId: {}, teacherId: {}",
                             peDoAuditInputDto.getApplicationId(), monterTeacher.getId());
 
@@ -277,7 +277,12 @@ public class MockClassService {
 
             // TBD
             if (StringUtils.equals(Result.TBD.name(), result)) {
-                return doTBD(teacherApplication, monterTeacher, onlineClass);
+                String msg = doTBD(teacherApplication, monterTeacher, onlineClass);
+                if (HttpStatus.OK.getReasonPhrase().equals(msg)) {
+                    // update pe comments
+                    teacherPeCommentsDao.updateTeacherPeComments(teacherPeComments);
+                }
+                return msg;
             }
 
             // audit
@@ -299,6 +304,9 @@ public class MockClassService {
 
                 teacherApplicationDao.update(teacherApplication);
                 logger.info("Pe doAudit mockClass, teacherApplication: {}", JsonUtils.toJSONString(teacherApplication));
+
+                // update pe comments
+                teacherPeCommentsDao.updateTeacherPeComments(teacherPeComments);
 
                 if (StringUtils.equals(peDoAuditInputDto.getStatus(), MockClassEnum.SUBMIT.name())) {
                     // 合并 tags
