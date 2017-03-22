@@ -72,10 +72,6 @@ public class StudentCommentController extends RestfulController{
                 return ApiResponseUtils.buildErrorResp(1001,"没有获取到评价信息");
             };
             StudentCommentVo studentCommentVo = studentCommentVos.get(0);
-            OnlineClass onlineClass = onlineClassService.getOnlineClassById(studentCommentVo.getClass_id());
-            Timestamp scheduleDateTime = onlineClass.getScheduledDateTime();
-            studentCommentVo.setLessonSn(onlineClass.getSerialNumber());
-            studentCommentVo.setScheduleDateTime(DateFormatUtils.format(scheduleDateTime, "MMM dd hh:mma", Locale.ENGLISH));
             Map<String,Object> ret = Maps.newHashMap();
             ret.put("data",studentCommentVo);
             long millis =stopwatch.stop().elapsed(TimeUnit.MILLISECONDS);
