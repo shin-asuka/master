@@ -131,6 +131,9 @@ public class ClassroomService {
                             // mock class 1.0
                             resultDto.setVersion(MOCK_CLASS_V1);
                         }
+                    } else if(StringUtils.isNotBlank(application.getResult())){
+                        // mock class 1.0
+                        resultDto.setVersion(MOCK_CLASS_V1);
                     }
                 }
             }
