@@ -64,6 +64,7 @@ public class BackgroundCommonService {
             if (null == backgroundScreening) {
                 result.put("needBackgroundCheck", true);
                 result.put("phase", BackgroundPhase.START);
+                result.put("result","");
                 return result;
             } else {
                 boolean in5Days = false;
@@ -80,6 +81,7 @@ public class BackgroundCommonService {
                 if (current.getTime().after(backgroundScreening.getUpdateTime())) {
                     result.put("needBackgroundCheck", true);
                     result.put("phase", BackgroundPhase.START);
+                    result.put("result","");
                 } else {
                     String backgroundResult = backgroundScreening.getResult();
                     String disputeStatus = backgroundScreening.getDisputeStatus();
@@ -127,7 +129,8 @@ public class BackgroundCommonService {
                                 break;
                         }
                     }else{
-                        result.put("result",BackgroundResult.NA);
+                        result.put("needBackgroundCheck", true);
+                        result.put("result","");
                         result.put("phase",BackgroundPhase.START);
                     }
                 }
@@ -159,7 +162,7 @@ public class BackgroundCommonService {
             if (null == canadaBackgroundScreening) {
                 result.put("needBackgroundCheck", true);
                 result.put("phase", BackgroundPhase.START);
-                result.put("result",BackgroundResult.NA);
+                result.put("result","");
                 return result;
             }
             current.add(Calendar.YEAR, -2);
@@ -167,20 +170,20 @@ public class BackgroundCommonService {
             if (current.getTime().after(backgroundScreening.getUpdateTime())) {
                 result.put("needBackgroundCheck", true);
                 result.put("phase", BackgroundPhase.START);
-                result.put("result",BackgroundResult.NA);
+                result.put("result","");
             } else { //不超过两年显示result
-                if (StringUtils.equalsIgnoreCase(canadaBackgroundScreening.getResult(),"PASS")){
+                if (StringUtils.equalsIgnoreCase(canadaBackgroundScreening.getResult(),"CLEAR")){
                     result.put("needBackgroundCheck",false);
                     result.put("result",BackgroundResult.CLEAR);
-                    result.put("phase",BackgroundPhase.CLEAR.getVal());
-                }else if (StringUtils.equalsIgnoreCase(canadaBackgroundScreening.getResult(),"FAIL")){
+                    result.put("phase",BackgroundPhase.CLEAR);
+                }else if (StringUtils.equalsIgnoreCase(canadaBackgroundScreening.getResult(),"ALERT")){
                     result.put("needBackgroundCheck",true);
                     result.put("result",BackgroundResult.ALERT);
-                    result.put("phase",BackgroundPhase.FAIL.getVal());
+                    result.put("phase",BackgroundPhase.FAIL);
                 }else {
                     result.put("needBackgroundCheck",true);
                     result.put("result",BackgroundResult.NA);
-                    result.put("phase",BackgroundPhase.PENDING.getVal());
+                    result.put("phase",BackgroundPhase.PENDING);
                 }
             }
             logger.info("获取加拿大老师: {} 背调状态信息 {}",teacher.getId(),result);
