@@ -82,7 +82,7 @@ public class PassportController extends AbstractController {
 			String[] ips = whiteIp.split(",");
 			ArrayList<String> ipList = Lists.newArrayList();
 			CollectionUtils.addAll(ipList, ips);
-			if (!ipList.contains(IpUtils.getRemoteIP())) {
+			if (!ipList.contains(IpUtils.getRemoteIP().split(",")[0])) {
 				logger.error(" User ip :{} is  Illegal", IpUtils.getRemoteIP());
 				model.addAttribute("info", ApplicationConstant.AjaxCode.USER_ERROR);
 				return jsonView(response, model.asMap());
