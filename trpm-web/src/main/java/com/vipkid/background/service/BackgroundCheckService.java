@@ -30,10 +30,13 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
+import static com.vipkid.trpm.util.DateUtils.FMT_YMD;
 
 @Service("backgroundCheckService")
 public class BackgroundCheckService {
@@ -256,7 +259,8 @@ public class BackgroundCheckService {
         teacher.setMaidenName(input.getMaidenName());
         teacher.setMiddleName(input.getMiddleName());
         if(StringUtils.isNotBlank(input.getBirthDay())){
-            teacher.setBirthday(DateUtils.parseDate(input.getBirthDay(), DateUtils.DEFAULT_FORMAT_PATTERN));
+            LocalDate localDate = LocalDate.parse(input.getBirthDay(), FMT_YMD);
+            teacher.setBirthday(java.sql.Date.valueOf(localDate));
         }
         int row = teacherDao.update(teacher);
         if(row != 1){

@@ -108,7 +108,7 @@ public class BackgroundCheckController extends RestfulController {
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
             return ApiResponseUtils.buildErrorResp(TeacherPortalCodeEnum.SYS_FAIL.getCode(), "Failed to save background check information.");
         } catch (Exception e) {
-            logger.warn("save background check info for US occur exception, teacherId=" + teacherId, e);
+            logger.error("save background check info for US occur exception, teacherId=" + teacherId, e);
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
             return ApiResponseUtils.buildErrorResp(TeacherPortalCodeEnum.SYS_FAIL.getCode(), "Failed to save background check information.");
         }
@@ -151,11 +151,11 @@ public class BackgroundCheckController extends RestfulController {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
             return ApiResponseUtils.buildErrorResp(TeacherPortalCodeEnum.SYS_PARAM_ERROR.getCode(), e.getMessage());
         }catch (ServiceException e) {
-            logger.warn("upload background file for US occur ServiceException, teacherId="+teacherId, e);
+            logger.error("upload background file for US occur ServiceException, teacherId="+teacherId, e);
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
             return ApiResponseUtils.buildErrorResp(TeacherPortalCodeEnum.SYS_FAIL.getCode(), "failed to upload file");
         } catch (Exception e) {
-            logger.warn("upload background file for US occur exception, teacherId="+teacherId, e);
+            logger.error("upload background file for US occur exception, teacherId="+teacherId, e);
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
             return ApiResponseUtils.buildErrorResp(TeacherPortalCodeEnum.SYS_FAIL.getCode(), "failed to upload file");
         }
@@ -189,11 +189,11 @@ public class BackgroundCheckController extends RestfulController {
             result.put("id2Url", id2Url);
             logger.info("save background check file for CA success, teacherId=" + teacherId );
         } catch (IllegalArgumentException e) {
-            logger.warn("save background check file for CA occur IllegalArgumentException, teacherId=" + teacherId, e);
+            logger.error("save background check file for CA occur IllegalArgumentException, teacherId=" + teacherId, e);
             response.setStatus(HttpStatus.BAD_REQUEST.value());
             return ApiResponseUtils.buildErrorResp(TeacherPortalCodeEnum.SYS_PARAM_ERROR.getCode(), e.getMessage());
         } catch (Exception e) {
-            logger.warn("save background check file for CA  occur exception, teacherId=" + teacherId, e);
+            logger.error("save background check file for CA  occur exception, teacherId=" + teacherId, e);
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
             return ApiResponseUtils.buildErrorResp(TeacherPortalCodeEnum.SYS_FAIL.getCode(), TeacherPortalCodeEnum.SYS_FAIL.getMsg());
         }
@@ -217,7 +217,7 @@ public class BackgroundCheckController extends RestfulController {
             info = checkService.getInfoForUs(teacherId);
             info.setGender(user.getGender());
         }catch (Exception e) {
-            logger.warn("get background check info occur exception, teacherId=" + teacherId, e);
+            logger.error("get background check info occur exception, teacherId=" + teacherId, e);
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
             return ApiResponseUtils.buildErrorResp(TeacherPortalCodeEnum.SYS_FAIL.getCode(), TeacherPortalCodeEnum.SYS_FAIL.getMsg());
         }
@@ -254,7 +254,7 @@ public class BackgroundCheckController extends RestfulController {
                 }
             }
         }catch (Exception e) {
-            logger.warn("get background check info occur exception, teacherId=" + teacherId, e);
+            logger.error("get background check info occur exception, teacherId=" + teacherId, e);
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
             return ApiResponseUtils.buildErrorResp(TeacherPortalCodeEnum.SYS_FAIL.getCode(), TeacherPortalCodeEnum.SYS_FAIL.getMsg());
         }
