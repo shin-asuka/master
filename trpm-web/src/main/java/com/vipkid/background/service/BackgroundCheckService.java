@@ -7,6 +7,8 @@ import com.vipkid.background.dto.input.BackgroundCheckInputDto;
 import com.vipkid.background.dto.output.BaseOutputDto;
 import com.vipkid.background.enums.TeacherPortalCodeEnum;
 import com.vipkid.background.vo.BackgroundCheckVo;
+import com.vipkid.dataSource.annotation.Master;
+import com.vipkid.dataSource.annotation.Slave;
 import com.vipkid.enums.TeacherAddressEnum;
 import com.vipkid.enums.TeacherApplicationEnum;
 import com.vipkid.file.utils.StringUtils;
@@ -62,6 +64,7 @@ public class BackgroundCheckService {
     @Autowired
     private SterlingService sterlingService;
 
+    @Master
     @Transactional(readOnly = false, propagation = Propagation.REQUIRES_NEW, rollbackFor = Exception.class)
     public BaseOutputDto saveBackgroundCheckInfo(BackgroundCheckInputDto input, String operateType){
         //update teacher
@@ -112,6 +115,7 @@ public class BackgroundCheckService {
 
     }
 
+    @Slave
     public BackgroundCheckVo getInfoForUs(Long teacherId){
         Teacher teacher = teacherDao.findById(teacherId);
         if(null == teacher){
@@ -173,6 +177,7 @@ public class BackgroundCheckService {
         return checkInfo;
     }
 
+    @Slave
     public List<TeacherContractFile> getInfoForCa(Long teacherId){
         String types = TeacherApplicationEnum.ContractFileType.CANADA_BACKGROUND_CHECK_CPIC_FORM.val()
                 +","+TeacherApplicationEnum.ContractFileType.CANADA_BACKGROUND_CHECK_ID2.val();
