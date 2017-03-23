@@ -286,7 +286,7 @@ public class BookingsController {
 
             if (onlineClassId == null || !StringUtils.isNumeric(onlineClassId + "")) {
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
-                logger.error("This online class ：{} does not exist.", onlineClassId);
+                logger.warn("This online class ：{} does not exist.", onlineClassId);
                 return ApiResponseUtils.buildErrorResp(HttpStatus.BAD_REQUEST.value(), "This online class  does not exist.", onlineClassId);
             }
 
@@ -312,7 +312,7 @@ public class BookingsController {
             Teacher teacher = (Teacher) request.getAttribute(TEACHER);
 
             if (0 == teacher.getId()) {
-                logger.error("This teacher ：{} have no jurisdiction .", teacher.getId());
+                logger.warn("This teacher ：{} have no jurisdiction .", teacher.getId());
                 response.setStatus(HttpStatus.FORBIDDEN.value());
                 return ApiResponseUtils.buildErrorResp(HttpStatus.BAD_REQUEST.value(), "The teacher have no jurisdiction.", teacher.getId());
             }
@@ -349,14 +349,14 @@ public class BookingsController {
         try {
             if (onlineClassId == null || !StringUtils.isNumeric(onlineClassId + "")) {
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
-                logger.error("This online class ：{} does not exist.", onlineClassId);
+                logger.warn("This online class ：{} does not exist.", onlineClassId);
                 return ApiResponseUtils.buildErrorResp(HttpStatus.BAD_REQUEST.value(), "This online class  does not exist.", onlineClassId);
             }
             Preconditions.checkArgument(request.getAttribute(TEACHER) != null);
             Teacher teacher = (Teacher) request.getAttribute(TEACHER);
 
             if (0 == teacher.getId()) {
-                logger.error("This teacher ：{} have no jurisdiction .", teacher.getId());
+                logger.warn("This teacher ：{} have no jurisdiction .", teacher.getId());
                 response.setStatus(HttpStatus.FORBIDDEN.value());
                 return ApiResponseUtils.buildErrorResp(HttpStatus.BAD_REQUEST.value(), "The teacher have no jurisdiction.", teacher.getId());
             }
@@ -364,7 +364,7 @@ public class BookingsController {
             String finishType = bookingsService.getFinishType(Long.valueOf(onlineClassId + ""), teacher.getId());
             if (StringUtils.isBlank(finishType)) {
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
-                logger.error("This online class ：{} cannot cancel.", onlineClassId);
+                logger.info("This online class ：{} cannot cancel.", onlineClassId);
                 return ApiResponseUtils.buildErrorResp(HttpStatus.BAD_REQUEST.value(), "This online class  cannot cancel.", onlineClassId);
             }
             dataMap.put("finishType", finishType);
