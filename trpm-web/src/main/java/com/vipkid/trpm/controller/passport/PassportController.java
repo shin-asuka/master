@@ -45,7 +45,7 @@ import java.util.Map;
 public class PassportController extends AbstractController {
 
 	private static Logger logger = LoggerFactory.getLogger(PassportController.class);
-	public static final String SIGN_WHITE_IP = PropertyConfigurer.stringValue("signIn.action.ip");
+	public static final String SIGN_WHITE_IP = PropertyConfigurer.stringValue("monitor.ip.whiteList");
 	@Resource
     SHA256PasswordEncoder sha256Encoder;
 
@@ -80,13 +80,13 @@ public class PassportController extends AbstractController {
 			@RequestParam("remember") boolean remember) {
 		// 对用户名进行解密
 		String ipStr = SIGN_WHITE_IP;
-		List<String> ipList = null;
+		List<String> ipList = Lists.newArrayList();
 		if(StringUtils.isNotBlank(ipStr)) {
 			ipList = Splitter.on(",").trimResults().splitToList(ipStr);
 		}
 		String ip =IpUtils.getRemoteIP().split(",")[0];
 		if (!ipList.contains(ip)){
-			logger.error(" User ip :{} is  Illegal",ip);
+			logger.error(" User ip :{} is  illegal",ip);
 			model.addAttribute("info", ApplicationConstant.AjaxCode.USER_ERROR);
 			return jsonView(response, model.asMap());
 		}
