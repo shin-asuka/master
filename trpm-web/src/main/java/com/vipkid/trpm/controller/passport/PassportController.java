@@ -1,5 +1,6 @@
 package com.vipkid.trpm.controller.passport;
 
+import com.google.api.client.util.Lists;
 import com.vipkid.enums.TeacherEnum;
 import com.vipkid.enums.UserEnum;
 import com.vipkid.recruitment.utils.ReturnMapUtils;
@@ -16,6 +17,7 @@ import com.vipkid.trpm.service.passport.RemberService;
 import com.vipkid.trpm.util.AES;
 import com.vipkid.trpm.util.CookieUtils;
 import com.vipkid.trpm.util.IpUtils;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.community.config.PropertyConfigurer;
 import org.slf4j.Logger;
@@ -32,6 +34,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Map;
 
@@ -40,7 +43,7 @@ import java.util.Map;
 public class PassportController extends AbstractController {
 
 	private static Logger logger = LoggerFactory.getLogger(PassportController.class);
-
+	public static final String SIGN_WHITE_IP = PropertyConfigurer.stringValue("sign.in.Action.ip");
 	@Resource
     SHA256PasswordEncoder sha256Encoder;
 
@@ -74,6 +77,21 @@ public class PassportController extends AbstractController {
 			@RequestParam("email") String strEmail, @RequestParam("passwd") String strPwd,
 			@RequestParam("remember") boolean remember) {
 		// 对用户名进行解密
+		String whiteIp = SIGN_WHITE_IP;
+		if(StringUtils.isNotBlank(whiteIp)) {
+			String[] ips = whiteIp.split(",");
+			ArrayList<String> ipList = Lists.newArrayList();
+			CollectionUtils.addAll(ipList, ips);
+			if (!ipList.contains(IpUtils.getRemoteIP())) {
+				logger.error(" User ip :{} is  Illegal", IpUtils.getRemoteIP());
+				model.addAttribute("info", ApplicationConstant.AjaxCode.USER_ERROR);
+				return jsonView(response, model.asMap());
+			}
+		}else{
+			logger.error(" whiteIp : {} is Null ",whiteIp);
+			model.addAttribute("info", ApplicationConstant.AjaxCode.USER_ERROR);
+			return jsonView(response, model.asMap());
+		}
 		String _strEmail = new String(Base64.getDecoder().decode(strEmail));
 		logger.info(" 请求参数 email ： " + _strEmail + ";password=" + strPwd + ",IP:" + IpUtils.getRemoteIP());
 		User user = passportService.findUserByUsername(_strEmail);
