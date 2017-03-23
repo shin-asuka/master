@@ -2,7 +2,7 @@ package com.vipkid.task.job;
 
 import com.google.common.collect.Lists;
 import com.vipkid.background.api.sterling.service.SterlingService;
-import com.vipkid.trpm.dao.BackgroundScreeningV2Dao;
+import com.vipkid.trpm.dao.BackgroundScreeningDao;
 import com.vipkid.vschedule.client.common.Vschedule;
 import com.vipkid.vschedule.client.schedule.JobContext;
 import org.apache.commons.collections.CollectionUtils;
@@ -28,11 +28,13 @@ public class BackgroundCheckJob {
     private SterlingService sterlingService;
 
     @Autowired
-    private BackgroundScreeningV2Dao backgroundScreeningV2Dao;
+    private BackgroundScreeningDao backgroundScreeningDao;
 
 
     /**
      * 调查结果状态的查询补全机制
+     *
+     *
      * @param jobContext
      */
     @Vschedule
@@ -40,7 +42,7 @@ public class BackgroundCheckJob {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         logger.info("开始获取教师背景调查，对正在进行的进行调查结果状态更新=======================================");
-        List<Long> bgScreeningIds = backgroundScreeningV2Dao.findIdByResultAndDisputeStatus("n/a",null);
+        List<Long> bgScreeningIds = backgroundScreeningDao.findIdByResultAndDisputeStatus("n/a",null);
         if(CollectionUtils.isNotEmpty(bgScreeningIds)){
             for(Long bgScreeningId:bgScreeningIds){
                 sterlingService.repairDateScreening(bgScreeningId);
@@ -48,7 +50,7 @@ public class BackgroundCheckJob {
         }
 
 
-        List<Long> alertBgScreeningIds = backgroundScreeningV2Dao.findIdByResultAndDisputeStatus("alert","active");
+        List<Long> alertBgScreeningIds = backgroundScreeningDao.findIdByResultAndDisputeStatus("alert","active");
         if(CollectionUtils.isNotEmpty(alertBgScreeningIds)){
             for(Long bgScreeningId:alertBgScreeningIds){
                 sterlingService.repairDateScreening(bgScreeningId);
@@ -64,7 +66,7 @@ public class BackgroundCheckJob {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         logger.info("开始检查教师背景调查中补全候选人信息=======================================");
-        List<Long> teacherIds = backgroundScreeningV2Dao.findTeacherIdBycandidateIdNone();
+        List<Long> teacherIds = backgroundScreeningDao.findTeacherIdBycandidateIdNone();
         if(CollectionUtils.isNotEmpty(teacherIds)){
             for(Long teacherId : teacherIds){
                 sterlingService.repairDataCandidate(teacherId);

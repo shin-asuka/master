@@ -15,7 +15,7 @@ import com.vipkid.enums.TeacherEnum.LifeCycle;
 import com.vipkid.recruitment.dao.TeacherContractFileDao;
 import com.vipkid.recruitment.entity.TeacherContractFile;
 import com.vipkid.trpm.dao.BackgroundAdverseDao;
-import com.vipkid.trpm.dao.BackgroundScreeningV2Dao;
+import com.vipkid.trpm.dao.BackgroundScreeningDao;
 import com.vipkid.trpm.dao.CanadaBackgroundScreeningDao;
 import com.vipkid.trpm.entity.BackgroundScreening;
 import com.vipkid.trpm.entity.CanadaBackgroundScreening;
@@ -37,7 +37,7 @@ import java.util.Map;
 public class BackgroundCommonService {
 
     @Autowired
-    private BackgroundScreeningV2Dao backgroundScreeningV2Dao;
+    private BackgroundScreeningDao backgroundScreeningDao;
 
     @Autowired
     private TeacherContractFileDao teacherContractFileDao;
@@ -54,7 +54,7 @@ public class BackgroundCommonService {
     public BackgroundStatusDto getUsaBackgroundStatus(Teacher teacher){
         BackgroundStatusDto backgroundStatusDto = new BackgroundStatusDto();
         Calendar current = Calendar.getInstance();
-        BackgroundScreening backgroundScreening = backgroundScreeningV2Dao.findByTeacherIdTopOne(teacher.getId());
+        BackgroundScreening backgroundScreening = backgroundScreeningDao.findByTeacherIdTopOne(teacher.getId());
         Date  contractEndDate = teacher.getContractEndDate();
         Calendar  remindTime = Calendar.getInstance();
         remindTime.setTime(contractEndDate);

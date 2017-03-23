@@ -17,7 +17,7 @@ import redis.clients.jedis.JedisPool;
  * com.vipkid.cache.utils.RedisClient
  * com.vipkid.trpm.proxy.redis.RedisClient
  * 看到这三个就蒙逼了；也不敢改动；所以就搞了一个工具类，就是为了方便使用，这里提供了最为简单的使用方法<br>
- * 不需要外部对需要cache的对象转String啊，转json啊，转bety[] 呀！
+ * 不需要外部对需要cache的对象转String啊，转json啊，转byte[] 呀！
  * 但是目前没有神马分布式锁之类的高级功能，
  * 不过以后会慢慢的完善
  */

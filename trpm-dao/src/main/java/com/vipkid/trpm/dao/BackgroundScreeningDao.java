@@ -1,42 +1,29 @@
 package com.vipkid.trpm.dao;
 
 import com.vipkid.trpm.entity.BackgroundScreening;
-import org.community.dao.support.MapperDaoTemplate;
-import org.mybatis.spring.SqlSessionTemplate;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
- * Created by luning on 2017/3/11.
+ * Created by liyang on 2017/3/15.
+ *
  */
-@Repository
-public class BackgroundScreeningDao extends MapperDaoTemplate<BackgroundScreening> {
-    @Autowired
-    public BackgroundScreeningDao(SqlSessionTemplate sqlSessionTemplate) {
-        super(sqlSessionTemplate, BackgroundScreening.class);
-    }
+public interface BackgroundScreeningDao {
 
-    public BackgroundScreening findByTeacherId(Long teacherId) {
-        if (teacherId == 0) {
-            return null;
-        }
-        BackgroundScreening backgroundScreening = new BackgroundScreening();
-        backgroundScreening.setTeacherId(teacherId);
+    int insert(BackgroundScreening backgroundScreening);
 
-        return selectOne(backgroundScreening,"findByTeacherId");
-    }
+    int update(BackgroundScreening backgroundScreening);
 
-    public Long insert(BackgroundScreening backgroundScreening) {
-        return null;
-    }
+    BackgroundScreening findByTeacherIdTopOne(Long teacherId);
 
+    BackgroundScreening findById(Long id);
 
+    List<Long> findIdByResultAndDisputeStatus(@Param("result") String result, @Param("disputeStatus") String disputeStatus);
 
-    public int update(BackgroundScreening backgroundScreening){
-        return 0;
-    }
+    List<Long> findTeacherIdBycandidateIdNone();
 
-    public BackgroundScreening findByTeacherIdTopOne(Long teacherId) {
-        return null;
-    }
+    int dynamicInsert(BackgroundScreening backgroundScreening);
+
+    BackgroundScreening findByScreeningIdAndCandidateId(@Param("screeningId") String screeningId, @Param("candidateId") String candidateId);
 }

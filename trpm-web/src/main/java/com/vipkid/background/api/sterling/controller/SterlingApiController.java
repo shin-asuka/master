@@ -1,12 +1,13 @@
 package com.vipkid.background.api.sterling.controller;
 
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.vipkid.background.api.sterling.dto.*;
 import com.vipkid.background.api.sterling.service.SterlingService;
 import com.vipkid.http.utils.JacksonUtils;
 import com.vipkid.rest.utils.ApiResponseUtils;
-import com.vipkid.trpm.dao.BackgroundScreeningV2Dao;
+import com.vipkid.trpm.dao.BackgroundScreeningDao;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.time.StopWatch;
 import org.apache.commons.lang3.StringUtils;
@@ -36,7 +37,7 @@ public class SterlingApiController {
 
 
     @Resource
-    private BackgroundScreeningV2Dao backgroundScreeningV2Dao;
+    private BackgroundScreeningDao backgroundScreeningDao;
 
 
     @RequestMapping("/background/sterling/saveCandidate")
@@ -105,7 +106,7 @@ public class SterlingApiController {
     }
 
 
-    @RequestMapping(value = "/background/sterling/repairDateScreening",method = RequestMethod.POST)
+    @RequestMapping(value = "/background/sterling/repairDateScreening",method = RequestMethod.GET)
     public Object repairDateScreening(Long screeningTableId){
         if(null == screeningTableId){
             return ApiResponseUtils.buildErrorResp("TP10000","参数为空");
@@ -136,7 +137,9 @@ public class SterlingApiController {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         logger.info("开始检查教师背景调查中补全候选人信息=======================================");
-        List<Long> teacherIds = backgroundScreeningV2Dao.findTeacherIdBycandidateIdNone();
+        List<Long> teacherIds = Lists.newArrayList();
+        teacherIds.add(3822133l);
+        //backgroundScreeningDao.findTeacherIdBycandidateIdNone();
         if(CollectionUtils.isNotEmpty(teacherIds)){
             for(Long teacherId : teacherIds){
                 sterlingService.repairDataCandidate(teacherId);

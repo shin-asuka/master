@@ -82,7 +82,7 @@ public class SterlingApiUtils {
             RedisCacheUtils.del(STERLING_ACCESS_TOKEN);
             SterlingAccessToken sterlingAccessToken = refreshAccessToken();
             if(StringUtils.isBlank(sterlingAccessToken.getAccess_token())){
-                logger.error("sterling  refresh access token worng");
+                logger.error("Sterling refresh access token error");
             }else{
                 sterlingCandidate = createCandidate(candidateInputDto,--retryTimes);
             }
@@ -114,7 +114,7 @@ public class SterlingApiUtils {
             return null;
         }
         if(StringUtils.isBlank(response.getContent())){
-            logger.info("Response.Content is null  url:{},header:{},params:{}",postUrl,JacksonUtils.toJSONString(headers),JacksonUtils.toJSONString(candidateInputDto));
+            logger.error("Response.Content is null  url:{},header:{},params:{}",postUrl,JacksonUtils.toJSONString(headers),JacksonUtils.toJSONString(candidateInputDto));
             return null;
         }
         SterlingCandidate sterlingCandidate = JacksonUtils.readJson(response.getContent(), new TypeReference<SterlingCandidate>() {});
@@ -161,7 +161,7 @@ public class SterlingApiUtils {
             return null;
         }
         if(StringUtils.isBlank(response.getContent())){
-            logger.info("Response.Content is null  url:{},header:{},params:{}",getUrl,JacksonUtils.toJSONString(headers),candidateId);
+            logger.error("Response.Content is null  url:{},header:{},params:{}",getUrl,JacksonUtils.toJSONString(headers),candidateId);
             return null;
         }
 
@@ -219,11 +219,11 @@ public class SterlingApiUtils {
         HttpClientUtils.Response response = HttpClientUtils.timeoutRetryGet(requestUrl,headers,MAX_RETRY);
 
         if(response == null){
-            logger.info("Response is null  url:{},header:{},params:{}",getUrl,JacksonUtils.toJSONString(headers),JacksonUtils.toJSONString(candidateFilterDto));
+            logger.error("Response is null  url:{},header:{},params:{}",getUrl,JacksonUtils.toJSONString(headers),JacksonUtils.toJSONString(candidateFilterDto));
             return Lists.newArrayList();
         }
         if(StringUtils.isBlank(response.getContent())){
-            logger.info("Response.Content is null  url:{},header:{},params:{}",getUrl,JacksonUtils.toJSONString(headers),JacksonUtils.toJSONString(candidateFilterDto));
+            logger.error("Response.Content is null  url:{},header:{},params:{}",getUrl,JacksonUtils.toJSONString(headers),JacksonUtils.toJSONString(candidateFilterDto));
             return Lists.newArrayList();
         }
 
@@ -249,11 +249,11 @@ public class SterlingApiUtils {
         HttpClientUtils.Response response = HttpClientUtils.timeoutRetryPost(postUrl,JacksonUtils.toJSONString(screeningInputDto),headers,MAX_RETRY);
 
         if(response == null){
-            logger.info("Response is null  url:{},header:{},params:{}",postUrl,JacksonUtils.toJSONString(headers),JacksonUtils.toJSONString(screeningInputDto));
+            logger.error("Response is null  url:{},header:{},params:{}",postUrl,JacksonUtils.toJSONString(headers),JacksonUtils.toJSONString(screeningInputDto));
             return null;
         }
         if(StringUtils.isBlank(response.getContent())){
-            logger.info("Response.Content is null  url:{},header:{},params:{}",postUrl,JacksonUtils.toJSONString(headers),JacksonUtils.toJSONString(screeningInputDto));
+            logger.error("Response.Content is null  url:{},header:{},params:{}",postUrl,JacksonUtils.toJSONString(headers),JacksonUtils.toJSONString(screeningInputDto));
             return null;
         }
 
@@ -281,11 +281,11 @@ public class SterlingApiUtils {
         headers.put(HTTP.CONTENT_TYPE,"application/json");
         HttpClientUtils.Response response = HttpClientUtils.timeoutRetryGet(getUrl,headers,MAX_RETRY);
         if(response == null){
-            logger.info("Response is null  url:{},header:{},params:{}",getUrl,JacksonUtils.toJSONString(headers),screeningId);
+            logger.error("Response is null  url:{},header:{},params:{}",getUrl,JacksonUtils.toJSONString(headers),screeningId);
             return null;
         }
         if(StringUtils.isBlank(response.getContent())){
-            logger.info("Response.Content is null  url:{},header:{},params:{}",getUrl,JacksonUtils.toJSONString(headers),screeningId);
+            logger.error("Response.Content is null  url:{},header:{},params:{}",getUrl,JacksonUtils.toJSONString(headers),screeningId);
             return null;
         }
 
@@ -313,11 +313,11 @@ public class SterlingApiUtils {
         headers.put(HTTP.CONTENT_TYPE,"application/json");
         HttpClientUtils.Response response = HttpClientUtils.timeoutRetryPost(postUrl,null,headers,MAX_RETRY);
         if(response == null){
-            logger.info("Response is null  url:{},header:{},params:{}",postUrl,JacksonUtils.toJSONString(headers),screeningId);
+            logger.error("Response is null  url:{},header:{},params:{}",postUrl,JacksonUtils.toJSONString(headers),screeningId);
             return null;
         }
         if(StringUtils.isBlank(response.getContent())){
-            logger.info("Response.Content is null  url:{},header:{},params:{}",postUrl,JacksonUtils.toJSONString(headers),screeningId);
+            logger.error("Response.Content is null  url:{},header:{},params:{}",postUrl,JacksonUtils.toJSONString(headers),screeningId);
             return null;
         }
 
@@ -353,7 +353,7 @@ public class SterlingApiUtils {
         }else if(StringUtils.isNotBlank(response.getContent())){
             SterlingScreening sterlingScreening = JacksonUtils.readJson(response.getContent(), new TypeReference<SterlingScreening>() {});
             if(CollectionUtils.isNotEmpty(sterlingScreening.getErrors())){
-                logger.warn(JacksonUtils.toJSONString(sterlingScreening.getErrors()));
+                logger.error("Sterling Pre Adverse Action screeningId:{},return:{}",screeningId,JacksonUtils.toJSONString(sterlingScreening.getErrors()));
             }
             return false;
         }else{

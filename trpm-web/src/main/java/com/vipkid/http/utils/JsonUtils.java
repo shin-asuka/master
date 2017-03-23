@@ -24,6 +24,7 @@ import com.google.common.collect.Lists;
  * @date 2016年4月9日 下午6:01:54
  *
  */
+@Deprecated
 public class JsonUtils {
 
     public static String toJSONString(Object object) {

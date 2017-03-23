@@ -284,6 +284,7 @@ public class HttpClientUtils {
             } catch (IOException e) {
                 ste =e;
             }
+            //TODO  i sleep time
         }
         logger.error(String.format("post [%s] timeout, retry %s times",requestBase.getURI(), retryTimes),  ste);
         return null;
@@ -302,7 +303,7 @@ public class HttpClientUtils {
 
             } catch(ConnectTimeoutException e){
                 ste = e;
-            }catch (SocketTimeoutException e) {
+            } catch (SocketTimeoutException e) {
                 ste = e;
             } catch (RuntimeException e){
                 ste =e;
