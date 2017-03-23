@@ -11,7 +11,6 @@ import com.vipkid.dataSource.annotation.Master;
 import com.vipkid.dataSource.annotation.Slave;
 import com.vipkid.enums.TeacherAddressEnum;
 import com.vipkid.enums.TeacherApplicationEnum;
-import com.vipkid.file.utils.StringUtils;
 import com.vipkid.recruitment.dao.TeacherContractFileDao;
 import com.vipkid.recruitment.entity.TeacherContractFile;
 import com.vipkid.rest.exception.ServiceException;
@@ -24,6 +23,7 @@ import com.vipkid.trpm.entity.TeacherAddress;
 import com.vipkid.trpm.entity.TeacherLicense;
 import com.vipkid.trpm.entity.TeacherLocation;
 import com.vipkid.trpm.util.DateUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -220,11 +220,14 @@ public class BackgroundCheckService {
                     TeacherLicense license = licenseDao.findByTeacherId(teacher.getId());
                     if(license != null){
                         candidateInputDto.setSsn(license.getSocialNo());
-                        CandidateInputDto.DriversLicense candidateLicense = new CandidateInputDto.DriversLicense();
-                        candidateLicense.setIssuingAgency(checkInput.getDriverLicenseAgency());
-                        candidateLicense.setLicenseNumber(checkInput.getDriverLicenseNumber());
-                        candidateLicense.setType(checkInput.getDriverLicenseType());
-                        candidateInputDto.setDriversLicense(candidateLicense);
+                        if(StringUtils.isNotBlank(license.getDriverLicense())){
+                            CandidateInputDto.DriversLicense candidateLicense = new CandidateInputDto.DriversLicense();
+                            candidateLicense.setIssuingAgency(license.getDriverLicenseIssuingAgency());
+                            candidateLicense.setLicenseNumber(license.getDriverLicense());
+                            candidateLicense.setType(license.getDriverLicenseType());
+                            candidateInputDto.setDriversLicense(candidateLicense);
+
+                        }
                     }
                     logger.info("submit background check information, begin invoke sterlingService.saveCandidate by syn, teacherId="+teacher.getId());
 
@@ -328,11 +331,14 @@ public class BackgroundCheckService {
     private void saveLicense(BackgroundCheckInputDto input){
         TeacherLicense license = new TeacherLicense();
         license.setTeacherId(input.getTeacherId());
-        license.setDriverLicense(input.getDriverLicenseNumber());
-        license.setDriverLicenseType(input.getDriverLicenseType());
-        license.setDriverLicenseIssuingAgency(input.getDriverLicenseAgency());
+        if(StringUtils.isNotBlank(input.getDriverLicenseNumber())) {
+            String licenseNumber = input.getDriverLicenseNumber().replaceAll(" ", "").trim();
+            license.setDriverLicense(licenseNumber);
+        }
+        license.setDriverLicenseType(StringUtils.isBlank(input.getDriverLicenseType()) ? null : input.getDriverLicenseType());
+        license.setDriverLicenseIssuingAgency(StringUtils.isBlank(input.getDriverLicenseAgency()) ? null : input.getDriverLicenseAgency());
         if(input.getSocialSecurityNumber().indexOf("*") == -1){
-            license.setSocialNo(input.getSocialSecurityNumber());
+            license.setSocialNo(input.getSocialSecurityNumber().replaceAll(" ", "").trim());
         }
         license.setUpdateId(input.getTeacherId());
 
