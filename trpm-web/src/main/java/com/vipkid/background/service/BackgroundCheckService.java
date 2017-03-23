@@ -202,7 +202,7 @@ public class BackgroundCheckService {
                 candidateInputDto.setGivenName(teacher.getFirstName());
                 candidateInputDto.setMiddleName(checkInput.getMiddleName());
                 candidateInputDto.setFamilyName(teacher.getLastName());
-                candidateInputDto.setPhone(teacher.getPhoneNationCode());
+                candidateInputDto.setPhone(teacher.getPhoneNationCode() + teacher.getMobile());
 
 
                 CandidateInputDto.Address address = new CandidateInputDto.Address();
