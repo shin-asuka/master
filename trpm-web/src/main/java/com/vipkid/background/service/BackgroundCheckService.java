@@ -203,7 +203,8 @@ public class BackgroundCheckService {
                 candidateInputDto.setMiddleName(checkInput.getMiddleName());
                 candidateInputDto.setFamilyName(teacher.getLastName());
                 candidateInputDto.setPhone(teacher.getPhoneNationCode());
-                candidateInputDto.setSsn(checkInput.getSocialSecurityNumber());
+
+
                 CandidateInputDto.Address address = new CandidateInputDto.Address();
                 address.setAddressLine(checkInput.getLatestStreet());
                 address.setCountryCode("US");
@@ -215,12 +216,16 @@ public class BackgroundCheckService {
                     address.setPostalCode(checkInput.getLatestZipCode());
                     candidateInputDto.setAddress(address);
 
-                    CandidateInputDto.DriversLicense license = new CandidateInputDto.DriversLicense();
-                    license.setIssuingAgency(checkInput.getDriverLicenseAgency());
-                    license.setLicenseNumber(checkInput.getDriverLicenseNumber());
-                    license.setType(checkInput.getDriverLicenseType());
-                    candidateInputDto.setDriversLicense(license);
 
+                    TeacherLicense license = licenseDao.findByTeacherId(teacher.getId());
+                    if(license != null){
+                        candidateInputDto.setSsn(license.getSocialNo());
+                        CandidateInputDto.DriversLicense candidateLicense = new CandidateInputDto.DriversLicense();
+                        candidateLicense.setIssuingAgency(checkInput.getDriverLicenseAgency());
+                        candidateLicense.setLicenseNumber(checkInput.getDriverLicenseNumber());
+                        candidateLicense.setType(checkInput.getDriverLicenseType());
+                        candidateInputDto.setDriversLicense(candidateLicense);
+                    }
                     logger.info("submit background check information, begin invoke sterlingService.saveCandidate by syn, teacherId="+teacher.getId());
 
                     output = sterlingService.saveCandidate(candidateInputDto);
