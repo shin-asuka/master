@@ -41,13 +41,13 @@ public class BackgroundCheckEnum {
         }
     }
     public  enum BackgroundPhase{
-        START("Start"),//Sterling还未开始背调
-        PENDING("Pending"),//Sterling开始背调等待背调的结果
-        PREADVERSE("Preadverse"),//第一次背调失败，等待老师dispute
-        DISPUTE("Dispute"),//正在进行dispute
-        DIDNOTDISPUTE("Didnotdispute"),//超过5天没有进行dispute
-        CLEAR("Clear"),//背调结果为Clear
-        FAIL("Fail");//背调的最终结果为失败，超过5天没有进行dispute也是为失败
+        START("START"),//Sterling还未开始背调
+        PENDING("PENDING"),//Sterling开始背调等待背调的结果
+        PREADVERSE("PREADVERSE"),//第一次背调失败，等待老师dispute
+        DISPUTE("DISPUTE"),//正在进行dispute
+        DIDNOTDISPUTE("DIDNOTDISPUTE"),//超过5天没有进行dispute
+        CLEAR("CLEAR"),//背调结果为Clear
+        FAIL("FAIL");//背调的最终结果为失败，超过5天没有进行dispute也是为失败
         private String value;
         BackgroundPhase(String value) {
             this.value = value;
