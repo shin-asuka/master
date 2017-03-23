@@ -22,13 +22,13 @@ public class BackgroundCheckEnum {
     }
 
     public enum BackgroundResult {
-        NA("n/a"), // 背调暂时没有结果
+        NA("N/A"), // 背调暂时没有结果
 
-        CLEAR("clear"), // 背调结果为 clear
+        CLEAR("CLEAR"), // 背调结果为 clear
 
-        ALERT("alert"),//背调结果为Alert即第一次背调失败
+        ALERT("ALERT"),//背调结果为Alert即第一次背调失败
 
-        FAIL("fail"); //背调结果为Fail
+        FAIL("FAIL"); //背调结果为Fail
 
         private String value;
 
@@ -58,17 +58,17 @@ public class BackgroundCheckEnum {
         }
     }
     public enum FileStatus{
-        SAVE("Save"),
-        SUBMIT("Submit");
+        SAVE("SAVE"),
+        SUBMIT("SUBMIT");
         private String value;
         FileStatus(String value){this.value = value;}
 
         public String getValue(){ return this.value;}
     }
     public enum FileResult{
-        PASS("Pass"),
-        FAIL("Fail"),
-        PENDING("Pending");
+        PASS("PASS"),
+        FAIL("FAIL"),
+        PENDING("PENDING");
         private String value;
         FileResult(String value){this.value = value;}
 
