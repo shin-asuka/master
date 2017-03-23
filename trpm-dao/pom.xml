@@ -151,7 +151,11 @@
 			<groupId>org.community</groupId>
 			<artifactId>thor-dao</artifactId>
 		</dependency>
-
+		
+		<dependency>
+			<groupId>com.vipkid.teacher.tools</groupId>
+			<artifactId>tools-dao</artifactId>
+		</dependency>
 	</dependencies>
 
 	<build>
