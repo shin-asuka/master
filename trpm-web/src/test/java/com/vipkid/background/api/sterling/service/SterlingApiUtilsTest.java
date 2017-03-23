@@ -6,9 +6,11 @@ import com.google.api.client.util.Lists;
 import com.google.api.client.util.Maps;
 import com.vipkid.background.api.sterling.dto.*;
 import com.vipkid.common.utils.ProtostuffUtils;
+
 import com.vipkid.file.utils.FileUtils;
 import com.vipkid.http.utils.HttpClientUtils;
 import com.vipkid.http.utils.JacksonUtils;
+import com.vipkid.trpm.util.DateUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -22,10 +24,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by liyang on 2017/3/12.
@@ -147,10 +146,10 @@ public class SterlingApiUtilsTest {
 
     @Test
     public void creatTestDate(){
-        String jsonTemplet ="{\"teacherId\":4969,\"email\":\"tp.test.%s@example.com\",\"givenName\":\"aa\",\"familyName\":\"aa\",\"confirmedNoMiddleName\":true,\"dob\":\"1998-07-18\",\"ssn\":\"123456%s\",\"phone\":\"+14041231234\",\"address\":{\"addressLine\":\"123MainStreet\",\"municipality\":\"Orlando\",\"regionCode\":\"US-FL\",\"postalCode\":\"12345\",\"countryCode\":\"US\"}}";
+        String jsonTemplet ="{\"teacherId\":4969,\"email\":\"tp.test.%s@example.com\",\"givenName\":\"aa%s\",\"familyName\":\"aa%s\",\"confirmedNoMiddleName\":true,\"dob\":\"1998-07-%s\",\"ssn\":\"123456%s\",\"phone\":\"+140412312%s\",\"address\":{\"addressLine\":\"123MainStreet\",\"municipality\":\"Orlando\",\"regionCode\":\"US-FL\",\"postalCode\":\"12345\",\"countryCode\":\"US\"}}";
 
         for(int i=116;i<200;i++){
-        String json =String.format(jsonTemplet,i,i);
+        String json =String.format(jsonTemplet,i,i,i,i,i,i);
         CandidateInputDto candidateInputDto = JacksonUtils.readJson(json, new TypeReference<CandidateInputDto>() {});
         SterlingCandidate sterlingCandidate =  SterlingApiUtils.createCandidate(candidateInputDto,SterlingApiUtils.MAX_RETRY);
             if(sterlingCandidate==null){
@@ -224,9 +223,14 @@ public class SterlingApiUtilsTest {
 
     @Test
     public void testDate(){
-        String json = "{\"teacherId\":101%s,\"email\":\"101%s@example.com\",\"givenName\":\"aa\",\"familyName\":\"aa\",\"middleName\":\"rr\",\"confirmedNoMiddleName\":false,\"dob\":\"1998-07-18\",\"ssn\":\"888888888\",\"phone\":\"+14041231234\",\"address\":{\"addressLine\":\"123MainStreet\",\"municipality\":\"Orlando\",\"regionCode\":\"US-FL\",\"postalCode\":\"12345\",\"countryCode\":\"US\"}}";
-        for(int i=12;i<99;i++){
-            String jsonDate = String.format(json,i,i);
+        String json = "{\"teacherId\":103%s,\"email\":\"103%s@example.com\",\"givenName\":\"a3%s\",\"familyName\":\"a3%s\",\"middleName\":\"r3%s\",\"confirmedNoMiddleName\":false,\"dob\":\"1998-07-%s\",\"ssn\":\"888888888\",\"phone\":\"+140412313%s\",\"address\":{\"addressLine\":\"123MainStreet\",\"municipality\":\"Orlando\",\"regionCode\":\"US-FL\",\"postalCode\":\"12345\",\"countryCode\":\"US\"}}";
+        for(int i=12;i<40;i++){
+            try {
+                Thread.sleep(100l);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            String jsonDate = String.format(json,i,i,i,i,i,i,i);
             Map<String,String> header = Maps.newHashMap();
             header.put("Content-Type","application/json");
 
@@ -235,7 +239,7 @@ public class SterlingApiUtilsTest {
             System.out.println(response);
             if(node.get("ret").asBoolean()){
                 Map<String,String> formdate =Maps.newHashMap();
-                formdate.put("teacherId",String.format("101%s",i));
+                formdate.put("teacherId",String.format("103%s",i));
                 formdate.put("documentUrl","https://teacher-data.vipkid.com.cn/teacher/tpinfo/3091416/a50e9831e5e04f9ebacab750c3c27dec/3091416-90852306271355571.jpg");
                 System.out.println(HttpClientUtils.post("http://localhost:8080/api/background/sterling/createScreening",formdate));
             }
@@ -243,13 +247,22 @@ public class SterlingApiUtilsTest {
     }
 
     @Test
-    public void testDate2(){
+    public void testData2(){
         for(int i=10;i<50;i++){
             Map<String,String> formdate =Maps.newHashMap();
             formdate.put("teacherId",String.format("100%s",i));
             formdate.put("documentUrl","https://teacher-data.vipkid.com.cn/teacher/tpinfo/3091416/a50e9831e5e04f9ebacab750c3c27dec/3091416-90852306271355571.jpg");
             HttpClientUtils.post("http://localhost:8080/api/background/sterling/createScreening",formdate);
         }
+    }
+
+
+    @Test
+    public void testDate1(){
+
+        SimpleDateFormat sdf = new SimpleDateFormat(" MMMM dd yyyy",
+                Locale.ENGLISH);
+        System.out.println(sdf.format(DateUtils.parseDate("1991-08-27",DateUtils.YYYY_MM_DD)));
     }
 }
 

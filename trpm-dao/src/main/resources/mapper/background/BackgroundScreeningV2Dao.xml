@@ -172,13 +172,21 @@
         WHERE
         s.id =#{id}
     </select>
-    <select id="findIdByResult" resultType="java.lang.Long" parameterType="java.lang.String">
+    <select id="findIdByResultAndDisputeStatus" resultType="java.lang.Long" parameterType="java.lang.String">
         SELECT
           s.id
         FROM
         bg_sterling_screening s
-        WHERE
-        s.result = #{result}
+
+        <trim prefix="WHERE" prefixOverrides="AND">
+            <if test="result != null">
+              AND s.result = #{result}
+            </if>
+            <if test="disputeStatus != null">
+              AND s.dispute_status = #{disputeStatus}
+            </if>
+        </trim>
+
     </select>
     <select id="findTeacherIdBycandidateIdNone" resultType="java.lang.Long" >
         SELECT
@@ -193,7 +201,14 @@
         <include refid="backgroundScreeningAllColumn"/>
         FROM
         bg_sterling_screening s
-        WHERE
-        s.screening_id = #{screeningId} AND s.candidate_id = #{candidateId}
+        <trim prefix="WHERE" prefixOverrides="AND">
+            <if test="screeningId != null">
+                AND s.screening_id = #{screeningId}
+            </if>
+            <if test="candidateId != null">
+                AND s.candidate_id = #{candidateId}
+            </if>
+        </trim>
+
     </select>
 </mapper>

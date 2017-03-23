@@ -18,7 +18,7 @@ public interface BackgroundScreeningV2Dao {
 
     BackgroundScreening findById(Long id);
 
-    List<Long> findIdByResult(String result);
+    List<Long> findIdByResultAndDisputeStatus(@Param("result") String result, @Param("disputeStatus") String disputeStatus);
 
     List<Long> findTeacherIdBycandidateIdNone();
 

@@ -31,27 +31,31 @@ public class BackgroundCheckJob {
     private BackgroundScreeningV2Dao backgroundScreeningV2Dao;
 
 
+    /**
+     * 调查结果状态的查询补全机制
+     * @param jobContext
+     */
     @Vschedule
     public void screeningResultCheckJob(JobContext jobContext){
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
-        logger.info("开始获取教师背景调查中调查结果状态更新=======================================");
-        List<Long> bgScreeningIds = backgroundScreeningV2Dao.findIdByResult("n/a");
+        logger.info("开始获取教师背景调查，对正在进行的进行调查结果状态更新=======================================");
+        List<Long> bgScreeningIds = backgroundScreeningV2Dao.findIdByResultAndDisputeStatus("n/a",null);
         if(CollectionUtils.isNotEmpty(bgScreeningIds)){
             for(Long bgScreeningId:bgScreeningIds){
                 sterlingService.repairDateScreening(bgScreeningId);
             }
         }
 
-        //TODO 些处逻辑不太准确
-        List<Long> alertBgScreeningIds = backgroundScreeningV2Dao.findIdByResult("alert");
+
+        List<Long> alertBgScreeningIds = backgroundScreeningV2Dao.findIdByResultAndDisputeStatus("alert","active");
         if(CollectionUtils.isNotEmpty(alertBgScreeningIds)){
             for(Long bgScreeningId:alertBgScreeningIds){
                 sterlingService.repairDateScreening(bgScreeningId);
             }
         }
         stopWatch.stop();
-        logger.info(String.format("结束获取教师背景调查中调查结果状态更新=======================================用时%s ms",stopWatch.getTime()));
+        logger.info(String.format("结束获取教师背景调查，对正在进行的进行调查结果状态更新=======================================用时%s ms",stopWatch.getTime()));
     }
 
 

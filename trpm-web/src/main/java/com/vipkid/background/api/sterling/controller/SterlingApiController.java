@@ -1,14 +1,14 @@
 package com.vipkid.background.api.sterling.controller;
 
-import com.amazonaws.util.json.Jackson;
-import com.fasterxml.jackson.core.type.TypeReference;
+
 import com.google.common.collect.Maps;
 import com.vipkid.background.api.sterling.dto.*;
-import com.vipkid.background.api.sterling.service.SterlingApiUtils;
 import com.vipkid.background.api.sterling.service.SterlingService;
 import com.vipkid.http.utils.JacksonUtils;
 import com.vipkid.rest.utils.ApiResponseUtils;
+import com.vipkid.trpm.dao.BackgroundScreeningV2Dao;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.time.StopWatch;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,10 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.List;
 import java.util.Map;
 
@@ -37,6 +35,8 @@ public class SterlingApiController {
     private SterlingService sterlingService;
 
 
+    @Resource
+    private BackgroundScreeningV2Dao backgroundScreeningV2Dao;
 
 
     @RequestMapping("/background/sterling/saveCandidate")
@@ -105,6 +105,20 @@ public class SterlingApiController {
     }
 
 
+    @RequestMapping(value = "/background/sterling/repairDateScreening",method = RequestMethod.POST)
+    public Object repairDateScreening(Long screeningTableId){
+        if(null == screeningTableId){
+            return ApiResponseUtils.buildErrorResp("TP10000","参数为空");
+        }
+        ScreeningOutputDto screeningOutputDto = sterlingService.repairDateScreening(screeningTableId);
+        if(null != screeningOutputDto.getErrorCode()){
+            return ApiResponseUtils.buildErrorResp(screeningOutputDto.getErrorCode(),screeningOutputDto.getErrorMessage());
+        }
+
+        return ApiResponseUtils.buildSuccessDataResp("success");
+    }
+
+
 
 
 //----------下面是测试的
@@ -117,6 +131,21 @@ public class SterlingApiController {
 
 
 
+    @RequestMapping("/background/sterling/testJob")
+    public Object testJob(){
+        StopWatch stopWatch = new StopWatch();
+        stopWatch.start();
+        logger.info("开始检查教师背景调查中补全候选人信息=======================================");
+        List<Long> teacherIds = backgroundScreeningV2Dao.findTeacherIdBycandidateIdNone();
+        if(CollectionUtils.isNotEmpty(teacherIds)){
+            for(Long teacherId : teacherIds){
+                sterlingService.repairDataCandidate(teacherId);
+            }
+        }
+        stopWatch.stop();
+        logger.info(String.format("结束检查教师背景调查中补全候选人信息=======================================用时%s ms",stopWatch.getTime()));
+        return ApiResponseUtils.buildSuccessDataResp("succese");
+    }
 
 
 }
