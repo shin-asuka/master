@@ -347,7 +347,11 @@
 			<artifactId>protostuff-runtime</artifactId>
 			<version>1.4.4</version>
 		</dependency>
-
+		
+		<dependency>
+			<groupId>com.vipkid.teacher.tools</groupId>
+			<artifactId>tools-dao</artifactId>
+		</dependency>
 	</dependencies>
 
 	<build>
