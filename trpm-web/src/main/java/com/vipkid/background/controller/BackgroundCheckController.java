@@ -246,9 +246,13 @@ public class BackgroundCheckController extends RestfulController {
                 Integer type = file.getFileType();
                 if(type.equals(TeacherApplicationEnum.ContractFileType.CANADA_BACKGROUND_CHECK_CPIC_FORM.val())){
                     map.put("cpicUrl", url);
+                    map.put("cpicResult", file.getFailReason());
+                    map.put("cpicFailReason", file.getFailReason());
                 }
                 if(type.equals(TeacherApplicationEnum.ContractFileType.CANADA_BACKGROUND_CHECK_ID2.val())){
                     map.put("id2Url", url);
+                    map.put("id2Result", file.getFailReason());
+                    map.put("id2FailReason", file.getFailReason());
                 }
             }
         }catch (Exception e) {
