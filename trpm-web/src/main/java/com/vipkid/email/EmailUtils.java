@@ -39,6 +39,7 @@ public class EmailUtils {
 			}else if (teacher.getRealName() != null){
 				paramsMap.put("teacherName", teacher.getRealName());
 			}
+			paramsMap.put("loginName", teacher.getEmail());
 			logger.info("【EMAIL.sendEmail4Recruitment】toAddMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",teacher.getRealName(),teacher.getEmail(),titleTemplate,contentTemplate);
 			Map<String, String> emailMap = TemplateUtils.readTemplate(contentTemplate, paramsMap, titleTemplate);
 			EmailEngine.addMailPool(teacher.getEmail(), emailMap, EmailConfig.EmailFormEnum.TEACHVIP);
