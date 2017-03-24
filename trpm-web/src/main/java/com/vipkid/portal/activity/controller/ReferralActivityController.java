@@ -5,6 +5,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,19 +50,25 @@ public class ReferralActivityController extends RestfulController{
 	@RequestMapping(value = "/share", method = RequestMethod.POST, produces = RestfulConfig.JSON_UTF_8)
 	public Map<String, Object> ShareHandle(HttpServletRequest request, HttpServletResponse response, @RequestBody ShareHandleDto bean){		
 		try{
-			Map<String,Object> result = Maps.newHashMap();
+        	Map<String,Object> resultMap = Maps.newHashMap();
+	    	//1.参数校验
+	    	resultMap = checkParmar(bean, response);
+	    	if(MapUtils.isNotEmpty(resultMap)){
+	    		return resultMap;
+	    	}
+	    	//逻辑开始
 			if(StringUtils.isNumeric(bean.getCandidateKey())){
 				//老师分享
-				result = this.referralActivityService.updateTeacherShare(Integer.valueOf(bean.getCandidateKey()), IpUtils.getIpAddress(request));
+				resultMap = this.referralActivityService.updateTeacherShare(bean.getCandidateKey(), IpUtils.getIpAddress(request), bean.getLinkSourceId());
 			}else{
 				//candidate 分享
-				result = this.referralActivityService.updateCandidateShare(bean.getCandidateKey(), IpUtils.getIpAddress(request));
+				resultMap = this.referralActivityService.updateCandidateShare(bean.getCandidateKey(), IpUtils.getIpAddress(request));
 			}
-			if(ReturnMapUtils.isSuccess(result)){
-				return ApiResponseUtils.buildSuccessDataResp(result.get("data"));
+			if(ReturnMapUtils.isSuccess(resultMap)){
+				return ApiResponseUtils.buildSuccessDataResp(resultMap.get("data"));
 			}else{
 				response.setStatus(HttpStatus.FORBIDDEN.value());
-				return ApiResponseUtils.buildErrorResp(-3, result.get("info")+"");
+				return ApiResponseUtils.buildErrorResp(-3, resultMap.get("info")+"");
 			}
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
@@ -122,10 +129,15 @@ public class ReferralActivityController extends RestfulController{
 	@RequestMapping(value = "/start", method = RequestMethod.POST, produces = RestfulConfig.JSON_UTF_8)
 	public Map<String, Object> startHandle(HttpServletRequest request, HttpServletResponse response,@RequestBody StartHandleDto bean){		
 		try{
-			Map<String,Object> result = Maps.newHashMap();
+        	Map<String,Object> resultMap = Maps.newHashMap();
+	    	//1.参数校验
+	    	resultMap = checkParmar(bean, response);
+	    	if(MapUtils.isNotEmpty(resultMap)){
+	    		return resultMap;
+	    	}
 			
 			
-			return ApiResponseUtils.buildSuccessDataResp(result);
+			return ApiResponseUtils.buildSuccessDataResp(resultMap);
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
 			logger.error(e.getMessage(),e);
@@ -151,10 +163,15 @@ public class ReferralActivityController extends RestfulController{
 	@RequestMapping(value = "/submit", method = RequestMethod.POST, produces = RestfulConfig.JSON_UTF_8)
 	public Map<String, Object> submitHandle(HttpServletRequest request, HttpServletResponse response,@RequestBody SubmitHandleDto bean){		
 		try{
-			Map<String,Object> result = Maps.newHashMap();
+        	Map<String,Object> resultMap = Maps.newHashMap();
+	    	//1.参数校验
+	    	resultMap = checkParmar(bean, response);
+	    	if(MapUtils.isNotEmpty(resultMap)){
+	    		return resultMap;
+	    	}
 			
 			
-			return ApiResponseUtils.buildSuccessDataResp(result);
+			return ApiResponseUtils.buildSuccessDataResp(resultMap);
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
 			logger.error(e.getMessage(),e);

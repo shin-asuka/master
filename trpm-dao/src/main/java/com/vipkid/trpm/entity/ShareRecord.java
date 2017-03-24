@@ -34,6 +34,9 @@ public class ShareRecord implements Serializable {
 	/****/
 	private String examVersion;
 
+	/****/
+	private java.util.Date shareTime;
+
 
 	
 	
@@ -107,6 +110,15 @@ public class ShareRecord implements Serializable {
 
 	public String getExamVersion(){
 		return this.examVersion;
+	}
+
+	public ShareRecord setShareTime(java.util.Date shareTime){
+		this.shareTime = shareTime;
+		return this;
+	}
+
+	public java.util.Date getShareTime(){
+		return this.shareTime;
 	}
 
 

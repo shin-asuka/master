@@ -1,12 +1,17 @@
 package com.vipkid.portal.activity.service;
 
+import java.nio.charset.StandardCharsets;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Maps;
 import com.vipkid.teacher.tools.utils.NumericUtils;
 import com.vipkid.teacher.tools.utils.ReturnMapUtils;
@@ -16,9 +21,12 @@ import com.vipkid.trpm.dao.ShareRecordDao;
 import com.vipkid.trpm.entity.ShareActivityExam;
 import com.vipkid.trpm.entity.ShareLinkSource;
 import com.vipkid.trpm.entity.ShareRecord;
+import com.vipkid.trpm.util.FilesUtils;
 
 @Service
 public class ReferralActivityService {
+	
+	private final static Logger logger = LoggerFactory.getLogger(ReferralActivityService.class);
 	
 	@Autowired
 	private ShareLinkSourceDao shareLinkSourceDao;
@@ -83,6 +91,7 @@ public class ReferralActivityService {
 		newRecord.setLinkSourceId(preRecord.getLinkSourceId());
 		newRecord.setTeacherId(preRecord.getTeacherId());
 		newRecord.setShareLevel(preRecord.getShareLevel()+1);
+		newRecord.setShareTime(new Date());
 		this.shareRecordDao.insert(newRecord);
 		Map<String,Object> resultMap = Maps.newHashMap();
 		resultMap.put("shareRecordId", newRecord.getId());
@@ -96,10 +105,34 @@ public class ReferralActivityService {
 	 * @param candidateIp
 	 * @return
 	 */
-	public Map<String,Object> updateTeacherShare(Integer candidateKey,String candidateIp){
-		
-		
+	public Map<String,Object> updateTeacherShare(String candidateKey,String candidateIp,Long linkSourceId){
+		ShareRecord newRecord = new ShareRecord();
+		newRecord.setCandidateKey(candidateKey);
+		newRecord.setCandidateIp(candidateIp);
+		newRecord.setCountClick(0L);
+		newRecord.setExamVersion(this.getExamVersion());
+		newRecord.setLinkSourceId(linkSourceId);
+		newRecord.setTeacherId(Long.valueOf(candidateKey));
+		newRecord.setShareLevel(1L);
+		newRecord.setShareTime(new Date());
+		this.shareRecordDao.insert(newRecord);
 		return ReturnMapUtils.returnSuccess();
+	}
+	
+	
+	public String  getExamVersion(){
+		//这里的配置不能缓存 及时获取
+        String contentJson = FilesUtils.readContent(this.getClass().getResourceAsStream("data/share/exam-vrsion.json"),StandardCharsets.UTF_8);
+        try{
+        	JSONObject json = JSONObject.parseObject(contentJson);
+        	//获取考试最新版本
+        	String examVersion = json.get("version")+"";
+        	logger.info("读取到最新版本：" + examVersion);
+        	return examVersion;
+        }catch(Exception e){
+        	logger.error("data/share/exam-vrsion.json,文件内容读取错误。"+e.getMessage(),e);
+        }
+        return null;
 	}
 	
 }
