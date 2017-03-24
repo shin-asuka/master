@@ -12,6 +12,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.google.common.collect.Maps;
 import com.vipkid.rest.activity.dto.ShareHandleDto;
@@ -29,6 +30,8 @@ public class ReferralActivityController {
 	
 	/**
 	 * 点击分享时间处理函数
+	 * 1.linkSourceId 从父链接中携带的参数 link源 1.APP  2.PC  3.广告入口
+	 * 2.candidateKey 如果老师点击share 则为老师ID 否则为link中携带的参数
 	 * @param request
 	 * @param response
 	 * @param bean
@@ -55,13 +58,17 @@ public class ReferralActivityController {
 	
 	/**
 	 * 点击参与事件记录接口
+	 * 1 linkSourceId 该参数为link来源ID 默认值为 2
+	 * 2.shareRecordId 分享记录ID (可选)
 	 * @param request
 	 * @param response
 	 * @param shareRecordId
 	 * @return
 	 */
 	@RequestMapping(value = "/click", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
-	public Map<String, Object> clickHandle(HttpServletRequest request, HttpServletResponse response, Integer shareRecordId){		
+	public Map<String, Object> clickHandle(HttpServletRequest request, HttpServletResponse response,
+			@RequestParam(value="linkSourceId",required=false,defaultValue="2")Integer linkSourceId, 
+			@RequestParam(value="shareRecordId",required=false,defaultValue="2")Integer shareRecordId){		
 		try{
 			Map<String,Object> result = Maps.newHashMap();
 			
