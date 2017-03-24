@@ -210,14 +210,15 @@ public class BackgroundCommonService {
 
                 for (TeacherContractFile contractFile : teacherContractFiles) {
                     Long screeningId = contractFile.getScreeningId();
-                    if (null == screeningId){
+                    String fileResult = contractFile.getResult();
+                    if (null == screeningId || StringUtils.equalsIgnoreCase(fileResult,FileResult.FAIL.getValue())){
                         backgroundFileStatusDto.setFileStatus(FileStatus.SAVE.getValue());
                     }else {
                         backgroundFileStatusDto.setFileStatus(FileStatus.SUBMIT.getValue());
                     }
-                    if (StringUtils.equalsIgnoreCase(contractFile.getResult(), "PASS")) {
+                    if (StringUtils.equalsIgnoreCase(fileResult, FileResult.PASS.getValue())) {
                         backgroundFileStatusDto.setFileResult(FileResult.PASS.getValue());
-                    } else if (StringUtils.equalsIgnoreCase(contractFile.getResult(), "FAIL")) {
+                    } else if (StringUtils.equalsIgnoreCase(fileResult, FileResult.FAIL.getValue())) {
                         backgroundFileStatusDto.setFileResult(FileResult.FAIL.getValue());
                     } else {
                         backgroundFileStatusDto.setFileResult(FileResult.PENDING.getValue());
@@ -229,7 +230,7 @@ public class BackgroundCommonService {
                 String canadaSecondFileResult = "";
                 for (TeacherContractFile contractFile : teacherContractFiles) {
                     Long screeningId = contractFile.getScreeningId();
-                    if (null == screeningId){
+                    if (null == screeningId || StringUtils.equalsIgnoreCase(contractFile.getResult(),FileResult.FAIL.getValue())){
                         backgroundFileStatusDto.setFileStatus(FileStatus.SAVE.getValue());
                     }else {
                         backgroundFileStatusDto.setFileStatus(FileStatus.SUBMIT.getValue());
@@ -241,9 +242,11 @@ public class BackgroundCommonService {
                     }else if (fileType == ContractFileType.CANADA_BACKGROUND_CHECK_ID2.val()){
                         canadaSecondFileResult = getCanadaFileResult(contractFile.getResult());
                     }
-                }if (StringUtils.equalsIgnoreCase(canadaFirstFileResult,"FAIL") || StringUtils.equalsIgnoreCase(canadaSecondFileResult,"FAIL")){
+                }if (StringUtils.equalsIgnoreCase(canadaFirstFileResult,FileResult.FAIL.getValue()) ||
+                        StringUtils.equalsIgnoreCase(canadaSecondFileResult,FileResult.FAIL.getValue())){
                     backgroundFileStatusDto.setFileResult(FileResult.FAIL.getValue());
-                }else if (StringUtils.equalsIgnoreCase(canadaFirstFileResult,"PASS") && StringUtils.equalsIgnoreCase(canadaSecondFileResult,"PASS")){
+                }else if (StringUtils.equalsIgnoreCase(canadaFirstFileResult,FileResult.PASS.getValue()) &&
+                        StringUtils.equalsIgnoreCase(canadaSecondFileResult,FileResult.PASS.getValue())){
                     backgroundFileStatusDto.setFileResult(FileResult.PASS.getValue());
                 }else {
                     backgroundFileStatusDto.setFileResult(FileResult.PENDING.getValue());
@@ -269,6 +272,7 @@ public class BackgroundCommonService {
         }else {
             return FileResult.PENDING.getValue();
         }
+
     }
 
 
