@@ -171,9 +171,7 @@ public class BackgroundCheckController extends RestfulController {
         Map<String, Object> result = new HashMap<>();
         String cpicUrl = input.getCpicUrl();
         String id2Url = input.getId2Url();
-        if (null == cpicUrl || null == id2Url) {
-            return ApiResponseUtils.buildErrorResp(TeacherPortalCodeEnum.SYS_PARAM_ERROR.getCode(),"file cannot be null");
-        }
+
         Long teacherId = null;
         try {
             Preconditions.checkArgument(StringUtils.isNotBlank(cpicUrl), "CPIC file cannot be null");
