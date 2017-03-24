@@ -234,7 +234,7 @@ public class BackgroundCommonService {
                 String canadaSecondFileResult = "";
                 for (TeacherContractFile contractFile : teacherContractFiles) {
                     Long screeningId = contractFile.getScreeningId();
-                    if (null == screeningId || StringUtils.equalsIgnoreCase(contractFile.getResult(),FileResult.FAIL.getValue())){
+                    if (null == screeningId ){
                         backgroundFileStatusDto.setFileStatus(FileStatus.SAVE.getValue());
                     }else {
                         backgroundFileStatusDto.setFileStatus(FileStatus.SUBMIT.getValue());
@@ -249,6 +249,8 @@ public class BackgroundCommonService {
                 }if (StringUtils.equalsIgnoreCase(canadaFirstFileResult,FileResult.FAIL.getValue()) ||
                         StringUtils.equalsIgnoreCase(canadaSecondFileResult,FileResult.FAIL.getValue())){
                     backgroundFileStatusDto.setFileResult(FileResult.FAIL.getValue());
+                    //如果审核结果有一个为FAIL，则FileStatus应为SAVE
+                    backgroundFileStatusDto.setFileStatus(FileStatus.SAVE.getValue());
                 }else if (StringUtils.equalsIgnoreCase(canadaFirstFileResult,FileResult.PASS.getValue()) &&
                         StringUtils.equalsIgnoreCase(canadaSecondFileResult,FileResult.PASS.getValue())){
                     backgroundFileStatusDto.setFileResult(FileResult.PASS.getValue());
