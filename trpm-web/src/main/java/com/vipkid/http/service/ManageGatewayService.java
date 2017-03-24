@@ -29,10 +29,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.sql.Timestamp;
+import java.util.*;
 
 /**
  *
@@ -92,6 +90,12 @@ public class ManageGatewayService extends HttpBaseService {
 					studentCommentVo.setTransaltion(StringUtils.isEmpty(result) ? "" : result);
 					Integer classId = studentCommentVo.getClass_id();
 					studentCommentVo.setOcToken(activityService.encode(classId));
+					OnlineClass onlineClass = onlineClassService.getOnlineClassById(studentCommentVo.getClass_id());
+					Lesson lesson = lessonDao.findById(onlineClass.getLessonId());
+					Timestamp scheduleDateTime = onlineClass.getScheduledDateTime();
+					studentCommentVo.setLessonSn(lesson.getSerialNumber());
+					studentCommentVo.setScheduleDateTime(DateFormatUtils.format(scheduleDateTime, "MMM dd hh:mma", Locale.ENGLISH));
+
 					Student student = studentService.getById(studentCommentVo.getStudent_id().longValue());
 					if(student!=null) {
 						studentCommentVo.setStudentAvatar(student.getAvatar());

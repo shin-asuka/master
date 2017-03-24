@@ -7,6 +7,7 @@ import org.apache.commons.lang3.time.DateFormatUtils;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Locale;
 
 public class ReferralTeacherDto implements Serializable{
 	/**
@@ -31,6 +32,14 @@ public class ReferralTeacherDto implements Serializable{
 	private Date regularDate;
 	
 	private Date scheduledDateTime;
+
+	private String nextStep;//下一步流程，进行中的需要显示
+
+	private String applyDateFormatter;
+
+	private String scheduledDateFormatter;
+
+	private String regularDateFormatter;
 
 	public static String YMD_ZN = "yyyy/MM/dd";
 
@@ -131,5 +140,25 @@ public class ReferralTeacherDto implements Serializable{
 
 	public void setScheduledDateTime(Date scheduledDateTime) {
 		this.scheduledDateTime = scheduledDateTime;
+	}
+
+	public String getNextStep() {
+		return StringUtils.isBlank(nextStep) ? "" : nextStep;
+	}
+
+	public void setNextStep(String nextStep) {
+		this.nextStep = nextStep;
+	}
+
+	public String getApplyDateFormatter() {
+		return applyDate == null ? "" : DateFormatUtils.format(applyDate, "MMM, dd yyyy", Locale.ENGLISH);
+	}
+
+	public String getScheduledDateFormatter() {
+		return scheduledDateTime == null ? "" : DateFormatUtils.format(scheduledDateTime, "MMM, dd yyyy", Locale.ENGLISH);
+	}
+
+	public String getRegularDateFormatter() {
+		return regularDate == null ? "" : DateFormatUtils.format(regularDate, "MMM, dd yyyy", Locale.ENGLISH);
 	}
 }

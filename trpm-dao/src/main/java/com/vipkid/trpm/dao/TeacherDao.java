@@ -4,6 +4,7 @@ import com.google.common.collect.Maps;
 import com.vipkid.enums.TeacherEnum.LifeCycle;
 import com.vipkid.rest.dto.ReferralTeacherDto;
 import com.vipkid.trpm.entity.Teacher;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.community.dao.support.MapperDaoTemplate;
 import org.mybatis.spring.SqlSessionTemplate;
@@ -58,7 +59,7 @@ public class TeacherDao extends MapperDaoTemplate<Teacher> {
     /**
      * 获取可用的serialNumber
      *
-     * @param serialNumber
+     * @param
      * @return
      */
     public String getSerialNumber() {
@@ -138,5 +139,38 @@ public class TeacherDao extends MapperDaoTemplate<Teacher> {
 
     public Integer findReferralTeachersCount(Map<String, Object> paramsMap){
         return selectCount("findReferralTeachersCount", paramsMap);
+    }
+
+    public List<ReferralTeacherDto> listReferralSucceedTeachers(Map<String, Object> paramsMap) {
+        return listEntity("listReferralSucceedTeachers", paramsMap);
+    }
+
+
+    public Integer countReferralSucceedTeachers(Map<String, Object> paramsMap) {
+        return selectCount("countReferralSucceedTeachers", paramsMap);
+    }
+
+    public List<ReferralTeacherDto> listReferralProcessingTeachers(Map<String, Object> paramsMap) {
+        return listEntity("listReferralProcessingTeachers", paramsMap);
+    }
+
+    public Integer countReferralProcessingTeachers(Map<String, Object> paramsMap) {
+        return selectCount("countReferralProcessingTeachers", paramsMap);
+    }
+
+    public List<ReferralTeacherDto> listReferralFailedTeachers(Map<String, Object> paramsMap) {
+        return listEntity("listReferralFailedTeachers", paramsMap);
+    }
+
+    public Integer countReferralFailedTeachers(Map<String, Object> paramsMap) {
+        return selectCount("countReferralFailedTeachers", paramsMap);
+    }
+
+    public ReferralTeacherDto getReferralTeacher(Map<String, Object> paramsMap) {
+        List<ReferralTeacherDto> list = listEntity("getReferralTeacher", paramsMap);
+        if(CollectionUtils.isEmpty(list)){
+            return null;
+        }
+        return list.get(0);
     }
 }

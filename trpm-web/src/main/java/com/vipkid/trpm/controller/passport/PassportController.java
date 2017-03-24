@@ -1,5 +1,7 @@
 package com.vipkid.trpm.controller.passport;
 
+import com.google.api.client.util.Lists;
+import com.google.common.base.Splitter;
 import com.vipkid.enums.TeacherEnum;
 import com.vipkid.enums.UserEnum;
 import com.vipkid.recruitment.utils.ReturnMapUtils;
@@ -16,6 +18,7 @@ import com.vipkid.trpm.service.passport.RemberService;
 import com.vipkid.trpm.util.AES;
 import com.vipkid.trpm.util.CookieUtils;
 import com.vipkid.trpm.util.IpUtils;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.community.config.PropertyConfigurer;
 import org.slf4j.Logger;
@@ -32,7 +35,9 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Base64;
+import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -40,7 +45,7 @@ import java.util.Map;
 public class PassportController extends AbstractController {
 
 	private static Logger logger = LoggerFactory.getLogger(PassportController.class);
-
+	public static final String SIGN_WHITE_IP = PropertyConfigurer.stringValue("monitor.ip.whiteList");
 	@Resource
     SHA256PasswordEncoder sha256Encoder;
 
@@ -74,6 +79,18 @@ public class PassportController extends AbstractController {
 			@RequestParam("email") String strEmail, @RequestParam("passwd") String strPwd,
 			@RequestParam("remember") boolean remember) {
 		// 对用户名进行解密
+		String ipStr = SIGN_WHITE_IP;
+		List<String> ipList = Lists.newArrayList();
+		if(StringUtils.isNotBlank(ipStr)) {
+			ipList = Splitter.on(",").trimResults().splitToList(ipStr);
+		}
+		String ip =IpUtils.getRemoteIP().split(",")[0];
+		if (!ipList.contains(ip)){
+			logger.error(" User ip :{} is  illegal",ip);
+			model.addAttribute("info", ApplicationConstant.AjaxCode.USER_ERROR);
+			return jsonView(response, model.asMap());
+		}
+
 		String _strEmail = new String(Base64.getDecoder().decode(strEmail));
 		logger.info(" 请求参数 email ： " + _strEmail + ";password=" + strPwd + ",IP:" + IpUtils.getRemoteIP());
 		User user = passportService.findUserByUsername(_strEmail);
@@ -137,6 +154,7 @@ public class PassportController extends AbstractController {
 		if (StringUtils.isEmpty(teacher.getRecruitmentId())) {
 			teacher.setRecruitmentId(this.passportService.updateRecruitmentId(teacher));
 		}
+		model.addAttribute("loginToken", loginService.setLoginToken(response, user));
 		model.addAttribute("info", "success-pass");
 		model.addAttribute("uuid",
 				AES.encrypt(user.getToken(), AES.getKey(AES.KEY_LENGTH_128, ApplicationConstant.AES_128_KEY)));
@@ -328,7 +346,6 @@ public class PassportController extends AbstractController {
 	 * @param request
 	 * @param response
 	 * @param model
-	 * @param privateCode
 	 * @param strToken
 	 * @return String
 	 * @date 2016年3月3日

@@ -16,6 +16,7 @@ import com.vipkid.trpm.dao.OnlineClassDao;
 import com.vipkid.trpm.dao.TeacherDao;
 import com.vipkid.trpm.entity.*;
 import com.vipkid.trpm.entity.teachercomment.SubmitTeacherCommentDto;
+
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,6 +26,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import javax.jms.Destination;
+
 import java.sql.Timestamp;
 import java.util.List;
 import java.util.Map;
@@ -39,7 +41,9 @@ import java.util.Map;
 @Service
 public class PayrollMessageServiceImpl implements PayrollMessageService {
 
-    private Logger logger = LoggerFactory.getLogger(PayrollMessageServiceImpl.class);
+    private static final String CONFIRM_TIME = "confirm_date_time";
+
+	private Logger logger = LoggerFactory.getLogger(PayrollMessageServiceImpl.class);
 
     @Resource
     private ProducerService producerService;
@@ -115,19 +119,23 @@ public class PayrollMessageServiceImpl implements PayrollMessageService {
                 }
                 // 学生是否在约课月内支付
                 Boolean isPaidForTrial = false;
-                if (isTrialOnly == true) {
-                    List<Map<String, Object>> payList = studentService.findPaidByStudentIdAndScheduleDateTime(studentId,
-                            onlineClass.getScheduledDateTime());
-                    if (payList.size() > 0) {
-                        Object timestamp = payList.get(0).get("confirm_date_time");
-                        logger.info("学生Trail课订单确认时间为：{}，studentId = {}",timestamp,studentId);
-                        if (null != timestamp && timestamp instanceof Timestamp) {
-                            isPaidForTrial = true;
-                            onlineClassMessage.setTrialPayTime(((Timestamp) timestamp).getTime());
-                        }
-                    }
-                    onlineClassMessage.setPaidForTrial(isPaidForTrial);
-                }
+				if (isTrialOnly == true) {
+					List<Map<String, Object>> payList = studentService.findPaidByStudentIdAndScheduleDateTime(
+							studentId, onlineClass.getScheduledDateTime());
+					List<Long> ids = studentService.findConfirmedPriceGreaterTan500BeforeThisMonth(studentId,
+							onlineClass.getScheduledDateTime());
+					if (payList != null && payList.size() > 0 && ids.size() == 0) {
+						Object timestamp = payList.get(0).get(CONFIRM_TIME);
+						logger.info("学生Trail课订单确认时间为：{}，studentId = {}", timestamp, studentId);
+						if (null != timestamp && timestamp instanceof Timestamp) {
+							isPaidForTrial = true;
+							onlineClassMessage.setTrialPayTime(((Timestamp) timestamp).getTime());
+						}
+					} else {
+						isPaidForTrial = false;
+					}
+					onlineClassMessage.setPaidForTrial(isPaidForTrial);
+				}
 
                 logger.info("PayrollMessageService 结束课程，消息发送成功  destination={}, message={} ",
                         finishOnlineClassDestination, JsonUtils.toJSONString(message));
@@ -189,18 +197,22 @@ public class PayrollMessageServiceImpl implements PayrollMessageService {
                 // 学生是否在约课月内支付
                 Boolean isPaidForTrial = false;
                 if (isTrialOnly == true) {
-                    List<Map<String, Object>> payList = studentService.findPaidByStudentIdAndScheduleDateTime(studentId,
-                            onlineClass.getScheduledDateTime());
-                    if (payList.size() > 0) {
-                        Object timestamp = payList.get(0).get("confirm_date_time");
-                        logger.info("学生Trail课订单确认时间为：{}，studentId = {}",timestamp,studentId);
-                        if (null != timestamp && timestamp instanceof Timestamp) {
-                            isPaidForTrial = true;
-                            onlineClassMessage.setTrialPayTime(((Timestamp) timestamp).getTime());
-                        }
-                    }
-                    onlineClassMessage.setPaidForTrial(isPaidForTrial);
-                }
+					List<Map<String, Object>> payList = studentService.findPaidByStudentIdAndScheduleDateTime(
+							studentId, onlineClass.getScheduledDateTime());
+					List<Long> ids = studentService.findConfirmedPriceGreaterTan500BeforeThisMonth(studentId,
+							onlineClass.getScheduledDateTime());
+					if (payList != null && payList.size() > 0 && ids.size() == 0) {
+						Object timestamp = payList.get(0).get(CONFIRM_TIME);
+						logger.info("学生Trail课订单确认时间为：{}，studentId = {}", timestamp, studentId);
+						if (null != timestamp && timestamp instanceof Timestamp) {
+							isPaidForTrial = true;
+							onlineClassMessage.setTrialPayTime(((Timestamp) timestamp).getTime());
+						}
+					} else {
+						isPaidForTrial = false;
+					}
+					onlineClassMessage.setPaidForTrial(isPaidForTrial);
+				}
 
                 // 是否有unitAssessment
                 assessmentReport.setHasUnitAssessment(true);

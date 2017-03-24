@@ -1,21 +1,17 @@
 package com.vipkid.trpm.controller.h5;
 
 import com.alibaba.fastjson.JSONObject;
-import com.google.api.client.util.Lists;
 import com.google.api.client.util.Maps;
 import com.google.common.base.Stopwatch;
-import com.vipkid.enums.TeacherEnum.LifeCycle;
 import com.vipkid.http.service.ManageGatewayService;
 import com.vipkid.http.utils.JsonUtils;
 import com.vipkid.rest.RestfulController;
-import com.vipkid.rest.interceptor.annotation.RestInterface;
 import com.vipkid.rest.portal.vo.StudentCommentPageVo;
 import com.vipkid.rest.portal.vo.StudentCommentTotalVo;
 import com.vipkid.rest.portal.vo.StudentCommentVo;
 import com.vipkid.rest.portal.vo.TranslationVo;
 import com.vipkid.rest.utils.ApiResponseUtils;
 import com.vipkid.rest.utils.ext.baidu.BaiduTranslateAPI;
-import com.vipkid.trpm.constant.ApplicationConstant;
 import com.vipkid.trpm.entity.OnlineClass;
 import com.vipkid.trpm.service.portal.OnlineClassService;
 import org.apache.commons.collections.CollectionUtils;
@@ -29,10 +25,12 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.text.DecimalFormat;
-import java.util.*;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 @RestController
@@ -74,9 +72,6 @@ public class StudentCommentController extends RestfulController{
                 return ApiResponseUtils.buildErrorResp(1001,"没有获取到评价信息");
             };
             StudentCommentVo studentCommentVo = studentCommentVos.get(0);
-            OnlineClass onlineClass = onlineClassService.getOnlineClassById(studentCommentVo.getClass_id());
-            Timestamp scheduleDateTime = onlineClass.getScheduledDateTime();
-            studentCommentVo.setScheduleDateTime(DateFormatUtils.format(scheduleDateTime, "MMM dd hh:mma", Locale.ENGLISH));
             Map<String,Object> ret = Maps.newHashMap();
             ret.put("data",studentCommentVo);
             long millis =stopwatch.stop().elapsed(TimeUnit.MILLISECONDS);
