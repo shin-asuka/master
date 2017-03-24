@@ -37,6 +37,9 @@ public class ShareActivityExam implements Serializable {
 	/****/
 	private Long shareRecordId;
 
+	/****/
+	private Long linkSourceId;
+
 
 	
 	
@@ -119,6 +122,15 @@ public class ShareActivityExam implements Serializable {
 
 	public Long getShareRecordId(){
 		return this.shareRecordId;
+	}
+
+	public ShareActivityExam setLinkSourceId(Long linkSourceId){
+		this.linkSourceId = linkSourceId;
+		return this;
+	}
+
+	public Long getLinkSourceId(){
+		return this.linkSourceId;
 	}
 
 
