@@ -8,6 +8,7 @@ import com.vipkid.background.dto.output.BaseOutputDto;
 import com.vipkid.background.enums.TeacherPortalCodeEnum;
 import com.vipkid.background.service.BackgroundCheckService;
 import com.vipkid.background.vo.BackgroundCheckVo;
+import com.vipkid.common.utils.IdentityValidatorUtils;
 import com.vipkid.enums.TeacherApplicationEnum;
 import com.vipkid.enums.TeacherEnum;
 import com.vipkid.file.model.FileVo;
@@ -87,6 +88,13 @@ public class BackgroundCheckController extends RestfulController {
             Preconditions.checkArgument(StringUtils.isNotBlank(zipCode), "latestZipCode cannot be null");
             Preconditions.checkArgument(StringUtils.isNotBlank(birthday), "latestBirthday cannot be null");
             Preconditions.checkArgument(StringUtils.isNotBlank(socialSecurityNo), "socialSecurityNumber cannot be null");
+
+            if(!IdentityValidatorUtils.validSocialNoForUs(socialSecurityNo)){
+                throw new IllegalArgumentException("socialSecurityNumber is illegal");
+            }
+            if(!IdentityValidatorUtils.validZipCodeForUs(zipCode)){
+                throw new IllegalArgumentException("latestZipCode is illegal");
+            }
 
             if(StringUtils.equals(operateType, "submit")){
                 Preconditions.checkArgument(StringUtils.isNotBlank(fileUrl), "fileUrl cannot be null");
@@ -246,12 +254,12 @@ public class BackgroundCheckController extends RestfulController {
                 Integer type = file.getFileType();
                 if(type.equals(TeacherApplicationEnum.ContractFileType.CANADA_BACKGROUND_CHECK_CPIC_FORM.val())){
                     map.put("cpicUrl", url);
-                    map.put("cpicResult", file.getFailReason());
+                    map.put("cpicResult", file.getResult());
                     map.put("cpicFailReason", file.getFailReason());
                 }
                 if(type.equals(TeacherApplicationEnum.ContractFileType.CANADA_BACKGROUND_CHECK_ID2.val())){
                     map.put("id2Url", url);
-                    map.put("id2Result", file.getFailReason());
+                    map.put("id2Result", file.getResult());
                     map.put("id2FailReason", file.getFailReason());
                 }
             }
