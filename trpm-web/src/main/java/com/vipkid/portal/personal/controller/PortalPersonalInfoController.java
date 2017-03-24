@@ -214,33 +214,35 @@ public class PortalPersonalInfoController extends RestfulController {
 			@RequestBody Map<String, Object> param) {
 		logger.info("开始调用restSaveTaxpayer接口，传入参数param = {}", JsonUtils.toJSONString(param));
 		try {
-			//添加参数校验
-			Preconditions.checkArgument(null != param.get("id"), "id 不能为空!");
+
 
 			String url = (String) param.get("url");
 			Integer formType = FormType.W9.val();// 目前只有W9一种formType;
 			Preconditions.checkArgument(StringUtils.isNotBlank(url), "url 不能为空!");
 			Preconditions.checkArgument(formType != null, "formType 不能为空!");
-
-			long teacherTaxpayerFormId = Long.valueOf(param.get("id")+"");
+			Long teacherTaxpayerFormId = null; //如果为空则创建，不为空则更新
 			Teacher teacher = getTeacher(request);
 			long teacherId = teacher.getId();
-			
-			// 验证接口入参id的合法性
-			TeacherTaxpayerForm originTeacherTaxpayerForm = teacherTaxpayerFormDao.findById(teacherTaxpayerFormId);
-			if (null != originTeacherTaxpayerForm && originTeacherTaxpayerForm.getTeacherId() != null
-					&& !originTeacherTaxpayerForm.getTeacherId().equals(teacherId)) {// 如果id不合法
-				logger.warn("调用restSaveTaxpayer接口,teacherId = {},恶意调用接口，传入非法id = {}。此Id对应的teacherTaxpayerForm并不属于此老师",
-						teacherId, teacherTaxpayerFormId);
-				
-				return ApiResponseUtils.buildErrorResp(1001, "入参Id不合法");
-			}
-			if (StringUtils.equals(originTeacherTaxpayerForm.getUrl(), url)) {
-				Map<String, Object> data = portalPersonalInfoService.getTaxpayerData(teacherId);
-				return ApiResponseUtils.buildSuccessDataResp(data);// 提升效率，直接返回成功
-			}
+
+			if(null != param.get("id")) {
+				teacherTaxpayerFormId = Long.valueOf(param.get("id") + "");
 
 
+				// 验证接口入参id的合法性
+				TeacherTaxpayerForm originTeacherTaxpayerForm = teacherTaxpayerFormDao.findById(teacherTaxpayerFormId);
+				if (null != originTeacherTaxpayerForm && originTeacherTaxpayerForm.getTeacherId() != null
+						&& !originTeacherTaxpayerForm.getTeacherId().equals(teacherId)) {// 如果id不合法
+					logger.warn("调用restSaveTaxpayer接口,teacherId = {},恶意调用接口，传入非法id = {}。此Id对应的teacherTaxpayerForm并不属于此老师",
+							teacherId, teacherTaxpayerFormId);
+
+					return ApiResponseUtils.buildErrorResp(1001, "入参Id不合法");
+				}
+				if (StringUtils.equals(originTeacherTaxpayerForm.getUrl(), url)) {
+					Map<String, Object> data = portalPersonalInfoService.getTaxpayerData(teacherId);
+					return ApiResponseUtils.buildSuccessDataResp(data);// 提升效率，直接返回成功
+				}
+
+			}
 
 			TeacherTaxpayerForm teacherTaxpayerForm = new TeacherTaxpayerForm();
 			teacherTaxpayerForm.setId(teacherTaxpayerFormId);
