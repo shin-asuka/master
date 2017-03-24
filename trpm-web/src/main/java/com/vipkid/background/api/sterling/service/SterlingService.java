@@ -3,6 +3,8 @@ package com.vipkid.background.api.sterling.service;
 
 
 
+import com.google.common.base.Predicate;
+import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import com.vipkid.background.api.sterling.controller.SterlingApiController;
 import com.vipkid.background.api.sterling.dto.*;
@@ -27,13 +29,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.Nullable;
 import javax.annotation.Resource;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
-import java.util.Map;
 import java.util.stream.Collectors;
 
 
@@ -301,7 +301,7 @@ public class SterlingService {
         screeningInputDto.setCallback(callback);
 
 
-        SterlingScreening sterlingScreening =SterlingApiUtils.createScreening(screeningInputDto,SterlingApiUtils.MAX_RETRY);
+        SterlingScreening sterlingScreening = SterlingApiUtils.createScreening(screeningInputDto, SterlingApiUtils.MAX_RETRY);
         if (sterlingScreening == null) {
             return new ScreeningOutputDto(10000,"没有返回结果");
         }
@@ -345,9 +345,27 @@ public class SterlingService {
             return new AdverseOutputDto(null,10000,String.format("bgScreeingId:%s report记录不存在",backgroundScreening.getId()));
         }
 
-        List<String> reportItemIdList = backgroundReportList.stream().map(map -> map.getReportId()).collect(Collectors.toList());
+        Collection<BackgroundReport> alertReport = Collections2.filter(backgroundReportList, new Predicate<BackgroundReport>() {
+            @Override
+            public boolean apply(@Nullable BackgroundReport report) {
+                return StringUtils.equals(report.getResult(),"alert");
+            }
+        });
 
-        boolean preAdverseAction =SterlingApiUtils.preAdverseAction(backgroundScreening.getScreeningId(),reportItemIdList);
+        if(org.springframework.util.CollectionUtils.isEmpty(alertReport)){
+            return new AdverseOutputDto(null,10000,String.format("bgScreeingId:%s report没有alert的",backgroundScreening.getId()));
+        }
+
+        List<String> reportItemIdList = Lists.transform(Lists.newArrayList(alertReport), new com.google.common.base.Function<BackgroundReport, String>() {
+            @Nullable
+            @Override
+            public String apply(@Nullable BackgroundReport report) {
+                return report.getReportId();
+            }
+        });
+
+
+        boolean preAdverseAction = SterlingApiUtils.preAdverseAction(backgroundScreening.getScreeningId(), reportItemIdList);
         if(!preAdverseAction){
             return new AdverseOutputDto(null,10000,String.format("ScreeingId:%s 请求Sterling失败",backgroundScreening.getScreeningId()));
         }

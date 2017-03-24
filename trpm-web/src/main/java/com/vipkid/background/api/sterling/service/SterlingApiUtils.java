@@ -68,6 +68,8 @@ public class SterlingApiUtils {
 
         HttpClientUtils.Response response = HttpClientUtils.timeoutRetryPost(postUrl,JacksonUtils.toJSONString(candidateInputDto),headers,MAX_RETRY);
 
+        logger.info("createCandidate  url:{},header:{},param:{},response:{}",postUrl,JacksonUtils.toJSONString(headers),JacksonUtils.toJSONString(candidateInputDto),JacksonUtils.toJSONString(response));
+
         if(response == null){
             logger.info("Response is null  url:{},header:{},params:{}",postUrl,JacksonUtils.toJSONString(headers),JacksonUtils.toJSONString(candidateInputDto));
             return null;
@@ -108,6 +110,8 @@ public class SterlingApiUtils {
 
 
         HttpClientUtils.Response response = HttpClientUtils.timeoutRetryPut(postUrl,JacksonUtils.toJSONString(candidateInputDto),headers,MAX_RETRY);
+
+        logger.info("updateCandidate  url:{},header:{},param:{},response:{}",postUrl,JacksonUtils.toJSONString(headers),JacksonUtils.toJSONString(candidateInputDto),JacksonUtils.toJSONString(response));
 
         if(response == null){
             logger.info("Response is null  url:{},header:{},params:{}",postUrl,JacksonUtils.toJSONString(headers),JacksonUtils.toJSONString(candidateInputDto));
@@ -155,6 +159,8 @@ public class SterlingApiUtils {
 
 
         HttpClientUtils.Response response = HttpClientUtils.timeoutRetryGet(getUrl,headers,MAX_RETRY);
+
+        logger.info("getCandidate  url:{},header:{},response:{}",getUrl,JacksonUtils.toJSONString(headers),JacksonUtils.toJSONString(response));
 
         if(response == null){
             logger.info("Response is null  url:{},header:{},params:{}",getUrl,JacksonUtils.toJSONString(headers),candidateId);
@@ -218,6 +224,8 @@ public class SterlingApiUtils {
         String requestUrl = getUrlBuilder.substring(0,getUrlBuilder.length()-1);
         HttpClientUtils.Response response = HttpClientUtils.timeoutRetryGet(requestUrl,headers,MAX_RETRY);
 
+        logger.info("getCandidateList  url:{},header:{},param:{},response:{}",requestUrl,JacksonUtils.toJSONString(headers),JacksonUtils.toJSONString(params),JacksonUtils.toJSONString(response));
+
         if(response == null){
             logger.error("Response is null  url:{},header:{},params:{}",getUrl,JacksonUtils.toJSONString(headers),JacksonUtils.toJSONString(candidateFilterDto));
             return Lists.newArrayList();
@@ -247,6 +255,8 @@ public class SterlingApiUtils {
         headers.put("Authorization",String.format(BEARER_FORMATE,getAccessToken()));
 
         HttpClientUtils.Response response = HttpClientUtils.timeoutRetryPost(postUrl,JacksonUtils.toJSONString(screeningInputDto),headers,MAX_RETRY);
+
+        logger.info("createScreening  url:{},header:{},param:{},response:{}",postUrl,JacksonUtils.toJSONString(headers),JacksonUtils.toJSONString(screeningInputDto),JacksonUtils.toJSONString(response));
 
         if(response == null){
             logger.error("Response is null  url:{},header:{},params:{}",postUrl,JacksonUtils.toJSONString(headers),JacksonUtils.toJSONString(screeningInputDto));
@@ -280,6 +290,9 @@ public class SterlingApiUtils {
         headers.put("Authorization",String.format(BEARER_FORMATE,getAccessToken()));
         headers.put(HTTP.CONTENT_TYPE,"application/json");
         HttpClientUtils.Response response = HttpClientUtils.timeoutRetryGet(getUrl,headers,MAX_RETRY);
+
+        logger.info("getScreening  url:{},header:{},response:{}",getUrl,JacksonUtils.toJSONString(headers),JacksonUtils.toJSONString(response));
+
         if(response == null){
             logger.error("Response is null  url:{},header:{},params:{}",getUrl,JacksonUtils.toJSONString(headers),screeningId);
             return null;
@@ -343,6 +356,8 @@ public class SterlingApiUtils {
         String postUrl = String.format(sterlingHost+"/v1/screenings/%s/adverse-actions",screeningId);
         HttpClientUtils.Response response = HttpClientUtils.timeoutRetryPost(postUrl,JacksonUtils.toJSONString(params),headers,MAX_RETRY);
 
+        logger.info("preAdverseAction  url:{},header:{},param:{},response:{}",postUrl,JacksonUtils.toJSONString(headers),JacksonUtils.toJSONString(params),JacksonUtils.toJSONString(response));
+
         if(response == null){
             logger.info("Response is null  url:{},header:{},params:{}",postUrl,JacksonUtils.toJSONString(headers),screeningId);
             return false;
@@ -381,6 +396,7 @@ public class SterlingApiUtils {
         httpHeaders.setContentType(MediaType.APPLICATION_OCTET_STREAM);
 
         String response = HttpClientUtils.postBinaryFile(post,fileByteArray,httpHeaders);
+        logger.info("preAdverseAction  url:{},header:{},response:{}",post,JacksonUtils.toJSONString(httpHeaders),JacksonUtils.toJSONString(response));
         if(StringUtils.isNotBlank(response)){
             return true;
         }
@@ -395,14 +411,6 @@ public class SterlingApiUtils {
 
 
 
-    /**
-     * 接收到callback 后对其进行组装
-     * @param response
-     * @return
-     */
-    public static SterlingCallBack buildCallBack(String response){
-        return null;
-    }
 
 
     /**
@@ -421,7 +429,6 @@ public class SterlingApiUtils {
             return null;
         }
         SterlingAccessToken sterlingAccessToken = JacksonUtils.readJson(response, new TypeReference<SterlingAccessToken>() {});
-//
         RedisCacheUtils.set(STERLING_ACCESS_TOKEN,sterlingAccessToken,sterlingAccessToken.getExpires_in());
         return sterlingAccessToken;
     }
@@ -432,8 +439,6 @@ public class SterlingApiUtils {
      * @return
      */
     public static String getAccessToken(){
-//      String result = "{\"error\":null,\"message\":null,\"moreInfo\":null,\"access_token\":\"eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6Ik56VTFORE13UlRFeU1UaEJOME5FUkVGQlJEbEZOMEZETURCRE5UYzVSVUUwUmtaRE5rVTFPQSJ9.eyJuYW1lIjoiQVBJVXNlckBWSVBLSUQuY29tIiwiZW1haWwiOiJBUElVc2VyQFZJUEtJRC5jb20iLCJyb2xlcyI6WyIvaW50djEvR0VUL2hlYWx0aCIsIi9pbnR2MS9HRVQvc3RhdHMiLCIvaW50djEvUE9TVC9jYW5kaWRhdGVzIiwiL2ludHYxL0dFVC9jYW5kaWRhdGVzIiwiL2ludHYxL0dFVC9jYW5kaWRhdGVzL3thbnl9IiwiL2ludHYxL1BVVC9jYW5kaWRhdGVzL3thbnl9IiwiL2ludHYxL1BPU1QvY2FuZGlkYXRlcy97YW55fS9kb2N1bWVudHMiLCIvaW50djEvR0VUL2NhbmRpZGF0ZXMve2FueX0vZG9jdW1lbnRzIiwiL2ludHYxL1BPU1QvY2FuZGlkYXRlcy97YW55fS90cnVzdCIsIi9pbnR2MS9QT1NUL3NjcmVlbmluZ3MiLCIvaW50djEvR0VUL3NjcmVlbmluZ3MiLCIvaW50djEvR0VUL3NjcmVlbmluZ3Mve2FueX0iLCIvaW50djEvUE9TVC9zY3JlZW5pbmdzL3thbnl9L3JlcG9ydC1saW5rcyIsIi9pbnR2MS9QT1NUL3NjcmVlbmluZ3Mve2FueX0vYWR2ZXJzZS1hY3Rpb25zIiwiL2ludHYxL0dFVC9zY3JlZW5pbmdzL3thbnl9L3JlcG9ydCIsIi9pbnR2MS9QT1NUL3NjcmVlbmluZ3Mve2FueX0vZG9jdW1lbnRzIiwiL2ludHYxL0dFVC9zY3JlZW5pbmdzL3thbnl9L2RvY3VtZW50cyIsIi9pbnR2MS9QT1NUL3N1YnNjcmlwdGlvbnMiLCIvaW50djEvUE9TVC9zdWJzY3JpcHRpb25zL3thbnl9IiwiL2ludHYxL0dFVC9zdWJzY3JpcHRpb25zL3thbnl9IiwiL2ludHYxL0dFVC9zdWJzY3JpcHRpb25zL3thbnl9L2V2ZW50cyIsIi9pbnR2MS9HRVQvc3Vic2NyaXB0aW9ucy97YW55fS9wYWNrYWdlcyIsIi9pbnR2MS9QT1NUL3N1YnNjcmlwdGlvbnMve2FueX0vZW5hYmxlIiwiL2ludHYxL1BPU1Qvc3Vic2NyaXB0aW9ucy97YW55fS9kaXNhYmxlIiwiL2ludHYxL1BPU1Qvc3Vic2NyaXB0aW9ucy97YW55fS9qb2IiLCIvaW50djEvREVMRVRFL3N1YnNjcmlwdGlvbnMve2FueX0iLCIvaW50djEvUE9TVC9pZGVudGl0aWVzIiwiL2ludHYxL0dFVC9pZGVudGl0aWVzL3thbnl9IiwiL2ludHYxL1BPU1QvaWRlbnRpdGllcy97YW55fS9yZXRyeSIsIi9pbnR2MS9HRVQvaWRlbnRpdGllcy97YW55fS92ZXJpZmljYXRpb24iLCIvaW50djEvUFVUL2lkZW50aXRpZXMve2FueX0vdmVyaWZpY2F0aW9uIiwiL2ludHYxL1BBVENIL2lkZW50aXRpZXMve2FueX0vdmVyaWZpY2F0aW9uIiwiL2ludHYxL0RFTEVURS9pZGVudGl0aWVzL3thbnl9IiwiL2ludHYxL1BPU1QvdHJ1c3RlZC11c2VycyIsIi9pbnR2MS9HRVQvdHJ1c3RlZC11c2Vycy97YW55fSIsIi9pbnR2MS9ERUxFVEUvdHJ1c3RlZC11c2Vycy97YW55fSIsIi9pbnR2MS9QT1NUL3RydXN0cyIsIi9pbnR2MS9HRVQvdHJ1c3RzL3thbnl9IiwiL2ludHYxL0RFTEVURS90cnVzdHMve2FueX0iLCIvaW50djEvR0VUL29uZXRpbWUtcmVwb3J0LWxpbmtzL3thbnl9IiwiL2ludHYxL0dFVC9wYWNrYWdlcyIsIi9pbnR2MS9HRVQvYWR2ZXJzZS1hY3Rpb25zIiwiL2ludHYxL0dFVC9nb2R6aWxsYS9tZXRyaWNzIiwiL2ludHYxL0dFVC9nb2R6aWxsYS9zdWJzY3JpcHRpb25zLW1ldHJpY3MiXSwiaXNzIjoiaHR0cHM6Ly9zdGVybGluZ2JhY2tjaGVjay5hdXRoMC5jb20vIiwic3ViIjoiYXV0aDB8MTcxMzEyNDQiLCJhdWQiOiJDYkNidENvVmtjSzdMOUFmR1dndnJNT3l5cVVYN0wyQSIsImV4cCI6MTQ4OTU3NzAwNiwiaWF0IjoxNDg5NTQxMDA2fQ.SxkIUP1lMkNfiFxGBTiPiZLW8ENkFsF3hUsZ42EllNNXw4RHRJas4-2wV21nT0cYeRtUCxCV1tK8D2LBrY_cRup01NORKAsCVTN8q25YnBorX_U-JiJaeBvLd11ZAOlk2OACOgCwgHaN2UP9zb7k1w3Or2ncuKMfXhaLXttqSsDSPH-3nR3cVq8-ZbmkvdMxzGBOyGXMKGDv5yy8mk2IPjX5ZXQOLnc8KmjjvyR15GJRth7m6CQ9K-1Ot7sEnAI_fsZXr-lYlMZJab-weFAWUUkhFHkTTb60ZWSnXDoA6KgJByC4ls1LCr0rvu4LKsc1m3DxUgmmvWgxvZTAHhBHAw\",\"token_type\":\"bearer\",\"expires_in\":36000}";
-//      JacksonUtils.readJson(result, new TypeReference<SterlingAccessToken>() {});
         SterlingAccessToken sterlingAccessToken = RedisCacheUtils.get(STERLING_ACCESS_TOKEN,SterlingAccessToken.class);
         if(null == sterlingAccessToken){
             sterlingAccessToken = refreshAccessToken();
