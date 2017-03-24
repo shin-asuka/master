@@ -68,14 +68,16 @@ public class BackgroundCommonService {
                 backgroundStatusDto.setResult("");
                 return backgroundStatusDto;
             } else {
-                boolean in5Days = false;
+                //boolean in5Days = false;
                 long screeningId = backgroundScreening.getId();
                 Date adverseTime = backgroundAdverseDao.findUpdateTimeByScreeningIdTopOne(screeningId);
-                current.add(Calendar.DATE, 5);
+
+                /*current.add(Calendar.DATE, 5);
                 if (null != adverseTime && adverseTime.before(current.getTime())) {
                     in5Days = true;
                 }
-                current.add(Calendar.DATE, -5);
+                current.add(Calendar.DATE, -5);*/
+
                 current.add(Calendar.YEAR, -2);
 
                 //上次背调超过两年需要进行背调，不超过两年需要根据result和disputeStatus进行判断
@@ -106,15 +108,17 @@ public class BackgroundCommonService {
                                 //disputeStatus为null
                                 if (null == disputeStatus) {
                                     //在5天内可以进行dispute，超过5天不允许在进行dispute自动FAIL
-                                    if (in5Days) {
+                                   // if (in5Days) {
+
                                         backgroundStatusDto.setPhase(BackgroundPhase.PREADVERSE.getVal());
                                         backgroundStatusDto.setResult(BackgroundResult.ALERT.getVal());
                                         backgroundStatusDto.setNeedBackgroundCheck(true);
-                                    } else {
+
+                                   /* } else {
                                         backgroundStatusDto.setNeedBackgroundCheck(false);
                                         backgroundStatusDto.setPhase(BackgroundPhase.DIDNOTDISPUTE.getVal());
                                         backgroundStatusDto.setResult(BackgroundResult.FAIL.getVal());
-                                    }
+                                    }*/
 
                                 } else {
                                     //diSputeStatus为ACTIVE表明正在进行dispute，为DEACTIVATED表明disputed失败
