@@ -1,4 +1,4 @@
-package com.vipkid.rest.activity.dto;
+package com.vipkid.portal.activity.dto;
 
 import com.vipkid.teacher.tools.utils.validation.annotaion.NotNull;
 

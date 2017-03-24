@@ -1,4 +1,4 @@
-package com.vipkid.rest.activity.share;
+package com.vipkid.portal.activity.controller;
 
 import java.util.Map;
 
@@ -15,10 +15,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.google.common.collect.Maps;
+import com.vipkid.portal.activity.dto.ShareHandleDto;
+import com.vipkid.portal.activity.dto.StartHandleDto;
+import com.vipkid.portal.activity.dto.SubmitHandleDto;
 import com.vipkid.rest.RestfulController;
-import com.vipkid.rest.activity.dto.ShareHandleDto;
-import com.vipkid.rest.activity.dto.StartHandleDto;
-import com.vipkid.rest.activity.dto.SubmitHandleDto;
 import com.vipkid.rest.config.RestfulConfig;
 import com.vipkid.rest.interceptor.annotation.RestInterface;
 import com.vipkid.rest.utils.ApiResponseUtils;
@@ -118,6 +118,10 @@ public class ReferralActivityController extends RestfulController{
 	
 	/**
 	 * 完成答题结果提交接口
+	 * 1.activityExamId 考试ID
+	 * 2.questionOrder 题目顺序
+	 * 3.questionId 题目ID
+	 * 4.questionResult 题目结果
 	 * @param request
 	 * @param response
 	 * @param bean
