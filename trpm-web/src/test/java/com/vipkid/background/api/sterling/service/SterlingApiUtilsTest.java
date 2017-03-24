@@ -222,26 +222,31 @@ public class SterlingApiUtilsTest {
     }
 
     @Test
-    public void testDate(){
-        String json = "{\"teacherId\":103%s,\"email\":\"103%s@example.com\",\"givenName\":\"a3%s\",\"familyName\":\"a3%s\",\"middleName\":\"r3%s\",\"confirmedNoMiddleName\":false,\"dob\":\"1998-07-%s\",\"ssn\":\"888888888\",\"phone\":\"+140412313%s\",\"address\":{\"addressLine\":\"123MainStreet\",\"municipality\":\"Orlando\",\"regionCode\":\"US-FL\",\"postalCode\":\"12345\",\"countryCode\":\"US\"}}";
-        for(int i=12;i<40;i++){
+    public void createTestData(){
+        String json = "{\"teacherId\":104%s,\"email\":\"mike.lee%s@example.com\",\"givenName\":\"mike%s\",\"familyName\":\"lee3%s\",\"middleName\":\"r3%s\",\"confirmedNoMiddleName\":false,\"dob\":\"1998-07-%s\",\"ssn\":\"888888888\",\"phone\":\"+140412000%s\",\"address\":{\"addressLine\":\"MainStreet\",\"municipality\":\"Orlando\",\"regionCode\":\"US-FL\",\"postalCode\":\"12345\",\"countryCode\":\"US\"}}";
+        for(int i=14;i<50;i++){
             try {
-                Thread.sleep(100l);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            String jsonDate = String.format(json,i,i,i,i,i,i,i);
-            Map<String,String> header = Maps.newHashMap();
-            header.put("Content-Type","application/json");
+                String jsonDate = String.format(json, i, i, i, i, i, i, i);
+                Map<String, String> header = Maps.newHashMap();
+                header.put("Content-Type", "application/json");
 
-            String response = HttpClientUtils.post("http://localhost:8080/api/background/sterling/saveCandidate.json",jsonDate,header);
-            JsonNode node = JacksonUtils.parseObject(response);
-            System.out.println(response);
-            if(node.get("ret").asBoolean()){
-                Map<String,String> formdate =Maps.newHashMap();
-                formdate.put("teacherId",String.format("103%s",i));
-                formdate.put("documentUrl","https://teacher-data.vipkid.com.cn/teacher/tpinfo/3091416/a50e9831e5e04f9ebacab750c3c27dec/3091416-90852306271355571.jpg");
-                System.out.println(HttpClientUtils.post("http://localhost:8080/api/background/sterling/createScreening",formdate));
+                String response = HttpClientUtils.post("http://a6-t.vipkid.com.cn/api/background/sterling/saveCandidate.json", jsonDate, header);
+                JsonNode node = JacksonUtils.parseObject(response);
+
+                System.out.println(response);
+                try {
+                    Thread.sleep(1000l);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                if (node.get("ret").asBoolean()) {
+                    Map<String, String> formdate = Maps.newHashMap();
+                    formdate.put("teacherId", String.format("104%s", i));
+                    formdate.put("documentUrl", "https://teacher-data.vipkid.com.cn/teacher/tpinfo/3091416/a50e9831e5e04f9ebacab750c3c27dec/3091416-90852306271355571.jpg");
+                    System.out.println(HttpClientUtils.post("http://a6-t.vipkid.com.cn/api/background/sterling/createScreening", formdate,null,10000));
+                }
+            }catch (Exception e){
+                e.printStackTrace();
             }
         }
     }

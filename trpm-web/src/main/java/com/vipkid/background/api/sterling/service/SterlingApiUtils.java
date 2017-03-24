@@ -396,7 +396,7 @@ public class SterlingApiUtils {
         httpHeaders.setContentType(MediaType.APPLICATION_OCTET_STREAM);
 
         String response = HttpClientUtils.postBinaryFile(post,fileByteArray,httpHeaders);
-        logger.info("preAdverseAction  url:{},header:{},response:{}",post,JacksonUtils.toJSONString(httpHeaders),JacksonUtils.toJSONString(response));
+        logger.info("createScreeningDocument  url:{},header:{},response:{}",post,JacksonUtils.toJSONString(httpHeaders),JacksonUtils.toJSONString(response));
         if(StringUtils.isNotBlank(response)){
             return true;
         }

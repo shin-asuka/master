@@ -223,53 +223,111 @@ public class HttpClientUtils {
         return null;
     }
 
-
+    /**
+     * 可以设置如果发生socketTimeout,connectionTimeout ,可以设置重试时间 每一次重试都会改变对应的Timeout
+     * 如发生SocketTimeOut ,则下一次请求的SocketTimeOut时间为 SocketTimeOut+=(retryTimes+500)
+     * @param url
+     * @param jsonData
+     * @param header
+     * @param retryTimes
+     * @return
+     */
     public static Response timeoutRetryPost(String url,String jsonData,Map<String,String> header,int retryTimes){
         if (retryTimes < 0) {
             throw new IllegalArgumentException("retry times must great than or equal 0");
         }
 
         HttpPost post=new HttpPost(url);
-        Response  response = timeoutRetryRequest(post,jsonData,header,retryTimes);
-        if(response == null){
-            post.releaseConnection();
+        Response  response = null;
+        try {
+            response = timeoutRetryRequest(post,jsonData,header,retryTimes);
+        } catch (IOException e) {
+            logger.info(String.format("post URL:%s,header:%s,param:%s",url,JacksonUtils.toJSONString(header),jsonData),e);
+        }finally{
+            if(response == null){
+                post.releaseConnection();
+            }
         }
+
 
         return response;
 
     }
 
+    /**
+     * 可以设置如果发生socketTimeout,connectionTimeout ,可以设置重试时间 每一次重试都会改变对应的Timeout
+     * 如发生SocketTimeOut ,则下一次请求的SocketTimeOut时间为 SocketTimeOut+=(retryTimes+500)
+     * @param url
+     * @param jsonData
+     * @param header
+     * @param retryTimes
+     * @return
+     */
     public static Response timeoutRetryPut(String url,String jsonData,Map<String,String> header,int retryTimes){
         if (retryTimes < 0) {
             throw new IllegalArgumentException("retry times must great than or equal 0");
         }
 
         HttpPut put=new HttpPut(url);
-        Response  response = timeoutRetryRequest(put,jsonData,header,retryTimes);
-        if(response == null){
-            put.releaseConnection();
+        Response  response = null;
+        try {
+            response = timeoutRetryRequest(put,jsonData,header,retryTimes);
+        } catch (IOException e) {
+            logger.info(String.format("put URL:%s,header:%s,param:%s",url,JacksonUtils.toJSONString(header),jsonData),e);
+        }finally{
+            if(response == null){
+                put.releaseConnection();
+            }
         }
         return response;
     }
 
+
+    /**
+     * 可以设置如果发生socketTimeout,connectionTimeout ,可以设置重试时间 每一次重试都会改变对应的Timeout
+     * 如发生SocketTimeOut ,则下一次请求的SocketTimeOut时间为 SocketTimeOut+=(retryTimes+500)
+     * @param url
+     * @param header
+     * @param retryTimes
+     * @return
+     */
     public static Response timeoutRetryGet(String url,Map<String,String> header,int retryTimes){
         if (retryTimes < 0) {
             throw new IllegalArgumentException("retry times must great than or equal 0");
         }
         HttpGet get=new HttpGet(url);
-        Response response = timeoutRetryRequest(get,header,retryTimes);
-        if(response == null){
-            get.releaseConnection();
+        Response response = null;
+        try {
+            response = timeoutRetryRequest(get,header,retryTimes);
+        } catch (IOException e) {
+            logger.info(String.format("get URL:%s,header:%s",url,JacksonUtils.toJSONString(header)),e);
+        }finally{
+            if(response == null){
+                get.releaseConnection();
+            }
         }
+
         return response;
     }
 
 
-    private  static Response timeoutRetryRequest(HttpEntityEnclosingRequestBase requestBase,String jsonData,Map<String,String> header,int retryTimes){
+    /**
+     * 可以设置如果发生socketTimeout,connectionTimeout ,可以设置重试时间 每一次重试都会改变对应的Timeout
+     * 如发生SocketTimeOut ,则下一次请求的SocketTimeOut时间为 SocketTimeOut+=(retryTimes+500)
+     * @param requestBase
+     * @param jsonData
+     * @param header
+     * @param retryTimes
+     * @return
+     * @throws IOException
+     */
+    private  static Response timeoutRetryRequest(HttpEntityEnclosingRequestBase requestBase,String jsonData,Map<String,String> header,int retryTimes)throws IOException {
         Exception ste = null;
+        int socketTimeout = READ_TIMEOUT;
+        int connectionTimeout = CONNECTION_TIMEOUT;
         for (int i = 0; i <= retryTimes; i++) {
             try {
-                Response result = interaction(requestBase,jsonData,null,header);
+                Response result = interaction(requestBase,jsonData,null,header,socketTimeout,connectionTimeout);
                 if (i > 0) {
                     logger.warn("post [{}] retry {} times", requestBase.getURI(), i);
                 }
@@ -277,38 +335,44 @@ public class HttpClientUtils {
 
             } catch(ConnectTimeoutException e){
                 ste = e;
-            }catch (SocketTimeoutException e) {
-                ste = e;
-            } catch (RuntimeException e){
-                ste =e;
-            } catch (IOException e) {
-                ste =e;
-            }
-            //TODO  i sleep time
-        }
-        logger.error(String.format("post [%s] timeout, retry %s times",requestBase.getURI(), retryTimes),  ste);
-        return null;
-    }
-
-
-    private  static Response timeoutRetryRequest(HttpRequestBase requestBase,Map<String,String> header,int retryTimes){
-        Exception ste = null;
-        for (int i = 0; i <= retryTimes; i++) {
-            try {
-                Response result = interaction(requestBase,header);
-                if (i > 0) {
-                    logger.warn("post [{}] retry {} times", requestBase.getURI(), i);
-                }
-                return result;
-
-            } catch(ConnectTimeoutException e){
-                ste = e;
+                connectionTimeout +=(i*500);
             } catch (SocketTimeoutException e) {
                 ste = e;
-            } catch (RuntimeException e){
-                ste =e;
-            } catch (IOException e) {
-                ste =e;
+                socketTimeout +=(i*500);
+            }
+        }
+        logger.error(String.format("post [%s] timeout, retry %s times",requestBase.getURI(), retryTimes),  ste);
+        return null;
+    }
+
+
+    /**
+     * 可以设置如果发生socketTimeout,connectionTimeout ,可以设置重试时间 每一次重试都会改变对应的Timeout
+     * 如发生SocketTimeOut ,则下一次请求的SocketTimeOut时间为 SocketTimeOut+=(retryTimes+500)
+     * @param requestBase
+     * @param header
+     * @param retryTimes
+     * @return
+     * @throws IOException
+     */
+    private  static Response timeoutRetryRequest(HttpRequestBase requestBase,Map<String,String> header,int retryTimes) throws IOException {
+        Exception ste = null;
+        int socketTimeout = READ_TIMEOUT;
+        int connectionTimeout = CONNECTION_TIMEOUT;
+        for (int i = 0; i <= retryTimes; i++) {
+            try {
+                Response result = interaction(requestBase,header,socketTimeout,connectionTimeout);
+                if (i > 0) {
+                    logger.warn("post [{}] retry {} times", requestBase.getURI(), i);
+                }
+                return result;
+
+            } catch(ConnectTimeoutException e){
+                ste = e;
+                connectionTimeout +=(i*500);
+            } catch (SocketTimeoutException e) {
+                ste = e;
+                socketTimeout +=(i*500);
             }
         }
 
@@ -316,8 +380,18 @@ public class HttpClientUtils {
         return null;
     }
 
-
-    private static Response interaction(HttpEntityEnclosingRequestBase requestBase, String jsonData, String defaultEncoding, Map<String, String> headers) throws IOException {
+    /**
+     *
+     * @param requestBase
+     * @param jsonData
+     * @param defaultEncoding
+     * @param headers
+     * @param readTimeout
+     * @param connectionTimeout
+     * @return
+     * @throws IOException
+     */
+    private static Response interaction(HttpEntityEnclosingRequestBase requestBase, String jsonData, String defaultEncoding, Map<String, String> headers,int readTimeout,int connectionTimeout) throws IOException {
         defaultEncoding = HttpClientUtils.getDefaultEncoding(defaultEncoding);
         try {
 
@@ -336,7 +410,7 @@ public class HttpClientUtils {
                 }
             }
 
-            HttpResponse response = HttpClientUtils.CLIENT.execute(requestBase);
+            HttpResponse response = HttpClientUtils.CLIENT.execute(setConfig(requestBase,readTimeout,connectionTimeout));
             int statusCode = response.getStatusLine().getStatusCode();
             String content = EntityUtils.toString(response.getEntity());
             return new Response(statusCode,content);
@@ -349,7 +423,7 @@ public class HttpClientUtils {
     }
 
 
-    private static Response interaction(HttpRequestBase requestBase,Map<String,String> headers) throws IOException {
+    private static Response interaction(HttpRequestBase requestBase,Map<String,String> headers,int readTimeout,int connectionTimeout) throws IOException {
         try {
 
             if(ArrayUtils.isEmpty(requestBase.getAllHeaders()) && org.apache.commons.collections.MapUtils.isNotEmpty(headers)){
@@ -358,7 +432,7 @@ public class HttpClientUtils {
                 }
             }
 
-            HttpResponse response = HttpClientUtils.CLIENT.execute(requestBase);
+            HttpResponse response = HttpClientUtils.CLIENT.execute(setConfig(requestBase,readTimeout,connectionTimeout));
             int statusCode = response.getStatusLine().getStatusCode();
             String content = EntityUtils.toString(response.getEntity());
             return new Response(statusCode,content);
@@ -368,6 +442,24 @@ public class HttpClientUtils {
             throw e;
         }
 
+    }
+
+
+    private static HttpRequestBase setConfig(HttpRequestBase requestBase,int readTimeout,int connectionTimeout){
+        RequestConfig.Builder configBuilder = null;
+        if(requestBase.getConfig()!=null){
+            configBuilder=RequestConfig.copy(requestBase.getConfig());
+        }else {
+            configBuilder=RequestConfig.custom();
+        }
+        if (readTimeout > 0) {
+            configBuilder.setSocketTimeout(readTimeout);
+        }
+        if (connectionTimeout >0){
+            configBuilder.setConnectTimeout(connectionTimeout);
+        }
+        requestBase.setConfig(configBuilder.build());
+        return requestBase;
     }
 
 
@@ -533,7 +625,7 @@ public class HttpClientUtils {
         HttpPost post = new HttpPost(url);
         try {
 
-            Response response = interaction(post,jsonData,defaultEncoding,headers);
+            Response response = interaction(post,jsonData,defaultEncoding,headers,0,0);
             if(response != null){
                 content=response.getContent();
             }
@@ -557,7 +649,7 @@ public class HttpClientUtils {
         HttpPut put = new HttpPut(url);
         try {
 
-            Response response = interaction(put,jsonData,defaultEncoding,headers);
+            Response response = interaction(put,jsonData,defaultEncoding,headers,0,0);
             if(response != null){
                 content=response.getContent();
             }
