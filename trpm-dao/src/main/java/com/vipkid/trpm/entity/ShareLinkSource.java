@@ -17,7 +17,7 @@ public class ShareLinkSource implements Serializable {
 	private String sourceName;
 
 	/****/
-	private Long clinkClick;
+	private Long linkClick;
 
 
 	
@@ -40,13 +40,13 @@ public class ShareLinkSource implements Serializable {
 		return this.sourceName;
 	}
 
-	public ShareLinkSource setClinkClick(Long clinkClick){
-		this.clinkClick = clinkClick;
+	public ShareLinkSource setLinkClick(Long linkClick){
+		this.linkClick = linkClick;
 		return this;
 	}
 
-	public Long getClinkClick(){
-		return this.clinkClick;
+	public Long getLinkClick(){
+		return this.linkClick;
 	}
 
 

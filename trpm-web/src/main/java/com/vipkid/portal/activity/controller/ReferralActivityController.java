@@ -5,8 +5,10 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,22 +20,27 @@ import com.google.common.collect.Maps;
 import com.vipkid.portal.activity.dto.ShareHandleDto;
 import com.vipkid.portal.activity.dto.StartHandleDto;
 import com.vipkid.portal.activity.dto.SubmitHandleDto;
+import com.vipkid.portal.activity.service.ReferralActivityService;
 import com.vipkid.rest.RestfulController;
 import com.vipkid.rest.config.RestfulConfig;
 import com.vipkid.rest.interceptor.annotation.RestInterface;
 import com.vipkid.rest.utils.ApiResponseUtils;
+import com.vipkid.teacher.tools.utils.IpUtils;
+import com.vipkid.teacher.tools.utils.ReturnMapUtils;
 
 @Controller
 @RequestMapping("/portal/referral/activity")
 public class ReferralActivityController extends RestfulController{
 
+	@Autowired
+	private ReferralActivityService referralActivityService;
 	
 	private final static Logger logger = LoggerFactory.getLogger(ReferralActivityController.class);
 	
 	/**
-	 * 点击分享时间处理函数
-	 * 1.linkSourceId 从父链接中携带的参数 link源 1.APP  2.PC  3.广告入口
-	 * 2.candidateKey 如果老师点击share 则为老师ID 否则为link中携带的参数
+	 * 点击分享时处理函数
+	 * 1.linkSourceId(link来源) 从父链接中携带的参数 link源 1.APP  2.PC  3.广告入口
+	 * 2.candidateKey(分享人) 如果老师点击share 则为老师ID 否则为开始测试接口中获得的candidateKey(32位的UUID)
 	 * @param request
 	 * @param response
 	 * @param bean
@@ -43,9 +50,19 @@ public class ReferralActivityController extends RestfulController{
 	public Map<String, Object> ShareHandle(HttpServletRequest request, HttpServletResponse response, @RequestBody ShareHandleDto bean){		
 		try{
 			Map<String,Object> result = Maps.newHashMap();
-			
-			
-			return ApiResponseUtils.buildSuccessDataResp(result);
+			if(StringUtils.isNumeric(bean.getCandidateKey())){
+				//老师分享
+				result = this.referralActivityService.updateTeacherShare(Integer.valueOf(bean.getCandidateKey()), IpUtils.getIpAddress(request));
+			}else{
+				//candidate 分享
+				result = this.referralActivityService.updateCandidateShare(bean.getCandidateKey(), IpUtils.getIpAddress(request));
+			}
+			if(ReturnMapUtils.isSuccess(result)){
+				return ApiResponseUtils.buildSuccessDataResp(result.get("data"));
+			}else{
+				response.setStatus(HttpStatus.FORBIDDEN.value());
+				return ApiResponseUtils.buildErrorResp(-3, result.get("info")+"");
+			}
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
 			logger.error(e.getMessage(),e);
@@ -72,10 +89,14 @@ public class ReferralActivityController extends RestfulController{
 			@RequestParam(value="linkSourceId",required=true,defaultValue="2")Integer linkSourceId, 
 			@RequestParam(value="shareRecordId",required=false)Integer shareRecordId){		
 		try{
-			Map<String,Object> result = Maps.newHashMap();
-			
-			
-			return ApiResponseUtils.buildSuccessDataResp(result);
+			if(shareRecordId == null){
+				//老师点击link 入口
+				this.referralActivityService.updateLinkSourceClick(linkSourceId);
+			}else{
+				//分享后link被单击次数的更新
+				this.referralActivityService.updateShareRecordClick(linkSourceId, shareRecordId);
+			}
+			return ApiResponseUtils.buildSuccessDataResp("OK");
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
 			logger.error(e.getMessage(),e);
@@ -98,7 +119,7 @@ public class ReferralActivityController extends RestfulController{
 	 * @param shareRecordId
 	 * @return
 	 */
-	@RequestMapping(value = "/start", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
+	@RequestMapping(value = "/start", method = RequestMethod.POST, produces = RestfulConfig.JSON_UTF_8)
 	public Map<String, Object> startHandle(HttpServletRequest request, HttpServletResponse response,@RequestBody StartHandleDto bean){		
 		try{
 			Map<String,Object> result = Maps.newHashMap();
