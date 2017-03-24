@@ -5,11 +5,11 @@ import com.vipkid.teacher.tools.utils.validation.annotaion.NotNull;
 @NotNull
 public class ShareHandleDto {
 
-	private Integer linkSourceId;
+	private Long linkSourceId;
 	
 	private String candidateKey;
 
-	public Integer getLinkSourceId() {
+	public Long getLinkSourceId() {
 		return linkSourceId;
 	}
 
@@ -17,7 +17,7 @@ public class ShareHandleDto {
 		return candidateKey;
 	}
 
-	public void setLinkSourceId(Integer linkSourceId) {
+	public void setLinkSourceId(Long linkSourceId) {
 		this.linkSourceId = linkSourceId;
 	}
 
