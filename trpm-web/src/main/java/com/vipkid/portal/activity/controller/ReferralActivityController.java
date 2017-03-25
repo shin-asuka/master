@@ -107,6 +107,12 @@ public class ReferralActivityController extends RestfulController{
 	    	if(MapUtils.isNotEmpty(resultMap)){
 	    		return resultMap;
 	    	}
+	    	boolean checkResult = this.referralActivityService.checkUrl(bean);
+	    	if(!checkResult){
+	    		response.setStatus(HttpStatus.FORBIDDEN.value());
+	    		logger.warn("参数不合法");
+	    		return ApiResponseUtils.buildErrorResp(-2, "参数不合法");
+	    	}
 			if(NumericUtils.isNull(bean.getShareRecordId())){
 				//老师点击link 入口
 				resultMap = this.referralActivityService.updateLinkSourceClick(bean.getLinkSourceId());
@@ -233,19 +239,28 @@ public class ReferralActivityController extends RestfulController{
 	
 	
 	/**
-	 * 完成答题结果提交接口(需要登陆后才能访问该接口)
+	 * 参数检查
 	 * @param request
 	 * @param response
 	 * @param bean
 	 * @return
 	 */
 	@RequestMapping(value = "/checkUrl", method = RequestMethod.POST, produces = RestfulConfig.JSON_UTF_8)
-	public Map<String, Object> checkUrl(HttpServletRequest request, HttpServletResponse response){		
+	public Map<String, Object> checkUrl(HttpServletRequest request, HttpServletResponse response, @RequestBody ClickHandleDto bean){		
 		try{
-			Map<String,Object> result = Maps.newHashMap();
-			
-			
-			return ApiResponseUtils.buildSuccessDataResp(result);
+        	Map<String,Object> resultMap = Maps.newHashMap();
+	    	//1.参数校验
+	    	resultMap = checkParmar(bean, response);
+	    	if(MapUtils.isNotEmpty(resultMap)){
+	    		return resultMap;
+	    	}
+			boolean checkResult = this.referralActivityService.checkUrl(bean);
+			if(!checkResult){
+	    		response.setStatus(HttpStatus.FORBIDDEN.value());
+	    		logger.warn("参数不合法");
+	    		return ApiResponseUtils.buildErrorResp(-2, "参数不合法");
+			}
+			return ApiResponseUtils.buildSuccessDataResp(resultMap);
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
 			logger.error(e.getMessage(),e);
