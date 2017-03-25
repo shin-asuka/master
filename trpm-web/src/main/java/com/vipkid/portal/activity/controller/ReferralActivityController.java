@@ -39,7 +39,7 @@ public class ReferralActivityController extends RestfulController{
 	private final static Logger logger = LoggerFactory.getLogger(ReferralActivityController.class);
 	
 	/**
-	 * 点击分享时处理函数
+	 * 点击分享按钮时处理函数
 	 * 1.linkSourceId(link来源) 从父链接中携带的参数 link源 1.APP  2.PC  3.广告入口
 	 * 2.candidateKey(分享人) 如果老师点击share 则为老师ID 否则为开始测试接口中获得的candidateKey(32位的UUID)
 	 * @param request
@@ -83,7 +83,7 @@ public class ReferralActivityController extends RestfulController{
 	
 	
 	/**
-	 * 点击参与事件记录接口
+	 * 参与者点击分享者分享链接时接口
 	 * 1 linkSourceId 该参数为link来源ID 默认值为 2
 	 * 2.shareRecordId 分享记录ID (可选)
 	 * @param request
