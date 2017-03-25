@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Maps;
+import com.vipkid.portal.activity.dto.ClickHandleDto;
 import com.vipkid.portal.activity.vo.StartHandleVo;
 import com.vipkid.teacher.tools.utils.NumericUtils;
 import com.vipkid.teacher.tools.utils.ReturnMapUtils;
@@ -210,6 +211,32 @@ public class ReferralActivityService {
 		return beanVo;
 	}
 	
+	/**
+	 * URL 参数验证
+	 * @param bean
+	 * @return
+	 */
+	public boolean checkUrl(ClickHandleDto bean){
+		ShareLinkSource sLinkSource = this.shareLinkSourceDao.getById(bean.getLinkSourceId());
+		if(NumericUtils.isNotNull(sLinkSource)){
+			if(NumericUtils.isNull(bean.getShareRecordId())){
+				return true;
+			}else{
+				ShareRecord shareRecord = this.shareRecordDao.getById(bean.getShareRecordId());
+				// 该分享ID 来源ID 匹配为正确
+				if(NumericUtils.isNotNull(shareRecord) && shareRecord.getLinkSourceId() == bean.getLinkSourceId()){
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
+	
+	/**
+	 * 获取考试最新版本
+	 * @return
+	 */
 	public String getExamVersion(){
 		//这里的配置不能缓存 及时获取
     	String contentJson = FilesUtils.readContent(this.getClass().getResourceAsStream("data/share/exam-vrsion.json"),StandardCharsets.UTF_8);
@@ -226,6 +253,11 @@ public class ReferralActivityService {
 	}
 	
 	
+	/**
+	 * 获取考试内容
+	 * @param versionName
+	 * @return
+	 */
 	public String getExamContent(String versionName){
 		// 优先从缓存中读取
 		String contentJson = redisProxy.get(RedisConstants.TRPM_SHARE_KEY + versionName);
