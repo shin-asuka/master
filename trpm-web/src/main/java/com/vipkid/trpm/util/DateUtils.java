@@ -1,6 +1,12 @@
 package com.vipkid.trpm.util;
 
+import com.google.common.collect.Maps;
+import com.vipkid.trpm.constant.ApplicationConstant;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.time.DateFormatUtils;
+
 import java.sql.Timestamp;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -10,12 +16,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Map;
-
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.time.DateFormatUtils;
-
-import com.google.common.collect.Maps;
-import com.vipkid.trpm.constant.ApplicationConstant;
 
 /**
  * 日期工具类
@@ -46,6 +46,8 @@ public final class DateUtils {
 	public static DateTimeFormatter FMT_YM = DateTimeFormatter.ofPattern("yyyy-MM");
 
 	public static DateTimeFormatter FMT_YMD_EMd = DateTimeFormatter.ofPattern("E, MMM d h:mma").withLocale(Locale.US);
+
+	public static String DEFAULT_FORMAT_PATTERN = "yyyy-MM-dd HH:mm:ss";
 
 	/* 每天的半小时数量 */
 	public static final int HALFHOUR_OF_DAY = 24 * 2;
@@ -303,7 +305,23 @@ public final class DateUtils {
         }
         return dateStr;
     }
-    
+
+	public static Date parseDate(String dateStr, String format) {
+		Date date = null;
+		if (StringUtils.isEmpty(format)) {
+			format = "yyyy-MM-dd HH:mm:ss";
+		}
+		if (StringUtils.isNotBlank(dateStr)) {
+			SimpleDateFormat dateFormat = new SimpleDateFormat(format);
+			try {
+				date = dateFormat.parse(dateStr);
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+		}
+		return date;
+	}
+
     public static Date getTheDayOfNextMonth(Date date, int dayOfMonth){
     	Calendar cal = Calendar.getInstance();
         cal.setTime(date);

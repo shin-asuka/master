@@ -127,13 +127,8 @@ public Logger logger = LoggerFactory.getLogger(AwsFileService.class);
 		logger.info("teacher id = {} ", teacherId);
 		FileVo fileVo = null;
 		if (file != null) {
-			String bucketName ="";
-			String bucketNameTest = PropertyConfigurer.stringValue("aws.bucketName.test");
-			if(StringUtils.isNotBlank(bucketNameTest)){
-				bucketName = bucketNameTest;
-			}else{
-				bucketName = PropertyConfigurer.stringValue("aws.bucketName");
-			}
+			String bucketName = PropertyConfigurer.stringValue("aws.bucketName");
+
 			try {
 				logger.info("文件:{}上传", fileName);
 				fileVo = upload(bucketName, key, file.getInputStream(), file.getSize());

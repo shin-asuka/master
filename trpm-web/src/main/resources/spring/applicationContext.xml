@@ -25,6 +25,8 @@
 			<!-- 需排除拦截的 -->
 			<mvc:exclude-mapping path="/api/h5/**"/>
 			<mvc:exclude-mapping path="/h5/**"/>
+			<mvc:exclude-mapping path="/api/background/sterling/**"/>
+			<mvc:exclude-mapping path="/background/sterling/**"/>
 			<beans:bean class="com.vipkid.rest.interceptor.LoginExpiredHandleInterceptor" />
 		</mvc:interceptor>
 		
@@ -34,6 +36,8 @@
 			<!-- 需排除拦截的 -->
 			<mvc:exclude-mapping path="/api/h5/**"/>
 			<mvc:exclude-mapping path="/h5/**"/>
+			<mvc:exclude-mapping path="/api/background/sterling/**"/>
+			<mvc:exclude-mapping path="/background/sterling/**"/>
 			<beans:bean class="com.vipkid.trpm.interceptor.CookieExpiredHandleInterceptor" />
 		</mvc:interceptor>
 
@@ -41,6 +45,9 @@
 		<mvc:interceptor>
 			<mvc:mapping path="/api/h5/**" />
 			<mvc:mapping path="/h5/**" />
+			<!--
+			<mvc:exclude-mapping path="/api/background/sterling/**"/>
+			-->
 			<beans:bean class="com.vipkid.trpm.interceptor.H5CookieExpiredHandleInterceptor" />
 		</mvc:interceptor>
 		
