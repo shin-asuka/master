@@ -177,6 +177,10 @@ public class ReferralActivityController extends RestfulController{
 	
 	/**
 	 * 完成答题结果提交接口
+	 * 1. 更新本题结果,如果没有答完成,则 插入下一道题的开始时间,
+	 * 已经答题完成计算结果保存更新测试结束时间期间 插入时候需要
+	 * 验证本次开始下一题是否存在,已经不在则不需要插入.
+	 * 
 	 * 1.activityExamId 考试ID
 	 * 2.questionOrder 题目顺序
 	 * 3.questionId 题目ID
@@ -211,7 +215,7 @@ public class ReferralActivityController extends RestfulController{
 	
 	
 	/**
-	 * 完成答题结果提交接口(需要登陆后才能访问该接口)
+	 * 检查答题步骤，到了那一步(需要登陆后才能访问该接口)
 	 * @param request
 	 * @param response
 	 * @param bean

@@ -31,6 +31,9 @@ public class ShareExamDetail implements Serializable {
 	/****/
 	private Long activityExamId;
 
+	/**0 未完成  1已完成**/
+	private Integer status;
+
 
 	
 	
@@ -95,6 +98,15 @@ public class ShareExamDetail implements Serializable {
 
 	public Long getActivityExamId(){
 		return this.activityExamId;
+	}
+
+	public ShareExamDetail setStatus(Integer status){
+		this.status = status;
+		return this;
+	}
+
+	public Integer getStatus(){
+		return this.status;
 	}
 
 
