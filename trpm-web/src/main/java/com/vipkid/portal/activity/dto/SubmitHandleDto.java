@@ -7,7 +7,7 @@ public class SubmitHandleDto {
 
 	private Integer activityExamId;
 	
-	private String questionOrder;
+	private String questionIndex;
 	
 	private String questionId;
 	
@@ -15,10 +15,6 @@ public class SubmitHandleDto {
 
 	public Integer getActivityExamId() {
 		return activityExamId;
-	}
-
-	public String getQuestionOrder() {
-		return questionOrder;
 	}
 
 	public String getQuestionId() {
@@ -29,12 +25,16 @@ public class SubmitHandleDto {
 		return questionResult;
 	}
 
-	public void setActivityExamId(Integer activityExamId) {
-		this.activityExamId = activityExamId;
+	public String getQuestionIndex() {
+		return questionIndex;
 	}
 
-	public void setQuestionOrder(String questionOrder) {
-		this.questionOrder = questionOrder;
+	public void setQuestionIndex(String questionIndex) {
+		this.questionIndex = questionIndex;
+	}
+
+	public void setActivityExamId(Integer activityExamId) {
+		this.activityExamId = activityExamId;
 	}
 
 	public void setQuestionId(String questionId) {

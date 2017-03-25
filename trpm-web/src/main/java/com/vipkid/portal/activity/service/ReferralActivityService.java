@@ -13,15 +13,19 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Maps;
+import com.vipkid.portal.activity.vo.StartHandleVo;
 import com.vipkid.teacher.tools.utils.NumericUtils;
 import com.vipkid.teacher.tools.utils.ReturnMapUtils;
 import com.vipkid.trpm.constant.ApplicationConstant.RedisConstants;
 import com.vipkid.trpm.dao.ShareActivityExamDao;
+import com.vipkid.trpm.dao.ShareExamDetailDao;
 import com.vipkid.trpm.dao.ShareLinkSourceDao;
 import com.vipkid.trpm.dao.ShareRecordDao;
 import com.vipkid.trpm.entity.ShareActivityExam;
+import com.vipkid.trpm.entity.ShareExamDetail;
 import com.vipkid.trpm.entity.ShareLinkSource;
 import com.vipkid.trpm.entity.ShareRecord;
 import com.vipkid.trpm.proxy.RedisProxy;
@@ -40,6 +44,9 @@ public class ReferralActivityService {
 	
 	@Autowired
 	private ShareActivityExamDao shareActivityExamDao;
+	
+	@Autowired
+	private ShareExamDetailDao shareExamDetailDao;
 
     @Autowired
     private RedisProxy redisProxy;
@@ -139,7 +146,7 @@ public class ReferralActivityService {
 	 * @param candidateKey 参与人Key
 	 * @return
 	 */
-	public ShareActivityExam startEaxm(Long shareRecordId, String candidateKey,String candidateIp){
+	public StartHandleVo startEaxm(Long shareRecordId, String candidateKey,String candidateIp,int index){
 		if(StringUtils.isBlank(candidateKey)){
 			candidateKey = UUID.randomUUID().toString().replace("-", "").toUpperCase();
 		}
@@ -152,7 +159,21 @@ public class ReferralActivityService {
 		bean.setLinkSourceId(preRecord.getLinkSourceId());
 		bean.setShareRecordId(shareRecordId);
 		this.shareActivityExamDao.insert(bean);
-		return bean;
+		
+		String questionId = getExamPageContentForIndex(this.getExamVersion(),index);
+		ShareExamDetail shareExamDetail = new ShareExamDetail();
+		shareExamDetail.setActivityExamId(bean.getId());
+		shareExamDetail.setQuestionId(questionId);
+		shareExamDetail.setQuestionIndex(1L);
+		shareExamDetail.setStartDateTime(new Date());
+		this.shareExamDetailDao.insert(shareExamDetail);
+		StartHandleVo beanVo = new StartHandleVo();
+		beanVo.setActivityExamID(bean.getId());
+		beanVo.setCandidateKey(bean.getCandidateKey());
+		beanVo.setPageContent(this.getExamContent(bean.getExamVersion()));
+		beanVo.setQuestionId(questionId);
+		beanVo.setQuestionIndex(index);
+		return beanVo;
 	}
 	
 	/**
@@ -162,7 +183,7 @@ public class ReferralActivityService {
 	 * @param candidateKey 参与人Key
 	 * @return
 	 */
-	public ShareActivityExam startEaxmForTeacher(Long teacherId, Long linkSourceId, String candidateIp){
+	public StartHandleVo startEaxmForTeacher(Long teacherId, Long linkSourceId, String candidateIp,int index){
 		ShareActivityExam bean = new ShareActivityExam();
 		bean.setExamVersion(this.getExamVersion());
 		bean.setStartDateTime(new Date());
@@ -172,7 +193,21 @@ public class ReferralActivityService {
 		bean.setLinkSourceId(linkSourceId);
 		bean.setShareRecordId(0L);
 		this.shareActivityExamDao.insert(bean);
-		return bean;
+		
+		String questionId = getExamPageContentForIndex(this.getExamVersion(),index);
+		ShareExamDetail shareExamDetail = new ShareExamDetail();
+		shareExamDetail.setActivityExamId(bean.getId());
+		shareExamDetail.setQuestionId(questionId);
+		shareExamDetail.setQuestionIndex(1L);
+		shareExamDetail.setStartDateTime(new Date());
+		this.shareExamDetailDao.insert(shareExamDetail);
+		StartHandleVo beanVo = new StartHandleVo();
+		beanVo.setActivityExamID(bean.getId());
+		beanVo.setCandidateKey(bean.getCandidateKey());
+		beanVo.setPageContent(this.getExamContent(bean.getExamVersion()));
+		beanVo.setQuestionId(questionId);
+		beanVo.setQuestionIndex(index);
+		return beanVo;
 	}
 	
 	public String getExamVersion(){
@@ -205,6 +240,23 @@ public class ReferralActivityService {
 			}
 		}
 		return StringUtils.trim(contentJson);
+	}
+	
+	/**
+	 * 获取指定题目的题ID
+	 * @param index
+	 * @return
+	 */
+	public String getExamPageContentForIndex(String versionName, int index){
+		String contentJson = this.getExamContent(versionName);
+		if(StringUtils.isNotBlank(contentJson)){
+			JSONObject json = JSONObject.parseObject(contentJson);
+			String pageContent = json.getString("pageContent");
+			JSONArray jsons = JSONArray.parseArray(pageContent);
+			JSONObject jsonObject = (JSONObject) jsons.get(index-1);
+			return jsonObject.getString("id");
+		}
+		return null;
 	}
 	
 }

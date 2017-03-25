@@ -22,6 +22,7 @@ import com.vipkid.portal.activity.dto.ShareHandleDto;
 import com.vipkid.portal.activity.dto.StartHandleDto;
 import com.vipkid.portal.activity.dto.SubmitHandleDto;
 import com.vipkid.portal.activity.service.ReferralActivityService;
+import com.vipkid.portal.activity.vo.StartHandleVo;
 import com.vipkid.rest.RestfulController;
 import com.vipkid.rest.config.RestfulConfig;
 import com.vipkid.rest.interceptor.annotation.RestInterface;
@@ -30,7 +31,6 @@ import com.vipkid.rest.utils.ApiResponseUtils;
 import com.vipkid.teacher.tools.utils.IpUtils;
 import com.vipkid.teacher.tools.utils.NumericUtils;
 import com.vipkid.teacher.tools.utils.ReturnMapUtils;
-import com.vipkid.trpm.entity.ShareActivityExam;
 import com.vipkid.trpm.entity.User;
 
 @Controller
@@ -149,22 +149,15 @@ public class ReferralActivityController extends RestfulController{
 	    	}
 	    	// 判断是否为Null
 	    	User user = this.loginService.getUser();
-	    	ShareActivityExam beanVo = new ShareActivityExam();
+	    	StartHandleVo beanVo = new StartHandleVo();
 			if(NumericUtils.isNull(user)){
 				//一般用户参与
-				beanVo = this.referralActivityService.startEaxm(bean.getShareRecordId(), bean.getCandidateKey(), IpUtils.getIpAddress(request));
+				beanVo = this.referralActivityService.startEaxm(bean.getShareRecordId(), bean.getCandidateKey(), IpUtils.getIpAddress(request), 1);
 			}else{
 				//老师参与 
-				beanVo = this.referralActivityService.startEaxmForTeacher(user.getId(), bean.getLinkSourceId(), IpUtils.getIpAddress(request));
+				beanVo = this.referralActivityService.startEaxmForTeacher(user.getId(), bean.getLinkSourceId(), IpUtils.getIpAddress(request), 1);
 			}
-			if(NumericUtils.isNull(beanVo)){
-				response.setStatus(HttpStatus.FORBIDDEN.value());
-				return ApiResponseUtils.buildErrorResp(-5, "ShareActivityExam 创建失败");
-			}
-			resultMap.put("activityExamID", beanVo.getId());
-			resultMap.put("candidateKey",beanVo.getCandidateKey());
-			resultMap.put("pageContent",this.referralActivityService.getExamContent(beanVo.getExamVersion()));
-			return ApiResponseUtils.buildSuccessDataResp(resultMap);
+			return ApiResponseUtils.buildSuccessDataResp(beanVo);
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
 			logger.error(e.getMessage(),e);
