@@ -35,10 +35,13 @@ public class ShareActivityExam implements Serializable {
 	private Long teacherId;
 
 	/****/
-	private Long shareRecordId;
+	private Long linkSourceId;
 
 	/****/
-	private Long linkSourceId;
+	private Long shareRecordId;
+
+	/**0,未完成  1已完成**/
+	private Integer status;
 
 
 	
@@ -115,6 +118,15 @@ public class ShareActivityExam implements Serializable {
 		return this.teacherId;
 	}
 
+	public ShareActivityExam setLinkSourceId(Long linkSourceId){
+		this.linkSourceId = linkSourceId;
+		return this;
+	}
+
+	public Long getLinkSourceId(){
+		return this.linkSourceId;
+	}
+
 	public ShareActivityExam setShareRecordId(Long shareRecordId){
 		this.shareRecordId = shareRecordId;
 		return this;
@@ -124,13 +136,13 @@ public class ShareActivityExam implements Serializable {
 		return this.shareRecordId;
 	}
 
-	public ShareActivityExam setLinkSourceId(Long linkSourceId){
-		this.linkSourceId = linkSourceId;
+	public ShareActivityExam setStatus(Integer status){
+		this.status = status;
 		return this;
 	}
 
-	public Long getLinkSourceId(){
-		return this.linkSourceId;
+	public Integer getStatus(){
+		return this.status;
 	}
 
 

@@ -159,6 +159,7 @@ public class ReferralActivityService {
 		bean.setCandidateIp(candidateIp);
 		bean.setLinkSourceId(preRecord.getLinkSourceId());
 		bean.setShareRecordId(shareRecordId);
+		bean.setStatus(0);
 		this.shareActivityExamDao.insert(bean);
 		
 		String questionId = getExamPageContentForIndex(this.getExamVersion(),index);
@@ -167,6 +168,7 @@ public class ReferralActivityService {
 		shareExamDetail.setQuestionId(questionId);
 		shareExamDetail.setQuestionIndex(1L);
 		shareExamDetail.setStartDateTime(new Date());
+		shareExamDetail.setStatus(0);
 		this.shareExamDetailDao.insert(shareExamDetail);
 		StartHandleVo beanVo = new StartHandleVo();
 		beanVo.setActivityExamID(bean.getId());
@@ -193,6 +195,7 @@ public class ReferralActivityService {
 		bean.setCandidateIp(candidateIp);
 		bean.setLinkSourceId(linkSourceId);
 		bean.setShareRecordId(0L);
+		bean.setStatus(0);
 		this.shareActivityExamDao.insert(bean);
 		
 		String questionId = getExamPageContentForIndex(this.getExamVersion(),index);
@@ -201,6 +204,7 @@ public class ReferralActivityService {
 		shareExamDetail.setQuestionId(questionId);
 		shareExamDetail.setQuestionIndex(1L);
 		shareExamDetail.setStartDateTime(new Date());
+		shareExamDetail.setStatus(0);
 		this.shareExamDetailDao.insert(shareExamDetail);
 		StartHandleVo beanVo = new StartHandleVo();
 		beanVo.setActivityExamID(bean.getId());

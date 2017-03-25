@@ -14,9 +14,6 @@ public class ShareRecord implements Serializable {
 	private Long id;
 
 	/****/
-	private Long linkSourceId;
-
-	/****/
 	private Long teacherId;
 
 	/****/
@@ -35,6 +32,9 @@ public class ShareRecord implements Serializable {
 	private String examVersion;
 
 	/****/
+	private Long linkSourceId;
+
+	/****/
 	private java.util.Date shareTime;
 
 
@@ -47,15 +47,6 @@ public class ShareRecord implements Serializable {
 
 	public Long getId(){
 		return this.id;
-	}
-
-	public ShareRecord setLinkSourceId(Long linkSourceId){
-		this.linkSourceId = linkSourceId;
-		return this;
-	}
-
-	public Long getLinkSourceId(){
-		return this.linkSourceId;
 	}
 
 	public ShareRecord setTeacherId(Long teacherId){
@@ -110,6 +101,15 @@ public class ShareRecord implements Serializable {
 
 	public String getExamVersion(){
 		return this.examVersion;
+	}
+
+	public ShareRecord setLinkSourceId(Long linkSourceId){
+		this.linkSourceId = linkSourceId;
+		return this;
+	}
+
+	public Long getLinkSourceId(){
+		return this.linkSourceId;
 	}
 
 	public ShareRecord setShareTime(java.util.Date shareTime){
