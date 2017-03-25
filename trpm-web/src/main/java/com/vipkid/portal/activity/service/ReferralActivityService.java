@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,12 +16,14 @@ import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Maps;
 import com.vipkid.teacher.tools.utils.NumericUtils;
 import com.vipkid.teacher.tools.utils.ReturnMapUtils;
+import com.vipkid.trpm.constant.ApplicationConstant.RedisConstants;
 import com.vipkid.trpm.dao.ShareActivityExamDao;
 import com.vipkid.trpm.dao.ShareLinkSourceDao;
 import com.vipkid.trpm.dao.ShareRecordDao;
 import com.vipkid.trpm.entity.ShareActivityExam;
 import com.vipkid.trpm.entity.ShareLinkSource;
 import com.vipkid.trpm.entity.ShareRecord;
+import com.vipkid.trpm.proxy.RedisProxy;
 import com.vipkid.trpm.util.FilesUtils;
 
 @Service
@@ -36,6 +39,9 @@ public class ReferralActivityService {
 	
 	@Autowired
 	private ShareActivityExamDao shareActivityExamDao;
+
+    @Autowired
+    private RedisProxy redisProxy;
 	
 	/**
 	 * link入口被单击次数的更新
@@ -120,19 +126,36 @@ public class ReferralActivityService {
 	}
 	
 	
-	public String  getExamVersion(){
+	public String getExamVersion(){
 		//这里的配置不能缓存 及时获取
-        String contentJson = FilesUtils.readContent(this.getClass().getResourceAsStream("data/share/exam-vrsion.json"),StandardCharsets.UTF_8);
-        try{
-        	JSONObject json = JSONObject.parseObject(contentJson);
-        	//获取考试最新版本
-        	String examVersion = json.get("version")+"";
-        	logger.info("读取到最新版本：" + examVersion);
-        	return examVersion;
-        }catch(Exception e){
-        	logger.error("data/share/exam-vrsion.json,文件内容读取错误。"+e.getMessage(),e);
-        }
-        return null;
+    	String contentJson = FilesUtils.readContent(this.getClass().getResourceAsStream("data/share/exam-vrsion.json"),StandardCharsets.UTF_8);
+    	logger.info("读取到：" + contentJson);
+    	if(StringUtils.isBlank(contentJson)){
+    		logger.error("data/share/exam-vrsion.json,没有读取到内容。");
+    		return contentJson;
+    	}
+    	JSONObject json = JSONObject.parseObject(contentJson);
+    	//获取考试最新版本
+    	String examVersion = json.getString("version");
+    	logger.info("解析到最新版本：" + examVersion);
+    	return StringUtils.trim(examVersion);
+	}
+	
+	
+	public String getExamContent(String versionName){
+		// 优先从缓存中读取
+		String contentJson = redisProxy.get(RedisConstants.TRPM_SHARE_KEY + versionName);
+		// 如果没有，则从文件中读取
+		if(StringUtils.isBlank(contentJson)){
+			contentJson = FilesUtils.readContent(this.getClass().getResourceAsStream("data/share/" + versionName),StandardCharsets.UTF_8);
+			logger.info("读取到：" + contentJson);
+			if(StringUtils.isNotBlank(contentJson)){
+				redisProxy.set(RedisConstants.TRPM_SHARE_KEY + versionName, contentJson, RedisConstants.TRPM_SHARE_TIME);
+			}else{
+				logger.error("data/share/"+versionName+",没有读取到内容。");
+			}
+		}
+		return StringUtils.trim(contentJson);
 	}
 	
 }
