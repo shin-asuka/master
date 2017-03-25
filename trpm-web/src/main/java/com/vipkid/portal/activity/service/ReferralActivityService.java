@@ -47,24 +47,30 @@ public class ReferralActivityService {
 	 * link入口被单击次数的更新
 	 * @param linkSourceId
 	 */
-	public void updateLinkSourceClick(Integer linkSourceId){
+	public Map<String,Object> updateLinkSourceClick(Long linkSourceId){
+		Map<String,Object> paramMap = Maps.newHashMap();
 		if(NumericUtils.isNotNullOrZeor(linkSourceId)){
 			ShareLinkSource bean = this.shareLinkSourceDao.getById(linkSourceId);
 			bean.setLinkClick(bean.getLinkClick()+1);
 			this.shareLinkSourceDao.updateById(bean);
+			paramMap.put("status", true);
 		}
+		return paramMap;
 	}
 	
 	/**
 	 * 通过分享ID 更新分享链接被单击次数
 	 * @param linkSourceId
 	 */
-	public void updateShareRecordClick(Integer linkSourceId,Integer shareRecordId){
+	public Map<String,Object> updateShareRecordClick(Long linkSourceId,Long shareRecordId){
+		Map<String,Object> paramMap = Maps.newHashMap();
 		if(NumericUtils.isNotNullOrZeor(linkSourceId)){
 			ShareRecord bean = this.shareRecordDao.getById(shareRecordId);
 			bean.setCountClick(bean.getCountClick()+1);
 			this.shareRecordDao.updateById(bean);
+			paramMap.put("status", true);
 		}
+		return paramMap;
 	}
 	
 	/**

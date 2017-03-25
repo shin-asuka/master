@@ -15,9 +15,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import com.google.common.collect.Maps;
+import com.vipkid.portal.activity.dto.ClickHandleDto;
 import com.vipkid.portal.activity.dto.ShareHandleDto;
 import com.vipkid.portal.activity.dto.StartHandleDto;
 import com.vipkid.portal.activity.dto.SubmitHandleDto;
@@ -27,6 +27,7 @@ import com.vipkid.rest.config.RestfulConfig;
 import com.vipkid.rest.interceptor.annotation.RestInterface;
 import com.vipkid.rest.utils.ApiResponseUtils;
 import com.vipkid.teacher.tools.utils.IpUtils;
+import com.vipkid.teacher.tools.utils.NumericUtils;
 import com.vipkid.teacher.tools.utils.ReturnMapUtils;
 
 @Controller
@@ -91,19 +92,23 @@ public class ReferralActivityController extends RestfulController{
 	 * @param shareRecordId
 	 * @return
 	 */
-	@RequestMapping(value = "/click", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
-	public Map<String, Object> clickHandle(HttpServletRequest request, HttpServletResponse response,
-			@RequestParam(value="linkSourceId",required=true,defaultValue="2")Integer linkSourceId, 
-			@RequestParam(value="shareRecordId",required=false)Integer shareRecordId){		
+	@RequestMapping(value = "/click", method = RequestMethod.POST, produces = RestfulConfig.JSON_UTF_8)
+	public Map<String, Object> clickHandle(HttpServletRequest request, HttpServletResponse response,@RequestBody ClickHandleDto bean){		
 		try{
-			if(shareRecordId == null){
+        	Map<String,Object> resultMap = Maps.newHashMap();
+	    	//1.参数校验
+	    	resultMap = checkParmar(bean, response);
+	    	if(MapUtils.isNotEmpty(resultMap)){
+	    		return resultMap;
+	    	}
+			if(NumericUtils.isNull(bean.getShareRecordId())){
 				//老师点击link 入口
-				this.referralActivityService.updateLinkSourceClick(linkSourceId);
+				resultMap = this.referralActivityService.updateLinkSourceClick(bean.getLinkSourceId());
 			}else{
 				//分享后link被单击次数的更新
-				this.referralActivityService.updateShareRecordClick(linkSourceId, shareRecordId);
+				resultMap = this.referralActivityService.updateShareRecordClick(bean.getLinkSourceId(), bean.getShareRecordId());
 			}
-			return ApiResponseUtils.buildSuccessDataResp("OK");
+			return ApiResponseUtils.buildSuccessDataResp(resultMap);
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
 			logger.error(e.getMessage(),e);
@@ -120,7 +125,8 @@ public class ReferralActivityController extends RestfulController{
 	 * 开始答题事件记录及数据获取接口
 	 * 1.shareRecordId
 	 * 2.candidateKey (从考必须有，非从靠可以不需要有)
-	 * 获取考试JSON串，新的考试ID
+	 * 如果candidateKey存在则认为是从新考试，获取考试JSON串，生成新的考试ID 不需要生成candidateKey
+	 * 如果没有candidateKey，则认为是首次考试，获取考试JSON串，生成新的考试ID 生成candidateKey
 	 * @param request
 	 * @param response
 	 * @param shareRecordId
@@ -194,6 +200,33 @@ public class ReferralActivityController extends RestfulController{
 	@RestInterface
 	@RequestMapping(value = "/checkResult", method = RequestMethod.POST, produces = RestfulConfig.JSON_UTF_8)
 	public Map<String, Object> checkResult(HttpServletRequest request, HttpServletResponse response){		
+		try{
+			Map<String,Object> result = Maps.newHashMap();
+			
+			
+			return ApiResponseUtils.buildSuccessDataResp(result);
+        } catch (IllegalArgumentException e) {
+            response.setStatus(HttpStatus.BAD_REQUEST.value());
+			logger.error(e.getMessage(),e);
+			return ApiResponseUtils.buildErrorResp(-6, "参数类型转化错误:"+e.getMessage());
+        } catch (Exception e) {
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+			logger.error(e.getMessage(),e);
+			return ApiResponseUtils.buildErrorResp(-7, "服务器异常:"+e.getMessage());
+        }
+	}
+	
+	
+	
+	/**
+	 * 完成答题结果提交接口(需要登陆后才能访问该接口)
+	 * @param request
+	 * @param response
+	 * @param bean
+	 * @return
+	 */
+	@RequestMapping(value = "/checkUrl", method = RequestMethod.POST, produces = RestfulConfig.JSON_UTF_8)
+	public Map<String, Object> checkUrl(HttpServletRequest request, HttpServletResponse response){		
 		try{
 			Map<String,Object> result = Maps.newHashMap();
 			
