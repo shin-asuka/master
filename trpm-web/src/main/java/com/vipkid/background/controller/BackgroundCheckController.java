@@ -89,8 +89,10 @@ public class BackgroundCheckController extends RestfulController {
             Preconditions.checkArgument(StringUtils.isNotBlank(birthday), "latestBirthday cannot be null");
             Preconditions.checkArgument(StringUtils.isNotBlank(socialSecurityNo), "socialSecurityNumber cannot be null");
 
-            if(!IdentityValidatorUtils.validSocialNoForUs(socialSecurityNo)){
-                throw new IllegalArgumentException("socialSecurityNumber is illegal");
+            if(socialSecurityNo.indexOf("*") == -1){
+                if(!IdentityValidatorUtils.validSocialNoForUs(socialSecurityNo)){
+                    throw new IllegalArgumentException("socialSecurityNumber is illegal");
+                }
             }
             if(!IdentityValidatorUtils.validZipCodeForUs(zipCode)){
                 throw new IllegalArgumentException("latestZipCode is illegal");
