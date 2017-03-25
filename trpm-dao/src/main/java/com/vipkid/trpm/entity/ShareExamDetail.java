@@ -17,7 +17,7 @@ public class ShareExamDetail implements Serializable {
 	private String questionId;
 
 	/****/
-	private Long questionOrder;
+	private Long questionIndex;
 
 	/****/
 	private String questionResult;
@@ -52,13 +52,13 @@ public class ShareExamDetail implements Serializable {
 		return this.questionId;
 	}
 
-	public ShareExamDetail setQuestionOrder(Long questionOrder){
-		this.questionOrder = questionOrder;
+	public ShareExamDetail setQuestionIndex(Long questionIndex){
+		this.questionIndex = questionIndex;
 		return this;
 	}
 
-	public Long getQuestionOrder(){
-		return this.questionOrder;
+	public Long getQuestionIndex(){
+		return this.questionIndex;
 	}
 
 	public ShareExamDetail setQuestionResult(String questionResult){
