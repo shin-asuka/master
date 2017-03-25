@@ -4,6 +4,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -131,6 +132,48 @@ public class ReferralActivityService {
 		return ReturnMapUtils.returnSuccess();
 	}
 	
+	/**
+	 * 一般参与者
+	 * 开始考试,生成试卷 测试
+	 * @param shareRecordId 分享ID
+	 * @param candidateKey 参与人Key
+	 * @return
+	 */
+	public ShareActivityExam startEaxm(Long shareRecordId, String candidateKey,String candidateIp){
+		if(StringUtils.isBlank(candidateKey)){
+			candidateKey = UUID.randomUUID().toString().replace("-", "").toUpperCase();
+		}
+		ShareRecord preRecord = this.shareRecordDao.getById(shareRecordId);
+		ShareActivityExam bean = new ShareActivityExam();
+		bean.setExamVersion(preRecord.getExamVersion());
+		bean.setStartDateTime(new Date());
+		bean.setCandidateKey(candidateKey);
+		bean.setCandidateIp(candidateIp);
+		bean.setLinkSourceId(preRecord.getLinkSourceId());
+		bean.setShareRecordId(shareRecordId);
+		this.shareActivityExamDao.insert(bean);
+		return bean;
+	}
+	
+	/**
+	 * 老师参与
+	 * 开始考试,生成试卷 测试
+	 * @param teacherId 分享ID
+	 * @param candidateKey 参与人Key
+	 * @return
+	 */
+	public ShareActivityExam startEaxmForTeacher(Long teacherId, Long linkSourceId, String candidateIp){
+		ShareActivityExam bean = new ShareActivityExam();
+		bean.setExamVersion(this.getExamVersion());
+		bean.setStartDateTime(new Date());
+		bean.setCandidateKey(teacherId+"");
+		bean.setTeacherId(teacherId);
+		bean.setCandidateIp(candidateIp);
+		bean.setLinkSourceId(linkSourceId);
+		bean.setShareRecordId(0L);
+		this.shareActivityExamDao.insert(bean);
+		return bean;
+	}
 	
 	public String getExamVersion(){
 		//这里的配置不能缓存 及时获取

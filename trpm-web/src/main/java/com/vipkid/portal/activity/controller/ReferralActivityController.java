@@ -25,10 +25,13 @@ import com.vipkid.portal.activity.service.ReferralActivityService;
 import com.vipkid.rest.RestfulController;
 import com.vipkid.rest.config.RestfulConfig;
 import com.vipkid.rest.interceptor.annotation.RestInterface;
+import com.vipkid.rest.service.LoginService;
 import com.vipkid.rest.utils.ApiResponseUtils;
 import com.vipkid.teacher.tools.utils.IpUtils;
 import com.vipkid.teacher.tools.utils.NumericUtils;
 import com.vipkid.teacher.tools.utils.ReturnMapUtils;
+import com.vipkid.trpm.entity.ShareActivityExam;
+import com.vipkid.trpm.entity.User;
 
 @Controller
 @RequestMapping("/portal/referral/activity")
@@ -36,6 +39,9 @@ public class ReferralActivityController extends RestfulController{
 
 	@Autowired
 	private ReferralActivityService referralActivityService;
+	
+    @Autowired
+    private LoginService loginService;
 	
 	private final static Logger logger = LoggerFactory.getLogger(ReferralActivityController.class);
 	
@@ -124,7 +130,7 @@ public class ReferralActivityController extends RestfulController{
 	/**
 	 * 开始答题事件记录及数据获取接口
 	 * 1.shareRecordId
-	 * 2.candidateKey (从考必须有，非从靠可以不需要有)
+	 * 2.candidateKey (从考必须有，非从考可以不需要有)
 	 * 如果candidateKey存在则认为是从新考试，获取考试JSON串，生成新的考试ID 不需要生成candidateKey
 	 * 如果没有candidateKey，则认为是首次考试，获取考试JSON串，生成新的考试ID 生成candidateKey
 	 * @param request
@@ -141,8 +147,23 @@ public class ReferralActivityController extends RestfulController{
 	    	if(MapUtils.isNotEmpty(resultMap)){
 	    		return resultMap;
 	    	}
-			
-			
+	    	// 判断是否为Null
+	    	User user = this.loginService.getUser();
+	    	ShareActivityExam beanVo = new ShareActivityExam();
+			if(NumericUtils.isNull(user)){
+				//一般用户参与
+				beanVo = this.referralActivityService.startEaxm(bean.getShareRecordId(), bean.getCandidateKey(), IpUtils.getIpAddress(request));
+			}else{
+				//老师参与 
+				beanVo = this.referralActivityService.startEaxmForTeacher(user.getId(), bean.getLinkSourceId(), IpUtils.getIpAddress(request));
+			}
+			if(NumericUtils.isNull(beanVo)){
+				response.setStatus(HttpStatus.FORBIDDEN.value());
+				return ApiResponseUtils.buildErrorResp(-5, "ShareActivityExam 创建失败");
+			}
+			resultMap.put("activityExamID", beanVo.getId());
+			resultMap.put("candidateKey",beanVo.getCandidateKey());
+			resultMap.put("pageContent",this.referralActivityService.getExamContent(beanVo.getExamVersion()));
 			return ApiResponseUtils.buildSuccessDataResp(resultMap);
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());

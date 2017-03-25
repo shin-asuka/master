@@ -6,12 +6,14 @@ import com.vipkid.teacher.tools.utils.validation.annotaion.NotNull;
 @NotNull
 public class StartHandleDto {
 
-	private Integer shareRecordId;
+	private Long shareRecordId;
+	
+	private Long linkSourceId;
 	
 	@Ignore
 	private String candidateKey;
 
-	public Integer getShareRecordId() {
+	public Long getShareRecordId() {
 		return shareRecordId;
 	}
 
@@ -19,12 +21,20 @@ public class StartHandleDto {
 		return candidateKey;
 	}
 
-	public void setShareRecordId(Integer shareRecordId) {
+	public void setShareRecordId(Long shareRecordId) {
 		this.shareRecordId = shareRecordId;
 	}
 
 	public void setCandidateKey(String candidateKey) {
 		this.candidateKey = candidateKey;
+	}
+
+	public Long getLinkSourceId() {
+		return linkSourceId;
+	}
+
+	public void setLinkSourceId(Long linkSourceId) {
+		this.linkSourceId = linkSourceId;
 	}
 	
 }
