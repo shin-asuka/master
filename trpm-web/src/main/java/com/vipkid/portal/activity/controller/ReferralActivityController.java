@@ -158,10 +158,10 @@ public class ReferralActivityController extends RestfulController{
 	    	StartHandleVo beanVo = new StartHandleVo();
 			if(NumericUtils.isNull(user)){
 				//一般用户参与
-				beanVo = this.referralActivityService.startEaxm(bean.getShareRecordId(), bean.getCandidateKey(), IpUtils.getIpAddress(request), 1);
+				beanVo = this.referralActivityService.updateStartEaxm(bean.getShareRecordId(), bean.getCandidateKey(), IpUtils.getIpAddress(request), 1);
 			}else{
 				//老师参与 
-				beanVo = this.referralActivityService.startEaxmForTeacher(user.getId(), bean.getLinkSourceId(), IpUtils.getIpAddress(request), 1);
+				beanVo = this.referralActivityService.updateStartEaxmForTeacher(user.getId(), bean.getLinkSourceId(), IpUtils.getIpAddress(request), 1);
 			}
 			return ApiResponseUtils.buildSuccessDataResp(beanVo);
         } catch (IllegalArgumentException e) {
