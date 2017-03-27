@@ -266,25 +266,27 @@ public class ReferralActivityService {
 		}
 		//考试不为空
 		SubmitHandleVo beanVo = new SubmitHandleVo();
-		 //更新当前提交结果
-		 ShareExamDetail currentExam = list.get(0);
-		 currentExam.setQuestionResult(bean.getQuestionResult());
-		 currentExam.setEndDateTime(new Date());
-		 this.shareExamDetailDao.updateById(currentExam);
-		 //下一道题的ID
-		 String questionId = getExamPageContentForIndex(shareActivityExam.getExamVersion(), bean.getQuestionIndex()+1);
-		 //更新本次考试结果，并返回结果
-		 if(StringUtils.isBlank(questionId)){
+		//更新当前提交结果
+		ShareExamDetail currentExamDetail = list.get(0);
+		currentExamDetail.setQuestionResult(bean.getQuestionResult());
+		currentExamDetail.setEndDateTime(new Date());
+		this.shareExamDetailDao.updateById(currentExamDetail);
+		//下一道题的ID
+		String questionId = getExamPageContentForIndex(shareActivityExam.getExamVersion(), bean.getQuestionIndex()+1);
+		//更新本次考试结果，并返回结果
+		if(StringUtils.isBlank(questionId)){
 			 // 没有下一题 计算结果 返回前端
 			 shareActivityExam = this.updateExamReturnResult(shareActivityExam, StatusEnum.COMPLETE);
-		 }else{
+		}else{
 			 //有下一题
 			 shareActivityExam = this.updateExamReturnResult(shareActivityExam, StatusEnum.PENDING);
 			 beanVo.setQuestionId(questionId);
 			 beanVo.setQuestionIndex(bean.getQuestionIndex()+1);
-		 }
-		 beanVo.setStatus(shareActivityExam.getStatus());
-		 beanVo.setExamResult(shareActivityExam.getExamResult());
+		}
+		//更新本次考试
+		this.shareActivityExamDao.updateById(shareActivityExam);
+		beanVo.setStatus(shareActivityExam.getStatus());
+		beanVo.setExamResult(shareActivityExam.getExamResult());
 		return ReturnMapUtils.returnSuccess(beanVo);
 	}
 	
@@ -294,7 +296,7 @@ public class ReferralActivityService {
  	 * @param status 考试状态
 	 * @return
 	 */
-	public ShareActivityExam updateExamReturnResult(ShareActivityExam shareActivityExam, StatusEnum status){
+	private ShareActivityExam updateExamReturnResult(ShareActivityExam shareActivityExam, StatusEnum status){
 		shareActivityExam.setStatus(status.val());
 		if(status.val() == StatusEnum.COMPLETE.val()){
 			shareActivityExam.setEndDateTime(new Date());
