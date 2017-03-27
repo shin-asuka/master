@@ -32,21 +32,53 @@ public class EmailUtils {
 	private static final Logger logger = LoggerFactory.getLogger(EmailUtils.class);
 
 	public static void sendEmail4Recruitment(Teacher teacher, String titleTemplate, String contentTemplate) {
+		Map<String,String> paramsMap=Maps.newHashMap();
+		sendEmail4RecruitmentCommonDeal(teacher,titleTemplate,contentTemplate,paramsMap);
+
+	}
+
+	/**
+	 * 带有其他参数的邮件发送
+	 * @param teacher  老师BEAN
+	 * @param titleTemplate 题目文件名常量
+	 * @param contentTemplate 内容文件名常量
+	 * @param paramsMap 插入内容的参数
+	 */
+	public static void sendEmail4Recruitment(Teacher teacher, String titleTemplate, String contentTemplate ,Map<String,String> paramsMap) {
+		sendEmail4RecruitmentCommonDeal(teacher,titleTemplate,contentTemplate,paramsMap);
+	}
+
+	/**
+	 * sendEmail4Recruitment的公共业务处理
+	 * @param teacher  老师BEAN
+	 * @param titleTemplate 题目文件名常量
+	 * @param contentTemplate 内容文件名常量
+	 * @param paramsMap 插入内容的参数
+	 */
+	private static void  sendEmail4RecruitmentCommonDeal(Teacher teacher, String titleTemplate, String contentTemplate ,Map<String,String> paramsMap){
 		try {
-			Map<String, String> paramsMap = Maps.newHashMap();
+			paramsMap.put("referralShow","none");
 			if (teacher.getFirstName() != null){
 				paramsMap.put("teacherName", teacher.getFirstName());
 			}else if (teacher.getRealName() != null){
 				paramsMap.put("teacherName", teacher.getRealName());
 			}
-			logger.info("【EMAIL.sendEmail4Recruitment】toAddMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",teacher.getRealName(),teacher.getEmail(),titleTemplate,contentTemplate);
+			if( StringUtils.isNotBlank(teacher.getReferee())){
+				String[] referralInfo = teacher.getReferee().split(",");
+				paramsMap.put("referrerName", referralInfo[1]);
+				paramsMap.put("referralShow","block");
+			}
+			logger.info("【EMAIL.sendEmail4Recruitment】addedMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}, referrer name = {}, ",
+					teacher.getRealName(),teacher.getEmail(),titleTemplate,contentTemplate,teacher.getReferee());
 			Map<String, String> emailMap = TemplateUtils.readTemplate(contentTemplate, paramsMap, titleTemplate);
 			EmailEngine.addMailPool(teacher.getEmail(), emailMap, EmailConfig.EmailFormEnum.TEACHVIP);
-			logger.info("【EMAIL.sendEmail4Recruitment】addedMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",teacher.getRealName(),teacher.getEmail(),titleTemplate,contentTemplate);
+			logger.info("【EMAIL.sendEmail4Recruitment】addedMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}, referrer name = {}",
+					teacher.getRealName(),teacher.getEmail(),titleTemplate,contentTemplate,teacher.getReferee());
 		} catch (Exception e) {
 			logger.error("【EMAIL.sendEmail4Recruitment】ERROR: {}", e);
 		}
 	}
+
 
 	public static void sendEmail4BasicInfoPass(Teacher teacher, Map<String, String> params) {
 		try {
@@ -99,6 +131,7 @@ public class EmailUtils {
 	public static void sendEmail4PracticumBook(Teacher teacher, OnlineClass onlineclass){
 		try {
 			Map<String,String> paramsMap = new HashMap<String,String>();
+			paramsMap.put("referralShow","none");
 			if (teacher.getFirstName() != null){
 				paramsMap.put("teacherName", teacher.getFirstName());
 			}else if (teacher.getRealName() != null){
@@ -106,6 +139,11 @@ public class EmailUtils {
 			}
 			paramsMap.put("scheduledDateTime", DateUtils.formatTo(onlineclass.getScheduledDateTime().toInstant(), teacher.getTimezone(), DateUtils.FMT_YMD_HM));
 			paramsMap.put("timezone", teacher.getTimezone());
+			if( StringUtils.isNotBlank(teacher.getReferee())){
+				String[] referralInfo = teacher.getReferee().split(",");
+				paramsMap.put("referrerName", referralInfo[1]);
+				paramsMap.put("referralShow","block");
+			}
 			logger.info("【EMAIL.sendEmail4PracticumBook】toAddMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",teacher.getRealName(),teacher.getEmail(),"PracticumBookTitle.html","PracticumBook.html");
 			Map<String, String> emailMap = TemplateUtils.readTemplate("PracticumBook.html", paramsMap, "PracticumBookTitle.html");
 			EmailEngine.addMailPool(teacher.getEmail(), emailMap, EmailConfig.EmailFormEnum.TEACHVIP);
