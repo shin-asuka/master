@@ -13,7 +13,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -71,7 +70,11 @@ public class UpdateRegularShowNameJob {
         if(org.apache.commons.lang.StringUtils.isNotBlank(date)) {
             userIds = Splitter.on(",").trimResults().splitToList(date);
         }
-        List<User> userList =  userDao.findUserNameListByIdList(userIds);
+        List<String> userIdList = Lists.newArrayList();
+        if(CollectionUtils.isNotEmpty(userIds)) {
+            userIds.forEach(userId -> userIdList.add(userId.trim()));
+        }
+        List<User> userList =  userDao.findUserNameListByIdList(userIdList);
         if(CollectionUtils.isNotEmpty(userList)){
             for (User user:userList) {
                 if (user != null) {
