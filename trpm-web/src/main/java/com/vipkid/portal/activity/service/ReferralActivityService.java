@@ -16,7 +16,9 @@ import org.springframework.stereotype.Service;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Maps;
+import com.vipkid.enums.ShareActivityExamEnum;
 import com.vipkid.portal.activity.dto.ClickHandleDto;
+import com.vipkid.portal.activity.dto.SubmitHandleDto;
 import com.vipkid.portal.activity.vo.StartHandleVo;
 import com.vipkid.teacher.tools.utils.NumericUtils;
 import com.vipkid.teacher.tools.utils.ReturnMapUtils;
@@ -147,7 +149,7 @@ public class ReferralActivityService {
 	 * @param candidateKey 参与人Key
 	 * @return
 	 */
-	public StartHandleVo startEaxm(Long shareRecordId, String candidateKey,String candidateIp,int index){
+	public StartHandleVo updateStartEaxm(Long shareRecordId, String candidateKey,String candidateIp,int index){
 		if(StringUtils.isBlank(candidateKey)){
 			candidateKey = UUID.randomUUID().toString().replace("-", "").toUpperCase();
 		}
@@ -186,7 +188,7 @@ public class ReferralActivityService {
 	 * @param candidateKey 参与人Key
 	 * @return
 	 */
-	public StartHandleVo startEaxmForTeacher(Long teacherId, Long linkSourceId, String candidateIp,int index){
+	public StartHandleVo updateStartEaxmForTeacher(Long teacherId, Long linkSourceId, String candidateIp,int index){
 		ShareActivityExam bean = new ShareActivityExam();
 		bean.setExamVersion(this.getExamVersion());
 		bean.setStartDateTime(new Date());
@@ -236,6 +238,37 @@ public class ReferralActivityService {
 		return false;
 	}
 	
+	/**
+	 * 1. 更新本题结果,如果没有答完成,则 插入下一道题的开始时间,
+	 * 已经答题完成计算结果保存更新测试结束时间期间 插入时候需要
+	 * 验证本次开始下一题是否存在,已经不在则不需要插入.
+	 * @return
+	 */
+	public Map<String, Object> updateExamResult(SubmitHandleDto bean){
+		ShareExamDetail shareExamDetail = new ShareExamDetail();
+		shareExamDetail.setActivityExamId(bean.getActivityExamId());
+		shareExamDetail.setQuestionId(bean.getQuestionId());
+		ShareActivityExam shareActivityExam = this.shareActivityExamDao.getById(bean.getActivityExamId());
+		if(NumericUtils.isNull(shareActivityExam)){
+			return ReturnMapUtils.returnFail(-2, "没有找到创建的测试记录，activityExamId:"+shareActivityExam.getId()+"不正确");
+		}
+		if(ShareActivityExamEnum.StatusEnum.COMPLETE.val() == shareActivityExam.getStatus()){
+			return ReturnMapUtils.returnFail(-3, "测试已经结束，请重新开始activityExamId:"+shareActivityExam.getId());
+		}
+		
+		List<ShareExamDetail> list = this.shareExamDetailDao.selectByList(shareExamDetail);
+		if(CollectionUtils.isNotEmpty(list)){
+			 String questionId = getExamPageContentForIndex(shareActivityExam.getExamVersion(), bean.getQuestionIndex()+1);
+			 if(StringUtils.isBlank(questionId)){
+				 // 没有下一题 计算结果 返回前段
+				 
+			 }else{
+				 //有下一题，返回下一题ID
+				 
+			 }
+		}
+		return Maps.newHashMap();
+	}
 	
 	/**
 	 * 获取考试最新版本

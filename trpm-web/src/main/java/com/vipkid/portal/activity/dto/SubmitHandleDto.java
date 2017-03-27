@@ -5,15 +5,15 @@ import com.vipkid.teacher.tools.utils.validation.annotaion.NotNull;
 @NotNull
 public class SubmitHandleDto {
 
-	private Integer activityExamId;
+	private Long activityExamId;
 	
-	private String questionIndex;
+	private Integer questionIndex;
 	
 	private String questionId;
 	
 	private String questionResult;
 
-	public Integer getActivityExamId() {
+	public Long getActivityExamId() {
 		return activityExamId;
 	}
 
@@ -25,15 +25,15 @@ public class SubmitHandleDto {
 		return questionResult;
 	}
 
-	public String getQuestionIndex() {
+	public Integer getQuestionIndex() {
 		return questionIndex;
 	}
 
-	public void setQuestionIndex(String questionIndex) {
+	public void setQuestionIndex(Integer questionIndex) {
 		this.questionIndex = questionIndex;
 	}
 
-	public void setActivityExamId(Integer activityExamId) {
+	public void setActivityExamId(Long activityExamId) {
 		this.activityExamId = activityExamId;
 	}
 
