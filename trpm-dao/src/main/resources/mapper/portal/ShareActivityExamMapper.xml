@@ -141,6 +141,15 @@
 		 FROM share_activity_exam
 		 <include refid="WhereSql"/>
 	</select>
+	
+		<!-- 查询排序list -->
+	<select id="selectOrderById" resultMap="ShareActivityExam">
+		 SELECT
+		 <include refid="Base_Column_List" />
+		 FROM share_exam_detail
+		 <include refid="WhereSql"/>
+		 ORDER BEY id ASC
+	</select>
 
 </mapper>
 
