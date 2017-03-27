@@ -23,6 +23,7 @@ import com.vipkid.portal.activity.dto.ShareHandleDto;
 import com.vipkid.portal.activity.dto.StartHandleDto;
 import com.vipkid.portal.activity.dto.SubmitHandleDto;
 import com.vipkid.portal.activity.service.ReferralActivityService;
+import com.vipkid.portal.activity.vo.CheckResultVo;
 import com.vipkid.portal.activity.vo.StartHandleVo;
 import com.vipkid.rest.RestfulController;
 import com.vipkid.rest.config.RestfulConfig;
@@ -33,6 +34,7 @@ import com.vipkid.teacher.tools.utils.IpUtils;
 import com.vipkid.teacher.tools.utils.NumericUtils;
 import com.vipkid.teacher.tools.utils.ReturnMapUtils;
 import com.vipkid.trpm.entity.ShareActivityExam;
+import com.vipkid.trpm.entity.ShareExamDetail;
 import com.vipkid.trpm.entity.User;
 
 @Controller
@@ -230,20 +232,28 @@ public class ReferralActivityController extends RestfulController{
 	@RequestMapping(value = "/checkResult", method = RequestMethod.POST, produces = RestfulConfig.JSON_UTF_8)
 	public Map<String, Object> checkResult(HttpServletRequest request, HttpServletResponse response){		
 		try{
-			Map<String,Object> result = Maps.newHashMap();
+			CheckResultVo beanVo = new CheckResultVo();
 			ShareActivityExam shareActivityExam = this.referralActivityService.checkTeacherExamStratus(getTeacher(request));
 			if (NumericUtils.isNull(shareActivityExam)) {
 				//表示从未考试
+				beanVo.setStatus(2);
+			}else{
+				beanVo.setStatus(shareActivityExam.getStatus());
+				beanVo.setExamResult(shareActivityExam.getExamResult());
+				beanVo.setPageContent(this.referralActivityService.getExamContent(shareActivityExam.getExamVersion()));
+				//已经考试已经有结果不用走下一步
+				if(shareActivityExam.getStatus() == StatusEnum.PENDING.val()){
+					//已经考试，但没有结果 进入该逻辑，获取未完成的测试试题 
+					ShareExamDetail shareExamDetail = this.referralActivityService.findPendingByExamId(shareActivityExam.getId());
+					if(NumericUtils.isNull(shareExamDetail)){
+						response.setStatus(HttpStatus.FORBIDDEN.value());
+						return ApiResponseUtils.buildErrorResp(-2, "未找到未完成的测试试题:"+shareActivityExam.getId());
+					}
+					beanVo.setQuestionId(shareExamDetail.getQuestionId());
+					beanVo.setQuestionIndex(shareExamDetail.getQuestionIndex());
+				}
 			}
-			if(shareActivityExam.getStatus() == StatusEnum.PENDING.val()){
-				//已经考试，但没有结果
-			}
-			
-			if(shareActivityExam.getStatus() == StatusEnum.COMPLETE.val()){
-				//已经考试，已经有结果
-			}
-			
-			return ApiResponseUtils.buildSuccessDataResp(result);
+			return ApiResponseUtils.buildSuccessDataResp(beanVo);
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
 			logger.error(e.getMessage(),e);

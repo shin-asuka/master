@@ -345,6 +345,19 @@ public class ReferralActivityService {
 		return null;
 	}
 	
+	
+	public ShareExamDetail findPendingByExamId(Long activityExamId){
+		ShareExamDetail selectBean = new ShareExamDetail();
+		selectBean.setActivityExamId(activityExamId);
+		selectBean.setStatus(StatusEnum.PENDING.val());
+		List<ShareExamDetail> list = this.shareExamDetailDao.selectByList(selectBean);
+		if(CollectionUtils.isEmpty(list)){
+			logger.error("未找到未完成的测试试题");
+			return null;
+		}
+		return list.get(0);
+	}
+	
 	/**
 	 * 获取考试最新版本
 	 * @return
