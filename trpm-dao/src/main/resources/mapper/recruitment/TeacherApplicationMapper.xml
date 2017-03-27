@@ -422,6 +422,25 @@
 		</foreach>
 	</select>
 
+	<!-- 查询取消模拟课并且没有在约课的数据 -->
+	<select id="findMockCancelNoBook" resultMap="teacherApplicationResultMap">
+		SELECT
+			a.teacher_id as teacher_application_teacher_id,l.create_time as teacher_application_audit_date_time
+		FROM
+			teacher_application a
+		LEFT JOIN teacher_application_log l ON a.teacher_id = l.teacher_id
+		WHERE
+			a. STATUS = #{aStatus}
+		AND a.result IS NULL
+		AND a.online_class_id IS NULL
+		AND l. STATUS = #{lStatus}
+		AND l.result = #{lResult}
+		<foreach collection="auditTimes" open="AND (" close=")" separator=" OR " item="auditTime">
+			(l.create_time BETWEEN #{auditTime.startTime} AND #{auditTime.endTime})
+		</foreach>
+		order by l.create_time
+	</select>
+
 	<select id="findTAByTeacherIdsStatusNeResult" resultMap="teacherApplicationResultMap">
 		SELECT
 		<include refid="teacherApplicationColumns" />
