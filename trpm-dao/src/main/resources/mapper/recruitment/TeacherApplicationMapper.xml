@@ -427,11 +427,10 @@
 		SELECT
 			a.teacher_id as teacher_application_teacher_id,l.create_time as teacher_application_audit_date_time
 		FROM
-		teacher_application_log l
-		INNER JOIN teacher_application a ON a.id = l.teacher_application_id
+			teacher_application a
+		LEFT JOIN teacher_application_log l ON a.teacher_id = l.teacher_id
 		WHERE
-		 a.current = 1
-		AND a.STATUS = #{aStatus}
+			a. STATUS = #{aStatus}
 		AND a.result IS NULL
 		AND a.online_class_id IS NULL
 		AND l. STATUS = #{lStatus}

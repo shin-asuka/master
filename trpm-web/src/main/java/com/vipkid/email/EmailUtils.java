@@ -70,6 +70,8 @@ public class EmailUtils {
 			}
 			logger.info("【EMAIL.sendEmail4Recruitment】addedMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}, referrer name = {}, ",
 					teacher.getRealName(),teacher.getEmail(),titleTemplate,contentTemplate,teacher.getReferee());
+			paramsMap.put("loginName", teacher.getEmail());
+			logger.info("【EMAIL.sendEmail4Recruitment】toAddMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",teacher.getRealName(),teacher.getEmail(),titleTemplate,contentTemplate);
 			Map<String, String> emailMap = TemplateUtils.readTemplate(contentTemplate, paramsMap, titleTemplate);
 			EmailEngine.addMailPool(teacher.getEmail(), emailMap, EmailConfig.EmailFormEnum.TEACHVIP);
 			logger.info("【EMAIL.sendEmail4Recruitment】addedMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}, referrer name = {}",
