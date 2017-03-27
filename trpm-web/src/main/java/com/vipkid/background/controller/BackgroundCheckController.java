@@ -106,7 +106,7 @@ public class BackgroundCheckController extends RestfulController {
 
             if (!StringUtils.equals(TeacherPortalCodeEnum.RES_SUCCESS.getCode(), output.getResCode())) {
                 response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-                return ApiResponseUtils.buildErrorResp(TeacherPortalCodeEnum.SYS_FAIL.getCode(), "Failed to save background check information.");
+                return ApiResponseUtils.buildErrorResp(output.getResCode(), output.getResMsg());
             }
 
         } catch (IllegalArgumentException e) {
