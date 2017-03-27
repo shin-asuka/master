@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -21,6 +22,8 @@ import com.vipkid.enums.ShareActivityExamEnum.StatusEnum;
 import com.vipkid.portal.activity.dto.ClickHandleDto;
 import com.vipkid.portal.activity.dto.SubmitHandleDto;
 import com.vipkid.portal.activity.vo.StartHandleVo;
+import com.vipkid.portal.activity.vo.SubmitHandleVo;
+import com.vipkid.teacher.tools.repository.dao.MyBatisTools;
 import com.vipkid.teacher.tools.utils.NumericUtils;
 import com.vipkid.teacher.tools.utils.ReturnMapUtils;
 import com.vipkid.trpm.constant.ApplicationConstant.RedisConstants;
@@ -32,6 +35,7 @@ import com.vipkid.trpm.entity.ShareActivityExam;
 import com.vipkid.trpm.entity.ShareExamDetail;
 import com.vipkid.trpm.entity.ShareLinkSource;
 import com.vipkid.trpm.entity.ShareRecord;
+import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.proxy.RedisProxy;
 import com.vipkid.trpm.util.FilesUtils;
 
@@ -254,27 +258,34 @@ public class ReferralActivityService {
 			return ReturnMapUtils.returnFail(-2, "没有找到创建的测试记录，activityExamId:"+shareActivityExam.getId()+"不正确");
 		}
 		if(StatusEnum.COMPLETE.val() == shareActivityExam.getStatus()){
-			return ReturnMapUtils.returnFail(-3, "测试已经结束，请重新开始activityExamId:"+shareActivityExam.getId());
-		}
-		
+			return ReturnMapUtils.returnFail(-3, "测试已经结束，请重新开始，activityExamId:"+shareActivityExam.getId());
+		}		
 		List<ShareExamDetail> list = this.shareExamDetailDao.selectByList(shareExamDetail);
-		if(CollectionUtils.isNotEmpty(list)){
-			 //更新当前提交结果
-			 ShareExamDetail currentExam = list.get(0);
-			 currentExam.setQuestionResult(bean.getQuestionResult());
-			 currentExam.setEndDateTime(new Date());
-			 this.shareExamDetailDao.updateById(currentExam);
-			 String questionId = getExamPageContentForIndex(shareActivityExam.getExamVersion(), bean.getQuestionIndex()+1);
-			 //更新本次考试结果，并返回结果
-			 if(StringUtils.isBlank(questionId)){
-				 // 没有下一题 计算结果 返回前段
-				 String examResult = this.updateExamReturnResult(shareActivityExam, StatusEnum.COMPLETE);
-			 }else{
-				 //有下一题，返回下一题ID
-				 String examResult = this.updateExamReturnResult(shareActivityExam, StatusEnum.PENDING);
-			 }
+		if(CollectionUtils.isEmpty(list)){
+			return ReturnMapUtils.returnFail(-4, "没有找到该题的考试信息，请从新提交，activityExamId:"+shareActivityExam.getId());
 		}
-		return Maps.newHashMap();
+		//考试不为空
+		SubmitHandleVo beanVo = new SubmitHandleVo();
+		 //更新当前提交结果
+		 ShareExamDetail currentExam = list.get(0);
+		 currentExam.setQuestionResult(bean.getQuestionResult());
+		 currentExam.setEndDateTime(new Date());
+		 this.shareExamDetailDao.updateById(currentExam);
+		 //下一道题的ID
+		 String questionId = getExamPageContentForIndex(shareActivityExam.getExamVersion(), bean.getQuestionIndex()+1);
+		 //更新本次考试结果，并返回结果
+		 if(StringUtils.isBlank(questionId)){
+			 // 没有下一题 计算结果 返回前端
+			 shareActivityExam = this.updateExamReturnResult(shareActivityExam, StatusEnum.COMPLETE);
+		 }else{
+			 //有下一题
+			 shareActivityExam = this.updateExamReturnResult(shareActivityExam, StatusEnum.PENDING);
+			 beanVo.setQuestionId(questionId);
+			 beanVo.setQuestionIndex(bean.getQuestionIndex()+1);
+		 }
+		 beanVo.setStatus(shareActivityExam.getStatus());
+		 beanVo.setExamResult(shareActivityExam.getExamResult());
+		return ReturnMapUtils.returnSuccess(beanVo);
 	}
 	
 	/**
@@ -283,10 +294,53 @@ public class ReferralActivityService {
  	 * @param status 考试状态
 	 * @return
 	 */
-	public String updateExamReturnResult(ShareActivityExam shareActivityExam, StatusEnum status){
+	public ShareActivityExam updateExamReturnResult(ShareActivityExam shareActivityExam, StatusEnum status){
 		shareActivityExam.setStatus(status.val());
 		if(status.val() == StatusEnum.COMPLETE.val()){
 			shareActivityExam.setEndDateTime(new Date());
+		}
+		ShareExamDetail selectBean = new ShareExamDetail();
+		selectBean.setActivityExamId(shareActivityExam.getId());
+		selectBean.setStatus(ShareActivityExamEnum.StatusEnum.COMPLETE.val());
+		Map<String,Object> paramMap = MyBatisTools.toMap(selectBean);
+		List<ShareExamDetail> list = this.shareExamDetailDao.findByList("selectOrderByIndex", paramMap);
+		StringBuilder examResultString = new StringBuilder("");
+		if(CollectionUtils.isNotEmpty(list)){
+			for (ShareExamDetail beanDetail:list) {
+				if(StringUtils.isNotBlank(beanDetail.getQuestionResult())){
+					examResultString.append(StringUtils.trim(beanDetail.getQuestionResult()));
+				}else {
+					examResultString.append("-");
+				}
+			}
+		}
+		shareActivityExam.setExamResult(examResultString.toString());
+		return shareActivityExam;
+	}
+	
+	/**
+	 * 检查老师测试状态
+	 * 1.如果有pending中的获取pending的测试
+	 * 2.如果没有pending的，获取最后一次完成的考试
+	 * 3.如果没有考试过进入开始考试页面
+	 * @param teacher 
+	 * @return
+	 */
+	public ShareActivityExam checkTeacherExamStratus(Teacher teacher){
+		ShareActivityExam selectBean = new ShareActivityExam();
+		selectBean.setTeacherId(teacher.getId());
+		Map<String, Object> paramMap = MyBatisTools.toMap(selectBean);
+		List<ShareActivityExam> list = this.shareActivityExamDao.findByOne("selectOrderById", paramMap);
+		//有考试过
+		if(CollectionUtils.isNotEmpty(list)){ 
+			List<ShareActivityExam> waitList = list.stream().filter(bean -> bean.getStatus() == StatusEnum.PENDING.val()).collect(Collectors.toList());
+			//有待考记录，返回未完成的考试
+			if(CollectionUtils.isNotEmpty(waitList)){
+				return waitList.get(0);
+			//全部完成则返回最后一条考试记录
+			}else{
+				return list.get(list.size()-1);
+			}
 		}
 		return null;
 	}

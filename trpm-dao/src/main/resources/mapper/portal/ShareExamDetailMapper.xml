@@ -126,6 +126,16 @@
 		 FROM share_exam_detail
 		 <include refid="WhereSql"/>
 	</select>
+	
+	
+	<!-- 查询排序list -->
+	<select id="selectOrderByIndex" resultMap="ShareExamDetail">
+		 SELECT
+		 <include refid="Base_Column_List" />
+		 FROM share_exam_detail
+		 <include refid="WhereSql"/>
+		 ORDER BEY question_index ASC
+	</select>
 
 </mapper>
 

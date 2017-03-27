@@ -55,7 +55,7 @@ public class ReferralActivityController extends RestfulController{
 	 * @return
 	 */
 	@RequestMapping(value = "/share", method = RequestMethod.POST, produces = RestfulConfig.JSON_UTF_8)
-	public Map<String, Object> ShareHandle(HttpServletRequest request, HttpServletResponse response, @RequestBody ShareHandleDto bean){		
+	public Map<String, Object> feacShareHandle(HttpServletRequest request, HttpServletResponse response, @RequestBody ShareHandleDto bean){		
 		try{
         	Map<String,Object> resultMap = Maps.newHashMap();
 	    	//1.参数校验
@@ -199,8 +199,11 @@ public class ReferralActivityController extends RestfulController{
 	    	if(MapUtils.isNotEmpty(resultMap)){
 	    		return resultMap;
 	    	}
-			
-			
+	    	resultMap = this.referralActivityService.updateExamDetailResult(bean);
+			if(ReturnMapUtils.isFail(resultMap)){
+				response.setStatus(HttpStatus.FORBIDDEN.value());
+				return ApiResponseUtils.buildErrorResp(-2, resultMap.get("info")+"");
+			}
 			return ApiResponseUtils.buildSuccessDataResp(resultMap);
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
