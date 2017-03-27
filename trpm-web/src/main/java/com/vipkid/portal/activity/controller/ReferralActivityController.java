@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.google.common.collect.Maps;
+import com.vipkid.enums.ShareActivityExamEnum.StatusEnum;
 import com.vipkid.portal.activity.dto.ClickHandleDto;
 import com.vipkid.portal.activity.dto.ShareHandleDto;
 import com.vipkid.portal.activity.dto.StartHandleDto;
@@ -31,6 +32,7 @@ import com.vipkid.rest.utils.ApiResponseUtils;
 import com.vipkid.teacher.tools.utils.IpUtils;
 import com.vipkid.teacher.tools.utils.NumericUtils;
 import com.vipkid.teacher.tools.utils.ReturnMapUtils;
+import com.vipkid.trpm.entity.ShareActivityExam;
 import com.vipkid.trpm.entity.User;
 
 @Controller
@@ -229,7 +231,17 @@ public class ReferralActivityController extends RestfulController{
 	public Map<String, Object> checkResult(HttpServletRequest request, HttpServletResponse response){		
 		try{
 			Map<String,Object> result = Maps.newHashMap();
+			ShareActivityExam shareActivityExam = this.referralActivityService.checkTeacherExamStratus(getTeacher(request));
+			if (NumericUtils.isNull(shareActivityExam)) {
+				//表示从未考试
+			}
+			if(shareActivityExam.getStatus() == StatusEnum.PENDING.val()){
+				//已经考试，但没有结果
+			}
 			
+			if(shareActivityExam.getStatus() == StatusEnum.COMPLETE.val()){
+				//已经考试，已经有结果
+			}
 			
 			return ApiResponseUtils.buildSuccessDataResp(result);
         } catch (IllegalArgumentException e) {
