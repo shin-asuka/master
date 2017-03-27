@@ -1,13 +1,13 @@
 package com.vipkid.portal.activity.vo;
 
 public class CheckResultVo {
-	
+	// 0 未完成  1 已完成  2从未考试
 	private Integer status;
 	
 	private Integer activityExamId;
 	
 	private String questionId;
-	
+	//总考试结果进度
 	private String examResult;
 	
 	private Long questionIndex;
