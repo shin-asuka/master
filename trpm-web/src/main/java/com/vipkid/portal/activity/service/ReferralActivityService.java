@@ -17,6 +17,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Maps;
 import com.vipkid.enums.ShareActivityExamEnum;
+import com.vipkid.enums.ShareActivityExamEnum.StatusEnum;
 import com.vipkid.portal.activity.dto.ClickHandleDto;
 import com.vipkid.portal.activity.dto.SubmitHandleDto;
 import com.vipkid.portal.activity.vo.StartHandleVo;
@@ -244,7 +245,7 @@ public class ReferralActivityService {
 	 * 验证本次开始下一题是否存在,已经不在则不需要插入.
 	 * @return
 	 */
-	public Map<String, Object> updateExamResult(SubmitHandleDto bean){
+	public Map<String, Object> updateExamDetailResult(SubmitHandleDto bean){
 		ShareExamDetail shareExamDetail = new ShareExamDetail();
 		shareExamDetail.setActivityExamId(bean.getActivityExamId());
 		shareExamDetail.setQuestionId(bean.getQuestionId());
@@ -252,22 +253,42 @@ public class ReferralActivityService {
 		if(NumericUtils.isNull(shareActivityExam)){
 			return ReturnMapUtils.returnFail(-2, "没有找到创建的测试记录，activityExamId:"+shareActivityExam.getId()+"不正确");
 		}
-		if(ShareActivityExamEnum.StatusEnum.COMPLETE.val() == shareActivityExam.getStatus()){
+		if(StatusEnum.COMPLETE.val() == shareActivityExam.getStatus()){
 			return ReturnMapUtils.returnFail(-3, "测试已经结束，请重新开始activityExamId:"+shareActivityExam.getId());
 		}
 		
 		List<ShareExamDetail> list = this.shareExamDetailDao.selectByList(shareExamDetail);
 		if(CollectionUtils.isNotEmpty(list)){
+			 //更新当前提交结果
+			 ShareExamDetail currentExam = list.get(0);
+			 currentExam.setQuestionResult(bean.getQuestionResult());
+			 currentExam.setEndDateTime(new Date());
+			 this.shareExamDetailDao.updateById(currentExam);
 			 String questionId = getExamPageContentForIndex(shareActivityExam.getExamVersion(), bean.getQuestionIndex()+1);
+			 //更新本次考试结果，并返回结果
 			 if(StringUtils.isBlank(questionId)){
 				 // 没有下一题 计算结果 返回前段
-				 
+				 String examResult = this.updateExamReturnResult(shareActivityExam, StatusEnum.COMPLETE);
 			 }else{
 				 //有下一题，返回下一题ID
-				 
+				 String examResult = this.updateExamReturnResult(shareActivityExam, StatusEnum.PENDING);
 			 }
 		}
 		return Maps.newHashMap();
+	}
+	
+	/**
+	 * 更新考试结果
+	 * @param activityExamId 考试ID
+ 	 * @param status 考试状态
+	 * @return
+	 */
+	public String updateExamReturnResult(ShareActivityExam shareActivityExam, StatusEnum status){
+		shareActivityExam.setStatus(status.val());
+		if(status.val() == StatusEnum.COMPLETE.val()){
+			shareActivityExam.setEndDateTime(new Date());
+		}
+		return null;
 	}
 	
 	/**
