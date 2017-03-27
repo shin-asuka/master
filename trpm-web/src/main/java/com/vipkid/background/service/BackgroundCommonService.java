@@ -79,6 +79,7 @@ public class BackgroundCommonService {
                 current.add(Calendar.DATE, -5);*/
 
                 current.add(Calendar.YEAR, -2);
+                current.add(Calendar.MONTH,1);
 
                 //上次背调超过两年需要进行背调，不超过两年需要根据result和disputeStatus进行判断
                 if (current.getTime().after(backgroundScreening.getUpdateTime())) {
