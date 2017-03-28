@@ -1241,10 +1241,10 @@ public class BookingsService {
 				value = existValue;
 				count = Long.parseLong(value);
 			} else {
-				int co=teacherService.incentivesTeacherInit(teacherId.toString());
+				int co = teacherService.incentivesTeacherInit(teacherId.toString());
 				count = new Long(co);
 			}
-			
+
 		} catch (Exception e) {
 			logger.error("redis get key = {}", key, e);
 		}
