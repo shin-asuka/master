@@ -437,7 +437,7 @@ public class ReferralActivityService {
 		String pageContent = json.getString("pageContent");
 		JSONArray jsons = JSONArray.parseArray(pageContent);
 		logger.info("jsons:" + jsons.size() + "; index:" + index);
-		if(jsons.size() <= index){
+		if(jsons.size() >= index){
 			JSONObject jsonObject = (JSONObject) jsons.get(index-1);
 			return jsonObject.getString("id");
 		}
