@@ -69,7 +69,7 @@ public class BasicInfoService {
     @Autowired
     private RedisProxy redisProxy;
 
-    private static List<String> RandomAB  = Lists.newArrayList();
+    private static List<String> RandomCodeList  = Lists.newArrayList();
     static {
 
         for(int i='A';i<'A'+26;i++){
@@ -77,31 +77,31 @@ public class BasicInfoService {
                 String s="";
                 s+=(char)i;
                 s+=(char)j;
-                RandomAB.add(s);
+                RandomCodeList.add(s);
             }
         }
     }
 
-    private static List<String>  SensitiveWords = Lists.newArrayList();
+    private static List<String>  SensitiveWordsList = Lists.newArrayList();
     static {
-        SensitiveWords.add("BB");
-        SensitiveWords.add("XX");
-        SensitiveWords.add("SB");
-        SensitiveWords.add("BT");
-        SensitiveWords.add("FK");
-        SensitiveWords.add("EG");
-        SensitiveWords.add("FE");
-        SensitiveWords.add("FO");
-        SensitiveWords.add("IC");
-        SensitiveWords.add("IP");
-        SensitiveWords.add("IQ");
-        SensitiveWords.add("NM");
-        SensitiveWords.add("NP");
-        SensitiveWords.add("OT");
-        SensitiveWords.add("OZ");
-        SensitiveWords.add("PO");
-        SensitiveWords.add("RU");
-        SensitiveWords.add("SH");
+        SensitiveWordsList.add("BB");
+        SensitiveWordsList.add("XX");
+        SensitiveWordsList.add("SB");
+        SensitiveWordsList.add("BT");
+        SensitiveWordsList.add("FK");
+        SensitiveWordsList.add("EG");
+        SensitiveWordsList.add("FE");
+        SensitiveWordsList.add("FO");
+        SensitiveWordsList.add("IC");
+        SensitiveWordsList.add("IP");
+        SensitiveWordsList.add("IQ");
+        SensitiveWordsList.add("NM");
+        SensitiveWordsList.add("NP");
+        SensitiveWordsList.add("OT");
+        SensitiveWordsList.add("OZ");
+        SensitiveWordsList.add("PO");
+        SensitiveWordsList.add("RU");
+        SensitiveWordsList.add("SH");
     }
 
     /**s
@@ -213,13 +213,13 @@ public class BasicInfoService {
                         randomCode += (char) (Math.random() * 26 + 'A');
                     }
                 randomCodeList.add(randomCode);
-                if (randomCodeList.containsAll(RandomAB)) {
+                if (randomCodeList.containsAll(RandomCodeList)) {
                     ++n;
                 }
                 showName += randomCode;
                 //敏感词过滤
                 duplicates = userDao.findUserCountByShowName(showName);
-                for (String str : SensitiveWords) {
+                for (String str : SensitiveWordsList) {
                     if (randomCode.indexOf(str) != -1) {
                         duplicates = 1;
                         break;
