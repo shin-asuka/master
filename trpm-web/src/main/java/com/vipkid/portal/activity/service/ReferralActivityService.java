@@ -358,7 +358,7 @@ public class ReferralActivityService {
 		ShareActivityExam selectBean = new ShareActivityExam();
 		selectBean.setTeacherId(teacher.getId());
 		Map<String, Object> paramMap = MyBatisTools.toMap(selectBean);
-		List<ShareActivityExam> list = this.shareActivityExamDao.findByOne("selectOrderById", paramMap);
+		List<ShareActivityExam> list = this.shareActivityExamDao.findByList("selectOrderById", paramMap);
 		//有考试过
 		if(CollectionUtils.isNotEmpty(list)){ 
 			List<ShareActivityExam> waitList = list.stream().filter(bean -> bean.getStatus() == StatusEnum.PENDING.val()).collect(Collectors.toList());
