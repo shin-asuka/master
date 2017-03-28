@@ -10,6 +10,7 @@ import com.vipkid.background.api.sterling.controller.SterlingApiController;
 import com.vipkid.background.api.sterling.dto.*;
 
 import com.vipkid.background.service.BackgroundCheckService;
+import com.vipkid.background.service.BackgroundCommonService;
 import com.vipkid.background.vo.BackgroundCheckVo;
 import com.vipkid.http.utils.JacksonUtils;
 import com.vipkid.trpm.dao.BackgroundAdverseDao;
@@ -65,6 +66,9 @@ public class SterlingService {
 
     @Resource
     private BackgroundCheckService backgroundCheckService;
+
+    @Resource
+    private BackgroundCommonService backgroundCommonService;
 
 
     /**
@@ -177,11 +181,12 @@ public class SterlingService {
         Calendar lastTime = Calendar.getInstance();
         lastTime.setTimeInMillis(updateTime.getTime());
         Calendar currentTime = Calendar.getInstance();
-        lastTime.add(Calendar.YEAR,2);
+        currentTime = backgroundCommonService.backgroundDateCondition(currentTime);
+
         candidateInputDto.setCandidateId(sterlingScreening.getCandidateId());
 
         //2年后修改信息，创建新记录
-        if(currentTime.after(lastTime)){
+        if(lastTime.before(currentTime)){
             return updateCandidateFor2years(candidateInputDto);
         }
 
