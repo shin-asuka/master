@@ -1,12 +1,14 @@
 package com.vipkid.portal.activity.vo;
 
+import com.alibaba.fastjson.JSONObject;
+
 public class StartHandleVo {
 
 	private Long activityExamID;
 	
 	private String candidateKey;
 	
-	private String pageContent;
+	private JSONObject pageContent;
 	
 	private String questionId;
 	
@@ -20,7 +22,7 @@ public class StartHandleVo {
 		return candidateKey;
 	}
 
-	public String getPageContent() {
+	public JSONObject getPageContent() {
 		return pageContent;
 	}
 
@@ -40,7 +42,7 @@ public class StartHandleVo {
 		this.candidateKey = candidateKey;
 	}
 
-	public void setPageContent(String pageContent) {
+	public void setPageContent(JSONObject pageContent) {
 		this.pageContent = pageContent;
 	}
 

@@ -1,5 +1,7 @@
 package com.vipkid.portal.activity.vo;
 
+import com.alibaba.fastjson.JSONObject;
+
 public class CheckResultVo {
 	// 0 未完成  1 已完成  2从未考试
 	private Integer status;
@@ -12,7 +14,7 @@ public class CheckResultVo {
 	
 	private Long questionIndex;
 
-	private String pageContent;
+	private JSONObject pageContent;
 
 	public Integer getStatus() {
 		return status;
@@ -26,7 +28,7 @@ public class CheckResultVo {
 		return questionId;
 	}
 
-	public String getPageContent() {
+	public JSONObject getPageContent() {
 		return pageContent;
 	}
 
@@ -42,7 +44,7 @@ public class CheckResultVo {
 		this.questionId = questionId;
 	}
 
-	public void setPageContent(String pageContent) {
+	public void setPageContent(JSONObject pageContent) {
 		this.pageContent = pageContent;
 	}
 

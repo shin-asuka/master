@@ -386,7 +386,7 @@ public class ReferralActivityService {
 	 * @param versionName
 	 * @return
 	 */
-	public String getExamContent(String versionName){
+	public JSONObject getExamContent(String versionName){
 		// 优先从缓存中读取
 		String contentJson = redisProxy.get(RedisConstants.TRPM_SHARE_KEY + versionName);
 		// 如果没有，则从文件中读取
@@ -399,7 +399,8 @@ public class ReferralActivityService {
 				logger.error("data/share/"+versionName+",没有读取到内容。");
 			}
 		}
-		return StringUtils.trim(contentJson);
+		JSONObject json = JSONObject.parseObject(contentJson);
+		return json;
 	}
 	
 	/**
@@ -408,15 +409,11 @@ public class ReferralActivityService {
 	 * @return
 	 */
 	public String getExamPageContentForIndex(String versionName, int index){
-		String contentJson = this.getExamContent(versionName);
-		if(StringUtils.isNotBlank(contentJson)){
-			JSONObject json = JSONObject.parseObject(contentJson);
-			String pageContent = json.getString("pageContent");
-			JSONArray jsons = JSONArray.parseArray(pageContent);
-			JSONObject jsonObject = (JSONObject) jsons.get(index-1);
-			return jsonObject.getString("id");
-		}
-		return null;
+		JSONObject json = this.getExamContent(versionName);
+		String pageContent = json.getString("pageContent");
+		JSONArray jsons = JSONArray.parseArray(pageContent);
+		JSONObject jsonObject = (JSONObject) jsons.get(index-1);
+		return jsonObject.getString("id");
 	}
 	
 }
