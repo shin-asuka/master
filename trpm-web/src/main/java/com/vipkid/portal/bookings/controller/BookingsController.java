@@ -374,4 +374,44 @@ public class BookingsController {
         }
 
     }
+    
+    /**
+     * 查询finishType
+     *
+     * @param request
+     * @param response
+     * @return
+     */
+    @RequestMapping(value = "/getIncentives", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
+    public Map<String, Object> getIncentives(@RequestBody Map<String, Object> paramMap, HttpServletRequest request, HttpServletResponse response) {
+        Map<String, Object> dataMap = Maps.newHashMap();
+        Object from = paramMap.get("from");
+        Object to = paramMap.get("to");
+        try {
+            
+            Preconditions.checkArgument(request.getAttribute(TEACHER) != null);
+            Teacher teacher = (Teacher) request.getAttribute(TEACHER);
+			if (from == null || to == null) {
+				response.setStatus(HttpStatus.BAD_REQUEST.value());
+				logger.warn("wrong parameters{} where get incentives ", teacher.getId());
+				return ApiResponseUtils.buildErrorResp(HttpStatus.BAD_REQUEST.value(),
+						"wrong parameters where get incentives ,{}.", teacher.getId());
+			}
+			if (0 == teacher.getId()) {
+				response.setStatus(HttpStatus.FORBIDDEN.value());
+				return ApiResponseUtils.buildErrorResp(HttpStatus.BAD_REQUEST.value(),
+						"The teacher have no jurisdiction.", teacher.getId());
+			}
+
+            
+
+            return ApiResponseUtils.buildSuccessDataResp(dataMap);
+        } catch (IllegalArgumentException e) {
+            logger.error("Get getIncentives  Exception {}", e);
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            return ApiResponseUtils.buildErrorResp(HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                    ExceptionUtils.getFullStackTrace(e));
+        }
+
+    }
 }
