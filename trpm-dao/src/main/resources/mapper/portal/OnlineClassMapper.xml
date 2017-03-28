@@ -776,7 +776,7 @@
 				<foreach collection="finishTypes" item="item" open="(" close=")" separator=",">
 					#{item}
 				</foreach>
-				AND o. STATUS = #{STATUS}
+				AND o. status = #{status}
 				AND o.teacher_id = #{teacherId}
 				AND o.scheduled_date_time  BETWEEN #{start}
 				AND #{end}
