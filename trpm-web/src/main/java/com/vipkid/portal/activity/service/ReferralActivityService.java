@@ -260,17 +260,18 @@ public class ReferralActivityService {
 	 * @return
 	 */
 	public Map<String, Object> updateExamDetailResult(SubmitHandleDto bean){
-		ShareExamDetail shareExamDetail = new ShareExamDetail();
-		shareExamDetail.setActivityExamId(bean.getActivityExamId());
-		shareExamDetail.setQuestionId(bean.getQuestionId());
 		ShareActivityExam shareActivityExam = this.shareActivityExamDao.getById(bean.getActivityExamId());
 		if(NumericUtils.isNull(shareActivityExam)){
 			return ReturnMapUtils.returnFail(-2, "没有找到创建的测试记录，activityExamId:"+shareActivityExam.getId()+"不正确");
 		}
 		if(StatusEnum.COMPLETE.val() == shareActivityExam.getStatus()){
 			return ReturnMapUtils.returnFail(-3, "测试已经结束，请重新开始，activityExamId:"+shareActivityExam.getId());
-		}		
-		List<ShareExamDetail> list = this.shareExamDetailDao.selectByList(shareExamDetail);
+		}	
+		
+		ShareExamDetail selectExamDetail = new ShareExamDetail();
+		selectExamDetail.setActivityExamId(bean.getActivityExamId());
+		selectExamDetail.setQuestionId(bean.getQuestionId());
+		List<ShareExamDetail> list = this.shareExamDetailDao.selectByList(selectExamDetail);
 		if(CollectionUtils.isEmpty(list)){
 			return ReturnMapUtils.returnFail(-4, "没有找到该题的考试信息，请从新提交，activityExamId:"+shareActivityExam.getId());
 		}
@@ -293,13 +294,20 @@ public class ReferralActivityService {
 			 shareActivityExam = this.updateExamReturnResult(shareActivityExam, StatusEnum.PENDING);
 			 beanVo.setQuestionId(questionId);
 			 beanVo.setQuestionIndex(bean.getQuestionIndex()+1);
-			 ShareExamDetail nextExamDetail = new ShareExamDetail();
-			 nextExamDetail.setActivityExamId(shareActivityExam.getId());
-			 nextExamDetail.setQuestionId(questionId);
-			 nextExamDetail.setQuestionIndex(bean.getQuestionIndex()+1L);
-			 nextExamDetail.setStartDateTime(new Date());
-			 nextExamDetail.setStatus(0);
-			 this.shareExamDetailDao.insertSelective(nextExamDetail);
+			 
+			 selectExamDetail.setQuestionId(questionId);
+			 List<ShareExamDetail> nextList = this.shareExamDetailDao.selectByList(selectExamDetail);
+			 if(CollectionUtils.isEmpty(nextList)){
+				 ShareExamDetail nextExamDetail = new ShareExamDetail();
+				 nextExamDetail.setActivityExamId(shareActivityExam.getId());
+				 nextExamDetail.setQuestionId(questionId);
+				 nextExamDetail.setQuestionIndex(bean.getQuestionIndex()+1L);
+				 nextExamDetail.setStartDateTime(new Date());
+				 nextExamDetail.setStatus(0); 
+				 this.shareExamDetailDao.insertSelective(nextExamDetail);
+			 }else{
+				 logger.info("下一题已经存在不再插入");
+			 }
 		}
 		//更新本次考试
 		this.shareActivityExamDao.updateById(shareActivityExam);
