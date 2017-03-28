@@ -292,10 +292,12 @@ public class ReferralActivityController extends RestfulController{
 	    		return resultMap;
 	    	}
 			boolean checkResult = this.referralActivityService.checkUrl(bean);
+			resultMap.put("checkResult", checkResult);
 			if(!checkResult){
 	    		response.setStatus(HttpStatus.FORBIDDEN.value());
 	    		logger.warn("参数不合法");
-	    		return ApiResponseUtils.buildErrorResp(-2, "参数不合法");
+	    		
+	    		return ApiResponseUtils.buildErrorResp(-2, "参数不合法",resultMap);
 			}
 			return ApiResponseUtils.buildSuccessDataResp(resultMap);
         } catch (IllegalArgumentException e) {
