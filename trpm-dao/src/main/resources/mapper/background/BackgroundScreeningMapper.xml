@@ -46,5 +46,22 @@
         ORDER BY id DESC LIMIT 1
     </select>
 
+    <select id="findByTeacherIdTopOne" resultMap="BackgroundScreeningResult" parameterType="Long">
+        SELECT
+        <include refid="backgroundScreeningAllColumn"/>
+        FROM
+        bg_sterling_screening s
+        WHERE
+        s.teacher_id =#{teacherId}
+        ORDER BY s.id DESC LIMIT 1
+    </select>
+    <select id="findById" resultMap="BackgroundScreeningResult" parameterType="Long">
+        SELECT
+        <include refid="backgroundScreeningAllColumn"/>
+        FROM
+        bg_sterling_screening s
+        WHERE
+        s.id =#{id}
+    </select>
 
 </mapper>
