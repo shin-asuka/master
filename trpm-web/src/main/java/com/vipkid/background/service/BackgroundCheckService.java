@@ -64,7 +64,7 @@ public class BackgroundCheckService {
     @Autowired
     private SterlingService sterlingService;
 
-    @Master
+    //@Master
     @Transactional(readOnly = false, propagation = Propagation.REQUIRES_NEW, rollbackFor = Exception.class)
     public BaseOutputDto saveBackgroundCheckInfo(BackgroundCheckInputDto input, String operateType){
         BaseOutputDto output = new BaseOutputDto();
