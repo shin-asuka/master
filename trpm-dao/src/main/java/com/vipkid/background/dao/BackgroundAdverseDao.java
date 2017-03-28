@@ -1,4 +1,4 @@
-package com.vipkid.trpm.dao;
+package com.vipkid.background.dao;
 
 import com.vipkid.trpm.entity.BackgroundAdverse;
 

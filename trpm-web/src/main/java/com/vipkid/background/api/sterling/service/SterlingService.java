@@ -13,9 +13,9 @@ import com.vipkid.background.service.BackgroundCheckService;
 import com.vipkid.background.service.BackgroundCommonService;
 import com.vipkid.background.vo.BackgroundCheckVo;
 import com.vipkid.http.utils.JacksonUtils;
-import com.vipkid.trpm.dao.BackgroundAdverseDao;
-import com.vipkid.trpm.dao.BackgroundReportDao;
-import com.vipkid.trpm.dao.BackgroundScreeningDao;
+import com.vipkid.background.dao.BackgroundAdverseDao;
+import com.vipkid.background.dao.BackgroundReportDao;
+import com.vipkid.background.dao.BackgroundScreeningDao;
 import com.vipkid.trpm.entity.BackgroundAdverse;
 import com.vipkid.trpm.entity.BackgroundReport;
 import com.vipkid.trpm.entity.BackgroundScreening;
@@ -34,8 +34,6 @@ import javax.annotation.Nullable;
 import javax.annotation.Resource;
 
 import java.util.*;
-
-import java.util.stream.Collectors;
 
 
 /**

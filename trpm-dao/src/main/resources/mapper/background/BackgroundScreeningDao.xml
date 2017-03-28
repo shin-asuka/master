@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.vipkid.trpm.dao.BackgroundScreeningDao">
+<mapper namespace="com.vipkid.background.dao.BackgroundScreeningDao">
     <resultMap id="BackgroundScreeningResult" type="com.vipkid.trpm.entity.BackgroundScreening">
         <id column="id" jdbcType="BIGINT" property="id" />
         <result column="teacher_id" jdbcType="BIGINT" property="teacherId" />

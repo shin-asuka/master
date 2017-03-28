@@ -1,10 +1,7 @@
 package com.vipkid.background.service;
 
-import com.google.api.client.util.Lists;
-import com.google.api.client.util.Maps;
 import com.vipkid.background.api.sterling.dto.BackgroundFileStatusDto;
 import com.vipkid.background.api.sterling.dto.BackgroundStatusDto;
-import com.vipkid.enums.BackgroundCheckEnum;
 import com.vipkid.enums.BackgroundCheckEnum.BackgroundResult;
 import com.vipkid.enums.BackgroundCheckEnum.DisputeStatus;
 import com.vipkid.enums.BackgroundCheckEnum.BackgroundPhase;
@@ -12,12 +9,11 @@ import com.vipkid.enums.BackgroundCheckEnum.FileStatus;
 import com.vipkid.enums.BackgroundCheckEnum.FileResult;
 import com.vipkid.enums.BackgroundCheckEnum.AdverseStatus;
 import com.vipkid.enums.TeacherApplicationEnum.ContractFileType;
-import com.vipkid.enums.TeacherEnum.LifeCycle;
 import com.vipkid.recruitment.dao.TeacherContractFileDao;
 import com.vipkid.recruitment.entity.TeacherContractFile;
-import com.vipkid.trpm.dao.BackgroundAdverseDao;
-import com.vipkid.trpm.dao.BackgroundScreeningDao;
-import com.vipkid.trpm.dao.CanadaBackgroundScreeningDao;
+import com.vipkid.background.dao.BackgroundAdverseDao;
+import com.vipkid.background.dao.BackgroundScreeningDao;
+import com.vipkid.background.dao.CanadaBackgroundScreeningDao;
 import com.vipkid.trpm.dao.TeacherGatedLaunchDao;
 import com.vipkid.trpm.entity.BackgroundAdverse;
 import com.vipkid.trpm.entity.BackgroundScreening;
@@ -34,7 +30,6 @@ import org.springframework.stereotype.Service;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 
 @Service

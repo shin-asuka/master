@@ -7,7 +7,7 @@ import com.vipkid.background.api.sterling.dto.*;
 import com.vipkid.background.api.sterling.service.SterlingService;
 import com.vipkid.http.utils.JacksonUtils;
 import com.vipkid.rest.utils.ApiResponseUtils;
-import com.vipkid.trpm.dao.BackgroundScreeningDao;
+import com.vipkid.background.dao.BackgroundScreeningDao;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.time.StopWatch;
 import org.apache.commons.lang3.StringUtils;
