@@ -289,10 +289,17 @@ public class ReferralActivityService {
 			 // 没有下一题 计算结果 返回前端
 			 shareActivityExam = this.updateExamReturnResult(shareActivityExam, StatusEnum.COMPLETE);
 		}else{
-			 //有下一题
+			 //有下一题,插入下一道题开始开始
 			 shareActivityExam = this.updateExamReturnResult(shareActivityExam, StatusEnum.PENDING);
 			 beanVo.setQuestionId(questionId);
 			 beanVo.setQuestionIndex(bean.getQuestionIndex()+1);
+			 ShareExamDetail nextExamDetail = new ShareExamDetail();
+			 nextExamDetail.setActivityExamId(shareActivityExam.getId());
+			 nextExamDetail.setQuestionId(questionId);
+			 nextExamDetail.setQuestionIndex(1L);
+			 nextExamDetail.setStartDateTime(new Date());
+			 nextExamDetail.setStatus(0);
+			 this.shareExamDetailDao.insertSelective(nextExamDetail);
 		}
 		//更新本次考试
 		this.shareActivityExamDao.updateById(shareActivityExam);
