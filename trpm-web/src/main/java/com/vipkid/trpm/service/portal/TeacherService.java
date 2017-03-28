@@ -680,8 +680,8 @@ public class TeacherService {
 
 			return initCount.intValue();
 		} catch (Exception e) {
-			logger.warn("incentivesTeacherInit put redis error  key={},teacherId={}}"
-					, ApplicationConstant.RedisConstants.INCENTIVE_FOR_APRIL + id, id);
+			logger.warn("incentivesTeacherInit put redis error :  key={},teacherId={},error={} "
+					, ApplicationConstant.RedisConstants.INCENTIVE_FOR_APRIL + id, id,e.getMessage());
 		}
 		return 0;
 	}

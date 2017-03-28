@@ -796,7 +796,7 @@
 	</select>
 
 	<!-- 根据条件查询不重复的ScheduledDate 的数量 -->
-	<select id="countScheduledByParam">
+	<select id="countScheduledByParam" resultType="java.lang.Integer">
 		SELECT
 			count(1)
 		FROM
