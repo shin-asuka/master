@@ -174,6 +174,9 @@ public class ReferralActivityController extends RestfulController{
 			}else{
 				//老师参与 
 				beanVo = this.referralActivityService.updateStartEaxmForTeacher(user.getId(), bean.getLinkSourceId(), IpUtils.getIpAddress(request), 1);
+				if(beanVo == null){
+					return ApiResponseUtils.buildErrorResp(-4, "你有未完成的考试记录,请完成后再继续。");
+				}
 			}
 			return ApiResponseUtils.buildSuccessDataResp(beanVo);
         } catch (IllegalArgumentException e) {

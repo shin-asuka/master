@@ -197,32 +197,41 @@ public class ReferralActivityService {
 	 * @return
 	 */
 	public StartHandleVo updateStartEaxmForTeacher(Long teacherId, Long linkSourceId, String candidateIp,int index){
-		ShareActivityExam bean = new ShareActivityExam();
-		bean.setExamVersion(this.getExamVersion());
-		bean.setStartDateTime(new Date());
-		bean.setCandidateKey(teacherId+"");
-		bean.setTeacherId(teacherId);
-		bean.setCandidateIp(candidateIp);
-		bean.setLinkSourceId(linkSourceId);
-		bean.setShareRecordId(0L);
-		bean.setStatus(0);
-		this.shareActivityExamDao.insertSelective(bean);
-		
-		String questionId = getExamPageContentForIndex(this.getExamVersion(),index);
-		ShareExamDetail shareExamDetail = new ShareExamDetail();
-		shareExamDetail.setActivityExamId(bean.getId());
-		shareExamDetail.setQuestionId(questionId);
-		shareExamDetail.setQuestionIndex(1L);
-		shareExamDetail.setStartDateTime(new Date());
-		shareExamDetail.setStatus(0);
-		this.shareExamDetailDao.insertSelective(shareExamDetail);
-		StartHandleVo beanVo = new StartHandleVo();
-		beanVo.setActivityExamId(bean.getId());
-		beanVo.setCandidateKey(bean.getCandidateKey());
-		beanVo.setQuestionId(questionId);
-		beanVo.setQuestionIndex(index);
-		beanVo.setRefereeId(teacherId);
-		return beanVo;
+		ShareActivityExam selectBean = new ShareActivityExam();
+		selectBean.setTeacherId(teacherId);
+		selectBean.setStatus(StatusEnum.PENDING.val());
+		Map<String, Object> paramMap = MyBatisTools.toMap(selectBean);
+		List<ShareActivityExam> list = this.shareActivityExamDao.findByList("selectOrderById", paramMap);
+		if(CollectionUtils.isEmpty(list)){
+			ShareActivityExam bean = new ShareActivityExam();
+			bean.setExamVersion(this.getExamVersion());
+			bean.setStartDateTime(new Date());
+			bean.setCandidateKey(teacherId+"");
+			bean.setTeacherId(teacherId);
+			bean.setCandidateIp(candidateIp);
+			bean.setLinkSourceId(linkSourceId);
+			bean.setShareRecordId(0L);
+			bean.setStatus(0);
+			this.shareActivityExamDao.insertSelective(bean);
+			
+			String questionId = getExamPageContentForIndex(this.getExamVersion(),index);
+			ShareExamDetail shareExamDetail = new ShareExamDetail();
+			shareExamDetail.setActivityExamId(bean.getId());
+			shareExamDetail.setQuestionId(questionId);
+			shareExamDetail.setQuestionIndex(1L);
+			shareExamDetail.setStartDateTime(new Date());
+			shareExamDetail.setStatus(0);
+			this.shareExamDetailDao.insertSelective(shareExamDetail);
+			StartHandleVo beanVo = new StartHandleVo();
+			beanVo.setActivityExamId(bean.getId());
+			beanVo.setCandidateKey(bean.getCandidateKey());
+			beanVo.setQuestionId(questionId);
+			beanVo.setQuestionIndex(index);
+			beanVo.setRefereeId(teacherId);
+			return beanVo;
+		}else{
+			return null;
+		}
 	}
 	
 	/**
