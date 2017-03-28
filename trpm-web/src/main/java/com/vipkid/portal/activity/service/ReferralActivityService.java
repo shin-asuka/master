@@ -1,6 +1,6 @@
 package com.vipkid.portal.activity.service;
 
-import java.nio.charset.StandardCharsets;
+import java.io.File;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Maps;
+import com.vipkid.email.template.TemplateUtils;
 import com.vipkid.enums.ShareActivityExamEnum;
 import com.vipkid.enums.ShareActivityExamEnum.StatusEnum;
 import com.vipkid.portal.activity.dto.ClickHandleDto;
@@ -37,7 +38,6 @@ import com.vipkid.trpm.entity.ShareLinkSource;
 import com.vipkid.trpm.entity.ShareRecord;
 import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.proxy.RedisProxy;
-import com.vipkid.trpm.util.FilesUtils;
 
 @Service
 public class ReferralActivityService {
@@ -366,7 +366,7 @@ public class ReferralActivityService {
 	 */
 	public String getExamVersion(){
 		//这里的配置不能缓存 及时获取
-    	String contentJson = FilesUtils.readContent(this.getClass().getResourceAsStream("data/share/exam-version.json"),StandardCharsets.UTF_8);
+    	String contentJson = TemplateUtils.readTemplatePath("data"+File.separator +"share"+File.separator +"exam-version.json").toString();
     	logger.info("读取到：" + contentJson);
     	if(StringUtils.isBlank(contentJson)){
     		logger.error("data/share/exam-version.json,没有读取到内容。");
@@ -377,8 +377,7 @@ public class ReferralActivityService {
     	String examVersion = json.getString("version");
     	logger.info("解析到最新版本：" + examVersion);
     	return StringUtils.trim(examVersion);
-	}
-	
+	}	
 	
 	/**
 	 * 获取考试内容
@@ -390,7 +389,7 @@ public class ReferralActivityService {
 		String contentJson = redisProxy.get(RedisConstants.TRPM_SHARE_KEY + versionName);
 		// 如果没有，则从文件中读取
 		if(StringUtils.isBlank(contentJson)){
-			contentJson = FilesUtils.readContent(this.getClass().getResourceAsStream("data/share/" + versionName),StandardCharsets.UTF_8);
+			contentJson = TemplateUtils.readTemplatePath("data"+File.separator +"share" + File.separator + versionName).toString();
 			logger.info("读取到：" + contentJson);
 			if(StringUtils.isNotBlank(contentJson)){
 				redisProxy.set(RedisConstants.TRPM_SHARE_KEY + versionName, contentJson, RedisConstants.TRPM_SHARE_TIME);
