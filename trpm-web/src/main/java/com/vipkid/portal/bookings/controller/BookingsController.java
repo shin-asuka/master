@@ -1,5 +1,6 @@
 package com.vipkid.portal.bookings.controller;
 
+import com.google.api.client.util.Lists;
 import com.google.api.client.util.Maps;
 import com.google.common.base.Preconditions;
 import com.vipkid.enums.OnlineClassEnum.CourseType;
@@ -9,14 +10,18 @@ import com.vipkid.file.utils.StringUtils;
 import com.vipkid.http.service.AnnouncementHttpService;
 import com.vipkid.http.utils.JsonUtils;
 import com.vipkid.http.vo.Announcement;
+import com.vipkid.payroll.utils.DateUtils;
 import com.vipkid.portal.bookings.entity.*;
 import com.vipkid.portal.bookings.service.BookingsService;
 import com.vipkid.rest.config.RestfulConfig;
 import com.vipkid.rest.interceptor.annotation.RestInterface;
 import com.vipkid.rest.service.LoginService;
 import com.vipkid.rest.utils.ApiResponseUtils;
+import com.vipkid.trpm.constant.ApplicationConstant.INCENTIVE;
+import com.vipkid.trpm.constant.ApplicationConstant.RedisConstants;
 import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.rest.RestfulController;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.ibatis.annotations.Param;
@@ -31,6 +36,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import java.sql.Timestamp;
+import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -65,6 +74,10 @@ public class BookingsController {
     private final static String EMERGENCY_ENGLISH  ="Emergency (personal or family member sickness, accident, mishap, etc.)";
     private final static String PERSONAL_REASON_ENGLISH ="Personal reason (schedule conflict, prior oversight, etc.)";
     private final static String UNRELIABLE_INTERNET_ACCESS_ENGLISH  ="Unreliable internet access (relocation, travel, etc.)";
+    
+    
+    
+    
     /* 获取 Scheduled 详细数据接口 */
     @RequestMapping(value = "/scheduled", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
     public Map<String, Object> scheduled(ScheduledRequest scheduledRequest, HttpServletResponse response) {
@@ -387,11 +400,12 @@ public class BookingsController {
         Map<String, Object> dataMap = Maps.newHashMap();
         Object from = paramMap.get("from");
         Object to = paramMap.get("to");
+      
         try {
             
             Preconditions.checkArgument(request.getAttribute(TEACHER) != null);
             Teacher teacher = (Teacher) request.getAttribute(TEACHER);
-			if (from == null || to == null) {
+			if (from == null || to == null ||!(from instanceof Timestamp)||!(to instanceof Timestamp)) {
 				response.setStatus(HttpStatus.BAD_REQUEST.value());
 				logger.warn("wrong parameters{} where get incentives ", teacher.getId());
 				return ApiResponseUtils.buildErrorResp(HttpStatus.BAD_REQUEST.value(),
@@ -402,9 +416,16 @@ public class BookingsController {
 				return ApiResponseUtils.buildErrorResp(HttpStatus.BAD_REQUEST.value(),
 						"The teacher have no jurisdiction.", teacher.getId());
 			}
-
-            
-
+			
+			List<Map<String, Object>> classes = bookingsService.findIncentiveClasses((Timestamp)from,(Timestamp)to,teacher.getId());
+			List<Map<String, Object>> resultClasses = Lists.newArrayList();
+			Long incentiveCount = bookingsService.getIncentiveCount(teacher.getId());
+			if (classes != null && classes.size() > incentiveCount) {
+				for (int i = incentiveCount.intValue(); i < classes.size(); i++) {
+					resultClasses.add(classes.get(i));
+				}
+			}
+			dataMap.put("incentiveClassList", resultClasses);
             return ApiResponseUtils.buildSuccessDataResp(dataMap);
         } catch (IllegalArgumentException e) {
             logger.error("Get getIncentives  Exception {}", e);
@@ -414,4 +435,53 @@ public class BookingsController {
         }
 
     }
+    
+    @RequestMapping(value = "/getIncentiveCount", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
+	public Map<String, Object> getIncentiveCount(@RequestBody Map<String, Object> paramMap, HttpServletRequest request,
+			HttpServletResponse response) {
+		Map<String, Object> dataMap = Maps.newHashMap();
+		Object from = paramMap.get("from");
+		Object to = paramMap.get("to");
+
+		try {
+
+			Preconditions.checkArgument(request.getAttribute(TEACHER) != null);
+			Teacher teacher = (Teacher) request.getAttribute(TEACHER);
+			if (from == null || to == null || !(from instanceof Timestamp) || !(to instanceof Timestamp)) {
+				response.setStatus(HttpStatus.BAD_REQUEST.value());
+				logger.warn("wrong parameters{} where get incentives ", teacher.getId());
+				return ApiResponseUtils.buildErrorResp(HttpStatus.BAD_REQUEST.value(),
+						"wrong parameters where get incentives ,{}.", teacher.getId());
+			}
+			if (0 == teacher.getId()) {
+				response.setStatus(HttpStatus.FORBIDDEN.value());
+				return ApiResponseUtils.buildErrorResp(HttpStatus.BAD_REQUEST.value(),
+						"The teacher have no jurisdiction.", teacher.getId());
+			}
+			Long incentiveCount = bookingsService.getIncentiveCount(teacher.getId());
+			Map<String, Long> resultmap = Maps.newHashMap();
+
+			bookingsService.countOnlineClassesByStartTimeAndEndTime(INCENTIVE.INCENTIVE_APRIL_01,
+					INCENTIVE.INCENTIVE_APRIL_10, teacher.getId(), incentiveCount, resultmap);
+			bookingsService.countOnlineClassesByStartTimeAndEndTime(INCENTIVE.INCENTIVE_APRIL_10,
+					INCENTIVE.INCENTIVE_APRIL_17, teacher.getId(), incentiveCount, resultmap);
+			bookingsService.countOnlineClassesByStartTimeAndEndTime(INCENTIVE.INCENTIVE_APRIL_17,
+					INCENTIVE.INCENTIVE_APRIL_23, teacher.getId(), incentiveCount, resultmap);
+			bookingsService.countOnlineClassesByStartTimeAndEndTime((Date) INCENTIVE.INCENTIVE_APRIL_23,
+					INCENTIVE.INCENTIVE_APRIL_30, teacher.getId(), incentiveCount, resultmap);
+			dataMap.put("incentiveCountMap", resultmap);
+
+			return ApiResponseUtils.buildSuccessDataResp(dataMap);
+		} catch (IllegalArgumentException e) {
+			logger.error("Get getIncentives  count"
+					+ "Exception {}", e);
+			response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+			return ApiResponseUtils.buildErrorResp(HttpStatus.INTERNAL_SERVER_ERROR.value(),
+					ExceptionUtils.getFullStackTrace(e));
+		}
+	}
+ 
+    
+    
+   
 }

@@ -774,6 +774,17 @@
         ORDER BY online_class.scheduled_date_time DESC
         GROUP BY online_class.scheduled_date_time
     </select>
+    <select id="countOnlineClassesByStartTimeAndEndTime" resultType="int">
+        SELECT
+        count(1)
+        FROM online_class      
+        WHERE
+        online_class.teacher_id = #{teacherId}
+        AND online_class.status = 'FINISHED'
+        AND (online_class.finish_type in('STUDENT_NO_SHOW','AS_SCHEDULED','STUDENT_IT_PROBLEM','SYSTEM_PROBLEM')
+        AND online_class.scheduled_date_time BETWEEN #{from} AND #{to}
+        GROUP BY online_class.scheduled_date_time
+    </select>
 
 	<select id="countClassNumByTeacherId" resultType="int">
 		SELECT count(1)
