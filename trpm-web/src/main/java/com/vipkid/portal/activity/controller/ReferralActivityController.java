@@ -70,9 +70,17 @@ public class ReferralActivityController extends RestfulController{
 	    	//逻辑开始
 			if(StringUtils.isNumeric(bean.getCandidateKey())){
 				//老师分享
-				resultMap = this.referralActivityService.updateTeacherShare(bean.getCandidateKey(), IpUtils.getIpAddress(request), bean.getLinkSourceId());
+				logger.info("识别为Teacher分享");
+				User user = this.loginService.getUser();
+				if(StringUtils.equals(user.getId()+"", bean.getCandidateKey())){
+					resultMap = this.referralActivityService.updateTeacherShare(bean.getCandidateKey(), IpUtils.getIpAddress(request), bean.getLinkSourceId());
+				}else{
+					response.setStatus(HttpStatus.FORBIDDEN.value());
+					return ApiResponseUtils.buildErrorResp(-5, "不是当前登陆老师的ID，不能分享。");
+				}
 			}else{
 				//candidate 分享
+				logger.info("识别为非Teacher分享");
 				resultMap = this.referralActivityService.updateCandidateShare(bean.getCandidateKey(), IpUtils.getIpAddress(request));
 			}
 			if(ReturnMapUtils.isSuccess(resultMap)){
