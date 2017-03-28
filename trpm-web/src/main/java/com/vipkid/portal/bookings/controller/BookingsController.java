@@ -437,15 +437,15 @@ public class BookingsController {
      */
     @RequestMapping(value = "/getIncentives", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
     public Map<String, Object> getIncentives(@RequestBody Map<String, Object> paramMap, HttpServletRequest request, HttpServletResponse response) {
-        Map<String, Object> dataMap = Maps.newHashMap();
-        Object from = paramMap.get("from");
-        Object to = paramMap.get("to");
+		Map<String, Object> dataMap = Maps.newHashMap();
+		Object from = paramMap.get("from");
+		Object to = paramMap.get("to");
 
-        try {
+		try {
 
-            Preconditions.checkArgument(request.getAttribute(TEACHER) != null);
-            Teacher teacher = (Teacher) request.getAttribute(TEACHER);
-			if (from == null || to == null ||!(from instanceof Timestamp)||!(to instanceof Timestamp)) {
+			Preconditions.checkArgument(request.getAttribute(TEACHER) != null);
+			Teacher teacher = (Teacher) request.getAttribute(TEACHER);
+			if (from == null || to == null || !(from instanceof Timestamp) || !(to instanceof Timestamp)) {
 				response.setStatus(HttpStatus.BAD_REQUEST.value());
 				logger.warn("wrong parameters{} where get incentives ", teacher.getId());
 				return ApiResponseUtils.buildErrorResp(HttpStatus.BAD_REQUEST.value(),
@@ -457,7 +457,8 @@ public class BookingsController {
 						"The teacher have no jurisdiction.", teacher.getId());
 			}
 
-			List<Map<String, Object>> classes = bookingsService.findIncentiveClasses((Timestamp)from,(Timestamp)to,teacher.getId());
+			List<Map<String, Object>> classes = bookingsService.findIncentiveClasses((Timestamp) from, (Timestamp) to,
+					teacher.getId());
 			List<Map<String, Object>> resultClasses = Lists.newArrayList();
 			Long incentiveCount = bookingsService.getIncentiveCount(teacher.getId());
 			if (classes != null && classes.size() > incentiveCount) {
@@ -466,16 +467,15 @@ public class BookingsController {
 				}
 			}
 			dataMap.put("incentiveClassList", resultClasses);
-            return ApiResponseUtils.buildSuccessDataResp(dataMap);
-        } catch (IllegalArgumentException e) {
-            logger.error("Get getIncentives  Exception {}", e);
-            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            return ApiResponseUtils.buildErrorResp(HttpStatus.INTERNAL_SERVER_ERROR.value(),
-                    ExceptionUtils.getFullStackTrace(e));
-        }
+			return ApiResponseUtils.buildSuccessDataResp(dataMap);
+		} catch (IllegalArgumentException e) {
+			logger.error("Get getIncentives  Exception {}", e);
+			response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+			return ApiResponseUtils.buildErrorResp(HttpStatus.INTERNAL_SERVER_ERROR.value(),
+					ExceptionUtils.getFullStackTrace(e));
+		}
 
     }
-
 
     @RequestMapping(value = "/getIncentiveCount", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
 	public Map<String, Object> getIncentiveCount(@RequestBody Map<String, Object> paramMap, HttpServletRequest request,
