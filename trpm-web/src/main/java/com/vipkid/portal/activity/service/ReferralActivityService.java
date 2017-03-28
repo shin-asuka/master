@@ -225,6 +225,7 @@ public class ReferralActivityService {
 	
 	/**
 	 * URL 参数验证
+	 * 1.验证通过 如果存在
 	 * @param bean
 	 * @return
 	 */
@@ -232,7 +233,7 @@ public class ReferralActivityService {
 		ShareLinkSource sLinkSource = this.shareLinkSourceDao.getById(bean.getLinkSourceId());
 		CheckUrlVo beanVo = new CheckUrlVo();
 		if(NumericUtils.isNotNull(sLinkSource)){
-			if(NumericUtils.isNull(bean.getShareRecordId())){
+			if(NumericUtils.isNullOrZeor(bean.getShareRecordId())){
 				//第一次点击
 				beanVo.setExamVersion(this.getExamVersion());
 				beanVo.setPageContent(this.getExamContent(beanVo.getExamVersion()));
