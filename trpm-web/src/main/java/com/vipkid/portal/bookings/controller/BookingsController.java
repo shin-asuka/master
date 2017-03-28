@@ -10,12 +10,15 @@ import com.vipkid.file.utils.StringUtils;
 import com.vipkid.http.service.AnnouncementHttpService;
 import com.vipkid.http.utils.JsonUtils;
 import com.vipkid.http.vo.Announcement;
+import com.vipkid.payroll.utils.DateUtils;
 import com.vipkid.portal.bookings.entity.*;
 import com.vipkid.portal.bookings.service.BookingsService;
 import com.vipkid.rest.config.RestfulConfig;
 import com.vipkid.rest.interceptor.annotation.RestInterface;
 import com.vipkid.rest.service.LoginService;
 import com.vipkid.rest.utils.ApiResponseUtils;
+import com.vipkid.trpm.constant.ApplicationConstant.INCENTIVE;
+import com.vipkid.trpm.constant.ApplicationConstant.RedisConstants;
 import com.vipkid.trpm.constant.ApplicationConstant;
 import com.vipkid.trpm.constant.ApplicationConstant.INCENTIVE;
 import com.vipkid.trpm.entity.Teacher;
@@ -35,6 +38,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -75,10 +79,6 @@ public class BookingsController {
     private final static String EMERGENCY_ENGLISH  ="Emergency (personal or family member sickness, accident, mishap, etc.)";
     private final static String PERSONAL_REASON_ENGLISH ="Personal reason (schedule conflict, prior oversight, etc.)";
     private final static String UNRELIABLE_INTERNET_ACCESS_ENGLISH  ="Unreliable internet access (relocation, travel, etc.)";
-
-
-
-
     /* 获取 Scheduled 详细数据接口 */
     @RequestMapping(value = "/scheduled", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
     public Map<String, Object> scheduled(ScheduledRequest scheduledRequest, HttpServletResponse response) {

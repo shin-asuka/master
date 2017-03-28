@@ -115,7 +115,7 @@ public class BookingsService {
 
     @Autowired
     private TeacherPageLoginService teacherPageLoginService;
-    
+
     @Autowired
     private TeacherService teacherService;
 
@@ -1214,7 +1214,7 @@ public class BookingsService {
 	public List<Map<String, Object>>  findIncentiveClasses(Date from, Date to, long id) {
 		 return onlineClassDao.findOnlineClassesByStartTimeAndEndTime(from,to,id);
 	}
-	
+
 	public void countOnlineClassesByStartTimeAndEndTime(Date from, Date to, Long id, Long incentiveCount,
 			List<Map<String, Object>> resultList) {
 		Map<String, Object> resultMap = Maps.newHashMap();
@@ -1227,10 +1227,10 @@ public class BookingsService {
 		resultMap.put("from",from.getTime());
 		resultMap.put("to",to.getTime());
 		resultMap.put("resultCount",resultCount);
-		
+
 		resultList.add(resultMap);
 	}
-	
+
 	public Long getIncentiveCount(Long teacherId) {
 		String value = null;
 		String key = RedisConstants.INCENTIVE_FOR_APRIL + teacherId;

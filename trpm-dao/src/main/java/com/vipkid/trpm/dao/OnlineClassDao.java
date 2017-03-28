@@ -501,4 +501,5 @@ public class OnlineClassDao extends MapperDaoTemplate<OnlineClass> {
 	public Integer countScheduledByParam(Map<String,Object> paramMap){
 		return selectCount("countScheduledByParam",paramMap);
 	}
+
 }
