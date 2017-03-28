@@ -28,7 +28,7 @@
     </beans:bean>
 
 
-	<tx:annotation-driven transaction-manager="transactionManager" />
+	<!--<tx:annotation-driven transaction-manager="transactionManager" />-->
 
 	<beans:bean id="transactionManager"
 		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
@@ -41,20 +41,20 @@
 		<property name="basePackage" value="com.vipkid.trpm.dao"/>
 	</bean>
 
-	<!--<tx:advice id="txAdvice" transaction-manager="transactionManager">
+	<tx:advice id="txAdvice" transaction-manager="transactionManager">
 		<tx:attributes>
 			<tx:method name="get*" read-only="true" />
 			<tx:method name="select*" read-only="true" />
 			<tx:method name="*" propagation="REQUIRED" rollback-for="Exception" />
 		</tx:attributes>
-	</tx:advice>-->
+	</tx:advice>
 
 	<aop:aspectj-autoproxy />
 
-	<!--<aop:config proxy-target-class="true">
+	<aop:config proxy-target-class="true">
 		<aop:advisor advice-ref="txAdvice" pointcut="execution(* com.vipkid.trpm.service.**.*Service.*(..))" order="2" />
 		<aop:advisor advice-ref="txAdvice" pointcut="execution(* com.vipkid.recruitment.**.service.*Service.*(..))"/>
-
+		<!--<aop:advisor advice-ref="txAdvice" pointcut="execution(* com.vipkid.background.**.service.*Service.*(..))"/>-->
 		<aop:advisor advice-ref="txAdvice" pointcut="execution(* com.vipkid.portal.**.service.*Service.*(..))"/>
 		<aop:advisor advice-ref="txAdvice" pointcut="execution(* com.vipkid.rest.service.*Service.*(..))"/>
 		<aop:advisor advice-ref="txAdvice" pointcut="execution(* com.vipkid.payroll.service.*Service.*(..))"/>
@@ -62,8 +62,6 @@
 		<aop:advisor advice-ref="rwDataSourceInterceptor" pointcut="execution(* com.vipkid.portal.personal.controller.*Controller.*(..))" order="1" />
 		<aop:advisor advice-ref="rwDataSourceInterceptor" pointcut="execution(* com.vipkid.background.service.*Service.*(..))"/>
 	</aop:config>
-	<aop:advisor advice-ref="txAdvice" pointcut="execution(* com.vipkid.background.**.service.*Service.*(..))"/>
-	-->
 
 	<bean id="rwDataSourceInterceptor" class="com.vipkid.dataSource.TypedReadWriteDataSourceInterceptor"></bean>
 
