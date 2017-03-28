@@ -38,12 +38,12 @@ import com.vipkid.rest.RestfulController;
 import com.vipkid.rest.config.RestfulConfig;
 import com.vipkid.rest.interceptor.annotation.RestInterface;
 import com.vipkid.rest.utils.ApiResponseUtils;
+import com.vipkid.teacher.tools.security.SHA256PasswordEncoder;
 import com.vipkid.trpm.dao.TeacherTaxpayerFormDao;
 import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.entity.TeacherTaxpayerForm;
 import com.vipkid.trpm.entity.TeacherTaxpayerFormDetail;
 import com.vipkid.trpm.entity.User;
-import com.vipkid.trpm.security.SHA256PasswordEncoder;
 import com.vipkid.trpm.service.portal.TeacherService;
 import com.vipkid.trpm.service.portal.TeacherTaxpayerFormService;
 import com.vipkid.trpm.util.AwsFileUtils;
@@ -73,9 +73,6 @@ public class PortalPersonalInfoController extends RestfulController {
 
 	@Autowired
 	private TeacherTaxpayerFormService teacherTaxpayerFormService;
-
-	@Autowired
-	private SHA256PasswordEncoder mSHA256PasswordEncoder;
 
 	@Autowired
 	private TeacherTaxpayerFormDao teacherTaxpayerFormDao;
@@ -313,7 +310,8 @@ public class PortalPersonalInfoController extends RestfulController {
 		}
 
 		//验证用户密码
-		String encodedPassword = mSHA256PasswordEncoder.encode(currentPassword);
+        SHA256PasswordEncoder encoder = new SHA256PasswordEncoder();
+		String encodedPassword = encoder.encode(currentPassword);
 		if (!StringUtils.equals(encodedPassword,user.getPassword())) {
 			return ApiResponseUtils.buildErrorResp(2001, "原密码输入错误");
 		}

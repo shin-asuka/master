@@ -25,9 +25,9 @@ import com.vipkid.rest.interceptor.annotation.RestInterface;
 import com.vipkid.rest.service.LoginService;
 import com.vipkid.rest.validation.ValidateUtils;
 import com.vipkid.rest.validation.tools.Result;
+import com.vipkid.teacher.tools.security.SHA256PasswordEncoder;
 import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.entity.User;
-import com.vipkid.trpm.security.SHA256PasswordEncoder;
 import com.vipkid.trpm.service.passport.PassportService;
 
 /**

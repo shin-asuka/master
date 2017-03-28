@@ -1,21 +1,10 @@
 package com.vipkid.trpm.service.passport;
 
-import com.google.common.collect.Maps;
-import com.vipkid.email.EmailUtils;
-import com.vipkid.enums.TeacherEnum;
-import com.vipkid.enums.TeacherEnum.RecruitmentChannel;
-import com.vipkid.enums.UserEnum;
-import com.vipkid.recruitment.utils.ReturnMapUtils;
-import com.vipkid.trpm.constant.ApplicationConstant;
-import com.vipkid.trpm.constant.ApplicationConstant.RedisConstants;
-import com.vipkid.trpm.dao.AppRestfulDao;
-import com.vipkid.trpm.dao.TeacherDao;
-import com.vipkid.trpm.dao.UserDao;
-import com.vipkid.trpm.entity.Teacher;
-import com.vipkid.trpm.entity.User;
-import com.vipkid.trpm.proxy.RedisProxy;
-import com.vipkid.trpm.security.SHA256PasswordEncoder;
-import com.vipkid.trpm.util.AES;
+import java.sql.Timestamp;
+import java.util.Base64;
+import java.util.Map;
+import java.util.UUID;
+
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.community.config.PropertyConfigurer;
@@ -24,10 +13,22 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.sql.Timestamp;
-import java.util.Base64;
-import java.util.Map;
-import java.util.UUID;
+import com.google.common.collect.Maps;
+import com.vipkid.email.EmailUtils;
+import com.vipkid.enums.TeacherEnum;
+import com.vipkid.enums.TeacherEnum.RecruitmentChannel;
+import com.vipkid.enums.UserEnum;
+import com.vipkid.recruitment.utils.ReturnMapUtils;
+import com.vipkid.teacher.tools.security.SHA256PasswordEncoder;
+import com.vipkid.trpm.constant.ApplicationConstant;
+import com.vipkid.trpm.constant.ApplicationConstant.RedisConstants;
+import com.vipkid.trpm.dao.AppRestfulDao;
+import com.vipkid.trpm.dao.TeacherDao;
+import com.vipkid.trpm.dao.UserDao;
+import com.vipkid.trpm.entity.Teacher;
+import com.vipkid.trpm.entity.User;
+import com.vipkid.trpm.proxy.RedisProxy;
+import com.vipkid.trpm.util.AES;
 
 /**
  * 用于passport的主要业务 1.包含Teacher的token更新，SignUp实现
