@@ -89,9 +89,11 @@ public class BackgroundCommonService {
                 //boolean in5Days = false;
                 long screeningId = backgroundScreening.getId();
                 BackgroundAdverse backgroundAdverse = backgroundAdverseDao.findByScreeningIdTopOne(screeningId);
-                String actionsStatus = backgroundAdverse.getActionsStatus();
-                if (StringUtils.equalsIgnoreCase(actionsStatus,AdverseStatus.AWAITINGDISPUTE.getValue())){
-                    Date adverseTime = backgroundAdverse.getUpdateTime();
+                if (null != backgroundAdverse){
+                    String actionsStatus = backgroundAdverse.getActionsStatus();
+                    if (StringUtils.equalsIgnoreCase(actionsStatus,AdverseStatus.AWAITINGDISPUTE.getValue())){
+                        Date adverseTime = backgroundAdverse.getUpdateTime();
+                    }
                 }
 
                 /*current.add(Calendar.DATE, 5);
