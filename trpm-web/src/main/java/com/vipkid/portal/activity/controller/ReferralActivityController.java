@@ -244,8 +244,10 @@ public class ReferralActivityController extends RestfulController{
 			ShareActivityExam shareActivityExam = this.referralActivityService.checkTeacherExamStratus(getTeacher(request));
 			if (NumericUtils.isNull(shareActivityExam)) {
 				//表示从未考试
+				logger.info("从没有考试");
 				beanVo.setStatus(2);
 			}else{
+				beanVo.setActivityExamId(shareActivityExam.getId());
 				beanVo.setStatus(shareActivityExam.getStatus());
 				beanVo.setExamResult(shareActivityExam.getExamResult());
 				//已经考试已经有结果不用走下一步
