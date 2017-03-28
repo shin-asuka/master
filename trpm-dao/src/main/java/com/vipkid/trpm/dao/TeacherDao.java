@@ -193,7 +193,7 @@ public class TeacherDao extends MapperDaoTemplate<Teacher> {
 			if(stateId != null && stateId != 0){
 				paramsMap.put("stateId", stateId);
 			}else{
-				logger.warn("传入的城市ID或者州ID为0,TeacherDao.countClassNumByTeacherId(int city,int stateId),city:{},stateId:{}",city,stateId);
+				logger.warn("传入的城市ID或者州ID为0,TeacherDao.findRegulareTeacherByCity(int city,int stateId),city:{},stateId:{}",city,stateId);
 				return 0;
 			}
 		}
