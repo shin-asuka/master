@@ -111,10 +111,20 @@ public class TeacherCommentController {
         }
     }
 
+    /**
+     * 初始化老师基数
+     * @param teacherId
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "/incentivesTeacherInit", method = RequestMethod.GET)
-    public Object incentivesTeacherInit() {
-
-        return null;
+    public Object incentivesTeacherInit(String teacherId) {
+        Integer count=0;
+        if(StringUtils.isBlank(teacherId)){
+            teacherService.incentivesAllTeacherInit();
+        }else{
+            count=teacherService.incentivesTeacherInit(teacherId);
+        }
+        return count;
     }
 }

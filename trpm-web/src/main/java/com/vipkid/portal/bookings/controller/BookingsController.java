@@ -388,39 +388,45 @@ public class BookingsController {
     }
 
 
-
+    /**
+     * 根据老师ID查询基数
+     * @param teacherId
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "/getIncentivesInitCount", method = RequestMethod.GET)
-	public Map<String, Object> getIncentivesInitCount(String teacherId) {
-		logger.info("getIncentivesInitCount ：teacherId={} .", teacherId);
-		if (StringUtils.isBlank(teacherId)) {
-			return ApiResponseUtils.buildErrorResp(HttpStatus.NOT_IMPLEMENTED.value(), "参数为空");
-		}
-		String count = null;
-		Integer countInt = 0;
-		try {
-			count = redisProxy.get(ApplicationConstant.RedisConstants.INCENTIVE_FOR_APRIL + teacherId);
-			if (StringUtils.isBlank(count)) {
-				countInt = teacherService.incentivesTeacherInit(teacherId);
-				if (countInt == 0) {
-					return ApiResponseUtils.buildErrorResp(HttpStatus.OK.value(), "没有查到具体数据");
-				}
-				count = countInt + "";
-			}
-			Map<String, Object> dataMap = Maps.newHashMap();
-			dataMap.put("errCode", HttpStatus.OK.value());
-			dataMap.put("errMsg", "成功");
-			dataMap.put("data", "count");
-			return dataMap;
+    public Map<String, Object> getIncentivesInitCount(String teacherId) {
+        logger.info("getIncentivesInitCount ：teacherId={} .", teacherId);
+        if(StringUtils.isBlank(teacherId)){
+            return ApiResponseUtils.buildErrorResp(HttpStatus.NOT_IMPLEMENTED.value(),
+                    "参数为空");
+        }
+        String count=null;
+        Integer countInt=0;
+        try{
+             count=redisProxy.get(ApplicationConstant.RedisConstants.INCENTIVE_FOR_APRIL+teacherId);
+            if(StringUtils.isBlank(count)){
+                countInt=teacherService.incentivesTeacherInit(teacherId);
+                if(countInt ==0){
+                    return ApiResponseUtils.buildErrorResp(HttpStatus.OK.value(),
+                            "没有查到具体数据");
+                }
+                count=countInt+"";
+            }
+            Map<String, Object> dataMap = Maps.newHashMap();
+            dataMap.put("errCode",HttpStatus.OK.value());
+            dataMap.put("errMsg","成功");
+            dataMap.put("data",count);
+            return dataMap;
 
-		} catch (Exception e) {
-			logger.warn("getIncentivesInitCount fail：teacherId={},error={} ", teacherId,
-					ExceptionUtils.getFullStackTrace(e));
-			return ApiResponseUtils.buildErrorResp(HttpStatus.INTERNAL_SERVER_ERROR.value(),
-					ExceptionUtils.getFullStackTrace(e));
-		}
+        }catch (Exception e){
+            logger.warn("getIncentivesInitCount fail：teacherId={},error={} ", teacherId,ExceptionUtils.getFullStackTrace(e));
+            return ApiResponseUtils.buildErrorResp(HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                    ExceptionUtils.getFullStackTrace(e));
+        }
 
-	}
+
+    }
 
     /**
      * 查询finishType
