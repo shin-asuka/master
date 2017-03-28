@@ -449,4 +449,12 @@ public class OnlineClassDao extends MapperDaoTemplate<OnlineClass> {
 		paramsMap.put("onlineClassId", onlineClassId);
 		return selectEntity("findOnlineClassCourseType",paramsMap);
 	}
+	
+	public List<Map<String, Object>> findOnlineClassesByStartTimeAndEndTime(Date from, Date to, Long teacherId){
+		Map<String, Object> paramsMap = new HashMap<>();
+		paramsMap.put("from", from);
+		paramsMap.put("to", to);
+		paramsMap.put("teacherId", teacherId);
+		return selectEntity("findOnlineClassesByStartTimeAndEndTime",paramsMap);
+	}
 }
