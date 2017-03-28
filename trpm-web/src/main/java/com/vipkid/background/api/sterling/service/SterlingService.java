@@ -49,7 +49,7 @@ public class SterlingService {
 
     static{
         callback = new ScreeningInputDto.CallBack();
-        callback.setUri(PropertyConfigurer.stringValue("background.sterling.callback.uri"));
+        callback.setUri(PropertyConfigurer.stringValue("background.sterling.callback.url"));
     }
 
 
