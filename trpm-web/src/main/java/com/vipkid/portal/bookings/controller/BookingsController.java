@@ -430,16 +430,15 @@ public class BookingsController {
      * @return
      */
     @RequestMapping(value = "/getIncentives", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
-    public Map<String, Object> getIncentives(@RequestBody Map<String, Object> paramMap, HttpServletRequest request, HttpServletResponse response) {
+    public Map<String, Object> getIncentives(Long from,Long to, HttpServletRequest request, HttpServletResponse response) {
 		Map<String, Object> dataMap = Maps.newHashMap();
-		Object from = paramMap.get("from");
-		Object to = paramMap.get("to");
+		
 
 		try {
 
 			Preconditions.checkArgument(request.getAttribute(TEACHER) != null);
 			Teacher teacher = (Teacher) request.getAttribute(TEACHER);
-			if (from == null || to == null || !(from instanceof Timestamp) || !(to instanceof Timestamp)) {
+			if (from == null || to == null ) {
 				response.setStatus(HttpStatus.BAD_REQUEST.value());
 				logger.warn("wrong parameters{} where get incentives ", teacher.getId());
 				return ApiResponseUtils.buildErrorResp(HttpStatus.BAD_REQUEST.value(),
@@ -451,7 +450,7 @@ public class BookingsController {
 						"The teacher have no jurisdiction.", teacher.getId());
 			}
 
-			List<Map<String, Object>> classes = bookingsService.findIncentiveClasses((Timestamp) from, (Timestamp) to,
+			List<Map<String, Object>> classes = bookingsService.findIncentiveClasses(new Date(from), new Date(to),
 					teacher.getId());
 			List<Map<String, Object>> resultClasses = Lists.newArrayList();
 			Long incentiveCount = bookingsService.getIncentiveCount(teacher.getId());
@@ -471,23 +470,16 @@ public class BookingsController {
 
     }
 
-    @RequestMapping(value = "/getIncentiveCount", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
-	public Map<String, Object> getIncentiveCount(@RequestBody Map<String, Object> paramMap, HttpServletRequest request,
+    @RequestMapping(value = "/getIncentiveCount", method = RequestMethod.GET)
+	public Map<String, Object> getIncentiveCount(HttpServletRequest request,
 			HttpServletResponse response) {
 		Map<String, Object> dataMap = Maps.newHashMap();
-		Object from = paramMap.get("from");
-		Object to = paramMap.get("to");
-
+		
 		try {
 
 			Preconditions.checkArgument(request.getAttribute(TEACHER) != null);
 			Teacher teacher = (Teacher) request.getAttribute(TEACHER);
-			if (from == null || to == null || !(from instanceof Timestamp) || !(to instanceof Timestamp)) {
-				response.setStatus(HttpStatus.BAD_REQUEST.value());
-				logger.warn("wrong parameters{} where get incentives ", teacher.getId());
-				return ApiResponseUtils.buildErrorResp(HttpStatus.BAD_REQUEST.value(),
-						"wrong parameters where get incentives ,{}.", teacher.getId());
-			}
+			
 			if (0 == teacher.getId()) {
 				response.setStatus(HttpStatus.FORBIDDEN.value());
 				return ApiResponseUtils.buildErrorResp(HttpStatus.BAD_REQUEST.value(),
