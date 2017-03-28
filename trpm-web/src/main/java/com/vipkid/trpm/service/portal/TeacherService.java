@@ -623,6 +623,15 @@ public class TeacherService {
 		if (CollectionUtils.isEmpty(teacherIds)) {
 			return;
 		}
+		paramMap.put("status", "FINISHED");
+		paramMap.put("start", "2017-03-01");
+		paramMap.put("end", "2017-03-28");
+		List<String> finishTypes=Lists.newArrayList();
+		finishTypes.add(ApplicationConstant.FinishType.AS_SCHEDULED);
+		finishTypes.add(ApplicationConstant.FinishType.STUDENT_NO_SHOW);
+		finishTypes.add(ApplicationConstant.FinishType.STUDENT_IT_PROBLEM);
+		finishTypes.add(ApplicationConstant.FinishType.SYSTEM_PROBLEM);
+		paramMap.put("finishTypes", finishTypes);
 		for (Long id : teacherIds) {
 			try {
 				paramMap.put("teacherId", id);
