@@ -22,6 +22,7 @@ import com.vipkid.enums.ShareActivityExamEnum;
 import com.vipkid.enums.ShareActivityExamEnum.StatusEnum;
 import com.vipkid.portal.activity.dto.ClickHandleDto;
 import com.vipkid.portal.activity.dto.SubmitHandleDto;
+import com.vipkid.portal.activity.vo.CheckUrlVo;
 import com.vipkid.portal.activity.vo.StartHandleVo;
 import com.vipkid.portal.activity.vo.SubmitHandleVo;
 import com.vipkid.teacher.tools.repository.dao.MyBatisTools;
@@ -182,7 +183,6 @@ public class ReferralActivityService {
 		StartHandleVo beanVo = new StartHandleVo();
 		beanVo.setActivityExamID(bean.getId());
 		beanVo.setCandidateKey(bean.getCandidateKey());
-		beanVo.setPageContent(this.getExamContent(bean.getExamVersion()));
 		beanVo.setQuestionId(questionId);
 		beanVo.setQuestionIndex(index);
 		return beanVo;
@@ -218,7 +218,6 @@ public class ReferralActivityService {
 		StartHandleVo beanVo = new StartHandleVo();
 		beanVo.setActivityExamID(bean.getId());
 		beanVo.setCandidateKey(bean.getCandidateKey());
-		beanVo.setPageContent(this.getExamContent(bean.getExamVersion()));
 		beanVo.setQuestionId(questionId);
 		beanVo.setQuestionIndex(index);
 		return beanVo;
@@ -229,20 +228,26 @@ public class ReferralActivityService {
 	 * @param bean
 	 * @return
 	 */
-	public boolean checkUrl(ClickHandleDto bean){
+	public CheckUrlVo checkUrl(ClickHandleDto bean){
 		ShareLinkSource sLinkSource = this.shareLinkSourceDao.getById(bean.getLinkSourceId());
+		CheckUrlVo beanVo = new CheckUrlVo();
 		if(NumericUtils.isNotNull(sLinkSource)){
 			if(NumericUtils.isNull(bean.getShareRecordId())){
-				return true;
+				//第一次点击
+				beanVo.setExamVersion(this.getExamVersion());
+				beanVo.setPageContent(this.getExamContent(beanVo.getExamVersion()));
+				return beanVo;
 			}else{
 				ShareRecord shareRecord = this.shareRecordDao.getById(bean.getShareRecordId());
 				// 该分享ID 来源ID 匹配为正确
 				if(NumericUtils.isNotNull(shareRecord) && shareRecord.getLinkSourceId() == bean.getLinkSourceId()){
-					return true;
+					beanVo.setExamVersion(shareRecord.getExamVersion());
+					beanVo.setPageContent(this.getExamContent(beanVo.getExamVersion()));
+					return beanVo;
 				}
 			}
 		}
-		return false;
+		return null;
 	}
 	
 	/**
