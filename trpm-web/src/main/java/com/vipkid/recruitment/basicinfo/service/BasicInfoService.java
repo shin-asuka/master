@@ -69,7 +69,42 @@ public class BasicInfoService {
     @Autowired
     private RedisProxy redisProxy;
 
-    /**
+    private static List<String> RandomCodeList  = Lists.newArrayList();
+    static {
+
+        for(int i='A';i<'A'+26;i++){
+            for(int j='A';j<'A'+26;j++){
+                String s="";
+                s+=(char)i;
+                s+=(char)j;
+                RandomCodeList.add(s);
+            }
+        }
+    }
+
+    private static List<String>  SensitiveWordsList = Lists.newArrayList();
+    static {
+        SensitiveWordsList.add("BB");
+        SensitiveWordsList.add("XX");
+        SensitiveWordsList.add("SB");
+        SensitiveWordsList.add("BT");
+        SensitiveWordsList.add("FK");
+        SensitiveWordsList.add("EG");
+        SensitiveWordsList.add("FE");
+        SensitiveWordsList.add("FO");
+        SensitiveWordsList.add("IC");
+        SensitiveWordsList.add("IP");
+        SensitiveWordsList.add("IQ");
+        SensitiveWordsList.add("NM");
+        SensitiveWordsList.add("NP");
+        SensitiveWordsList.add("OT");
+        SensitiveWordsList.add("OZ");
+        SensitiveWordsList.add("PO");
+        SensitiveWordsList.add("RU");
+        SensitiveWordsList.add("SH");
+    }
+
+    /**s
      * 查询可用的招聘渠道
      *  
      * @Author:ALong (ZengWeiLong)
@@ -93,7 +128,7 @@ public class BasicInfoService {
      * @Author:ALong (ZengWeiLong)
      * @param bean
      * @param user
-     * @param teacher
+     * @param
      * @return    
      * Map<String,Object>
      * @date 2016年10月17日
@@ -159,7 +194,50 @@ public class BasicInfoService {
         if(name.indexOf(" ") > -1){
             name = name.substring(0,name.indexOf(" ")+2);
         }
-        user.setName(name);
+        int showNumber= userDao.findUserCountByShowName(name);
+        //showName 重复执行的逻辑
+        if(showNumber>0) {
+            String showName;
+            int duplicates;//showName 重复的标记
+            int n = 2;//添加随机大写字母的个数
+            List<String> randomCodeList = Lists.newArrayList();
+            int num = 0;
+            do {
+                if(StringUtils.isNotBlank(name)) {
+                    showName = name.substring(0, name.indexOf(" ") + 1);
+                }else{
+                    showName ="";
+                }
+                String randomCode = StringUtils.EMPTY;//添加随机字母的变量
+                //执行随机变量的逻辑
+                    for (int i = 0; i < n; i++) {
+                        randomCode += (char) (Math.random() * 26 + 'A');
+                    }
+                randomCodeList.add(randomCode);
+                if (randomCodeList.containsAll(RandomCodeList)) {
+                    ++n;
+                }
+                showName += randomCode;
+                //敏感词过滤
+                duplicates = userDao.findUserCountByShowName(showName);
+                for (String str : SensitiveWordsList) {
+                    if (randomCode.indexOf(str) != -1) {
+                        duplicates = 1;
+                        break;
+                    }
+                }
+                logger.info("user :{} 循环次数:{}", user.getId(),num);
+                ++num;
+                if(num>500&&n==2){
+                    ++n;
+                }
+            } while (duplicates > 0);
+            user.setName(showName);
+        }else{
+            user.setName(name);
+        }
+
+
         user.setGender(bean.getGender());
         user.setLastEditorId(user.getId());
         user.setLastEditDateTime(new Timestamp(System.currentTimeMillis()));
@@ -220,7 +298,7 @@ public class BasicInfoService {
     /**
      * 渠道为当前老师的数据初始化<br/>
      * @Author:VIPKID-ZengWeiLong
-     * @param paramMap
+     * @param
      * @return 2015年10月12日
      */
     public List<Map<String, Object>> findTeacher(){
