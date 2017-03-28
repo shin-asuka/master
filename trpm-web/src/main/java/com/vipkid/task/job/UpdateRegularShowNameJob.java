@@ -64,11 +64,12 @@ public class UpdateRegularShowNameJob {
 
     @Vschedule
     public void doJob(JobContext jobContext) {
-        logger.info("【UpdateRegularShowNameJob  】START: ==================================================Time :{}",System.currentTimeMillis());
-        String date =  jobContext.getData();
+        long startTime = System.currentTimeMillis();
+        logger.info("【UpdateRegularShowNameJob  】START: ==================================================startTime :{}",startTime);
+        String data =  jobContext.getData();
         List<String> userIds =  Lists.newArrayList();//获得teacherId 集合
-        if(org.apache.commons.lang.StringUtils.isNotBlank(date)) {
-            userIds = Splitter.on(",").trimResults().splitToList(date);
+        if(org.apache.commons.lang.StringUtils.isNotBlank(data)) {
+            userIds = Splitter.on(",").trimResults().splitToList(data);
         }
         List<String> userIdList = Lists.newArrayList();
         if(CollectionUtils.isNotEmpty(userIds)) {
@@ -76,47 +77,47 @@ public class UpdateRegularShowNameJob {
         }
         List<User> userList =  userDao.findUserNameListByIdList(userIdList);
         if(CollectionUtils.isNotEmpty(userList)){
-            for (User user:userList) {
+            for (User user : userList) {
                 if (user != null) {
-                    String name = user.getName();
-                    String showName;
-                    int nameNum;//showName 重复的标记
+                    String showName = user.getName();
+                    String currentShowName;
+                    int duplicates;//showName 重复的标记
                     int n = 2;//添加随机大写字母的个数
-                    List<String> showNameList = Lists.newArrayList();
+                    List<String> randomCodeList = Lists.newArrayList();
                     int num = 0;
                     do {
-                        if(StringUtils.isNotBlank(name)) {
-                            showName = name.substring(0, name.indexOf(" ") + 1);
+                        if(StringUtils.isNotBlank(showName)) {
+                            currentShowName = showName.substring(0, showName.indexOf(" ") + 1);
                         }else{
-                            showName ="";
+                            currentShowName ="";
                         }
-                        if(StringUtils.isBlank(showName)){
-                            showName=name+" ";
+                        if(StringUtils.isBlank(currentShowName)){
+                            currentShowName=showName+" ";
                         }
-                        String s = StringUtils.EMPTY;//添加随机字母的变量
+                        String  randomCode = StringUtils.EMPTY;//添加随机字母的变量
                         //执行随机变量的逻辑
                         for (int j = 0; j < n; j++) {
-                            s += (char) (Math.random() * 26 + 'A');
+                            randomCode += (char) (Math.random() * 26 + 'A');
                         }
-                        showNameList.add(s);
-                        if (showNameList.containsAll(RandomAB)) {
+                        randomCodeList.add( randomCode);
+                        if (randomCodeList.containsAll(RandomAB)) {
                             ++n;
                         }
-                        showName += s;
+                        currentShowName +=  randomCode;
                         //敏感词过滤
-                        nameNum = userDao.findUserShowNumber(showName);
+                        duplicates = userDao.findUserCountByShowName(currentShowName);
                         for (String str : SensitiveWords) {
-                            if (s.indexOf(str) != -1) {
-                                nameNum = 1;
+                            if ( randomCode.indexOf(str) != -1) {
+                                duplicates = 1;
                                 break;
                             }
                         }
                         logger.info("user :{} 循环次数:{}", user.getId(),num);
                         ++num;
-                    } while (nameNum > 0);
-                    if (!StringUtils.equalsIgnoreCase(showName, name)) {
-                        logger.info("uopdate teacher :{} showName:{}", user.getId(), showName);
-                        user.setName(showName);
+                    } while (duplicates > 0);
+                    if (!StringUtils.equalsIgnoreCase(currentShowName, showName)) {
+                        logger.info("uopdate teacher :{} showName:{}", user.getId(), currentShowName);
+                        user.setName(currentShowName);
                         userDao.update(user);
                     }
                 }else{
@@ -124,8 +125,8 @@ public class UpdateRegularShowNameJob {
                 }
             }
         }
-
-        logger.info("【UpdateRegularShowNameJob  】END: ==================================================Time :{}",System.currentTimeMillis());
+        long endTime = System.currentTimeMillis();
+        logger.info("【UpdateRegularShowNameJob  】END: ==================================================Time :{}",endTime-startTime);
 
     }
 }

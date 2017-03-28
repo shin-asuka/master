@@ -72,19 +72,19 @@ public class UserDao extends MapperDaoTemplate<User> {
 	}
 
 
-	public int findUserShowNumber(String showName){
+	public int findUserCountByShowName(String showName){
 		if(StringUtils.isBlank(showName)){
 			return -1;
 		}
 		Map<String, Object> paramsMap = new HashMap<String, Object>();
 		paramsMap.put("showName",showName);
-		return selectEntity("findUserShowNumber",paramsMap);
+		return selectEntity("findUserCountByShowName",paramsMap);
 	}
 
-	public List<User> findUserShowNameAndIdList(int startLine){
+	public List<User> findUserShowNameAndIdList(int offset){
 
 		Map<String, Object> paramsMap = new HashMap<String, Object>();
-		paramsMap.put("startLine",startLine);
+		paramsMap.put("offset",offset);
 		return listEntity("findUserShowNameAndIdList",paramsMap);
 	}
 

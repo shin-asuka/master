@@ -194,38 +194,38 @@ public class BasicInfoService {
         if(name.indexOf(" ") > -1){
             name = name.substring(0,name.indexOf(" ")+2);
         }
-        int showNumber= userDao.findUserShowNumber(name);
+        int showNumber= userDao.findUserCountByShowName(name);
         //showName 重复执行的逻辑
         if(showNumber>0) {
             String showName;
-            int nameNum;//showName 重复的标记
+            int duplicates;//showName 重复的标记
             int n = 2;//添加随机大写字母的个数
-            List<String> showNameList = Lists.newArrayList();
+            List<String> randomCodeList = Lists.newArrayList();
             do {
                 if(StringUtils.isNotBlank(name)) {
                     showName = name.substring(0, name.indexOf(" ") + 1);
                 }else{
                     showName ="";
                 }
-                String s = StringUtils.EMPTY;//添加随机字母的变量
+                String randomCode = StringUtils.EMPTY;//添加随机字母的变量
                 //执行随机变量的逻辑
                     for (int i = 0; i < n; i++) {
-                        s += (char) (Math.random() * 26 + 'A');
+                        randomCode += (char) (Math.random() * 26 + 'A');
                     }
-                showNameList.add(s);
-                if (showNameList.containsAll(RandomAB)) {
+                randomCodeList.add(randomCode);
+                if (randomCodeList.containsAll(RandomAB)) {
                     ++n;
                 }
-                showName += s;
+                showName += randomCode;
                 //敏感词过滤
-                nameNum = userDao.findUserShowNumber(showName);
+                duplicates = userDao.findUserCountByShowName(showName);
                 for (String str : SensitiveWords) {
-                    if (s.indexOf(str) != -1) {
-                        nameNum = 1;
+                    if (randomCode.indexOf(str) != -1) {
+                        duplicates = 1;
                         break;
                     }
                 }
-            } while (nameNum > 0);
+            } while (duplicates > 0);
             user.setName(showName);
         }else{
             user.setName(name);

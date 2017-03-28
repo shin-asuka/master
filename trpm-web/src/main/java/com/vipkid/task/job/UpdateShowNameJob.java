@@ -61,7 +61,8 @@ public class UpdateShowNameJob {
 
     @Vschedule
     public void doJob(JobContext jobContext) {
-        logger.info("【updateShowName  】START: ==================================================Time :{}",System.currentTimeMillis());
+        long startTime = System.currentTimeMillis();
+        logger.info("【updateShowName  】START: ==================================================startTime :{}",startTime);
         for (int i = 0; i < 50000; i = i + 1000){
             List<User> userList = userDao.findUserShowNameAndIdList(i);
             if(CollectionUtils.isEmpty(userList)){
@@ -69,47 +70,47 @@ public class UpdateShowNameJob {
             }else{
                 for (User user:userList) {
                     if (user != null) {
-                        String name = user.getName();
-                        int showNumber = userDao.findUserShowNumber(name);
+                        String showName = user.getName();
+                        int showNumber = userDao.findUserCountByShowName(showName);
                         if (showNumber > 1) {
 
-                            String showName;
-                            int nameNum;//showName 重复的标记
+                            String currentShowName;
+                            int duplicates;//showName 重复的标记
                             int n = 2;//添加随机大写字母的个数
-                            List<String> showNameList = Lists.newArrayList();
+                            List<String> randomCodeList = Lists.newArrayList();
                             int num = 0;
                             do {
-                                if(StringUtils.isNotBlank(name)) {
-                                    showName = name.substring(0, name.indexOf(" ") + 1);
+                                if(StringUtils.isNotBlank(showName)) {
+                                    currentShowName = showName.substring(0, showName.indexOf(" ") + 1);
                                 }else{
-                                    showName ="";
+                                    currentShowName ="";
                                 }
-                                if(StringUtils.isBlank(showName)){
-                                    showName=name+" ";
+                                if(StringUtils.isBlank(currentShowName)){
+                                    currentShowName=showName+" ";
                                 }
-                                String s = StringUtils.EMPTY;//添加随机字母的变量
+                                String randomCode = StringUtils.EMPTY;//添加随机字母的变量
                                 //执行随机变量的逻辑
                                 for (int j = 0; j < n; j++) {
-                                    s += (char) (Math.random() * 26 + 'A');
+                                    randomCode += (char) (Math.random() * 26 + 'A');
                                 }
-                                showNameList.add(s);
-                                if (showNameList.containsAll(RandomAB)) {
+                                randomCodeList.add(randomCode);
+                                if (randomCodeList.containsAll(RandomAB)) {
                                     ++n;
                                 }
-                                showName += s;
+                                currentShowName += randomCode;
                                 //敏感词过滤
-                                nameNum = userDao.findUserShowNumber(showName);
+                                duplicates = userDao.findUserCountByShowName(currentShowName);
                                 for (String str : SensitiveWords) {
-                                    if (s.indexOf(str) != -1) {
-                                        nameNum = 1;
+                                    if (randomCode.indexOf(str) != -1) {
+                                        duplicates = 1;
                                         break;
                                     }
                                 }
                                 logger.info("user :{} 循环次数:{}", user.getId(),num);
                                 ++num;
-                            } while (nameNum > 0);
-                            logger.info("uopdate teacher :{} showName:{} 编号：{}", user.getId(), showName,i);
-                            user.setName(showName);
+                            } while (duplicates > 0);
+                            logger.info("uopdate teacher :{} showName:{} 编号：{}", user.getId(), currentShowName,i);
+                            user.setName(currentShowName);
                             userDao.update(user);
                         }
                     }else{
@@ -118,6 +119,7 @@ public class UpdateShowNameJob {
                 }
             }
         }
-        logger.info("【updateShowNmae  】END: ==================================================Time :{}",System.currentTimeMillis());
+        long endTime = System.currentTimeMillis();
+        logger.info("【updateShowNmae  】END: ==================================================Time :{}",endTime-startTime);
     }
 }

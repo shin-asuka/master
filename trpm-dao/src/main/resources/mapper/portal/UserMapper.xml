@@ -210,7 +210,7 @@
 
 	<!--查询用户的showName 数量-->
 
-	<select id="findUserShowNumber" resultType="int">
+	<select id="findUserCountByShowName" resultType="int">
 		SELECT
 		count(1)
 		FROM user
@@ -229,7 +229,7 @@
 		IN ("BASIC_INFO","INTERVIEW","SIGN_CONTRACT","TRAINING","PRACTICUM","CONTRACT_INFO")
         and ta.result IN("PASS","REAPPLY","PRACTICUM","PRACTICUM2","TBD","TBD_FAIL","CANCEL" )
         and  ta.current = 1
-		GROUP BY id limit #{startLine},1000;
+		GROUP BY id limit #{offset},1000;
 	</select>
 
 
