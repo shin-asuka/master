@@ -90,7 +90,20 @@ public class BackgroundCheckService {
             CandidateOutputDto candidateOutput = createCandidate(input, teacher);
             if(!StringUtils.equals(candidateOutput.getResCode().getCode(), TeacherPortalCodeEnum.RES_SUCCESS.getCode())){
                 output.setResCode(candidateOutput.getResCode().getCode());
-                output.setResMsg(candidateOutput.getErrorMessage());
+                //format errorMessage
+                String errorMessage = candidateOutput.getErrorMessage();
+                if(StringUtils.isBlank(errorMessage)){
+                    output.setResMsg("failed");
+                    return output;
+                }
+                if(errorMessage.indexOf("?format") != -1){
+                    String[] temp = errorMessage.split("\\?");
+                    String field = temp[0];
+                    String message = " is incorrect.";
+                    output.setResMsg(field + message);
+                    return output;
+                }
+                output.setResMsg(errorMessage);
                 return output;
             }
         }
@@ -369,5 +382,4 @@ public class BackgroundCheckService {
         logger.info("save background check information, BackgroundCheckService.saveLicense, insert success.teacherId="+input.getTeacherId());
 
     }
-
 }
