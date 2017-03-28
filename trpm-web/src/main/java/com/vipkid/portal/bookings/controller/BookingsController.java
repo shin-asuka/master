@@ -10,19 +10,15 @@ import com.vipkid.file.utils.StringUtils;
 import com.vipkid.http.service.AnnouncementHttpService;
 import com.vipkid.http.utils.JsonUtils;
 import com.vipkid.http.vo.Announcement;
-import com.vipkid.payroll.utils.DateUtils;
 import com.vipkid.portal.bookings.entity.*;
 import com.vipkid.portal.bookings.service.BookingsService;
 import com.vipkid.rest.config.RestfulConfig;
 import com.vipkid.rest.interceptor.annotation.RestInterface;
 import com.vipkid.rest.service.LoginService;
 import com.vipkid.rest.utils.ApiResponseUtils;
-import com.vipkid.trpm.constant.ApplicationConstant.INCENTIVE;
-import com.vipkid.trpm.constant.ApplicationConstant.RedisConstants;
 import com.vipkid.trpm.constant.ApplicationConstant;
+import com.vipkid.trpm.constant.ApplicationConstant.INCENTIVE;
 import com.vipkid.trpm.entity.Teacher;
-import com.vipkid.rest.RestfulController;
-
 import com.vipkid.trpm.proxy.RedisProxy;
 import com.vipkid.trpm.service.portal.TeacherService;
 import org.apache.commons.collections.CollectionUtils;
@@ -35,10 +31,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import java.sql.Timestamp;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
