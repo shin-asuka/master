@@ -27,6 +27,9 @@
         <beans:constructor-arg index="1" value="REUSE" />
     </beans:bean>
 
+
+	<tx:annotation-driven transaction-manager="transactionManager" />
+
 	<beans:bean id="transactionManager"
 		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
 		<beans:property name="dataSource" ref="dataSource" />
@@ -50,7 +53,6 @@
 
 	<aop:config proxy-target-class="true">
 		<aop:advisor advice-ref="txAdvice" pointcut="execution(* com.vipkid.trpm.service.**.*Service.*(..))" order="2" />
-		<aop:advisor advice-ref="txAdvice" pointcut="execution(* com.vipkid.**.service.*Service.*(..))"/>
 		<aop:advisor advice-ref="txAdvice" pointcut="execution(* com.vipkid.recruitment.**.service.*Service.*(..))"/>
 		<aop:advisor advice-ref="txAdvice" pointcut="execution(* com.vipkid.portal.**.service.*Service.*(..))"/>
 		<aop:advisor advice-ref="txAdvice" pointcut="execution(* com.vipkid.rest.service.*Service.*(..))"/>
