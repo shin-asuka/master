@@ -752,13 +752,36 @@
 		</if>
 		</select>
 
-	<select id="countClassNumByTeacherId" resultType="int">		
-		SELECT count(1) 
-		FROM online_class o 
-		WHERE 
-			o.teacher_id = #{teacherId} and 
-			o.`status` = 'FINISHED' and 
-			o.finish_type = 'AS_SCHEDULED' 
+		  <!-- 通过老师id开始时间，结束时间查找 -->
+    <select id="findOnlineClassesByStartTimeAndEndTime" resultType="java.util.HashMap">
+        SELECT
+        online_class.id AS id,
+        student.english_name AS englishName,
+        online_class.scheduled_date_time AS scheduledDateTime,
+        online_class.status AS status,
+        lesson.serial_number AS serialNumber,
+        lesson.name AS lessonName,
+        online_class.finish_type AS finishType
+        FROM online_class
+        LEFT JOIN lesson ON (lesson.id = online_class.lesson_id)
+        LEFT JOIN online_class_student ON (online_class.id = online_class_student.online_class_id)
+        LEFT JOIN student ON (online_class_student.student_id = student.id)
+        WHERE
+        online_class.teacher_id = #{teacherId}
+        AND online_class.status = 'FINISHED'
+        AND (online_class.finish_type in('STUDENT_NO_SHOW','AS_SCHEDULED','STUDENT_IT_PROBLEM','SYSTEM_PROBLEM')
+        AND online_class.scheduled_date_time BETWEEN #{from} AND #{to}
+        ORDER BY online_class.scheduled_date_time DESC
+        GROUP BY online_class.scheduled_date_time
+    </select>
+
+	<select id="countClassNumByTeacherId" resultType="int">
+		SELECT count(1)
+		FROM online_class o
+		WHERE
+			o.teacher_id = #{teacherId} and
+			o.`status` = 'FINISHED' and
+			o.finish_type = 'AS_SCHEDULED'
 	</select>
 
 	<!-- 根据条件查询不重复的ScheduledDate 的数量 -->
