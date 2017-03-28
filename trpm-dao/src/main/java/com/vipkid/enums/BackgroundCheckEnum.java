@@ -75,7 +75,7 @@ public class BackgroundCheckEnum {
         public String getValue(){ return this.value;}
     }
     public enum AdverseStatus{
-        INITATED("initated"),
+        INITIATED("initiated"),
         AWAITINGDISPUTE("awaiting-dispute"),
         COMPLETE("complete"),
         CANCELLED("cancelled");
