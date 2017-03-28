@@ -296,7 +296,7 @@ public class ReferralActivityService {
 			 ShareExamDetail nextExamDetail = new ShareExamDetail();
 			 nextExamDetail.setActivityExamId(shareActivityExam.getId());
 			 nextExamDetail.setQuestionId(questionId);
-			 nextExamDetail.setQuestionIndex(1L);
+			 nextExamDetail.setQuestionIndex(bean.getQuestionIndex()+1L);
 			 nextExamDetail.setStartDateTime(new Date());
 			 nextExamDetail.setStatus(0);
 			 this.shareExamDetailDao.insertSelective(nextExamDetail);
