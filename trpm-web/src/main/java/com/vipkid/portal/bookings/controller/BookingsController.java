@@ -388,7 +388,11 @@ public class BookingsController {
     }
 
 
-
+    /**
+     * 根据老师ID查询基数
+     * @param teacherId
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "/getIncentivesInitCount", method = RequestMethod.GET)
     public Map<String, Object> getIncentivesInitCount(String teacherId) {
@@ -412,7 +416,7 @@ public class BookingsController {
             Map<String, Object> dataMap = Maps.newHashMap();
             dataMap.put("errCode",HttpStatus.OK.value());
             dataMap.put("errMsg","成功");
-            dataMap.put("data","count");
+            dataMap.put("data",count);
             return dataMap;
 
         }catch (Exception e){
@@ -471,6 +475,7 @@ public class BookingsController {
         }
 
     }
+
 
     @RequestMapping(value = "/getIncentiveCount", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
 	public Map<String, Object> getIncentiveCount(@RequestBody Map<String, Object> paramMap, HttpServletRequest request,
