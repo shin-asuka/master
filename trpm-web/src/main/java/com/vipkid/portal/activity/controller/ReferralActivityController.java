@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import com.amazonaws.services.dynamodbv2.xspec.NULL;
 import com.google.common.collect.Maps;
 import com.vipkid.enums.ShareActivityExamEnum.StatusEnum;
 import com.vipkid.portal.activity.dto.ClickHandleDto;
@@ -72,7 +73,7 @@ public class ReferralActivityController extends RestfulController{
 				//老师分享
 				logger.info("识别为Teacher分享");
 				User user = this.loginService.getUser();
-				if(StringUtils.equals(user.getId()+"", bean.getCandidateKey())){
+				if(NumericUtils.isNotNull(user) && StringUtils.equals(user.getId()+"", bean.getCandidateKey())){
 					resultMap = this.referralActivityService.updateTeacherShare(bean.getCandidateKey(), IpUtils.getIpAddress(request), bean.getLinkSourceId());
 				}else{
 					response.setStatus(HttpStatus.FORBIDDEN.value());
