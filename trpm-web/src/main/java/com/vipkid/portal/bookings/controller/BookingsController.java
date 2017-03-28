@@ -73,6 +73,10 @@ public class BookingsController {
     private final static String EMERGENCY_ENGLISH  ="Emergency (personal or family member sickness, accident, mishap, etc.)";
     private final static String PERSONAL_REASON_ENGLISH ="Personal reason (schedule conflict, prior oversight, etc.)";
     private final static String UNRELIABLE_INTERNET_ACCESS_ENGLISH  ="Unreliable internet access (relocation, travel, etc.)";
+
+
+
+
     /* 获取 Scheduled 详细数据接口 */
     @RequestMapping(value = "/scheduled", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
     public Map<String, Object> scheduled(ScheduledRequest scheduledRequest, HttpServletResponse response) {
@@ -432,16 +436,15 @@ public class BookingsController {
      * @return
      */
     @RequestMapping(value = "/getIncentives", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
-    public Map<String, Object> getIncentives(@RequestBody Map<String, Object> paramMap, HttpServletRequest request, HttpServletResponse response) {
-        Map<String, Object> dataMap = Maps.newHashMap();
-        Object from = paramMap.get("from");
-        Object to = paramMap.get("to");
+    public Map<String, Object> getIncentives(Long from,Long to, HttpServletRequest request, HttpServletResponse response) {
+		Map<String, Object> dataMap = Maps.newHashMap();
+
 
         try {
 
 			Preconditions.checkArgument(request.getAttribute(TEACHER) != null);
 			Teacher teacher = (Teacher) request.getAttribute(TEACHER);
-			if (from == null || to == null || !(from instanceof Timestamp) || !(to instanceof Timestamp)) {
+			if (from == null || to == null ) {
 				response.setStatus(HttpStatus.BAD_REQUEST.value());
 				logger.warn("wrong parameters{} where get incentives ", teacher.getId());
 				return ApiResponseUtils.buildErrorResp(HttpStatus.BAD_REQUEST.value(),
@@ -473,8 +476,8 @@ public class BookingsController {
 
     }
 
-    @RequestMapping(value = "/getIncentiveCount", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
-	public Map<String, Object> getIncentiveCount(@RequestBody Map<String, Object> paramMap, HttpServletRequest request,
+    @RequestMapping(value = "/getIncentiveCount", method = RequestMethod.GET)
+	public Map<String, Object> getIncentiveCount(HttpServletRequest request,
 			HttpServletResponse response) {
 		Map<String, Object> dataMap = Maps.newHashMap();
 		Object from = paramMap.get("from");
