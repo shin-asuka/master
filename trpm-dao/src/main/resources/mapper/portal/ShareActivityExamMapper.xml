@@ -148,7 +148,7 @@
 		 <include refid="Base_Column_List" />
 		 FROM share_exam_detail
 		 <include refid="WhereSql"/>
-		 ORDER BEY id ASC
+		 ORDER BY id ASC
 	</select>
 
 </mapper>
