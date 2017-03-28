@@ -27,6 +27,7 @@ import com.vipkid.trpm.entity.OnlineClass;
 import com.vipkid.trpm.entity.PeakTime;
 import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.proxy.RedisProxy;
+import com.vipkid.trpm.service.portal.TeacherService;
 import com.vipkid.trpm.util.CookieUtils;
 import com.vipkid.trpm.util.DateUtils;
 import com.vipkid.trpm.util.FilesUtils;
@@ -114,6 +115,9 @@ public class BookingsService {
 
     @Autowired
     private TeacherPageLoginService teacherPageLoginService;
+    
+    @Autowired
+    private TeacherService teacherService;
 
     @Autowired
     private ScalperService scalperService;
@@ -1235,10 +1239,12 @@ public class BookingsService {
 			String existValue = redisProxy.get(key);
 			if (StringUtils.isNoneEmpty(existValue)) {
 				value = existValue;
+				count = Long.parseLong(value);
 			} else {
-				//TODO
+				int co=teacherService.incentivesTeacherInit(teacherId.toString());
+				count = new Long(co);
 			}
-			count = Long.parseLong(value);
+			
 		} catch (Exception e) {
 			logger.error("redis get key = {}", key, e);
 		}
