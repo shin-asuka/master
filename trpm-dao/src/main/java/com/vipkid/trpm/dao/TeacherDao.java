@@ -180,11 +180,12 @@ public class TeacherDao extends MapperDaoTemplate<Teacher> {
     }
 
 	/**
-	 * 根据老师ID统计老师一共正常上了多少节课程
-	 * @param teacherId
+	 * 根据城市ID或者州ID获取同城市正式老师数量
+	 * @param city 城市ID
+	 * @param stateId 州ID
 	 * @return
 	 */
-	public int findSameTeacherByCity(Integer city,Integer stateId){
+	public int findRegulareTeacherByCity(Integer city,Integer stateId){
 		Map<String, Object> paramsMap = Maps.newHashMap();
 		if(city != null && city != 0){
 			paramsMap.put("city", city);
@@ -192,10 +193,10 @@ public class TeacherDao extends MapperDaoTemplate<Teacher> {
 			if(stateId != null && stateId != 0){
 				paramsMap.put("stateId", stateId);
 			}else{
-				logger.warn("TeacherDao.countClassNumByTeacherId(int city,int stateId),city:{},stateId:{}",city,stateId);
+				logger.warn("传入的城市ID或者州ID为0,TeacherDao.countClassNumByTeacherId(int city,int stateId),city:{},stateId:{}",city,stateId);
 				return 0;
 			}
 		}
-		return this.selectEntity("countSameTeacherByCity", paramsMap);
+		return this.selectEntity("findRegulareTeacherByCity", paramsMap);
 	}
 }

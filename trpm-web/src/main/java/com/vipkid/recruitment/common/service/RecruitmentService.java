@@ -474,11 +474,11 @@ public class RecruitmentService {
     
     
     /**
-     * 通过推荐人Id 获取推荐人已经完成了多少节课
-     * @param referralId
+     * 获取推荐人已经完成了多少节课
+     * @param teacher
      * @return
      */
-    public Map<String,String> getReferralClassNum(Teacher teacher){
+    public Map<String,String> getReferralCompleteNumber(Teacher teacher){
     	Map<String, String> pramMap = Maps.newHashMap();
     	pramMap.put("referralShow", "none");
     	if(teacher != null && StringUtils.isNotBlank(teacher.getReferee())){

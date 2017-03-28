@@ -241,7 +241,7 @@ public class AuditEmailService {
                 paramsMap.put("teacherName", teacher.getRealName());
             }
             //推荐人信息
-            Map<String, String> refereMap = this.recruitmentService.getReferralClassNum(teacher);
+            Map<String, String> refereMap = this.recruitmentService.getReferralCompleteNumber(teacher);
             if(MapUtils.isNotEmpty(refereMap)){
             	paramsMap.putAll(refereMap);
             }

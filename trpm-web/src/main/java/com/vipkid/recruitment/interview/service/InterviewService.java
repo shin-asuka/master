@@ -300,7 +300,7 @@ public class InterviewService {
             	teacherAddress = teacherAddressDao.findById(teacher.getCurrentAddressId());
             	int cityId = teacherAddress.getCity();
             	//城市老师数量统计
-            	teacherNumber = teacherDao.findSameTeacherByCity(cityId, teacherAddress.getStateId());
+            	teacherNumber = teacherDao.findRegulareTeacherByCity(cityId, teacherAddress.getStateId());
             	if(cityId == 0){
             		cityId = teacherAddress.getStateId();
             	}

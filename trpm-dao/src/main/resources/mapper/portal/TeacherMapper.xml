@@ -762,7 +762,7 @@
 	</select>
 
 	<!-- SQL 统计同城市的正式老师个数 -->
-	<select id="countSameTeacherByCity" resultType="int">
+	<select id="findRegulareTeacherByCity" resultType="int">
 		SELECT count(1) 
 		FROM teacher t Left join teacher_address ta on t.current_address_id = ta.id 
 		WHERE t.life_cycle = 'REGULAR'
