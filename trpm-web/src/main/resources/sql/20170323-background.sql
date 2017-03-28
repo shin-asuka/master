@@ -14,7 +14,9 @@ CREATE TABLE `bg_sterling_screening` (
 `pdf_link` TEXT NULL COMMENT '报告结果 pdf 地址',
 `create_time` DATETIME NULL COMMENT '记录创建的时间',
 `update_time` DATETIME NULL COMMENT '记录最后一次更新的时间',
-PRIMARY KEY (`id`)
+PRIMARY KEY (`id`),
+INDEX `index_screening_id_candidate_id` (`candidate_id`, `screening_id`) ,
+INDEX `index_teacher_id` (`teacher_id`)
 )ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `bg_sterling_adverse`;
@@ -27,7 +29,8 @@ CREATE TABLE `bg_sterling_adverse` (
 `actions_updated_at` DATETIME NULL COMMENT 'adverse 最后一次变更的时间',
 `create_time` DATETIME NULL COMMENT '本记录创建的时间',
 `update_time` DATETIME NULL COMMENT '本记录最后一次修改的时间',
-PRIMARY KEY (`id`)
+PRIMARY KEY (`id`),
+INDEX `index_bg_sterling_screening_id` (`bg_sterling_screening_id`)
 )ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `bg_sterling_report`;
@@ -42,5 +45,6 @@ CREATE TABLE `bg_sterling_report` (
 `updated_at` DATETIME NULL COMMENT '最后一次修改的时间',
 `create_time` DATETIME NULL COMMENT '本记录创建的时间',
 `update_time` DATETIME NULL COMMENT '本记录最后一次修改的时间',
-PRIMARY KEY (`id`)
+PRIMARY KEY (`id`),
+INDEX `index_bg_sterling_screening_id` (`bg_sterling_screening_id`)
 )ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
