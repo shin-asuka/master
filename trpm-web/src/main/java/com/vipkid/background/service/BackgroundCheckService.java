@@ -211,34 +211,29 @@ public class BackgroundCheckService {
         CandidateInputDto.Address address = new CandidateInputDto.Address();
         address.setAddressLine(checkInput.getLatestStreet());
         address.setCountryCode("US");
-        try{
-            TeacherLocation location = locationDao.findById(checkInput.getLatestCity());
-            if(null != location){
-                address.setMunicipality(location.getName());
-            }
-            address.setPostalCode(checkInput.getLatestZipCode());
-            candidateInputDto.setAddress(address);
-
-
-            TeacherLicense license = licenseDao.findByTeacherId(teacher.getId());
-            if(license != null){
-                candidateInputDto.setSsn(license.getSocialNo());
-                if(StringUtils.isNotBlank(license.getDriverLicense())){
-                    CandidateInputDto.DriversLicense candidateLicense = new CandidateInputDto.DriversLicense();
-                    candidateLicense.setIssuingAgency(license.getDriverLicenseIssuingAgency());
-                    candidateLicense.setLicenseNumber(license.getDriverLicense());
-                    candidateLicense.setType(license.getDriverLicenseType());
-                    candidateInputDto.setDriversLicense(candidateLicense);
-
-                }
-            }
-            logger.info("submit background check information, begin invoke sterlingService.saveCandidate by syn, teacherId="+teacher.getId());
-
-            output = sterlingService.saveCandidate(candidateInputDto);
-            logger.info("submit background check information, invoke sterlingService.saveCandidate,teacherId="+teacher.getId()+", return resCode="+output.getResCode().getCode()+", resMsg="+output.getResCode().getMsg()+", errorCode="+output.getErrorCode()+", errorMsg="+output.getErrorMessage()+", id="+output.getId());
-        }catch(Exception e){
-            logger.error("submit background check information occur exception, BackgroundCheckService.createCandidate failed, teacherId="+teacher.getId());
+        TeacherLocation location = locationDao.findById(checkInput.getLatestCity());
+        if(null != location){
+            address.setMunicipality(location.getName());
         }
+        address.setPostalCode(checkInput.getLatestZipCode());
+        candidateInputDto.setAddress(address);
+
+        TeacherLicense license = licenseDao.findByTeacherId(teacher.getId());
+        if(license != null){
+            candidateInputDto.setSsn(license.getSocialNo());
+            if(StringUtils.isNotBlank(license.getDriverLicense())){
+                CandidateInputDto.DriversLicense candidateLicense = new CandidateInputDto.DriversLicense();
+                candidateLicense.setIssuingAgency(license.getDriverLicenseIssuingAgency());
+                candidateLicense.setLicenseNumber(license.getDriverLicense());
+                candidateLicense.setType(license.getDriverLicenseType());
+                candidateInputDto.setDriversLicense(candidateLicense);
+
+            }
+        }
+        logger.info("submit background check information, begin invoke sterlingService.saveCandidate, teacherId="+teacher.getId());
+
+        output = sterlingService.saveCandidate(candidateInputDto);
+        logger.info("submit background check information, invoke sterlingService.saveCandidate,teacherId="+teacher.getId()+", return resCode="+output.getResCode().getCode()+", resMsg="+output.getResCode().getMsg()+", errorCode="+output.getErrorCode()+", errorMsg="+output.getErrorMessage()+", id="+output.getId());
         return output;
     }
 
