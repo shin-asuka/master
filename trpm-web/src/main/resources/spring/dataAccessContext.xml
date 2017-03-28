@@ -54,7 +54,7 @@
 	<aop:config proxy-target-class="true">
 		<aop:advisor advice-ref="txAdvice" pointcut="execution(* com.vipkid.trpm.service.**.*Service.*(..))" order="2" />
 		<aop:advisor advice-ref="txAdvice" pointcut="execution(* com.vipkid.recruitment.**.service.*Service.*(..))"/>
-		<aop:advisor advice-ref="txAdvice" pointcut="execution(* com.vipkid.background.**.service.*Service.*(..))"/>
+		<aop:advisor advice-ref="txAdvice" pointcut="execution(* com.vipkid.background.service.*Service.*(..))"/>
 		<aop:advisor advice-ref="txAdvice" pointcut="execution(* com.vipkid.portal.**.service.*Service.*(..))"/>
 		<aop:advisor advice-ref="txAdvice" pointcut="execution(* com.vipkid.rest.service.*Service.*(..))"/>
 		<aop:advisor advice-ref="txAdvice" pointcut="execution(* com.vipkid.payroll.service.*Service.*(..))"/>
