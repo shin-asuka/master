@@ -1,18 +1,5 @@
 package com.vipkid.trpm.service.portal;
 
-import java.sql.Timestamp;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -23,30 +10,29 @@ import com.vipkid.http.constant.HttpUrlConstant;
 import com.vipkid.http.service.HttpApiClient;
 import com.vipkid.http.utils.JsonUtils;
 import com.vipkid.http.vo.StandardJsonObject;
-import com.vipkid.portal.classroom.model.TeacherCommentVo;
 import com.vipkid.portal.personal.model.ReferralTeacherVo;
 import com.vipkid.rest.dto.ReferralTeacherDto;
 import com.vipkid.rest.security.AppContext;
 import com.vipkid.trpm.constant.ApplicationConstant;
-import com.vipkid.trpm.dao.CourseDao;
-import com.vipkid.trpm.dao.LessonDao;
-import com.vipkid.trpm.dao.OnlineClassDao;
-import com.vipkid.trpm.dao.StudentDao;
-import com.vipkid.trpm.dao.StudentExamDao;
-import com.vipkid.trpm.dao.TeacherDao;
-import com.vipkid.trpm.entity.Course;
-import com.vipkid.trpm.entity.Lesson;
-import com.vipkid.trpm.entity.OnlineClass;
-import com.vipkid.trpm.entity.Student;
-import com.vipkid.trpm.entity.StudentExam;
-import com.vipkid.trpm.entity.Teacher;
-import com.vipkid.trpm.entity.teachercomment.QueryTeacherCommentOutputDto;
-import com.vipkid.trpm.entity.teachercomment.SubmitTeacherCommentDto;
-import com.vipkid.trpm.entity.teachercomment.TeacherComment;
-import com.vipkid.trpm.entity.teachercomment.TeacherCommentResult;
-import com.vipkid.trpm.entity.teachercomment.TeacherCommentUpdateDto;
+import com.vipkid.trpm.dao.*;
+import com.vipkid.trpm.entity.*;
+import com.vipkid.trpm.entity.teachercomment.*;
+import com.vipkid.trpm.proxy.RedisProxy;
 import com.vipkid.trpm.util.DateUtils;
 import com.vipkid.trpm.util.LessonSerialNumber;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
+import java.sql.Timestamp;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @author zouqinghua
@@ -101,6 +87,10 @@ public class TeacherService {
 
 	@Autowired
 	private ReportService reportService;
+
+	@Autowired
+	private RedisProxy redisProxy;
+
 
 	/**
 	 * 通过teacherId获取教师信息
@@ -615,4 +605,43 @@ public class TeacherService {
 		paramsMap.put("param", bean);
 		return this.teacherDao.findReferralTeachersCount(paramsMap);
 	}
+
+	/**
+	 * 老师激励活动初始化数据
+	 * i.	设每个老师的计算基数为x
+	 * ii.	x=（老师3月1日-28日状态为finished 的课程总和）/4
+	 * iii.	如果x≤5， 则显示为5
+	 * iv.	如果x>5， 则显示实际数据
+	 * v.	x只显示整数，如果商数有余数，则四舍五入到个位，仍然显示为整数。
+	 * @param teacherId 老师ID，不传的话初始化所有老师
+	 */
+	@Slave
+	public void incentivesTeacherInit(String teacherId) {
+		Map<String, Object> paramMap = Maps.newHashMap();
+		paramMap.put("teacherId", teacherId);
+		List<Long> teacherIds = teacherDao.findRegularIdNoLike(paramMap);
+		if (CollectionUtils.isEmpty(teacherIds)) {
+			return;
+		}
+		for (Long id : teacherIds) {
+			try {
+				paramMap.put("teacherId", id);
+				Integer count = onlineClassDao.countScheduledByParam(paramMap);
+				if (count == null) continue;
+
+				BigDecimal initCount = new BigDecimal(count / 4.0 <= 5 ? 5 : count / 4.0)
+						.setScale(0, BigDecimal.ROUND_HALF_UP);
+				//活动持续一个多月，缓存60天
+				redisProxy.set(ApplicationConstant.RedisConstants.INCENTIVE_FOR_APRIL + teacherId
+						, initCount.toString(), 5184000);
+				logger.info("incentivesTeacherInit put redis  key={},teacherId={},initCount={}"
+						, ApplicationConstant.RedisConstants.INCENTIVE_FOR_APRIL + teacherId, teacherId, initCount);
+
+			} catch (Exception e) {
+				logger.warn("incentivesTeacherInit put redis error  key={},teacherId={}}"
+						, ApplicationConstant.RedisConstants.INCENTIVE_FOR_APRIL + teacherId, teacherId);
+			}
+		}
+	}
+
 }

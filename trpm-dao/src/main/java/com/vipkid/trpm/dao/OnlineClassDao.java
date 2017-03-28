@@ -461,6 +461,15 @@ public class OnlineClassDao extends MapperDaoTemplate<OnlineClass> {
 		return selectEntity("findOnlineClassCourseType",paramsMap);
 	}
 
+	/**
+	 * 根据条件查询不重复的ScheduledDate 的数量
+	 * @param paramMap
+	 * @return
+	 */
+	public Integer countScheduledByParam(Map<String,Object> paramMap){
+		return selectCount("countScheduledByParam",paramMap);
+	}
+
 	public List<Map<String, Object>> findOnlineClassesByStartTimeAndEndTime(Date from, Date to, Long teacherId){
 		Map<String, Object> paramsMap = new HashMap<>();
 		paramsMap.put("from", from);

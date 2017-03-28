@@ -276,8 +276,10 @@ public interface ApplicationConstant {
         public static final int IMAGE_CODE_INVALID_SEC = 120; // 图片验证码失效时间阀值
         public static final int PAYROLL_DISPLAY_MAX_NUM_EXCEED_DAY_SEC = 60 * 60 * 24 * 10 ;//payroll 部分老师可用 10天
         public static final String QUIT_TEACHER_EXPIRED_TIME = "QUIT_TEACHER_";
-        
-        
+        public static final String INCENTIVE_FOR_APRIL = "INCENTIVE_FOR_APRIL_"; //四月老师激励KEY前缀
+
+
+
     }
     public static final class TrailLessonConstants{
 
