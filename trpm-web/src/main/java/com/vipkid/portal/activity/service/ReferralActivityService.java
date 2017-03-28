@@ -272,6 +272,7 @@ public class ReferralActivityService {
 		ShareExamDetail currentExamDetail = list.get(0);
 		currentExamDetail.setQuestionResult(bean.getQuestionResult());
 		currentExamDetail.setEndDateTime(new Date());
+		currentExamDetail.setStatus(StatusEnum.COMPLETE.val());
 		this.shareExamDetailDao.updateById(currentExamDetail);
 		//下一道题的ID
 		String questionId = getExamPageContentForIndex(shareActivityExam.getExamVersion(), bean.getQuestionIndex()+1);
