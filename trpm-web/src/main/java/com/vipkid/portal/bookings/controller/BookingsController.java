@@ -15,19 +15,17 @@ import com.vipkid.rest.config.RestfulConfig;
 import com.vipkid.rest.interceptor.annotation.RestInterface;
 import com.vipkid.rest.service.LoginService;
 import com.vipkid.rest.utils.ApiResponseUtils;
+import com.vipkid.trpm.constant.ApplicationConstant;
 import com.vipkid.trpm.entity.Teacher;
-import com.vipkid.rest.RestfulController;
+import com.vipkid.trpm.proxy.RedisProxy;
+import com.vipkid.trpm.service.portal.TeacherService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
-import org.apache.ibatis.annotations.Param;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -56,6 +54,12 @@ public class BookingsController {
 
     @Autowired
     private AnnouncementHttpService announcementHttpService;
+
+    @Autowired
+    private RedisProxy redisProxy;
+
+    @Autowired
+    private TeacherService teacherService;
 
     private final static String EMERGENCY_CHINESE  ="紧急情况（个人或者家庭成员出现疾病发作、意外事故、突发不测等）";
     private final static String PERSONAL_REASON_CHINESE ="个人原因（日程冲突、安排不当等）";
@@ -372,6 +376,43 @@ public class BookingsController {
             return ApiResponseUtils.buildErrorResp(HttpStatus.INTERNAL_SERVER_ERROR.value(),
                     ExceptionUtils.getFullStackTrace(e));
         }
+
+    }
+
+
+
+    @ResponseBody
+    @RequestMapping(value = "/getIncentivesInitCount", method = RequestMethod.GET)
+    public Map<String, Object> getIncentivesInitCount(String teacherId) {
+        logger.info("getIncentivesInitCount ：teacherId={} .", teacherId);
+        if(StringUtils.isBlank(teacherId)){
+            return ApiResponseUtils.buildErrorResp(HttpStatus.NOT_IMPLEMENTED.value(),
+                    "参数为空");
+        }
+        String count=null;
+        Integer countInt=0;
+        try{
+             count=redisProxy.get(ApplicationConstant.RedisConstants.INCENTIVE_FOR_APRIL+teacherId);
+            if(StringUtils.isBlank(count)){
+                countInt=teacherService.incentivesTeacherInit(teacherId);
+                if(countInt ==0){
+                    return ApiResponseUtils.buildErrorResp(HttpStatus.OK.value(),
+                            "没有查到具体数据");
+                }
+                count=countInt+"";
+            }
+            Map<String, Object> dataMap = Maps.newHashMap();
+            dataMap.put("errCode",HttpStatus.OK.value());
+            dataMap.put("errMsg","成功");
+            dataMap.put("data","count");
+            return dataMap;
+
+        }catch (Exception e){
+            logger.warn("getIncentivesInitCount fail：teacherId={},error={} ", teacherId,ExceptionUtils.getFullStackTrace(e));
+            return ApiResponseUtils.buildErrorResp(HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                    ExceptionUtils.getFullStackTrace(e));
+        }
+
 
     }
 }
