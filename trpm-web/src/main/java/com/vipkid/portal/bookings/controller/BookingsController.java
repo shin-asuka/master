@@ -480,12 +480,12 @@ public class BookingsController {
 			HttpServletResponse response) {
     	Map<String, Object> dataMap = Maps.newHashMap();
     	List<Map<String, Object>> resultList = Lists.newArrayList();
-		
+
 		try {
 
 			Preconditions.checkArgument(request.getAttribute(TEACHER) != null);
 			Teacher teacher = (Teacher) request.getAttribute(TEACHER);
-			
+
 			if (0 == teacher.getId()) {
 				response.setStatus(HttpStatus.FORBIDDEN.value());
 				return ApiResponseUtils.buildErrorResp(HttpStatus.BAD_REQUEST.value(),
