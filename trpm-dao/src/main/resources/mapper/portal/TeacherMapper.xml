@@ -485,7 +485,7 @@
 		ORDER BY t.real_name
 	</select>
 
-	<select id="findRegularIdNoLike" resultType="java.lang.Long">
+	<select id="findRegularIdNoLike" resultType="java.lang.String">
 		select t.id  from teacher t where t.life_cycle = 'REGULAR'
 		<if test="teacherId !=null">
 			AND t.id=#{teacherId}

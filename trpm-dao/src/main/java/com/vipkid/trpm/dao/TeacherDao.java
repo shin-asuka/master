@@ -106,7 +106,7 @@ public class TeacherDao extends MapperDaoTemplate<Teacher> {
      * 查询所有Regular老师Id,不带Like条件
      * @return
      */
-    public List<Long> findRegularIdNoLike(Map<String,Object> map){
+    public List<String> findRegularIdNoLike(Map<String,Object> map){
         return super.listEntity("findRegularIdNoLike", map);
     }
     /**

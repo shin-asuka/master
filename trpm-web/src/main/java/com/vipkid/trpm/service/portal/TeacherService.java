@@ -607,21 +607,16 @@ public class TeacherService {
 	}
 
 	/**
-	 * 老师激励活动初始化数据
-	 * i.	设每个老师的计算基数为x
-	 * ii.	x=（老师3月1日-28日状态为finished 的课程总和）/4
-	 * iii.	如果x≤5， 则显示为5
-	 * iv.	如果x>5， 则显示实际数据
-	 * v.	x只显示整数，如果商数有余数，则四舍五入到个位，仍然显示为整数。
-	 * @param teacherId 老师ID，不传的话初始化所有老师
+	 * 老师激励活动初始化数据1条
+	 * @param teacherId 老师ID
 	 */
 	@Slave
-	public void incentivesTeacherInit(String teacherId) {
+	public Integer incentivesTeacherInit(String teacherId) {
 		Map<String, Object> paramMap = Maps.newHashMap();
 		paramMap.put("teacherId", teacherId);
-		List<Long> teacherIds = teacherDao.findRegularIdNoLike(paramMap);
+		List<String> teacherIds = teacherDao.findRegularIdNoLike(paramMap);
 		if (CollectionUtils.isEmpty(teacherIds)) {
-			return;
+			return 0;
 		}
 		paramMap.put("status", "FINISHED");
 		paramMap.put("start", "2017-03-01");
@@ -632,25 +627,63 @@ public class TeacherService {
 		finishTypes.add(ApplicationConstant.FinishType.STUDENT_IT_PROBLEM);
 		finishTypes.add(ApplicationConstant.FinishType.SYSTEM_PROBLEM);
 		paramMap.put("finishTypes", finishTypes);
-		for (Long id : teacherIds) {
-			try {
-				paramMap.put("teacherId", id);
-				Integer count = onlineClassDao.countScheduledByParam(paramMap);
-				if (count == null) continue;
+		return dealIncentivesData(paramMap,teacherId);
 
-				BigDecimal initCount = new BigDecimal(count / 4.0 <= 5 ? 5 : count / 4.0)
-						.setScale(0, BigDecimal.ROUND_HALF_UP);
-				//活动持续一个多月，缓存60天
-				redisProxy.set(ApplicationConstant.RedisConstants.INCENTIVE_FOR_APRIL + teacherId
-						, initCount.toString(), 5184000);
-				logger.info("incentivesTeacherInit put redis  key={},teacherId={},initCount={}"
-						, ApplicationConstant.RedisConstants.INCENTIVE_FOR_APRIL + teacherId, teacherId, initCount);
+	}
 
-			} catch (Exception e) {
-				logger.warn("incentivesTeacherInit put redis error  key={},teacherId={}}"
-						, ApplicationConstant.RedisConstants.INCENTIVE_FOR_APRIL + teacherId, teacherId);
-			}
+	/**
+	 * 老师激励活动初始化数据
+	 */
+	public void incentivesAllTeacherInit() {
+		Map<String, Object> paramMap = Maps.newHashMap();
+		List<String> teacherIds = teacherDao.findRegularIdNoLike(paramMap);
+		if (CollectionUtils.isEmpty(teacherIds)) {
+			return;
 		}
+		paramMap.put("status", "FINISHED");
+		paramMap.put("start", "2017-03-01");
+		paramMap.put("end", "2017-03-28");
+		List<String> finishTypes = Lists.newArrayList();
+		finishTypes.add(ApplicationConstant.FinishType.AS_SCHEDULED);
+		finishTypes.add(ApplicationConstant.FinishType.STUDENT_NO_SHOW);
+		finishTypes.add(ApplicationConstant.FinishType.STUDENT_IT_PROBLEM);
+		finishTypes.add(ApplicationConstant.FinishType.SYSTEM_PROBLEM);
+		paramMap.put("finishTypes", finishTypes);
+		for (String id : teacherIds) {
+			dealIncentivesData(paramMap,id);
+		}
+	}
+
+	/**
+	 * i.	设每个老师的计算基数为x
+	 * ii.	x=（老师3月1日-28日状态为finished 的课程总和）/4
+	 * iii.	如果x≤5， 则显示为5
+	 * iv.	如果x>5， 则显示实际数据
+	 * v.	x只显示整数，如果商数有余数，则四舍五入到个位，仍然显示为整数。
+	 * @param paramMap
+	 * @param id
+	 * @return
+	 */
+	private Integer dealIncentivesData(Map<String, Object> paramMap,String id){
+		try {
+			paramMap.put("teacherId", id);
+			Integer count = onlineClassDao.countScheduledByParam(paramMap);
+			if (count == null) return 0;
+
+			BigDecimal initCount = new BigDecimal(count / 4.0 <= 5 ? 5 : count / 4.0)
+					.setScale(0, BigDecimal.ROUND_HALF_UP);
+			//活动持续一个多月，缓存60天
+			redisProxy.set(ApplicationConstant.RedisConstants.INCENTIVE_FOR_APRIL + id
+					, initCount.toString(), 5184000);
+			logger.info("incentivesTeacherInit put redis  key={},teacherId={},initCount={}"
+					, ApplicationConstant.RedisConstants.INCENTIVE_FOR_APRIL + id, id, initCount);
+
+			return initCount.intValue();
+		} catch (Exception e) {
+			logger.warn("incentivesTeacherInit put redis error  key={},teacherId={}}"
+					, ApplicationConstant.RedisConstants.INCENTIVE_FOR_APRIL + id, id);
+		}
+		return 0;
 	}
 
 }
