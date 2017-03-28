@@ -169,7 +169,7 @@ public class ReferralActivityService {
 		bean.setLinkSourceId(preRecord.getLinkSourceId());
 		bean.setShareRecordId(shareRecordId);
 		bean.setStatus(0);
-		this.shareActivityExamDao.insert(bean);
+		this.shareActivityExamDao.insertSelective(bean);
 		
 		String questionId = getExamPageContentForIndex(this.getExamVersion(),index);
 		ShareExamDetail shareExamDetail = new ShareExamDetail();
@@ -178,7 +178,7 @@ public class ReferralActivityService {
 		shareExamDetail.setQuestionIndex(1L);
 		shareExamDetail.setStartDateTime(new Date());
 		shareExamDetail.setStatus(0);
-		this.shareExamDetailDao.insert(shareExamDetail);
+		this.shareExamDetailDao.insertSelective(shareExamDetail);
 		StartHandleVo beanVo = new StartHandleVo();
 		beanVo.setActivityExamID(bean.getId());
 		beanVo.setCandidateKey(bean.getCandidateKey());
@@ -205,7 +205,7 @@ public class ReferralActivityService {
 		bean.setLinkSourceId(linkSourceId);
 		bean.setShareRecordId(0L);
 		bean.setStatus(0);
-		this.shareActivityExamDao.insert(bean);
+		this.shareActivityExamDao.insertSelective(bean);
 		
 		String questionId = getExamPageContentForIndex(this.getExamVersion(),index);
 		ShareExamDetail shareExamDetail = new ShareExamDetail();
@@ -214,7 +214,7 @@ public class ReferralActivityService {
 		shareExamDetail.setQuestionIndex(1L);
 		shareExamDetail.setStartDateTime(new Date());
 		shareExamDetail.setStatus(0);
-		this.shareExamDetailDao.insert(shareExamDetail);
+		this.shareExamDetailDao.insertSelective(shareExamDetail);
 		StartHandleVo beanVo = new StartHandleVo();
 		beanVo.setActivityExamID(bean.getId());
 		beanVo.setCandidateKey(bean.getCandidateKey());
