@@ -1224,8 +1224,8 @@ public class BookingsService {
 			resultCount = count - incentiveCount > 0 ? count - incentiveCount : 0;
 		}
 
-		String startStr = DateUtils.formatDate(from, "yyyy MM");
-		String endStr = DateUtils.formatDate(to, "yyyy MM");
+		String startStr = DateUtils.formatDate(from, "yyyy MM dd");
+		String endStr = DateUtils.formatDate(to, "yyyy MM dd");
 		String key = startStr + "-" + endStr;
 		resultMap.put(key, resultCount);
 
