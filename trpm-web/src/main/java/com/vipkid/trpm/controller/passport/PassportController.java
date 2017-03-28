@@ -26,6 +26,7 @@ import com.google.common.base.Splitter;
 import com.vipkid.enums.TeacherEnum;
 import com.vipkid.enums.UserEnum;
 import com.vipkid.recruitment.utils.ReturnMapUtils;
+import com.vipkid.rest.dto.RegisterDto;
 import com.vipkid.rest.service.LoginService;
 import com.vipkid.trpm.constant.ApplicationConstant;
 import com.vipkid.trpm.constant.ApplicationConstant.CookieKey;
@@ -219,7 +220,12 @@ public class PassportController extends AbstractController {
 			// 执行业务逻辑
 			Object reid = CookieUtils.getValue(request, ApplicationConstant.REFEREEID);
 			Object partnerid = CookieUtils.getValue(request, ApplicationConstant.PARTNERID);
-			model.addAllAttributes(passportService.saveSignUp(email, privateCode, Long.valueOf(reid+""),  Long.valueOf(partnerid+"")));
+			RegisterDto bean = new RegisterDto();
+			bean.setEmail(email);
+			bean.setPassword(privateCode);
+			bean.setRefereeId(Long.valueOf(reid+""));
+			bean.setPartnerId(Long.valueOf(partnerid+""));
+			model.addAllAttributes(passportService.saveSignUp(bean));
 			CookieUtils.removeCookie(response, ApplicationConstant.REFEREEID, null, null);
 		}
 		return jsonView(response, model.asMap());

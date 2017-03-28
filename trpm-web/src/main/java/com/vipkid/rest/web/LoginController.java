@@ -314,7 +314,7 @@ public class LoginController extends RestfulController {
             
             // 执行业务逻辑
             logger.info("账户检查完毕-(通过)-正在注册:{}",bean.getEmail());
-            Map<String, Object> result = passportService.saveSignUp(email, bean.getPassword(), bean.getRefereeId(), bean.getPartnerId());
+            Map<String, Object> result = passportService.saveSignUp(bean);
             if(ReturnMapUtils.isFail(result)){
                 response.setStatus(HttpStatus.FORBIDDEN.value());
                 logger.warn("注册失败：{}",result);
