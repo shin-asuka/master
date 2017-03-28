@@ -366,10 +366,10 @@ public class ReferralActivityService {
 	 */
 	public String getExamVersion(){
 		//这里的配置不能缓存 及时获取
-    	String contentJson = FilesUtils.readContent(this.getClass().getResourceAsStream("data/share/exam-vrsion.json"),StandardCharsets.UTF_8);
+    	String contentJson = FilesUtils.readContent(this.getClass().getResourceAsStream("data/share/exam-version.json"),StandardCharsets.UTF_8);
     	logger.info("读取到：" + contentJson);
     	if(StringUtils.isBlank(contentJson)){
-    		logger.error("data/share/exam-vrsion.json,没有读取到内容。");
+    		logger.error("data/share/exam-version.json,没有读取到内容。");
     		return contentJson;
     	}
     	JSONObject json = JSONObject.parseObject(contentJson);
