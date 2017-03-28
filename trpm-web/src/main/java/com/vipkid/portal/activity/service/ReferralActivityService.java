@@ -362,9 +362,10 @@ public class ReferralActivityService {
 		//有考试过
 		if(CollectionUtils.isNotEmpty(list)){ 
 			List<ShareActivityExam> waitList = list.stream().filter(bean -> bean.getStatus() == StatusEnum.PENDING.val()).collect(Collectors.toList());
+			logger.info("waitList:"+waitList.size());
 			//有待考记录，返回未完成的考试
 			if(CollectionUtils.isNotEmpty(waitList)){
-				return waitList.get(0);
+				return waitList.get(waitList.size()-1);
 			//全部完成则返回最后一条考试记录
 			}else{
 				return list.get(list.size()-1);

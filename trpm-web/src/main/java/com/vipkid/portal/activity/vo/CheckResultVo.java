@@ -5,7 +5,7 @@ public class CheckResultVo {
 	// 0 未完成  1 已完成  2从未考试
 	private Integer status;
 	
-	private Integer activityExamId;
+	private Long activityExamId;
 	
 	private String questionId;
 	//总考试结果进度
@@ -17,7 +17,7 @@ public class CheckResultVo {
 		return status;
 	}
 
-	public Integer getActivityExamId() {
+	public Long getActivityExamId() {
 		return activityExamId;
 	}
 
@@ -29,7 +29,7 @@ public class CheckResultVo {
 		this.status = status;
 	}
 
-	public void setActivityExamId(Integer activityExamId) {
+	public void setActivityExamId(Long activityExamId) {
 		this.activityExamId = activityExamId;
 	}
 
