@@ -18,13 +18,16 @@ import com.vipkid.trpm.dao.TeacherDao;
 import com.vipkid.trpm.dao.TeacherPeCommentsDao;
 import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.entity.TeacherPeComments;
+
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.HtmlUtils;
+
 import java.util.List;
 import java.util.Map;
 
@@ -39,6 +42,9 @@ public class AuditEmailService {
 
     @Autowired
     private TeacherDao teacherDao;
+    
+    @Autowired
+    private RecruitmentService recruitmentService;
 
     @Autowired
     private TeacherApplicationDao teacherApplicationDao;
@@ -234,6 +240,12 @@ public class AuditEmailService {
             }else if (StringUtils.isNotBlank(teacher.getRealName())){
                 paramsMap.put("teacherName", teacher.getRealName());
             }
+            //推荐人信息
+            Map<String, String> refereMap = this.recruitmentService.getReferralCompleteNumber(teacher);
+            if(MapUtils.isNotEmpty(refereMap)){
+            	paramsMap.putAll(refereMap);
+            }
+            
             logger.info("【EMAIL.sendInterviewPass】toAddMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",
                     teacher.getRealName(),teacher.getEmail(),INTERVIEW_PASS_TITLE, INTERVIEW_PASS_CONTENT);
             Map<String, String> emailMap = TemplateUtils.readTemplate(INTERVIEW_PASS_CONTENT, paramsMap, INTERVIEW_PASS_TITLE);

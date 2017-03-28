@@ -1,5 +1,21 @@
 package com.vipkid.recruitment.interview.service;
 
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateFormatUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.google.api.client.util.Maps;
 import com.vipkid.dataSource.annotation.Slave;
 import com.vipkid.email.EmailUtils;
@@ -15,35 +31,27 @@ import com.vipkid.recruitment.dao.InterviewDao;
 import com.vipkid.recruitment.dao.TeacherApplicationDao;
 import com.vipkid.recruitment.dao.TeacherApplicationLogDao;
 import com.vipkid.recruitment.dao.TeacherLockLogDao;
-import com.vipkid.recruitment.entity.TeacherApplication;
 import com.vipkid.recruitment.entity.InterviewerClassCount;
+import com.vipkid.recruitment.entity.TeacherApplication;
 import com.vipkid.recruitment.entity.TeacherLockLog;
 import com.vipkid.recruitment.interview.InterviewConstant;
 import com.vipkid.recruitment.utils.ReturnMapUtils;
-import com.vipkid.trpm.dao.*;
+import com.vipkid.trpm.dao.LessonDao;
+import com.vipkid.trpm.dao.OnlineClassDao;
+import com.vipkid.trpm.dao.TeacherAddressDao;
+import com.vipkid.trpm.dao.TeacherDao;
+import com.vipkid.trpm.dao.TeacherLocationDao;
+import com.vipkid.trpm.dao.TeacherQuizDao;
+import com.vipkid.trpm.dao.UserDao;
 import com.vipkid.trpm.entity.Lesson;
 import com.vipkid.trpm.entity.OnlineClass;
 import com.vipkid.trpm.entity.Teacher;
+import com.vipkid.trpm.entity.TeacherAddress;
+import com.vipkid.trpm.entity.TeacherLocation;
 import com.vipkid.trpm.entity.User;
 import com.vipkid.trpm.proxy.OnlineClassProxy;
 import com.vipkid.trpm.proxy.OnlineClassProxy.ClassType;
 import com.vipkid.trpm.util.DateUtils;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.time.DateFormatUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import java.sql.Timestamp;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
-import java.util.*;
-import java.lang.StringBuffer;
 
 @Service
 public class InterviewService {
@@ -65,6 +73,9 @@ public class InterviewService {
 
     @Autowired
     private TeacherQuizDao teacherQuizDao;
+    
+    @Autowired
+    private TeacherAddressDao teacherAddressDao;
 
     @Autowired
     private TeacherApplicationLogDao teacherApplicationLogDao;
@@ -77,6 +88,9 @@ public class InterviewService {
     
     @Autowired
     private TeacherLockLogDao teacherLockLogDao;
+    
+    @Autowired
+    private TeacherLocationDao teacherLocationDao;
 
     private static Logger logger = LoggerFactory.getLogger(InterviewService.class);
 
@@ -279,7 +293,24 @@ public class InterviewService {
         if(ReturnMapUtils.isSuccess(result)){
             result.put("onlineClassId",onlineClass.getId());
             logger.info("teacher:{} book Interview success send email.  onlineClassId:{}", teacher.getId(), onlineClass.getId());
-            EmailUtils.sendEmail4InterviewBook(teacher,onlineClass);
+            TeacherAddress teacherAddress = null;
+            Integer teacherNumber = 0;
+            String cityName = "";
+            if(teacher.getCurrentAddressId() != 0){
+            	teacherAddress = teacherAddressDao.findById(teacher.getCurrentAddressId());
+            	int cityId = teacherAddress.getCity();
+            	//城市老师数量统计
+            	teacherNumber = teacherDao.findRegulareTeacherByCity(cityId, teacherAddress.getStateId());
+            	if(cityId == 0){
+            		cityId = teacherAddress.getStateId();
+            	}
+            	//城市名称获取
+            	if(cityId != 0){
+            		TeacherLocation tl = this.teacherLocationDao.findById(cityId);
+            		cityName = tl.getName();
+            	}
+            }
+            EmailUtils.sendEmail4InterviewBook(teacher,onlineClass,cityName,teacherNumber);
         }
         return result;
     }

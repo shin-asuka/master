@@ -207,7 +207,8 @@ public class BasicInfoService {
             application.setResult(Result.PASS.toString());
             //发送邮件
             logger.info("调用发送邮件程序发送给:{}",user.getUsername());
-            EmailUtils.sendEmail4BasicInfoPass(teacher);
+            //包含推荐人信息
+            EmailUtils.sendEmail4BasicInfoPass(teacher,recruitmentService.getReferralCompleteNumber(teacher));
             result.put("result", Result.PASS);            
         }
         this.teacherApplicationDao.save(application);

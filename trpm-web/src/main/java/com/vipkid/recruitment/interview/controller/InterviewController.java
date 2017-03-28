@@ -1,17 +1,10 @@
 package com.vipkid.recruitment.interview.controller;
 
-import com.google.api.client.util.Maps;
-import com.vipkid.enums.TeacherApplicationEnum.Result;
-import com.vipkid.enums.TeacherApplicationEnum.Status;
-import com.vipkid.enums.TeacherEnum.LifeCycle;
-import com.vipkid.recruitment.common.service.RecruitmentService;
-import com.vipkid.recruitment.interview.InterviewConstant;
-import com.vipkid.recruitment.interview.service.InterviewService;
-import com.vipkid.recruitment.utils.ReturnMapUtils;
-import com.vipkid.rest.RestfulController;
-import com.vipkid.rest.config.RestfulConfig;
-import com.vipkid.rest.interceptor.annotation.RestInterface;
-import com.vipkid.trpm.entity.Teacher;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,9 +15,19 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.util.Map;
+import com.google.api.client.util.Maps;
+import com.vipkid.enums.TeacherApplicationEnum.Result;
+import com.vipkid.enums.TeacherApplicationEnum.Status;
+import com.vipkid.enums.TeacherEnum.LifeCycle;
+import com.vipkid.recruitment.common.service.AuditEmailService;
+import com.vipkid.recruitment.common.service.RecruitmentService;
+import com.vipkid.recruitment.interview.InterviewConstant;
+import com.vipkid.recruitment.interview.service.InterviewService;
+import com.vipkid.recruitment.utils.ReturnMapUtils;
+import com.vipkid.rest.RestfulController;
+import com.vipkid.rest.config.RestfulConfig;
+import com.vipkid.rest.interceptor.annotation.RestInterface;
+import com.vipkid.trpm.entity.Teacher;
 
 @RestController
 @RestInterface(lifeCycle={LifeCycle.INTERVIEW})
@@ -35,8 +38,12 @@ public class InterviewController extends RestfulController {
 
     @Autowired
     private InterviewService interviewService;
+    
     @Autowired
     private RecruitmentService recruitmentService;
+    
+    @Autowired
+    private AuditEmailService auditEmailService;
 
     @RequestMapping(value = "/list", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
     public Map<String,Object> list(HttpServletRequest request, HttpServletResponse response){
@@ -99,6 +106,9 @@ public class InterviewController extends RestfulController {
             Map<String,Object> result = this.interviewService.cancelInterviewClass(Long.valueOf(onlineClassId+""), getTeacher(request));
             if(ReturnMapUtils.isFail(result)){
                 response.setStatus(HttpStatus.FORBIDDEN.value());
+            }else{
+            	//add cancel 邮件
+            	auditEmailService.sendInterviewReapply(getTeacher(request).getId());
             }
             return result;
         } catch (IllegalArgumentException e) {

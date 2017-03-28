@@ -4,10 +4,13 @@ import com.google.common.collect.Maps;
 import com.vipkid.enums.TeacherEnum.LifeCycle;
 import com.vipkid.rest.dto.ReferralTeacherDto;
 import com.vipkid.trpm.entity.Teacher;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.community.dao.support.MapperDaoTemplate;
 import org.mybatis.spring.SqlSessionTemplate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -17,7 +20,9 @@ import java.util.Map;
 
 @Repository
 public class TeacherDao extends MapperDaoTemplate<Teacher> {
-
+	
+	private static Logger logger = LoggerFactory.getLogger(TeacherDao.class);
+	
     @Autowired
     public TeacherDao(SqlSessionTemplate sqlSessionTemplate) {
         super(sqlSessionTemplate, Teacher.class);
@@ -173,4 +178,25 @@ public class TeacherDao extends MapperDaoTemplate<Teacher> {
         }
         return list.get(0);
     }
+
+	/**
+	 * 根据城市ID或者州ID获取同城市正式老师数量
+	 * @param city 城市ID
+	 * @param stateId 州ID
+	 * @return
+	 */
+	public int findRegulareTeacherByCity(Integer city,Integer stateId){
+		Map<String, Object> paramsMap = Maps.newHashMap();
+		if(city != null && city != 0){
+			paramsMap.put("city", city);
+		}else{
+			if(stateId != null && stateId != 0){
+				paramsMap.put("stateId", stateId);
+			}else{
+				logger.warn("传入的城市ID或者州ID为0,TeacherDao.findRegulareTeacherByCity(int city,int stateId),city:{},stateId:{}",city,stateId);
+				return 0;
+			}
+		}
+		return this.selectEntity("findRegulareTeacherByCity", paramsMap);
+	}
 }

@@ -8,7 +8,7 @@ import static com.vipkid.trpm.constant.ApplicationConstant.NEW_TEACHER_NAME;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.digester.ObjectCreateRule;
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.community.config.PropertyConfigurer;
 import org.slf4j.Logger;
@@ -39,6 +39,7 @@ public class EmailUtils {
 			}else if (teacher.getRealName() != null){
 				paramsMap.put("teacherName", teacher.getRealName());
 			}
+			paramsMap.put("loginName", teacher.getEmail());
 			logger.info("【EMAIL.sendEmail4Recruitment】toAddMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",teacher.getRealName(),teacher.getEmail(),titleTemplate,contentTemplate);
 			Map<String, String> emailMap = TemplateUtils.readTemplate(contentTemplate, paramsMap, titleTemplate);
 			EmailEngine.addMailPool(teacher.getEmail(), emailMap, EmailConfig.EmailFormEnum.TEACHVIP);
@@ -48,13 +49,16 @@ public class EmailUtils {
 		}
 	}
 
-	public static void sendEmail4BasicInfoPass(Teacher teacher) {
+	public static void sendEmail4BasicInfoPass(Teacher teacher, Map<String, String> params) {
 		try {
 			Map<String, String> paramsMap = Maps.newHashMap();
 			if (teacher.getFirstName() != null){
 				paramsMap.put("teacherName", teacher.getFirstName());
 			}else if (teacher.getRealName() != null){
 				paramsMap.put("teacherName", teacher.getRealName());
+			}
+			if(MapUtils.isNotEmpty(params)){
+				paramsMap.putAll(params);
 			}
 			logger.info("【EMAIL.sendEmail4BasicInfoPass】toAddMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",teacher.getRealName(),teacher.getEmail(),"BasicInfoPassTitle.html","BasicInfoPass.html");
 			Map<String, String> emailMap = TemplateUtils.readTemplate("BasicInfoPass.html", paramsMap, "BasicInfoPassTitle.html");
@@ -65,7 +69,7 @@ public class EmailUtils {
 		}
 	}
 
-	public static void sendEmail4InterviewBook(Teacher teacher, OnlineClass onlineclass){
+	public static void sendEmail4InterviewBook(Teacher teacher, OnlineClass onlineclass,String cityName,Integer teacherNumber){
 		try {
 			Map<String,String> paramsMap = new HashMap<String,String>();
 			if (teacher.getFirstName() != null){
@@ -73,6 +77,14 @@ public class EmailUtils {
 			}else if (teacher.getRealName() != null){
 				paramsMap.put("teacherName", teacher.getRealName());
 			}
+			
+			paramsMap.put("referralShow", "none");
+			if(StringUtils.isNotBlank(cityName)){
+				paramsMap.put("referralShow", "block");
+			}
+			
+			paramsMap.put("applicantState", cityName);
+			paramsMap.put("teacherNumber", teacherNumber+"");
 			paramsMap.put("scheduledDateTime", DateUtils.formatTo(onlineclass.getScheduledDateTime().toInstant(), teacher.getTimezone(), DateUtils.FMT_YMD_HM));
 			paramsMap.put("timezone", teacher.getTimezone());
 			logger.info("【EMAIL.sendEmail4InterviewBook】toAddMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",teacher.getRealName(),teacher.getEmail(),"InterviewBookTitle.html","InterviewBook.html");
