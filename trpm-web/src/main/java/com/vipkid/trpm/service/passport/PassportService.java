@@ -15,16 +15,21 @@ import org.springframework.stereotype.Service;
 
 import com.google.common.collect.Maps;
 import com.vipkid.email.EmailUtils;
+import com.vipkid.enums.ShareActivityExamEnum.StatusEnum;
 import com.vipkid.enums.TeacherEnum;
 import com.vipkid.enums.TeacherEnum.RecruitmentChannel;
 import com.vipkid.enums.UserEnum;
 import com.vipkid.recruitment.utils.ReturnMapUtils;
+import com.vipkid.rest.dto.RegisterDto;
 import com.vipkid.teacher.tools.security.SHA256PasswordEncoder;
+import com.vipkid.teacher.tools.utils.NumericUtils;
 import com.vipkid.trpm.constant.ApplicationConstant;
 import com.vipkid.trpm.constant.ApplicationConstant.RedisConstants;
 import com.vipkid.trpm.dao.AppRestfulDao;
+import com.vipkid.trpm.dao.ShareActivityExamDao;
 import com.vipkid.trpm.dao.TeacherDao;
 import com.vipkid.trpm.dao.UserDao;
+import com.vipkid.trpm.entity.ShareActivityExam;
 import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.entity.User;
 import com.vipkid.trpm.proxy.RedisProxy;
@@ -57,6 +62,9 @@ public class PassportService {
 
     @Autowired
     private VerifyCodeService verifyCodeService;
+    
+    @Autowired
+    private ShareActivityExamDao shareActivityExamDao;
 
     /**
      * 通过id查询Teacher
@@ -114,16 +122,17 @@ public class PassportService {
      * @Author:VIPKID-ZengWeiLong
      * @return 2016年3月3日
      */
-    public Map<String, Object> saveSignUp(String email, String password, Long reid, Long partnerId) {
+    public Map<String, Object> saveSignUp(RegisterDto bean) {
         Map<String, Object> resultMap = Maps.newHashMap();
-        User user = this.userDao.findByUsername(email);
+        User user = this.userDao.findByUsername(bean.getEmail());
         // 1.是否存在
         if (user != null) {
             return ReturnMapUtils.returnFail(ApplicationConstant.AjaxCode.USER_EXITS);
         }
         // 2.创建User
         user = new User();
-        user.setUsername(email);
+        user.setUsername(bean.getEmail());
+        String password = bean.getPassword();
         if (StringUtils.isBlank(password)) {
             password = UserEnum.DEFAULT_TEACHER_PASSWORD;
         }
@@ -150,7 +159,7 @@ public class PassportService {
         // 3.创建 Teacher
         Teacher teacher = new Teacher();
         teacher.setId(user.getId());
-        teacher.setEmail(email);
+        teacher.setEmail(bean.getEmail());
         teacher.setLifeCycle(TeacherEnum.LifeCycle.SIGNUP.toString());
         String serialNumber = teacherDao.getSerialNumber();
         teacher.setSerialNumber(serialNumber);
@@ -159,8 +168,15 @@ public class PassportService {
         teacher.setContractType(TeacherEnum.ContractType.FOUR_A.getVal());
         teacher.setHide(TeacherEnum.Hide.NONE.toString());
         // 设置推荐人保存字段
-        teacher = this.prerefereeId(teacher, reid, partnerId);
+        teacher = this.prerefereeId(teacher, bean.getRefereeId(), bean.getPartnerId());
         teacherDao.save(teacher);
+        if(NumericUtils.isNotNullOrZeor(bean.getActivityExamId())){
+        	ShareActivityExam shareActivityExam = shareActivityExamDao.getById(bean.getActivityExamId());
+        	if(shareActivityExam != null && shareActivityExam.getStatus() == StatusEnum.COMPLETE.val() && NumericUtils.isNullOrZeor(shareActivityExam.getTeacherId())){
+        		shareActivityExam.setTeacherId(teacher.getId());
+        		this.shareActivityExamDao.updateById(shareActivityExam);
+        	}
+        }
         logger.info(" Sign up teacher: " + teacher.getSerialNumber());
         if(PropertyConfigurer.booleanValue("signup.send.mail.switch")){
             // 4.发送邮件(带着Recruitment ID)
