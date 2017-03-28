@@ -480,8 +480,16 @@
 	
 	<select id="findAllRegularId" resultType="String">
 		select t.id  from teacher t where t.life_cycle = 'REGULAR'
-		AND t.real_name not like '%test%' 
+		AND t.real_name not like '%test%'
 		AND t.real_name not like '%测试%'
+		ORDER BY t.real_name
+	</select>
+
+	<select id="findRegularIdNoLike" resultType="java.lang.Long">
+		select t.id  from teacher t where t.life_cycle = 'REGULAR'
+		<if test="teacherId !=null">
+			AND t.id=#{teacherId}
+		</if>
 		ORDER BY t.real_name
 	</select>
 

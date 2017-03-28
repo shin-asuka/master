@@ -760,6 +760,28 @@
 			o.`status` = 'FINISHED' and 
 			o.finish_type = 'AS_SCHEDULED' 
 	</select>
-	
 
+	<!-- 根据条件查询不重复的ScheduledDate 的数量 -->
+	<select id="countScheduledByParam">
+		SELECT
+			count(1)
+		FROM
+			(
+				SELECT
+					o.scheduled_date_time
+				FROM
+					online_class o
+				WHERE
+					o.finish_type IN
+				<foreach collection="finishTypes" item="item" open="(" close=")" separator=",">
+					#{item}
+				</foreach>
+				AND o. STATUS = #{STATUS}
+				AND o.teacher_id = #{teacherId}
+				AND o.scheduled_date_time  BETWEEN #{start}
+				AND #{end}
+				GROUP BY
+					o.scheduled_date_time
+			) a
+	</select>
 </mapper>

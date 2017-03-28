@@ -110,4 +110,11 @@ public class TeacherCommentController {
             return ApiResponseUtils.buildErrorResp(-1, "获取tc信息失败");
         }
     }
+
+    @ResponseBody
+    @RequestMapping(value = "/incentivesTeacherInit", method = RequestMethod.GET)
+    public Object incentivesTeacherInit() {
+
+        return null;
+    }
 }
