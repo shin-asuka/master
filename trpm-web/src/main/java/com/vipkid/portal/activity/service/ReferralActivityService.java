@@ -181,10 +181,11 @@ public class ReferralActivityService {
 		shareExamDetail.setStatus(0);
 		this.shareExamDetailDao.insertSelective(shareExamDetail);
 		StartHandleVo beanVo = new StartHandleVo();
-		beanVo.setActivityExamID(bean.getId());
+		beanVo.setActivityExamId(bean.getId());
 		beanVo.setCandidateKey(bean.getCandidateKey());
 		beanVo.setQuestionId(questionId);
 		beanVo.setQuestionIndex(index);
+		beanVo.setRefereeId(preRecord.getTeacherId());
 		return beanVo;
 	}
 	
@@ -216,10 +217,11 @@ public class ReferralActivityService {
 		shareExamDetail.setStatus(0);
 		this.shareExamDetailDao.insertSelective(shareExamDetail);
 		StartHandleVo beanVo = new StartHandleVo();
-		beanVo.setActivityExamID(bean.getId());
+		beanVo.setActivityExamId(bean.getId());
 		beanVo.setCandidateKey(bean.getCandidateKey());
 		beanVo.setQuestionId(questionId);
 		beanVo.setQuestionIndex(index);
+		beanVo.setRefereeId(teacherId);
 		return beanVo;
 	}
 	
