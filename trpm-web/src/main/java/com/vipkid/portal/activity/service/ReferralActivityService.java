@@ -428,8 +428,11 @@ public class ReferralActivityService {
 		JSONObject json = this.getExamContent(versionName);
 		String pageContent = json.getString("pageContent");
 		JSONArray jsons = JSONArray.parseArray(pageContent);
-		JSONObject jsonObject = (JSONObject) jsons.get(index-1);
-		return jsonObject.getString("id");
+		if(jsons.size() <= index){
+			JSONObject jsonObject = (JSONObject) jsons.get(index-1);
+			return jsonObject.getString("id");
+		}
+		return null;
 	}
 	
 }
