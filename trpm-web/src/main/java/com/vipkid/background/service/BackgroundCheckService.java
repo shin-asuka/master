@@ -87,25 +87,7 @@ public class BackgroundCheckService {
 
         if(StringUtils.equals(operateType, "submit")){
             //createCandidateAsync(input, teacher);
-            CandidateOutputDto candidateOutput = createCandidate(input, teacher);
-            if(!StringUtils.equals(candidateOutput.getResCode().getCode(), TeacherPortalCodeEnum.RES_SUCCESS.getCode())){
-                output.setResCode(candidateOutput.getResCode().getCode());
-                //format errorMessage
-                String errorMessage = candidateOutput.getErrorMessage();
-                if(StringUtils.isBlank(errorMessage)){
-                    output.setResMsg("failed");
-                    return output;
-                }
-                if(errorMessage.indexOf("?format") != -1){
-                    String[] temp = errorMessage.split("\\?");
-                    String field = temp[0];
-                    String message = " is incorrect.";
-                    output.setResMsg(field + message);
-                    return output;
-                }
-                output.setResMsg(errorMessage);
-                return output;
-            }
+            createCandidate(input, teacher);
         }
 
         output.setResCode(TeacherPortalCodeEnum.RES_SUCCESS.getCode());
@@ -218,10 +200,16 @@ public class BackgroundCheckService {
         candidateInputDto.setGivenName(teacher.getFirstName());
         candidateInputDto.setMiddleName(checkInput.getMiddleName());
         candidateInputDto.setFamilyName(teacher.getLastName());
-        candidateInputDto.setPhone(teacher.getPhoneNationCode() + teacher.getMobile());
 
+        String nationCode = teacher.getPhoneNationCode();
+        String mobile = teacher.getMobile();
+
+        if(StringUtils.equals("+1", nationCode) && StringUtils.isNotBlank(mobile) && mobile.length() == 10){
+            candidateInputDto.setPhone(nationCode + mobile);
+        }
 
         CandidateInputDto.Address address = new CandidateInputDto.Address();
+
         address.setAddressLine(checkInput.getLatestStreet());
         address.setCountryCode("US");
         TeacherLocation location = locationDao.findById(checkInput.getLatestCity());
@@ -240,13 +228,28 @@ public class BackgroundCheckService {
                 candidateLicense.setLicenseNumber(license.getDriverLicense());
                 candidateLicense.setType(license.getDriverLicenseType());
                 candidateInputDto.setDriversLicense(candidateLicense);
-
             }
         }
         logger.info("submit background check information, begin invoke sterlingService.saveCandidate, teacherId="+teacher.getId());
-
         output = sterlingService.saveCandidate(candidateInputDto);
         logger.info("submit background check information, invoke sterlingService.saveCandidate,teacherId="+teacher.getId()+", return resCode="+output.getResCode().getCode()+", resMsg="+output.getResCode().getMsg()+", errorCode="+output.getErrorCode()+", errorMsg="+output.getErrorMessage()+", id="+output.getId());
+        if(!StringUtils.equals(output.getResCode().getCode(), TeacherPortalCodeEnum.RES_SUCCESS.getCode())){
+            //format errorMessage
+            String errorMessage = output.getErrorMessage();
+            String resMsg = "";
+            if(StringUtils.isNotBlank(errorMessage)){
+                if(errorMessage.indexOf("?format") != -1){
+                    String[] temp = errorMessage.split("\\?");
+                    String field = temp[0];
+                    String message = " is incorrect.";
+                    resMsg = field + message;
+                }else{
+                    resMsg = errorMessage;
+                }
+            }
+            logger.error("submit background check information, invoke sterlingService.saveCandidate failed, teacherId="+teacher.getId());
+            throw new ServiceException(TeacherPortalCodeEnum.SYS_FAIL.getCode(), resMsg);
+        }
         return output;
     }
 

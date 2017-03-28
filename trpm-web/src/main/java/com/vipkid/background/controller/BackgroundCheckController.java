@@ -116,7 +116,7 @@ public class BackgroundCheckController extends RestfulController {
         } catch (ServiceException e) {
             logger.error("save background check info for US occur ServiceException, teacherId=" + teacherId, e);
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            return ApiResponseUtils.buildErrorResp(TeacherPortalCodeEnum.SYS_FAIL.getCode(), "Failed to save background check information.");
+            return ApiResponseUtils.buildErrorResp(TeacherPortalCodeEnum.SYS_FAIL.getCode(), e.getMessage());
         } catch (Exception e) {
             logger.error("save background check info for US occur exception, teacherId=" + teacherId, e);
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
