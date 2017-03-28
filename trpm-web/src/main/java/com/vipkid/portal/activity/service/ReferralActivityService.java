@@ -144,7 +144,9 @@ public class ReferralActivityService {
 		newRecord.setShareLevel(1L);
 		newRecord.setShareTime(new Date());
 		this.shareRecordDao.insert(newRecord);
-		return ReturnMapUtils.returnSuccess();
+		Map<String, Object> resultMap = Maps.newHashMap();
+		resultMap.put("shareRecordId", newRecord.getId());
+		return ReturnMapUtils.returnSuccess(resultMap);
 	}
 	
 	/**
