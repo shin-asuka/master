@@ -404,7 +404,7 @@ public class OnlineClassDao extends MapperDaoTemplate<OnlineClass> {
 	public List<Map<String, Object>> findMajorCourseListByCond(HashMap<String,Object> onlineClassVoCond) {
 		return listEntity("findMajorCourseListByCond", onlineClassVoCond);
 	}
-	
+
 	/**
 	 * 根据老师ID统计老师一共正常上了多少节课程
 	 * @param teacherId
@@ -459,6 +459,21 @@ public class OnlineClassDao extends MapperDaoTemplate<OnlineClass> {
 		Map<String, Object> paramsMap = new HashMap<>();
 		paramsMap.put("onlineClassId", onlineClassId);
 		return selectEntity("findOnlineClassCourseType",paramsMap);
+	}
+
+	public List<Map<String, Object>> findOnlineClassesByStartTimeAndEndTime(Date from, Date to, Long teacherId){
+		Map<String, Object> paramsMap = new HashMap<>();
+		paramsMap.put("from", from);
+		paramsMap.put("to", to);
+		paramsMap.put("teacherId", teacherId);
+		return selectEntity("findOnlineClassesByStartTimeAndEndTime",paramsMap);
+	}
+	public int countOnlineClassesByStartTimeAndEndTime(Date from, Date to, Long teacherId){
+		Map<String, Object> paramsMap = new HashMap<>();
+		paramsMap.put("from", from);
+		paramsMap.put("to", to);
+		paramsMap.put("teacherId", teacherId);
+		return selectEntity("countOnlineClassesByStartTimeAndEndTime",paramsMap);
 	}
 
 	/**
