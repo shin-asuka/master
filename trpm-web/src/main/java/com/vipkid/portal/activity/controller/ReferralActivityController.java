@@ -24,6 +24,7 @@ import com.vipkid.portal.activity.dto.StartHandleDto;
 import com.vipkid.portal.activity.dto.SubmitHandleDto;
 import com.vipkid.portal.activity.service.ReferralActivityService;
 import com.vipkid.portal.activity.vo.CheckResultVo;
+import com.vipkid.portal.activity.vo.CheckUrlVo;
 import com.vipkid.portal.activity.vo.StartHandleVo;
 import com.vipkid.rest.RestfulController;
 import com.vipkid.rest.config.RestfulConfig;
@@ -118,12 +119,6 @@ public class ReferralActivityController extends RestfulController{
 	    	resultMap = checkParmar(bean, response);
 	    	if(MapUtils.isNotEmpty(resultMap)){
 	    		return resultMap;
-	    	}
-	    	boolean checkResult = this.referralActivityService.checkUrl(bean);
-	    	if(!checkResult){
-	    		response.setStatus(HttpStatus.FORBIDDEN.value());
-	    		logger.warn("参数不合法");
-	    		return ApiResponseUtils.buildErrorResp(-2, "参数不合法");
 	    	}
 			if(NumericUtils.isNull(bean.getShareRecordId())){
 				//老师点击link 入口
@@ -248,7 +243,6 @@ public class ReferralActivityController extends RestfulController{
 			}else{
 				beanVo.setStatus(shareActivityExam.getStatus());
 				beanVo.setExamResult(shareActivityExam.getExamResult());
-				beanVo.setPageContent(this.referralActivityService.getExamContent(shareActivityExam.getExamVersion()));
 				//已经考试已经有结果不用走下一步
 				if(shareActivityExam.getStatus() == StatusEnum.PENDING.val()){
 					//已经考试，但没有结果 进入该逻辑，获取未完成的测试试题 
@@ -291,15 +285,14 @@ public class ReferralActivityController extends RestfulController{
 	    	if(MapUtils.isNotEmpty(resultMap)){
 	    		return resultMap;
 	    	}
-			boolean checkResult = this.referralActivityService.checkUrl(bean);
-			resultMap.put("checkResult", checkResult);
+	    	CheckUrlVo beanVo = this.referralActivityService.checkUrl(bean);
+	    	boolean checkResult = beanVo == null ? false : true;
 			if(!checkResult){
 	    		response.setStatus(HttpStatus.FORBIDDEN.value());
 	    		logger.warn("参数不合法");
-	    		
 	    		return ApiResponseUtils.buildErrorResp(-2, "参数不合法",resultMap);
 			}
-			return ApiResponseUtils.buildSuccessDataResp(resultMap);
+			return ApiResponseUtils.buildSuccessDataResp(beanVo);
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
 			logger.error(e.getMessage(),e);
@@ -310,4 +303,5 @@ public class ReferralActivityController extends RestfulController{
 			return ApiResponseUtils.buildErrorResp(-7, "服务器异常:"+e.getMessage());
         }
 	}
+	
 }

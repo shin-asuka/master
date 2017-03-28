@@ -1,6 +1,5 @@
 package com.vipkid.portal.activity.vo;
 
-import com.alibaba.fastjson.JSONObject;
 
 public class StartHandleVo {
 
@@ -8,11 +7,14 @@ public class StartHandleVo {
 	
 	private String candidateKey;
 	
-	private JSONObject pageContent;
-	
 	private String questionId;
 	
 	private Integer questionIndex;
+	
+	/**
+	 * 推荐人 顶层Id
+	 */
+	private Long refereeId;
 
 	public Long getActivityExamID() {
 		return activityExamID;
@@ -20,10 +22,6 @@ public class StartHandleVo {
 
 	public String getCandidateKey() {
 		return candidateKey;
-	}
-
-	public JSONObject getPageContent() {
-		return pageContent;
 	}
 
 	public String getQuestionId() {
@@ -42,16 +40,20 @@ public class StartHandleVo {
 		this.candidateKey = candidateKey;
 	}
 
-	public void setPageContent(JSONObject pageContent) {
-		this.pageContent = pageContent;
-	}
-
 	public void setQuestionId(String questionId) {
 		this.questionId = questionId;
 	}
 
 	public void setQuestionIndex(Integer questionIndex) {
 		this.questionIndex = questionIndex;
+	}
+
+	public Long getRefereeId() {
+		return refereeId;
+	}
+
+	public void setRefereeId(Long refereeId) {
+		this.refereeId = refereeId;
 	}
 	
 	
