@@ -120,7 +120,7 @@ public class ReferralActivityService {
 		newRecord.setTeacherId(preRecord.getTeacherId());
 		newRecord.setShareLevel(preRecord.getShareLevel()+1);
 		newRecord.setShareTime(new Date());
-		this.shareRecordDao.insert(newRecord);
+		this.shareRecordDao.insertSelective(newRecord);
 		Map<String,Object> resultMap = Maps.newHashMap();
 		resultMap.put("shareRecordId", newRecord.getId());
 		return ReturnMapUtils.returnSuccess(resultMap);
@@ -143,7 +143,7 @@ public class ReferralActivityService {
 		newRecord.setTeacherId(Long.valueOf(candidateKey));
 		newRecord.setShareLevel(1L);
 		newRecord.setShareTime(new Date());
-		this.shareRecordDao.insert(newRecord);
+		this.shareRecordDao.insertSelective(newRecord);
 		Map<String, Object> resultMap = Maps.newHashMap();
 		resultMap.put("shareRecordId", newRecord.getId());
 		return ReturnMapUtils.returnSuccess(resultMap);
