@@ -19,6 +19,7 @@ import com.vipkid.trpm.constant.ApplicationConstant;
 import com.vipkid.trpm.constant.ApplicationConstant.AuditCategory;
 import com.vipkid.trpm.constant.ApplicationConstant.CookieKey;
 import com.vipkid.trpm.constant.ApplicationConstant.PeakTimeType;
+import com.vipkid.trpm.constant.ApplicationConstant.RedisConstants;
 import com.vipkid.trpm.dao.AuditDao;
 import com.vipkid.trpm.dao.OnlineClassDao;
 import com.vipkid.trpm.dao.PeakTimeDao;
@@ -53,6 +54,7 @@ import org.springframework.stereotype.Service;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.sql.Timestamp;
@@ -1204,6 +1206,44 @@ public class BookingsService {
         }
         return finishType;
     }
+
+	public List<Map<String, Object>>  findIncentiveClasses(Date from, Date to, long id) {
+		 return onlineClassDao.findOnlineClassesByStartTimeAndEndTime(from,to,id);
+	}
+	
+	public void countOnlineClassesByStartTimeAndEndTime(Date from, Date to, Long id, Long incentiveCount,
+			Map<String, Long> resultMap) {
+		long resultCount = 0;
+		Integer count = onlineClassDao.countOnlineClassesByStartTimeAndEndTime(from, to, id);
+
+		if (incentiveCount != null && incentiveCount != null) {
+			resultCount = count - incentiveCount > 0 ? count - incentiveCount : 0;
+		}
+
+		String startStr = DateUtils.formatDate(from, "yyyy MM");
+		String endStr = DateUtils.formatDate(to, "yyyy MM");
+		String key = startStr + "-" + endStr;
+		resultMap.put(key, resultCount);
+
+	}
+	
+	public Long getIncentiveCount(Long teacherId) {
+		String value = null;
+		String key = RedisConstants.INCENTIVE_FOR_APRIL + teacherId;
+		Long count = null;
+		try {
+			String existValue = redisProxy.get(key);
+			if (StringUtils.isNoneEmpty(existValue)) {
+				value = existValue;
+			} else {
+				//TODO
+			}
+			count = Long.parseLong(value);
+		} catch (Exception e) {
+			logger.error("redis get key = {}", key, e);
+		}
+		return count;
+	}
 
 
 

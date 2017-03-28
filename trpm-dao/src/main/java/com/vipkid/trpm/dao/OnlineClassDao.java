@@ -477,4 +477,11 @@ public class OnlineClassDao extends MapperDaoTemplate<OnlineClass> {
 	public Integer countScheduledByParam(Map<String,Object> paramMap){
 		return selectCount("countScheduledByParam",paramMap);
 	}
+	public int countOnlineClassesByStartTimeAndEndTime(Date from, Date to, Long teacherId){
+		Map<String, Object> paramsMap = new HashMap<>();
+		paramsMap.put("from", from);
+		paramsMap.put("to", to);
+		paramsMap.put("teacherId", teacherId);
+		return selectEntity("countOnlineClassesByStartTimeAndEndTime",paramsMap);
+	}
 }
