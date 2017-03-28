@@ -3,7 +3,7 @@ package com.vipkid.portal.activity.vo;
 
 public class StartHandleVo {
 
-	private Long activityExamID;
+	private Long activityExamId;
 	
 	private String candidateKey;
 	
@@ -16,8 +16,8 @@ public class StartHandleVo {
 	 */
 	private Long refereeId;
 
-	public Long getActivityExamID() {
-		return activityExamID;
+	public Long getActivityExamId() {
+		return activityExamId;
 	}
 
 	public String getCandidateKey() {
@@ -32,8 +32,8 @@ public class StartHandleVo {
 		return questionIndex;
 	}
 
-	public void setActivityExamID(Long activityExamID) {
-		this.activityExamID = activityExamID;
+	public void setActivityExamId(Long activityExamId) {
+		this.activityExamId = activityExamId;
 	}
 
 	public void setCandidateKey(String candidateKey) {
