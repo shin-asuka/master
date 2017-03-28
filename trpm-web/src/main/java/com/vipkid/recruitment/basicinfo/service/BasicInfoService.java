@@ -201,6 +201,7 @@ public class BasicInfoService {
             int duplicates;//showName 重复的标记
             int n = 2;//添加随机大写字母的个数
             List<String> randomCodeList = Lists.newArrayList();
+            int num = 0;
             do {
                 if(StringUtils.isNotBlank(name)) {
                     showName = name.substring(0, name.indexOf(" ") + 1);
@@ -224,6 +225,11 @@ public class BasicInfoService {
                         duplicates = 1;
                         break;
                     }
+                }
+                logger.info("user :{} 循环次数:{}", user.getId(),num);
+                ++num;
+                if(num>500&&n==2){
+                    ++n;
                 }
             } while (duplicates > 0);
             user.setName(showName);

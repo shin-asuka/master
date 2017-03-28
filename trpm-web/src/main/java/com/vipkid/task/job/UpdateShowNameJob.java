@@ -108,6 +108,9 @@ public class UpdateShowNameJob {
                                 }
                                 logger.info("user :{} 循环次数:{}", user.getId(),num);
                                 ++num;
+                                if(num>500&&n==2){
+                                    ++n;
+                                }
                             } while (duplicates > 0);
                             logger.info("uopdate teacher :{} showName:{} 编号：{}", user.getId(), currentShowName,i);
                             user.setName(currentShowName);
