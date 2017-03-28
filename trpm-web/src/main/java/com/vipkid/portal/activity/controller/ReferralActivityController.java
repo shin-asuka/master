@@ -122,6 +122,11 @@ public class ReferralActivityController extends RestfulController{
 	    	}
 			if(NumericUtils.isNull(bean.getShareRecordId())){
 				//老师点击link 入口
+				User user = this.loginService.getUser();
+				if(NumericUtils.isNull(user)){
+					response.setStatus(HttpStatus.FORBIDDEN.value());
+					return ApiResponseUtils.buildErrorResp(-3, "未登陆不能访问该链接");
+				}
 				resultMap = this.referralActivityService.updateLinkSourceClick(bean.getLinkSourceId());
 			}else{
 				//分享后link被单击次数的更新
@@ -285,6 +290,15 @@ public class ReferralActivityController extends RestfulController{
 	    	if(MapUtils.isNotEmpty(resultMap)){
 	    		return resultMap;
 	    	}
+	    	if(NumericUtils.isNullOrZeor(bean.getShareRecordId())){
+	    		//第一次 老师必须登陆
+				User user = this.loginService.getUser();
+				if(NumericUtils.isNull(user)){
+					response.setStatus(HttpStatus.FORBIDDEN.value());
+					return ApiResponseUtils.buildErrorResp(-3, "未登陆不能访问该链接");
+				}
+	    	}
+	    	//校验数据
 	    	CheckUrlVo beanVo = this.referralActivityService.checkUrl(bean);
 	    	boolean checkResult = beanVo == null ? false : true;
 			if(!checkResult){
