@@ -146,7 +146,7 @@
 	<select id="selectOrderById" resultMap="ShareActivityExam">
 		 SELECT
 		 <include refid="Base_Column_List" />
-		 FROM share_exam_detail
+		 FROM share_activity_exam
 		 <include refid="WhereSql"/>
 		 ORDER BY id ASC
 	</select>
