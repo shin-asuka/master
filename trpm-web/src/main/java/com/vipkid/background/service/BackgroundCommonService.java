@@ -17,11 +17,14 @@ import com.vipkid.recruitment.entity.TeacherContractFile;
 import com.vipkid.trpm.dao.BackgroundAdverseDao;
 import com.vipkid.trpm.dao.BackgroundScreeningDao;
 import com.vipkid.trpm.dao.CanadaBackgroundScreeningDao;
+import com.vipkid.trpm.dao.TeacherGatedLaunchDao;
+import com.vipkid.trpm.entity.BackgroundAdverse;
 import com.vipkid.trpm.entity.BackgroundScreening;
 import com.vipkid.trpm.entity.CanadaBackgroundScreening;
 import com.vipkid.trpm.entity.Teacher;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.community.config.PropertyConfigurer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,11 +51,25 @@ public class BackgroundCommonService {
     @Autowired
     private CanadaBackgroundScreeningDao canadaBackgroundScreeningDao;
 
+    @Autowired
+    private TeacherGatedLaunchDao teacherGatedLaunchDao;
+
     private static Logger logger = LoggerFactory.getLogger(BackgroundCommonService.class);
+    private boolean  backgroundSwitch = PropertyConfigurer.booleanValue("background.switch");
 
 
     public BackgroundStatusDto getUsaBackgroundStatus(Teacher teacher){
         BackgroundStatusDto backgroundStatusDto = new BackgroundStatusDto();
+
+        boolean needBackgroundCheck = needBackgroundCheck(teacher.getId());
+        //不在灰度列表中
+        if (!needBackgroundCheck){
+            backgroundStatusDto.setNeedBackgroundCheck(needBackgroundCheck);
+            backgroundStatusDto.setPhase("");
+            backgroundStatusDto.setResult("");
+            return backgroundStatusDto;
+        }
+
         Calendar current = Calendar.getInstance();
         BackgroundScreening backgroundScreening = backgroundScreeningDao.findByTeacherIdTopOne(teacher.getId());
         Date  contractEndDate = teacher.getContractEndDate();
@@ -70,7 +87,8 @@ public class BackgroundCommonService {
             } else {
                 //boolean in5Days = false;
                 long screeningId = backgroundScreening.getId();
-                Date adverseTime = backgroundAdverseDao.findUpdateTimeByScreeningIdTopOne(screeningId);
+                BackgroundAdverse backgroundAdverse = backgroundAdverseDao.findByScreeningIdTopOne(screeningId);
+                String actionsStatus = backgroundAdverse.getActionsStatus();
 
                 /*current.add(Calendar.DATE, 5);
                 if (null != adverseTime && adverseTime.before(current.getTime())) {
@@ -78,8 +96,7 @@ public class BackgroundCommonService {
                 }
                 current.add(Calendar.DATE, -5);*/
 
-                current.add(Calendar.YEAR, -2);
-                current.add(Calendar.MONTH,1);
+                current = backgroundDateCondition(current);
 
                 //上次背调超过两年需要进行背调，不超过两年需要根据result和disputeStatus进行判断
                 if (current.getTime().after(backgroundScreening.getUpdateTime())) {
@@ -156,6 +173,14 @@ public class BackgroundCommonService {
 
     public BackgroundStatusDto getCanadabackgroundStatus(Teacher teacher){
         BackgroundStatusDto backgroundStatusDto = new BackgroundStatusDto();
+        boolean needBackgroundCheck = needBackgroundCheck(teacher.getId());
+        //不在灰度列表中
+        if (!needBackgroundCheck){
+            backgroundStatusDto.setNeedBackgroundCheck(needBackgroundCheck);
+            backgroundStatusDto.setPhase("");
+            backgroundStatusDto.setResult("");
+            return backgroundStatusDto;
+        }
         Calendar current = Calendar.getInstance();
         Date  contractEndDate = teacher.getContractEndDate();
         Calendar  remindTime = Calendar.getInstance();
@@ -172,7 +197,7 @@ public class BackgroundCommonService {
 
                 return backgroundStatusDto;
             }
-            current.add(Calendar.YEAR, -2);
+            current = backgroundDateCondition(current);
             //超过两年需要背调，
             if (current.getTime().after(canadaBackgroundScreening.getUpdateTime())) {
                 backgroundStatusDto.setNeedBackgroundCheck(true);
@@ -200,13 +225,17 @@ public class BackgroundCommonService {
             backgroundStatusDto.setResult("");
             backgroundStatusDto.setNeedBackgroundCheck(false);
         }
+
         logger.info("获取加拿大老师: {} 背调信息 {}",teacher.getId(),backgroundStatusDto);
         return backgroundStatusDto;
     }
 
     public BackgroundFileStatusDto getBackgroundFileStatus(long teacherId, String nationality) {
         BackgroundFileStatusDto backgroundFileStatusDto = new BackgroundFileStatusDto();
-        List<TeacherContractFile> teacherContractFiles = teacherContractFileDao.findBackgroundFileByTeacherId(teacherId);
+        Calendar calendar = Calendar.getInstance();
+        calendar = backgroundDateCondition(calendar);
+        Date timeConditon = calendar.getTime();
+        List<TeacherContractFile> teacherContractFiles = teacherContractFileDao.findBackgroundFileByTeacherId(teacherId,timeConditon);
         boolean hasFile = false;
         if (CollectionUtils.isNotEmpty(teacherContractFiles)) {
             hasFile = true;
@@ -280,6 +309,24 @@ public class BackgroundCommonService {
             return FileResult.PENDING.getValue();
         }
 
+    }
+
+    public boolean needBackgroundCheck(long teacherId){
+        if (!backgroundSwitch){
+            long count = teacherGatedLaunchDao.countByTeacherId(teacherId);
+            if (count> 0 ){
+                return true;
+            }else {
+                return false;
+            }
+        }else {
+            return true;
+        }
+    }
+    public Calendar backgroundDateCondition(Calendar calendar){
+        calendar.add(Calendar.YEAR,2);
+        calendar.add(Calendar.MONTH,1);
+        return calendar;
     }
 
 

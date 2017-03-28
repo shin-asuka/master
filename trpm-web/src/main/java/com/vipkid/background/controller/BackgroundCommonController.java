@@ -5,6 +5,7 @@ import com.google.api.client.util.Maps;
 import com.vipkid.background.api.sterling.dto.BackgroundFileStatusDto;
 import com.vipkid.background.api.sterling.dto.BackgroundStatusDto;
 import com.vipkid.background.service.BackgroundCommonService;
+import com.vipkid.enums.TeacherEnum;
 import com.vipkid.recruitment.utils.ReturnMapUtils;
 import com.vipkid.rest.RestfulController;
 import com.vipkid.rest.config.RestfulConfig;
@@ -24,7 +25,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 
 @RestController
-@RestInterface
+@RestInterface(lifeCycle = {TeacherEnum.LifeCycle.REGULAR})
 @RequestMapping("/background")
 public class BackgroundCommonController extends RestfulController{
 

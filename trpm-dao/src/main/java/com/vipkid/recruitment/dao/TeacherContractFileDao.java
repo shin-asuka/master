@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.sql.Timestamp;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -89,9 +90,11 @@ public class TeacherContractFileDao extends MapperDaoTemplate<TeacherContractFil
        teacherContractFile.setId(id);
        return super.selectOne(teacherContractFile,"findById");
    }
-    public List<TeacherContractFile> findBackgroundFileByTeacherId(long teacherId){
+    public List<TeacherContractFile> findBackgroundFileByTeacherId(long teacherId, Date timeCondition){
         TeacherContractFile teacherContractFile =new TeacherContractFile();
+        Timestamp updateTime = new Timestamp(timeCondition.getTime());
         teacherContractFile.setTeacherId(teacherId);
+        teacherContractFile.setUpdateTime(updateTime);
         return super.selectList(teacherContractFile,"findBackgroundFileByTeacherId");
     }
 }
