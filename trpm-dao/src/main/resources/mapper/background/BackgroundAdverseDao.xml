@@ -55,8 +55,8 @@
     <select id="findByScreeningIdTopOne" resultType="com.vipkid.trpm.entity.BackgroundAdverse">
         SELECT
         <include refid="backgroundScreeningColumns"/>
-        FROM bg_sterling_adverse ba
-        WHERE  ba.bg_sterling_screening_id = #{screeningId}
+        FROM bg_sterling_adverse a
+        WHERE  a.bg_sterling_screening_id = #{screeningId}
         ORDER BY id DESC LIMIT 1
     </select>
     <select id="findUpdateTimeByBgScreeningId" resultMap="BaseResultMap" parameterType="java.lang.Long">

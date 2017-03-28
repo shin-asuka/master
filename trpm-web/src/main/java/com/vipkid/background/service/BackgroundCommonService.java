@@ -10,6 +10,7 @@ import com.vipkid.enums.BackgroundCheckEnum.DisputeStatus;
 import com.vipkid.enums.BackgroundCheckEnum.BackgroundPhase;
 import com.vipkid.enums.BackgroundCheckEnum.FileStatus;
 import com.vipkid.enums.BackgroundCheckEnum.FileResult;
+import com.vipkid.enums.BackgroundCheckEnum.AdverseStatus;
 import com.vipkid.enums.TeacherApplicationEnum.ContractFileType;
 import com.vipkid.enums.TeacherEnum.LifeCycle;
 import com.vipkid.recruitment.dao.TeacherContractFileDao;
@@ -89,6 +90,9 @@ public class BackgroundCommonService {
                 long screeningId = backgroundScreening.getId();
                 BackgroundAdverse backgroundAdverse = backgroundAdverseDao.findByScreeningIdTopOne(screeningId);
                 String actionsStatus = backgroundAdverse.getActionsStatus();
+                if (StringUtils.equalsIgnoreCase(actionsStatus,AdverseStatus.AWAITINGDISPUTE.getValue())){
+                    Date adverseTime = backgroundAdverse.getUpdateTime();
+                }
 
                 /*current.add(Calendar.DATE, 5);
                 if (null != adverseTime && adverseTime.before(current.getTime())) {
