@@ -31,7 +31,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -507,7 +506,22 @@ public class BookingsController {
 		}
 	}
 
-
+    /**
+     * 初始化老师基数
+     * @param teacherId
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/incentivesTeacherInit", method = RequestMethod.GET)
+    public Object incentivesTeacherInit(String teacherId) {
+        Integer count=0;
+        if(org.apache.commons.lang.StringUtils.isBlank(teacherId)){
+            teacherService.incentivesAllTeacherInit();
+        }else{
+            count=teacherService.incentivesTeacherInit(teacherId);
+        }
+        return count;
+    }
 
 
 }
