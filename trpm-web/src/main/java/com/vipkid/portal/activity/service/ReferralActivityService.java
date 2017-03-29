@@ -97,20 +97,20 @@ public class ReferralActivityService {
 	 * @param candidateKey
 	 * @return
 	 */
-	public Map<String,Object> updateCandidateShare(String candidateKey,String candidateIp){
-		ShareActivityExam selectExam = new ShareActivityExam();
-		selectExam.setCandidateKey(candidateKey);
-		List<ShareActivityExam> examList = this.shareActivityExamDao.selectByList(selectExam);
-		if(CollectionUtils.isEmpty(examList)){
+	public Map<String,Object> updateCandidateShare(String candidateKey,String candidateIp,Long activityExamId){
+		ShareActivityExam activityExam = this.shareActivityExamDao.getById(activityExamId);
+		if(NumericUtils.isNull(activityExam)){
 			return ReturnMapUtils.returnFail(-2, "没有找到考试记录,非法的分享");
 		}
-		ShareActivityExam exam = examList.get(0);		
-		if(NumericUtils.isNull(exam.getShareRecordId())){
-			return ReturnMapUtils.returnFail(-3, "考试记录中没有分享ID,非法的分享");
+		if(StringUtils.equals(candidateKey, activityExam.getCandidateKey())){
+			return ReturnMapUtils.returnFail(-3, "非法提交，测试ID "+activityExamId+" 和 candidateKey "+candidateKey+"不匹配");
 		}
-		ShareRecord preRecord = this.shareRecordDao.getById(exam.getShareRecordId());
+		if(NumericUtils.isNull(activityExam.getShareRecordId())){
+			return ReturnMapUtils.returnFail(-4, "考试记录中没有分享ID,非法的分享");
+		}
+		ShareRecord preRecord = this.shareRecordDao.getById(activityExam.getShareRecordId());
 		if(NumericUtils.isNull(preRecord)){
-			return ReturnMapUtils.returnFail(-4, "考试记录中没有找到上层分享数据,非法的分享","分享ID:"+exam.getShareRecordId());
+			return ReturnMapUtils.returnFail(-5, "考试记录中没有找到上层分享数据,非法的分享","分享ID:"+activityExam.getShareRecordId());
 		}
 		ShareRecord newRecord = new ShareRecord();
 		newRecord.setCandidateKey(candidateKey);
@@ -121,6 +121,7 @@ public class ReferralActivityService {
 		newRecord.setTeacherId(preRecord.getTeacherId());
 		newRecord.setShareLevel(preRecord.getShareLevel()+1);
 		newRecord.setShareTime(new Date());
+		newRecord.setActivityExamId(activityExam.getId());
 		this.shareRecordDao.insertSelective(newRecord);
 		Map<String,Object> resultMap = Maps.newHashMap();
 		resultMap.put("shareRecordId", newRecord.getId());
@@ -134,7 +135,14 @@ public class ReferralActivityService {
 	 * @param candidateIp
 	 * @return
 	 */
-	public Map<String,Object> updateTeacherShare(String candidateKey,String candidateIp,Long linkSourceId){
+	public Map<String,Object> updateTeacherShare(String candidateKey,String candidateIp,Long linkSourceId ,Long activityExamId){
+		ShareActivityExam activityExam = this.shareActivityExamDao.getById(activityExamId);
+		if(NumericUtils.isNull(activityExam)){
+			return ReturnMapUtils.returnFail(-2, "没有找到考试记录,非法的分享");
+		}
+		if(StringUtils.equals(candidateKey, activityExam.getCandidateKey())){
+			return ReturnMapUtils.returnFail(-3, "非法提交，测试ID "+activityExamId+" 和 candidateKey "+candidateKey+"不匹配");
+		}
 		ShareRecord newRecord = new ShareRecord();
 		newRecord.setCandidateKey(candidateKey);
 		newRecord.setCandidateIp(candidateIp);
@@ -144,6 +152,7 @@ public class ReferralActivityService {
 		newRecord.setTeacherId(Long.valueOf(candidateKey));
 		newRecord.setShareLevel(1L);
 		newRecord.setShareTime(new Date());
+		newRecord.setActivityExamId(activityExam.getId());
 		this.shareRecordDao.insertSelective(newRecord);
 		Map<String, Object> resultMap = Maps.newHashMap();
 		resultMap.put("shareRecordId", newRecord.getId());

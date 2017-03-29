@@ -5,7 +5,7 @@
 
 	<!-- 通用查询结果列-->
 	<sql id="Base_Column_List">
-		 id,teacher_id,candidate_ip,candidate_key,share_level,count_click,exam_version,link_source_id,share_time
+		 id,teacher_id,candidate_ip,candidate_key,share_level,count_click,exam_version,link_source_id,share_time,activity_exam_id
 	</sql>
 	
 	<!-- 对象返回定义 -->
@@ -19,6 +19,7 @@
 		<result column="exam_version" property="examVersion" />
 		<result column="link_source_id" property="linkSourceId" />
 		<result column="share_time" property="shareTime" />
+		<result column="activity_exam_id" property="activityExamId" />
 	</resultMap>
 	
 	<!-- 条件语句映射 -->
@@ -32,6 +33,7 @@
 			<if test="examVersion != null"> AND exam_version = #{examVersion}</if>
 			<if test="linkSourceId != null"> AND link_source_id = #{linkSourceId}</if>
 			<if test="shareTime != null"> AND share_time = #{shareTime}</if>
+			<if test="activityExamId != null"> AND activity_exam_id = #{activityExamId}</if>
 		</trim>
 	</sql>
 
@@ -61,7 +63,7 @@
 		 INSERT INTO share_record
  			(<include refid="Base_Column_List" />) 
 		 VALUES
- 			(#{id},#{teacherId},#{candidateIp},#{candidateKey},#{shareLevel},#{countClick},#{examVersion},#{linkSourceId},#{shareTime})
+ 			(#{id},#{teacherId},#{candidateIp},#{candidateKey},#{shareLevel},#{countClick},#{examVersion},#{linkSourceId},#{shareTime},#{activityExamId})
 	</insert>
 	
 	<!-- 添加 （匹配有值的字段）-->
@@ -77,6 +79,7 @@
 			<if test="examVersion != null "> exam_version,</if>
 			<if test="linkSourceId != null "> link_source_id,</if>
 			<if test="shareTime != null "> share_time,</if>
+			<if test="activityExamId != null "> activity_exam_id,</if>
 		</trim>
 		 <trim prefix="values (" suffix=")" suffixOverrides="," >
 			<if test="id!=null "> #{id},</if>
@@ -88,6 +91,7 @@
 			<if test="examVersion!=null "> #{examVersion},</if>
 			<if test="linkSourceId!=null "> #{linkSourceId},</if>
 			<if test="shareTime!=null "> #{shareTime},</if>
+			<if test="activityExamId!=null "> #{activityExamId},</if>
 		</trim>
 	</insert>
 
@@ -95,7 +99,7 @@
 	<update id="updateByPrimaryKey">
 		 UPDATE share_record
 		 SET 
-			 teacher_id = #{teacherId},candidate_ip = #{candidateIp},candidate_key = #{candidateKey},share_level = #{shareLevel},count_click = #{countClick},exam_version = #{examVersion},link_source_id = #{linkSourceId},share_time = #{shareTime}
+			 teacher_id = #{teacherId},candidate_ip = #{candidateIp},candidate_key = #{candidateKey},share_level = #{shareLevel},count_click = #{countClick},exam_version = #{examVersion},link_source_id = #{linkSourceId},share_time = #{shareTime},activity_exam_id = #{activityExamId}
 		 WHERE id = #{id}
 	</update>
 	
@@ -112,6 +116,7 @@
 			<if test="examVersion != null ">exam_version = #{examVersion},</if>
 			<if test="linkSourceId != null ">link_source_id = #{linkSourceId},</if>
 			<if test="shareTime != null ">share_time = #{shareTime},</if>
+			<if test="activityExamId != null ">activity_exam_id = #{activityExamId},</if>
  		 </set>
 		 WHERE id = #{id}
 	</update>

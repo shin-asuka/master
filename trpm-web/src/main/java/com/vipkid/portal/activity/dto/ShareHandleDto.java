@@ -7,6 +7,8 @@ public class ShareHandleDto {
 
 	private Long linkSourceId;
 	
+	private Long activityExamId;
+	
 	private String candidateKey;
 
 	public Long getLinkSourceId() {
@@ -23,6 +25,14 @@ public class ShareHandleDto {
 
 	public void setCandidateKey(String candidateKey) {
 		this.candidateKey = candidateKey;
+	}
+
+	public Long getActivityExamId() {
+		return activityExamId;
+	}
+
+	public void setActivityExamId(Long activityExamId) {
+		this.activityExamId = activityExamId;
 	}
 	
 }

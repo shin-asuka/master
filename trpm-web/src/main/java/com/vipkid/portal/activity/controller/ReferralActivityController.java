@@ -74,7 +74,7 @@ public class ReferralActivityController extends RestfulController{
 				logger.info("识别为Teacher分享");
 				User user = this.loginService.getUser();
 				if(NumericUtils.isNotNull(user) && StringUtils.equals(user.getId()+"", bean.getCandidateKey())){
-					resultMap = this.referralActivityService.updateTeacherShare(bean.getCandidateKey(), IpUtils.getIpAddress(request), bean.getLinkSourceId());
+					resultMap = this.referralActivityService.updateTeacherShare(bean.getCandidateKey(), IpUtils.getIpAddress(request), bean.getLinkSourceId(),bean.getActivityExamId());
 				}else{
 					response.setStatus(HttpStatus.FORBIDDEN.value());
 					return ApiResponseUtils.buildErrorResp(-5, "不是当前登陆老师的ID，不能分享。");
@@ -82,7 +82,7 @@ public class ReferralActivityController extends RestfulController{
 			}else{
 				//candidate 分享
 				logger.info("识别为非Teacher分享");
-				resultMap = this.referralActivityService.updateCandidateShare(bean.getCandidateKey(), IpUtils.getIpAddress(request));
+				resultMap = this.referralActivityService.updateCandidateShare(bean.getCandidateKey(), IpUtils.getIpAddress(request),bean.getActivityExamId());
 			}
 			if(ReturnMapUtils.isSuccess(resultMap)){
 				return ApiResponseUtils.buildSuccessDataResp(resultMap.get("data"));
