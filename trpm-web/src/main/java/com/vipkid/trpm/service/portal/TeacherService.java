@@ -607,7 +607,7 @@ public class TeacherService {
 	}
 
 	/**
-	 * 老师激励活动初始化数据1条
+	 * 老师激励活动初始化数据1条,最小返回5
 	 * @param teacherId 老师ID
 	 */
 	@Slave
@@ -616,7 +616,7 @@ public class TeacherService {
 		paramMap.put("teacherId", teacherId);
 		List<String> teacherIds = teacherDao.findRegularIdNoLike(paramMap);
 		if (CollectionUtils.isEmpty(teacherIds)) {
-			return 0;
+			return 5;
 		}
 		paramMap.put("status", "FINISHED");
 		paramMap.put("start", "2017-03-01");
@@ -660,6 +660,7 @@ public class TeacherService {
 	 * iii.	如果x≤5， 则显示为5
 	 * iv.	如果x>5， 则显示实际数据
 	 * v.	x只显示整数，如果商数有余数，则四舍五入到个位，仍然显示为整数。
+	 * 最小返回5
 	 * @param paramMap
 	 * @param id
 	 * @return
@@ -668,7 +669,7 @@ public class TeacherService {
 		try {
 			paramMap.put("teacherId", id);
 			Integer count = onlineClassDao.countScheduledByParam(paramMap);
-			if (count == null) return 0;
+			if (count == null) return 5;
 
 			BigDecimal initCount = new BigDecimal(count / 4.0 <= 5 ? 5 : count / 4.0)
 					.setScale(0, BigDecimal.ROUND_HALF_UP);
@@ -682,8 +683,8 @@ public class TeacherService {
 		} catch (Exception e) {
 			logger.warn("incentivesTeacherInit put redis error :  key={},teacherId={},error={} "
 					, ApplicationConstant.RedisConstants.INCENTIVE_FOR_APRIL + id, id,e.getMessage());
+			return 5;
 		}
-		return 0;
 	}
 
 }
