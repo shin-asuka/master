@@ -83,14 +83,7 @@ public class BackgroundCommonService {
             } else {
                 //boolean in5Days = false;
                 long screeningId = backgroundScreening.getId();
-                BackgroundAdverse backgroundAdverse = backgroundAdverseDao.findByScreeningIdTopOne(screeningId);
-                String actionsStatus = "";
-                if (null != backgroundAdverse){
-                    actionsStatus = backgroundAdverse.getActionsStatus();
-                    if (StringUtils.equalsIgnoreCase(actionsStatus,AdverseStatus.AWAITINGDISPUTE.getValue())){
-                        Date adverseTime = backgroundAdverse.getUpdateTime();
-                    }
-                }
+
 
                 /*current.add(Calendar.DATE, 5);
                 if (null != adverseTime && adverseTime.before(current.getTime())) {
@@ -152,31 +145,44 @@ public class BackgroundCommonService {
                                         backgroundStatusDto.setResult(BackgroundResult.FAIL.getVal());
                                     }
                                 }*/
-                                if (StringUtils.equalsIgnoreCase(actionsStatus,AdverseStatus.CANCELLED.getValue())){
-                                    //cancelled
-                                    backgroundStatusDto.setNeedBackgroundCheck(false);
-                                    backgroundStatusDto.setPhase(BackgroundPhase.CLEAR.getVal());
-                                    backgroundStatusDto.setResult(BackgroundResult.CLEAR.getVal());
-                                }else if (StringUtils.equalsIgnoreCase(actionsStatus,AdverseStatus.COMPLETE.getValue())){
-                                    backgroundStatusDto.setNeedBackgroundCheck(false);
-                                    backgroundStatusDto.setPhase(BackgroundPhase.FAIL.getVal());
-                                    backgroundStatusDto.setResult(BackgroundResult.FAIL.getVal());
-                                }else {
+                                BackgroundAdverse backgroundAdverse = backgroundAdverseDao.findByScreeningIdTopOne(screeningId);
 
-                                    if (StringUtils.equalsIgnoreCase(disputeStatus,DisputeStatus.ACTIVE.getVal())){
+                                if (null == backgroundAdverse){
+
+                                    backgroundStatusDto.setPhase(BackgroundPhase.PENDING.getVal());
+                                    backgroundStatusDto.setResult(BackgroundResult.NA.getVal());
+                                    backgroundStatusDto.setNeedBackgroundCheck(true);
+                                }else{
+                                    String actionsStatus = backgroundAdverse.getActionsStatus();
+                                    if (StringUtils.equalsIgnoreCase(actionsStatus,AdverseStatus.CANCELLED.getValue())){
+                                        //cancelled 暂时显示30天
+                                        backgroundStatusDto.setNeedBackgroundCheck(true);
                                         backgroundStatusDto.setPhase(BackgroundPhase.DISPUTE.getVal());
                                         backgroundStatusDto.setResult(BackgroundResult.ALERT.getVal());
-                                        backgroundStatusDto.setNeedBackgroundCheck(true);
-                                    }else if (StringUtils.equalsIgnoreCase(disputeStatus,DisputeStatus.DEACTIVATED.getVal())){
+                                    }else if (StringUtils.equalsIgnoreCase(actionsStatus,AdverseStatus.COMPLETE.getValue())){
+                                        backgroundStatusDto.setNeedBackgroundCheck(false);
                                         backgroundStatusDto.setPhase(BackgroundPhase.FAIL.getVal());
                                         backgroundStatusDto.setResult(BackgroundResult.FAIL.getVal());
-                                        backgroundStatusDto.setNeedBackgroundCheck(false);
                                     }else {
-                                        //dispute_status 为initiated 或 adverse_status为""
-                                        backgroundStatusDto.setPhase(BackgroundPhase.PREADVERSE.getVal());
-                                        backgroundStatusDto.setResult(BackgroundResult.ALERT.getVal());
-                                        backgroundStatusDto.setNeedBackgroundCheck(true);
+
+                                        if (StringUtils.equalsIgnoreCase(disputeStatus,DisputeStatus.ACTIVE.getVal())){
+                                            //正在进行dispute
+                                            backgroundStatusDto.setPhase(BackgroundPhase.DISPUTE.getVal());
+                                            backgroundStatusDto.setResult(BackgroundResult.ALERT.getVal());
+                                            backgroundStatusDto.setNeedBackgroundCheck(true);
+                                        }else if (StringUtils.equalsIgnoreCase(disputeStatus,DisputeStatus.DEACTIVATED.getVal())){
+                                            //最终结果为fail
+                                            backgroundStatusDto.setPhase(BackgroundPhase.FAIL.getVal());
+                                            backgroundStatusDto.setResult(BackgroundResult.FAIL.getVal());
+                                            backgroundStatusDto.setNeedBackgroundCheck(false);
+                                        }else {
+                                            //dispute_status 为initiated 等待老师进行dispute
+                                            backgroundStatusDto.setPhase(BackgroundPhase.PREADVERSE.getVal());
+                                            backgroundStatusDto.setResult(BackgroundResult.ALERT.getVal());
+                                            backgroundStatusDto.setNeedBackgroundCheck(true);
+                                        }
                                     }
+
                                 }
                                 break;
                         }
