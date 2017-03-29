@@ -20,9 +20,9 @@ import java.util.Map;
 
 @Repository
 public class TeacherDao extends MapperDaoTemplate<Teacher> {
-	
+
 	private static Logger logger = LoggerFactory.getLogger(TeacherDao.class);
-	
+
     @Autowired
     public TeacherDao(SqlSessionTemplate sqlSessionTemplate) {
         super(sqlSessionTemplate, Teacher.class);

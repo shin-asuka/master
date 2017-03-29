@@ -73,7 +73,7 @@ public class InterviewService {
 
     @Autowired
     private TeacherQuizDao teacherQuizDao;
-    
+
     @Autowired
     private TeacherAddressDao teacherAddressDao;
 
@@ -88,7 +88,7 @@ public class InterviewService {
     
     @Autowired
     private TeacherLockLogDao teacherLockLogDao;
-    
+
     @Autowired
     private TeacherLocationDao teacherLocationDao;
 

@@ -21,7 +21,6 @@ import com.vipkid.trpm.constant.ApplicationConstant.INCENTIVE;
 import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.proxy.RedisProxy;
 import com.vipkid.trpm.service.portal.TeacherService;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.slf4j.Logger;
