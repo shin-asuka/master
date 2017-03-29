@@ -474,29 +474,29 @@ public class RecruitmentService {
 
 
     /**
-     * 通过推荐人Id 获取推荐人已经完成了多少节课
-     * @param referralId
+     * 获取推荐人已经完成了多少节课
+     * @param teacher
      * @return
      */
-    public Map<String,String> getReferralClassNum(Teacher teacher){
-    	Map<String, String> pramMap = Maps.newHashMap();
-    	pramMap.put("referralShow", "none");
-    	if(teacher != null && StringUtils.isNotBlank(teacher.getReferee())){
-    		String[] referralInfo = teacher.getReferee().split(",");
-    		try{
-    			String teacherId = referralInfo[0];
-	    		pramMap.put("referrerName", referralInfo[1]);
-	    		if(StringUtils.isNumeric(teacherId)){
-	    			long id = Long.valueOf(teacherId);
-	    			int numberClasses = this.onlineClassDao.countClassNumByTeacherId(id);
-	    			pramMap.put("numberClasses",numberClasses+"");
-	    			pramMap.put("referralShow", "block");
-	    		}
-    		}catch(Exception e){
-    			pramMap.put("referralShow", "none");
-    			logger.warn(" 推荐人{}，上课数据获取失败:{}",teacher.getReferee(),e.getStackTrace());
-    		}
-    	}
-    	return pramMap;
+    public Map<String,String> getReferralCompleteNumber(Teacher teacher){
+        Map<String, String> pramMap = Maps.newHashMap();
+        pramMap.put("referralShow", "none");
+        if(teacher != null && StringUtils.isNotBlank(teacher.getReferee())){
+            String[] referralInfo = teacher.getReferee().split(",");
+            try{
+                String teacherId = referralInfo[0];
+                pramMap.put("referrerName", referralInfo[1]);
+                if(StringUtils.isNumeric(teacherId)){
+                    long id = Long.valueOf(teacherId);
+                    int numberClasses = this.onlineClassDao.countClassNumByTeacherId(id);
+                    pramMap.put("numberClasses",numberClasses+"");
+                    pramMap.put("referralShow", "block");
+                }
+            }catch(Exception e){
+                pramMap.put("referralShow", "none");
+                logger.warn(" 推荐人{}，上课数据获取失败:{}",teacher.getReferee(),e.getStackTrace());
+            }
+        }
+        return pramMap;
     }
 }
