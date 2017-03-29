@@ -618,15 +618,7 @@ public class TeacherService {
 		if (CollectionUtils.isEmpty(teacherIds)) {
 			return 5;
 		}
-		paramMap.put("status", "FINISHED");
-		paramMap.put("start", "2017-03-01");
-		paramMap.put("end", "2017-03-28");
-		List<String> finishTypes=Lists.newArrayList();
-		finishTypes.add(ApplicationConstant.FinishType.AS_SCHEDULED);
-		finishTypes.add(ApplicationConstant.FinishType.STUDENT_NO_SHOW);
-		finishTypes.add(ApplicationConstant.FinishType.STUDENT_IT_PROBLEM);
-		finishTypes.add(ApplicationConstant.FinishType.SYSTEM_PROBLEM);
-		paramMap.put("finishTypes", finishTypes);
+		paramMap=assembleParam(paramMap);
 		return dealIncentivesData(paramMap,teacherId);
 
 	}
@@ -640,6 +632,18 @@ public class TeacherService {
 		if (CollectionUtils.isEmpty(teacherIds)) {
 			return;
 		}
+		paramMap=assembleParam(paramMap);
+		for (String id : teacherIds) {
+			dealIncentivesData(paramMap,id);
+		}
+	}
+
+	/**
+	 * 组装查询参数
+	 * @param paramMap
+	 * @return
+	 */
+	private Map<String, Object> assembleParam(Map<String, Object> paramMap ){
 		paramMap.put("status", "FINISHED");
 		paramMap.put("start", "2017-03-01");
 		paramMap.put("end", "2017-03-28");
@@ -649,11 +653,8 @@ public class TeacherService {
 		finishTypes.add(ApplicationConstant.FinishType.STUDENT_IT_PROBLEM);
 		finishTypes.add(ApplicationConstant.FinishType.SYSTEM_PROBLEM);
 		paramMap.put("finishTypes", finishTypes);
-		for (String id : teacherIds) {
-			dealIncentivesData(paramMap,id);
-		}
+		return paramMap;
 	}
-
 	/**
 	 * i.	设每个老师的计算基数为x
 	 * ii.	x=（老师3月1日-28日状态为finished 的课程总和）/4
