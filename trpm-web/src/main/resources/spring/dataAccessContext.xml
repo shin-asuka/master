@@ -38,7 +38,7 @@
 	<!-- 扫描basePackage下所有以Dao的接口 -->
 	<bean id="mapperScannerConfigurer" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
 		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory" />
-		<property name="basePackage" value="com.vipkid.trpm.dao,com.vipkid.background.dao"/>
+		<property name="basePackage" value="com.vipkid.trpm.dao,com.vipkid.background"/>
 	</bean>
 
 	<tx:advice id="txAdvice" transaction-manager="transactionManager">
