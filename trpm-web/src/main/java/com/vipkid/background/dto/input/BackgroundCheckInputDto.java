@@ -25,6 +25,12 @@ public class BackgroundCheckInputDto implements Serializable{
     /* 最新zipcode */
     private String latestZipCode;
 
+    /* 当前国家id */
+    private Integer currentCountryId;
+    /* 当前state id */
+    private Integer currentStateId;
+    /* 当前city id */
+    private Integer currentCity;
     /* 当前街道名称 */
     private String currentStreet;
     /* 当前zipCode */
@@ -187,5 +193,29 @@ public class BackgroundCheckInputDto implements Serializable{
 
     public void setOperateType(String operateType) {
         this.operateType = operateType;
+    }
+
+    public Integer getCurrentCountryId() {
+        return currentCountryId;
+    }
+
+    public void setCurrentCountryId(Integer currentCountryId) {
+        this.currentCountryId = currentCountryId;
+    }
+
+    public Integer getCurrentStateId() {
+        return currentStateId;
+    }
+
+    public void setCurrentStateId(Integer currentStateId) {
+        this.currentStateId = currentStateId;
+    }
+
+    public Integer getCurrentCity() {
+        return currentCity;
+    }
+
+    public void setCurrentCity(Integer currentCity) {
+        this.currentCity = currentCity;
     }
 }

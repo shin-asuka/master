@@ -311,12 +311,19 @@ public class BackgroundCheckService {
         //if currentStreet or currentZipCode has been changed, then update it.
         TeacherAddress currentAddress = teacherAddressDao.getTeacherAddress(teacher.getCurrentAddressId());
         if(currentAddress != null){
-            if(!StringUtils.equals(currentAddress.getStreetAddress(), currentStreet) || !StringUtils.equals(currentAddress.getZipCode(), currentZipCode)){
+            if(!StringUtils.equals(currentAddress.getStreetAddress(), currentStreet)
+                    || !StringUtils.equals(currentAddress.getZipCode(), currentZipCode)
+                    || !currentAddress.getCountryId().equals(input.getCurrentCountryId())
+                    || !currentAddress.getStateId().equals(input.getCurrentStateId())
+                    || !currentAddress.getCity().equals(input.getCurrentCity())){
                 TeacherAddress address = new TeacherAddress();
                 address.setTeacherId(input.getTeacherId());
                 address.setStreetAddress(currentStreet);
                 address.setZipCode(currentZipCode);
                 address.setType(TeacherAddressEnum.AddressType.NORMAL.val());
+                address.setCountryId(input.getCurrentCountryId());
+                address.setStateId(input.getCurrentStateId());
+                address.setCity(input.getCurrentCity());
                 teacherAddressDao.updateByTeacherIdAndType(address);
             }
         }

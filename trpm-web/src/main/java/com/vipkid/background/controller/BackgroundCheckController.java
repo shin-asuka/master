@@ -71,6 +71,11 @@ public class BackgroundCheckController extends RestfulController {
         Long teacherId = teacher.getId();
         checkInput.setTeacherId(teacherId);
         String operateType = checkInput.getOperateType();
+
+        Integer currentCountryId = checkInput.getCurrentCountryId();
+        Integer currentStateId = checkInput.getCurrentStateId();
+        Integer currentCityId = checkInput.getCurrentCity();
+
         Integer countryId = checkInput.getLatestCountryId();
         Integer stateId = checkInput.getLatestStateId();
         Integer cityId = checkInput.getLatestCity();
@@ -81,6 +86,10 @@ public class BackgroundCheckController extends RestfulController {
         String socialSecurityNo = checkInput.getSocialSecurityNumber();
         String fileUrl = checkInput.getFileUrl();
         try {
+            Preconditions.checkArgument(currentCountryId != null, "currentCountryId cannot be null");
+            Preconditions.checkArgument(currentStateId != null, "currentStateId cannot be null");
+            Preconditions.checkArgument(currentCityId != null, "currentCityId cannot be null");
+
             Preconditions.checkArgument(countryId != null, "latestCountryId cannot be null");
             Preconditions.checkArgument(stateId != null, "latestStateId cannot be null");
             Preconditions.checkArgument(cityId != null, "latestCityId cannot be null");
@@ -191,8 +200,22 @@ public class BackgroundCheckController extends RestfulController {
             teacherId = teacher.getId();
             logger.info("save background check file for CA, teacherId=" + teacherId);
 
-            checkService.saveContractFile(teacherId, TeacherApplicationEnum.ContractFileType.CANADA_BACKGROUND_CHECK_CPIC_FORM.val(), cpicUrl, "submit");
-            checkService.saveContractFile(teacherId, TeacherApplicationEnum.ContractFileType.CANADA_BACKGROUND_CHECK_ID2.val(), id2Url, "submit");
+            List<TeacherContractFile> list = checkService.getInfoForCa(teacherId);
+
+            if(list != null && list.size() > 0){
+                for(TeacherContractFile file : list){
+                    String fileResult = file.getResult();
+                    if(!fileResult.equals("PASS") && file.getFileType() == TeacherApplicationEnum.ContractFileType.CANADA_BACKGROUND_CHECK_CPIC_FORM.val().intValue()){
+                        checkService.saveContractFile(teacherId, TeacherApplicationEnum.ContractFileType.CANADA_BACKGROUND_CHECK_CPIC_FORM.val(), cpicUrl, "submit");
+                    }
+                    if(!fileResult.equals("PASS") && file.getFileType() == TeacherApplicationEnum.ContractFileType.CANADA_BACKGROUND_CHECK_ID2.val().intValue()){
+                        checkService.saveContractFile(teacherId, TeacherApplicationEnum.ContractFileType.CANADA_BACKGROUND_CHECK_ID2.val(), id2Url, "submit");
+                    }
+                }
+            }else{
+                checkService.saveContractFile(teacherId, TeacherApplicationEnum.ContractFileType.CANADA_BACKGROUND_CHECK_CPIC_FORM.val(), cpicUrl, "submit");
+                checkService.saveContractFile(teacherId, TeacherApplicationEnum.ContractFileType.CANADA_BACKGROUND_CHECK_ID2.val(), id2Url, "submit");
+            }
             result.put("cpicUrl", cpicUrl);
             result.put("id2Url", id2Url);
             logger.info("save background check file for CA success, teacherId=" + teacherId );

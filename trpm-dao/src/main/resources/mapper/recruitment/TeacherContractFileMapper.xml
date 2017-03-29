@@ -101,6 +101,7 @@
         WHERE
         teacher_id =#{teacherId}
         AND file_type in (${types})
+        AND (screening_id is null or screening_id = 0)
     </select>
 
     <update id="updateUrlAndScreeningId">
