@@ -7,7 +7,7 @@ import com.vipkid.background.api.sterling.dto.*;
 import com.vipkid.background.api.sterling.service.SterlingService;
 import com.vipkid.http.utils.JacksonUtils;
 import com.vipkid.rest.utils.ApiResponseUtils;
-import com.vipkid.background.dao.BackgroundScreeningDao;
+import com.vipkid.background.BackgroundScreeningDao;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.time.StopWatch;
 import org.apache.commons.lang3.StringUtils;
@@ -96,8 +96,17 @@ public class SterlingApiController {
 
 
 
-    @RequestMapping(value = "/api/background/sterling/callback",method = RequestMethod.POST)
+    @RequestMapping(value = "/background/sterling/callback",method = RequestMethod.POST)
     public Object  callback(@RequestBody  SterlingCallBack callBack,HttpServletRequest request){
+        logger.warn(JacksonUtils.toJSONString(callBack));
+        if(null != callBack){
+            sterlingService.updateBackgroundScreening(callBack.getPayload());
+        }
+        return ApiResponseUtils.buildSuccessDataResp("success");
+    }
+
+    @RequestMapping(value = "/api/background/sterling/callback",method = RequestMethod.POST)
+    public Object  callbackbeta(@RequestBody  SterlingCallBack callBack,HttpServletRequest request){
         logger.warn(JacksonUtils.toJSONString(callBack));
         if(null != callBack){
             sterlingService.updateBackgroundScreening(callBack.getPayload());

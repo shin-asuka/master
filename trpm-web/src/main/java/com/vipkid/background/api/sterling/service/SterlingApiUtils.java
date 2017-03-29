@@ -19,6 +19,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.protocol.HTTP;
 
+import org.community.config.PropertyConfigurer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
@@ -38,7 +39,9 @@ public class SterlingApiUtils {
 
     private static final Logger logger = LoggerFactory.getLogger(SterlingApiUtils.class);
 
-    private static final String sterlingHost = "https://api-int.kennect.com";
+    private static final String sterlingHost = PropertyConfigurer.stringValue("background.sterling.host");
+
+    private static final String sterlingAuth = PropertyConfigurer.stringValue("background.sterling.auth");
 
     private static String BEARER_FORMATE = "Bearer %s";
 
@@ -422,7 +425,7 @@ public class SterlingApiUtils {
         Map<String,String> params = Maps.newHashMap();
         params.put("grant_type","client_credentials");
         Map<String,String> headers =Maps.newHashMap();
-        headers.put("Authorization",String.format("Basic %s", new sun.misc.BASE64Encoder().encode("APIUser@VIPKID.com:nEtGtGHyqD".getBytes())));
+        headers.put("Authorization",String.format("Basic %s", new sun.misc.BASE64Encoder().encode(sterlingAuth.getBytes())));
         headers.put(HTTP.CONTENT_TYPE,"application/x-www-form-urlencoded");
         String response = HttpClientUtils.appointHeadersPost(postUrl,params,headers);
         if(org.apache.commons.lang3.StringUtils.isBlank(response)){

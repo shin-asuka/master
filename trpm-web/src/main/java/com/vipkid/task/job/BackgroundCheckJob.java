@@ -1,7 +1,7 @@
 package com.vipkid.task.job;
 
 import com.vipkid.background.api.sterling.service.SterlingService;
-import com.vipkid.background.dao.BackgroundScreeningDao;
+import com.vipkid.background.BackgroundScreeningDao;
 import com.vipkid.vschedule.client.common.Vschedule;
 import com.vipkid.vschedule.client.schedule.JobContext;
 import org.apache.commons.collections.CollectionUtils;

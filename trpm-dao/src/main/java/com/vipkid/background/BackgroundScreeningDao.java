@@ -1,4 +1,4 @@
-package com.vipkid.background.dao;
+package com.vipkid.background;
 
 import com.vipkid.trpm.entity.BackgroundScreening;
 import org.apache.ibatis.annotations.Param;
