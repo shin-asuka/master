@@ -1,19 +1,14 @@
 package com.vipkid.background.service;
 
-import com.vipkid.background.api.sterling.dto.BackgroundFileStatusDto;
-import com.vipkid.background.api.sterling.dto.BackgroundStatusDto;
-import com.vipkid.enums.BackgroundCheckEnum.BackgroundResult;
-import com.vipkid.enums.BackgroundCheckEnum.DisputeStatus;
-import com.vipkid.enums.BackgroundCheckEnum.BackgroundPhase;
-import com.vipkid.enums.BackgroundCheckEnum.FileStatus;
-import com.vipkid.enums.BackgroundCheckEnum.FileResult;
-import com.vipkid.enums.BackgroundCheckEnum.AdverseStatus;
-import com.vipkid.enums.TeacherApplicationEnum.ContractFileType;
-import com.vipkid.recruitment.dao.TeacherContractFileDao;
-import com.vipkid.recruitment.entity.TeacherContractFile;
 import com.vipkid.background.BackgroundAdverseDao;
 import com.vipkid.background.BackgroundScreeningDao;
 import com.vipkid.background.CanadaBackgroundScreeningDao;
+import com.vipkid.background.api.sterling.dto.BackgroundFileStatusDto;
+import com.vipkid.background.api.sterling.dto.BackgroundStatusDto;
+import com.vipkid.enums.BackgroundCheckEnum.*;
+import com.vipkid.enums.TeacherApplicationEnum.ContractFileType;
+import com.vipkid.recruitment.dao.TeacherContractFileDao;
+import com.vipkid.recruitment.entity.TeacherContractFile;
 import com.vipkid.trpm.dao.TeacherGatedLaunchDao;
 import com.vipkid.trpm.entity.BackgroundAdverse;
 import com.vipkid.trpm.entity.BackgroundScreening;
@@ -84,7 +79,6 @@ public class BackgroundCommonService {
                 //boolean in5Days = false;
                 long screeningId = backgroundScreening.getId();
 
-
                 /*current.add(Calendar.DATE, 5);
                 if (null != adverseTime && adverseTime.before(current.getTime())) {
                     in5Days = true;
@@ -148,35 +142,35 @@ public class BackgroundCommonService {
                                 BackgroundAdverse backgroundAdverse = backgroundAdverseDao.findByScreeningIdTopOne(screeningId);
 
                                 if (null == backgroundAdverse){
-
                                     backgroundStatusDto.setPhase(BackgroundPhase.PENDING.getVal());
                                     backgroundStatusDto.setResult(BackgroundResult.NA.getVal());
                                     backgroundStatusDto.setNeedBackgroundCheck(true);
-                                }else{
+                                } else {
                                     String actionsStatus = backgroundAdverse.getActionsStatus();
                                     if (StringUtils.equalsIgnoreCase(actionsStatus,AdverseStatus.CANCELLED.getValue())){
                                         //cancelled 暂时显示30天
-                                        backgroundStatusDto.setNeedBackgroundCheck(true);
                                         backgroundStatusDto.setPhase(BackgroundPhase.DISPUTE.getVal());
                                         backgroundStatusDto.setResult(BackgroundResult.ALERT.getVal());
-                                    }else if (StringUtils.equalsIgnoreCase(actionsStatus,AdverseStatus.COMPLETE.getValue())){
-                                        backgroundStatusDto.setNeedBackgroundCheck(false);
+                                        backgroundStatusDto.setNeedBackgroundCheck(true);
+                                    } else if (StringUtils.equalsIgnoreCase(actionsStatus,AdverseStatus.COMPLETE.getValue())){
+                                        //最终结果为fail
                                         backgroundStatusDto.setPhase(BackgroundPhase.FAIL.getVal());
                                         backgroundStatusDto.setResult(BackgroundResult.FAIL.getVal());
-                                    }else {
-
+                                        backgroundStatusDto.setNeedBackgroundCheck(false);
+                                    } else {
+                                        //AdverseStatus 为 initiated
                                         if (StringUtils.equalsIgnoreCase(disputeStatus,DisputeStatus.ACTIVE.getVal())){
                                             //正在进行dispute
                                             backgroundStatusDto.setPhase(BackgroundPhase.DISPUTE.getVal());
                                             backgroundStatusDto.setResult(BackgroundResult.ALERT.getVal());
                                             backgroundStatusDto.setNeedBackgroundCheck(true);
-                                        }else if (StringUtils.equalsIgnoreCase(disputeStatus,DisputeStatus.DEACTIVATED.getVal())){
-                                            //最终结果为fail
-                                            backgroundStatusDto.setPhase(BackgroundPhase.FAIL.getVal());
+                                        } else if (StringUtils.equalsIgnoreCase(disputeStatus,DisputeStatus.DEACTIVATED.getVal())){
+                                            //n天内老师没有DISPUTE
+                                            backgroundStatusDto.setPhase(BackgroundPhase.DIDNOTDISPUTE.getVal());
                                             backgroundStatusDto.setResult(BackgroundResult.FAIL.getVal());
                                             backgroundStatusDto.setNeedBackgroundCheck(false);
-                                        }else {
-                                            //dispute_status 为initiated 等待老师进行dispute
+                                        } else {
+                                            //dispute_status 为 null 等待老师进行dispute
                                             backgroundStatusDto.setPhase(BackgroundPhase.PREADVERSE.getVal());
                                             backgroundStatusDto.setResult(BackgroundResult.ALERT.getVal());
                                             backgroundStatusDto.setNeedBackgroundCheck(true);
@@ -186,7 +180,7 @@ public class BackgroundCommonService {
                                 }
                                 break;
                         }
-                    }else{
+                    } else {
                         backgroundStatusDto.setPhase(BackgroundPhase.START.getVal());
                         backgroundStatusDto.setNeedBackgroundCheck(true);
                         backgroundStatusDto.setResult("");
@@ -242,11 +236,11 @@ public class BackgroundCommonService {
                     backgroundStatusDto.setPhase(BackgroundPhase.CLEAR.getVal());
                     backgroundStatusDto.setResult(BackgroundResult.CLEAR.getVal());
                     backgroundStatusDto.setNeedBackgroundCheck(false);
-                }else if (StringUtils.equalsIgnoreCase(canadaBackgroundScreening.getResult(),BackgroundResult.ALERT.getVal())){
+                } else if (StringUtils.equalsIgnoreCase(canadaBackgroundScreening.getResult(),BackgroundResult.ALERT.getVal())){
                     backgroundStatusDto.setNeedBackgroundCheck(false);
                     backgroundStatusDto.setPhase(BackgroundPhase.FAIL.getVal());
                     backgroundStatusDto.setResult(BackgroundResult.FAIL.getVal());
-                }else {
+                } else {
                     backgroundStatusDto.setNeedBackgroundCheck(true);
                     backgroundStatusDto.setPhase(BackgroundPhase.PENDING.getVal());
                     backgroundStatusDto.setResult(BackgroundResult.NA.getVal());
@@ -281,7 +275,7 @@ public class BackgroundCommonService {
                     String fileResult = contractFile.getResult();
                     if (null == screeningId || StringUtils.equalsIgnoreCase(fileResult,FileResult.FAIL.getValue())){
                         backgroundFileStatusDto.setFileStatus(FileStatus.SAVE.getValue());
-                    }else {
+                    } else {
                         backgroundFileStatusDto.setFileStatus(FileStatus.SUBMIT.getValue());
                     }
                     if (StringUtils.equalsIgnoreCase(fileResult, FileResult.PASS.getValue())) {
@@ -300,7 +294,7 @@ public class BackgroundCommonService {
                     Long screeningId = contractFile.getScreeningId();
                     if (null == screeningId ){
                         backgroundFileStatusDto.setFileStatus(FileStatus.SAVE.getValue());
-                    }else {
+                    } else {
                         backgroundFileStatusDto.setFileStatus(FileStatus.SUBMIT.getValue());
                     }
                     int fileType = contractFile.getFileType();
@@ -310,15 +304,15 @@ public class BackgroundCommonService {
                     }else if (fileType == ContractFileType.CANADA_BACKGROUND_CHECK_ID2.val()){
                         canadaSecondFileResult = getCanadaFileResult(contractFile.getResult());
                     }
-                }if (StringUtils.equalsIgnoreCase(canadaFirstFileResult,FileResult.FAIL.getValue()) ||
+                } if (StringUtils.equalsIgnoreCase(canadaFirstFileResult,FileResult.FAIL.getValue()) ||
                         StringUtils.equalsIgnoreCase(canadaSecondFileResult,FileResult.FAIL.getValue())){
                     backgroundFileStatusDto.setFileResult(FileResult.FAIL.getValue());
                     //如果审核结果有一个为FAIL，则FileStatus应为SAVE
                     backgroundFileStatusDto.setFileStatus(FileStatus.SAVE.getValue());
-                }else if (StringUtils.equalsIgnoreCase(canadaFirstFileResult,FileResult.PASS.getValue()) &&
+                } else if (StringUtils.equalsIgnoreCase(canadaFirstFileResult,FileResult.PASS.getValue()) &&
                         StringUtils.equalsIgnoreCase(canadaSecondFileResult,FileResult.PASS.getValue())){
                     backgroundFileStatusDto.setFileResult(FileResult.PASS.getValue());
-                }else {
+                } else {
                     backgroundFileStatusDto.setFileResult(FileResult.PENDING.getValue());
                 }
             }
@@ -337,9 +331,9 @@ public class BackgroundCommonService {
     public String getCanadaFileResult(String result){
         if (StringUtils.equalsIgnoreCase(result,FileResult.PASS.getValue())){
             return FileResult.PASS.getValue();
-        }else if (StringUtils.equalsIgnoreCase(result,FileResult.FAIL.getValue())){
+        } else if (StringUtils.equalsIgnoreCase(result,FileResult.FAIL.getValue())){
             return FileResult.FAIL.getValue();
-        }else {
+        } else {
             return FileResult.PENDING.getValue();
         }
 
@@ -350,18 +344,17 @@ public class BackgroundCommonService {
             long count = teacherGatedLaunchDao.countByTeacherId(teacherId);
             if (count> 0 ){
                 return true;
-            }else {
+            } else {
                 return false;
             }
-        }else {
+        } else {
             return true;
         }
     }
+
     public Calendar backgroundDateCondition(Calendar calendar){
         calendar.add(Calendar.YEAR,-2);
         calendar.add(Calendar.MONTH,1);
         return calendar;
     }
-
-
 }
