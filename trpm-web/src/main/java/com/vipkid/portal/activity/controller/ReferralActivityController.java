@@ -244,6 +244,7 @@ public class ReferralActivityController extends RestfulController{
 	public Map<String, Object> checkResult(HttpServletRequest request, HttpServletResponse response){		
 		try{
 			CheckResultVo beanVo = new CheckResultVo();
+			beanVo.setCandidateKey(getTeacher(request).getId()+"");
 			ShareActivityExam shareActivityExam = this.referralActivityService.checkTeacherExamStratus(getTeacher(request));
 			if (NumericUtils.isNull(shareActivityExam)) {
 				//表示从未考试
