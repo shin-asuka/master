@@ -2,14 +2,16 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="TeacherMapper">
 
-	<sql id="teacherColumns">teacher.id AS teacher_id, teacher.address AS
-		teacher_address, teacher.avatar AS teacher_avatar,
-		teacher.birthday AS teacher_birthday, teacher.certificates AS teacher_certificates,
+	<sql id="teacherColumns">teacher.id AS teacher_id,
+		teacher.address AS teacher_address,
+		teacher.avatar AS teacher_avatar,
+		teacher.birthday AS teacher_birthday,
+		teacher.certificates AS teacher_certificates,
 		teacher.contract_end_date AS teacher_contract_end_date,
 		teacher.contract_start_date AS teacher_contract_start_date,
 		teacher.entry_date AS teacher_entry_date,
-		teacher.country AS teacher_country, teacher.currency AS
-		teacher_currency, teacher.email AS teacher_email,
+		teacher.country AS teacher_country,
+		teacher.currency AS teacher_currency, teacher.email AS teacher_email,
 		teacher.extra_class_salary AS teacher_extra_class_salary, teacher.hide
 		AS teacher_hide, teacher.introduction AS teacher_introduction,
 		teacher.job AS teacher_job, teacher.job_hrs_per_week AS teacher_job_hrs_per_week, teacher.life_cycle AS teacher_life_cycle,
@@ -36,26 +38,27 @@
 		teacher.has_tested AS teacher_has_tested, teacher.introduction_zh AS
 		teacher_introduction_zh, teacher.graduated_from AS
 		teacher_graduated_from, teacher.teacher_tags AS teacher_teacher_tags,
-		teacher.vipkid_remarks AS teacher_vipkid_remarks, 
+		teacher.vipkid_remarks AS teacher_vipkid_remarks,
 		teacher.manager AS teacher_manager,
-		
+
 		teacher.identity_type AS teacher_identity_type,
 		teacher.identity_number AS teacher_identity_number,
-		teacher.issuance_country as teacher_issuance_country,
-		teacher.phone_type as teacher_phone_type,
-		teacher.phone_nation_code as teacher_phone_nation_code,
-		teacher.phone_nation_id as teacher_phone_nation_id,
-		teacher.current_address_id as teacher_current_address_id,
-		teacher.beneficiary_bank_address_id as teacher_beneficiary_bank_address_id,
-		teacher.beneficiary_address_id as teacher_beneficiary_address_id,
-		
+		teacher.issuance_country AS teacher_issuance_country,
+		teacher.phone_type AS teacher_phone_type,
+		teacher.phone_nation_code AS teacher_phone_nation_code,
+		teacher.phone_nation_id AS teacher_phone_nation_id,
+		teacher.current_address_id AS teacher_current_address_id,
+		teacher.beneficiary_bank_address_id AS teacher_beneficiary_bank_address_id,
+		teacher.beneficiary_address_id AS teacher_beneficiary_address_id,
+
 		teacher.contract_type AS teacher_contract_type,
 		teacher.highest_degree AS teacher_highest_degree,
 		teacher.evaluation_bio AS teacher_evaluation_bio,
 		teacher.other_channel AS teacher_other_channel,
 		teacher.first_name AS teacher_first_name,
 		teacher.middle_name AS teacher_middle_name,
-		teacher.last_name AS teacher_last_name
+		teacher.last_name AS teacher_last_name,
+		teacher.maiden_name AS teacher_maiden_name
 	</sql>
 
 	<sql id="teacherWhere">
@@ -132,6 +135,8 @@
 			<if test="firstName != null"> AND teacher.first_name = #{firstName}</if>
 			<if test="middleName != null"> AND teacher.middle_name = #{middleName}</if>
 			<if test="lastName != null"> AND teacher.last_name = #{lastName}</if>
+			<if test="maidenName != null">AND teacher.maiden_name = #{maidenName}</if>
+
 		</trim>
 	</sql>
 
@@ -212,6 +217,7 @@
 		<result column="teacher_first_name" property="firstName" />
 		<result column="teacher_middle_name" property="middleName" />
 		<result column="teacher_last_name" property="lastName" />
+		<result column="teacher_maiden_name" property="maidenName"/>
 	</resultMap>
 
 	<select id="findDao" resultMap="teacherResultMap">
@@ -315,6 +321,7 @@
 			<if test="firstName != null">,first_name</if>
 			<if test="middleName != null">,middle_name</if>
 			<if test="lastName != null">,last_name</if>
+			<if test="maidenName != null">,maiden_name</if>
 		</trim>
 		) VALUES
 		<trim prefix="(" prefixOverrides=",">
@@ -385,6 +392,7 @@
 			<if test="firstName != null">,#{firstName}</if>
 			<if test="middleName != null">,#{middleName}</if>
 			<if test="lastName != null">,#{lastName}</if>
+			<if test="maidenName != null">,#{maidenName}</if>
 		</trim>
 		)
 	</insert>
@@ -465,6 +473,7 @@
 			<if test="lastName != null">,last_name = #{lastName}</if>
 			<if test="phoneType != null">,phone_type = #{phoneType}</if>
 			<if test="otherChannel != null">,other_channel = #{otherChannel}</if>
+			<if test="maidenName != null">,maiden_name = #{maidenName}</if>
 		</trim>
 		<trim prefix="WHERE" prefixOverrides="AND">AND id = #{id}</trim>
 	</update>
