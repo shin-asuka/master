@@ -37,6 +37,9 @@ public class ShareRecord implements Serializable {
 	/****/
 	private java.util.Date shareTime;
 
+	/****/
+	private Long activityExamId;
+
 
 	
 	
@@ -119,6 +122,15 @@ public class ShareRecord implements Serializable {
 
 	public java.util.Date getShareTime(){
 		return this.shareTime;
+	}
+
+	public ShareRecord setActivityExamId(Long activityExamId){
+		this.activityExamId = activityExamId;
+		return this;
+	}
+
+	public Long getActivityExamId(){
+		return this.activityExamId;
 	}
 
 
