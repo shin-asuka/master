@@ -49,6 +49,8 @@ public class BackgroundCommonController extends RestfulController{
             }else{
                 backgroundStatusDto.setNeedBackgroundCheck(false);
                 backgroundStatusDto.setNationality("OTHERS");
+                backgroundStatusDto.setPhase("");
+                backgroundStatusDto.setResult("");
             }
             response.setStatus(HttpStatus.OK.value());
             return ApiResponseUtils.buildSuccessDataResp(backgroundStatusDto);
