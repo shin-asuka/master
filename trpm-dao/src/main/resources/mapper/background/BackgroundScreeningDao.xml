@@ -9,7 +9,7 @@
         <result column="status" jdbcType="VARCHAR" property="status" />
         <result column="result" jdbcType="VARCHAR" property="result" />
         <result column="dispute_status" jdbcType="VARCHAR" property="disputeStatus" />
-        <result column="dispute_created_at" jdbcType="DATE" property="disputeCreatedAt" />
+        <result column="dispute_created_at" jdbcType="TIMESTAMP" property="disputeCreatedAt" />
         <result column="submitted_at" jdbcType="TIMESTAMP" property="submittedAt" />
         <result column="update_at" jdbcType="TIMESTAMP" property="updateAt" />
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />

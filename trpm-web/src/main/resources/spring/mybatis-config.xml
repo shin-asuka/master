@@ -8,6 +8,7 @@
 		<setting name="lazyLoadingEnabled" value="true" />
 		<setting name="cacheEnabled" value="true" />
 		<!--<setting name="logImpl" value="STDOUT_LOGGING"/>-->
+		<setting name="defaultExecutorType" value="REUSE"/>
 		${logImpl.console.out}
 		
 	</settings>
