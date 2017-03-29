@@ -1216,19 +1216,19 @@ public class BookingsService {
 	}
 	
 	public void countOnlineClassesByStartTimeAndEndTime(Date from, Date to, Long id, Long incentiveCount,
-			Map<String, Long> resultMap) {
+			List<Map<String, Object>> resultList) {
+		Map<String, Object> resultMap = Maps.newHashMap();
 		long resultCount = 0;
 		Integer count = onlineClassDao.countOnlineClassesByStartTimeAndEndTime(from, to, id);
 
 		if (incentiveCount != null && incentiveCount != null) {
 			resultCount = count - incentiveCount > 0 ? count - incentiveCount : 0;
 		}
-
-		String startStr = DateUtils.formatDate(from, "yyyy MM dd");
-		String endStr = DateUtils.formatDate(to, "yyyy MM dd");
-		String key = startStr + "-" + endStr;
-		resultMap.put(key, resultCount);
-
+		resultMap.put("from",from.getTime());
+		resultMap.put("to",to.getTime());
+		resultMap.put("resultCount",resultCount);
+		
+		resultList.add(resultMap);
 	}
 	
 	public Long getIncentiveCount(Long teacherId) {

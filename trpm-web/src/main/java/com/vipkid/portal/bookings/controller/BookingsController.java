@@ -21,6 +21,7 @@ import com.vipkid.trpm.constant.ApplicationConstant.INCENTIVE;
 import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.proxy.RedisProxy;
 import com.vipkid.trpm.service.portal.TeacherService;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.slf4j.Logger;
@@ -31,6 +32,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
@@ -443,11 +445,9 @@ public class BookingsController {
 
 			Preconditions.checkArgument(request.getAttribute(TEACHER) != null);
 			Teacher teacher = (Teacher) request.getAttribute(TEACHER);
-			if (from == null || to == null ) {
-				response.setStatus(HttpStatus.BAD_REQUEST.value());
-				logger.warn("wrong parameters{} where get incentives ", teacher.getId());
-				return ApiResponseUtils.buildErrorResp(HttpStatus.BAD_REQUEST.value(),
-						"wrong parameters where get incentives ,{}.", teacher.getId());
+			if (from == null || to == null || from == 0 || to == 0) {
+				from = INCENTIVE.INCENTIVE_APRIL_01.getTime();
+				to = INCENTIVE.INCENTIVE_APRIL_10.getTime();
 			}
 			if (0 == teacher.getId()) {
 				response.setStatus(HttpStatus.FORBIDDEN.value());
@@ -455,7 +455,7 @@ public class BookingsController {
 						"The teacher have no jurisdiction.", teacher.getId());
 			}
 
-			List<Map<String, Object>> classes = bookingsService.findIncentiveClasses((Timestamp) from, (Timestamp) to,
+			List<Map<String, Object>> classes = bookingsService.findIncentiveClasses(new Date(from), new Date(to),
 					teacher.getId());
 			List<Map<String, Object>> resultClasses = Lists.newArrayList();
 			Long incentiveCount = bookingsService.getIncentiveCount(teacher.getId());
@@ -478,37 +478,30 @@ public class BookingsController {
     @RequestMapping(value = "/getIncentiveCount", method = RequestMethod.GET)
 	public Map<String, Object> getIncentiveCount(HttpServletRequest request,
 			HttpServletResponse response) {
-		Map<String, Object> dataMap = Maps.newHashMap();
-		Object from = paramMap.get("from");
-		Object to = paramMap.get("to");
-
+    	Map<String, Object> dataMap = Maps.newHashMap();
+    	List<Map<String, Object>> resultList = Lists.newArrayList();
+		
 		try {
 
 			Preconditions.checkArgument(request.getAttribute(TEACHER) != null);
 			Teacher teacher = (Teacher) request.getAttribute(TEACHER);
-			if (from == null || to == null || !(from instanceof Timestamp) || !(to instanceof Timestamp)) {
-				response.setStatus(HttpStatus.BAD_REQUEST.value());
-				logger.warn("wrong parameters{} where get incentives ", teacher.getId());
-				return ApiResponseUtils.buildErrorResp(HttpStatus.BAD_REQUEST.value(),
-						"wrong parameters where get incentives ,{}.", teacher.getId());
-			}
+			
 			if (0 == teacher.getId()) {
 				response.setStatus(HttpStatus.FORBIDDEN.value());
 				return ApiResponseUtils.buildErrorResp(HttpStatus.BAD_REQUEST.value(),
 						"The teacher have no jurisdiction.", teacher.getId());
 			}
 			Long incentiveCount = bookingsService.getIncentiveCount(teacher.getId());
-			Map<String, Long> resultmap = Maps.newHashMap();
 
 			bookingsService.countOnlineClassesByStartTimeAndEndTime(INCENTIVE.INCENTIVE_APRIL_01,
-					INCENTIVE.INCENTIVE_APRIL_10, teacher.getId(), incentiveCount, resultmap);
+					INCENTIVE.INCENTIVE_APRIL_10, teacher.getId(), incentiveCount, resultList);
 			bookingsService.countOnlineClassesByStartTimeAndEndTime(INCENTIVE.INCENTIVE_APRIL_10,
-					INCENTIVE.INCENTIVE_APRIL_17, teacher.getId(), incentiveCount, resultmap);
+					INCENTIVE.INCENTIVE_APRIL_17, teacher.getId(), incentiveCount, resultList);
 			bookingsService.countOnlineClassesByStartTimeAndEndTime(INCENTIVE.INCENTIVE_APRIL_17,
-					INCENTIVE.INCENTIVE_APRIL_23, teacher.getId(), incentiveCount, resultmap);
+					INCENTIVE.INCENTIVE_APRIL_23, teacher.getId(), incentiveCount, resultList);
 			bookingsService.countOnlineClassesByStartTimeAndEndTime((Date) INCENTIVE.INCENTIVE_APRIL_23,
-					INCENTIVE.INCENTIVE_APRIL_30, teacher.getId(), incentiveCount, resultmap);
-			dataMap.put("incentiveCountMap", resultmap);
+					INCENTIVE.INCENTIVE_APRIL_30, teacher.getId(), incentiveCount, resultList);
+			dataMap.put("incentiveList", resultList);
 
 			return ApiResponseUtils.buildSuccessDataResp(dataMap);
 		} catch (IllegalArgumentException e) {
