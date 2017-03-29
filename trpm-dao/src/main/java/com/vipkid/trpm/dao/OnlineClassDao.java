@@ -19,6 +19,8 @@ import static com.google.common.base.Preconditions.checkArgument;
 @Repository
 public class OnlineClassDao extends MapperDaoTemplate<OnlineClass> {
 
+	private static final int ONE_SECOND = 1000;
+
 	@Autowired
 	public OnlineClassDao(SqlSessionTemplate sqlSessionTemplate) {
 		super(sqlSessionTemplate, OnlineClass.class);
@@ -461,19 +463,20 @@ public class OnlineClassDao extends MapperDaoTemplate<OnlineClass> {
 		return selectEntity("findOnlineClassCourseType",paramsMap);
 	}
 
-	public List<Map<String, Object>> findOnlineClassesByStartTimeAndEndTime(Date from, Date to, Long teacherId){
+	public List<Map<String, Object>> findOnlineClassesByStartTimeAndEndTime(Date from, Date to, Long teacherId) {
 		Map<String, Object> paramsMap = new HashMap<>();
 		paramsMap.put("from", new Timestamp(from.getTime()));
-		paramsMap.put("to", new Timestamp(to.getTime()));
+		paramsMap.put("to", new Timestamp(to.getTime() - ONE_SECOND));
 		paramsMap.put("teacherId", teacherId);
-		return listEntity("findOnlineClassesByStartTimeAndEndTime",paramsMap);
+		return listEntity("findOnlineClassesByStartTimeAndEndTime", paramsMap);
 	}
-	public Integer countOnlineClassesByStartTimeAndEndTime(Date from, Date to, Long teacherId){
+
+	public Integer countOnlineClassesByStartTimeAndEndTime(Date from, Date to, Long teacherId) {
 		Map<String, Object> paramsMap = new HashMap<>();
 		paramsMap.put("from", from.getTime());
-		paramsMap.put("to", to.getTime());
+		paramsMap.put("to", to.getTime() - ONE_SECOND);
 		paramsMap.put("teacherId", teacherId);
-		return selectCount("countOnlineClassesByStartTimeAndEndTime",paramsMap);
+		return selectCount("countOnlineClassesByStartTimeAndEndTime", paramsMap);
 	}
 
 	/**
