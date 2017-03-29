@@ -42,19 +42,19 @@ public class AwsFileUtils {
 	public static final Long TAPXPAYER_FILE_MAX_SIZE = 20*1024*1024L; //20M
 	public static final String TAPXPAYER_FILE_TYPE = "pdf,jpg,png,jpeg,bmp";
 
-	public static final String CONTRACT_FILE_TYPE = "doc,docx,pdf,jpg,jpeg,png,bmp.";
+	public static final String CONTRACT_FILE_TYPE = "doc,docx,pdf,jpg,jpeg,png,bmp";
 	public static final Long CONTRACT_FILE_MAX_SIZE = 20*1024*1024L; //20M
 
-	public static final String IDENTIFICATION_FILE_TYPE = "doc,docx,pdf,jpg,jpeg,png,bmp.";
+	public static final String IDENTIFICATION_FILE_TYPE = "doc,docx,pdf,jpg,jpeg,png,bmp";
 	public static final Long IDENTIFICATION_FILE_MAX_SIZE = 20*1024*1024L; //20M
 
-	public static final String DIPLOMA_FILE_TYPE = "doc,docx,pdf,jpg,jpeg,png,bmp.";
+	public static final String DIPLOMA_FILE_TYPE = "doc,docx,pdf,jpg,jpeg,png,bmp";
 	public static final Long DIPLOMA_FILE_MAX_SIZE = 20*1024*1024L; //20M
 
-	public static final String CERTIFICATES_FILE_TYPE = "doc,docx,pdf,jpg,jpeg,png,bmp.";
+	public static final String CERTIFICATES_FILE_TYPE = "doc,docx,pdf,jpg,jpeg,png,bmp";
 	public static final Long CERTIFICATES_FILE_MAX_SIZE = 20*1024*1024L; //20M
 
-	public static final String DEGREES_FILE_TYPE = "doc,docx,pdf,jpg,jpeg,png,bmp.";
+	public static final String DEGREES_FILE_TYPE = "doc,docx,pdf,jpg,jpeg,png,bmp";
 	public static final Long DEGREES_FILE_MAX_SIZE = 20*1024*1024L; //20M
 
 	public static final Long AVATAR_MAX_SIZE = 20*1024*1024L; //20M

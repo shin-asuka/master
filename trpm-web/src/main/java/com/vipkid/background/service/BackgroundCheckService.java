@@ -311,7 +311,7 @@ public class BackgroundCheckService {
         //if currentStreet or currentZipCode has been changed, then update it.
         TeacherAddress currentAddress = teacherAddressDao.getTeacherAddress(teacher.getCurrentAddressId());
         if(currentAddress != null){
-            if(StringUtils.equals(currentAddress.getStreetAddress(), currentStreet) || StringUtils.equals(currentAddress.getZipCode(), currentZipCode)){
+            if(!StringUtils.equals(currentAddress.getStreetAddress(), currentStreet) || !StringUtils.equals(currentAddress.getZipCode(), currentZipCode)){
                 TeacherAddress address = new TeacherAddress();
                 address.setTeacherId(input.getTeacherId());
                 address.setStreetAddress(currentStreet);
