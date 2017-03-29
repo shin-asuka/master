@@ -763,12 +763,12 @@
 
 	<!-- SQL 统计同城市的正式老师个数 -->
 	<select id="findRegulareTeacherByCity" resultType="int">
-		SELECT count(1) 
-		FROM teacher t Left join teacher_address ta on t.current_address_id = ta.id 
+		SELECT count(1)
+		FROM teacher t Left join teacher_address ta on t.current_address_id = ta.id
 		WHERE t.life_cycle = 'REGULAR'
 		<if test="city != null and city != 0"> AND ta.city = #{city} </if>
 		<if test="stateId != null and stateId != 0"> AND ta.state_id = #{stateId} </if>
-		ORDER BY t.id 
+		ORDER BY t.id
 	</select>
-	
+
 </mapper>

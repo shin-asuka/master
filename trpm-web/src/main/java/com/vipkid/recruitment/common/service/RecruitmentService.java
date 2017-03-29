@@ -471,8 +471,8 @@ public class RecruitmentService {
     public int getCancelNum(long teacherId, String status){
         return this.teacherApplicationLogDao.getCancelNum(teacherId, status, Result.CANCEL);
     }
-    
-    
+
+
     /**
      * 获取推荐人已经完成了多少节课
      * @param teacher

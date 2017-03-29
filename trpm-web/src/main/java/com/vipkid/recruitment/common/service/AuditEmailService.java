@@ -42,7 +42,7 @@ public class AuditEmailService {
 
     @Autowired
     private TeacherDao teacherDao;
-    
+
     @Autowired
     private RecruitmentService recruitmentService;
 
@@ -245,7 +245,7 @@ public class AuditEmailService {
             if(MapUtils.isNotEmpty(refereMap)){
             	paramsMap.putAll(refereMap);
             }
-            
+
             logger.info("【EMAIL.sendInterviewPass】toAddMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",
                     teacher.getRealName(),teacher.getEmail(),INTERVIEW_PASS_TITLE, INTERVIEW_PASS_CONTENT);
             Map<String, String> emailMap = TemplateUtils.readTemplate(INTERVIEW_PASS_CONTENT, paramsMap, INTERVIEW_PASS_TITLE);

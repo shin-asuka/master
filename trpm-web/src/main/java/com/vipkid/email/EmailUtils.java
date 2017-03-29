@@ -110,12 +110,12 @@ public class EmailUtils {
 			}else if (teacher.getRealName() != null){
 				paramsMap.put("teacherName", teacher.getRealName());
 			}
-			
+
 			paramsMap.put("referralShow", "none");
 			if(StringUtils.isNotBlank(cityName)){
 				paramsMap.put("referralShow", "block");
 			}
-			
+
 			paramsMap.put("applicantState", cityName);
 			paramsMap.put("teacherNumber", teacherNumber+"");
 			paramsMap.put("scheduledDateTime", DateUtils.formatTo(onlineclass.getScheduledDateTime().toInstant(), teacher.getTimezone(), DateUtils.FMT_YMD_HM));
