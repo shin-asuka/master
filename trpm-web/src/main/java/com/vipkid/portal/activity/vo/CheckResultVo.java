@@ -12,6 +12,8 @@ public class CheckResultVo {
 	private String examResult;
 	
 	private Long questionIndex;
+	
+	private String candidateKey;
 
 	public Integer getStatus() {
 		return status;
@@ -51,6 +53,14 @@ public class CheckResultVo {
 
 	public void setQuestionIndex(Long questionIndex) {
 		this.questionIndex = questionIndex;
+	}
+
+	public String getCandidateKey() {
+		return candidateKey;
+	}
+
+	public void setCandidateKey(String candidateKey) {
+		this.candidateKey = candidateKey;
 	}
 	
 }
