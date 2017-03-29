@@ -71,11 +71,11 @@ public class BackgroundCheckController extends RestfulController {
         Long teacherId = teacher.getId();
         checkInput.setTeacherId(teacherId);
         String operateType = checkInput.getOperateType();
-
+        /*
         Integer currentCountryId = checkInput.getCurrentCountryId();
         Integer currentStateId = checkInput.getCurrentStateId();
         Integer currentCityId = checkInput.getCurrentCity();
-
+        */
         Integer countryId = checkInput.getLatestCountryId();
         Integer stateId = checkInput.getLatestStateId();
         Integer cityId = checkInput.getLatestCity();
@@ -86,10 +86,11 @@ public class BackgroundCheckController extends RestfulController {
         String socialSecurityNo = checkInput.getSocialSecurityNumber();
         String fileUrl = checkInput.getFileUrl();
         try {
+            /*
             Preconditions.checkArgument(currentCountryId != null, "currentCountryId cannot be null");
             Preconditions.checkArgument(currentStateId != null, "currentStateId cannot be null");
             Preconditions.checkArgument(currentCityId != null, "currentCityId cannot be null");
-
+            */
             Preconditions.checkArgument(countryId != null, "latestCountryId cannot be null");
             Preconditions.checkArgument(stateId != null, "latestStateId cannot be null");
             Preconditions.checkArgument(cityId != null, "latestCityId cannot be null");

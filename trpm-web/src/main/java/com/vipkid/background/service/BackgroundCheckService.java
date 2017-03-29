@@ -305,10 +305,10 @@ public class BackgroundCheckService {
     }
 
     private void saveAddress(BackgroundCheckInputDto input, Teacher teacher){
+        /*
+        //if currentStreet or currentZipCode has been changed, then update it.
         String currentStreet = input.getCurrentStreet();
         String currentZipCode = input.getCurrentZipCode();
-
-        //if currentStreet or currentZipCode has been changed, then update it.
         TeacherAddress currentAddress = teacherAddressDao.getTeacherAddress(teacher.getCurrentAddressId());
         if(currentAddress != null){
             if(!StringUtils.equals(currentAddress.getStreetAddress(), currentStreet)
@@ -327,7 +327,7 @@ public class BackgroundCheckService {
                 teacherAddressDao.updateByTeacherIdAndType(address);
             }
         }
-
+        */
         TeacherAddress address = new TeacherAddress();
         address.setTeacherId(input.getTeacherId());
         address.setCity(input.getLatestCity());
