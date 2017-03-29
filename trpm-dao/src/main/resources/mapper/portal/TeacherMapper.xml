@@ -785,7 +785,19 @@
 		WHERE t.life_cycle = 'REGULAR'
 		<if test="city != null and city != 0"> AND ta.city = #{city} </if>
 		<if test="stateId != null and stateId != 0"> AND ta.state_id = #{stateId} </if>
-		ORDER BY t.id
+		ORDER BY t.id 
 	</select>
+	
+	<select id="getActivityExamInfo" resultType="java.util.Map">
+		select t.id,t.teacher_id teacherId, t.`status` 
+		from share_activity_exam t 
+		where t.id = #{id}
+	</select>
+	
+	<update id="updateActivityExamInfo">
+		UPDATE share_activity_exam 
+		set teacher_id = #{teacherId} 
+		where id = #{id}
+	</update>
 
 </mapper>

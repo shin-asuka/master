@@ -26,10 +26,8 @@ import com.vipkid.teacher.tools.utils.NumericUtils;
 import com.vipkid.trpm.constant.ApplicationConstant;
 import com.vipkid.trpm.constant.ApplicationConstant.RedisConstants;
 import com.vipkid.trpm.dao.AppRestfulDao;
-import com.vipkid.trpm.dao.ShareActivityExamDao;
 import com.vipkid.trpm.dao.TeacherDao;
 import com.vipkid.trpm.dao.UserDao;
-import com.vipkid.trpm.entity.ShareActivityExam;
 import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.entity.User;
 import com.vipkid.trpm.proxy.RedisProxy;
@@ -62,9 +60,6 @@ public class PassportService {
 
     @Autowired
     private VerifyCodeService verifyCodeService;
-    
-    @Autowired
-    private ShareActivityExamDao shareActivityExamDao;
 
     /**
      * 通过id查询Teacher
@@ -171,10 +166,11 @@ public class PassportService {
         teacher = this.prerefereeId(teacher, bean.getRefereeId(), bean.getPartnerId());
         teacherDao.save(teacher);
         if(NumericUtils.isNotNullOrZeor(bean.getActivityExamId())){
-        	ShareActivityExam shareActivityExam = shareActivityExamDao.getById(bean.getActivityExamId());
-        	if(shareActivityExam != null && shareActivityExam.getStatus() == StatusEnum.COMPLETE.val() && NumericUtils.isNullOrZeor(shareActivityExam.getTeacherId())){
-        		shareActivityExam.setTeacherId(teacher.getId());
-        		this.shareActivityExamDao.updateById(shareActivityExam);
+        	Map<String,Object> activityExamMap = this.teacherDao.getActivityExamInfo(bean.getActivityExamId());
+        	if(MapUtils.isNotEmpty(activityExamMap) 
+        			&& StringUtils.equals(activityExamMap.get("status")+"",StatusEnum.COMPLETE.val()+"") 
+        			&& NumericUtils.isNullOrZeor((Integer)activityExamMap.get("teacherId"))){
+        		this.teacherDao.updateActivityExamInfo(bean.getActivityExamId(), teacher.getId());
         	}
         }
         logger.info(" Sign up teacher: " + teacher.getSerialNumber());
