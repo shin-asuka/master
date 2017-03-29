@@ -1,19 +1,15 @@
 {
     "result": {
         "A": {
-            "text":"你是一个好老师",
 			"image":"http://www.xxxxx"
         },
         "B": {
-            "text": "你是一个优秀的好老师",
 			"image":"http://www.xxxxx"
         },
         "C": {
-            "text": "你是一个很优秀有责任心的好的老师",
 			"image":"http://www.xxxxx"
         },
         "D": {
-            "text": "你是一个很优秀有责任心,喜欢小孩子的老师,加入我们VIPKID吧!",
 			"image":"http://www.xxxxx"
         }
     },
@@ -21,88 +17,72 @@
         {
             "id": "Q01",
 			"index" : 1,
-            "title": "以下内容你喜欢啥,文字,游戏,和咖啡",
             "choose": [
                 {
-                    "answer": "A",
-                    "text": "Hello!This a picture",
-                    "image": "http://www.baidu.com.cn"
+                    "answer": "A"
                 },
                 {
-                    "answer": "B",
-                    "text": "Hello!This a picture",
-                    "image": "http://www.baidu.com.cn"
+                    "answer": "B"
                 },
                 {
-                    "answer": "C",
-                    "text": "Hello!This a picture",
-                    "image": "http://www.baidu.com.cn"
+                    "answer": "C"
+                },
+                {
+                    "answer": "D"
                 }
             ]
         },
         {
             "id": "Q02",
 			"index" : 2,
-            "title": "以下内容你喜欢啥,文字,游戏,和咖啡",
             "choose": [
                 {
-                    "answer": "A",
-                    "text": "Hello!This a picture",
-                    "image": "http://www.baidu.com.cn"
+                    "answer": "A"
                 },
                 {
-                    "answer": "B",
-                    "text": "Hello!This a picture",
-                    "image": "http://www.baidu.com.cn"
+                    "answer": "B"
                 },
                 {
-                    "answer": "C",
-                    "text": "Hello!This a picture",
-                    "image": "http://www.baidu.com.cn"
+                    "answer": "C"
+                },
+                {
+                    "answer": "D"
                 }
             ]
         },
         {
             "id": "Q03",
 			"index" : 3,
-            "title": "以下内容你喜欢啥,文字,游戏,和咖啡",
             "choose": [
                 {
-                    "answer": "A",
-                    "text": "Hello!This a picture",
-                    "image": "http://www.baidu.com.cn"
+                    "answer": "A"
                 },
                 {
-                    "answer": "B",
-                    "text": "Hello!This a picture",
-                    "image": "http://www.baidu.com.cn"
+                    "answer": "B"
                 },
                 {
-                    "answer": "C",
-                    "text": "Hello!This a picture",
-                    "image": "http://www.baidu.com.cn"
+                    "answer": "C"
+                },
+                 {
+                    "answer": "D"
                 }
             ]
         },
         {
             "id": "Q04",
 			"index" : 4,
-            "title": "以下内容你喜欢啥,文字,游戏,和咖啡",
             "choose": [
                 {
                     "answer": "A",
-                    "text": "image",
-                    "image": "http://www.baidu.com.cn"
                 },
                 {
                     "answer": "B",
-                    "text": "image",
-                    "image": "http://www.baidu.com.cn"
                 },
                 {
                     "answer": "C",
-                    "text": "image",
-                    "image": "http://www.baidu.com.cn"
+                },
+                {
+                    "answer": "D"
                 }
             ]
         }
