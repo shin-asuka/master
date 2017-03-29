@@ -402,16 +402,15 @@ public class BookingsController {
                     "参数为空");
         }
         String count=null;
-        Integer countInt=0;
         try{
              count=redisProxy.get(ApplicationConstant.RedisConstants.INCENTIVE_FOR_APRIL+teacherId);
             if(StringUtils.isBlank(count)){
-                countInt=teacherService.incentivesTeacherInit(teacherId);
-                if(countInt ==0){
-                    return ApiResponseUtils.buildErrorResp(HttpStatus.OK.value(),
-                            "没有查到具体数据");
+                Integer countInt=teacherService.incentivesTeacherInit(teacherId);
+                if(countInt !=null){
+                    count=countInt+"";
+                }else{//最小返回5
+                    count="5";
                 }
-                count=countInt+"";
             }
             Map<String, Object> dataMap = Maps.newHashMap();
             dataMap.put("errCode",HttpStatus.OK.value());
