@@ -111,7 +111,7 @@ public class SterlingApiUtilsTest {
     public void createScreeningTest(){
         ScreeningInputDto screeningInputDto = new ScreeningInputDto();
         ScreeningInputDto.CallBack callBack =new ScreeningInputDto.CallBack();
-        callBack.setUri("https://a6-t.vipkid.com.cn/api/api/background/sterling/callback.json");
+        callBack.setUri("https://a6-t.vipkid.com.cn/api/background/sterling/callback.json");
         screeningInputDto.setCallback(callBack);
         screeningInputDto.setPackageId("182951");
         screeningInputDto.setCandidateId("3180193");

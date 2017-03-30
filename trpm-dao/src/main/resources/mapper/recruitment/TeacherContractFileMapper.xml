@@ -127,7 +127,7 @@
                 <if test="teacherApplicationId!=-1">,teacher_application_id = #{teacherApplicationId}</if>
                 <if test="failReason!=null">,fail_reason = #{failReason}</if>
                 <if test="result!=null">,result = #{result}</if>
-                <if test="screening_id!=null">,screening_id = #{screeningId}</if>
+                <if test="screeningId!=null">,screening_id = #{screeningId}</if>
             </trim>
         <trim prefix="WHERE" prefixOverrides="AND">AND id = #{id}</trim>
     </update>

@@ -158,7 +158,19 @@ public class BackgroundCheckController extends RestfulController {
             if (StringUtils.isNotBlank(fileName)) {
                 fileName = AwsFileUtils.reNewFileName(fileName);
             }
-            String key = AwsFileUtils.getDegreeskey(teacher.getId(), teacher.getId() + "-" + fileName);
+
+            String key="";
+            switch (type){
+                case 9:
+                    key = AwsFileUtils.getUsBackgroundCheckKey(teacher.getId(), teacher.getId() + "-" + fileName);
+                    break;
+                case 10:
+                    key = AwsFileUtils.getCanadaBackgroundCheckCpicFormKey(teacher.getId(), teacher.getId() + "-" + fileName);
+                    break;
+                case 11:
+                    key = AwsFileUtils.getCanadaBackgroundCheckId2Key(teacher.getId(), teacher.getId() + "-" + fileName);
+                    break;
+            }
             FileVo fileVo = fileService.awsUpload(file, teacher.getId(), fileName, key);
             if (fileVo == null) {
                 response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());

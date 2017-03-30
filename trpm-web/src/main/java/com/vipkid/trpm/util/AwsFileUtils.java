@@ -4,10 +4,12 @@ import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
+import com.vipkid.enums.TeacherApplicationEnum;
 import com.vipkid.file.utils.Encodes;
 import com.vipkid.file.utils.FileUtils;
 import com.vipkid.file.utils.StringUtils;
 
+import com.vipkid.recruitment.entity.TeacherApplication;
 import org.community.config.PropertyConfigurer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,7 +40,13 @@ public class AwsFileUtils {
 	public static final String TEACHER_AVATAR = "avatar";
 	public static final String TEACHER_LIFE_PICTURE = "picture";
 	public static final String TEACHER_SHORT_VIDEO = "video";
-	
+
+	public static final String CANADA_BACKGROUND_CHECK_CPIC_FORM = "cacpic";
+
+	public static final String CANADA_BACKGROUND_CHECK_ID2 = "caid2";
+
+	public static final String US_BACKGROUND_CHECK = "usbgcheck";
+
 	public static final Long TAPXPAYER_FILE_MAX_SIZE = 20*1024*1024L; //20M
 	public static final String TAPXPAYER_FILE_TYPE = "pdf,jpg,png,jpeg,bmp";
 
@@ -130,6 +138,22 @@ public class AwsFileUtils {
 		String key = buildS3FileKey(CERTIFICATES, fileName, teacherId);
 		return key;
 	}
+
+	public static String getCanadaBackgroundCheckCpicFormKey(Long teacherId, String fileName){
+		String key = buildS3FileKey(CANADA_BACKGROUND_CHECK_CPIC_FORM, fileName, teacherId);
+		return key;
+	}
+
+	public static String getCanadaBackgroundCheckId2Key(Long teacherId, String fileName){
+		String key = buildS3FileKey(CANADA_BACKGROUND_CHECK_ID2, fileName, teacherId);
+		return key;
+	}
+
+	public static String getUsBackgroundCheckKey(Long teacherId, String fileName){
+		String key = buildS3FileKey(US_BACKGROUND_CHECK, fileName, teacherId);
+		return key;
+	}
+
 	public static String buildS3FileKey(String subDir, String fileName, Long teacherId){
 		String key = null;
 		try {
