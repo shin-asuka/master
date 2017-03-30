@@ -5,7 +5,9 @@ import com.vipkid.http.utils.JsonUtils;
 import com.vipkid.rest.config.RestfulConfig;
 import com.vipkid.rest.security.AppContext;
 import com.vipkid.rest.utils.ApiResponseUtils;
-import com.vipkid.trpm.entity.teachercomment.*;
+import com.vipkid.trpm.entity.teachercomment.QueryTeacherCommentOutputDto;
+import com.vipkid.trpm.entity.teachercomment.StudentAbilityLevelRule;
+import com.vipkid.trpm.entity.teachercomment.SubmitTeacherCommentDto;
 import com.vipkid.trpm.service.portal.ReportService;
 import com.vipkid.trpm.service.portal.TeacherService;
 import org.apache.commons.lang.StringUtils;
@@ -110,4 +112,6 @@ public class TeacherCommentController {
             return ApiResponseUtils.buildErrorResp(-1, "获取tc信息失败");
         }
     }
+
+
 }

@@ -19,6 +19,7 @@ import com.vipkid.trpm.constant.ApplicationConstant;
 import com.vipkid.trpm.constant.ApplicationConstant.AuditCategory;
 import com.vipkid.trpm.constant.ApplicationConstant.CookieKey;
 import com.vipkid.trpm.constant.ApplicationConstant.PeakTimeType;
+import com.vipkid.trpm.constant.ApplicationConstant.RedisConstants;
 import com.vipkid.trpm.dao.AuditDao;
 import com.vipkid.trpm.dao.OnlineClassDao;
 import com.vipkid.trpm.dao.PeakTimeDao;
@@ -26,6 +27,7 @@ import com.vipkid.trpm.entity.OnlineClass;
 import com.vipkid.trpm.entity.PeakTime;
 import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.proxy.RedisProxy;
+import com.vipkid.trpm.service.portal.TeacherService;
 import com.vipkid.trpm.util.CookieUtils;
 import com.vipkid.trpm.util.DateUtils;
 import com.vipkid.trpm.util.FilesUtils;
@@ -53,6 +55,7 @@ import org.springframework.stereotype.Service;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.sql.Timestamp;
@@ -112,6 +115,9 @@ public class BookingsService {
 
     @Autowired
     private TeacherPageLoginService teacherPageLoginService;
+
+    @Autowired
+    private TeacherService teacherService;
 
     @Autowired
     private ScalperService scalperService;
@@ -1204,6 +1210,46 @@ public class BookingsService {
         }
         return finishType;
     }
+
+	public List<Map<String, Object>>  findIncentiveClasses(Date from, Date to, long id) {
+		 return onlineClassDao.findOnlineClassesByStartTimeAndEndTime(from,to,id);
+	}
+
+	public void countOnlineClassesByStartTimeAndEndTime(Date from, Date to, Long id, Long incentiveCount,
+			List<Map<String, Object>> resultList) {
+		Map<String, Object> resultMap = Maps.newHashMap();
+		long resultCount = 0;
+		Integer count = onlineClassDao.countOnlineClassesByStartTimeAndEndTime(from, to, id);
+
+		if (incentiveCount != null && incentiveCount != null) {
+			resultCount = count - incentiveCount > 0 ? count - incentiveCount : 0;
+		}
+		resultMap.put("from",from.getTime());
+		resultMap.put("to", to.getTime() - onlineClassDao.ONE_SECOND);
+		resultMap.put("resultCount",resultCount);
+
+		resultList.add(resultMap);
+	}
+
+	public Long getIncentiveCount(Long teacherId) {
+		String value = null;
+		String key = RedisConstants.INCENTIVE_FOR_APRIL + teacherId;
+		Long count = null;
+		try {
+			String existValue = redisProxy.get(key);
+			if (StringUtils.isNoneEmpty(existValue)) {
+				value = existValue;
+				count = Long.parseLong(value);
+			} else {
+				int co = teacherService.incentivesTeacherInit(teacherId.toString());
+				count = new Long(co);
+			}
+
+		} catch (Exception e) {
+			logger.error("redis get key = {}", key, e);
+		}
+		return count;
+	}
 
 
 

@@ -1,5 +1,6 @@
 package com.vipkid.portal.bookings.controller;
 
+import com.google.api.client.util.Lists;
 import com.google.api.client.util.Maps;
 import com.google.common.base.Preconditions;
 import com.vipkid.enums.OnlineClassEnum.CourseType;
@@ -15,22 +16,22 @@ import com.vipkid.rest.config.RestfulConfig;
 import com.vipkid.rest.interceptor.annotation.RestInterface;
 import com.vipkid.rest.service.LoginService;
 import com.vipkid.rest.utils.ApiResponseUtils;
+import com.vipkid.trpm.constant.ApplicationConstant;
+import com.vipkid.trpm.constant.ApplicationConstant.INCENTIVE;
 import com.vipkid.trpm.entity.Teacher;
-import com.vipkid.rest.RestfulController;
+import com.vipkid.trpm.proxy.RedisProxy;
+import com.vipkid.trpm.service.portal.TeacherService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
-import org.apache.ibatis.annotations.Param;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -56,6 +57,12 @@ public class BookingsController {
 
     @Autowired
     private AnnouncementHttpService announcementHttpService;
+
+    @Autowired
+    private RedisProxy redisProxy;
+
+    @Autowired
+    private TeacherService teacherService;
 
     private final static String EMERGENCY_CHINESE  ="紧急情况（个人或者家庭成员出现疾病发作、意外事故、突发不测等）";
     private final static String PERSONAL_REASON_CHINESE ="个人原因（日程冲突、安排不当等）";
@@ -374,4 +381,147 @@ public class BookingsController {
         }
 
     }
+
+
+    /**
+     * 根据老师ID查询基数
+     * @param teacherId
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/getIncentivesInitCount", method = RequestMethod.GET)
+    public Map<String, Object> getIncentivesInitCount(String teacherId) {
+        logger.info("getIncentivesInitCount ：teacherId={} .", teacherId);
+        if(StringUtils.isBlank(teacherId)){
+            return ApiResponseUtils.buildErrorResp(HttpStatus.NOT_IMPLEMENTED.value(),
+                    "参数为空");
+        }
+        String count=null;
+        try{
+             count=redisProxy.get(ApplicationConstant.RedisConstants.INCENTIVE_FOR_APRIL+teacherId);
+            if(StringUtils.isBlank(count)){
+                Integer countInt=teacherService.incentivesTeacherInit(teacherId);
+                if(countInt !=null){
+                    count=countInt+"";
+                }else{//最小返回5
+                    count="5";
+                }
+            }
+            Map<String, Object> dataMap = Maps.newHashMap();
+            dataMap.put("errCode",HttpStatus.OK.value());
+            dataMap.put("errMsg","成功");
+            dataMap.put("data",count);
+            return dataMap;
+
+        }catch (Exception e){
+            logger.warn("getIncentivesInitCount fail：teacherId={},error={} ", teacherId,ExceptionUtils.getFullStackTrace(e));
+            return ApiResponseUtils.buildErrorResp(HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                    ExceptionUtils.getFullStackTrace(e));
+        }
+
+
+    }
+
+    /**
+     * 查询finishType
+     *
+     * @param request
+     * @param response
+     * @return
+     */
+    @RequestMapping(value = "/getIncentives", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
+    public Map<String, Object> getIncentives(Long from,Long to, HttpServletRequest request, HttpServletResponse response) {
+		Map<String, Object> dataMap = Maps.newHashMap();
+
+
+        try {
+
+			Preconditions.checkArgument(request.getAttribute(TEACHER) != null);
+			Teacher teacher = (Teacher) request.getAttribute(TEACHER);
+			if (from == null || to == null || from == 0 || to == 0) {
+				from = INCENTIVE.INCENTIVE_APRIL_01.getTime();
+				to = INCENTIVE.INCENTIVE_APRIL_10.getTime();
+			}
+			if (0 == teacher.getId()) {
+				response.setStatus(HttpStatus.FORBIDDEN.value());
+				return ApiResponseUtils.buildErrorResp(HttpStatus.BAD_REQUEST.value(),
+						"The teacher have no jurisdiction.", teacher.getId());
+			}
+
+			List<Map<String, Object>> classes = bookingsService.findIncentiveClasses(new Date(from), new Date(to),
+					teacher.getId());
+			List<Map<String, Object>> resultClasses = Lists.newArrayList();
+			Long incentiveCount = bookingsService.getIncentiveCount(teacher.getId());
+			if (classes != null && classes.size() > incentiveCount) {
+				for (int i = incentiveCount.intValue(); i < classes.size(); i++) {
+					resultClasses.add(classes.get(i));
+				}
+			}
+			dataMap.put("incentiveClassList", resultClasses);
+			return ApiResponseUtils.buildSuccessDataResp(dataMap);
+		} catch (IllegalArgumentException e) {
+			logger.error("Get getIncentives  Exception {}", e);
+			response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+			return ApiResponseUtils.buildErrorResp(HttpStatus.INTERNAL_SERVER_ERROR.value(),
+					ExceptionUtils.getFullStackTrace(e));
+		}
+
+    }
+
+    @RequestMapping(value = "/getIncentiveCount", method = RequestMethod.GET)
+	public Map<String, Object> getIncentiveCount(HttpServletRequest request,
+			HttpServletResponse response) {
+    	Map<String, Object> dataMap = Maps.newHashMap();
+    	List<Map<String, Object>> resultList = Lists.newArrayList();
+
+		try {
+
+			Preconditions.checkArgument(request.getAttribute(TEACHER) != null);
+			Teacher teacher = (Teacher) request.getAttribute(TEACHER);
+
+			if (0 == teacher.getId()) {
+				response.setStatus(HttpStatus.FORBIDDEN.value());
+				return ApiResponseUtils.buildErrorResp(HttpStatus.BAD_REQUEST.value(),
+						"The teacher have no jurisdiction.", teacher.getId());
+			}
+			Long incentiveCount = bookingsService.getIncentiveCount(teacher.getId());
+
+			bookingsService.countOnlineClassesByStartTimeAndEndTime(INCENTIVE.INCENTIVE_APRIL_01,
+					INCENTIVE.INCENTIVE_APRIL_10, teacher.getId(), incentiveCount, resultList);
+			bookingsService.countOnlineClassesByStartTimeAndEndTime(INCENTIVE.INCENTIVE_APRIL_10,
+					INCENTIVE.INCENTIVE_APRIL_17, teacher.getId(), incentiveCount, resultList);
+			bookingsService.countOnlineClassesByStartTimeAndEndTime(INCENTIVE.INCENTIVE_APRIL_17,
+					INCENTIVE.INCENTIVE_APRIL_24, teacher.getId(), incentiveCount, resultList);
+			bookingsService.countOnlineClassesByStartTimeAndEndTime((Date) INCENTIVE.INCENTIVE_APRIL_24,
+					INCENTIVE.INCENTIVE_APRIL_30, teacher.getId(), incentiveCount, resultList);
+			dataMap.put("incentiveList", resultList);
+
+			return ApiResponseUtils.buildSuccessDataResp(dataMap);
+		} catch (IllegalArgumentException e) {
+			logger.error("Get getIncentives  count"
+					+ "Exception {}", e);
+			response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+			return ApiResponseUtils.buildErrorResp(HttpStatus.INTERNAL_SERVER_ERROR.value(),
+					ExceptionUtils.getFullStackTrace(e));
+		}
+	}
+
+    /**
+     * 初始化老师基数
+     * @param teacherId
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/incentivesTeacherInit", method = RequestMethod.GET)
+    public Object incentivesTeacherInit(String teacherId) {
+        Integer count=0;
+        if(org.apache.commons.lang.StringUtils.isBlank(teacherId)){
+            teacherService.incentivesAllTeacherInit();
+        }else{
+            count=teacherService.incentivesTeacherInit(teacherId);
+        }
+        return count;
+    }
+
+
 }

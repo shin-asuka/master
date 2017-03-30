@@ -20,9 +20,9 @@ import java.util.Map;
 
 @Repository
 public class TeacherDao extends MapperDaoTemplate<Teacher> {
-	
+
 	private static Logger logger = LoggerFactory.getLogger(TeacherDao.class);
-	
+
     @Autowired
     public TeacherDao(SqlSessionTemplate sqlSessionTemplate) {
         super(sqlSessionTemplate, Teacher.class);
@@ -102,6 +102,13 @@ public class TeacherDao extends MapperDaoTemplate<Teacher> {
         return super.listEntity("findAllRegularId", Maps.newHashMap());
     }
 
+    /**
+     * 查询所有Regular老师Id,不带Like条件
+     * @return
+     */
+    public List<String> findRegularIdNoLike(Map<String,Object> map){
+        return super.listEntity("findRegularIdNoLike", map);
+    }
     /**
      * 查询所有没有环信id的Regular老师Id
      *
