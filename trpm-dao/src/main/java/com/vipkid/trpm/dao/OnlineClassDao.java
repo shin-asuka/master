@@ -1,12 +1,6 @@
 package com.vipkid.trpm.dao;
 
-import com.google.common.collect.Maps;
-import com.vipkid.trpm.entity.OnlineClass;
-import org.apache.commons.collections.CollectionUtils;
-import org.community.dao.support.MapperDaoTemplate;
-import org.mybatis.spring.SqlSessionTemplate;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
+import static com.google.common.base.Preconditions.checkArgument;
 
 import java.sql.Timestamp;
 import java.util.Date;
@@ -14,12 +8,21 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.google.common.base.Preconditions.checkArgument;
+import org.apache.commons.collections.CollectionUtils;
+import org.community.dao.support.MapperDaoTemplate;
+import org.mybatis.spring.SqlSessionTemplate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+
+import com.google.common.collect.Maps;
+import com.vipkid.trpm.entity.OnlineClass;
 
 @Repository
 public class OnlineClassDao extends MapperDaoTemplate<OnlineClass> {
 
-	private static final int ONE_SECOND = 1000;
+
+
+	public static final long ONE_SECOND = 1000;
 
 	@Autowired
 	public OnlineClassDao(SqlSessionTemplate sqlSessionTemplate) {

@@ -491,8 +491,8 @@ public class BookingsController {
 			bookingsService.countOnlineClassesByStartTimeAndEndTime(INCENTIVE.INCENTIVE_APRIL_10,
 					INCENTIVE.INCENTIVE_APRIL_17, teacher.getId(), incentiveCount, resultList);
 			bookingsService.countOnlineClassesByStartTimeAndEndTime(INCENTIVE.INCENTIVE_APRIL_17,
-					INCENTIVE.INCENTIVE_APRIL_23, teacher.getId(), incentiveCount, resultList);
-			bookingsService.countOnlineClassesByStartTimeAndEndTime((Date) INCENTIVE.INCENTIVE_APRIL_23,
+					INCENTIVE.INCENTIVE_APRIL_24, teacher.getId(), incentiveCount, resultList);
+			bookingsService.countOnlineClassesByStartTimeAndEndTime((Date) INCENTIVE.INCENTIVE_APRIL_24,
 					INCENTIVE.INCENTIVE_APRIL_30, teacher.getId(), incentiveCount, resultList);
 			dataMap.put("incentiveList", resultList);
 
