@@ -1225,7 +1225,7 @@ public class BookingsService {
 			resultCount = count - incentiveCount > 0 ? count - incentiveCount : 0;
 		}
 		resultMap.put("from",from.getTime());
-		resultMap.put("to",to.getTime());
+		resultMap.put("to", to.getTime() - onlineClassDao.ONE_SECOND);
 		resultMap.put("resultCount",resultCount);
 
 		resultList.add(resultMap);
