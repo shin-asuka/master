@@ -16,8 +16,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class BuryPointH5Controller {
 
     @RequestMapping(value = "shareParentFeedback", method = RequestMethod.GET)
-    public Object shareParentFeedback(Integer teacherId,Long onlineClassId,Long feedbackId){
-        BuryPointUtils.shareParentFeedBack(teacherId,onlineClassId,feedbackId,"H5");
+    public Object shareParentFeedback(Integer teacherId,Long onlineClassId,Long feedbackId,String channel){
+        BuryPointUtils.shareParentFeedBack(teacherId,onlineClassId,feedbackId,"H5",channel);
         return ApiResponseUtils.buildSuccessDataResp("OK");
     }
 }
