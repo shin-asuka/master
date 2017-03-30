@@ -11,10 +11,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.google.common.collect.Maps;
 import com.vipkid.enums.ShareActivityExamEnum.StatusEnum;
@@ -38,7 +38,7 @@ import com.vipkid.trpm.entity.ShareActivityExam;
 import com.vipkid.trpm.entity.ShareExamDetail;
 import com.vipkid.trpm.entity.User;
 
-@Controller
+@RestController
 @RequestMapping("/portal/referral/activity")
 public class ReferralActivityController extends RestfulController{
 
