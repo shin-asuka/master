@@ -1,5 +1,6 @@
 package com.vipkid.trpm.controller.h5;
 
+import com.vipkid.rest.utils.ApiResponseUtils;
 import com.vipkid.rest.utils.BuryPointUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,8 +16,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class BuryPointH5Controller {
 
     @RequestMapping(value = "shareParentFeedback", method = RequestMethod.GET)
-    public static Boolean shareParentFeedBack(Integer teacherId,Long onlineClassId,Long feedbackId){
+    public Object shareParentFeedback(Integer teacherId,Long onlineClassId,Long feedbackId){
         BuryPointUtils.shareParentFeedBack(teacherId,onlineClassId,feedbackId,"H5");
-        return true;
+        return ApiResponseUtils.buildSuccessDataResp("OK");
     }
 }

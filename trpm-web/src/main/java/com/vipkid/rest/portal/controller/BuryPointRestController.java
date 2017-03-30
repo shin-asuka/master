@@ -19,8 +19,8 @@ public class BuryPointRestController {
 
     @RequestMapping(value = "shareParentFeedback", method = RequestMethod.GET)
     public Object shareParentFeedback(Integer teacherId,Long onlineClassId,Long feedbackId){
-        BuryPointUtils.shareParentFeedBack(teacherId,onlineClassId,feedbackId,"PC");
-        return ApiResponseUtils.buildSuccessDataResp(true);
+        BuryPointUtils.shareParentFeedBack(teacherId, onlineClassId, feedbackId, "PC");
+        return ApiResponseUtils.buildSuccessDataResp("OK");
     }
 
 

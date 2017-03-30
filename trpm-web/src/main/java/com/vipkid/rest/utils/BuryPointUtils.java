@@ -10,8 +10,7 @@ import org.springframework.stereotype.Controller;
 public class BuryPointUtils {
     private static final Logger logger = LoggerFactory.getLogger(BuryPointUtils.class);
 
-    public static Boolean shareParentFeedBack(Integer teacherId,Long onlineClassId,Long feedbackId,String source){
+    public static void shareParentFeedBack(Integer teacherId,Long onlineClassId,Long feedbackId,String source){
         logger.info("【埋点】shareParentFeedBack--teacherId:{}，onlineClassId:{}，feedbackId:{},source:{}",teacherId,onlineClassId,feedbackId,source);
-        return true;
     }
 }
