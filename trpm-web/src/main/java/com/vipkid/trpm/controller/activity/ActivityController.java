@@ -226,7 +226,7 @@ public class ActivityController extends AbstractController{
         Map<String,Object> ret = Maps.newHashMap();
         ret.put("data",studentCommentVo);
         long millis = stopwatch.stop().elapsed(TimeUnit.MILLISECONDS);
-        logger.info("执行方法getActivityShareData()耗时：{} ", millis);
+        logger.info("执行方法getParentFeedbackShareData()耗时：{} ", millis);
         return ApiResponseUtils.buildSuccessDataResp(ret);
     }
 }
