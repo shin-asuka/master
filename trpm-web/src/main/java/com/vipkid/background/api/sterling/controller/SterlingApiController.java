@@ -56,8 +56,8 @@ public class SterlingApiController {
             return ApiResponseUtils.buildErrorResp(105003, candidateOutputDto.getErrorMessage());
         }
 
-        Map<String,Object> result= Maps.newHashMap();
-        result.put("bgSterlingScreeningId",candidateOutputDto.getId());
+        Map<String, Long> result= Maps.newHashMap();
+        result.put("bgSterlingScreeningId", candidateOutputDto.getId());
 
         return ApiResponseUtils.buildSuccessDataResp(result);
 
