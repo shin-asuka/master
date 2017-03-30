@@ -105,6 +105,11 @@ public class PracticumFeedbackService {
         
 		resultMap.put("submitType", bean.getSubmitType());
         
+		if(bean.getId() == null){
+			resultMap.put("msg", "applicationId not null");
+			return resultMap;
+		}
+		
 		int applicationId = bean.getId().intValue();
 		
         TeacherApplication teacherApplication = this.teacherApplicationDao.findApplictionById(applicationId);
@@ -179,6 +184,11 @@ public class PracticumFeedbackService {
 		
 		resultMap.put("submitType", bean.getSubmitType());
         
+		if(bean.getId() == null){
+			resultMap.put("msg", "applicationId not null");
+			return resultMap;
+		}
+		
 		int applicationId = bean.getId().intValue();
         
         TeacherApplication teacherApplication = this.teacherApplicationDao.findApplictionById(applicationId);
