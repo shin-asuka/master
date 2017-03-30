@@ -131,24 +131,24 @@ public class PracticumFeedbackService {
 			teacherApplication.setAuditDateTime(null);
 			//保存Tag
 			this.savePeAdditional(bean, applicationId);
-			
             resultMap.put("result", onlineclassService.updateApplications(teacherApplication));
         } else {
             if (bean.getResult().startsWith(Result.TBD.toString())) {
 	            //TBD	
                 resultMap = peSupervisorService.doPracticumForPE(pe, teacherApplication, bean.getResult());
+                //保存Tag
+                this.savePeAdditional(bean, applicationId);
+                
             } else {
                 if (StringUtils.isBlank(bean.getFinishType())) {
                 	bean.setFinishType(FinishType.AS_SCHEDULED);
-                }
-                
+                }                
                 resultMap = onlineclassService.updateAudit(pe, teacherApplication, bean.getResult(), bean.getFinishType());
                 
                 // Finish课程成功
                 if ((Boolean) resultMap.get("result")) {
                 	//保存Tag
                 	this.savePeAdditional(bean, applicationId);
-                	
                 	Teacher recruitTeacher = (Teacher) resultMap.get("recruitTeacher");
                 	
                 	onlineclassService.finishPracticum(teacherApplication, bean.getFinishType(), pe, recruitTeacher);
@@ -207,7 +207,9 @@ public class PracticumFeedbackService {
 			teacherApplication.setResult(null);
 			teacherApplication.setAuditorId(0);
 			teacherApplication.setAuditDateTime(null);
+			//保存Tag
 			this.savePeSuperviserAdditional(bean, applicationId);
+			
             resultMap.put("result", onlineclassService.updateApplications(teacherApplication));
         } else {
             if (StringUtils.isBlank(bean.getFinishType())) {
