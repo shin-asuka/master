@@ -120,7 +120,7 @@ public class ReferralActivityController extends RestfulController{
 	    	if(MapUtils.isNotEmpty(resultMap)){
 	    		return resultMap;
 	    	}
-			if(NumericUtils.isNull(bean.getShareRecordId())){
+			if(NumericUtils.isNullOrZeor(bean.getShareRecordId())){
 				//老师点击link 入口
 				User user = this.loginService.getUser();
 				if(NumericUtils.isNull(user)){
