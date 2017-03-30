@@ -75,9 +75,9 @@ public class SterlingApiController {
             logger.warn("teacherId:{},documentUrl:{},return:{}",teacherId,documentUrl,JacksonUtils.toJSONString(screeningOutputDto));
             return ApiResponseUtils.buildErrorResp(screeningOutputDto.getErrorCode(),screeningOutputDto.getErrorMessage());
         }
-        Map<String,Object> result= Maps.newHashMap();
-        result.put("bgSterlingScreeningId",screeningOutputDto.getId());
-        return ApiResponseUtils.buildSuccessDataResp(result);
+        //Map<String,Object> result= Maps.newHashMap();
+        //result.put("bgSterlingScreeningId",screeningOutputDto.getId());
+        return ApiResponseUtils.buildSuccessDataResp(screeningOutputDto.getId());
     }
 
 
