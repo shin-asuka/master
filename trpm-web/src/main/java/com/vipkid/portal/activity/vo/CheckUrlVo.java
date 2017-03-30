@@ -7,6 +7,8 @@ public class CheckUrlVo {
 	private String examVersion;
 	
 	private JSONObject pageContent;
+	
+	private Long level;
 
 	public String getExamVersion() {
 		return examVersion;
@@ -23,6 +25,13 @@ public class CheckUrlVo {
 	public void setPageContent(JSONObject pageContent) {
 		this.pageContent = pageContent;
 	}
-	
+
+	public Long getLevel() {
+		return level;
+	}
+
+	public void setLevel(Long level) {
+		this.level = level;
+	}
 	
 }

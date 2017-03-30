@@ -257,6 +257,7 @@ public class ReferralActivityService {
 			if(NumericUtils.isNullOrZeor(bean.getShareRecordId())){
 				//第一次点击
 				beanVo.setExamVersion(this.getExamVersion());
+				beanVo.setLevel(0L);
 				beanVo.setPageContent(this.getExamContent(beanVo.getExamVersion()));
 				return beanVo;
 			}else{
@@ -264,6 +265,7 @@ public class ReferralActivityService {
 				// 该分享ID 来源ID 匹配为正确
 				if(NumericUtils.isNotNull(shareRecord)){
 					beanVo.setExamVersion(shareRecord.getExamVersion());
+					beanVo.setLevel(shareRecord.getShareLevel());
 					beanVo.setPageContent(this.getExamContent(beanVo.getExamVersion()));
 					return beanVo;
 				}
