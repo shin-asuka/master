@@ -106,14 +106,7 @@ public class SterlingApiController {
         return ApiResponseUtils.buildSuccessDataResp("success");
     }
 
-    @RequestMapping(value = "/api/background/sterling/callback",method = RequestMethod.POST)
-    public Object  callbackbeta(@RequestBody  SterlingCallBack callBack,HttpServletRequest request){
-        logger.warn(JacksonUtils.toJSONString(callBack));
-        if(null != callBack){
-            sterlingService.updateBackgroundScreening(callBack.getPayload());
-        }
-        return ApiResponseUtils.buildSuccessDataResp("success");
-    }
+
 
 
     @RequestMapping(value = "/background/sterling/repairDateScreening",method = RequestMethod.GET)
@@ -127,37 +120,6 @@ public class SterlingApiController {
         }
 
         return ApiResponseUtils.buildSuccessDataResp("success");
-    }
-
-
-
-
-//----------下面是测试的
-    @Deprecated
-    @RequestMapping("/background/sterling/repairDateScreeing")
-    public Object repairDataCandidate(Long backgroundSterlingId){
-        ScreeningOutputDto screeningOutputDto = sterlingService.repairDateScreening(backgroundSterlingId);
-        return ApiResponseUtils.buildSuccessDataResp(screeningOutputDto);
-    }
-
-
-
-    @RequestMapping("/background/sterling/testJob")
-    public Object testJob(){
-        StopWatch stopWatch = new StopWatch();
-        stopWatch.start();
-        logger.info("开始检查教师背景调查中补全候选人信息=======================================");
-        List<Long> teacherIds = Lists.newArrayList();
-        teacherIds.add(3822133l);
-        //backgroundScreeningDao.findTeacherIdBycandidateIdNone();
-        if(CollectionUtils.isNotEmpty(teacherIds)){
-            for(Long teacherId : teacherIds){
-                sterlingService.repairDataCandidate(teacherId);
-            }
-        }
-        stopWatch.stop();
-        logger.info(String.format("结束检查教师背景调查中补全候选人信息=======================================用时%s ms",stopWatch.getTime()));
-        return ApiResponseUtils.buildSuccessDataResp("succese");
     }
 
 
