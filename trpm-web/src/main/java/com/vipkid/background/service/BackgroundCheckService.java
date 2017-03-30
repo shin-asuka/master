@@ -172,7 +172,7 @@ public class BackgroundCheckService {
             checkInfo.setDriverLicenseType(license.getDriverLicenseType());
             checkInfo.setDriverLicenseAgency(license.getDriverLicenseIssuingAgency());
             if(StringUtils.isNotBlank(license.getSocialNo())){
-                String socialNo = license.getSocialNo().substring(0,2) + "******";
+                String socialNo =  "******" + license.getSocialNo().substring(license.getSocialNo().length()-3, license.getSocialNo().length());
                 checkInfo.setSocialSecurityNumber(socialNo);
             }
         }
