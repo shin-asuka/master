@@ -321,7 +321,7 @@ public interface ApplicationConstant {
 	public static final class INCENTIVE {
 		public final static Date INCENTIVE_APRIL_01 = DateUtils.parseDate("2017-04-01 00:00:00");
 		public final static Date INCENTIVE_APRIL_10 = DateUtils.parseDate("2017-04-10 00:00:00");
-		public final static Date INCENTIVE_APRIL_23 = DateUtils.parseDate("2017-04-23 00:00:00");
+		public final static Date INCENTIVE_APRIL_24 = DateUtils.parseDate("2017-04-24 00:00:00");
 		public final static Date INCENTIVE_APRIL_17 = DateUtils.parseDate("2017-04-17 00:00:00");
 		public final static Date INCENTIVE_APRIL_30 = DateUtils.parseDate("2017-04-30 23:59:00");
 	}
