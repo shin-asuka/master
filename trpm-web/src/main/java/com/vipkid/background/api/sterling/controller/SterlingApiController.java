@@ -70,6 +70,7 @@ public class SterlingApiController {
     public Object createScreening(Long teacherId,String documentUrl){
 
         ScreeningOutputDto screeningOutputDto = sterlingService.createScreening(teacherId,documentUrl);
+
         if(StringUtils.isNotBlank(screeningOutputDto.getErrorMessage())){
             logger.warn("teacherId:{},documentUrl:{},return:{}",teacherId,documentUrl,JacksonUtils.toJSONString(screeningOutputDto));
             return ApiResponseUtils.buildErrorResp(screeningOutputDto.getErrorCode(),screeningOutputDto.getErrorMessage());

@@ -298,6 +298,10 @@ public class SterlingService {
         }
 
 
+        if(StringUtils.isNotBlank(backgroundScreening.getScreeningId())){
+            //😀 如果这个用户创建过Screening ，哪么就不去调用接口了，直接返回，因为调用接口一次就要花💰
+            return new ScreeningOutputDto(backgroundScreening.getId());
+        }
         ScreeningInputDto screeningInputDto = new ScreeningInputDto();
         screeningInputDto.setPackageId(PropertyConfigurer.stringValue("background.sterling.pakcageId"));
         screeningInputDto.setCandidateId(backgroundScreening.getCandidateId());
