@@ -626,6 +626,7 @@ public class TeacherService {
 	/**
 	 * 老师激励活动初始化数据
 	 */
+	@Slave
 	public void incentivesAllTeacherInit() {
 		Map<String, Object> paramMap = Maps.newHashMap();
 		List<String> teacherIds = teacherDao.findRegularIdNoLike(paramMap);
