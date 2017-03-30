@@ -476,8 +476,8 @@ public class OnlineClassDao extends MapperDaoTemplate<OnlineClass> {
 
 	public Integer countOnlineClassesByStartTimeAndEndTime(Date from, Date to, Long teacherId) {
 		Map<String, Object> paramsMap = new HashMap<>();
-		paramsMap.put("from", from.getTime());
-		paramsMap.put("to", to.getTime() - ONE_SECOND);
+		paramsMap.put("from", new Timestamp(from.getTime()));
+		paramsMap.put("to", new Timestamp(to.getTime() - ONE_SECOND));
 		paramsMap.put("teacherId", teacherId);
 		return selectCount("countOnlineClassesByStartTimeAndEndTime", paramsMap);
 	}
