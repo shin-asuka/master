@@ -4,6 +4,7 @@ import com.vipkid.rest.utils.BuryPointUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -12,6 +13,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/h5/burypoint")
 public class BuryPointH5Controller {
+
+    @RequestMapping(value = "shareParentFeedback", method = RequestMethod.GET)
     public static Boolean shareParentFeedBack(Integer teacherId,Long onlineClassId,Long feedbackId){
         BuryPointUtils.shareParentFeedBack(teacherId,onlineClassId,feedbackId,"H5");
         return true;
