@@ -647,7 +647,7 @@ public class TeacherService {
 	private Map<String, Object> assembleParam(Map<String, Object> paramMap ){
 		paramMap.put("status", "FINISHED");
 		paramMap.put("start", "2017-03-01");
-		paramMap.put("end", "2017-03-28");
+		paramMap.put("end", "2017-03-29");
 		List<String> finishTypes = Lists.newArrayList();
 		finishTypes.add(ApplicationConstant.FinishType.AS_SCHEDULED);
 		finishTypes.add(ApplicationConstant.FinishType.STUDENT_NO_SHOW);
