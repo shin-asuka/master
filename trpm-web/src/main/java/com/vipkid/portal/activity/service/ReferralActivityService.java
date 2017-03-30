@@ -262,7 +262,7 @@ public class ReferralActivityService {
 			}else{
 				ShareRecord shareRecord = this.shareRecordDao.getById(bean.getShareRecordId());
 				// 该分享ID 来源ID 匹配为正确
-				if(NumericUtils.isNotNull(shareRecord) && shareRecord.getLinkSourceId() == bean.getLinkSourceId()){
+				if(NumericUtils.isNotNull(shareRecord)){
 					beanVo.setExamVersion(shareRecord.getExamVersion());
 					beanVo.setPageContent(this.getExamContent(beanVo.getExamVersion()));
 					return beanVo;
