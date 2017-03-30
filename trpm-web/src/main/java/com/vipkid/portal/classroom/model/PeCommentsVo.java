@@ -10,9 +10,9 @@ import com.vipkid.rest.validation.annotation.NotNull;
 @NotNull
 public class PeCommentsVo {
 
-	private Integer id;
+	private Long id;
 	
-	private Integer onlineClassId;
+	private Long onlineClassId;
 	
 	private Integer delayDays;
 	
@@ -89,11 +89,11 @@ public class PeCommentsVo {
 	
 	private String submitType;
 
-	public Integer getId() {
+	public Long getId() {
 		return id;
 	}
 
-	public Integer getOnlineClassId() {
+	public Long getOnlineClassId() {
 		return onlineClassId;
 	}
 
@@ -209,11 +209,11 @@ public class PeCommentsVo {
 		return result;
 	}
 
-	public void setId(Integer id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 
-	public void setOnlineClassId(Integer onlineClassId) {
+	public void setOnlineClassId(Long onlineClassId) {
 		this.onlineClassId = onlineClassId;
 	}
 
