@@ -76,7 +76,7 @@ public class SterlingApiController {
         }
         Map<String,Object> result= Maps.newHashMap();
         result.put("bgSterlingScreeningId",screeningOutputDto.getId());
-        return ApiResponseUtils.buildSuccessDataResp("success");
+        return ApiResponseUtils.buildSuccessDataResp(result);
     }
 
 
@@ -90,7 +90,7 @@ public class SterlingApiController {
         }
         Map<String,Object> result= Maps.newHashMap();
         result.put("teacherId",adverseOutputDto.getId());
-        return ApiResponseUtils.buildSuccessDataResp("success");
+        return ApiResponseUtils.buildSuccessDataResp(result);
     }
 
 
