@@ -2,13 +2,12 @@
 package com.vipkid.rest.exception;
 
 /**
+ * Service层公用的Exception, 从由Spring管理事务的函数中抛出时会触发事务回滚.
  * 
- * @author zouqinghua
- * @date 2016年10月20日  下午9:42:49
- *
  */
 public class ServiceException extends RuntimeException {
 
+    private String errCode;
     private static final long serialVersionUID = 1L;
 
     public ServiceException() {
@@ -19,11 +18,30 @@ public class ServiceException extends RuntimeException {
         super(message);
     }
 
+    public ServiceException(String errCode, String message) {
+        this(errCode, message, null);
+    }
+
     public ServiceException(Throwable cause) {
         super(cause);
     }
 
-    public ServiceException(String message, Throwable cause) {
+    public ServiceException(String errCode, String message, Throwable cause) {
         super(message, cause);
+        this.errCode = errCode;
     }
+
+    public String getErrCode() {
+        return errCode;
+    }
+
+    public void setErrCode(String errCode) {
+        this.errCode = errCode;
+    }
+
+    @Override
+    public String getMessage() {
+        return super.getMessage();
+    }
+
 }

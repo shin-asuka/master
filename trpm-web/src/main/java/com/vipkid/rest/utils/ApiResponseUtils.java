@@ -49,6 +49,18 @@ public class ApiResponseUtils {
     }
 
     /**
+     * 错误返回, 只有错误码和错误消息
+     *
+     * @param errCode
+     * @param errMsg
+     * @return
+     */
+    public static Map<String, Object> buildErrorResp(String errCode, String errMsg) {
+        Map<String, Object> retMap = buildErrorResp(errCode, errMsg, null);
+        return retMap;
+    }
+
+    /**
      * 错误返回, 带有 data 信息
      *
      * @param data
@@ -60,12 +72,39 @@ public class ApiResponseUtils {
     }
 
     /**
+     * 错误返回, 带有 data 信息
+     *
+     * @param data
+     * @return
+     */
+    public static Map<String, Object> buildErrorResp(String errCode, String errMsg, Object data) {
+        Map<String, Object> retMap = buildResponse(false, errCode, errMsg, data);
+        return retMap;
+    }
+
+
+    /**
      * 返回消息体
      *
      * @param data
      * @return
      */
     public static Map<String, Object> buildResponse(boolean ret, int errorCode, String errMsg, Object data) {
+        Map<String, Object> retMap = new HashMap<String, Object>();
+        retMap.put("ret", ret);
+        retMap.put("errCode", errorCode);
+        retMap.put("errMsg", errMsg);
+        retMap.put("data", data);
+        return retMap;
+    }
+
+    /**
+     * 返回消息体
+     *
+     * @param data
+     * @return
+     */
+    public static Map<String, Object> buildResponse(boolean ret, String errorCode, String errMsg, Object data) {
         Map<String, Object> retMap = new HashMap<String, Object>();
         retMap.put("ret", ret);
         retMap.put("errCode", errorCode);

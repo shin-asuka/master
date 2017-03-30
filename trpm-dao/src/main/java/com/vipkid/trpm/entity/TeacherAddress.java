@@ -26,6 +26,8 @@ public class TeacherAddress extends Entity implements Serializable {
 	/*  */
 	private java.sql.Timestamp updateTime;
 
+	private Integer type;
+
 	public Integer getId() {
 		return this.id;
 	}
@@ -104,5 +106,13 @@ public class TeacherAddress extends Entity implements Serializable {
 	public TeacherAddress setUpdateTime(java.sql.Timestamp updateTime) {
 		this.updateTime = updateTime;
 		return this;
+	}
+
+	public Integer getType() {
+		return type;
+	}
+
+	public void setType(Integer type) {
+		this.type = type;
 	}
 }

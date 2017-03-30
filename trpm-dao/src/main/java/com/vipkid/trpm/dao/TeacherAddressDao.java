@@ -1,7 +1,10 @@
 package com.vipkid.trpm.dao;
 
 import java.sql.Timestamp;
+import java.util.Date;
+import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.community.dao.support.MapperDaoTemplate;
 import org.mybatis.spring.SqlSessionTemplate;
@@ -61,4 +64,26 @@ public class TeacherAddressDao extends MapperDaoTemplate<TeacherAddress> {
         return super.update(teacherAddress);
     }
 
+    public int updateByTeacherIdAndType(TeacherAddress updateAddress){
+        updateAddress.setUpdateTime(new Timestamp(new Date().getTime()));
+        return super.update(updateAddress, "updateByTeacherIdAndType");
+    }
+
+    public TeacherAddress getByTeacherIdAndType(Long teacherId, Integer type){
+        TeacherAddress address = new TeacherAddress();
+        address.setTeacherId(teacherId);
+        address.setType(type);
+        List<TeacherAddress> list =  super.selectList(address, "findByTeacherIdAndType");
+        if(CollectionUtils.isEmpty(list)){
+            return null;
+        }
+        return list.get(0);
+    }
+
+    public List<TeacherAddress> findListByTeacherId(Long teacherId){
+        TeacherAddress address = new TeacherAddress();
+        address.setTeacherId(teacherId);
+        List<TeacherAddress> list =  super.selectList(address, "findListByTeacherId");
+        return list;
+    }
 }

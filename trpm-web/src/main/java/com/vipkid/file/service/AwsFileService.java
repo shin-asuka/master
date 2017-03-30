@@ -3,6 +3,7 @@ package com.vipkid.file.service;
 import java.io.IOException;
 import java.io.InputStream;
 
+import com.vipkid.file.utils.StringUtils;
 import org.community.config.PropertyConfigurer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,6 +24,7 @@ import com.vipkid.file.model.FileVo;
 import com.vipkid.file.utils.FileUtils;
 import com.vipkid.http.utils.JsonUtils;
 import com.vipkid.trpm.util.AwsFileUtils;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * @author zouqinghua
@@ -117,7 +119,29 @@ public Logger logger = LoggerFactory.getLogger(AwsFileService.class);
         }
 		return fileVo;
 	}
-	
+
+	/**
+	 * 文件上传功能
+	 */
+	public FileVo awsUpload(MultipartFile file, Long teacherId, String fileName, String key) {
+		logger.info("teacher id = {} ", teacherId);
+		FileVo fileVo = null;
+		if (file != null) {
+			String bucketName = PropertyConfigurer.stringValue("aws.bucketName");
+
+			try {
+				logger.info("文件:{}上传", fileName);
+				fileVo = upload(bucketName, key, file.getInputStream(), file.getSize());
+			} catch (IOException e) {
+				logger.error("awsUpload exception", e);
+			}
+			if (fileVo != null) {
+				String url = "https://" + bucketName + "/" + key;
+				fileVo.setUrl(url);
+			}
+		}
+		return fileVo;
+	}
 	
 	
 }

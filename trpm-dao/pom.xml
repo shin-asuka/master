@@ -151,6 +151,7 @@
 			<groupId>org.community</groupId>
 			<artifactId>thor-dao</artifactId>
 		</dependency>
+
 	</dependencies>
 
 	<build>

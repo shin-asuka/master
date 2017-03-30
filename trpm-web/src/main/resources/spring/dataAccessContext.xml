@@ -15,21 +15,32 @@
         <beans:property name="configLocation" value="classpath:spring/mybatis-config.xml" />
         <beans:property name="mapperLocations">
         	<beans:array>
-        		<beans:value>classpath*:mapper/portal/*.xml</beans:value>
-        		<beans:value>classpath*:mapper/recruitment/*.xml</beans:value>
+        		<beans:value>classpath*:mapper/*/*.xml</beans:value>
         	</beans:array>
         </beans:property>
-    </beans:bean>
+
+
+	</beans:bean>
 
     <beans:bean id="sqlSessionTemplate" class="org.mybatis.spring.SqlSessionTemplate">
         <beans:constructor-arg index="0" ref="sqlSessionFactory" />
         <beans:constructor-arg index="1" value="REUSE" />
     </beans:bean>
 
+
+	<tx:annotation-driven transaction-manager="transactionManager" />
+
+
 	<beans:bean id="transactionManager"
 		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
 		<beans:property name="dataSource" ref="dataSource" />
 	</beans:bean>
+
+	<!-- 扫描basePackage下所有以Dao的接口 -->
+	<bean id="mapperScannerConfigurer" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory" />
+		<property name="basePackage" value="com.vipkid.trpm.dao,com.vipkid.background"/>
+	</bean>
 
 	<tx:advice id="txAdvice" transaction-manager="transactionManager">
 		<tx:attributes>
@@ -49,6 +60,7 @@
 		<aop:advisor advice-ref="txAdvice" pointcut="execution(* com.vipkid.payroll.service.*Service.*(..))"/>
 		<aop:advisor advice-ref="rwDataSourceInterceptor" pointcut="execution(* com.vipkid.rest.portal.controller.*Controller.*(..))" order="1" />
 		<aop:advisor advice-ref="rwDataSourceInterceptor" pointcut="execution(* com.vipkid.portal.personal.controller.*Controller.*(..))" order="1" />
+		<aop:advisor advice-ref="rwDataSourceInterceptor" pointcut="execution(* com.vipkid.background.service.*Service.*(..))"/>
 	</aop:config>
 
 	<bean id="rwDataSourceInterceptor" class="com.vipkid.dataSource.TypedReadWriteDataSourceInterceptor"></bean>

@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.vipkid.background.BackgroundReportDao">
+    <resultMap id="BaseResultMap" type="com.vipkid.trpm.entity.BackgroundReport">
+        <id column="id" jdbcType="BIGINT" property="id" />
+        <result column="report_id" jdbcType="VARCHAR" property="reportId" />
+        <result column="screening_id" jdbcType="VARCHAR" property="screeningId" />
+        <result column="bg_sterling_screening_id" jdbcType="INTEGER" property="bgSterlingScreeningId" />
+        <result column="status" jdbcType="VARCHAR" property="status" />
+        <result column="result" jdbcType="VARCHAR" property="result" />
+        <result column="updated_at" jdbcType="TIMESTAMP" property="updatedAt" />
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+        <result column="type" jdbcType="LONGVARCHAR" property="type" />
+    </resultMap>
+
+    <sql id="bgReportAllcolumn">
+        id,
+        report_id,
+        screening_id,
+        bg_sterling_screening_id,
+        STATUS,
+        result,
+        updated_at,
+        create_time,
+        update_time,
+        type
+
+    </sql>
+
+    <insert id="batchInsert" parameterType="java.util.List" useGeneratedKeys="true">
+        INSERT INTO bg_sterling_report (
+        id,
+        report_id,
+        screening_id,
+        bg_sterling_screening_id,
+        STATUS,
+        result,
+        updated_at,
+        create_time,
+        update_time,
+        type
+        )
+        VALUES
+        <foreach collection="list" item="report" index="index" separator=",">
+            (
+            #{report.id,jdbcType=BIGINT},
+            #{report.reportId,jdbcType=VARCHAR},
+            #{report.screeningId,jdbcType=VARCHAR},
+            #{report.bgSterlingScreeningId,jdbcType=INTEGER},
+            #{report.status,jdbcType=VARCHAR},
+            #{report.result,jdbcType=VARCHAR},
+            #{report.updatedAt,jdbcType=TIMESTAMP},
+            #{report.createTime,jdbcType=TIMESTAMP},
+            #{report.updateTime,jdbcType=TIMESTAMP},
+            #{report.type,jdbcType=LONGVARCHAR}
+            )
+
+        </foreach>
+
+
+    </insert>
+    <update id="update">
+        UPDATE bg_sterling_report
+          <set>
+            <if test="id != null">
+                id = #{id,jdbcType=BIGINT},
+            </if>
+            <if test="reportId != null">
+                report_id = #{reportId,jdbcType=VARCHAR},
+            </if>
+            <if test="screeningId != null">
+                screening_id = #{screeningId,jdbcType=VARCHAR},
+            </if>
+            <if test="bgSterlingScreeningId != null">
+                bg_sterling_screening_id = #{bgSterlingScreeningId,jdbcType=INTEGER},
+            </if>
+            <if test="status != null">
+                status = #{status,jdbcType=VARCHAR},
+            </if>
+            <if test="result != null">
+                result = #{result,jdbcType=VARCHAR},
+            </if>
+            <if test="updatedAt != null">
+                updated_at = #{updatedAt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="type != null">
+                type = #{type,jdbcType=LONGVARCHAR},
+            </if>
+          </set>
+        WHERE  id = #{id,jdbcType=BIGINT}
+    </update>
+
+
+    <select id="findByBgSterlingScreeningId" parameterType="Long" resultMap="BaseResultMap">
+        SELECT
+        <include refid="bgReportAllcolumn" />
+        FROM
+        bg_sterling_report r
+        WHERE
+        r.bg_sterling_screening_id = #{id}
+    </select>
+</mapper>
