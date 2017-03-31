@@ -8,7 +8,6 @@ import com.vipkid.email.EmailUtils;
 import com.vipkid.enums.TeacherApplicationEnum;
 import com.vipkid.http.utils.JsonUtils;
 import com.vipkid.recruitment.dao.TeacherApplicationDao;
-import com.vipkid.recruitment.dao.TeacherApplicationLogDao;
 import com.vipkid.recruitment.entity.TeacherApplication;
 import com.vipkid.task.utils.UADateUtils;
 import com.vipkid.trpm.dao.TeacherDao;
@@ -39,8 +38,6 @@ public class PracticumCancel24HoursNoBookJob {
     private TeacherApplicationDao teacherApplicationDao;
     @Autowired
     private TeacherDao teacherDao;
-    @Autowired
-    private TeacherApplicationLogDao teacherApplicationLogDao;
 
 
     @Vschedule
