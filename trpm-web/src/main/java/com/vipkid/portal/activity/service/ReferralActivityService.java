@@ -95,9 +95,12 @@ public class ReferralActivityService {
 	 * 通过key 获取考试记录，得到上层分享ID，上层分享信息。通过上层分享信息插入本层分享信息
 	 * 插入考试记录
 	 * @param candidateKey
+	 * @param candidateIp
+	 * @param linkSourceId
+	 * @param activityExamId
 	 * @return
 	 */
-	public Map<String,Object> updateCandidateShare(String candidateKey,String candidateIp,Long activityExamId){
+	public Map<String,Object> updateCandidateShare(String candidateKey,String candidateIp,Long linkSourceId, Long activityExamId){
 		ShareActivityExam activityExam = this.shareActivityExamDao.getById(activityExamId);
 		if(NumericUtils.isNull(activityExam)){
 			return ReturnMapUtils.returnFail(-2, "没有找到考试记录,非法的分享");
@@ -117,7 +120,7 @@ public class ReferralActivityService {
 		newRecord.setCandidateIp(candidateIp);
 		newRecord.setCountClick(0L);
 		newRecord.setExamVersion(preRecord.getExamVersion());
-		newRecord.setLinkSourceId(preRecord.getLinkSourceId());
+		newRecord.setLinkSourceId(linkSourceId);
 		newRecord.setTeacherId(preRecord.getTeacherId());
 		newRecord.setShareLevel(preRecord.getShareLevel()+1);
 		newRecord.setShareTime(new Date());
@@ -133,6 +136,8 @@ public class ReferralActivityService {
 	 * 老师的分享
 	 * @param candidateKey
 	 * @param candidateIp
+	 * @param linkSourceId
+	 * @param activityExamId
 	 * @return
 	 */
 	public Map<String,Object> updateTeacherShare(String candidateKey,String candidateIp,Long linkSourceId ,Long activityExamId){

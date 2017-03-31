@@ -82,7 +82,7 @@ public class ReferralActivityController extends RestfulController{
 			}else{
 				//candidate 分享
 				logger.info("识别为非Teacher分享");
-				resultMap = this.referralActivityService.updateCandidateShare(bean.getCandidateKey(), IpUtils.getIpAddress(request),bean.getActivityExamId());
+				resultMap = this.referralActivityService.updateCandidateShare(bean.getCandidateKey(), IpUtils.getIpAddress(request), bean.getLinkSourceId(),bean.getActivityExamId());
 			}
 			if(ReturnMapUtils.isSuccess(resultMap)){
 				return ApiResponseUtils.buildSuccessDataResp(resultMap.get("data"));
@@ -127,6 +127,7 @@ public class ReferralActivityController extends RestfulController{
 					response.setStatus(HttpStatus.FORBIDDEN.value());
 					return ApiResponseUtils.buildErrorResp(-3, "未登陆不能访问该链接");
 				}
+				// 老师点击次数
 				resultMap = this.referralActivityService.updateLinkSourceClick(bean.getLinkSourceId());
 			}else{
 				//分享后link被单击次数的更新
