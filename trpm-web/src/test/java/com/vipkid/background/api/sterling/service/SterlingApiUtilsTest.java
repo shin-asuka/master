@@ -268,6 +268,9 @@ public class SterlingApiUtilsTest {
         SimpleDateFormat sdf = new SimpleDateFormat(" MMMM dd yyyy",
                 Locale.ENGLISH);
         System.out.println(sdf.format(DateUtils.parseDate("1991-08-27",DateUtils.YYYY_MM_DD)));
+
+
+        System.out.println(StringUtils.substring("001000062954812",0,3));
     }
 }
 

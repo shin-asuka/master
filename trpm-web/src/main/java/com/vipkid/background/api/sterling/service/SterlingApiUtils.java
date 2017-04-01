@@ -253,6 +253,13 @@ public class SterlingApiUtils {
         if(null == screeningInputDto){
             return null;
         }
+
+
+        if(retryTimes == 0){
+            logger.info("retry == 0  params:{}",JacksonUtils.toJSONString(screeningInputDto));
+            return null;
+        }
+
         String postUrl = sterlingHost + "/v1/screenings" ;
         Map<String,String> headers = Maps.newHashMap();
         headers.put("Authorization",String.format(BEARER_FORMATE,getAccessToken()));

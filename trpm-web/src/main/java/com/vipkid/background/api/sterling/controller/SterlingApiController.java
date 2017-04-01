@@ -101,6 +101,16 @@ public class SterlingApiController {
     public Object  callback(@RequestBody  SterlingCallBack callBack,HttpServletRequest request){
         logger.warn(JacksonUtils.toJSONString(callBack));
         if(null != callBack){
+            String screeningId = callBack.getPayload().getId();
+            String screeningFlag = StringUtils.substring(screeningId,0,3);
+            if(StringUtils.isBlank(screeningFlag)){
+                logger.warn("错误数据，丢弃");
+                ApiResponseUtils.buildSuccessDataResp("success");
+            }
+            if(!StringUtils.equals(screeningFlag,"001")){
+                logger.warn("错误数据，丢弃");
+                ApiResponseUtils.buildSuccessDataResp("success");
+            }
             sterlingService.updateBackgroundScreening(callBack.getPayload());
         }
         return ApiResponseUtils.buildSuccessDataResp("success");
