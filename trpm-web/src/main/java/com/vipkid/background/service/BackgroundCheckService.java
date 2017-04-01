@@ -221,6 +221,7 @@ public class BackgroundCheckService {
         TeacherLicense license = licenseDao.findByTeacherId(teacher.getId());
         if(license != null){
             candidateInputDto.setSsn(license.getSocialNo());
+            /*
             if(StringUtils.isNotBlank(license.getDriverLicense())){
                 CandidateInputDto.DriversLicense candidateLicense = new CandidateInputDto.DriversLicense();
                 candidateLicense.setIssuingAgency(license.getDriverLicenseIssuingAgency());
@@ -228,6 +229,7 @@ public class BackgroundCheckService {
                 candidateLicense.setType(license.getDriverLicenseType());
                 candidateInputDto.setDriversLicense(candidateLicense);
             }
+            */
         }
         logger.info("submit background check information, begin invoke sterlingService.saveCandidate, teacherId="+teacher.getId());
         output = sterlingService.saveCandidate(candidateInputDto);
