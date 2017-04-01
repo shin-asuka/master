@@ -10,6 +10,7 @@ import com.vipkid.file.model.FileUploadStatus;
 import com.vipkid.file.model.FileVo;
 import com.vipkid.file.service.AwsFileService;
 import com.vipkid.http.service.FileHttpService;
+import com.vipkid.http.utils.JacksonUtils;
 import com.vipkid.http.utils.JsonUtils;
 import com.vipkid.http.vo.TeacherFile;
 import com.vipkid.recruitment.common.service.RecruitmentService;
@@ -412,14 +413,14 @@ public class ContractInfoController extends RestfulController {
 
                 if (fileVo != null) {
                     FileUploadStatus fileUploadStatus = fileHttpService.uploadLifePicture(teacherId, key);
-                    result.put("id", fileUploadStatus.getId());
-                    result.put("url", fileUploadStatus.getUrl());
-                    logger.info("Successful to upload uploadLifePic: {} for {}.", JsonUtils.toJSONString(result), teacherId);
-                    return ReturnMapUtils.returnSuccess(result);
-                } else {
-                    response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-                    return ReturnMapUtils.returnFail("Upload failed!  Please try again.");
+                    if(fileUploadStatus!=null){
+                        result.put("id", fileUploadStatus.getId());
+                        result.put("url", fileUploadStatus.getUrl());
+                        logger.info("Successful to upload uploadLifePic: {} for {}.", JacksonUtils.toJSONString(result), teacherId);
+                        return ReturnMapUtils.returnSuccess(result);
+                    }
                 }
+
             } catch (IllegalArgumentException e) {
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
                 return ReturnMapUtils.returnFail(e.getMessage(), e);

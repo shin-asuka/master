@@ -771,6 +771,7 @@
         AND online_class.status = 'FINISHED'
         AND online_class.finish_type in('STUDENT_NO_SHOW','AS_SCHEDULED','STUDENT_IT_PROBLEM','SYSTEM_PROBLEM')
         AND online_class.scheduled_date_time BETWEEN #{from} AND #{to}
+        AND DATE_FORMAT(online_class.scheduled_date_time,'%T') in('19:00:00','19:30:00','20:00:00','20:30:00')
         GROUP BY online_class.scheduled_date_time
         ORDER BY online_class.scheduled_date_time ASC
     </select>
@@ -783,6 +784,7 @@
         AND online_class.status = 'FINISHED'
         AND online_class.finish_type in('STUDENT_NO_SHOW','AS_SCHEDULED','STUDENT_IT_PROBLEM','SYSTEM_PROBLEM')
         AND online_class.scheduled_date_time BETWEEN #{from} AND #{to}
+		AND DATE_FORMAT(online_class.scheduled_date_time,'%T') in('19:00:00','19:30:00','20:00:00','20:30:00')
     </select>
 
 	<select id="countClassNumByTeacherId" resultType="int">
@@ -813,6 +815,7 @@
 				AND o.teacher_id = #{teacherId}
 				AND o.scheduled_date_time  BETWEEN #{start}
 				AND #{end}
+		        AND DATE_FORMAT(o.scheduled_date_time,'%T') in('19:00:00','19:30:00','20:00:00','20:30:00')
 				GROUP BY
 					o.scheduled_date_time
 			) a
