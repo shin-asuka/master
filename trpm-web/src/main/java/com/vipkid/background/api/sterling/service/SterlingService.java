@@ -37,6 +37,8 @@ import javax.annotation.Resource;
 
 import java.util.*;
 
+import static com.vipkid.common.utils.KeyGenerator.CREATE_CANDIDATE_LOCK;
+import static com.vipkid.common.utils.KeyGenerator.CREATE_PREADVERSE_LOCK;
 import static com.vipkid.common.utils.KeyGenerator.CREATE_SCREENING_LOCK;
 
 
@@ -166,7 +168,7 @@ public class SterlingService {
      */
     public CandidateOutputDto saveCandidate(CandidateInputDto candidateInputDto) {
 
-        if(!RedisCacheUtils.lock(KeyGenerator.generateKey(CREATE_SCREENING_LOCK,candidateInputDto.getTeacherId()),String.valueOf(candidateInputDto.getTeacherId()),RedisCacheUtils.FIVE_MINUTES)){
+        if(!RedisCacheUtils.lock(KeyGenerator.generateKey(CREATE_CANDIDATE_LOCK,candidateInputDto.getTeacherId()),String.valueOf(candidateInputDto.getTeacherId()),RedisCacheUtils.FIVE_MINUTES)){
             return new CandidateOutputDto(10000,"已经存在一次请求还没有结束");
         }
         try{
@@ -202,7 +204,7 @@ public class SterlingService {
             //修改信息
             return updateCandidate(candidateInputDto);
         }finally {
-            RedisCacheUtils.unlock(KeyGenerator.generateKey(CREATE_SCREENING_LOCK,candidateInputDto.getTeacherId()));
+            RedisCacheUtils.unlock(KeyGenerator.generateKey(CREATE_CANDIDATE_LOCK,candidateInputDto.getTeacherId()));
         }
 
     }
@@ -374,7 +376,7 @@ public class SterlingService {
 
     @Transactional(readOnly = false)
     public AdverseOutputDto createPreAdverse(Long teacherId) {
-        if(!RedisCacheUtils.lock(KeyGenerator.generateKey(CREATE_SCREENING_LOCK,teacherId),String.valueOf(teacherId),RedisCacheUtils.FIVE_MINUTES)){
+        if(!RedisCacheUtils.lock(KeyGenerator.generateKey(CREATE_PREADVERSE_LOCK,teacherId),String.valueOf(teacherId),RedisCacheUtils.FIVE_MINUTES)){
             return new AdverseOutputDto(10000,"已经存在一次请求还没有结束");
         }
 
@@ -421,7 +423,7 @@ public class SterlingService {
            }
            return new AdverseOutputDto(teacherId);
        }finally {
-           RedisCacheUtils.unlock(KeyGenerator.generateKey(CREATE_SCREENING_LOCK,teacherId));
+           RedisCacheUtils.unlock(KeyGenerator.generateKey(CREATE_PREADVERSE_LOCK,teacherId));
        }
     }
 
