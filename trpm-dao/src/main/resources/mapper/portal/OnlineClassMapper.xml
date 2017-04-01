@@ -813,6 +813,7 @@
 				AND o.teacher_id = #{teacherId}
 				AND o.scheduled_date_time  BETWEEN #{start}
 				AND #{end}
+		        AND DATE_FORMAT(o.scheduled_date_time,'%T') in('19:00:00','19:30:00','20:00:00','20:30:00')
 				GROUP BY
 					o.scheduled_date_time
 			) a
