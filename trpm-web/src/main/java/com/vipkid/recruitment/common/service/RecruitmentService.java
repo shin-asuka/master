@@ -1,6 +1,7 @@
 package com.vipkid.recruitment.common.service;
 
 import com.google.api.client.util.Maps;
+import com.google.common.collect.Lists;
 import com.vipkid.enums.OnlineClassEnum;
 import com.vipkid.enums.TeacherApplicationEnum.AuditStatus;
 import com.vipkid.enums.TeacherApplicationEnum.Result;
@@ -17,15 +18,14 @@ import com.vipkid.recruitment.interview.InterviewConstant;
 import com.vipkid.recruitment.practicum.PracticumConstant;
 import com.vipkid.recruitment.utils.ReturnMapUtils;
 import com.vipkid.rest.dto.TimezoneDto;
+import com.vipkid.rest.utils.ApiResponseUtils;
 import com.vipkid.trpm.constant.ApplicationConstant.FinishType;
 import com.vipkid.trpm.dao.*;
-import com.vipkid.trpm.entity.OnlineClass;
-import com.vipkid.trpm.entity.Teacher;
-import com.vipkid.trpm.entity.TeacherAddress;
-import com.vipkid.trpm.entity.TeacherLocation;
+import com.vipkid.trpm.entity.*;
 import com.vipkid.trpm.util.DateUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.HttpStatus;
 import org.community.tools.JsonTools;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,6 +33,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -62,6 +63,9 @@ public class RecruitmentService {
 
     @Autowired
     private TeacherLockLogDao teacherLockLogDao;
+
+    @Autowired
+    private TeacherRecruitPeakTimeDao teacherRecruitPeakTimeDao;
 
     @Autowired
     private TeacherPeFeedbackDao teacherPeFeedbackDao;
@@ -526,5 +530,47 @@ public class RecruitmentService {
             }
         }
         return pramMap;
+    }
+
+    /**
+     * 保存老师约面试时间
+     * */
+    public Map<String,Object> saveTeacherRecruitPeak(Teacher teacher, String status, List<Long> scheduledDateTimeList) {
+        List<TeacherRecruitPeakTime> teacherRecruitPeakTimeList = Lists.newArrayList();
+
+        for (Long scheduledDateTime : scheduledDateTimeList) {
+
+            if (null == scheduledDateTime){
+                continue;
+            }
+
+            Date date = new Date(scheduledDateTime);
+            TeacherRecruitPeakTime teacherRecruitPeakTime = new TeacherRecruitPeakTime();
+            teacherRecruitPeakTime.setTeacherId(teacher.getId());
+            teacherRecruitPeakTime.setStatus(status);
+            teacherRecruitPeakTime.setScheduledDateTime(date);
+            teacherRecruitPeakTime.setCreateTime(new Date());
+
+            //判断此老师是否约过此时间段，如果已经约过，则不存
+            if (teacherRecruitPeakTimeDao.isExistRecruitPeakTime(teacherRecruitPeakTime)){
+                logger.info("此时间段老师已经约过",teacherRecruitPeakTime.toString());
+                continue;
+            }
+
+            teacherRecruitPeakTimeList.add(teacherRecruitPeakTime);
+        }
+
+        if (teacherRecruitPeakTimeList.size()<1) {
+            return ApiResponseUtils.buildErrorResp(org.apache.http.HttpStatus.SC_OK,"插入数据已经存在", teacherRecruitPeakTimeList.toString());
+        }
+
+        int countInsert = teacherRecruitPeakTimeDao.saveTeacherRecruitPeakTimeBatch(teacherRecruitPeakTimeList);
+        if (teacherRecruitPeakTimeList.size() != countInsert){
+            logger.error("batch insert teacher recruit peak time have problem ,countInsert{},teacherRecruitPeakTimeList", countInsert, teacherRecruitPeakTimeList.size());
+            return ApiResponseUtils.buildErrorResp(HttpStatus.SC_INTERNAL_SERVER_ERROR,"插入数据有问题", teacherRecruitPeakTimeList.toString());
+        }
+
+        logger.info("batch insert teacher recruit peak time success");
+        return ApiResponseUtils.buildResponse(true,HttpStatus.SC_OK,"成功","插入"+countInsert+"条数据成功:"+teacherRecruitPeakTimeList.toString());
     }
 }

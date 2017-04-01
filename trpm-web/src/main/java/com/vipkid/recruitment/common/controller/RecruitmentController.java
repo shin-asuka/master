@@ -1,11 +1,13 @@
 package com.vipkid.recruitment.common.controller;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.vipkid.http.utils.JacksonUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.google.api.client.util.Lists;
 import com.google.common.collect.Maps;
 import com.vipkid.recruitment.common.service.RecruitmentService;
 import com.vipkid.recruitment.utils.ReturnMapUtils;
@@ -23,12 +26,14 @@ import com.vipkid.rest.RestfulController;
 import com.vipkid.rest.config.RestfulConfig;
 import com.vipkid.rest.dto.TimezoneDto;
 import com.vipkid.rest.interceptor.annotation.RestInterface;
+import com.vipkid.rest.utils.ApiResponseUtils;
 import com.vipkid.rest.validation.ValidateUtils;
 import com.vipkid.rest.validation.tools.Result;
 import com.vipkid.rest.web.LoginController;
 import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.entity.TeacherAddress;
 import com.vipkid.trpm.entity.TeacherLocation;
+import com.vipkid.trpm.entity.TeacherRecruitPeakTime;
 
 /**
  * 该类,仅提供给招募端各个状态下需要调用的通用接口
@@ -123,5 +128,28 @@ public class RecruitmentController extends RestfulController{
             return ReturnMapUtils.returnFail(e.getMessage(),e);
         }
     }
-    
+
+
+    /**
+     * 保存老师约面试时间
+     * @param map 老师约面试时间和面试状态
+     * */
+    @RequestMapping(value = "/saveRecruitPeakTime",method = RequestMethod.POST)
+    public Map<String,Object> teacherRecruitPeakTime(HttpServletRequest request,@RequestBody Map<String,Object> map){
+        try {
+            if (map == null || map.get("status") == null || map.get("scheduledDateTime") == null){
+                logger.error("保存老师面试时间为空{}", JacksonUtils.toJSONString(map));
+                return ApiResponseUtils.buildErrorResp(org.apache.http.HttpStatus.SC_BAD_REQUEST, "请求参数有误");
+            }
+
+            Teacher teacher = getTeacher(request);
+            String status = String.valueOf(map.get("status"));
+            List<Long> scheduledDateTimeList = (List<Long>) map.get("scheduledDateTime");
+
+            return recruitmentService.saveTeacherRecruitPeak(teacher, status, scheduledDateTimeList);
+        }catch (Exception e){
+            logger.error("保存老师约面试时间异常{}",e);
+            return ApiResponseUtils.buildErrorResp(org.apache.http.HttpStatus.SC_INTERNAL_SERVER_ERROR,"保存老师约课面试信息异常", JacksonUtils.toJSONString(map));
+        }
+    }
 }

@@ -52,7 +52,7 @@ public class AuditEmailServiceTest {
 
     @Test
     public void testSendTBDResultToMonter() {
-        TeacherApplication teacherApplication = teacherApplicationDao.findApplictionById(1213790);
+        TeacherApplication teacherApplication = teacherApplicationDao.findApplicationById(1213790);
         OnlineClass onlineClass = onlineClassDao.findById(teacherApplication.getOnlineClassId());
 
         Teacher peTeacher = teacherDao.findById(onlineClass.getTeacherId());
