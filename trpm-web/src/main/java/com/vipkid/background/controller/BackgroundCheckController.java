@@ -82,6 +82,9 @@ public class BackgroundCheckController extends RestfulController {
         String street = checkInput.getLatestStreet();
         String zipCode = checkInput.getLatestZipCode();
 
+        String firstName = checkInput.getFirstName();
+        String lastName = checkInput.getLastName();
+
         String birthday = checkInput.getBirthDay();
         String socialSecurityNo = checkInput.getSocialSecurityNumber();
         String fileUrl = checkInput.getFileUrl();
@@ -91,6 +94,9 @@ public class BackgroundCheckController extends RestfulController {
             Preconditions.checkArgument(currentStateId != null, "currentStateId cannot be null");
             Preconditions.checkArgument(currentCityId != null, "currentCityId cannot be null");
             */
+            Preconditions.checkArgument(firstName != null, "firstName cannot be null");
+            Preconditions.checkArgument(lastName != null, "lastName cannot be null");
+
             Preconditions.checkArgument(countryId != null, "latestCountryId cannot be null");
             Preconditions.checkArgument(stateId != null, "latestStateId cannot be null");
             Preconditions.checkArgument(cityId != null, "latestCityId cannot be null");

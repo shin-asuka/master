@@ -294,11 +294,15 @@ public class BackgroundCheckService {
 
     private void updateTeacherBasicIno(Teacher teacher, BackgroundCheckInputDto input){
         teacher.setMaidenName(input.getMaidenName());
-        teacher.setMiddleName(input.getMiddleName());
+        if(StringUtils.isNotBlank(input.getMiddleName())){
+            teacher.setMiddleName(input.getMiddleName());
+        }
         if(StringUtils.isNotBlank(input.getBirthDay())){
             LocalDate localDate = LocalDate.parse(input.getBirthDay(), FMT_YMD);
             teacher.setBirthday(java.sql.Date.valueOf(localDate));
         }
+        teacher.setFirstName(input.getFirstName());
+        teacher.setLastName(input.getLastName());
         int row = teacherDao.update(teacher);
         if(row != 1){
             logger.error("save background check information, update table Teacher, return affected row is not one, teacherId="+input.getTeacherId());
