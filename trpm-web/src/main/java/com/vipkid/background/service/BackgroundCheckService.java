@@ -301,8 +301,12 @@ public class BackgroundCheckService {
             LocalDate localDate = LocalDate.parse(input.getBirthDay(), FMT_YMD);
             teacher.setBirthday(java.sql.Date.valueOf(localDate));
         }
-        teacher.setFirstName(input.getFirstName());
-        teacher.setLastName(input.getLastName());
+        if(StringUtils.isBlank(teacher.getFirstName())){
+            teacher.setFirstName(input.getFirstName());
+        }
+        if(StringUtils.isBlank(teacher.getLastName())){
+            teacher.setLastName(input.getLastName());
+        }
         int row = teacherDao.update(teacher);
         if(row != 1){
             logger.error("save background check information, update table Teacher, return affected row is not one, teacherId="+input.getTeacherId());
