@@ -157,7 +157,7 @@ public class BackgroundCheckController extends RestfulController {
             String fileName = file.getOriginalFilename();
 
             Preconditions.checkArgument(AwsFileUtils.checkContractFileType(fileName), "文件类型不正确，支持类型为" + AwsFileUtils.CONTRACT_FILE_TYPE);
-            Preconditions.checkArgument(AwsFileUtils.checkContractFileSize(size), "文件太大，maxSize = " + AwsFileUtils.CONTRACT_FILE_MAX_SIZE);
+            Preconditions.checkArgument(AwsFileUtils.checkContractFileSize(size), "文件太大，maxSize = " + AwsFileUtils.BACKGROUND_CHECK_FILE_MAX_SIZE);
 
             Teacher teacher = getTeacher(request);
             teacherId = teacher.getId();
