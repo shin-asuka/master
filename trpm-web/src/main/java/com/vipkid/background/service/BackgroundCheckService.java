@@ -44,7 +44,7 @@ import static com.vipkid.trpm.util.DateUtils.FMT_YMD;
 public class BackgroundCheckService {
     private static Logger logger = LoggerFactory.getLogger(BackgroundCheckService.class);
 
-    public static ExecutorService fixedThreadPool = Executors.newFixedThreadPool(5);
+    //public static ExecutorService fixedThreadPool = Executors.newFixedThreadPool(5);
 
     @Autowired
     private TeacherContractFileDao contractFileDao;
@@ -255,15 +255,6 @@ public class BackgroundCheckService {
     }
 
 
-    private void createCandidateAsync(BackgroundCheckInputDto checkInput, Teacher teacher){
-        Runnable thread = new Runnable() {
-            @Override
-            public void run() {
-                createCandidate(checkInput, teacher);
-            }
-        };
-        fixedThreadPool.submit(thread);
-    }
     private int updateUrlAndScreeningId(Long teacherId, Integer fileType, String url, String operateType){
         TeacherContractFile teacherContractFile = new TeacherContractFile();
         teacherContractFile.setTeacherId(teacherId);
