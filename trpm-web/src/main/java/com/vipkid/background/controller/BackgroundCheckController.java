@@ -94,8 +94,8 @@ public class BackgroundCheckController extends RestfulController {
             Preconditions.checkArgument(currentStateId != null, "currentStateId cannot be null");
             Preconditions.checkArgument(currentCityId != null, "currentCityId cannot be null");
             */
-            Preconditions.checkArgument(firstName != null, "firstName cannot be null");
-            Preconditions.checkArgument(lastName != null, "lastName cannot be null");
+            Preconditions.checkArgument(StringUtils.isNotBlank(firstName),"firstName cannot be null");
+            Preconditions.checkArgument(StringUtils.isNotBlank(lastName), "lastName cannot be null");
 
             Preconditions.checkArgument(countryId != null, "latestCountryId cannot be null");
             Preconditions.checkArgument(stateId != null, "latestStateId cannot be null");
