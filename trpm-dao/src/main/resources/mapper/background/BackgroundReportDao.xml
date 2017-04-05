@@ -14,18 +14,17 @@
         <result column="type" jdbcType="LONGVARCHAR" property="type" />
     </resultMap>
 
-    <sql id="bgReportAllcolumn">
+    <sql id="bgReportAllColumns">
         id,
         report_id,
         screening_id,
         bg_sterling_screening_id,
-        STATUS,
+        status,
         result,
         updated_at,
         create_time,
         update_time,
         type
-
     </sql>
 
     <insert id="batchInsert" parameterType="java.util.List" useGeneratedKeys="true">
@@ -34,7 +33,7 @@
         report_id,
         screening_id,
         bg_sterling_screening_id,
-        STATUS,
+        status,
         result,
         updated_at,
         create_time,
@@ -63,9 +62,6 @@
     <update id="update">
         UPDATE bg_sterling_report
           <set>
-            <if test="id != null">
-                id = #{id,jdbcType=BIGINT},
-            </if>
             <if test="reportId != null">
                 report_id = #{reportId,jdbcType=VARCHAR},
             </if>
@@ -100,10 +96,21 @@
 
     <select id="findByBgSterlingScreeningId" parameterType="Long" resultMap="BaseResultMap">
         SELECT
-        <include refid="bgReportAllcolumn" />
+        <include refid="bgReportAllColumns" />
         FROM
         bg_sterling_report r
         WHERE
         r.bg_sterling_screening_id = #{id}
+    </select>
+
+    <select id="getByReportIdBgSterlingScreeningId" resultMap="BaseResultMap">
+        SELECT
+        <include refid="bgReportAllColumns" />
+        FROM
+        bg_sterling_report r
+        WHERE
+        r.report_id = #{reportId} AND
+        r.bg_sterling_screening_id = #{bgSterlingScreeningId}
+        ORDER BY id DESC LIMIT 1
     </select>
 </mapper>

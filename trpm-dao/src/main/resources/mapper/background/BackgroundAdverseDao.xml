@@ -66,6 +66,15 @@
         WHERE a.bg_sterling_screening_id =#{bgScreeningId}
 
     </select>
+    <select id="getByActionsIdBgSterlingScreeningId" resultMap="BaseResultMap">
+        SELECT
+        <include refid="backgroundScreeningColumns"/>
+        FROM bg_sterling_adverse a
+        WHERE
+        a.actions_id = #{actionsId} AND
+        a.bg_sterling_screening_id = #{bgSterlingScreeningId}
+        ORDER BY id DESC LIMIT 1
+    </select>
 
     <update id="update" parameterType="com.vipkid.trpm.entity.BackgroundAdverse">
 

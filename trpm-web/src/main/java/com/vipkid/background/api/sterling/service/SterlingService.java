@@ -279,6 +279,7 @@ public class SterlingService {
 
         backgroundScreeningDao.update(updateBackgroundScreening);
 
+        /*
         if(CollectionUtils.isNotEmpty(sterlingScreening.getAdverseActions())){
             List<BackgroundAdverse> backgroundAdverseList =  backgroundAdverseDao.findUpdateTimeByBgScreeningId(backgroundScreening.getId());
             if(CollectionUtils.isEmpty(backgroundAdverseList)){
@@ -297,13 +298,63 @@ public class SterlingService {
 
             }
         }
+        */
+        List<SterlingCallBack.ReportItem> rApiList = sterlingScreening.getReportItems();
+        if(CollectionUtils.isNotEmpty(rApiList)){
+            List<BackgroundReport> rInsertList = Lists.newArrayList();
+            for (SterlingCallBack.ReportItem rApi : rApiList) {
+                BackgroundReport rDB = backgroundReportDao.getByReportIdBgSterlingScreeningId(rApi.getId(), backgroundSterlingId);
+                if (rDB==null) {
+                    BackgroundReport rInsert =new BackgroundReport();
+                    rInsert.setBgSterlingScreeningId(backgroundSterlingId);
+                    rInsert.setScreeningId(backgroundScreening.getScreeningId());
+                    rInsert.setReportId(rApi.getId());
+                    rInsert.setStatus(rApi.getStatus());
+                    rInsert.setResult(rApi.getStatus());
+                    rInsert.setUpdatedAt(DateUtils.convertzDateTime(rApi.getUpdatedAt()));
+                    rInsert.setUpdateTime(new Date());
+                    rInsert.setCreateTime(new Date());
+                    rInsert.setType(rApi.getType());
+                    rInsertList.add(rInsert);
+                } else {
+                    rDB.setResult(rApi.getResult());
+                    rDB.setStatus(rApi.getStatus());
+                    rDB.setUpdatedAt(DateUtils.convertzDateTime(rApi.getUpdatedAt()));
+                    rDB.setUpdateTime(new Date());
+                    backgroundReportDao.update(rDB);
+                }
+            }
+            backgroundReportDao.batchInsert(rInsertList);
+        }
+
+        List<SterlingCallBack.AdverseAction> aApiList = sterlingScreening.getAdverseActions();
+        if(CollectionUtils.isNotEmpty(aApiList)){
+            List<BackgroundAdverse> aInsertList = Lists.newArrayList();
+            for (SterlingCallBack.AdverseAction aApi : aApiList) {
+                BackgroundAdverse aDB = backgroundAdverseDao.getByActionsIdBgSterlingScreeningId(aApi.getId(), backgroundSterlingId);
+                if (aDB==null) {
+                    BackgroundAdverse aInsert =new BackgroundAdverse();
+                    aInsert.setBgSterlingScreeningId(backgroundSterlingId);
+                    aInsert.setScreeningId(backgroundScreening.getScreeningId());
+                    aInsert.setActionsId(aApi.getId());
+                    aInsert.setActionsStatus(aApi.getStatus());
+                    aInsert.setActionsUpdatedAt(DateUtils.convertzDateTime(aApi.getUpdatedAt()));
+                    aInsert.setUpdateTime(new Date());
+                    aInsert.setCreateTime(new Date());
+                    aInsertList.add(aInsert);
+                } else {
+                    aDB.setActionsStatus(aApi.getStatus());
+                    aDB.setActionsUpdatedAt(DateUtils.convertzDateTime(aApi.getUpdatedAt()));
+                    aDB.setUpdateTime(new Date());
+                    backgroundAdverseDao.update(aDB);
+                }
+            }
+            backgroundAdverseDao.batchInsert(aInsertList);
+        }
 
         return new ScreeningOutputDto(backgroundSterlingId);
 
     }
-
-
-
 
 
     @Transactional(readOnly = false)
