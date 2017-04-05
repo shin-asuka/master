@@ -317,14 +317,18 @@ public class SterlingService {
                     rInsert.setType(rApi.getType());
                     rInsertList.add(rInsert);
                 } else {
-                    rDB.setResult(rApi.getResult());
-                    rDB.setStatus(rApi.getStatus());
-                    rDB.setUpdatedAt(DateUtils.convertzDateTime(rApi.getUpdatedAt()));
-                    rDB.setUpdateTime(new Date());
-                    backgroundReportDao.update(rDB);
+                    if (!StringUtils.equals(rApi.getResult(), rDB.getResult()) || !StringUtils.equals(rApi.getStatus(), rDB.getStatus())) {
+                        rDB.setResult(rApi.getResult());
+                        rDB.setStatus(rApi.getStatus());
+                        rDB.setUpdatedAt(DateUtils.convertzDateTime(rApi.getUpdatedAt()));
+                        rDB.setUpdateTime(new Date());
+                        backgroundReportDao.update(rDB);
+                    }
                 }
             }
-            backgroundReportDao.batchInsert(rInsertList);
+            if(CollectionUtils.isNotEmpty(rInsertList)) {
+                backgroundReportDao.batchInsert(rInsertList);
+            }
         }
 
         List<SterlingCallBack.AdverseAction> aApiList = sterlingScreening.getAdverseActions();
@@ -343,13 +347,17 @@ public class SterlingService {
                     aInsert.setCreateTime(new Date());
                     aInsertList.add(aInsert);
                 } else {
-                    aDB.setActionsStatus(aApi.getStatus());
-                    aDB.setActionsUpdatedAt(DateUtils.convertzDateTime(aApi.getUpdatedAt()));
-                    aDB.setUpdateTime(new Date());
-                    backgroundAdverseDao.update(aDB);
+                    if (!StringUtils.equals(aApi.getStatus(), aDB.getActionsStatus())) {
+                        aDB.setActionsStatus(aApi.getStatus());
+                        aDB.setActionsUpdatedAt(DateUtils.convertzDateTime(aApi.getUpdatedAt()));
+                        aDB.setUpdateTime(new Date());
+                        backgroundAdverseDao.update(aDB);
+                    }
                 }
             }
-            backgroundAdverseDao.batchInsert(aInsertList);
+            if(CollectionUtils.isNotEmpty(aInsertList)) {
+                backgroundAdverseDao.batchInsert(aInsertList);
+            }
         }
 
         return new ScreeningOutputDto(backgroundSterlingId);
