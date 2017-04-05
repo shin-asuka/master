@@ -113,7 +113,7 @@ public class ReferralActivityService {
 		if(NumericUtils.isNull(activityExam)){
 			return ReturnMapUtils.returnFail(-2, "没有找到考试记录,非法的分享");
 		}
-		if(!StringUtils.equals(candidateKey, activityExam.getCandidateKey())){
+		if(!StringUtils.equals(candidateKey, activityExam.getCandidateKey()) && !StringUtils.equals(candidateKey, activityExam.getTeacherId()+"")){
 			return ReturnMapUtils.returnFail(-3, "非法提交，测试ID "+activityExamId+" 和 candidateKey "+candidateKey+"不匹配");
 		}
 		if(NumericUtils.isNull(activityExam.getShareRecordId())){
@@ -153,7 +153,7 @@ public class ReferralActivityService {
 		if(NumericUtils.isNull(activityExam)){
 			return ReturnMapUtils.returnFail(-2, "没有找到考试记录,非法的分享");
 		}
-		if(!StringUtils.equals(candidateKey, activityExam.getCandidateKey())){
+		if(!StringUtils.equals(candidateKey, activityExam.getCandidateKey()) && !StringUtils.equals(candidateKey, activityExam.getTeacherId()+"")){
 			logger.info("candidateKey:" + candidateKey + " , " + activityExam.getCandidateKey());
 			return ReturnMapUtils.returnFail(-3, "非法提交，测试ID:"+activityExamId+" 和 candidateKey="+candidateKey+"不匹配");
 		}
