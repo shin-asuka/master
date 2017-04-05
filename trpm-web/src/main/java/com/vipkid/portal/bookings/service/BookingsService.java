@@ -59,6 +59,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -1224,6 +1225,10 @@ public class BookingsService {
 		if (incentiveCount != null && incentiveCount != null) {
 			resultCount = count - incentiveCount > 0 ? count - incentiveCount : 0;
 		}
+		 SimpleDateFormat sdf = new SimpleDateFormat("MMM. dd",  
+	                Locale.ENGLISH);  
+		resultMap.put("fromStr",sdf.format(from));
+		resultMap.put("toStr",sdf.format(new Date(to.getTime() - onlineClassDao.ONE_SECOND)));
 		resultMap.put("from",from.getTime());
 		resultMap.put("to", to.getTime() - onlineClassDao.ONE_SECOND);
 		resultMap.put("resultCount",resultCount);
