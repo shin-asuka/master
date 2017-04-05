@@ -1225,7 +1225,7 @@ public class BookingsService {
 		if (incentiveCount != null && incentiveCount != null) {
 			resultCount = count - incentiveCount > 0 ? count - incentiveCount : 0;
 		}
-		 SimpleDateFormat sdf = new SimpleDateFormat("MMM. dd",  
+		 SimpleDateFormat sdf = new SimpleDateFormat("MMM.dd",  
 	                Locale.ENGLISH);  
 		resultMap.put("fromStr",sdf.format(from));
 		resultMap.put("toStr",sdf.format(new Date(to.getTime() - onlineClassDao.ONE_SECOND)));
