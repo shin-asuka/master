@@ -125,6 +125,7 @@ public class ReferralActivityController extends RestfulController{
 				User user = this.loginService.getUser();
 				if(NumericUtils.isNull(user)){
 					response.setStatus(HttpStatus.FORBIDDEN.value());
+					logger.warn("未登陆不能访问该链接");
 					return ApiResponseUtils.buildErrorResp(-3, "未登陆不能访问该链接");
 				}
 				// 老师点击次数
@@ -132,6 +133,11 @@ public class ReferralActivityController extends RestfulController{
 			}else{
 				//分享后link被单击次数的更新
 				resultMap = this.referralActivityService.updateShareRecordClick(bean.getLinkSourceId(), bean.getShareRecordId());
+			}
+			if(ReturnMapUtils.isFail(resultMap)){
+				response.setStatus(HttpStatus.FORBIDDEN.value());
+				logger.warn("未找到与匹配的分享记录:linkSourceId:{},shareRecordId:{}",bean.getLinkSourceId(), bean.getShareRecordId());
+				return ApiResponseUtils.buildErrorResp(-4, "未找到与匹配的分享记录");
 			}
 			return ApiResponseUtils.buildSuccessDataResp(resultMap);
         } catch (IllegalArgumentException e) {

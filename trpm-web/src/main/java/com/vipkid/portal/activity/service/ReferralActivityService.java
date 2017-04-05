@@ -68,6 +68,10 @@ public class ReferralActivityService {
 		Map<String,Object> paramMap = Maps.newHashMap();
 		if(NumericUtils.isNotNullOrZeor(linkSourceId)){
 			ShareLinkSource bean = this.shareLinkSourceDao.getById(linkSourceId);
+			if(NumericUtils.isNull(bean)){
+				paramMap.put("status", false);
+				return paramMap;
+			}
 			bean.setLinkClick(bean.getLinkClick()+1);
 			this.shareLinkSourceDao.updateById(bean);
 			paramMap.put("status", true);
@@ -83,6 +87,10 @@ public class ReferralActivityService {
 		Map<String,Object> paramMap = Maps.newHashMap();
 		if(NumericUtils.isNotNullOrZeor(linkSourceId)){
 			ShareRecord bean = this.shareRecordDao.getById(shareRecordId);
+			if(NumericUtils.isNull(bean)){
+				paramMap.put("status", false);
+				return paramMap;
+			}
 			bean.setCountClick(bean.getCountClick()+1);
 			this.shareRecordDao.updateById(bean);
 			paramMap.put("status", true);
