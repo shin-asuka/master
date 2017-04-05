@@ -31,6 +31,9 @@ public class RedisCacheUtils {
     private static final String PREFIX = "TP_%s";
 
 
+    public static final int FIVE_MINUTES=5*60;
+
+
     /**
      *
      * @param key
@@ -63,6 +66,56 @@ public class RedisCacheUtils {
             }
         }
         return false;
+    }
+
+
+
+    public static <T> boolean  lock(String key,T t,int seconds){
+        Jedis jedis = null;
+        Long setOK = -1l;
+        try {
+            jedis = redisClient.getJedisPool().getResource();
+            if (jedis != null) {
+                byte[] keyByte = ProtostuffUtils.serializer(String.format(PREFIX,key));
+                byte[] valueByte = ProtostuffUtils.serializer(t);
+                setOK = jedis.setnx(keyByte,valueByte);
+                if (setOK == 1) {
+                    jedis.expire(keyByte,seconds);
+                    return true;
+                } else {
+                    logger.info("Redis key:{}|value:{}",key, JacksonUtils.toJSONString(t));
+                    return false;
+                }
+            }
+        } catch (Exception e) {
+            logger.info(String.format("Redis key:%s|value:%s",key, JacksonUtils.toJSONString(t)),e);
+        } finally {
+            if (jedis != null) {
+                jedis.close();
+            }
+        }
+        return false;
+    }
+
+
+    /**
+     * 解锁 无论是否加锁成功，都需要调用unlock 应该以： lock(); try { doSomething(); } finally { unlock()； } 的方式调用
+     */
+    public static void unlock(String key) {
+        Jedis jedis = null;
+        try {
+            jedis = redisClient.getJedisPool().getResource();
+            if (jedis != null) {
+                byte[] keyByte = ProtostuffUtils.serializer(String.format(PREFIX, key));
+                jedis.del(keyByte);
+            }
+        } catch (Exception e) {
+            logger.info(String.format("Redis key:%s|value:%s",key, key),e);
+        }  finally {
+            if (jedis != null) {
+                jedis.close();
+            }
+        }
     }
 
 

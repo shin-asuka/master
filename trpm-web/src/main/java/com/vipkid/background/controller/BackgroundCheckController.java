@@ -82,6 +82,9 @@ public class BackgroundCheckController extends RestfulController {
         String street = checkInput.getLatestStreet();
         String zipCode = checkInput.getLatestZipCode();
 
+        String firstName = checkInput.getFirstName();
+        String lastName = checkInput.getLastName();
+
         String birthday = checkInput.getBirthDay();
         String socialSecurityNo = checkInput.getSocialSecurityNumber();
         String fileUrl = checkInput.getFileUrl();
@@ -91,6 +94,9 @@ public class BackgroundCheckController extends RestfulController {
             Preconditions.checkArgument(currentStateId != null, "currentStateId cannot be null");
             Preconditions.checkArgument(currentCityId != null, "currentCityId cannot be null");
             */
+            Preconditions.checkArgument(StringUtils.isNotBlank(firstName),"firstName cannot be null");
+            Preconditions.checkArgument(StringUtils.isNotBlank(lastName), "lastName cannot be null");
+
             Preconditions.checkArgument(countryId != null, "latestCountryId cannot be null");
             Preconditions.checkArgument(stateId != null, "latestStateId cannot be null");
             Preconditions.checkArgument(cityId != null, "latestCityId cannot be null");
@@ -151,7 +157,7 @@ public class BackgroundCheckController extends RestfulController {
             String fileName = file.getOriginalFilename();
 
             Preconditions.checkArgument(AwsFileUtils.checkContractFileType(fileName), "文件类型不正确，支持类型为" + AwsFileUtils.CONTRACT_FILE_TYPE);
-            Preconditions.checkArgument(AwsFileUtils.checkContractFileSize(size), "文件太大，maxSize = " + AwsFileUtils.CONTRACT_FILE_MAX_SIZE);
+            Preconditions.checkArgument(AwsFileUtils.checkContractFileSize(size), "文件太大，maxSize = " + AwsFileUtils.BACKGROUND_CHECK_FILE_MAX_SIZE);
 
             Teacher teacher = getTeacher(request);
             teacherId = teacher.getId();

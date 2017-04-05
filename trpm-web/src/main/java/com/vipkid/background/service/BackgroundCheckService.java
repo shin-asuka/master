@@ -44,7 +44,7 @@ import static com.vipkid.trpm.util.DateUtils.FMT_YMD;
 public class BackgroundCheckService {
     private static Logger logger = LoggerFactory.getLogger(BackgroundCheckService.class);
 
-    public static ExecutorService fixedThreadPool = Executors.newFixedThreadPool(5);
+    //public static ExecutorService fixedThreadPool = Executors.newFixedThreadPool(5);
 
     @Autowired
     private TeacherContractFileDao contractFileDao;
@@ -255,15 +255,6 @@ public class BackgroundCheckService {
     }
 
 
-    private void createCandidateAsync(BackgroundCheckInputDto checkInput, Teacher teacher){
-        Runnable thread = new Runnable() {
-            @Override
-            public void run() {
-                createCandidate(checkInput, teacher);
-            }
-        };
-        fixedThreadPool.submit(thread);
-    }
     private int updateUrlAndScreeningId(Long teacherId, Integer fileType, String url, String operateType){
         TeacherContractFile teacherContractFile = new TeacherContractFile();
         teacherContractFile.setTeacherId(teacherId);
@@ -294,10 +285,18 @@ public class BackgroundCheckService {
 
     private void updateTeacherBasicIno(Teacher teacher, BackgroundCheckInputDto input){
         teacher.setMaidenName(input.getMaidenName());
-        teacher.setMiddleName(input.getMiddleName());
+        if(StringUtils.isNotBlank(input.getMiddleName())){
+            teacher.setMiddleName(input.getMiddleName());
+        }
         if(StringUtils.isNotBlank(input.getBirthDay())){
             LocalDate localDate = LocalDate.parse(input.getBirthDay(), FMT_YMD);
             teacher.setBirthday(java.sql.Date.valueOf(localDate));
+        }
+        if(StringUtils.isBlank(teacher.getFirstName())){
+            teacher.setFirstName(input.getFirstName());
+        }
+        if(StringUtils.isBlank(teacher.getLastName())){
+            teacher.setLastName(input.getLastName());
         }
         int row = teacherDao.update(teacher);
         if(row != 1){

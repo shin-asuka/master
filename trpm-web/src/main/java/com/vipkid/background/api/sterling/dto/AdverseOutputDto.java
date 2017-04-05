@@ -8,11 +8,16 @@ public class AdverseOutputDto {
     private Integer errorCode;
     private String errorMessage;
 
-    public AdverseOutputDto(Long id,Integer errorCode,String errorMessage){
-        this.id = id;
+    public AdverseOutputDto(Integer errorCode,String errorMessage){
+
         this.errorCode = errorCode;
         this.errorMessage = errorMessage;
     }
+
+    public AdverseOutputDto(Long id){
+        this.id = id;
+    }
+
     public Long getId() {
         return id;
     }

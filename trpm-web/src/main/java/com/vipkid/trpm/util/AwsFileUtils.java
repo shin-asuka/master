@@ -47,6 +47,8 @@ public class AwsFileUtils {
 
 	public static final String US_BACKGROUND_CHECK = "usbgcheck";
 
+	public static final Long BACKGROUND_CHECK_FILE_MAX_SIZE = 10*1024*1024L; //10M
+
 	public static final Long TAPXPAYER_FILE_MAX_SIZE = 20*1024*1024L; //20M
 	public static final String TAPXPAYER_FILE_TYPE = "pdf,jpg,png,jpeg,bmp";
 
