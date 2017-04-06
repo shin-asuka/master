@@ -18,10 +18,7 @@ import com.vipkid.recruitment.practicum.PracticumConstant;
 import com.vipkid.recruitment.utils.ReturnMapUtils;
 import com.vipkid.rest.dto.TimezoneDto;
 import com.vipkid.trpm.constant.ApplicationConstant.FinishType;
-import com.vipkid.trpm.dao.OnlineClassDao;
-import com.vipkid.trpm.dao.TeacherAddressDao;
-import com.vipkid.trpm.dao.TeacherDao;
-import com.vipkid.trpm.dao.TeacherLocationDao;
+import com.vipkid.trpm.dao.*;
 import com.vipkid.trpm.entity.OnlineClass;
 import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.entity.TeacherAddress;
@@ -65,6 +62,9 @@ public class RecruitmentService {
 
     @Autowired
     private TeacherLockLogDao teacherLockLogDao;
+
+    @Autowired
+    private TeacherPeFeedbackDao teacherPeFeedbackDao;
 
     /**
      * 获取老师当前LifeCycle状态下的流程结果 
@@ -394,6 +394,8 @@ public class RecruitmentService {
                 TeacherApplication teacherApplication = teacherApplicationDao.findApplictionByOlineclassId(onlineClass.getId(), teacher.getId());
                 if(null != teacherApplication) {
                     result.put("applicationId", teacherApplication.getId());
+                    int appId = Long.valueOf(teacherApplication.getId()).intValue();
+                    result.put("submitted", teacherPeFeedbackDao.hasTeacherPeFeedback(appId));
                 }
             }
         }
