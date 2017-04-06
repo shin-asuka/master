@@ -58,6 +58,7 @@
 		</mvc:interceptor>
 	</mvc:interceptors>
 
+
 	<beans:bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
 		<beans:property name="locations">
 			<beans:list>
@@ -72,6 +73,7 @@
 			<!--</beans:list>-->
 		<!--</beans:property>-->
 	<!--</beans:bean>-->
+
 
 
 	<beans:bean id="applicationContextHolder" class="org.community.spring.ApplicationContextHolder"
