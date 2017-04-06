@@ -1,18 +1,18 @@
 package com.vipkid.portal.classroom.model;
 
-import java.util.List;
-import java.util.Map;
-
 import com.vipkid.rest.validation.annotation.Ignore;
 import com.vipkid.rest.validation.annotation.Length;
 import com.vipkid.rest.validation.annotation.NotNull;
 
+import java.util.List;
+import java.util.Map;
+
 @NotNull
 public class PeCommentsVo {
 
-	private Long id;
+	private Integer id;
 	
-	private Long onlineClassId;
+	private Integer onlineClassId;
 	
 	private Integer delayDays;
 	
@@ -89,11 +89,11 @@ public class PeCommentsVo {
 	
 	private String submitType;
 
-	public Long getId() {
+	public Integer getId() {
 		return id;
 	}
 
-	public Long getOnlineClassId() {
+	public Integer getOnlineClassId() {
 		return onlineClassId;
 	}
 
@@ -209,11 +209,11 @@ public class PeCommentsVo {
 		return result;
 	}
 
-	public void setId(Long id) {
+	public void setId(Integer id) {
 		this.id = id;
 	}
 
-	public void setOnlineClassId(Long onlineClassId) {
+	public void setOnlineClassId(Integer onlineClassId) {
 		this.onlineClassId = onlineClassId;
 	}
 

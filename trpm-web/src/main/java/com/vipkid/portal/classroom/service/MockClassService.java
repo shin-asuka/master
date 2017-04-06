@@ -13,6 +13,7 @@ import com.vipkid.enums.TeacherModuleEnum.RoleClass;
 import com.vipkid.http.utils.JsonUtils;
 import com.vipkid.portal.classroom.model.mockclass.*;
 import com.vipkid.portal.classroom.util.BeanUtils;
+import com.vipkid.recruitment.common.service.AuditEmailService;
 import com.vipkid.recruitment.dao.TeacherApplicationDao;
 import com.vipkid.recruitment.entity.TeacherApplication;
 import com.vipkid.recruitment.event.AuditEvent;
@@ -37,6 +38,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.sql.Timestamp;
 import java.util.List;
 import java.util.Map;
@@ -128,12 +130,21 @@ public class MockClassService {
     @Autowired
     private TeacherTagsDao teacherTagsDao;
 
+    @Resource
+    private AuditEmailService auditEmailService;
+
     public PeReviewOutputDto doPeReview(Integer applicationId) {
         TeacherApplication teacherApplication = teacherApplicationDao.findApplictionById(applicationId);
         Preconditions.checkNotNull(teacherApplication, "Teacher application [" + applicationId + "] not found");
 
         PeReviewOutputDto peReviewOutputDto = new PeReviewOutputDto();
         TeacherPeComments teacherPeComments = teacherPeCommentsDao.getTeacherPeComments(applicationId);
+
+        if (null != teacherPeComments && 0 == teacherPeComments.getTemplateId()) {
+            return peReviewOutputDto;
+        } else if (null == teacherPeComments && StringUtils.isNotBlank(teacherApplication.getResult())) {
+            return peReviewOutputDto;
+        }
 
         // 首次进入初始化 Pe Comments
         if (null == teacherPeComments) {
@@ -323,7 +334,18 @@ public class MockClassService {
                 auditEventHandler.onAuditEvent(
                                 new AuditEvent(recruitTeacher.getId(), LifeCycle.PRACTICUM.name(), result));
                 if (isPes) {
-                    // send mail to monter TODO
+                    // send mail to monter
+                    Teacher peTeacher = teacherDao.findById(onlineClass.getTeacherId());
+                    User candidate = userDao.findById(teacherApplication.getTeacherId());
+
+                    String mockClass = "Mock Class 2";
+                    Lesson lesson = lessonDao.findById(onlineClass.getLessonId());
+                    if (StringUtils.equals(MOCK_CLASS_1, lesson.getSerialNumber())) {
+                        mockClass = "Mock Class 1";
+                    }
+
+                    auditEmailService.sendTBDResultToMonter(peTeacher, candidate.getName(), mockClass,
+                                    teacherApplication, onlineClass);
                 }
 
                 // 更新 last editor
@@ -383,7 +405,7 @@ public class MockClassService {
 
     public String getResult(boolean isPes, long lessonId, int totalScore, int totalProfessionalisms) {
         Lesson lesson = lessonDao.findById(lessonId);
-        logger.info("Current lesson is: {}",lesson.getSerialNumber());
+        logger.info("Current lesson is: {}", lesson.getSerialNumber());
 
         if (StringUtils.equals(MOCK_CLASS_1, lesson.getSerialNumber())) {
             if (totalProfessionalisms < 3 || totalScore < 35) {

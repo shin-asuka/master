@@ -126,12 +126,10 @@ public class ClassroomService {
                     // mock class 2.0
                     resultDto.setVersion(MOCK_CLASS_V2);
                     TeacherPeComments teacherPeComments = teacherPeCommentsDao.getTeacherPeComments(resultDto.getTeacherApplicationId().intValue());
-                    if(null != teacherPeComments){
-                        if(0 == teacherPeComments.getTemplateId()) {
-                            // mock class 1.0
-                            resultDto.setVersion(MOCK_CLASS_V1);
-                        }
-                    } else if(StringUtils.isNotBlank(application.getResult())){
+                    if(null != teacherPeComments && 0 == teacherPeComments.getTemplateId()){
+                        // mock class 1.0
+                        resultDto.setVersion(MOCK_CLASS_V1);
+                    } else if(null == teacherPeComments && StringUtils.isNotBlank(application.getResult())){
                         // mock class 1.0
                         resultDto.setVersion(MOCK_CLASS_V1);
                     }

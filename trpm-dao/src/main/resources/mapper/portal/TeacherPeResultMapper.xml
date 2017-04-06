@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="TeacherPeResultMapper">
-    
+
     <sql id="teacherPeResultColumns">teacher_pe_result.id AS id, teacher_pe_result.application_id AS application_id, teacher_pe_result.option_id AS option_id</sql>
-    
+
     <sql id="teacherPeResultWhere">
         <trim prefix="WHERE" prefixOverrides="AND">
             <if test="id != null">AND teacher_pe_result.id = #{id}</if>
@@ -11,49 +11,49 @@
             <if test="optionId != null">AND teacher_pe_result.option_id = #{optionId}</if>
         </trim>
     </sql>
-    
+
     <sql id="teacherPeResultOrder">
         <if test="orderString != null">ORDER BY ${orderString}</if>
     </sql>
-    
+
     <sql id="teacherPeResultLimit">LIMIT #{startLine}, #{limitLine}</sql>
-    
+
     <resultMap type="com.vipkid.trpm.entity.TeacherPeResult" id="teacherPeResultResultMap">
-        <id column="id" property="id" />
-        <result column="application_id" property="applicationId" />
-        <result column="option_id" property="optionId" />
+        <id column="id" property="id"/>
+        <result column="application_id" property="applicationId"/>
+        <result column="option_id" property="optionId"/>
     </resultMap>
-    
+
     <select id="findDao" resultMap="teacherPeResultResultMap">
         SELECT
-        <include refid="teacherPeResultColumns" />
+        <include refid="teacherPeResultColumns"/>
         FROM teacher_pe_result
-        <include refid="teacherPeResultWhere" />
+        <include refid="teacherPeResultWhere"/>
     </select>
-    
+
     <select id="countDao" resultType="int">
         SELECT COUNT(*) FROM teacher_pe_result
-        <include refid="teacherPeResultWhere" />
+        <include refid="teacherPeResultWhere"/>
     </select>
-    
+
     <select id="pageDao" resultMap="teacherPeResultResultMap">
         SELECT
-        <include refid="teacherPeResultColumns" />
+        <include refid="teacherPeResultColumns"/>
         FROM teacher_pe_result
-        <include refid="teacherPeResultWhere" />
-        <include refid="teacherPeResultOrder" />
-        <include refid="teacherPeResultLimit" />
+        <include refid="teacherPeResultWhere"/>
+        <include refid="teacherPeResultOrder"/>
+        <include refid="teacherPeResultLimit"/>
     </select>
-    
+
     <select id="limitDao" resultMap="teacherPeResultResultMap">
         SELECT
-        <include refid="teacherPeResultColumns" />
+        <include refid="teacherPeResultColumns"/>
         FROM teacher_pe_result
-        <include refid="teacherPeResultWhere" />
-        <include refid="teacherPeResultOrder" />
-        <include refid="teacherPeResultLimit" />
+        <include refid="teacherPeResultWhere"/>
+        <include refid="teacherPeResultOrder"/>
+        <include refid="teacherPeResultLimit"/>
     </select>
-    
+
     <insert id="saveDao" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO teacher_pe_result
         <trim prefix="(" prefixOverrides=",">
@@ -69,7 +69,7 @@
         </trim>
         )
     </insert>
-    
+
     <update id="updateDao">
         UPDATE teacher_pe_result
         <trim prefix="SET" prefixOverrides=",">
@@ -78,7 +78,7 @@
         </trim>
         <trim prefix="WHERE" prefixOverrides="AND">AND id = #{id}</trim>
     </update>
-    
+
     <delete id="deleteDao">
         DELETE FROM teacher_pe_result
         <trim prefix="WHERE" prefixOverrides="AND">AND id = #{id}</trim>
@@ -88,5 +88,47 @@
         DELETE FROM teacher_pe_result
         <trim prefix="WHERE" prefixOverrides="AND">AND application_id = #{applicationId}</trim>
     </delete>
-    
+
+    <select id="findRubricResultTables" resultType="java.util.HashMap">
+        SELECT
+        teacher_pe_section.name AS title,
+        SUM(teacher_pe_option.points) AS points
+        FROM
+        teacher_pe_rubric
+        JOIN teacher_pe_section
+        ON teacher_pe_rubric.id = teacher_pe_section.rubric_id
+        JOIN teacher_pe_criteria
+        ON teacher_pe_section.id = teacher_pe_criteria.section_id
+        JOIN teacher_pe_option
+        ON teacher_pe_criteria.id = teacher_pe_option.criteria_id
+        JOIN teacher_pe_result
+        ON teacher_pe_option.id = teacher_pe_result.option_id
+        WHERE
+        teacher_pe_rubric.id = #{rubricId} AND teacher_pe_result.application_id = #{applicationId}
+        GROUP BY
+        teacher_pe_section.id
+    </select>
+
+    <select id="findTBDRubricResultTables" resultType="java.util.HashMap">
+        SELECT
+        teacher_pe_section.id AS id,
+        teacher_pe_section.name AS name,
+        teacher_pe_criteria.title AS title,
+        teacher_pe_option.points AS points
+        FROM
+        teacher_pe_rubric
+        JOIN teacher_pe_section
+        ON teacher_pe_rubric.id = teacher_pe_section.rubric_id
+        JOIN teacher_pe_criteria
+        ON teacher_pe_section.id = teacher_pe_criteria.section_id
+        JOIN teacher_pe_option
+        ON teacher_pe_criteria.id = teacher_pe_option.criteria_id
+        JOIN teacher_pe_result
+        ON teacher_pe_option.id = teacher_pe_result.option_id
+        WHERE
+        teacher_pe_rubric.id = #{rubricId} AND teacher_pe_result.application_id = #{applicationId}
+        GROUP BY
+        teacher_pe_criteria.id
+    </select>
+
 </mapper>

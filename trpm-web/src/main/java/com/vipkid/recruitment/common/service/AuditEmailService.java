@@ -20,19 +20,32 @@ import com.vipkid.trpm.dao.OnlineClassDao;
 import com.vipkid.trpm.dao.TeacherDao;
 import com.vipkid.trpm.dao.TeacherPeCommentsDao;
 import com.vipkid.trpm.entity.OnlineClass;
+import com.vipkid.trpm.dao.TeacherPeResultDao;
+import com.vipkid.trpm.dao.TeacherPeRubricDao;
+import com.vipkid.trpm.entity.OnlineClass;
 import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.entity.TeacherPeComments;
+import com.vipkid.trpm.entity.TeacherPeRubric;
+import com.vipkid.trpm.util.DateUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.velocity.Template;
+import org.apache.velocity.VelocityContext;
+import org.apache.velocity.app.VelocityEngine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.HtmlUtils;
 
+import java.io.StringWriter;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
+import java.util.stream.Collectors;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * 主要用于发送 TR 审核过程中立即发送的邮件
@@ -62,18 +75,26 @@ public class AuditEmailService {
     @Autowired
     private OnlineClassDao onlineClassDao;
 
+    @Autowired
+    private TeacherPeRubricDao teacherPeRubricDao;
+
+    @Autowired
+    private TeacherPeResultDao teacherPeResultDao;
+
+    private VelocityEngine velocityEngine;
+
     private static String BASICINFO_PASS_TITLE = "BasicInfoPassTitle.html";
     private static String BASICINFO_PASS_CONTENT = "BasicInfoPass.html";
 
 
     private static String PRACTICUM_PASS_TITLE = "PracticumPassTitle.html";
-    private static String PRACTICUM_PASS_CONTENT = "PracticumPass.html";
+    private static String PRACTICUM_PASS_CONTENT = "PracticumPass-20170323.html";
 
     private static String PRACTICUM_PASS_4_OLD_PROCESS_TITLE = "PracticumPass4OldProcessTitle.html";
     private static String PRACTICUM_PASS_CONTENT_4_OLD_PROCESS = "PracticumPass4OldProcess.html";
 
     private static String PRACTICUM2_START_TITLE = "Practicum2StartTitle.html";
-    private static String PRACTICUM2_START_CONTENT = "Practicum2Start.html";
+    private static String PRACTICUM2_START_CONTENT = "Practicum2Start-20170323.html";
 
     private static String PRACTICUM_REAPPLY_TITLE = "PracticumReapplyTitle.html";
     private static String PRACTICUM_REAPPLY_CONTENT = "PracticumReapply.html";
@@ -92,10 +113,121 @@ public class AuditEmailService {
     private static String CONTRACTINFO_REAPPLY_TITLE = "ContractInfoReapplyTitle.html";
     private static String CONTRACTINFO_REAPPLY_CONTENT = "ContractInfoReapply.html";
 
+    private static String MOCKCLASS_RUBRIC_TABLE_FOR_MONTER = "template/MockClassRubricTableForMonter.vm";
+    private static String MOCKCLASS_RUBRIC_TABLE_FOR_RESULT = "template/MockClassRubricTableForResult.vm";
 
-    public Map<String,Object> sendBasicInfoPass(long teacherId){
-        try{
-            Teacher teacher  =  teacherDao.findById(teacherId);
+    private static String MOCKCLASS_TBD_TO_MONTER_TITLE = "MockClassTBDForMonterTitle.html";
+    private static String MOCKCLASS_TBD_TO_MONTER_CONTENT = "MockClassTBDForMonterContent.html";
+
+    public AuditEmailService() {
+        Properties properties = new Properties();
+        properties.setProperty("input.encoding", UTF_8.displayName());
+        properties.setProperty("output.encoding", UTF_8.displayName());
+        properties.setProperty("resource.loader", "class");
+        properties.setProperty("class.resource.loader.class",
+                        "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
+
+        velocityEngine = new VelocityEngine();
+        velocityEngine.init(properties);
+    }
+
+    private String getMockClassRubricTable(String templateName, VelocityContext velocityContext) {
+        try {
+            Template template = velocityEngine.getTemplate(templateName);
+            StringWriter stringWriter = new StringWriter();
+            template.merge(velocityContext, stringWriter);
+
+            return stringWriter.toString();
+        } catch (Exception e) {
+            logger.error("Get mockclass rubric table failed", e);
+            return null;
+        }
+    }
+
+    private void putMockClassRubricTable(Map<String, String> paramsMap, Integer templateId, long applicationId) {
+        List<TeacherPeRubric> teacherPeRubrics = teacherPeRubricDao.listTeacherPeRubric(templateId);
+        if (CollectionUtils.isNotEmpty(teacherPeRubrics)) {
+            Map<Integer, Object> resultMap = Maps.newHashMap();
+            for (TeacherPeRubric teacherPeRubric : teacherPeRubrics) {
+                resultMap.put(teacherPeRubric.getId(),
+                                teacherPeResultDao.getRubricResultTables(teacherPeRubric.getId(), applicationId));
+            }
+
+            VelocityContext velocityContext = new VelocityContext();
+            velocityContext.put("resultMap", resultMap);
+            String rubricTableForResult = getMockClassRubricTable(MOCKCLASS_RUBRIC_TABLE_FOR_RESULT, velocityContext);
+            paramsMap.put("rubricTableForResult", rubricTableForResult);
+        }
+
+    }
+
+    private void putMockClassRubricTableForTBD(Map<String, String> paramsMap, Integer templateId, long applicationId) {
+        List<TeacherPeRubric> teacherPeRubrics = teacherPeRubricDao.listTeacherPeRubric(templateId);
+        if (CollectionUtils.isNotEmpty(teacherPeRubrics)) {
+            Map<Integer, Object> resultMap = Maps.newHashMap();
+            Map<Integer, Object> countMap = Maps.newHashMap();
+
+            for (TeacherPeRubric teacherPeRubric : teacherPeRubrics) {
+                List<Map<String, Object>> results =
+                                teacherPeResultDao.getTBDRubricResultTables(teacherPeRubric.getId(), applicationId);
+
+                Map<Integer, Long> sectionMap = results.stream()
+                                .collect(Collectors.groupingBy(o -> (Integer) o.get("id"), Collectors.counting()));
+
+                resultMap.put(teacherPeRubric.getId(), results);
+                countMap.put(teacherPeRubric.getId(), sectionMap);
+            }
+
+            VelocityContext velocityContext = new VelocityContext();
+            velocityContext.put("resultMap", resultMap);
+            velocityContext.put("countMap", countMap);
+            String rubricTableForResult = getMockClassRubricTable(MOCKCLASS_RUBRIC_TABLE_FOR_MONTER, velocityContext);
+            paramsMap.put("rubricTableForResult", rubricTableForResult);
+        }
+    }
+
+    public Map<String, Object> sendTBDResultToMonter(Teacher peTeacher, String candidate, String mockClass,
+                    TeacherApplication teacherApplication, OnlineClass onlineClass) {
+        try {
+            Map<String, String> paramsMap = Maps.newHashMap();
+            paramsMap.put("teacherName", peTeacher.getRealName());
+            paramsMap.put("candidateName", candidate);
+            paramsMap.put("mockClass", mockClass);
+
+            String scheduleDateTime = DateUtils.formatTo(onlineClass.getScheduledDateTime().toInstant(),
+                            peTeacher.getTimezone(), DateUtils.FMT_YMD_HMA_US);
+            paramsMap.put("scheduleDateTime", scheduleDateTime);
+            paramsMap.put("result", teacherApplication.getResult());
+
+            TeacherPeComments teacherPeComments = teacherPeCommentsDao
+                            .getTeacherPeComments(Long.valueOf(teacherApplication.getId()).intValue());
+            logger.info("teacherPeComments:{}", JSON.toJSONString(teacherPeComments));
+
+            if (teacherPeComments != null) {
+                // mock class
+                paramsMap.put("totalScore", String.valueOf(teacherPeComments.getTotalScore()));
+                putMockClassRubricTableForTBD(paramsMap, teacherPeComments.getTemplateId(), teacherApplication.getId());
+
+                paramsMap.put("thingsDidWell", HtmlUtils.htmlUnescape(teacherPeComments.getThingsDidWell()));
+                paramsMap.put("areasImprovement", HtmlUtils.htmlUnescape(teacherPeComments.getAreasImprovement()));
+            }
+
+            logger.info("【EMAIL.sendTBDResultToMonter】toAddMailPool: titleTemplate = {}, contentTemplate = {}",
+                            MOCKCLASS_TBD_TO_MONTER_TITLE, MOCKCLASS_TBD_TO_MONTER_CONTENT);
+            Map<String, String> emailMap = TemplateUtils.readTemplate(MOCKCLASS_TBD_TO_MONTER_CONTENT, paramsMap,
+                            MOCKCLASS_TBD_TO_MONTER_TITLE);
+            EmailEngine.addMailPool(peTeacher.getEmail(), emailMap, EmailConfig.EmailFormEnum.TEACHVIP);
+
+            return ReturnMapUtils.returnSuccess();
+        } catch (Exception e) {
+            logger.error("【EMAIL.sendTBDResultToMonter】ERROR: {}", e);
+        }
+        return ReturnMapUtils.returnFail("email send fail  ");
+    }
+
+    public Map<String, Object> sendBasicInfoPass(long teacherId) {
+        try {
+            Teacher teacher = teacherDao.findById(teacherId);
             Map<String, String> paramsMap = Maps.newHashMap();
 
             if (StringUtils.isNotBlank(teacher.getFirstName())){
@@ -117,46 +249,60 @@ public class AuditEmailService {
         return ReturnMapUtils.returnFail("email send fail  ");
     }
 
-
-
-
-
-    public Map<String,Object> sendPracticumPass(long teacherId){
-        try{
-            Teacher teacher  =  teacherDao.findById(teacherId);
+    public Map<String, Object> sendPracticumPass(long teacherId) {
+        try {
+            Teacher teacher = teacherDao.findById(teacherId);
             Map<String, String> paramsMap = Maps.newHashMap();
 
-            if (StringUtils.isNotBlank(teacher.getFirstName())){
+            if (StringUtils.isNotBlank(teacher.getFirstName())) {
                 paramsMap.put("teacherName", teacher.getFirstName());
-            }else if (StringUtils.isNotBlank(teacher.getRealName())){
+            } else if (StringUtils.isNotBlank(teacher.getRealName())) {
                 paramsMap.put("teacherName", teacher.getRealName());
             }
-            
-            TeacherApplication  application =  teacherApplicationDao.findCurrentApplication(teacherId).stream().findFirst().get();
-            logger.info(" teacherId:{},application Id{}",teacherId,application.getId());
-            TeacherPeComments teacherPeComments =  teacherPeCommentsDao.getTeacherPeComments(Long.valueOf(application.getId()).intValue());
 
-            logger.info("teacherPeComments:{}", JsonUtils.toJSONString(teacherPeComments));
-            if(teacherPeComments!=null) {
+            TeacherApplication application =
+                            teacherApplicationDao.findCurrentApplication(teacherId).stream().findFirst().get();
+            logger.info(" teacherId:{},application Id{}", teacherId, application.getId());
+
+            TeacherPeComments teacherPeComments =
+                            teacherPeCommentsDao.getTeacherPeComments(Long.valueOf(application.getId()).intValue());
+            logger.info("teacherPeComments:{}", JSON.toJSONString(teacherPeComments));
+
+            if (teacherPeComments != null) {
+                // mock class
+                paramsMap.put("totalScore", String.valueOf(teacherPeComments.getTotalScore()));
+                paramsMap.put("result", application.getResult());
+                putMockClassRubricTable(paramsMap, teacherPeComments.getTemplateId(), application.getId());
+
                 paramsMap.put("thingsDidWell", HtmlUtils.htmlUnescape(teacherPeComments.getThingsDidWell()));
-                logger.info("thingsDidWell:{}",HtmlUtils.htmlUnescape(teacherPeComments.getThingsDidWell()));
+                logger.info("thingsDidWell:{}", HtmlUtils.htmlUnescape(teacherPeComments.getThingsDidWell()));
                 paramsMap.put("areasImprovement", HtmlUtils.htmlUnescape(teacherPeComments.getAreasImprovement()));
             }
-            List<TeacherApplication> list = teacherApplicationDao.findApplicationForStatusResult(teacher.getId(), TeacherApplicationEnum.Status.SIGN_CONTRACT.toString(), TeacherApplicationEnum.Result.PASS.toString());
-            if(CollectionUtils.isNotEmpty(list)){
+
+            List<TeacherApplication> list = teacherApplicationDao.findApplictionForStatusResult(teacher.getId(),
+                            TeacherApplicationEnum.Status.SIGN_CONTRACT.toString(),
+                            TeacherApplicationEnum.Result.PASS.toString());
+            if (CollectionUtils.isNotEmpty(list)) {
                 logger.info("【EMAIL.sendPracticumPass4OldProcess】toAddMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",
-                        teacher.getRealName(),teacher.getEmail(), PRACTICUM_PASS_4_OLD_PROCESS_TITLE, PRACTICUM_PASS_CONTENT_4_OLD_PROCESS);
-                Map<String, String> emailMap = TemplateUtils.readTemplate(PRACTICUM_PASS_CONTENT_4_OLD_PROCESS, paramsMap, PRACTICUM_PASS_4_OLD_PROCESS_TITLE);
+                                teacher.getRealName(), teacher.getEmail(), PRACTICUM_PASS_4_OLD_PROCESS_TITLE,
+                                PRACTICUM_PASS_CONTENT_4_OLD_PROCESS);
+                Map<String, String> emailMap = TemplateUtils.readTemplate(PRACTICUM_PASS_CONTENT_4_OLD_PROCESS,
+                                paramsMap, PRACTICUM_PASS_4_OLD_PROCESS_TITLE);
                 EmailEngine.addMailPool(teacher.getEmail(), emailMap, EmailConfig.EmailFormEnum.TEACHVIP);
                 logger.info("【EMAIL.sendPracticumPass4OldProcess】addedMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",
-                        teacher.getRealName(),teacher.getEmail(), PRACTICUM_PASS_4_OLD_PROCESS_TITLE, PRACTICUM_PASS_CONTENT_4_OLD_PROCESS);
+                                teacher.getRealName(), teacher.getEmail(), PRACTICUM_PASS_4_OLD_PROCESS_TITLE,
+                                PRACTICUM_PASS_CONTENT_4_OLD_PROCESS);
             } else {
+                // 新版本
                 logger.info("【EMAIL.sendPracticumPass】toAddMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",
-                        teacher.getRealName(),teacher.getEmail(), PRACTICUM_PASS_TITLE, PRACTICUM_PASS_CONTENT);
-                Map<String, String> emailMap = TemplateUtils.readTemplate(PRACTICUM_PASS_CONTENT, paramsMap, PRACTICUM_PASS_TITLE);
+                                teacher.getRealName(), teacher.getEmail(), PRACTICUM_PASS_TITLE,
+                                PRACTICUM_PASS_CONTENT);
+                Map<String, String> emailMap =
+                                TemplateUtils.readTemplate(PRACTICUM_PASS_CONTENT, paramsMap, PRACTICUM_PASS_TITLE);
                 EmailEngine.addMailPool(teacher.getEmail(), emailMap, EmailConfig.EmailFormEnum.TEACHVIP);
                 logger.info("【EMAIL.sendPracticumPass】addedMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",
-                        teacher.getRealName(),teacher.getEmail(), PRACTICUM_PASS_TITLE, PRACTICUM_PASS_CONTENT);
+                                teacher.getRealName(), teacher.getEmail(), PRACTICUM_PASS_TITLE,
+                                PRACTICUM_PASS_CONTENT);
             }
 
             return ReturnMapUtils.returnSuccess();
@@ -166,37 +312,48 @@ public class AuditEmailService {
         return ReturnMapUtils.returnFail("email send fail  ");
     }
 
-    public Map<String,Object> sendPracticum2Start(long teacherId){
-        try{
-            Teacher teacher  =  teacherDao.findById(teacherId);
+    public Map<String, Object> sendPracticum2Start(long teacherId) {
+        try {
+            Teacher teacher = teacherDao.findById(teacherId);
             Map<String, String> paramsMap = Maps.newHashMap();
 
-            if (StringUtils.isNotBlank(teacher.getFirstName())){
+            if (StringUtils.isNotBlank(teacher.getFirstName())) {
                 paramsMap.put("teacherName", teacher.getFirstName());
-            }else if (StringUtils.isNotBlank(teacher.getRealName())){
+            } else if (StringUtils.isNotBlank(teacher.getRealName())) {
                 paramsMap.put("teacherName", teacher.getRealName());
             }
 
-            TeacherApplication application = teacherApplicationDao.findCurrentApplication(teacherId).stream().findFirst().get();
+            TeacherApplication application =
+                            teacherApplicationDao.findCurrentApplication(teacherId).stream().findFirst().get();
             logger.info("【EMAIL.sendPracticum2Start】teacherId:{}, applicationId:{}", teacherId, application.getId());
-            TeacherPeComments teacherPeComments =  teacherPeCommentsDao.getTeacherPeComments(Long.valueOf(application.getId()).intValue());
+            TeacherPeComments teacherPeComments =
+                            teacherPeCommentsDao.getTeacherPeComments(Long.valueOf(application.getId()).intValue());
 
-            if(TeacherApplicationEnum.Result.PRACTICUM2.toString().equals(application.getResult()) && teacherPeComments!=null && "SUBMIT".equalsIgnoreCase(teacherPeComments.getStatus())
-                    && StringUtils.isNotBlank(teacherPeComments.getThingsDidWell()) && StringUtils.isNotBlank(teacherPeComments.getAreasImprovement()) && teacherPeComments.getTotalScore()>0
-            ) {
+            if (TeacherApplicationEnum.Result.PRACTICUM2.toString().equals(application.getResult())
+                            && teacherPeComments != null && "SUBMIT".equalsIgnoreCase(teacherPeComments.getStatus())
+                            && StringUtils.isNotBlank(teacherPeComments.getThingsDidWell())
+                            && StringUtils.isNotBlank(teacherPeComments.getAreasImprovement())
+                            && teacherPeComments.getTotalScore() > 0) {
+                // mock class
+                paramsMap.put("totalScore", String.valueOf(teacherPeComments.getTotalScore()));
+                paramsMap.put("result", application.getResult());
+                putMockClassRubricTable(paramsMap, teacherPeComments.getTemplateId(), application.getId());
+
                 paramsMap.put("thingsDidWell", HtmlUtils.htmlUnescape(teacherPeComments.getThingsDidWell()));
                 paramsMap.put("areasImprovement", HtmlUtils.htmlUnescape(teacherPeComments.getAreasImprovement()));
                 paramsMap.put("totalScore", teacherPeComments.getTotalScore() + "");
 
-
                 logger.info("【EMAIL.sendPracticum2Start】toAddMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",
-                        teacher.getRealName(),teacher.getEmail(),PRACTICUM2_START_TITLE,PRACTICUM2_START_CONTENT);
+                                teacher.getRealName(), teacher.getEmail(), PRACTICUM2_START_TITLE,
+                                PRACTICUM2_START_CONTENT);
 
-                Map<String, String> emailMap = TemplateUtils.readTemplate(PRACTICUM2_START_CONTENT, paramsMap, PRACTICUM2_START_TITLE);
+                Map<String, String> emailMap =
+                                TemplateUtils.readTemplate(PRACTICUM2_START_CONTENT, paramsMap, PRACTICUM2_START_TITLE);
                 EmailEngine.addMailPool(teacher.getEmail(), emailMap, EmailConfig.EmailFormEnum.TEACHVIP);
 
                 logger.info("【EMAIL.sendPracticum2Start】addedMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",
-                        teacher.getRealName(),teacher.getEmail(),PRACTICUM2_START_TITLE, PRACTICUM2_START_CONTENT);
+                                teacher.getRealName(), teacher.getEmail(), PRACTICUM2_START_TITLE,
+                                PRACTICUM2_START_CONTENT);
             }
             return ReturnMapUtils.returnSuccess();
         } catch (Exception e) {
@@ -205,26 +362,28 @@ public class AuditEmailService {
         return ReturnMapUtils.returnFail("email send fail");
     }
 
+    public Map<String, Object> sendPracticumReapply(long teacherId) {
+        try {
+            Teacher teacher = teacherDao.findById(teacherId);
 
-    public Map<String,Object> sendPracticumReapply(long teacherId){
-        try{
-            Teacher teacher  =  teacherDao.findById(teacherId);
-
-            //TODO   FinishType
+            // TODO FinishType
             // if(onlineClass.getFinishType().equals(""))
 
             Map<String, String> paramsMap = Maps.newHashMap();
-            if (StringUtils.isNotBlank(teacher.getFirstName())){
+            if (StringUtils.isNotBlank(teacher.getFirstName())) {
                 paramsMap.put("teacherName", teacher.getFirstName());
-            }else if (StringUtils.isNotBlank(teacher.getRealName())){
+            } else if (StringUtils.isNotBlank(teacher.getRealName())) {
                 paramsMap.put("teacherName", teacher.getRealName());
-            }            
+            }
             logger.info("【EMAIL.sendPracticumReapply】toAddMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",
-                    teacher.getRealName(),teacher.getEmail(),PRACTICUM_REAPPLY_TITLE, PRACTICUM_REAPPLY_CONTENT);
-            Map<String, String> emailMap = TemplateUtils.readTemplate(PRACTICUM_REAPPLY_CONTENT, paramsMap, PRACTICUM_REAPPLY_TITLE);
+                            teacher.getRealName(), teacher.getEmail(), PRACTICUM_REAPPLY_TITLE,
+                            PRACTICUM_REAPPLY_CONTENT);
+            Map<String, String> emailMap =
+                            TemplateUtils.readTemplate(PRACTICUM_REAPPLY_CONTENT, paramsMap, PRACTICUM_REAPPLY_TITLE);
             EmailEngine.addMailPool(teacher.getEmail(), emailMap, EmailConfig.EmailFormEnum.TEACHVIP);
             logger.info("【EMAIL.sendPracticumReapply】addedMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",
-                    teacher.getRealName(),teacher.getEmail(),PRACTICUM_REAPPLY_TITLE, PRACTICUM_REAPPLY_CONTENT);
+                            teacher.getRealName(), teacher.getEmail(), PRACTICUM_REAPPLY_TITLE,
+                            PRACTICUM_REAPPLY_CONTENT);
             return ReturnMapUtils.returnSuccess();
         } catch (Exception e) {
             logger.error("【EMAIL.sendPracticumReapply】ERROR: {}", e);
@@ -232,9 +391,8 @@ public class AuditEmailService {
         return ReturnMapUtils.returnFail("email send fail");
     }
 
-
-    public Map<String,Object> sendInterviewPass(long teacherId){
-        try{
+    public Map<String, Object> sendInterviewPass(long teacherId) {
+        try {
 
             List<TeacherApplication> list = teacherApplicationDao.findCurrentApplication(teacherId);
             Map<String, String> paramsMap = Maps.newHashMap();
@@ -437,6 +595,5 @@ public class AuditEmailService {
         }
         return null;
     }
-
 
 }
