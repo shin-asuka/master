@@ -224,10 +224,10 @@ public class BackgroundCheckController extends RestfulController {
             if(list != null && list.size() > 0){
                 for(TeacherContractFile file : list){
                     String fileResult = file.getResult();
-                    if(!fileResult.equals("PASS") && file.getFileType() == TeacherApplicationEnum.ContractFileType.CANADA_BACKGROUND_CHECK_CPIC_FORM.val().intValue()){
+                    if(!"PASS".equals(fileResult) && file.getFileType() == TeacherApplicationEnum.ContractFileType.CANADA_BACKGROUND_CHECK_CPIC_FORM.val().intValue()){
                         checkService.saveContractFile(teacherId, TeacherApplicationEnum.ContractFileType.CANADA_BACKGROUND_CHECK_CPIC_FORM.val(), cpicUrl, "submit");
                     }
-                    if(!fileResult.equals("PASS") && file.getFileType() == TeacherApplicationEnum.ContractFileType.CANADA_BACKGROUND_CHECK_ID2.val().intValue()){
+                    if(!"PASS".equals(fileResult) && file.getFileType() == TeacherApplicationEnum.ContractFileType.CANADA_BACKGROUND_CHECK_ID2.val().intValue()){
                         checkService.saveContractFile(teacherId, TeacherApplicationEnum.ContractFileType.CANADA_BACKGROUND_CHECK_ID2.val(), id2Url, "submit");
                     }
                 }
@@ -296,12 +296,12 @@ public class BackgroundCheckController extends RestfulController {
             for(TeacherContractFile file : list){
                 String url = file.getUrl();
                 Integer type = file.getFileType();
-                if(type.equals(TeacherApplicationEnum.ContractFileType.CANADA_BACKGROUND_CHECK_CPIC_FORM.val())){
+                if(TeacherApplicationEnum.ContractFileType.CANADA_BACKGROUND_CHECK_CPIC_FORM.val().equals(type)){
                     map.put("cpicUrl", url);
                     map.put("cpicResult", file.getResult());
                     map.put("cpicFailReason", file.getFailReason());
                 }
-                if(type.equals(TeacherApplicationEnum.ContractFileType.CANADA_BACKGROUND_CHECK_ID2.val())){
+                if(TeacherApplicationEnum.ContractFileType.CANADA_BACKGROUND_CHECK_ID2.val().equals(type)){
                     map.put("id2Url", url);
                     map.put("id2Result", file.getResult());
                     map.put("id2FailReason", file.getFailReason());
@@ -317,9 +317,9 @@ public class BackgroundCheckController extends RestfulController {
     }
 
     private boolean validateContractFileType(Integer type){
-        if(!type.equals(TeacherApplicationEnum.ContractFileType.US_BACKGROUND_CHECK.val())
-                && !type.equals(TeacherApplicationEnum.ContractFileType.CANADA_BACKGROUND_CHECK_CPIC_FORM.val())
-                && !type.equals(TeacherApplicationEnum.ContractFileType.CANADA_BACKGROUND_CHECK_ID2.val())){
+        if(!TeacherApplicationEnum.ContractFileType.US_BACKGROUND_CHECK.val().equals(type)
+                && !TeacherApplicationEnum.ContractFileType.CANADA_BACKGROUND_CHECK_CPIC_FORM.val().equals(type)
+                && !TeacherApplicationEnum.ContractFileType.CANADA_BACKGROUND_CHECK_ID2.val().equals(type)){
             return false;
         }
         return true;
