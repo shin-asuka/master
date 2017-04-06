@@ -8,7 +8,6 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.vipkid.rest.service.LoginService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,15 +21,17 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
-import com.vipkid.http.service.FileHttpService;
-import com.vipkid.http.utils.JsonUtils;
-import com.vipkid.http.vo.TeacherFile;
+import com.vipkid.rest.service.LoginService;
+import com.vipkid.teacher.tools.security.SHA256PasswordEncoder;
 import com.vipkid.trpm.constant.ApplicationConstant.CookieKey;
-import com.vipkid.trpm.entity.*;
+import com.vipkid.trpm.entity.Teacher;
+import com.vipkid.trpm.entity.TeacherAddress;
+import com.vipkid.trpm.entity.TeacherLocation;
+import com.vipkid.trpm.entity.TeacherNationalityCode;
+import com.vipkid.trpm.entity.User;
 import com.vipkid.trpm.entity.personal.BasicInfo;
 import com.vipkid.trpm.entity.personal.ChangePassword;
 import com.vipkid.trpm.entity.personal.TeacherBankVO;
-import com.vipkid.trpm.security.SHA256PasswordEncoder;
 import com.vipkid.trpm.service.passport.IndexService;
 import com.vipkid.trpm.service.passport.RemberService;
 import com.vipkid.trpm.service.portal.PersonalInfoService;
@@ -55,9 +56,6 @@ public class PersonalInfoController extends AbstractPortalController {
 
     @Resource
     private ChangePasswordValidator changePasswordValidator;
-
-    @Resource
-    private SHA256PasswordEncoder mSHA256PasswordEncoder;
 
     @Autowired
     private IndexService indexService;
@@ -306,7 +304,8 @@ public class PersonalInfoController extends AbstractPortalController {
         }
 
         // 验证用户密码
-        String encodedPassword = mSHA256PasswordEncoder.encode(changePassword.getOriginalPassword());
+        SHA256PasswordEncoder encoder = new SHA256PasswordEncoder();
+        String encodedPassword = encoder.encode(changePassword.getOriginalPassword());
         // 新密码不相等
         boolean a = StringUtils.equals(encodedPassword, loginService.getUser().getPassword());
         // 获取的旧密码解密后与
@@ -326,7 +325,7 @@ public class PersonalInfoController extends AbstractPortalController {
         Teacher teacher = loginService.getTeacher();
 
         // 执行密码修改操作
-        String encodedNewPassword = mSHA256PasswordEncoder.encode(changePassword.getUserpassword());
+        String encodedNewPassword = encoder.encode(changePassword.getUserpassword());
         modelMap = personalInfoService.doChangePassword(teacher.getId(), encodedNewPassword);
         remberService.delkeys(request, response);
         CookieUtils.removeCookie(response, CookieKey.TRPM_CHANGE_WINDOW, null, null);

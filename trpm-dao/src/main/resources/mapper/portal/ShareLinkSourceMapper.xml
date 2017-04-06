@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ShareLinkSource_Mapper">
+
+	<!-- 通用查询结果列-->
+	<sql id="Base_Column_List">
+		 id,source_name,link_click
+	</sql>
+	
+	<!-- 对象返回定义 -->
+	<resultMap type="com.vipkid.trpm.entity.ShareLinkSource" id="ShareLinkSource">
+		<id column="id" property="id" />
+		<result column="source_name" property="sourceName" />
+		<result column="link_click" property="linkClick" />
+	</resultMap>
+	
+	<!-- 条件语句映射 -->
+	<sql id="WhereSql">
+		<trim prefix="WHERE" prefixOverrides="AND">
+			<if test="sourceName != null"> AND source_name = #{sourceName}</if>
+			<if test="linkClick != null"> AND link_click = #{linkClick}</if>
+		</trim>
+	</sql>
+
+	<!-- 分页语句映射 -->
+	<sql id="LimitSql">
+		<if test="startRows != null  and pageSize != null">
+			LIMIT #{startRows},#{pageSize}
+		</if>
+	</sql>
+	
+	<!-- 查询（根据主键ID查询） -->
+	<select id="selectByPrimaryKey" resultMap="ShareLinkSource">
+		 SELECT
+		 <include refid="Base_Column_List" />
+		 FROM share_link_source
+		 WHERE id = #{id}
+	</select>
+	
+	<!--删除：根据主键ID删除-->
+	<delete id="deleteByPrimaryKey">
+		 DELETE FROM share_link_source
+		 WHERE id = #{id}
+	</delete>
+
+	<!-- 添加 -->
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
+		 INSERT INTO share_link_source
+ 			(<include refid="Base_Column_List" />) 
+		 VALUES
+ 			(#{id},#{sourceName},#{linkClick})
+	</insert>
+	
+	<!-- 添加 （匹配有值的字段）-->
+	<insert id="insertSelective" useGeneratedKeys="true" keyProperty="id">
+		 INSERT INTO share_link_source
+		 <trim prefix="(" suffix=")" suffixOverrides="," >
+			<if test="id != null "> id,</if>
+			<if test="sourceName != null "> source_name,</if>
+			<if test="linkClick != null "> link_click,</if>
+		</trim>
+		 <trim prefix="values (" suffix=")" suffixOverrides="," >
+			<if test="id!=null "> #{id},</if>
+			<if test="sourceName!=null "> #{sourceName},</if>
+			<if test="linkClick!=null "> #{linkClick},</if>
+		</trim>
+	</insert>
+
+	<!-- 修 改-->
+	<update id="updateByPrimaryKey">
+		 UPDATE share_link_source
+		 SET 
+			 source_name = #{sourceName},link_click = #{linkClick}
+		 WHERE id = #{id}
+	</update>
+	
+
+	<!-- 修 改 （匹配有值的字段） -->
+	<update id="updateByPrimaryKeySelective">
+		 UPDATE share_link_source
+ 		 <set> 
+			<if test="sourceName != null ">source_name = #{sourceName},</if>
+			<if test="linkClick != null ">link_click = #{linkClick},</if>
+ 		 </set>
+		 WHERE id = #{id}
+	</update>
+	
+		<!-- 查询分页list -->
+	<select id="selectByPage" resultMap="ShareLinkSource">
+		 SELECT
+		 <include refid="Base_Column_List" />
+		 FROM share_link_source
+		 <include refid="WhereSql"/>
+		 <include refid="LimitSql"/>
+	</select>
+	
+	<!-- 查询分页count -->
+	<select id="countByPage" resultType="int">
+		 SELECT count(*)
+		 FROM share_link_source
+		 <include refid="WhereSql"/>
+	</select>
+
+</mapper>
+

@@ -1,10 +1,8 @@
 package com.vipkid.rest.web;
 
 import java.io.IOException;
-
 import java.sql.Timestamp;
 import java.util.Date;
-
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -44,11 +42,11 @@ import com.vipkid.rest.service.AdminQuizService;
 import com.vipkid.rest.service.LoginService;
 import com.vipkid.rest.validation.ValidateUtils;
 import com.vipkid.rest.validation.tools.Result;
+import com.vipkid.teacher.tools.security.SHA256PasswordEncoder;
 import com.vipkid.trpm.constant.ApplicationConstant.AjaxCode;
 import com.vipkid.trpm.constant.ApplicationConstant.CookieKey;
 import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.entity.User;
-import com.vipkid.trpm.security.SHA256PasswordEncoder;
 import com.vipkid.trpm.service.huanxin.HuanxinService;
 import com.vipkid.trpm.service.passport.PassportService;
 import com.vipkid.trpm.util.Bean2Map;
@@ -315,7 +313,7 @@ public class LoginController extends RestfulController {
             
             // 执行业务逻辑
             logger.info("账户检查完毕-(通过)-正在注册:{}",bean.getEmail());
-            Map<String, Object> result = passportService.saveSignUp(email, bean.getPassword(), bean.getRefereeId(), bean.getPartnerId());
+            Map<String, Object> result = passportService.saveSignUp(bean);
             if(ReturnMapUtils.isFail(result)){
                 response.setStatus(HttpStatus.FORBIDDEN.value());
                 logger.warn("注册失败：{}",result);

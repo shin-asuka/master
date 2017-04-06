@@ -14,6 +14,11 @@ public class RegisterDto {
     
     private Long partnerId;
     
+    /**
+     * 分享活动考试ID 用于回绑
+     */
+    private Long activityExamId;
+    
     @NotNull
     private String key;
     
@@ -73,7 +78,13 @@ public class RegisterDto {
         this.imageCode = imageCode;
 
     }
-    
-    
+
+	public Long getActivityExamId() {
+		return activityExamId;
+	}
+
+	public void setActivityExamId(Long activityExamId) {
+		this.activityExamId = activityExamId;
+	}
     
 }

@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ShareRecord_Mapper">
+
+	<!-- 通用查询结果列-->
+	<sql id="Base_Column_List">
+		 id,teacher_id,candidate_ip,candidate_key,share_level,count_click,exam_version,link_source_id,share_time,activity_exam_id
+	</sql>
+	
+	<!-- 对象返回定义 -->
+	<resultMap type="com.vipkid.trpm.entity.ShareRecord" id="ShareRecord">
+		<id column="id" property="id" />
+		<result column="teacher_id" property="teacherId" />
+		<result column="candidate_ip" property="candidateIp" />
+		<result column="candidate_key" property="candidateKey" />
+		<result column="share_level" property="shareLevel" />
+		<result column="count_click" property="countClick" />
+		<result column="exam_version" property="examVersion" />
+		<result column="link_source_id" property="linkSourceId" />
+		<result column="share_time" property="shareTime" />
+		<result column="activity_exam_id" property="activityExamId" />
+	</resultMap>
+	
+	<!-- 条件语句映射 -->
+	<sql id="WhereSql">
+		<trim prefix="WHERE" prefixOverrides="AND">
+			<if test="teacherId != null"> AND teacher_id = #{teacherId}</if>
+			<if test="candidateIp != null"> AND candidate_ip = #{candidateIp}</if>
+			<if test="candidateKey != null"> AND candidate_key = #{candidateKey}</if>
+			<if test="shareLevel != null"> AND share_level = #{shareLevel}</if>
+			<if test="countClick != null"> AND count_click = #{countClick}</if>
+			<if test="examVersion != null"> AND exam_version = #{examVersion}</if>
+			<if test="linkSourceId != null"> AND link_source_id = #{linkSourceId}</if>
+			<if test="shareTime != null"> AND share_time = #{shareTime}</if>
+			<if test="activityExamId != null"> AND activity_exam_id = #{activityExamId}</if>
+		</trim>
+	</sql>
+
+	<!-- 分页语句映射 -->
+	<sql id="LimitSql">
+		<if test="startRows != null  and pageSize != null">
+			LIMIT #{startRows},#{pageSize}
+		</if>
+	</sql>
+	
+	<!-- 查询（根据主键ID查询） -->
+	<select id="selectByPrimaryKey" resultMap="ShareRecord">
+		 SELECT
+		 <include refid="Base_Column_List" />
+		 FROM share_record
+		 WHERE id = #{id}
+	</select>
+	
+	<!--删除：根据主键ID删除-->
+	<delete id="deleteByPrimaryKey">
+		 DELETE FROM share_record
+		 WHERE id = #{id}
+	</delete>
+
+	<!-- 添加 -->
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
+		 INSERT INTO share_record
+ 			(<include refid="Base_Column_List" />) 
+		 VALUES
+ 			(#{id},#{teacherId},#{candidateIp},#{candidateKey},#{shareLevel},#{countClick},#{examVersion},#{linkSourceId},#{shareTime},#{activityExamId})
+	</insert>
+	
+	<!-- 添加 （匹配有值的字段）-->
+	<insert id="insertSelective" useGeneratedKeys="true" keyProperty="id">
+		 INSERT INTO share_record
+		 <trim prefix="(" suffix=")" suffixOverrides="," >
+			<if test="id != null "> id,</if>
+			<if test="teacherId != null "> teacher_id,</if>
+			<if test="candidateIp != null "> candidate_ip,</if>
+			<if test="candidateKey != null "> candidate_key,</if>
+			<if test="shareLevel != null "> share_level,</if>
+			<if test="countClick != null "> count_click,</if>
+			<if test="examVersion != null "> exam_version,</if>
+			<if test="linkSourceId != null "> link_source_id,</if>
+			<if test="shareTime != null "> share_time,</if>
+			<if test="activityExamId != null "> activity_exam_id,</if>
+		</trim>
+		 <trim prefix="values (" suffix=")" suffixOverrides="," >
+			<if test="id!=null "> #{id},</if>
+			<if test="teacherId!=null "> #{teacherId},</if>
+			<if test="candidateIp!=null "> #{candidateIp},</if>
+			<if test="candidateKey!=null "> #{candidateKey},</if>
+			<if test="shareLevel!=null "> #{shareLevel},</if>
+			<if test="countClick!=null "> #{countClick},</if>
+			<if test="examVersion!=null "> #{examVersion},</if>
+			<if test="linkSourceId!=null "> #{linkSourceId},</if>
+			<if test="shareTime!=null "> #{shareTime},</if>
+			<if test="activityExamId!=null "> #{activityExamId},</if>
+		</trim>
+	</insert>
+
+	<!-- 修 改-->
+	<update id="updateByPrimaryKey">
+		 UPDATE share_record
+		 SET 
+			 teacher_id = #{teacherId},candidate_ip = #{candidateIp},candidate_key = #{candidateKey},share_level = #{shareLevel},count_click = #{countClick},exam_version = #{examVersion},link_source_id = #{linkSourceId},share_time = #{shareTime},activity_exam_id = #{activityExamId}
+		 WHERE id = #{id}
+	</update>
+	
+
+	<!-- 修 改 （匹配有值的字段） -->
+	<update id="updateByPrimaryKeySelective">
+		 UPDATE share_record
+ 		 <set> 
+			<if test="teacherId != null ">teacher_id = #{teacherId},</if>
+			<if test="candidateIp != null ">candidate_ip = #{candidateIp},</if>
+			<if test="candidateKey != null ">candidate_key = #{candidateKey},</if>
+			<if test="shareLevel != null ">share_level = #{shareLevel},</if>
+			<if test="countClick != null ">count_click = #{countClick},</if>
+			<if test="examVersion != null ">exam_version = #{examVersion},</if>
+			<if test="linkSourceId != null ">link_source_id = #{linkSourceId},</if>
+			<if test="shareTime != null ">share_time = #{shareTime},</if>
+			<if test="activityExamId != null ">activity_exam_id = #{activityExamId},</if>
+ 		 </set>
+		 WHERE id = #{id}
+	</update>
+	
+		<!-- 查询分页list -->
+	<select id="selectByPage" resultMap="ShareRecord">
+		 SELECT
+		 <include refid="Base_Column_List" />
+		 FROM share_record
+		 <include refid="WhereSql"/>
+		 <include refid="LimitSql"/>
+	</select>
+	
+	<!-- 查询分页count -->
+	<select id="countByPage" resultType="int">
+		 SELECT count(*)
+		 FROM share_record
+		 <include refid="WhereSql"/>
+	</select>
+
+</mapper>
+

@@ -19,6 +19,7 @@ import com.vipkid.enums.TeacherPageLoginEnum.LoginType;
 import com.vipkid.enums.TeacherQuizEnum;
 import com.vipkid.enums.TeacherQuizEnum.Version;
 import com.vipkid.rest.config.RestfulConfig;
+import com.vipkid.teacher.tools.security.SHA256PasswordEncoder;
 import com.vipkid.trpm.dao.AppRestfulDao;
 import com.vipkid.trpm.dao.TeacherDao;
 import com.vipkid.trpm.dao.TeacherPageLoginDao;
@@ -30,7 +31,6 @@ import com.vipkid.trpm.entity.TeacherPageLogin;
 import com.vipkid.trpm.entity.TeacherQuiz;
 import com.vipkid.trpm.entity.TeacherQuizDetails;
 import com.vipkid.trpm.entity.User;
-import com.vipkid.trpm.security.SHA256PasswordEncoder;
 @Service
 public class AdminQuizService {
     private static Logger logger = LoggerFactory.getLogger(AdminQuizService.class);

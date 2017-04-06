@@ -1,21 +1,10 @@
 package com.vipkid.trpm.service.passport;
 
-import com.google.common.collect.Maps;
-import com.vipkid.email.EmailUtils;
-import com.vipkid.enums.TeacherEnum;
-import com.vipkid.enums.TeacherEnum.RecruitmentChannel;
-import com.vipkid.enums.UserEnum;
-import com.vipkid.recruitment.utils.ReturnMapUtils;
-import com.vipkid.trpm.constant.ApplicationConstant;
-import com.vipkid.trpm.constant.ApplicationConstant.RedisConstants;
-import com.vipkid.trpm.dao.AppRestfulDao;
-import com.vipkid.trpm.dao.TeacherDao;
-import com.vipkid.trpm.dao.UserDao;
-import com.vipkid.trpm.entity.Teacher;
-import com.vipkid.trpm.entity.User;
-import com.vipkid.trpm.proxy.RedisProxy;
-import com.vipkid.trpm.security.SHA256PasswordEncoder;
-import com.vipkid.trpm.util.AES;
+import java.sql.Timestamp;
+import java.util.Base64;
+import java.util.Map;
+import java.util.UUID;
+
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.community.config.PropertyConfigurer;
@@ -24,10 +13,25 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.sql.Timestamp;
-import java.util.Base64;
-import java.util.Map;
-import java.util.UUID;
+import com.google.common.collect.Maps;
+import com.vipkid.email.EmailUtils;
+import com.vipkid.enums.ShareActivityExamEnum.StatusEnum;
+import com.vipkid.enums.TeacherEnum;
+import com.vipkid.enums.TeacherEnum.RecruitmentChannel;
+import com.vipkid.enums.UserEnum;
+import com.vipkid.recruitment.utils.ReturnMapUtils;
+import com.vipkid.rest.dto.RegisterDto;
+import com.vipkid.teacher.tools.security.SHA256PasswordEncoder;
+import com.vipkid.teacher.tools.utils.NumericUtils;
+import com.vipkid.trpm.constant.ApplicationConstant;
+import com.vipkid.trpm.constant.ApplicationConstant.RedisConstants;
+import com.vipkid.trpm.dao.AppRestfulDao;
+import com.vipkid.trpm.dao.TeacherDao;
+import com.vipkid.trpm.dao.UserDao;
+import com.vipkid.trpm.entity.Teacher;
+import com.vipkid.trpm.entity.User;
+import com.vipkid.trpm.proxy.RedisProxy;
+import com.vipkid.trpm.util.AES;
 
 /**
  * 用于passport的主要业务 1.包含Teacher的token更新，SignUp实现
@@ -113,16 +117,17 @@ public class PassportService {
      * @Author:VIPKID-ZengWeiLong
      * @return 2016年3月3日
      */
-    public Map<String, Object> saveSignUp(String email, String password, Long reid, Long partnerId) {
+    public Map<String, Object> saveSignUp(RegisterDto bean) {
         Map<String, Object> resultMap = Maps.newHashMap();
-        User user = this.userDao.findByUsername(email);
+        User user = this.userDao.findByUsername(bean.getEmail());
         // 1.是否存在
         if (user != null) {
             return ReturnMapUtils.returnFail(ApplicationConstant.AjaxCode.USER_EXITS);
         }
         // 2.创建User
         user = new User();
-        user.setUsername(email);
+        user.setUsername(bean.getEmail());
+        String password = bean.getPassword();
         if (StringUtils.isBlank(password)) {
             password = UserEnum.DEFAULT_TEACHER_PASSWORD;
         }
@@ -149,7 +154,7 @@ public class PassportService {
         // 3.创建 Teacher
         Teacher teacher = new Teacher();
         teacher.setId(user.getId());
-        teacher.setEmail(email);
+        teacher.setEmail(bean.getEmail());
         teacher.setLifeCycle(TeacherEnum.LifeCycle.SIGNUP.toString());
         String serialNumber = teacherDao.getSerialNumber();
         teacher.setSerialNumber(serialNumber);
@@ -158,8 +163,16 @@ public class PassportService {
         teacher.setContractType(TeacherEnum.ContractType.FOUR_A.getVal());
         teacher.setHide(TeacherEnum.Hide.NONE.toString());
         // 设置推荐人保存字段
-        teacher = this.prerefereeId(teacher, reid, partnerId);
+        teacher = this.prerefereeId(teacher, bean.getRefereeId(), bean.getPartnerId());
         teacherDao.save(teacher);
+        if(NumericUtils.isNotNullOrZeor(bean.getActivityExamId())){
+        	Map<String,Object> activityExamMap = this.teacherDao.getActivityExamInfo(bean.getActivityExamId());
+        	if(MapUtils.isNotEmpty(activityExamMap) 
+        			&& StringUtils.equals(activityExamMap.get("status")+"",StatusEnum.COMPLETE.val()+"") 
+        			&& NumericUtils.isNullOrZeor((Integer)activityExamMap.get("teacherId"))){
+        		this.teacherDao.updateActivityExamInfo(bean.getActivityExamId(), teacher.getId());
+        	}
+        }
         logger.info(" Sign up teacher: " + teacher.getSerialNumber());
         if(PropertyConfigurer.booleanValue("signup.send.mail.switch")){
             // 4.发送邮件(带着Recruitment ID)
