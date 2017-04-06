@@ -17,6 +17,24 @@ import com.vipkid.trpm.entity.teachercomment.TeacherCommentResult;
 import com.vipkid.trpm.service.portal.ReportService;
 import com.vipkid.trpm.service.portal.TeacherService;
 import com.vipkid.trpm.util.DateUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.sql.Timestamp;
+import java.util.Map;
+import java.util.Objects;
+import java.util.TimeZone;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 1.主要负责UAReport、DemoReport、FeebBack等模块的参数接收和页面跳转<br>
@@ -100,7 +118,7 @@ public class ReportController extends AbstractPortalController {
      */
     @RequestMapping(value = "/uploadReport", method = RequestMethod.POST)
     public String uaReportSubmit(MultipartHttpServletRequest request, HttpServletResponse response,
-            AssessmentReport report, @RequestParam("file") MultipartFile file) {
+                                 AssessmentReport report, @RequestParam("file") MultipartFile file) {
         logger.info("ReportController: uaReportSubmit() 参数为：AssessmentReport={}", JsonUtils.toJSONString(report));
 
         String score = request.getParameter("score");
