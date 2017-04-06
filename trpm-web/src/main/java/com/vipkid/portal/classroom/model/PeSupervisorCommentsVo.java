@@ -10,11 +10,11 @@ import java.util.Map;
 @NotNull
 public class PeSupervisorCommentsVo {
 
-	private Integer id;
+	private Long id;
 	
 	private Integer peId;
 	
-	private Integer onlineClassId;
+	private Long onlineClassId;
 	
 	private Integer delayDays;
 	
@@ -68,11 +68,11 @@ public class PeSupervisorCommentsVo {
 	
 	private String submitType;
 	
-	public Integer getId() {
+	public Long getId() {
 		return id;
 	}
 
-	public Integer getOnlineClassId() {
+	public Long getOnlineClassId() {
 		return onlineClassId;
 	}
 
@@ -156,7 +156,7 @@ public class PeSupervisorCommentsVo {
 		return result;
 	}
 
-	public void setId(Integer id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 	
@@ -168,7 +168,7 @@ public class PeSupervisorCommentsVo {
 		this.peId = peId;
 	}
 
-	public void setOnlineClassId(Integer onlineClassId) {
+	public void setOnlineClassId(Long onlineClassId) {
 		this.onlineClassId = onlineClassId;
 	}
 
