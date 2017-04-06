@@ -199,7 +199,7 @@ public class BackgroundCommonService {
         return backgroundStatusDto;
     }
 
-    public BackgroundStatusDto getCanadabackgroundStatus(Teacher teacher){
+    public BackgroundStatusDto getCanadaBackgroundStatus(Teacher teacher){
         BackgroundStatusDto backgroundStatusDto = new BackgroundStatusDto();
         boolean needBackgroundCheck = needBackgroundCheck(teacher.getId());
         //不在灰度列表中
@@ -262,8 +262,8 @@ public class BackgroundCommonService {
         BackgroundFileStatusDto backgroundFileStatusDto = new BackgroundFileStatusDto();
         Calendar calendar = Calendar.getInstance();
         calendar = backgroundDateCondition(calendar);
-        Date timeConditon = calendar.getTime();
-        List<TeacherContractFile> teacherContractFiles = teacherContractFileDao.findBackgroundFileByTeacherId(teacherId,timeConditon);
+        Date timeCondition = calendar.getTime();
+        List<TeacherContractFile> teacherContractFiles = teacherContractFileDao.findBackgroundFileByTeacherId(teacherId,timeCondition);
         boolean hasFile = false;
         if (CollectionUtils.isNotEmpty(teacherContractFiles)) {
             hasFile = true;
