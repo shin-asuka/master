@@ -163,10 +163,4 @@ public class SterlingScreening implements Serializable {
             this.pdf = pdf;
         }
     }
-
-
-
-
-
-
 }

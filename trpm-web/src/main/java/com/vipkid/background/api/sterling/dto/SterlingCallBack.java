@@ -1,7 +1,6 @@
 package com.vipkid.background.api.sterling.dto;
 
 import java.io.Serializable;
-import java.sql.Timestamp;
 import java.util.List;
 
 /**
@@ -249,9 +248,4 @@ public class SterlingCallBack implements Serializable{
             this.createdAt = createdAt;
         }
     }
-
-
-
-
-
 }
