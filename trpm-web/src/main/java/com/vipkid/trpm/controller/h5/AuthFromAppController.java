@@ -24,7 +24,7 @@ public class AuthFromAppController {
      *
      * @return
      */
-    @RequestMapping(value = "/auth", method = RequestMethod.GET)
+    @RequestMapping(value = "/auth", method = RequestMethod.POST)
     public Object shareParentFeedback(){
         Teacher teacher = AppContext.getTeacher();
         if(teacher == null){
