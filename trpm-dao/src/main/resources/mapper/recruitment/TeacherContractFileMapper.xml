@@ -14,7 +14,8 @@
         teacher_contract_file.update_id AS updateId,
         teacher_contract_file.teacher_application_id AS teacherApplicationId,
         teacher_contract_file.fail_reason AS failReason,
-        teacher_contract_file.result AS result
+        teacher_contract_file.result AS result,
+        teacher_contract_file.screening_id AS screeningId
     </sql>
     <insert id="saveDao" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO teacher_contract_file
@@ -30,6 +31,7 @@
             <if test="teacherApplicationId!=-1">,teacher_application_id</if>
             <if test="failReason!=null">,fail_reason</if>
             <if test="result!=null">,result</if>
+            <if test="screeningId!=null">,screening_id</if>
         </trim>
         ) VALUES
         <trim prefix="(" prefixOverrides=",">
@@ -44,6 +46,7 @@
             <if test="teacherApplicationId!=-1">,#{teacherApplicationId}</if>
             <if test="failReason!=null">,#{failReason}</if>
             <if test="result!=null">,#{result}</if>
+            <if test="screeningId!=null">,#{screeningId}</if>
         </trim>
         )
     </insert>
@@ -69,6 +72,7 @@
     </select>
 
 
+
     <select id="findById"  resultType="com.vipkid.recruitment.entity.TeacherContractFile" >
         SELECT
         <include refid="teacherContractFileColumns"/>
@@ -77,6 +81,37 @@
         teacher_contract_file.id =#{id}
     </select>
 
+
+
+    <select id="findAllowEditOne"  resultType="com.vipkid.recruitment.entity.TeacherContractFile" >
+        SELECT
+        <include refid="teacherContractFileColumns"/>
+        FROM teacher_contract_file
+        WHERE
+        teacher_id =#{teacherId}
+        AND file_type =#{fileType}
+        AND (screening_id is null or screening_id = 0)
+        limit 1
+    </select>
+
+    <select id="findListByTypes"  resultType="com.vipkid.recruitment.entity.TeacherContractFile" >
+        SELECT
+        <include refid="teacherContractFileColumns"/>
+        FROM teacher_contract_file
+        WHERE
+        teacher_id =#{teacherId}
+        AND file_type in (${types})
+        AND (screening_id is null or screening_id = 0)
+    </select>
+
+    <update id="updateUrlAndScreeningId">
+        UPDATE teacher_contract_file
+        set file_url=#{url}
+        <if test="screeningId != null">, screening_id = #{screeningId}, result='', fail_reason=''</if>
+        WHERE teacher_id =#{teacherId}
+        and file_type =#{fileType}
+        and (screening_id is null or screening_id = 0)
+    </update>
 
     <update id="updateDao">
         UPDATE teacher_contract_file
@@ -92,6 +127,7 @@
                 <if test="teacherApplicationId!=-1">,teacher_application_id = #{teacherApplicationId}</if>
                 <if test="failReason!=null">,fail_reason = #{failReason}</if>
                 <if test="result!=null">,result = #{result}</if>
+                <if test="screeningId!=null">,screening_id = #{screeningId}</if>
             </trim>
         <trim prefix="WHERE" prefixOverrides="AND">AND id = #{id}</trim>
     </update>
@@ -101,5 +137,17 @@
         DELETE FROM teacher_contract_file
         <trim prefix="WHERE" prefixOverrides="AND">AND id = #{id}</trim>
     </delete>
+
+    <select id="findBackgroundFileByTeacherId"  resultType="com.vipkid.recruitment.entity.TeacherContractFile" >
+        SELECT
+        <include refid="teacherContractFileColumns"/>
+        FROM teacher_contract_file
+        WHERE
+        teacher_contract_file.teacher_id =#{teacherId}
+        AND teacher_contract_file.file_type IN (9,10,11)
+        AND teacher_contract_file.update_time > #{updateTime}
+        AND (teacher_contract_file.screening_id >=0 OR teacher_contract_file.screening_id is null)
+
+    </select>
 
 </mapper>

@@ -30,7 +30,7 @@ public class Teacher extends Entity implements Serializable {
 	/*  */
 	private String bankACHNumber;
 	/*  */
-	private java.sql.Date birthday;
+	private java.util.Date birthday;
 	/*  */
 	private String certificates;
 	/*  */
@@ -155,6 +155,8 @@ public class Teacher extends Entity implements Serializable {
 	
 	private String lastName;
 
+	private String maidenName;
+
 	public long getId() {
 		return this.id;
 	}
@@ -245,11 +247,11 @@ public class Teacher extends Entity implements Serializable {
 		return this;
 	}
 	
-	public java.sql.Date getBirthday() {
+	public java.util.Date getBirthday() {
 		return this.birthday;
 	}
 
-	public Teacher setBirthday(java.sql.Date birthday) {
+	public Teacher setBirthday(java.util.Date birthday) {
 		this.birthday = birthday;
 		return this;
 	}
@@ -811,4 +813,12 @@ public class Teacher extends Entity implements Serializable {
     public void setLastName(String lastName) {
         this.lastName = lastName;
     }
+
+	public String getMaidenName() {
+		return maidenName;
+	}
+
+	public void setMaidenName(String maidenName) {
+		this.maidenName = maidenName;
+	}
 }

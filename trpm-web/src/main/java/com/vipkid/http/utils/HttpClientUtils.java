@@ -2,41 +2,57 @@ package com.vipkid.http.utils;
 
 import org.apache.commons.collections.*;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.*;
+import org.apache.http.HttpEntity;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.HttpResponseException;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.entity.EntityBuilder;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.*;
 import org.apache.http.config.Registry;
 import org.apache.http.config.RegistryBuilder;
 import org.apache.http.conn.ConnectTimeoutException;
 import org.apache.http.conn.socket.ConnectionSocketFactory;
 import org.apache.http.conn.socket.LayeredConnectionSocketFactory;
 import org.apache.http.conn.socket.PlainConnectionSocketFactory;
+import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.conn.ssl.SSLContexts;
 import org.apache.http.conn.ssl.TrustStrategy;
+import org.apache.http.entity.ByteArrayEntity;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.FileEntity;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntity;
+import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.entity.mime.content.FileBody;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.message.BasicHeader;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.HTTP;
+import org.apache.http.ssl.SSLContextBuilder;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.*;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
+import sun.misc.BASE64Encoder;
 
+import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.SocketTimeoutException;
 import java.net.URLDecoder;
@@ -60,6 +76,8 @@ import java.util.Map;
  * @since 2016/11/16 下午2:51
  */
 public class HttpClientUtils {
+
+
 
 
     /**
@@ -102,42 +120,52 @@ public class HttpClientUtils {
 
     private static final int MAX_TOTAL = 400;
 
+    private static HttpComponentsClientHttpRequestFactory clientHttpRequestFactory = null;
+
+    private static RestTemplate restTemplate = null;
+
     static {
         LayeredConnectionSocketFactory ssl = null;
 
-        final SSLContext sslcontext;
-        try {
-            sslcontext = SSLContexts.custom().useTLS().loadTrustMaterial(
-                    KeyStore.getInstance(KeyStore.getDefaultType()), new TrustStrategy() {
 
-                        @Override
-                        public boolean isTrusted(X509Certificate[] chain, String authType)
-                                throws CertificateException {
-                            return true;
-                        }
-                    }).build();
-            ssl = new SSLConnectionSocketFactory(sslcontext,SSLConnectionSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
-        } catch (KeyStoreException e) {
-            throw new RuntimeException(e);
-        } catch (KeyManagementException e) {
-            throw new RuntimeException(e);
+        SSLContext sslContext = null;
+        try {
+            sslContext = new SSLContextBuilder().loadTrustMaterial(null, new TrustStrategy() {
+
+
+                public boolean isTrusted(java.security.cert.X509Certificate[] arg0, String arg1) {
+                    return true;
+                }
+            }).build();
+
         } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
+        } catch (KeyManagementException e) {
+            e.printStackTrace();
+        } catch (KeyStoreException e) {
+            e.printStackTrace();
         }
 
-        final Registry<ConnectionSocketFactory> sfr = RegistryBuilder.<ConnectionSocketFactory>create()
+        final  HostnameVerifier hostnameVerifier = NoopHostnameVerifier.INSTANCE;
+
+        SSLConnectionSocketFactory sslSocketFactory = new SSLConnectionSocketFactory(sslContext, hostnameVerifier);
+        Registry<ConnectionSocketFactory> socketFactoryRegistry = RegistryBuilder.<ConnectionSocketFactory>create()
                 .register("http", PlainConnectionSocketFactory.getSocketFactory())
-                .register("https", ssl)
+                .register("https", sslSocketFactory)
                 .build();
 
-        PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager(sfr);
+        PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager(socketFactoryRegistry);
         connectionManager.setDefaultMaxPerRoute(DEFAULT_MAX_PER_ROUTE);
         connectionManager.setMaxTotal(MAX_TOTAL);
 
-        RequestConfig requestConfig = RequestConfig.custom().setSocketTimeout(READ_TIMEOUT).setConnectTimeout(
-                CONNECTION_TIMEOUT).build();//设置请求和传输超时时间
+        RequestConfig requestConfig = RequestConfig.custom().setSocketTimeout(READ_TIMEOUT).setConnectTimeout(CONNECTION_TIMEOUT).build();//设置请求和传输超时时间
 
-        CLIENT = HttpClientBuilder.create().setDefaultRequestConfig(requestConfig).setConnectionManager(connectionManager).build();
+        HttpClientBuilder b = HttpClientBuilder.create();
+        CLIENT = HttpClientBuilder.create().setSSLContext(sslContext).setDefaultRequestConfig(requestConfig).setConnectionManager(connectionManager).build();
+
+        clientHttpRequestFactory = new HttpComponentsClientHttpRequestFactory(CLIENT);
+
+        restTemplate = new RestTemplate(clientHttpRequestFactory);
 
     }
 
@@ -194,6 +222,246 @@ public class HttpClientUtils {
         logger.error("post [{}] timeout, retry {} times", url, retryTimes, ste);
         return null;
     }
+
+    /**
+     * 可以设置如果发生socketTimeout,connectionTimeout ,可以设置重试时间 每一次重试都会改变对应的Timeout
+     * 如发生SocketTimeOut ,则下一次请求的SocketTimeOut时间为 SocketTimeOut+=(retryTimes+500)
+     * @param url
+     * @param jsonData
+     * @param header
+     * @param retryTimes
+     * @return
+     */
+    public static Response timeoutRetryPost(String url,String jsonData,Map<String,String> header,int retryTimes){
+        if (retryTimes < 0) {
+            throw new IllegalArgumentException("retry times must great than or equal 0");
+        }
+
+        HttpPost post=new HttpPost(url);
+        Response  response = null;
+        try {
+            response = timeoutRetryRequest(post,jsonData,header,retryTimes);
+        } catch (IOException e) {
+            logger.info(String.format("post URL:%s,header:%s,param:%s",url,JacksonUtils.toJSONString(header),jsonData),e);
+        }finally{
+            if(response == null){
+                post.releaseConnection();
+            }
+        }
+
+
+        return response;
+
+    }
+
+    /**
+     * 可以设置如果发生socketTimeout,connectionTimeout ,可以设置重试时间 每一次重试都会改变对应的Timeout
+     * 如发生SocketTimeOut ,则下一次请求的SocketTimeOut时间为 SocketTimeOut+=(retryTimes+500)
+     * @param url
+     * @param jsonData
+     * @param header
+     * @param retryTimes
+     * @return
+     */
+    public static Response timeoutRetryPut(String url,String jsonData,Map<String,String> header,int retryTimes){
+        if (retryTimes < 0) {
+            throw new IllegalArgumentException("retry times must great than or equal 0");
+        }
+
+        HttpPut put=new HttpPut(url);
+        Response  response = null;
+        try {
+            response = timeoutRetryRequest(put,jsonData,header,retryTimes);
+        } catch (IOException e) {
+            logger.info(String.format("put URL:%s,header:%s,param:%s",url,JacksonUtils.toJSONString(header),jsonData),e);
+        }finally{
+            if(response == null){
+                put.releaseConnection();
+            }
+        }
+        return response;
+    }
+
+
+    /**
+     * 可以设置如果发生socketTimeout,connectionTimeout ,可以设置重试时间 每一次重试都会改变对应的Timeout
+     * 如发生SocketTimeOut ,则下一次请求的SocketTimeOut时间为 SocketTimeOut+=(retryTimes+500)
+     * @param url
+     * @param header
+     * @param retryTimes
+     * @return
+     */
+    public static Response timeoutRetryGet(String url,Map<String,String> header,int retryTimes){
+        if (retryTimes < 0) {
+            throw new IllegalArgumentException("retry times must great than or equal 0");
+        }
+        HttpGet get=new HttpGet(url);
+        Response response = null;
+        try {
+            response = timeoutRetryRequest(get,header,retryTimes);
+        } catch (IOException e) {
+            logger.info(String.format("get URL:%s,header:%s",url,JacksonUtils.toJSONString(header)),e);
+        }finally{
+            if(response == null){
+                get.releaseConnection();
+            }
+        }
+
+        return response;
+    }
+
+
+    /**
+     * 可以设置如果发生socketTimeout,connectionTimeout ,可以设置重试时间 每一次重试都会改变对应的Timeout
+     * 如发生SocketTimeOut ,则下一次请求的SocketTimeOut时间为 SocketTimeOut+=(retryTimes+500)
+     * @param requestBase
+     * @param jsonData
+     * @param header
+     * @param retryTimes
+     * @return
+     * @throws IOException
+     */
+    private  static Response timeoutRetryRequest(HttpEntityEnclosingRequestBase requestBase,String jsonData,Map<String,String> header,int retryTimes)throws IOException {
+        Exception ste = null;
+        int socketTimeout = READ_TIMEOUT;
+        int connectionTimeout = CONNECTION_TIMEOUT;
+        for (int i = 0; i <= retryTimes; i++) {
+            try {
+                Response result = interaction(requestBase,jsonData,null,header,socketTimeout,connectionTimeout);
+                if (i > 0) {
+                    logger.warn("post [{}] retry {} times", requestBase.getURI(), i);
+                }
+                return result;
+
+            } catch(ConnectTimeoutException e){
+                ste = e;
+                connectionTimeout +=(i*500);
+            } catch (SocketTimeoutException e) {
+                ste = e;
+                socketTimeout +=(i*500);
+            }
+        }
+        logger.error(String.format("post [%s] timeout, retry %s times",requestBase.getURI(), retryTimes),  ste);
+        return null;
+    }
+
+
+    /**
+     * 可以设置如果发生socketTimeout,connectionTimeout ,可以设置重试时间 每一次重试都会改变对应的Timeout
+     * 如发生SocketTimeOut ,则下一次请求的SocketTimeOut时间为 SocketTimeOut+=(retryTimes+500)
+     * @param requestBase
+     * @param header
+     * @param retryTimes
+     * @return
+     * @throws IOException
+     */
+    private  static Response timeoutRetryRequest(HttpRequestBase requestBase,Map<String,String> header,int retryTimes) throws IOException {
+        Exception ste = null;
+        int socketTimeout = READ_TIMEOUT;
+        int connectionTimeout = CONNECTION_TIMEOUT;
+        for (int i = 0; i <= retryTimes; i++) {
+            try {
+                Response result = interaction(requestBase,header,socketTimeout,connectionTimeout);
+                if (i > 0) {
+                    logger.warn("post [{}] retry {} times", requestBase.getURI(), i);
+                }
+                return result;
+
+            } catch(ConnectTimeoutException e){
+                ste = e;
+                connectionTimeout +=(i*500);
+            } catch (SocketTimeoutException e) {
+                ste = e;
+                socketTimeout +=(i*500);
+            }
+        }
+
+        logger.error(String.format("post [%s] timeout, retry %s times",requestBase.getURI(), retryTimes),  ste);
+        return null;
+    }
+
+    /**
+     *
+     * @param requestBase
+     * @param jsonData
+     * @param defaultEncoding
+     * @param headers
+     * @param readTimeout
+     * @param connectionTimeout
+     * @return
+     * @throws IOException
+     */
+    private static Response interaction(HttpEntityEnclosingRequestBase requestBase, String jsonData, String defaultEncoding, Map<String, String> headers,int readTimeout,int connectionTimeout) throws IOException {
+        defaultEncoding = HttpClientUtils.getDefaultEncoding(defaultEncoding);
+        try {
+
+            if(ArrayUtils.isEmpty(requestBase.getAllHeaders())){
+                if(org.apache.commons.collections.MapUtils.isNotEmpty(headers)){
+                    for(String key : headers.keySet()){
+                        requestBase.setHeader(key, headers.get(key));
+                    }
+
+
+                }
+                if(StringUtils.isNotBlank(jsonData)){
+                    StringEntity entity = new StringEntity(jsonData, defaultEncoding);
+                    entity.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
+                    requestBase.setEntity(entity);
+                }
+            }
+
+            HttpResponse response = HttpClientUtils.CLIENT.execute(setConfig(requestBase,readTimeout,connectionTimeout));
+            int statusCode = response.getStatusLine().getStatusCode();
+            String content = EntityUtils.toString(response.getEntity());
+            return new Response(statusCode,content);
+        }
+        catch (Exception e) {
+            HttpClientUtils.logger.error(String.format("post [%s] happens error ", requestBase.getURI()), e);
+            throw e;
+        }
+
+    }
+
+
+    private static Response interaction(HttpRequestBase requestBase,Map<String,String> headers,int readTimeout,int connectionTimeout) throws IOException {
+        try {
+
+            if(ArrayUtils.isEmpty(requestBase.getAllHeaders()) && org.apache.commons.collections.MapUtils.isNotEmpty(headers)){
+                for(String key : headers.keySet()){
+                    requestBase.setHeader(key, headers.get(key));
+                }
+            }
+
+            HttpResponse response = HttpClientUtils.CLIENT.execute(setConfig(requestBase,readTimeout,connectionTimeout));
+            int statusCode = response.getStatusLine().getStatusCode();
+            String content = EntityUtils.toString(response.getEntity());
+            return new Response(statusCode,content);
+        }
+        catch (Exception e) {
+            HttpClientUtils.logger.error(String.format("post [%s] happens error ", requestBase.getURI()), e);
+            throw e;
+        }
+
+    }
+
+
+    private static HttpRequestBase setConfig(HttpRequestBase requestBase,int readTimeout,int connectionTimeout){
+        RequestConfig.Builder configBuilder = null;
+        if(requestBase.getConfig()!=null){
+            configBuilder=RequestConfig.copy(requestBase.getConfig());
+        }else {
+            configBuilder=RequestConfig.custom();
+        }
+        if (readTimeout > 0) {
+            configBuilder.setSocketTimeout(readTimeout);
+        }
+        if (connectionTimeout >0){
+            configBuilder.setConnectTimeout(connectionTimeout);
+        }
+        requestBase.setConfig(configBuilder.build());
+        return requestBase;
+    }
+
 
     /**
      * 指定headers的post请求
@@ -259,11 +527,59 @@ public class HttpClientUtils {
         try {
             UrlEncodedFormEntity formEntity = new UrlEncodedFormEntity(nameValues, defaultEncoding);
             post.setEntity(formEntity);
+
             content = HttpClientUtils.CLIENT.execute(post, new CharsetableResponseHandler(defaultEncoding));
         } catch (UnsupportedEncodingException e) {
             throw new RuntimeException("unsupported Encoding " + defaultEncoding, e);
         } catch (SocketTimeoutException e) {
             throw e;
+        } catch (Exception e) {
+            HttpClientUtils.logger.error(String.format("post [%s] happens error ", url), e);
+        }
+        return content;
+    }
+
+
+    public static String postBinaryFile(String post, byte[] fileByteArray, HttpHeaders httpHeaders) {
+        org.springframework.http.HttpEntity<byte[]> httpEntity = new org.springframework.http.HttpEntity<>(fileByteArray, httpHeaders);
+
+        org.springframework.http.ResponseEntity responseEntity = restTemplate.postForEntity(post, httpEntity, org.springframework.http.ResponseEntity.class);
+        if(responseEntity.getStatusCode().value() == 201){
+            return "success";
+        }
+        return StringUtils.EMPTY;
+    }
+
+    public static String postWithEntity(String url,HttpEntity entity,String defaultEncoding,Map<String,String> headers){
+        if(null == entity){
+            return null;
+        }
+        defaultEncoding = HttpClientUtils.getDefaultEncoding(defaultEncoding);
+        HttpResponse response = null;
+        String content =null;
+        HttpPost post = new HttpPost(url);
+        if (headers != null) {
+            for (Map.Entry<String, String> entry : headers.entrySet()) {
+                post.addHeader(entry.getKey(), entry.getValue());
+            }
+        }
+
+        try {
+
+            post.setEntity(entity);
+
+            response = HttpClientUtils.CLIENT.execute(post);
+            System.out.println(response.getStatusLine().getStatusCode());
+            if(response.getStatusLine().getStatusCode() == 201){
+                content = EntityUtils.toString(response.getEntity());
+            }else{
+                content = String.valueOf(response.getStatusLine().getStatusCode());
+            }
+
+        }catch (UnsupportedEncodingException e) {
+            throw new RuntimeException("unsupported Encoding " + defaultEncoding, e);
+        } catch (SocketTimeoutException e) {
+            e.printStackTrace();
         } catch (Exception e) {
             HttpClientUtils.logger.error(String.format("post [%s] happens error ", url), e);
         }
@@ -281,9 +597,17 @@ public class HttpClientUtils {
         return HttpClientUtils.post(url, jsonData, null, null);
     }
 
+
     public static String post(String url, String jsonData, Map<String, String> headers) {
         return HttpClientUtils.post(url, jsonData, null, headers);
     }
+
+
+
+    public static String put(String url,String jsonData,Map<String,String> headers){
+        return put(url,jsonData,null,headers);
+    }
+
 
     public static HttpResponse postRESTful(String url, String jsonData){
         return HttpClientUtils.postRESTful(url, jsonData, null, null);
@@ -297,25 +621,48 @@ public class HttpClientUtils {
      * @return
      */
     public static String post(String url, String jsonData, String defaultEncoding, Map<String, String> headers) {
-        defaultEncoding = HttpClientUtils.getDefaultEncoding(defaultEncoding);
         String content = null;
+        HttpPost post = new HttpPost(url);
         try {
-            HttpPost post = new HttpPost(url);
-            if(org.apache.commons.collections.MapUtils.isNotEmpty(headers)){
-                for(String key : headers.keySet()){
-                    post.setHeader(key, headers.get(key));
-                }
+
+            Response response = interaction(post,jsonData,defaultEncoding,headers,0,0);
+            if(response != null){
+                content=response.getContent();
             }
-            StringEntity entity = new StringEntity(jsonData, defaultEncoding);
-            entity.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
-            post.setEntity(entity);
-            HttpResponse response = HttpClientUtils.CLIENT.execute(post);
-            content = EntityUtils.toString(response.getEntity());
         } catch (Exception e) {
+            post.releaseConnection();
             HttpClientUtils.logger.error(String.format("post [%s] happens error ", url), e);
         }
         return content;
     }
+
+    /**
+     * 请求特定的url提交Json字符串，使用put方法，返回响应的内容
+     * @param url
+     * @param jsonData
+     * @param defaultEncoding
+     * @param headers
+     * @return
+     */
+    public static String put(String url, String jsonData, String defaultEncoding, Map<String, String> headers) {
+        String content = null;
+        HttpPut put = new HttpPut(url);
+        try {
+
+            Response response = interaction(put,jsonData,defaultEncoding,headers,0,0);
+            if(response != null){
+                content=response.getContent();
+            }
+        } catch (Exception e) {
+            put.releaseConnection();
+            HttpClientUtils.logger.error(String.format("post [%s] happens error ", url), e);
+        }
+        return content;
+    }
+    
+
+
+
 
     /**
      * 请求特定的url提交Json字符串，使用post方法，返回响应的内容
@@ -601,6 +948,29 @@ public class HttpClientUtils {
         return null;
     }
 
+
+
+
+    public static String get(String url,Map<String,String> headers){
+
+        String content = null;
+        HttpGet get =new HttpGet(url);
+        try {
+
+            if(org.apache.commons.collections.MapUtils.isNotEmpty(headers)){
+                for(String key : headers.keySet()){
+                    get.setHeader(key, headers.get(key));
+                }
+            }
+            HttpResponse response = HttpClientUtils.CLIENT.execute(get);
+            content = EntityUtils.toString(response.getEntity());
+        } catch (Exception e) {
+            HttpClientUtils.logger.error(String.format("post [%s] happens error ", url), e);
+        }
+        return content;
+
+    }
+
     /**
      * 对特定的url的post请求，返回响应体
      *
@@ -610,6 +980,7 @@ public class HttpClientUtils {
     public static HttpResponse get(String url) {
         HttpGet get = new HttpGet(url);
         try {
+
             return HttpClientUtils.CLIENT.execute(get);
         } catch (SocketTimeoutException e) {
             logger.error("error when get " + e);
@@ -655,5 +1026,33 @@ public class HttpClientUtils {
             }
         }
         return content;
+    }
+
+
+
+    public static class Response{
+        private int statusCode;
+        private String content;
+
+
+        public Response(int statusCode,String content){
+            this.statusCode =  statusCode;
+            this.content = content;
+        }
+        public int getStatusCode() {
+            return statusCode;
+        }
+
+        public void setStatusCode(int statusCode) {
+            this.statusCode = statusCode;
+        }
+
+        public String getContent() {
+            return content;
+        }
+
+        public void setContent(String content) {
+            this.content = content;
+        }
     }
 }

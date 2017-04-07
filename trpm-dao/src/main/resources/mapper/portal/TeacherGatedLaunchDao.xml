@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.vipkid.trpm.dao.TeacherGatedLaunchDao">
+    <resultMap id="BaseResultMap" type="com.vipkid.trpm.entity.TeacherGatedLaunch">
+        <id column="id" jdbcType="BIGINT" property="id" />
+        <result column="teacher_id" jdbcType="VARCHAR" property="teacherId" />
+        <result column="status" jdbcType="TINYINT" property="status" />
+        <result column="type_number" jdbcType="INTEGER" property="typeNumber" />
+        <result column="create_id" jdbcType="BIGINT" property="createId" />
+        <result column="update_id" jdbcType="BIGINT" property="updateId" />
+        <result column="create_time" jdbcType="DATE" property="createTime" />
+        <result column="update_time" jdbcType="DATE" property="updateTime" />
+    </resultMap>
+
+    <sql id="teacherGatedLaunchColumns">
+        a.id,
+        a.screening_id,
+        a.status,
+        a.type_number,
+        a.create_id,
+        a.update_id,
+        a.create_time,
+        a.update_time
+    </sql>
+
+    <select id="countByTeacherId" resultType="java.lang.Integer" parameterType="java.lang.Long">
+        SELECT
+        count(*)
+        FROM teacher_gated_launch a
+        WHERE a.teacher_id = #{teacherId}
+        AND a.type_number = 1
+        AND  a.status = 1
+
+
+    </select>
+</mapper>

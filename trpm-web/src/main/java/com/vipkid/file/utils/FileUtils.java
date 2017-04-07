@@ -1,6 +1,15 @@
 package com.vipkid.file.utils;
 
+import com.vipkid.http.utils.HttpClientUtils;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+
+import java.io.BufferedInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigDecimal;
+import java.util.zip.GZIPOutputStream;
 
 
 /**
@@ -100,5 +109,48 @@ public class FileUtils {
 			}
     	}
     	return type;
+    }
+
+
+    public static byte[] webUrlConvertByteArray(String url){
+        HttpResponse response= HttpClientUtils.get(url);
+        HttpEntity entity = response.getEntity();
+        byte[] byArray =new byte[(int)entity.getContentLength()];
+        InputStream is =null;
+        ByteArrayOutputStream byteArrayOutputStream =null;
+
+
+        try {
+            is=entity.getContent();
+            byteArrayOutputStream =new ByteArrayOutputStream();
+            byte[] bb = new byte[2048];
+            int ch = is.read(bb);
+            while (ch != -1) {
+                byteArrayOutputStream.write(bb, 0, ch);
+                ch = is.read(bb);
+            }
+
+            byArray = byteArrayOutputStream.toByteArray();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }finally {
+
+            if(byteArrayOutputStream != null){
+                try {
+                    byteArrayOutputStream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (is != null) {
+                try {
+                    is.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }
+        return byArray;
     }
 }

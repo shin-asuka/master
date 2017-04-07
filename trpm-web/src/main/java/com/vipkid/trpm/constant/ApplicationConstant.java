@@ -1,9 +1,12 @@
 package com.vipkid.trpm.constant;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.community.config.PropertyConfigurer;
+
+import com.vipkid.payroll.utils.DateUtils;
 
 public interface ApplicationConstant {
 
@@ -276,7 +279,8 @@ public interface ApplicationConstant {
         public static final int IMAGE_CODE_INVALID_SEC = 120; // 图片验证码失效时间阀值
         public static final int PAYROLL_DISPLAY_MAX_NUM_EXCEED_DAY_SEC = 60 * 60 * 24 * 10 ;//payroll 部分老师可用 10天
         public static final String QUIT_TEACHER_EXPIRED_TIME = "QUIT_TEACHER_";
-        
+        public static final String INCENTIVE_FOR_APRIL = "INCENTIVE_FOR_APRIL_";
+
         
     }
     public static final class TrailLessonConstants{
@@ -313,5 +317,13 @@ public interface ApplicationConstant {
         put(4, "Slightly Easy");
         put(5, "Very Easy");
     }};
+
+	public static final class INCENTIVE {
+		public final static Date INCENTIVE_APRIL_01 = DateUtils.parseDate("2017-04-01 00:00:00");
+		public final static Date INCENTIVE_APRIL_10 = DateUtils.parseDate("2017-04-10 00:00:00");
+		public final static Date INCENTIVE_APRIL_24 = DateUtils.parseDate("2017-04-24 00:00:00");
+		public final static Date INCENTIVE_APRIL_17 = DateUtils.parseDate("2017-04-17 00:00:00");
+		public final static Date INCENTIVE_APRIL_30 = DateUtils.parseDate("2017-04-30 23:59:00");
+	}
 
 }

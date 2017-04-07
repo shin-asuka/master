@@ -16,7 +16,15 @@
         <username>teacher.alert@vipkid.cn</username>
         <password>Alert1</password>
         <from>teacher.alert@vipkid.cn</from>
-        <to>mike.lee.alert@vipkid.com.cn,ninglu@vipkid.com.cn,tianwenqi@vipkid.com.cn,zhuzhengyi@vipkid.com.cn,caoxinzhou@vipkid.com.cn,lilibo@vipkid.com.cn,zengweilong@vipkid.com.cn,liuguowen@vipkid.com.cn,xingxuelin@vipkid.com.cn,yangchao@vipkid.com.cn,dengpeng@vipkid.com.cn,zhangzhaojun@vipkid.com.cn,luojiaoxia@vipkid.com.cn</to>
+        <to>mike.lee.alert@vipkid.com.cn,ninglu@vipkid.com.cn,
+            tianwenqi@vipkid.com.cn,zhuzhengyi@vipkid.com.cn,
+            caoxinzhou@vipkid.com.cn,lilibo@vipkid.com.cn,
+            zengweilong@vipkid.com.cn,liuguowen@vipkid.com.cn,
+            xingxuelin@vipkid.com.cn,yangchao@vipkid.com.cn,
+            dengpeng@vipkid.com.cn,zhangzhaojun@vipkid.com.cn,
+            luojiaoxia@vipkid.com.cn,rentingji@vipkid.com.cn,
+            pankui@vipkid.com.cn
+        </to>
 
         <!--采用HTML渲染方式，可以自定义CSS -->
         <layout class="com.vipkid.common.log.HTMLWrapperLayout">

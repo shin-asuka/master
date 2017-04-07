@@ -2,7 +2,12 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="TeacherAddressMapper">
     
-    <sql id="teacherAddressColumns">teacher_address.id AS teacher_address_id, teacher_address.teacher_id AS teacher_address_teacher_id, teacher_address.country_id AS teacher_address_country_id, teacher_address.state_id AS teacher_address_state_id, teacher_address.city AS teacher_address_city, teacher_address.street_address AS teacher_address_street_address, teacher_address.zip_code AS teacher_address_zip_code, teacher_address.create_time AS teacher_address_create_time, teacher_address.update_time AS teacher_address_update_time</sql>
+    <sql id="teacherAddressColumns">
+        teacher_address.id AS teacher_address_id, teacher_address.teacher_id AS teacher_address_teacher_id, teacher_address.country_id AS teacher_address_country_id, teacher_address.state_id AS teacher_address_state_id, teacher_address.city AS teacher_address_city, teacher_address.street_address AS teacher_address_street_address, teacher_address.zip_code AS teacher_address_zip_code, teacher_address.create_time AS teacher_address_create_time,
+        teacher_address.update_time AS teacher_address_update_time,
+        teacher_address.type AS teacher_address_type
+
+    </sql>
     
     <sql id="teacherAddressWhere">
         <trim prefix="WHERE" prefixOverrides="AND">
@@ -15,6 +20,7 @@
             <if test="zipCode != null">AND teacher_address.zip_code = #{zipCode}</if>
             <if test="createTime != null">AND teacher_address.create_time = #{createTime}</if>
             <if test="updateTime != null">AND teacher_address.update_time = #{updateTime}</if>
+            <if test="type != null">AND teacher_address.type = #{type}</if>
         </trim>
     </sql>
     
@@ -34,6 +40,7 @@
         <result column="teacher_address_zip_code" property="zipCode" />
         <result column="teacher_address_create_time" property="createTime" />
         <result column="teacher_address_update_time" property="updateTime" />
+        <result column="teacher_address_type" property="type" />
     </resultMap>
     
     <select id="findDao" resultMap="teacherAddressResultMap">
@@ -66,6 +73,24 @@
         <include refid="teacherAddressOrder" />
         <include refid="teacherAddressLimit" />
     </select>
+
+
+    <select id="findByTeacherIdAndType" resultMap="teacherAddressResultMap">
+        SELECT
+        <include refid="teacherAddressColumns" />
+        FROM teacher_address
+        WHERE teacher_id=#{teacherId}
+        AND type=#{type}
+        LIMIT 1
+    </select>
+
+
+    <select id="findListByTeacherId" resultMap="teacherAddressResultMap">
+        SELECT
+        <include refid="teacherAddressColumns" />
+        FROM teacher_address
+        WHERE teacher_id=#{teacherId}
+    </select>
     
     <insert id="saveDao" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO teacher_address
@@ -79,6 +104,7 @@
             <if test="zipCode != null">,zip_code</if>
             <if test="createTime != null">,create_time</if>
             <if test="updateTime != null">,update_time</if>
+            <if test="type != null">,type</if>
         </trim>
         ) VALUES
         <trim prefix="(" prefixOverrides=",">
@@ -91,6 +117,7 @@
             <if test="zipCode != null">,#{zipCode}</if>
             <if test="createTime != null">,#{createTime}</if>
             <if test="updateTime != null">,#{updateTime}</if>
+            <if test="type != null">,#{type}</if>
         </trim>
         )
     </insert>
@@ -107,8 +134,23 @@
             <if test="zipCode != null">,zip_code = #{zipCode}</if>
             <if test="createTime != null">,create_time = #{createTime}</if>
             <if test="updateTime != null">,update_time = #{updateTime}</if>
+            <if test="type != null">,type = #{type}</if>
         </trim>
         <trim prefix="WHERE" prefixOverrides="AND">AND id = #{id}</trim>
+    </update>
+
+
+    <update id="updateByTeacherIdAndType">
+        UPDATE teacher_address
+        <trim prefix="SET" prefixOverrides=",">
+            <if test="countryId != null">,country_id = #{countryId}</if>
+            <if test="stateId != null">,state_id = #{stateId}</if>
+            <if test="city != null">,city = #{city}</if>
+            <if test="streetAddress != null">,street_address = #{streetAddress}</if>
+            <if test="zipCode != null">,zip_code = #{zipCode}</if>
+            <if test="updateTime != null">,update_time = #{updateTime}</if>
+        </trim>
+            WHERE teacher_id=#{teacherId} and type = #{type}
     </update>
     
     <delete id="deleteDao">

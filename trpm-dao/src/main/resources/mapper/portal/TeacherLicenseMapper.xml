@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="TeacherLicenseMapper">
+    
+    <sql id="teacherLicenseColumns">
+        id,
+        teacher_id,
+        driver_license,
+        social_no,
+        driver_license_type,
+        driver_license_issuing_agency,
+        create_time,
+        update_time,
+        create_id,
+        update_id
+    </sql>
+    
+    <sql id="teacherLicenseWhere">
+        <trim prefix="WHERE" prefixOverrides="AND">
+            <if test="id != null">AND id = #{id}</if>
+            <if test="teacherId != null">AND teacher_id = #{teacherId}</if>
+            <if test="driverLicense != null">AND driver_license = #{driverLicense}</if>
+            <if test="socialNo != null">AND social_no = #{socialNo}</if>
+            <if test="driverLicenseType != null">AND type = #{driverLicenseType}</if>
+            <if test="driverLicenseIssuingAgency != null">AND driver_license_issuing_agency = #{driverLicenseIssuingAgency}</if>
+            <if test="createTime != null">AND create_time = #{createTime}</if>
+            <if test="updateTime != null">AND update_time = #{updateTime}</if>
+            <if test="createId != null">AND create_id = #{createId}</if>
+            <if test="updateId != null">AND update_id = #{updateId}</if>
+        </trim>
+    </sql>
+    
+    <sql id="teacherLicenseOrder">
+        <if test="orderString != null">ORDER BY ${orderString}</if>
+    </sql>
+    
+    <sql id="teacherLicenseLimit">LIMIT #{startLine},#{limitLine}</sql>
+    
+    <resultMap type="com.vipkid.trpm.entity.TeacherLicense" id="teacherLicenseResultMap">
+        <id column="teacher_license_id" property="id" />
+        <result column="teacher_id" property="teacherId" />
+        <result column="driver_license" property="driverLicense" />
+        <result column="social_no" property="socialNo" />
+        <result column="driver_license_type" property="driverLicenseType" />
+        <result column="driver_license_issuing_agency" property="driverLicenseIssuingAgency" />
+        <result column="create_time" property="createTime" />
+        <result column="update_time" property="updateTime" />
+        <result column="create_id" property="createId" />
+        <result column="update_id" property="updateId" />
+    </resultMap>
+    
+
+
+    <select id="findByTeacherId" resultMap="teacherLicenseResultMap">
+        SELECT
+        <include refid="teacherLicenseColumns" />
+        FROM teacher_license
+        WHERE
+          teacher_id = #{teacherId}
+    </select>
+    <insert id="saveDao" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO teacher_license
+        <trim prefix="(" prefixOverrides=",">
+            <if test="id != null">,id</if>
+            <if test="teacherId != null">,teacher_id</if>
+            <if test="driverLicense != null">,driver_license</if>
+            <if test="socialNo != null">,social_no</if>
+            <if test="driverLicenseType != null">,driver_license_type</if>
+            <if test="driverLicenseIssuingAgency != null">,driver_license_issuing_agency</if>
+            <if test="createTime != null">,create_time</if>
+            <if test="updateTime != null">,update_time</if>
+            <if test="createId != null">,create_id</if>
+            <if test="updateId != null">,update_id</if>
+        </trim>
+        ) VALUES
+        <trim prefix="(" prefixOverrides=",">
+            <if test="id != null">,#{id}</if>
+            <if test="teacherId != null">,#{teacherId}</if>
+            <if test="driverLicense != null">,#{driverLicense}</if>
+            <if test="socialNo != null">,#{socialNo}</if>
+            <if test="driverLicenseType != null">,#{driverLicenseType}</if>
+            <if test="driverLicenseIssuingAgency != null">,#{driverLicenseIssuingAgency}</if>
+            <if test="createTime != null">,#{createTime}</if>
+            <if test="updateTime != null">,#{updateTime}</if>
+            <if test="createId != null">,#{createId}</if>
+            <if test="updateId != null">,#{updateId}</if>
+        </trim>
+        )
+    </insert>
+    
+    <update id="updateDao">
+        UPDATE teacher_license
+        <trim prefix="SET" prefixOverrides=",">
+            <if test="id != null">,id = #{id}</if>
+            <if test="teacherId != null">,teacher_id = #{teacherId}</if>
+            <if test="driverLicense != null">,driver_license = #{driverLicense}</if>
+            <if test="socialNo != null">,social_no = #{socialNo}</if>
+            <if test="driverLicenseType != null">,driver_license_type = #{type}</if>
+            <if test="driverLicenseIssuingAgency != null">,driver_license_issuing_agency = #{driverLicenseIssuingAgency}</if>
+            <if test="createTime != null">,create_time = #{createTime}</if>
+            <if test="updateTime != null">,update_time = #{updateTime}</if>
+            <if test="updateId != null">,update_id = #{updateId}</if>
+        </trim>
+        <trim prefix="WHERE" prefixOverrides="AND">AND id = #{id}</trim>
+    </update>
+
+    <update id="updateByTeacherId">
+        UPDATE teacher_license
+        <trim prefix="SET" prefixOverrides=",">
+            <if test="driverLicense != null">,driver_license = #{driverLicense}</if>
+            <if test="socialNo != null">,social_no = #{socialNo}</if>
+            <if test="driverLicenseType != null">,driver_license_type = #{driverLicenseType}</if>
+            <if test="driverLicenseIssuingAgency != null">,driver_license_issuing_agency = #{driverLicenseIssuingAgency}</if>
+            <if test="updateTime != null">,update_time = #{updateTime}</if>
+            <if test="updateId != null">,update_id = #{updateId}</if>
+        </trim>
+        WHERE teacher_id=#{teacherId}
+    </update>
+
+    
+    <delete id="deleteDao">
+        DELETE FROM teacher_license
+        <trim prefix="WHERE" prefixOverrides="AND">AND id = #{id}</trim>
+    </delete>
+    
+</mapper>

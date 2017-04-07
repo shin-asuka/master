@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.vipkid.background.BackgroundAdverseDao">
+    <resultMap id="BaseResultMap" type="com.vipkid.trpm.entity.BackgroundAdverse">
+        <id column="id" jdbcType="BIGINT" property="id" />
+        <result column="screening_id" jdbcType="VARCHAR" property="screeningId" />
+        <result column="bg_sterling_screening_id" jdbcType="BIGINT" property="bgSterlingScreeningId" />
+        <result column="actions_id" jdbcType="VARCHAR" property="actionsId" />
+        <result column="actions_status" jdbcType="VARCHAR" property="actionsStatus" />
+        <result column="actions_updated_at" jdbcType="TIMESTAMP" property="actionsUpdatedAt" />
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    </resultMap>
+
+    <sql id="backgroundScreeningColumns">
+        a.id,
+        a.screening_id,
+        a.bg_sterling_screening_id,
+        a.actions_id,
+        a.actions_status,
+        a.actions_updated_at,
+        a.create_time,
+        a.update_time
+    </sql>
+
+
+
+    <insert id="batchInsert" parameterType="java.util.List" useGeneratedKeys="true">
+
+      INSERT INTO bg_sterling_adverse (
+        screening_id,
+        bg_sterling_screening_id,
+        actions_id,
+        actions_status,
+        actions_updated_at,
+        create_time,
+        update_time
+      )
+      VALUES
+
+      <foreach collection="list" item="adverse" index="index" separator=",">
+      (
+          #{adverse.screeningId,jdbcType=VARCHAR},
+          #{adverse.bgSterlingScreeningId,jdbcType=BIGINT},
+          #{adverse.actionsId,jdbcType=VARCHAR},
+          #{adverse.actionsStatus,jdbcType=VARCHAR},
+          #{adverse.actionsUpdatedAt,jdbcType=TIMESTAMP},
+          #{adverse.createTime,jdbcType=TIMESTAMP},
+          #{adverse.updateTime,jdbcType=TIMESTAMP}
+      )
+
+      </foreach>
+    </insert>
+
+    <select id="findByScreeningIdTopOne" resultType="com.vipkid.trpm.entity.BackgroundAdverse">
+        SELECT
+        <include refid="backgroundScreeningColumns"/>
+        FROM bg_sterling_adverse a
+        WHERE  a.bg_sterling_screening_id = #{screeningId}
+        ORDER BY id DESC LIMIT 1
+    </select>
+    <select id="findUpdateTimeByBgScreeningId" resultMap="BaseResultMap" parameterType="java.lang.Long">
+        SELECT
+        <include refid="backgroundScreeningColumns"/>
+        FROM bg_sterling_adverse a
+        WHERE a.bg_sterling_screening_id =#{bgScreeningId}
+
+    </select>
+
+    <update id="update" parameterType="com.vipkid.trpm.entity.BackgroundAdverse">
+
+        UPDATE bg_sterling_adverse
+        <set>
+            <if test="screeningId != null">
+                screening_id = #{screeningId,jdbcType=VARCHAR},
+            </if>
+            <if test="bgSterlingScreeningId != null">
+                bg_sterling_screening_id = #{bgSterlingScreeningId,jdbcType=BIGINT},
+            </if>
+            <if test="actionsId != null">
+                actions_id = #{actionsId,jdbcType=VARCHAR},
+            </if>
+            <if test="actionsStatus != null">
+                actions_status = #{actionsStatus,jdbcType=VARCHAR},
+            </if>
+            <if test="actionsUpdatedAt != null">
+                actions_updated_at = #{actionsUpdatedAt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+
+        WHERE
+        id = #{id,jdbcType=BIGINT}
+    </update>
+</mapper>
