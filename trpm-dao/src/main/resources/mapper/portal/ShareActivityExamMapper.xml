@@ -150,6 +150,17 @@
 		 <include refid="WhereSql"/>
 		 ORDER BY id ASC
 	</select>
+	
+	<!-- 根据Token 查询TeacherToken -->
+	<select id="selectTeacherTokenByToken" resultMap="java.util.Map">
+		 SELECT
+			t.app_token,
+			t.teacher_id
+		FROM
+			teacher_token t
+		WHERE
+			t.app_token = #{appToken}
+	</select>
 
 </mapper>
 

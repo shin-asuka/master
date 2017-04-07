@@ -34,13 +34,11 @@ import com.vipkid.trpm.dao.ShareActivityExamDao;
 import com.vipkid.trpm.dao.ShareExamDetailDao;
 import com.vipkid.trpm.dao.ShareLinkSourceDao;
 import com.vipkid.trpm.dao.ShareRecordDao;
-import com.vipkid.trpm.dao.TeacherTokenDao;
 import com.vipkid.trpm.entity.ShareActivityExam;
 import com.vipkid.trpm.entity.ShareExamDetail;
 import com.vipkid.trpm.entity.ShareLinkSource;
 import com.vipkid.trpm.entity.ShareRecord;
 import com.vipkid.trpm.entity.Teacher;
-import com.vipkid.trpm.entity.TeacherToken;
 import com.vipkid.trpm.proxy.RedisProxy;
 
 @Service
@@ -62,9 +60,6 @@ public class ReferralActivityService {
 
     @Autowired
     private RedisProxy redisProxy;
-    
-    @Autowired
-    private TeacherTokenDao teacherTokenDao;
 	
 	/**
 	 * link入口被单击次数的更新
@@ -421,8 +416,10 @@ public class ReferralActivityService {
 	 */
 	public Integer getRequestType(String token){
 		Integer type = RequestTypeEnum.PC.val();
-		TeacherToken teacherToken = teacherTokenDao.findByToken(token);
-		if(NumericUtils.isNotNull(teacherToken)){
+		Map<String, Object> paramMap = Maps.newHashMap();
+		paramMap.put("appToken",token);
+		List<Map<String, Object>> list = this.shareActivityExamDao.findByList("selectTeacherTokenByToken", paramMap);
+		if(CollectionUtils.isNotEmpty(list)){
 			type = RequestTypeEnum.APP.val();
 		}
 		return type;
