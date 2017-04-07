@@ -34,10 +34,12 @@ import com.vipkid.trpm.dao.StaffDao;
 import com.vipkid.trpm.dao.TeacherDao;
 import com.vipkid.trpm.dao.TeacherModuleDao;
 import com.vipkid.trpm.dao.TeacherPageLoginDao;
+import com.vipkid.trpm.dao.TeacherTokenDao;
 import com.vipkid.trpm.dao.UserDao;
 import com.vipkid.trpm.entity.Staff;
 import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.entity.TeacherPageLogin;
+import com.vipkid.trpm.entity.TeacherToken;
 import com.vipkid.trpm.entity.User;
 import com.vipkid.trpm.proxy.RedisProxy;
 import com.vipkid.trpm.util.CacheUtils;
@@ -73,6 +75,9 @@ public class LoginService {
     
     @Autowired
     private StaffDao staffDao;
+    
+    @Autowired
+    private TeacherTokenDao teacherTokenDao;
     
     /**
      * 判断User是否有PE权限
@@ -168,6 +173,8 @@ public class LoginService {
     private User getPreUserByRedis(){
     	User user = null;
     	String token = getToken();
+    	
+    	// token优先判断PC 从Redis中获取User登陆信息
     	String key = CacheUtils.getUserTokenKey(token);
     	if(StringUtils.isNotBlank(key)){
     		String json = redisProxy.get(key);
@@ -175,6 +182,14 @@ public class LoginService {
     			user = JsonTools.readValue(json, User.class);
             }
     	}
+    	
+    	//如果User 为空 表示没有获取到PC登陆信息则 判断按照AppToken判断 
+    	if(user == null){
+    		TeacherToken teacherToken = teacherTokenDao.findByToken(token);
+    		user = this.userDao.findById(teacherToken.getTeacherId());
+    	}
+    	
+    	//如果user已经获取到 则初始化Redis 缓存
     	if(user!=null){
     		Integer timeout = CacheUtils.getLoginTimeout();
             redisProxy.expire(key, timeout); //延长有效期
