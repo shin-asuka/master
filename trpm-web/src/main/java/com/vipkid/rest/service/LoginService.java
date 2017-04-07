@@ -185,14 +185,15 @@ public class LoginService {
     	
     	//如果User 为空 表示没有获取到PC登陆信息则 判断按照AppToken判断 
     	if(user == null){
+    		logger.info("没有获取到缓存相关的token 登陆信息，验证APP表 token");
     		TeacherToken teacherToken = teacherTokenDao.findByToken(token);
     		user = this.userDao.findById(teacherToken.getTeacherId());
     	}
     	
-    	//如果user已经获取到 则初始化Redis 缓存
-    	if(user!=null){
+    	//如果user已经获取到 则覆盖Redis 缓存 延长时间作用
+    	if(user != null){
     		Integer timeout = CacheUtils.getLoginTimeout();
-            redisProxy.expire(key, timeout); //延长有效期
+    		redisProxy.set(key, JsonTools.getJson(user), timeout);
     	}
     	return user;
     }
