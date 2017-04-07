@@ -422,6 +422,7 @@ public class ReferralActivityService {
 		if(CollectionUtils.isNotEmpty(list)){
 			type = RequestTypeEnum.APP.val();
 		}
+		logger.info(" type = " + type);
 		return type;
 	}
 	

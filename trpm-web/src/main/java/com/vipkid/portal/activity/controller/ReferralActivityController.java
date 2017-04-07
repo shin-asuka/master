@@ -251,6 +251,8 @@ public class ReferralActivityController extends RestfulController{
 	public Map<String, Object> checkResult(HttpServletRequest request, HttpServletResponse response){		
 		try{
 			CheckResultVo beanVo = new CheckResultVo();
+			String tokenString = (String)request.getAttribute(AUTOKEN);
+			beanVo.setRequestType(this.referralActivityService.getRequestType(tokenString));
 			beanVo.setCandidateKey(getTeacher(request).getId()+"");
 			ShareActivityExam shareActivityExam = this.referralActivityService.checkTeacherExamStratus(getTeacher(request));
 			if (NumericUtils.isNull(shareActivityExam)) {
@@ -271,8 +273,6 @@ public class ReferralActivityController extends RestfulController{
 					}
 					beanVo.setQuestionId(shareExamDetail.getQuestionId());
 					beanVo.setQuestionIndex(shareExamDetail.getQuestionIndex());
-					String tokenString = (String)request.getAttribute(AUTOKEN);
-					beanVo.setRequestType(this.referralActivityService.getRequestType(tokenString));
 				}
 			}
 			return ApiResponseUtils.buildSuccessDataResp(beanVo);
