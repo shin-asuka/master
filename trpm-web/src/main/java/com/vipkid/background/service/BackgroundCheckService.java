@@ -7,7 +7,6 @@ import com.vipkid.background.dto.input.BackgroundCheckInputDto;
 import com.vipkid.background.dto.output.BaseOutputDto;
 import com.vipkid.background.enums.TeacherPortalCodeEnum;
 import com.vipkid.background.vo.BackgroundCheckVo;
-import com.vipkid.dataSource.annotation.Master;
 import com.vipkid.dataSource.annotation.Slave;
 import com.vipkid.enums.TeacherAddressEnum;
 import com.vipkid.enums.TeacherApplicationEnum;
@@ -35,8 +34,6 @@ import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import static com.vipkid.trpm.util.DateUtils.FMT_YMD;
 
@@ -188,7 +185,6 @@ public class BackgroundCheckService {
     }
 
     private CandidateOutputDto createCandidate(BackgroundCheckInputDto checkInput, Teacher teacher){
-        CandidateOutputDto output = new  CandidateOutputDto(TeacherPortalCodeEnum.SYS_FAIL);
         CandidateInputDto candidateInputDto = new CandidateInputDto();
         candidateInputDto.setTeacherId(teacher.getId());
         candidateInputDto.setEmail(teacher.getEmail());
@@ -232,7 +228,7 @@ public class BackgroundCheckService {
             */
         }
         logger.info("submit background check information, begin invoke sterlingService.saveCandidate, teacherId="+teacher.getId());
-        output = sterlingService.saveCandidate(candidateInputDto);
+        CandidateOutputDto output = sterlingService.saveCandidate(candidateInputDto);
         logger.info("submit background check information, invoke sterlingService.saveCandidate,teacherId="+teacher.getId()+", return resCode="+output.getResCode().getCode()+", resMsg="+output.getResCode().getMsg()+", errorCode="+output.getErrorCode()+", errorMsg="+output.getErrorMessage()+", id="+output.getId());
         if(!StringUtils.equals(output.getResCode().getCode(), TeacherPortalCodeEnum.RES_SUCCESS.getCode())){
             //format errorMessage
