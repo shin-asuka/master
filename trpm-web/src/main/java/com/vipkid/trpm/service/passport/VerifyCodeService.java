@@ -59,7 +59,7 @@ public class VerifyCodeService {
             if (StringUtils.isEmpty(redisValue)) {
                 logger.warn("图片验证码不存在，key = {}", key);
                 return false;
-            } else if (!StringUtils.equalsIgnoreCase(verifyCode, redisValue)) {
+            } else if (!StringUtils.equals(verifyCode, redisValue)) {
                 logger.warn("输入的图片验证码不正确，key = {},value = {},verifyCode = {}", redisKey, redisValue, verifyCode);
                 return false;
             }
