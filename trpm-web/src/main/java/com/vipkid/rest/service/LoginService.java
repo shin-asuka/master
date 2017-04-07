@@ -187,7 +187,9 @@ public class LoginService {
     	if(user == null){
     		logger.info("没有获取到缓存相关的token 登陆信息，验证APP表 token");
     		TeacherToken teacherToken = teacherTokenDao.findByToken(token);
-    		user = this.userDao.findById(teacherToken.getTeacherId());
+    		if(teacherToken != null){
+    			user = this.userDao.findById(teacherToken.getTeacherId());
+    		}
     	}
     	
     	//如果user已经获取到 则覆盖Redis 缓存 延长时间作用
