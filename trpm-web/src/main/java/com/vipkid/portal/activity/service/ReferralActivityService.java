@@ -19,6 +19,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Maps;
 import com.vipkid.email.template.TemplateUtils;
 import com.vipkid.enums.ShareActivityExamEnum;
+import com.vipkid.enums.ShareActivityExamEnum.RequestTypeEnum;
 import com.vipkid.enums.ShareActivityExamEnum.StatusEnum;
 import com.vipkid.portal.activity.dto.ClickHandleDto;
 import com.vipkid.portal.activity.dto.SubmitHandleDto;
@@ -33,11 +34,13 @@ import com.vipkid.trpm.dao.ShareActivityExamDao;
 import com.vipkid.trpm.dao.ShareExamDetailDao;
 import com.vipkid.trpm.dao.ShareLinkSourceDao;
 import com.vipkid.trpm.dao.ShareRecordDao;
+import com.vipkid.trpm.dao.TeacherTokenDao;
 import com.vipkid.trpm.entity.ShareActivityExam;
 import com.vipkid.trpm.entity.ShareExamDetail;
 import com.vipkid.trpm.entity.ShareLinkSource;
 import com.vipkid.trpm.entity.ShareRecord;
 import com.vipkid.trpm.entity.Teacher;
+import com.vipkid.trpm.entity.TeacherToken;
 import com.vipkid.trpm.proxy.RedisProxy;
 
 @Service
@@ -59,6 +62,9 @@ public class ReferralActivityService {
 
     @Autowired
     private RedisProxy redisProxy;
+    
+    @Autowired
+    private TeacherTokenDao teacherTokenDao;
 	
 	/**
 	 * link入口被单击次数的更新
@@ -408,6 +414,19 @@ public class ReferralActivityService {
 		return null;
 	}
 	
+	/**
+	 * 通过token 获取 token 类型 来自APP 还是 PC
+	 * @param token
+	 * @return
+	 */
+	public Integer getRequestType(String token){
+		Integer type = RequestTypeEnum.PC.val();
+		TeacherToken teacherToken = teacherTokenDao.findByToken(token);
+		if(NumericUtils.isNotNull(teacherToken)){
+			type = RequestTypeEnum.APP.val();
+		}
+		return type;
+	}
 	
 	public ShareExamDetail findPendingByExamId(Long activityExamId){
 		ShareExamDetail selectBean = new ShareExamDetail();

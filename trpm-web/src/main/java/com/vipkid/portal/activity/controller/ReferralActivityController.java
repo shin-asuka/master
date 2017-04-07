@@ -271,6 +271,8 @@ public class ReferralActivityController extends RestfulController{
 					}
 					beanVo.setQuestionId(shareExamDetail.getQuestionId());
 					beanVo.setQuestionIndex(shareExamDetail.getQuestionIndex());
+					String tokenString = (String)request.getAttribute(AUTOKEN);
+					beanVo.setRequestType(this.referralActivityService.getRequestType(tokenString));
 				}
 			}
 			return ApiResponseUtils.buildSuccessDataResp(beanVo);
