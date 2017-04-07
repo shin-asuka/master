@@ -189,13 +189,17 @@ public class LoginService {
     		TeacherToken teacherToken = teacherTokenDao.findByToken(token);
     		if(teacherToken != null){
     			user = this.userDao.findById(teacherToken.getTeacherId());
+    			if(user != null){
+    				Integer timeout = CacheUtils.getLoginTimeout();
+    				redisProxy.set(key, JsonTools.getJson(user), timeout);
+    			}
     		}
     	}
     	
     	//如果user已经获取到 则覆盖Redis 缓存 延长时间作用
     	if(user != null){
     		Integer timeout = CacheUtils.getLoginTimeout();
-    		redisProxy.set(key, JsonTools.getJson(user), timeout);
+    		redisProxy.expire(key, timeout); //延长有效期
     	}
     	return user;
     }
