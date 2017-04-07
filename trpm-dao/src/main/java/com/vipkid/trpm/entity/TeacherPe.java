@@ -11,11 +11,11 @@ public class TeacherPe extends Entity implements Serializable {
     private int id;
     /*  */
     private long onlineClassId;
-    /* 老师的 id */
+    /* candidate id */
     private long teacherId;
-    /* 老师的名称 */
+    /* candidate 的名称 */
     private String teacherName;
-    /* pes 的 id */
+    /* PES 的 id */
     private long peId = -1;
     /* 课程序列号 */
     private String serialNumber;
@@ -23,13 +23,13 @@ public class TeacherPe extends Entity implements Serializable {
     private String lessonName;
     /* 课程开始时间 */
     private java.sql.Timestamp scheduleTime;
-    /* 面试者的名字 */
+    /* PE 名字 */
     private String studentName;
-    /* 面试者的 id */
+    /* PE 的 id */
     private long studentId;
-    /* teacher 的评价 */
+    /* PE 的评价 */
     private String teacherComment;
-    /* pe 的评价 */
+    /* PES 的评价 */
     private String peComment;
     /*  */
     private java.sql.Timestamp creationTime;
