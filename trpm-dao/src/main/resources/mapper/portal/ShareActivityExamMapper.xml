@@ -152,7 +152,7 @@
 	</select>
 	
 	<!-- 根据Token 查询TeacherToken -->
-	<select id="selectTeacherTokenByToken" resultMap="java.util.Map">
+	<select id="selectTeacherTokenByToken" resultType="java.util.Map">
 		 SELECT
 			t.app_token,
 			t.teacher_id
