@@ -16,14 +16,15 @@ import java.util.Map;
  * @since 2017/4/7 下午5:17
  */
 @RestController
-@RequestMapping("/print")
+@RequestMapping("/trace")
 public class FePrintLogController {
 
     private static final Logger logger = LoggerFactory.getLogger(FePrintLogController.class);
 
-    @RequestMapping(value = "/log", method = RequestMethod.POST)
-    public Map<String, Object> printLogFromFE(String feLog){
-        logger.info("print log from fe! content:{}",feLog);
+    @RequestMapping(method = RequestMethod.GET)
+    public Map<String, Object> printLogFromFE(String traceLog){
+        //traceLog 是encode的值
+        logger.info("print log from fe! content:{}",traceLog);
         return null;
     }
 }
