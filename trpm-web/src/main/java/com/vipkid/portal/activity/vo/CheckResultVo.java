@@ -14,6 +14,8 @@ public class CheckResultVo {
 	private Long questionIndex;
 	
 	private String candidateKey;
+	
+	private Integer requestType;
 
 	public Integer getStatus() {
 		return status;
@@ -61,6 +63,14 @@ public class CheckResultVo {
 
 	public void setCandidateKey(String candidateKey) {
 		this.candidateKey = candidateKey;
+	}
+
+	public Integer getRequestType() {
+		return requestType;
+	}
+
+	public void setRequestType(Integer requestType) {
+		this.requestType = requestType;
 	}
 	
 }
