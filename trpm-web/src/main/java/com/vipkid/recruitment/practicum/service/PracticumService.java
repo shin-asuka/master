@@ -269,6 +269,8 @@ public class PracticumService {
             //一旦失败，抛出异常回滚
             throw new RuntimeException(""+result.get("info"));
         }
+        //发送提醒邮件
+        EmailUtils.sendEmail4Recruitment(teacher,"PracticumReapplyTitle.html","PracticumReapply.html");
         return result;
     }
 
