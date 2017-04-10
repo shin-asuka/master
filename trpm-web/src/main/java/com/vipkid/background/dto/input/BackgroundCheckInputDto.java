@@ -12,6 +12,10 @@ public class BackgroundCheckInputDto implements Serializable{
 
     private String maidenName;
 
+    private String firstName;
+
+    private String lastName;
+
     private String birthDay;
 
     /* 最新国家id */
@@ -217,5 +221,21 @@ public class BackgroundCheckInputDto implements Serializable{
 
     public void setCurrentCity(Integer currentCity) {
         this.currentCity = currentCity;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 }

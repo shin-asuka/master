@@ -1,24 +1,16 @@
 package com.vipkid.background.api.sterling.service;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-
 import com.google.api.client.util.Lists;
 import com.google.api.client.util.Maps;
-
 import com.vipkid.background.api.sterling.dto.*;
-
-
 import com.vipkid.common.utils.RedisCacheUtils;
 import com.vipkid.file.utils.FileUtils;
 import com.vipkid.http.utils.HttpClientUtils;
 import com.vipkid.http.utils.JacksonUtils;
-
 import org.apache.commons.collections.CollectionUtils;
-
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.protocol.HTTP;
-
 import org.community.config.PropertyConfigurer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,7 +35,7 @@ public class SterlingApiUtils {
 
     private static final String sterlingAuth = PropertyConfigurer.stringValue("background.sterling.auth");
 
-    private static String BEARER_FORMATE = "Bearer %s";
+    private static String BEARER_FORMAT = "Bearer %s";
 
     private static final  String MESSAGE_UNAUTHORIZED="Unauthorized";
 
@@ -66,7 +58,7 @@ public class SterlingApiUtils {
 
         String postUrl = sterlingHost + "/v1/candidates";
         Map<String,String> headers = Maps.newHashMap();
-        headers.put("Authorization",String.format(BEARER_FORMATE,getAccessToken()));
+        headers.put("Authorization",String.format(BEARER_FORMAT,getAccessToken()));
 
 
         HttpClientUtils.Response response = HttpClientUtils.timeoutRetryPost(postUrl,JacksonUtils.toJSONString(candidateInputDto),headers,MAX_RETRY);
@@ -109,7 +101,7 @@ public class SterlingApiUtils {
 
         String postUrl = String.format(sterlingHost + "/v1/candidates/%s",candidateInputDto.getCandidateId());
         Map<String,String> headers = Maps.newHashMap();
-        headers.put("Authorization",String.format(BEARER_FORMATE,getAccessToken()));
+        headers.put("Authorization",String.format(BEARER_FORMAT,getAccessToken()));
 
 
         HttpClientUtils.Response response = HttpClientUtils.timeoutRetryPut(postUrl,JacksonUtils.toJSONString(candidateInputDto),headers,MAX_RETRY);
@@ -129,16 +121,13 @@ public class SterlingApiUtils {
             RedisCacheUtils.del(STERLING_ACCESS_TOKEN);
             SterlingAccessToken sterlingAccessToken = refreshAccessToken();
             if(StringUtils.isBlank(sterlingAccessToken.getAccess_token())){
-                logger.error("sterling  refresh access token worng");
+                logger.error("sterling  refresh access token wrong");
             }else{
                 sterlingCandidate = updateCandidate(candidateInputDto,--retryTimes);
             }
         }
         return sterlingCandidate;
     }
-
-
-
 
 
     /**
@@ -158,7 +147,7 @@ public class SterlingApiUtils {
 
         String getUrl = sterlingHost + "/v1/candidates/" + candidateId;
         Map<String,String> headers = Maps.newHashMap();
-        headers.put("Authorization",String.format(BEARER_FORMATE,getAccessToken()));
+        headers.put("Authorization",String.format(BEARER_FORMAT,getAccessToken()));
 
 
         HttpClientUtils.Response response = HttpClientUtils.timeoutRetryGet(getUrl,headers,MAX_RETRY);
@@ -180,7 +169,7 @@ public class SterlingApiUtils {
         if(StringUtils.equals(sterlingCandidate.getMessage(),MESSAGE_UNAUTHORIZED)){
             SterlingAccessToken sterlingAccessToken = refreshAccessToken();
             if(StringUtils.isBlank(sterlingAccessToken.getAccess_token())){
-                logger.warn("sterling  refresh access token worng");
+                logger.warn("sterling  refresh access token wrong");
             }else{
                 sterlingCandidate = getCandidate(candidateId,--retryTimes);
             }
@@ -194,7 +183,7 @@ public class SterlingApiUtils {
         String getUrl = sterlingHost+"/v1/candidates";
 
         Map<String,String> headers = Maps.newHashMap();
-        headers.put("Authorization",String.format(BEARER_FORMATE,getAccessToken()));
+        headers.put("Authorization",String.format(BEARER_FORMAT,getAccessToken()));
 
         Map<String,Object> params = Maps.newHashMap();
 
@@ -253,9 +242,16 @@ public class SterlingApiUtils {
         if(null == screeningInputDto){
             return null;
         }
+
+
+        if(retryTimes == 0){
+            logger.info("retry == 0  params:{}",JacksonUtils.toJSONString(screeningInputDto));
+            return null;
+        }
+
         String postUrl = sterlingHost + "/v1/screenings" ;
         Map<String,String> headers = Maps.newHashMap();
-        headers.put("Authorization",String.format(BEARER_FORMATE,getAccessToken()));
+        headers.put("Authorization",String.format(BEARER_FORMAT,getAccessToken()));
 
         HttpClientUtils.Response response = HttpClientUtils.timeoutRetryPost(postUrl,JacksonUtils.toJSONString(screeningInputDto),headers,MAX_RETRY);
 
@@ -275,7 +271,7 @@ public class SterlingApiUtils {
             RedisCacheUtils.del(STERLING_ACCESS_TOKEN);
             SterlingAccessToken sterlingAccessToken = refreshAccessToken();
             if(StringUtils.isBlank(sterlingAccessToken.getAccess_token())){
-                logger.error("sterling  refresh access token worng");
+                logger.error("sterling  refresh access token wrong");
             }else{
                 sterlingScreening = createScreening(screeningInputDto,--retryTimes);
             }
@@ -290,7 +286,7 @@ public class SterlingApiUtils {
         }
         String getUrl = String.format(sterlingHost + "/v1/screenings/%s",screeningId) ;
         Map<String,String> headers = Maps.newHashMap();
-        headers.put("Authorization",String.format(BEARER_FORMATE,getAccessToken()));
+        headers.put("Authorization",String.format(BEARER_FORMAT,getAccessToken()));
         headers.put(HTTP.CONTENT_TYPE,"application/json");
         HttpClientUtils.Response response = HttpClientUtils.timeoutRetryGet(getUrl,headers,MAX_RETRY);
 
@@ -311,8 +307,6 @@ public class SterlingApiUtils {
     }
 
 
-
-
     /**
      * 根据背景调查的ID 获取调查后的report
      * @param screeningId
@@ -325,7 +319,7 @@ public class SterlingApiUtils {
 
         String postUrl = String.format(sterlingHost + "/v1/screenings/%s/report-links",screeningId);
         Map<String,String> headers = Maps.newHashMap();
-        headers.put("Authorization",String.format(BEARER_FORMATE,getAccessToken()));
+        headers.put("Authorization",String.format(BEARER_FORMAT,getAccessToken()));
         headers.put(HTTP.CONTENT_TYPE,"application/json");
         HttpClientUtils.Response response = HttpClientUtils.timeoutRetryPost(postUrl,null,headers,MAX_RETRY);
         if(response == null){
@@ -353,7 +347,7 @@ public class SterlingApiUtils {
             return false;
         }
         Map<String, String> headers = Maps.newHashMap();
-        headers.put("Authorization", String.format(BEARER_FORMATE, getAccessToken()));
+        headers.put("Authorization", String.format(BEARER_FORMAT, getAccessToken()));
         Map<String, Object> params = Maps.newHashMap();
         params.put("reportItemIds",reportIdList);
         String postUrl = String.format(sterlingHost+"/v1/screenings/%s/adverse-actions",screeningId);
@@ -383,19 +377,19 @@ public class SterlingApiUtils {
 
     /**
      * 用http的方式上传授权文档
-     * @param screeingId
+     * @param screeningId
      * @param documentLink
      * @return
      */
-    public static boolean createScreeningDocument(String screeingId,String documentLink){
-        if(StringUtils.isBlank(screeingId) || StringUtils.isBlank(documentLink)){
+    public static boolean createScreeningDocument(String screeningId,String documentLink){
+        if(StringUtils.isBlank(screeningId) || StringUtils.isBlank(documentLink)){
             return false;
         }
         byte[] fileByteArray = FileUtils.webUrlConvertByteArray(documentLink);
-        String post = String.format(sterlingHost +"/v1/screenings/%s/documents?party=candidate&documentType=end-user-agreement",screeingId);
+        String post = String.format(sterlingHost +"/v1/screenings/%s/documents?party=candidate&documentType=end-user-agreement",screeningId);
 
         org.springframework.http.HttpHeaders httpHeaders = new org.springframework.http.HttpHeaders();
-        httpHeaders.add("Authorization", String.format(BEARER_FORMATE, getAccessToken()));
+        httpHeaders.add("Authorization", String.format(BEARER_FORMAT, getAccessToken()));
         httpHeaders.setContentType(MediaType.APPLICATION_OCTET_STREAM);
 
         String response = HttpClientUtils.postBinaryFile(post,fileByteArray,httpHeaders);
@@ -405,15 +399,6 @@ public class SterlingApiUtils {
         }
         return false;
     }
-
-
-
-
-
-
-
-
-
 
 
     /**
@@ -448,10 +433,4 @@ public class SterlingApiUtils {
         }
         return sterlingAccessToken.getAccess_token();
     }
-
-
-
-
-
-
 }

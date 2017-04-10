@@ -17,12 +17,12 @@ import org.springframework.stereotype.Service;
 import com.google.api.client.util.Maps;
 import com.vipkid.portal.personal.model.TeachingInfoData;
 import com.vipkid.rest.service.LoginService;
+import com.vipkid.teacher.tools.security.SHA256PasswordEncoder;
 import com.vipkid.trpm.constant.ApplicationConstant.CookieKey;
 import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.entity.TeacherTaxpayerForm;
 import com.vipkid.trpm.entity.User;
 import com.vipkid.trpm.entity.personal.TaxpayerView;
-import com.vipkid.trpm.security.SHA256PasswordEncoder;
 import com.vipkid.trpm.service.passport.RemberService;
 import com.vipkid.trpm.service.portal.PersonalInfoService;
 import com.vipkid.trpm.service.portal.TeacherTaxpayerFormService;
@@ -42,9 +42,6 @@ public class PortalPersonalInfoService {
 
 	@Autowired
 	private LoginService loginService;
-
-	@Autowired
-	private SHA256PasswordEncoder mSHA256PasswordEncoder;
 
 	@Autowired
 	private RemberService remberService;
@@ -86,7 +83,8 @@ public class PortalPersonalInfoService {
 
 		Map<String, Object> teachingInfoData = Maps.newHashMap();
 		// 执行密码修改操作
-		String encodedNewPassword = mSHA256PasswordEncoder.encode(newPassword);
+		SHA256PasswordEncoder encoder = new SHA256PasswordEncoder();
+		String encodedNewPassword = encoder.encode(newPassword);
 		Map<String, Object> map = personalInfoService.doChangePassword(teacher.getId(), encodedNewPassword);
 		if ((Boolean) map.get("action")) {
 			teachingInfoData.put("isSuccess", true);

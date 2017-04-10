@@ -1,21 +1,20 @@
 package com.vipkid.background.api.sterling.service;
 
 
-
-
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
-import com.vipkid.background.api.sterling.controller.SterlingApiController;
-import com.vipkid.background.api.sterling.dto.*;
-
-import com.vipkid.background.service.BackgroundCheckService;
-import com.vipkid.background.service.BackgroundCommonService;
-import com.vipkid.background.vo.BackgroundCheckVo;
-import com.vipkid.http.utils.JacksonUtils;
 import com.vipkid.background.BackgroundAdverseDao;
 import com.vipkid.background.BackgroundReportDao;
 import com.vipkid.background.BackgroundScreeningDao;
+import com.vipkid.background.api.sterling.controller.SterlingApiController;
+import com.vipkid.background.api.sterling.dto.*;
+import com.vipkid.background.service.BackgroundCheckService;
+import com.vipkid.background.service.BackgroundCommonService;
+import com.vipkid.background.vo.BackgroundCheckVo;
+import com.vipkid.common.utils.KeyGenerator;
+import com.vipkid.common.utils.RedisCacheUtils;
+import com.vipkid.http.utils.JacksonUtils;
 import com.vipkid.trpm.entity.BackgroundAdverse;
 import com.vipkid.trpm.entity.BackgroundReport;
 import com.vipkid.trpm.entity.BackgroundScreening;
@@ -32,8 +31,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Nullable;
 import javax.annotation.Resource;
-
 import java.util.*;
+
+import static com.vipkid.common.utils.KeyGenerator.*;
 
 
 /**
@@ -46,6 +46,8 @@ public class SterlingService {
     private static final Logger logger = LoggerFactory.getLogger(SterlingApiController.class);
 
     private static ScreeningInputDto.CallBack callback = null;
+
+
 
     static{
         callback = new ScreeningInputDto.CallBack();
@@ -159,37 +161,45 @@ public class SterlingService {
      * @return
      */
     public CandidateOutputDto saveCandidate(CandidateInputDto candidateInputDto) {
-        BackgroundScreening sterlingScreening = backgroundScreeningDao.findByTeacherIdTopOne(candidateInputDto.getTeacherId());
-        //创建
-        if(null == sterlingScreening){
-            return createCandidate(candidateInputDto);
-        }
 
-        //修补
-        if(StringUtils.isBlank(sterlingScreening.getCandidateId())){
-            //有记录，但是没有sterling的数据
-            CandidateOutputDto candidateOutputDto = repairDataCandidate(candidateInputDto.getTeacherId());
-            if(candidateOutputDto.getErrorCode() == 12000){
-                //sterling不存在要重新创建candidate
-                candidateOutputDto = createCandidate(candidateInputDto);
+        if(!RedisCacheUtils.lock(KeyGenerator.generateKey(CREATE_CANDIDATE_LOCK,candidateInputDto.getTeacherId()),String.valueOf(candidateInputDto.getTeacherId()),RedisCacheUtils.FIVE_MINUTES)){
+            return new CandidateOutputDto(10000,"已经存在一次请求还没有结束");
+        }
+        try{
+            BackgroundScreening sterlingScreening = backgroundScreeningDao.findByTeacherIdTopOne(candidateInputDto.getTeacherId());
+            //创建
+            if(null == sterlingScreening){
+                return createCandidate(candidateInputDto);
             }
-            return candidateOutputDto;
+
+            //修补
+            if(StringUtils.isBlank(sterlingScreening.getCandidateId())){
+                //有记录，但是没有sterling的数据
+                CandidateOutputDto candidateOutputDto = repairDataCandidate(candidateInputDto.getTeacherId());
+                if(candidateOutputDto.getErrorCode() == 12000){
+                    //sterling不存在要重新创建candidate
+                    candidateOutputDto = createCandidate(candidateInputDto);
+                }
+                return candidateOutputDto;
+            }
+            Date updateTime = sterlingScreening.getUpdateTime();
+            Calendar lastTime = Calendar.getInstance();
+            lastTime.setTimeInMillis(updateTime.getTime());
+            Calendar currentTime = Calendar.getInstance();
+            currentTime = backgroundCommonService.backgroundDateCondition(currentTime);
+
+            candidateInputDto.setCandidateId(sterlingScreening.getCandidateId());
+
+            //2年后修改信息，创建新记录
+            if(lastTime.before(currentTime)){
+                return updateCandidateFor2years(candidateInputDto);
+            }
+
+            //修改信息
+            return updateCandidate(candidateInputDto);
+        }finally {
+            RedisCacheUtils.unlock(KeyGenerator.generateKey(CREATE_CANDIDATE_LOCK,candidateInputDto.getTeacherId()));
         }
-        Date updateTime = sterlingScreening.getUpdateTime();
-        Calendar lastTime = Calendar.getInstance();
-        lastTime.setTimeInMillis(updateTime.getTime());
-        Calendar currentTime = Calendar.getInstance();
-        currentTime = backgroundCommonService.backgroundDateCondition(currentTime);
-
-        candidateInputDto.setCandidateId(sterlingScreening.getCandidateId());
-
-        //2年后修改信息，创建新记录
-        if(lastTime.before(currentTime)){
-            return updateCandidateFor2years(candidateInputDto);
-        }
-
-        //修改信息
-        return updateCandidate(candidateInputDto);
 
     }
 
@@ -219,7 +229,6 @@ public class SterlingService {
 
         List<SterlingCandidate> sterlingCandidateList = SterlingApiUtils.getCandidateList(candidateFilterDto);
         if(CollectionUtils.isEmpty(sterlingCandidateList)){
-            CandidateInputDto candidateInputDto =new CandidateInputDto();
             return new CandidateOutputDto(12000,"没有查到");
         }
 
@@ -263,6 +272,7 @@ public class SterlingService {
 
         backgroundScreeningDao.update(updateBackgroundScreening);
 
+        /*
         if(CollectionUtils.isNotEmpty(sterlingScreening.getAdverseActions())){
             List<BackgroundAdverse> backgroundAdverseList =  backgroundAdverseDao.findUpdateTimeByBgScreeningId(backgroundScreening.getId());
             if(CollectionUtils.isEmpty(backgroundAdverseList)){
@@ -281,13 +291,71 @@ public class SterlingService {
 
             }
         }
+        */
+        List<SterlingCallBack.ReportItem> rApiList = sterlingScreening.getReportItems();
+        if(CollectionUtils.isNotEmpty(rApiList)){
+            List<BackgroundReport> rInsertList = Lists.newArrayList();
+            for (SterlingCallBack.ReportItem rApi : rApiList) {
+                BackgroundReport rDB = backgroundReportDao.getByReportIdBgSterlingScreeningId(rApi.getId(), backgroundSterlingId);
+                if (rDB==null) {
+                    BackgroundReport rInsert =new BackgroundReport();
+                    rInsert.setBgSterlingScreeningId(backgroundSterlingId);
+                    rInsert.setScreeningId(backgroundScreening.getScreeningId());
+                    rInsert.setReportId(rApi.getId());
+                    rInsert.setStatus(rApi.getStatus());
+                    rInsert.setResult(rApi.getStatus());
+                    rInsert.setUpdatedAt(DateUtils.convertzDateTime(rApi.getUpdatedAt()));
+                    rInsert.setUpdateTime(new Date());
+                    rInsert.setCreateTime(new Date());
+                    rInsert.setType(rApi.getType());
+                    rInsertList.add(rInsert);
+                } else {
+                    if (!StringUtils.equals(rApi.getResult(), rDB.getResult()) || !StringUtils.equals(rApi.getStatus(), rDB.getStatus())) {
+                        rDB.setResult(rApi.getResult());
+                        rDB.setStatus(rApi.getStatus());
+                        rDB.setUpdatedAt(DateUtils.convertzDateTime(rApi.getUpdatedAt()));
+                        rDB.setUpdateTime(new Date());
+                        backgroundReportDao.update(rDB);
+                    }
+                }
+            }
+            if(CollectionUtils.isNotEmpty(rInsertList)) {
+                backgroundReportDao.batchInsert(rInsertList);
+            }
+        }
+
+        List<SterlingCallBack.AdverseAction> aApiList = sterlingScreening.getAdverseActions();
+        if(CollectionUtils.isNotEmpty(aApiList)){
+            List<BackgroundAdverse> aInsertList = Lists.newArrayList();
+            for (SterlingCallBack.AdverseAction aApi : aApiList) {
+                BackgroundAdverse aDB = backgroundAdverseDao.getByActionsIdBgSterlingScreeningId(aApi.getId(), backgroundSterlingId);
+                if (aDB==null) {
+                    BackgroundAdverse aInsert =new BackgroundAdverse();
+                    aInsert.setBgSterlingScreeningId(backgroundSterlingId);
+                    aInsert.setScreeningId(backgroundScreening.getScreeningId());
+                    aInsert.setActionsId(aApi.getId());
+                    aInsert.setActionsStatus(aApi.getStatus());
+                    aInsert.setActionsUpdatedAt(DateUtils.convertzDateTime(aApi.getUpdatedAt()));
+                    aInsert.setUpdateTime(new Date());
+                    aInsert.setCreateTime(new Date());
+                    aInsertList.add(aInsert);
+                } else {
+                    if (!StringUtils.equals(aApi.getStatus(), aDB.getActionsStatus())) {
+                        aDB.setActionsStatus(aApi.getStatus());
+                        aDB.setActionsUpdatedAt(DateUtils.convertzDateTime(aApi.getUpdatedAt()));
+                        aDB.setUpdateTime(new Date());
+                        backgroundAdverseDao.update(aDB);
+                    }
+                }
+            }
+            if(CollectionUtils.isNotEmpty(aInsertList)) {
+                backgroundAdverseDao.batchInsert(aInsertList);
+            }
+        }
 
         return new ScreeningOutputDto(backgroundSterlingId);
 
     }
-
-
-
 
 
     @Transactional(readOnly = false)
@@ -302,39 +370,57 @@ public class SterlingService {
             //😀 如果这个用户创建过Screening ，哪么就不去调用接口了，直接返回，因为调用接口一次就要花💰
             return new ScreeningOutputDto(backgroundScreening.getId());
         }
-        ScreeningInputDto screeningInputDto = new ScreeningInputDto();
-        screeningInputDto.setPackageId(PropertyConfigurer.stringValue("background.sterling.pakcageId"));
-        screeningInputDto.setCandidateId(backgroundScreening.getCandidateId());
-        screeningInputDto.setCallback(callback);
 
 
-        SterlingScreening sterlingScreening = SterlingApiUtils.createScreening(screeningInputDto, SterlingApiUtils.MAX_RETRY);
-        if (sterlingScreening == null) {
-            return new ScreeningOutputDto(10000,"没有返回结果");
+        if(!RedisCacheUtils.lock(KeyGenerator.generateKey(CREATE_SCREENING_LOCK,teacherId),String.valueOf(teacherId),RedisCacheUtils.FIVE_MINUTES)){
+            return new ScreeningOutputDto(10000,"已经存在一次请求还没有结束");
         }
+        try{
 
-        if (CollectionUtils.isNotEmpty(sterlingScreening.getErrors())) {
-            return new ScreeningOutputDto(Integer.valueOf(sterlingScreening.getErrors().get(0).getErrorCode()),sterlingScreening.getErrors().get(0).getErrorMessage());
-        }
-        //返回字段保存
-        backgroundScreening.setSubmittedAt(DateUtils.convertzDateTime(sterlingScreening.getSubmittedAt()));
-        backgroundScreening.setUpdateAt(DateUtils.convertzDateTime(sterlingScreening.getUpdatedAt()));
-        backgroundScreening.setUpdateTime(new Date());
-        backgroundScreening.setResult(sterlingScreening.getResult());
-        backgroundScreening.setStatus(sterlingScreening.getStatus());
-        backgroundScreening.setScreeningId(sterlingScreening.getId());
-        //更新 bg_sterling_screening 表的数据
-        backgroundScreeningDao.update(backgroundScreening);
+            ScreeningInputDto screeningInputDto = new ScreeningInputDto();
+            screeningInputDto.setPackageId(PropertyConfigurer.stringValue("background.sterling.packageId"));
+            screeningInputDto.setCandidateId(backgroundScreening.getCandidateId());
+            screeningInputDto.setCallback(callback);
 
-        if(CollectionUtils.isNotEmpty(sterlingScreening.getReportItems())){
-            //插入report表
-            List<BackgroundReport> backgroundReportList = transformBackgroundReport(sterlingScreening.getReportItems(),backgroundScreening.getId(),backgroundScreening.getScreeningId());
-            int row = backgroundReportDao.batchInsert(backgroundReportList);
-        }
 
-        boolean isSuccess = SterlingApiUtils.createScreeningDocument(sterlingScreening.getId(),documentUrl);
-        if(isSuccess){
-            return new ScreeningOutputDto(backgroundScreening.getId());
+            SterlingScreening sterlingScreening = SterlingApiUtils.createScreening(screeningInputDto, SterlingApiUtils.MAX_RETRY);
+            if (sterlingScreening == null) {
+                return new ScreeningOutputDto(10000,"没有返回结果");
+            }
+
+            if (CollectionUtils.isNotEmpty(sterlingScreening.getErrors())) {
+                return new ScreeningOutputDto(Integer.valueOf(sterlingScreening.getErrors().get(0).getErrorCode()),sterlingScreening.getErrors().get(0).getErrorMessage());
+            }
+            String screeningFlag = StringUtils.substring(sterlingScreening.getId(),0,3);
+            if(StringUtils.isBlank(screeningFlag)){
+                return new ScreeningOutputDto(10000,"返回不正确");
+            }
+            if(!StringUtils.equals(screeningFlag,"001")){
+                return new ScreeningOutputDto(10000,"返回不正确");
+            }
+
+            //返回字段保存
+            backgroundScreening.setSubmittedAt(DateUtils.convertzDateTime(sterlingScreening.getSubmittedAt()));
+            backgroundScreening.setUpdateAt(DateUtils.convertzDateTime(sterlingScreening.getUpdatedAt()));
+            backgroundScreening.setUpdateTime(new Date());
+            backgroundScreening.setResult(sterlingScreening.getResult());
+            backgroundScreening.setStatus(sterlingScreening.getStatus());
+            backgroundScreening.setScreeningId(sterlingScreening.getId());
+            //更新 bg_sterling_screening 表的数据
+            backgroundScreeningDao.update(backgroundScreening);
+
+            if(CollectionUtils.isNotEmpty(sterlingScreening.getReportItems())){
+                //插入report表
+                List<BackgroundReport> backgroundReportList = transformBackgroundReport(sterlingScreening.getReportItems(),backgroundScreening.getId(),backgroundScreening.getScreeningId());
+                int row = backgroundReportDao.batchInsert(backgroundReportList);
+            }
+
+            boolean isSuccess = SterlingApiUtils.createScreeningDocument(sterlingScreening.getId(),documentUrl);
+            if(isSuccess){
+                return new ScreeningOutputDto(backgroundScreening.getId());
+            }
+        }finally {
+            RedisCacheUtils.unlock(KeyGenerator.generateKey(CREATE_SCREENING_LOCK,teacherId));
         }
 
         return new ScreeningOutputDto(10000,"上传文档没有成功");
@@ -342,48 +428,55 @@ public class SterlingService {
 
     @Transactional(readOnly = false)
     public AdverseOutputDto createPreAdverse(Long teacherId) {
-
-        BackgroundScreening backgroundScreening = backgroundScreeningDao.findByTeacherIdTopOne(teacherId);
-        if(backgroundScreening == null){
-            return new AdverseOutputDto(null,10000,String.format("teacherId:%s screeing记录不存在",teacherId));
-        }
-        List<BackgroundReport> backgroundReportList = backgroundReportDao.findByBgSterlingScreeningId(backgroundScreening.getId());
-        if(CollectionUtils.isEmpty(backgroundReportList)){
-            return new AdverseOutputDto(null,10000,String.format("bgScreeingId:%s report记录不存在",backgroundScreening.getId()));
+        if(!RedisCacheUtils.lock(KeyGenerator.generateKey(CREATE_PREADVERSE_LOCK,teacherId),String.valueOf(teacherId),RedisCacheUtils.FIVE_MINUTES)){
+            return new AdverseOutputDto(10000,"已经存在一次请求还没有结束");
         }
 
-        Collection<BackgroundReport> alertReport = Collections2.filter(backgroundReportList, new Predicate<BackgroundReport>() {
-            @Override
-            public boolean apply(@Nullable BackgroundReport report) {
-                return StringUtils.equals(report.getResult(),"alert");
-            }
-        });
+       try{
+           BackgroundScreening backgroundScreening = backgroundScreeningDao.findByTeacherIdTopOne(teacherId);
+           if(backgroundScreening == null){
+               return new AdverseOutputDto(10000,String.format("teacherId:%s screening记录不存在",teacherId));
+           }
+           List<BackgroundReport> backgroundReportList = backgroundReportDao.findByBgSterlingScreeningId(backgroundScreening.getId());
+           if(CollectionUtils.isEmpty(backgroundReportList)){
+               return new AdverseOutputDto(10000,String.format("bgScreeningId:%s report记录不存在",backgroundScreening.getId()));
+           }
 
-        if(org.springframework.util.CollectionUtils.isEmpty(alertReport)){
-            return new AdverseOutputDto(null,10000,String.format("bgScreeingId:%s report没有alert的",backgroundScreening.getId()));
-        }
+           Collection<BackgroundReport> alertReport = Collections2.filter(backgroundReportList, new Predicate<BackgroundReport>() {
+               @Override
+               public boolean apply(@Nullable BackgroundReport report) {
+                   return StringUtils.equals(report.getResult(),"alert") || StringUtils.equals(report.getResult(),"error");
+               }
+           });
 
-        List<String> reportItemIdList = Lists.transform(Lists.newArrayList(alertReport), new com.google.common.base.Function<BackgroundReport, String>() {
-            @Nullable
-            @Override
-            public String apply(@Nullable BackgroundReport report) {
-                return report.getReportId();
-            }
-        });
+           if(org.springframework.util.CollectionUtils.isEmpty(alertReport)){
+               return new AdverseOutputDto(10000,String.format("bgScreeningId:%s report没有alert的",backgroundScreening.getId()));
+           }
+
+           List<String> reportItemIdList = Lists.transform(Lists.newArrayList(alertReport), new com.google.common.base.Function<BackgroundReport, String>() {
+               @Nullable
+               @Override
+               public String apply(@Nullable BackgroundReport report) {
+                   return report.getReportId();
+               }
+           });
 
 
-        boolean preAdverseAction = SterlingApiUtils.preAdverseAction(backgroundScreening.getScreeningId(), reportItemIdList);
-        if(!preAdverseAction){
-            return new AdverseOutputDto(null,10000,String.format("ScreeingId:%s 请求Sterling失败",backgroundScreening.getScreeningId()));
-        }
-        SterlingScreening sterlingScreening = SterlingApiUtils.getScreening(backgroundScreening.getScreeningId());
-        if(sterlingScreening == null){
-            return new AdverseOutputDto(null,10000,String.format("ScreeingId:%s 请求Sterling失败",backgroundScreening.getScreeningId()));
-        }
-        if(CollectionUtils.isNotEmpty(sterlingScreening.getAdverseActions())){
-            batchInsertBackgroundAdverse(sterlingScreening.getAdverseActions(),backgroundScreening.getId(),sterlingScreening.getId());
-        }
-        return new AdverseOutputDto(teacherId,null,null);
+           boolean preAdverseAction = SterlingApiUtils.preAdverseAction(backgroundScreening.getScreeningId(), reportItemIdList);
+           if(!preAdverseAction){
+               return new AdverseOutputDto(10000,String.format("ScreeningId:%s 请求Sterling失败",backgroundScreening.getScreeningId()));
+           }
+           SterlingScreening sterlingScreening = SterlingApiUtils.getScreening(backgroundScreening.getScreeningId());
+           if(sterlingScreening == null){
+               return new AdverseOutputDto(10000,String.format("ScreeningId:%s 请求Sterling失败",backgroundScreening.getScreeningId()));
+           }
+           if(CollectionUtils.isNotEmpty(sterlingScreening.getAdverseActions())){
+               batchInsertBackgroundAdverse(sterlingScreening.getAdverseActions(),backgroundScreening.getId(),sterlingScreening.getId());
+           }
+           return new AdverseOutputDto(teacherId);
+       }finally {
+           RedisCacheUtils.unlock(KeyGenerator.generateKey(CREATE_PREADVERSE_LOCK,teacherId));
+       }
     }
 
 
@@ -410,10 +503,10 @@ public class SterlingService {
      * 转换report表
      * @param reportItemList
      * @param backgroundScreeningId
-     * @param screeingId
+     * @param screeningId
      * @return
      */
-    private List<BackgroundReport> transformBackgroundReport(List<SterlingCallBack.ReportItem> reportItemList,Long backgroundScreeningId,String screeingId){
+    private List<BackgroundReport> transformBackgroundReport(List<SterlingCallBack.ReportItem> reportItemList,Long backgroundScreeningId,String screeningId){
         if(CollectionUtils.isEmpty(reportItemList)){
             return Lists.newArrayList();
         }
@@ -421,7 +514,7 @@ public class SterlingService {
         for(SterlingCallBack.ReportItem reportItem:reportItemList){
             BackgroundReport backgroundReport =new BackgroundReport();
             backgroundReport.setBgSterlingScreeningId(backgroundScreeningId);
-            backgroundReport.setScreeningId(screeingId);
+            backgroundReport.setScreeningId(screeningId);
             backgroundReport.setReportId(reportItem.getId());
             backgroundReport.setStatus(reportItem.getStatus());
             backgroundReport.setResult(reportItem.getStatus());
@@ -433,8 +526,6 @@ public class SterlingService {
         }
         return backgroundReportList;
     }
-
-
 
 
     /**

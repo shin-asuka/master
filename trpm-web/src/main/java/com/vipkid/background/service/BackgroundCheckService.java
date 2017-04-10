@@ -7,7 +7,6 @@ import com.vipkid.background.dto.input.BackgroundCheckInputDto;
 import com.vipkid.background.dto.output.BaseOutputDto;
 import com.vipkid.background.enums.TeacherPortalCodeEnum;
 import com.vipkid.background.vo.BackgroundCheckVo;
-import com.vipkid.dataSource.annotation.Master;
 import com.vipkid.dataSource.annotation.Slave;
 import com.vipkid.enums.TeacherAddressEnum;
 import com.vipkid.enums.TeacherApplicationEnum;
@@ -35,8 +34,6 @@ import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import static com.vipkid.trpm.util.DateUtils.FMT_YMD;
 
@@ -44,7 +41,7 @@ import static com.vipkid.trpm.util.DateUtils.FMT_YMD;
 public class BackgroundCheckService {
     private static Logger logger = LoggerFactory.getLogger(BackgroundCheckService.class);
 
-    public static ExecutorService fixedThreadPool = Executors.newFixedThreadPool(5);
+    //public static ExecutorService fixedThreadPool = Executors.newFixedThreadPool(5);
 
     @Autowired
     private TeacherContractFileDao contractFileDao;
@@ -188,7 +185,6 @@ public class BackgroundCheckService {
     }
 
     private CandidateOutputDto createCandidate(BackgroundCheckInputDto checkInput, Teacher teacher){
-        CandidateOutputDto output = new  CandidateOutputDto(TeacherPortalCodeEnum.SYS_FAIL);
         CandidateInputDto candidateInputDto = new CandidateInputDto();
         candidateInputDto.setTeacherId(teacher.getId());
         candidateInputDto.setEmail(teacher.getEmail());
@@ -221,6 +217,7 @@ public class BackgroundCheckService {
         TeacherLicense license = licenseDao.findByTeacherId(teacher.getId());
         if(license != null){
             candidateInputDto.setSsn(license.getSocialNo());
+            /*
             if(StringUtils.isNotBlank(license.getDriverLicense())){
                 CandidateInputDto.DriversLicense candidateLicense = new CandidateInputDto.DriversLicense();
                 candidateLicense.setIssuingAgency(license.getDriverLicenseIssuingAgency());
@@ -228,9 +225,10 @@ public class BackgroundCheckService {
                 candidateLicense.setType(license.getDriverLicenseType());
                 candidateInputDto.setDriversLicense(candidateLicense);
             }
+            */
         }
         logger.info("submit background check information, begin invoke sterlingService.saveCandidate, teacherId="+teacher.getId());
-        output = sterlingService.saveCandidate(candidateInputDto);
+        CandidateOutputDto output = sterlingService.saveCandidate(candidateInputDto);
         logger.info("submit background check information, invoke sterlingService.saveCandidate,teacherId="+teacher.getId()+", return resCode="+output.getResCode().getCode()+", resMsg="+output.getResCode().getMsg()+", errorCode="+output.getErrorCode()+", errorMsg="+output.getErrorMessage()+", id="+output.getId());
         if(!StringUtils.equals(output.getResCode().getCode(), TeacherPortalCodeEnum.RES_SUCCESS.getCode())){
             //format errorMessage
@@ -253,15 +251,6 @@ public class BackgroundCheckService {
     }
 
 
-    private void createCandidateAsync(BackgroundCheckInputDto checkInput, Teacher teacher){
-        Runnable thread = new Runnable() {
-            @Override
-            public void run() {
-                createCandidate(checkInput, teacher);
-            }
-        };
-        fixedThreadPool.submit(thread);
-    }
     private int updateUrlAndScreeningId(Long teacherId, Integer fileType, String url, String operateType){
         TeacherContractFile teacherContractFile = new TeacherContractFile();
         teacherContractFile.setTeacherId(teacherId);
@@ -292,10 +281,18 @@ public class BackgroundCheckService {
 
     private void updateTeacherBasicIno(Teacher teacher, BackgroundCheckInputDto input){
         teacher.setMaidenName(input.getMaidenName());
-        teacher.setMiddleName(input.getMiddleName());
+        if(StringUtils.isNotBlank(input.getMiddleName())){
+            teacher.setMiddleName(input.getMiddleName());
+        }
         if(StringUtils.isNotBlank(input.getBirthDay())){
             LocalDate localDate = LocalDate.parse(input.getBirthDay(), FMT_YMD);
             teacher.setBirthday(java.sql.Date.valueOf(localDate));
+        }
+        if(StringUtils.isBlank(teacher.getFirstName())){
+            teacher.setFirstName(input.getFirstName());
+        }
+        if(StringUtils.isBlank(teacher.getLastName())){
+            teacher.setLastName(input.getLastName());
         }
         int row = teacherDao.update(teacher);
         if(row != 1){

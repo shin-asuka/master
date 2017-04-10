@@ -82,6 +82,9 @@ public class BackgroundCheckController extends RestfulController {
         String street = checkInput.getLatestStreet();
         String zipCode = checkInput.getLatestZipCode();
 
+        String firstName = checkInput.getFirstName();
+        String lastName = checkInput.getLastName();
+
         String birthday = checkInput.getBirthDay();
         String socialSecurityNo = checkInput.getSocialSecurityNumber();
         String fileUrl = checkInput.getFileUrl();
@@ -91,6 +94,9 @@ public class BackgroundCheckController extends RestfulController {
             Preconditions.checkArgument(currentStateId != null, "currentStateId cannot be null");
             Preconditions.checkArgument(currentCityId != null, "currentCityId cannot be null");
             */
+            Preconditions.checkArgument(StringUtils.isNotBlank(firstName),"firstName cannot be null");
+            Preconditions.checkArgument(StringUtils.isNotBlank(lastName), "lastName cannot be null");
+
             Preconditions.checkArgument(countryId != null, "latestCountryId cannot be null");
             Preconditions.checkArgument(stateId != null, "latestStateId cannot be null");
             Preconditions.checkArgument(cityId != null, "latestCityId cannot be null");
@@ -151,7 +157,7 @@ public class BackgroundCheckController extends RestfulController {
             String fileName = file.getOriginalFilename();
 
             Preconditions.checkArgument(AwsFileUtils.checkContractFileType(fileName), "文件类型不正确，支持类型为" + AwsFileUtils.CONTRACT_FILE_TYPE);
-            Preconditions.checkArgument(AwsFileUtils.checkContractFileSize(size), "文件太大，maxSize = " + AwsFileUtils.CONTRACT_FILE_MAX_SIZE);
+            Preconditions.checkArgument(AwsFileUtils.checkContractFileSize(size), "文件太大，maxSize = " + AwsFileUtils.BACKGROUND_CHECK_FILE_MAX_SIZE);
 
             Teacher teacher = getTeacher(request);
             teacherId = teacher.getId();
@@ -218,10 +224,10 @@ public class BackgroundCheckController extends RestfulController {
             if(list != null && list.size() > 0){
                 for(TeacherContractFile file : list){
                     String fileResult = file.getResult();
-                    if(!fileResult.equals("PASS") && file.getFileType() == TeacherApplicationEnum.ContractFileType.CANADA_BACKGROUND_CHECK_CPIC_FORM.val().intValue()){
+                    if(!"PASS".equals(fileResult) && file.getFileType() == TeacherApplicationEnum.ContractFileType.CANADA_BACKGROUND_CHECK_CPIC_FORM.val().intValue()){
                         checkService.saveContractFile(teacherId, TeacherApplicationEnum.ContractFileType.CANADA_BACKGROUND_CHECK_CPIC_FORM.val(), cpicUrl, "submit");
                     }
-                    if(!fileResult.equals("PASS") && file.getFileType() == TeacherApplicationEnum.ContractFileType.CANADA_BACKGROUND_CHECK_ID2.val().intValue()){
+                    if(!"PASS".equals(fileResult) && file.getFileType() == TeacherApplicationEnum.ContractFileType.CANADA_BACKGROUND_CHECK_ID2.val().intValue()){
                         checkService.saveContractFile(teacherId, TeacherApplicationEnum.ContractFileType.CANADA_BACKGROUND_CHECK_ID2.val(), id2Url, "submit");
                     }
                 }
@@ -290,12 +296,12 @@ public class BackgroundCheckController extends RestfulController {
             for(TeacherContractFile file : list){
                 String url = file.getUrl();
                 Integer type = file.getFileType();
-                if(type.equals(TeacherApplicationEnum.ContractFileType.CANADA_BACKGROUND_CHECK_CPIC_FORM.val())){
+                if(TeacherApplicationEnum.ContractFileType.CANADA_BACKGROUND_CHECK_CPIC_FORM.val().equals(type)){
                     map.put("cpicUrl", url);
                     map.put("cpicResult", file.getResult());
                     map.put("cpicFailReason", file.getFailReason());
                 }
-                if(type.equals(TeacherApplicationEnum.ContractFileType.CANADA_BACKGROUND_CHECK_ID2.val())){
+                if(TeacherApplicationEnum.ContractFileType.CANADA_BACKGROUND_CHECK_ID2.val().equals(type)){
                     map.put("id2Url", url);
                     map.put("id2Result", file.getResult());
                     map.put("id2FailReason", file.getFailReason());
@@ -311,9 +317,9 @@ public class BackgroundCheckController extends RestfulController {
     }
 
     private boolean validateContractFileType(Integer type){
-        if(!type.equals(TeacherApplicationEnum.ContractFileType.US_BACKGROUND_CHECK.val())
-                && !type.equals(TeacherApplicationEnum.ContractFileType.CANADA_BACKGROUND_CHECK_CPIC_FORM.val())
-                && !type.equals(TeacherApplicationEnum.ContractFileType.CANADA_BACKGROUND_CHECK_ID2.val())){
+        if(!TeacherApplicationEnum.ContractFileType.US_BACKGROUND_CHECK.val().equals(type)
+                && !TeacherApplicationEnum.ContractFileType.CANADA_BACKGROUND_CHECK_CPIC_FORM.val().equals(type)
+                && !TeacherApplicationEnum.ContractFileType.CANADA_BACKGROUND_CHECK_ID2.val().equals(type)){
             return false;
         }
         return true;

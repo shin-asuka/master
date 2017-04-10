@@ -3,6 +3,7 @@ package com.vipkid.trpm.dao;
 import com.google.common.collect.Maps;
 import com.vipkid.enums.TeacherEnum.LifeCycle;
 import com.vipkid.rest.dto.ReferralTeacherDto;
+import com.vipkid.teacher.tools.utils.NumericUtils;
 import com.vipkid.trpm.entity.Teacher;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -206,4 +207,22 @@ public class TeacherDao extends MapperDaoTemplate<Teacher> {
 		}
 		return this.selectEntity("findRegulareTeacherByCity", paramsMap);
 	}
+    
+    public Map<String,Object> getActivityExamInfo(Long id){
+    	if(NumericUtils.isNullOrZeor(id)){
+    		return null;
+    	}
+    	Map<String, Object> paramsMap = Maps.newHashMap();
+    	paramsMap.put("id", id);
+    	return this.selectEntity("getActivityExamInfo", paramsMap);
+    }
+    
+    public void updateActivityExamInfo(Long id,Long teacherId){
+    	if(NumericUtils.isNotNullOrZeor(id)){
+    		Map<String, Object> paramsMap = Maps.newHashMap();
+        	paramsMap.put("id", id);
+        	paramsMap.put("teacherId", teacherId);
+        	this.getSqlSession().update("updateActivityExamInfo", paramsMap);
+    	}
+    }
 }

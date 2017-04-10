@@ -1,25 +1,20 @@
 package com.vipkid.background.api.sterling.controller;
 
-
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.vipkid.background.api.sterling.dto.*;
 import com.vipkid.background.api.sterling.service.SterlingService;
 import com.vipkid.http.utils.JacksonUtils;
 import com.vipkid.rest.utils.ApiResponseUtils;
-import com.vipkid.background.BackgroundScreeningDao;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.time.StopWatch;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -34,10 +29,6 @@ public class SterlingApiController {
 
     @Autowired
     private SterlingService sterlingService;
-
-
-    @Resource
-    private BackgroundScreeningDao backgroundScreeningDao;
 
 
     @RequestMapping("/background/sterling/saveCandidate")
@@ -62,8 +53,6 @@ public class SterlingApiController {
         return ApiResponseUtils.buildSuccessDataResp(candidateOutputDto.getId());
 
     }
-
-
 
 
     @RequestMapping("/background/sterling/createScreening")
@@ -95,18 +84,24 @@ public class SterlingApiController {
     }
 
 
-
-
     @RequestMapping(value = "/background/sterling/callback",method = RequestMethod.POST)
     public Object  callback(@RequestBody  SterlingCallBack callBack,HttpServletRequest request){
         logger.warn(JacksonUtils.toJSONString(callBack));
         if(null != callBack){
+            String screeningId = callBack.getPayload().getId();
+            String screeningFlag = StringUtils.substring(screeningId,0,3);
+            if(StringUtils.isBlank(screeningFlag)){
+                logger.warn("错误数据，丢弃");
+                ApiResponseUtils.buildSuccessDataResp("success");
+            }
+            if(!StringUtils.equals(screeningFlag,"001")){
+                logger.warn("错误数据，丢弃");
+                ApiResponseUtils.buildSuccessDataResp("success");
+            }
             sterlingService.updateBackgroundScreening(callBack.getPayload());
         }
         return ApiResponseUtils.buildSuccessDataResp("success");
     }
-
-
 
 
     @RequestMapping(value = "/background/sterling/repairDateScreening",method = RequestMethod.GET)
@@ -121,6 +116,4 @@ public class SterlingApiController {
 
         return ApiResponseUtils.buildSuccessDataResp("success");
     }
-
-
 }

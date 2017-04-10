@@ -1,24 +1,14 @@
 package com.vipkid.trpm.controller.passport;
 
-import com.google.api.client.util.Lists;
-import com.google.common.base.Splitter;
-import com.vipkid.enums.TeacherEnum;
-import com.vipkid.enums.UserEnum;
-import com.vipkid.recruitment.utils.ReturnMapUtils;
-import com.vipkid.rest.service.LoginService;
-import com.vipkid.trpm.constant.ApplicationConstant;
-import com.vipkid.trpm.constant.ApplicationConstant.CookieKey;
-import com.vipkid.trpm.controller.AbstractController;
-import com.vipkid.trpm.entity.Teacher;
-import com.vipkid.trpm.entity.User;
-import com.vipkid.trpm.security.SHA256PasswordEncoder;
-import com.vipkid.trpm.service.passport.IndexService;
-import com.vipkid.trpm.service.passport.PassportService;
-import com.vipkid.trpm.service.passport.RemberService;
-import com.vipkid.trpm.util.AES;
-import com.vipkid.trpm.util.CookieUtils;
-import com.vipkid.trpm.util.IpUtils;
-import org.apache.commons.collections.CollectionUtils;
+
+import java.io.IOException;
+import java.util.Base64;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.lang.StringUtils;
 import org.community.config.PropertyConfigurer;
 import org.slf4j.Logger;
@@ -31,23 +21,33 @@ import org.springframework.web.bind.ServletRequestUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.List;
-import java.util.Map;
+import com.google.api.client.util.Lists;
+import com.google.common.base.Splitter;
+import com.vipkid.enums.TeacherEnum;
+import com.vipkid.enums.UserEnum;
+import com.vipkid.recruitment.utils.ReturnMapUtils;
+import com.vipkid.rest.dto.RegisterDto;
+import com.vipkid.rest.service.LoginService;
+import com.vipkid.trpm.constant.ApplicationConstant;
+import com.vipkid.trpm.constant.ApplicationConstant.CookieKey;
+import com.vipkid.trpm.controller.AbstractController;
+import com.vipkid.trpm.entity.Teacher;
+import com.vipkid.trpm.entity.User;
+import com.vipkid.trpm.service.passport.IndexService;
+import com.vipkid.trpm.service.passport.PassportService;
+import com.vipkid.trpm.service.passport.RemberService;
+import com.vipkid.trpm.util.AES;
+import com.vipkid.trpm.util.CookieUtils;
+import com.vipkid.trpm.util.IpUtils;
+
 
 @Controller
 @PreAuthorize("permitAll")
 public class PassportController extends AbstractController {
 
 	private static Logger logger = LoggerFactory.getLogger(PassportController.class);
+	
 	public static final String SIGN_WHITE_IP = PropertyConfigurer.stringValue("monitor.ip.whiteList");
-	@Resource
-    SHA256PasswordEncoder sha256Encoder;
 
 	@Autowired
 	private PassportService passportService;
@@ -220,7 +220,12 @@ public class PassportController extends AbstractController {
 			// 执行业务逻辑
 			Object reid = CookieUtils.getValue(request, ApplicationConstant.REFEREEID);
 			Object partnerid = CookieUtils.getValue(request, ApplicationConstant.PARTNERID);
-			model.addAllAttributes(passportService.saveSignUp(email, privateCode, Long.valueOf(reid+""),  Long.valueOf(partnerid+"")));
+			RegisterDto bean = new RegisterDto();
+			bean.setEmail(email);
+			bean.setPassword(privateCode);
+			bean.setRefereeId(Long.valueOf(reid+""));
+			bean.setPartnerId(Long.valueOf(partnerid+""));
+			model.addAllAttributes(passportService.saveSignUp(bean));
 			CookieUtils.removeCookie(response, ApplicationConstant.REFEREEID, null, null);
 		}
 		return jsonView(response, model.asMap());

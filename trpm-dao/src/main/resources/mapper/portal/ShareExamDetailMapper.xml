@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ShareExamDetail_Mapper">
+
+	<!-- 通用查询结果列-->
+	<sql id="Base_Column_List">
+		 id,question_id,question_index,question_result,start_date_time,end_date_time,activity_exam_id,status
+	</sql>
+	
+	<!-- 对象返回定义 -->
+	<resultMap type="com.vipkid.trpm.entity.ShareExamDetail" id="ShareExamDetail">
+		<id column="id" property="id" />
+		<result column="question_id" property="questionId" />
+		<result column="question_index" property="questionIndex" />
+		<result column="question_result" property="questionResult" />
+		<result column="start_date_time" property="startDateTime" />
+		<result column="end_date_time" property="endDateTime" />
+		<result column="activity_exam_id" property="activityExamId" />
+		<result column="status" property="status" />
+	</resultMap>
+	
+	<!-- 条件语句映射 -->
+	<sql id="WhereSql">
+		<trim prefix="WHERE" prefixOverrides="AND">
+			<if test="questionId != null"> AND question_id = #{questionId}</if>
+			<if test="questionIndex != null"> AND question_index = #{questionIndex}</if>
+			<if test="questionResult != null"> AND question_result = #{questionResult}</if>
+			<if test="startDateTime != null"> AND start_date_time = #{startDateTime}</if>
+			<if test="endDateTime != null"> AND end_date_time = #{endDateTime}</if>
+			<if test="activityExamId != null"> AND activity_exam_id = #{activityExamId}</if>
+			<if test="status != null"> AND status = #{status}</if>
+		</trim>
+	</sql>
+
+	<!-- 分页语句映射 -->
+	<sql id="LimitSql">
+		<if test="startRows != null  and pageSize != null">
+			LIMIT #{startRows},#{pageSize}
+		</if>
+	</sql>
+	
+	<!-- 查询（根据主键ID查询） -->
+	<select id="selectByPrimaryKey" resultMap="ShareExamDetail">
+		 SELECT
+		 <include refid="Base_Column_List" />
+		 FROM share_exam_detail
+		 WHERE id = #{id}
+	</select>
+	
+	<!--删除：根据主键ID删除-->
+	<delete id="deleteByPrimaryKey">
+		 DELETE FROM share_exam_detail
+		 WHERE id = #{id}
+	</delete>
+
+	<!-- 添加 -->
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
+		 INSERT INTO share_exam_detail
+ 			(<include refid="Base_Column_List" />) 
+		 VALUES
+ 			(#{id},#{questionId},#{questionIndex},#{questionResult},#{startDateTime},#{endDateTime},#{activityExamId},#{status})
+	</insert>
+	
+	<!-- 添加 （匹配有值的字段）-->
+	<insert id="insertSelective" useGeneratedKeys="true" keyProperty="id">
+		 INSERT INTO share_exam_detail
+		 <trim prefix="(" suffix=")" suffixOverrides="," >
+			<if test="id != null "> id,</if>
+			<if test="questionId != null "> question_id,</if>
+			<if test="questionIndex != null "> question_index,</if>
+			<if test="questionResult != null "> question_result,</if>
+			<if test="startDateTime != null "> start_date_time,</if>
+			<if test="endDateTime != null "> end_date_time,</if>
+			<if test="activityExamId != null "> activity_exam_id,</if>
+			<if test="status != null "> status,</if>
+		</trim>
+		 <trim prefix="values (" suffix=")" suffixOverrides="," >
+			<if test="id!=null "> #{id},</if>
+			<if test="questionId!=null "> #{questionId},</if>
+			<if test="questionIndex!=null "> #{questionIndex},</if>
+			<if test="questionResult!=null "> #{questionResult},</if>
+			<if test="startDateTime!=null "> #{startDateTime},</if>
+			<if test="endDateTime!=null "> #{endDateTime},</if>
+			<if test="activityExamId!=null "> #{activityExamId},</if>
+			<if test="status!=null "> #{status},</if>
+		</trim>
+	</insert>
+
+	<!-- 修 改-->
+	<update id="updateByPrimaryKey">
+		 UPDATE share_exam_detail
+		 SET 
+			 question_id = #{questionId},question_index = #{questionIndex},question_result = #{questionResult},start_date_time = #{startDateTime},end_date_time = #{endDateTime},activity_exam_id = #{activityExamId},status = #{status}
+		 WHERE id = #{id}
+	</update>
+	
+
+	<!-- 修 改 （匹配有值的字段） -->
+	<update id="updateByPrimaryKeySelective">
+		 UPDATE share_exam_detail
+ 		 <set> 
+			<if test="questionId != null ">question_id = #{questionId},</if>
+			<if test="questionIndex != null ">question_index = #{questionIndex},</if>
+			<if test="questionResult != null ">question_result = #{questionResult},</if>
+			<if test="startDateTime != null ">start_date_time = #{startDateTime},</if>
+			<if test="endDateTime != null ">end_date_time = #{endDateTime},</if>
+			<if test="activityExamId != null ">activity_exam_id = #{activityExamId},</if>
+			<if test="status != null ">status = #{status},</if>
+ 		 </set>
+		 WHERE id = #{id}
+	</update>
+	
+		<!-- 查询分页list -->
+	<select id="selectByPage" resultMap="ShareExamDetail">
+		 SELECT
+		 <include refid="Base_Column_List" />
+		 FROM share_exam_detail
+		 <include refid="WhereSql"/>
+		 <include refid="LimitSql"/>
+	</select>
+	
+	<!-- 查询分页count -->
+	<select id="countByPage" resultType="int">
+		 SELECT count(*)
+		 FROM share_exam_detail
+		 <include refid="WhereSql"/>
+	</select>
+	
+	
+	<!-- 查询排序list -->
+	<select id="selectOrderByIndex" resultMap="ShareExamDetail">
+		 SELECT
+		 <include refid="Base_Column_List" />
+		 FROM share_exam_detail
+		 <include refid="WhereSql"/>
+		 ORDER BY question_index ASC
+	</select>
+
+</mapper>
+

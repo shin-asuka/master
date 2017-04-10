@@ -1,10 +1,8 @@
 package com.vipkid.rest.web;
 
 import java.io.IOException;
-
 import java.sql.Timestamp;
 import java.util.Date;
-
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -36,6 +34,7 @@ import com.vipkid.recruitment.utils.ReturnMapUtils;
 import com.vipkid.rest.RestfulController;
 import com.vipkid.rest.config.RestfulConfig;
 import com.vipkid.rest.config.TeacherInfo;
+import com.vipkid.rest.dto.ForgetPasswordDto;
 import com.vipkid.rest.dto.LoginDto;
 import com.vipkid.rest.dto.RegisterDto;
 import com.vipkid.rest.dto.ResetPasswordDto;
@@ -44,11 +43,11 @@ import com.vipkid.rest.service.AdminQuizService;
 import com.vipkid.rest.service.LoginService;
 import com.vipkid.rest.validation.ValidateUtils;
 import com.vipkid.rest.validation.tools.Result;
+import com.vipkid.teacher.tools.security.SHA256PasswordEncoder;
 import com.vipkid.trpm.constant.ApplicationConstant.AjaxCode;
 import com.vipkid.trpm.constant.ApplicationConstant.CookieKey;
 import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.entity.User;
-import com.vipkid.trpm.security.SHA256PasswordEncoder;
 import com.vipkid.trpm.service.huanxin.HuanxinService;
 import com.vipkid.trpm.service.passport.PassportService;
 import com.vipkid.trpm.util.Bean2Map;
@@ -315,7 +314,7 @@ public class LoginController extends RestfulController {
             
             // 执行业务逻辑
             logger.info("账户检查完毕-(通过)-正在注册:{}",bean.getEmail());
-            Map<String, Object> result = passportService.saveSignUp(email, bean.getPassword(), bean.getRefereeId(), bean.getPartnerId());
+            Map<String, Object> result = passportService.saveSignUp(bean);
             if(ReturnMapUtils.isFail(result)){
                 response.setStatus(HttpStatus.FORBIDDEN.value());
                 logger.warn("注册失败：{}",result);
@@ -344,15 +343,18 @@ public class LoginController extends RestfulController {
      * @Author:ALong (ZengWeiLong)
      * @param request
      * @param response
-     * @param pram 重置用户
+     * @param forgetPasswordDto 重置用户
      * @return String code码
      * @date 2016年5月16日
      */
     @RequestMapping(value = "/resetPasswordRequest", method = RequestMethod.POST, produces = RestfulConfig.JSON_UTF_8)
     public Map<String, Object> resetPasswordRequest(HttpServletRequest request, HttpServletResponse response,
-            @RequestBody Map<String,String> pram) {
+                                                    @RequestBody ForgetPasswordDto forgetPasswordDto) {
         try{
-            String email = pram.get("email");
+            //String email = pram.get("email");
+            String email = forgetPasswordDto.getEmail();
+            String key = forgetPasswordDto.getKey();
+            String imageCode = forgetPasswordDto.getImageCode();
             logger.info("参数验证:{}",email);            
             if (StringUtils.isBlank(email)) {
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
@@ -360,6 +362,15 @@ public class LoginController extends RestfulController {
             }
             
             logger.info("账号验证:{}",email);
+            //验证验证码
+            if (StringUtils.isBlank(key) || StringUtils.isBlank(imageCode)) {
+                response.setStatus(HttpStatus.BAD_REQUEST.value());
+                return ReturnMapUtils.returnFail(AjaxCode.VERIFY_CODE);
+            } else if (!passportService.checkVerifyCode(key, imageCode)) {
+                logger.warn("验证码错误，key = {},imageCode = {}", forgetPasswordDto.getKey(), forgetPasswordDto.getImageCode());
+                response.setStatus(HttpStatus.BAD_REQUEST.value());
+                return ReturnMapUtils.returnFail(AjaxCode.VERIFY_CODE_ERROR);
+            }
             // 根据email，检查是否有此账号。
             User user = this.passportService.findUserByUsername(email);
             if (null == user) {

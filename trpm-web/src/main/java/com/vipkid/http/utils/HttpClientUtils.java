@@ -323,8 +323,10 @@ public class HttpClientUtils {
      */
     private  static Response timeoutRetryRequest(HttpEntityEnclosingRequestBase requestBase,String jsonData,Map<String,String> header,int retryTimes)throws IOException {
         Exception ste = null;
-        int socketTimeout = READ_TIMEOUT;
-        int connectionTimeout = CONNECTION_TIMEOUT;
+        //int socketTimeout = READ_TIMEOUT;
+        //int connectionTimeout = CONNECTION_TIMEOUT;
+        int socketTimeout = 100*1000;
+        int connectionTimeout = 20*1000;
         for (int i = 0; i <= retryTimes; i++) {
             try {
                 Response result = interaction(requestBase,jsonData,null,header,socketTimeout,connectionTimeout);
