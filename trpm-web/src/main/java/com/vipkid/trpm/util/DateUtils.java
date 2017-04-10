@@ -4,6 +4,8 @@ import com.google.common.collect.Maps;
 import com.vipkid.trpm.constant.ApplicationConstant;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateFormatUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.Timestamp;
 import java.text.ParseException;
@@ -21,6 +23,7 @@ import java.util.Map;
  * 日期工具类
  */
 public final class DateUtils {
+	private static final Logger logger = LoggerFactory.getLogger(DateUtils.class);
 
 	public static final String YYYY_MM_DD = "yyyy-MM-dd";
 
@@ -55,6 +58,25 @@ public final class DateUtils {
 	public static final int MINUTE_OF_HALFHOUR = 30;
 	/* 每星期的天数 */
 	public static final int DAY_OF_WEEK = 7;
+
+
+
+
+	public final static String DATE_CHINESE_PATTERN = "yyyy年MM月dd日";
+	public final static String DATE_MONTH_DAY_CHINESE_PATTERN = "MM月dd日";
+	public final static String HOUR_MINUTE_CHINESE_PATTERN = "HH点mm分";
+	public final static String DATE_PATTERN = "yyyy-MM-dd";
+	public final static String DATE_YYYY_MM = "yyyy-MM";
+	public final static String DATE_SHORT_PATTERN = "yyyyMMdd";
+	public final static String DATE_SLASH_PATTERN = "yyyy/MM/dd";
+	public final static String DATETIME_MILL_SECOND = "yyyy-MM-dd HH:mm:ss.SSS";
+	public final static String DATETIME_PATTERN = "yyyy-MM-dd HH:mm:ss";
+	public final static String DATETIME_PATTERN_SHORT = "yyyy-MM-dd HH:mm";
+	public final static String DATETIME_PATTERN_CREAT_ORDER = "yyyy-MM-ddHH:mm";
+	public final static String DATETIME_SHORT_PATTERN = "yyyyMMddHHmmss";
+	public final static String HOUR_MINUTE = "HH:mm";
+	public final static String HOUR_MINUTE_SECOND = "HH:mm:ss";
+
 
 	/**
 	 * 使用上海时区，解析指定格式的日期时间字符串到Timestamp对象
@@ -333,4 +355,100 @@ public final class DateUtils {
         Date startTime = cal.getTime();
         return startTime;
     }
+
+
+
+
+	/**
+	 * 比较两个日期date1大于date2 返回1 等于返回0 小于返回-1
+	 *
+	 * @param date1
+	 * @param date2
+	 * @return
+	 */
+	public static int compareDate(Object date1, Object date2) {
+		if (date1 == null || date2 == null) {
+			String msg = "illegal arguments,date1 and date2 must be not null.";
+			throw new IllegalArgumentException(msg);
+		}
+		Date d1 = (Date) (date1 instanceof String ? convertDate((String) date1) : date1);
+		Date d2 = (Date) (date2 instanceof String ? convertDate((String) date2) : date2);
+		return DateUtils.round(d1, Calendar.DATE).compareTo(DateUtils.round(d2, Calendar.DATE));
+	}
+
+	/**
+	 * 将日期或者时间戳转化为日期对象
+	 *
+	 * @param date yyyy-MM-dd or yyyy-MM-dd HH:mm:ss or yyyy-MM-dd HH:mm:ss.SSS
+	 * @return
+	 */
+	public static Date convertDate(String date) {
+		if (StringUtils.isBlank(date)) {
+			return null;
+		}
+		if (StringUtils.isNumeric(date)) {
+			long timestamp = Long.parseLong(date);
+			if (timestamp > 0 && timestamp < Long.MAX_VALUE) {
+				return new Date(timestamp);
+			} else {
+				return null;
+			}
+		}
+		if (date.indexOf(":") > 0) {
+			return convertDate(date, DateUtils.DATETIME_PATTERN);
+		} else if (date.indexOf(".") > 0) {
+			return convertDate(date, DateUtils.DATETIME_MILL_SECOND);
+		} else {
+			return convertDate(date, DateUtils.DATE_PATTERN);
+		}
+	}
+
+	/**
+	 * 将日期或者时间字符串转化为日期对象
+	 *
+	 * @param date 日期字符串
+	 * @param pattern 格式字符串</br> yyyy-MM-DD, yyyy/MM/DD, yyyyMMdd</br> yyyy-MM-dd-HH:mm:ss, yyyy-MM-dd HH:mm:ss
+	 *            格式字符串可选字符："GyMdkHmsSEDFwWahKzZ"
+	 * @return Date
+	 */
+	public static Date convertDate(String date, String pattern) {
+		try {
+			if (StringUtils.isEmpty(pattern) || StringUtils.isEmpty(date)) {
+				String msg = "the date or pattern is empty.";
+				throw new IllegalArgumentException(msg);
+			}
+			SimpleDateFormat df = new SimpleDateFormat(pattern.trim());
+			return df.parse(date.trim());
+		} catch (Exception e) {
+			logger.error("Method===DateUtils.convertDate error!", e);
+			return null;
+		}
+	}
+
+	/**
+	 * 按指定roundType格式化日期。
+	 *
+	 * @param date 日期
+	 * @param roundType
+	 * @return Date
+	 */
+	public static Date round(Date date, int roundType) {
+		Calendar c = Calendar.getInstance();
+		c.setTimeInMillis(date.getTime());
+		switch (roundType) {
+			case Calendar.MONTH:
+				c.set(Calendar.DAY_OF_MONTH, 1);
+			case Calendar.DATE:
+				c.set(Calendar.HOUR_OF_DAY, 0);
+			case Calendar.HOUR:
+				c.set(Calendar.MINUTE, 0);
+			case Calendar.MINUTE:
+				c.set(Calendar.SECOND, 0);
+			case Calendar.SECOND:
+				c.set(Calendar.MILLISECOND, 0);
+				return c.getTime();
+			default:
+				throw new IllegalArgumentException("invalid round roundType.");
+		}
+	}
 }

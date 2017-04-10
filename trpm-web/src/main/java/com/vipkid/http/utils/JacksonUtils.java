@@ -3,6 +3,7 @@ package com.vipkid.http.utils;
 import java.io.IOException;
 import java.util.Iterator;
 
+import java.util.List;
 import java.util.Map;
 
 
@@ -166,5 +167,69 @@ public class JacksonUtils {
         }else if(jsonNode.isObject()){
             map.putAll(parseJsonToMap(jsonNode,key));
         }
+    }
+
+
+
+    /**
+     * 反序列化为对象
+     * @param json
+     * @param targetClass
+     * @param <T>
+     * @return
+     * @throws IOException
+     */
+
+    public static <T> T unmarshalFromString(String json, Class<T> targetClass)  {
+        if(StringUtils.isBlank(json)||targetClass==null)
+            return null;
+
+        try {
+            return mapper.readValue(json,targetClass);
+        } catch (Exception e) {
+            logger.error(String.format("unmarshalFromString error %s, %s", json, targetClass.toString()), e);
+
+        }
+        return null;
+    }
+
+    /**
+     * 反序列化为集合对象
+     * @param json
+     * @param type
+     * @param <T>
+     * @return
+     * @throws IOException
+     */
+//    public static <T> T unmarshalFromString(String json, TypeReference<T> type)  {
+//        if(StringUtils.isBlank(json)||type==null)
+//            return null;
+//
+//        try {
+//            return  mapper.readValue(json, type);
+//        } catch (Exception e) {
+//            logger.error(String.format("unmarshalFromString error %s, %s", json, type.getType()), e);
+//        }
+//        return null;
+//    }
+
+    /**
+     * 反序列化为List
+     * @param json
+     * @param targetClass
+     * @param <T>
+     * @return
+     * @throws IOException
+     */
+    public static <T> List<T> unmarshalFromString2List(String json, Class<T> targetClass)  {
+        //  logger.info("JacksonUtils===unmarshalFromString2List "+json);
+        if(StringUtils.isBlank(json)||targetClass==null)
+            return null;
+        try {
+            return mapper.readValue(json, mapper.getTypeFactory().constructCollectionType(List.class, targetClass));
+        } catch (Exception e) {
+            logger.error(String.format("unmarshalFromString2List error %s, %s", json, targetClass.toString()), e);
+        }
+        return null;
     }
 }

@@ -45,6 +45,7 @@ public class BackgroundCommonController extends RestfulController{
                 backgroundStatusDto = backgroundCommonService.getCanadaBackgroundStatus(teacher);
                 backgroundStatusDto.setNationality("CANADA");
             }else{
+                backgroundStatusDto.setContractEndWithInOneMonth(false);
                 backgroundStatusDto.setNeedBackgroundCheck(false);
                 backgroundStatusDto.setNationality("OTHERS");
                 backgroundStatusDto.setPhase("");

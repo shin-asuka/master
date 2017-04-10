@@ -6,18 +6,26 @@ import com.vipkid.file.model.FileUploadStatus;
 import com.vipkid.file.model.FileVo;
 import com.vipkid.file.service.AwsFileService;
 import com.vipkid.file.utils.FileUtils;
+import com.vipkid.http.constant.HttpUrlConstant;
 import com.vipkid.http.service.FileHttpService;
+import com.vipkid.http.service.HttpApiClient;
+import com.vipkid.http.utils.JacksonUtils;
+import com.vipkid.http.vo.StandardJsonObject;
 import com.vipkid.trpm.constant.ApplicationConstant.MediaType;
 import com.vipkid.trpm.dao.*;
 import com.vipkid.trpm.entity.*;
 import com.vipkid.trpm.entity.media.UploadResult;
+import com.vipkid.trpm.entity.personal.APIQueryContractByIdResult;
+import com.vipkid.trpm.entity.personal.APIQueryContractListByTeacherIdResult;
 import com.vipkid.trpm.entity.personal.BasicInfo;
 import com.vipkid.trpm.entity.personal.TeacherBankVO;
 import com.vipkid.trpm.service.media.AbstarctMediaService;
 import com.vipkid.trpm.service.media.OSSMediaService;
 import com.vipkid.trpm.util.AwsFileUtils;
+import com.vipkid.trpm.util.DateUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.community.config.PropertyConfigurer;
 import org.community.tools.JsonTools;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,6 +47,11 @@ import static com.vipkid.trpm.util.DateUtils.FMT_YMD;
 public class PersonalInfoService {
 
 	private static final Logger logger = LoggerFactory.getLogger(PersonalInfoService.class);
+
+	private static final String CONTRACT_QUERY_BY_TEACHERIDS = "/api/internal/contract/queryInstanceByTeacherId";
+	private static final String CONTRACT_QUERY_BY_ID = "/api/internal/contract/queryInstanceById";
+	private static final String CONTRACT_DO_SIGN = "/api/internal/contract/doSign";
+
 
 	@Autowired
 	private UserDao userDao;
@@ -70,6 +83,12 @@ public class PersonalInfoService {
 
 	@Autowired
 	private TeacherBankInfoDao teacherBankInfoDao;
+
+	@Autowired
+	private HttpApiClient httpApiClient;
+
+	@Autowired
+	private HttpUrlConstant httpUrlConstant;
 
 	/**
 	 * 处理用户密码修改逻辑
@@ -520,5 +539,109 @@ public class PersonalInfoService {
 		}
 		return teacher;
 	}
+
+    /**
+     * 根据老师id获取全部合同
+	 *
+	 * @param teacherId
+	 * @return
+	 */
+	public List<APIQueryContractListByTeacherIdResult> queryALLContractByTeacherId(Long teacherId) {
+
+		Map<String, String> requestParam = Maps.newHashMap();
+		requestParam.put("teacherId",String.valueOf(teacherId));
+		Object queryResultObj = doHttpGetContractFromTeacherAdmin(requestParam,CONTRACT_QUERY_BY_TEACHERIDS);
+		List<APIQueryContractListByTeacherIdResult> contractInfoList=null;
+		if (queryResultObj != null) {
+			contractInfoList = JacksonUtils
+					.unmarshalFromString2List(queryResultObj.toString(), APIQueryContractListByTeacherIdResult.class);
+		}
+		return contractInfoList;
+	}
+
+	/**
+	 * 获取单个合同信息
+	 *
+	 * @param contractId
+	 * @return
+     */
+	public APIQueryContractByIdResult queryContractById(Long contractId) {
+		Map<String, String> requestParam = Maps.newHashMap();
+		requestParam.put("id",String.valueOf(contractId));
+		Object queryResultObj = doHttpGetContractFromTeacherAdmin(requestParam,CONTRACT_QUERY_BY_ID);
+		APIQueryContractByIdResult contractInfoList=null;
+		if (queryResultObj != null) {
+			contractInfoList = JacksonUtils.unmarshalFromString(queryResultObj.toString(),APIQueryContractByIdResult.class);
+		}
+		return contractInfoList;
+	}
+
+	/**
+	 * 老师签约
+	 *
+	 * @param contractId
+	 * @return
+     */
+	public boolean doSign(Long contractId) {
+		boolean result = false;
+		Map<String, String> requestParam = Maps.newHashMap();
+		requestParam.put("instanceId",String.valueOf(contractId));
+		requestParam.put("signTime", DateUtils.formatDate(new Date()));
+
+		Object doSignResultObj = doHttpGetContractFromTeacherAdmin(requestParam,CONTRACT_DO_SIGN);
+
+		if (doSignResultObj != null
+				&& doSignResultObj instanceof String
+				&& String.valueOf(contractId).equals(doSignResultObj)) {
+			result = true;
+		}
+		return result;
+	}
+
+	/**
+	 * 通用get方法请求tms接口
+	 *
+	 * @param requestParam
+	 * @param requestUrl
+	 * @return
+     */
+	private Object doHttpGetContractFromTeacherAdmin(Map<String, String> requestParam, String requestUrl) {
+		Object result = null;
+		String response = null;
+		//List<ContractInfo> contractInfoList;
+		try {
+			String httpUrl = httpUrlConstant.getApiTeacherAdminServerUrl() + requestUrl;
+			logger.info("getContractInfoFromTeacherAdmin http request url = {}; param={}",
+					httpUrl, requestParam);
+
+			response = httpApiClient.doPost(httpUrl, requestParam);
+
+			logger.info("getContractInfoFromTeacherAdmin http response = {}", response);
+			StandardJsonObject standardJsonObject = JacksonUtils
+					.unmarshalFromString(response, StandardJsonObject.class);
+			if (standardJsonObject == null || !standardJsonObject.getRet()) {
+				logger.error("请求teacher admin接口失败，请求参数：{}，返回结果：{}", httpUrl, requestParam, response);
+				return null;
+			}
+			Map<String, Object> dataMap = standardJsonObject.getData();
+			if (dataMap == null || dataMap.size() <= 0 || dataMap.get("result") == null) {
+				logger.error("请求teacher admin接口返回数据为空，请求参数：{}，返回结果：{}", httpUrl, requestParam, response);
+				return null;
+			}
+			result = dataMap.get("result");
+//			//返回结果数据
+//			contractInfoList = JacksonUtils
+//					.unmarshalFromString2List(dataMap.get("result").toString(), ContractInfo.class);
+//
+//			if (CollectionUtils.isEmpty(contractInfoList)) {
+//				logger.info("请求teacher admin接口返回业务数据为空，请求参数：{}，返回结果：{}", httpUrl, requestParam, response);
+//				return null;
+//			}
+		} catch (Exception e) {
+			logger.error("请求teacher admin接口返回数据格式异常，转换StandardJsonObject失败，请求参数：{}，返回结果：{}", requestParam, response, e);
+		}
+		return result;
+	}
+
 
 }
