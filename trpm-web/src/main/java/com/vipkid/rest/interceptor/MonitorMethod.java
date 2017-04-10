@@ -60,7 +60,6 @@ public class MonitorMethod {
     
     // 配置切入点,该方法无方法体,主要为方便同类中其他方法使用此处配置的切入点
     @Pointcut("execution(* com.vipkid.portal.*.controller..*Controller.*(..))")
-    public void portalController() {}
     @Around("portalController()")
     public Object doPortalControllerAround(ProceedingJoinPoint pjp) {
     	return doLogger(pjp);
