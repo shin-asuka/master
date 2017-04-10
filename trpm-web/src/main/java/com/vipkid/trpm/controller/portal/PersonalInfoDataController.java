@@ -7,14 +7,10 @@ import java.io.OutputStream;
 import java.util.*;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import com.fasterxml.jackson.databind.JsonNode;
 import com.google.api.client.util.Lists;
 import com.google.api.client.util.Maps;
 import com.vipkid.file.utils.Encodes;
-import com.vipkid.http.utils.JacksonUtils;
 import com.vipkid.rest.utils.ApiResponseUtils;
 import com.vipkid.trpm.constant.ApplicationConstant;
 import com.vipkid.trpm.entity.personal.APIQueryContractByIdResult;
@@ -24,13 +20,11 @@ import com.vipkid.trpm.service.portal.TeacherService;
 import com.vipkid.trpm.util.DateUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.HttpStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.service.portal.PersonalInfoService;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -52,11 +46,6 @@ public class PersonalInfoDataController {
     @Resource
     PersonalInfoService personalInfoService;
 
-    @Resource
-    private TeacherService teacherService;
-
-
-
 
     /***
      *
@@ -68,8 +57,6 @@ public class PersonalInfoDataController {
      */
     @RequestMapping(value = "/contractInfo", method = RequestMethod.GET)
     public Map<String, Object> contractinfo(@RequestParam("teacherId") Long teacherId) {
-
-        //Teacher teacher = teacherService.get(teacherId);
 
         List<APIQueryContractListByTeacherIdResult> contractInstanceResultList = personalInfoService
                 .queryALLContractByTeacherId(teacherId);
@@ -91,9 +78,8 @@ public class PersonalInfoDataController {
                         || StringUtils
                         .equals(one.getInstanceStatus(), ApplicationConstant.ContractConstants.INSTANT_STATUS_ENABLE)) {
                     //已签或生效的合同
-                    if (DateUtils.compareDate(today, one.getStartTime()) >= 0
-                            && DateUtils.compareDate(today, one.getEndTime()) <= 0) {
-                        //如果是在合同期内
+                    if (one.getStartTime() <= today.getTime() && today.getTime() <= one.getEndTime()) {
+                        //如果是在合同期内(注意one的时区和today的时区必须都要是北京时区)
                         signedList.add(new QueryContractByTeacherIdOutputDto(one));
                     }
                 }

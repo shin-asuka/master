@@ -24,6 +24,18 @@ public class HttpApiClient {
         return HttpClientUtils.request(url);
     }
 
+    public String doGet(String url,Map<String, String> requestParam) {
+        if (requestParam != null && requestParam.size() > 0) {
+            StringBuffer sb = new StringBuffer();
+            sb.append("?");
+            for(String key : requestParam.keySet()){
+                sb.append(key).append("=").append(requestParam.get(key)).append("&");
+            }
+            sb.substring(0,sb.length()-1);
+            url = url + sb.toString();
+        }
+        return HttpClientUtils.request(url);
+    }
 
     public String doPost(String url, Map<String, String> formData) {
         return HttpClientUtils.post(url, formData);

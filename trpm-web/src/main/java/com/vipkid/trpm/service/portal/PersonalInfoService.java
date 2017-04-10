@@ -553,8 +553,8 @@ public class PersonalInfoService {
 		Object queryResultObj = doHttpGetContractFromTeacherAdmin(requestParam,CONTRACT_QUERY_BY_TEACHERIDS);
 		List<APIQueryContractListByTeacherIdResult> contractInfoList=null;
 		if (queryResultObj != null) {
-			contractInfoList = JacksonUtils
-					.unmarshalFromString2List(queryResultObj.toString(), APIQueryContractListByTeacherIdResult.class);
+			contractInfoList = JacksonUtils.unmarshalFromString2List(JacksonUtils.toJSONString(queryResultObj),
+					APIQueryContractListByTeacherIdResult.class);
 		}
 		return contractInfoList;
 	}
@@ -614,7 +614,7 @@ public class PersonalInfoService {
 			logger.info("getContractInfoFromTeacherAdmin http request url = {}; param={}",
 					httpUrl, requestParam);
 
-			response = httpApiClient.doPost(httpUrl, requestParam);
+			response = httpApiClient.doGet(httpUrl, requestParam);
 
 			logger.info("getContractInfoFromTeacherAdmin http response = {}", response);
 			StandardJsonObject standardJsonObject = JacksonUtils
