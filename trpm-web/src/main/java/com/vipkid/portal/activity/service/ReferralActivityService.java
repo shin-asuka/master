@@ -19,6 +19,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Maps;
 import com.vipkid.email.template.TemplateUtils;
 import com.vipkid.enums.ShareActivityExamEnum;
+import com.vipkid.enums.ShareActivityExamEnum.RequestTypeEnum;
 import com.vipkid.enums.ShareActivityExamEnum.StatusEnum;
 import com.vipkid.portal.activity.dto.ClickHandleDto;
 import com.vipkid.portal.activity.dto.SubmitHandleDto;
@@ -408,6 +409,22 @@ public class ReferralActivityService {
 		return null;
 	}
 	
+	/**
+	 * 通过token 获取 token 类型 来自APP 还是 PC
+	 * @param token
+	 * @return
+	 */
+	public Integer getRequestType(String token){
+		Integer type = RequestTypeEnum.PC.val();
+		Map<String, Object> paramMap = Maps.newHashMap();
+		paramMap.put("appToken",token);
+		List<Map<String, Object>> list = this.shareActivityExamDao.findByList("selectTeacherTokenByToken", paramMap);
+		if(CollectionUtils.isNotEmpty(list)){
+			type = RequestTypeEnum.APP.val();
+		}
+		logger.info(" type = " + type);
+		return type;
+	}
 	
 	public ShareExamDetail findPendingByExamId(Long activityExamId){
 		ShareExamDetail selectBean = new ShareExamDetail();

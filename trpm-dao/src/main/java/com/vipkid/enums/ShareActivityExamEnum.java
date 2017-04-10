@@ -18,4 +18,21 @@ public class ShareActivityExamEnum {
             return this.val;
         }
     }
+    
+    public enum RequestTypeEnum {
+    	
+        PC(0),
+        
+        APP(1);
+
+        private int val;
+
+        private RequestTypeEnum(int val) {
+            this.val = val;
+        }
+
+        public int val() {
+            return this.val;
+        }
+    }
 }
