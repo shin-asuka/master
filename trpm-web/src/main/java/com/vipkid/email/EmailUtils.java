@@ -185,6 +185,13 @@ public class EmailUtils {
 			}else if (teacher.getRealName() != null){
 				paramsMap.put("teacherName", teacher.getRealName());
 			}
+
+			paramsMap.put("referralShow", "none");
+			if( StringUtils.isNotBlank(teacher.getReferee())){
+				String[] referralInfo = teacher.getReferee().split(",");
+				paramsMap.put("referrerName", referralInfo[1]);
+				paramsMap.put("referralShow","block");
+			}
 			paramsMap.put("quizScore",quizScore+"");
 			logger.info("【EMAIL.sendEmail4TrainingPass】toAddMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",teacher.getRealName(),teacher.getEmail(),"TrainingPassTitle.html","TrainingPass.html");
 			Map<String, String> emailMap = TemplateUtils.readTemplate("TrainingPass.html", paramsMap, "TrainingPassTitle.html");
