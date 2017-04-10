@@ -265,6 +265,7 @@ public class SterlingService {
 
         BackgroundScreening updateBackgroundScreening = new BackgroundScreening();
         updateBackgroundScreening.setId(backgroundSterlingId);
+        updateBackgroundScreening.setScreeningId(sterlingScreening.getId());
         updateBackgroundScreening.setStatus(sterlingScreening.getStatus());
         updateBackgroundScreening.setResult(sterlingScreening.getResult());
         updateBackgroundScreening.setUpdateAt(DateUtils.convertzDateTime(sterlingScreening.getUpdatedAt()));
@@ -396,7 +397,7 @@ public class SterlingService {
                 return new ScreeningOutputDto(10000,"返回不正确");
             }
             if(!StringUtils.equals(screeningFlag,"001")){
-                return new ScreeningOutputDto(10000,"返回不正确");
+                //return new ScreeningOutputDto(10000,"返回不正确");
             }
 
             //返回字段保存
@@ -416,14 +417,15 @@ public class SterlingService {
             }
 
             boolean isSuccess = SterlingApiUtils.createScreeningDocument(sterlingScreening.getId(),documentUrl);
-            if(isSuccess){
+            //if(isSuccess){
                 return new ScreeningOutputDto(backgroundScreening.getId());
-            }
+            //}
         }finally {
-            RedisCacheUtils.unlock(KeyGenerator.generateKey(CREATE_SCREENING_LOCK,teacherId));
+            //先不释放，等5分钟失效，从而保证5分钟内只有一次提交
+            //RedisCacheUtils.unlock(KeyGenerator.generateKey(CREATE_SCREENING_LOCK,teacherId));
         }
 
-        return new ScreeningOutputDto(10000,"上传文档没有成功");
+        //return new ScreeningOutputDto(10000,"上传文档没有成功");
     }
 
     @Transactional(readOnly = false)

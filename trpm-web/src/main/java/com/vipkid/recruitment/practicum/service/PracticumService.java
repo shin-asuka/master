@@ -192,11 +192,13 @@ public class PracticumService {
             }
         }
         //判断剩余可取消次数
+        /*
         if(recruitmentService.getRemainRescheduleTimes(teacher, Status.PRACTICUM.toString(), Result.CANCEL.toString(), false) <= 0){
             userDao.doLock(teacher.getId());
             teacherLockLogDao.save(new TeacherLockLog(teacher.getId(), Reason.RESCHEDULE.toString(), LifeCycle.PRACTICUM.toString()));
             return ReturnMapUtils.returnFail("There are no more cancellations allowed for your account. Contact us at teachvip@vipkid.com.cn for more information.",logpix);
         }
+        */
         //执行BOOK逻辑
         String dateTime = DateFormatUtils.format(onlineClass.getScheduledDateTime(),"yyyy-MM-dd HH:mm:ss");
         Map<String,Object> result = OnlineClassProxy.doBookRecruitment(teacher.getId(), onlineClass.getId(), ClassType.PRACTICUM,dateTime);
@@ -254,7 +256,7 @@ public class PracticumService {
 
         //保存cancel记录
         this.teacherApplicationLogDao.saveCancel(teacher.getId(), listEntity.get(0).getId(), Status.PRACTICUM, Result.CANCEL, onlineClass);
-
+/*
         if (!UserEnum.Status.isLocked(userDao.findById(teacher.getId()).getStatus())) {
             int count = recruitmentService.getRemainRescheduleTimes(teacher, Status.PRACTICUM.toString(), Result.CANCEL.toString(), true);
             if (count <= 0) {
@@ -262,7 +264,7 @@ public class PracticumService {
                 teacherLockLogDao.save(new TeacherLockLog(teacher.getId(), Reason.RESCHEDULE.toString(), LifeCycle.PRACTICUM.toString()));
             }
         }
-
+*/
         //执行Cancel逻辑
         Map<String,Object> result = OnlineClassProxy.doCancelRecruitement(teacher.getId(), onlineClass.getId(), ClassType.PRACTICUM);
         if(ReturnMapUtils.isFail(result)){
