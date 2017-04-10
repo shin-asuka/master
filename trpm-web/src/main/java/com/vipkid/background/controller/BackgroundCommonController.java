@@ -27,7 +27,6 @@ import java.util.Map;
 @RequestMapping("/background")
 public class BackgroundCommonController extends RestfulController{
 
-    private static Logger logger2 = LoggerFactory.getLogger(BackgroundCommonController.class);
 
     @Autowired
     private BackgroundCommonService backgroundCommonService;
