@@ -175,23 +175,23 @@ public class InterviewService {
     }
 
 
-    /*加入interviewer scheduler逻辑以后, book 逻辑变动较大, 从接收onlineclassId改为接受前端时间戳*/
+    /*加入interviewer scheduler逻辑以后, book 逻辑变动较大, 从接收onlineClassId改为接受前端时间戳*/
     @Slave
     public String getOnlineClassIdRandomised(long timestamp) {
 
         logger.info("Timestamp to book the interview:" + timestamp);
 
         Timestamp ts = new Timestamp(timestamp);
-        String schduledDateTime = ts.toLocalDateTime().format(DateUtils.FMT_YMD_HMS);
-        LocalDateTime schduledDT = ts.toLocalDateTime();
-        logger.info("schduledDateTime to book the interview:" + schduledDateTime);
+        String scheduledDateTime = ts.toLocalDateTime().format(DateUtils.FMT_YMD_HMS);
+        LocalDateTime scheduledDT = ts.toLocalDateTime();
+        logger.info("scheduledDateTime to book the interview:" + scheduledDateTime);
 
-        String fromTime_curDate = schduledDT.with(LocalTime.of(0, 0, 0)).format(DateUtils.FMT_YMD_HMS);
-        String toTime_curDate = schduledDT.with(LocalTime.of(23, 59, 59)).format(DateUtils.FMT_YMD_HMS);
+        String fromTime_curDate = scheduledDT.with(LocalTime.of(0, 0, 0)).format(DateUtils.FMT_YMD_HMS);
+        String toTime_curDate = scheduledDT.with(LocalTime.of(23, 59, 59)).format(DateUtils.FMT_YMD_HMS);
         logger.info("bookInterviewClass get least booked teacher fromTime:{}, toTime:{}", fromTime_curDate, toTime_curDate);
 
         //取出候选课程对应老师当天BOOK或FINISHED课程数。(online class id , scheduledTime, teacher id, count booked)
-        List<InterviewerClassCount> listInterviewers = interviewDao.findlistByBookedCount(schduledDateTime, fromTime_curDate, toTime_curDate);
+        List<InterviewerClassCount> listInterviewers = interviewDao.findlistByBookedCount(scheduledDateTime, fromTime_curDate, toTime_curDate);
         StringBuilder log =new StringBuilder();
         for (InterviewerClassCount member : listInterviewers){
             log.append("{id:"+member.getOnlinClassId()+",teacherId:"+member.getTeacherId()+",bookedCount:"+member.getBookedCount()+"} ");
@@ -204,27 +204,27 @@ public class InterviewService {
             return  Integer.toString(listInterviewers.get(0).getOnlinClassId());
         }else{
 
-            List<InterviewerClassCount> targeList=new ArrayList<InterviewerClassCount>();
-            int prevCount=listInterviewers.get(0).getBookedCount();
-            int curCount=prevCount;
-            for (int i=0;i< listInterviewers.size(); i++) {
+            List<InterviewerClassCount> targetList=new ArrayList<InterviewerClassCount>();
+            int curCount, prevCount = listInterviewers.get(0).getBookedCount();
+
+            for (int i=0; i< listInterviewers.size(); i++) {
 
                 curCount = listInterviewers.get(i).getBookedCount();
-                if (curCount!= prevCount){
+                if (curCount != prevCount){
                    break;
                 }
 
-                targeList.add(listInterviewers.get(i));
+                targetList.add(listInterviewers.get(i));
                 prevCount=curCount;
             }
 
             //Shuffle the new list
-            if(CollectionUtils.isNotEmpty(targeList)){
-                Collections.shuffle(targeList);
+            if(CollectionUtils.isNotEmpty(targetList)){
+                Collections.shuffle(targetList);
             }
 
-            logger.info("Top 1 Class Id to be booked: {}", listInterviewers.get(0).getOnlinClassId());
-            return Integer.toString(listInterviewers.get(0).getOnlinClassId());
+            logger.info("Top 1 Class Id to be booked: {}", targetList.get(0).getOnlinClassId());
+            return Integer.toString(targetList.get(0).getOnlinClassId());
         }
     }
 
@@ -278,11 +278,13 @@ public class InterviewService {
             }
         }
         //判断剩余可取消次数
+        /*
         if(recruitmentService.getRemainRescheduleTimes(teacher, Status.INTERVIEW.toString(), Result.CANCEL.toString(), false) <= 0){
             userDao.doLock(teacher.getId());
             teacherLockLogDao.save(new TeacherLockLog(teacher.getId(), Reason.RESCHEDULE.toString(), LifeCycle.INTERVIEW.toString()));
             return ReturnMapUtils.returnFail("There are no more cancellations allowed for your account. Contact us at teachvip@vipkid.com.cn for more information.",logpix);
         }
+        */
         //执行BOOK逻辑
         String dateTime = DateFormatUtils.format(onlineClass.getScheduledDateTime(),"yyyy-MM-dd HH:mm:ss");
         Map<String,Object> result = OnlineClassProxy.doBookRecruitment(teacher.getId(), onlineClass.getId(), ClassType.TEACHER_RECRUITMENT,dateTime);
@@ -363,7 +365,7 @@ public class InterviewService {
 
         //保存cancel记录
         this.teacherApplicationLogDao.saveCancel(teacher.getId(), listEntity.get(0).getId(), Status.INTERVIEW, Result.CANCEL, onlineClass);
-
+/*
         if (!UserEnum.Status.isLocked(userDao.findById(teacher.getId()).getStatus())) {
             int count = recruitmentService.getRemainRescheduleTimes(teacher, Status.INTERVIEW.toString(), Result.CANCEL.toString(), true);
             if (count <= 0) {
@@ -371,7 +373,7 @@ public class InterviewService {
                 teacherLockLogDao.save(new TeacherLockLog(teacher.getId(), Reason.RESCHEDULE.toString(), LifeCycle.INTERVIEW.toString()));
             }
         }
-
+*/
         //执行Cancel逻辑
         Map<String,Object> result = OnlineClassProxy.doCancelRecruitement(teacher.getId(), onlineClass.getId(), ClassType.TEACHER_RECRUITMENT);
         if(ReturnMapUtils.isFail(result)){
