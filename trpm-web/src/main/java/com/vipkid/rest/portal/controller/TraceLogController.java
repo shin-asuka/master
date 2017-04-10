@@ -17,12 +17,12 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/trace")
-public class FePrintLogController {
+public class TraceLogController {
 
-    private static final Logger logger = LoggerFactory.getLogger(FePrintLogController.class);
+    private static final Logger logger = LoggerFactory.getLogger(TraceLogController.class);
 
     @RequestMapping(method = RequestMethod.GET)
-    public Map<String, Object> printLogFromFE(String traceLog){
+    public Map<String, Object> traceLogFromFE(String traceLog){
         //traceLog 是encode的值
         logger.info("print log from fe! content:{}",traceLog);
         return null;
