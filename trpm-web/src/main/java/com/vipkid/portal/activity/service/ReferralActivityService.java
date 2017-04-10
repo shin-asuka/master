@@ -23,6 +23,7 @@ import com.vipkid.enums.ShareActivityExamEnum.RequestTypeEnum;
 import com.vipkid.enums.ShareActivityExamEnum.StatusEnum;
 import com.vipkid.portal.activity.dto.ClickHandleDto;
 import com.vipkid.portal.activity.dto.SubmitHandleDto;
+import com.vipkid.portal.activity.dto.ToPortalDto;
 import com.vipkid.portal.activity.vo.CheckUrlVo;
 import com.vipkid.portal.activity.vo.StartHandleVo;
 import com.vipkid.portal.activity.vo.SubmitHandleVo;
@@ -436,6 +437,21 @@ public class ReferralActivityService {
 			return null;
 		}
 		return list.get(0);
+	}
+	
+	/**
+	 * 更新toPortal
+	 * @param bean
+	 * @return
+	 */
+	public Map<String, Object> updateForToPortal(ToPortalDto bean){
+		ShareActivityExam shareActivityExam = this.shareActivityExamDao.getById(bean.getActivityExamId());
+		shareActivityExam.setToPortal(shareActivityExam.getToPortal()+1);
+		int result = this.shareActivityExamDao.updateById(shareActivityExam);
+		if(result >= 1){
+			return ReturnMapUtils.returnSuccess();
+		}
+		return ReturnMapUtils.returnFail(-3, "更新结果：" + result);
 	}
 	
 	/**
