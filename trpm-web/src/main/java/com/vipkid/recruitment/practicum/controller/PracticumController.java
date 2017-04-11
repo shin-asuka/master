@@ -99,7 +99,7 @@ public class PracticumController extends RestfulController {
                 response.setStatus(HttpStatus.FORBIDDEN.value());
             }else{
                 //add cancel 邮件
-                auditEmailService.sendInterviewReapply(getTeacher(request).getId());
+                auditEmailService.sendCancelPracticum(getTeacher(request).getId());
             }
             return result;
         } catch (IllegalArgumentException e) {
