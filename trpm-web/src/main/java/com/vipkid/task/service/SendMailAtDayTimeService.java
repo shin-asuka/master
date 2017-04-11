@@ -6,11 +6,15 @@ import com.vipkid.email.EmailEngine;
 import com.vipkid.email.handle.EmailConfig;
 import com.vipkid.email.handle.EmailEntity;
 import com.vipkid.email.template.TemplateUtils;
+import com.vipkid.recruitment.dao.TeacherReminderDao;
+import com.vipkid.recruitment.entity.TeacherReminder;
+import com.vipkid.teacher.tools.utils.conversion.JsonUtils;
 import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.util.DateUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.sql.Timestamp;
@@ -34,6 +38,9 @@ public class SendMailAtDayTimeService {
 
     private static final int HOURS_15_OF_DAY = 15;
 
+    @Autowired
+    private TeacherReminderDao teacherReminderDao;
+
     /**
      * Interview 已 BOOKED 的课程，发送 48／24 小时提醒
      * 
@@ -41,6 +48,7 @@ public class SendMailAtDayTimeService {
      * @param scheduledDateTime 课程开始时间，北京时间
      * @param sendScheduledTime 定时发送时间，必须是北京时间
      */
+    @Deprecated
     public void interviewBooked48And24HoursReminder(Teacher teacher, Timestamp scheduledDateTime,
                     Date sendScheduledTime) {
         try {
@@ -73,6 +81,7 @@ public class SendMailAtDayTimeService {
      * @param scheduledDateTime 课程开始时间，北京时间
      * @param sendScheduledTime 定时发送时间，必须是北京时间
      */
+    @Deprecated
     public void interviewBooked2HoursReminder(Teacher teacher, Timestamp scheduledDateTime, Date sendScheduledTime) {
         try {
             logger.info("【EMAIL.InterviewBooked2HoursReminder】toAdd MailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",
@@ -98,21 +107,35 @@ public class SendMailAtDayTimeService {
     }
 
     /**
-     * 发送 Interview 已 BOOKED 的课程所有提醒
+     * 保存发送 Interview 已 BOOKED 的课程所有提醒
      * 
      * @param teacher 老师
      * @param scheduledDateTime 课程开始时间，北京时间
      */
-    public void sendAllInterviewBookedReminder(Teacher teacher, Timestamp scheduledDateTime) {
+    public void saveAllInterviewBookedReminder(Teacher teacher, Timestamp scheduledDateTime, long onlineClassId) {
         List<Reminder> remiderList = getReminders(teacher, scheduledDateTime);
         if (CollectionUtils.isNotEmpty(remiderList)) {
+            List<TeacherReminder> teacherReminderList = Lists.newArrayList();
+
             for (Reminder reminder : remiderList) {
+                TeacherReminder teacherReminder = new TeacherReminder();
+                teacherReminder.setOnlineClassId(onlineClassId);
+                teacherReminder.setSendScheduledTime(reminder.getScheduledTime());
+
+                Map<String, String> paramsMap = getSendParams(teacher, scheduledDateTime);
+                teacherReminder.setParams(JsonUtils.toJson(paramsMap));
+
                 if (reminder.is2Hours()) {
-                    interviewBooked2HoursReminder(teacher, scheduledDateTime, reminder.getScheduledTime());
+                    teacherReminder.setMailTemplateTitle("InterviewMockClass2HoursReminderTitle.html");
+                    teacherReminder.setMailTemplateContent("InterviewMockClass2HoursReminder.html");
                 } else {
-                    interviewBooked48And24HoursReminder(teacher, scheduledDateTime, reminder.getScheduledTime());
+                    teacherReminder.setMailTemplateTitle("InterviewReminderTitle.html");
+                    teacherReminder.setMailTemplateContent("InterviewReminder.html");
                 }
+                teacherReminderList.add(teacherReminder);
             }
+
+            teacherReminderDao.saveTeacherReminders(teacherReminderList);
         } else {
             logger.warn("Not any reminder need send for Interview...");
         }
@@ -125,6 +148,7 @@ public class SendMailAtDayTimeService {
      * @param scheduledDateTime 课程开始时间，北京时间
      * @param sendScheduledTime 定时发送时间，必须是北京时间
      */
+    @Deprecated
     public void mockClassBooked48And24HoursReminder(Teacher teacher, Timestamp scheduledDateTime,
                     Date sendScheduledTime) {
         try {
@@ -157,6 +181,7 @@ public class SendMailAtDayTimeService {
      * @param scheduledDateTime 课程开始时间，北京时间
      * @param sendScheduledTime 定时发送时间，必须是北京时间
      */
+    @Deprecated
     public void mockClassBooked2HoursReminder(Teacher teacher, Timestamp scheduledDateTime, Date sendScheduledTime) {
         try {
             logger.info("【EMAIL.mockClassBooked2HoursReminder】toAdd MailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",
@@ -182,21 +207,35 @@ public class SendMailAtDayTimeService {
     }
 
     /**
-     * 发送 MockClass 已 BOOKED 的课程所有提醒
+     * 保存发送 MockClass 已 BOOKED 的课程所有提醒
      *
      * @param teacher 老师
      * @param scheduledDateTime 课程开始时间，北京时间
      */
-    public void sendAllMockClassBookedReminder(Teacher teacher, Timestamp scheduledDateTime) {
+    public void saveAllMockClassBookedReminder(Teacher teacher, Timestamp scheduledDateTime, long onlineClassId) {
         List<Reminder> remiderList = getReminders(teacher, scheduledDateTime);
         if (CollectionUtils.isNotEmpty(remiderList)) {
+            List<TeacherReminder> teacherReminderList = Lists.newArrayList();
+
             for (Reminder reminder : remiderList) {
+                TeacherReminder teacherReminder = new TeacherReminder();
+                teacherReminder.setOnlineClassId(onlineClassId);
+                teacherReminder.setSendScheduledTime(reminder.getScheduledTime());
+
+                Map<String, String> paramsMap = getSendParams(teacher, scheduledDateTime);
+                teacherReminder.setParams(JsonUtils.toJson(paramsMap));
+
                 if (reminder.is2Hours()) {
-                    mockClassBooked2HoursReminder(teacher, scheduledDateTime, reminder.getScheduledTime());
+                    teacherReminder.setMailTemplateTitle("InterviewMockClass2HoursReminderTitle.html");
+                    teacherReminder.setMailTemplateContent("InterviewMockClass2HoursReminder.html");
                 } else {
-                    mockClassBooked48And24HoursReminder(teacher, scheduledDateTime, reminder.getScheduledTime());
+                    teacherReminder.setMailTemplateTitle("PracticumReminderJobTitle.html");
+                    teacherReminder.setMailTemplateContent("PracticumReminderJob.html");
                 }
+                teacherReminderList.add(teacherReminder);
             }
+
+            teacherReminderDao.saveTeacherReminders(teacherReminderList);
         } else {
             logger.warn("Not any reminder need send for MockClass...");
         }
