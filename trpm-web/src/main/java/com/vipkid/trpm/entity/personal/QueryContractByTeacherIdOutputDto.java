@@ -21,8 +21,8 @@ public class QueryContractByTeacherIdOutputDto {
 
     public QueryContractByTeacherIdOutputDto(APIQueryContractListByTeacherIdResult one) {
         contractId = one.getId();
-        startTime = DateUtils.formatDate(new Date(one.getStartTime()), DateUtils.YYYY_MM_DD);
-        endTime = DateUtils.formatDate(new Date(one.getEndTime()), DateUtils.YYYY_MM_DD);
+        startTime = one.getStartTime();//合同系统传过来的即是yyyy-MM-dd格式的;
+        endTime = one.getEndTime();//合同系统传过来的即是yyyy-MM-dd格式的 DateUtils.YYYY_MM_DD
         contractNumber = one.getInstanceNumber();
     }
 
