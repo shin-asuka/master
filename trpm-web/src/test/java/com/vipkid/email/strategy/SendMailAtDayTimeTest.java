@@ -11,6 +11,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.temporal.ChronoField;
+import java.util.Date;
 
 /**
  * Created by liuguowen on 2017/4/11.
@@ -25,17 +29,32 @@ public class SendMailAtDayTimeTest {
     private SendMailAtDayTime sendMailAtDayTime;
 
     @Test
-    public void testSendInterviewBookedReminder() throws InterruptedException {
+    public void testInterviewBooked48And24Reminder() throws InterruptedException {
         Teacher teacher = new Teacher();
         teacher.setEmail("liuguowen@vipkid.com.cn");
         teacher.setRealName("John Liu");
         teacher.setTimezone("America/Los_Angeles");
 
-        Timestamp scheduledDateTime =
-                        java.sql.Timestamp.from(DateUtils.parseDate("2017-04-11 18:00:00", null).toInstant());
+        Timestamp scheduledDateTime = Timestamp.from(DateUtils.parseDate("2017-04-11 18:00:00", null).toInstant());
 
-        sendMailAtDayTime.sendInterviewBookedReminder(teacher, scheduledDateTime);
+        LocalDateTime now = LocalDateTime.now().with(ChronoField.HOUR_OF_DAY, 16).with(ChronoField.MINUTE_OF_HOUR, 10)
+                        .with(ChronoField.SECOND_OF_MINUTE, 0);
+        Date sendScheduledTime = Date.from(now.atZone(ZoneId.systemDefault()).toInstant());
 
+        sendMailAtDayTime.interviewBooked48And24HoursReminder(teacher, scheduledDateTime, sendScheduledTime);
+        Thread.sleep(100 * 1000L);
+    }
+
+    @Test
+    public void testSendAllInterviewBookedReminder() throws InterruptedException {
+        Teacher teacher = new Teacher();
+        teacher.setEmail("liuguowen@vipkid.com.cn");
+        teacher.setRealName("John Liu");
+        teacher.setTimezone("America/Los_Angeles");
+
+        Timestamp scheduledDateTime = Timestamp.from(DateUtils.parseDate("2017-04-13 18:00:00", null).toInstant());
+
+        sendMailAtDayTime.sendAllInterviewBookedReminder(teacher, scheduledDateTime);
         Thread.sleep(100 * 1000L);
     }
 
