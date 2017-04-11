@@ -125,6 +125,10 @@ public class PersonalInfoDataController {
 
         APIQueryContractByIdResult contract = personalInfoService.queryContractById(contractId);
 
+        if (contract == null) {
+            logger.error("can not find contract id:{}", contractId);
+            return;
+        }
         String fileName = contract.getInstanceNumber() + ".html";
 
         InputStream contentInputStream = null;

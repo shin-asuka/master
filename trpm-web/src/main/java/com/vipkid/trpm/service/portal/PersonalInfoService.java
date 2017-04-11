@@ -569,11 +569,11 @@ public class PersonalInfoService {
 		Map<String, String> requestParam = Maps.newHashMap();
 		requestParam.put("id",String.valueOf(contractId));
 		Object queryResultObj = doHttpGetContractFromTeacherAdmin(requestParam,CONTRACT_QUERY_BY_ID);
-		APIQueryContractByIdResult contractInfoList=null;
+		APIQueryContractByIdResult contract=null;
 		if (queryResultObj != null) {
-			contractInfoList = JacksonUtils.unmarshalFromString(queryResultObj.toString(),APIQueryContractByIdResult.class);
+			contract = JacksonUtils.unmarshalFromString(queryResultObj.toString(),APIQueryContractByIdResult.class);
 		}
-		return contractInfoList;
+		return contract;
 	}
 
 	/**
