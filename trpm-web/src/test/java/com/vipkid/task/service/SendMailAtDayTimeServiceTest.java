@@ -1,6 +1,5 @@
-package com.vipkid.email.strategy;
+package com.vipkid.task.service;
 
-import com.vipkid.task.service.SendMailAtDayTimeService;
 import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.util.DateUtils;
 import org.junit.Test;
@@ -20,10 +19,10 @@ import java.sql.Timestamp;
 @ContextConfiguration(locations = {"classpath*:spring/applicationContext.xml"})
 @WebAppConfiguration
 @Transactional
-public class SendMailAtDayTimeTest {
+public class SendMailAtDayTimeServiceTest {
 
     @Resource
-    private SendMailAtDayTimeService sendMailAtDayTime;
+    private SendMailAtDayTimeService sendMailAtDayTimeService;
 
     @Test
     public void testSaveAllInterviewBookedReminder() throws InterruptedException {
@@ -33,7 +32,7 @@ public class SendMailAtDayTimeTest {
         teacher.setTimezone("America/Los_Angeles");
 
         Timestamp scheduledDateTime = Timestamp.from(DateUtils.parseDate("2017-04-13 18:00:00", null).toInstant());
-        sendMailAtDayTime.saveAllInterviewBookedReminder(teacher, scheduledDateTime, 152456);
+        sendMailAtDayTimeService.saveAllInterviewBookedReminder(teacher, scheduledDateTime, 152456);
     }
 
 }
