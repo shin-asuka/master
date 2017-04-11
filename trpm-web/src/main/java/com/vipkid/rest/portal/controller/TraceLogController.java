@@ -16,7 +16,7 @@ import java.util.Map;
  * @since 2017/4/7 下午5:17
  */
 @RestController
-@RequestMapping("/trace")
+@RequestMapping("/api/trace")
 public class TraceLogController {
 
     private static final Logger logger = LoggerFactory.getLogger(TraceLogController.class);
