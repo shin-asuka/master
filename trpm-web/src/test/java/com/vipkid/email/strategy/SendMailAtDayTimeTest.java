@@ -1,5 +1,6 @@
 package com.vipkid.email.strategy;
 
+import com.vipkid.task.service.SendMailAtDayTimeService;
 import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.util.DateUtils;
 import org.junit.Test;
@@ -26,7 +27,7 @@ import java.util.Date;
 public class SendMailAtDayTimeTest {
 
     @Resource
-    private SendMailAtDayTime sendMailAtDayTime;
+    private SendMailAtDayTimeService sendMailAtDayTime;
 
     @Test
     public void testInterviewBooked48And24Reminder() throws InterruptedException {

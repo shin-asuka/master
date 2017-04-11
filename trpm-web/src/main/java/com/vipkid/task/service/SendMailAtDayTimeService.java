@@ -1,4 +1,4 @@
-package com.vipkid.email.strategy;
+package com.vipkid.task.service;
 
 import com.google.api.client.util.Lists;
 import com.google.common.collect.Maps;
@@ -24,9 +24,9 @@ import java.util.List;
 import java.util.Map;
 
 @Component
-public class SendMailAtDayTime {
+public class SendMailAtDayTimeService {
 
-    private static final Logger logger = LoggerFactory.getLogger(SendMailAtDayTime.class);
+    private static final Logger logger = LoggerFactory.getLogger(SendMailAtDayTimeService.class);
 
     private static final int HOURS_48 = 48;
     private static final int HOURS_24 = 24;
