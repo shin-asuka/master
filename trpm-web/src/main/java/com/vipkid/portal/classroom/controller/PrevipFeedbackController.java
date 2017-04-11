@@ -18,6 +18,10 @@ import com.vipkid.trpm.entity.Lesson;
 import com.vipkid.trpm.entity.OnlineClass;
 import com.vipkid.trpm.entity.StudentExam;
 import com.vipkid.trpm.entity.teachercomment.TeacherComment;
+import com.vipkid.trpm.service.portal.OnlineClassService;
+import org.apache.commons.lang3.time.DateFormatUtils;
+import org.apache.commons.lang3.time.DateUtils;
+import org.apache.commons.net.ntp.TimeStamp;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +34,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.text.DateFormat;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -54,6 +59,8 @@ public class PrevipFeedbackController {
     @Autowired
     @Qualifier("previpFeedbackService")
     private FeedbackService feedbackService;
+    @Autowired
+    private OnlineClassService onlineClassService;
 
     @RequestMapping("/previp/save")
     public Map<String,Object> feedbackSubmit(HttpServletRequest request, HttpServletResponse response,
@@ -61,7 +68,12 @@ public class PrevipFeedbackController {
         Stopwatch stopwatch = Stopwatch.createStarted();
         PrevipCommentsBo teacherComment = Convertor.toPrevipCommentsBo(teacherCommentVo);
         String serialNumber = teacherComment.getSerialNumber();
-        String scheduledDateTime = teacherComment.getScheduleDateTime();
+        OnlineClass onlineClass = onlineClassService.getOnlineClassById(teacherCommentVo.getOnlineClassId());
+        String scheduledDateTime = "";
+        if(null != onlineClass) {
+            scheduledDateTime = DateFormatUtils.format(onlineClass.getScheduledDateTime(),"yyyy-MM-dd");
+        }
+
         logger.info("ReportController: feedbackSubmit() 参数为：serialNumber={}, scheduledDateTime={}, teacherComment={}", serialNumber, scheduledDateTime, JSON.toJSONString(teacherComment));
         teacherComment.setSubmitSource("PC");
 

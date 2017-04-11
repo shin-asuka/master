@@ -17,6 +17,8 @@ import com.vipkid.trpm.entity.Lesson;
 import com.vipkid.trpm.entity.OnlineClass;
 import com.vipkid.trpm.entity.StudentExam;
 import com.vipkid.trpm.entity.teachercomment.TeacherComment;
+import com.vipkid.trpm.service.portal.OnlineClassService;
+import org.apache.commons.lang3.time.DateFormatUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,7 +51,8 @@ public class TrialFeedbackController {
     private StudentExamDao studentExamDao;
     @Autowired
     private LoginService loginService;
-
+    @Autowired
+    private OnlineClassService onlineClassService;
 
     @RequestMapping("/trial/save")
     public Map<String,Object> feedbackSubmit(HttpServletRequest request, HttpServletResponse response,
@@ -57,7 +60,11 @@ public class TrialFeedbackController {
         Stopwatch stopwatch = Stopwatch.createStarted();
         MajorCommentsBo teacherComment = Convertor.toMajorCommentsBo(teacherCommentVo);
         String serialNumber = teacherComment.getSerialNumber();
-        String scheduledDateTime = teacherComment.getScheduleDateTime();
+        OnlineClass onlineClass = onlineClassService.getOnlineClassById(teacherCommentVo.getOnlineClassId());
+        String scheduledDateTime = "";
+        if(null != onlineClass) {
+            scheduledDateTime = DateFormatUtils.format(onlineClass.getScheduledDateTime(), "yyyy-MM-dd");
+        }
         logger.info("ReportController: feedbackSubmit() 参数为：serialNumber={}, scheduledDateTime={}, teacherComment={}", serialNumber, scheduledDateTime, JSON.toJSONString(teacherComment));
         teacherComment.setSubmitSource("PC");
         Map<String, Object> parmMap = majorFeedbackService.submitTeacherComment(teacherComment, loginService.getUser(),serialNumber,scheduledDateTime,false);
