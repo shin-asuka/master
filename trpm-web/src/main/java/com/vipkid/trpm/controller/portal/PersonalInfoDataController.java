@@ -78,7 +78,8 @@ public class PersonalInfoDataController {
                         || StringUtils
                         .equals(one.getInstanceStatus(), ApplicationConstant.ContractConstants.INSTANT_STATUS_ENABLE)) {
                     //已签或生效的合同
-                    if (one.getStartTime() <= today.getTime() && today.getTime() <= one.getEndTime()) {
+                    if (DateUtils.compareDate(today.getTime(), one.getStartTime()) >= 0
+                            && DateUtils.compareDate(today.getTime(), one.getEndTime()) <= 0) {
                         //如果是在合同期内(注意one的时区和today的时区必须都要是北京时区)
                         signedList.add(new QueryContractByTeacherIdOutputDto(one));
                     }
