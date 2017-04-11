@@ -765,6 +765,7 @@ public class OnlineClassService {
             onlineClassDao.updateEntity(onlineClass);
 
             //根据Reschedule次数判断是否lock用户
+            /*
             if (FinishType.STUDENT_CANCELLATION.equals(finishType) || FinishType.STUDENT_NO_SHOW.equals(finishType) || FinishType.STUDENT_IT_PROBLEM.equals(finishType)){
                 if (!UserEnum.Status.isLocked(userDao.findById(recruitTeacher.getId()).getStatus())){
                     int count = recruitmentService.getRemainRescheduleTimes(recruitTeacher, Status.PRACTICUM.toString(), finishType, true);
@@ -774,6 +775,7 @@ public class OnlineClassService {
                     }
                 }
             }
+            */
         }
     }
 

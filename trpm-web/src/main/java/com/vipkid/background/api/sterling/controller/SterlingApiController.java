@@ -94,7 +94,7 @@ public class SterlingApiController {
                 logger.warn("错误数据，丢弃");
                 ApiResponseUtils.buildSuccessDataResp("success");
             }
-            if(!StringUtils.equals(screeningFlag,"001")){
+            if(!StringUtils.equals(screeningFlag,"001") && !screeningId.startsWith("1")){
                 logger.warn("错误数据，丢弃");
                 ApiResponseUtils.buildSuccessDataResp("success");
             }

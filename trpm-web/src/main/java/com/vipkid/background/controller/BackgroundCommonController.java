@@ -27,6 +27,7 @@ import java.util.Map;
 @RequestMapping("/background")
 public class BackgroundCommonController extends RestfulController{
 
+
     @Autowired
     private BackgroundCommonService backgroundCommonService;
     
