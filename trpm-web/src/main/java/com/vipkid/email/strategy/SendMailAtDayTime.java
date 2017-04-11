@@ -76,12 +76,12 @@ public class SendMailAtDayTime {
     public void interviewBooked2HoursReminder(Teacher teacher, Timestamp scheduledDateTime, Date sendScheduledTime) {
         try {
             logger.info("【EMAIL.InterviewBooked2HoursReminder】toAdd MailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",
-                            teacher.getRealName(), teacher.getEmail(), "InterviewReminderTitle.html",
-                            "InterviewReminder.html");
-            // TODO
+                            teacher.getRealName(), teacher.getEmail(), "InterviewMockClass2HoursReminderTitle.html",
+                            "InterviewMockClass2HoursReminder.html");
+            // TODO 新增邮件模版
             Map<String, String> paramsMap = getSendParams(teacher, scheduledDateTime);
-            Map<String, String> emailMap = TemplateUtils.readTemplate("Interview2HoursReminder.html", paramsMap,
-                            "Interview2HoursReminderTitle.html");
+            Map<String, String> emailMap = TemplateUtils.readTemplate("InterviewMockClass2HoursReminder.html",
+                            paramsMap, "InterviewMockClass2HoursReminderTitle.html");
 
             EmailEntity reviceEntity = new EmailEntity().setToMail(teacher.getEmail())
                             .setMailSubject(emailMap.get("title")).setMailBody(emailMap.get("content"));
@@ -90,8 +90,8 @@ public class SendMailAtDayTime {
             EmailEngine.addMailPool(reviceEntity, EmailConfig.EmailFormEnum.TEACHVIP);
 
             logger.info("【EMAIL.InterviewBooked2HoursReminder】added MailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",
-                            teacher.getRealName(), teacher.getEmail(), "InterviewReminderTitle.html",
-                            "InterviewReminder.html");
+                            teacher.getRealName(), teacher.getEmail(), "InterviewMockClass2HoursReminderTitle.html",
+                            "InterviewMockClass2HoursReminder.html");
         } catch (Exception e) {
             logger.error("【EMAIL.InterviewBooked2HoursReminder】ERROR: {}", e);
         }
@@ -114,7 +114,91 @@ public class SendMailAtDayTime {
                 }
             }
         } else {
-            logger.warn("Not any reminder need send for interview...");
+            logger.warn("Not any reminder need send for Interview...");
+        }
+    }
+
+    /**
+     * MockClass 已 BOOKED 的课程，发送 48／24 小时提醒
+     *
+     * @param teacher 老师
+     * @param scheduledDateTime 课程开始时间，北京时间
+     * @param sendScheduledTime 定时发送时间，必须是北京时间
+     */
+    public void mockClassBooked48And24HoursReminder(Teacher teacher, Timestamp scheduledDateTime,
+                    Date sendScheduledTime) {
+        try {
+            logger.info("【EMAIL.mockClassBooked48And24HoursReminder】toAdd MailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",
+                            teacher.getRealName(), teacher.getEmail(), "PracticumReminderJobTitle.html",
+                            "PracticumReminderJob.html");
+
+            Map<String, String> paramsMap = getSendParams(teacher, scheduledDateTime);
+            Map<String, String> emailMap = TemplateUtils.readTemplate("PracticumReminderJob.html", paramsMap,
+                            "PracticumReminderJobTitle.html");
+
+            EmailEntity reviceEntity = new EmailEntity().setToMail(teacher.getEmail())
+                            .setMailSubject(emailMap.get("title")).setMailBody(emailMap.get("content"));
+            reviceEntity.setScheduledTime(sendScheduledTime);
+
+            EmailEngine.addMailPool(reviceEntity, EmailConfig.EmailFormEnum.TEACHVIP);
+
+            logger.info("【EMAIL.mockClassBooked48And24HoursReminder】added MailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",
+                            teacher.getRealName(), teacher.getEmail(), "PracticumReminderJobTitle.html",
+                            "PracticumReminderJob.html");
+        } catch (Exception e) {
+            logger.error("【EMAIL.mockClassBooked48And24HoursReminder】ERROR: {}", e);
+        }
+    }
+
+    /**
+     * MockClass 已 BOOKED 的课程，发送 2 小时提醒
+     *
+     * @param teacher 老师
+     * @param scheduledDateTime 课程开始时间，北京时间
+     * @param sendScheduledTime 定时发送时间，必须是北京时间
+     */
+    public void mockClassBooked2HoursReminder(Teacher teacher, Timestamp scheduledDateTime, Date sendScheduledTime) {
+        try {
+            logger.info("【EMAIL.mockClassBooked2HoursReminder】toAdd MailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",
+                            teacher.getRealName(), teacher.getEmail(), "InterviewMockClass2HoursReminderTitle.html",
+                            "InterviewMockClass2HoursReminder.html");
+
+            Map<String, String> paramsMap = getSendParams(teacher, scheduledDateTime);
+            Map<String, String> emailMap = TemplateUtils.readTemplate("InterviewMockClass2HoursReminder.html",
+                            paramsMap, "InterviewMockClass2HoursReminderTitle.html");
+
+            EmailEntity reviceEntity = new EmailEntity().setToMail(teacher.getEmail())
+                            .setMailSubject(emailMap.get("title")).setMailBody(emailMap.get("content"));
+            reviceEntity.setScheduledTime(sendScheduledTime);
+
+            EmailEngine.addMailPool(reviceEntity, EmailConfig.EmailFormEnum.TEACHVIP);
+
+            logger.info("【EMAIL.mockClassBooked2HoursReminder】added MailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",
+                            teacher.getRealName(), teacher.getEmail(), "InterviewMockClass2HoursReminderTitle.html",
+                            "InterviewMockClass2HoursReminder.html");
+        } catch (Exception e) {
+            logger.error("【EMAIL.mockClassBooked2HoursReminder】ERROR: {}", e);
+        }
+    }
+
+    /**
+     * 发送 MockClass 已 BOOKED 的课程所有提醒
+     *
+     * @param teacher 老师
+     * @param scheduledDateTime 课程开始时间，北京时间
+     */
+    public void sendAllMockClassBookedReminder(Teacher teacher, Timestamp scheduledDateTime) {
+        List<Reminder> remiderList = getReminders(teacher, scheduledDateTime);
+        if (CollectionUtils.isNotEmpty(remiderList)) {
+            for (Reminder reminder : remiderList) {
+                if (reminder.is2Hours()) {
+                    mockClassBooked2HoursReminder(teacher, scheduledDateTime, reminder.getScheduledTime());
+                } else {
+                    mockClassBooked48And24HoursReminder(teacher, scheduledDateTime, reminder.getScheduledTime());
+                }
+            }
+        } else {
+            logger.warn("Not any reminder need send for MockClass...");
         }
     }
 
