@@ -284,6 +284,7 @@
 	<select id="findByTeacherIdWithFromAndToTime" resultType="java.util.HashMap">
 		SELECT
 		online_class.id AS id,
+		online_class.book_date_time AS bookDateTime,
 		online_class.lesson_id AS lessonId,
 		student.english_name AS englishName,
 		student.id AS studentId,
@@ -337,6 +338,7 @@
 
 	<!-- Classrooms的查询列 -->
 	<sql id="classroomsColumns">
+		online_class.book_date_time AS bookDateTime,
 		online_class.lesson_id AS lessonId,
 		online_class.teacher_id AS teacherId,
 		online_class.is_paid_trail AS isPaidTrail,

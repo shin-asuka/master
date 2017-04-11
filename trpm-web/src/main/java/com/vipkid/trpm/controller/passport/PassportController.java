@@ -79,17 +79,17 @@ public class PassportController extends AbstractController {
 			@RequestParam("email") String strEmail, @RequestParam("passwd") String strPwd,
 			@RequestParam("remember") boolean remember) {
 		// 对用户名进行解密
-		String ipStr = SIGN_WHITE_IP;
-		List<String> ipList = Lists.newArrayList();
-		if(StringUtils.isNotBlank(ipStr)) {
-			ipList = Splitter.on(",").trimResults().splitToList(ipStr);
-		}
-		String ip =IpUtils.getRemoteIP().split(",")[0];
-		if (!ipList.contains(ip)){
-			logger.error(" User ip :{} is  illegal",ip);
-			model.addAttribute("info", ApplicationConstant.AjaxCode.USER_ERROR);
-			return jsonView(response, model.asMap());
-		}
+//		String ipStr = SIGN_WHITE_IP;
+//		List<String> ipList = Lists.newArrayList();
+//		if(StringUtils.isNotBlank(ipStr)) {
+//			ipList = Splitter.on(",").trimResults().splitToList(ipStr);
+//		}
+//		String ip =IpUtils.getRemoteIP().split(",")[0];
+//		if (!ipList.contains(ip)){
+//			logger.error(" User ip :{} is  illegal",ip);
+//			model.addAttribute("info", ApplicationConstant.AjaxCode.USER_ERROR);
+//			return jsonView(response, model.asMap());
+//		}
 
 		String _strEmail = new String(Base64.getDecoder().decode(strEmail));
 		logger.info(" 请求参数 email ： " + _strEmail + ";password=" + strPwd + ",IP:" + IpUtils.getRemoteIP());

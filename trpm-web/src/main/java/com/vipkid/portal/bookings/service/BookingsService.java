@@ -14,7 +14,9 @@ import com.vipkid.http.service.ScalperService;
 import com.vipkid.http.utils.WebUtils;
 import com.vipkid.portal.bookings.constant.BookingsResult;
 import com.vipkid.portal.bookings.entity.*;
+import com.vipkid.rest.portal.model.ClassroomDetail;
 import com.vipkid.rest.service.TeacherPageLoginService;
+import com.vipkid.rest.utils.ClassroomUtils;
 import com.vipkid.trpm.constant.ApplicationConstant;
 import com.vipkid.trpm.constant.ApplicationConstant.AuditCategory;
 import com.vipkid.trpm.constant.ApplicationConstant.CookieKey;
@@ -496,6 +498,14 @@ public class BookingsService {
     public void setSchedulePriority(Map<String, Map<String, Object>> teacherScheduleMap, String scheduleKey,
                                     Map<String, Object> teacherSchedule) {
         boolean isReplaced = false;
+        Timestamp bookDateTimestamp = (Timestamp) teacherSchedule.get("bookDateTime");
+        if(bookDateTimestamp != null) {
+            Calendar bookDateTime = Calendar.getInstance();
+            bookDateTime.setTimeInMillis(bookDateTimestamp.getTime());
+            teacherSchedule.put("bookDateTime",bookDateTime);
+        }
+
+        ClassroomUtils.buildAsyncLessonSN(teacherSchedule);
 
         /* 获取新的 TeacherSchedule 的状态 */
         String newStatus = (String) teacherSchedule.get("status");

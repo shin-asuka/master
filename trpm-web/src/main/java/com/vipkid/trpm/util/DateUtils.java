@@ -49,6 +49,8 @@ public final class DateUtils {
 
 	public static String DEFAULT_FORMAT_PATTERN = "yyyy-MM-dd HH:mm:ss";
 
+	public static String HH_MM_SS ="HH:mm:ss";
+
 	/* 每天的半小时数量 */
 	public static final int HALFHOUR_OF_DAY = 24 * 2;
 	/* 半小时的分钟数 */
@@ -320,6 +322,20 @@ public final class DateUtils {
 			}
 		}
 		return date;
+	}
+
+	/**
+	 *
+	 * @param date
+	 * @param start  HH:mm:ss
+	 * @param end HH:mm:ss
+	 * @return
+	 */
+	public static boolean hasDateRangeForHHmmss(Date date,String start,String end){
+		Date startTime=DateUtils.parseDate(start,DateUtils.HH_MM_SS);
+		Date endTime=DateUtils.parseDate(end,DateUtils.HH_MM_SS);
+		Long dateTime=DateUtils.parseDate(DateUtils.formatDate(date,DateUtils.HH_MM_SS),DateUtils.HH_MM_SS).getTime();
+		return startTime.getTime() <= dateTime && dateTime <= endTime.getTime();
 	}
 
     public static Date getTheDayOfNextMonth(Date date, int dayOfMonth){

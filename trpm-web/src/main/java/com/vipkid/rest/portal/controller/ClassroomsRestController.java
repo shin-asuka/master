@@ -11,6 +11,7 @@ import com.vipkid.rest.portal.model.ClassroomDetail;
 import com.vipkid.rest.portal.model.ClassroomsData;
 import com.vipkid.rest.portal.service.ClassroomsRestService;
 import com.vipkid.rest.utils.ApiResponseUtils;
+import com.vipkid.rest.utils.ClassroomUtils;
 import com.vipkid.trpm.constant.ApplicationConstant;
 import com.vipkid.trpm.entity.teachercomment.TeacherComment;
 import com.vipkid.trpm.service.portal.TeacherService;
@@ -70,6 +71,9 @@ public class ClassroomsRestController extends RestfulController{
 					List<ClassroomDetail> dataList = classroomsData.getDataList();
 
 					for (ClassroomDetail classroomDetail : dataList) {
+						//异步刷新课标（如果当前时间是周一的11:50~12:10,则今天约的课的课标要临时调整)
+						ClassroomUtils.buildAsyncLessonSN(classroomDetail);
+
 						if(classroomDetail.getIsPaidTrail() == null || classroomDetail.getIsPaidTrail().intValue() == 0) {
 							continue;
 						}
