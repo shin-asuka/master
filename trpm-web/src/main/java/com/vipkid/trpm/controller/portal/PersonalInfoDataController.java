@@ -37,7 +37,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @since 2017/4/10 下午2:41
  */
 @RestController
-@RequestMapping("/api/personal")
+@RequestMapping("/personal")
 public class PersonalInfoDataController {
 
 
