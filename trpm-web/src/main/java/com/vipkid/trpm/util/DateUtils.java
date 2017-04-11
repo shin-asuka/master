@@ -325,7 +325,7 @@ public final class DateUtils {
 	}
 
 	/**
-	 *
+	 * 是否在时间区间中
 	 * @param date
 	 * @param start  HH:mm:ss
 	 * @param end HH:mm:ss
