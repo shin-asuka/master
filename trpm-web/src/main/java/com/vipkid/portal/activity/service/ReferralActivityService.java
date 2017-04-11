@@ -304,10 +304,10 @@ public class ReferralActivityService {
 			return ReturnMapUtils.returnFail(-3, "测试已经结束，请重新开始，activityExamId:"+shareActivityExam.getId());
 		}	
 		
-		ShareExamDetail selectExamDetail = new ShareExamDetail();
-		selectExamDetail.setActivityExamId(bean.getActivityExamId());
-		selectExamDetail.setQuestionId(bean.getQuestionId());
-		List<ShareExamDetail> list = this.shareExamDetailDao.selectByList(selectExamDetail);
+		ShareExamDetail selectBean = new ShareExamDetail();
+		selectBean.setActivityExamId(bean.getActivityExamId());
+		selectBean.setQuestionId(bean.getQuestionId());
+		List<ShareExamDetail> list = this.shareExamDetailDao.selectByList(selectBean);
 		if(CollectionUtils.isEmpty(list)){
 			return ReturnMapUtils.returnFail(-4, "没有找到该题的考试信息，请从新提交，activityExamId:"+shareActivityExam.getId());
 		}
@@ -331,8 +331,8 @@ public class ReferralActivityService {
 			 beanVo.setQuestionId(questionId);
 			 beanVo.setQuestionIndex(bean.getQuestionIndex()+1);
 			 
-			 selectExamDetail.setQuestionId(questionId);
-			 List<ShareExamDetail> nextList = this.shareExamDetailDao.selectByList(selectExamDetail);
+			 selectBean.setQuestionId(questionId);
+			 List<ShareExamDetail> nextList = this.shareExamDetailDao.selectByList(selectBean);
 			 if(CollectionUtils.isEmpty(nextList)){
 				 ShareExamDetail nextExamDetail = new ShareExamDetail();
 				 nextExamDetail.setActivityExamId(shareActivityExam.getId());
