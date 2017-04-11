@@ -373,7 +373,7 @@ public class SterlingService {
         }
 
 
-        if(!RedisCacheUtils.lock(KeyGenerator.generateKey(CREATE_SCREENING_LOCK,teacherId),String.valueOf(teacherId),RedisCacheUtils.FIVE_MINUTES)){
+        if(!RedisCacheUtils.lock(KeyGenerator.generateKey(CREATE_SCREENING_LOCK,teacherId),String.valueOf(teacherId),RedisCacheUtils.TEN_MINUTES)){
             return new ScreeningOutputDto(10000,"已经存在一次请求还没有结束");
         }
         try{
