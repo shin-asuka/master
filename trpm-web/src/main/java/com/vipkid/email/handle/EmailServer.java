@@ -1,9 +1,8 @@
 package com.vipkid.email.handle;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-
-
 import com.google.common.collect.Maps;
+import com.vipkid.trpm.util.DateUtils;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.community.config.PropertyConfigurer;
@@ -16,6 +15,7 @@ import javax.mail.Authenticator;
 import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import java.nio.charset.StandardCharsets;
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -55,9 +55,15 @@ public class EmailServer {
         Map<String, String> requestParam = Maps.newHashMap();
         requestParam.put("from", mailEntity.getFromMail());
         requestParam.put("to", mailEntity.getToMail());
-       // requestParam.put("to", "moyonglin1@gmail.com");
+
         requestParam.put("subject", mailEntity.getMailSubject());
         requestParam.put("content", mailEntity.getMailBody());
+
+        // 增加定时发送
+        if(null != mailEntity.getScheduledTime()) {
+            SimpleDateFormat dateFormat = new SimpleDateFormat(DateUtils.DEFAULT_FORMAT_PATTERN);
+            requestParam.put("scheduledTime", dateFormat.format(mailEntity.getScheduledTime()));
+        }
         try {
             String json = HttpClientProxy.post(REQUEST_URL, requestParam, requestHeader);
             logger.info("Email send result ====>：{}", json);

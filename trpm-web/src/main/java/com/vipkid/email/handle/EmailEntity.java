@@ -1,5 +1,7 @@
 package com.vipkid.email.handle;
 
+import java.util.Date;
+
 public class EmailEntity {
     
     private String host; 			// 邮件服务器设置  
@@ -13,6 +15,17 @@ public class EmailEntity {
     private String mailBody;		// 邮件内容设置
     
     private String personalName;	// 发送人昵称
+
+    // 定时发送，必须是北京时间
+    private Date scheduledTime;
+
+    public Date getScheduledTime() {
+        return scheduledTime;
+    }
+
+    public void setScheduledTime(Date scheduledTime) {
+        this.scheduledTime = scheduledTime;
+    }
 
     public String getHost() {
         return host;
