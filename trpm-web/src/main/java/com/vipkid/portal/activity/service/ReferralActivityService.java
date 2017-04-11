@@ -446,6 +446,9 @@ public class ReferralActivityService {
 	 */
 	public Map<String, Object> updateForToPortal(ToPortalDto bean){
 		ShareActivityExam shareActivityExam = this.shareActivityExamDao.getById(bean.getActivityExamId());
+		if(NumericUtils.isNull(shareActivityExam)){
+			return ReturnMapUtils.returnFail(-2, "未找到ShareActivityExam数据,Id:" + bean.getActivityExamId());
+		}
 		shareActivityExam.setToPortal(shareActivityExam.getToPortal()+1);
 		int result = this.shareActivityExamDao.updateById(shareActivityExam);
 		if(result >= 1){
