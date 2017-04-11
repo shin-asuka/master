@@ -4,6 +4,7 @@ import com.google.api.client.util.Maps;
 import com.vipkid.enums.TeacherApplicationEnum.Result;
 import com.vipkid.enums.TeacherApplicationEnum.Status;
 import com.vipkid.enums.TeacherEnum.LifeCycle;
+import com.vipkid.recruitment.common.service.AuditEmailService;
 import com.vipkid.recruitment.common.service.RecruitmentService;
 import com.vipkid.recruitment.practicum.PracticumConstant;
 import com.vipkid.recruitment.practicum.service.PracticumService;
@@ -44,6 +45,8 @@ public class PracticumController extends RestfulController {
     private RecruitmentService recruitmentService;
     @Autowired
     private HuanxinService huanxinService;
+    @Autowired
+    AuditEmailService auditEmailService;
 
     @RequestMapping(value = "/list", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
     public Map<String,Object> list(HttpServletRequest request, HttpServletResponse response) {
@@ -94,6 +97,9 @@ public class PracticumController extends RestfulController {
             Map<String,Object> result = this.practicumService.cancelClass(Long.valueOf(onlineClassId+""), getTeacher(request));
             if(ReturnMapUtils.isFail(result)){
                 response.setStatus(HttpStatus.FORBIDDEN.value());
+            }else{
+                //add cancel 邮件
+                auditEmailService.sendInterviewReapply(getTeacher(request).getId());
             }
             return result;
         } catch (IllegalArgumentException e) {

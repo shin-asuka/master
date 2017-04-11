@@ -85,6 +85,9 @@ public class AuditEmailService {
     private static String CONTRACTINFO_REAPPLY_TITLE = "ContractInfoReapplyTitle.html";
     private static String CONTRACTINFO_REAPPLY_CONTENT = "ContractInfoReapply.html";
 
+    private static String CANCEL_PRACTICUM_TITLE = "CancelPracticumTitle.html";
+    private static String CANCEL_PRACTICUM = "CancelPracticumTitle.htmlhtml";
+
     public Map<String,Object> sendBasicInfoPass(long teacherId){
         try{
             Teacher teacher  =  teacherDao.findById(teacherId);
@@ -406,6 +409,30 @@ public class AuditEmailService {
             }
         }
         return null;
+    }
+
+    public Map<String,Object> sendCancelPracticum(long teacherId){
+        try{
+            Teacher teacher  =  teacherDao.findById(teacherId);
+            Map<String, String> paramsMap = Maps.newHashMap();
+
+            if (StringUtils.isNotBlank(teacher.getFirstName())){
+                paramsMap.put("teacherName", teacher.getFirstName());
+            }else if (StringUtils.isNotBlank(teacher.getRealName())){
+                paramsMap.put("teacherName", teacher.getRealName());
+            }
+
+            logger.info("【EMAIL.sendCancelPracticum】toAddMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",
+                    teacher.getRealName(),teacher.getEmail(),CANCEL_PRACTICUM_TITLE, CANCEL_PRACTICUM);
+            Map<String, String> emailMap = TemplateUtils.readTemplate(CANCEL_PRACTICUM, paramsMap, CANCEL_PRACTICUM_TITLE);
+            EmailEngine.addMailPool(teacher.getEmail(), emailMap, EmailConfig.EmailFormEnum.TEACHVIP);
+            logger.info("【EMAIL.sendCancelPracticum】addedMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",
+                    teacher.getRealName(),teacher.getEmail(),CANCEL_PRACTICUM_TITLE, CANCEL_PRACTICUM);
+            return ReturnMapUtils.returnSuccess();
+        } catch (Exception e) {
+            logger.error("【EMAIL.sendInterviewReapply】ERROR: {}", e);
+        }
+        return ReturnMapUtils.returnFail("email send fail ");
     }
 
 
