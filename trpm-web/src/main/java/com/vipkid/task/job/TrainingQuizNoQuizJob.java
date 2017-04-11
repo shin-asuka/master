@@ -7,6 +7,7 @@ import com.vipkid.enums.TeacherEnum;
 import com.vipkid.enums.TeacherLockLogEnum;
 import com.vipkid.enums.TeacherQuizEnum;
 import com.vipkid.http.utils.JsonUtils;
+import com.vipkid.recruitment.common.service.RecruitmentService;
 import com.vipkid.recruitment.dao.TeacherApplicationDao;
 import com.vipkid.recruitment.dao.TeacherLockLogDao;
 import com.vipkid.recruitment.entity.TeacherLockLog;
@@ -47,6 +48,8 @@ public class TrainingQuizNoQuizJob {
     private TeacherQuizDao teacherQuizDao;
     @Autowired
     private TeacherLockLogDao teacherLockLogDao;
+    @Autowired
+    private RecruitmentService recruitmentService;
 
     @Vschedule
     public void doJob (JobContext jobContext) {
