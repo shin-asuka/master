@@ -99,7 +99,7 @@ public class PersonalInfoDataController {
     @RequestMapping("/contract/doSign")
     public  Map<String, Object> teacherSignature(
             @RequestParam("contractId") Long contractId,
-            @RequestParam("signerName") String signerName){
+            @RequestParam("teacherName") String signerName){
 
         APIQueryContractByIdResult contract = personalInfoService.queryContractById(contractId);
         if (contract == null || !StringUtils.equals(signerName, contract.getSignerName())) {
@@ -170,7 +170,7 @@ public class PersonalInfoDataController {
      *
      * @param contractId 合同Id
      */
-    @RequestMapping("/personal/contractContent")
+    @RequestMapping("/contractContent")
     public Map<String, Object> contractContentById(@RequestParam("contractId") Long contractId){
 
         APIQueryContractByIdResult contract = personalInfoService.queryContractById(contractId);
