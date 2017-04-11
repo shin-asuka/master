@@ -63,7 +63,7 @@ public class TrialFeedbackController {
         OnlineClass onlineClass = onlineClassService.getOnlineClassById(teacherCommentVo.getOnlineClassId());
         String scheduledDateTime = "";
         if(null != onlineClass) {
-            scheduledDateTime = DateFormatUtils.format(onlineClass.getScheduledDateTime(), "yyyy-MM-dd");
+            scheduledDateTime = DateFormatUtils.format(onlineClass.getScheduledDateTime(), "yyyy-MM-dd HH:mm:ss");
         }
         logger.info("ReportController: feedbackSubmit() 参数为：serialNumber={}, scheduledDateTime={}, teacherComment={}", serialNumber, scheduledDateTime, JSON.toJSONString(teacherComment));
         teacherComment.setSubmitSource("PC");
