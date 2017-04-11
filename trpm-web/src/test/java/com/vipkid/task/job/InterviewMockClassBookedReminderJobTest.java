@@ -22,8 +22,11 @@ public class InterviewMockClassBookedReminderJobTest {
     private InterviewMockClassBookedReminderJob interviewMockClassBookedReminderJob;
 
     @Test
-    public void testDoJob() {
-        interviewMockClassBookedReminderJob.doJob(new JobContext());
+    public void testDoJob() throws InterruptedException {
+        JobContext jobContext = new JobContext();
+        jobContext.setData("2017-04-13 06:00:00");
+        interviewMockClassBookedReminderJob.doJob(jobContext);
+        Thread.sleep(10 * 1000L);
     }
 
 }

@@ -13,6 +13,7 @@ import com.vipkid.trpm.dao.OnlineClassDao;
 import com.vipkid.trpm.dao.TeacherDao;
 import com.vipkid.trpm.entity.OnlineClass;
 import com.vipkid.trpm.entity.Teacher;
+import com.vipkid.trpm.util.DateUtils;
 import com.vipkid.vschedule.client.common.Vschedule;
 import com.vipkid.vschedule.client.schedule.JobContext;
 import org.apache.commons.collections.CollectionUtils;
@@ -56,6 +57,10 @@ public class InterviewMockClassBookedReminderJob {
 
         Date sendScheduledTime = Date.from(now.atZone(ZoneId.systemDefault()).toInstant());
         logger.info("Interview and MockClass reminder sendScheduledTime: {}", sendScheduledTime);
+
+        if (null != jobContext.getData()) {
+            sendScheduledTime = DateUtils.parseDate(jobContext.getData(), null);
+        }
 
         List<TeacherReminder> teacherReminderList = teacherReminderDao.findBySendScheduledTime(sendScheduledTime);
 
