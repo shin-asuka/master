@@ -49,7 +49,7 @@ public class InterviewMockClassBookedReminderJob {
     private TeacherDao teacherDao;
 
     @Vschedule
-    // @Scheduled(cron = "0 15 * * * ?")
+    // @Scheduled(cron = "0 0/15 * * * ?")
     public void doJob(JobContext jobContext) {
         LocalDateTime now =
                         LocalDateTime.now().with(ChronoField.SECOND_OF_MINUTE, 0).with(ChronoField.MILLI_OF_SECOND, 0);
