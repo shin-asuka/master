@@ -5,13 +5,14 @@ package com.vipkid.http.service;
 
 import java.util.List;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.vipkid.trpm.entity.teachercomment.StudentAbilityLevelRule;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
+
 import com.google.common.collect.Lists;
 import com.vipkid.http.utils.JsonUtils;
 import com.vipkid.http.utils.WebUtils;
@@ -38,7 +39,7 @@ public class TeacherAppService extends HttpBaseService {
 			String data = WebUtils.simpleGet(url);
 			if (data!=null) {
 				String datas = getData(data);
-				list = JsonUtils.toBeanList(datas, TeacherNationalityCode.class);
+				list = JsonUtils.readJson(datas, new TypeReference<List<TeacherNationalityCode>>() {});
 			}
 		} catch (Exception e) {
 			logger.error("getAllNationCodes error ",e);
@@ -60,7 +61,7 @@ public class TeacherAppService extends HttpBaseService {
 			String data = WebUtils.simpleGet(url);
 			if (data!=null) {
 				String datas = getData(data);
-				list = JsonUtils.toBeanList(datas, TeacherLocation.class);
+				list = JsonUtils.readJson(datas, new TypeReference<List<TeacherLocation>>() {});
 			}
 		} catch (Exception e) {
 			logger.error("getCountryList error",e);
@@ -85,7 +86,7 @@ public class TeacherAppService extends HttpBaseService {
 			String data = WebUtils.simpleGet(url);
 			if (data!=null) {
 				String datas = getData(data);
-				list = JsonUtils.toBeanList(datas, TeacherLocation.class);
+				list = JsonUtils.readJson(datas, new TypeReference<List<TeacherLocation>>() {});
 			}
 		} catch (Exception e) {
 			logger.error("getStateList error",e);
@@ -106,7 +107,7 @@ public class TeacherAppService extends HttpBaseService {
 			String data = WebUtils.simpleGet(url);
 			if (data!=null) {
 				String datas = getData(data);
-				list = JsonUtils.toBeanList(datas, StudentAbilityLevelRule.class);
+				list = JsonUtils.readJson(datas, new TypeReference<List<StudentAbilityLevelRule>>() {});
 			}
 		} catch (Exception e) {
 			logger.error("levelAndUnits error",e);
@@ -131,7 +132,7 @@ public class TeacherAppService extends HttpBaseService {
 			String data = WebUtils.simpleGet(url);
 			if (data!=null) {
 				String datas = getData(data);
-				list = JsonUtils.toBeanList(datas, TeacherLocation.class);
+				list = JsonUtils.readJson(datas, new TypeReference<List<TeacherLocation>>() {});
 			}
 		} catch (Exception e) {
 			logger.error("getCityList error",e);
@@ -146,11 +147,11 @@ public class TeacherAppService extends HttpBaseService {
 	public String getData(String respone){
 		String data = null;
 		if(StringUtils.isNotBlank(respone)){
-			JSONObject json = JsonUtils.parseToJSONObject(respone);
+			JsonNode json = JsonUtils.parseObject(respone);
 			if(json!=null){
-				JSON dataObj = (JSON) json.get("data");
+				JsonNode dataObj = json.get("data");
 				if(dataObj != null ){
-					data = dataObj.toJSONString();
+					data = dataObj.toString();
 				}
 			}
 		}

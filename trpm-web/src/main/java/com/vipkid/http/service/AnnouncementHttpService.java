@@ -5,6 +5,7 @@ package com.vipkid.http.service;
 
 import java.util.List;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,7 +33,7 @@ public class AnnouncementHttpService extends HttpBaseService {
         try {
         	String data = WebUtils.simpleGet(url);
             if (data!=null) {
-            	list = JsonUtils.toBeanList(data, Announcement.class);
+            	list = JsonUtils.readJson(data, new TypeReference<List<Announcement>>() {});
             }
 		} catch (Exception e) {
 			logger.error("获取教师公告失败！"+e);

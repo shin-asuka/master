@@ -1,10 +1,11 @@
 package com.vipkid.trpm.service.portal;
 
-import com.alibaba.fastjson.JSON;
+
 import com.google.common.collect.Maps;
 import com.vipkid.email.EmailEngine;
 import com.vipkid.email.handle.EmailConfig;
 import com.vipkid.email.template.TemplateUtils;
+import com.vipkid.http.utils.JsonUtils;
 import com.vipkid.payroll.service.StudentService;
 import com.vipkid.trpm.constant.ApplicationConstant;
 import com.vipkid.trpm.dao.*;
@@ -194,8 +195,8 @@ public class ReportEmailService {
                 "C1-L1-U1-LC2-7",
                 "C1-L1-U1-LC2-11",
                 "C1-L1-U1-LC2-12");
-        logger.info(JSON.toJSONString(null));
-        logger.info(JSON.toJSONString(lessonSnList));
+
+        logger.info(JsonUtils.toJSONString(lessonSnList));
         if (CollectionUtils.isNotEmpty(lessonSnList) && lessonSnList.size() >= 3) {
             List<Integer> lessonNoList = new ArrayList<>();
             lessonSnList.forEach(x -> lessonNoList.add(LessonSerialNumber.getLessonNoFromSn(x)));

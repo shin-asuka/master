@@ -1,23 +1,26 @@
 /**
- * 
+ *
  */
 package com.vipkid.http.utils;
 
 import java.io.IOException;
-import java.util.List;
+import java.util.Iterator;
+
+import java.util.Map;
+
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import org.apache.commons.lang.StringUtils;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonNode;
+
+import com.google.common.collect.Maps;
+import org.apache.commons.lang.StringUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.collect.Lists;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author zouqinghua
@@ -27,81 +30,7 @@ import com.google.common.collect.Lists;
 @Deprecated
 public class JsonUtils {
 
-    public static String toJSONString(Object object) {
-        String str = null;
-        ObjectMapper mapper = new ObjectMapper();
-        try {
-            str = mapper.writeValueAsString(object);
-        } catch (JsonProcessingException e) {
-        	e.printStackTrace();
-        }
-        return str;
-    }
-    
-    public static <T> T toBean(String json, Class<T> clazz) {
-    	ObjectMapper mapper = new ObjectMapper();
-    	T t = null;
-		try {
-			t = mapper.readValue(json, clazz);
-		} catch (JsonParseException e) {
-			e.printStackTrace();
-		} catch (JsonMappingException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-    	
-    	return t;
-    }
-    
-    public static <T> List<T> toBeanList(Object objects,Class<T> clazz){
-    	List<T> list = null;
-    	if(objects!=null){
-    		String jsons = JSONArray.toJSONString(objects);
-    		list = toBeanList(jsons, clazz);
-    	}
-    	return list;
-    }
-    
-    public static <T> List<T> toBeanList(String jsons,Class<T> clazz){
-    	List<T> list = Lists.newArrayList();
-    	if(StringUtils.isNotBlank(jsons)){
-    		JSONArray jsonArray = JSONArray.parseArray(jsons);
-    		for (Object object : jsonArray) {
-    			//String json = JSON.toJSONString(object);
-    			//T t = toBean(json, clazz);
-    			JSONObject json = (JSONObject) object;
-				T t = JSON.toJavaObject(json, clazz);
-    			list.add(t);
-			}
-    	}
-    	return list;
-    }
-
-    public static JSONObject toJSONObject(Object object){
-    	JSONObject jsonObject = null;
-    	if(object!=null){
-    		jsonObject = (JSONObject) JSON.toJSON(object);
-    	}
-    	return jsonObject;
-    }
-    
-    public static JSONObject parseToJSONObject(String object){
-    	JSONObject jsonObject = null;
-    	if(object!=null){
-    		jsonObject = JSONObject.parseObject(object);
-    	}
-    	return jsonObject;
-    }
-    
-    public static JSONArray parseToJSONArray(String object){
-    	JSONArray jsonObject = null;
-    	if(object!=null){
-    		jsonObject = JSONArray.parseArray(object);
-    	}
-    	return jsonObject;
-    }
-
+	private static final Logger logger = LoggerFactory.getLogger(JsonUtils.class);
 
 	private static ObjectMapper mapper = new ObjectMapper();
 	static{
@@ -114,6 +43,133 @@ public class JsonUtils {
 //		// 禁止把POJO中值为null的字段映射到json字符串中
 //		mapper.configure(SerializationFeature.WRITE_NULL_MAP_VALUES,true);
 	}
+
+
+	public static String toJSONString(Object object) {
+		if (object == null) {
+			return StringUtils.EMPTY;
+		}
+		try {
+			return object instanceof String ? (String) object : mapper.writeValueAsString(object);
+		} catch (Exception e) {
+			String message = String.format("Object to jsonString error;object=%s", object.getClass());
+			logger.error(message, e);
+			return StringUtils.EMPTY;
+		}
+	}
+
+	public static <T> T toBean(String json, Class<T> clazz) {
+		if (StringUtils.isBlank(json) || clazz == null) {
+			return null;
+		}
+		try {
+			return clazz.equals(String.class) ? (T) json : mapper.readValue(json, clazz);
+		} catch (Exception e) {
+			String message = String.format("jsonString to Object error;jsonString=%s", json);
+			logger.error(message, e);
+			return null;
+		}
+
+	}
+
+
+	/**
+	 * 将json通过类型转换成对象
+	 *
+	 * @param json          json字符串
+	 * @param typeReference 引用类型
+	 * @return 返回对象
+	 * @throws IOException
+	 */
+	public static <T> T readJson(String json, TypeReference<T> typeReference) {
+
+		if (StringUtils.isBlank(json) || typeReference == null) {
+			return null;
+		}
+		try {
+			return (T) (typeReference.getType().equals(String.class) ? json : mapper.readValue(json, typeReference));
+		} catch (Exception e) {
+			String message = String.format("jsonString to Object error;jsonString=%s", json);
+			logger.error(message, e);
+			return null;
+		}
+	}
+
+
+
+
+	public static JsonNode parseObject(String jsonStr) {
+		try {
+			return mapper.readTree(jsonStr);
+		} catch (Exception e) {
+			String message = String.format("jsonString to JsonNode error;jsonString=%s", jsonStr);
+			logger.error(message, e);
+			return null;
+		}
+	}
+
+
+	public static Map<String,Object> parseJsonToHttpParams(JsonNode jsonNode){
+	    return parseJsonToMap(jsonNode,null);
+    }
+
+	private static Map<String, Object> parseJsonToMap(JsonNode rootNode, String keyPre){
+		Map<String, Object> map = Maps.newHashMap();
+
+		if(org.apache.commons.lang3.StringUtils.isNoneBlank(keyPre)){
+			keyPre += ".";
+		}else{
+			keyPre ="";
+		}
+
+		if(rootNode == null ){
+			return map;
+		}
+		Iterator<String> fieldNames = rootNode.fieldNames();
+
+		while(fieldNames.hasNext()){
+			String fieldName = fieldNames.next();
+			String key = keyPre+fieldName;
+			JsonNode childNode=rootNode.path(fieldName);
+			put(childNode,key,map);
+
+		}
+		return map;
+	}
+
+	private  static Map<String, Object> parseJsonArrayToMap(JsonNode rootNode,String keyPre){
+		Map<String, Object> map = Maps.newHashMap();
+		if(keyPre == null){
+			keyPre ="";
+		}
+		if(!rootNode.isArray()) {
+			return map;
+		}
+		Iterator<JsonNode> elements = rootNode.elements();
+		Integer index = 0;
+		while(elements.hasNext()) {
+
+			JsonNode element = elements.next();
+			String key = keyPre+"["+index+"]";
+			put(element,key,map);
+			index++;
+
+		}
+		return map;
+	}
+
+	private  static void put(JsonNode jsonNode,String key,Map<String,Object> map){
+		if(jsonNode.isArray()){
+			map.putAll(parseJsonArrayToMap(jsonNode,key));
+		}else if(jsonNode.isTextual()){
+			map.put(key,jsonNode.asText());
+		}else if(jsonNode.isNumber()){
+			map.put(key,jsonNode.numberValue());
+		}else if(jsonNode.isObject()){
+			map.putAll(parseJsonToMap(jsonNode,key));
+		}
+	}
+
 
 
 }

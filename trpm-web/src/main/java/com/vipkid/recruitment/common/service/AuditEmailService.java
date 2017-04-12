@@ -8,6 +8,7 @@ import com.vipkid.email.EmailEngine;
 import com.vipkid.email.handle.EmailConfig;
 import com.vipkid.email.template.TemplateUtils;
 import com.vipkid.enums.TeacherApplicationEnum;
+import com.vipkid.http.utils.JsonUtils;
 import com.vipkid.recruitment.dao.TeacherApplicationDao;
 import com.vipkid.recruitment.dao.TeacherContractFileDao;
 import com.vipkid.recruitment.entity.TeacherApplication;
@@ -127,7 +128,7 @@ public class AuditEmailService {
             logger.info(" teacherId:{},application Id{}",teacherId,application.getId());
             TeacherPeComments teacherPeComments =  teacherPeCommentsDao.getTeacherPeComments(Long.valueOf(application.getId()).intValue());
 
-            logger.info("teacherPeComments:{}",JSON.toJSONString(teacherPeComments));
+            logger.info("teacherPeComments:{}", JsonUtils.toJSONString(teacherPeComments));
             if(teacherPeComments!=null) {
                 paramsMap.put("thingsDidWell", HtmlUtils.htmlUnescape(teacherPeComments.getThingsDidWell()));
                 logger.info("thingsDidWell:{}",HtmlUtils.htmlUnescape(teacherPeComments.getThingsDidWell()));

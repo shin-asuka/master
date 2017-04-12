@@ -5,6 +5,7 @@ package com.vipkid.http.service;
 
 import java.util.List;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.vipkid.file.utils.StringUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
@@ -55,7 +56,7 @@ public class AssessmentHttpService extends HttpBaseService {
         try {
         	String data = WebUtils.postNameValuePair(url, onlineClassVo);
             if (data!=null) {
-            	list = JsonUtils.toBeanList(data, StudentUnitAssessment.class);
+            	list = JsonUtils.readJson(data, new TypeReference<List<StudentUnitAssessment>>() {});
             }
 		} catch (Exception e) {
 			logger.error("获取UA报告失败！",e);

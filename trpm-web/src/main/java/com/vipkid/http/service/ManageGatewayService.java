@@ -4,6 +4,7 @@
 package com.vipkid.http.service;
 
 import com.alibaba.fastjson.JSONObject;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.api.client.util.Lists;
 import com.google.api.client.util.Maps;
@@ -83,7 +84,7 @@ public class ManageGatewayService extends HttpBaseService {
 		try {
 			String data = WebUtils.simpleGet(String.format(super.serverAddress + GATEWAY_STUDENT_COMMENT_BATCH_API ,idsStr));
 			if (data!=null) {
-				studentCommentApiList = JsonUtils.toBeanList(data, StudentCommentVo.class);
+				studentCommentApiList = JsonUtils.readJson(data, new TypeReference<List<StudentCommentVo>>() {});
 				for(StudentCommentVo studentCommentVo : studentCommentApiList) {
 					String result = getTranslation(studentCommentVo.getId().longValue());
 					studentCommentVo.setTransaltion(StringUtils.isEmpty(result) ? "" : result);
