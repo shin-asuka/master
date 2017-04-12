@@ -58,10 +58,14 @@ public class InterviewMockClassBookedReminderJob {
         logger.info("Interview and MockClass reminder time: {}", now);
 
         Date sendScheduledTime = Date.from(now.atZone(ZoneId.systemDefault()).toInstant());
-        if (null != jobContext.getData()) {
+        if (StringUtils.isNoneBlank(jobContext.getData())) {
             sendScheduledTime = DateUtils.parseDate(jobContext.getData(), null);
         }
         logger.info("Interview and MockClass reminder sendScheduledTime: {}", sendScheduledTime);
+
+        if (null == sendScheduledTime) {
+            logger.warn("Interview and MockClass reminder sendScheduledTime illegal");
+        }
 
         List<TeacherReminder> teacherReminderList = teacherReminderDao.findBySendScheduledTime(sendScheduledTime);
 
