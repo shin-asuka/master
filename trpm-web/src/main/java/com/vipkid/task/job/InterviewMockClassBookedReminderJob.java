@@ -65,6 +65,7 @@ public class InterviewMockClassBookedReminderJob {
 
         if (null == sendScheduledTime) {
             logger.warn("Interview and MockClass reminder sendScheduledTime illegal");
+            return;
         }
 
         List<TeacherReminder> teacherReminderList = teacherReminderDao.findBySendScheduledTime(sendScheduledTime);
