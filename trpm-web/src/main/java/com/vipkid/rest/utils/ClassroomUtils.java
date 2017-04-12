@@ -110,6 +110,8 @@ public class ClassroomUtils {
         if(StringUtils.isNumeric(dayOfWeek)){
             int day = Integer.valueOf(dayOfWeek);
             if(day<1 || day > 7){
+                return Calendar.MONDAY;
+            }else{
                 return day;
             }
         }
