@@ -32,7 +32,7 @@ public class InterviewMockClassBookedReminderJobTest {
     @Test
     public void testDoJob() throws InterruptedException {
         JobContext jobContext = new JobContext();
-        jobContext.setData("2017-04-13 06:00:00");
+        jobContext.setData("2017-04-15 04:00:00");
         interviewMockClassBookedReminderJob.doJob(jobContext);
         Thread.sleep(10 * 1000L);
     }

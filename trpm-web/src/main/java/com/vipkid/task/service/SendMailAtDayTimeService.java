@@ -58,7 +58,6 @@ public class SendMailAtDayTimeService {
                 teacherReminder.setParams(JsonUtils.toJson(paramsMap));
 
                 if (reminder.is2Hours()) {
-                    // TODO 增加邮件模版
                     teacherReminder.setMailTemplateTitle("InterviewMockClass2HoursReminderTitle.html");
                     teacherReminder.setMailTemplateContent("InterviewMockClass2HoursReminder.html");
                 } else {

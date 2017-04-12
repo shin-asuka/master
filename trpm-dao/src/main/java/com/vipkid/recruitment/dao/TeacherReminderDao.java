@@ -22,7 +22,11 @@ public class TeacherReminderDao extends MapperDaoTemplate<TeacherReminder> {
     }
 
     public void saveTeacherReminders(List<TeacherReminder> teacherReminderList) {
-        super.saveBatch(teacherReminderList);
+        try {
+            super.saveBatch(teacherReminderList);
+        } catch (Exception e) {
+            // 不做处理
+        }
     }
 
     public List<TeacherReminder> findBySendScheduledTime(Date sendScheduledTime) {
