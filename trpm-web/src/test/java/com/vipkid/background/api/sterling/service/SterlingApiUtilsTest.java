@@ -69,10 +69,14 @@ public class SterlingApiUtilsTest {
                 "    \"countryCode\": \"US\"\n" +
                 "  }\n" +
                 "}";
-        CandidateInputDto candidateInputDto = JacksonUtils.readJson(json, new TypeReference<CandidateInputDto>() {});
-        System.out.println(candidateInputDto.getAddress().getAddressLine());
-        SterlingCandidate sterlingCandidate =  SterlingApiUtils.createCandidate(candidateInputDto,SterlingApiUtils.MAX_RETRY);
-        System.out.println(JacksonUtils.toJSONString(sterlingCandidate));
+
+        JsonNode jsonNode = JacksonUtils.parseObject(json);
+        System.out.println(jsonNode.get("aa"));
+//        CandidateInputDto candidateInputDto = JacksonUtils.readJson(json, new TypeReference<CandidateInputDto>() {});
+//
+//        System.out.println(candidateInputDto.getAddress().getAddressLine());
+//        SterlingCandidate sterlingCandidate =  SterlingApiUtils.createCandidate(candidateInputDto,SterlingApiUtils.MAX_RETRY);
+//        System.out.println(JacksonUtils.toJSONString(sterlingCandidate));
 
     }
 
