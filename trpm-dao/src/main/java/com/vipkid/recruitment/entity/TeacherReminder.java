@@ -23,6 +23,16 @@ public final class TeacherReminder extends Entity implements Serializable {
     /*  */
     private String mailTemplateContent;
 
+    private Long teacherId;
+
+    public Long getTeacherId() {
+        return teacherId;
+    }
+
+    public void setTeacherId(Long teacherId) {
+        this.teacherId = teacherId;
+    }
+
     public Long getId() {
         return id;
     }

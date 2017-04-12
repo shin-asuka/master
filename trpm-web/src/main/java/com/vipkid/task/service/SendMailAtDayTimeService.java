@@ -52,6 +52,7 @@ public class SendMailAtDayTimeService {
                 TeacherReminder teacherReminder = new TeacherReminder();
                 teacherReminder.setOnlineClassId(onlineClassId);
                 teacherReminder.setSendScheduledTime(reminder.getScheduledTime());
+                teacherReminder.setTeacherId(teacher.getId());
 
                 Map<String, String> paramsMap = getSendParams(teacher, scheduledDateTime);
                 teacherReminder.setParams(JsonUtils.toJson(paramsMap));
@@ -88,6 +89,7 @@ public class SendMailAtDayTimeService {
                 TeacherReminder teacherReminder = new TeacherReminder();
                 teacherReminder.setOnlineClassId(onlineClassId);
                 teacherReminder.setSendScheduledTime(reminder.getScheduledTime());
+                teacherReminder.setTeacherId(teacher.getId());
 
                 Map<String, String> paramsMap = getSendParams(teacher, scheduledDateTime);
                 teacherReminder.setParams(JsonUtils.toJson(paramsMap));

@@ -69,7 +69,7 @@ public class InterviewMockClassBookedReminderJob {
                 OnlineClass onlineClass = onlineClassDao.findById(teacherReminder.getOnlineClassId());
 
                 if (null != onlineClass && ClassStatus.isBooked(onlineClass.getStatus())) {
-                    Teacher teacher = teacherDao.findById(onlineClass.getTeacherId());
+                    Teacher teacher = teacherDao.findById(teacherReminder.getTeacherId());
 
                     if (null != teacher) {
                         sendReminder(teacher, teacherReminder);
