@@ -222,9 +222,21 @@ public class FileHttpService extends HttpBaseService {
                 if (isSuccessResponse(response)) {
                     JsonNode data = response.get("data");
                     if (null != data) {
-                        Long id = data.get("id").asLong();
-                        Integer status = data.get("status").asInt();//1 成功，2 失败
-                        String fileUrl = data.get("url").asText();
+                        Long id = null;
+                        if(null != data.get("id")){
+                            id = data.get("id").asLong();
+                        }
+
+                        Integer status = null ;
+                        if(null != data.get("status")){
+                            status = data.get("status").asInt();//1 成功，2 失败
+                        }
+
+                        String fileUrl = null;
+                        if(null !=data.get("url")){
+                            data.get("url").textValue();
+                        }
+
                         fileUploadStatus = new FileUploadStatus();
                         fileUploadStatus.setId(id);
                         fileUploadStatus.setStatus(status);
