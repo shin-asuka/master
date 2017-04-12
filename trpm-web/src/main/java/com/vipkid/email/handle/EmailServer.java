@@ -31,20 +31,23 @@ public class EmailServer {
     private static final boolean ENABLE_EMAIL = PropertyConfigurer.booleanValue("email.enable");
 
     private static int sendMessage(String from, Session _session, EmailEntity reviceEntity) {
+        int result = 1;
         if (!ENABLE_EMAIL){
             logger.info("Email send skip ====>：");
-            return 1;
+            return result;
         }
+
         try {
             logger.info("Email send start ====>：");
-            int result = sendMail(reviceEntity);
+            result = sendMail(reviceEntity);
             logger.info("Email send end ====>：{}", result);
         } catch (Exception e) {
             logger.error("Email send Exception:", e);
             return 0;
         }
+
         logger.info("Email send complete ====>：");
-        return 1;
+        return result;
     }
 
     public static int sendMail(EmailEntity mailEntity) {
