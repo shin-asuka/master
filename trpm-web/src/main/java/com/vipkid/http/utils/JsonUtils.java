@@ -16,6 +16,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.google.common.collect.Maps;
 import org.apache.commons.lang.StringUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -41,6 +42,8 @@ public class JsonUtils {
 //		mapper.configure(DeserializationFeature.USE_JAVA_ARRAY_FOR_JSON_ARRAY,false);
 		// 设置输入时忽略在JSON字符串中存在但Java对象实际没有的属性
 		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+		mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+
 //		// 禁止把POJO中值为null的字段映射到json字符串中
 //		mapper.configure(SerializationFeature.WRITE_NULL_MAP_VALUES,true);
 
