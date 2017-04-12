@@ -4,6 +4,7 @@
 package com.vipkid.http.utils;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Iterator;
 
 import java.util.Map;
@@ -42,6 +43,7 @@ public class JsonUtils {
 		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 //		// 禁止把POJO中值为null的字段映射到json字符串中
 //		mapper.configure(SerializationFeature.WRITE_NULL_MAP_VALUES,true);
+
 	}
 
 
@@ -95,6 +97,28 @@ public class JsonUtils {
 		}
 	}
 
+
+	/**
+	 * 将json通过类型转换成对象
+	 *
+	 * @param json          json字符串
+	 * @param typeReference 引用类型
+	 * @return 返回对象
+	 * @throws IOException
+	 */
+	public static <T> T readJson(String json, TypeReference<T> typeReference,ObjectMapper defMapper) {
+
+		if (StringUtils.isBlank(json) || typeReference == null) {
+			return null;
+		}
+		try {
+			return (T) (typeReference.getType().equals(String.class) ? json : defMapper==null?mapper.readValue(json, typeReference):defMapper.readValue(json,typeReference));
+		} catch (Exception e) {
+			String message = String.format("jsonString to Object error;jsonString=%s", json);
+			logger.error(message, e);
+			return null;
+		}
+	}
 
 
 

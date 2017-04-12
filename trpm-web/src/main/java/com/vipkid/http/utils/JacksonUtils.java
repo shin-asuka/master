@@ -1,6 +1,7 @@
 package com.vipkid.http.utils;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Iterator;
 
 import java.util.Map;
@@ -24,6 +25,16 @@ import org.slf4j.LoggerFactory;
  */
 public class JacksonUtils {
     private static final Logger logger = LoggerFactory.getLogger(JacksonUtils.class);
+
+    public static ObjectMapper HHMMSS_MAPPER = new ObjectMapper();
+    static{
+        // 设置输出时包含属性的风格
+        HHMMSS_MAPPER.setSerializationInclusion(JsonInclude.Include.ALWAYS);
+        HHMMSS_MAPPER.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        HHMMSS_MAPPER.setDateFormat(new SimpleDateFormat("yyyy-MM-dd hh:mm:ss"));
+
+    }
+
 
     private static ObjectMapper mapper = new ObjectMapper();
     static{
@@ -86,6 +97,20 @@ public class JacksonUtils {
         }
         try {
             return (T) (typeReference.getType().equals(String.class) ? json : mapper.readValue(json, typeReference));
+        } catch (Exception e) {
+            String message = String.format("jsonString to Object error;jsonString=%s", json);
+            logger.error(message, e);
+            return null;
+        }
+    }
+
+
+    public static <T> T readJson(String json, TypeReference<T> typeReference, ObjectMapper objectMapper) {
+        if (StringUtils.isBlank(json) || typeReference == null) {
+            return null;
+        }
+        try {
+            return (T) (typeReference.getType().equals(String.class) ? json : objectMapper==null?mapper.readValue(json, typeReference):objectMapper.readValue(json,typeReference));
         } catch (Exception e) {
             String message = String.format("jsonString to Object error;jsonString=%s", json);
             logger.error(message, e);
