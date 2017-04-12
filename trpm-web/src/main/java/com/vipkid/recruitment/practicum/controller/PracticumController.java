@@ -97,9 +97,6 @@ public class PracticumController extends RestfulController {
             Map<String,Object> result = this.practicumService.cancelClass(Long.valueOf(onlineClassId+""), getTeacher(request));
             if(ReturnMapUtils.isFail(result)){
                 response.setStatus(HttpStatus.FORBIDDEN.value());
-            }else{
-                //add cancel 邮件
-                auditEmailService.sendCancelPracticum(getTeacher(request).getId());
             }
             return result;
         } catch (IllegalArgumentException e) {
