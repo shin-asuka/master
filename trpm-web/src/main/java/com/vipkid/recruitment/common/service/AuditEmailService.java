@@ -85,8 +85,6 @@ public class AuditEmailService {
     private static String CONTRACTINFO_REAPPLY_TITLE = "ContractInfoReapplyTitle.html";
     private static String CONTRACTINFO_REAPPLY_CONTENT = "ContractInfoReapply.html";
 
-    private static String CANCEL_PRACTICUM_TITLE = "CancelPracticumTitle.html";
-    private static String CANCEL_PRACTICUM = "CancelPracticum.html";
 
     public Map<String,Object> sendBasicInfoPass(long teacherId){
         try{
