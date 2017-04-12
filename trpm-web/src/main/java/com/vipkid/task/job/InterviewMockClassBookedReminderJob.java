@@ -6,6 +6,7 @@ import com.vipkid.email.handle.EmailConfig;
 import com.vipkid.email.handle.EmailEntity;
 import com.vipkid.email.template.TemplateUtils;
 import com.vipkid.enums.OnlineClassEnum.ClassStatus;
+import com.vipkid.file.utils.StringUtils;
 import com.vipkid.recruitment.dao.TeacherReminderDao;
 import com.vipkid.recruitment.entity.TeacherReminder;
 import com.vipkid.teacher.tools.utils.conversion.JsonUtils;
@@ -24,7 +25,9 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoField;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -51,8 +54,7 @@ public class InterviewMockClassBookedReminderJob {
     @Vschedule
     // @Scheduled(cron = "0 0/15 * * * ?")
     public void doJob(JobContext jobContext) {
-        LocalDateTime now =
-                        LocalDateTime.now().with(ChronoField.SECOND_OF_MINUTE, 0).with(ChronoField.MILLI_OF_SECOND, 0);
+        LocalDateTime now = getLocalDateTime(null);
         logger.info("Interview and MockClass reminder time: {}", now);
 
         Date sendScheduledTime = Date.from(now.atZone(ZoneId.systemDefault()).toInstant());
@@ -102,6 +104,37 @@ public class InterviewMockClassBookedReminderJob {
         } catch (Exception e) {
             logger.error("【EMAIL.InterviewMockClassBookedReminderJob】ERROR: {}", e);
         }
+    }
+
+    public LocalDateTime getLocalDateTime(String text) {
+        LocalDateTime now =
+                        LocalDateTime.now().with(ChronoField.SECOND_OF_MINUTE, 0).with(ChronoField.MILLI_OF_SECOND, 0);
+
+        if (StringUtils.isNotBlank(text)) {
+            now = LocalDateTime.parse(text, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
+                            .with(ChronoField.SECOND_OF_MINUTE, 0).with(ChronoField.MILLI_OF_SECOND, 0);
+        }
+
+        // 时间矫正
+        final int minute = now.get(ChronoField.MINUTE_OF_HOUR);
+        if (minute > 0 && minute < 10) { // 2017-04-12 18:01 应该返回 2017-04-12 18:00
+
+            return now.with(ChronoField.MINUTE_OF_HOUR, 0);
+        } else if (minute > 10 && minute < 20) { // 2017-04-12 18:14 应该返回 2017-04-12 18:15
+
+            return now.with(ChronoField.MINUTE_OF_HOUR, 15);
+        } else if (minute > 25 && minute < 35) { // 2017-04-12 18:29 应该返回 2017-04-12 18:30
+
+            return now.with(ChronoField.MINUTE_OF_HOUR, 30);
+        } else if (minute > 40 && minute < 50) { // 2017-04-12 18:44 应该返回 2017-04-12 18:45
+
+            return now.with(ChronoField.MINUTE_OF_HOUR, 45);
+        } else if (minute > 55) { // 2017-04-12 18:58 应该返回 2017-04-12 19:00
+
+            return now.plus(1, ChronoUnit.HOURS).with(ChronoField.MINUTE_OF_HOUR, 0);
+        }
+
+        return now;
     }
 
 }
