@@ -85,6 +85,7 @@ public class AuditEmailService {
     private static String CONTRACTINFO_REAPPLY_TITLE = "ContractInfoReapplyTitle.html";
     private static String CONTRACTINFO_REAPPLY_CONTENT = "ContractInfoReapply.html";
 
+
     public Map<String,Object> sendBasicInfoPass(long teacherId){
         try{
             Teacher teacher  =  teacherDao.findById(teacherId);
