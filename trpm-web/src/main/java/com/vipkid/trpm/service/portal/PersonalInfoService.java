@@ -571,7 +571,7 @@ public class PersonalInfoService {
 		Object queryResultObj = doHttpGetContractFromTeacherAdmin(requestParam,CONTRACT_QUERY_BY_ID);
 		APIQueryContractByIdResult contract=null;
 		if (queryResultObj != null) {
-			contract = JacksonUtils.unmarshalFromString(queryResultObj.toString(),APIQueryContractByIdResult.class);
+			contract = JacksonUtils.unmarshalFromString(JacksonUtils.toJSONString(queryResultObj),APIQueryContractByIdResult.class);
 		}
 		return contract;
 	}

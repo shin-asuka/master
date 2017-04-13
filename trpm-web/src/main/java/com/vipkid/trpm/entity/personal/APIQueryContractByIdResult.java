@@ -18,15 +18,15 @@ public class APIQueryContractByIdResult {
 
     private String signerName;
 
-    private Long signTime;
+    private String signTime;//YYYY-MM-DD
 
-    private Long startTime;
+    private String startTime;//YYYY-MM-DD
 
-    private Long endTime;
+    private String endTime;//YYYY-MM-DD
 
-    private Long enableSignStartTime;
+    private String enableSignStartTime;//YYYY-MM-DD
 
-    private Long enableSignEndTime;
+    private String enableSignEndTime;//YYYY-MM-DD
 
     private String channel;
 
@@ -70,43 +70,43 @@ public class APIQueryContractByIdResult {
         this.signerName = signerName;
     }
 
-    public Long getSignTime() {
+    public String getSignTime() {
         return signTime;
     }
 
-    public void setSignTime(Long signTime) {
+    public void setSignTime(String signTime) {
         this.signTime = signTime;
     }
 
-    public Long getStartTime() {
+    public String getStartTime() {
         return startTime;
     }
 
-    public void setStartTime(Long startTime) {
+    public void setStartTime(String startTime) {
         this.startTime = startTime;
     }
 
-    public Long getEndTime() {
+    public String getEndTime() {
         return endTime;
     }
 
-    public void setEndTime(Long endTime) {
+    public void setEndTime(String endTime) {
         this.endTime = endTime;
     }
 
-    public Long getEnableSignStartTime() {
+    public String getEnableSignStartTime() {
         return enableSignStartTime;
     }
 
-    public void setEnableSignStartTime(Long enableSignStartTime) {
+    public void setEnableSignStartTime(String enableSignStartTime) {
         this.enableSignStartTime = enableSignStartTime;
     }
 
-    public Long getEnableSignEndTime() {
+    public String getEnableSignEndTime() {
         return enableSignEndTime;
     }
 
-    public void setEnableSignEndTime(Long enableSignEndTime) {
+    public void setEnableSignEndTime(String enableSignEndTime) {
         this.enableSignEndTime = enableSignEndTime;
     }
 
