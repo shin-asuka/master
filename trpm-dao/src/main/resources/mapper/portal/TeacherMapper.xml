@@ -621,7 +621,7 @@
 		LEFT JOIN teacher_application ta ON t.id = ta.teacher_id
 		LEFT JOIN teacher_first_class tc ON t.id = tc.teacher_id
 		WHERE
-		t.referee LIKE CONCAT(#{param.teacherId},',%')
+		t.referee LIKE '${param.teacherId},%'
 		AND (ta.current = 1 or ta.current is null)
 		AND tc.scheduled_date_time is not null
 		<if test="param.lifeCycle != null"> AND t.life_cycle = #{param.lifeCycle} </if>
@@ -644,7 +644,7 @@
 		LEFT JOIN teacher_application ta ON t.id = ta.teacher_id
 		LEFT JOIN teacher_first_class tc ON t.id = tc.teacher_id
 		WHERE
-		t.referee LIKE CONCAT(#{param.teacherId},',%')
+		t.referee LIKE '${param.teacherId},%'
 		AND (ta.current = 1 or ta.current is null)
 		AND tc.scheduled_date_time is not null
 		<if test="param.lifeCycle != null"> AND t.life_cycle = #{param.lifeCycle} </if>
@@ -672,7 +672,7 @@
 		LEFT JOIN teacher_application ta ON t.id = ta.teacher_id
 		LEFT JOIN teacher_first_class tc ON t.id = tc.teacher_id
 		WHERE
-		t.referee LIKE CONCAT(#{param.teacherId},',%')
+		t.referee LIKE '${param.teacherId},%'
 		AND (ta.current = 1 or ta.current is null)
 		AND t.life_cycle in('SIGNUP','BASIC_INFO','INTERVIEW', 'TRAINING','PRACTICUM','CONTRACT_INFO','REGULAR')
 		AND (ta.result != 'FAIL' or ta.result is null)
@@ -697,7 +697,7 @@
 		LEFT JOIN teacher_application ta ON t.id = ta.teacher_id
 		LEFT JOIN teacher_first_class tc ON t.id = tc.teacher_id
 		WHERE
-		t.referee LIKE CONCAT(#{param.teacherId},',%')
+		t.referee LIKE '${param.teacherId},%'
 		AND (ta.current = 1 or ta.current is null)
 		AND t.life_cycle in('SIGNUP','BASIC_INFO','INTERVIEW', 'TRAINING','PRACTICUM','CONTRACT_INFO','REGULAR')
 		AND (ta.result != 'FAIL' or ta.result is null)
@@ -726,7 +726,7 @@
 		LEFT JOIN teacher_application ta ON t.id = ta.teacher_id
 		LEFT JOIN teacher_first_class tc ON t.id = tc.teacher_id
 		WHERE
-		t.referee LIKE CONCAT(#{param.teacherId},',%')
+		t.referee LIKE '${param.teacherId},%'
 		AND (ta.current = 1 or ta.current is null)
 		AND ((t.life_cycle in('SIGNUP','BASIC_INFO','INTERVIEW', 'TRAINING','PRACTICUM','CONTRACT_INFO','REGULAR') AND ta.result = 'FAIL') or (t.life_cycle in ('FAIL', 'QUIT') AND tc.scheduled_date_time is null))
 		<if test="param.lifeCycle != null"> AND t.life_cycle = #{param.lifeCycle} </if>
@@ -749,7 +749,7 @@
 		LEFT JOIN teacher_application ta ON t.id = ta.teacher_id
 		LEFT JOIN teacher_first_class tc ON t.id = tc.teacher_id
 		WHERE
-		t.referee LIKE CONCAT(#{param.teacherId},',%')
+		t.referee LIKE '${param.teacherId},%'
 		AND (ta.current = 1 or ta.current is null)
 		AND ((t.life_cycle in('SIGNUP','BASIC_INFO','INTERVIEW', 'TRAINING','PRACTICUM','CONTRACT_INFO','REGULAR') AND ta.result = 'FAIL') or (t.life_cycle in ('FAIL', 'QUIT') AND tc.scheduled_date_time is null))
 		<if test="param.lifeCycle != null"> AND t.life_cycle = #{param.lifeCycle} </if>
