@@ -69,4 +69,10 @@ public class HttpApiClient {
             throws SocketTimeoutException, ConnectTimeoutException {
         return HttpClientUtils.requestTimeOutPost(url, jsonData);
     }
+
+
+    public String doPut(String url, String jsonData) {
+        return HttpClientUtils.put(url, jsonData,null);
+    }
+
 }

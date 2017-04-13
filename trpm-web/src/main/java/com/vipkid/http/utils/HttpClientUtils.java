@@ -414,6 +414,7 @@ public class HttpClientUtils {
 
             HttpResponse response = HttpClientUtils.CLIENT.execute(setConfig(requestBase,readTimeout,connectionTimeout));
             int statusCode = response.getStatusLine().getStatusCode();
+            logger.info("httpClientUtils interaction statusCode:{}",statusCode);
             String content = EntityUtils.toString(response.getEntity());
             return new Response(statusCode,content);
         }
