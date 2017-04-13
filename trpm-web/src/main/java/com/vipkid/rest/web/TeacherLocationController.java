@@ -60,16 +60,7 @@ public class TeacherLocationController {
 	 * @param countryId
 	 * @return
 	 */
-	@RequestMapping(value = "/info/states", method = RequestMethod.GET)
-	public Object getStateList(Integer countryId) {
-		logger.info("getStateList countryId = {}", countryId);
-		Preconditions.checkArgument(countryId != null , "countryId 不能为空");
-		
-		List<TeacherLocation> list = teacherAppService.getStateList(countryId);
-		logger.info("stateList countryId = {}, list = {}",countryId,list.size());
-		
-		return ApiResponseUtils.buildSuccessDataResp(list);
-	}
+	 
 	
 	/**
 	 * 根据stateId 获取cities 列表

@@ -11,12 +11,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Maps;
+import com.vipkid.enums.TeacherEnum.LifeCycle;
 import com.vipkid.http.service.PayrollService;
 import com.vipkid.payroll.model.Page;
 import com.vipkid.payroll.model.PayrollItemVo;
@@ -25,21 +26,24 @@ import com.vipkid.payroll.model.ReferralPayrollItem;
 import com.vipkid.payroll.model.Result;
 import com.vipkid.payroll.utils.DateUtils;
 import com.vipkid.payroll.utils.JsonMapper;
+import com.vipkid.rest.interceptor.annotation.RestInterface;
 import com.vipkid.rest.service.LoginService;
 import com.vipkid.trpm.controller.portal.AbstractPortalController;
 import com.vipkid.trpm.entity.Teacher;
 
-@Controller
+@RestController
+@RestInterface(lifeCycle = {LifeCycle.ALL })
+@RequestMapping("/portal")
 public class PayrollController extends AbstractPortalController {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(PayrollController.class);
 	@Resource
 	private PayrollService payrollService;
 
-	@Autowired
+	@Resource
 	private LoginService loginService;
 
-	@RequestMapping(value = "/portal/payment")
+	@RequestMapping(value = "/payment")
 	public Map<String, Object> payment(
 			@RequestParam(value = "offsetOfMonth", required = false, defaultValue = "0") Integer offsetOfMonth,
 			HttpServletRequest request, HttpServletResponse response) {
@@ -86,7 +90,7 @@ public class PayrollController extends AbstractPortalController {
 		return result.getAttribute();
 	}
 
-	@RequestMapping("/portal/priceList")
+	@RequestMapping("/priceList")
 	public Map<String, Object> priceList(
 			@RequestParam(value = "offsetOfMonth", required = false, defaultValue = "0") Integer offsetOfMonth,
 			HttpServletRequest request, HttpServletResponse response) {
@@ -123,7 +127,7 @@ public class PayrollController extends AbstractPortalController {
 		return result.getAttribute();
 	}
 
-	@RequestMapping("/portal/salaryList")
+	@RequestMapping("/salaryList")
 	public Map<String, Object> salaryList(
 			@RequestParam(value = "offsetOfMonth", required = false, defaultValue = "0") Integer offsetOfMonth,
 			@RequestParam(value = "itemType") Integer itemType, HttpServletRequest request, HttpServletResponse response) {
@@ -218,7 +222,7 @@ public class PayrollController extends AbstractPortalController {
 	
 	
 
-	@RequestMapping("/portal/listReferral")
+	@RequestMapping("/listReferral")
 	public Map<String, Object> listReferral(
 			@RequestParam(value = "offsetOfMonth", required = false, defaultValue = "0") Integer offsetOfMonth,
 			 HttpServletRequest request, HttpServletResponse response) {
