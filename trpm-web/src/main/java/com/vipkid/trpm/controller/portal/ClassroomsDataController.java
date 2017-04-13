@@ -90,7 +90,8 @@ public class ClassroomsDataController {
         String requestUrl = httpUrlConstant.getApiClassroomServerUrl()
                 + String.format(API_SWITCH_CLASSROOM_URL, onlineClassId, onlineClass.getClassroom(), supplierCode);
         Map teacherIdMap = Maps.newHashMap();
-        teacherIdMap.put("teacherId", onlineClass.getTeacherId());
+        teacherIdMap.put("operatorId", onlineClass.getTeacherId());
+        teacherIdMap.put("operatorType", "Teacher");
         String jsonData = JacksonUtils.toJSONString(teacherIdMap);
 
         String result = httpApiClient.doPut(requestUrl,jsonData);
