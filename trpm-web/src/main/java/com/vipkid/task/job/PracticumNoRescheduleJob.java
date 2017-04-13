@@ -51,7 +51,7 @@ public class PracticumNoRescheduleJob {
         Stopwatch stopwatch = Stopwatch.createStarted();
 
         try {
-            find(stopwatch, 24, 48);
+            find(stopwatch, 24);
         } catch (Exception e) {
             logger.error("【JOB.EMAIL.PracticumNoRescheduleJob】EXCEPTION: Cost {}ms. ", stopwatch.elapsed(TimeUnit.MILLISECONDS), e);
         }

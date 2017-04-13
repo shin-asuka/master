@@ -31,7 +31,9 @@ public class RedisCacheUtils {
     private static final String PREFIX = "TP_%s";
 
 
-    public static final int FIVE_MINUTES=5*60;
+    public static final int FIVE_MINUTES = 300;
+
+    public static final int TEN_MINUTES = 600;
 
 
     /**

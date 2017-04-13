@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import com.vipkid.http.utils.JsonUtils;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * Created by ZengWeiLong on 2017/1/10.
@@ -80,9 +81,11 @@ public class MonitorMethod {
         				argString.append("request,");
         			}else if(o instanceof HttpServletResponse){
         				argString.append("response,");
-        			}else{
-        				argString.append(JsonUtils.toJSONString(o)+",");
-        			}
+        			}else if(o instanceof MultipartFile){
+                        logger.info("上传文件");
+                    }else{
+                        argString.append(JsonUtils.toJSONString(o)+",");
+                    }
     			}
         	}
         	//执行结果

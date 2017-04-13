@@ -22,6 +22,7 @@ import com.vipkid.portal.activity.dto.ClickHandleDto;
 import com.vipkid.portal.activity.dto.ShareHandleDto;
 import com.vipkid.portal.activity.dto.StartHandleDto;
 import com.vipkid.portal.activity.dto.SubmitHandleDto;
+import com.vipkid.portal.activity.dto.ToPortalDto;
 import com.vipkid.portal.activity.service.ReferralActivityService;
 import com.vipkid.portal.activity.vo.CheckResultVo;
 import com.vipkid.portal.activity.vo.CheckUrlVo;
@@ -322,6 +323,40 @@ public class ReferralActivityController extends RestfulController{
 	    		return ApiResponseUtils.buildErrorResp(-2, "参数不合法",resultMap);
 			}
 			return ApiResponseUtils.buildSuccessDataResp(beanVo);
+        } catch (IllegalArgumentException e) {
+            response.setStatus(HttpStatus.BAD_REQUEST.value());
+			logger.error(e.getMessage(),e);
+			return ApiResponseUtils.buildErrorResp(-6, "参数类型转化错误:"+e.getMessage());
+        } catch (Exception e) {
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+			logger.error(e.getMessage(),e);
+			return ApiResponseUtils.buildErrorResp(-7, "服务器异常:"+e.getMessage());
+        }
+	}
+	
+	
+	/**
+	 * 参数检查
+	 * @param request
+	 * @param response
+	 * @param bean
+	 * @return
+	 */
+	@RequestMapping(value = "/toPortal", method = RequestMethod.POST, produces = RestfulConfig.JSON_UTF_8)
+	public Map<String, Object> toPortal(HttpServletRequest request, HttpServletResponse response, @RequestBody ToPortalDto bean){		
+		try{
+        	Map<String,Object> resultMap = Maps.newHashMap();
+	    	//1.参数校验
+	    	resultMap = checkParmar(bean, response);
+	    	if(MapUtils.isNotEmpty(resultMap)){
+	    		return resultMap;
+	    	}
+	    	resultMap = this.referralActivityService.updateForToPortal(bean);
+	    	if(ReturnMapUtils.isFail(resultMap)){
+	    		response.setStatus(HttpStatus.FORBIDDEN.value());
+	    		return ApiResponseUtils.buildErrorResp(-2, "参数不合法",resultMap.get("info"));
+	    	}
+			return ApiResponseUtils.buildSuccessDataResp(resultMap);
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
 			logger.error(e.getMessage(),e);

@@ -8,6 +8,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
+import com.vipkid.http.utils.JsonUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.community.tools.JsonTools;
 import org.slf4j.Logger;
@@ -21,7 +22,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.alibaba.fastjson.JSONObject;
+
 import com.google.api.client.util.Maps;
 import com.vipkid.enums.TeacherEnum.LifeCycle;
 import com.vipkid.http.service.AssessmentHttpService;
@@ -56,7 +57,7 @@ public class UnitAssessmentController {
     @RequestMapping(value = "/unfinishedUA", method = RequestMethod.GET,produces = RestfulConfig.JSON_UTF_8)
     @ResponseBody
     public Object getUnfinishedUA(OnlineClassVo onlineClassVoCond ,@RequestParam(defaultValue = "1") Integer pageNo, @RequestParam(defaultValue = "10") Integer pageSize) {
-        logger.info("[/unfinishedUA] ====,{}", JSONObject.toJSONString(onlineClassVoCond));
+        logger.info("[/unfinishedUA] ====,{}", JsonUtils.toJSONString(onlineClassVoCond));
         try{
         HashMap<String,Object> cond = new HashMap<String,Object>();
         cond.put("lessonSn",onlineClassVoCond.getLessonSn());
@@ -137,7 +138,7 @@ public class UnitAssessmentController {
     @RequestMapping(value = "/onlineClass/fetchById/{id}", method = RequestMethod.GET)
     @RestInterface(lifeCycle = LifeCycle.REGULAR)
     public Object findUaBasicInfo(@PathVariable Long id,HttpServletResponse response){
-        logger.info("[/onlineClass/fetchById/{id}]========={}",JSONObject.toJSONString(id));
+        logger.info("[/onlineClass/fetchById/{id}]========={}", JsonUtils.toJSONString(id));
         Teacher loginTeacher = loginService.getTeacher();
         Map<String, Object> result = Maps.newHashMap();
         User user = loginService.getUser();
