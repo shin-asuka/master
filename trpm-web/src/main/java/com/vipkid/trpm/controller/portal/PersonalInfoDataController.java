@@ -13,6 +13,7 @@ import com.google.api.client.util.Maps;
 import com.vipkid.file.utils.Encodes;
 import com.vipkid.rest.utils.ApiResponseUtils;
 import com.vipkid.trpm.constant.ApplicationConstant;
+import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.entity.personal.APIQueryContractByIdResult;
 import com.vipkid.trpm.entity.personal.APIQueryContractListByTeacherIdResult;
 import com.vipkid.trpm.entity.personal.QueryContractByTeacherIdOutputDto;
@@ -44,8 +45,10 @@ public class PersonalInfoDataController {
     private Logger logger = LoggerFactory.getLogger(PersonalInfoDataController.class);
 
     @Resource
-    PersonalInfoService personalInfoService;
+    private PersonalInfoService personalInfoService;
 
+    @Resource
+    private TeacherService teacherService;
 
     /***
      *
@@ -58,26 +61,39 @@ public class PersonalInfoDataController {
     @RequestMapping(value = "/contractInfo", method = RequestMethod.GET)
     public Map<String, Object> contractinfo(@RequestParam("teacherId") Long teacherId) {
 
-        List<APIQueryContractListByTeacherIdResult> contractInstanceResultList = personalInfoService
-                .queryALLContractByTeacherId(teacherId);
         //分两种返回:
         //1.未签的
         List<QueryContractByTeacherIdOutputDto> signedList = Lists.newArrayList();
-        //2.已签或生效的
+        //2.已签或生效的,并且是在合同有效期内的
         List<QueryContractByTeacherIdOutputDto> unsignList = Lists.newArrayList();
 
+        Date today = new Date();
+        Teacher teacher = teacherService.get(teacherId);
+        if (StringUtils.isNotBlank(teacher.getContract())
+                && teacher.getContractStartDate() != null
+                && teacher.getContractEndDate() != null
+                && DateUtils.compareDate(today, teacher.getContractStartDate()) >= 0
+                && DateUtils.compareDate(today, teacher.getContractEndDate()) <= 0) {
+            //如果是在合同期内(注意one的时区和today的时区必须都要是北京时区)
+            signedList.add(new QueryContractByTeacherIdOutputDto(teacher.getContractStartDate(),
+                    teacher.getContractEndDate(),
+                    teacher.getContract()));
+        }
+
+        List<APIQueryContractListByTeacherIdResult> contractInstanceResultList = personalInfoService
+                .queryALLContractByTeacherId(teacherId);
+
+
         if (CollectionUtils.isNotEmpty(contractInstanceResultList)) {
-            Date today = new Date();
             for (APIQueryContractListByTeacherIdResult one : contractInstanceResultList) {
-                if (StringUtils
+                if (CollectionUtils.isEmpty(unsignList) && StringUtils
                         .equals(one.getInstanceStatus(), ApplicationConstant.ContractConstants.INSTANT_STATUS_NOSIGN)) {
-                    //未签的合同
+                    //未签的合同(最多只返回给前端一个)
                     unsignList.add(new QueryContractByTeacherIdOutputDto(one));
-                } else if (StringUtils
-                        .equals(one.getInstanceStatus(), ApplicationConstant.ContractConstants.INSTANT_STATUS_SIGNED)
-                        || StringUtils
-                        .equals(one.getInstanceStatus(), ApplicationConstant.ContractConstants.INSTANT_STATUS_ENABLE)) {
-                    //已签或生效的合同
+                } else if (CollectionUtils.isEmpty(signedList) &&
+                        (StringUtils.equals(one.getInstanceStatus(), ApplicationConstant.ContractConstants.INSTANT_STATUS_SIGNED)
+                        || StringUtils.equals(one.getInstanceStatus(), ApplicationConstant.ContractConstants.INSTANT_STATUS_ENABLE))) {
+                    //已签或生效的合同(最多只返回给前端一个)
                     if (DateUtils.compareDate(today, one.getStartTime()) >= 0
                             && DateUtils.compareDate(today, one.getEndTime()) <= 0) {
                         //如果是在合同期内(注意one的时区和today的时区必须都要是北京时区)
