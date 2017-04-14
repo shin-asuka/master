@@ -4,6 +4,7 @@ import com.google.api.client.util.Maps;
 import com.vipkid.enums.TeacherEnum;
 import com.vipkid.http.constant.HttpUrlConstant;
 import com.vipkid.http.service.HttpApiClient;
+import com.vipkid.http.utils.HttpClientUtils;
 import com.vipkid.http.utils.JacksonUtils;
 import com.vipkid.http.utils.JsonUtils;
 import com.vipkid.rest.interceptor.annotation.RestInterface;
@@ -14,6 +15,7 @@ import com.vipkid.trpm.service.portal.OnlineClassService;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -96,12 +98,12 @@ public class ClassroomsDataController {
                 + API_URL_SEP
                 + String.format(API_SWITCH_CLASSROOM_PARAM, onlineClass.getTeacherId());
 
-        String result = httpApiClient.doPut(requestUrl,null);
+        HttpClientUtils.Response response = httpApiClient.doPut(requestUrl,null);
 
-        if(StringUtils.isBlank(result)){
-            return ApiResponseUtils.buildErrorResp(-1,"fail");
-        }else{
+        if (response != null && response.getStatusCode() == HttpStatus.ACCEPTED.value()) {
             return ApiResponseUtils.buildSuccessDataResp("success");
+        } else {
+            return ApiResponseUtils.buildErrorResp(-1, "fail");
         }
 
     }

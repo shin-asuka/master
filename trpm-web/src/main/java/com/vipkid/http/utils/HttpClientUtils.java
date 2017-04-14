@@ -607,7 +607,7 @@ public class HttpClientUtils {
 
 
 
-    public static String put(String url,String jsonData,Map<String,String> headers){
+    public static HttpClientUtils.Response put(String url,String jsonData,Map<String,String> headers){
         return put(url,jsonData,null,headers);
     }
 
@@ -647,20 +647,24 @@ public class HttpClientUtils {
      * @param headers
      * @return
      */
-    public static String put(String url, String jsonData, String defaultEncoding, Map<String, String> headers) {
-        String content = null;
+    public static Response put(String url, String jsonData, String defaultEncoding, Map<String, String> headers) {
+        Response response = null;
         HttpPut put = new HttpPut(url);
         try {
 
-            Response response = interaction(put,jsonData,defaultEncoding,headers,0,0);
-            if(response != null){
-                content=response.getContent();
+            response = interaction(put, jsonData, defaultEncoding, headers, 0, 0);
+            if (response != null) {
+                logger.info("httpClientUtils put response status:{},content:{}", response.getStatusCode(),
+                        response.getContent());
+            } else {
+                logger.info("httpClientUtils put response:null");
             }
+
         } catch (Exception e) {
             put.releaseConnection();
             HttpClientUtils.logger.error(String.format("post [%s] happens error ", url), e);
         }
-        return content;
+        return response;
     }
     
 
