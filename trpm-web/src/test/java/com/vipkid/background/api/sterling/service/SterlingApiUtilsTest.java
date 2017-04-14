@@ -2,6 +2,7 @@ package com.vipkid.background.api.sterling.service;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.api.client.util.Lists;
 import com.google.api.client.util.Maps;
 import com.vipkid.background.api.sterling.dto.*;
@@ -10,6 +11,8 @@ import com.vipkid.common.utils.ProtostuffUtils;
 import com.vipkid.file.utils.FileUtils;
 import com.vipkid.http.utils.HttpClientUtils;
 import com.vipkid.http.utils.JacksonUtils;
+import com.vipkid.http.utils.JsonUtils;
+import com.vipkid.http.vo.StudentUnitAssessment;
 import com.vipkid.trpm.util.DateUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.ArrayUtils;
@@ -66,10 +69,14 @@ public class SterlingApiUtilsTest {
                 "    \"countryCode\": \"US\"\n" +
                 "  }\n" +
                 "}";
-        CandidateInputDto candidateInputDto = JacksonUtils.readJson(json, new TypeReference<CandidateInputDto>() {});
-        System.out.println(candidateInputDto.getAddress().getAddressLine());
-        SterlingCandidate sterlingCandidate =  SterlingApiUtils.createCandidate(candidateInputDto,SterlingApiUtils.MAX_RETRY);
-        System.out.println(JacksonUtils.toJSONString(sterlingCandidate));
+
+        JsonNode jsonNode = JacksonUtils.parseObject(json);
+        System.out.println(jsonNode.get("aa"));
+//        CandidateInputDto candidateInputDto = JacksonUtils.readJson(json, new TypeReference<CandidateInputDto>() {});
+//
+//        System.out.println(candidateInputDto.getAddress().getAddressLine());
+//        SterlingCandidate sterlingCandidate =  SterlingApiUtils.createCandidate(candidateInputDto,SterlingApiUtils.MAX_RETRY);
+//        System.out.println(JacksonUtils.toJSONString(sterlingCandidate));
 
     }
 
@@ -272,6 +279,7 @@ public class SterlingApiUtilsTest {
 
         System.out.println(StringUtils.substring("001000062954812",0,3));
     }
+
 }
 
 

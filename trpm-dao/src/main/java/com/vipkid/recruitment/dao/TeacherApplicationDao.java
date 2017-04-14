@@ -210,6 +210,15 @@ public class TeacherApplicationDao extends MapperDaoTemplate<TeacherApplication>
         return listEntity("findTAByAuditTimeCurrentStatusResult", paramsMap);
     }
 
+    /**
+     * 查询取消模拟课并且没有在约课的数据
+     * @param param
+     * @return
+     */
+    public List<TeacherApplication> findMockCancelNoBook(Map<String,Object> param){
+        return listEntity("findMockCancelNoBook", param);
+
+    }
 
     public List<TeacherApplication> findByTeacherIdsStatusNeResult(List<Long> teacherIds, String status, String result) {
         Map<String, Object> paramsMap = new HashMap<String, Object>();

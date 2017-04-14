@@ -5,7 +5,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import com.alibaba.fastjson.JSON;
+
+import com.amazonaws.util.json.Jackson;
+import com.vipkid.http.utils.JsonUtils;
 import com.vipkid.payroll.utils.DateUtils;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -68,13 +70,13 @@ public class StudentService {
         String endDate = DateFormatUtils.format(new Date(), "yyyy-MM-dd");
         logger.info("查询学生的订单，开始日期 = {}，结束日期 = {}，StudentId = {}", startDate, endDate, studentId);
         List<Map<String, Object>> list = studentDao.findOrderListByStudentIdAndPaidDateTime(studentId, scheduleDateTime);
-        logger.info("学生的订单信息为，StudentId = {}，orderList = {}", studentId, JSON.toJSONString(list));
+        logger.info("学生的订单信息为，StudentId = {}，orderList = {}", studentId, JsonUtils.toJSONString(list));
         return list;
     }
 
 	public List<Long> findConfirmedPriceGreaterTan500BeforeThisMonth(Long studentId, Timestamp scheduledDateTime) {
         List<Long> list = studentDao.findConfirmedPriceGreaterTan500BeforeThisMonth(studentId, scheduledDateTime);
-        logger.info("学生之前的的订单信息为，StudentId = {}，orderList = {}", studentId, JSON.toJSONString(list));
+        logger.info("学生之前的的订单信息为，StudentId = {}，orderList = {}", studentId, JsonUtils.toJSONString(list));
         return list;
 	}
 }

@@ -5,7 +5,7 @@
 
 	<!-- 通用查询结果列-->
 	<sql id="Base_Column_List">
-		 id,exam_version,exam_result,start_date_time,end_date_time,candidate_ip,candidate_key,teacher_id,link_source_id,share_record_id,status
+		 id,exam_version,exam_result,start_date_time,end_date_time,candidate_ip,candidate_key,teacher_id,link_source_id,share_record_id,status,to_portal
 	</sql>
 	
 	<!-- 对象返回定义 -->
@@ -21,6 +21,7 @@
 		<result column="link_source_id" property="linkSourceId" />
 		<result column="share_record_id" property="shareRecordId" />
 		<result column="status" property="status" />
+		<result column="to_portal" property="toPortal" />
 	</resultMap>
 	
 	<!-- 条件语句映射 -->
@@ -36,6 +37,7 @@
 			<if test="linkSourceId != null"> AND link_source_id = #{linkSourceId}</if>
 			<if test="shareRecordId != null"> AND share_record_id = #{shareRecordId}</if>
 			<if test="status != null"> AND status = #{status}</if>
+			<if test="toPortal != null"> AND to_portal = #{toPortal}</if>
 		</trim>
 	</sql>
 
@@ -65,7 +67,7 @@
 		 INSERT INTO share_activity_exam
  			(<include refid="Base_Column_List" />) 
 		 VALUES
- 			(#{id},#{examVersion},#{examResult},#{startDateTime},#{endDateTime},#{candidateIp},#{candidateKey},#{teacherId},#{linkSourceId},#{shareRecordId},#{status})
+ 			(#{id},#{examVersion},#{examResult},#{startDateTime},#{endDateTime},#{candidateIp},#{candidateKey},#{teacherId},#{linkSourceId},#{shareRecordId},#{status},#{toPortal})
 	</insert>
 	
 	<!-- 添加 （匹配有值的字段）-->
@@ -83,6 +85,7 @@
 			<if test="linkSourceId != null "> link_source_id,</if>
 			<if test="shareRecordId != null "> share_record_id,</if>
 			<if test="status != null "> status,</if>
+			<if test="toPortal != null "> to_portal,</if>
 		</trim>
 		 <trim prefix="values (" suffix=")" suffixOverrides="," >
 			<if test="id!=null "> #{id},</if>
@@ -96,6 +99,7 @@
 			<if test="linkSourceId!=null "> #{linkSourceId},</if>
 			<if test="shareRecordId!=null "> #{shareRecordId},</if>
 			<if test="status!=null "> #{status},</if>
+			<if test="toPortal!=null "> #{toPortal},</if>
 		</trim>
 	</insert>
 
@@ -103,7 +107,7 @@
 	<update id="updateByPrimaryKey">
 		 UPDATE share_activity_exam
 		 SET 
-			 exam_version = #{examVersion},exam_result = #{examResult},start_date_time = #{startDateTime},end_date_time = #{endDateTime},candidate_ip = #{candidateIp},candidate_key = #{candidateKey},teacher_id = #{teacherId},link_source_id = #{linkSourceId},share_record_id = #{shareRecordId},status = #{status}
+			 exam_version = #{examVersion},exam_result = #{examResult},start_date_time = #{startDateTime},end_date_time = #{endDateTime},candidate_ip = #{candidateIp},candidate_key = #{candidateKey},teacher_id = #{teacherId},link_source_id = #{linkSourceId},share_record_id = #{shareRecordId},status = #{status},to_portal=#{toPortal} 
 		 WHERE id = #{id}
 	</update>
 	
@@ -122,6 +126,7 @@
 			<if test="linkSourceId != null ">link_source_id = #{linkSourceId},</if>
 			<if test="shareRecordId != null ">share_record_id = #{shareRecordId},</if>
 			<if test="status != null ">status = #{status},</if>
+			<if test="toPortal != null ">to_portal = #{toPortal},</if>
  		 </set>
 		 WHERE id = #{id}
 	</update>

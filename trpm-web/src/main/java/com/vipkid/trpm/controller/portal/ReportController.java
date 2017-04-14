@@ -1,29 +1,9 @@
 package com.vipkid.trpm.controller.portal;
 
-import java.sql.Timestamp;
-import java.util.Map;
-import java.util.Objects;
-import java.util.TimeZone;
-import java.util.concurrent.TimeUnit;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
-
-import com.alibaba.fastjson.JSON;
 import com.google.common.base.Stopwatch;
 import com.google.common.collect.Maps;
 import com.vipkid.enums.OnlineClassEnum;
+import com.vipkid.http.utils.JsonUtils;
 import com.vipkid.rest.service.LoginService;
 import com.vipkid.trpm.dao.StudentExamDao;
 import com.vipkid.trpm.entity.AssessmentReport;
@@ -37,6 +17,24 @@ import com.vipkid.trpm.entity.teachercomment.TeacherCommentResult;
 import com.vipkid.trpm.service.portal.ReportService;
 import com.vipkid.trpm.service.portal.TeacherService;
 import com.vipkid.trpm.util.DateUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.sql.Timestamp;
+import java.util.Map;
+import java.util.Objects;
+import java.util.TimeZone;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 1.主要负责UAReport、DemoReport、FeebBack等模块的参数接收和页面跳转<br>
@@ -75,14 +73,14 @@ public class ReportController extends AbstractPortalController {
      */
     @RequestMapping("/uploadPage")
     public String uaReport(AssessmentReport report, HttpServletRequest request, Model model) {
-        logger.info("ReportController: uaReport() 参数为：AssessmentReport={}", JSON.toJSONString(report));
+        logger.info("ReportController: uaReport() 参数为：AssessmentReport={}", JsonUtils.toJSONString(report));
         model = this.uploadData(report, request, model, "0");
         return view("ua_report_upload");
     }
 
     @RequestMapping("/uaReportShow")
     public String uaReportShow(AssessmentReport report, Long onlineClassId, HttpServletRequest request, Model model) {
-        logger.info("ReportController: uaReportShow() 参数为：AssessmentReport={}, onlineClassId={}", JSON.toJSONString(report), onlineClassId);
+        logger.info("ReportController: uaReportShow() 参数为：AssessmentReport={}, onlineClassId={}", JsonUtils.toJSONString(report), onlineClassId);
 
         model.addAttribute("onlineClassId", onlineClassId);
 
@@ -101,7 +99,7 @@ public class ReportController extends AbstractPortalController {
      */
     @RequestMapping("/uploadPracticum")
     public String practicumReport(AssessmentReport report, HttpServletRequest request, Model model) {
-        logger.info("ReportController: practicumReport() 参数为：AssessmentReport={}", JSON.toJSONString(report));
+        logger.info("ReportController: practicumReport() 参数为：AssessmentReport={}", JsonUtils.toJSONString(report));
         model = this.uploadData(report, request, model, "1");
         return view("practicum_report_upload");
     }
@@ -120,8 +118,8 @@ public class ReportController extends AbstractPortalController {
      */
     @RequestMapping(value = "/uploadReport", method = RequestMethod.POST)
     public String uaReportSubmit(MultipartHttpServletRequest request, HttpServletResponse response,
-            AssessmentReport report, @RequestParam("file") MultipartFile file) {
-        logger.info("ReportController: uaReportSubmit() 参数为：AssessmentReport={}", JSON.toJSONString(report));
+                                 AssessmentReport report, @RequestParam("file") MultipartFile file) {
+        logger.info("ReportController: uaReportSubmit() 参数为：AssessmentReport={}", JsonUtils.toJSONString(report));
 
         String score = request.getParameter("score");
         String onlineClassId = request.getParameter("onlineClassId");
@@ -146,7 +144,7 @@ public class ReportController extends AbstractPortalController {
     @RequestMapping(value = "/uploadPracticumReport", method = RequestMethod.POST)
     public String practicumReportSubmit(MultipartHttpServletRequest request, HttpServletResponse response,
             AssessmentReport report, @RequestParam("file") MultipartFile file) {
-        logger.info("ReportController: practicumReportSubmit() 参数为：AssessmentReport={}", JSON.toJSONString(report));
+        logger.info("ReportController: practicumReportSubmit() 参数为：AssessmentReport={}", JsonUtils.toJSONString(report));
 
         String score = request.getParameter("score");
         String onlineClassId = request.getParameter("onlineClassId");
@@ -209,7 +207,7 @@ public class ReportController extends AbstractPortalController {
     @RequestMapping("/reportSubmit")
     public String demoReportSubmit(HttpServletRequest request, HttpServletResponse response, DemoReport demoReport,
             boolean isSubmited) {
-        logger.info("ReportController: demoReportSubmit() 参数为：demoReport={}, isSubmited={}", JSON.toJSONString(demoReport), isSubmited);
+        logger.info("ReportController: demoReportSubmit() 参数为：demoReport={}, isSubmited={}", JsonUtils.toJSONString(demoReport), isSubmited);
 
         Map<String, Object> map = reportService.saveOrSubmitDemoReport(demoReport, isSubmited,
         		loginService.getUser());
@@ -297,7 +295,7 @@ public class ReportController extends AbstractPortalController {
         Stopwatch stopwatch = Stopwatch.createStarted();
         String serialNumber = request.getParameter("serialNumber");
         String scheduledDateTime = request.getParameter("scheduledDateTime");
-        logger.info("ReportController: feedbackSubmit() 参数为：serialNumber={}, scheduledDateTime={}, teacherComment={}", serialNumber, scheduledDateTime, JSON.toJSONString(teacherComment));
+        logger.info("ReportController: feedbackSubmit() 参数为：serialNumber={}, scheduledDateTime={}, teacherComment={}", serialNumber, scheduledDateTime, JsonUtils.toJSONString(teacherComment));
         teacherComment.setSubmitSource("PC");
         Map<String, Object> parmMap = reportService.submitTeacherComment(teacherComment, loginService.getUser(),serialNumber,scheduledDateTime,false);
 
@@ -393,7 +391,7 @@ public class ReportController extends AbstractPortalController {
 
 
     private Model uploadData(AssessmentReport report, HttpServletRequest request, Model model, String classType) {
-        logger.info("ReportController: uploadData() 参数为：report={}, classType={}", JSON.toJSONString(report), classType);
+        logger.info("ReportController: uploadData() 参数为：report={}, classType={}", JsonUtils.toJSONString(report), classType);
 
         model.addAttribute("template", report);
 

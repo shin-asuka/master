@@ -7,7 +7,8 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.alibaba.fastjson.JSON;
+
+import com.vipkid.http.utils.JsonUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,7 +49,7 @@ public class CookieUtils {
         }
 
         try {
-            logger.info("Response add cookie,cookie = {}", JSON.toJSONString(cookie));
+            logger.info("Response add cookie,cookie = {}", JsonUtils.toJSONString(cookie));
             response.addCookie(cookie);
         } catch (Exception e) {
             logger.error("给Response添加Cookie时出现异常,name = {},value = {}",name,value,e);

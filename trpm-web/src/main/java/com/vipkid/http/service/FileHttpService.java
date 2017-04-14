@@ -2,19 +2,20 @@ package com.vipkid.http.service;
 
 import java.io.Serializable;
 import java.util.HashMap;
-import java.util.List;
+
 import java.util.Map;
-import com.alibaba.fastjson.JSONObject;
+;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.google.api.client.util.Maps;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.vipkid.file.model.AppLifePicture;
+
 import com.vipkid.file.model.FileUploadStatus;
 import com.vipkid.http.utils.JsonUtils;
 import com.vipkid.http.utils.WebUtils;
-import com.vipkid.http.vo.AppVideo;
+
 import com.vipkid.http.vo.HttpResult;
 import com.vipkid.http.vo.TeacherFile;
 
@@ -134,9 +135,9 @@ public class FileHttpService extends HttpBaseService {
      */
     public TeacherFile queryTeacherFiles(Long teacherId) {
 
-    	logger.info("获取老师文件信息 queryTeacherFiles teacherId = {}",teacherId);
-    	
-    	TeacherFile teacherFile = new TeacherFile(teacherId);
+        logger.info("获取老师文件信息 queryTeacherFiles teacherId = {}",teacherId);
+
+        TeacherFile teacherFile = new TeacherFile(teacherId);
         //Map<String, Object> result = Maps.newHashMap();
         if(null == teacherId) {
             return teacherFile;
@@ -151,26 +152,26 @@ public class FileHttpService extends HttpBaseService {
             logger.info("Call {} and get {}", url, responseBody);
 
             if (responseBody != null) {
-                JSONObject response = JsonUtils.parseToJSONObject(responseBody);
+                JsonNode response = JsonUtils.parseObject(responseBody);
                 if (isSuccessResponse(response)) {
-                    JSONObject data = response.getJSONObject("data");
+                    JsonNode data = response.get("data");
                     if (null != data) {
-                    	
+
                         /*String lifePicturesJson = data.getString("lifePictures");
                         String avatarUrl = data.getString("avatar");
                         String shortVideoStr = data.getString("shortVideo");
-                        
+
                         List<AppLifePicture> lifePictures = JsonUtils.toBeanList(lifePicturesJson, AppLifePicture.class);
                         AppVideo shortVideo = JsonUtils.toBean(shortVideoStr, AppVideo.class);
-                        
+
                         teacherFile.setAvatar(avatarUrl);
                         teacherFile.setLifePictures(lifePictures);
                         teacherFile.setShortVideo(shortVideo);*/
-                    	
-                    	teacherFile = JsonUtils.toBean(data.toString(), TeacherFile.class);
+
+                        teacherFile = JsonUtils.toBean(data.toString(), TeacherFile.class);
                     }
                 } else {
-                    String errorMessage = response.getString("errMsg");
+                    String errorMessage = response.get("errMsg").asText();
                     logger.error("Call {} and get error message: {}", errorMessage);
                 }
             }
@@ -217,20 +218,32 @@ public class FileHttpService extends HttpBaseService {
             logger.info("Call {} and get {}", url, responseBody);
 
             if (responseBody != null) {
-                JSONObject response = JsonUtils.parseToJSONObject(responseBody);
+                JsonNode response = JsonUtils.parseObject(responseBody);
                 if (isSuccessResponse(response)) {
-                    JSONObject data = response.getJSONObject("data");
+                    JsonNode data = response.get("data");
                     if (null != data) {
-                        Long id = data.getLong("id");
-                        Integer status = data.getInteger("status");//1 成功，2 失败
-                        String fileUrl = data.getString("url");
+                        Long id = null;
+                        if(null != data.get("id")){
+                            id = data.get("id").asLong();
+                        }
+
+                        Integer status = null ;
+                        if(null != data.get("status")){
+                            status = data.get("status").asInt();//1 成功，2 失败
+                        }
+
+                        String fileUrl = null;
+                        if(null !=data.get("url")){
+                            data.get("url").textValue();
+                        }
+
                         fileUploadStatus = new FileUploadStatus();
                         fileUploadStatus.setId(id);
                         fileUploadStatus.setStatus(status);
                         fileUploadStatus.setUrl(fileUrl);
                     }
                 } else {
-                    String errorMessage = response.getString("errMsg");
+                    String errorMessage = response.get("errMsg").asText();
                     logger.error("Call {} and get error message: {}", errorMessage);
                 }
             }
@@ -262,17 +275,17 @@ public class FileHttpService extends HttpBaseService {
             logger.info("Call {} and get {}", url, responseBody);
 
             if (responseBody != null) {
-                JSONObject response = JsonUtils.parseToJSONObject(responseBody);
+                 JsonNode response = JsonUtils.parseObject(responseBody);
                 if (isSuccessResponse(response)) {
-                    JSONObject data = response.getJSONObject("data");
+                    JsonNode data = response.get("data");
                     if (null != data) {
-                        Integer status = data.getInteger("status");//1 成功，0 失败
+                        Integer status = data.get("status").asInt();//1 成功，0 失败
                         if (status == 1) {
                             return true;
                         }
                     }
                 } else {
-                    String errorMessage = response.getString("errMsg");
+                    String errorMessage = response.get("errMsg").asText();
                     logger.error("Call {} and get error message: {}", errorMessage);
                 }
             }
@@ -285,10 +298,10 @@ public class FileHttpService extends HttpBaseService {
     }
 
 
-    private boolean isSuccessResponse(JSONObject response) {
+    private boolean isSuccessResponse(JsonNode response) {
 
         if (null != response) {
-            Boolean ret = response.getBoolean("ret");
+            Boolean ret = response.get("ret").asBoolean();
             if (ret) {
                 return true;
             }

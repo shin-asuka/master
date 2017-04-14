@@ -7,6 +7,7 @@ import javax.jms.TextMessage;
 
 import com.alibaba.druid.support.json.JSONUtils;
 import com.alibaba.fastjson.JSON;
+import com.vipkid.http.utils.JsonUtils;
 import com.vipkid.mq.message.FinishOnlineClassMessage;
 import com.vipkid.mq.message.UaReportMessage;
 import com.vipkid.mq.service.PayrollMessageService;
@@ -39,7 +40,7 @@ public class UaReportMessageConsumer implements MessageListener {
             UaReportMessage uaReportMessage;
             try {
                 uaReportMessage = (UaReportMessage) JsonMapper.fromJsonString(textMsg.getText(), UaReportMessage.class);
-                logger.info("UA报告消息内容，UaReportMessage = {}", JSON.toJSONString(uaReportMessage));
+                logger.info("UA报告消息内容，UaReportMessage = {}", JsonUtils.toJSONString(uaReportMessage));
                 checkMessage(uaReportMessage);
                 AssessmentReport assessmentReport = convertAssessmentReportFromMessage(uaReportMessage);
                 if (null != assessmentReport) {

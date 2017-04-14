@@ -42,6 +42,9 @@ public class ShareActivityExam implements Serializable {
 
 	/**0,未完成  1已完成**/
 	private Integer status;
+	
+	/** 点击次数 */
+	private Integer toPortal;
 
 
 	
@@ -145,6 +148,12 @@ public class ShareActivityExam implements Serializable {
 		return this.status;
 	}
 
+	public Integer getToPortal() {
+		return toPortal;
+	}
 
+	public void setToPortal(Integer toPortal) {
+		this.toPortal = toPortal;
+	}
 }
 
