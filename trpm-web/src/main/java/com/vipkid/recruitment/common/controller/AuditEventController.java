@@ -32,7 +32,7 @@ import com.vipkid.rest.validation.tools.Result;
 /**
  * Created by zhangzhaojun on 2016/11/29.
  */
-@RemoteInterface(portal ={Authentication.Portal.MANAGEMENT})
+//@RemoteInterface(portal ={Authentication.Portal.MANAGEMENT})
 @RestController
 @RequestMapping("/recruitment/auditEvent")
 public class AuditEventController extends RestfulController {

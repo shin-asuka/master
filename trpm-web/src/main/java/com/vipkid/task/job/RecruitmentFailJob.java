@@ -4,6 +4,7 @@ import com.google.common.base.Stopwatch;
 import com.vipkid.email.EmailUtils;
 import com.vipkid.enums.TeacherApplicationEnum;
 import com.vipkid.http.utils.JsonUtils;
+import com.vipkid.recruitment.common.service.AuditPushMessageService;
 import com.vipkid.recruitment.dao.TeacherApplicationDao;
 import com.vipkid.task.utils.UADateUtils;
 import com.vipkid.trpm.entity.Teacher;
@@ -33,6 +34,9 @@ public class RecruitmentFailJob {
 
 	@Autowired
 	private TeacherApplicationDao teacherApplicationDao;
+
+	@Autowired
+	private AuditPushMessageService auditPushMessageService;
 	
 	@Vschedule
 	public void doJob(JobContext jobContext) {
@@ -67,6 +71,7 @@ public class RecruitmentFailJob {
 			String name = map.get("teacherName");
 			String firstName = map.get("firstName");
 			String status = map.get("status");
+			Long teacherId = Long.parseLong(map.get("id"));
 			Teacher teacher = new Teacher();
 			teacher.setEmail(email);
 			teacher.setRealName(name);
@@ -78,12 +83,15 @@ public class RecruitmentFailJob {
 				if (TeacherApplicationEnum.Status.BASIC_INFO.toString().equals(status)){
 					titleTemplate = "BasicInfoFailTitle.html";
 					contentTemplate = "BasicInfoFail.html";
+					auditPushMessageService.pushAndSaveMessage(teacherId);
 				} else if (TeacherApplicationEnum.Status.INTERVIEW.toString().equals(status)){
 					titleTemplate = "InterviewFailTitle.html";
 					contentTemplate = "InterviewFail.html";
+					auditPushMessageService.pushAndSaveMessage(teacherId);
 				} else if (TeacherApplicationEnum.Status.PRACTICUM.toString().equals(status)){
 					titleTemplate = "PracticumFailTitle.html";
 					contentTemplate = "PracticumFail.html";
+					auditPushMessageService.pushAndSaveMessage(teacherId);
 				}
 
 				EmailUtils.sendEmail4Recruitment(teacher, titleTemplate, contentTemplate);

@@ -333,4 +333,10 @@ public final class DateUtils {
         Date startTime = cal.getTime();
         return startTime;
     }
+
+	public static Date getPrevMinutes(int offset) {
+		Calendar calendar = Calendar.getInstance();
+		calendar.add(Calendar.MINUTE, -offset);
+		return calendar.getTime();
+	}
 }
