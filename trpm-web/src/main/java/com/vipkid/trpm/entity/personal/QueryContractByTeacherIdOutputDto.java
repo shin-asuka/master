@@ -1,6 +1,8 @@
 package com.vipkid.trpm.entity.personal;
 
+import com.vipkid.trpm.constant.ApplicationConstant;
 import com.vipkid.trpm.util.DateUtils;
+import org.apache.commons.lang.StringUtils;
 
 import java.util.Date;
 
@@ -31,7 +33,11 @@ public class QueryContractByTeacherIdOutputDto {
             String contract) {
         startTime = DateUtils.formatDate(contractStartDate,DateUtils.YYYY_MM_DD);
         endTime = DateUtils.formatDate(contractEndDate,DateUtils.YYYY_MM_DD);
-        paperContractUrl = contract;//不包含http://resource.vipkid.com.cn
+        if(StringUtils.isNotBlank(contract) && !contract.contains(ApplicationConstant.HTTP)){
+            paperContractUrl =ApplicationConstant.ContractConstants.PDF_URL+ contract;//不包含http://resource.vipkid.com.cn
+        }else {
+            paperContractUrl = contract;//不包含http://resource.vipkid.com.cn
+        }
     }
 
     public String getStartTime() {

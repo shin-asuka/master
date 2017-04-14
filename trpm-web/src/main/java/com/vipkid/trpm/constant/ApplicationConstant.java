@@ -41,6 +41,9 @@ public interface ApplicationConstant {
 
     public static Integer UA_FOR_CLASS_ID = 20160420;
 
+    public static final String HTTP ="http://";
+
+
     public static final class AjaxCode {
         public static String USER_NULL = "user-null";
 
@@ -336,6 +339,7 @@ public interface ApplicationConstant {
         public static final String INSTANT_STATUS_NOSIGN = "NOSIGN";
         public static final String INSTANT_STATUS_SIGNED = "SIGNED";
         public static final String INSTANT_STATUS_ENABLE = "ENABLE";
+        public static final String PDF_URL = "http://resource.vipkid.com.cn";
 
     }
 }
