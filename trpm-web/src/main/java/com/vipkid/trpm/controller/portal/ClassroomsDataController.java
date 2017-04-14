@@ -98,6 +98,7 @@ public class ClassroomsDataController {
                 + API_URL_SEP
                 + String.format(API_SWITCH_CLASSROOM_PARAM, onlineClass.getTeacherId());
 
+        logger.info("/classroom/switchLine requestUrl:{}",requestUrl);
         HttpClientUtils.Response response = httpApiClient.doPut(requestUrl,null);
 
         if (response != null && response.getStatusCode() == HttpStatus.ACCEPTED.value()) {
