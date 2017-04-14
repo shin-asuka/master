@@ -1,9 +1,10 @@
 package com.vipkid.email.handle;
 
+import com.vipkid.email.handle.EmailConfig.EmailFormEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.vipkid.email.handle.EmailConfig.EmailFormEnum;
+import java.util.function.Function;
 
 public class EmailHandle {
 
@@ -18,6 +19,19 @@ public class EmailHandle {
                 return sendForEducation(email,subject,content);
             default:
                 logger.info("枚举错误，无法发送邮件，email:{},subject:{},content:{}",email,subject,content);
+                return null;
+        }
+    }
+
+    public static String switchMail(EmailEntity reviceEntity, EmailFormEnum emailForm) {
+        switch (emailForm) {
+            case TEACHVIP:
+                return sendForSupplier(reviceEntity, (v)-> EmailServer.Teachvip.sendMail(reviceEntity));
+            case EDUCATION:
+                return sendForSupplier(reviceEntity, (v)-> EmailServer.Education.sendMail(reviceEntity));
+            default:
+                logger.info("枚举错误，无法发送邮件，email:{}, subject:{}, content:{}", reviceEntity.getToMail(),
+                        reviceEntity.getMailSubject(), reviceEntity.getMailBody());
                 return null;
         }
     }
@@ -88,4 +102,37 @@ public class EmailHandle {
                 "EDUCATION 最终这个Email[" + email + "] 的发送结果:[" + result + "],这是标题:[" + subject + "],这是内容:[" + content + "]");
         return "SUCCESS!";
     }
+
+    public static String sendForSupplier(EmailEntity reviceEntity, Function<EmailEntity, Integer> function){
+        reviceEntity.setHost(EmailConfig.HOST).setFromMail(EmailConfig.TC_FROM)
+                .setPersonalName(EmailConfig.TC_FROM.split("@")[0]);
+        // 重试机制
+        int count = 0, result = 0;
+        while (count < EmailConfig.REPLY_COUNT) {
+            result = function.apply(reviceEntity);
+            if (1 == result) {
+                break;
+            } else {
+                count++;
+                logger.error("邮箱地址 [" + reviceEntity.getToMail() + "] 发送失败了 [" + count + "] 次了，等待继续发送");
+            }
+        }
+        // 发送失败，通知管理员
+        if (0 == result) {
+            logger.info("邮箱地址 [" + reviceEntity.getToMail() + "] 邮件发送失败, 尝试发送到你测试环境的邮箱: "
+                    + EmailConfig.TEST_EMIAL_TO);
+
+            reviceEntity.setToMail(EmailConfig.TEST_EMIAL_TO);
+            reviceEntity.setMailSubject("【SEND FAIL】(" + reviceEntity.getToMail() + ")"
+                    + reviceEntity.getMailSubject());
+
+            function.apply(reviceEntity);
+            return "ERROR!" + reviceEntity.getToMail();
+        }
+
+        logger.info("最终这个Email [" + reviceEntity.getToMail() + "] 的发送结果:[" + result + "], 标题:["
+                + reviceEntity.getMailSubject() + "], 内容:[" + reviceEntity.getMailBody() + "]");
+        return "SUCCESS!";
+    }
+
 }
