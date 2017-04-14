@@ -52,6 +52,8 @@ public final class DateUtils {
 
 	public static String DEFAULT_FORMAT_PATTERN = "yyyy-MM-dd HH:mm:ss";
 
+	public static final String MMMM_DD_YYYY = "MMMM dd,YYYY";
+
 	/* 每天的半小时数量 */
 	public static final int HALFHOUR_OF_DAY = 24 * 2;
 	/* 半小时的分钟数 */
@@ -317,16 +319,28 @@ public final class DateUtils {
     	return formatDate(date, null);
     }
     public static String formatDate(Date date, String format) {
-        String dateStr = null;
-        if (StringUtils.isEmpty(format)) {
-            format = "yyyy-MM-dd HH:mm:ss";
-        }
-        if (date != null) {
-            SimpleDateFormat dateFormat = new SimpleDateFormat(format);
-            dateStr = dateFormat.format(date);
-        }
-        return dateStr;
-    }
+		String dateStr = null;
+		if (StringUtils.isEmpty(format)) {
+			format = "yyyy-MM-dd HH:mm:ss";
+		}
+		if (date != null) {
+			SimpleDateFormat dateFormat = new SimpleDateFormat(format);
+			dateStr = dateFormat.format(date);
+		}
+		return dateStr;
+	}
+
+	public static String formatDate(Date date, String format,Locale locale) {
+		String dateStr = null;
+		if (StringUtils.isEmpty(format)) {
+			format = "yyyy-MM-dd HH:mm:ss";
+		}
+		if (date != null) {
+			SimpleDateFormat dateFormat = new SimpleDateFormat(format,locale);
+			dateStr = dateFormat.format(date);
+		}
+		return dateStr;
+	}
 
 	public static Date parseDate(String dateStr, String format) {
 		Date date = null;

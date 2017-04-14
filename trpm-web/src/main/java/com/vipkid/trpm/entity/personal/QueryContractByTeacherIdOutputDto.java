@@ -4,7 +4,10 @@ import com.vipkid.trpm.constant.ApplicationConstant;
 import com.vipkid.trpm.util.DateUtils;
 import org.apache.commons.lang.StringUtils;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 /**
  * 实现描述:
@@ -24,15 +27,15 @@ public class QueryContractByTeacherIdOutputDto {
 
     public QueryContractByTeacherIdOutputDto(APIQueryContractListByTeacherIdResult one) {
         contractId = one.getId();
-        startTime = one.getStartTime();//合同系统传过来的即是yyyy-MM-dd格式的;
-        endTime = one.getEndTime();//合同系统传过来的即是yyyy-MM-dd格式的 DateUtils.YYYY_MM_DD
+        startTime = DateUtils.formatDate(DateUtils.parseDate(one.getStartTime(),DateUtils.YYYY_MM_DD) ,DateUtils.MMMM_DD_YYYY,Locale.ENGLISH);//合同系统传过来的即是yyyy-MM-dd格式的;
+        endTime = DateUtils.formatDate(DateUtils.parseDate(one.getEndTime(),DateUtils.YYYY_MM_DD),DateUtils.MMMM_DD_YYYY,Locale.ENGLISH);//合同系统传过来的即是yyyy-MM-dd格式的 DateUtils.YYYY_MM_DD
         contractNumber = one.getInstanceNumber();
     }
 
     public QueryContractByTeacherIdOutputDto(Date contractStartDate, Date contractEndDate,
             String contract) {
-        startTime = DateUtils.formatDate(contractStartDate,DateUtils.YYYY_MM_DD);
-        endTime = DateUtils.formatDate(contractEndDate,DateUtils.YYYY_MM_DD);
+        startTime = DateUtils.formatDate(contractStartDate,DateUtils.MMMM_DD_YYYY,Locale.ENGLISH);
+        endTime = DateUtils.formatDate(contractEndDate,DateUtils.MMMM_DD_YYYY,Locale.ENGLISH);
         if(StringUtils.isNotBlank(contract) && !contract.contains(ApplicationConstant.HTTP)){
             paperContractUrl =ApplicationConstant.ContractConstants.PDF_URL+ contract;//不包含http://resource.vipkid.com.cn
         }else {
