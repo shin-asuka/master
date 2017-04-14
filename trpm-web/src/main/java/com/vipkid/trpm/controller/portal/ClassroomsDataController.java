@@ -44,6 +44,10 @@ public class ClassroomsDataController {
     //https://code.vipkid.com.cn/alchemy/invoker/blob/master/invoker-interface.md
     private static final String API_SWITCH_CLASSROOM_URL = "/api/invoker/service/class/%s/classroom/%s/supplier/%s";
 
+    private static final String API_URL_SEP = "?";
+
+    private static final String API_SWITCH_CLASSROOM_PARAM = "operatorId=%s&operatorType=Teacher";
+
     @Resource
     private OnlineClassService onlineClassService;
 
@@ -88,13 +92,11 @@ public class ClassroomsDataController {
             return ApiResponseUtils.buildErrorResp(-1, "wrong teacher");
         }
         String requestUrl = httpUrlConstant.getApiClassroomServerUrl()
-                + String.format(API_SWITCH_CLASSROOM_URL, onlineClassId, onlineClass.getClassroom(), supplierCode);
-        Map teacherIdMap = Maps.newHashMap();
-        teacherIdMap.put("operatorId", onlineClass.getTeacherId());
-        teacherIdMap.put("operatorType", "Teacher");
-        String jsonData = JacksonUtils.toJSONString(teacherIdMap);
+                + String.format(API_SWITCH_CLASSROOM_URL, onlineClassId, onlineClass.getClassroom(), supplierCode)
+                + API_URL_SEP
+                + String.format(API_SWITCH_CLASSROOM_PARAM, onlineClass.getTeacherId());
 
-        String result = httpApiClient.doPut(requestUrl,jsonData);
+        String result = httpApiClient.doPut(requestUrl,null);
 
         if(StringUtils.isBlank(result)){
             return ApiResponseUtils.buildErrorResp(-1,"fail");
