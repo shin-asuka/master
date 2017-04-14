@@ -196,7 +196,7 @@ public class PersonalInfoDataController {
 
         APIQueryContractByIdResult contract = personalInfoService.queryContractById(contractId);
         if (contract != null) {
-            return ApiResponseUtils.buildSuccessDataResp(contract.getInstanceContent());
+            return ApiResponseUtils.buildResponse(true, 0, null, contract.getInstanceContent());
         }else{
             return ApiResponseUtils.buildErrorResp(-1,"result is null");
         }
