@@ -580,6 +580,9 @@ public class ContractInfoController extends RestfulController {
         try {
             Teacher teacher = getTeacher(request);
             logger.info("Teacher:{} toPublic", teacher.getId());
+            if(StringUtils.equals(TeacherEnum.LifeCycle.REGULAR.toString(),teacher.getLifeCycle())){
+                return ReturnMapUtils.returnSuccess();
+            }
             boolean result = this.contractInfoService.toRegular(teacher);
             if (result) {
                 logger.info("Successfully get TO REGULAR!");
