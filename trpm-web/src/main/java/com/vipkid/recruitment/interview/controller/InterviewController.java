@@ -5,6 +5,8 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.vipkid.trpm.entity.User;
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,8 +18,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.google.api.client.util.Maps;
-import com.vipkid.enums.TeacherApplicationEnum.Result;
-import com.vipkid.enums.TeacherApplicationEnum.Status;
 import com.vipkid.enums.TeacherEnum.LifeCycle;
 import com.vipkid.recruitment.common.service.AuditEmailService;
 import com.vipkid.recruitment.common.service.RecruitmentService;
@@ -49,7 +49,7 @@ public class InterviewController extends RestfulController {
     public Map<String,Object> list(HttpServletRequest request, HttpServletResponse response){
         try{
             Map<String,Object> result = Maps.newHashMap();
-            result.put("list", this.interviewService.findlistByInterview());
+            result.put("list", this.interviewService.findListByInterview());
             result.put("days", InterviewConstant.SHOW_DAYS_EXCLUDE_TODAY);
             return ReturnMapUtils.returnSuccess(result);
         } catch (IllegalArgumentException e) {
@@ -79,7 +79,7 @@ public class InterviewController extends RestfulController {
                 return  ReturnMapUtils.returnFail("Oops, someone else just booked this time slot. Please select another.");
             }
 
-            Map<String, Object> result = this.interviewService.bookInterviewClass(Long.valueOf(onlineClassIdStr + ""), getTeacher(request));
+            Map<String, Object> result = this.interviewService.bookInterviewClass(Long.valueOf(onlineClassIdStr + ""), getTeacher(request), InterviewConstant.BOOK_TIME);
 
             if(ReturnMapUtils.isFail(result)){
                 response.setStatus(HttpStatus.FORBIDDEN.value());
@@ -136,7 +136,47 @@ public class InterviewController extends RestfulController {
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
             return ReturnMapUtils.returnFail(e.getMessage(), e);
         }
-    } 
+    }
+
+    @RequestMapping(value = "/start", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
+    public Map<String,Object> start(HttpServletRequest request, HttpServletResponse response){
+        try{
+            Teacher teacher = getTeacher(request);
+            User user = getUser(request);
+            Map<String, Object> ret;
+
+            ret = interviewService.createInterviewClass(teacher, user);
+
+
+            if (ReturnMapUtils.isFail(ret) || ret.get("id") == null
+                    || MapUtils.getBooleanValue(ret, "isCreated")) {
+                return ret;
+            }
+
+            long onlineClassId = Long.parseLong(ret.get("id").toString());
+            ret = interviewService.bookInterviewClass(onlineClassId, teacher, InterviewConstant.BOOK_TIME_0);
+
+
+            if (ReturnMapUtils.isFail(ret)) {
+                return ret;
+            }
+
+            ret = interviewService.getClassRoomUrl(onlineClassId, teacher, user);
+
+
+            if(ReturnMapUtils.isFail(ret)){
+                response.setStatus(HttpStatus.FORBIDDEN.value());
+            }
+
+            return ret;
+        } catch (IllegalArgumentException e) {
+            response.setStatus(HttpStatus.BAD_REQUEST.value());
+            return ReturnMapUtils.returnFail(e.getMessage(),e);
+        } catch (Exception e) {
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            return ReturnMapUtils.returnFail(e.getMessage(), e);
+        }
+    }
     
 
     @RequestMapping(value = "/toTraining", method = RequestMethod.POST, produces = RestfulConfig.JSON_UTF_8)
