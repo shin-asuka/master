@@ -81,7 +81,6 @@ public class InterviewService {
     @Autowired
     private SendMailAtDayTimeService sendMailAtDayTimeService;
 
-
     private static Logger logger = LoggerFactory.getLogger(InterviewService.class);
 
     /**
@@ -91,10 +90,10 @@ public class InterviewService {
      * @return
      * List&lt;Map&lt;String,Object&gt;&gt;
      */
-    public List<Map<String,Object>> findListByInterview(){
+    public List<Map<String,Object>> findlistByInterview(){
         String fromTime = LocalDateTime.now().plusHours(1).format(DateUtils.FMT_YMD_HMS);
         String toTime = LocalDateTime.now().plusDays(InterviewConstant.SHOW_DAYS_EXCLUDE_TODAY + 1).withHour(23).withMinute(59).withSecond(59).format(DateUtils.FMT_YMD_HMS);
-        logger.info("findListByInterview parameter fromTime:{}, toTime:{}",fromTime, toTime);
+        logger.info("findlistByInterview parameter fromTime:{}, toTime:{}",fromTime, toTime);
         List<Map<String,Object>> list = interviewDao.findlistByInterview(fromTime, toTime);
         if(CollectionUtils.isNotEmpty(list)){
             Collections.shuffle(list);
@@ -135,25 +134,25 @@ public class InterviewService {
             result.put("lessonSN",lesson.getSerialNumber());
         }
         
-        String logSuffix = "onlineClassId:"+onlineClassId+"; teacherId:"+teacher.getId();
+        String logpix = "onlineclassId:"+onlineClassId+";teacherId:"+teacher.getId();
         
         //课程必须是当前步骤中的数据
         List<TeacherApplication> listEntity = this.teacherApplicationDao.findCurrentApplication(teacher.getId());
         
         if(CollectionUtils.isEmpty(listEntity)){
-            result.putAll(ReturnMapUtils.returnFail("You cannot enter this classroom!",logSuffix));
+            result.putAll(ReturnMapUtils.returnFail("You cannot enter this classroom!",logpix));
             return result;
         }
         
         //进教室权限判断    
         if(listEntity.get(0).getOnlineClassId() != onlineClassId){
-        	result.putAll(ReturnMapUtils.returnFail("You cannot enter this classroom!",logSuffix));
+        	result.putAll(ReturnMapUtils.returnFail("You cannot enter this classroom!",logpix));
             return result; 
         }
 
         //判断教室是否创建好
         if(StringUtils.isBlank(onlineClass.getClassroom())){
-        	result.putAll(ReturnMapUtils.returnFail("The classroom without creating",logSuffix));
+        	result.putAll(ReturnMapUtils.returnFail("The classroom without creating",logpix));
         	return result;
         }
 
@@ -164,39 +163,6 @@ public class InterviewService {
         return result;
     }
 
-
-    public Map<String,Object> createInterviewClass(Teacher teacher, User user){
-        Map<String, Object> ret;
-
-        List<TeacherApplication> listEntity = teacherApplicationDao.findCurrentApplication(teacher.getId());
-
-
-        if(CollectionUtils.isEmpty(listEntity)){
-            ret = ReturnMapUtils.returnFail("You cannot enter interview classroom!");
-            return ret;
-        }
-
-        TeacherApplication teacherApplication = listEntity.get(0);
-
-
-        //存在步骤，但步骤中已经存在待审核的课程 不允许继续create
-        if(teacherApplication.getOnlineClassId() != 0){
-            if (StringUtils.isBlank(teacherApplication.getResult())){
-                ret = getClassRoomUrl(teacherApplication.getOnlineClassId(), teacher, user);
-                ret.put("isCreated", true);
-            } else {
-                ret = ReturnMapUtils.returnFail("Interview Finished!");
-            }
-            return ret;
-        }
-
-        // 下一步会马上book课create教室，见 appServer -> OnlineClassService.createDBYClassroom，create教室时scheduledDateTime要比当前时间大5秒才可以创建。
-        // 为保险起见，这里多加5分钟
-        long scheduledDateTime = System.currentTimeMillis() + InterviewConstant.CREATE_TIME_AFTER;
-        ret = OnlineClassProxy.doCreateInterview(teacher.getId(), scheduledDateTime);
-
-        return ret;
-    }
 
     /*加入interviewer scheduler逻辑以后, book 逻辑变动较大, 从接收onlineClassId改为接受前端时间戳*/
     @Slave
@@ -263,13 +229,13 @@ public class InterviewService {
      * @return
      * Map&lt;String,Object&gt;
      */
-    public Map<String,Object> bookInterviewClass(long onlineClassId,Teacher teacher, long afterTimeMillis){
+    public Map<String,Object> bookInterviewClass(long onlineClassId,Teacher teacher){
         
         if(teacher == null || teacher.getId() == 0 || StringUtils.isBlank(teacher.getRealName())){
             return ReturnMapUtils.returnFail("This account does not exist.");
         }
         
-        String logSuffix = "onlineClassId:"+onlineClassId+"; teacherId:"+teacher.getId();
+        String logpix = "onlineclassId:"+onlineClassId+";teacherId:"+teacher.getId();
         
         if(recruitmentService.teacherIsApplicationFinished(teacher)){
             return ReturnMapUtils.returnFail("Your recruitment process is over already, Please refresh your page !","INTERVIEW:"+teacher.getId());
@@ -279,17 +245,17 @@ public class InterviewService {
         
         //课程没有找到，无法book
         if(onlineClass == null){
-            return ReturnMapUtils.returnFail("This online class does not exist.",logSuffix);
+            return ReturnMapUtils.returnFail("This online class does not exist.",logpix);
         }
 
         //onlineClassId 必须是OPEN 课
         if(!OnlineClassEnum.ClassStatus.OPEN.toString().equalsIgnoreCase(onlineClass.getStatus())){
-            return ReturnMapUtils.returnFail("Oops, someone else just booked this time slot. Please select another.",logSuffix);
+            return ReturnMapUtils.returnFail("Oops, someone else just booked this time slot. Please select another.",logpix);
         }
 
         //book的课程在开课前1小时之内不允许book
-        if((System.currentTimeMillis() + afterTimeMillis) > onlineClass.getScheduledDateTime().getTime()){
-            return ReturnMapUtils.returnFail("Oops, someone else just booked this time slot. Please select another.",logSuffix);
+        if((System.currentTimeMillis() + InterviewConstant.BOOK_TIME) > onlineClass.getScheduledDateTime().getTime()){
+            return ReturnMapUtils.returnFail("Oops, someone else just booked this time slot. Please select another.",logpix);
         }
         //约课老师必须是INTERVIEW的待约课老师
         List<TeacherApplication> listEntity = teacherApplicationDao.findCurrentApplication(teacher.getId());
@@ -297,7 +263,7 @@ public class InterviewService {
             TeacherApplication teacherApplication = listEntity.get(0);
             //存在步骤，但步骤中已经存在待审核的课程 不允许继续book
             if(teacherApplication.getOnlineClassId() != 0 && StringUtils.isBlank(teacherApplication.getResult())){
-                return ReturnMapUtils.returnFail("You have booked a class already. Please refresh your page !",logSuffix);
+                return ReturnMapUtils.returnFail("You have booked a class already. Please refresh your page !",logpix);
             }
         }
         //判断剩余可取消次数
@@ -305,7 +271,7 @@ public class InterviewService {
         if(recruitmentService.getRemainRescheduleTimes(teacher, Status.INTERVIEW.toString(), Result.CANCEL.toString(), false) <= 0){
             userDao.doLock(teacher.getId());
             teacherLockLogDao.save(new TeacherLockLog(teacher.getId(), Reason.RESCHEDULE.toString(), LifeCycle.INTERVIEW.toString()));
-            return ReturnMapUtils.returnFail("There are no more cancellations allowed for your account. Contact us at teachvip@vipkid.com.cn for more information.",logSuffix);
+            return ReturnMapUtils.returnFail("There are no more cancellations allowed for your account. Contact us at teachvip@vipkid.com.cn for more information.",logpix);
         }
         */
         //执行BOOK逻辑
@@ -359,31 +325,31 @@ public class InterviewService {
             return ReturnMapUtils.returnFail("This account does not exist.");
         }
         
-        String logSuffix = "onlineClassId:"+onlineClassId+"; teacherId:"+teacher.getId();
+        String logpix = "onlineclassId:"+onlineClassId+";teacherId:"+teacher.getId();
 
         //class already start, can't cancel error
         OnlineClass onlineClass = this.onlineClassDao.findById(onlineClassId);
         if(onlineClass == null){
-            return ReturnMapUtils.returnFail("This online class does not exist.",logSuffix);
+            return ReturnMapUtils.returnFail("This online class does not exist.",logpix);
         }
         
         if(System.currentTimeMillis() > onlineClass.getScheduledDateTime().getTime()){
-            return ReturnMapUtils.returnFail("Sorry, you can't cancel after the start time has passed.",logSuffix);
+            return ReturnMapUtils.returnFail("Sorry, you can't cancel after the start time has passed.",logpix);
         }
 
         List<TeacherApplication> listEntity = this.teacherApplicationDao.findCurrentApplication(teacher.getId());
         //如果步骤中无数据则不允许cancel
         if(CollectionUtils.isEmpty(listEntity)){
-            return ReturnMapUtils.returnFail("You do not have permission to cancel this course",logSuffix);
+            return ReturnMapUtils.returnFail("You do not have permission to cancel this course",logpix);
         }else{
             TeacherApplication teacherApplication = listEntity.get(0);
             //如果步骤中有数据并且数据不是本次cancel的课程 则不允许cancel
             if(teacherApplication.getOnlineClassId() != onlineClass.getId()){
-                return ReturnMapUtils.returnFail("You have already cancelled this class. Please refresh your page !",logSuffix);
+                return ReturnMapUtils.returnFail("You have already cancelled this class. Please refresh your page !",logpix);
             }else{
                 //果步骤中有数据并且数据不是本次cancel的课程 但管理端已经审核，不允许cancel
                 if(StringUtils.isNotBlank(teacherApplication.getResult())){
-                    return ReturnMapUtils.returnFail("This class already audited. Please refresh your page !",logSuffix);
+                    return ReturnMapUtils.returnFail("This class already audited. Please refresh your page !",logpix);
                 }
             }
         }

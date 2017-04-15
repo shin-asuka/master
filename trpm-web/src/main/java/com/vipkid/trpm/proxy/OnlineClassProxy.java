@@ -1,11 +1,13 @@
 package com.vipkid.trpm.proxy;
 
-import com.fasterxml.jackson.databind.JsonNode;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.vipkid.http.utils.HttpClientUtils;
-import com.vipkid.http.utils.JacksonUtils;
-import com.vipkid.recruitment.utils.ReturnMapUtils;
 import com.vipkid.rest.security.AppContext;
 import com.vipkid.trpm.constant.ApplicationConstant;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -17,12 +19,9 @@ import org.community.tools.StringTools;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.google.common.collect.Maps;
+import com.vipkid.recruitment.utils.ReturnMapUtils;
 
 public class OnlineClassProxy {
 
@@ -142,29 +141,6 @@ public class OnlineClassProxy {
             return ReturnMapUtils.returnSuccess();
         } else {
             logger.warn("用户Id:【{}】,Booked onlineClassId:【{}】失败2,classType:【{}】,classTime:【{}】,原因：接口 "+requestUrl + " 未知【"+responseBody+"】", userId,onlineClassId,type,scheduledDateTime);
-            return ReturnMapUtils.returnFail("Booking failed! Please check if you have already scheduled.");
-        }
-    }
-
-    public static Map<String,Object> doCreateInterview(long userId, long scheduledDateTime){
-        String requestJson = "{\"teacher\":{\"id\":3822232},\"scheduledDateTime\":"+scheduledDateTime+",\"course\":{\"id\":211702,\"mode\":\"ONE_TO_MANY\"},\"lesson\":{\"id\":211705,\"name\":\"RecruitmentLesson\"}}";
-
-        Map<String, String>requestHeader = Maps.newHashMap();
-        String author = "TEACHER " + userId;
-        requestHeader.put("Authorization", author + " " + DigestUtils.md5Hex(author));
-
-        String requestUrl=getHttpUrl()+"/api/service/private/onlineClasses";
-        String responseBody = HttpClientUtils.post(requestUrl, requestJson, null, requestHeader);
-        logger.info("doCreateInterview MESSAGE : " + responseBody);
-        if (StringUtils.isBlank(responseBody)) {
-            logger.warn("用户Id:【{}】,doCreateInterview 失败1,classTime:【{}】,原因：接口 "+requestUrl + " 返回为空。", userId,scheduledDateTime);
-            return ReturnMapUtils.returnFail("Booking failed! Please try again.");
-        } else if (responseBody.startsWith("{")) {
-            Map data = JacksonUtils.toBean(responseBody, Map.class);
-            logger.info("用户Id:【{}】,doCreateInterview onlineClassId:【{}】成功,classTime:【{}】", userId, data.get("id"), scheduledDateTime);
-            return ReturnMapUtils.returnSuccess(data);
-        } else {
-            logger.warn("用户Id:【{}】,doCreateInterview 失败2,classTime:【{}】,原因：接口 "+requestUrl + " 未知【"+responseBody+"】", userId,scheduledDateTime);
             return ReturnMapUtils.returnFail("Booking failed! Please check if you have already scheduled.");
         }
     }
