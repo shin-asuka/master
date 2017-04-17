@@ -31,8 +31,7 @@ public class HttpApiClient {
             for(String key : requestParam.keySet()){
                 sb.append(key).append("=").append(requestParam.get(key)).append("&");
             }
-            sb.substring(0,sb.length()-1);
-            url = url + sb.toString();
+            url = url + sb.toString().substring(0,sb.length()-1);
         }
         return HttpClientUtils.request(url);
     }
