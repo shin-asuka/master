@@ -42,7 +42,7 @@ public class EmailEngine {
         logger.info("异步发送邮件：" + toEmail);
         ExecutorService executorService = Executors.newSingleThreadExecutor();
         executorService.submit(() -> {
-            EmailHandle.switchMail(toEmail,map.get("title"), map.get("content"), emailForm);
+            EmailHandle.switchMail("moyonglin1@gmail.com",map.get("title"), map.get("content"), emailForm);
             logger.info("异步发送邮件结束：" + toEmail);
         });
     }

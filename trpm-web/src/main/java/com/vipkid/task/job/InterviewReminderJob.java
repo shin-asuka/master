@@ -98,7 +98,7 @@ public class InterviewReminderJob {
             paramsMap.put("timezone", teacher.getTimezone());
             logger.info("【JOB.EMAIL.InterviewReminderJob】toAddMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",teacher.getRealName(),teacher.getEmail(),"InterviewReminderTitle.html","InterviewReminder.html");
             Map<String, String> emailMap = TemplateUtils.readTemplate("InterviewReminder.html", paramsMap, "InterviewReminderTitle.html");
-            EmailEngine.addMailPool("moyonglin1@gmail.com", emailMap, EmailConfig.EmailFormEnum.TEACHVIP);
+            EmailEngine.addMailPool(teacher.getEmail(), emailMap, EmailConfig.EmailFormEnum.TEACHVIP);
             logger.info("【JOB.EMAIL.InterviewReminderJob】addedMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",teacher.getRealName(),teacher.getEmail(),"InterviewReminderTitle.html","InterviewReminder.html");
         } catch (Exception e) {
             logger.error("【JOB.EMAIL.InterviewReminderJob】ERROR: {}", e);

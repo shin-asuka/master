@@ -122,7 +122,7 @@ public class EmailUtils {
 			paramsMap.put("timezone", teacher.getTimezone());
 			logger.info("【EMAIL.sendEmail4InterviewBook】toAddMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",teacher.getRealName(),teacher.getEmail(),"InterviewBookTitle.html","InterviewBook.html");
 			Map<String, String> emailMap = TemplateUtils.readTemplate("InterviewBook.html", paramsMap, "InterviewBookTitle.html");
-			EmailEngine.addMailPool("moyonglin1@gmail.com", emailMap, EmailConfig.EmailFormEnum.TEACHVIP);
+			EmailEngine.addMailPool(teacher.getEmail(), emailMap, EmailConfig.EmailFormEnum.TEACHVIP);
 			logger.info("【EMAIL.sendEmail4InterviewBook】addedMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",teacher.getRealName(),teacher.getEmail(),"InterviewBookTitle.html","InterviewBook.html");
 		} catch (Exception e) {
 			logger.error("【EMAIL.sendEmail4InterviewBook】ERROR: {}", e);
@@ -148,7 +148,7 @@ public class EmailUtils {
 			}
 			logger.info("【EMAIL.sendEmail4PracticumBook】toAddMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",teacher.getRealName(),teacher.getEmail(),"PracticumBookTitle.html","PracticumBook.html");
 			Map<String, String> emailMap = TemplateUtils.readTemplate("PracticumBook.html", paramsMap, "PracticumBookTitle.html");
-			EmailEngine.addMailPool("moyonglin1@gmail.com", emailMap, EmailConfig.EmailFormEnum.TEACHVIP);
+			EmailEngine.addMailPool(teacher.getEmail(), emailMap, EmailConfig.EmailFormEnum.TEACHVIP);
 			logger.info("【EMAIL.sendEmail4PracticumBook】addedMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",teacher.getRealName(),teacher.getEmail(),"PracticumBookTitle.html","PracticumBook.html");
 		} catch (Exception e) {
 			logger.error("【EMAIL.sendEmail4InterviewBook】ERROR: {}", e);
