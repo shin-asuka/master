@@ -5,14 +5,12 @@ import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.vipkid.enums.AppEnum;
-import com.vipkid.enums.OnlineClassEnum;
+import com.vipkid.dataSource.annotation.Slave;
 import com.vipkid.enums.OnlineClassEnum.ClassStatus;
 import com.vipkid.enums.OnlineClassEnum.ClassType;
 import com.vipkid.enums.OnlineClassEnum.CourseType;
 import com.vipkid.enums.TeacherPageLoginEnum.LoginType;
 import com.vipkid.http.service.ScalperService;
-import com.vipkid.http.utils.WebUtils;
 import com.vipkid.portal.bookings.constant.BookingsResult;
 import com.vipkid.portal.bookings.entity.*;
 import com.vipkid.rest.service.TeacherPageLoginService;
@@ -33,7 +31,6 @@ import com.vipkid.trpm.util.CookieUtils;
 import com.vipkid.trpm.util.DateUtils;
 import com.vipkid.trpm.util.FilesUtils;
 import com.vipkid.trpm.util.IpUtils;
-
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -56,14 +53,12 @@ import org.springframework.stereotype.Service;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
@@ -1213,6 +1208,7 @@ public class BookingsService {
         return finishType;
     }
 
+    @Slave
 	public List<Map<String, Object>>  findIncentiveClasses(Date from, Date to, long id) {
 		 return onlineClassDao.findOnlineClassesByStartTimeAndEndTime(from,to,id);
 	}
@@ -1228,9 +1224,9 @@ public class BookingsService {
 		}
 		SimpleDateFormat sdf = new SimpleDateFormat("MMM.dd", Locale.ENGLISH);  
 		resultMap.put("fromStr",sdf.format(from));
-		resultMap.put("toStr",sdf.format(new Date(to.getTime() - onlineClassDao.ONE_SECOND)));
+		resultMap.put("toStr",sdf.format(new Date(to.getTime() - OnlineClassDao.ONE_SECOND)));
 		resultMap.put("from",from.getTime());
-		resultMap.put("to", to.getTime() - onlineClassDao.ONE_SECOND);
+		resultMap.put("to", to.getTime() - OnlineClassDao.ONE_SECOND);
 		resultMap.put("resultCount",resultCount);
 
 		resultList.add(resultMap);
