@@ -294,7 +294,7 @@ public class ClassroomsRestServiceImpl implements ClassroomsRestService{
 	 * @return Map<String, Object>
 	 */
 	@Slave
-	private Map<String, Object> doClassrooms(Teacher teacher, String monthOfYear, String courseType, int linePerPage,
+	public Map<String, Object> doClassrooms(Teacher teacher, String monthOfYear, String courseType, int linePerPage,
 			int page) {
 		Map<String, Object> modelMap = Maps.newHashMap();
 
@@ -370,7 +370,7 @@ public class ClassroomsRestServiceImpl implements ClassroomsRestService{
 	 * @author zhangbole
 	 */
 	@Slave
-	private List<ClassroomDetail> getDataList(String courseType, Teacher teacher, String monthOfYear,
+	public List<ClassroomDetail> getDataList(String courseType, Teacher teacher, String monthOfYear,
 			int curPage) {
 		List<ClassroomDetail> result = Lists.newArrayList();
 		Map<String, Object> dataListMap = null;
