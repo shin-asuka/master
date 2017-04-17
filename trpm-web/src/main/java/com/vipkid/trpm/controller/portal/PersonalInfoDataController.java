@@ -17,12 +17,14 @@ import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.entity.personal.APIQueryContractByIdResult;
 import com.vipkid.trpm.entity.personal.APIQueryContractListByTeacherIdResult;
 import com.vipkid.trpm.entity.personal.QueryContractByTeacherIdOutputDto;
+import com.vipkid.trpm.proxy.RedisProxy;
 import com.vipkid.trpm.service.portal.TeacherService;
 import com.vipkid.trpm.util.DateUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -49,6 +51,11 @@ public class PersonalInfoDataController {
 
     @Resource
     private TeacherService teacherService;
+
+    @Autowired
+    private RedisProxy redisProxy;
+
+    private static final String PERSONAL_INFO_CONTRACT="tp_personal_Info_contract_power";
 
     /***
      *
@@ -199,6 +206,61 @@ public class PersonalInfoDataController {
             return ApiResponseUtils.buildResponse(true, 0, null, contract.getInstanceContent());
         }else{
             return ApiResponseUtils.buildErrorResp(-1,"result is null");
+        }
+    }
+
+
+    /**
+     *
+     * 判断老师是否能查看合同页面
+     *
+     * @param teacherId 合同Id
+     */
+    @RequestMapping("/hasContractPower")
+    public Map<String, Object> hasContractPower(@RequestParam("teacherId") Long teacherId){
+        String power=redisProxy.get(PERSONAL_INFO_CONTRACT+teacherId);
+        if (power != null) {
+            return ApiResponseUtils.buildResponse(true, 0, null, true);
+        }else{
+            return ApiResponseUtils.buildErrorResp(-1,"result is null",false);
+        }
+    }
+
+    /**
+     *
+     * 添加老师是否能查看合同页面权限
+     *
+     * @param teacherId 老师Id
+     */
+    @RequestMapping("/setContractPower")
+    public Map<String, Object> setContractPower(@RequestParam("teacherId") Long teacherId){
+        if(teacherId == null || teacherId == 0L){
+            return ApiResponseUtils.buildErrorResp(-1,"teacherId 不能为空");
+        }
+        boolean result=redisProxy.set(PERSONAL_INFO_CONTRACT+teacherId,teacherId+"",5184000);
+        if (result) {
+            return ApiResponseUtils.buildResponse(true, 0, "设置老师查看合同页面权限成功", teacherId);
+        }else{
+            return ApiResponseUtils.buildErrorResp(-1,"设置老师查看合同页面权限失败",teacherId);
+        }
+    }
+
+    /**
+     *
+     * 判断老师是否能查看合同页面
+     *
+     * @param teacherId 合同Id
+     */
+    @RequestMapping("/deleteContractPower")
+    public Map<String, Object> deleteContractPower(@RequestParam("teacherId") Long teacherId){
+        if(teacherId == null || teacherId == 0L){
+            return ApiResponseUtils.buildErrorResp(-1,"teacherId 不能为空");
+        }
+        long result=redisProxy.del(PERSONAL_INFO_CONTRACT+teacherId);
+        if (result > 0) {
+            return ApiResponseUtils.buildResponse(true, 0, "删除老师查看合同页面权限成功", teacherId);
+        }else{
+            return ApiResponseUtils.buildErrorResp(-1,"删除老师查看合同页面权限失败",teacherId);
         }
     }
 }
