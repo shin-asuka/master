@@ -37,7 +37,7 @@ public class AuditPushMessageService {
             return;
         }
         Map<String, String> requestHeader = Maps.newHashMap();
-        requestHeader.put("X-Vipkid-Service", "TeacherPortal");
+        requestHeader.put("X-Vipkid-Service", "TeacherREST");
 
         PushMultiCastRequest request = new PushMultiCastRequest();
         String title = "VIPKID Teach";
