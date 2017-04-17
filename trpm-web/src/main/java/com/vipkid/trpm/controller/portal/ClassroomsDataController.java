@@ -101,7 +101,7 @@ public class ClassroomsDataController {
         logger.info("/classroom/switchLine requestUrl:{}",requestUrl);
         HttpClientUtils.Response response = httpApiClient.doPut(requestUrl,null);
 
-        if (response != null && response.getStatusCode() == HttpStatus.ACCEPTED.value()) {
+        if (response != null && response.getStatusCode() == HttpStatus.OK.value()) {
             return ApiResponseUtils.buildSuccessDataResp("success");
         } else {
             return ApiResponseUtils.buildErrorResp(-1, "fail");
