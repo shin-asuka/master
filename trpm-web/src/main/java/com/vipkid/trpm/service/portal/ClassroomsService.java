@@ -204,6 +204,11 @@ public class ClassroomsService {
         return computePage(count, linePerPage);
     }
 
+    @Slave
+    public List<Map<String, Object>> findStatMajorFinishTypeBy(long teacherId, String timezone, String monthOfYear) {
+        return onlineClassDao.findStatMajorFinishTypeBy(teacherId, timezone, monthOfYear);
+    }
+
     /**
      * 计算分页
      *
@@ -230,6 +235,11 @@ public class ClassroomsService {
         int count = onlineClassDao.countPracticumFromNowBy(teacher.getId(), teacher.getTimezone(),
                 monthOfYear);
         return computePage(count, linePerPage);
+    }
+
+    @Slave
+    public List<Map<String, Object>> findStatPracticumFinishTypeBy(long teacherId, String timezone, String monthOfYear) {
+        return onlineClassDao.findStatPracticumFinishTypeBy(teacherId, timezone, monthOfYear);
     }
 
     /**
