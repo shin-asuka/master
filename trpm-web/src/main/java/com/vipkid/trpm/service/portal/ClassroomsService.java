@@ -1,29 +1,24 @@
 package com.vipkid.trpm.service.portal;
 
-import java.util.List;
-import java.util.Map;
-
+import com.google.common.collect.Maps;
+import com.vipkid.dataSource.annotation.Slave;
 import com.vipkid.enums.OnlineClassEnum.CourseType;
+import com.vipkid.http.service.AssessmentHttpService;
+import com.vipkid.http.vo.OnlineClassVo;
+import com.vipkid.http.vo.StudentUnitAssessment;
 import com.vipkid.recruitment.dao.TeacherApplicationDao;
+import com.vipkid.trpm.constant.ApplicationConstant.UaReportStatus;
+import com.vipkid.trpm.dao.*;
 import com.vipkid.trpm.entity.*;
 import com.vipkid.trpm.entity.teachercomment.TeacherComment;
+import com.vipkid.trpm.util.DateUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.google.common.collect.Maps;
-import com.vipkid.http.service.AssessmentHttpService;
-import com.vipkid.http.vo.OnlineClassVo;
-import com.vipkid.http.vo.StudentUnitAssessment;
-import com.vipkid.trpm.constant.ApplicationConstant.UaReportStatus;
-import com.vipkid.trpm.dao.AssessmentReportDao;
-import com.vipkid.trpm.dao.CourseDao;
-import com.vipkid.trpm.dao.DemoReportDao;
-import com.vipkid.trpm.dao.LessonDao;
-import com.vipkid.trpm.dao.OnlineClassDao;
-import com.vipkid.trpm.dao.TeacherPageLoginDao;
-import com.vipkid.trpm.util.DateUtils;
+import java.util.List;
+import java.util.Map;
 
 /**
  * classrooms显示规则：
@@ -91,6 +86,7 @@ public class ClassroomsService {
      * @param monthOfYear
      * @return Map<String, Object>
      */
+    @Slave
     public Map<String, Object> majorTotal(Teacher teacher, String monthOfYear) {
         Map<String, Object> modelMap = Maps.newHashMap();
 
@@ -109,6 +105,7 @@ public class ClassroomsService {
      * @param linePerPage
      * @return Map<String, Object>
      */
+    @Slave
     public Map<String, Object> majorList(Teacher teacher, String monthOfYear, int curPage,
             int linePerPage) {
         Map<String, Object> modelMap = Maps.newHashMap();
@@ -127,6 +124,7 @@ public class ClassroomsService {
      * @param monthOfYear
      * @return Map<String, Object>
      */
+    @Slave
     public Map<String, Object> practicumTotal(Teacher teacher, String monthOfYear) {
         Map<String, Object> modelMap = Maps.newHashMap();
 
@@ -145,6 +143,7 @@ public class ClassroomsService {
      * @param linePerPage
      * @return Map<String, Object>
      */
+    @Slave
     public Map<String, Object> practicumList(Teacher teacher, String monthOfYear, int curPage,
             int linePerPage) {
         Map<String, Object> modelMap = Maps.newHashMap();
@@ -198,6 +197,7 @@ public class ClassroomsService {
      * @param linePerPage
      * @return int
      */
+    @Slave
     public int majorInPage(Teacher teacher, String monthOfYear, int linePerPage) {
         int count = onlineClassDao.countMajorFromNowBy(teacher.getId(), teacher.getTimezone(),
                 monthOfYear);
@@ -225,6 +225,7 @@ public class ClassroomsService {
      * @param linePerPage
      * @return int
      */
+    @Slave
     public int practicumInPage(Teacher teacher, String monthOfYear, int linePerPage) {
         int count = onlineClassDao.countPracticumFromNowBy(teacher.getId(), teacher.getTimezone(),
                 monthOfYear);
