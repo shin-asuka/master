@@ -260,7 +260,7 @@ public class PersonalInfoDataController {
         if (result > 0) {
             return ApiResponseUtils.buildResponse(true, 0, "删除老师查看合同页面权限成功", teacherId);
         }else{
-            return ApiResponseUtils.buildErrorResp(-1,"删除老师查看合同页面权限失败",teacherId);
+            return ApiResponseUtils.buildErrorResp(-1,"删除老师查看合同页面权限失败"+result,teacherId);
         }
     }
 }
