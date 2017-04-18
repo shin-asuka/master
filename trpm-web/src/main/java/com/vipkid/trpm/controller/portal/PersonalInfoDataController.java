@@ -110,6 +110,16 @@ public class PersonalInfoDataController {
         Map<String, Object> result = Maps.newHashMap();
         result.put("signedList", signedList);
         result.put("unsignList", unsignList);
+        StringBuffer fullName=new StringBuffer();
+        fullName.append(teacher.getFirstName()).append(" ");
+        if(StringUtils.isNotBlank(teacher.getMiddleName())){
+            fullName.append(teacher.getMiddleName()).append(" ");
+        }
+        if(StringUtils.isNotBlank(teacher.getLastName())){
+            fullName.append(teacher.getLastName());
+        }
+        result.put("fullName", fullName.toString());
+
         return ApiResponseUtils.buildSuccessDataResp(result);
     }
 
