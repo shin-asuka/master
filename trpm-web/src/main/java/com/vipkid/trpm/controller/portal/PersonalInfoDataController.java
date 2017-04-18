@@ -1,9 +1,6 @@
 package com.vipkid.trpm.controller.portal;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.util.*;
 
 import javax.annotation.Resource;
@@ -199,14 +196,29 @@ public class PersonalInfoDataController {
      * @param contractId 合同Id
      */
     @RequestMapping("/contractContent")
-    public Map<String, Object> contractContentById(@RequestParam("contractId") Long contractId){
+    public void contractContentById(@RequestParam("contractId") Long contractId ,HttpServletResponse response){
 
         APIQueryContractByIdResult contract = personalInfoService.queryContractById(contractId);
-        if (contract != null) {
-            return ApiResponseUtils.buildResponse(true, 0, null, contract.getInstanceContent());
-        }else{
-            return ApiResponseUtils.buildErrorResp(-1,"result is null");
-        }
+
+            PrintWriter out=null;
+            try {
+                response.setContentType("text/html; charset=utf-8");
+                response.setCharacterEncoding("UTF-8");
+                out=response.getWriter();
+                if (contract != null) {
+                    out.print(contract.getInstanceContent());
+                }else{
+                    out.print("{\"ret\": false, \"data\": \"没有查到对应合同文本\",   \"errCode\": -1,  \"errMsg\": null}");
+                }
+                out.flush();
+
+            } catch (IOException e) {
+                logger.error("query print out Internal error!",e);
+            } finally {
+                if(out !=null){
+                    out.close();
+                }
+            }
     }
 
 
