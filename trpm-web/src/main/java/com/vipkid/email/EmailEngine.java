@@ -1,15 +1,15 @@
 package com.vipkid.email;
 
-import java.util.Map;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
+import com.vipkid.email.handle.EmailConfig.EmailFormEnum;
+import com.vipkid.email.handle.EmailEntity;
+import com.vipkid.email.handle.EmailHandle;
+import com.vipkid.email.template.TemplateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.vipkid.email.handle.EmailConfig.EmailFormEnum;
-import com.vipkid.email.handle.EmailHandle;
-import com.vipkid.email.template.TemplateUtils;
+import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * <b>邮件发送线程调度引擎类</b> <br/>
@@ -45,7 +45,15 @@ public class EmailEngine {
             EmailHandle.switchMail(toEmail,map.get("title"), map.get("content"), emailForm);
             logger.info("异步发送邮件结束：" + toEmail);
         });
-        
+    }
+
+    public static void addMailPool(EmailEntity reviceEntity, EmailFormEnum emailForm) {
+        logger.info("异步发送邮件：" + reviceEntity.getToMail());
+        ExecutorService executorService = Executors.newSingleThreadExecutor();
+        executorService.submit(() -> {
+            EmailHandle.switchMail(reviceEntity, emailForm);
+            logger.info("异步发送邮件结束：" + reviceEntity.getToMail());
+        });
     }
 
     /**

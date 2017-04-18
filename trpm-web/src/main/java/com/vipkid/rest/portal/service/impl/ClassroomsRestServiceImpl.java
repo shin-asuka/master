@@ -314,7 +314,7 @@ public class ClassroomsRestServiceImpl implements ClassroomsRestService{
 			modelMap.put("curPage", page);
 
 			/* 查询统计数据 */
-			List<Map<String, Object>> stateList = onlineClassDao.findStatPracticumFinishTypeBy(teacher.getId(), teacher.getTimezone(), monthOfYear);
+			List<Map<String, Object>> stateList = classroomsService.findStatPracticumFinishTypeBy(teacher.getId(), teacher.getTimezone(), monthOfYear);
 			rebuildStateList(stateList);
 			modelMap.put("stateList", stateList);
 		} else {
@@ -336,7 +336,7 @@ public class ClassroomsRestServiceImpl implements ClassroomsRestService{
 			modelMap.put("curPage", page);
 
 			/* 查询统计数据 */
-			List<Map<String, Object>> stateList = onlineClassDao.findStatMajorFinishTypeBy(teacher.getId(), teacher.getTimezone(), monthOfYear);
+			List<Map<String, Object>> stateList = classroomsService.findStatMajorFinishTypeBy(teacher.getId(), teacher.getTimezone(), monthOfYear);
 			rebuildStateList(stateList);
 			modelMap.put("stateList",stateList);
 		}
@@ -541,11 +541,7 @@ public class ClassroomsRestServiceImpl implements ClassroomsRestService{
 		} else {
 			assessmentReport = assessmentReportDao.findReportByStudentIdAndName(serialNumber, studentId);
 		}
-		if (null != assessmentReport && StringUtils.isNotEmpty(assessmentReport.getUrl())) {
-			return true;
-		} else {
-			return false;
-		}
+		return null != assessmentReport && StringUtils.isNotEmpty(assessmentReport.getUrl());
 	}
 
 	private Map<String, Object> getOldUaReportStatus(long onlineClassId, long studentId, String serialNumber) {
@@ -639,7 +635,7 @@ public class ClassroomsRestServiceImpl implements ClassroomsRestService{
 		
 		private int code;
 		
-		private ReportType(int code ){
+		ReportType(int code){
 			this.setCode(code);
 		}
 
