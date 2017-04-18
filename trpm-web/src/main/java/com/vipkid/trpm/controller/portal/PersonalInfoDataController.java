@@ -4,6 +4,7 @@ import java.io.*;
 import java.util.*;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import com.google.api.client.util.Lists;
 import com.google.api.client.util.Maps;
@@ -196,22 +197,22 @@ public class PersonalInfoDataController {
      * @param contractId 合同Id
      */
     @RequestMapping("/contractContent")
-    public void contractContentById(@RequestParam("contractId") Long contractId ,HttpServletResponse response){
+    public void contractContentById(@RequestParam("contractId") Long contractId , HttpServletResponse response, HttpServletRequest request){
 
         APIQueryContractByIdResult contract = personalInfoService.queryContractById(contractId);
 
+
             PrintWriter out=null;
             try {
+            if (contract != null) {
                 response.setContentType("text/html; charset=utf-8");
                 response.setCharacterEncoding("UTF-8");
-                out=response.getWriter();
-                if (contract != null) {
-                    out.print(contract.getInstanceContent());
-                }else{
-                    out.print("{\"ret\": false, \"data\": \"没有查到对应合同文本\",   \"errCode\": -1,  \"errMsg\": null}");
-                }
+                out = response.getWriter();
+                out.print(contract.getInstanceContent());
                 out.flush();
-
+            }else {
+                response.sendRedirect(request.getContextPath() + "/common/404.jsp");
+            }
             } catch (IOException e) {
                 logger.error("query print out Internal error!",e);
             } finally {
@@ -219,7 +220,8 @@ public class PersonalInfoDataController {
                     out.close();
                 }
             }
-    }
+        }
+
 
 
     /**
