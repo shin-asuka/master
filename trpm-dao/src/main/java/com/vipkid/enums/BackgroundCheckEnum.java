@@ -86,4 +86,15 @@ public class BackgroundCheckEnum {
 
         public String getValue(){return this.value;}
     }
+    public enum ReportType{
+        SSN("SSN Trace"),
+        CRIMINAL("Multi-State Instant Criminal Check"),
+        CHECK("Criminal Check by County"),
+        DOJ("DOJ Sex Offender");
+        private String value;
+
+        ReportType(String value){this.value = value;}
+
+        public String getValue(){return this.value;}
+    }
 }
