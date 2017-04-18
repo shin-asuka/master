@@ -96,7 +96,11 @@ public class ReturnMapUtils {
 
     /**  3. util functions */
     public static boolean isSuccess(Map<String, Object> data) {
-        return MapUtils.getBooleanValue(data, "status");
+        Object status = data.get("status");
+        if (status instanceof Boolean) {
+            return (Boolean) status;
+        }
+        return true;
     }
 
     public static boolean isFail(Map<String, Object> data) {
