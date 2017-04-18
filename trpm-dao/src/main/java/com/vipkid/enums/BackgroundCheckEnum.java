@@ -89,12 +89,30 @@ public class BackgroundCheckEnum {
     public enum ReportType{
         SSN("SSN Trace"),
         CRIMINAL("Multi-State Instant Criminal Check"),
-        CHECK("Criminal Check by County"),
+        CRIMINAL_BY_COUNTY("Criminal Check by County"),
         DOJ("DOJ Sex Offender");
+
         private String value;
 
         ReportType(String value){this.value = value;}
 
         public String getValue(){return this.value;}
     }
+    public enum ReportResult{
+        PENDINF("pending"),
+        SUCESS("success"),
+        COMPLETE("complete"),
+        NO_DATA("no data"),
+        ERROR("error"),
+        NA("n/a"),
+        ALERT("alert");
+
+        private String value;
+
+        ReportResult(String value){this.value = value;}
+
+        public String getValue(){return this.value;}
+
+    }
+
 }
