@@ -304,7 +304,7 @@ public class SterlingService {
                     rInsert.setScreeningId(backgroundScreening.getScreeningId());
                     rInsert.setReportId(rApi.getId());
                     rInsert.setStatus(rApi.getStatus());
-                    rInsert.setResult(rApi.getStatus());
+                    rInsert.setResult(rApi.getResult());
                     rInsert.setUpdatedAt(DateUtils.convertzDateTime(rApi.getUpdatedAt()));
                     rInsert.setUpdateTime(new Date());
                     rInsert.setCreateTime(new Date());
@@ -519,8 +519,8 @@ public class SterlingService {
             backgroundReport.setScreeningId(screeningId);
             backgroundReport.setReportId(reportItem.getId());
             backgroundReport.setStatus(reportItem.getStatus());
-            backgroundReport.setResult(reportItem.getStatus());
-            backgroundReport.setUpdateTime(DateUtils.convertzDateTime(reportItem.getUpdatedAt()));
+            backgroundReport.setResult(reportItem.getResult());
+            backgroundReport.setUpdatedAt(DateUtils.convertzDateTime(reportItem.getUpdatedAt()));
             backgroundReport.setUpdateTime(new Date());
             backgroundReport.setCreateTime(new Date());
             backgroundReport.setType(reportItem.getType());
