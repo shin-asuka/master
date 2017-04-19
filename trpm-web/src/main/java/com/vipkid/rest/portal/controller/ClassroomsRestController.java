@@ -1,7 +1,6 @@
 package com.vipkid.rest.portal.controller;
 
 import com.google.common.base.Stopwatch;
-import com.vipkid.dataSource.annotation.Slave;
 import com.vipkid.enums.OnlineClassEnum;
 import com.vipkid.enums.TeacherEnum.LifeCycle;
 import com.vipkid.http.utils.JsonUtils;
@@ -51,7 +50,6 @@ public class ClassroomsRestController extends RestfulController{
 	 * @param page
 	 * @return
 	 */
-	@Slave
 	@RequestMapping(value = "/restClassrooms", method = RequestMethod.GET)
 	public Map<String, Object> classrooms(HttpServletRequest request, HttpServletResponse response,
 			@RequestParam(value="teacherId", required=true) long teacherId,

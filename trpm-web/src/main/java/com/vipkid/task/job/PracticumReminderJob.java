@@ -92,10 +92,10 @@ public class PracticumReminderJob {
             }
             paramsMap.put("scheduledDateTime", DateUtils.formatTo(scheduledDateTime.toInstant(), teacher.getTimezone(), DateUtils.FMT_YMD_HM));
             paramsMap.put("timezone", teacher.getTimezone());
-            logger.info("【JOB.EMAIL.PracticumReminderJob】toAddMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",teacher.getRealName(),teacher.getEmail(),"InterviewBookTitle.html","InterviewBook.html");
+            logger.info("【JOB.EMAIL.PracticumReminderJob】toAddMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",teacher.getRealName(),teacher.getEmail(),"PracticumReminderJobTitle.html","PracticumReminderJob.html");
             Map<String, String> emailMap = TemplateUtils.readTemplate("PracticumReminderJob.html", paramsMap, "PracticumReminderJobTitle.html");
             EmailEngine.addMailPool(teacher.getEmail(), emailMap, EmailConfig.EmailFormEnum.TEACHVIP);
-            logger.info("【JOB.EMAIL.PracticumReminderJob】addedMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",teacher.getRealName(),teacher.getEmail(),"InterviewBookTitle.html","InterviewBook.html");
+            logger.info("【JOB.EMAIL.PracticumReminderJob】addedMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",teacher.getRealName(),teacher.getEmail(),"PracticumReminderJobTitle.html","PracticumReminderJob.html");
         } catch (Exception e) {
             logger.error("【JOB.EMAIL.PracticumReminderJob】ERROR: {}", e);
         }
