@@ -4,7 +4,6 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.google.api.client.util.Lists;
 import com.google.api.client.util.Maps;
-import com.vipkid.dataSource.annotation.Slave;
 import com.vipkid.enums.OnlineClassEnum;
 import com.vipkid.enums.OnlineClassEnum.CourseType;
 import com.vipkid.file.service.QNService;
@@ -89,7 +88,6 @@ public class ClassroomsRestServiceImpl implements ClassroomsRestService{
 	
 	private static Long Interval=3*60L*24L*60L*60L*1000L;
 
-	@Slave
 	public Map<String, Object> getClassroomsData(long teacherId, int offsetOfMonth, String courseType, int page) {
 		if (!CourseType.isPracticum(courseType)) {// 只要不是"PRACTICUM"，就赋值"MAJOR"
 			courseType = "MAJOR";
@@ -293,8 +291,7 @@ public class ClassroomsRestServiceImpl implements ClassroomsRestService{
 	 * @author zhangbole
 	 * @return Map<String, Object>
 	 */
-	@Slave
-	public Map<String, Object> doClassrooms(Teacher teacher, String monthOfYear, String courseType, int linePerPage,
+	private Map<String, Object> doClassrooms(Teacher teacher, String monthOfYear, String courseType, int linePerPage,
 			int page) {
 		Map<String, Object> modelMap = Maps.newHashMap();
 
@@ -369,8 +366,7 @@ public class ClassroomsRestServiceImpl implements ClassroomsRestService{
 	 * 
 	 * @author zhangbole
 	 */
-	@Slave
-	public List<ClassroomDetail> getDataList(String courseType, Teacher teacher, String monthOfYear,
+	private List<ClassroomDetail> getDataList(String courseType, Teacher teacher, String monthOfYear,
 			int curPage) {
 		List<ClassroomDetail> result = Lists.newArrayList();
 		Map<String, Object> dataListMap = null;
