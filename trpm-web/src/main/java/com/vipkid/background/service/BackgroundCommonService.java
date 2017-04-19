@@ -141,43 +141,6 @@ public class BackgroundCommonService {
                                     }
                                 }*/
                                 BackgroundAdverse backgroundAdverse = backgroundAdverseDao.findByScreeningIdTopOne(screeningId);
-                                List<BackgroundReport> backgroundReports = backgroundReportDao.findByBgSterlingScreeningId(screeningId);
-                                boolean multiCheck = false;
-                                boolean criminalCheck = true;
-                                boolean offender = false;
-                                for (BackgroundReport backgroundReport:backgroundReports
-                                     ) {
-                                    String reportType = backgroundReport.getType();
-                                    String reportResult = backgroundReport.getResult();
-                                    if (null != reportType){
-                                        switch (reportType){
-                                            case ("Multi-State Instant Criminal Check"):
-                                                if (StringUtils.equalsIgnoreCase(reportResult,ReportResult.COMPLETE.getValue()) ||
-                                                        StringUtils.equalsIgnoreCase(reportResult,ReportResult.SUCESS.getValue())){
-                                                     multiCheck = true;
-                                                }
-                                                break;
-                                            case ("DOJ Sex Offender"):
-                                                if (StringUtils.equalsIgnoreCase(reportResult,ReportResult.COMPLETE.getValue()) ||
-                                                        StringUtils.equalsIgnoreCase(reportResult,ReportResult.SUCESS.getValue())){
-                                                    offender = true;
-                                                }
-                                                break;
-                                            case ("Criminal Check by County"):
-                                                if (!StringUtils.equalsIgnoreCase(reportResult,ReportResult.COMPLETE.getValue()) &&
-                                                        !StringUtils.equalsIgnoreCase(reportResult,ReportResult.SUCESS.getValue())){
-                                                    criminalCheck = false;
-                                                }
-                                                break;
-
-                                        }
-                                    }
-                                }
-                                if (multiCheck && offender && criminalCheck){
-                                    backgroundStatusDto.setNeedBackgroundCheck(false);
-                                    backgroundStatusDto.setResult(BackgroundResult.CLEAR.getVal());
-                                    backgroundStatusDto.setPhase(BackgroundPhase.CLEAR.getVal());
-                                }
 
                                 if (null == backgroundAdverse){
                                     backgroundStatusDto.setPhase(BackgroundPhase.PENDING.getVal());
@@ -215,6 +178,44 @@ public class BackgroundCommonService {
                                         }
                                     }
 
+                                }
+                                //如果只是因为ssn问题导致的alert可以认为是clear
+                                List<BackgroundReport> backgroundReports = backgroundReportDao.findByBgSterlingScreeningId(screeningId);
+                                boolean multiCheck = false;
+                                boolean offender = false;
+                                boolean criminalCheck = true;
+                                for (BackgroundReport backgroundReport:backgroundReports
+                                        ) {
+                                    String reportType = backgroundReport.getType();
+                                    String reportResult = backgroundReport.getResult();
+                                    if (null != reportType){
+                                        switch (reportType){
+                                            case ("Multi-State Instant Criminal Check"):
+                                                if (StringUtils.equalsIgnoreCase(reportResult,ReportResult.COMPLETE.getValue()) ||
+                                                        StringUtils.equalsIgnoreCase(reportResult,ReportResult.SUCESS.getValue())){
+                                                    multiCheck = true;
+                                                }
+                                                break;
+                                            case ("DOJ Sex Offender"):
+                                                if (StringUtils.equalsIgnoreCase(reportResult,ReportResult.COMPLETE.getValue()) ||
+                                                        StringUtils.equalsIgnoreCase(reportResult,ReportResult.SUCESS.getValue())){
+                                                    offender = true;
+                                                }
+                                                break;
+                                            case ("Criminal Check by County"):
+                                                if (!StringUtils.equalsIgnoreCase(reportResult,ReportResult.COMPLETE.getValue()) &&
+                                                        !StringUtils.equalsIgnoreCase(reportResult,ReportResult.SUCESS.getValue())){
+                                                    criminalCheck = false;
+                                                }
+                                                break;
+
+                                        }
+                                    }
+                                }
+                                if (multiCheck && offender && criminalCheck){
+                                    backgroundStatusDto.setNeedBackgroundCheck(false);
+                                    backgroundStatusDto.setResult(BackgroundResult.CLEAR.getVal());
+                                    backgroundStatusDto.setPhase(BackgroundPhase.CLEAR.getVal());
                                 }
                                 break;
                         }
