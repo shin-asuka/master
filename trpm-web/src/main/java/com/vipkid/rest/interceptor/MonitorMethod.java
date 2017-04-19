@@ -66,7 +66,7 @@ public class MonitorMethod {
     public Object doPortalControllerAround(ProceedingJoinPoint pjp) {
     	return doLogger(pjp);
     }
-    
+
     private Object doLogger(ProceedingJoinPoint pjp){
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
@@ -95,7 +95,10 @@ public class MonitorMethod {
             	reslult = JsonUtils.toJSONString(obj);
             }
             return obj;
-        } catch (Throwable e) {
+        }catch (IllegalArgumentException e) {
+            logger.warn("MonitorMethodInterceptor IllegalArgumentException, errorMessage=" + e.getMessage(), e);
+            throw new RuntimeException(e);
+        }catch (Throwable e) {
             logger.error("MonitorMethodInterceptor error !",e);
             throw new RuntimeException(e);
         }finally{

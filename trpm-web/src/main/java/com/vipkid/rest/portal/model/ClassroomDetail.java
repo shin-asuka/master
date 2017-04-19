@@ -2,6 +2,8 @@ package com.vipkid.rest.portal.model;
 
 import com.vipkid.rest.portal.vo.StudentCommentVo;
 
+import java.util.Calendar;
+
 /*classrooms页面的接口返回的每节课的数据模型*/
 public class ClassroomDetail{
 	private Integer id;
@@ -15,6 +17,7 @@ public class ClassroomDetail{
 	private Long learningCycleId;
 	private Long onlineClassId;
 	private String scheduledDateTime;
+	private Calendar bookDateTime;
 	private String status;
 	private Integer isPaidTrail;
 	private int[] paidTrailPaymentYearMonth;
@@ -184,5 +187,13 @@ public class ClassroomDetail{
 
 	public void setStudentCommentVo(StudentCommentVo studentCommentVo) {
 		this.studentCommentVo = studentCommentVo;
+	}
+
+	public Calendar getBookDateTime() {
+		return bookDateTime;
+	}
+
+	public void setBookDateTime(Calendar bookDateTime) {
+		this.bookDateTime = bookDateTime;
 	}
 }

@@ -92,7 +92,7 @@ public class ClassroomsRestServiceImpl implements ClassroomsRestService{
 		if (!CourseType.isPracticum(courseType)) {// 只要不是"PRACTICUM"，就赋值"MAJOR"
 			courseType = "MAJOR";
 		}
-		Map<String, Object> result = null;
+ 		Map<String, Object> result = null;
 
 		ClassroomsData classroomsData = new ClassroomsData();
 
@@ -415,7 +415,12 @@ public class ClassroomsRestServiceImpl implements ClassroomsRestService{
             df.setTimeZone(TimeZone.getTimeZone(teacher.getTimezone()));
             String scheduledDateTime = df.format(date);
             classroomDetail.setScheduledDateTime(scheduledDateTime);
-
+            Timestamp bookDateTimestamp = (Timestamp) eachMap.get("bookDateTime");
+            if(bookDateTimestamp != null) {
+				Calendar bookDateTime = Calendar.getInstance();
+				bookDateTime.setTimeInMillis(bookDateTimestamp.getTime());
+				classroomDetail.setBookDateTime(bookDateTime);
+			}
             String onlineClassId = String.valueOf(eachMap.get("id"));
             classroomDetail.setOnlineClassId(Long.parseLong(onlineClassId));
             String finishType = (String) eachMap.get("finishType");
@@ -647,4 +652,7 @@ public class ClassroomsRestServiceImpl implements ClassroomsRestService{
 			this.code = code;
 		}
 	}
+
+
+
 }

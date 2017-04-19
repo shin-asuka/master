@@ -68,12 +68,7 @@ public class TeacherTaxpayerFormService {
 		return page;
 	}
 		
-	public TeacherTaxpayerForm getTeacherTaxpayerForm(Long teacherId,Integer formType){
-		 
-		TeacherTaxpayerForm teacherTaxpayerForm = teacherTaxpayerFormDao.findByTeacherIdAndType(teacherId, formType);
-		
-		return teacherTaxpayerForm;
-	}
+
 	
 	public TaxpayerView getTeacherTaxpayerView(Long teacherId){ 
 		TaxpayerView view = new TaxpayerView();
