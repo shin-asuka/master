@@ -42,6 +42,10 @@ public class AssessmentHttpService extends HttpBaseService {
                 .append("/education/findUnSubmitedListByOnlineClassIds").toString();
         OnlineClassVo unSubmitSnlineClassVo = null;
         try {
+            if(StringUtils.isNotEmpty(onlineClassVo.getIdListStr())){
+                String[] ids = onlineClassVo.getIdListStr().split(",");
+                logger.info("查询未提交UA:输入Id个数:{}",ids.length);
+            };
             int i = 0;
             String data = null;
             //retry 拿不到idListStr的请求
@@ -56,7 +60,10 @@ public class AssessmentHttpService extends HttpBaseService {
             }
             if (data!=null) {
             	unSubmitSnlineClassVo = JsonUtils.readJson(data, new TypeReference<OnlineClassVo>() {},JacksonUtils.HHMMSS_MAPPER);
-                if(unSubmitSnlineClassVo.getIdListStr().equals(""));
+                if(StringUtils.isNotEmpty(unSubmitSnlineClassVo.getIdListStr())){
+                    String[] ids = unSubmitSnlineClassVo.getIdListStr().split(",");
+                    logger.info("查询未提交UA成功，共{}个",ids.length);
+                };
             }
 		} catch (Exception e) {
 			logger.error("获取未提交课程的UA报告失败！",e);
