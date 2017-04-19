@@ -99,8 +99,9 @@ public class BackgroundCheckEnum {
         public String getValue(){return this.value;}
     }
     public enum ReportResult{
-        PENDINF("pending"),
-        SUCESS("success"),
+        PENDING("pending"),
+        SUCCESS("success"),
+        CLEAR("clear"),
         COMPLETE("complete"),
         NO_DATA("no data"),
         ERROR("error"),

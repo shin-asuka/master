@@ -184,27 +184,26 @@ public class BackgroundCommonService {
                                 boolean multiCheck = false;
                                 boolean offender = false;
                                 boolean criminalCheck = true;
-                                for (BackgroundReport backgroundReport:backgroundReports
-                                        ) {
+                                for (BackgroundReport backgroundReport:backgroundReports) {
                                     String reportType = backgroundReport.getType();
                                     String reportResult = backgroundReport.getResult();
                                     if (null != reportType){
                                         switch (reportType){
                                             case ("Multi-State Instant Criminal Check"):
                                                 if (StringUtils.equalsIgnoreCase(reportResult,ReportResult.COMPLETE.getValue()) ||
-                                                        StringUtils.equalsIgnoreCase(reportResult,ReportResult.SUCESS.getValue())){
+                                                        StringUtils.equalsIgnoreCase(reportResult,ReportResult.CLEAR.getValue())){
                                                     multiCheck = true;
                                                 }
                                                 break;
                                             case ("DOJ Sex Offender"):
                                                 if (StringUtils.equalsIgnoreCase(reportResult,ReportResult.COMPLETE.getValue()) ||
-                                                        StringUtils.equalsIgnoreCase(reportResult,ReportResult.SUCESS.getValue())){
+                                                        StringUtils.equalsIgnoreCase(reportResult,ReportResult.CLEAR.getValue())){
                                                     offender = true;
                                                 }
                                                 break;
                                             case ("Criminal Check by County"):
                                                 if (!StringUtils.equalsIgnoreCase(reportResult,ReportResult.COMPLETE.getValue()) &&
-                                                        !StringUtils.equalsIgnoreCase(reportResult,ReportResult.SUCESS.getValue())){
+                                                        !StringUtils.equalsIgnoreCase(reportResult,ReportResult.CLEAR.getValue())){
                                                     criminalCheck = false;
                                                 }
                                                 break;
