@@ -42,7 +42,18 @@ public class AssessmentHttpService extends HttpBaseService {
                 .append("/education/findUnSubmitedListByOnlineClassIds").toString();
         OnlineClassVo unSubmitSnlineClassVo = null;
         try {
-        	String data = WebUtils.postNameValuePair(url, onlineClassVo);
+            int i = 0;
+            String data = null;
+            //retry
+            while(data == null && i<3) {
+                try {
+                    i++;
+                    data = WebUtils.postNameValuePair(url, onlineClassVo);
+                }catch (Exception e){
+                    logger.info("查询未提交UA失败",e);
+                }
+                Thread.sleep(500);
+            }
             if (data!=null) {
             	unSubmitSnlineClassVo = JsonUtils.readJson(data, new TypeReference<OnlineClassVo>() {},JacksonUtils.HHMMSS_MAPPER);
             }
