@@ -196,14 +196,12 @@ public class BackgroundCommonService {
                                                 }
                                                 break;
                                             case ("DOJ Sex Offender"):
-                                                if (StringUtils.equalsIgnoreCase(reportResult,ReportResult.COMPLETE.getValue()) ||
-                                                        StringUtils.equalsIgnoreCase(reportResult,ReportResult.CLEAR.getValue())){
+                                                if (StringUtils.equalsIgnoreCase(reportResult,ReportResult.CLEAR.getValue())){
                                                     offender = true;
                                                 }
                                                 break;
                                             case ("Criminal Check by County"):
-                                                if (!StringUtils.equalsIgnoreCase(reportResult,ReportResult.COMPLETE.getValue()) &&
-                                                        !StringUtils.equalsIgnoreCase(reportResult,ReportResult.CLEAR.getValue())){
+                                                if (!StringUtils.equalsIgnoreCase(reportResult,ReportResult.CLEAR.getValue())){
                                                     criminalCheck = false;
                                                 }
                                                 break;
