@@ -44,7 +44,7 @@ public class AssessmentHttpService extends HttpBaseService {
         try {
             int i = 0;
             String data = null;
-            //retry
+            //retry 拿不到idListStr的请求
             while(data == null && i<3) {
                 try {
                     i++;
@@ -56,6 +56,7 @@ public class AssessmentHttpService extends HttpBaseService {
             }
             if (data!=null) {
             	unSubmitSnlineClassVo = JsonUtils.readJson(data, new TypeReference<OnlineClassVo>() {},JacksonUtils.HHMMSS_MAPPER);
+                if(unSubmitSnlineClassVo.getIdListStr().equals(""));
             }
 		} catch (Exception e) {
 			logger.error("获取未提交课程的UA报告失败！",e);
