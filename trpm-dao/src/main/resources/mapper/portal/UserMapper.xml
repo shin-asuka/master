@@ -243,4 +243,37 @@
 			#{id}
 		</foreach>
 	</select>
+
+	<select id="findAllShowNameDuplicateUsers" resultMap="userResultMap">
+		SELECT
+			<include refid="userColumns" />
+		FROM
+		  `teacher`
+		JOIN `user` ON `teacher`.`id` = `user`.`id`
+		WHERE
+		  `user`.`name` IN(
+			SELECT
+			  `user`.`name`
+			FROM
+			  `teacher`
+			JOIN `user` ON `teacher`.`id` = `user`.`id`
+			GROUP BY
+			  `user`.`name`
+			HAVING
+			  COUNT(*) > 1
+		  ) ORDER BY `user`.`name` LIMIT #{startLine}, #{limitLine}
+	</select>
+
+	<select id="findFullNameEqualsShowNameUsers" resultMap="userResultMap">
+		SELECT
+			<include refid="userColumns" />
+		FROM
+		`teacher`
+		JOIN `user`
+		ON `teacher`.`id` = `user`.`id`
+		WHERE
+		`teacher`.`real_name` = `user`.`name`
+		ORDER BY `user`.`id` LIMIT #{startLine}, #{limitLine}
+	</select>
+
 </mapper>

@@ -93,4 +93,22 @@ public class UserDao extends MapperDaoTemplate<User> {
 		paramsMap.put("userIds",userIds);
 		return listEntity("findUserNameListByIdList",paramsMap);
 	}
+
+	/* 查询 User 的总数量 */
+	public int getCount(){
+		return super.selectCount(new User());
+	}
+
+	public List<User> findAllShowNameDuplicateUsers(int startLine, int limitLine){
+		return super.selectLimit(new User(), "findAllShowNameDuplicateUsers", startLine, limitLine);
+	}
+
+	public void updateBatch(List<User> userList){
+		super.updateBatch(userList);
+	}
+
+	public List<User> findFullNameEqualsShowNameUsers(int startLine, int limitLine){
+		return super.selectLimit(new User(), "findFullNameEqualsShowNameUsers", startLine, limitLine);
+	}
+
 }
