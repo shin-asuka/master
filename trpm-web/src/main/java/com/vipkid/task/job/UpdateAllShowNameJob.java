@@ -23,6 +23,8 @@ public class UpdateAllShowNameJob {
 
     private static final Logger logger = LoggerFactory.getLogger(UpdateAllShowNameJob.class);
 
+    private static final int LINE_PER_PAGE = 1000;
+
     private static final List<String> RANDOM_CODES = Lists.newArrayList();
 
     private static final List<String> SENSITIVE_WORDS = Lists.newArrayList();
@@ -76,11 +78,9 @@ public class UpdateAllShowNameJob {
     }
 
     private void doUpdateFullNameEqualsShowNameUsers() {
-        int linePerPage = 1000;
-        int count = userDao.getCount();
-        int totalPage = count % linePerPage == 0 ? count / linePerPage : Math.abs(count / linePerPage) + 1;
+        int totalPage = getTotalPage();
         for (int curPage = 1; curPage <= totalPage; curPage++) {
-            List<User> userList = userDao.findFullNameEqualsShowNameUsers((curPage - 1) * linePerPage, linePerPage);
+            List<User> userList = userDao.findFullNameEqualsShowNameUsers((curPage - 1) * LINE_PER_PAGE, LINE_PER_PAGE);
             logger.info("Find fullname equals showname users at page: {}", curPage);
 
             if (CollectionUtils.isEmpty(userList)) {
@@ -92,11 +92,9 @@ public class UpdateAllShowNameJob {
     }
 
     private void doUpdateAllShowNameDuplicateUsers() {
-        int linePerPage = 1000;
-        int count = userDao.getCount();
-        int totalPage = count % linePerPage == 0 ? count / linePerPage : Math.abs(count / linePerPage) + 1;
+        int totalPage = getTotalPage();
         for (int curPage = 1; curPage <= totalPage; curPage++) {
-            List<User> userList = userDao.findAllShowNameDuplicateUsers((curPage - 1) * linePerPage, linePerPage);
+            List<User> userList = userDao.findAllShowNameDuplicateUsers((curPage - 1) * LINE_PER_PAGE, LINE_PER_PAGE);
             logger.info("Find all showname duplicate users at page: {}", curPage);
 
             if (CollectionUtils.isEmpty(userList)) {
@@ -105,6 +103,11 @@ public class UpdateAllShowNameJob {
             logger.info("Find all showname duplicate users number: {}", userList.size());
             doUpdateShowName(userList);
         }
+    }
+
+    private int getTotalPage() {
+        int count = userDao.getCount();
+        return count % LINE_PER_PAGE == 0 ? count / LINE_PER_PAGE : Math.abs(count / LINE_PER_PAGE) + 1;
     }
 
     private void doUpdateShowName(List<User> userList) {
