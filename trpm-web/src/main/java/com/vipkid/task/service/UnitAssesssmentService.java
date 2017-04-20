@@ -173,7 +173,7 @@ public class UnitAssesssmentService {
 							paramsMap.put("teacherName", oc.getTeacherName());
 						}
 	                    Map<String, String> emailMap = new TemplateUtils().readTemplate(contentTemplate, paramsMap, titleTemplate);
-	                    new EmailEngine().addMailPool(email, emailMap,EmailFormEnum.EDUCATION);
+	                    EmailEngine.addMailPool(email, emailMap,EmailFormEnum.EDUCATION);
 	                    //EmailHandle emailHandle = new EmailHandle(email, emailMap.get("title"), emailMap.get("content"), EmailFormEnum.TEACHVIP);
 	                    //emailHandle.sendMail();  
 	                    logger.info("send Email success  teacher = {},email = {},contentTemplate = {}, titleTemplate = {}",name,email,contentTemplate,titleTemplate);

@@ -24,9 +24,10 @@ import java.util.concurrent.Executors;
  * @date 2016年4月23日 下午3:26:25
  *
  */
-public class EmailEngine {
+public  class EmailEngine {
 
     private static Logger logger = LoggerFactory.getLogger(EmailEngine.class);
+    private static ExecutorService executorService = Executors.newSingleThreadExecutor();
 
     /**
      * 使用线程池发送邮件
@@ -40,7 +41,6 @@ public class EmailEngine {
      */
     public static void addMailPool(String toEmail, Map<String, String> map, EmailFormEnum emailForm) {
         logger.info("异步发送邮件：" + toEmail);
-        ExecutorService executorService = Executors.newSingleThreadExecutor();
         executorService.submit(() -> {
             EmailHandle.switchMail(toEmail,map.get("title"), map.get("content"), emailForm);
             logger.info("异步发送邮件结束：" + toEmail);
@@ -49,7 +49,6 @@ public class EmailEngine {
 
     public static void addMailPool(EmailEntity reviceEntity, EmailFormEnum emailForm) {
         logger.info("异步发送邮件：" + reviceEntity.getToMail());
-        ExecutorService executorService = Executors.newSingleThreadExecutor();
         executorService.submit(() -> {
             EmailHandle.switchMail(reviceEntity, emailForm);
             logger.info("异步发送邮件结束：" + reviceEntity.getToMail());
