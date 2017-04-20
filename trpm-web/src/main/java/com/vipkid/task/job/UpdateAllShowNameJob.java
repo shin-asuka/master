@@ -124,7 +124,7 @@ public class UpdateAllShowNameJob {
                     int duplicates;// showName 重复的标记
                     int n = 2;// 添加随机大写字母的个数
 
-                    List<String> codeList = Lists.newArrayList();
+                    List<String> randomCodeList = Lists.newArrayList();
                     int num = 0;
                     do {
                         if (StringUtils.isNotBlank(showName)) {
@@ -143,8 +143,8 @@ public class UpdateAllShowNameJob {
                             randomCode += (char) (Math.random() * 26 + 'A');
                         }
 
-                        codeList.add(randomCode);
-                        if (codeList.containsAll(RANDOM_CODES)) {
+                        randomCodeList.add(randomCode);
+                        if (randomCodeList.containsAll(RANDOM_CODES)) {
                             ++n;
                         }
                         currentShowName += randomCode;
