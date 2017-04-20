@@ -1,13 +1,9 @@
 package com.vipkid.recruitment.basicinfo.service;
 
 import java.sql.Timestamp;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -78,7 +74,7 @@ public class TeachingExperienceService {
         teachingExperience.setTimePeriodStart(new Timestamp(bean.getTimePeriodStart()));
         teachingExperience.setTimePeriodEnd(new Timestamp(bean.getTimePeriodEnd()));
         teachingExperience.setHoursWeek(bean.getHoursPerWeek());
-        teachingExperience.setJobDescription(HtmlUtils.htmlEscape(bean.getJobDescription()));
+        teachingExperience.setJobDescription(HtmlUtils.htmlEscape(StringUtil.filterEmoji(bean.getJobDescription())));
         
         teachingExperience.setUpdateId(user.getId());
         teachingExperience.setUpdateTime(new Timestamp(System.currentTimeMillis()));
@@ -125,6 +121,4 @@ public class TeachingExperienceService {
         }
         return list;
     }
-
-
 }
