@@ -79,7 +79,9 @@ public class UpdateAllShowNameJob {
 
     private void doUpdateFullNameEqualsShowNameUsers() {
         int totalPage = getTotalPage();
-        for (int curPage = 1; curPage <= totalPage; curPage++) {
+        logger.info("Find fullname equals showname users total page: {}", totalPage);
+
+        for (int curPage = 1; curPage <= totalPage;) {
             List<User> userList = userDao.findFullNameEqualsShowNameUsers((curPage - 1) * LINE_PER_PAGE, LINE_PER_PAGE);
             logger.info("Find fullname equals showname users at page: {}", curPage);
 
@@ -93,7 +95,9 @@ public class UpdateAllShowNameJob {
 
     private void doUpdateAllShowNameDuplicateUsers() {
         int totalPage = getTotalPage();
-        for (int curPage = 1; curPage <= totalPage; curPage++) {
+        logger.info("Find all showname duplicate users total page: {}", totalPage);
+
+        for (int curPage = 1; curPage <= totalPage;) {
             List<User> userList = userDao.findAllShowNameDuplicateUsers((curPage - 1) * LINE_PER_PAGE, LINE_PER_PAGE);
             logger.info("Find all showname duplicate users at page: {}", curPage);
 
