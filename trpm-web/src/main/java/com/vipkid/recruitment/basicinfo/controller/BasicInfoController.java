@@ -250,11 +250,12 @@ public class BasicInfoController extends RestfulController{
     @RequestMapping("emoji")
     public String filterMoji(@RequestParam("emojiStr") String emojiStr){
 
-
+        String str = teachingExperienceService.filterEmoji(emojiStr);
         System.out.println("======方法二= 替换======");
-        System.out.println(teachingExperienceService.filterEmoji(emojiStr));
-
-        return teachingExperienceService.filterEmoji(emojiStr);
+        System.out.println(str);
+        logger.info("=================");
+        logger.info(str);
+        return str;
     }
 
 
