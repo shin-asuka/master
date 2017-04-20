@@ -19,7 +19,10 @@ public enum TeacherPortalCodeEnum {
 	ORDER_NOT_EXISTS("TP30003", "the item does not exists"),
 
 	//订单已经存在
-	ORDER_ALREADY_EXISTED("TP30004", "the item already existed");
+	ORDER_ALREADY_EXISTED("TP30004", "the item already existed"),
+
+	//重复提交
+	SUBMIT_REPEATED("TIS40008", "submit repeated");
 
 	private String code;
 	private String msg;

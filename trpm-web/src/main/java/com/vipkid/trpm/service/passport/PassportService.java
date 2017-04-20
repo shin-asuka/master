@@ -71,6 +71,8 @@ public class PassportService {
 
     private static final String SIGN_UP_KEY = "vipkid_sign_up:";
 
+    private static final String SIGN_UP_USERNAME_KEY = "vipkid_sign_up_username:";
+
     /**
      * 通过id查询Teacher
      * 
@@ -130,7 +132,14 @@ public class PassportService {
     public Map<String, Object> saveSignUp(RegisterDto bean) {
         Map<String, Object> resultMap = Maps.newHashMap();
         String lockKey = "";
+        String usernameKey = "";
+        String email = bean.getEmail();
         try {
+            usernameKey = tryUserNameLock(email);
+            if(StringUtils.isBlank(usernameKey)){
+                logger.info("老师注册, 该用户还没注册完成，不能重复提交 . email="+email);
+                return ReturnMapUtils.returnFail(ApplicationConstant.AjaxCode.USER_EXITS);
+            }
             User user = this.userDao.findByUsername(bean.getEmail());
             // 1.是否存在
             if (user != null) {
@@ -213,6 +222,7 @@ public class PassportService {
             logger.error("老师注册发生异常，email="+bean.getEmail(), e);
             throw new ServiceException(TeacherPortalCodeEnum.SYS_FAIL.getCode(), TeacherPortalCodeEnum.SYS_FAIL.getMsg());
         } finally {
+            releaseLock(usernameKey);
             releaseLock(lockKey);
         }
         return ReturnMapUtils.returnSuccess(resultMap);
@@ -313,7 +323,7 @@ public class PassportService {
      * 更新用户密码
      * 
      * @Author:ALong (ZengWeiLong)
-     * @param password
+     * @param
      * @return int
      * @date 2016年3月3日
      */
@@ -551,11 +561,21 @@ public class PassportService {
 		return value;
 	}
 
+    private String tryUserNameLock(String username) {
+        String key = SIGN_UP_USERNAME_KEY + username;
+        boolean bl = redisProxy.lock(key, SIGN_UP_TIME_OUT);
+        if (!bl) {
+            logger.error("老师注册，username已存在redis，不能重复提交.key="+key);
+            return null;
+        }
+        return key;
+    }
+
     private String trySerialNumberLock(String serialNumber){
         String key = SIGN_UP_KEY + serialNumber;
         boolean bl = redisProxy.lock(key, SIGN_UP_TIME_OUT);
         if (!bl) {
-            logger.error("老师注册，serialNumber重复,上次操作时间为:" + redisProxy.get(key));
+            logger.error("老师注册，serialNumber已存在redis，请稍后再试.key="+key);
             return null;
         }
         return key;
