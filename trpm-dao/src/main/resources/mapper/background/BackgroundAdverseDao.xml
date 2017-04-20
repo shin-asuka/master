@@ -52,7 +52,7 @@
       </foreach>
     </insert>
 
-    <select id="findByScreeningIdTopOne" resultType="com.vipkid.trpm.entity.BackgroundAdverse">
+    <select id="findByScreeningIdTopOne" resultMap="BaseResultMap">
         SELECT
         <include refid="backgroundScreeningColumns"/>
         FROM bg_sterling_adverse a
