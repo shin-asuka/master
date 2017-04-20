@@ -1,6 +1,7 @@
 package com.vipkid.recruitment.basicinfo.service;
 
 import java.sql.Timestamp;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -21,6 +22,8 @@ import com.vipkid.recruitment.utils.ReturnMapUtils;
 import com.vipkid.rest.dto.TeachingExperienceDto;
 import com.vipkid.trpm.entity.User;
 import com.vipkid.trpm.util.DateUtils;
+import com.vipkid.trpm.util.StringUtil;
+
 
 /**
  * 教师教育经验 
@@ -46,7 +49,7 @@ public class TeachingExperienceService {
         teachingExperience.setTimePeriodStart(new Timestamp(bean.getTimePeriodStart()));
         teachingExperience.setTimePeriodEnd(new Timestamp(bean.getTimePeriodEnd()));
         teachingExperience.setHoursWeek(bean.getHoursPerWeek());
-        teachingExperience.setJobDescription(HtmlUtils.htmlEscape(bean.getJobDescription()));
+        teachingExperience.setJobDescription(HtmlUtils.htmlEscape(StringUtil.filterEmoji(bean.getJobDescription())));
         teachingExperience.setCreateId(user.getId());
         teachingExperience.setCreateTime(new Timestamp(System.currentTimeMillis()));
         teachingExperience.setUpdateId(user.getId());
@@ -123,23 +126,5 @@ public class TeachingExperienceService {
         return list;
     }
 
-    /**
-     * 过滤大部分iOS与android emoji表情符号
-     * @author pankui
-     * */
-    public String filterEmoji(String source) {
 
-        if (StringUtils.isBlank(source)){
-            return null;
-        }
-
-        Pattern emoji = Pattern.compile ("[\ud83c\udc00-\ud83c\udfff]|[\ud83d\udc00-\ud83d\udfff]|[\u2600-\u27ff]",Pattern.UNICODE_CASE | Pattern . CASE_INSENSITIVE ) ;
-        Matcher emojiMatcher = emoji.matcher(source);
-        if ( emojiMatcher.find())
-        {
-            source = emojiMatcher.replaceAll("");
-            return source ;
-        }
-        return source;
-    }
 }

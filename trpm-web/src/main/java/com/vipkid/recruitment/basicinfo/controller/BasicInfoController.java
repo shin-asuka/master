@@ -245,20 +245,4 @@ public class BasicInfoController extends RestfulController{
             return ReturnMapUtils.returnFail(e.getMessage(), e);
         }
     }
-
-    /**测试过滤 emoji表情*/
-    @RequestMapping("emoji")
-    public String filterMoji(@RequestParam("emojiStr") String emojiStr){
-
-        String str = teachingExperienceService.filterEmoji(emojiStr);
-        System.out.println("======方法二= 替换======");
-        System.out.println(str);
-        logger.info("=================");
-        logger.info(str);
-        return str;
-    }
-
-
-
-
 }
