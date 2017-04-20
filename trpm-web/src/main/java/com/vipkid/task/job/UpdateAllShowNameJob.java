@@ -112,8 +112,6 @@ public class UpdateAllShowNameJob {
 
     private void doUpdateShowName(List<User> userList) {
         if (CollectionUtils.isNotEmpty(userList)) {
-            List<User> batchList = Lists.newArrayList();
-
             for (User user : userList) {
                 if (null == user) {
                     continue;
@@ -168,14 +166,11 @@ public class UpdateAllShowNameJob {
                             ++n;
                         }
                     } while (duplicates > 0);
-
+                    logger.info("Update teacher :{} showName:{}", user.getId(), currentShowName);
                     user.setName(currentShowName);
-                    batchList.add(user);
+                    userDao.update(user);
                 }
             }
-
-            logger.info("Batch update teachers number: {}", batchList.size());
-            userDao.updateBatch(batchList);
         }
     }
 
