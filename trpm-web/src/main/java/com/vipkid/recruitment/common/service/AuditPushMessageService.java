@@ -65,7 +65,7 @@ public class AuditPushMessageService {
         PushMessage message = new PushMessage();
         message.setTitle(title);
         message.setMessage(content);
-        message.setOperator("push");
+        message.setOperator("system_teacher-portal");
         message.setSource("signup_progress_remind");
         message.setUserId(teacherId);
 
