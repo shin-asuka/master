@@ -151,7 +151,6 @@
 	<update id="updateDao">
 		UPDATE user
 		<trim prefix="SET" prefixOverrides=",">
-			<if test="id!=0">,id = #{id}</if>
 			<if test="dtype!=null">,dtype = #{dtype}</if>
 			<if test="createDateTime!=null">,create_date_time = #{createDateTime}</if>
 			<if test="gender!=null">,gender = #{gender}</if>

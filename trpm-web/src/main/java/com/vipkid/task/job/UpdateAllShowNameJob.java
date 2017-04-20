@@ -167,8 +167,10 @@ public class UpdateAllShowNameJob {
                         }
                     } while (duplicates > 0);
                     logger.info("Update teacher :{} showName:{}", user.getId(), currentShowName);
-                    user.setName(currentShowName);
-                    userDao.update(user);
+                    User currentUser = new User();
+                    currentUser.setId(user.getId());
+                    currentUser.setName(currentShowName);
+                    userDao.update(currentUser);
                 }
             }
         }
