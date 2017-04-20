@@ -3,7 +3,10 @@ package com.vipkid.recruitment.basicinfo.service;
 import java.sql.Timestamp;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -118,5 +121,25 @@ public class TeachingExperienceService {
             te.setJobDescription(HtmlUtils.htmlUnescape(te.getJobDescription()));
         }
         return list;
+    }
+
+    /**
+     * 过滤大部分iOS与android emoji表情符号
+     * @author pankui
+     * */
+    public String filterEmoji(String source) {
+
+        if (StringUtils.isBlank(source)){
+            return null;
+        }
+
+        Pattern emoji = Pattern.compile ("[\ud83c\udc00-\ud83c\udfff]|[\ud83d\udc00-\ud83d\udfff]|[\u2600-\u27ff]",Pattern.UNICODE_CASE | Pattern . CASE_INSENSITIVE ) ;
+        Matcher emojiMatcher = emoji.matcher(source);
+        if ( emojiMatcher.find())
+        {
+            source = emojiMatcher.replaceAll("");
+            return source ;
+        }
+        return source;
     }
 }

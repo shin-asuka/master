@@ -2,11 +2,15 @@ package com.vipkid.recruitment.basicinfo.controller;
 
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.ibatis.annotations.Param;
 import org.community.tools.JsonTools;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,6 +19,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.google.api.client.util.Maps;
@@ -240,5 +245,19 @@ public class BasicInfoController extends RestfulController{
             return ReturnMapUtils.returnFail(e.getMessage(), e);
         }
     }
+
+    /**测试过滤 emoji表情*/
+    @RequestMapping("emoji")
+    public String filterMoji(@RequestParam("emojiStr") String emojiStr){
+
+
+        System.out.println("======方法二= 替换======");
+        System.out.println(teachingExperienceService.filterEmoji(emojiStr));
+
+        return teachingExperienceService.filterEmoji(emojiStr);
+    }
+
+
+
 
 }
