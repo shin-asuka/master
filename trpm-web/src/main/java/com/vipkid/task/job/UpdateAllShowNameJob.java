@@ -1,7 +1,9 @@
 package com.vipkid.task.job;
 
 import com.google.api.client.util.Lists;
+import com.vipkid.trpm.dao.TeacherDao;
 import com.vipkid.trpm.dao.UserDao;
+import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.entity.User;
 import com.vipkid.vschedule.client.common.Vschedule;
 import com.vipkid.vschedule.client.schedule.JobContext;
@@ -62,6 +64,9 @@ public class UpdateAllShowNameJob {
     @Autowired
     private UserDao userDao;
 
+    @Autowired
+    private TeacherDao teacherDao;
+
     @Vschedule
     public void doJob(JobContext jobContext) {
         if (StringUtils.isNotBlank(jobContext.getData())) {
@@ -89,7 +94,37 @@ public class UpdateAllShowNameJob {
                 break;
             }
             logger.info("Find fullname equals showname users number: {}", userList.size());
-            doUpdateShowName(userList);
+            doSetShowNameEuqalsFirstName(userList);
+        }
+    }
+
+    private void doSetShowNameEuqalsFirstName(List<User> userList) {
+        if (CollectionUtils.isNotEmpty(userList)) {
+            List<User> batchList = Lists.newArrayList();
+
+            for (User user : userList) {
+                if (null == user) {
+                    continue;
+                }
+
+                Teacher teacher = teacherDao.findById(user.getId());
+                if (null != teacher) {
+                    String fullname = teacher.getRealName();
+
+                    if (StringUtils.isNotBlank(fullname)) {
+                        String[] names = fullname.split(" ");
+                        String showname = names[0];
+                        logger.info("Teacher: {}, fullname: {}, new showname: {}", user.getId(), fullname, showname);
+
+                        User currentUser = new User();
+                        currentUser.setId(user.getId());
+                        currentUser.setName(showname);
+                        batchList.add(currentUser);
+                    }
+                }
+            }
+
+            userDao.updateBatch(batchList);
         }
     }
 
