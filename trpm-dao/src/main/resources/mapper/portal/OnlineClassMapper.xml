@@ -822,9 +822,4 @@
 					o.scheduled_date_time
 			) a
 	</select>
-
-	<select id="findOnlineClassType" resultType="java.lang.Integer">
-		SELECT class_type FROM online_class WHERE id=#{id}
-	</select>
-
 </mapper>

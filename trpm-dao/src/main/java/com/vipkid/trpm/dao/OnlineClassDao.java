@@ -490,16 +490,4 @@ public class OnlineClassDao extends MapperDaoTemplate<OnlineClass> {
 	public Integer countScheduledByParam(Map<String,Object> paramMap){
 		return selectCount("countScheduledByParam",paramMap);
 	}
-
-	/**
-	 * 根据 online class id 查询 ClassType
-	 * @param  OnlineClsssId onlineClassId
-	 * */
-	public Integer findOnlineClassTypeById(long OnlineClsssId){
-
-			OnlineClass onlineClass = new OnlineClass();
-			onlineClass.setId(OnlineClsssId);
-		 	OnlineClass  result = selectOne(onlineClass,"findOnlineClassType");
-		 	return  result.getClassType();
-	}
 }

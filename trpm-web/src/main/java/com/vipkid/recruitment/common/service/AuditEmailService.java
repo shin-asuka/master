@@ -82,7 +82,7 @@ public class AuditEmailService {
 
     private static String INTERVIEW_REAPPLY_TITLE = "InterviewNoRescheduleTitle.html";
     private static String INTERVIEW_REAPPLY_CONTENT = "InterviewNoReschedule.html";
-    private static String INTERVIEW_REAPPLY_QUICK_TITLE = "InterviewNoRescheduleQuickTitle.html";
+    private static String INTERVIEW_REAPPLY_TITLE_QUICK = "InterviewNoRescheduleQuickTitle.html";
     private static String INTERVIEW_REAPPLY_CONTENT_QUICK = "InterviewNoRescheduleQuick.html";
 
     private static String CONTRACTINFO_PASS_TITLE = "ContractInfoPassTitle.html";
@@ -285,15 +285,15 @@ public class AuditEmailService {
                 TeacherApplication teacherApplication = teacherApplicationList.get(0);
                 long onlineClassId = teacherApplication.getOnlineClassId();
 
-                if (onlineClassDao.findOnlineClassTypeById(onlineClassId) == 3){
+                if (onlineClassDao.findById(onlineClassId).getClassType() == 3){
                     paramsMap.put("commnets",teacherApplication.getComments());
                     if (null == teacherApplication.getComments()){
                         paramsMap.put("commnets","");
                     }
 
                     logger.info("【EMAIL.sendInterviewReapply】toAddMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",
-                            teacher.getRealName(),teacher.getEmail(),INTERVIEW_REAPPLY_QUICK_TITLE, INTERVIEW_REAPPLY_CONTENT_QUICK);
-                    Map<String, String> emailMap = TemplateUtils.readTemplate(INTERVIEW_REAPPLY_CONTENT_QUICK, paramsMap, INTERVIEW_REAPPLY_QUICK_TITLE);
+                            teacher.getRealName(),teacher.getEmail(),INTERVIEW_REAPPLY_TITLE_QUICK, INTERVIEW_REAPPLY_CONTENT_QUICK);
+                    Map<String, String> emailMap = TemplateUtils.readTemplate(INTERVIEW_REAPPLY_CONTENT_QUICK, paramsMap, INTERVIEW_REAPPLY_TITLE_QUICK);
                     EmailEngine.addMailPool(teacher.getEmail(), emailMap, EmailConfig.EmailFormEnum.TEACHVIP);
                     return ReturnMapUtils.returnSuccess();
                 }
