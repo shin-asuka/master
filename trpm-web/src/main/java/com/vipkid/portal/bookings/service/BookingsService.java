@@ -586,6 +586,7 @@ public class BookingsService {
      * @param teacher
      * @return
      */
+    @Slave
     public Map<String, Object> doSchedule(ScheduledRequest scheduledRequest, Teacher teacher) {
         String timezone = teacher.getTimezone();
         long teacherId = teacher.getId();
