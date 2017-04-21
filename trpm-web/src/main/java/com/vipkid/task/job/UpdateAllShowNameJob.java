@@ -114,6 +114,15 @@ public class UpdateAllShowNameJob {
                     if (StringUtils.isNotBlank(fullname)) {
                         String[] names = fullname.split(" ");
                         String showname = names[0];
+
+                        if (fullname.equals(showname)) {
+                            showname += StringUtils.SPACE;
+
+                            for (int i = 0; i < 2; i++) {
+                                showname += (char) (Math.random() * 26 + 'A');
+                            }
+                        }
+
                         logger.info("Teacher: {}, fullname: {}, new showname: {}", user.getId(), fullname, showname);
 
                         User currentUser = new User();
