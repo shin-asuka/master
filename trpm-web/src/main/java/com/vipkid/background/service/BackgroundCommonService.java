@@ -52,14 +52,14 @@ public class BackgroundCommonService {
     public BackgroundStatusDto getUsaBackgroundStatus(Teacher teacher){
         BackgroundStatusDto backgroundStatusDto = new BackgroundStatusDto();
 
-        boolean needBackgroundCheck = needBackgroundCheck(teacher.getId());
+//        boolean needBackgroundCheck = needBackgroundCheck(teacher.getId());
         //不在灰度列表中
-        if (!needBackgroundCheck){
-            backgroundStatusDto.setNeedBackgroundCheck(needBackgroundCheck);
-            backgroundStatusDto.setPhase("");
-            backgroundStatusDto.setResult("");
-            return backgroundStatusDto;
-        }
+//        if (!needBackgroundCheck){
+//            backgroundStatusDto.setNeedBackgroundCheck(needBackgroundCheck);
+//            backgroundStatusDto.setPhase("");
+//            backgroundStatusDto.setResult("");
+//            return backgroundStatusDto;
+//        }
 
         Calendar current = Calendar.getInstance();
         BackgroundScreening backgroundScreening = backgroundScreeningDao.findByTeacherIdTopOne(teacher.getId());
