@@ -286,9 +286,9 @@ public class AuditEmailService {
                 long onlineClassId = teacherApplication.getOnlineClassId();
 
                 if (onlineClassDao.findById(onlineClassId).getClassType() == 3){
-                    paramsMap.put("commnets",teacherApplication.getComments());
+                    paramsMap.put("comments",teacherApplication.getComments());
                     if (null == teacherApplication.getComments()){
-                        paramsMap.put("commnets","");
+                        paramsMap.put("comments","");
                     }
 
                     logger.info("【EMAIL.sendInterviewReapply】toAddMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",
