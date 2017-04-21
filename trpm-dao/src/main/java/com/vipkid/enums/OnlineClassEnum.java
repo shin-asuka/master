@@ -44,7 +44,9 @@ public class OnlineClassEnum {
         
         PRACTICUM (1),
         
-        INTERVIEW (2);
+        INTERVIEW (2),
+
+        QUICK_INTERVIEW (3);
         
         private Integer val;   
         
