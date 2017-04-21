@@ -7,6 +7,7 @@ import com.google.api.client.util.Maps;
 import com.vipkid.email.EmailEngine;
 import com.vipkid.email.handle.EmailConfig;
 import com.vipkid.email.template.TemplateUtils;
+import com.vipkid.enums.OnlineClassEnum;
 import com.vipkid.enums.TeacherApplicationEnum;
 import com.vipkid.http.utils.JsonUtils;
 import com.vipkid.recruitment.dao.TeacherApplicationDao;
@@ -18,9 +19,9 @@ import com.vipkid.recruitment.utils.ReturnMapUtils;
 import com.vipkid.trpm.dao.OnlineClassDao;
 import com.vipkid.trpm.dao.TeacherDao;
 import com.vipkid.trpm.dao.TeacherPeCommentsDao;
+import com.vipkid.trpm.entity.OnlineClass;
 import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.entity.TeacherPeComments;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -82,8 +83,8 @@ public class AuditEmailService {
 
     private static String INTERVIEW_REAPPLY_TITLE = "InterviewNoRescheduleTitle.html";
     private static String INTERVIEW_REAPPLY_CONTENT = "InterviewNoReschedule.html";
-    private static String INTERVIEW_REAPPLY_TITLE_QUICK = "InterviewNoRescheduleQuickTitle.html";
-    private static String INTERVIEW_REAPPLY_CONTENT_QUICK = "InterviewNoRescheduleQuick.html";
+    private static String INTERVIEW_REAPPLY_QUICK_TITLE = "InterviewNoRescheduleQuickTitle.html";
+    private static String INTERVIEW_REAPPLY_QUICK_CONTENT = "InterviewNoRescheduleQuick.html";
 
     private static String CONTRACTINFO_PASS_TITLE = "ContractInfoPassTitle.html";
     private static String CONTRACTINFO_PASS_CONTENT = "ContractInfoPass.html";
@@ -281,24 +282,26 @@ public class AuditEmailService {
 
             /*如果 classType == 3  发此封邮件模板*/
             List<TeacherApplication> teacherApplicationList =  teacherApplicationDao.findCurrentApplication(teacher.getId());
-            if (CollectionUtils.isNotEmpty(teacherApplicationList) && teacherApplicationList.size() > 0){
+            if (CollectionUtils.isNotEmpty(teacherApplicationList)) {
                 TeacherApplication teacherApplication = teacherApplicationList.get(0);
-                long onlineClassId = teacherApplication.getOnlineClassId();
+                if (teacherApplication != null && teacherApplication.getOnlineClassId() != 0) {
+                    OnlineClass onlineClass = onlineClassDao.findById(teacherApplication.getOnlineClassId());
+                    if (onlineClass != null && onlineClass.getClassType() == OnlineClassEnum.ClassType.QUICK_INTERVIEW.val()) {
 
-                if (onlineClassDao.findById(onlineClassId).getClassType() == 3){
-                    paramsMap.put("comments",teacherApplication.getComments());
-                    if (null == teacherApplication.getComments()){
-                        paramsMap.put("comments","");
+                        String comments = teacherApplication.getComments()==null ? "" : teacherApplication.getComments();
+                        paramsMap.put("comments", comments);
+
+                        logger.info("【EMAIL.sendQuickInterviewReapply】toAddMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",
+                                teacher.getRealName(), teacher.getEmail(), INTERVIEW_REAPPLY_QUICK_TITLE, INTERVIEW_REAPPLY_QUICK_CONTENT);
+                        Map<String, String> emailMap = TemplateUtils.readTemplate(INTERVIEW_REAPPLY_QUICK_CONTENT, paramsMap, INTERVIEW_REAPPLY_QUICK_TITLE);
+                        EmailEngine.addMailPool(teacher.getEmail(), emailMap, EmailConfig.EmailFormEnum.TEACHVIP);
+                        logger.info("【EMAIL.sendQuickInterviewReapply】addedMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",
+                                teacher.getRealName(),teacher.getEmail(), INTERVIEW_REAPPLY_QUICK_TITLE, INTERVIEW_REAPPLY_QUICK_CONTENT);
+                        return ReturnMapUtils.returnSuccess();
                     }
-
-                    logger.info("【EMAIL.sendInterviewReapply】toAddMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",
-                            teacher.getRealName(),teacher.getEmail(),INTERVIEW_REAPPLY_TITLE_QUICK, INTERVIEW_REAPPLY_CONTENT_QUICK);
-                    Map<String, String> emailMap = TemplateUtils.readTemplate(INTERVIEW_REAPPLY_CONTENT_QUICK, paramsMap, INTERVIEW_REAPPLY_TITLE_QUICK);
-                    EmailEngine.addMailPool(teacher.getEmail(), emailMap, EmailConfig.EmailFormEnum.TEACHVIP);
-                    return ReturnMapUtils.returnSuccess();
                 }
             }
-            
+
             logger.info("【EMAIL.sendInterviewReapply】toAddMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",
                     teacher.getRealName(),teacher.getEmail(),INTERVIEW_REAPPLY_TITLE, INTERVIEW_REAPPLY_CONTENT);
             Map<String, String> emailMap = TemplateUtils.readTemplate(INTERVIEW_REAPPLY_CONTENT, paramsMap, INTERVIEW_REAPPLY_TITLE);
