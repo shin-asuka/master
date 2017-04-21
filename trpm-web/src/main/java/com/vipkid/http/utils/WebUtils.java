@@ -5,10 +5,13 @@ package com.vipkid.http.utils;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.vipkid.enums.OnlineClassEnum;
+import com.vipkid.trpm.util.IpUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpEntity;
@@ -195,7 +198,7 @@ public class WebUtils {
     }
 
     public static String postNameValuePair(String url, Object object) {
-//    	JSONObject json = JsonUtils.toJSONObject(object);
+
         String json = JsonUtils.toJSONString(object);
 
         logger.info("Post data,url = {},params = {}", url, json);
@@ -269,7 +272,5 @@ public class WebUtils {
         }
         return null;
     }
-
-
 
 }

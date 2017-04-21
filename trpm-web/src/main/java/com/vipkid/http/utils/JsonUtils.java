@@ -192,8 +192,12 @@ public class JsonUtils {
 			map.put(key,jsonNode.asText());
 		}else if(jsonNode.isNumber()){
 			map.put(key,jsonNode.numberValue());
-		}else if(jsonNode.isObject()){
-			map.putAll(parseJsonToMap(jsonNode,key));
+		}else if(jsonNode.isBoolean()){
+			map.put(key,jsonNode.booleanValue());
+		}else if(jsonNode.isLong()){
+			map.put(key,jsonNode.longValue());
+		}else if(jsonNode.isObject()) {
+			map.putAll(parseJsonToMap(jsonNode, key));
 		}
 	}
 
