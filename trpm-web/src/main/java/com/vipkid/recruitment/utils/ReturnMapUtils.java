@@ -61,9 +61,12 @@ public class ReturnMapUtils {
     public static Map<String, Object> returnFail(String info, String jsonParam,Throwable t) {        
 
         String message = info + "-logger["+jsonParam+"]";
-        
-        if (null != t) {
-            logger.error(message, t);
+
+        /*业务的异常，给屏蔽*/
+        if (null != t && t instanceof  IllegalArgumentException) {
+            logger.warn(message, t);
+        }else if (null != t){
+            logger.error(message,t);
         } else {
             //错误消息栈
             logger.warn(message);
