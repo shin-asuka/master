@@ -1,9 +1,10 @@
 package com.vipkid.trpm.util;
 
 /**
- * Created by pankui on 2017-04-20.
+ * Created by pankui on 2017-04-21.
  */
-public class StringUtil {
+public class EmojiUtils {
+
     /**
      * 过滤大部分iOS与android emoji表情符号
      * @author pankui

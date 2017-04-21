@@ -18,7 +18,7 @@ import com.vipkid.recruitment.utils.ReturnMapUtils;
 import com.vipkid.rest.dto.TeachingExperienceDto;
 import com.vipkid.trpm.entity.User;
 import com.vipkid.trpm.util.DateUtils;
-import com.vipkid.trpm.util.StringUtil;
+import com.vipkid.trpm.util.EmojiUtils;
 
 
 /**
@@ -45,7 +45,7 @@ public class TeachingExperienceService {
         teachingExperience.setTimePeriodStart(new Timestamp(bean.getTimePeriodStart()));
         teachingExperience.setTimePeriodEnd(new Timestamp(bean.getTimePeriodEnd()));
         teachingExperience.setHoursWeek(bean.getHoursPerWeek());
-        teachingExperience.setJobDescription(HtmlUtils.htmlEscape(StringUtil.filterEmoji(bean.getJobDescription())));
+        teachingExperience.setJobDescription(HtmlUtils.htmlEscape(EmojiUtils.filterEmoji(bean.getJobDescription())));
         teachingExperience.setCreateId(user.getId());
         teachingExperience.setCreateTime(new Timestamp(System.currentTimeMillis()));
         teachingExperience.setUpdateId(user.getId());
@@ -74,7 +74,7 @@ public class TeachingExperienceService {
         teachingExperience.setTimePeriodStart(new Timestamp(bean.getTimePeriodStart()));
         teachingExperience.setTimePeriodEnd(new Timestamp(bean.getTimePeriodEnd()));
         teachingExperience.setHoursWeek(bean.getHoursPerWeek());
-        teachingExperience.setJobDescription(HtmlUtils.htmlEscape(StringUtil.filterEmoji(bean.getJobDescription())));
+        teachingExperience.setJobDescription(HtmlUtils.htmlEscape(EmojiUtils.filterEmoji(bean.getJobDescription())));
         
         teachingExperience.setUpdateId(user.getId());
         teachingExperience.setUpdateTime(new Timestamp(System.currentTimeMillis()));
