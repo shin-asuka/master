@@ -599,7 +599,7 @@
 			<properties>
 				<env>a11</env>
 				<masterAddressOfMysql>54.222.199.188:3301</masterAddressOfMysql>
-				<slaveAddressOfMysql>54.222.199.188:3301</slaveAddressOfMysql>
+				<slaveAddressOfMysql>54.222.199.188:3302</slaveAddressOfMysql>
 				<targetHost>10.1.5.21</targetHost>
 				<datasource>local</datasource>
 			</properties>
