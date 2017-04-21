@@ -1,5 +1,7 @@
 package com.vipkid.trpm.util;
 
+import org.apache.commons.lang3.StringUtils;
+
 /**
  * Created by pankui on 2017-04-21.
  */
@@ -27,5 +29,24 @@ public class EmojiUtils {
         }
 
         return sb.toString();
+    }
+
+    /**
+     * 判断emoji表情是否存在
+     * @param  input 字符串
+     * */
+    public static boolean isExistEmoji(String input) {
+        if (StringUtils.isBlank(input)){
+            return false;
+        }
+
+        for (int i = 0; i < input.length(); i++) {
+            if (i < (input.length() - 1)) {
+                if (Character.isSurrogatePair(input.charAt(i), input.charAt(i + 1))) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }
