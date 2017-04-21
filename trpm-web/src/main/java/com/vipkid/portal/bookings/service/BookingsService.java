@@ -1140,7 +1140,7 @@ public class BookingsService {
      * @param teacherId
      * @return
      */
-    public boolean cancelClassSuccess(long onlineClassId, long teacherId,String cancelReason) {
+    public boolean cancelClassSuccess(Long onlineClassId, Long teacherId,String cancelReason) {
         boolean flag = false;
        String finishType =getFinishType(onlineClassId,teacherId);
         if(StringUtils.isBlank(finishType)){
