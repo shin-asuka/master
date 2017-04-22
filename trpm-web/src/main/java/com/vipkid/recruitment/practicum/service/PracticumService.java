@@ -16,6 +16,7 @@ import com.vipkid.recruitment.dao.TeacherLockLogDao;
 import com.vipkid.recruitment.entity.TeacherApplication;
 import com.vipkid.recruitment.practicum.PracticumConstant;
 import com.vipkid.recruitment.utils.ReturnMapUtils;
+import com.vipkid.rest.exception.ServiceException;
 import com.vipkid.task.service.SendMailAtDayTimeService;
 import com.vipkid.trpm.dao.*;
 import com.vipkid.trpm.entity.*;
@@ -266,7 +267,7 @@ public class PracticumService {
         Map<String,Object> result = OnlineClassProxy.doCancelRecruitement(teacher.getId(), onlineClass.getId(), ClassType.PRACTICUM);
         if(ReturnMapUtils.isFail(result)){
             //一旦失败，抛出异常回滚
-            throw new RuntimeException(""+result.get("info"));
+            throw new ServiceException(""+result.get("info"));
         }
         //发送提醒邮件
         EmailUtils.sendEmail4Recruitment(teacher,"PracticumReapplyTitle.html","PracticumReapply.html");

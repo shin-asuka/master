@@ -18,6 +18,7 @@ import com.vipkid.recruitment.entity.InterviewerClassCount;
 import com.vipkid.recruitment.entity.TeacherApplication;
 import com.vipkid.recruitment.interview.InterviewConstant;
 import com.vipkid.recruitment.utils.ReturnMapUtils;
+import com.vipkid.rest.exception.ServiceException;
 import com.vipkid.task.service.SendMailAtDayTimeService;
 import com.vipkid.trpm.dao.*;
 import com.vipkid.trpm.entity.*;
@@ -402,7 +403,7 @@ public class InterviewService {
         Map<String,Object> result = OnlineClassProxy.doCancelRecruitement(teacher.getId(), onlineClass.getId(), ClassType.TEACHER_RECRUITMENT);
         if(ReturnMapUtils.isFail(result)){
             //一旦失败，抛出异常回滚
-            throw new RuntimeException(""+result.get("info"));
+            throw new ServiceException(""+result.get("info"));
         }
         return result;
     }
