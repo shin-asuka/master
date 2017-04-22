@@ -90,6 +90,8 @@ public class UpdateAllShowNameJob {
                 logger.info("Do update all showname duplicate other users...");
                 doUpdateAllShowNameDuplicateUsers(null);
             }
+        } else {
+            logger.info("Not match anything...");
         }
     }
 
