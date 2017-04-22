@@ -3,7 +3,6 @@ package com.vipkid.task.job;
 import com.google.api.client.util.Lists;
 import com.vipkid.trpm.dao.TeacherDao;
 import com.vipkid.trpm.dao.UserDao;
-import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.entity.User;
 import com.vipkid.vschedule.client.common.Vschedule;
 import com.vipkid.vschedule.client.schedule.JobContext;
@@ -30,6 +29,8 @@ public class UpdateAllShowNameJob {
     private static final List<String> RANDOM_CODES = Lists.newArrayList();
 
     private static final List<String> SENSITIVE_WORDS = Lists.newArrayList();
+
+    private static final String REGULAR = "REGULAR";
 
     static {
         for (int i = 'A'; i < 'A' + 26; i++) {
@@ -69,80 +70,116 @@ public class UpdateAllShowNameJob {
 
     @Vschedule
     public void doJob(JobContext jobContext) {
-        if (StringUtils.isNotBlank(jobContext.getData())) {
-            if (jobContext.getData().equalsIgnoreCase("All")) {
-                logger.info("Do update all showname duplicate users...");
-                doUpdateAllShowNameDuplicateUsers();
-            } else if (jobContext.getData().equalsIgnoreCase("FullName")) {
-                logger.info("Do update fullname equals showname users...");
-                doUpdateFullNameEqualsShowNameUsers();
+        if (null != jobContext.getData()) {
+            if (jobContext.getData().equalsIgnoreCase("FullnameRegular")) {
+                logger.info("Do update fullname equals showname regular users...");
+                doUpdateFullNameEqualsShowNameUsers(REGULAR);
             }
-        } else {
-            logger.info("Do nothing...");
+
+            if (jobContext.getData().equalsIgnoreCase("FullnameOther")) {
+                logger.info("Do update fullname equals showname other users...");
+                doUpdateFullNameEqualsShowNameUsers(null);
+            }
+
+            if (jobContext.getData().equalsIgnoreCase("ShownameRegular")) {
+                logger.info("Do update all showname duplicate regular users...");
+                doUpdateAllShowNameDuplicateUsers(REGULAR);
+            }
+
+            if (jobContext.getData().equalsIgnoreCase("ShownameOther")) {
+                logger.info("Do update all showname duplicate other users...");
+                doUpdateAllShowNameDuplicateUsers(null);
+            }
         }
     }
 
-    private void doUpdateFullNameEqualsShowNameUsers() {
+    private void doUpdateFullNameEqualsShowNameUsers(String lifeCycle) {
         int totalPage = getTotalPage();
         logger.info("Find fullname equals showname users total page: {}", totalPage);
 
         for (int curPage = 1; curPage <= totalPage; curPage++) {
-            List<User> userList = userDao.findFullNameEqualsShowNameUsers(0, LINE_PER_PAGE);
+            List<User> userList = userDao.findFullNameEqualsShowNameUsers(lifeCycle, 0, LINE_PER_PAGE);
             logger.info("Find fullname equals showname users at page: {}", curPage);
 
             if (CollectionUtils.isEmpty(userList)) {
                 break;
             }
             logger.info("Find fullname equals showname users number: {}", userList.size());
-            doSetShowNameEuqalsFirstName(userList);
+            doUpdateFullNameEqualsShowName(userList);
         }
     }
 
-    private void doSetShowNameEuqalsFirstName(List<User> userList) {
+    private void doUpdateFullNameEqualsShowName(List<User> userList) {
         if (CollectionUtils.isNotEmpty(userList)) {
-            List<User> batchList = Lists.newArrayList();
-
             for (User user : userList) {
                 if (null == user) {
                     continue;
                 }
 
-                Teacher teacher = teacherDao.findById(user.getId());
-                if (null != teacher) {
-                    String fullname = teacher.getRealName();
+                String showName = user.getName();
+                String currentShowName;
 
-                    if (StringUtils.isNotBlank(fullname)) {
-                        String[] names = fullname.split(" ");
-                        String showname = names[0];
+                int duplicates;// showName 重复的标记
+                int n = 2;// 添加随机大写字母的个数
 
-                        if (fullname.equals(showname)) {
-                            showname += StringUtils.SPACE;
-
-                            for (int i = 0; i < 2; i++) {
-                                showname += (char) (Math.random() * 26 + 'A');
-                            }
-                        }
-
-                        logger.info("Teacher: {}, fullname: {}, new showname: {}", user.getId(), fullname, showname);
-
-                        User currentUser = new User();
-                        currentUser.setId(user.getId());
-                        currentUser.setName(showname);
-                        batchList.add(currentUser);
+                List<String> randomCodeList = Lists.newArrayList();
+                int num = 0;
+                do {
+                    if (StringUtils.isNotBlank(showName)) {
+                        currentShowName = showName.substring(0, showName.indexOf(" ") + 1);
+                    } else {
+                        currentShowName = "";
                     }
+
+                    if (StringUtils.isBlank(currentShowName)) {
+                        currentShowName = showName + " ";
+                    }
+                    String randomCode = StringUtils.EMPTY;// 添加随机字母的变量
+
+                    // 执行随机变量的逻辑
+                    for (int j = 0; j < n; j++) {
+                        randomCode += (char) (Math.random() * 26 + 'A');
+                    }
+                    randomCodeList.add(randomCode);
+
+                    if (randomCodeList.containsAll(RANDOM_CODES)) {
+                        ++n;
+                    }
+                    currentShowName += randomCode;
+
+                    // 敏感词过滤
+                    duplicates = userDao.findUserCountByShowName(currentShowName);
+                    for (String str : SENSITIVE_WORDS) {
+                        if (randomCode.indexOf(str) != -1) {
+                            duplicates = 1;
+                            break;
+                        }
+                    }
+
+                    logger.info("user :{} 循环次数:{}", user.getId(), num);
+
+                    ++num;
+                    if (num > 500 && n == 2) {
+                        ++n;
+                    }
+                } while (duplicates > 0);
+
+                if (!StringUtils.equalsIgnoreCase(currentShowName, showName)) {
+                    logger.info("uopdate teacher :{} showName:{}", user.getId(), currentShowName);
+
+                    user.setName(currentShowName);
+                    userDao.update(user);
                 }
             }
-
-            userDao.updateBatch(batchList);
         }
     }
 
-    private void doUpdateAllShowNameDuplicateUsers() {
+    private void doUpdateAllShowNameDuplicateUsers(String lifeCycle) {
         int totalPage = getTotalPage();
         logger.info("Find all showname duplicate users total page: {}", totalPage);
 
         for (int curPage = 1; curPage <= totalPage; curPage++) {
-            List<User> userList = userDao.findAllShowNameDuplicateUsers(0, LINE_PER_PAGE);
+            List<User> userList = userDao.findAllShowNameDuplicateUsers(lifeCycle, 0, LINE_PER_PAGE);
             logger.info("Find all showname duplicate users at page: {}", curPage);
 
             if (CollectionUtils.isEmpty(userList)) {
