@@ -6,6 +6,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.vipkid.http.utils.JacksonUtils;
+import com.vipkid.rest.exception.ServiceException;
 import com.vipkid.trpm.entity.User;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -115,6 +116,9 @@ public class InterviewController extends RestfulController {
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
             return ReturnMapUtils.returnFail(e.getMessage(),e);
+        } catch (ServiceException e){
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            return ReturnMapUtils.returnFail(e.getMessage(), e);
         } catch (Exception e) {
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
             return ReturnMapUtils.returnFail(e.getMessage(), e);
@@ -219,4 +223,5 @@ public class InterviewController extends RestfulController {
             return ReturnMapUtils.returnFail(e.getMessage(), e);
         }
     }
+
 }
