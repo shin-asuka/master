@@ -102,7 +102,7 @@ public class MonitorMethod {
             throw new RuntimeException(e);
         }catch (ServiceException e){
             logger.warn("MonitorMethodInterceptor ServiceException, errorMessage=" ,e);
-            return new ServiceException(e);
+            throw new ServiceException(e);
         }catch (Throwable e) {
             logger.error("MonitorMethodInterceptor error !",e);
             throw new RuntimeException(e);
