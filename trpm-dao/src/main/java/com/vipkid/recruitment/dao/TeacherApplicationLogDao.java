@@ -53,11 +53,11 @@ public class TeacherApplicationLogDao extends MapperDaoTemplate<TeacherApplicati
         this.save(bean);
     }
 
-    public int getOnlineClassCancelNum(long teacherId, long onlineClassId, Result result){
+    public int getOnlineClassCancelNum(long teacherId, long onlineClassId){
         TeacherApplicationLog applicationLog = new TeacherApplicationLog();
         applicationLog.setTeacherId(teacherId);
         applicationLog.setOnlineClassId(onlineClassId);
-        applicationLog.setResult(result.toString());
+        applicationLog.setResult(Result.CANCEL.toString());
         return super.selectCount(applicationLog);
     }
 

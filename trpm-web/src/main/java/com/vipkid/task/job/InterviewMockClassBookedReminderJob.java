@@ -6,7 +6,6 @@ import com.vipkid.email.handle.EmailConfig;
 import com.vipkid.email.handle.EmailEntity;
 import com.vipkid.email.template.TemplateUtils;
 import com.vipkid.enums.OnlineClassEnum.ClassStatus;
-import com.vipkid.enums.TeacherApplicationEnum.Result;
 import com.vipkid.file.utils.StringUtils;
 import com.vipkid.recruitment.dao.TeacherApplicationLogDao;
 import com.vipkid.recruitment.dao.TeacherReminderDao;
@@ -83,7 +82,7 @@ public class InterviewMockClassBookedReminderJob {
                     Teacher teacher = teacherDao.findById(teacherReminder.getTeacherId());
 
                     int cancelNum = teacherApplicationLogDao.getOnlineClassCancelNum(teacherReminder.getTeacherId(),
-                                    onlineClass.getId(), Result.CANCEL);
+                                    onlineClass.getId());
 
                     if (null != teacher && 0 == cancelNum) {
                         sendReminder(teacher, teacherReminder);
