@@ -243,6 +243,11 @@ public class WebUtils {
     }
 
     public static String postJSON(String url, JSONObject json) {
+        return postJSON(url, json, null);
+    }
+
+
+    public static String postJSON(String url, JSONObject json, Map<String,String> haredMpas) {
         logger.info("Post data,url = {},params = {}", url, json);
         CloseableHttpResponse response = null;
         try {

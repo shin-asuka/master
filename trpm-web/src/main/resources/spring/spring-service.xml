@@ -37,4 +37,8 @@
     <bean id="scalperService" class="com.vipkid.http.service.ScalperService">
         <property name="serverAddress" value="${scalper.serverAddress}"/>
     </bean>
+    
+    <bean id="prizeService" class="com.vipkid.http.service.PrizeService">
+    	<property name="serverAddress" value="${teacher.activity.serverAddress}"/>
+    </bean>
 </beans>
