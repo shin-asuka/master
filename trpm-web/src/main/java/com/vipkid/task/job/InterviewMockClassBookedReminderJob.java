@@ -6,7 +6,9 @@ import com.vipkid.email.handle.EmailConfig;
 import com.vipkid.email.handle.EmailEntity;
 import com.vipkid.email.template.TemplateUtils;
 import com.vipkid.enums.OnlineClassEnum.ClassStatus;
+import com.vipkid.enums.TeacherApplicationEnum.Result;
 import com.vipkid.file.utils.StringUtils;
+import com.vipkid.recruitment.dao.TeacherApplicationLogDao;
 import com.vipkid.recruitment.dao.TeacherReminderDao;
 import com.vipkid.recruitment.entity.TeacherReminder;
 import com.vipkid.teacher.tools.utils.conversion.JsonUtils;
@@ -51,6 +53,9 @@ public class InterviewMockClassBookedReminderJob {
     @Autowired
     private TeacherDao teacherDao;
 
+    @Autowired
+    private TeacherApplicationLogDao teacherApplicationLogDao;
+
     @Vschedule
     // @Scheduled(cron = "0 0/15 * * * ?")
     public void doJob(JobContext jobContext) {
@@ -77,8 +82,13 @@ public class InterviewMockClassBookedReminderJob {
                 if (null != onlineClass && ClassStatus.isBooked(onlineClass.getStatus())) {
                     Teacher teacher = teacherDao.findById(teacherReminder.getTeacherId());
 
-                    if (null != teacher) {
+                    int cancelNum = teacherApplicationLogDao.getOnlineClassCancelNum(teacherReminder.getTeacherId(),
+                                    onlineClass.getId(), Result.CANCEL);
+
+                    if (null != teacher && 0 == cancelNum) {
                         sendReminder(teacher, teacherReminder);
+                    } else {
+                        teacherReminderDao.deleteTeacherReminder(teacherReminder.getId());
                     }
                 } else {
                     teacherReminderDao.deleteTeacherReminder(teacherReminder.getId());

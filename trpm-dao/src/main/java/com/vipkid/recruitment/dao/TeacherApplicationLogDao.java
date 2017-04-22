@@ -1,18 +1,17 @@
 package com.vipkid.recruitment.dao;
 
-import java.sql.Timestamp;
-import java.util.List;
-
+import com.vipkid.enums.TeacherApplicationEnum.Result;
+import com.vipkid.enums.TeacherApplicationEnum.Status;
+import com.vipkid.recruitment.entity.TeacherApplicationLog;
+import com.vipkid.trpm.entity.OnlineClass;
 import org.apache.commons.collections.CollectionUtils;
 import org.community.dao.support.MapperDaoTemplate;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.vipkid.enums.TeacherApplicationEnum.Result;
-import com.vipkid.enums.TeacherApplicationEnum.Status;
-import com.vipkid.recruitment.entity.TeacherApplicationLog;
-import com.vipkid.trpm.entity.OnlineClass;
+import java.sql.Timestamp;
+import java.util.List;
 
 @Repository
 public class TeacherApplicationLogDao extends MapperDaoTemplate<TeacherApplicationLog>{
@@ -53,4 +52,13 @@ public class TeacherApplicationLogDao extends MapperDaoTemplate<TeacherApplicati
         bean.setUpdateTime(new Timestamp(time));
         this.save(bean);
     }
+
+    public int getOnlineClassCancelNum(long teacherId, long onlineClassId, Result result){
+        TeacherApplicationLog applicationLog = new TeacherApplicationLog();
+        applicationLog.setTeacherId(teacherId);
+        applicationLog.setOnlineClassId(onlineClassId);
+        applicationLog.setResult(result.toString());
+        return super.selectCount(applicationLog);
+    }
+
 }
