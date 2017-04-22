@@ -7,14 +7,15 @@ import com.vipkid.email.handle.EmailEntity;
 import com.vipkid.email.template.TemplateUtils;
 import com.vipkid.enums.OnlineClassEnum.ClassStatus;
 import com.vipkid.file.utils.StringUtils;
-import com.vipkid.recruitment.dao.TeacherApplicationLogDao;
 import com.vipkid.recruitment.dao.TeacherReminderDao;
 import com.vipkid.recruitment.entity.TeacherReminder;
 import com.vipkid.teacher.tools.utils.conversion.JsonUtils;
 import com.vipkid.trpm.dao.OnlineClassDao;
 import com.vipkid.trpm.dao.TeacherDao;
+import com.vipkid.trpm.dao.UserDao;
 import com.vipkid.trpm.entity.OnlineClass;
 import com.vipkid.trpm.entity.Teacher;
+import com.vipkid.trpm.entity.User;
 import com.vipkid.trpm.util.DateUtils;
 import com.vipkid.vschedule.client.common.Vschedule;
 import com.vipkid.vschedule.client.schedule.JobContext;
@@ -29,10 +30,7 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoField;
 import java.time.temporal.ChronoUnit;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by liuguowen on 2017/4/11.
@@ -53,7 +51,7 @@ public class InterviewMockClassBookedReminderJob {
     private TeacherDao teacherDao;
 
     @Autowired
-    private TeacherApplicationLogDao teacherApplicationLogDao;
+    private UserDao userDao;
 
     @Vschedule
     // @Scheduled(cron = "0 0/15 * * * ?")
@@ -76,21 +74,35 @@ public class InterviewMockClassBookedReminderJob {
 
         if (CollectionUtils.isNotEmpty(teacherReminderList)) {
             for (TeacherReminder teacherReminder : teacherReminderList) {
-                OnlineClass onlineClass = onlineClassDao.findById(teacherReminder.getOnlineClassId());
+                try {
+                    OnlineClass onlineClass = onlineClassDao.findById(teacherReminder.getOnlineClassId());
 
-                if (null != onlineClass && ClassStatus.isBooked(onlineClass.getStatus())) {
-                    Teacher teacher = teacherDao.findById(teacherReminder.getTeacherId());
+                    if (null != onlineClass && ClassStatus.isBooked(onlineClass.getStatus())) {
+                        Teacher teacher = teacherDao.findById(teacherReminder.getTeacherId());
+                        User user = userDao.findUserByOnlineClassId(onlineClass.getId());
 
-                    int cancelNum = teacherApplicationLogDao.getOnlineClassCancelNum(teacherReminder.getTeacherId(),
-                                    onlineClass.getId());
+                        String teacherId = String.valueOf(teacherReminder.getTeacherId());
+                        Optional.ofNullable(user).ifPresent((u) -> {
+                            logger.info("This user name: {} mapping to teacherId: {}", u.getName(), teacherId);
+                        });
 
-                    if (null != teacher && 0 == cancelNum) {
-                        sendReminder(teacher, teacherReminder);
+                        if (null != teacher && null != user && user.getName().contains(teacherId)) {
+                            logger.info("Online class: {} student is matched by teacher: {}, and send reminder email!",
+                                            onlineClass.getId(), teacherId);
+
+                            sendReminder(teacher, teacherReminder);
+                        } else {
+                            logger.info("Online class: {} was canceled by teacher: {}, and delete reminder task!",
+                                            onlineClass.getId(), teacherId);
+
+                            teacherReminderDao.deleteTeacherReminder(teacherReminder.getId());
+                        }
                     } else {
                         teacherReminderDao.deleteTeacherReminder(teacherReminder.getId());
                     }
-                } else {
-                    teacherReminderDao.deleteTeacherReminder(teacherReminder.getId());
+                } catch (Exception e) {
+                    logger.warn("Teacher reminder error for teacherId: {}, sendScheduledTime", teacherReminder.getId(),
+                                    teacherReminder.getSendScheduledTime());
                 }
             }
         } else {
