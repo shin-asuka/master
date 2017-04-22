@@ -60,19 +60,5 @@ public class AuditPushMessageService {
                     PUSH_URL, request);
         }
         logger.info("Invoke push api multicast result: {}", resultJson);
-
-        //save message
-        PushMessage message = new PushMessage();
-        message.setTitle(title);
-        message.setMessage(content);
-        message.setOperator("system_teacher-portal");
-        message.setSource("signup_progress_remind");
-        message.setUserId(teacherId);
-
-        logger.info("Invoke push message save. params: {}", JacksonUtils.toJSONString(message));
-        String saveResult = null;
-        saveResult = WebUtils.doPostJSON(requestHeader,
-                SAVE_PUSH_MESSAGE_URL, message);
-        logger.info("save pushMessage result: {}", saveResult);
     }
 }
