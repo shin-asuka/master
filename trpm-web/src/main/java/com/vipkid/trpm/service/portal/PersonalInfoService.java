@@ -586,7 +586,7 @@ public class PersonalInfoService {
 		boolean result = false;
 		Map<String, String> requestParam = Maps.newHashMap();
 		requestParam.put("instanceId",String.valueOf(contractId));
-		requestParam.put("signTime", DateUtils.formatDate(new Date(),DateUtils.DATE_PATTERN));
+		requestParam.put("signTime", DateUtils.formatDate(new Date(),DateUtils.DATETIME_PATTERN));
 
 		Object doSignResultObj = doHttpGetContractFromTeacherAdmin(requestParam,CONTRACT_DO_SIGN);
 
