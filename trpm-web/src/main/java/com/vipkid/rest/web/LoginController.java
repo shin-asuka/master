@@ -11,6 +11,9 @@ import java.util.concurrent.locks.LockSupport;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.google.common.base.Preconditions;
+import com.vipkid.rest.utils.ApiResponseUtils;
+import com.vipkid.trpm.service.portal.TeacherService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.community.config.PropertyConfigurer;
@@ -78,6 +81,9 @@ public class LoginController extends RestfulController {
 
     @Autowired
     private AdminQuizService adminQuizService;
+
+    @Autowired
+    private TeacherService teacherService;
         
 
     /**
@@ -296,6 +302,18 @@ public class LoginController extends RestfulController {
             if (!passportService.checkVerifyCode(bean.getKey(),bean.getImageCode())) {
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
                 return ReturnMapUtils.returnFail(AjaxCode.VERIFY_CODE_ERROR,"验证码校验不通过！" + email);
+            }
+
+            //检查ReferralCode
+            String referralCode = bean.getReferralCode();
+            logger.info("check ReferralCode:{}",referralCode);
+            if (StringUtils.isNotBlank(bean.getReferralCode())){
+                long referralId = teacherService.getTeacherIdWithReferralCode(referralCode);
+                bean.setRefereeId(referralId);
+                User user = passportService.findUserById(referralId);
+                if (null == user){
+                    return ApiResponseUtils.buildErrorResp(HttpStatus.BAD_REQUEST.value(),"Referral not exist");
+                }
             }
             
             logger.info("账户数据检查:{}",bean.getEmail());
@@ -548,6 +566,10 @@ public class LoginController extends RestfulController {
 
             TeacherInfo teacherinfo = new TeacherInfo();
             teacherinfo.setTeacherId(this.getUser(request).getId());
+
+            //添加 ReferralCode
+            String referralCode = teacherService.getReferralCode(this.getUser(request).getId());
+            teacherinfo.setReferralCode(referralCode);
             //权限判断 start
             loginService.findByTeacherModule(teacherinfo, teacher.getLifeCycle());
             //其他信息
@@ -645,4 +667,18 @@ public class LoginController extends RestfulController {
         }
 
     }
+
+    @RequestMapping(value = "/getReferralCode")
+    public String getReferralCode(HttpServletRequest request, HttpServletResponse response, long referralId){
+        Preconditions.checkArgument(null != Long.valueOf(referralId),"referralId can not be null");
+        String referralCode = null;
+        try {
+             referralCode = teacherService.getReferralCode(referralId);
+
+        }catch (Exception e){
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+        }
+        return referralCode;
+    }
+
 }

@@ -323,7 +323,7 @@ public class PassportService {
      * 更新用户密码
      * 
      * @Author:ALong (ZengWeiLong)
-     * @param
+     * @param password
      * @return int
      * @date 2016年3月3日
      */
@@ -394,7 +394,7 @@ public class PassportService {
      * @return Teacher
      * @date 2016年3月18日
      */
-    public Teacher prerefereeId(Teacher teacher, Long refereeId, Long partnerId) {
+    public Teacher prerefereeId(Teacher teacher, Long refereeId, Long partnerId ,String channel) {
         
         logger.info("注册时候添加推荐信息参数:{},refereeId:{},parenerId:{}",teacher.getEmail(),refereeId,partnerId);
         
@@ -416,7 +416,11 @@ public class PassportService {
                 } else if (UserEnum.Dtype.TEACHER.val().equals(user.getDtype())) {
                     Teacher t = teacherDao.findById(refereeId);
                     if(t!=null){
+                        if (StringUtils.isNotBlank(channel) && StringUtils.equals(channel.trim(),RecruitmentChannel.REFERRAL_CODE.toString())){
+                            teacher.setRecruitmentChannel(RecruitmentChannel.REFERRAL_CODE.toString());
+                        }else {
                         teacher.setRecruitmentChannel(RecruitmentChannel.TEACHER.toString());
+                        }
                         teacher.setReferee(user.getId() + "," + t.getRealName());//Referee存老师的realName
                         logger.info("TEACHER设置: teacher-refereeId:{},refereeId:{},parenerId:{}",teacher.getEmail(),refereeId,partnerId);
                     }else{
