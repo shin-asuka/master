@@ -190,7 +190,7 @@ public class UnitAssesssmentService {
 		if(CollectionUtils.isNotEmpty(list)){
 			for (Map<String,Object> map : list) {
 				JSONObject jsonObject = (JSONObject) JSONObject.toJSON(map);
-				
+				logger.info(jsonObject.toJSONString());
 				OnlineClassVo onlineClassVo = new OnlineClassVo();
 				Long id = jsonObject.getLong("id");
 				
@@ -202,6 +202,8 @@ public class UnitAssesssmentService {
 				onlineClassVo.setTeacherEmail(jsonObject.getString("teacherEmail"));
 				onlineClassVo.setScheduledDateTime(jsonObject.getDate("scheduledDateTime"));
 				onlineClassVos.add(onlineClassVo);
+				logger.info(JSONObject.toJSONString(onlineClassVo));
+				logger.info(JSONObject.toJSONString(onlineClassVos));
 			}
 		}
 		return onlineClassVos;
