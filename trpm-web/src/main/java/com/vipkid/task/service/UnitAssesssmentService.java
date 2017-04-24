@@ -103,11 +103,10 @@ public class UnitAssesssmentService {
 			for (OnlineClassVo oc : onlineClassVos) { //数据格式转换
 				Long id = oc.getId();
 				onlineClassVo.getIdList().add(id);
-				onlineClassVo.setIdListStr(StringUtils.join(onlineClassVo.getIdList(),","));
-				onlineClassVo.getIdList().clear();
 				ocMap.put(id, oc);
 			}
-			
+			onlineClassVo.setIdListStr(StringUtils.join(onlineClassVo.getIdList(),","));
+			onlineClassVo.getIdList().clear();
 			//调用homework服务查询为完成UA报告的课程
 			OnlineClassVo onlineClassVoUnSubmit = assessmentHttpService.findUnSubmitonlineClassVo(onlineClassVo);
 			logger.info("Result 12h unSubmit OnlineClass  = {}",JsonUtils.toJSONString(onlineClassVoUnSubmit));
