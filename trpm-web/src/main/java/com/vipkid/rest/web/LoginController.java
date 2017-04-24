@@ -312,7 +312,7 @@ public class LoginController extends RestfulController {
                 bean.setRefereeId(referralId);
                 User user = passportService.findUserById(referralId);
                 if (null == user){
-                    return ApiResponseUtils.buildErrorResp(HttpStatus.BAD_REQUEST.value(),"Referral not exist");
+                    return ApiResponseUtils.buildErrorResp(HttpStatus.BAD_REQUEST.value(),"Referral code does not exist, please check.");
                 }
             }
             
@@ -669,16 +669,17 @@ public class LoginController extends RestfulController {
     }
 
     @RequestMapping(value = "/getReferralCode")
-    public String getReferralCode(HttpServletRequest request, HttpServletResponse response, long referralId){
+    public Map<String, Object> getReferralCode(HttpServletRequest request, HttpServletResponse response, long referralId){
         Preconditions.checkArgument(null != Long.valueOf(referralId),"referralId can not be null");
-        String referralCode = null;
+        Map<String,Object> result = Maps.newHashMap();
         try {
-             referralCode = teacherService.getReferralCode(referralId);
+            String referralCode = teacherService.getReferralCode(referralId);
+            result.put("referralCode",referralCode);
 
         }catch (Exception e){
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
         }
-        return referralCode;
+        return result;
     }
 
 }
