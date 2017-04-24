@@ -13,7 +13,7 @@ public class InterviewConstant {
     /***
      * 创建5分钟后的onlineClass，给quickInterview用
      */
-    public static final int CREATE_TIME_AFTER = 600000;
+    public static final int CREATE_TIME_AFTER = 300000;
     /***
      *开课前30分钟 可以进入onlineClass
      */
