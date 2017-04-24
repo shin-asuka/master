@@ -126,7 +126,8 @@ public class PersonalInfoDataController {
 
         APIQueryContractByIdResult contract = personalInfoService.queryContractById(contractId);
         if (contract == null || !StringUtils.equals(signerName, contract.getSignerName())) {
-            return ApiResponseUtils.buildErrorResp(-1,"sign error,please confirm the signer's name");
+            // -2 参数问题
+            return ApiResponseUtils.buildErrorResp(-2,"sign error,please confirm the signer's name");
         }
 
         boolean doSignResult = personalInfoService.doSign(contractId);
