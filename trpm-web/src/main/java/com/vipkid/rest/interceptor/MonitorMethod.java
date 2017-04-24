@@ -13,6 +13,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import com.vipkid.http.utils.JsonUtils;
+import com.vipkid.rest.exception.ServiceException;
+
 import org.springframework.web.multipart.MultipartFile;
 
 /**
@@ -98,6 +100,9 @@ public class MonitorMethod {
         }catch (IllegalArgumentException e) {
             logger.warn("MonitorMethodInterceptor IllegalArgumentException, errorMessage=" + e.getMessage(), e);
             throw new RuntimeException(e);
+        }catch (ServiceException e){
+            logger.warn("MonitorMethodInterceptor ServiceException, errorMessage=" ,e);
+            throw new ServiceException(e);
         }catch (Throwable e) {
             logger.error("MonitorMethodInterceptor error !",e);
             throw new RuntimeException(e);
