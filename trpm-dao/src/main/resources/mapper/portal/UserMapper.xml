@@ -151,7 +151,6 @@
 	<update id="updateDao">
 		UPDATE user
 		<trim prefix="SET" prefixOverrides=",">
-			<if test="id!=0">,id = #{id}</if>
 			<if test="dtype!=null">,dtype = #{dtype}</if>
 			<if test="createDateTime!=null">,create_date_time = #{createDateTime}</if>
 			<if test="gender!=null">,gender = #{gender}</if>
@@ -243,4 +242,69 @@
 			#{id}
 		</foreach>
 	</select>
+
+	<select id="findAllShowNameDuplicateRegularUsers" resultMap="userResultMap">
+		SELECT
+			<include refid="userColumns" />
+		FROM
+		  `teacher`
+		JOIN `user` ON `teacher`.`id` = `user`.`id`
+		WHERE `teacher`.life_cycle = 'REGULAR' AND
+		  `user`.`name` IN(
+			SELECT
+			  `user`.`name`
+			FROM
+			  `teacher`
+			JOIN `user` ON `teacher`.`id` = `user`.`id`
+			GROUP BY
+			  `user`.`name`
+			HAVING
+			  COUNT(*) > 1
+		  ) ORDER BY `user`.`name` LIMIT #{startLine}, #{limitLine}
+	</select>
+
+	<select id="findAllShowNameDuplicateOtherUsers" resultMap="userResultMap">
+		SELECT
+		<include refid="userColumns" />
+		FROM
+		`teacher`
+		JOIN `user` ON `teacher`.`id` = `user`.`id`
+		WHERE `teacher`.life_cycle != 'REGULAR' AND
+		`user`.`name` IN(
+		SELECT
+		`user`.`name`
+		FROM
+		`teacher`
+		JOIN `user` ON `teacher`.`id` = `user`.`id`
+		GROUP BY
+		`user`.`name`
+		HAVING
+		COUNT(*) > 1
+		) ORDER BY `user`.`name` LIMIT #{startLine}, #{limitLine}
+	</select>
+
+	<select id="findFullNameEqualsShowNameRegularUsers" resultMap="userResultMap">
+		SELECT
+			<include refid="userColumns" />
+		FROM
+		`teacher`
+		JOIN `user`
+		ON `teacher`.`id` = `user`.`id`
+		WHERE
+		`teacher`.`real_name` = `user`.`name` AND `teacher`.life_cycle = 'REGULAR'
+		ORDER BY `user`.`id` LIMIT #{startLine}, #{limitLine}
+	</select>
+
+	<select id="findFullNameEqualsShowNameOtherUsers" resultMap="userResultMap">
+		SELECT
+		<include refid="userColumns" />
+		FROM
+		`teacher`
+		JOIN `user`
+		ON `teacher`.`id` = `user`.`id`
+		WHERE
+		`teacher`.`real_name` = `user`.`name` AND `teacher`.life_cycle != 'REGULAR'
+		ORDER BY `user`.`id` LIMIT #{startLine}, #{limitLine}
+	</select>
+
 </mapper>
