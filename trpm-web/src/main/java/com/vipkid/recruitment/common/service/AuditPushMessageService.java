@@ -45,6 +45,7 @@ public class AuditPushMessageService {
         request.setTitle(title);
         request.setBody(content);
         request.setPriority("high");
+        request.setJump_link("vipkid://native");
         request.setExpires_at(LocalDateTime.now().plusMinutes(15).atZone(ZoneId.systemDefault()).toInstant()
                 .getEpochSecond());
         List<Long> list = new ArrayList<Long>();
