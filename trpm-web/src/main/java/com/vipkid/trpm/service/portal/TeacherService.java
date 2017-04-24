@@ -34,6 +34,7 @@ import com.vipkid.trpm.entity.*;
 import com.vipkid.trpm.entity.teachercomment.*;
 import com.vipkid.trpm.proxy.RedisProxy;
 import com.vipkid.trpm.util.DateUtils;
+import com.vipkid.trpm.util.EmojiUtils;
 import com.vipkid.trpm.util.LessonSerialNumber;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -396,6 +397,10 @@ public class TeacherService {
 
 	public boolean updateTeacherComment(TeacherCommentUpdateDto inputDto) {
 		Map<String, String> param = Maps.newHashMap();
+
+		/*过滤emoji表情*/
+		inputDto.setTeacherFeedback(EmojiUtils.filterEmoji(inputDto.getTeacherFeedback()));
+		inputDto.setTipsForOtherTeachers(EmojiUtils.filterEmoji(inputDto.getTipsForOtherTeachers()));
 		//        param.put("tcId", inputDto.getTeacherCommentId());
 		//        param.put("feedback", inputDto.getTeacherFeedback());
 		//        param.put("tipsForOtherTeachers", inputDto.getTipsForOtherTeachers());
