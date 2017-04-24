@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.vipkid.recruitment.common.service.AuditPushMessageService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.community.tools.JsonTools;
@@ -68,6 +69,9 @@ public class BasicInfoService {
     
     @Autowired
     private RedisProxy redisProxy;
+
+    @Autowired
+    private AuditPushMessageService pushMessageService;
 
     private static List<String> RandomCodeList  = Lists.newArrayList();
     static {
@@ -287,7 +291,11 @@ public class BasicInfoService {
             logger.info("调用发送邮件程序发送给:{}",user.getUsername());
             //包含推荐人信息
             EmailUtils.sendEmail4BasicInfoPass(teacher,recruitmentService.getReferralCompleteNumber(teacher));
-            result.put("result", Result.PASS);            
+            result.put("result", Result.PASS);
+
+            //push message
+            logger.info("auto pass basic info, 向老师发送pushMessage，teacherId="+teacher.getId());
+            pushMessageService.pushAndSaveMessage(teacher.getId());
         }
         this.teacherApplicationDao.save(application);
         this.teacherDao.update(teacher);
