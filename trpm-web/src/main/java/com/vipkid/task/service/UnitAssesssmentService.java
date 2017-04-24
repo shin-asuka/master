@@ -189,8 +189,8 @@ public class UnitAssesssmentService {
 		List<OnlineClassVo> onlineClassVos = Lists.newArrayList();
 		if(CollectionUtils.isNotEmpty(list)){
 			for (Map<String,Object> map : list) {
-				JSONObject jsonObject = new JSONObject();
-				jsonObject = (JSONObject) JSONObject.toJSON(map);
+				JSONObject jsonObject =(JSONObject) JSONObject.toJSON(map);
+				logger.info("解析结果:{}",jsonObject.toJSONString());
 				OnlineClassVo onlineClassVo = new OnlineClassVo();
 				onlineClassVo.setId(jsonObject.getLong("id"));
 				onlineClassVo.setTeacherId(jsonObject.getLong("teacherId"));
