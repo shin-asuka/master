@@ -53,6 +53,7 @@ public class AssessmentHttpService extends HttpBaseService {
                 try {
                     i++;
                     data = WebUtils.postNameValuePair(url, onlineClassVo);
+                    logger.info("请求第{}次",i);
                 }catch (Exception e){
                     logger.info("查询未提交UA失败",e);
                 }
