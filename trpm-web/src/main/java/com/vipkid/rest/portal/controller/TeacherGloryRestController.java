@@ -1,17 +1,14 @@
 package com.vipkid.rest.portal.controller;
 
 import com.google.api.client.util.Lists;
-import java.util.List;
-import java.util.Map;
-
-import com.vipkid.enums.TeacherEnum;
-import com.vipkid.rest.interceptor.annotation.RestInterface;
 import com.vipkid.rest.portal.model.TeacherGlory;
-import com.vipkid.rest.security.AppContext;
 import com.vipkid.rest.utils.ApiResponseUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by LP-813 on 2017/4/24.
@@ -31,9 +28,13 @@ public class TeacherGloryRestController {
         teacherGlory.setAvatar("boy3");
         teacherGlory.setTitle("万人迷");
         teacherGlory.setDescription("在VIPKID被超过10000名学员关注");
-        teacherGlory.setShareTitle("哇！有超过10000名学⽣生喜欢我！");
+        teacherGlory.setShareTitle("哇！有超过10000名学生喜欢我！");
         teacherGlory.setShareDescription("想和我⼀一样吗？点击加⼊VIPKID和我们⼀一起改变世界吧");
         List<TeacherGlory> ret = Lists.newArrayList();
+        ret.add(teacherGlory);
+        teacherGlory.setTitle("万人迷2");
+        ret.add(teacherGlory);
+        teacherGlory.setTitle("万人迷3");
         ret.add(teacherGlory);
         return ApiResponseUtils.buildSuccessDataResp(ret);
     }
