@@ -668,12 +668,13 @@ public class LoginController extends RestfulController {
 
     }
 
-    @RequestMapping(value = "/getReferralCode")
-    public Map<String, Object> getReferralCode(HttpServletRequest request, HttpServletResponse response, @RequestParam(value = "referralId") long referralId){
+    @RequestMapping(value = "/getReferralCode", method = RequestMethod.POST, produces = RestfulConfig.JSON_UTF_8)
+    public Map<String, Object> getReferralCode(HttpServletRequest request, HttpServletResponse response, @RequestBody Map<String,Long> param){
 
-        Preconditions.checkArgument(null != Long.valueOf(referralId),"referralId can not be null");
         Map<String,Object> result = Maps.newHashMap();
         try {
+            long referralId = param.get("referralId");
+            Preconditions.checkArgument(null != Long.valueOf(referralId),"referralId can not be null");
             String referralCode = teacherService.getReferralCode(referralId);
             result.put("referralCode",referralCode);
 
