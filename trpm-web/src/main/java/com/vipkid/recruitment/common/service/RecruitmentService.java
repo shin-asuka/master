@@ -396,6 +396,8 @@ public class RecruitmentService {
                     result.put("applicationId", teacherApplication.getId());
                     int appId = Long.valueOf(teacherApplication.getId()).intValue();
                     result.put("submitted", teacherPeFeedbackDao.hasTeacherPeFeedback(appId));
+                    // 灰度发布 FIXME
+                    result.put("showFeedback", teacherApplicationDao.countByInterviewer(teacherApplication.getStduentId()));
                 }
             }
         }

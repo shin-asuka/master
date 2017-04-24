@@ -133,6 +133,11 @@ public class ClassroomService {
                         // mock class 1.0
                         resultDto.setVersion(MOCK_CLASS_V1);
                     }
+                    // 灰度发布 FIXME
+                    if(0 != teacherApplicationDao.countByInterviewer(application.getStduentId())){
+                        resultDto.setVersion(MOCK_CLASS_V2);
+                        logger.info("Current mock class gray release for application: {}", application.getId());
+                    }
                 }
             }
         }else{

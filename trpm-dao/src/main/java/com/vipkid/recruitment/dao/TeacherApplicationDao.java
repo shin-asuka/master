@@ -270,4 +270,10 @@ public class TeacherApplicationDao extends MapperDaoTemplate<TeacherApplication>
         super.update(teacherApplication, "initApplicationAnswer");
     }
 
+    public int countByInterviewer(long studentId){
+        TeacherApplication teacherApplication = new TeacherApplication();
+        teacherApplication.setStduentId(studentId);
+        return super.selectCount(teacherApplication, "countByInterviewer");
+    }
+
 }
