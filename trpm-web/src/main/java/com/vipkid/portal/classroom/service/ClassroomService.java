@@ -137,6 +137,18 @@ public class ClassroomService {
                     if(0 != teacherApplicationDao.countByInterviewer(application.getStduentId())){
                         resultDto.setVersion(MOCK_CLASS_V2);
                         logger.info("Current mock class gray release for application: {}", application.getId());
+
+                        if(null != teacherPeComments && 0 == teacherPeComments.getTemplateId()){
+                            // mock class 1.0
+                            resultDto.setVersion(MOCK_CLASS_V1);
+                            logger.info("Exist pe comments for application: {}, set version=1", application.getId());
+                        } else if(null == teacherPeComments && StringUtils.isNotBlank(application.getResult())){
+                            // mock class 1.0
+                            resultDto.setVersion(MOCK_CLASS_V1);
+                            logger.info("Exist pe comments for application: {}, set version=1", application.getId());
+                        }
+                    }else{
+                        resultDto.setVersion(MOCK_CLASS_V1);
                     }
                 }
             }
