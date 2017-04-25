@@ -16,10 +16,7 @@ import com.vipkid.trpm.constant.ApplicationConstant.MediaType;
 import com.vipkid.trpm.dao.*;
 import com.vipkid.trpm.entity.*;
 import com.vipkid.trpm.entity.media.UploadResult;
-import com.vipkid.trpm.entity.personal.APIQueryContractByIdResult;
-import com.vipkid.trpm.entity.personal.APIQueryContractListByTeacherIdResult;
-import com.vipkid.trpm.entity.personal.BasicInfo;
-import com.vipkid.trpm.entity.personal.TeacherBankVO;
+import com.vipkid.trpm.entity.personal.*;
 import com.vipkid.trpm.service.media.AbstarctMediaService;
 import com.vipkid.trpm.service.media.OSSMediaService;
 import com.vipkid.trpm.util.AwsFileUtils;
@@ -52,7 +49,7 @@ public class PersonalInfoService {
 	private static final String CONTRACT_QUERY_BY_TEACHERIDS = "/api/internal/contract/queryInstanceByTeacherId";
 	private static final String CONTRACT_QUERY_BY_ID = "/api/internal/contract/queryInstanceById";
 	private static final String CONTRACT_DO_SIGN = "/api/internal/contract/doSign";
-	private static final String CONTRACT_CHECK_SIGN = "/api/internal/contract/queryOOTInstanceByTeacherIdAndDate";
+	private static final String CONTRACT_CHECK_SIGN = "/api/internal/contract/queryRenewByTeacherIdAndDate";
 
 
 
@@ -546,18 +543,34 @@ public class PersonalInfoService {
     /**
      * 根据老师id获取全部合同
 	 *
-	 * @param teacherId
+	 * @param teacher
 	 * @return
 	 */
-	public List<APIQueryContractListByTeacherIdResult> queryALLContractByTeacherId(Long teacherId) {
+	public List<APIQueryContractListByTeacherIdResult> queryALLContractByTeacherId(Teacher teacher) {
 
 		Map<String, String> requestParam = Maps.newHashMap();
-		requestParam.put("teacherId",String.valueOf(teacherId));
+		requestParam.put("teacherId",String.valueOf(teacher.getId()));
+		requestParam.put("endDate",DateUtils.formatDate(teacher.getContractEndDate(),DateUtils.DATE_PATTERN));
+
 		Object queryResultObj = doHttpGetContractFromTeacherAdmin(requestParam,CONTRACT_QUERY_BY_TEACHERIDS);
 		List<APIQueryContractListByTeacherIdResult> contractInfoList=null;
 		if (queryResultObj != null) {
 			contractInfoList = JacksonUtils.unmarshalFromString2List(JacksonUtils.toJSONString(queryResultObj),
 					APIQueryContractListByTeacherIdResult.class);
+		}
+		return contractInfoList;
+	}
+
+	public APIQueryContractListByTeacherIdMapResult queryALLContractByTeacherIdMap(Teacher teacher) {
+		Map<String, String> requestParam = Maps.newHashMap();
+		requestParam.put("teacherId",String.valueOf(teacher.getId()));
+		requestParam.put("endDate",DateUtils.formatDate(teacher.getContractEndDate(),DateUtils.DATE_PATTERN));
+
+		Object queryResultObj = doHttpGetContractFromTeacherAdmin(requestParam,CONTRACT_QUERY_BY_TEACHERIDS);
+		APIQueryContractListByTeacherIdMapResult contractInfoList=null;
+		if (queryResultObj != null) {
+			contractInfoList = JacksonUtils.unmarshalFromString(JacksonUtils.toJSONString(queryResultObj),APIQueryContractListByTeacherIdMapResult.class);
+
 		}
 		return contractInfoList;
 	}

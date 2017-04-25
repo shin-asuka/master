@@ -13,6 +13,7 @@ import com.vipkid.rest.utils.ApiResponseUtils;
 import com.vipkid.trpm.constant.ApplicationConstant;
 import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.entity.personal.APIQueryContractByIdResult;
+import com.vipkid.trpm.entity.personal.APIQueryContractListByTeacherIdMapResult;
 import com.vipkid.trpm.entity.personal.APIQueryContractListByTeacherIdResult;
 import com.vipkid.trpm.entity.personal.QueryContractByTeacherIdOutputDto;
 import com.vipkid.trpm.proxy.RedisProxy;
@@ -71,6 +72,9 @@ public class PersonalInfoDataController {
         List<QueryContractByTeacherIdOutputDto> signedList = Lists.newArrayList();
         //2.已签或生效的,并且是在合同有效期内的
         List<QueryContractByTeacherIdOutputDto> unsignList = Lists.newArrayList();
+        //3.已经签署的合同
+        List<QueryContractByTeacherIdOutputDto> ineffectiveList = Lists.newArrayList();
+
 
         Date today = new Date();
         Teacher teacher = teacherService.get(teacherId);
@@ -85,9 +89,13 @@ public class PersonalInfoDataController {
                     teacher.getContract()));
         }
 
-        List<APIQueryContractListByTeacherIdResult> contractInstanceResultList = personalInfoService
-                .queryALLContractByTeacherId(teacherId);
+        List<APIQueryContractListByTeacherIdResult> contractInstanceResultList = Lists.newArrayList();
+        APIQueryContractListByTeacherIdMapResult contractListByTeacherIdMapResult=personalInfoService.queryALLContractByTeacherIdMap(teacher);
 
+        if(contractListByTeacherIdMapResult !=null){
+            contractInstanceResultList.addAll(contractListByTeacherIdMapResult.getIneffectiveList());
+            contractInstanceResultList.addAll(contractListByTeacherIdMapResult.getUnSignList());
+        }
 
         if (CollectionUtils.isNotEmpty(contractInstanceResultList)) {
             for (APIQueryContractListByTeacherIdResult one : contractInstanceResultList) {
@@ -95,14 +103,17 @@ public class PersonalInfoDataController {
                         .equals(one.getInstanceStatus(), ApplicationConstant.ContractConstants.INSTANT_STATUS_NOSIGN)) {
                     //未签的合同(最多只返回给前端一个)
                     unsignList.add(new QueryContractByTeacherIdOutputDto(one));
-                } else if (CollectionUtils.isEmpty(signedList) &&
-                        (StringUtils.equals(one.getInstanceStatus(), ApplicationConstant.ContractConstants.INSTANT_STATUS_SIGNED)
-                        || StringUtils.equals(one.getInstanceStatus(), ApplicationConstant.ContractConstants.INSTANT_STATUS_ENABLE))) {
+                } else if ((StringUtils.equals(one.getInstanceStatus(), ApplicationConstant.ContractConstants.INSTANT_STATUS_SIGNED)
+                                || StringUtils.equals(one.getInstanceStatus(), ApplicationConstant.ContractConstants.INSTANT_STATUS_ENABLE))) {
                     //已签或生效的合同(最多只返回给前端一个)
                     if (DateUtils.compareDate(today, one.getStartTime()) >= 0
-                            && DateUtils.compareDate(today, one.getEndTime()) <= 0) {
+                            && DateUtils.compareDate(today, one.getEndTime()) <= 0
+                            && CollectionUtils.isEmpty(signedList)) {
                         //如果是在合同期内(注意one的时区和today的时区必须都要是北京时区)
                         signedList.add(new QueryContractByTeacherIdOutputDto(one));
+                    }else if(DateUtils.compareDate(today, one.getStartTime()) < 0
+                            && CollectionUtils.isEmpty(ineffectiveList)){
+                        ineffectiveList.add(new QueryContractByTeacherIdOutputDto(one));
                     }
                 }
             }
@@ -110,6 +121,8 @@ public class PersonalInfoDataController {
         Map<String, Object> result = Maps.newHashMap();
         result.put("signedList", signedList);
         result.put("unsignList", unsignList);
+        result.put("ineffectiveList", ineffectiveList);
+
 
         return ApiResponseUtils.buildSuccessDataResp(result);
     }
