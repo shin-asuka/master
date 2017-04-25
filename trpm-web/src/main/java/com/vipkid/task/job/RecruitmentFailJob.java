@@ -91,10 +91,12 @@ public class RecruitmentFailJob {
 					contentTemplate = "PracticumFail.html";
 				}
 
-				EmailUtils.sendEmail4Recruitment(teacher, titleTemplate, contentTemplate);
-				logger.info("【JOB.EMAIL.RecruitmentFail】SEND: Cost {}ms. email = {}, name = {}, titleTemplate = {}, contentTemplate = {}", stopwatch.elapsed(TimeUnit.MILLISECONDS), email, name, titleTemplate, contentTemplate);
 				logger.info("【JOB.PUSH_MESSAGE.RecruitmentFail】SEND. start send pushMessage. teacherId="+teacherId);
 				auditPushMessageService.pushAndSaveMessage(teacherId);
+
+				EmailUtils.sendEmail4Recruitment(teacher, titleTemplate, contentTemplate);
+				logger.info("【JOB.EMAIL.RecruitmentFail】SEND: Cost {}ms. email = {}, name = {}, titleTemplate = {}, contentTemplate = {}", stopwatch.elapsed(TimeUnit.MILLISECONDS), email, name, titleTemplate, contentTemplate);
+
 			}
 		}
 	}
