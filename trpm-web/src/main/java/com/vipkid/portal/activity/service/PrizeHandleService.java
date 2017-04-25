@@ -8,6 +8,8 @@ import java.util.List;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.community.tools.JsonTools;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +25,8 @@ import com.vipkid.trpm.entity.User;
 
 @Service
 public class PrizeHandleService {
+	
+	private final static Logger logger = LoggerFactory.getLogger(PrizeHandleService.class);	
 
 	@Autowired
 	private UserDao userDao;
@@ -72,6 +76,10 @@ public class PrizeHandleService {
 	 */
 	public boolean checkOnlineClass(Long onlineClassId) {
     	OnlineClass onlineClass = onlineClassDao.findById(onlineClassId);
+    	if(onlineClass == null){
+    		logger.warn("该课程ID不存在:" + onlineClassId);
+    		return false;
+    	}
 		Date date = new Date(onlineClass.getScheduledDateTime().getTime());
     	if(date.after(CLASS_START_DATE)){
     		return true;
