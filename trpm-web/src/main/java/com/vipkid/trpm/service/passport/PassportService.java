@@ -5,6 +5,11 @@ import java.util.Base64;
 import java.util.Map;
 import java.util.UUID;
 
+import com.aliyun.common.utils.DateUtil;
+import com.vipkid.background.enums.TeacherPortalCodeEnum;
+import com.vipkid.cache.utils.RedisClient;
+import com.vipkid.rest.exception.ServiceException;
+import com.vipkid.trpm.util.DateUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.community.config.PropertyConfigurer;
@@ -60,6 +65,13 @@ public class PassportService {
 
     @Autowired
     private VerifyCodeService verifyCodeService;
+
+    //注册超时时间为30s
+    private static final int SIGN_UP_TIME_OUT = 30;
+
+    private static final String SIGN_UP_KEY = "vipkid_sign_up:";
+
+    private static final String SIGN_UP_USERNAME_KEY = "vipkid_sign_up_username:";
 
     /**
      * 通过id查询Teacher
@@ -119,68 +131,100 @@ public class PassportService {
      */
     public Map<String, Object> saveSignUp(RegisterDto bean) {
         Map<String, Object> resultMap = Maps.newHashMap();
-        User user = this.userDao.findByUsername(bean.getEmail());
-        // 1.是否存在
-        if (user != null) {
-            return ReturnMapUtils.returnFail(ApplicationConstant.AjaxCode.USER_EXITS);
-        }
-        // 2.创建User
-        user = new User();
-        user.setUsername(bean.getEmail());
-        String password = bean.getPassword();
-        if (StringUtils.isBlank(password)) {
-            password = UserEnum.DEFAULT_TEACHER_PASSWORD;
-        }
-        String strPwd = new String(Base64.getDecoder().decode(password));
-        SHA256PasswordEncoder encoder = new SHA256PasswordEncoder();
-        user.setPassword(encoder.encode(strPwd));
-        
-        if(PropertyConfigurer.booleanValue("signup.send.mail.switch")){
-            user.setStatus(UserEnum.Status.LOCKED.toString());
-        }else{
-            user.setStatus(UserEnum.Status.NORMAL.toString());
-        }
-        user.setToken(UUID.randomUUID().toString());
-        user.setCreateDateTime(new Timestamp(System.currentTimeMillis()));
-        user.setLastEditDateTime(new Timestamp(System.currentTimeMillis()));
-        user.setRegisterDateTime(new Timestamp(System.currentTimeMillis()));
-        user.setRoles(UserEnum.Role.TEACHER.toString());
-        user.setDtype(UserEnum.Dtype.TEACHER.val());
-        userDao.save(user);
-        user.setLastEditorId(user.getId());
-        user.setCreaterId(user.getId());
-        userDao.update(user);
+        String lockKey = "";
+        String usernameKey = "";
+        String email = bean.getEmail();
+        try {
+            usernameKey = tryUserNameLock(email);
+            if(StringUtils.isBlank(usernameKey)){
+                logger.info("老师注册, 该用户还没注册完成，不能重复提交 . email="+email);
+                return ReturnMapUtils.returnFail(ApplicationConstant.AjaxCode.USER_EXITS);
+            }
+            User user = this.userDao.findByUsername(bean.getEmail());
+            // 1.是否存在
+            if (user != null) {
+                return ReturnMapUtils.returnFail(ApplicationConstant.AjaxCode.USER_EXITS);
+            }
+            // 2.创建User
+            user = new User();
+            user.setUsername(bean.getEmail());
+            String password = bean.getPassword();
+            if (StringUtils.isBlank(password)) {
+                password = UserEnum.DEFAULT_TEACHER_PASSWORD;
+            }
+            String strPwd = new String(Base64.getDecoder().decode(password));
+            SHA256PasswordEncoder encoder = new SHA256PasswordEncoder();
+            user.setPassword(encoder.encode(strPwd));
 
-        // 3.创建 Teacher
-        Teacher teacher = new Teacher();
-        teacher.setId(user.getId());
-        teacher.setEmail(bean.getEmail());
-        teacher.setLifeCycle(TeacherEnum.LifeCycle.SIGNUP.toString());
-        String serialNumber = teacherDao.getSerialNumber();
-        teacher.setSerialNumber(serialNumber);
-        teacher.setRecruitmentId(System.currentTimeMillis() + "-"+ encoder.encode(teacher.getSerialNumber() + "kxoucywejl" + teacher.getEmail()));
-        teacher.setCurrency(TeacherEnum.Currency.US_DOLLAR.toString());
-        teacher.setContractType(TeacherEnum.ContractType.FOUR_A.getVal());
-        teacher.setHide(TeacherEnum.Hide.NONE.toString());
-        // 设置推荐人保存字段
-        teacher = this.prerefereeId(teacher, bean.getRefereeId(), bean.getPartnerId());
-        teacherDao.save(teacher);
-        if(NumericUtils.isNotNullOrZeor(bean.getActivityExamId())){
-        	Map<String,Object> activityExamMap = this.teacherDao.getActivityExamInfo(bean.getActivityExamId());
-        	if(MapUtils.isNotEmpty(activityExamMap) 
-        			&& StringUtils.equals(activityExamMap.get("status")+"",StatusEnum.COMPLETE.val()+"") 
-        			&& NumericUtils.isNullOrZeor((Integer)activityExamMap.get("teacherId"))){
-        		this.teacherDao.updateActivityExamInfo(bean.getActivityExamId(), teacher.getId());
-        	}
+            if (PropertyConfigurer.booleanValue("signup.send.mail.switch")) {
+                user.setStatus(UserEnum.Status.LOCKED.toString());
+            } else {
+                user.setStatus(UserEnum.Status.NORMAL.toString());
+            }
+            user.setToken(UUID.randomUUID().toString());
+            user.setCreateDateTime(new Timestamp(System.currentTimeMillis()));
+            user.setLastEditDateTime(new Timestamp(System.currentTimeMillis()));
+            user.setRegisterDateTime(new Timestamp(System.currentTimeMillis()));
+            user.setRoles(UserEnum.Role.TEACHER.toString());
+            user.setDtype(UserEnum.Dtype.TEACHER.val());
+            userDao.save(user);
+            user.setLastEditorId(user.getId());
+            user.setCreaterId(user.getId());
+            userDao.update(user);
+
+            // 3.创建 Teacher
+            Teacher teacher = new Teacher();
+            teacher.setId(user.getId());
+            teacher.setEmail(bean.getEmail());
+            teacher.setLifeCycle(TeacherEnum.LifeCycle.SIGNUP.toString());
+            String serialNumber = teacherDao.getSerialNumber();
+
+            //启用分布式锁检查，避免出现重复serialNumber
+            lockKey = trySerialNumberLock(serialNumber);
+            if (StringUtils.isBlank(lockKey)) {
+                //休眠1000ms再去查询一次max serialNumber
+                Thread.sleep(1000);
+                serialNumber = teacherDao.getSerialNumber();
+                lockKey = trySerialNumberLock(serialNumber);
+                if (StringUtils.isBlank(lockKey)) {
+                    logger.error("老师注册，最大seriaNumber已被占用， 请稍后再试, email=" + bean.getEmail());
+                    throw new ServiceException(TeacherPortalCodeEnum.ORDER_ALREADY_EXISTED.getCode(), "seriaNumber已经存在， 请稍后再试");
+                }
+            }
+            teacher.setSerialNumber(serialNumber);
+            teacher.setRecruitmentId(System.currentTimeMillis() + "-" + encoder.encode(teacher.getSerialNumber() + "kxoucywejl" + teacher.getEmail()));
+            teacher.setCurrency(TeacherEnum.Currency.US_DOLLAR.toString());
+            teacher.setContractType(TeacherEnum.ContractType.FOUR_A.getVal());
+            teacher.setHide(TeacherEnum.Hide.NONE.toString());
+            // 设置推荐人保存字段
+            teacher = this.prerefereeId(teacher, bean.getRefereeId(), bean.getPartnerId());
+            teacherDao.save(teacher);
+            if (NumericUtils.isNotNullOrZeor(bean.getActivityExamId())) {
+                Map<String, Object> activityExamMap = this.teacherDao.getActivityExamInfo(bean.getActivityExamId());
+                if (MapUtils.isNotEmpty(activityExamMap)
+                        && StringUtils.equals(activityExamMap.get("status") + "", StatusEnum.COMPLETE.val() + "")
+                        && NumericUtils.isNullOrZeor((Integer) activityExamMap.get("teacherId"))) {
+                    this.teacherDao.updateActivityExamInfo(bean.getActivityExamId(), teacher.getId());
+                }
+            }
+            logger.info(" Sign up teacher: " + teacher.getSerialNumber());
+            if (PropertyConfigurer.booleanValue("signup.send.mail.switch")) {
+                // 4.发送邮件(带着Recruitment ID)
+                EmailUtils.sendActivationEmail(teacher);
+                //用于注册后跳转的参数(前后端分离后，不需要uuid该参数)
+                resultMap.put("uuid", AES.encrypt(teacher.getRecruitmentId(), AES.getKey(AES.KEY_LENGTH_128, ApplicationConstant.AES_128_KEY)));
+            }
+            resultMap.put("user", user);
+        } catch(ServiceException e){
+            logger.error("老师注册发生异常，email="+bean.getEmail(), e);
+            throw e;
+        } catch(Exception e){
+            logger.error("老师注册发生异常，email="+bean.getEmail(), e);
+            throw new ServiceException(TeacherPortalCodeEnum.SYS_FAIL.getCode(), TeacherPortalCodeEnum.SYS_FAIL.getMsg());
+        } finally {
+            releaseLock(usernameKey);
+            releaseLock(lockKey);
         }
-        logger.info(" Sign up teacher: " + teacher.getSerialNumber());
-        if(PropertyConfigurer.booleanValue("signup.send.mail.switch")){
-            // 4.发送邮件(带着Recruitment ID)
-            EmailUtils.sendActivationEmail(teacher);
-            //用于注册后跳转的参数(前后端分离后，不需要uuid该参数)
-            resultMap.put("uuid", AES.encrypt(teacher.getRecruitmentId(),AES.getKey(AES.KEY_LENGTH_128, ApplicationConstant.AES_128_KEY)));
-        }
-        resultMap.put("user", user);
         return ReturnMapUtils.returnSuccess(resultMap);
     }
 
@@ -279,7 +323,7 @@ public class PassportService {
      * 更新用户密码
      * 
      * @Author:ALong (ZengWeiLong)
-     * @param password
+     * @param
      * @return int
      * @date 2016年3月3日
      */
@@ -516,4 +560,30 @@ public class PassportService {
 		}
 		return value;
 	}
+
+    private String tryUserNameLock(String username) {
+        String key = SIGN_UP_USERNAME_KEY + username;
+        boolean bl = redisProxy.lock(key, SIGN_UP_TIME_OUT);
+        if (!bl) {
+            logger.error("老师注册，username已存在redis，不能重复提交.key="+key);
+            return null;
+        }
+        return key;
+    }
+
+    private String trySerialNumberLock(String serialNumber){
+        String key = SIGN_UP_KEY + serialNumber;
+        boolean bl = redisProxy.lock(key, SIGN_UP_TIME_OUT);
+        if (!bl) {
+            logger.error("老师注册，serialNumber已存在redis，请稍后再试.key="+key);
+            return null;
+        }
+        return key;
+    }
+
+    private void releaseLock(String lockKey) {
+        if(StringUtils.isNotBlank(lockKey)){
+            redisProxy.del(lockKey);
+        }
+    }
 }

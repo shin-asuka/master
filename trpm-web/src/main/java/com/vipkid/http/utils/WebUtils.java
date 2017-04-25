@@ -10,8 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.vipkid.enums.OnlineClassEnum;
-import com.vipkid.trpm.util.IpUtils;
+import com.google.common.base.Preconditions;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpEntity;
@@ -41,6 +40,7 @@ import com.vipkid.http.vo.HttpResult;
  * @date 2016年3月11日 上午10:31:48
  *
  */
+@Deprecated
 public class WebUtils {
 
     private static final Logger logger = LoggerFactory.getLogger(WebUtils.class);

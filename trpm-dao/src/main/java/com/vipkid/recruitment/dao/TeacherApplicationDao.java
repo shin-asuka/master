@@ -187,7 +187,7 @@ public class TeacherApplicationDao extends MapperDaoTemplate<TeacherApplication>
         return selectOne(new TeacherApplication().setId(id));
     }
 
-    public List<Map<String, String>> findFailTeachersByAuditTime(String startTime, String endTime) {
+    public List<Map<String, Object>> findFailTeachersByAuditTime(String startTime, String endTime) {
         Map<String, Object> paramsMap = new HashMap<String, Object>();
         paramsMap.put("startTime", startTime);
         paramsMap.put("endTime", endTime);

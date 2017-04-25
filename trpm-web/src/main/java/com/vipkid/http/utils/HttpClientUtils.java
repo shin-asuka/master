@@ -626,8 +626,9 @@ public class HttpClientUtils {
         String content = null;
         HttpPost post = new HttpPost(url);
         try {
-
+            logger.info("Post data map,url = {},params = {}", url, jsonData);
             Response response = interaction(post,jsonData,defaultEncoding,headers,0,0);
+            logger.info("Post data,response status line = {}",response.getStatusCode());
             if(response != null){
                 content=response.getContent();
             }
