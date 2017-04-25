@@ -1,6 +1,7 @@
 package com.vipkid.background.service;
 
 import com.vipkid.background.BackgroundAdverseDao;
+import com.vipkid.background.BackgroundReportDao;
 import com.vipkid.background.BackgroundScreeningDao;
 import com.vipkid.background.CanadaBackgroundScreeningDao;
 import com.vipkid.background.api.sterling.dto.BackgroundFileStatusDto;
@@ -10,10 +11,7 @@ import com.vipkid.enums.TeacherApplicationEnum.ContractFileType;
 import com.vipkid.recruitment.dao.TeacherContractFileDao;
 import com.vipkid.recruitment.entity.TeacherContractFile;
 import com.vipkid.trpm.dao.TeacherGatedLaunchDao;
-import com.vipkid.trpm.entity.BackgroundAdverse;
-import com.vipkid.trpm.entity.BackgroundScreening;
-import com.vipkid.trpm.entity.CanadaBackgroundScreening;
-import com.vipkid.trpm.entity.Teacher;
+import com.vipkid.trpm.entity.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.community.config.PropertyConfigurer;
@@ -44,6 +42,9 @@ public class BackgroundCommonService {
 
     @Autowired
     private TeacherGatedLaunchDao teacherGatedLaunchDao;
+
+    @Autowired
+    private BackgroundReportDao backgroundReportDao;
 
     private static Logger logger = LoggerFactory.getLogger(BackgroundCommonService.class);
     private boolean  backgroundSwitch = PropertyConfigurer.booleanValue("background.sterling.switch");
@@ -177,6 +178,41 @@ public class BackgroundCommonService {
                                         }
                                     }
 
+                                }
+                                //如果只是因为ssn问题导致的alert可以认为是clear
+                                List<BackgroundReport> backgroundReports = backgroundReportDao.findByBgSterlingScreeningId(screeningId);
+                                boolean multiCheck = false;
+                                boolean offender = false;
+                                boolean criminalCheck = true;
+                                for (BackgroundReport backgroundReport:backgroundReports) {
+                                    String reportType = backgroundReport.getType();
+                                    String reportResult = backgroundReport.getResult();
+                                    if (null != reportType){
+                                        switch (reportType){
+                                            case ("Multi-State Instant Criminal Check"):
+                                                if (StringUtils.equalsIgnoreCase(reportResult,ReportResult.COMPLETE.getValue()) ||
+                                                        StringUtils.equalsIgnoreCase(reportResult,ReportResult.CLEAR.getValue())){
+                                                    multiCheck = true;
+                                                }
+                                                break;
+                                            case ("DOJ Sex Offender"):
+                                                if (StringUtils.equalsIgnoreCase(reportResult,ReportResult.CLEAR.getValue())){
+                                                    offender = true;
+                                                }
+                                                break;
+                                            case ("Criminal Check by County"):
+                                                if (!StringUtils.equalsIgnoreCase(reportResult,ReportResult.CLEAR.getValue())){
+                                                    criminalCheck = false;
+                                                }
+                                                break;
+
+                                        }
+                                    }
+                                }
+                                if (multiCheck && offender && criminalCheck){
+                                    backgroundStatusDto.setNeedBackgroundCheck(false);
+                                    backgroundStatusDto.setResult(BackgroundResult.CLEAR.getVal());
+                                    backgroundStatusDto.setPhase(BackgroundPhase.CLEAR.getVal());
                                 }
                                 break;
                         }
