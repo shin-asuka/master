@@ -105,7 +105,7 @@ public class BackgroundCommonService {
                         switch (backgroundResult) {
                             //开始背调，背调结果结果为N/A
                             case "n/a":
-                                backgroundStatusDto.setNeedBackgroundCheck(true);
+                                backgroundStatusDto.setNeedBackgroundCheck(false);
                                 backgroundStatusDto.setPhase(BackgroundPhase.PENDING.getVal());
                                 backgroundStatusDto.setResult(BackgroundResult.NA.getVal());
                                 break;
@@ -149,14 +149,14 @@ public class BackgroundCommonService {
                                 if (null == backgroundAdverse){
                                     backgroundStatusDto.setPhase(BackgroundPhase.PENDING.getVal());
                                     backgroundStatusDto.setResult(BackgroundResult.NA.getVal());
-                                    backgroundStatusDto.setNeedBackgroundCheck(true);
+                                    backgroundStatusDto.setNeedBackgroundCheck(false);
                                 } else {
                                     String actionsStatus = backgroundAdverse.getActionsStatus();
                                     if (StringUtils.equalsIgnoreCase(actionsStatus,AdverseStatus.CANCELLED.getValue())){
                                         //cancelled 暂时显示30天
                                         backgroundStatusDto.setPhase(BackgroundPhase.DISPUTE.getVal());
                                         backgroundStatusDto.setResult(BackgroundResult.ALERT.getVal());
-                                        backgroundStatusDto.setNeedBackgroundCheck(true);
+                                        backgroundStatusDto.setNeedBackgroundCheck(false);
                                     } else if (StringUtils.equalsIgnoreCase(actionsStatus,AdverseStatus.COMPLETE.getValue())){
                                         //最终结果为fail
                                         backgroundStatusDto.setPhase(BackgroundPhase.FAIL.getVal());
@@ -168,7 +168,7 @@ public class BackgroundCommonService {
                                             //正在进行dispute
                                             backgroundStatusDto.setPhase(BackgroundPhase.DISPUTE.getVal());
                                             backgroundStatusDto.setResult(BackgroundResult.ALERT.getVal());
-                                            backgroundStatusDto.setNeedBackgroundCheck(true);
+                                            backgroundStatusDto.setNeedBackgroundCheck(false);
                                         } else if (StringUtils.equalsIgnoreCase(disputeStatus,DisputeStatus.DEACTIVATED.getVal())){
                                             //n天内老师没有DISPUTE
                                             backgroundStatusDto.setPhase(BackgroundPhase.DIDNOTDISPUTE.getVal());
@@ -178,7 +178,7 @@ public class BackgroundCommonService {
                                             //dispute_status 为 null 等待老师进行dispute
                                             backgroundStatusDto.setPhase(BackgroundPhase.PREADVERSE.getVal());
                                             backgroundStatusDto.setResult(BackgroundResult.ALERT.getVal());
-                                            backgroundStatusDto.setNeedBackgroundCheck(true);
+                                            backgroundStatusDto.setNeedBackgroundCheck(false);
                                         }
                                     }
 
