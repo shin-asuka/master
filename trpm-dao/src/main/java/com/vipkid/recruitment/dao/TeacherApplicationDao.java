@@ -163,6 +163,11 @@ public class TeacherApplicationDao extends MapperDaoTemplate<TeacherApplication>
         List<TeacherApplication> teacherApplications =
                 super.selectList(teacherApplication.setOnlineClassId(onlineClassId));
 
+        if (null == teacherApplications || teacherApplications.size() == 0 ){
+
+            return  new TeacherApplication();
+        }
+
         Optional<TeacherApplication> optional = teacherApplications.stream()
                 .filter(ta -> ta.getAuditorId() == auditorId).findFirst();
         if (optional.isPresent()) {
