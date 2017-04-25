@@ -686,7 +686,7 @@ public class TeacherService {
 	 * @param teacherId
 	 * @return
 	 */
-	public String getReferralCode(long teacherId){
+	public String getReferralCodeByTeacherId(long teacherId){
 		String referral = Long.toString(teacherId,36);
 		int length = referral.length();
 		int len = 6-length;
@@ -702,16 +702,10 @@ public class TeacherService {
 	 * @param referralCode
 	 * @return
 	 */
-	public long getTeacherIdWithReferralCode(String referralCode){
+	public long getTeacherIdByReferralCode(String referralCode){
 		referralCode.trim().toLowerCase();
-		if (StringUtils.contains(referralCode,'0')){
-			int begin = referralCode.lastIndexOf('0');
-			referralCode = referralCode.substring(begin,referralCode.length());
-
-		}
 		long teacherId = Long.parseLong(referralCode,36);
 		return teacherId;
 	}
-
 
 }

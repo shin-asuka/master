@@ -308,7 +308,7 @@ public class LoginController extends RestfulController {
             String referralCode = bean.getReferralCode();
             logger.info("check ReferralCode:{}",referralCode);
             if (StringUtils.isNotBlank(bean.getReferralCode())){
-                long referralId = teacherService.getTeacherIdWithReferralCode(referralCode);
+                long referralId = teacherService.getTeacherIdByReferralCode(referralCode);
                 bean.setRefereeId(referralId);
                 User user = passportService.findUserById(referralId);
                 if (null == user){
@@ -568,7 +568,7 @@ public class LoginController extends RestfulController {
             teacherinfo.setTeacherId(this.getUser(request).getId());
 
             //添加 ReferralCode
-            String referralCode = teacherService.getReferralCode(this.getUser(request).getId());
+            String referralCode = teacherService.getReferralCodeByTeacherId(this.getUser(request).getId());
             teacherinfo.setReferralCode(referralCode);
             //权限判断 start
             loginService.findByTeacherModule(teacherinfo, teacher.getLifeCycle());
@@ -675,7 +675,7 @@ public class LoginController extends RestfulController {
         try {
             long referralId = param.get("referralId");
             Preconditions.checkArgument(null != Long.valueOf(referralId),"referralId can not be null");
-            String referralCode = teacherService.getReferralCode(referralId);
+            String referralCode = teacherService.getReferralCodeByTeacherId(referralId);
             result.put("referralCode",referralCode);
 
         }catch (Exception e){
