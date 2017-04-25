@@ -1,13 +1,30 @@
 package com.vipkid.recruitment.interview.service;
 
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
+import com.google.api.client.util.Maps;
+import com.vipkid.dataSource.annotation.Slave;
+import com.vipkid.email.EmailUtils;
+import com.vipkid.enums.OnlineClassEnum;
+import com.vipkid.enums.TeacherApplicationEnum;
+import com.vipkid.enums.TeacherApplicationEnum.Result;
+import com.vipkid.enums.TeacherApplicationEnum.Status;
+import com.vipkid.enums.TeacherEnum.LifeCycle;
+import com.vipkid.enums.TeacherQuizEnum.Version;
+import com.vipkid.recruitment.common.service.RecruitmentService;
+import com.vipkid.recruitment.dao.InterviewDao;
+import com.vipkid.recruitment.dao.TeacherApplicationDao;
+import com.vipkid.recruitment.dao.TeacherApplicationLogDao;
+import com.vipkid.recruitment.dao.TeacherLockLogDao;
+import com.vipkid.recruitment.entity.InterviewerClassCount;
+import com.vipkid.recruitment.entity.TeacherApplication;
+import com.vipkid.recruitment.interview.InterviewConstant;
+import com.vipkid.recruitment.utils.ReturnMapUtils;
+import com.vipkid.rest.exception.ServiceException;
+import com.vipkid.task.service.SendMailAtDayTimeService;
+import com.vipkid.trpm.dao.*;
+import com.vipkid.trpm.entity.*;
+import com.vipkid.trpm.proxy.OnlineClassProxy;
+import com.vipkid.trpm.proxy.OnlineClassProxy.ClassType;
+import com.vipkid.trpm.util.DateUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
@@ -16,42 +33,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.google.api.client.util.Maps;
-import com.vipkid.dataSource.annotation.Slave;
-import com.vipkid.email.EmailUtils;
-import com.vipkid.enums.OnlineClassEnum;
-import com.vipkid.enums.TeacherApplicationEnum.Result;
-import com.vipkid.enums.TeacherApplicationEnum.Status;
-import com.vipkid.enums.TeacherEnum.LifeCycle;
-import com.vipkid.enums.TeacherLockLogEnum.Reason;
-import com.vipkid.enums.TeacherQuizEnum.Version;
-import com.vipkid.enums.UserEnum;
-import com.vipkid.recruitment.common.service.RecruitmentService;
-import com.vipkid.recruitment.dao.InterviewDao;
-import com.vipkid.recruitment.dao.TeacherApplicationDao;
-import com.vipkid.recruitment.dao.TeacherApplicationLogDao;
-import com.vipkid.recruitment.dao.TeacherLockLogDao;
-import com.vipkid.recruitment.entity.InterviewerClassCount;
-import com.vipkid.recruitment.entity.TeacherApplication;
-import com.vipkid.recruitment.entity.TeacherLockLog;
-import com.vipkid.recruitment.interview.InterviewConstant;
-import com.vipkid.recruitment.utils.ReturnMapUtils;
-import com.vipkid.trpm.dao.LessonDao;
-import com.vipkid.trpm.dao.OnlineClassDao;
-import com.vipkid.trpm.dao.TeacherAddressDao;
-import com.vipkid.trpm.dao.TeacherDao;
-import com.vipkid.trpm.dao.TeacherLocationDao;
-import com.vipkid.trpm.dao.TeacherQuizDao;
-import com.vipkid.trpm.dao.UserDao;
-import com.vipkid.trpm.entity.Lesson;
-import com.vipkid.trpm.entity.OnlineClass;
-import com.vipkid.trpm.entity.Teacher;
-import com.vipkid.trpm.entity.TeacherAddress;
-import com.vipkid.trpm.entity.TeacherLocation;
-import com.vipkid.trpm.entity.User;
-import com.vipkid.trpm.proxy.OnlineClassProxy;
-import com.vipkid.trpm.proxy.OnlineClassProxy.ClassType;
-import com.vipkid.trpm.util.DateUtils;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 @Service
 public class InterviewService {
@@ -92,6 +80,9 @@ public class InterviewService {
     @Autowired
     private TeacherLocationDao teacherLocationDao;
 
+    @Autowired
+    private SendMailAtDayTimeService sendMailAtDayTimeService;
+
     private static Logger logger = LoggerFactory.getLogger(InterviewService.class);
 
     /**
@@ -101,10 +92,10 @@ public class InterviewService {
      * @return
      * List&lt;Map&lt;String,Object&gt;&gt;
      */
-    public List<Map<String,Object>> findlistByInterview(){
+    public List<Map<String,Object>> findListByInterview(){
         String fromTime = LocalDateTime.now().plusHours(1).format(DateUtils.FMT_YMD_HMS);
         String toTime = LocalDateTime.now().plusDays(InterviewConstant.SHOW_DAYS_EXCLUDE_TODAY + 1).withHour(23).withMinute(59).withSecond(59).format(DateUtils.FMT_YMD_HMS);
-        logger.info("findlistByInterview parameter fromTime:{}, toTime:{}",fromTime, toTime);
+        logger.info("findListByInterview parameter fromTime:{}, toTime:{}",fromTime, toTime);
         List<Map<String,Object>> list = interviewDao.findlistByInterview(fromTime, toTime);
         if(CollectionUtils.isNotEmpty(list)){
             Collections.shuffle(list);
@@ -145,25 +136,25 @@ public class InterviewService {
             result.put("lessonSN",lesson.getSerialNumber());
         }
         
-        String logpix = "onlineclassId:"+onlineClassId+";teacherId:"+teacher.getId();
+        String logSuffix = "onlineClassId:"+onlineClassId+"; teacherId:"+teacher.getId();
         
         //课程必须是当前步骤中的数据
         List<TeacherApplication> listEntity = this.teacherApplicationDao.findCurrentApplication(teacher.getId());
         
         if(CollectionUtils.isEmpty(listEntity)){
-            result.putAll(ReturnMapUtils.returnFail("You cannot enter this classroom!",logpix));
+            result.putAll(ReturnMapUtils.returnFail("You cannot enter this classroom!",logSuffix));
             return result;
         }
         
         //进教室权限判断    
         if(listEntity.get(0).getOnlineClassId() != onlineClassId){
-        	result.putAll(ReturnMapUtils.returnFail("You cannot enter this classroom!",logpix));
+        	result.putAll(ReturnMapUtils.returnFail("You cannot enter this classroom!",logSuffix));
             return result; 
         }
 
         //判断教室是否创建好
         if(StringUtils.isBlank(onlineClass.getClassroom())){
-        	result.putAll(ReturnMapUtils.returnFail("The classroom without creating",logpix));
+        	result.putAll(ReturnMapUtils.returnFail("The classroom without creating",logSuffix));
         	return result;
         }
 
@@ -174,6 +165,39 @@ public class InterviewService {
         return result;
     }
 
+    public Map<String,Object> createInterviewClass(Teacher teacher){
+        Map<String, Object> ret;
+
+        List<TeacherApplication> listEntity = teacherApplicationDao.findCurrentApplication(teacher.getId());
+
+
+        if(CollectionUtils.isEmpty(listEntity)){
+            ret = ReturnMapUtils.returnFail("You cannot enter interview classroom!");
+            return ret;
+        }
+
+        TeacherApplication teacherApplication = listEntity.get(0);
+
+        if(recruitmentService.teacherIsApplicationFinished(teacher)){
+            ret = ReturnMapUtils.returnFail("Your recruitment process is over already, Please refresh your page !","INTERVIEW:"+teacher.getId());
+            return ret;
+        }
+
+        //存在步骤，但步骤中已经存在待审核的课程 直接返回classRoomUrl不允许继续create
+        if (teacherApplication.getOnlineClassId() != 0 && StringUtils.isBlank(teacherApplication.getResult())){
+            ret = ReturnMapUtils.returnSuccess();
+            ret.put("id", teacherApplication.getOnlineClassId());
+            ret.put("isCreated", true);
+            return ret;
+        }
+        
+        // 下一步会马上book课create教室，见 appServer -> OnlineClassService.createDBYClassroom，create教室时scheduledDateTime要比当前时间大5秒才可以创建。
+        // 为保险起见，这里多加5分钟
+        long scheduledDateTime = System.currentTimeMillis() + InterviewConstant.CREATE_TIME_AFTER;
+        ret = OnlineClassProxy.doCreateInterview(teacher.getId(), scheduledDateTime);
+
+        return ret;
+    }
 
     /*加入interviewer scheduler逻辑以后, book 逻辑变动较大, 从接收onlineClassId改为接受前端时间戳*/
     @Slave
@@ -228,7 +252,6 @@ public class InterviewService {
         }
     }
 
-
     /***
      * BOOK INTERVIEW 
      * 1.onlineClassId 必须是OPEN 课
@@ -240,13 +263,13 @@ public class InterviewService {
      * @return
      * Map&lt;String,Object&gt;
      */
-    public Map<String,Object> bookInterviewClass(long onlineClassId,Teacher teacher){
+    public Map<String,Object> bookInterviewClass(long onlineClassId,Teacher teacher, long afterTimeMillis){
         
         if(teacher == null || teacher.getId() == 0 || StringUtils.isBlank(teacher.getRealName())){
             return ReturnMapUtils.returnFail("This account does not exist.");
         }
         
-        String logpix = "onlineclassId:"+onlineClassId+";teacherId:"+teacher.getId();
+        String logSuffix = "onlineClassId:"+onlineClassId+"; teacherId:"+teacher.getId();
         
         if(recruitmentService.teacherIsApplicationFinished(teacher)){
             return ReturnMapUtils.returnFail("Your recruitment process is over already, Please refresh your page !","INTERVIEW:"+teacher.getId());
@@ -256,17 +279,17 @@ public class InterviewService {
         
         //课程没有找到，无法book
         if(onlineClass == null){
-            return ReturnMapUtils.returnFail("This online class does not exist.",logpix);
+            return ReturnMapUtils.returnFail("This online class does not exist.",logSuffix);
         }
 
         //onlineClassId 必须是OPEN 课
         if(!OnlineClassEnum.ClassStatus.OPEN.toString().equalsIgnoreCase(onlineClass.getStatus())){
-            return ReturnMapUtils.returnFail("Oops, someone else just booked this time slot. Please select another.",logpix);
+            return ReturnMapUtils.returnFail("Oops, someone else just booked this time slot. Please select another.",logSuffix);
         }
 
         //book的课程在开课前1小时之内不允许book
-        if((System.currentTimeMillis() + InterviewConstant.BOOK_TIME) > onlineClass.getScheduledDateTime().getTime()){
-            return ReturnMapUtils.returnFail("Oops, someone else just booked this time slot. Please select another.",logpix);
+        if((System.currentTimeMillis() + afterTimeMillis) > onlineClass.getScheduledDateTime().getTime()){
+            return ReturnMapUtils.returnFail("Oops, someone else just booked this time slot. Please select another.",logSuffix);
         }
         //约课老师必须是INTERVIEW的待约课老师
         List<TeacherApplication> listEntity = teacherApplicationDao.findCurrentApplication(teacher.getId());
@@ -274,7 +297,7 @@ public class InterviewService {
             TeacherApplication teacherApplication = listEntity.get(0);
             //存在步骤，但步骤中已经存在待审核的课程 不允许继续book
             if(teacherApplication.getOnlineClassId() != 0 && StringUtils.isBlank(teacherApplication.getResult())){
-                return ReturnMapUtils.returnFail("You have booked a class already. Please refresh your page !",logpix);
+                return ReturnMapUtils.returnFail("You have booked a class already. Please refresh your page !",logSuffix);
             }
         }
         //判断剩余可取消次数
@@ -282,7 +305,7 @@ public class InterviewService {
         if(recruitmentService.getRemainRescheduleTimes(teacher, Status.INTERVIEW.toString(), Result.CANCEL.toString(), false) <= 0){
             userDao.doLock(teacher.getId());
             teacherLockLogDao.save(new TeacherLockLog(teacher.getId(), Reason.RESCHEDULE.toString(), LifeCycle.INTERVIEW.toString()));
-            return ReturnMapUtils.returnFail("There are no more cancellations allowed for your account. Contact us at teachvip@vipkid.com.cn for more information.",logpix);
+            return ReturnMapUtils.returnFail("There are no more cancellations allowed for your account. Contact us at teachvip@vipkid.com.cn for more information.", logSuffix);
         }
         */
         //执行BOOK逻辑
@@ -313,6 +336,8 @@ public class InterviewService {
             	}
             }
             EmailUtils.sendEmail4InterviewBook(teacher,onlineClass,cityName,teacherNumber);
+            // 保存 Interview 提醒
+            sendMailAtDayTimeService.saveAllInterviewBookedReminder(teacher, onlineClass.getScheduledDateTime(), onlineClassId);
         }
         return result;
     }
@@ -334,31 +359,31 @@ public class InterviewService {
             return ReturnMapUtils.returnFail("This account does not exist.");
         }
         
-        String logpix = "onlineclassId:"+onlineClassId+";teacherId:"+teacher.getId();
+        String logSuffix = "onlineClassId:"+onlineClassId+"; teacherId:"+teacher.getId();
 
         //class already start, can't cancel error
         OnlineClass onlineClass = this.onlineClassDao.findById(onlineClassId);
         if(onlineClass == null){
-            return ReturnMapUtils.returnFail("This online class does not exist.",logpix);
+            return ReturnMapUtils.returnFail("This online class does not exist.",logSuffix);
         }
         
         if(System.currentTimeMillis() > onlineClass.getScheduledDateTime().getTime()){
-            return ReturnMapUtils.returnFail("Sorry, you can't cancel after the start time has passed.",logpix);
+            return ReturnMapUtils.returnFail("Sorry, you can't cancel after the start time has passed.",logSuffix);
         }
 
         List<TeacherApplication> listEntity = this.teacherApplicationDao.findCurrentApplication(teacher.getId());
         //如果步骤中无数据则不允许cancel
         if(CollectionUtils.isEmpty(listEntity)){
-            return ReturnMapUtils.returnFail("You do not have permission to cancel this course",logpix);
+            return ReturnMapUtils.returnFail("You do not have permission to cancel this course",logSuffix);
         }else{
             TeacherApplication teacherApplication = listEntity.get(0);
             //如果步骤中有数据并且数据不是本次cancel的课程 则不允许cancel
             if(teacherApplication.getOnlineClassId() != onlineClass.getId()){
-                return ReturnMapUtils.returnFail("You have already cancelled this class. Please refresh your page !",logpix);
+                return ReturnMapUtils.returnFail("You have already cancelled this class. Please refresh your page !",logSuffix);
             }else{
                 //果步骤中有数据并且数据不是本次cancel的课程 但管理端已经审核，不允许cancel
                 if(StringUtils.isNotBlank(teacherApplication.getResult())){
-                    return ReturnMapUtils.returnFail("This class already audited. Please refresh your page !",logpix);
+                    return ReturnMapUtils.returnFail("This class already audited. Please refresh your page !",logSuffix);
                 }
             }
         }
@@ -378,7 +403,7 @@ public class InterviewService {
         Map<String,Object> result = OnlineClassProxy.doCancelRecruitement(teacher.getId(), onlineClass.getId(), ClassType.TEACHER_RECRUITMENT);
         if(ReturnMapUtils.isFail(result)){
             //一旦失败，抛出异常回滚
-            throw new RuntimeException(""+result.get("info"));
+            throw new ServiceException(""+result.get("info"));
         }
         return result;
     }

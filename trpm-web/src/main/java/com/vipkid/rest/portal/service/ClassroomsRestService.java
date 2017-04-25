@@ -1,5 +1,7 @@
 package com.vipkid.rest.portal.service;
 
+import com.vipkid.rest.portal.model.ClassroomDetail;
+
 import java.util.Map;
 
 public interface ClassroomsRestService {

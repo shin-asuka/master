@@ -25,9 +25,10 @@ public class TypedReadWriteDataSourceRouter extends AbstractRoutingDataSource {
     protected Object determineCurrentLookupKey() {
         Annotation annotation = DataSourceHolder.get();
         if (annotation == null || annotation.annotationType() == Master.class) {
+            logger.info("TypedReadWriteDataSourceRouter set datasource [master]");
             return "WRITE";
         }
-        logger.info("TypedReadWriteDataSourceRouter set datasource [salve]");
+        logger.info("TypedReadWriteDataSourceRouter set datasource [slave]");
 
         ThreadLocalRandom random = ThreadLocalRandom.current();
         return "READ_" + random.nextInt(slaves);

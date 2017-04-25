@@ -10,6 +10,7 @@ import com.vipkid.recruitment.practicum.service.PracticumService;
 import com.vipkid.recruitment.utils.ReturnMapUtils;
 import com.vipkid.rest.RestfulController;
 import com.vipkid.rest.config.RestfulConfig;
+import com.vipkid.rest.exception.ServiceException;
 import com.vipkid.rest.interceptor.annotation.RestInterface;
 import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.service.huanxin.HuanxinService;
@@ -99,6 +100,9 @@ public class PracticumController extends RestfulController {
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
             return ReturnMapUtils.returnFail(e.getMessage(),e);
+        } catch (ServiceException e){
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            return ReturnMapUtils.returnFail(e.getMessage(), e);
         } catch (Exception e) {
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
             return ReturnMapUtils.returnFail(e.getMessage(), e);

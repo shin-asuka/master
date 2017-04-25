@@ -318,8 +318,7 @@ public class PortalPersonalInfoController extends RestfulController {
 
 		return null;// 如果验证通过，返回null
 	}
-	
-	@Slave
+
 	@RequestMapping(value = "/findReferrals", method = RequestMethod.POST)
 	public Map<String, Object> findReferrals(HttpServletRequest request, HttpServletResponse response,@RequestBody ReferralTeacherVo bean) {
 		try{
