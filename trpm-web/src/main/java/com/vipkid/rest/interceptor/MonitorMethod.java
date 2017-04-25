@@ -13,6 +13,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import com.vipkid.http.utils.JsonUtils;
+import com.vipkid.rest.exception.ServiceException;
+
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * Created by ZengWeiLong on 2017/1/10.
@@ -65,7 +68,7 @@ public class MonitorMethod {
     public Object doPortalControllerAround(ProceedingJoinPoint pjp) {
     	return doLogger(pjp);
     }
-    
+
     private Object doLogger(ProceedingJoinPoint pjp){
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
@@ -80,9 +83,11 @@ public class MonitorMethod {
         				argString.append("request,");
         			}else if(o instanceof HttpServletResponse){
         				argString.append("response,");
-        			}else{
-        				argString.append(JsonUtils.toJSONString(o)+",");
-        			}
+        			}else if(o instanceof MultipartFile){
+                        logger.info("上传文件");
+                    }else{
+                        argString.append(JsonUtils.toJSONString(o)+",");
+                    }
     			}
         	}
         	//执行结果
@@ -92,7 +97,13 @@ public class MonitorMethod {
             	reslult = JsonUtils.toJSONString(obj);
             }
             return obj;
-        } catch (Throwable e) {
+        }catch (IllegalArgumentException e) {
+            logger.warn("MonitorMethodInterceptor IllegalArgumentException, errorMessage=" + e.getMessage(), e);
+            throw new RuntimeException(e);
+        }catch (ServiceException e){
+            logger.warn("MonitorMethodInterceptor ServiceException, errorMessage=" ,e);
+            throw new ServiceException(e);
+        }catch (Throwable e) {
             logger.error("MonitorMethodInterceptor error !",e);
             throw new RuntimeException(e);
         }finally{

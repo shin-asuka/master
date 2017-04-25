@@ -7,29 +7,22 @@ import com.vipkid.enums.TeacherApplicationEnum.Result;
 import com.vipkid.enums.TeacherApplicationEnum.Status;
 import com.vipkid.enums.TeacherEnum.LifeCycle;
 import com.vipkid.enums.TeacherEnum.Type;
-import com.vipkid.enums.TeacherLockLogEnum.Reason;
 import com.vipkid.enums.TeacherQuizEnum.Version;
-import com.vipkid.enums.UserEnum;
 import com.vipkid.recruitment.common.service.RecruitmentService;
 import com.vipkid.recruitment.dao.PracticumDao;
 import com.vipkid.recruitment.dao.TeacherApplicationDao;
 import com.vipkid.recruitment.dao.TeacherApplicationLogDao;
 import com.vipkid.recruitment.dao.TeacherLockLogDao;
 import com.vipkid.recruitment.entity.TeacherApplication;
-import com.vipkid.recruitment.entity.TeacherLockLog;
 import com.vipkid.recruitment.practicum.PracticumConstant;
 import com.vipkid.recruitment.utils.ReturnMapUtils;
+import com.vipkid.rest.exception.ServiceException;
+import com.vipkid.task.service.SendMailAtDayTimeService;
 import com.vipkid.trpm.dao.*;
-import com.vipkid.trpm.entity.Lesson;
-import com.vipkid.trpm.entity.OnlineClass;
-import com.vipkid.trpm.entity.Teacher;
-import com.vipkid.trpm.entity.TeacherQuiz;
-import com.vipkid.trpm.entity.User;
+import com.vipkid.trpm.entity.*;
 import com.vipkid.trpm.proxy.OnlineClassProxy;
 import com.vipkid.trpm.proxy.OnlineClassProxy.ClassType;
-import com.vipkid.trpm.service.huanxin.HuanxinService;
 import com.vipkid.trpm.util.DateUtils;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang3.StringUtils;
@@ -64,6 +57,9 @@ public class PracticumService {
     private TeacherApplicationLogDao teacherApplicationLogDao;
     @Autowired
     private RecruitmentService recruitmentService;
+
+    @Autowired
+    private SendMailAtDayTimeService sendMailAtDayTimeService;
 
     private static Logger logger = LoggerFactory.getLogger(PracticumService.class);
 
@@ -214,6 +210,8 @@ public class PracticumService {
             }else{
                 EmailUtils.sendEmail4PracticumBook(teacher,onlineClass);
             }
+            // 保存 MockClass 提醒
+            sendMailAtDayTimeService.saveAllMockClassBookedReminder(teacher, onlineClass.getScheduledDateTime(), onlineClassId);
         }
 
         return result;
@@ -269,7 +267,7 @@ public class PracticumService {
         Map<String,Object> result = OnlineClassProxy.doCancelRecruitement(teacher.getId(), onlineClass.getId(), ClassType.PRACTICUM);
         if(ReturnMapUtils.isFail(result)){
             //一旦失败，抛出异常回滚
-            throw new RuntimeException(""+result.get("info"));
+            throw new ServiceException(""+result.get("info"));
         }
         //发送提醒邮件
         EmailUtils.sendEmail4Recruitment(teacher,"PracticumReapplyTitle.html","PracticumReapply.html");

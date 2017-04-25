@@ -377,7 +377,8 @@ public class RecruitmentService {
             if(OnlineClassEnum.ClassStatus.BOOKED.toString().equals(onlineClass.getStatus())){
                 result.put("serverTime",System.currentTimeMillis());
                 result.put("scheduledDateTime",onlineClass.getScheduledDateTime().getTime());
-                result.put("onlineClassId", onlineClass.getId());  
+                result.put("onlineClassId", onlineClass.getId());
+                result.put("isQuickInterview", onlineClass.getClassType() == OnlineClassEnum.ClassType.QUICK_INTERVIEW.val() ? true : false);
             }
         }
         return result;

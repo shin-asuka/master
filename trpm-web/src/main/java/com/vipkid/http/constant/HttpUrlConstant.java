@@ -31,6 +31,11 @@ public class HttpUrlConstant {
     @Value("${api.gateway.server.url}")
     private String apiGatewayServerUrl;
 
+
+    @Value("${api.classroom.server.url}")
+    private String apiClassroomServerUrl;
+
+
     public String getApiHomeworkServerUrl() {
         return apiHomeworkServerUrl;
     }
@@ -53,5 +58,13 @@ public class HttpUrlConstant {
 
     public void setApiGatewayServerUrl(String apiGatewayServerUrl) {
         this.apiGatewayServerUrl = apiGatewayServerUrl;
+    }
+
+    public String getApiClassroomServerUrl() {
+        return apiClassroomServerUrl;
+    }
+
+    public void setApiClassroomServerUrl(String apiClassroomServerUrl) {
+        this.apiClassroomServerUrl = apiClassroomServerUrl;
     }
 }

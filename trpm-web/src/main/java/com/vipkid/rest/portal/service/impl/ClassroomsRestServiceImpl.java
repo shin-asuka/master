@@ -92,7 +92,7 @@ public class ClassroomsRestServiceImpl implements ClassroomsRestService{
 		if (!CourseType.isPracticum(courseType)) {// 只要不是"PRACTICUM"，就赋值"MAJOR"
 			courseType = "MAJOR";
 		}
-		Map<String, Object> result = null;
+ 		Map<String, Object> result = null;
 
 		ClassroomsData classroomsData = new ClassroomsData();
 
@@ -314,7 +314,7 @@ public class ClassroomsRestServiceImpl implements ClassroomsRestService{
 			modelMap.put("curPage", page);
 
 			/* 查询统计数据 */
-			List<Map<String, Object>> stateList = onlineClassDao.findStatPracticumFinishTypeBy(teacher.getId(), teacher.getTimezone(), monthOfYear);
+			List<Map<String, Object>> stateList = classroomsService.findStatPracticumFinishTypeBy(teacher.getId(), teacher.getTimezone(), monthOfYear);
 			rebuildStateList(stateList);
 			modelMap.put("stateList", stateList);
 		} else {
@@ -336,7 +336,7 @@ public class ClassroomsRestServiceImpl implements ClassroomsRestService{
 			modelMap.put("curPage", page);
 
 			/* 查询统计数据 */
-			List<Map<String, Object>> stateList = onlineClassDao.findStatMajorFinishTypeBy(teacher.getId(), teacher.getTimezone(), monthOfYear);
+			List<Map<String, Object>> stateList = classroomsService.findStatMajorFinishTypeBy(teacher.getId(), teacher.getTimezone(), monthOfYear);
 			rebuildStateList(stateList);
 			modelMap.put("stateList",stateList);
 		}
@@ -415,7 +415,12 @@ public class ClassroomsRestServiceImpl implements ClassroomsRestService{
             df.setTimeZone(TimeZone.getTimeZone(teacher.getTimezone()));
             String scheduledDateTime = df.format(date);
             classroomDetail.setScheduledDateTime(scheduledDateTime);
-
+            Timestamp bookDateTimestamp = (Timestamp) eachMap.get("bookDateTime");
+            if(bookDateTimestamp != null) {
+				Calendar bookDateTime = Calendar.getInstance();
+				bookDateTime.setTimeInMillis(bookDateTimestamp.getTime());
+				classroomDetail.setBookDateTime(bookDateTime);
+			}
             String onlineClassId = String.valueOf(eachMap.get("id"));
             classroomDetail.setOnlineClassId(Long.parseLong(onlineClassId));
             String finishType = (String) eachMap.get("finishType");
@@ -541,11 +546,7 @@ public class ClassroomsRestServiceImpl implements ClassroomsRestService{
 		} else {
 			assessmentReport = assessmentReportDao.findReportByStudentIdAndName(serialNumber, studentId);
 		}
-		if (null != assessmentReport && StringUtils.isNotEmpty(assessmentReport.getUrl())) {
-			return true;
-		} else {
-			return false;
-		}
+		return null != assessmentReport && StringUtils.isNotEmpty(assessmentReport.getUrl());
 	}
 
 	private Map<String, Object> getOldUaReportStatus(long onlineClassId, long studentId, String serialNumber) {
@@ -639,7 +640,7 @@ public class ClassroomsRestServiceImpl implements ClassroomsRestService{
 		
 		private int code;
 		
-		private ReportType(int code ){
+		ReportType(int code){
 			this.setCode(code);
 		}
 
@@ -651,4 +652,7 @@ public class ClassroomsRestServiceImpl implements ClassroomsRestService{
 			this.code = code;
 		}
 	}
+
+
+
 }

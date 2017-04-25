@@ -5,6 +5,7 @@ package com.vipkid.http.utils;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -196,7 +197,7 @@ public class WebUtils {
     }
 
     public static String postNameValuePair(String url, Object object) {
-//    	JSONObject json = JsonUtils.toJSONObject(object);
+
         String json = JsonUtils.toJSONString(object);
 
         logger.info("Post data,url = {},params = {}", url, json);

@@ -166,28 +166,28 @@ public class ScheduleService {
      * @param timePoints
      * @return List<TimeSlot>
      */
-    public List<TimeSlot> timeSlotsOfWeek(List<Date> daysOfWeek, List<TimePoint> timePoints) {
-        List<TimeSlot> timeSlotsOfWeek = Lists.newLinkedList();
-
-        timePoints.stream().forEach((timePoint) -> {
-            daysOfWeek.stream().forEach((day) -> {
-                Calendar calendarDay = Calendar.getInstance();
-                calendarDay.setTime(day);
-
-                /* 设置小时和分钟 */
-                Calendar calendarTime = Calendar.getInstance();
-                calendarTime.setTimeInMillis(timePoint.getMillis());
-
-                calendarDay.set(Calendar.HOUR_OF_DAY, calendarTime.get(Calendar.HOUR_OF_DAY));
-                calendarDay.set(Calendar.MINUTE, calendarTime.get(Calendar.MINUTE));
-                calendarDay.set(Calendar.SECOND, 0);
-
-                timeSlotsOfWeek.add(new TimeSlot(calendarDay.getTime()));
-            });
-        });
-
-        return timeSlotsOfWeek;
-    }
+//    public List<TimeSlot> timeSlotsOfWeek(List<Date> daysOfWeek, List<TimePoint> timePoints) {
+//        List<TimeSlot> timeSlotsOfWeek = Lists.newLinkedList();
+//
+//        timePoints.stream().forEach((timePoint) -> {
+//            daysOfWeek.stream().forEach((day) -> {
+//                Calendar calendarDay = Calendar.getInstance();
+//                calendarDay.setTime(day);
+//
+//                /* 设置小时和分钟 */
+//                Calendar calendarTime = Calendar.getInstance();
+//                calendarTime.setTimeInMillis(timePoint.getMillis());
+//
+//                calendarDay.set(Calendar.HOUR_OF_DAY, calendarTime.get(Calendar.HOUR_OF_DAY));
+//                calendarDay.set(Calendar.MINUTE, calendarTime.get(Calendar.MINUTE));
+//                calendarDay.set(Calendar.SECOND, 0);
+//
+//                timeSlotsOfWeek.add(new TimeSlot(calendarDay.getTime()));
+//            });
+//        });
+//
+//        return timeSlotsOfWeek;
+//    }
 
     /**
      * 计算整个星期的ZoneTime
@@ -196,15 +196,15 @@ public class ScheduleService {
      * @param timezone
      * @return List<ZoneTime>
      */
-    public List<ZoneTime> zoneTimesOfWeek(List<TimeSlot> timeSlots, String timezone) {
-        List<ZoneTime> zoneTimesOfWeek = Lists.newLinkedList();
-
-        timeSlots.stream().forEach((timeSlot) -> {
-            zoneTimesOfWeek.add(new ZoneTime(timeSlot, timezone));
-        });
-
-        return zoneTimesOfWeek;
-    }
+//    public List<ZoneTime> zoneTimesOfWeek(List<TimeSlot> timeSlots, String timezone) {
+//        List<ZoneTime> zoneTimesOfWeek = Lists.newLinkedList();
+//
+//        timeSlots.stream().forEach((timeSlot) -> {
+//            zoneTimesOfWeek.add(new ZoneTime(timeSlot, timezone));
+//        });
+//
+//        return zoneTimesOfWeek;
+//    }
 
     /**
      * 计算Schedule表格
@@ -215,58 +215,58 @@ public class ScheduleService {
      * @param courseType
      * @return Map<TimePoint, List<TimeSlot>>
      */
-    public Map<TimePoint, List<TimeSlot>> scheduleTable(List<Date> daysOfWeek, String timezone,
-                    Map<String, String> peakTimeMap, String courseType) {
-        Comparator<TimePoint> comparator =
-                        (first, second) -> Long.valueOf(first.getMillis() - second.getMillis()).intValue();
-
-        Map<TimePoint, List<TimeSlot>> scheduleTable = Maps.newTreeMap(comparator);
-
-        List<TimeSlot> timeSlotsOfWeek = timeSlotsOfWeek(daysOfWeek, timePointsOfDay);
-        List<ZoneTime> zoneTimesOfWeek = zoneTimesOfWeek(timeSlotsOfWeek, timezone);
-
-        // 更新每个TimeSlot的ZoneTime列表
-        timeSlotsOfWeek.stream().forEach((timeSlot) -> {
-
-            zoneTimesOfWeek.stream().forEach((zoneTime) -> {
-                if (zoneTime.getLocalTime().equals(timeSlot.getLocalTime())) {
-                    timeSlot.getZoneTime().add(zoneTime);
-
-                    /* 设置当前timeSlot是否显示 */
-                    timeSlot.setShow(isShow(zoneTime.getFormatToBeiJing(), courseType));
-
-                    /* 设置当前timeSlot是否已过期 */
-                    timeSlot.setExpired(zoneTime.getDateFromBeiJing().before(new Date()));
-
-                    /* 设置当前timeSlot样式 */
-                    String peakType = peakTimeMap.get(zoneTime.getFormatToBeiJing());
-                    setTimeSlotStyle(timeSlot, peakType);
-                }
-            });
-
-        });
-
-        // 设置TimePoint和TimeSlot列表的映射关系
-        timePointsOfDay.stream().forEach((timePoint) -> {
-
-            List<TimeSlot> groupTimeSlots = Lists.newLinkedList();
-
-            timeSlotsOfWeek.stream().forEach((timeSlot) -> {
-                if (StringUtils.contains(timeSlot.getLocalTime(), timePoint.getName())) {
-                    groupTimeSlots.add(timeSlot);
-                }
-            });
-
-            /* 过滤不在上课时间段的数据 */
-            long t = groupTimeSlots.stream().filter(timeSlot -> timeSlot.isShow()).count();
-            if (0 != t) {
-                scheduleTable.put(timePoint, groupTimeSlots);
-            }
-
-        });
-
-        return scheduleTable;
-    }
+//    public Map<TimePoint, List<TimeSlot>> scheduleTable(List<Date> daysOfWeek, String timezone,
+//                    Map<String, String> peakTimeMap, String courseType) {
+//        Comparator<TimePoint> comparator =
+//                        (first, second) -> Long.valueOf(first.getMillis() - second.getMillis()).intValue();
+//
+//        Map<TimePoint, List<TimeSlot>> scheduleTable = Maps.newTreeMap(comparator);
+//
+//        List<TimeSlot> timeSlotsOfWeek = timeSlotsOfWeek(daysOfWeek, timePointsOfDay);
+//        List<ZoneTime> zoneTimesOfWeek = zoneTimesOfWeek(timeSlotsOfWeek, timezone);
+//
+//        // 更新每个TimeSlot的ZoneTime列表
+//        timeSlotsOfWeek.stream().forEach((timeSlot) -> {
+//
+//            zoneTimesOfWeek.stream().forEach((zoneTime) -> {
+//                if (zoneTime.getLocalTime().equals(timeSlot.getLocalTime())) {
+//                    timeSlot.getZoneTime().add(zoneTime);
+//
+//                    /* 设置当前timeSlot是否显示 */
+//                    timeSlot.setShow(isShow(zoneTime.getFormatToBeiJing(), courseType));
+//
+//                    /* 设置当前timeSlot是否已过期 */
+//                    timeSlot.setExpired(zoneTime.getDateFromBeiJing().before(new Date()));
+//
+//                    /* 设置当前timeSlot样式 */
+//                    String peakType = peakTimeMap.get(zoneTime.getFormatToBeiJing());
+//                    setTimeSlotStyle(timeSlot, peakType);
+//                }
+//            });
+//
+//        });
+//
+//        // 设置TimePoint和TimeSlot列表的映射关系
+//        timePointsOfDay.stream().forEach((timePoint) -> {
+//
+//            List<TimeSlot> groupTimeSlots = Lists.newLinkedList();
+//
+//            timeSlotsOfWeek.stream().forEach((timeSlot) -> {
+//                if (StringUtils.contains(timeSlot.getLocalTime(), timePoint.getName())) {
+//                    groupTimeSlots.add(timeSlot);
+//                }
+//            });
+//
+//            /* 过滤不在上课时间段的数据 */
+//            long t = groupTimeSlots.stream().filter(timeSlot -> timeSlot.isShow()).count();
+//            if (0 != t) {
+//                scheduleTable.put(timePoint, groupTimeSlots);
+//            }
+//
+//        });
+//
+//        return scheduleTable;
+//    }
 
     /**
      * 设置TimeSlot样式
@@ -274,19 +274,19 @@ public class ScheduleService {
      * @param timeSlot
      * @param peakType
      */
-    public void setTimeSlotStyle(TimeSlot timeSlot, String peakType) {
-        if (timeSlot.isExpired()) {
-            timeSlot.setStyle(SlotStyle.EXPIRED_TIME_SLOT);
-        } else if (timeSlot.isShow()) {
-            if (!StringUtils.isEmpty(peakType) && !StringUtils.contains(peakType, PeakTimeType.NORMALTIME)) {
-                timeSlot.setStyle(SlotStyle.PEAK_TIME);
-            } else {
-                timeSlot.setStyle(SlotStyle.EMPTY);
-            }
-        } else {
-            timeSlot.setStyle(SlotStyle.EXPIRED_TIME_SLOT);
-        }
-    }
+//    public void setTimeSlotStyle(TimeSlot timeSlot, String peakType) {
+//        if (timeSlot.isExpired()) {
+//            timeSlot.setStyle(SlotStyle.EXPIRED_TIME_SLOT);
+//        } else if (timeSlot.isShow()) {
+//            if (!StringUtils.isEmpty(peakType) && !StringUtils.contains(peakType, PeakTimeType.NORMALTIME)) {
+//                timeSlot.setStyle(SlotStyle.PEAK_TIME);
+//            } else {
+//                timeSlot.setStyle(SlotStyle.EMPTY);
+//            }
+//        } else {
+//            timeSlot.setStyle(SlotStyle.EXPIRED_TIME_SLOT);
+//        }
+//    }
 
     /**
      * 北京的上课时间为早9点到晚9点半
@@ -341,18 +341,18 @@ public class ScheduleService {
      * @param toTime
      * @return Map<String, String>
      */
-    public Map<String, String> getPeakTimeMap(Date fromTime, Date toTime) {
-        Map<String, String> peakTimeMap = Maps.newHashMap();
-        List<PeakTime> peakTimeList = peakTimeDao.findByFromAndToTime(fromTime, toTime);
-
-        Consumer<PeakTime> consumer = (peakTime) -> {
-            Instant instant = peakTime.getTimePoint().toInstant();
-            peakTimeMap.put(formatTo(instant, FMT_YMD_HMS), peakTime.getType());
-        };
-
-        peakTimeList.stream().forEach(consumer);
-        return peakTimeMap;
-    }
+//    public Map<String, String> getPeakTimeMap(Date fromTime, Date toTime) {
+//        Map<String, String> peakTimeMap = Maps.newHashMap();
+//        List<PeakTime> peakTimeList = peakTimeDao.findByFromAndToTime(fromTime, toTime);
+//
+//        Consumer<PeakTime> consumer = (peakTime) -> {
+//            Instant instant = peakTime.getTimePoint().toInstant();
+//            peakTimeMap.put(formatTo(instant, FMT_YMD_HMS), peakTime.getType());
+//        };
+//
+//        peakTimeList.stream().forEach(consumer);
+//        return peakTimeMap;
+//    }
 
     /**
      * 查询老师的Schedule列表
@@ -363,89 +363,89 @@ public class ScheduleService {
      * @param timezone
      * @return List<Map<String, Object>>
      */
-    public Map<String, Map<String, Object>> getTeacherScheduleMap(long teacherId, Date fromTime, Date toTime,
-                    String timezone) {
-        List<Map<String, Object>> teacherScheduleList =
-                        onlineClassDao.findByTeacherIdWithFromAndToTime(teacherId, fromTime, toTime, timezone);
-
-        logger.info("Teacher id: {}, Schedule size: {}", teacherId, teacherScheduleList.size());
-
-        /* 根据北京时间构造Map对象 */
-        Map<String, Map<String, Object>> teacherScheduleMap = Maps.newHashMap();
-
-        /* 查询需要显示的INVALID课程列表 */
-        List<Map<String, Object>> invalidScheduleList =
-                        onlineClassDao.findInvalidBy(teacherId, fromTime, toTime, timezone);
-
-        /* 查询24小时的课程列表 */
-        List<String> onlineClassIds = teacherScheduleList.stream().map(map -> {
-            return String.valueOf(map.get("id"));
-        }).collect(Collectors.toList());
-        List<String> idsFor24Hour = get24HourClass(teacherId, onlineClassIds);
-
-        for (Map<String, Object> teacherSchedule : teacherScheduleList) {
-            long onlineClassId = (Long) teacherSchedule.get("id");
-
-            /**
-             * 由于查询的列表中包含除了REMOVED之外所有的课程，因此需要过滤不用于显示的INVALID记录； 业务场景：换课时，只显示第一个被换老师的INVALID记录。
-             */
-            String status = (String) teacherSchedule.get("status");
-            if (ClassStatus.isInvalid(status)) {
-                boolean isFilter = true;
-
-                for (Map<String, Object> invalidSchedule : invalidScheduleList) {
-                    if (onlineClassId == (Long) invalidSchedule.get("id")) {
-                        isFilter = false;
-                        break;
-                    }
-                }
-
-                if (isFilter) {
-                    continue;
-                }
-            }
-
-            /* 设置课程类型 */
-            int classType = (Integer) teacherSchedule.get("classType");
-            if (ClassType.PRACTICUM.val() == classType) {
-                teacherSchedule.put("isPracticum", true);
-            } else {
-                teacherSchedule.put("isPracticum", false);
-            }
-
-            /* 设置是否是24小时的课程 */
-            if (idsFor24Hour.stream().anyMatch(id -> id.equals(String.valueOf(onlineClassId)))) {
-                teacherSchedule.put("is24Hour", true);
-            } else {
-                teacherSchedule.put("is24Hour", false);
-            }
-
-            /* 设置OPEN课程的学生数量 */
-            setStudentCount(teacherSchedule);
-
-            /* 按优先级过滤课程 */
-            Date scheduledDateTime = (Date) teacherSchedule.get("scheduledDateTime");
-            String scheduleKey = formatTo(scheduledDateTime.toInstant(), FMT_YMD_HMS);
-            setSchedulePriority(teacherScheduleMap, scheduleKey, teacherSchedule);
-        }
-
-        return teacherScheduleMap;
-    }
+//    public Map<String, Map<String, Object>> getTeacherScheduleMap(long teacherId, Date fromTime, Date toTime,
+//                    String timezone) {
+//        List<Map<String, Object>> teacherScheduleList =
+//                        onlineClassDao.findByTeacherIdWithFromAndToTime(teacherId, fromTime, toTime, timezone);
+//
+//        logger.info("Teacher id: {}, Schedule size: {}", teacherId, teacherScheduleList.size());
+//
+//        /* 根据北京时间构造Map对象 */
+//        Map<String, Map<String, Object>> teacherScheduleMap = Maps.newHashMap();
+//
+//        /* 查询需要显示的INVALID课程列表 */
+//        List<Map<String, Object>> invalidScheduleList =
+//                        onlineClassDao.findInvalidBy(teacherId, fromTime, toTime, timezone);
+//
+//        /* 查询24小时的课程列表 */
+//        List<String> onlineClassIds = teacherScheduleList.stream().map(map -> {
+//            return String.valueOf(map.get("id"));
+//        }).collect(Collectors.toList());
+//        List<String> idsFor24Hour = get24HourClass(teacherId, onlineClassIds);
+//
+//        for (Map<String, Object> teacherSchedule : teacherScheduleList) {
+//            long onlineClassId = (Long) teacherSchedule.get("id");
+//
+//            /**
+//             * 由于查询的列表中包含除了REMOVED之外所有的课程，因此需要过滤不用于显示的INVALID记录； 业务场景：换课时，只显示第一个被换老师的INVALID记录。
+//             */
+//            String status = (String) teacherSchedule.get("status");
+//            if (ClassStatus.isInvalid(status)) {
+//                boolean isFilter = true;
+//
+//                for (Map<String, Object> invalidSchedule : invalidScheduleList) {
+//                    if (onlineClassId == (Long) invalidSchedule.get("id")) {
+//                        isFilter = false;
+//                        break;
+//                    }
+//                }
+//
+//                if (isFilter) {
+//                    continue;
+//                }
+//            }
+//
+//            /* 设置课程类型 */
+//            int classType = (Integer) teacherSchedule.get("classType");
+//            if (ClassType.PRACTICUM.val() == classType) {
+//                teacherSchedule.put("isPracticum", true);
+//            } else {
+//                teacherSchedule.put("isPracticum", false);
+//            }
+//
+//            /* 设置是否是24小时的课程 */
+//            if (idsFor24Hour.stream().anyMatch(id -> id.equals(String.valueOf(onlineClassId)))) {
+//                teacherSchedule.put("is24Hour", true);
+//            } else {
+//                teacherSchedule.put("is24Hour", false);
+//            }
+//
+//            /* 设置OPEN课程的学生数量 */
+//            setStudentCount(teacherSchedule);
+//
+//            /* 按优先级过滤课程 */
+//            Date scheduledDateTime = (Date) teacherSchedule.get("scheduledDateTime");
+//            String scheduleKey = formatTo(scheduledDateTime.toInstant(), FMT_YMD_HMS);
+//            setSchedulePriority(teacherScheduleMap, scheduleKey, teacherSchedule);
+//        }
+//
+//        return teacherScheduleMap;
+//    }
 
     /**
      * 设置OPEN课的学生数量
      * 
      * @param teacherSchedule
      */
-    public void setStudentCount(Map<String, Object> teacherSchedule) {
-        /* 获取TeacherSchedule的状态 */
-        String status = (String) teacherSchedule.get("status");
-
-        if (ClassStatus.isOpen(status)) {
-            long onlineClassId = (Long) teacherSchedule.get("id");
-            teacherSchedule.put("studentCount", onlineClassDao.countStudentByOnlineClassId(onlineClassId));
-        }
-    }
+//    public void setStudentCount(Map<String, Object> teacherSchedule) {
+//        /* 获取TeacherSchedule的状态 */
+//        String status = (String) teacherSchedule.get("status");
+//
+//        if (ClassStatus.isOpen(status)) {
+//            long onlineClassId = (Long) teacherSchedule.get("id");
+//            teacherSchedule.put("studentCount", onlineClassDao.countStudentByOnlineClassId(onlineClassId));
+//        }
+//    }
 
     /**
      * 设置TeacherSchedule显示的优先级
@@ -454,76 +454,76 @@ public class ScheduleService {
      * @param scheduleKey
      * @param teacherSchedule
      */
-    public void setSchedulePriority(Map<String, Map<String, Object>> teacherScheduleMap, String scheduleKey,
-                    Map<String, Object> teacherSchedule) {
-        boolean isReplaced = false;
-
-        /* 获取新的TeacherSchedule的状态 */
-        String newStatus = (String) teacherSchedule.get("status");
-        String newFinishType = (String) teacherSchedule.get("finishType");
-
-        if (teacherScheduleMap.containsKey(scheduleKey)) {
-            /* 获取已有的TeacherSchedule的状态 */
-            Map<String, Object> exsitTeacherSchedule = teacherScheduleMap.get(scheduleKey);
-            String oldStatus = (String) exsitTeacherSchedule.get("status");
-            String oldFinishType = (String) exsitTeacherSchedule.get("finishType");
-
-            /* 增加新类型替换 */
-            /* 如果老状态为FINISHED */
-            if (ClassStatus.isFinished(oldStatus)) {
-                /* 新状态为BOOKED，则替换 */
-                if (ClassStatus.isBooked(newStatus)) {
-                    isReplaced = true;
-                }
-                /* 新状态为AVAILABLE，老的FinishType为StudentNoShow24则替换 */
-                if (ClassStatus.isAvailable(newStatus) && FinishType.isStudentNoShow24(oldFinishType)) {
-                    isReplaced = true;
-                }
-                /* 新状态为FINISHED，老的FinishType为StudentNoShow则替换 */
-                if (ClassStatus.isFinished(newStatus) && FinishType.isStudentNoShow(oldFinishType)) {
-                    isReplaced = true;
-                }
-            }
-
-            /* 如果老状态为EXPIRED，新状态为FINISHED，或新状态为BOOKED，则替换 */
-            if (ClassStatus.isExpired(oldStatus)) {
-                if (ClassStatus.isFinished(newStatus) || ClassStatus.isBooked(newStatus)) {
-                    isReplaced = true;
-                }
-            }
-
-            /* 如果老状态为CANCELED，或REMOVED，则替换 */
-            if (ClassStatus.isCanceled(oldStatus) || ClassStatus.isRemoved(oldStatus)) {
-                isReplaced = true;
-            }
-
-            /* 如果老状态为AVAILABLE */
-            if (ClassStatus.isAvailable(oldStatus)) {
-                /* 新状态为BOOKED，则替换 */
-                if (ClassStatus.isBooked(newStatus)) {
-                    isReplaced = true;
-                }
-                /* 新FinishType为StudentNoShow，则替换 */
-                if (FinishType.isStudentNoShow(newFinishType)) {
-                    isReplaced = true;
-                }
-            }
-
-            /* 如果老状态为INVALID，新状态不为INVALID，则替换 */
-            if (ClassStatus.isInvalid(oldStatus) && !ClassStatus.isInvalid(newStatus)) {
-                isReplaced = true;
-            }
-        } else {
-            /* 如果新状态不为REMOVED，则替换 */
-            if (!ClassStatus.isRemoved(newStatus)) {
-                isReplaced = true;
-            }
-        }
-
-        if (isReplaced) {
-            teacherScheduleMap.put(scheduleKey, teacherSchedule);
-        }
-    }
+//    public void setSchedulePriority(Map<String, Map<String, Object>> teacherScheduleMap, String scheduleKey,
+//                    Map<String, Object> teacherSchedule) {
+//        boolean isReplaced = false;
+//
+//        /* 获取新的TeacherSchedule的状态 */
+//        String newStatus = (String) teacherSchedule.get("status");
+//        String newFinishType = (String) teacherSchedule.get("finishType");
+//
+//        if (teacherScheduleMap.containsKey(scheduleKey)) {
+//            /* 获取已有的TeacherSchedule的状态 */
+//            Map<String, Object> exsitTeacherSchedule = teacherScheduleMap.get(scheduleKey);
+//            String oldStatus = (String) exsitTeacherSchedule.get("status");
+//            String oldFinishType = (String) exsitTeacherSchedule.get("finishType");
+//
+//            /* 增加新类型替换 */
+//            /* 如果老状态为FINISHED */
+//            if (ClassStatus.isFinished(oldStatus)) {
+//                /* 新状态为BOOKED，则替换 */
+//                if (ClassStatus.isBooked(newStatus)) {
+//                    isReplaced = true;
+//                }
+//                /* 新状态为AVAILABLE，老的FinishType为StudentNoShow24则替换 */
+//                if (ClassStatus.isAvailable(newStatus) && FinishType.isStudentNoShow24(oldFinishType)) {
+//                    isReplaced = true;
+//                }
+//                /* 新状态为FINISHED，老的FinishType为StudentNoShow则替换 */
+//                if (ClassStatus.isFinished(newStatus) && FinishType.isStudentNoShow(oldFinishType)) {
+//                    isReplaced = true;
+//                }
+//            }
+//
+//            /* 如果老状态为EXPIRED，新状态为FINISHED，或新状态为BOOKED，则替换 */
+//            if (ClassStatus.isExpired(oldStatus)) {
+//                if (ClassStatus.isFinished(newStatus) || ClassStatus.isBooked(newStatus)) {
+//                    isReplaced = true;
+//                }
+//            }
+//
+//            /* 如果老状态为CANCELED，或REMOVED，则替换 */
+//            if (ClassStatus.isCanceled(oldStatus) || ClassStatus.isRemoved(oldStatus)) {
+//                isReplaced = true;
+//            }
+//
+//            /* 如果老状态为AVAILABLE */
+//            if (ClassStatus.isAvailable(oldStatus)) {
+//                /* 新状态为BOOKED，则替换 */
+//                if (ClassStatus.isBooked(newStatus)) {
+//                    isReplaced = true;
+//                }
+//                /* 新FinishType为StudentNoShow，则替换 */
+//                if (FinishType.isStudentNoShow(newFinishType)) {
+//                    isReplaced = true;
+//                }
+//            }
+//
+//            /* 如果老状态为INVALID，新状态不为INVALID，则替换 */
+//            if (ClassStatus.isInvalid(oldStatus) && !ClassStatus.isInvalid(newStatus)) {
+//                isReplaced = true;
+//            }
+//        } else {
+//            /* 如果新状态不为REMOVED，则替换 */
+//            if (!ClassStatus.isRemoved(newStatus)) {
+//                isReplaced = true;
+//            }
+//        }
+//
+//        if (isReplaced) {
+//            teacherScheduleMap.put(scheduleKey, teacherSchedule);
+//        }
+//    }
 
     /**
      * 处理Schedule逻辑
@@ -534,35 +534,35 @@ public class ScheduleService {
      * @param courseType
      * @return Map<String, Object>
      */
-    public Map<String, Object> doSchedule(int offsetOfWeek, long teacherId, String timezone, String courseType) {
-        Map<String, Object> modelMap = Maps.newHashMap();
-        Calendar calendar = Calendar.getInstance();
-
-        /* 分页处理 */
-        if (0 != offsetOfWeek) {
-            calendar.add(Calendar.DATE, offsetOfWeek * DAY_OF_WEEK);
-        }
-
-        /* 获取日期所在星期 */
-        List<Date> daysOfWeek = daysOfWeek(calendar.getTime());
-        modelMap.put("daysOfWeek", daysOfWeek);
-
-        /* 查询的开始时间和结束时间 */
-        Date fromTime = daysOfWeek.get(0), toTime = daysOfWeek.get(DAY_OF_WEEK);
-
-        /* 计算Schedule表格 */
-        Map<String, String> peakTimeMap = getPeakTimeMap(fromTime, toTime);
-        modelMap.put("scheduleTable", scheduleTable(daysOfWeek, timezone, peakTimeMap, courseType));
-
-        /* 查询老师的Schedule记录 */
-        modelMap.put("teacherScheduleMap", getTeacherScheduleMap(teacherId, fromTime, toTime, timezone));
-
-        /* 设置页面显示日期 */
-        modelMap.put("startDate", daysOfWeek.get(0));
-        modelMap.put("endDate", daysOfWeek.get(DAY_OF_WEEK - 1));
-
-        return modelMap;
-    }
+//    public Map<String, Object> doSchedule(int offsetOfWeek, long teacherId, String timezone, String courseType) {
+//        Map<String, Object> modelMap = Maps.newHashMap();
+//        Calendar calendar = Calendar.getInstance();
+//
+//        /* 分页处理 */
+//        if (0 != offsetOfWeek) {
+//            calendar.add(Calendar.DATE, offsetOfWeek * DAY_OF_WEEK);
+//        }
+//
+//        /* 获取日期所在星期 */
+//        List<Date> daysOfWeek = daysOfWeek(calendar.getTime());
+//        modelMap.put("daysOfWeek", daysOfWeek);
+//
+//        /* 查询的开始时间和结束时间 */
+//        Date fromTime = daysOfWeek.get(0), toTime = daysOfWeek.get(DAY_OF_WEEK);
+//
+//        /* 计算Schedule表格 */
+//        Map<String, String> peakTimeMap = getPeakTimeMap(fromTime, toTime);
+//        modelMap.put("scheduleTable", scheduleTable(daysOfWeek, timezone, peakTimeMap, courseType));
+//
+//        /* 查询老师的Schedule记录 */
+//        modelMap.put("teacherScheduleMap", getTeacherScheduleMap(teacherId, fromTime, toTime, timezone));
+//
+//        /* 设置页面显示日期 */
+//        modelMap.put("startDate", daysOfWeek.get(0));
+//        modelMap.put("endDate", daysOfWeek.get(DAY_OF_WEEK - 1));
+//
+//        return modelMap;
+//    }
 
     /**
      * 处理TimeSlot创建逻辑
@@ -805,14 +805,14 @@ public class ScheduleService {
                         teacherId);
     }
 
-    public boolean isShow24HourInfo(HttpServletRequest request, HttpServletResponse response) {
-        Cookie cookie = CookieUtils.getCookie(request, CookieKey.TRPM_HOURS_24);
-        if (null != cookie) {
-            CookieUtils.removeCookie(response, CookieKey.TRPM_HOURS_24, null, null);
-            return true;
-        }
-        return false;
-    }
+//    public boolean isShow24HourInfo(HttpServletRequest request, HttpServletResponse response) {
+//        Cookie cookie = CookieUtils.getCookie(request, CookieKey.TRPM_HOURS_24);
+//        if (null != cookie) {
+//            CookieUtils.removeCookie(response, CookieKey.TRPM_HOURS_24, null, null);
+//            return true;
+//        }
+//        return false;
+//    }
 
     public boolean set24HourClass(long teacherId, long onlineClassId) {
         Map<String, String> requestHeader = get24HourRequestHeader(teacherId);
@@ -908,27 +908,27 @@ public class ScheduleService {
         return false;
     }
 
-    public List<String> get24HourClass(long teacherId, List<String> onlineClassIds) {
-        Map<String, String> requestHeader = get24HourRequestHeader(teacherId);
-        logger.info("Get 24Hour Request Header: {}", requestHeader.get("Authorization"));
-
-        try {
-            Map<String, String> requestParams = Maps.newHashMap();
-            String value = onlineClassIds.stream().collect(Collectors.joining(","));
-            requestParams.put("classIds", value);
-
-            String requestUrl =
-                            ApplicationConstant.TEACHER_24HOUR_URL + "/api/service/public/24HourClass/filterByClass";
-            logger.info("Get 24Hour Request Url: {}", requestUrl);
-
-            String responseBody = HttpClientProxy.get(requestUrl, requestParams, requestHeader);
-            responseBody = StringTools.matchString(responseBody, "\\[(.*?)\\]", Pattern.CASE_INSENSITIVE, 1);
-            return Arrays.asList(StringUtils.split(responseBody, ","));
-        } catch (Exception e) {
-            logger.error("HttpClientProxy err: {}", e);
-            return Lists.newArrayList();
-        }
-    }
+//    public List<String> get24HourClass(long teacherId, List<String> onlineClassIds) {
+//        Map<String, String> requestHeader = get24HourRequestHeader(teacherId);
+//        logger.info("Get 24Hour Request Header: {}", requestHeader.get("Authorization"));
+//
+//        try {
+//            Map<String, String> requestParams = Maps.newHashMap();
+//            String value = onlineClassIds.stream().collect(Collectors.joining(","));
+//            requestParams.put("classIds", value);
+//
+//            String requestUrl =
+//                            ApplicationConstant.TEACHER_24HOUR_URL + "/api/service/public/24HourClass/filterByClass";
+//            logger.info("Get 24Hour Request Url: {}", requestUrl);
+//
+//            String responseBody = HttpClientProxy.get(requestUrl, requestParams, requestHeader);
+//            responseBody = StringTools.matchString(responseBody, "\\[(.*?)\\]", Pattern.CASE_INSENSITIVE, 1);
+//            return Arrays.asList(StringUtils.split(responseBody, ","));
+//        } catch (Exception e) {
+//            logger.error("HttpClientProxy err: {}", e);
+//            return Lists.newArrayList();
+//        }
+//    }
 
     private Map<String, String> get24HourRequestHeader(long teacherId) {
         String t = "TEACHER " + teacherId;

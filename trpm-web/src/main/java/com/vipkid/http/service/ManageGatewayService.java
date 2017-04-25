@@ -148,9 +148,11 @@ public class ManageGatewayService extends HttpBaseService {
 					stuCommentApi.setTagsEn(convertTagsToEn(stuCommentApi.getTags()));
 				}
 			}else{
+				studentCommentPageApi.setData(Lists.newArrayList());
 				studentCommentPageApi.setTotal(0);
 			}
 		} catch (Exception e) {
+			studentCommentPageApi.setData(Lists.newArrayList());
 			logger.error("【ManageGatewayService.getStudentCommentListByTeacherId】调用失败，teacherId：{},start:{},limit:{},ratingLevel:{},exception:{}", teacher, start, limit, ratings,e);
 		}
 

@@ -1,9 +1,8 @@
 package com.vipkid.email.handle;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-
-
 import com.google.common.collect.Maps;
+import com.vipkid.trpm.util.DateUtils;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.community.config.PropertyConfigurer;
@@ -16,6 +15,7 @@ import javax.mail.Authenticator;
 import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import java.nio.charset.StandardCharsets;
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -31,20 +31,23 @@ public class EmailServer {
     private static final boolean ENABLE_EMAIL = PropertyConfigurer.booleanValue("email.enable");
 
     private static int sendMessage(String from, Session _session, EmailEntity reviceEntity) {
+        int result = 1;
         if (!ENABLE_EMAIL){
             logger.info("Email send skip ====>：");
-            return 1;
+            return result;
         }
+
         try {
             logger.info("Email send start ====>：");
-            int result = sendMail(reviceEntity);
+            result = sendMail(reviceEntity);
             logger.info("Email send end ====>：{}", result);
         } catch (Exception e) {
             logger.error("Email send Exception:", e);
             return 0;
         }
+
         logger.info("Email send complete ====>：");
-        return 1;
+        return result;
     }
 
     public static int sendMail(EmailEntity mailEntity) {
@@ -55,9 +58,15 @@ public class EmailServer {
         Map<String, String> requestParam = Maps.newHashMap();
         requestParam.put("from", mailEntity.getFromMail());
         requestParam.put("to", mailEntity.getToMail());
-       // requestParam.put("to", "moyonglin1@gmail.com");
+
         requestParam.put("subject", mailEntity.getMailSubject());
         requestParam.put("content", mailEntity.getMailBody());
+
+        // 增加定时发送
+        if(null != mailEntity.getScheduledTime()) {
+            SimpleDateFormat dateFormat = new SimpleDateFormat(DateUtils.DEFAULT_FORMAT_PATTERN);
+            requestParam.put("scheduledTime", dateFormat.format(mailEntity.getScheduledTime()));
+        }
         try {
             String json = HttpClientProxy.post(REQUEST_URL, requestParam, requestHeader);
             logger.info("Email send result ====>：{}", json);
