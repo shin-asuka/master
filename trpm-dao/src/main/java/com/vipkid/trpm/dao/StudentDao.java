@@ -24,6 +24,7 @@ public class StudentDao extends MapperDaoTemplate<Student> {
     }
 
     public Student findById(long studentId) {
+    	if(studentId == 0) return null;
         return selectOne(new Student().setId(studentId));
     }
 

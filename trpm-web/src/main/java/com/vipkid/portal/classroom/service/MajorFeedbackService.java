@@ -133,11 +133,14 @@ public class MajorFeedbackService implements FeedbackService {
         //int status = teacherCommentDao.update(teacherComment);
         TeacherCommentUpdateDto tcuDto = new TeacherCommentUpdateDto(Convertor.toSubmitTeacherCommentDto(teacherComment));
         boolean success = teacherService.updateTeacherComment(tcuDto);
+        //更新后再从DB里查一次确保feedback有值(这段逻辑是因为之前出现过老师有提交feedback的截图,但是实际后端没有收到任何请求的问题,无法重现原因不明)
+        TeacherCommentResult feedback = teacherService.findByTeacherCommentId(String.valueOf(teacherComment.getId()));
 
-        if (success) {
+        if (success && feedback != null && StringUtils.isNotBlank(feedback.getTeacherFeedback())) {
             logger.info("FEEDBACK_SAVE_OK,paramMap = {},teacherName = {},teacherComment ={}",
                     JSON.toJSONString(paramMap), user.getUsername(), teacherComment);
             paramMap.put("status", true);
+            paramMap.put("feedback", feedback.getTeacherFeedback());
         } else {
             logger.error("FEEDBACK_SAVE_FAIL,paramMap = {},teacherName = {},teacherComment ={}",
                     JSON.toJSONString(paramMap), user.getUsername(), teacherComment);
