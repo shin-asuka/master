@@ -271,6 +271,15 @@ public class WebUtils {
         }
         return null;
     }
+
+    /***
+     * 该接口已废弃，请不要使用。新的在HttpApiClient类中
+     * @param requestHeader
+     * @param url
+     * @param object
+     * @return
+     */
+    @Deprecated
     public static String doPostJSON(Map<String, String> requestHeader, String url, Object object) {
         Preconditions.checkNotNull(requestHeader);
 
