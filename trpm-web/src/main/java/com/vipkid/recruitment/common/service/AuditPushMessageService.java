@@ -1,6 +1,7 @@
 package com.vipkid.recruitment.common.service;
 
 import com.google.api.client.util.Maps;
+import com.vipkid.http.service.HttpApiClient;
 import com.vipkid.http.utils.JacksonUtils;
 import com.vipkid.http.utils.WebUtils;
 import com.vipkid.recruitment.common.dto.PushMessage;
@@ -8,6 +9,7 @@ import com.vipkid.recruitment.common.dto.PushMultiCastRequest;
 import org.community.config.PropertyConfigurer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -29,6 +31,9 @@ public class AuditPushMessageService {
     private static final String PUSH_URL = PropertyConfigurer.stringValue("api.push.url") + "/v1/biz/teacher/push/multicast";
 
     private static final String SAVE_PUSH_MESSAGE_URL = PropertyConfigurer.stringValue("tis.message.save.url");
+
+    @Autowired
+    private HttpApiClient apiClient;
 
 
     public void pushAndSaveMessage(Long teacherId){
@@ -55,10 +60,10 @@ public class AuditPushMessageService {
 
         String resultJson = null;
         int retry = 0;
+        String paramJson = JacksonUtils.toJSONString(request);
         while (null == resultJson && retry <= RETRY_COUNT) {
             retry++;
-            resultJson = WebUtils.doPostJSON(requestHeader,
-                    PUSH_URL, request);
+            resultJson =  apiClient.doPostJsonWithHeader(PUSH_URL, paramJson, requestHeader);
         }
         logger.info("Invoke push api multicast result: {}", resultJson);
     }

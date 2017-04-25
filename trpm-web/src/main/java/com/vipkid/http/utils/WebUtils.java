@@ -40,6 +40,7 @@ import com.vipkid.http.vo.HttpResult;
  * @date 2016年3月11日 上午10:31:48
  *
  */
+@Deprecated
 public class WebUtils {
 
     private static final Logger logger = LoggerFactory.getLogger(WebUtils.class);
@@ -271,55 +272,5 @@ public class WebUtils {
         }
         return null;
     }
-
-    /***
-     * 该接口已废弃，请不要使用。新的在HttpApiClient类中
-     * @param requestHeader
-     * @param url
-     * @param object
-     * @return
-     */
-    @Deprecated
-    public static String doPostJSON(Map<String, String> requestHeader, String url, Object object) {
-        Preconditions.checkNotNull(requestHeader);
-
-        String json = JacksonUtils.toJSONString(object);
-        logger.info("Post data,url = {},params = {}", url, json);
-
-        CloseableHttpResponse response = null;
-        try {
-            HttpPost httpPost = new HttpPost(url);
-            httpPost.setHeader("Content-Type", "application/json");
-
-            StringEntity jsonEntity = new StringEntity(json, DEFAULT_CHARSET);
-            httpPost.setEntity(jsonEntity);
-
-            requestHeader.forEach((k, v) -> {
-                httpPost.addHeader(k, v);
-            });
-
-            CloseableHttpClient httpclient = HttpClients.createDefault();
-            response = httpclient.execute(httpPost);
-            logger.info("Post data,response status line = {}", response.getStatusLine());
-
-            HttpEntity entity = response.getEntity();
-            String rt = EntityUtils.toString(entity);
-            logger.info("数据信息 response data = {}", rt);
-
-            return rt;
-        } catch (Exception e) {
-            logger.error("Post data error,url = {},params = {}", url, json, e);
-        } finally {
-            if (null != response) {
-                try {
-                    response.close();
-                } catch (IOException e) {
-                    logger.error("关闭输出流时出错，url = {}", url, e);
-                }
-            }
-        }
-        return null;
-    }
-
 
 }
