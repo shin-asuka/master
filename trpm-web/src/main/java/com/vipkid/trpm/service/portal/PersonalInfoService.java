@@ -11,6 +11,7 @@ import com.vipkid.http.service.FileHttpService;
 import com.vipkid.http.service.HttpApiClient;
 import com.vipkid.http.utils.JacksonUtils;
 import com.vipkid.http.vo.StandardJsonObject;
+import com.vipkid.portal.bookings.controller.BookingsController;
 import com.vipkid.trpm.constant.ApplicationConstant.MediaType;
 import com.vipkid.trpm.dao.*;
 import com.vipkid.trpm.entity.*;
@@ -51,6 +52,8 @@ public class PersonalInfoService {
 	private static final String CONTRACT_QUERY_BY_TEACHERIDS = "/api/internal/contract/queryInstanceByTeacherId";
 	private static final String CONTRACT_QUERY_BY_ID = "/api/internal/contract/queryInstanceById";
 	private static final String CONTRACT_DO_SIGN = "/api/internal/contract/doSign";
+	private static final String CONTRACT_CHECK_SIGN = "/api/internal/contract/queryOOTInstanceByTeacherIdAndDate";
+
 
 
 	@Autowired
@@ -594,6 +597,27 @@ public class PersonalInfoService {
 				&& doSignResultObj instanceof String
 				&& String.valueOf(contractId).equals(doSignResultObj)) {
 			result = true;
+		}
+		return result;
+	}
+
+	/**
+	 * 检查老师是否已经签约下份合同
+	 *
+	 * @param teacherId 老师ID
+	 * @param endDate 上份合同结束时间
+	 * @return
+	 */
+	public boolean checkHasSignNext(Long teacherId,Date endDate) {
+		boolean result = false;
+		Map<String, String> requestParam = Maps.newHashMap();
+		requestParam.put("teacherId",String.valueOf(teacherId));
+		requestParam.put("endDate",DateUtils.formatDate(endDate,DateUtils.DATE_PATTERN));
+
+		Object doSignResultObj = doHttpGetContractFromTeacherAdmin(requestParam,CONTRACT_CHECK_SIGN);
+
+		if (doSignResultObj != null && doSignResultObj instanceof Boolean) {
+			result = (Boolean) doSignResultObj;
 		}
 		return result;
 	}

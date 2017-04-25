@@ -14,6 +14,7 @@ import com.vipkid.trpm.entity.BackgroundAdverse;
 import com.vipkid.trpm.entity.BackgroundScreening;
 import com.vipkid.trpm.entity.CanadaBackgroundScreening;
 import com.vipkid.trpm.entity.Teacher;
+import com.vipkid.trpm.service.portal.PersonalInfoService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.community.config.PropertyConfigurer;
@@ -45,6 +46,9 @@ public class BackgroundCommonService {
     @Autowired
     private TeacherGatedLaunchDao teacherGatedLaunchDao;
 
+    @Autowired
+    private PersonalInfoService personalInfoService;
+
     private static Logger logger = LoggerFactory.getLogger(BackgroundCommonService.class);
     private boolean  backgroundSwitch = PropertyConfigurer.booleanValue("background.sterling.switch");
 
@@ -69,7 +73,7 @@ public class BackgroundCommonService {
         //合同即将到期需进行背调,提前一个月进行弹窗提示
         remindTime.add(Calendar.MONTH,-1);
         if (remindTime.getTime().before(current.getTime()) ) {
-            backgroundStatusDto.setContractEndWithInOneMonth(true);
+            backgroundStatusDto.setContractEndWithInOneMonth(!personalInfoService.checkHasSignNext(teacher.getId(),contractEndDate));
             //没有背调结果，即第一次开始背调
             if (null == backgroundScreening) {
                 backgroundStatusDto.setNeedBackgroundCheck(true);
@@ -218,7 +222,7 @@ public class BackgroundCommonService {
         remindTime.add(Calendar.MONTH,-1);
         //合同即将到期需进行背调,提前一个月进行弹窗提示
         if (remindTime.getTime().before(current.getTime()) ) {
-            backgroundStatusDto.setContractEndWithInOneMonth(true);
+            backgroundStatusDto.setContractEndWithInOneMonth(!personalInfoService.checkHasSignNext(teacher.getId(),contractEndDate));
             CanadaBackgroundScreening canadaBackgroundScreening = canadaBackgroundScreeningDao.findByTeacherId(teacher.getId());
             //第一次进行背调
             if (null == canadaBackgroundScreening) {
