@@ -10,6 +10,8 @@ import org.slf4j.LoggerFactory;
 
 import com.google.api.client.util.Maps;
 
+import com.vipkid.rest.exception.ServiceException;
+
 /**
  * 定义返回Map status 必须
  *
@@ -63,7 +65,7 @@ public class ReturnMapUtils {
         String message = info + "-logger["+jsonParam+"]";
 
         /*业务的异常，给屏蔽*/
-        if (null != t && t instanceof  IllegalArgumentException) {
+        if (null != t && (t instanceof  IllegalArgumentException || t instanceof ServiceException)) {
             logger.warn(message, t);
         }else if (null != t){
             logger.error(message,t);
