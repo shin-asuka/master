@@ -197,7 +197,7 @@ public class PassportService {
             teacher.setContractType(TeacherEnum.ContractType.FOUR_A.getVal());
             teacher.setHide(TeacherEnum.Hide.NONE.toString());
             // 设置推荐人保存字段
-            teacher = this.prerefereeId(teacher, bean.getRefereeId(), bean.getPartnerId());
+            teacher = this.prerefereeId(teacher, bean.getRefereeId(), bean.getPartnerId(),bean.getChannel());
             teacherDao.save(teacher);
             if (NumericUtils.isNotNullOrZeor(bean.getActivityExamId())) {
                 Map<String, Object> activityExamMap = this.teacherDao.getActivityExamInfo(bean.getActivityExamId());
@@ -323,7 +323,7 @@ public class PassportService {
      * 更新用户密码
      * 
      * @Author:ALong (ZengWeiLong)
-     * @param password
+     * @param newpassword
      * @return int
      * @date 2016年3月3日
      */
