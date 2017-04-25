@@ -27,7 +27,7 @@ import java.util.concurrent.Executors;
 public  class EmailEngine {
 
     private static Logger logger = LoggerFactory.getLogger(EmailEngine.class);
-    private static ExecutorService executorService = Executors.newSingleThreadExecutor();
+    private static ExecutorService executorService = Executors.newFixedThreadPool(24);
 
     /**
      * 使用线程池发送邮件

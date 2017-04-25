@@ -189,9 +189,7 @@ public class UnitAssesssmentService {
 		List<OnlineClassVo> onlineClassVos = Lists.newArrayList();
 		if(CollectionUtils.isNotEmpty(list)){
 			for (Map<String,Object> map : list) {
-				logger.info("解析长度list:{}",list.size());
 				JSONObject jsonObject =(JSONObject) JSONObject.toJSON(map);
-				logger.info("解析结果:{}",jsonObject.toJSONString());
 				OnlineClassVo onlineClassVo = new OnlineClassVo();
 				onlineClassVo.setId(jsonObject.getLong("id"));
 				onlineClassVo.setTeacherId(jsonObject.getLong("teacherId"));
@@ -201,7 +199,6 @@ public class UnitAssesssmentService {
 				onlineClassVo.setTeacherEmail(jsonObject.getString("teacherEmail"));
 				onlineClassVo.setScheduledDateTime(jsonObject.getDate("scheduledDateTime"));
 				onlineClassVos.add(onlineClassVo);
-				logger.info("解析长度onlineClassVos:{}",onlineClassVos.size());
 			}
 		}
 		return onlineClassVos;
