@@ -45,6 +45,7 @@ public class AuditPushMessageService {
         request.setTitle(title);
         request.setBody(content);
         request.setPriority("high");
+        request.setJump_link("vipkid://native");
         request.setExpires_at(LocalDateTime.now().plusMinutes(15).atZone(ZoneId.systemDefault()).toInstant()
                 .getEpochSecond());
         List<Long> list = new ArrayList<Long>();
@@ -60,19 +61,5 @@ public class AuditPushMessageService {
                     PUSH_URL, request);
         }
         logger.info("Invoke push api multicast result: {}", resultJson);
-
-        //save message
-        PushMessage message = new PushMessage();
-        message.setTitle(title);
-        message.setMessage(content);
-        message.setOperator("push");
-        message.setSource("signup_progress_remind");
-        message.setUserId(teacherId);
-
-        logger.info("Invoke push message save. params: {}", JacksonUtils.toJSONString(message));
-        String saveResult = null;
-        saveResult = WebUtils.doPostJSON(requestHeader,
-                SAVE_PUSH_MESSAGE_URL, message);
-        logger.info("save pushMessage result: {}", saveResult);
     }
 }

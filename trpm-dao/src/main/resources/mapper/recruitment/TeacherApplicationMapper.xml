@@ -387,7 +387,8 @@
 		ta.status AS status,
 		t.real_name AS teacherName,
 		t.first_name AS firstName,
-		t.email AS teacherEmail
+		t.email AS teacherEmail,
+		t.id as teacherId
 		FROM
 		teacher_application ta
 		JOIN teacher t ON t.id = ta.teacher_id

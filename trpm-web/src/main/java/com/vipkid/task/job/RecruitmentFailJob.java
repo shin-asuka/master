@@ -60,18 +60,18 @@ public class RecruitmentFailJob {
 		String startTime = UADateUtils.format(startDate, UADateUtils.defaultFormat) ;
 		String endTime = UADateUtils.format(endDate, UADateUtils.defaultFormat) ;
 
-		List<Map<String, String>> list = teacherApplicationDao.findFailTeachersByAuditTime(startTime, endTime);
+		List<Map<String, Object>> list = teacherApplicationDao.findFailTeachersByAuditTime(startTime, endTime);
 		logger.info("【JOB.EMAIL.RecruitmentFail】FIND: Cost {}ms. Query: startTime = {}, endTime = {}; Result: list = {}", stopwatch.elapsed(TimeUnit.MILLISECONDS), startTime, endTime, JsonUtils.toJSONString(list));
 		list.forEach(x -> send(stopwatch, x));
 	}
 
-	void send(Stopwatch stopwatch, Map<String, String> map) {
+	void send(Stopwatch stopwatch, Map<String, Object> map) {
 		if(map!=null){
-			String email = map.get("teacherEmail"); //获取教师邮箱发送邮件
-			String name = map.get("teacherName");
-			String firstName = map.get("firstName");
-			String status = map.get("status");
-			Long teacherId = Long.parseLong(map.get("id"));
+			String email = (String)map.get("teacherEmail"); //获取教师邮箱发送邮件
+			String name = (String)map.get("teacherName");
+			String firstName = (String)map.get("firstName");
+			String status = (String)map.get("status");
+			Long teacherId = (Long)map.get("teacherId");
 			Teacher teacher = new Teacher();
 			teacher.setEmail(email);
 			teacher.setRealName(name);
@@ -83,19 +83,20 @@ public class RecruitmentFailJob {
 				if (TeacherApplicationEnum.Status.BASIC_INFO.toString().equals(status)){
 					titleTemplate = "BasicInfoFailTitle.html";
 					contentTemplate = "BasicInfoFail.html";
-					auditPushMessageService.pushAndSaveMessage(teacherId);
 				} else if (TeacherApplicationEnum.Status.INTERVIEW.toString().equals(status)){
 					titleTemplate = "InterviewFailTitle.html";
 					contentTemplate = "InterviewFail.html";
-					auditPushMessageService.pushAndSaveMessage(teacherId);
 				} else if (TeacherApplicationEnum.Status.PRACTICUM.toString().equals(status)){
 					titleTemplate = "PracticumFailTitle.html";
 					contentTemplate = "PracticumFail.html";
-					auditPushMessageService.pushAndSaveMessage(teacherId);
 				}
+
+				logger.info("【JOB.PUSH_MESSAGE.RecruitmentFail】SEND. start send pushMessage. teacherId="+teacherId);
+				auditPushMessageService.pushAndSaveMessage(teacherId);
 
 				EmailUtils.sendEmail4Recruitment(teacher, titleTemplate, contentTemplate);
 				logger.info("【JOB.EMAIL.RecruitmentFail】SEND: Cost {}ms. email = {}, name = {}, titleTemplate = {}, contentTemplate = {}", stopwatch.elapsed(TimeUnit.MILLISECONDS), email, name, titleTemplate, contentTemplate);
+
 			}
 		}
 	}
