@@ -83,19 +83,18 @@ public class RecruitmentFailJob {
 				if (TeacherApplicationEnum.Status.BASIC_INFO.toString().equals(status)){
 					titleTemplate = "BasicInfoFailTitle.html";
 					contentTemplate = "BasicInfoFail.html";
-					auditPushMessageService.pushAndSaveMessage(teacherId);
 				} else if (TeacherApplicationEnum.Status.INTERVIEW.toString().equals(status)){
 					titleTemplate = "InterviewFailTitle.html";
 					contentTemplate = "InterviewFail.html";
-					auditPushMessageService.pushAndSaveMessage(teacherId);
 				} else if (TeacherApplicationEnum.Status.PRACTICUM.toString().equals(status)){
 					titleTemplate = "PracticumFailTitle.html";
 					contentTemplate = "PracticumFail.html";
-					auditPushMessageService.pushAndSaveMessage(teacherId);
 				}
 
 				EmailUtils.sendEmail4Recruitment(teacher, titleTemplate, contentTemplate);
 				logger.info("【JOB.EMAIL.RecruitmentFail】SEND: Cost {}ms. email = {}, name = {}, titleTemplate = {}, contentTemplate = {}", stopwatch.elapsed(TimeUnit.MILLISECONDS), email, name, titleTemplate, contentTemplate);
+				logger.info("【JOB.PUSH_MESSAGE.RecruitmentFail】SEND. start send pushMessage. teacherId="+teacherId);
+				auditPushMessageService.pushAndSaveMessage(teacherId);
 			}
 		}
 	}
