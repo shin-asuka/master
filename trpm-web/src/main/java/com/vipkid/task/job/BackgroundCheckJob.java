@@ -1,11 +1,13 @@
 package com.vipkid.task.job;
 
+import com.google.common.base.Splitter;
 import com.vipkid.background.api.sterling.service.SterlingService;
 import com.vipkid.background.BackgroundScreeningDao;
 import com.vipkid.vschedule.client.common.Vschedule;
 import com.vipkid.vschedule.client.schedule.JobContext;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.time.StopWatch;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,6 +57,36 @@ public class BackgroundCheckJob {
                 sterlingService.repairDateScreening(bgScreeningId);
             }
         }
+        stopWatch.stop();
+        logger.info(String.format("结束获取教师背景调查，对正在进行的进行调查结果状态更新=======================================用时%s ms",stopWatch.getTime()));
+    }
+
+    @Vschedule
+    public void screeningResultCheckByIdsJob(JobContext jobContext){
+        StopWatch stopWatch = new StopWatch();
+        stopWatch.start();
+        logger.info("开始获取教师背景调查，对正在进行的进行调查结果状态更新=======================================");
+
+        if (null == jobContext) {
+            logger.info("传递的jobContext 为空，jobContext{}",jobContext);
+            return;
+        }
+        if (StringUtils.isBlank(jobContext.getData())){
+            logger.info("传递的 getData 为空，jobContext{}",jobContext.getData());
+            return;
+        }
+
+        /*接受vschedule传递参数*/
+        String bgScreeningIdsStr = jobContext.getData();
+        List<String> bgScreeningIds = Splitter.on(",").omitEmptyStrings().splitToList(bgScreeningIdsStr);
+
+        if(CollectionUtils.isNotEmpty(bgScreeningIds)){
+            for(String bgScreeningId:bgScreeningIds){
+                Long id = Long.parseLong(bgScreeningId);
+                sterlingService.repairDateScreening(id);
+            }
+        }
+
         stopWatch.stop();
         logger.info(String.format("结束获取教师背景调查，对正在进行的进行调查结果状态更新=======================================用时%s ms",stopWatch.getTime()));
     }
