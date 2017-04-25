@@ -33,17 +33,17 @@ public class PrizeHandleService {
 	/**
 	 * 课程限制开始时间
 	 */
-	public final static Date CLASS_START_DATE = DateUtils.parseDate("2017-01-01 00:00:00");
+	public final static Date CLASS_START_DATE = DateUtils.parseDate("2017-04-01 00:00:00");
 	
 	/**
 	 * 活动开始时间
 	 */
-	public final static Date START_DATE = DateUtils.parseDate("2017-04-01 00:00:00");
+	public final static Date START_DATE = DateUtils.parseDate("2017-05-01 00:00:00");
 	
 	/**
 	 * 活动结束时间
 	 */
-	public final static Date END_DATE = DateUtils.parseDate("2017-06-01 00:00:00");
+	public final static Date END_DATE = DateUtils.parseDate("2017-05-29 00:00:00");
 	
 	/**
 	 * 
