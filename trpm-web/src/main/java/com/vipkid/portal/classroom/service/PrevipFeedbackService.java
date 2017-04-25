@@ -147,6 +147,7 @@ public class PrevipFeedbackService implements FeedbackService{
             logger.info("FEEDBACK_SAVE_OK,paramMap = {},teacherName = {},teacherComment ={}",
                     JSON.toJSONString(paramMap), user.getUsername(), teacherComment);
             paramMap.put("status", true);
+            paramMap.put("feedback", feedback.getTeacherFeedback());
         } else {
             logger.error("FEEDBACK_SAVE_FAIL,paramMap = {},teacherName = {},teacherComment ={}",
                     JSON.toJSONString(paramMap), user.getUsername(), teacherComment);
