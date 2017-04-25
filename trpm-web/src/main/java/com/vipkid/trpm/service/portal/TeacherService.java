@@ -693,7 +693,7 @@ public class TeacherService {
 		for (int i = 0; i<len; i++){
 			referral = 0 + referral;
 		}
-		return referral;
+		return referral.toUpperCase();
 	}
 
 
@@ -703,7 +703,7 @@ public class TeacherService {
 	 * @return
 	 */
 	public long getTeacherIdWithReferralCode(String referralCode){
-		referralCode.trim();
+		referralCode.trim().toLowerCase();
 		if (StringUtils.contains(referralCode,'0')){
 			int begin = referralCode.lastIndexOf('0');
 			referralCode = referralCode.substring(begin,referralCode.length());
