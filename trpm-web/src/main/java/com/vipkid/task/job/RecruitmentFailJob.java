@@ -71,7 +71,7 @@ public class RecruitmentFailJob {
 			String name = map.get("teacherName");
 			String firstName = map.get("firstName");
 			String status = map.get("status");
-			Long teacherId = Long.parseLong(map.get("teacherId"));
+			Long teacherId = Long.valueOf(map.get("teacherId"));
 			Teacher teacher = new Teacher();
 			teacher.setEmail(email);
 			teacher.setRealName(name);
