@@ -13,7 +13,9 @@ import com.vipkid.enums.TeacherPageLoginEnum.LoginType;
 import com.vipkid.http.service.ScalperService;
 import com.vipkid.portal.bookings.constant.BookingsResult;
 import com.vipkid.portal.bookings.entity.*;
+import com.vipkid.rest.portal.model.ClassroomDetail;
 import com.vipkid.rest.service.TeacherPageLoginService;
+import com.vipkid.rest.utils.ClassroomUtils;
 import com.vipkid.trpm.constant.ApplicationConstant;
 import com.vipkid.trpm.constant.ApplicationConstant.AuditCategory;
 import com.vipkid.trpm.constant.ApplicationConstant.CookieKey;
@@ -492,6 +494,14 @@ public class BookingsService {
     public void setSchedulePriority(Map<String, Map<String, Object>> teacherScheduleMap, String scheduleKey,
                                     Map<String, Object> teacherSchedule) {
         boolean isReplaced = false;
+        Timestamp bookDateTimestamp = (Timestamp) teacherSchedule.get("bookDateTime");
+        if(bookDateTimestamp != null) {
+            Calendar bookDateTime = Calendar.getInstance();
+            bookDateTime.setTimeInMillis(bookDateTimestamp.getTime());
+            teacherSchedule.put("bookDateTime",bookDateTime);
+        }
+
+        ClassroomUtils.buildAsyncLessonSN(teacherSchedule);
 
         /* 获取新的 TeacherSchedule 的状态 */
         String newStatus = (String) teacherSchedule.get("status");
@@ -576,6 +586,7 @@ public class BookingsService {
      * @param teacher
      * @return
      */
+    @Slave
     public Map<String, Object> doSchedule(ScheduledRequest scheduledRequest, Teacher teacher) {
         String timezone = teacher.getTimezone();
         long teacherId = teacher.getId();
@@ -1130,7 +1141,7 @@ public class BookingsService {
      * @param teacherId
      * @return
      */
-    public boolean cancelClassSuccess(long onlineClassId, long teacherId,String cancelReason) {
+    public boolean cancelClassSuccess(Long onlineClassId, Long teacherId,String cancelReason) {
         boolean flag = false;
        String finishType =getFinishType(onlineClassId,teacherId);
         if(StringUtils.isBlank(finishType)){

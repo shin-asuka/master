@@ -196,7 +196,7 @@
         WHERE
         s.candidate_id IS NULL
     </select>
-    <select id="findByScreeningIdAndCandidateId" resultType="com.vipkid.trpm.entity.BackgroundScreening">
+    <select id="findByScreeningIdAndCandidateId" resultMap="BackgroundScreeningResult">
         SELECT
         <include refid="backgroundScreeningAllColumn"/>
         FROM

@@ -5,6 +5,7 @@ package com.vipkid.trpm.service.portal;
 
 import java.util.List;
 
+import com.vipkid.dataSource.annotation.Slave;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,7 +56,8 @@ public class TeacherTaxpayerFormService {
 		
 		return list;
 	}
-	
+
+	@Slave
 	public Page<TeacherTaxpayerView> findPage(Page<TeacherTaxpayerView> page, TeacherTaxpayerView teacherTaxpayerView){
 		logger.info("查询TeacherTaxpayerView = {} ,page = {}" , JsonUtils.toJSONString(teacherTaxpayerView),JsonUtils.toJSONString(page));
 		Integer count = teacherTaxpayerFormDao.getTaxpayerViewCount(teacherTaxpayerView);
@@ -68,12 +70,7 @@ public class TeacherTaxpayerFormService {
 		return page;
 	}
 		
-	public TeacherTaxpayerForm getTeacherTaxpayerForm(Long teacherId,Integer formType){
-		 
-		TeacherTaxpayerForm teacherTaxpayerForm = teacherTaxpayerFormDao.findByTeacherIdAndType(teacherId, formType);
-		
-		return teacherTaxpayerForm;
-	}
+
 	
 	public TaxpayerView getTeacherTaxpayerView(Long teacherId){ 
 		TaxpayerView view = new TaxpayerView();

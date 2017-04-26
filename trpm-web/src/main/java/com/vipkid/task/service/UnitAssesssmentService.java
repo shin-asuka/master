@@ -58,7 +58,7 @@ public class UnitAssesssmentService {
 		logger.info("查询出6个小时以前已经AS_SCHEDULED的课程  startTime = {},endTime = {}",startTime,endTime);
 		
 		List<Map<String, Object>> list = onlineClassDao.findMajorCourseListByStartTimeAndEndTime(startTime, endTime ,null);
-		logger.info("Get unSubmit OnlineClass list = {}",JsonUtils.toJSONString(list));
+		logger.info("Get 6h unSubmit OnlineClass list = {}",JsonUtils.toJSONString(list));
 		
 		List<OnlineClassVo> onlineClassVos = getOnlineClassVoList(list);
 		
@@ -68,13 +68,14 @@ public class UnitAssesssmentService {
 			for (OnlineClassVo oc : onlineClassVos) { //数据格式转换
 				Long id = oc.getId();
 				onlineClassVo.getIdList().add(id);
-				onlineClassVo.setIdListStr(StringUtils.join(onlineClassVo.getIdList(),","));
 				ocMap.put(id, oc);
 			}
+			onlineClassVo.setIdListStr(StringUtils.join(onlineClassVo.getIdList(),","));
+			onlineClassVo.getIdList().clear();
 			
 			//调用homework服务查询为完成UA报告的课程
 			OnlineClassVo onlineClassVoUnSubmit = assessmentHttpService.findUnSubmitonlineClassVo(onlineClassVo );
-			logger.info("Result unSubmit OnlineClass  = {}",JsonUtils.toJSONString(onlineClassVoUnSubmit));
+			logger.info("Result 6h unSubmit OnlineClass  = {}",JsonUtils.toJSONString(onlineClassVoUnSubmit));
 			sendEmail(onlineClassVoUnSubmit, ocMap,"UARemindTeacher6hour.html","UARemindTeacher6hourTitle.html");
 		}
 		
@@ -92,7 +93,7 @@ public class UnitAssesssmentService {
 		logger.info("查询出12个小时以前已经AS_SCHEDULED的课程  startTime = {},endTime = {}",startTime,endTime);
 		
 		List<Map<String, Object>> list = onlineClassDao.findMajorCourseListByStartTimeAndEndTime(startTime, endTime, null);
-		logger.info("Get unSubmit OnlineClass list = {}",JsonUtils.toJSONString(list));
+		logger.info("Get 12h unSubmit OnlineClass list = {}",JsonUtils.toJSONString(list));
 		
 		List<OnlineClassVo> onlineClassVos = getOnlineClassVoList(list);
 		
@@ -102,13 +103,14 @@ public class UnitAssesssmentService {
 			for (OnlineClassVo oc : onlineClassVos) { //数据格式转换
 				Long id = oc.getId();
 				onlineClassVo.getIdList().add(id);
-				onlineClassVo.setIdListStr(StringUtils.join(onlineClassVo.getIdList(),","));
 				ocMap.put(id, oc);
 			}
-			
+			onlineClassVo.setIdListStr(StringUtils.join(onlineClassVo.getIdList(),","));
+			onlineClassVo.getIdList().clear();
+
 			//调用homework服务查询为完成UA报告的课程
 			OnlineClassVo onlineClassVoUnSubmit = assessmentHttpService.findUnSubmitonlineClassVo(onlineClassVo);
-			logger.info("Result unSubmit OnlineClass  = {}",JsonUtils.toJSONString(onlineClassVoUnSubmit));
+			logger.info("Result 12h unSubmit OnlineClass  = {}",JsonUtils.toJSONString(onlineClassVoUnSubmit));
 			sendEmail(onlineClassVoUnSubmit, ocMap,"UARemindTeacher12hour.html","UARemindTeacher12hourTitle.html");
 		}
 		
@@ -126,7 +128,7 @@ public class UnitAssesssmentService {
 		logger.info("查询出24个小时以前已经AS_SCHEDULED的课程  startTime = {},endTime = {}",startTime,endTime);
 
 		List<Map<String, Object>> list = onlineClassDao.findMajorCourseListByStartTimeAndEndTime(startTime, endTime, null);
-		logger.info("Get unSubmit OnlineClass list = {}",JsonUtils.toJSONString(list));
+		logger.info("Get 24h unSubmit OnlineClass list = {}",JsonUtils.toJSONString(list));
 
 		List<OnlineClassVo> onlineClassVos = getOnlineClassVoList(list);
 
@@ -136,13 +138,14 @@ public class UnitAssesssmentService {
 			for (OnlineClassVo oc : onlineClassVos) { //数据格式转换
 				Long id = oc.getId();
 				onlineClassVo.getIdList().add(id);
-				onlineClassVo.setIdListStr(StringUtils.join(onlineClassVo.getIdList(),","));
 				ocMap.put(id, oc);
 			}
+			onlineClassVo.setIdListStr(StringUtils.join(onlineClassVo.getIdList(),","));
+			onlineClassVo.getIdList().clear();
 
 			//调用homework服务查询为完成UA报告的课程
 			OnlineClassVo onlineClassVoUnSubmit = assessmentHttpService.findUnSubmitonlineClassVo(onlineClassVo );
-			logger.info("Result unSubmit OnlineClass  = {}",JsonUtils.toJSONString(onlineClassVoUnSubmit));
+			logger.info("Result 24h unSubmit OnlineClass  = {}",JsonUtils.toJSONString(onlineClassVoUnSubmit));
 			sendEmail(onlineClassVoUnSubmit, ocMap,"UARemindTeacher24hour.html","UARemindTeacher24hourTitle.html");
 		}
 
@@ -170,7 +173,7 @@ public class UnitAssesssmentService {
 							paramsMap.put("teacherName", oc.getTeacherName());
 						}
 	                    Map<String, String> emailMap = new TemplateUtils().readTemplate(contentTemplate, paramsMap, titleTemplate);
-	                    new EmailEngine().addMailPool(email, emailMap,EmailFormEnum.EDUCATION);
+	                    EmailEngine.addMailPool(email, emailMap,EmailFormEnum.EDUCATION);
 	                    //EmailHandle emailHandle = new EmailHandle(email, emailMap.get("title"), emailMap.get("content"), EmailFormEnum.TEACHVIP);
 	                    //emailHandle.sendMail();  
 	                    logger.info("send Email success  teacher = {},email = {},contentTemplate = {}, titleTemplate = {}",name,email,contentTemplate,titleTemplate);
@@ -186,12 +189,9 @@ public class UnitAssesssmentService {
 		List<OnlineClassVo> onlineClassVos = Lists.newArrayList();
 		if(CollectionUtils.isNotEmpty(list)){
 			for (Map<String,Object> map : list) {
-				JSONObject jsonObject = (JSONObject) JSONObject.toJSON(map);
-				
+				JSONObject jsonObject =(JSONObject) JSONObject.toJSON(map);
 				OnlineClassVo onlineClassVo = new OnlineClassVo();
-				Long id = jsonObject.getLong("id");
-				
-				onlineClassVo.setId(id);
+				onlineClassVo.setId(jsonObject.getLong("id"));
 				onlineClassVo.setTeacherId(jsonObject.getLong("teacherId"));
 				onlineClassVo.setLessonId(jsonObject.getLong("lessonId"));
 				onlineClassVo.setTeacherFirstName(jsonObject.getString("teacherFirstName"));

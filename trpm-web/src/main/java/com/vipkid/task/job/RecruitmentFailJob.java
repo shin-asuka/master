@@ -4,6 +4,7 @@ import com.google.common.base.Stopwatch;
 import com.vipkid.email.EmailUtils;
 import com.vipkid.enums.TeacherApplicationEnum;
 import com.vipkid.http.utils.JsonUtils;
+import com.vipkid.recruitment.common.service.AuditPushMessageService;
 import com.vipkid.recruitment.dao.TeacherApplicationDao;
 import com.vipkid.task.utils.UADateUtils;
 import com.vipkid.trpm.entity.Teacher;
@@ -33,6 +34,9 @@ public class RecruitmentFailJob {
 
 	@Autowired
 	private TeacherApplicationDao teacherApplicationDao;
+
+	@Autowired
+	private AuditPushMessageService auditPushMessageService;
 	
 	@Vschedule
 	public void doJob(JobContext jobContext) {
@@ -56,17 +60,18 @@ public class RecruitmentFailJob {
 		String startTime = UADateUtils.format(startDate, UADateUtils.defaultFormat) ;
 		String endTime = UADateUtils.format(endDate, UADateUtils.defaultFormat) ;
 
-		List<Map<String, String>> list = teacherApplicationDao.findFailTeachersByAuditTime(startTime, endTime);
+		List<Map<String, Object>> list = teacherApplicationDao.findFailTeachersByAuditTime(startTime, endTime);
 		logger.info("【JOB.EMAIL.RecruitmentFail】FIND: Cost {}ms. Query: startTime = {}, endTime = {}; Result: list = {}", stopwatch.elapsed(TimeUnit.MILLISECONDS), startTime, endTime, JsonUtils.toJSONString(list));
 		list.forEach(x -> send(stopwatch, x));
 	}
 
-	void send(Stopwatch stopwatch, Map<String, String> map) {
+	void send(Stopwatch stopwatch, Map<String, Object> map) {
 		if(map!=null){
-			String email = map.get("teacherEmail"); //获取教师邮箱发送邮件
-			String name = map.get("teacherName");
-			String firstName = map.get("firstName");
-			String status = map.get("status");
+			String email = (String)map.get("teacherEmail"); //获取教师邮箱发送邮件
+			String name = (String)map.get("teacherName");
+			String firstName = (String)map.get("firstName");
+			String status = (String)map.get("status");
+			Long teacherId = (Long)map.get("teacherId");
 			Teacher teacher = new Teacher();
 			teacher.setEmail(email);
 			teacher.setRealName(name);
@@ -86,8 +91,12 @@ public class RecruitmentFailJob {
 					contentTemplate = "PracticumFail.html";
 				}
 
+				logger.info("【JOB.PUSH_MESSAGE.RecruitmentFail】SEND. start send pushMessage. teacherId="+teacherId);
+				auditPushMessageService.pushAndSaveMessage(teacherId);
+
 				EmailUtils.sendEmail4Recruitment(teacher, titleTemplate, contentTemplate);
 				logger.info("【JOB.EMAIL.RecruitmentFail】SEND: Cost {}ms. email = {}, name = {}, titleTemplate = {}, contentTemplate = {}", stopwatch.elapsed(TimeUnit.MILLISECONDS), email, name, titleTemplate, contentTemplate);
+
 			}
 		}
 	}

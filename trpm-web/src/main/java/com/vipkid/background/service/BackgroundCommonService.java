@@ -1,6 +1,7 @@
 package com.vipkid.background.service;
 
 import com.vipkid.background.BackgroundAdverseDao;
+import com.vipkid.background.BackgroundReportDao;
 import com.vipkid.background.BackgroundScreeningDao;
 import com.vipkid.background.CanadaBackgroundScreeningDao;
 import com.vipkid.background.api.sterling.dto.BackgroundFileStatusDto;
@@ -10,10 +11,7 @@ import com.vipkid.enums.TeacherApplicationEnum.ContractFileType;
 import com.vipkid.recruitment.dao.TeacherContractFileDao;
 import com.vipkid.recruitment.entity.TeacherContractFile;
 import com.vipkid.trpm.dao.TeacherGatedLaunchDao;
-import com.vipkid.trpm.entity.BackgroundAdverse;
-import com.vipkid.trpm.entity.BackgroundScreening;
-import com.vipkid.trpm.entity.CanadaBackgroundScreening;
-import com.vipkid.trpm.entity.Teacher;
+import com.vipkid.trpm.entity.*;
 import com.vipkid.trpm.service.portal.PersonalInfoService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -47,6 +45,9 @@ public class BackgroundCommonService {
     private TeacherGatedLaunchDao teacherGatedLaunchDao;
 
     @Autowired
+    private BackgroundReportDao backgroundReportDao;
+
+    @Autowired
     private PersonalInfoService personalInfoService;
 
     private static Logger logger = LoggerFactory.getLogger(BackgroundCommonService.class);
@@ -56,14 +57,14 @@ public class BackgroundCommonService {
     public BackgroundStatusDto getUsaBackgroundStatus(Teacher teacher){
         BackgroundStatusDto backgroundStatusDto = new BackgroundStatusDto();
 
-//        boolean needBackgroundCheck = needBackgroundCheck(teacher.getId());
+        boolean needBackgroundCheck = needBackgroundCheck(teacher.getId());
         //不在灰度列表中
-//        if (!needBackgroundCheck){
-//            backgroundStatusDto.setNeedBackgroundCheck(needBackgroundCheck);
-//            backgroundStatusDto.setPhase("");
-//            backgroundStatusDto.setResult("");
-//            return backgroundStatusDto;
-//        }
+        if (!needBackgroundCheck){
+            backgroundStatusDto.setNeedBackgroundCheck(needBackgroundCheck);
+            backgroundStatusDto.setPhase("");
+            backgroundStatusDto.setResult("");
+            return backgroundStatusDto;
+        }
 
         Calendar current = Calendar.getInstance();
         BackgroundScreening backgroundScreening = backgroundScreeningDao.findByTeacherIdTopOne(teacher.getId());
@@ -105,7 +106,7 @@ public class BackgroundCommonService {
                         switch (backgroundResult) {
                             //开始背调，背调结果结果为N/A
                             case "n/a":
-                                backgroundStatusDto.setNeedBackgroundCheck(false);
+                                backgroundStatusDto.setNeedBackgroundCheck(true);
                                 backgroundStatusDto.setPhase(BackgroundPhase.PENDING.getVal());
                                 backgroundStatusDto.setResult(BackgroundResult.NA.getVal());
                                 break;
@@ -149,14 +150,14 @@ public class BackgroundCommonService {
                                 if (null == backgroundAdverse){
                                     backgroundStatusDto.setPhase(BackgroundPhase.PENDING.getVal());
                                     backgroundStatusDto.setResult(BackgroundResult.NA.getVal());
-                                    backgroundStatusDto.setNeedBackgroundCheck(false);
+                                    backgroundStatusDto.setNeedBackgroundCheck(true);
                                 } else {
                                     String actionsStatus = backgroundAdverse.getActionsStatus();
                                     if (StringUtils.equalsIgnoreCase(actionsStatus,AdverseStatus.CANCELLED.getValue())){
                                         //cancelled 暂时显示30天
                                         backgroundStatusDto.setPhase(BackgroundPhase.DISPUTE.getVal());
                                         backgroundStatusDto.setResult(BackgroundResult.ALERT.getVal());
-                                        backgroundStatusDto.setNeedBackgroundCheck(false);
+                                        backgroundStatusDto.setNeedBackgroundCheck(true);
                                     } else if (StringUtils.equalsIgnoreCase(actionsStatus,AdverseStatus.COMPLETE.getValue())){
                                         //最终结果为fail
                                         backgroundStatusDto.setPhase(BackgroundPhase.FAIL.getVal());
@@ -168,7 +169,7 @@ public class BackgroundCommonService {
                                             //正在进行dispute
                                             backgroundStatusDto.setPhase(BackgroundPhase.DISPUTE.getVal());
                                             backgroundStatusDto.setResult(BackgroundResult.ALERT.getVal());
-                                            backgroundStatusDto.setNeedBackgroundCheck(false);
+                                            backgroundStatusDto.setNeedBackgroundCheck(true);
                                         } else if (StringUtils.equalsIgnoreCase(disputeStatus,DisputeStatus.DEACTIVATED.getVal())){
                                             //n天内老师没有DISPUTE
                                             backgroundStatusDto.setPhase(BackgroundPhase.DIDNOTDISPUTE.getVal());
@@ -178,16 +179,51 @@ public class BackgroundCommonService {
                                             //dispute_status 为 null 等待老师进行dispute
                                             backgroundStatusDto.setPhase(BackgroundPhase.PREADVERSE.getVal());
                                             backgroundStatusDto.setResult(BackgroundResult.ALERT.getVal());
-                                            backgroundStatusDto.setNeedBackgroundCheck(false);
+                                            backgroundStatusDto.setNeedBackgroundCheck(true);
                                         }
                                     }
 
+                                }
+                                //如果只是因为ssn问题导致的alert可以认为是clear
+                                List<BackgroundReport> backgroundReports = backgroundReportDao.findByBgSterlingScreeningId(screeningId);
+                                boolean multiCheck = false;
+                                boolean offender = false;
+                                boolean criminalCheck = true;
+                                for (BackgroundReport backgroundReport:backgroundReports) {
+                                    String reportType = backgroundReport.getType();
+                                    String reportResult = backgroundReport.getResult();
+                                    if (null != reportType){
+                                        switch (reportType){
+                                            case ("Multi-State Instant Criminal Check"):
+                                                if (StringUtils.equalsIgnoreCase(reportResult,ReportResult.COMPLETE.getValue()) ||
+                                                        StringUtils.equalsIgnoreCase(reportResult,ReportResult.CLEAR.getValue())){
+                                                    multiCheck = true;
+                                                }
+                                                break;
+                                            case ("DOJ Sex Offender"):
+                                                if (StringUtils.equalsIgnoreCase(reportResult,ReportResult.CLEAR.getValue())){
+                                                    offender = true;
+                                                }
+                                                break;
+                                            case ("Criminal Check by County"):
+                                                if (!StringUtils.equalsIgnoreCase(reportResult,ReportResult.CLEAR.getValue())){
+                                                    criminalCheck = false;
+                                                }
+                                                break;
+
+                                        }
+                                    }
+                                }
+                                if (multiCheck && offender && criminalCheck){
+                                    backgroundStatusDto.setNeedBackgroundCheck(false);
+                                    backgroundStatusDto.setResult(BackgroundResult.CLEAR.getVal());
+                                    backgroundStatusDto.setPhase(BackgroundPhase.CLEAR.getVal());
                                 }
                                 break;
                         }
                     } else {
                         backgroundStatusDto.setPhase(BackgroundPhase.START.getVal());
-                        backgroundStatusDto.setNeedBackgroundCheck(false);
+                        backgroundStatusDto.setNeedBackgroundCheck(true);
                         backgroundStatusDto.setResult("");
                     }
                 }
@@ -209,12 +245,12 @@ public class BackgroundCommonService {
         BackgroundStatusDto backgroundStatusDto = new BackgroundStatusDto();
         boolean needBackgroundCheck = needBackgroundCheck(teacher.getId());
         //不在灰度列表中
-//        if (!needBackgroundCheck){
-//            backgroundStatusDto.setNeedBackgroundCheck(needBackgroundCheck);
-//            backgroundStatusDto.setPhase("");
-//            backgroundStatusDto.setResult("");
-//            return backgroundStatusDto;
-//        }
+        if (!needBackgroundCheck){
+            backgroundStatusDto.setNeedBackgroundCheck(needBackgroundCheck);
+            backgroundStatusDto.setPhase("");
+            backgroundStatusDto.setResult("");
+            return backgroundStatusDto;
+        }
         Calendar current = Calendar.getInstance();
         Date  contractEndDate = teacher.getContractEndDate();
         Calendar  remindTime = Calendar.getInstance();
@@ -248,7 +284,7 @@ public class BackgroundCommonService {
                     backgroundStatusDto.setPhase(BackgroundPhase.FAIL.getVal());
                     backgroundStatusDto.setResult(BackgroundResult.FAIL.getVal());
                 } else {
-                    backgroundStatusDto.setNeedBackgroundCheck(false);
+                    backgroundStatusDto.setNeedBackgroundCheck(true);
                     backgroundStatusDto.setPhase(BackgroundPhase.PENDING.getVal());
                     backgroundStatusDto.setResult(BackgroundResult.NA.getVal());
                 }

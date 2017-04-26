@@ -15,8 +15,8 @@ import com.vipkid.rest.dto.InfoRoomDto;
 import com.vipkid.trpm.constant.ApplicationConstant;
 import com.vipkid.trpm.dao.*;
 import com.vipkid.trpm.entity.*;
+import com.vipkid.trpm.entity.classroom.GetStarDto;
 import com.vipkid.trpm.entity.classroom.UpdateStarDto;
-import com.vipkid.trpm.entity.teachercomment.TeacherComment;
 import com.vipkid.trpm.proxy.OnlineClassProxy;
 import com.vipkid.trpm.service.portal.TeacherService;
 import com.vipkid.trpm.util.FilesUtils;
@@ -124,9 +124,13 @@ public class ClassroomService {
 		
 		//Other Info
 		int stars = 0;
-		TeacherComment comment = teacherService.findByStudentIdAndOnlineClassId(bean.getStudentId(),bean.getOnlineClassId());
-		if(comment != null){
-			stars = comment.getStars();
+		//TeacherComment comment = teacherService.findByStudentIdAndOnlineClassId(bean.getStudentId(),bean.getOnlineClassId());
+        Map<String, Object> starNumMap = getStarNum(onlineClass.getId(), teacher.getId(), student.getId());
+        logger.info("TeacherId:{}, Major Course query stars : {},onlineClassId:{},studentId:{}", teacher.getId(), JsonUtils.toJSONString(starNumMap),
+                onlineClass.getId(), student.getId());
+
+        if(starNumMap != null){
+			stars = (Integer)starNumMap.get("starNum");
 		}else{
 			logger.warn("课程还没有TeacherComment,onlineClassId:{},studentId:{}",bean.getOnlineClassId(), bean.getStudentId());
 		}
@@ -424,7 +428,44 @@ public class ClassroomService {
     	this.exitclassroom(onlineClassId, teacher);
     	onlineClassDao.updateEntity(new OnlineClass().setId(onlineClassId).setStatus("FINISHED").setFinishType("AS_SCHEDULED"));
     }
-    
+
+    /**
+     * 调用星星服务，获取当前的星星数量
+     * @return
+     */
+    public Map<String, Object> getStarNum(long onlineClassId, long teacherId, long studentId){
+        Map<String, Object> resultMap = com.google.common.collect.Maps.newHashMap();
+        try {
+            String url = PropertyConfigurer.stringValue("star.server.getStar");
+
+            Map<String, String> paramMap = com.google.common.collect.Maps.newHashMap();
+            paramMap.put("onlineclassId", String.valueOf(onlineClassId));
+            paramMap.put("teacherId", String.valueOf(teacherId));
+            paramMap.put("studentId", String.valueOf(studentId));
+            logger.info("Invoke star server getStar paramMap: {}", JsonUtils.toJSONString(paramMap));
+
+            String resultJson = HttpClientProxy.get(url, paramMap, com.google.common.collect.Maps.newHashMap());
+            logger.info("Invoke star server getStar resultJson: {}", resultJson);
+
+            if (null != resultJson) {
+                GetStarDto getStarDto = JsonUtils.toBean(resultJson, GetStarDto.class);
+                if(getStarDto.getCode() == HttpStatus.OK.value()){
+                    resultMap.put("starNum", getStarDto.getData().getResult());
+                } else {
+                    resultMap.put("starNum", 0);
+                }
+                resultMap.put("code", getStarDto.getCode());
+            } else {
+                resultMap.put("starNum", 0);
+                resultMap.put("code", HttpStatus.NO_CONTENT.value());
+            }
+        } catch(Exception e) {
+            logger.error("Invoke star server getStar failed", e);
+            resultMap.put("starNum", 0);
+            resultMap.put("code", HttpStatus.INTERNAL_SERVER_ERROR.value());
+        }
+        return resultMap;
+    }
     
     /**
     *

@@ -59,7 +59,6 @@
 		<aop:advisor advice-ref="txAdvice" pointcut="execution(* com.vipkid.rest.service.*Service.*(..))"/>
 		<aop:advisor advice-ref="txAdvice" pointcut="execution(* com.vipkid.payroll.service.*Service.*(..))"/>
 		<aop:advisor advice-ref="rwDataSourceInterceptor" pointcut="execution(* com.vipkid.rest.portal.controller.*Controller.*(..))" order="1" />
-		<aop:advisor advice-ref="rwDataSourceInterceptor" pointcut="execution(* com.vipkid.portal.personal.controller.*Controller.*(..))" order="1" />
 		<aop:advisor advice-ref="rwDataSourceInterceptor" pointcut="execution(* com.vipkid..service.portal.*Service.*(..))" order="1" />
 		<aop:advisor advice-ref="rwDataSourceInterceptor" pointcut="execution(* com.vipkid.background.service.*Service.*(..))" order="1" />
 		<aop:advisor advice-ref="rwDataSourceInterceptor" pointcut="execution(* com.vipkid..service.*Service.*(..))" order="1" />

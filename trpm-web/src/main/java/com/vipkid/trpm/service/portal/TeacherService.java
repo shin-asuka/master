@@ -606,14 +606,14 @@ public class TeacherService {
 		return errMsg;
 	}
 
-	
+	@Slave
 	public List<ReferralTeacherDto> findReferralTeachers(ReferralTeacherVo bean){
 		Map<String, Object> paramsMap = Maps.newHashMap();
 		paramsMap.put("param", bean);
 		return this.teacherDao.findReferralTeachers(paramsMap);
 	}
 
-	
+	@Slave
 	public Integer findReferralTeachersCount(ReferralTeacherVo bean){
 		Map<String, Object> paramsMap = Maps.newHashMap();
 		paramsMap.put("param", bean);
