@@ -27,6 +27,8 @@ import com.vipkid.trpm.entity.TeacherTaxpayerFormDetail;
 import com.vipkid.trpm.service.huanxin.HuanxinService;
 import com.vipkid.trpm.service.portal.TeacherTaxpayerFormService;
 import com.vipkid.trpm.util.AwsFileUtils;
+import com.vipkid.trpm.util.EmojiUtils;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.community.config.PropertyConfigurer;
@@ -215,7 +217,7 @@ public class ContractInfoController extends RestfulController {
             }
 
             logger.info("update Teacher's introduction: {}", bio);
-            teacher.setIntroduction(bio);
+            teacher.setIntroduction(EmojiUtils.filterEmoji(bio));
             boolean bioUpdated = contractInfoService.updateTeacher(teacher);
             if (!bioUpdated) {
                 return ReturnMapUtils.returnFail("Failed to submit teacher bio");

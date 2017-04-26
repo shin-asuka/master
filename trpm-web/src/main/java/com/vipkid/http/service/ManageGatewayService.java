@@ -237,6 +237,9 @@ public class ManageGatewayService extends HttpBaseService {
 	public String getTranslation(Long id){
 		String ret = "";
 		try {
+			if(null == id){
+				return "";
+			}
 			String data = WebUtils.simpleGet(String.format(super.serverAddress + GATEWAY_STUDENT_COMMENT_TRANSLATION_API,id));
 			if (data!=null) {
 				JSONObject jb = JSONObject.parseObject(data);

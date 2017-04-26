@@ -1,9 +1,12 @@
 package com.vipkid.recruitment.dao;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import com.vipkid.enums.OnlineClassEnum.ClassStatus;
 import com.vipkid.recruitment.entity.TeacherApplication;
+
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.community.dao.support.MapperDaoTemplate;
 import org.mybatis.spring.SqlSessionTemplate;
@@ -162,6 +165,10 @@ public class TeacherApplicationDao extends MapperDaoTemplate<TeacherApplication>
         teacherApplication.setOrderString("id DESC");
         List<TeacherApplication> teacherApplications =
                 super.selectList(teacherApplication.setOnlineClassId(onlineClassId));
+
+        if (CollectionUtils.isEmpty(teacherApplications)){
+            return  new TeacherApplication();
+        }
 
         Optional<TeacherApplication> optional = teacherApplications.stream()
                 .filter(ta -> ta.getAuditorId() == auditorId).findFirst();
