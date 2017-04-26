@@ -1,30 +1,17 @@
 package com.vipkid.trpm.service.portal;
 
-import java.sql.Timestamp;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import com.fasterxml.jackson.core.type.TypeReference;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.vipkid.dataSource.annotation.Slave;
 import com.vipkid.enums.OrderByEnum;
+import com.vipkid.file.utils.StringUtils;
 import com.vipkid.http.constant.HttpUrlConstant;
 import com.vipkid.http.service.HttpApiClient;
 import com.vipkid.http.utils.JsonUtils;
 import com.vipkid.http.vo.StandardJsonObject;
-import com.vipkid.portal.classroom.model.TeacherCommentVo;
 import com.vipkid.portal.personal.model.ReferralTeacherVo;
 import com.vipkid.rest.dto.ReferralTeacherDto;
 import com.vipkid.rest.security.AppContext;
@@ -37,7 +24,6 @@ import com.vipkid.trpm.util.DateUtils;
 import com.vipkid.trpm.util.EmojiUtils;
 import com.vipkid.trpm.util.LessonSerialNumber;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -410,19 +396,17 @@ public class TeacherService {
 		param.put("teacherComment", JsonUtils.toJSONString(inputDto));
 		logger.info("updateTeacherComment http request url = {}; param={}",
 				httpUrlConstant.getApiHomeworkServerUrl() + API_TEACHER_COMMENT_UPDATE,JsonUtils.toJSONString(inputDto));
-		String response = httpApiClient
-				.doPost(httpUrlConstant.getApiHomeworkServerUrl() + API_TEACHER_COMMENT_UPDATE, param);
-		logger.info("updateTeacherComment http response = {}", response);
+		String response = httpApiClient.doPost(httpUrlConstant.getApiHomeworkServerUrl() + API_TEACHER_COMMENT_UPDATE, param);
+		logger.info("updateTeacherComment http response = {}", StringUtils.getMaxLenSubStr(response, 500));
 		StandardJsonObject standardJsonObject = null;
 		try {
 			standardJsonObject = JsonUtils.toBean(response, StandardJsonObject.class);
 		} catch (Exception e) {
-			logger.error("请求CF失败，返回数据格式异常，转换StandardJsonObject失败，请求参数：{}，返回结果：{}", param,
-					response, e);
+			logger.error("请求CF失败，返回数据格式异常，转换StandardJsonObject失败，请求参数：{}，返回结果：{}", param, StringUtils.getMaxLenSubStr(response, 500), e);
 			return false;
 		}
 		if (standardJsonObject == null || !standardJsonObject.getRet()) {
-			logger.error("请求CF返回失败，请求参数：{}，返回结果：{}", param, response);
+			logger.error("请求CF返回失败，请求参数：{}，返回结果：{}", param, StringUtils.getMaxLenSubStr(response, 500));
 			return false;
 		}
 
@@ -436,11 +420,9 @@ public class TeacherService {
 			param.put("teacherComment", JsonUtils.toJSONString(inputDto));
 		try {
 			logger.info("checkExistOrInsertOne http request url = {}; param={}",
-				httpUrlConstant.getApiHomeworkServerUrl() + API_TEACHER_COMMENT_INSERT,
-				JsonUtils.toJSONString(inputDto));
-			String response = httpApiClient
-				.doPost(httpUrlConstant.getApiHomeworkServerUrl() + API_TEACHER_COMMENT_INSERT, param);
-			logger.info("checkExistOrInsertOne http response = {}", response);
+				httpUrlConstant.getApiHomeworkServerUrl() + API_TEACHER_COMMENT_INSERT, JsonUtils.toJSONString(inputDto));
+			String response = httpApiClient.doPost(httpUrlConstant.getApiHomeworkServerUrl() + API_TEACHER_COMMENT_INSERT, param);
+			logger.info("checkExistOrInsertOne http response = {}", StringUtils.getMaxLenSubStr(response, 500));
 
 			StandardJsonObject standardJsonObject = null;
 
@@ -448,22 +430,21 @@ public class TeacherService {
 			standardJsonObject = JsonUtils.toBean(response, StandardJsonObject.class);
 
 			if (standardJsonObject == null || !standardJsonObject.getRet()) {
-				logger.error("请求checkExistOrInsertOne返回失败，请求参数：{}，返回结果：{}", param, response);
+				logger.error("请求checkExistOrInsertOne返回失败，请求参数：{}，返回结果：{}", param, StringUtils.getMaxLenSubStr(response, 500));
 				return null;
 			}
 			if (standardJsonObject.getData() == null
 				|| standardJsonObject.getData().get("result") == null) {
-				logger.error("请求checkExistOrInsertOne返回数据为空，请求参数：{}，返回结果：{}", param, response);
+				logger.error("请求checkExistOrInsertOne返回数据为空，请求参数：{}，返回结果：{}", param, StringUtils.getMaxLenSubStr(response, 500));
 				return null;
 			}
 			tcResult = JsonUtils.readJson(JsonUtils.toJSONString(standardJsonObject.getData().get("result")), new TypeReference<List<TeacherCommentResult>>() {});
 			if (CollectionUtils.isEmpty(tcResult)) {
-				logger.error("请求checkExistOrInsertOne数据返回为空，请求参数：{}，返回结果：{}", param, response);
+				logger.error("请求checkExistOrInsertOne数据返回为空，请求参数：{}，返回结果：{}", param, StringUtils.getMaxLenSubStr(response, 500));
 				return null;
 			}
 		} catch (Exception e) {
-			logger
-				.error("请求checkExistOrInsertOne失败，返回数据格式异常，转换StandardJsonObject失败，请求参数：{}", param, e);
+			logger.error("请求checkExistOrInsertOne失败，返回数据格式异常，转换StandardJsonObject失败，请求参数：{}", param, e);
 			return null;
 		}
 
@@ -476,9 +457,8 @@ public class TeacherService {
 		List<TeacherCommentResult> teacherCommentList = null;
 		try {
 			logger.info("getTeacherCommentResult http request url = {}; param={}",httpUrlConstant.getApiHomeworkServerUrl() + requestUrl,requestParam);
-			response = httpApiClient
-					.doPost(httpUrlConstant.getApiHomeworkServerUrl() + requestUrl, requestParam);
-			logger.info("getTeacherCommentResult http response = {}",response);
+			response = httpApiClient.doPost(httpUrlConstant.getApiHomeworkServerUrl() + requestUrl, requestParam);
+			logger.info("getTeacherCommentResult http response = {}",StringUtils.getMaxLenSubStr(response, 500));
 
 			StandardJsonObject standardJsonObject = null;
 			if (StringUtils.isBlank(response)) {
@@ -488,20 +468,17 @@ public class TeacherService {
 			standardJsonObject = JsonUtils.toBean(response, StandardJsonObject.class);
 
 			if (standardJsonObject == null || !standardJsonObject.getRet()) {
-				logger.error("请求CF返回失败，请求参数：{}，返回结果：{}", requestParam, response);
+				logger.error("请求CF返回失败，请求参数：{}，返回结果：{}", requestParam, StringUtils.getMaxLenSubStr(response, 500));
 				return null;
 			}
 
-			teacherCommentList = JsonUtils
-					.readJson(JsonUtils.toJSONString(standardJsonObject.getData().get("result")), new TypeReference<List<TeacherCommentResult>>() {});
+			teacherCommentList = JsonUtils.readJson(JsonUtils.toJSONString(standardJsonObject.getData().get("result")), new TypeReference<List<TeacherCommentResult>>() {});
 			if (CollectionUtils.isEmpty(teacherCommentList)) {
-				logger.info("请求CF返回业务数据为空，请求参数：{}，返回结果：{}", requestParam,
-						response);
+				logger.info("请求CF返回业务数据为空，请求参数：{}，返回结果：{}", requestParam, StringUtils.getMaxLenSubStr(response, 500));
 				return null;
 			}
 		} catch (Exception e) {
-			logger.error("请求CF失败，返回数据格式异常，转换StandardJsonObject失败，请求参数：{}，返回结果：{}", requestParam,
-					response, e);
+			logger.error("请求CF失败，返回数据格式异常，转换StandardJsonObject失败，请求参数：{}，返回结果：{}", requestParam, StringUtils.getMaxLenSubStr(response, 500), e);
 			return null;
 		}
 		return teacherCommentList;
@@ -512,9 +489,8 @@ public class TeacherService {
 		List<Map<String,Object>> teacherCommentList = Lists.newArrayList();
 		try {
 			logger.info("getTeacherCommentObject http request url = {}; param={}",httpUrlConstant.getApiHomeworkServerUrl() + requestUrl,requestParam);
-			response = httpApiClient
-					.doPost(httpUrlConstant.getApiHomeworkServerUrl() + requestUrl, requestParam);
-			logger.info("getTeacherCommentObject http response = {}",response);
+			response = httpApiClient.doPost(httpUrlConstant.getApiHomeworkServerUrl() + requestUrl, requestParam);
+			logger.info("getTeacherCommentObject http response = {}",StringUtils.getMaxLenSubStr(response, 500));
 			StandardJsonObject standardJsonObject = null;
 			if (StringUtils.isBlank(response)) {
 				return null;
@@ -523,23 +499,20 @@ public class TeacherService {
 			standardJsonObject = JsonUtils.toBean(response, StandardJsonObject.class);
 
 			if (standardJsonObject == null || !standardJsonObject.getRet()) {
-				logger.warn("请求CF返回失败，请求参数：{}，返回结果：{}", requestParam, response);
+				logger.warn("请求CF返回失败，请求参数：{}，返回结果：{}", requestParam, StringUtils.getMaxLenSubStr(response, 500));
 				return null;
 			}
 
-			List<Map<String,Object>> responseList = JsonUtils
-					.readJson(JsonUtils.toJSONString(standardJsonObject.getData().get("result")),new TypeReference<List<Map<String,Object>>>(){} );
+			List<Map<String,Object>> responseList = JsonUtils.readJson(JsonUtils.toJSONString(standardJsonObject.getData().get("result")),new TypeReference<List<Map<String,Object>>>(){} );
 			if (CollectionUtils.isEmpty(responseList)) {
-				logger.warn("请求CF返回业务数据为空，请求参数：{}，返回结果：{}", requestParam,
-						response);
+				logger.warn("请求CF返回业务数据为空，请求参数：{}，返回结果：{}", requestParam, StringUtils.getMaxLenSubStr(response, 500));
 				return null;
 			}
 			for(Map oneRecord : responseList){
 				teacherCommentList.add((Map<String, Object>)oneRecord);
 			}
 		} catch (Exception e) {
-			logger.error("请求CF失败，返回数据格式异常，转换StandardJsonObject失败，请求参数：{}，返回结果：{}", requestParam,
-					response, e);
+			logger.error("请求CF失败，返回数据格式异常，转换StandardJsonObject失败，请求参数：{}，返回结果：{}", requestParam, StringUtils.getMaxLenSubStr(response, 500), e);
 			return null;
 		}
 		return teacherCommentList;
@@ -707,5 +680,4 @@ public class TeacherService {
 			return 5;
 		}
 	}
-
 }

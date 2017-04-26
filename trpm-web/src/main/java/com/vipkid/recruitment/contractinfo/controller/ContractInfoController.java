@@ -104,14 +104,17 @@ public class ContractInfoController extends RestfulController {
             TeacherFile teacherFiles = fileHttpService.queryTeacherFiles(teacherId);
             String avatarUrl = teacherFiles.getAvatar();
             List<AppLifePicture> lifePictures = teacherFiles.getLifePictures();
-            String shortVideoUrl = teacherFiles.getShortVideo().getUrl();
-            Integer shortVideoStatus = teacherFiles.getShortVideo().getStatus();
 
             FileUploadStatus fileUploadStatus = new FileUploadStatus();
-            if (shortVideoStatus != null && shortVideoUrl != null) {
-                fileUploadStatus.setStatus(shortVideoStatus);
-                fileUploadStatus.setUrl(shortVideoUrl);
+            if(teacherFiles.getShortVideo() != null) {
+                String shortVideoUrl = teacherFiles.getShortVideo().getUrl();
+                Integer shortVideoStatus = teacherFiles.getShortVideo().getStatus();
+                if (shortVideoStatus != null && shortVideoUrl != null) {
+                    fileUploadStatus.setStatus(shortVideoStatus);
+                    fileUploadStatus.setUrl(shortVideoUrl);
+                }
             }
+
             Map<String, Object> personalInfo = Maps.newHashMap();
 
             personalInfo.put("avatar", avatarUrl);

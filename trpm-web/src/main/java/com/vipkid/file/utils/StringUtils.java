@@ -1,20 +1,14 @@
 
 package com.vipkid.file.utils;
 
-import java.io.UnsupportedEncodingException;
-import java.util.List;
-import java.util.Locale;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import com.google.common.collect.Lists;
+import org.apache.commons.lang3.StringEscapeUtils;
 
 import javax.servlet.http.HttpServletRequest;
-
-import org.apache.commons.lang3.StringEscapeUtils;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
-import org.springframework.web.servlet.LocaleResolver;
-
-import com.google.common.collect.Lists;
+import java.io.UnsupportedEncodingException;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * 字符串工具类, 继承org.apache.commons.lang3.StringUtils类
@@ -380,4 +374,11 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils {
         return result.toString();
     }
 
+    public static String getMaxLenSubStr(String str, int maxSubstringLength) {
+        if (str.length() < maxSubstringLength) {
+            return str;
+        } else {
+            return str.substring(0, maxSubstringLength).concat("......");
+        }
+    }
 }
