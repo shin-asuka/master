@@ -703,7 +703,6 @@ public class TeacherService {
 	 * @return
 	 */
 	public long getTeacherIdByReferralCode(String referralCode){
-		referralCode.trim().toLowerCase();
 		long teacherId = Long.parseLong(referralCode,36);
 		return teacherId;
 	}
