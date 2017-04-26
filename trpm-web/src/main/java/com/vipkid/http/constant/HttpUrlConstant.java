@@ -36,6 +36,16 @@ public class HttpUrlConstant {
     private String apiClassroomServerUrl;
 
 
+    /**
+     * teacher-admin的服务器地址
+     */
+    //@Value("${teacher.contract.contractInfo.url}")
+    @Value("${api.teacher.admin.server.url}")
+    private String apiTeacherAdminServerUrl;
+
+
+
+
     public String getApiHomeworkServerUrl() {
         return apiHomeworkServerUrl;
     }
@@ -58,6 +68,14 @@ public class HttpUrlConstant {
 
     public void setApiGatewayServerUrl(String apiGatewayServerUrl) {
         this.apiGatewayServerUrl = apiGatewayServerUrl;
+    }
+
+    public String getApiTeacherAdminServerUrl() {
+        return apiTeacherAdminServerUrl;
+    }
+
+    public void setApiTeacherAdminServerUrl(String apiTeacherAdminServerUrl) {
+        this.apiTeacherAdminServerUrl = apiTeacherAdminServerUrl;
     }
 
     public String getApiClassroomServerUrl() {

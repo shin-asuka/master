@@ -9,6 +9,7 @@ public class BackgroundStatusDto implements Serializable {
 
     private static final long serialVersionUID = -3805545654536384132L;
     boolean needBackgroundCheck;
+    boolean contractEndWithInOneMonth;
     String phase;
     String result;
     String nationality;
@@ -43,5 +44,13 @@ public class BackgroundStatusDto implements Serializable {
 
     public void setResult(String result) {
         this.result = result;
+    }
+
+    public boolean isContractEndWithInOneMonth() {
+        return contractEndWithInOneMonth;
+    }
+
+    public void setContractEndWithInOneMonth(boolean contractEndWithInOneMonth) {
+        this.contractEndWithInOneMonth = contractEndWithInOneMonth;
     }
 }
