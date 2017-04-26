@@ -187,7 +187,7 @@ public class BackgroundCommonService {
                         }
                     } else {
                         backgroundStatusDto.setPhase(BackgroundPhase.START.getVal());
-                        backgroundStatusDto.setNeedBackgroundCheck(true);
+                        backgroundStatusDto.setNeedBackgroundCheck(false);
                         backgroundStatusDto.setResult("");
                     }
                 }
@@ -248,7 +248,7 @@ public class BackgroundCommonService {
                     backgroundStatusDto.setPhase(BackgroundPhase.FAIL.getVal());
                     backgroundStatusDto.setResult(BackgroundResult.FAIL.getVal());
                 } else {
-                    backgroundStatusDto.setNeedBackgroundCheck(true);
+                    backgroundStatusDto.setNeedBackgroundCheck(false);
                     backgroundStatusDto.setPhase(BackgroundPhase.PENDING.getVal());
                     backgroundStatusDto.setResult(BackgroundResult.NA.getVal());
                 }
