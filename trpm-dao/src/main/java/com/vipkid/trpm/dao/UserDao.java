@@ -1,6 +1,7 @@
 package com.vipkid.trpm.dao;
 
 import com.vipkid.trpm.entity.User;
+import com.google.common.collect.Maps;
 import org.apache.commons.lang3.StringUtils;
 import org.community.dao.support.MapperDaoTemplate;
 import org.mybatis.spring.SqlSessionTemplate;
@@ -116,6 +117,13 @@ public class UserDao extends MapperDaoTemplate<User> {
 		} else {
 		 	return super.selectLimit(new User(), "findFullNameEqualsShowNameOtherUsers", startLine, limitLine);
 	 	}
+	}
+
+
+	public User findUserByOnlineClassId(long onlineClassId){
+		Map<String, Object> paramsMap = Maps.newHashMap();
+		paramsMap.put("onlineClassId", onlineClassId);
+		return super.selectOne("findUserByOnlineClassId", paramsMap);
 	}
 
 }

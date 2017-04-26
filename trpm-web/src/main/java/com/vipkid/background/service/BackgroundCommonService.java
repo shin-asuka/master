@@ -12,6 +12,7 @@ import com.vipkid.recruitment.dao.TeacherContractFileDao;
 import com.vipkid.recruitment.entity.TeacherContractFile;
 import com.vipkid.trpm.dao.TeacherGatedLaunchDao;
 import com.vipkid.trpm.entity.*;
+import com.vipkid.trpm.service.portal.PersonalInfoService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.community.config.PropertyConfigurer;
@@ -46,6 +47,9 @@ public class BackgroundCommonService {
     @Autowired
     private BackgroundReportDao backgroundReportDao;
 
+    @Autowired
+    private PersonalInfoService personalInfoService;
+
     private static Logger logger = LoggerFactory.getLogger(BackgroundCommonService.class);
     private boolean  backgroundSwitch = PropertyConfigurer.booleanValue("background.sterling.switch");
 
@@ -70,6 +74,7 @@ public class BackgroundCommonService {
         //合同即将到期需进行背调,提前一个月进行弹窗提示
         remindTime.add(Calendar.MONTH,-1);
         if (remindTime.getTime().before(current.getTime()) ) {
+            backgroundStatusDto.setContractEndWithInOneMonth(!personalInfoService.checkHasSignNext(teacher.getId(),contractEndDate));
             //没有背调结果，即第一次开始背调
             if (null == backgroundScreening) {
                 backgroundStatusDto.setNeedBackgroundCheck(true);
@@ -94,14 +99,14 @@ public class BackgroundCommonService {
                     backgroundStatusDto.setPhase(BackgroundPhase.START.getVal());
                     backgroundStatusDto.setResult("");
 
-                } else {
+                } else { //mod by rentj 2017-04-26 只要是进行过背调了，不论结果如何，都不在弹出框setNeedBackgroundCheck=false
                     String backgroundResult = backgroundScreening.getResult();
                     String disputeStatus = backgroundScreening.getDisputeStatus();
                     if (null != backgroundResult) {
                         switch (backgroundResult) {
                             //开始背调，背调结果结果为N/A
                             case "n/a":
-                                backgroundStatusDto.setNeedBackgroundCheck(true);
+                                backgroundStatusDto.setNeedBackgroundCheck(false);
                                 backgroundStatusDto.setPhase(BackgroundPhase.PENDING.getVal());
                                 backgroundStatusDto.setResult(BackgroundResult.NA.getVal());
                                 break;
@@ -145,14 +150,14 @@ public class BackgroundCommonService {
                                 if (null == backgroundAdverse){
                                     backgroundStatusDto.setPhase(BackgroundPhase.PENDING.getVal());
                                     backgroundStatusDto.setResult(BackgroundResult.NA.getVal());
-                                    backgroundStatusDto.setNeedBackgroundCheck(true);
+                                    backgroundStatusDto.setNeedBackgroundCheck(false);
                                 } else {
                                     String actionsStatus = backgroundAdverse.getActionsStatus();
                                     if (StringUtils.equalsIgnoreCase(actionsStatus,AdverseStatus.CANCELLED.getValue())){
                                         //cancelled 暂时显示30天
                                         backgroundStatusDto.setPhase(BackgroundPhase.DISPUTE.getVal());
                                         backgroundStatusDto.setResult(BackgroundResult.ALERT.getVal());
-                                        backgroundStatusDto.setNeedBackgroundCheck(true);
+                                        backgroundStatusDto.setNeedBackgroundCheck(false);
                                     } else if (StringUtils.equalsIgnoreCase(actionsStatus,AdverseStatus.COMPLETE.getValue())){
                                         //最终结果为fail
                                         backgroundStatusDto.setPhase(BackgroundPhase.FAIL.getVal());
@@ -164,7 +169,7 @@ public class BackgroundCommonService {
                                             //正在进行dispute
                                             backgroundStatusDto.setPhase(BackgroundPhase.DISPUTE.getVal());
                                             backgroundStatusDto.setResult(BackgroundResult.ALERT.getVal());
-                                            backgroundStatusDto.setNeedBackgroundCheck(true);
+                                            backgroundStatusDto.setNeedBackgroundCheck(false);
                                         } else if (StringUtils.equalsIgnoreCase(disputeStatus,DisputeStatus.DEACTIVATED.getVal())){
                                             //n天内老师没有DISPUTE
                                             backgroundStatusDto.setPhase(BackgroundPhase.DIDNOTDISPUTE.getVal());
@@ -174,7 +179,7 @@ public class BackgroundCommonService {
                                             //dispute_status 为 null 等待老师进行dispute
                                             backgroundStatusDto.setPhase(BackgroundPhase.PREADVERSE.getVal());
                                             backgroundStatusDto.setResult(BackgroundResult.ALERT.getVal());
-                                            backgroundStatusDto.setNeedBackgroundCheck(true);
+                                            backgroundStatusDto.setNeedBackgroundCheck(false);
                                         }
                                     }
 
@@ -227,6 +232,7 @@ public class BackgroundCommonService {
             logger.info("获取美国老师: {} 背调状态信息 {}",teacher.getId(),backgroundStatusDto);
             return backgroundStatusDto;
         }else {
+            backgroundStatusDto.setContractEndWithInOneMonth(false);
             backgroundStatusDto.setNeedBackgroundCheck(false);
             backgroundStatusDto.setPhase("");
             backgroundStatusDto.setResult("");
@@ -252,6 +258,7 @@ public class BackgroundCommonService {
         remindTime.add(Calendar.MONTH,-1);
         //合同即将到期需进行背调,提前一个月进行弹窗提示
         if (remindTime.getTime().before(current.getTime()) ) {
+            backgroundStatusDto.setContractEndWithInOneMonth(!personalInfoService.checkHasSignNext(teacher.getId(),contractEndDate));
             CanadaBackgroundScreening canadaBackgroundScreening = canadaBackgroundScreeningDao.findByTeacherId(teacher.getId());
             //第一次进行背调
             if (null == canadaBackgroundScreening) {
@@ -277,7 +284,7 @@ public class BackgroundCommonService {
                     backgroundStatusDto.setPhase(BackgroundPhase.FAIL.getVal());
                     backgroundStatusDto.setResult(BackgroundResult.FAIL.getVal());
                 } else {
-                    backgroundStatusDto.setNeedBackgroundCheck(true);
+                    backgroundStatusDto.setNeedBackgroundCheck(false);
                     backgroundStatusDto.setPhase(BackgroundPhase.PENDING.getVal());
                     backgroundStatusDto.setResult(BackgroundResult.NA.getVal());
                 }
@@ -285,6 +292,7 @@ public class BackgroundCommonService {
             logger.info("获取加拿大老师: {} 背调状态信息 {}",teacher.getId(),backgroundStatusDto);
             return backgroundStatusDto;
         } else {
+            backgroundStatusDto.setContractEndWithInOneMonth(false);
             backgroundStatusDto.setPhase("");
             backgroundStatusDto.setResult("");
             backgroundStatusDto.setNeedBackgroundCheck(false);

@@ -567,7 +567,7 @@
 				AND  tc.scheduled_date_time BETWEEN #{param.startTime} AND #{param.endTime}
 			</if>
 		</if>
-		<if test="param.name != null"> AND (u.name LIKE CONCAT('%', #{param.name}, '%') OR t.email LIKE CONCAT('%', #{param.name}, '%') ) </if>
+		<if test="param.name != null and param.name != ''"> AND (u.name LIKE CONCAT('%', #{param.name}, '%') OR t.email LIKE CONCAT('%', #{param.name}, '%') ) </if>
 		ORDER BY
 		u.register_date_time DESC
 		<if test="param.startRows != null  and param.pageSize != null">
@@ -599,7 +599,7 @@
 		<if test="param.dataType == 3">
 			AND  tc.scheduled_date_time BETWEEN #{param.startTime} AND #{param.endTime}
 		</if>
-		<if test="param.name != null"> AND (u.name LIKE CONCAT('%', #{param.name}, '%') OR t.email LIKE CONCAT('%', #{param.name}, '%') ) </if>
+		<if test="param.name != null and param.name != ''"> AND (u.name LIKE CONCAT('%', #{param.name}, '%') OR t.email LIKE CONCAT('%', #{param.name}, '%') ) </if>
 	</select>
 
 	<!-- 成功的列表和笔数-->

@@ -307,4 +307,18 @@
 		ORDER BY `user`.`id` LIMIT #{startLine}, #{limitLine}
 	</select>
 
+
+	<select id="findUserByOnlineClassId" resultMap="userResultMap">
+		SELECT
+		<include refid="userColumns" />
+		FROM
+		`online_class`
+		JOIN `online_class_student`
+		ON `online_class`.`id` = `online_class_student`.`online_class_id`
+		JOIN `user`
+		ON `online_class_student`.`student_id` = `user`.`id`
+		WHERE
+		`online_class`.`id` = #{onlineClassId}
+	</select>
+
 </mapper>

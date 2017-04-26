@@ -20,6 +20,7 @@ import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.entity.TeacherAddress;
 import com.vipkid.trpm.entity.TeacherLocation;
 import com.vipkid.trpm.entity.User;
+import com.vipkid.trpm.util.EmojiUtils;
 
 @Service
 public class PortalBasicInfoService {
@@ -110,7 +111,7 @@ public class PortalBasicInfoService {
 		teacher.setPhoneNationId(basicInfo.getPhoneNationId());
 		teacher.setPhoneType(basicInfo.getPhoneType());
 		teacher.setMobile(basicInfo.getMobile());
-		teacher.setIntroduction(basicInfo.getIntroduction());
+		teacher.setIntroduction(EmojiUtils.filterEmoji(basicInfo.getIntroduction()));
 		
 		teacher.setSkype(basicInfo.getSkype());
 		teacher.setTimezone(basicInfo.getTimezone());
