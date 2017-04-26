@@ -60,26 +60,26 @@ public class LoginExpiredHandleInterceptor extends HandlerInterceptorAdapter {
         try{
             
             String uri = request.getRequestURI();
-            
+
             if(StringUtils.endsWith(uri, "user/login")){
                 logger.info("IP:{},发起请求:{}",IpUtils.getIpAddress(request),request.getRequestURI());
             }else{
                 logger.info("IP:{},发起请求:{},请求参数:{}",IpUtils.getIpAddress(request),request.getRequestURI(),RequestUtils.readRequestBody(request));
             }
-            
+
             HandlerMethod handlerMethod = (HandlerMethod) handler;
-            
+
             //如果有RemoteInterface 注解 表示该接口暴露给其他系统调用需要进行以下拦截认证
             RemoteInterface remoteInterface = AnnotaionUtils.getAnnotation(handlerMethod,RemoteInterface.class);
             if(remoteInterface != null && remoteInterface.portal().length > 0){
                 return this.remoteHandle(remoteInterface, request, response);
             }
-            
+
             //如果有RestInterface，表示该接口为前后端分离接口需要进行以下拦截认证
             RestInterface restInterface = AnnotaionUtils.getAnnotation(handlerMethod,RestInterface.class);
             if(restInterface != null && restInterface.lifeCycle().length > 0){
                 return this.restHandle(restInterface, request, response, uri);
-            }       
+            }
         
             return true;
             
