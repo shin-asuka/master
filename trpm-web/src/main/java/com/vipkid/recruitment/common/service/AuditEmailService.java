@@ -142,7 +142,7 @@ public class AuditEmailService {
                 logger.info("thingsDidWell:{}",HtmlUtils.htmlUnescape(teacherPeComments.getThingsDidWell()));
                 paramsMap.put("areasImprovement", HtmlUtils.htmlUnescape(teacherPeComments.getAreasImprovement()));
             }
-            List<TeacherApplication> list = teacherApplicationDao.findApplictionForStatusResult(teacher.getId(), TeacherApplicationEnum.Status.SIGN_CONTRACT.toString(), TeacherApplicationEnum.Result.PASS.toString());
+            List<TeacherApplication> list = teacherApplicationDao.findApplicationForStatusResult(teacher.getId(), TeacherApplicationEnum.Status.SIGN_CONTRACT.toString(), TeacherApplicationEnum.Result.PASS.toString());
             if(CollectionUtils.isNotEmpty(list)){
                 logger.info("【EMAIL.sendPracticumPass4OldProcess】toAddMailPool: teacher name = {}, email = {}, titleTemplate = {}, contentTemplate = {}",
                         teacher.getRealName(),teacher.getEmail(), PRACTICUM_PASS_4_OLD_PROCESS_TITLE, PRACTICUM_PASS_CONTENT_4_OLD_PROCESS);

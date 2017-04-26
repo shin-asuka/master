@@ -131,7 +131,7 @@ public class PeSupervisorController extends AbstractPeController {
             }
 
             List<TeacherApplication> list = teacherApplicationDao
-                    .findApplictionForStatusResult(teacherApplication.getTeacherId(),Status.PRACTICUM.toString(),Result.PRACTICUM2.toString());
+                    .findApplicationForStatusResult(teacherApplication.getTeacherId(),Status.PRACTICUM.toString(),Result.PRACTICUM2.toString());
             if (list != null && list.size() > 0) {
                 model.addAttribute("practicum2", true);
             } else {
@@ -147,7 +147,7 @@ public class PeSupervisorController extends AbstractPeController {
 
             if(0==teacherApplication.getAuditorId() && null==teacherPeComments){
                 teacherApplicationDao.initApplicationAnswer(teacherApplication);
-                model.addAttribute("teacherApplication", teacherApplicationDao.findApplictionById(applicationId));
+                model.addAttribute("teacherApplication", teacherApplicationDao.findApplicationById(applicationId));
             }else{
                 model.addAttribute("teacherApplication", teacherApplication);
             }

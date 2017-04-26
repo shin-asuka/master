@@ -1,19 +1,5 @@
 package com.vipkid.portal.classroom.service;
 
-import java.lang.reflect.InvocationTargetException;
-import java.nio.charset.StandardCharsets;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.community.tools.JsonTools;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.google.api.client.util.Lists;
 import com.google.common.collect.Maps;
 import com.vipkid.enums.TeacherApplicationEnum.Result;
@@ -24,26 +10,26 @@ import com.vipkid.portal.classroom.util.BeanUtils;
 import com.vipkid.recruitment.dao.TeacherApplicationDao;
 import com.vipkid.recruitment.entity.TeacherApplication;
 import com.vipkid.trpm.constant.ApplicationConstant.FinishType;
-import com.vipkid.trpm.dao.DemoReportDao;
-import com.vipkid.trpm.dao.TeacherModuleDao;
-import com.vipkid.trpm.dao.TeacherPeCommentsDao;
-import com.vipkid.trpm.dao.TeacherPeLevelsDao;
-import com.vipkid.trpm.dao.TeacherPeTagsDao;
-import com.vipkid.trpm.entity.DemoReport;
-import com.vipkid.trpm.entity.Teacher;
-import com.vipkid.trpm.entity.TeacherModule;
-import com.vipkid.trpm.entity.TeacherPeComments;
-import com.vipkid.trpm.entity.TeacherPeLevels;
-import com.vipkid.trpm.entity.TeacherPeTags;
+import com.vipkid.trpm.dao.*;
+import com.vipkid.trpm.entity.*;
 import com.vipkid.trpm.entity.report.DemoReports;
 import com.vipkid.trpm.entity.report.ReportLevels;
-import com.vipkid.trpm.service.pe.AppserverPracticumService;
-import com.vipkid.trpm.service.pe.PeSupervisorService;
-import com.vipkid.trpm.service.pe.TeacherPeCommentsService;
-import com.vipkid.trpm.service.pe.TeacherPeLevelsService;
-import com.vipkid.trpm.service.pe.TeacherPeTagsService;
+import com.vipkid.trpm.service.pe.*;
 import com.vipkid.trpm.service.portal.OnlineClassService;
 import com.vipkid.trpm.util.FilesUtils;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.community.tools.JsonTools;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.lang.reflect.InvocationTargetException;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 @Service
 public class PracticumFeedbackService {
@@ -112,7 +98,7 @@ public class PracticumFeedbackService {
 		
 		int applicationId = bean.getId().intValue();
 		
-        TeacherApplication teacherApplication = this.teacherApplicationDao.findApplictionById(applicationId);
+        TeacherApplication teacherApplication = this.teacherApplicationDao.findApplicationById(applicationId);
         
         if (StringUtils.isNotBlank(teacherApplication.getResult())) {
             logger.info("Teacher application already end or recruitment process step already end, class id is : {},result is {}",teacherApplication.getOnlineClassId(), teacherApplication.getResult());
@@ -191,7 +177,7 @@ public class PracticumFeedbackService {
 		
 		int applicationId = bean.getId().intValue();
         
-        TeacherApplication teacherApplication = this.teacherApplicationDao.findApplictionById(applicationId);
+        TeacherApplication teacherApplication = this.teacherApplicationDao.findApplicationById(applicationId);
         
         if (StringUtils.isNotBlank(teacherApplication.getResult())) {
             logger.info("Teacher application already end or recruitment process step already end, class id is : {},result is {}",teacherApplication.getOnlineClassId(), teacherApplication.getResult());
@@ -244,7 +230,7 @@ public class PracticumFeedbackService {
 	public PeCommentsVo findPeFromByAppId(Integer applicationId,Teacher teacher) throws IllegalAccessException, InvocationTargetException{
 		PeCommentsVo bean = new PeCommentsVo();
 		
-		TeacherApplication teacherApplication = this.teacherApplicationDao.findApplictionById(applicationId);
+		TeacherApplication teacherApplication = this.teacherApplicationDao.findApplicationById(applicationId);
 	
 		if(teacherApplication != null){
 			if(StringUtils.isNotBlank(teacherApplication.getContractUrl())){
@@ -293,7 +279,7 @@ public class PracticumFeedbackService {
 	public PeSupervisorCommentsVo findPeSupervisorFromByAppId(Integer applicationId) throws IllegalAccessException, InvocationTargetException{
 		
 		PeSupervisorCommentsVo bean = new PeSupervisorCommentsVo();		
-		TeacherApplication teacherApplication = this.teacherApplicationDao.findApplictionById(applicationId);
+		TeacherApplication teacherApplication = this.teacherApplicationDao.findApplicationById(applicationId);
 
 		TeacherPeComments teacherPeComments = teacherPeCommentsDao.getTeacherPeComments(applicationId);
 		if(teacherPeComments != null){

@@ -1,14 +1,37 @@
 package com.vipkid.trpm.service.portal;
 
-import java.sql.Timestamp;
-import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.TimeZone;
-
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.vipkid.enums.OnlineClassEnum.ClassStatus;
+import com.vipkid.enums.TeacherApplicationEnum;
+import com.vipkid.enums.TeacherApplicationEnum.Result;
+import com.vipkid.enums.TeacherApplicationEnum.Status;
+import com.vipkid.enums.TeacherModuleEnum;
+import com.vipkid.enums.TeacherModuleEnum.RoleClass;
+import com.vipkid.http.service.AssessmentHttpService;
+import com.vipkid.http.utils.JsonUtils;
+import com.vipkid.http.vo.OnlineClassVo;
+import com.vipkid.http.vo.StudentUnitAssessment;
+import com.vipkid.recruitment.common.service.RecruitmentService;
+import com.vipkid.recruitment.dao.TeacherApplicationDao;
+import com.vipkid.recruitment.dao.TeacherLockLogDao;
+import com.vipkid.recruitment.entity.TeacherApplication;
+import com.vipkid.trpm.constant.ApplicationConstant;
+import com.vipkid.trpm.constant.ApplicationConstant.FinishType;
+import com.vipkid.trpm.dao.*;
+import com.vipkid.trpm.entity.*;
+import com.vipkid.trpm.entity.classroom.GetStarDto;
+import com.vipkid.trpm.entity.classroom.UpdateStarDto;
+import com.vipkid.trpm.entity.teachercomment.TeacherComment;
+import com.vipkid.trpm.entity.teachercomment.TeacherCommentResult;
+import com.vipkid.trpm.entity.teachercomment.TeacherCommentUpdateDto;
+import com.vipkid.trpm.proxy.OnlineClassProxy;
+import com.vipkid.trpm.util.DateUtils;
+import com.vipkid.trpm.util.FilesUtils;
+import com.vipkid.trpm.util.IpUtils;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -22,65 +45,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.vipkid.enums.OnlineClassEnum.ClassStatus;
-import com.vipkid.enums.TeacherApplicationEnum;
-import com.vipkid.enums.TeacherApplicationEnum.Result;
-import com.vipkid.enums.TeacherApplicationEnum.Status;
-import com.vipkid.enums.TeacherEnum.LifeCycle;
-import com.vipkid.enums.TeacherLockLogEnum.Reason;
-import com.vipkid.enums.TeacherModuleEnum;
-import com.vipkid.enums.TeacherModuleEnum.RoleClass;
-import com.vipkid.enums.UserEnum;
-import com.vipkid.http.service.AssessmentHttpService;
-import com.vipkid.http.utils.JsonUtils;
-import com.vipkid.http.vo.OnlineClassVo;
-import com.vipkid.http.vo.StudentUnitAssessment;
-import com.vipkid.recruitment.common.service.RecruitmentService;
-import com.vipkid.recruitment.dao.TeacherApplicationDao;
-import com.vipkid.recruitment.dao.TeacherLockLogDao;
-import com.vipkid.recruitment.entity.TeacherApplication;
-import com.vipkid.recruitment.entity.TeacherLockLog;
-import com.vipkid.trpm.constant.ApplicationConstant;
-import com.vipkid.trpm.constant.ApplicationConstant.FinishType;
-import com.vipkid.trpm.dao.AssessmentReportDao;
-import com.vipkid.trpm.dao.AuditDao;
-import com.vipkid.trpm.dao.CourseDao;
-import com.vipkid.trpm.dao.DemoReportDao;
-import com.vipkid.trpm.dao.LessonDao;
-import com.vipkid.trpm.dao.OnlineClassDao;
-import com.vipkid.trpm.dao.StudentDao;
-import com.vipkid.trpm.dao.TagsDao;
-import com.vipkid.trpm.dao.TeacherDao;
-import com.vipkid.trpm.dao.TeacherModuleDao;
-import com.vipkid.trpm.dao.TeacherPeCommentsDao;
-import com.vipkid.trpm.dao.TeacherPeDao;
-import com.vipkid.trpm.dao.TeacherPeLevelsDao;
-import com.vipkid.trpm.dao.TeacherPeTagsDao;
-import com.vipkid.trpm.dao.UserDao;
-import com.vipkid.trpm.entity.AssessmentReport;
-import com.vipkid.trpm.entity.Course;
-import com.vipkid.trpm.entity.DemoReport;
-import com.vipkid.trpm.entity.Lesson;
-import com.vipkid.trpm.entity.OnlineClass;
-import com.vipkid.trpm.entity.Student;
-import com.vipkid.trpm.entity.Teacher;
-import com.vipkid.trpm.entity.TeacherModule;
-import com.vipkid.trpm.entity.TeacherPeComments;
-import com.vipkid.trpm.entity.User;
-import com.vipkid.trpm.entity.classroom.GetStarDto;
-import com.vipkid.trpm.entity.classroom.UpdateStarDto;
-import com.vipkid.trpm.entity.teachercomment.TeacherComment;
-import com.vipkid.trpm.entity.teachercomment.TeacherCommentResult;
-import com.vipkid.trpm.entity.teachercomment.TeacherCommentUpdateDto;
-import com.vipkid.trpm.proxy.OnlineClassProxy;
-import com.vipkid.trpm.util.DateUtils;
-import com.vipkid.trpm.util.FilesUtils;
-import com.vipkid.trpm.util.IpUtils;
+import java.sql.Timestamp;
+import java.time.Instant;
+import java.util.*;
 
 @Service
 public class OnlineClassService {
@@ -208,11 +175,11 @@ public class OnlineClassService {
         modelMap.putAll(this.enterBefore(onlineClass, studentId, "BOOKED"));
 
         TeacherApplication teacherApplication =
-                teacherApplicationDao.findApplictionByOlineclassId(onlineClass.getId(), student.getId());
+                teacherApplicationDao.findApplicationByOnlineClassId(onlineClass.getId(), student.getId());
         modelMap.putAll(OnlineClassProxy.generateRoomEnterUrl(String.valueOf(student.getId()), user.getName(),
                 onlineClass.getClassroom(), OnlineClassProxy.RoomRole.STUDENT, onlineClass.getSupplierCode(),onlineClass.getId(),OnlineClassProxy.ClassType.PRACTICUM));
         modelMap.put("teacherPe", teacherPeDao.findByOnlineClassId(onlineClass.getId()));
-        List<TeacherApplication> list = teacherApplicationDao.findApplictionForStatusResult(
+        List<TeacherApplication> list = teacherApplicationDao.findApplicationForStatusResult(
                 teacherApplication.getTeacherId(),Status.PRACTICUM.toString(),Result.PRACTICUM2.toString());
 
         if (list != null && list.size() > 0) {
@@ -239,7 +206,7 @@ public class OnlineClassService {
 
         if(0==teacherApplication.getAuditorId() && null==teacherPeComments){
             teacherApplicationDao.initApplicationAnswer(teacherApplication);
-            modelMap.put("teacherApplication", teacherApplicationDao.findApplictionById(applicationId));
+            modelMap.put("teacherApplication", teacherApplicationDao.findApplicationById(applicationId));
         }else{
             modelMap.put("teacherApplication", teacherApplication);
         }
@@ -434,7 +401,7 @@ public class OnlineClassService {
         // 5.practicum2 判断是否存在
         if (TeacherApplicationEnum.Result.PRACTICUM2.toString().equals(result)) {
             List<TeacherApplication> list = teacherApplicationDao
-                    .findApplictionForStatusResult(currTeacherApplication.getTeacherId(),Status.PRACTICUM.toString(),Result.PRACTICUM2.toString());
+                    .findApplicationForStatusResult(currTeacherApplication.getTeacherId(),Status.PRACTICUM.toString(),Result.PRACTICUM2.toString());
 
             if (list != null && list.size() > 0) {
                 logger.info("The teacher is already in practicum 2., class id is : {},status is {},recruitTeacher:{}",

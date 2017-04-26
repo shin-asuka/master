@@ -1,39 +1,34 @@
 package com.vipkid.recruitment.contractinfo.service;
 
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
+import com.google.api.client.util.Maps;
+import com.google.common.collect.Lists;
+import com.vipkid.enums.TeacherApplicationEnum;
+import com.vipkid.enums.TeacherEnum;
+import com.vipkid.recruitment.dao.TeacherApplicationDao;
 import com.vipkid.recruitment.dao.TeacherContractFileDao;
+import com.vipkid.recruitment.entity.ContractFile;
+import com.vipkid.recruitment.entity.TeacherApplication;
 import com.vipkid.recruitment.entity.TeacherContractFile;
 import com.vipkid.recruitment.utils.ReturnMapUtils;
 import com.vipkid.rest.config.RestfulConfig;
 import com.vipkid.trpm.dao.TeacherAddressDao;
 import com.vipkid.trpm.dao.TeacherDao;
 import com.vipkid.trpm.dao.TeacherTaxpayerFormDao;
+import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.entity.TeacherAddress;
 import com.vipkid.trpm.entity.TeacherTaxpayerForm;
-
-import com.google.api.client.util.Maps;
-import com.google.common.collect.Lists;
-import com.vipkid.trpm.service.huanxin.HuanxinService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import com.vipkid.enums.TeacherApplicationEnum;
-import com.vipkid.enums.TeacherEnum;
-import com.vipkid.recruitment.dao.TeacherApplicationDao;
-import com.vipkid.recruitment.entity.TeacherApplication;
-import com.vipkid.recruitment.entity.ContractFile;
-import com.vipkid.trpm.entity.Teacher;
-
 import org.springframework.transaction.annotation.Transactional;
+
+import java.sql.Timestamp;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author by zhangzhaojun on 2016/11/14.
@@ -61,7 +56,7 @@ public class ContractInfoService {
     private static int LOCATION_IS_USA=2497273;
 
     public String findContractUrl(long teacherId){
-       List<TeacherApplication> teacherApplications =  teacherApplicationDao.findApplictionForStatusResult(teacherId,TeacherApplicationEnum.Status.INTERVIEW.toString(),TeacherApplicationEnum.Result.PASS.toString());
+       List<TeacherApplication> teacherApplications =  teacherApplicationDao.findApplicationForStatusResult(teacherId,TeacherApplicationEnum.Status.INTERVIEW.toString(),TeacherApplicationEnum.Result.PASS.toString());
         if(CollectionUtils.isNotEmpty(teacherApplications)){
             TeacherApplication teacherApplication = teacherApplications.get(0);
                      return teacherApplication.getContractUrl();

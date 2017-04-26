@@ -1,19 +1,5 @@
 package com.vipkid.recruitment.basicinfo.service;
 
-import java.sql.Timestamp;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import com.vipkid.recruitment.common.service.AuditPushMessageService;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.community.tools.JsonTools;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.google.api.client.util.Lists;
 import com.google.api.client.util.Maps;
 import com.vipkid.email.EmailUtils;
@@ -24,6 +10,7 @@ import com.vipkid.enums.TeacherEnum;
 import com.vipkid.enums.TeacherEnum.LifeCycle;
 import com.vipkid.enums.TeacherEnum.RecruitmentChannel;
 import com.vipkid.enums.UserEnum;
+import com.vipkid.recruitment.common.service.AuditPushMessageService;
 import com.vipkid.recruitment.common.service.RecruitmentService;
 import com.vipkid.recruitment.dao.TeacherApplicationDao;
 import com.vipkid.recruitment.dao.TeachingExperienceDao;
@@ -40,6 +27,18 @@ import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.entity.TeacherAddress;
 import com.vipkid.trpm.entity.User;
 import com.vipkid.trpm.proxy.RedisProxy;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.community.tools.JsonTools;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.sql.Timestamp;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Service
 public class BasicInfoService {
@@ -184,7 +183,7 @@ public class BasicInfoService {
             return ReturnMapUtils.returnFail("Your recruitment process is over already, Please refresh your page !","INTERVIEW:"+teacher.getId());
         }
         
-        List<TeacherApplication> applicationList = teacherApplicationDao.findApplictionForStatus(teacher.getId(),LifeCycle.BASIC_INFO.toString());
+        List<TeacherApplication> applicationList = teacherApplicationDao.findApplicationForStatus(teacher.getId(),LifeCycle.BASIC_INFO.toString());
         if(CollectionUtils.isNotEmpty(applicationList)){
             logger.error("已经提交基本信息的老师{}，重复提交被拦截:提交状态{},审核结果{},用户状态:{}",teacher.getId(),applicationList.get(0).getStatus(),applicationList.get(0).getResult(),teacher.getLifeCycle());
             return ReturnMapUtils.returnFail("You have already submitted data!");

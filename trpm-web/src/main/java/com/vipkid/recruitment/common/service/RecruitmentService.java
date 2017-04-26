@@ -1,17 +1,5 @@
 package com.vipkid.recruitment.common.service;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.community.tools.JsonTools;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.google.api.client.util.Maps;
 import com.vipkid.enums.OnlineClassEnum;
 import com.vipkid.enums.TeacherApplicationEnum.AuditStatus;
@@ -39,6 +27,17 @@ import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.entity.TeacherAddress;
 import com.vipkid.trpm.entity.TeacherLocation;
 import com.vipkid.trpm.util.DateUtils;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.community.tools.JsonTools;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 @Service
 public class RecruitmentService {
@@ -277,7 +276,7 @@ public class RecruitmentService {
             }
         }
 
-        List<TeacherApplication> list = teacherApplicationDao.findApplictionForStatusResult(teacher.getId(), null, Result.PRACTICUM2.name());
+        List<TeacherApplication> list = teacherApplicationDao.findApplicationForStatusResult(teacher.getId(), null, Result.PRACTICUM2.name());
         if(CollectionUtils.isNotEmpty(list)){
             result.put("practicumNo", 2);
         }else{
@@ -287,7 +286,7 @@ public class RecruitmentService {
         result.put("trainingPassTime", 0);
         if(AuditStatus.TO_SUBMIT.toString().equals(result.get("result").toString())){
             logger.info("进入"+teacherApplication.getStatus()+"待约课页面 teacherId:{} taId:{}",teacher.getId(),teacherApplication.getId());
-            List<TeacherApplication> trainingPassTAList = teacherApplicationDao.findApplictionForStatusResult(teacher.getId(), Status.TRAINING.toString(), Result.PASS.toString());
+            List<TeacherApplication> trainingPassTAList = teacherApplicationDao.findApplicationForStatusResult(teacher.getId(), Status.TRAINING.toString(), Result.PASS.toString());
             if(CollectionUtils.isNotEmpty(trainingPassTAList) && trainingPassTAList.get(0).getAuditDateTime() != null){
                 result.put("trainingPassTime", trainingPassTAList.get(0).getAuditDateTime().getTime());
             }
@@ -410,12 +409,12 @@ public class RecruitmentService {
      */
     public boolean teacherIsApplicationFinished(Teacher teacher){
         //老师已经被fail过，不能继续操作n
-        List<TeacherApplication> fail = teacherApplicationDao.findApplictionForStatusResult(teacher.getId(),teacher.getLifeCycle(),Result.FAIL.toString());
+        List<TeacherApplication> fail = teacherApplicationDao.findApplicationForStatusResult(teacher.getId(),teacher.getLifeCycle(),Result.FAIL.toString());
         if(CollectionUtils.isNotEmpty(fail)){
             return true;
         }
         //当前步骤已经pass过 不允许操作
-        List<TeacherApplication> pass = teacherApplicationDao.findApplictionForStatusResult(teacher.getId(),teacher.getLifeCycle(),Result.PASS.toString());
+        List<TeacherApplication> pass = teacherApplicationDao.findApplicationForStatusResult(teacher.getId(),teacher.getLifeCycle(),Result.PASS.toString());
         if(CollectionUtils.isNotEmpty(pass)){
             return true;
         }

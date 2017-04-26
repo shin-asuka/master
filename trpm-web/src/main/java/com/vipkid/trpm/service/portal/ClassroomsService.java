@@ -256,7 +256,7 @@ public class ClassroomsService {
         Map<String, Object> modelMap = Maps.newHashMap();
         modelMap.put("viewName", "practicum_report_entry");
         /** Practicum课按照onlineClassId进行查询 */
-        int count = teacherApplicationDao.countApplicationByOlineclassId(onlineClassId);
+        int count = teacherApplicationDao.countApplicationByOnlineClassId(onlineClassId);
         if (0 != count) {
             modelMap.put("lifeCycle", "(Submitted)");
         } else {
