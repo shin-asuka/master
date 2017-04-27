@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Map;
 
 /**
- * 实现描述:前端调用此接口记录日志用
+ * 实现描述:前端调用此接口记录日志用,不走任何过滤器
  *
  * @author steven
  * @version v1.0.0
@@ -25,6 +25,17 @@ public class TraceLogController {
     public Map<String, Object> traceLogFromFE(String traceLog){
         //traceLog 是encode的值
         logger.info("print log from fe! content:{}",traceLog);
+        return null;
+    }
+
+    /**
+     *
+     * 记录
+     *
+     * @return
+     */
+    @RequestMapping(value = "/health",method = RequestMethod.GET)
+    public Map<String, Object> health(){
         return null;
     }
 }
