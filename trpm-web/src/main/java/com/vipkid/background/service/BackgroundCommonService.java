@@ -74,8 +74,7 @@ public class BackgroundCommonService {
         //合同即将到期需进行背调,提前一个月进行弹窗提示
         remindTime.add(Calendar.MONTH,-1);
         if (remindTime.getTime().before(current.getTime()) ) {
-            //backgroundStatusDto.setContractEndWithInOneMonth(!personalInfoService.checkHasSignNext(teacher.getId(),contractEndDate));
-            backgroundStatusDto.setContractEndWithInOneMonth(false);
+            backgroundStatusDto.setContractEndWithInOneMonth(personalInfoService.needNewContract(teacher));
             //没有背调结果，即第一次开始背调
             if (null == backgroundScreening) {
                 backgroundStatusDto.setNeedBackgroundCheck(true);
@@ -259,8 +258,7 @@ public class BackgroundCommonService {
         remindTime.add(Calendar.MONTH,-1);
         //合同即将到期需进行背调,提前一个月进行弹窗提示
         if (remindTime.getTime().before(current.getTime()) ) {
-            //backgroundStatusDto.setContractEndWithInOneMonth(!personalInfoService.checkHasSignNext(teacher.getId(),contractEndDate));
-            backgroundStatusDto.setContractEndWithInOneMonth(false);
+            backgroundStatusDto.setContractEndWithInOneMonth(personalInfoService.needNewContract(teacher));
             CanadaBackgroundScreening canadaBackgroundScreening = canadaBackgroundScreeningDao.findByTeacherId(teacher.getId());
             //第一次进行背调
             if (null == canadaBackgroundScreening) {

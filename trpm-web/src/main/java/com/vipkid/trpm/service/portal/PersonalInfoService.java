@@ -636,6 +636,23 @@ public class PersonalInfoService {
 	}
 
 	/**
+	 * 是否有未签署合同
+	 * @param teacher
+	 * @return
+	 */
+	public boolean needNewContract(Teacher teacher) {
+		boolean result = false;
+		APIQueryContractListByTeacherIdMapResult contractList=this.queryALLContractByTeacherIdMap(teacher);
+		if(contractList !=null){
+			List<APIQueryContractListByTeacherIdResult> unSignList=contractList.getUnSignList();
+			if(CollectionUtils.isNotEmpty(unSignList) ){//待签合同是不是空，需要签署合同
+				result=true;
+			}
+		}
+		return result;
+	}
+
+	/**
 	 * 通用get方法请求tms接口
 	 *
 	 * @param requestParam
