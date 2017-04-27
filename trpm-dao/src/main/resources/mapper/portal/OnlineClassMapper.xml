@@ -670,13 +670,13 @@
 			and oc.status in( 'FINISHED','BOOKED')
 			and (oc.finish_type = 'AS_SCHEDULED' or oc.finish_type is null )
 		<if test="lessonSn != null and lessonSn != ''">
-			and l.serial_number like '%${lessonSn}%'
+			and l.serial_number like CONCAT('%', #{lessonSn}, '%')
 		</if>
 		<if test="studentName != null and studentName != ''">
-			and (s.english_name like '%${studentName}%' or us.name like '%${studentName}%')
+			and (s.english_name like CONCAT('%', #{studentName}, '%')  or us.name like CONCAT('%', #{studentName}, '%'))
 		</if>
 		<if test="teacherName != null and teacherName != ''">
-			and us2.name like '%${teacherName}%'
+			and us2.name like CONCAT('%', #{teacherName}, '%')
 		</if>
 		<if test="from != null and from != '' or to != null and to != ''">
 			AND oc.scheduled_date_time BETWEEN #{from} AND #{to}

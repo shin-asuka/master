@@ -13,7 +13,7 @@
 			JOIN unit u on lc.unit_id = u.id
 			JOIN course c on u.course_id = c.id
 		</if>
-		WHERE oc.teacher_id = ${teacherId}
+		WHERE oc.teacher_id = #{teacherId}
 		AND (oc.finish_type != 'STUDENT_NO_SHOW_24H' or oc.finish_type is null)
 		<if test="classStatus != null">
 			AND oc.status IN
@@ -50,7 +50,7 @@
 		JOIN learning_cycle lc ON l.learning_cycle_id = lc.id
 		JOIN unit u ON lc.unit_id = u.id
 		JOIN course c ON u.course_id = c.id
-		WHERE oc.teacher_id = ${teacherId}
+		WHERE oc.teacher_id = #{teacherId}
 		AND (oc.finish_type != 'STUDENT_NO_SHOW_24H' or oc.finish_type is null)
 		<if test="classStatus != null">
 			AND oc.status IN

@@ -45,7 +45,7 @@
 	</sql>
 
 	<sql id="userOrder">
-		<if test="orderString!=null">ORDER BY ${orderString}</if>
+		<if test="orderString!=null">ORDER BY #{orderString}</if>
 	</sql>
 
 	<sql id="userLimit">LIMIT #{startLine},#{limitLine}</sql>
