@@ -139,7 +139,11 @@ public class RecruitmentService {
         }else{
             //如果是Fail并且在半小时之内为待审核
             boolean _result = StringUtils.equalsIgnoreCase(Result.FAIL.toString(),teacherApplication.getResult());
-            boolean _failTimeout = !DateUtils.count11hrlf(teacherApplication.getAuditDateTime().getTime());
+            long auditTimeMillis = teacherApplication.getApplyDateTime().getTime();
+            if (teacherApplication.getAuditDateTime() != null) {
+                auditTimeMillis = teacherApplication.getAuditDateTime().getTime();
+            }
+            boolean _failTimeout = !DateUtils.count11Half(auditTimeMillis);
             if(_result && _failTimeout){
                 logger.info("进入"+teacherApplication.getStatus()+"待审核页面 teacherId:{} taId:{}",teacher.getId(),teacherApplication.getId());
                 result.put("result",AuditStatus.TO_AUDIT.toString());
@@ -204,7 +208,11 @@ public class RecruitmentService {
         }else{
             //如果是Fail并且在11个半小时之内为待审核
             boolean _result = StringUtils.equalsIgnoreCase(Result.FAIL.toString(),teacherApplication.getResult());
-            boolean _failTimeout = !DateUtils.count11hrlf(teacherApplication.getAuditDateTime().getTime());
+            long auditTimeMillis = teacherApplication.getApplyDateTime().getTime();
+            if (teacherApplication.getAuditDateTime() != null) {
+                auditTimeMillis = teacherApplication.getAuditDateTime().getTime();
+            }
+            boolean _failTimeout = !DateUtils.count11Half(auditTimeMillis);
             if(_result && _failTimeout){
                 logger.info("进入"+teacherApplication.getStatus()+"待审核页面 teacherId:{} taId:{}",teacher.getId(),teacherApplication.getId());
                 result.put("result",AuditStatus.TO_AUDIT.toString());
@@ -256,7 +264,11 @@ public class RecruitmentService {
         }else{
             //如果是Fail并且在11个半小时之内为待审核
             boolean _result = StringUtils.equalsIgnoreCase(Result.FAIL.toString(),teacherApplication.getResult());
-            boolean _failTimeout = !DateUtils.count11hrlf(teacherApplication.getAuditDateTime().getTime());
+            long auditTimeMillis = teacherApplication.getApplyDateTime().getTime();
+            if (teacherApplication.getAuditDateTime() != null) {
+                auditTimeMillis = teacherApplication.getAuditDateTime().getTime();
+            }
+            boolean _failTimeout = !DateUtils.count11Half(auditTimeMillis);
             if((_result && _failTimeout) || Result.TBD.toString().equals(teacherApplication.getResult()) || Result.TBD_FAIL.toString().equals(teacherApplication.getResult())){
                 logger.info("进入"+teacherApplication.getStatus()+"待审核页面 teacherId:{} taId:{}",teacher.getId(),teacherApplication.getId());
                 result.put("result",AuditStatus.TO_AUDIT.toString());

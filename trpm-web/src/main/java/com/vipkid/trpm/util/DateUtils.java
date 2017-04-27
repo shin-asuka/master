@@ -228,7 +228,7 @@ public final class DateUtils {
      * long
      * @date 2016年6月30日
      */
-    public static boolean count11hrlf(long auditTime){
+    public static boolean count11Half(long auditTime){
         auditTime += 11.5*(3600*1000);
         if(System.currentTimeMillis() > auditTime){
             return true;
