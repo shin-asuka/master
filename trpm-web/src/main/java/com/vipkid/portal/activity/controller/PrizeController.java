@@ -1,7 +1,6 @@
 package com.vipkid.portal.activity.controller;
 
 
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -47,7 +46,7 @@ public class PrizeController extends RestfulController {
 	
 	@Autowired
 	private PrizeHandleService prizeHandleService;
-		
+			
 	/**
 	 * 转盘模块接受插入抽奖卷逻辑
 	 * 1.如果奖卷已经存在则返回你已经获得过本次抽奖卷
@@ -67,19 +66,12 @@ public class PrizeController extends RestfulController {
 	    	}
 	    	Long teacherId = getUser(request).getId();
 	    	Long onlineClassId = bean.getOnlineClassId();
-	    	
-	    	//活动时间判断
-	    	Date date = new Date();
-	    	if(!date.after(PrizeHandleService.START_DATE) && date.before(PrizeHandleService.END_DATE)){
-	    		return ApiResponseUtils.buildErrorResp(-1, "不在活动范围内,不能插入抽奖卷:" + onlineClassId);
-	    	}
-	    	
+	    		    	
 	    	//课程时间判断
 	    	boolean checkResult = this.prizeHandleService.checkOnlineClass(onlineClassId);
 	    	if(!checkResult){
 	    		return ApiResponseUtils.buildErrorResp(-1, "分享的课程不在活动要求范围内:" + onlineClassId);
 	    	}
-	    	
 	    	
 	    	String onlineClassIdStr = Long.toString(onlineClassId);
 	    	//Check 五星好评
@@ -128,11 +120,6 @@ public class PrizeController extends RestfulController {
 	@RequestMapping(value="/luckDraw",method = RequestMethod.POST)
 	public Map<String, Object> getLuckDraw(HttpServletRequest request, HttpServletResponse response){
     	try{
-	    	//活动时间判断
-	    	Date date = new Date();
-	    	if(!date.after(PrizeHandleService.START_DATE) && date.before(PrizeHandleService.END_DATE)){
-	    		return ApiResponseUtils.buildErrorResp(-1, "不在活动范围内,不能抽奖");
-	    	}
 			JSONObject resultJson = this.prizeService.luckDraw(request.getHeader(AUTOKEN));
 			if(!resultJson.getBooleanValue("status")){
 				return ApiResponseUtils.buildErrorResp(resultJson.getIntValue("code"), resultJson.getString("info"));

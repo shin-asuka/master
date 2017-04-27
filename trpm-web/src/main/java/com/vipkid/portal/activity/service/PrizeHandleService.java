@@ -40,16 +40,6 @@ public class PrizeHandleService {
 	public final static Date CLASS_START_DATE = DateUtils.parseDate("2016-04-01 00:00:00");
 	
 	/**
-	 * 活动开始时间 2017-05-02 00:00:00
-	 */
-	public final static Date START_DATE = DateUtils.parseDate("2017-04-01 00:00:00");
-	
-	/**
-	 * 活动结束时间 2017-06-30 00:00:00
-	 */
-	public final static Date END_DATE = DateUtils.parseDate("2017-05-29 00:00:00");
-	
-	/**
 	 * 
 	 * @return
 	 */
