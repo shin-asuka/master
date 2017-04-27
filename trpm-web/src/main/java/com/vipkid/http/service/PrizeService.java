@@ -11,6 +11,8 @@ import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Maps;
 import com.vipkid.http.utils.WebUtils;
 import com.vipkid.rest.RestfulController;
+import com.vipkid.teacher.tools.utils.NumericUtils;
+import com.vipkid.teacher.tools.utils.ReturnMapUtils;
 import com.vipkid.teacher.tools.utils.conversion.JsonUtils;
 import com.vipkid.trpm.constant.ApplicationConstant.RedisConstants;
 import com.vipkid.trpm.proxy.RedisProxy;
@@ -61,14 +63,22 @@ public class PrizeService extends HttpBaseService {
 	 * @return
 	 */
 	public JSONObject findDrawListByAll(String token){
-		String urlString = redisProxy.get(RedisConstants.TRPM_PRIZER_KEY); 
+		String urlString = redisProxy.get(RedisConstants.TRPM_PRIZER_KEY);
 		if(StringUtils.isBlank(urlString)){
 			urlString = new StringBuilder(super.serverAddress).append(URL_PREFIX).append("drawlist").toString();
-			redisProxy.set(RedisConstants.TRPM_PRIZER_KEY , urlString, RedisConstants.TRPM_PRIZER_TIME);
+			Map<String, Object> pramMap = Maps.newHashMap();
+			JSONObject reslultJson = this.getJsonResult(pramMap,urlString,token);
+			if(NumericUtils.isNotNull(reslultJson)){
+				urlString = reslultJson.toJSONString();
+				redisProxy.set(RedisConstants.TRPM_PRIZER_KEY, urlString, RedisConstants.TRPM_PRIZER_TIME);
+				return reslultJson;
+			}
+			logger.error("无法访问link:{}",urlString);
+			return null;
+		}else{
+			JSONObject reslultJson = JSONObject.parseObject(urlString);		
+			return reslultJson;
 		}
-		Map<String, Object> pramMap = Maps.newHashMap();
-		JSONObject reslultJson = this.getJsonResult(pramMap,urlString,token);
-		return reslultJson;
 	}
 	
 	/**
@@ -151,15 +161,18 @@ public class PrizeService extends HttpBaseService {
 	 * @return
 	 */
 	private JSONObject getJsonResult(Map<String, Object> pramMap, String url,String token) {
-		JSONObject jsonObject = JSONObject.parseObject(JsonUtils.toJson(pramMap));
+		String pramJson = JsonUtils.toJson(pramMap);
+		JSONObject jsonObject = JSONObject.parseObject(pramJson);
 		Map<String, String> heardMaps = Maps.newHashMap();
 		if(StringUtils.isNotBlank(token)){
 			heardMaps.put(RestfulController.AUTOKEN, token);
 		}
-		String pramJson = JsonUtils.toJson(pramMap);
 		logger.info("开始发送请求:[" + url +"] 参数:"+ pramJson);
 		String jsonString = WebUtils.postJSON(url,jsonObject,heardMaps);
 		logger.info("完成请求:[" + url +"] 参数:"+ pramJson + "; 结果：" + jsonString);
+		if(StringUtils.isBlank(jsonString)){
+			jsonString = JsonUtils.toJson(ReturnMapUtils.returnFail(0, "teacher-activity 服务无法访问：URL=["+url+"]。"));
+		}
  		JSONObject resultJson = JSONObject.parseObject(jsonString);		
 		return resultJson;
 	}
