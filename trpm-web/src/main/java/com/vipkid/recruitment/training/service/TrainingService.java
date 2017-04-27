@@ -1,18 +1,5 @@
 package com.vipkid.recruitment.training.service;
 
-import java.sql.Timestamp;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.community.tools.JsonTools;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.vipkid.email.EmailUtils;
 import com.vipkid.enums.TeacherApplicationEnum;
@@ -29,6 +16,18 @@ import com.vipkid.trpm.dao.TeacherQuizDetailsDao;
 import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.entity.TeacherQuiz;
 import com.vipkid.trpm.entity.TeacherQuizDetails;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.community.tools.JsonTools;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.sql.Timestamp;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 @Service
 public class TrainingService {
@@ -87,7 +86,7 @@ public class TrainingService {
         if(CollectionUtils.isEmpty(list)){
             teacherQuizDao.insertQuiz(teacherId,teacherId,Version.TRAINING_QUIZ);
         }
-        List<TeacherApplication> teacherApplications = teacherApplicationDao.findApplictionForStatusResult(teacherId,TeacherApplicationEnum.Status.TRAINING.toString(),null);
+        List<TeacherApplication> teacherApplications = teacherApplicationDao.findApplicationForStatusResult(teacherId,TeacherApplicationEnum.Status.TRAINING.toString(),null);
 
         if(CollectionUtils.isEmpty(teacherApplications)){
             List<TeacherApplication> old_teacherApplications = teacherApplicationDao.findCurrentApplication(teacherId);

@@ -28,7 +28,6 @@ import com.vipkid.trpm.entity.teachercomment.TeacherComment;
 import com.vipkid.trpm.service.portal.ClassroomsService;
 import com.vipkid.trpm.service.portal.TeacherService;
 import com.vipkid.trpm.util.DateUtils;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.community.config.PropertyConfigurer;
@@ -530,7 +529,7 @@ public class ClassroomsRestServiceImpl implements ClassroomsRestService{
 	}
 
 	private int getPracticumReportStatus(long onlineClassId) {
-		int count = teacherApplicationDao.countApplicationByOlineclassId(onlineClassId);
+		int count = teacherApplicationDao.countApplicationByOnlineClassId(onlineClassId);
 		if (0 != count) {
 			return 1;// 代表状态为(submitted)
 		} else {

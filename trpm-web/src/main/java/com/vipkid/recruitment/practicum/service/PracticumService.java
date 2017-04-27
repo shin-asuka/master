@@ -204,7 +204,7 @@ public class PracticumService {
         }
         if(ReturnMapUtils.isSuccess(result)){
             logger.info("teacher:{} book Practicum success send email",teacher.getId());
-            List<TeacherApplication> list = teacherApplicationDao.findApplictionForStatusResult(teacher.getId(), null, Result.PRACTICUM2.name());
+            List<TeacherApplication> list = teacherApplicationDao.findApplicationForStatusResult(teacher.getId(), null, Result.PRACTICUM2.name());
             if(CollectionUtils.isNotEmpty(list)){
                 EmailUtils.sendEmail4Practicum2Book(teacher,onlineClass);
             }else{
@@ -290,7 +290,7 @@ public class PracticumService {
         if(Status.PRACTICUM.toString().equals(teacherApplication.getStatus())
                 && Result.PASS.toString().equals(teacherApplication.getResult())){
             //按照新流程 该步骤将老师的LifeCycle改变为Practicum -to-Contract
-            List<TeacherApplication> list = teacherApplicationDao.findApplictionForStatusResult(teacher.getId(),Status.SIGN_CONTRACT.toString(), Result.PASS.toString());
+            List<TeacherApplication> list = teacherApplicationDao.findApplicationForStatusResult(teacher.getId(),Status.SIGN_CONTRACT.toString(), Result.PASS.toString());
 
             if(CollectionUtils.isNotEmpty(list)){
                 // 1.教师状态更新

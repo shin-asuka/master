@@ -1,11 +1,9 @@
 package com.vipkid.recruitment.dao;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import com.vipkid.enums.OnlineClassEnum.ClassStatus;
 import com.vipkid.recruitment.entity.TeacherApplication;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.community.dao.support.MapperDaoTemplate;
@@ -91,8 +89,8 @@ public class TeacherApplicationDao extends MapperDaoTemplate<TeacherApplication>
      * List<TeacherApplication>
      * @date 2016年10月20日
      */
-    public List<TeacherApplication> findApplictionForStatus(long teacherId,String status) {
-       return findApplictionForStatusResult(teacherId, status, null);
+    public List<TeacherApplication> findApplicationForStatus(long teacherId, String status) {
+       return findApplicationForStatusResult(teacherId, status, null);
     }
     
     /**
@@ -104,8 +102,8 @@ public class TeacherApplicationDao extends MapperDaoTemplate<TeacherApplication>
      * List<TeacherApplication>
      * @date 2016年10月20日
      */
-    public List<TeacherApplication> findApplictionForResult(long teacherId,String result) {
-        return this.findApplictionForStatusResult(teacherId, null, result);
+    public List<TeacherApplication> findApplicationForResult(long teacherId, String result) {
+        return this.findApplicationForStatusResult(teacherId, null, result);
     }
     
     /**
@@ -114,7 +112,7 @@ public class TeacherApplicationDao extends MapperDaoTemplate<TeacherApplication>
      * @param teacherId
      * @return 2015年10月22日
      */
-    public List<TeacherApplication> findApplictionForStatusResult(long teacherId,String status,String result) {
+    public List<TeacherApplication> findApplicationForStatusResult(long teacherId, String status, String result) {
         if(teacherId <= 0L){
             return Lists.newArrayList();
         }
@@ -158,16 +156,16 @@ public class TeacherApplicationDao extends MapperDaoTemplate<TeacherApplication>
     }
 
     /**
-     * @param auditorId 通过onlinclass 查teacher application；
+     * @param auditorId 通过OnlineClass 查teacher application；
      */
-    public TeacherApplication findApplictionByOlineclassId(long onlineClassId, long auditorId) {
+    public TeacherApplication findApplicationByOnlineClassId(long onlineClassId, long auditorId) {
         TeacherApplication teacherApplication = new TeacherApplication();
         teacherApplication.setOrderString("id DESC");
         List<TeacherApplication> teacherApplications =
                 super.selectList(teacherApplication.setOnlineClassId(onlineClassId));
 
         if (CollectionUtils.isEmpty(teacherApplications)){
-            return  new TeacherApplication();
+            return null;
         }
 
         Optional<TeacherApplication> optional = teacherApplications.stream()
@@ -184,13 +182,13 @@ public class TeacherApplicationDao extends MapperDaoTemplate<TeacherApplication>
         return super.save(teacherApplication);
     }
 
-    public int countApplicationByOlineclassId(long onlineClassId) {
+    public int countApplicationByOnlineClassId(long onlineClassId) {
         Map<String, Object> paramsMap = new HashMap<String, Object>();
         paramsMap.put("onlineClassId", onlineClassId);
-        return selectCount("countApplicationByOlineclassId", paramsMap);
+        return selectCount("countApplicationByOnlineClassId", paramsMap);
     }
 
-    public TeacherApplication findApplictionById(long id) {
+    public TeacherApplication findApplicationById(long id) {
         return selectOne(new TeacherApplication().setId(id));
     }
 

@@ -113,7 +113,7 @@ public class ClassroomService {
             resultDto.setUa(obtainUa(onlineClass.getId()));
             resultDto.setCourseType(OnlineClassEnum.CourseName.obtainCourseName(lesson.getSerialNumber()));
             if(CourseName.PRACTICUM1.show().equals(resultDto.getCourseType()) || CourseName.PRACTICUM2.show().equals(resultDto.getCourseType())){
-            	TeacherApplication application = teacherApplicationDao.findApplictionByOlineclassId(bean.getOnlineClassId(), teacher.getId());	
+            	TeacherApplication application = teacherApplicationDao.findApplicationByOnlineClassId(bean.getOnlineClassId(), teacher.getId());
             	if(application != null){
             		resultDto.setTeacherApplicationId(application.getId());
             	}
@@ -297,7 +297,7 @@ public class ClassroomService {
      * 上课期间可以发送帮助请求，非上课期间不能发送
      *
      * @Title: sendHelp
-     * @param scheduleTime
+     * @param scheduleMillis
      * @param onlineClassId
      * @param teacher
      * @return Map<String,Object>
@@ -471,8 +471,7 @@ public class ClassroomService {
     *
     * @Title: sendStarlogs
     * @param send true是增加  false 是移除
-    * @param studentId
-    * @param onlineClassId
+    * @param bean
     * @param teacher
     * @date 2016年1月11日
     */

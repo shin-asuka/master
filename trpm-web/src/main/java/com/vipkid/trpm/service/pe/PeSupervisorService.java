@@ -1,10 +1,23 @@
 package com.vipkid.trpm.service.pe;
 
-import java.sql.Timestamp;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-
+import com.google.common.base.Preconditions;
+import com.google.common.collect.Maps;
+import com.vipkid.enums.OnlineClassEnum.ClassStatus;
+import com.vipkid.enums.TbdResultEnum;
+import com.vipkid.enums.TeacherApplicationEnum;
+import com.vipkid.enums.TeacherApplicationEnum.Result;
+import com.vipkid.enums.TeacherApplicationEnum.Status;
+import com.vipkid.enums.TeacherModuleEnum;
+import com.vipkid.enums.TeacherModuleEnum.RoleClass;
+import com.vipkid.recruitment.dao.TeacherApplicationDao;
+import com.vipkid.recruitment.entity.TeacherApplication;
+import com.vipkid.trpm.constant.ApplicationConstant;
+import com.vipkid.trpm.dao.*;
+import com.vipkid.trpm.entity.*;
+import com.vipkid.trpm.proxy.OnlineClassProxy;
+import com.vipkid.trpm.util.DateUtils;
+import com.vipkid.trpm.util.FilesUtils;
+import com.vipkid.trpm.util.IpUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -12,35 +25,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Maps;
-import com.vipkid.enums.OnlineClassEnum.ClassStatus;
-import com.vipkid.enums.TbdResultEnum;
-import com.vipkid.enums.TeacherApplicationEnum;
-import com.vipkid.enums.TeacherModuleEnum;
-import com.vipkid.enums.TeacherApplicationEnum.Result;
-import com.vipkid.enums.TeacherApplicationEnum.Status;
-import com.vipkid.enums.TeacherModuleEnum.RoleClass;
-import com.vipkid.recruitment.dao.TeacherApplicationDao;
-import com.vipkid.recruitment.entity.TeacherApplication;
-import com.vipkid.trpm.constant.ApplicationConstant;
-import com.vipkid.trpm.dao.AuditDao;
-import com.vipkid.trpm.dao.LessonDao;
-import com.vipkid.trpm.dao.OnlineClassDao;
-import com.vipkid.trpm.dao.TeacherDao;
-import com.vipkid.trpm.dao.TeacherModuleDao;
-import com.vipkid.trpm.dao.TeacherPeDao;
-import com.vipkid.trpm.dao.UserDao;
-import com.vipkid.trpm.entity.Lesson;
-import com.vipkid.trpm.entity.OnlineClass;
-import com.vipkid.trpm.entity.Teacher;
-import com.vipkid.trpm.entity.TeacherModule;
-import com.vipkid.trpm.entity.TeacherPe;
-import com.vipkid.trpm.entity.User;
-import com.vipkid.trpm.proxy.OnlineClassProxy;
-import com.vipkid.trpm.util.DateUtils;
-import com.vipkid.trpm.util.FilesUtils;
-import com.vipkid.trpm.util.IpUtils;
+import java.sql.Timestamp;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class PeSupervisorService {
@@ -163,7 +151,7 @@ public class PeSupervisorService {
         // 5.practicum2 判断是否存在
         if (TeacherApplicationEnum.Result.PRACTICUM2.toString().equals(result)) {
             List<TeacherApplication> list = teacherApplicationDao
-                    .findApplictionForStatusResult(currTeacherApplication.getTeacherId(),Status.PRACTICUM.toString(),Result.PRACTICUM2.toString());
+                    .findApplicationForStatusResult(currTeacherApplication.getTeacherId(),Status.PRACTICUM.toString(),Result.PRACTICUM2.toString());
             if (list != null && list.size() > 0) {
                 logger.info(
                         "The teacher is already in practicum 2., class id is : {},status is {},recruitTeacher:{}",
@@ -408,7 +396,7 @@ public class PeSupervisorService {
     public Map<String, Object> peExitClass(long teacherApplicationId) {
         Map<String, Object> resultMap = Maps.newHashMap();
         TeacherApplication teacherApplication =
-                teacherApplicationDao.findApplictionById(teacherApplicationId);
+                teacherApplicationDao.findApplicationById(teacherApplicationId);
         if (null == teacherApplication || StringUtils.isEmpty(teacherApplication.getResult())) {
             resultMap.put("result", false);
         } else {

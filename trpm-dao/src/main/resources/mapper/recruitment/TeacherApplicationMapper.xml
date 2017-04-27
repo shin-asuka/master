@@ -377,7 +377,7 @@
 		<trim prefix="WHERE" prefixOverrides="AND">AND id = #{id}</trim>
 	</delete>
 
-	<select id="countApplicationByOlineclassId" resultType="int">
+	<select id="countApplicationByOnlineClassId" resultType="int">
 		SELECT COUNT(*) FROM teacher_application
 		WHERE online_class_id = #{onlineClassId} AND auditor_id IS NOT NULL
 	</select>
