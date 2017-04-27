@@ -28,7 +28,6 @@
 			<mvc:exclude-mapping path="/api/background/sterling/**"/>
 			<mvc:exclude-mapping path="/background/sterling/**"/>
 			<mvc:exclude-mapping path="/api/trace"/>
-			<mvc:exclude-mapping path="/api/health"/>
 			<beans:bean class="com.vipkid.rest.interceptor.LoginExpiredHandleInterceptor" />
 		</mvc:interceptor>
 		
@@ -41,7 +40,6 @@
 			<mvc:exclude-mapping path="/api/background/sterling/**"/>
 			<mvc:exclude-mapping path="/background/sterling/**"/>
 			<mvc:exclude-mapping path="/api/trace"/>
-			<mvc:exclude-mapping path="/api/health"/>
 			<beans:bean class="com.vipkid.trpm.interceptor.CookieExpiredHandleInterceptor" />
 		</mvc:interceptor>
 
