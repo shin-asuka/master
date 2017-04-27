@@ -247,12 +247,14 @@ public class PersonalInfoDataController {
      */
     @RequestMapping("/hasContractPower")
     public Map<String, Object> hasContractPower(@RequestParam("teacherId") Long teacherId){
-        String power=redisProxy.get(PERSONAL_INFO_CONTRACT+teacherId);
-        if (power != null) {
-            return ApiResponseUtils.buildResponse(true, 0, null, true);
-        }else{
-            return ApiResponseUtils.buildErrorResp(-1,"result is null",false);
-        }
+        return ApiResponseUtils.buildResponse(true, 0, null, true);
+
+//        String power=redisProxy.get(PERSONAL_INFO_CONTRACT+teacherId);
+//        if (power != null) {
+//            return ApiResponseUtils.buildResponse(true, 0, null, true);
+//        }else{
+//            return ApiResponseUtils.buildErrorResp(-1,"result is null",false);
+//        }
     }
 
     /**
