@@ -35,7 +35,7 @@ public class TraceLogController {
      * @return
      */
     @RequestMapping(value = "/health",method = RequestMethod.GET)
-    public Map<String, Object> health(){
-        return null;
+    public String health(){
+        return "success";
     }
 }
