@@ -30,7 +30,7 @@ public class TraceLogController {
 
     /**
      *
-     * 记录
+     * 探活接口
      *
      * @return
      */
