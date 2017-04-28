@@ -106,7 +106,8 @@ public class TeacherGloryRestService{
                 Integer gloryId = i+1;
                 teacherGlory.setId(gloryId);
                 teacherGlory.setName(gloryMap.get(gloryId).getName());
-                teacherGlory.setUserId(new Long(AppContext.getUser().getId()).intValue());
+                //teacherGlory.setUserId(new Long(AppContext.getUser().getId()).intValue());
+                teacherGlory.setUserId(2040456);
                 teacherGlory.setFinishTime(DateFormatUtils.format(new Date(),"yyyy-MM-dd HH:mm:ss"));
                 teacherGlory.setPriority(gloryMap.get(gloryId).getPriority());
                 teacherGlory.setAvatar(gloryMap.get(gloryId).getAvatar());

@@ -14,6 +14,7 @@ import com.vipkid.trpm.proxy.RedisProxy;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -25,17 +26,18 @@ import java.util.Map;
  * Created by LP-813 on 2017/4/24.
  */
 @RestController
-@RestInterface(lifeCycle = TeacherEnum.LifeCycle.REGULAR)
+//@RestInterface(lifeCycle = TeacherEnum.LifeCycle.REGULAR)
 public class TeacherGloryRestController extends RestfulController {
 
     private static final Logger logger = LoggerFactory.getLogger(TeacherGloryRestController.class);
 
+    @Autowired
     private TeacherGloryRestService teacherGloryRestService;
 
     @RequestMapping(value = "getTeacherGlory", method = RequestMethod.GET)
     public Map<String, Object> getByTeacherId() {
-
-        long userId = AppContext.getUser().getId();
+        long userId = 2040456l;
+        //long userId = AppContext.getUser().getId();
         String userGloryKey = CacheConfigConst.TEACHER_GLORY_KEY + "_" + userId;
         RedisProxy redisProxy = RedisClient.getInstance();
         String currentGlory = redisProxy.get(userGloryKey);
