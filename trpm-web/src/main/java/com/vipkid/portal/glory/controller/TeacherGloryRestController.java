@@ -2,12 +2,15 @@ package com.vipkid.portal.glory.controller;
 
 import com.vipkid.cache.CacheConfigConst;
 import com.vipkid.cache.utils.RedisClient;
+import com.vipkid.http.utils.JacksonUtils;
 import com.vipkid.portal.glory.model.TeacherGlory;
 import com.vipkid.portal.glory.service.TeacherGloryRestService;
 import com.vipkid.rest.security.AppContext;
 import com.vipkid.rest.utils.ApiResponseUtils;
 import com.vipkid.trpm.proxy.RedisProxy;
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -22,6 +25,8 @@ import java.util.Map;
 //@RestInterface(lifeCycle = TeacherEnum.LifeCycle.REGULAR)
 public class TeacherGloryRestController {
 
+    private static final Logger logger = LoggerFactory.getLogger(TeacherGloryRestController.class);
+
     private TeacherGloryRestService teacherGloryRestService;
 
     @RequestMapping(value = "getTeacherGlory", method = RequestMethod.GET)
@@ -31,9 +36,13 @@ public class TeacherGloryRestController {
         String userGloryKey = CacheConfigConst.TEACHER_GLORY_KEY + "_" + userId;
         RedisProxy redisProxy = RedisClient.getInstance();
         String currentGlory = redisProxy.get(userGloryKey);
+        logger.info("currentGlory:{}",currentGlory);
         String[] newGlory = teacherGloryRestService.refeshGlory(currentGlory,new Long(userId).intValue());
+        logger.info("newGlory:{}",JacksonUtils.toJSONString(newGlory));
         List<TeacherGlory> ret = teacherGloryRestService.getGloryView(newGlory);
+        logger.info("viewGlory:{}", JacksonUtils.toJSONString(ret));
         String[] markedGlory = teacherGloryRestService.markShownStatus(newGlory);
+        logger.info("markedGlory:{}", JacksonUtils.toJSONString(markedGlory));
         redisProxy.set(userGloryKey,StringUtils.join(markedGlory));
 
         return ApiResponseUtils.buildSuccessDataResp(ret);
