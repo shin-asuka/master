@@ -132,7 +132,7 @@ public class TeacherGloryRestService{
 
     class GloryHandler{
         //Life Cycle变为Regular
-        private Long userId = AppContext.getUser().getId();
+        private Long userId = 2040456l;
         private List<Map<String,Object>> teacherClassList = null;
         private List<Map<String,Object>> teacherReferalList = null;
 
