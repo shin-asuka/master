@@ -822,4 +822,60 @@
 					o.scheduled_date_time
 			) a
 	</select>
+
+	<select id="findClassByTeacherId" resultType="java.util.HashMap">
+		SELECT teacher_id as teacherId,unix_timestamp(scheduled_date_time) as scheduledDateTime
+		FROM online_class o
+		WHERE
+		o.teacher_id = #{teacherId} and
+		o.`status` = 'FINISHED' and
+		o.finish_type = 'AS_SCHEDULED'order by scheduled_date_time DESC
+	</select>
+
+	<select id="findReferalByTeacherId" resultType="java.util.HashMap">
+		SELECT
+		*
+		FROM
+		(
+		SELECT
+		teacher_id AS teacherId,
+		scheduled_date_time AS scheduleDateTime
+		FROM
+		online_class
+		WHERE
+		teacher_id IN (
+		SELECT
+		id
+		FROM
+		teacher
+		WHERE
+		referee LIKE CONCAT(#{teacherId}, '%')
+		AND EXISTS (
+		SELECT
+		*
+		FROM
+		online_class
+		WHERE
+		teacher_id = teacher.id
+		AND `status` = 'FINISHED'
+		AND finish_type = 'AS_SCHEDULED'
+		HAVING
+		count(1) > 0
+		)
+		)
+		ORDER BY
+		scheduled_date_time DESC
+		) AS a
+		GROUP BY
+		teacherId
+		ORDER BY
+		scheduleDateTime DESC;
+	</select>
+
+	<select id="findBookedClassByTeacherId" resultType="java.util.HashMap">
+		SELECT teacher_id as teacherId,unix_timestamp(book_date_time) as BookDateTime from online_class
+		where teacher_id = #{teacherId} and book_date_time is not null ASC limit #{limit};
+	</select>
+
+
 </mapper>

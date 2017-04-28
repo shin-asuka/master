@@ -1,14 +1,16 @@
-package com.vipkid.portal.glory.model;
+package com.vipkid.trpm.entity;
+
+import org.community.dao.support.Entity;
+
+import java.io.Serializable;
 
 /**
- * Created by LP-813 on 2017/4/24.
+ * Created by LP-813 on 2017/4/28.
  */
-public class TeacherGlory {
+public class TeacherGloryInfo extends Entity implements Serializable {
 
     private Integer id;
     private String name;
-    private Integer userId;
-    private String finishTime;
     private Integer priority;
     private String avatar;
     private String title;
@@ -32,22 +34,6 @@ public class TeacherGlory {
         this.name = name;
     }
 
-    public Integer getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Integer userId) {
-        this.userId = userId;
-    }
-
-    public String getFinishTime() {
-        return finishTime;
-    }
-
-    public void setFinishTime(String finishTime) {
-        this.finishTime = finishTime;
-    }
-
     public Integer getPriority() {
         return priority;
     }
@@ -62,6 +48,14 @@ public class TeacherGlory {
 
     public void setAvatar(String avatar) {
         this.avatar = avatar;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public String getDescription() {
@@ -86,13 +80,5 @@ public class TeacherGlory {
 
     public void setShareDescription(String shareDescription) {
         this.shareDescription = shareDescription;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
     }
 }
