@@ -6,6 +6,7 @@ import com.vipkid.enums.TeacherEnum;
 import com.vipkid.http.utils.JacksonUtils;
 import com.vipkid.portal.glory.model.TeacherGlory;
 import com.vipkid.portal.glory.service.TeacherGloryRestService;
+import com.vipkid.rest.RestfulController;
 import com.vipkid.rest.interceptor.annotation.RestInterface;
 import com.vipkid.rest.security.AppContext;
 import com.vipkid.rest.utils.ApiResponseUtils;
@@ -25,7 +26,7 @@ import java.util.Map;
  */
 @RestController
 @RestInterface(lifeCycle = TeacherEnum.LifeCycle.REGULAR)
-public class TeacherGloryRestController {
+public class TeacherGloryRestController extends RestfulController {
 
     private static final Logger logger = LoggerFactory.getLogger(TeacherGloryRestController.class);
 
