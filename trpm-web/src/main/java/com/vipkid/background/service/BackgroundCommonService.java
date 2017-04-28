@@ -13,6 +13,7 @@ import com.vipkid.recruitment.entity.TeacherContractFile;
 import com.vipkid.trpm.dao.TeacherGatedLaunchDao;
 import com.vipkid.trpm.entity.*;
 import com.vipkid.trpm.service.portal.PersonalInfoService;
+import com.vipkid.trpm.util.DateUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.community.config.PropertyConfigurer;
@@ -57,6 +58,19 @@ public class BackgroundCommonService {
     public BackgroundStatusDto getUsaBackgroundStatus(Teacher teacher){
         BackgroundStatusDto backgroundStatusDto = new BackgroundStatusDto();
 
+        Date  contractEndDate = teacher.getContractEndDate();
+        if(contractEndDate ==null){
+            backgroundStatusDto.setContractEndWithInOneMonth(false);
+            backgroundStatusDto.setNeedBackgroundCheck(false);
+            backgroundStatusDto.setPhase("");
+            backgroundStatusDto.setResult("");
+            return backgroundStatusDto;
+        }
+        Date now =new Date();
+        boolean hasAlert=DateUtils.addMonth(contractEndDate,-1).before(now);
+        if(hasAlert || DateUtils.addMonth(contractEndDate,1).after(now)){ //合同到期的时候进行续约提醒
+            backgroundStatusDto.setContractEndWithInOneMonth(personalInfoService.needNewContract(teacher));
+        }
         boolean needBackgroundCheck = needBackgroundCheck(teacher.getId());
         //不在灰度列表中
         if (!needBackgroundCheck){
@@ -66,15 +80,13 @@ public class BackgroundCommonService {
             return backgroundStatusDto;
         }
 
-        Calendar current = Calendar.getInstance();
-        BackgroundScreening backgroundScreening = backgroundScreeningDao.findByTeacherIdTopOne(teacher.getId());
-        Date  contractEndDate = teacher.getContractEndDate();
-        Calendar  remindTime = Calendar.getInstance();
-        remindTime.setTime(contractEndDate);
+
+
+
         //合同即将到期需进行背调,提前一个月进行弹窗提示
-        remindTime.add(Calendar.MONTH,-1);
-        if (remindTime.getTime().before(current.getTime()) ) {
-            backgroundStatusDto.setContractEndWithInOneMonth(personalInfoService.needNewContract(teacher));
+        if (hasAlert){
+            BackgroundScreening backgroundScreening = backgroundScreeningDao.findByTeacherIdTopOne(teacher.getId());
+
             //没有背调结果，即第一次开始背调
             if (null == backgroundScreening) {
                 backgroundStatusDto.setNeedBackgroundCheck(true);
@@ -90,7 +102,7 @@ public class BackgroundCommonService {
                     in5Days = true;
                 }
                 current.add(Calendar.DATE, -5);*/
-
+                Calendar current = Calendar.getInstance();
                 current = backgroundDateCondition(current);
 
                 //上次背调超过两年需要进行背调，不超过两年需要根据result和disputeStatus进行判断
@@ -232,7 +244,6 @@ public class BackgroundCommonService {
             logger.info("获取美国老师: {} 背调状态信息 {}",teacher.getId(),backgroundStatusDto);
             return backgroundStatusDto;
         }else {
-            backgroundStatusDto.setContractEndWithInOneMonth(false);
             backgroundStatusDto.setNeedBackgroundCheck(false);
             backgroundStatusDto.setPhase("");
             backgroundStatusDto.setResult("");
@@ -243,6 +254,21 @@ public class BackgroundCommonService {
 
     public BackgroundStatusDto getCanadaBackgroundStatus(Teacher teacher){
         BackgroundStatusDto backgroundStatusDto = new BackgroundStatusDto();
+
+        Date  contractEndDate = teacher.getContractEndDate();
+        if(contractEndDate ==null){
+            backgroundStatusDto.setContractEndWithInOneMonth(false);
+            backgroundStatusDto.setNeedBackgroundCheck(false);
+            backgroundStatusDto.setPhase("");
+            backgroundStatusDto.setResult("");
+            return backgroundStatusDto;
+        }
+        Date now =new Date();
+        boolean hasAlert=DateUtils.addMonth(contractEndDate,-1).before(now);
+        if(hasAlert || DateUtils.addMonth(contractEndDate,1).after(now)){ //合同到期的时候进行续约提醒
+            backgroundStatusDto.setContractEndWithInOneMonth(personalInfoService.needNewContract(teacher));
+        }
+
         boolean needBackgroundCheck = needBackgroundCheck(teacher.getId());
         //不在灰度列表中
         if (!needBackgroundCheck){
@@ -251,13 +277,12 @@ public class BackgroundCommonService {
             backgroundStatusDto.setResult("");
             return backgroundStatusDto;
         }
-        Calendar current = Calendar.getInstance();
-        Date  contractEndDate = teacher.getContractEndDate();
-        Calendar  remindTime = Calendar.getInstance();
-        remindTime.setTime(contractEndDate);
-        remindTime.add(Calendar.MONTH,-1);
+//        Date  contractEndDate = teacher.getContractEndDate();
+//        Calendar  remindTime = Calendar.getInstance();
+//        remindTime.setTime(contractEndDate);
+//        remindTime.add(Calendar.MONTH,-1);
         //合同即将到期需进行背调,提前一个月进行弹窗提示
-        if (remindTime.getTime().before(current.getTime()) ) {
+        if (hasAlert ) {
             backgroundStatusDto.setContractEndWithInOneMonth(personalInfoService.needNewContract(teacher));
             CanadaBackgroundScreening canadaBackgroundScreening = canadaBackgroundScreeningDao.findByTeacherId(teacher.getId());
             //第一次进行背调
@@ -268,6 +293,7 @@ public class BackgroundCommonService {
 
                 return backgroundStatusDto;
             }
+            Calendar current = Calendar.getInstance();
             current = backgroundDateCondition(current);
             //超过两年需要背调，
             if (current.getTime().after(canadaBackgroundScreening.getUpdateTime())) {
@@ -292,7 +318,6 @@ public class BackgroundCommonService {
             logger.info("获取加拿大老师: {} 背调状态信息 {}",teacher.getId(),backgroundStatusDto);
             return backgroundStatusDto;
         } else {
-            backgroundStatusDto.setContractEndWithInOneMonth(false);
             backgroundStatusDto.setPhase("");
             backgroundStatusDto.setResult("");
             backgroundStatusDto.setNeedBackgroundCheck(false);

@@ -24,7 +24,6 @@ import org.springframework.web.multipart.MultipartFile;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Stopwatch;
 import com.google.common.collect.Maps;
-import com.vipkid.dataSource.annotation.Slave;
 import com.vipkid.enums.TeacherEnum;
 import com.vipkid.enums.TeacherEnum.FormType;
 import com.vipkid.enums.TeacherEnum.LifeCycle;
