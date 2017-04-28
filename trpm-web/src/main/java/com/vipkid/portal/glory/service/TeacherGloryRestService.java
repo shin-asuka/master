@@ -56,11 +56,11 @@ public class TeacherGloryRestService{
 
         //新建一个成就数组，初始化数据
         String initGlory  = NO_GLORY + "," + new Date().getTime()/1000;
-        String[] gloryArr = StringUtils.split(initGlory);
+        String[] gloryArr = StringUtils.split(initGlory,",");
 
         //加载当前成就
         if(StringUtils.isNotEmpty(currentGlory)) {
-            gloryArr = StringUtils.split(currentGlory);
+            gloryArr = StringUtils.split(currentGlory,",");
             Long cacheTime = NumberUtils.toLong(gloryArr[gloryArr.length - 1]);
 
             //距上次成就计算时间不足15min，不再重新计算
@@ -280,16 +280,11 @@ public class TeacherGloryRestService{
                 List<Map<String,Object>> bookclassList = onlineClassDao.findBookedClassByTeacherId(cond);
                 if(CollectionUtils.isNotEmpty(bookclassList)) {
                     Map<String,Object> onlineClass = bookclassList.get(0);
-                    String finishTimeStr = (String)onlineClass.get("bookDateTime");
-                    try {
-                        Long finishTime = DateUtils.parseDate(finishTimeStr, "yyyy-MM-dd HH:mm:ss").getTime() / 1000;
-                        if (now - finishTime <= 7 * 24 * 3600) {
-                            return TeacherGloryEnum.Status.FINISH.value();
-                        } else {
-                            return TeacherGloryEnum.Status.EXPIRED.value();
-                        }
-                    } catch (ParseException e) {
-                        e.printStackTrace();
+                    Long finishTime = (Long)onlineClass.get("bookDateTime");
+                    if (now - finishTime <= 7 * 24 * 3600) {
+                        return TeacherGloryEnum.Status.FINISH.value();
+                    } else {
+                        return TeacherGloryEnum.Status.EXPIRED.value();
                     }
                 }
             }

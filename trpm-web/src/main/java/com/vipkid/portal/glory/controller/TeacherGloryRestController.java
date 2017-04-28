@@ -48,7 +48,7 @@ public class TeacherGloryRestController extends RestfulController {
         logger.info("viewGlory:{}", JacksonUtils.toJSONString(ret));
         String[] markedGlory = teacherGloryRestService.markShownStatus(newGlory);
         logger.info("markedGlory:{}", JacksonUtils.toJSONString(markedGlory));
-        redisProxy.set(userGloryKey,StringUtils.join(markedGlory));
+        redisProxy.set(userGloryKey,StringUtils.join(markedGlory,","));
 
         return ApiResponseUtils.buildSuccessDataResp(ret);
     }

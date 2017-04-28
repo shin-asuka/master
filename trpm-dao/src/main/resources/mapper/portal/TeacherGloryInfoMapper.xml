@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="TeacherGloryInfoMapper">
+
+    <select id="findAll" resultType="com.vipkid.trpm.entity.TeacherGloryInfo">
+		select id,name,priority,avatar,title,description,share_title as shareTitle,share_description as shareDescription from teacher_glory_info;
+	</select>
+
+</mapper>

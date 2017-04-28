@@ -873,8 +873,8 @@
 	</select>
 
 	<select id="findBookedClassByTeacherId" resultType="java.util.HashMap">
-		SELECT teacher_id as teacherId,unix_timestamp(book_date_time) as BookDateTime from online_class
-		where teacher_id = #{teacherId} and book_date_time is not null ASC limit #{limit};
+		SELECT teacher_id as teacherId,unix_timestamp(book_date_time) as bookDateTime from online_class
+		where teacher_id = #{teacherId} and book_date_time is not null order by book_date_time ASC  limit #{limit};
 	</select>
 
 
