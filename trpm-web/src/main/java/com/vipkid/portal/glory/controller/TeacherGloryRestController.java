@@ -2,9 +2,11 @@ package com.vipkid.portal.glory.controller;
 
 import com.vipkid.cache.CacheConfigConst;
 import com.vipkid.cache.utils.RedisClient;
+import com.vipkid.enums.TeacherEnum;
 import com.vipkid.http.utils.JacksonUtils;
 import com.vipkid.portal.glory.model.TeacherGlory;
 import com.vipkid.portal.glory.service.TeacherGloryRestService;
+import com.vipkid.rest.interceptor.annotation.RestInterface;
 import com.vipkid.rest.security.AppContext;
 import com.vipkid.rest.utils.ApiResponseUtils;
 import com.vipkid.trpm.proxy.RedisProxy;
@@ -22,7 +24,7 @@ import java.util.Map;
  * Created by LP-813 on 2017/4/24.
  */
 @RestController
-//@RestInterface(lifeCycle = TeacherEnum.LifeCycle.REGULAR)
+@RestInterface(lifeCycle = TeacherEnum.LifeCycle.REGULAR)
 public class TeacherGloryRestController {
 
     private static final Logger logger = LoggerFactory.getLogger(TeacherGloryRestController.class);
