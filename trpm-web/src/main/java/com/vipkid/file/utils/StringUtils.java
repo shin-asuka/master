@@ -375,7 +375,7 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils {
     }
 
     public static String getMaxLenSubStr(String str, int maxSubstringLength) {
-        if (str.length() < maxSubstringLength) {
+        if (StringUtils.isBlank(str) || str.length() < maxSubstringLength) {
             return str;
         } else {
             return str.substring(0, maxSubstringLength).concat("......");
