@@ -243,7 +243,7 @@ public class PersonalInfoDataController {
      *
      * 判断老师是否能查看合同页面
      *
-     * @param teacherId 合同Id
+     * @param teacherId 老师Id
      */
     @RequestMapping("/hasContractPower")
     public Map<String, Object> hasContractPower(@RequestParam("teacherId") Long teacherId){
@@ -276,9 +276,9 @@ public class PersonalInfoDataController {
 
     /**
      *
-     * 判断老师是否能查看合同页面
+     * 删除老师查看合同页面权限
      *
-     * @param teacherId 合同Id
+     * @param teacherId 老师Id
      */
     @RequestMapping("/deleteContractPower")
     public Map<String, Object> deleteContractPower(@RequestParam("teacherId") Long teacherId){
