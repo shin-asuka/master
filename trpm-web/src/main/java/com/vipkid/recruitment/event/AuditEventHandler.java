@@ -53,7 +53,7 @@ public class AuditEventHandler implements AuditHandler {
                 switch (result) {
                     case "PASS":
                         logger.info("向用户 {} sendInterviewPass 的邮件, 并且发送message", teacherId);
-                        //ret = auditEmailService.sendInterviewPass(teacherId);
+                        ret = auditEmailService.sendInterviewPass(teacherId);
                         pushMessageService.pushAndSaveMessage(teacherId);
                         break;
                     case "REAPPLY":
