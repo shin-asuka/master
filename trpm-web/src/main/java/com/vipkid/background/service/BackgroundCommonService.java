@@ -59,8 +59,9 @@ public class BackgroundCommonService {
         BackgroundStatusDto backgroundStatusDto = new BackgroundStatusDto();
 
         Date  contractEndDate = teacher.getContractEndDate();
+        backgroundStatusDto.setContractEndWithInOneMonth(false);
+
         if(contractEndDate ==null){
-            backgroundStatusDto.setContractEndWithInOneMonth(false);
             backgroundStatusDto.setNeedBackgroundCheck(false);
             backgroundStatusDto.setPhase("");
             backgroundStatusDto.setResult("");
@@ -254,10 +255,10 @@ public class BackgroundCommonService {
 
     public BackgroundStatusDto getCanadaBackgroundStatus(Teacher teacher){
         BackgroundStatusDto backgroundStatusDto = new BackgroundStatusDto();
-
         Date  contractEndDate = teacher.getContractEndDate();
+
+        backgroundStatusDto.setContractEndWithInOneMonth(false);
         if(contractEndDate ==null){
-            backgroundStatusDto.setContractEndWithInOneMonth(false);
             backgroundStatusDto.setNeedBackgroundCheck(false);
             backgroundStatusDto.setPhase("");
             backgroundStatusDto.setResult("");
