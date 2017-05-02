@@ -284,7 +284,6 @@ public class BackgroundCommonService {
 //        remindTime.add(Calendar.MONTH,-1);
         //合同即将到期需进行背调,提前一个月进行弹窗提示
         if (hasAlert ) {
-            backgroundStatusDto.setContractEndWithInOneMonth(personalInfoService.needNewContract(teacher));
             CanadaBackgroundScreening canadaBackgroundScreening = canadaBackgroundScreeningDao.findByTeacherId(teacher.getId());
             //第一次进行背调
             if (null == canadaBackgroundScreening) {
