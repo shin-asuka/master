@@ -99,6 +99,12 @@ public class BookingsController {
     public Map<String, Object> createTimeSlot(@RequestBody String body, HttpServletResponse response) {
         try {
             logger.info("Invocation createTimeSlot() arguments: {}", body);
+            if (StringUtils.isBlank(body)) {
+                response.setStatus(HttpStatus.BAD_REQUEST.value());
+                return ApiResponseUtils.buildErrorResp(HttpStatus.BAD_REQUEST.value(),
+                        "Argument 'body' is required");
+            }
+
             TimeSlotCreateRequest timeSlotCreateRequest = JsonUtils.toBean(body, TimeSlotCreateRequest.class);
 
             Map<String, Object> checkMap = checkArgumentForType(timeSlotCreateRequest.getType());
