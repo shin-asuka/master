@@ -29,7 +29,7 @@ import java.util.Map;
  * Created by LP-813 on 2017/4/24.
  */
 @RestController
-//@RestInterface(lifeCycle = TeacherEnum.LifeCycle.REGULAR)
+@RestInterface(lifeCycle = TeacherEnum.LifeCycle.ALL)
 public class TeacherGloryRestController extends RestfulController {
 
     private static final Logger logger = LoggerFactory.getLogger(TeacherGloryRestController.class);
