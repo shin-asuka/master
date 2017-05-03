@@ -2,6 +2,7 @@ package com.vipkid.portal.glory.service;
 
 import com.google.api.client.util.Lists;
 import com.google.api.client.util.Maps;
+import com.vipkid.enums.TeacherEnum;
 import com.vipkid.enums.TeacherGloryEnum;
 import com.vipkid.http.service.ManageGatewayService;
 import com.vipkid.portal.glory.model.TeacherGlory;
@@ -148,7 +149,7 @@ public class TeacherGloryRestService{
             if(status.equals(TeacherGloryEnum.Status.UNFINISH.value())){
                 Long now = Calendar.getInstance().getTime().getTime()/1000;
                 Teacher teacher = teacherDao.findById(userId);
-                if(teacher != null && teacher.getEntryDate()!=null) {
+                if(teacher != null && teacher.getEntryDate()!=null && TeacherEnum.LifeCycle.REGULAR.getVal().equals(teacher.getLifeCycle())) {
                     if(now - teacher.getEntryDate().getTime()/1000 > 7*24*3600){
                         status = TeacherGloryEnum.Status.EXPIRED.value();
                     }else{
