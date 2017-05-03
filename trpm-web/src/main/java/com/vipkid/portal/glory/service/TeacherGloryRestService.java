@@ -125,9 +125,9 @@ public class TeacherGloryRestService{
 
     //完成展示，状态转移为SHOWN
     public String[] markShownStatus(String[] gloryArr) {
-        for(String glory:gloryArr) {
-            if (TeacherGloryEnum.Status.FINISH.value().equals(glory)) {
-                glory = TeacherGloryEnum.Status.SHOWN.value();
+        for(int i=0;i<gloryArr.length;i++) {
+            if (TeacherGloryEnum.Status.FINISH.value().equals(gloryArr[i])) {
+                gloryArr[i] = TeacherGloryEnum.Status.SHOWN.value();
             }
         }
         return gloryArr;
