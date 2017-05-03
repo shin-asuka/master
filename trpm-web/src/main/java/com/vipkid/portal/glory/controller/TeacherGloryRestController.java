@@ -40,7 +40,7 @@ public class TeacherGloryRestController extends RestfulController {
     @RequestMapping(value = "getTeacherGlory", method = RequestMethod.GET)
     public Map<String, Object> getByTeacherId(HttpServletRequest request) {
         User getUser = UserUtils.getUser(request);
-        long userId = AppContext.getTeacher().getId();
+        long userId = getUser.getId();
         String userGloryKey = CacheConfigConst.TEACHER_GLORY_KEY + "_" + userId;
         RedisProxy redisProxy = RedisClient.getInstance();
         String currentGlory = redisProxy.get(userGloryKey);

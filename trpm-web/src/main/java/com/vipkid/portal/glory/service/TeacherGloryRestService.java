@@ -134,7 +134,7 @@ public class TeacherGloryRestService{
     }
 
     class GloryHandler{
-        
+
         private Long userId;
         private List<Map<String,Object>> teacherClassList = null;
         private List<Map<String,Object>> teacherReferalList = null;
@@ -336,7 +336,6 @@ public class TeacherGloryRestService{
             if(null==teacherReferalList){
                 HashMap cond = Maps.newHashMap();
                 cond.put("teacherId",userId);
-                //TODO：看看是返空集合还是返null
                 teacherReferalList = onlineClassDao.findReferalByTeacherId(cond);
             };
             if(teacherReferalList.size()>referalNumRequired){
