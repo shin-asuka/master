@@ -10,12 +10,14 @@ import com.vipkid.recruitment.entity.TeacherApplication;
 import com.vipkid.rest.portal.vo.StudentCommentPageVo;
 import com.vipkid.rest.portal.vo.StudentCommentVo;
 import com.vipkid.rest.security.AppContext;
+import com.vipkid.rest.utils.UserUtils;
 import com.vipkid.trpm.dao.OnlineClassDao;
 import com.vipkid.trpm.dao.TeacherDao;
 import com.vipkid.trpm.dao.TeacherGloryInfoDao;
 import com.vipkid.trpm.entity.OnlineClass;
 import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.entity.TeacherGloryInfo;
+import com.vipkid.trpm.entity.User;
 import com.vipkid.trpm.service.portal.OnlineClassService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -70,7 +72,7 @@ public class TeacherGloryRestService{
         }
 
         //计算成就，更新状态。
-        GloryHandler gloryHandler = new GloryHandler();
+        GloryHandler gloryHandler = new GloryHandler(userId.longValue());
         gloryArr[0] = gloryHandler.handle1(gloryArr[0]);
         gloryArr[1] = gloryHandler.handle2(gloryArr[1]);
         gloryArr[2] = gloryHandler.handle3(gloryArr[2]);
@@ -91,7 +93,7 @@ public class TeacherGloryRestService{
         return gloryArr;
     }
 
-    public List<TeacherGlory> getGloryView(String[] gloryArr) {
+    public List<TeacherGlory> getGloryView(String[] gloryArr,long userId) {
         //读取glory字典
         List<TeacherGloryInfo> teacherGloryInfoList = teacherGloryInfoDao.getAll();
         Map<Integer,TeacherGloryInfo> gloryMap = Maps.newHashMap();
@@ -107,7 +109,7 @@ public class TeacherGloryRestService{
                 teacherGlory.setId(gloryId);
                 teacherGlory.setName(gloryMap.get(gloryId).getName());
                 //teacherGlory.setUserId(new Long(AppContext.getUser().getId()).intValue());
-                teacherGlory.setUserId(2040456);
+                teacherGlory.setUserId(new Long(userId).intValue());
                 teacherGlory.setFinishTime(DateFormatUtils.format(new Date(),"yyyy-MM-dd HH:mm:ss"));
                 teacherGlory.setPriority(gloryMap.get(gloryId).getPriority());
                 teacherGlory.setAvatar(gloryMap.get(gloryId).getAvatar());
@@ -132,10 +134,13 @@ public class TeacherGloryRestService{
 
     class GloryHandler{
         //Life Cycle变为Regular
-        private Long userId = 2040456l;
+        private Long userId;
         private List<Map<String,Object>> teacherClassList = null;
         private List<Map<String,Object>> teacherReferalList = null;
 
+        GloryHandler(Long userId){
+            this.userId = userId;
+        }
 
         String handle1(String status){
             if(status.equals(TeacherGloryEnum.Status.UNFINISH.value())){
