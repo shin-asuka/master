@@ -341,7 +341,7 @@ public class InterviewService {
             		cityId = teacherAddress.getStateId();
             	}
             	//城市名称获取
-            	if(cityId != 0){
+            	else{
             		TeacherLocation tl = this.teacherLocationDao.findById(cityId);
             		cityName = tl.getName();
             	}
