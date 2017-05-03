@@ -42,8 +42,6 @@ public class TeacherGloryRestService{
 
     private static final Logger logger = LoggerFactory.getLogger(TeacherGloryRestService.class);
 
-
-
     @Autowired
     private TeacherDao teacherDao;
     @Autowired
@@ -72,6 +70,7 @@ public class TeacherGloryRestService{
         }
 
         //计算成就，更新状态。
+        //为避免过度设计，现有方案采用内部类实现，未来预案可采用责任链模式
         GloryHandler gloryHandler = new GloryHandler(userId.longValue());
         gloryArr[0] = gloryHandler.handle1(gloryArr[0]);
         gloryArr[1] = gloryHandler.handle2(gloryArr[1]);
@@ -101,6 +100,7 @@ public class TeacherGloryRestService{
             gloryMap.put(teacherGloryInfo.getId(),teacherGloryInfo);
         }
 
+        //计算需要展示的成绩内容
         List<TeacherGlory> teacherGloryList = Lists.newArrayList();
         for(int i=0;i<gloryArr.length;i++) {
             if(TeacherGloryEnum.Status.FINISH.value().equals(gloryArr[i])){
@@ -123,6 +123,7 @@ public class TeacherGloryRestService{
         return teacherGloryList;
     }
 
+    //完成展示，状态转移为SHOWN
     public String[] markShownStatus(String[] gloryArr) {
         for(String glory:gloryArr) {
             if (TeacherGloryEnum.Status.FINISH.value().equals(glory)) {
@@ -133,7 +134,7 @@ public class TeacherGloryRestService{
     }
 
     class GloryHandler{
-        //Life Cycle变为Regular
+        
         private Long userId;
         private List<Map<String,Object>> teacherClassList = null;
         private List<Map<String,Object>> teacherReferalList = null;
@@ -142,6 +143,7 @@ public class TeacherGloryRestService{
             this.userId = userId;
         }
 
+        //Life Cycle变为Regular
         String handle1(String status){
             if(status.equals(TeacherGloryEnum.Status.UNFINISH.value())){
                 Long now = Calendar.getInstance().getTime().getTime()/1000;
@@ -296,7 +298,9 @@ public class TeacherGloryRestService{
             return status;
         };
 
-        //AS_SCHEDULE类成就通用逻辑
+        /**
+         * AS_SCHEDULE类成就通用逻辑
+         */
         String classNumGlory(String status,Integer classNumRequired){
             if(!status.equals(TeacherGloryEnum.Status.UNFINISH.value())){
                 return status;
@@ -304,7 +308,6 @@ public class TeacherGloryRestService{
             if(null==teacherClassList){
                 HashMap cond = Maps.newHashMap();
                 cond.put("teacherId",userId);
-                //TODO：看看是返空集合还是返null
                 teacherClassList = onlineClassDao.findClassByTeacherId(cond);
             };
             if(teacherClassList.size()<classNumRequired){
