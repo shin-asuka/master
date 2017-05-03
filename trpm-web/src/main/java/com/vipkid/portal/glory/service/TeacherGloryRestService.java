@@ -243,12 +243,12 @@ public class TeacherGloryRestService{
 
         //Life Cycle变为Teaching Prep
         String handle14(String status){
-            return recruitmentStatusGlory(status, TeacherEnum.LifeCycle.TRAINING.getVal());
+            return recruitmentStatusGlory(status,"TRAINING");
         };
 
         //Life Cycle变为Contract&Info
         String handle15(String status){
-            return recruitmentStatusGlory(status, TeacherEnum.LifeCycle.CONTRACT_INFO.getVal());
+            return recruitmentStatusGlory(status,"CONTRACT_INFO");
         };
 
         //第⼀节Booked Class记录
