@@ -149,7 +149,7 @@ public class TeacherGloryRestService{
             if(status.equals(TeacherGloryEnum.Status.UNFINISH.value())){
                 Long now = Calendar.getInstance().getTime().getTime()/1000;
                 Teacher teacher = teacherDao.findById(userId);
-                if(teacher != null && teacher.getEntryDate()!=null && TeacherEnum.LifeCycle.REGULAR.getVal().equals(teacher.getLifeCycle())) {
+                if(teacher != null && teacher.getEntryDate()!=null && "REGULAR".equals(teacher.getLifeCycle())) {
                     if(now - teacher.getEntryDate().getTime()/1000 > 7*24*3600){
                         status = TeacherGloryEnum.Status.EXPIRED.value();
                     }else{
