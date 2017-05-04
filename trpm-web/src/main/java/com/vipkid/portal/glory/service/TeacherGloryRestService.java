@@ -146,21 +146,7 @@ public class TeacherGloryRestService{
 
         //Life Cycle变为Regular
         String handle1(String status){
-            if(status.equals(TeacherGloryEnum.Status.UNFINISH.value())){
-                Long now = Calendar.getInstance().getTime().getTime()/1000;
-                List<TeacherApplication> taList = teacherApplicationDao.findApplicationForStatusResult(userId, "CONTRACT_INFO", "PASS");
-                if(CollectionUtils.isNotEmpty(taList)){
-                    TeacherApplication ta = taList.get(0);
-                    if(ta != null && ta.getAuditDateTime()!=null) {
-                        if(now - ta.getAuditDateTime().getTime()/1000 > 7*24*3600){
-                            status = TeacherGloryEnum.Status.EXPIRED.value();
-                        }else{
-                            status = TeacherGloryEnum.Status.FINISH.value();
-                        }
-                    }
-                }
-            }
-            return status;
+            return recruitmentStatusGlory(status,"CONTRACT_INFO",0);
         };
         //As Schedule课程记录达到1节
         String handle2(String status){
@@ -229,29 +215,17 @@ public class TeacherGloryRestService{
         };
         //Life Cycle变为Regular时间达到100天
         String handle13(String status){
-            if(status.equals(TeacherGloryEnum.Status.UNFINISH.value())){
-                Long now = Calendar.getInstance().getTime().getTime()/1000;
-                Teacher teacher = teacherDao.findById(userId);
-                if(teacher != null && teacher.getEntryDate()!=null) {
-                    if(now - teacher.getEntryDate().getTime()/1000 > 100*24*3600){
-                        status = TeacherGloryEnum.Status.FINISH.value();
-                    }
-                    if(now - teacher.getEntryDate().getTime()/1000 > 107*24*3600){
-                        status = TeacherGloryEnum.Status.EXPIRED.value();
-                    }
-                }
-            }
-            return status;
+            return recruitmentStatusGlory(status,"CONTRACT_INFO",100);
         };
 
         //Life Cycle变为Teaching Prep
         String handle14(String status){
-            return recruitmentStatusGlory(status,"INTERVIEW");
+            return recruitmentStatusGlory(status,"INTERVIEW",0);
         };
 
         //Life Cycle变为Contract&Info
         String handle15(String status){
-            return recruitmentStatusGlory(status,"PRACTICUM");
+            return recruitmentStatusGlory(status,"PRACTICUM",0);
         };
 
         //第⼀节Booked Class记录
@@ -276,12 +250,13 @@ public class TeacherGloryRestService{
         };
 
         /**
-         * 招募状态类成就通用逻辑
+         * 招募状态类成就通用逻辑，例如：某人PASS某阶段满X天
          * @param status 成就状态
          * @param recruitmentStatus 招募状态
+         * @param dayNum 达到天数
          * @return
          */
-        String recruitmentStatusGlory(String status,String recruitmentStatus){
+        String recruitmentStatusGlory(String status,String recruitmentStatus,Integer dayNum){
             if(status.equals(TeacherGloryEnum.Status.UNFINISH.value())) {
                 Long now = Calendar.getInstance().getTime().getTime() / 1000;
                 List<TeacherApplication> teacherApplications = teacherApplicationDao.findApplicationForStatusResult(userId, recruitmentStatus, "PASS");
@@ -289,7 +264,7 @@ public class TeacherGloryRestService{
                     TeacherApplication ta = teacherApplications.get(0);
                     if(ta.getAuditDateTime()!=null) {
                         Long finishTime = ta.getAuditDateTime().getTime() / 1000;
-                        if (now - finishTime <= 7 * 24 * 3600) {
+                        if (now - finishTime <= (7+dayNum) * 24 * 3600) {
                             return TeacherGloryEnum.Status.FINISH.value();
                         } else {
                             return TeacherGloryEnum.Status.EXPIRED.value();
