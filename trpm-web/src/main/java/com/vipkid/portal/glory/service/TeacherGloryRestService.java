@@ -243,12 +243,12 @@ public class TeacherGloryRestService{
 
         //Life Cycle变为Teaching Prep
         String handle14(String status){
-            return recruitmentStatusGlory(status,"TRAINING");
+            return recruitmentStatusGlory(status,"INTERVIEW");
         };
 
         //Life Cycle变为Contract&Info
         String handle15(String status){
-            return recruitmentStatusGlory(status,"CONTRACT_INFO");
+            return recruitmentStatusGlory(status,"PRACTICUM");
         };
 
         //第⼀节Booked Class记录
@@ -281,11 +281,11 @@ public class TeacherGloryRestService{
         String recruitmentStatusGlory(String status,String recruitmentStatus){
             if(status.equals(TeacherGloryEnum.Status.UNFINISH.value())) {
                 Long now = Calendar.getInstance().getTime().getTime() / 1000;
-                List<TeacherApplication> teacherApplications = teacherApplicationDao.findApplicationForStatusResult(userId, recruitmentStatus, null);
+                List<TeacherApplication> teacherApplications = teacherApplicationDao.findApplicationForStatusResult(userId, recruitmentStatus, "PASS");
                 if(CollectionUtils.isNotEmpty(teacherApplications)) {
                     TeacherApplication ta = teacherApplications.get(0);
-                    if(ta.getApplyDateTime()!=null) {
-                        Long finishTime = ta.getApplyDateTime().getTime() / 1000;
+                    if(ta.getAuditDateTime()!=null) {
+                        Long finishTime = ta.getAuditDateTime().getTime() / 1000;
                         if (now - finishTime <= 7 * 24 * 3600) {
                             return TeacherGloryEnum.Status.FINISH.value();
                         } else {
