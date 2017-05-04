@@ -73,6 +73,8 @@ public interface ApplicationConstant {
 
         public static String VERIFY_CODE_ERROR = "verify-code-error";
 
+        public static String SYSTEM_BUSY = "system-busy";
+
     }
 
     /* 日志名称定义 */

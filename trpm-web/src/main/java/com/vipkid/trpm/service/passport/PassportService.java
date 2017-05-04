@@ -182,14 +182,8 @@ public class PassportService {
             //启用分布式锁检查，避免出现重复serialNumber
             lockKey = trySerialNumberLock(serialNumber);
             if (StringUtils.isBlank(lockKey)) {
-                //休眠1000ms再去查询一次max serialNumber
-                Thread.sleep(1000);
-                serialNumber = teacherDao.getSerialNumber();
-                lockKey = trySerialNumberLock(serialNumber);
-                if (StringUtils.isBlank(lockKey)) {
-                    logger.error("老师注册，最大seriaNumber已被占用， 请稍后再试, email=" + bean.getEmail());
-                    throw new ServiceException(TeacherPortalCodeEnum.ORDER_ALREADY_EXISTED.getCode(), "seriaNumber已经存在， 请稍后再试");
-                }
+                logger.info("老师注册, 最大serialNumber已被占用， 请稍后再试 . email="+email);
+                return ReturnMapUtils.returnFail(ApplicationConstant.AjaxCode.SYSTEM_BUSY);
             }
             teacher.setSerialNumber(serialNumber);
             teacher.setRecruitmentId(System.currentTimeMillis() + "-" + encoder.encode(teacher.getSerialNumber() + "kxoucywejl" + teacher.getEmail()));
