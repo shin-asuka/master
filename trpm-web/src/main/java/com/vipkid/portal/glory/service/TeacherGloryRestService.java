@@ -62,12 +62,12 @@ public class TeacherGloryRestService{
         //加载当前成就
         if(StringUtils.isNotEmpty(currentGlory)) {
             gloryArr = StringUtils.split(currentGlory,",");
-            Long cacheTime = NumberUtils.toLong(gloryArr[gloryArr.length - 1]);
+//            Long cacheTime = NumberUtils.toLong(gloryArr[gloryArr.length - 1]);
 
-            //距上次成就计算时间不足15min，不再重新计算
-            if (new Date().getTime() / 1000 - cacheTime < 15 * 60) {
-                return gloryArr;
-            }
+//            //距上次成就计算时间不足15min，不再重新计算
+//            if (new Date().getTime() / 1000 - cacheTime < 15 * 60) {
+//                return gloryArr;
+//            }
         }
 
         //计算成就，更新状态。
@@ -264,7 +264,7 @@ public class TeacherGloryRestService{
                     TeacherApplication ta = teacherApplications.get(0);
                     if(ta.getAuditDateTime()!=null) {
                         Long finishTime = ta.getAuditDateTime().getTime() / 1000;
-                        if (now - finishTime <= (7+dayNum) * 24 * 3600) {
+                        if (now - finishTime <= (7+dayNum) * 24 * 3600 && now - finishTime >= (dayNum) * 24 * 3600 ) {
                             return TeacherGloryEnum.Status.FINISH.value();
                         } else {
                             return TeacherGloryEnum.Status.EXPIRED.value();
