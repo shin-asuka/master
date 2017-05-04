@@ -35,6 +35,8 @@ import java.sql.Timestamp;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author zouqinghua
@@ -705,6 +707,17 @@ public class TeacherService {
 	public long getTeacherIdByReferralCode(String referralCode){
 		long teacherId = Long.parseLong(referralCode,36);
 		return teacherId;
+	}
+
+	/**
+	 * 验证referralCode是否包含特殊字符
+	 * @param referralCode
+	 * @return
+	 */
+	public boolean isMatch(String referralCode){
+		Pattern pattern = Pattern.compile("^[A-Za-z0-9]*+$");
+		Matcher matcher = pattern.matcher(referralCode);
+		return matcher.matches();
 	}
 
 }

@@ -1,33 +1,6 @@
 package com.vipkid.rest.web;
 
-import java.io.IOException;
-import java.sql.Timestamp;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.locks.LockSupport;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import com.google.common.base.Preconditions;
-import com.vipkid.rest.utils.ApiResponseUtils;
-import com.vipkid.trpm.service.portal.TeacherService;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.community.config.PropertyConfigurer;
-import org.community.tools.JsonTools;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.google.common.collect.Maps;
 import com.vipkid.enums.TeacherEnum;
 import com.vipkid.enums.TeacherEnum.LifeCycle;
@@ -44,6 +17,7 @@ import com.vipkid.rest.dto.ResetPasswordDto;
 import com.vipkid.rest.interceptor.annotation.RestInterface;
 import com.vipkid.rest.service.AdminQuizService;
 import com.vipkid.rest.service.LoginService;
+import com.vipkid.rest.utils.ApiResponseUtils;
 import com.vipkid.rest.validation.ValidateUtils;
 import com.vipkid.rest.validation.tools.Result;
 import com.vipkid.teacher.tools.security.SHA256PasswordEncoder;
@@ -53,10 +27,30 @@ import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.entity.User;
 import com.vipkid.trpm.service.huanxin.HuanxinService;
 import com.vipkid.trpm.service.passport.PassportService;
+import com.vipkid.trpm.service.portal.TeacherService;
 import com.vipkid.trpm.util.Bean2Map;
 import com.vipkid.trpm.util.CookieUtils;
 import com.vipkid.trpm.util.DateUtils;
 import com.vipkid.trpm.util.IpUtils;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.community.config.PropertyConfigurer;
+import org.community.tools.JsonTools;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.sql.Timestamp;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.LockSupport;
 
 @RestController
 @RequestMapping("/user")
@@ -308,6 +302,10 @@ public class LoginController extends RestfulController {
             String referralCode = bean.getReferralCode();
             logger.info("check ReferralCode:{}",referralCode);
             if (StringUtils.isNotBlank(bean.getReferralCode())){
+                boolean match = teacherService.isMatch(referralCode);
+                if (!match){
+                    return ApiResponseUtils.buildErrorResp(HttpStatus.BAD_REQUEST.value(),"referral code error");
+                }
                 long referralId = teacherService.getTeacherIdByReferralCode(referralCode);
                 bean.setRefereeId(referralId);
                 User user = passportService.findUserById(referralId);
