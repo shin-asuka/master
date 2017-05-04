@@ -148,12 +148,15 @@ public class TeacherGloryRestService{
         String handle1(String status){
             if(status.equals(TeacherGloryEnum.Status.UNFINISH.value())){
                 Long now = Calendar.getInstance().getTime().getTime()/1000;
-                Teacher teacher = teacherDao.findById(userId);
-                if(teacher != null && teacher.getEntryDate()!=null && "REGULAR".equals(teacher.getLifeCycle())) {
-                    if(now - teacher.getEntryDate().getTime()/1000 > 7*24*3600){
-                        status = TeacherGloryEnum.Status.EXPIRED.value();
-                    }else{
-                        status = TeacherGloryEnum.Status.FINISH.value();
+                List<TeacherApplication> taList = teacherApplicationDao.findApplicationForStatusResult(userId, "CONTRACT_INFO", "PASS");
+                if(CollectionUtils.isNotEmpty(taList)){
+                    TeacherApplication ta = taList.get(0);
+                    if(ta != null && ta.getAuditDateTime()!=null) {
+                        if(now - ta.getAuditDateTime().getTime()/1000 > 7*24*3600){
+                            status = TeacherGloryEnum.Status.EXPIRED.value();
+                        }else{
+                            status = TeacherGloryEnum.Status.FINISH.value();
+                        }
                     }
                 }
             }
