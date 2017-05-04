@@ -304,12 +304,14 @@ public class LoginController extends RestfulController {
             if (StringUtils.isNotBlank(bean.getReferralCode())){
                 boolean match = teacherService.isMatch(referralCode);
                 if (!match){
+                    response.setStatus(HttpStatus.BAD_REQUEST.value());
                     return ApiResponseUtils.buildErrorResp(HttpStatus.BAD_REQUEST.value(),"referral code error");
                 }
                 long referralId = teacherService.getTeacherIdByReferralCode(referralCode);
                 bean.setRefereeId(referralId);
                 User user = passportService.findUserById(referralId);
                 if (null == user){
+                    response.setStatus(HttpStatus.BAD_REQUEST.value());
                     return ApiResponseUtils.buildErrorResp(HttpStatus.BAD_REQUEST.value(),"Referral code does not exist, please check.");
                 }
             }
