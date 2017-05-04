@@ -17,7 +17,6 @@ import com.vipkid.rest.dto.ResetPasswordDto;
 import com.vipkid.rest.interceptor.annotation.RestInterface;
 import com.vipkid.rest.service.AdminQuizService;
 import com.vipkid.rest.service.LoginService;
-import com.vipkid.rest.utils.ApiResponseUtils;
 import com.vipkid.rest.validation.ValidateUtils;
 import com.vipkid.rest.validation.tools.Result;
 import com.vipkid.teacher.tools.security.SHA256PasswordEncoder;
@@ -305,14 +304,14 @@ public class LoginController extends RestfulController {
                 boolean match = teacherService.isMatch(referralCode);
                 if (!match){
                     response.setStatus(HttpStatus.BAD_REQUEST.value());
-                    return ApiResponseUtils.buildErrorResp(HttpStatus.BAD_REQUEST.value(),"referral code error");
+                    return ReturnMapUtils.returnFail(AjaxCode.REFERRAL_CODE_ERROR,"referral code error");
                 }
                 long referralId = teacherService.getTeacherIdByReferralCode(referralCode);
                 bean.setRefereeId(referralId);
                 User user = passportService.findUserById(referralId);
                 if (null == user){
                     response.setStatus(HttpStatus.BAD_REQUEST.value());
-                    return ApiResponseUtils.buildErrorResp(HttpStatus.BAD_REQUEST.value(),"Referral code does not exist, please check.");
+                    return ReturnMapUtils.returnFail(AjaxCode.REFERRAL_NOT_EXIST,"Referral code does not exist, please check.");
                 }
             }
             

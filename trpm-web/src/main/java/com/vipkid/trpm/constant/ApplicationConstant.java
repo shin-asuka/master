@@ -1,12 +1,11 @@
 package com.vipkid.trpm.constant;
 
+import com.vipkid.payroll.utils.DateUtils;
+import org.community.config.PropertyConfigurer;
+
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.community.config.PropertyConfigurer;
-
-import com.vipkid.payroll.utils.DateUtils;
 
 public interface ApplicationConstant {
 
@@ -72,6 +71,10 @@ public interface ApplicationConstant {
         public static String VERIFY_CODE = "need-verify-code";
 
         public static String VERIFY_CODE_ERROR = "verify-code-error";
+
+        public static String REFERRAL_CODE_ERROR = "referral-code-error";
+
+        public static String REFERRAL_NOT_EXIST = "referral-not-exist";
 
     }
 
