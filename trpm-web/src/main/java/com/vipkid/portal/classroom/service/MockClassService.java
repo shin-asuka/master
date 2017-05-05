@@ -134,7 +134,7 @@ public class MockClassService {
     private AuditEmailService auditEmailService;
 
     public PeReviewOutputDto doPeReview(Integer applicationId) {
-        TeacherApplication teacherApplication = teacherApplicationDao.findApplictionById(applicationId);
+        TeacherApplication teacherApplication = teacherApplicationDao.findApplicationById(applicationId);
         Preconditions.checkNotNull(teacherApplication, "Teacher application [" + applicationId + "] not found");
 
         PeReviewOutputDto peReviewOutputDto = new PeReviewOutputDto();
@@ -226,7 +226,7 @@ public class MockClassService {
                         || StringUtils.equals(peDoAuditInputDto.getStatus(), Result.REAPPLY.name())) {
             // do submit or reschedule
             TeacherApplication teacherApplication =
-                            teacherApplicationDao.findApplictionById(peDoAuditInputDto.getApplicationId());
+                            teacherApplicationDao.findApplicationById(peDoAuditInputDto.getApplicationId());
             Preconditions.checkNotNull(teacherApplication,
                             "Teacher application [" + peDoAuditInputDto.getApplicationId() + "] not found");
 
@@ -252,7 +252,7 @@ public class MockClassService {
 
             // 判断 practicum2 是否已经存在
             if (StringUtils.equals(Result.PRACTICUM2.name(), result)) {
-                List<TeacherApplication> practicum2List = teacherApplicationDao.findApplictionForStatusResult(
+                List<TeacherApplication> practicum2List = teacherApplicationDao.findApplicationForStatusResult(
                                 teacherApplication.getTeacherId(), Status.PRACTICUM.name(), Result.PRACTICUM2.name());
                 if (CollectionUtils.isNotEmpty(practicum2List)) {
                     return "The teacher is already in practicum 2.";
