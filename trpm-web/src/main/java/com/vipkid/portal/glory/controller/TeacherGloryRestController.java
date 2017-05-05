@@ -38,7 +38,7 @@ public class TeacherGloryRestController extends RestfulController {
     private TeacherGloryRestService teacherGloryRestService;
 
     @RequestMapping(value = "getTeacherGlory", method = RequestMethod.GET)
-    public Map<String, Object> getByTeacherId(HttpServletRequest request) {
+    public Map<String, Object> getByTeacherId(HttpServletRequest request,String site) {
         User getUser = getUser(request);
         long userId = getUser.getId();
         String userGloryKey = CacheConfigConst.TEACHER_GLORY_KEY + "_" + userId;
@@ -47,7 +47,7 @@ public class TeacherGloryRestController extends RestfulController {
         logger.info("currentGlory:{}",currentGlory);
         String[] newGlory = teacherGloryRestService.refeshGlory(currentGlory,new Long(userId).intValue());
         logger.info("newGlory:{}",JacksonUtils.toJSONString(newGlory));
-        List<TeacherGlory> ret = teacherGloryRestService.getGloryView(newGlory,userId);
+        List<TeacherGlory> ret = teacherGloryRestService.getGloryView(newGlory,userId,site);
         logger.info("viewGlory:{}", JacksonUtils.toJSONString(ret));
         String[] markedGlory = teacherGloryRestService.markShownStatus(newGlory);
         logger.info("markedGlory:{}", JacksonUtils.toJSONString(markedGlory));

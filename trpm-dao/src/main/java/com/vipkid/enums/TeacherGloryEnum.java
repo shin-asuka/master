@@ -26,4 +26,25 @@ public class TeacherGloryEnum {
             return value;
         }
     }
+
+    public enum Source {
+
+        BOOKING("Booking"), // 未达成
+        CONTRACT("Contract"), // 已达成,待展示
+        TRAINING("Training");//已展示
+
+        private String value;
+
+        private Source(String value) {
+            this.value = value;
+        }
+
+        public String toString() {
+            return this.value;
+        }
+
+        public String value(){
+            return value;
+        }
+    }
 }

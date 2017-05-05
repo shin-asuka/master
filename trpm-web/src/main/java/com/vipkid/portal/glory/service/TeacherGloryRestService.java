@@ -93,7 +93,7 @@ public class TeacherGloryRestService{
         return gloryArr;
     }
 
-    public List<TeacherGlory> getGloryView(String[] gloryArr,long userId) {
+    public List<TeacherGlory> getGloryView(String[] gloryArr,long userId,String site) {
         //读取glory字典
         List<TeacherGloryInfo> teacherGloryInfoList = teacherGloryInfoDao.getAll();
         Map<Integer,TeacherGloryInfo> gloryMap = Maps.newHashMap();
@@ -105,20 +105,24 @@ public class TeacherGloryRestService{
         List<TeacherGlory> teacherGloryList = Lists.newArrayList();
         for(int i=0;i<gloryArr.length;i++) {
             if(TeacherGloryEnum.Status.FINISH.value().equals(gloryArr[i])){
-                TeacherGlory teacherGlory = new TeacherGlory();
-                Integer gloryId = i+1;
-                teacherGlory.setId(gloryId);
-                teacherGlory.setName(gloryMap.get(gloryId).getName());
-                //teacherGlory.setUserId(new Long(AppContext.getUser().getId()).intValue());
-                teacherGlory.setUserId(new Long(userId).intValue());
-                teacherGlory.setFinishTime(DateFormatUtils.format(new Date(),"yyyy-MM-dd HH:mm:ss"));
-                teacherGlory.setPriority(gloryMap.get(gloryId).getPriority());
-                teacherGlory.setAvatar(gloryMap.get(gloryId).getAvatar());
-                teacherGlory.setTitle(gloryMap.get(gloryId).getTitle());
-                teacherGlory.setDescription(gloryMap.get(gloryId).getDescription());
-                teacherGlory.setShareTitle(gloryMap.get(gloryId).getShareTitle());
-                teacherGlory.setShareDescription(gloryMap.get(gloryId).getShareDescription());
-                teacherGloryList.add(teacherGlory);
+                if(i == 14 && TeacherGloryEnum.Source.CONTRACT.value().equals(site) ||
+                   i == 13 && TeacherGloryEnum.Source.TRAINING.value().equals(site) ||
+                   i!=13 && i!=14 && TeacherGloryEnum.Source.BOOKING.value().equals(site)){
+                    TeacherGlory teacherGlory = new TeacherGlory();
+                    Integer gloryId = i + 1;
+                    teacherGlory.setId(gloryId);
+                    teacherGlory.setName(gloryMap.get(gloryId).getName());
+                    //teacherGlory.setUserId(new Long(AppContext.getUser().getId()).intValue());
+                    teacherGlory.setUserId(new Long(userId).intValue());
+                    teacherGlory.setFinishTime(DateFormatUtils.format(new Date(), "yyyy-MM-dd HH:mm:ss"));
+                    teacherGlory.setPriority(gloryMap.get(gloryId).getPriority());
+                    teacherGlory.setAvatar(gloryMap.get(gloryId).getAvatar());
+                    teacherGlory.setTitle(gloryMap.get(gloryId).getTitle());
+                    teacherGlory.setDescription(gloryMap.get(gloryId).getDescription());
+                    teacherGlory.setShareTitle(gloryMap.get(gloryId).getShareTitle());
+                    teacherGlory.setShareDescription(gloryMap.get(gloryId).getShareDescription());
+                    teacherGloryList.add(teacherGlory);
+                }
             }
         }
         return teacherGloryList;
