@@ -291,7 +291,8 @@ public class TeacherGloryRestService{
                 return TeacherGloryEnum.Status.UNFINISH.value();
             }
             Long now = Calendar.getInstance().getTime().getTime()/1000;
-            Map<String,Object> map = teacherClassList.get(0);
+            int size = teacherClassList.size();
+            Map<String,Object> map = teacherClassList.get(size-classNumRequired);
             Long scheduledDateTime = (Long) map.get("scheduledDateTime");
             if(now - scheduledDateTime >= 7*24*3600 + 25*60) {
                 return TeacherGloryEnum.Status.EXPIRED.value();
