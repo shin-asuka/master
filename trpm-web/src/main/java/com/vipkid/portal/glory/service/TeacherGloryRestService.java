@@ -264,8 +264,10 @@ public class TeacherGloryRestService{
                     TeacherApplication ta = teacherApplications.get(0);
                     if(ta.getAuditDateTime()!=null) {
                         Long finishTime = ta.getAuditDateTime().getTime() / 1000;
-                        if (now - finishTime <= (7+dayNum) * 24 * 3600 && now - finishTime >= (dayNum) * 24 * 3600 ) {
+                        if (now - finishTime < (7+dayNum) * 86400 && now - finishTime > dayNum * 86400 ) {
                             return TeacherGloryEnum.Status.FINISH.value();
+                        } else if(now - finishTime <= dayNum * 86400){
+                            return TeacherGloryEnum.Status.UNFINISH.value();
                         } else {
                             return TeacherGloryEnum.Status.EXPIRED.value();
                         }
