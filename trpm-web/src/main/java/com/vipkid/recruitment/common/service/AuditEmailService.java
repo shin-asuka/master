@@ -276,7 +276,7 @@ public class AuditEmailService {
                 paramsMap.put("areasImprovement", HtmlUtils.htmlUnescape(teacherPeComments.getAreasImprovement()));
             }
 
-            List<TeacherApplication> list = teacherApplicationDao.findApplictionForStatusResult(teacher.getId(),
+            List<TeacherApplication> list = teacherApplicationDao.findApplicationForStatusResult(teacher.getId(),
                             TeacherApplicationEnum.Status.SIGN_CONTRACT.toString(),
                             TeacherApplicationEnum.Result.PASS.toString());
             if (CollectionUtils.isNotEmpty(list)) {

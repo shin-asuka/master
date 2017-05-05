@@ -391,7 +391,7 @@ public class RecruitmentService {
                 result.put("onlineClassId", onlineClass.getId());
                 result.put("isQuickInterview", onlineClass.getClassType() == OnlineClassEnum.ClassType.QUICK_INTERVIEW.val() ? true : false);
                 // mockclass
-                TeacherApplication teacherApplication = teacherApplicationDao.findApplictionByOlineclassId(onlineClass.getId(), teacher.getId());
+                TeacherApplication teacherApplication = teacherApplicationDao.findApplicationByOnlineClassId(onlineClass.getId(), teacher.getId());
                 if(null != teacherApplication) {
                     result.put("applicationId", teacherApplication.getId());
                     int appId = Long.valueOf(teacherApplication.getId()).intValue();
@@ -436,10 +436,7 @@ public class RecruitmentService {
         }
         //当前步骤已经pass过 不允许操作
         List<TeacherApplication> pass = teacherApplicationDao.findApplicationForStatusResult(teacher.getId(),teacher.getLifeCycle(),Result.PASS.toString());
-        if(CollectionUtils.isNotEmpty(pass)){
-            return true;
-        }
-        return false;
+        return CollectionUtils.isNotEmpty(pass);
     }
 
     public int getRemainRescheduleTimes(Teacher teacher, String status, String type, boolean isForRescheduleAction){
