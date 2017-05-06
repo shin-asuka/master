@@ -7,7 +7,7 @@ public class PracticumConstant {
      */
     public static final long BOOK_TIME = 60 * 60 * 1000;
     /***
-     *开课前60分钟 可以进入onlineClass
+     *开课后60分钟 可以进入 Mock Class classroom
      */
     public static final int ENTER_CLASS_MINUTES = 60;
     /***

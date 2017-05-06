@@ -163,7 +163,7 @@ public class RecruitmentService {
         }
     }
 
-    private Map<String,Object> getInterviewPracticumStatusByResultIsBlank(TeacherApplication teacherApplication, int enterClassAllowedMinute){
+    private Map<String,Object> getInterviewPracticumStatusByResultIsBlank(TeacherApplication teacherApplication){
         Map<String,Object> result = Maps.newHashMap();
         if(teacherApplication.getOnlineClassId() == 0){
             //待约课
@@ -176,7 +176,17 @@ public class RecruitmentService {
             OnlineClass onlineClass = this.onlineClassDao.findById(teacherApplication.getOnlineClassId());
             //处于book状态的onlineClass 应该处于倒计时页面
             if(OnlineClassEnum.ClassStatus.BOOKED.toString().equals(onlineClass.getStatus())){
-                //小于1个小时 可进入onlineClass
+                //开课后多久还可以进入classroom
+                int enterClassAllowedMinute;
+                if (onlineClass.getClassType() == 2) {
+                    enterClassAllowedMinute = InterviewConstant.ENTER_CLASS_MINUTES;
+                } else if (onlineClass.getClassType() == 3) {
+                    enterClassAllowedMinute = InterviewConstant.ENTER_CLASS_MINUTES_QUICK;
+                } else {
+                    // ==1 practicum
+                    enterClassAllowedMinute = PracticumConstant.ENTER_CLASS_MINUTES;
+                }
+
                 if(!DateUtils.countXMinute(onlineClass.getScheduledDateTime().getTime(), enterClassAllowedMinute)){
                     logger.info("进入"+teacherApplication.getStatus()+"待上课核页面 teacherId:{} taId:{}",teacherApplication.getTeacherId(),teacherApplication.getId());
                     result.put("result",AuditStatus.TO_CLASS.toString());
@@ -204,7 +214,7 @@ public class RecruitmentService {
     private Map<String,Object> getInterviewStatus(Teacher teacher,TeacherApplication teacherApplication){
         Map<String,Object> result = Maps.newHashMap();
         if(StringUtils.isBlank(teacherApplication.getResult())){
-            result.putAll(getInterviewPracticumStatusByResultIsBlank(teacherApplication, InterviewConstant.ENTER_CLASS_MINUTES));
+            result.putAll(getInterviewPracticumStatusByResultIsBlank(teacherApplication));
         }else{
             //如果是Fail并且在11个半小时之内为待审核
             boolean _result = StringUtils.equalsIgnoreCase(Result.FAIL.toString(),teacherApplication.getResult());
@@ -260,7 +270,7 @@ public class RecruitmentService {
     private Map<String,Object> getPracticumStatus(Teacher teacher,TeacherApplication teacherApplication){
         Map<String,Object> result = Maps.newHashMap();
         if(StringUtils.isBlank(teacherApplication.getResult())){
-            result.putAll(getInterviewPracticumStatusByResultIsBlank(teacherApplication, PracticumConstant.ENTER_CLASS_MINUTES));
+            result.putAll(getInterviewPracticumStatusByResultIsBlank(teacherApplication));
         }else{
             //如果是Fail并且在11个半小时之内为待审核
             boolean _result = StringUtils.equalsIgnoreCase(Result.FAIL.toString(),teacherApplication.getResult());
