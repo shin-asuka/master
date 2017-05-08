@@ -324,7 +324,8 @@ public class TeacherGloryRestService{
                 teacherReferalList = onlineClassDao.findReferalByTeacherId(cond);
             };
             if(teacherReferalList.size()>referalNumRequired){
-                Long lastScheduledDateTime = (Long)teacherReferalList.get(0).get("scheduledDateTime");
+                int size = teacherReferalList.size();
+                Long lastScheduledDateTime = (Long)teacherReferalList.get(size-referalNumRequired).get("scheduledDateTime");
                 Long now = Calendar.getInstance().getTime().getTime()/1000;
                 if(null == lastScheduledDateTime || now - lastScheduledDateTime <= 7*24*3600 + 25*60) {
                     return TeacherGloryEnum.Status.FINISH.value();
