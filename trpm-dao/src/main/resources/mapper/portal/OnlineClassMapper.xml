@@ -864,7 +864,7 @@
 		)
 		)
 		ORDER BY
-		scheduled_date_time DESC
+		scheduled_date_time ASC	
 		) AS a
 		GROUP BY
 		teacherId
