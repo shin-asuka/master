@@ -15,9 +15,13 @@ public class InterviewConstant {
      */
     public static final int CREATE_TIME_AFTER = 300000;
     /***
-     *开课前30分钟 可以进入onlineClass
+     *开课后30分钟 可以进入 Interview classroom
      */
     public static final int ENTER_CLASS_MINUTES = 30;
+    /***
+     *开课后60分钟 可以进入 Quick Interview classroom
+     */
+    public static final int ENTER_CLASS_MINUTES_QUICK = 60;
     /***
      *除了今天还展示几天的timeSlots
      */

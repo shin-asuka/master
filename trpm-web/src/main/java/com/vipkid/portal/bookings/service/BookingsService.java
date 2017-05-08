@@ -682,12 +682,12 @@ public class BookingsService {
                 modelMap.put("timePoint", timePoint);
                 logger.info("create timeslot by scalper success, params:{}", requestMap.toString());
                 return modelMap;
-            } else if (SCALPER_REFUSED_CODE == (int) returnModel.get("code")) {
+            } else if (returnModel.get("code")!=null && SCALPER_REFUSED_CODE == (int) returnModel.get("code")) {
                 logger.info("create timeslot by scalper refused! ");
-                modelMap.put("error", returnModel.get("code"));
+                modelMap.put("error", String.valueOf(returnModel.get("code")));
             } else {
-                logger.info("create timeslot by scalper failed! code = {}", returnModel.get("code"));
-                modelMap.put("error", returnModel.get("code"));
+                logger.info("create timeslot by scalper failed! code = {}", String.valueOf(returnModel.get("code")));
+                modelMap.put("error", String.valueOf(returnModel.get("code")));
             }
         } else {
             logger.error("post url={} result = null", url);
@@ -861,12 +861,12 @@ public class BookingsService {
                 modelMap.put("status", ClassStatus.REMOVED.name());
                 logger.info("cancel timeslot by scalper success, params:{}", requestMap.toString());
                 return modelMap;
-            } else if (SCALPER_REFUSED_CODE == (int) returnModel.get("code")) {
+            } else if (returnModel.get("code")!=null && SCALPER_REFUSED_CODE == (int) returnModel.get("code")) {
                 logger.info("cancel timeslot by scalper refused! ");
-                modelMap.put("error", returnModel.get("code"));
+                modelMap.put("error", String.valueOf(returnModel.get("code")));
             } else {
-                logger.info("cancel timeslot by scalper failed! code = {}", returnModel.get("code"));
-                modelMap.put("error", returnModel.get("code"));
+                logger.info("cancel timeslot by scalper failed! code = {}", String.valueOf(returnModel.get("code")));
+                modelMap.put("error", String.valueOf(returnModel.get("code")));
             }
         } else {
             logger.error("post url={} result = null", url);
@@ -1168,7 +1168,7 @@ public class BookingsService {
             if (SCALPER_SUCCESS_CODE == (int) returnModel.get("code")) {
                 logger.info("cancel course by scalper success, params:{}", requestParams.toString());
                 flag = true;
-            } else if (SCALPER_REFUSED_CODE == (int) returnModel.get("code")) {
+            } else if (returnModel.get("code")!=null && SCALPER_REFUSED_CODE == (int) returnModel.get("code")) {
                 logger.info("cancel course by scalper refused! ");
             } else {
                 logger.info("cancel course by scalper failed! code = {}", returnModel.get("code"));
