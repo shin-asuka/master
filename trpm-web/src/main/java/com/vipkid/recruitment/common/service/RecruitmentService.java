@@ -18,10 +18,7 @@ import com.vipkid.recruitment.practicum.PracticumConstant;
 import com.vipkid.recruitment.utils.ReturnMapUtils;
 import com.vipkid.rest.dto.TimezoneDto;
 import com.vipkid.trpm.constant.ApplicationConstant.FinishType;
-import com.vipkid.trpm.dao.OnlineClassDao;
-import com.vipkid.trpm.dao.TeacherAddressDao;
-import com.vipkid.trpm.dao.TeacherDao;
-import com.vipkid.trpm.dao.TeacherLocationDao;
+import com.vipkid.trpm.dao.*;
 import com.vipkid.trpm.entity.OnlineClass;
 import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.entity.TeacherAddress;
@@ -65,6 +62,9 @@ public class RecruitmentService {
 
     @Autowired
     private TeacherLockLogDao teacherLockLogDao;
+
+    @Autowired
+    private TeacherPeFeedbackDao teacherPeFeedbackDao;
 
     /**
      * 获取老师当前LifeCycle状态下的流程结果 
@@ -163,7 +163,7 @@ public class RecruitmentService {
         }
     }
 
-    private Map<String,Object> getInterviewPracticumStatusByResultIsBlank(TeacherApplication teacherApplication, int enterClassAllowedMinute){
+    private Map<String,Object> getInterviewPracticumStatusByResultIsBlank(TeacherApplication teacherApplication){
         Map<String,Object> result = Maps.newHashMap();
         if(teacherApplication.getOnlineClassId() == 0){
             //待约课
@@ -176,7 +176,17 @@ public class RecruitmentService {
             OnlineClass onlineClass = this.onlineClassDao.findById(teacherApplication.getOnlineClassId());
             //处于book状态的onlineClass 应该处于倒计时页面
             if(OnlineClassEnum.ClassStatus.BOOKED.toString().equals(onlineClass.getStatus())){
-                //小于1个小时 可进入onlineClass
+                //开课后多久还可以进入classroom
+                int enterClassAllowedMinute;
+                if (onlineClass.getClassType() == 2) {
+                    enterClassAllowedMinute = InterviewConstant.ENTER_CLASS_MINUTES;
+                } else if (onlineClass.getClassType() == 3) {
+                    enterClassAllowedMinute = InterviewConstant.ENTER_CLASS_MINUTES_QUICK;
+                } else {
+                    // ==1 practicum
+                    enterClassAllowedMinute = PracticumConstant.ENTER_CLASS_MINUTES;
+                }
+
                 if(!DateUtils.countXMinute(onlineClass.getScheduledDateTime().getTime(), enterClassAllowedMinute)){
                     logger.info("进入"+teacherApplication.getStatus()+"待上课核页面 teacherId:{} taId:{}",teacherApplication.getTeacherId(),teacherApplication.getId());
                     result.put("result",AuditStatus.TO_CLASS.toString());
@@ -204,7 +214,7 @@ public class RecruitmentService {
     private Map<String,Object> getInterviewStatus(Teacher teacher,TeacherApplication teacherApplication){
         Map<String,Object> result = Maps.newHashMap();
         if(StringUtils.isBlank(teacherApplication.getResult())){
-            result.putAll(getInterviewPracticumStatusByResultIsBlank(teacherApplication, InterviewConstant.ENTER_CLASS_MINUTES));
+            result.putAll(getInterviewPracticumStatusByResultIsBlank(teacherApplication));
         }else{
             //如果是Fail并且在11个半小时之内为待审核
             boolean _result = StringUtils.equalsIgnoreCase(Result.FAIL.toString(),teacherApplication.getResult());
@@ -260,7 +270,7 @@ public class RecruitmentService {
     private Map<String,Object> getPracticumStatus(Teacher teacher,TeacherApplication teacherApplication){
         Map<String,Object> result = Maps.newHashMap();
         if(StringUtils.isBlank(teacherApplication.getResult())){
-            result.putAll(getInterviewPracticumStatusByResultIsBlank(teacherApplication, PracticumConstant.ENTER_CLASS_MINUTES));
+            result.putAll(getInterviewPracticumStatusByResultIsBlank(teacherApplication));
         }else{
             //如果是Fail并且在11个半小时之内为待审核
             boolean _result = StringUtils.equalsIgnoreCase(Result.FAIL.toString(),teacherApplication.getResult());
@@ -390,6 +400,15 @@ public class RecruitmentService {
                 result.put("scheduledDateTime",onlineClass.getScheduledDateTime().getTime());
                 result.put("onlineClassId", onlineClass.getId());
                 result.put("isQuickInterview", onlineClass.getClassType() == OnlineClassEnum.ClassType.QUICK_INTERVIEW.val() ? true : false);
+                // mockclass
+                TeacherApplication teacherApplication = teacherApplicationDao.findApplicationByOnlineClassId(onlineClass.getId(), teacher.getId());
+                if(null != teacherApplication) {
+                    result.put("applicationId", teacherApplication.getId());
+                    int appId = Long.valueOf(teacherApplication.getId()).intValue();
+                    result.put("submitted", teacherPeFeedbackDao.hasTeacherPeFeedback(appId));
+                    // 灰度发布 FIXME
+                    result.put("showFeedback", teacherApplicationDao.countByInterviewer(teacherApplication.getStduentId()));
+                }
             }
         }
         return result;
@@ -427,10 +446,7 @@ public class RecruitmentService {
         }
         //当前步骤已经pass过 不允许操作
         List<TeacherApplication> pass = teacherApplicationDao.findApplicationForStatusResult(teacher.getId(),teacher.getLifeCycle(),Result.PASS.toString());
-        if(CollectionUtils.isNotEmpty(pass)){
-            return true;
-        }
-        return false;
+        return CollectionUtils.isNotEmpty(pass);
     }
 
     public int getRemainRescheduleTimes(Teacher teacher, String status, String type, boolean isForRescheduleAction){

@@ -1,0 +1,49 @@
+<p class=MsoNormal style='line-height:normal;background:white'><span
+        lang=EN-US style='font-size:10.5pt;font-family:"Verdana",sans-serif;color:black'><strong>Mock Class Rubric</strong></span></p>
+<p class=MsoNormal style='line-height:normal;background:white'><span
+        lang=EN-US style='font-size:10.5pt;font-family:"Verdana",sans-serif;color:black'>Full points = teacher fully meets the criterion</span></p>
+<p class=MsoNormal style='line-height:normal;background:white'><span
+        lang=EN-US style='font-size:10.5pt;font-family:"Verdana",sans-serif;color:black'>Partial points= teacher partially meets the criterion</span></p>
+<p class=MsoNormal style='line-height:normal;background:white'><span
+        lang=EN-US style='font-size:10.5pt;font-family:"Verdana",sans-serif;color:black'>No points= teacher fails to meet the criterion</span></p>
+
+<div>
+    <table width="700" border="1" cellpadding="6">
+        <tr>
+            <th>Section</th>
+            <th>Criteria</th>
+            <th>Points</th>
+        </tr>
+        #set($rubricResults = $resultMap.get(1))
+        #set($sectionMap = $countMap.get(1))
+        #set($sectionId = 0)
+        #foreach($item in $rubricResults)
+            <tr>
+                #if($sectionId != ${item.id})
+                    <td rowspan="$!{sectionMap.get(${item.id})}">${item.name}</td>
+                #end
+                <td>${item.title}</td>
+                <td align="center">${item.points}</td>
+                #set($sectionId = ${item.id})
+            </tr>
+        #end
+    </table>
+</div>
+
+<br/>
+
+<p class=MsoNormal style='line-height:normal;background:white'><span
+        lang=EN-US style='font-size:10.5pt;font-family:"Verdana",sans-serif;color:black'><strong>Professionalism</strong></span></p>
+
+<div>
+    <table width="700" border="1" cellpadding="6">
+        #set($rubricResults = $resultMap.get(2))
+        #foreach($item in $rubricResults)
+            <tr>
+                <td>${item.name}</td>
+                <td>${item.title}</td>
+                <td align="center">#if(0 == ${item.points}) YES #else NO #end</td>
+            </tr>
+        #end
+    </table>
+</div>

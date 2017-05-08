@@ -55,6 +55,9 @@ public class InfoRoomDto {
 	
 	private Long teacherApplicationId;
 
+	// mock class
+	private Integer version;
+
 	public Long getOnlineClassId() {
 		return onlineClassId;
 	}
@@ -230,5 +233,13 @@ public class InfoRoomDto {
 	public void setTeacherApplicationId(Long teacherApplicationId) {
 		this.teacherApplicationId = teacherApplicationId;
 	}
-	
+
+	public Integer getVersion() {
+		return version;
+	}
+
+	public void setVersion(Integer version) {
+		this.version = version;
+	}
+
 }

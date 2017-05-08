@@ -1,11 +1,11 @@
 package com.vipkid.portal.classroom.model;
 
-import java.util.List;
-import java.util.Map;
-
 import com.vipkid.rest.validation.annotation.Ignore;
 import com.vipkid.rest.validation.annotation.Length;
 import com.vipkid.rest.validation.annotation.NotNull;
+
+import java.util.List;
+import java.util.Map;
 
 @NotNull
 public class PeSupervisorCommentsVo {

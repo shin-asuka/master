@@ -510,4 +510,9 @@
 		WHERE id = #{id}
 	</update>
 
+	<select id="countByInterviewer" resultType="int">
+		SELECT COUNT(*) FROM teacher_application
+		WHERE status="INTERVIEW" AND result="PASS" AND stduent_id=#{stduentId} AND auditor_id IN(2897197,1398691,2036008)
+	</select>
+
 </mapper>

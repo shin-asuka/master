@@ -1,30 +1,6 @@
 package com.vipkid.rest.web;
 
-import java.io.IOException;
-import java.sql.Timestamp;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.locks.LockSupport;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.community.config.PropertyConfigurer;
-import org.community.tools.JsonTools;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 import com.vipkid.enums.TeacherEnum;
 import com.vipkid.enums.TeacherEnum.LifeCycle;
@@ -50,10 +26,30 @@ import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.entity.User;
 import com.vipkid.trpm.service.huanxin.HuanxinService;
 import com.vipkid.trpm.service.passport.PassportService;
+import com.vipkid.trpm.service.portal.TeacherService;
 import com.vipkid.trpm.util.Bean2Map;
 import com.vipkid.trpm.util.CookieUtils;
 import com.vipkid.trpm.util.DateUtils;
 import com.vipkid.trpm.util.IpUtils;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.community.config.PropertyConfigurer;
+import org.community.tools.JsonTools;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.sql.Timestamp;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.LockSupport;
 
 @RestController
 @RequestMapping("/user")
@@ -78,6 +74,9 @@ public class LoginController extends RestfulController {
 
     @Autowired
     private AdminQuizService adminQuizService;
+
+    @Autowired
+    private TeacherService teacherService;
         
 
     /**
@@ -296,6 +295,24 @@ public class LoginController extends RestfulController {
             if (!passportService.checkVerifyCode(bean.getKey(),bean.getImageCode())) {
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
                 return ReturnMapUtils.returnFail(AjaxCode.VERIFY_CODE_ERROR,"验证码校验不通过！" + email);
+            }
+
+            //检查ReferralCode
+            String referralCode = bean.getReferralCode();
+            logger.info("check ReferralCode:{}",referralCode);
+            if (StringUtils.isNotBlank(bean.getReferralCode())){
+                boolean match = teacherService.isMatch(referralCode);
+                if (!match){
+                    response.setStatus(HttpStatus.BAD_REQUEST.value());
+                    return ReturnMapUtils.returnFail(AjaxCode.REFERRAL_CODE_ERROR,"referral code error");
+                }
+                long referralId = teacherService.getTeacherIdByReferralCode(referralCode);
+                bean.setRefereeId(referralId);
+                User user = passportService.findUserById(referralId);
+                if (null == user){
+                    response.setStatus(HttpStatus.BAD_REQUEST.value());
+                    return ReturnMapUtils.returnFail(AjaxCode.REFERRAL_NOT_EXIST,"Referral code does not exist, please check.");
+                }
             }
             
             logger.info("账户数据检查:{}",bean.getEmail());
@@ -548,6 +565,10 @@ public class LoginController extends RestfulController {
 
             TeacherInfo teacherinfo = new TeacherInfo();
             teacherinfo.setTeacherId(this.getUser(request).getId());
+
+            //添加 ReferralCode
+            String referralCode = teacherService.getReferralCodeByTeacherId(this.getUser(request).getId());
+            teacherinfo.setReferralCode(referralCode);
             //权限判断 start
             loginService.findByTeacherModule(teacherinfo, teacher.getLifeCycle());
             //其他信息
@@ -645,4 +666,21 @@ public class LoginController extends RestfulController {
         }
 
     }
+
+    @RequestMapping(value = "/getReferralCode", method = RequestMethod.POST, produces = RestfulConfig.JSON_UTF_8)
+    public Map<String, Object> getReferralCode(HttpServletRequest request, HttpServletResponse response, @RequestBody Map<String,Long> param){
+
+        Map<String,Object> result = Maps.newHashMap();
+        try {
+            Preconditions.checkArgument(null != param.get("referralId"),"referralId can not be null");
+            long referralId = param.get("referralId").longValue();
+            String referralCode = teacherService.getReferralCodeByTeacherId(referralId);
+            result.put("referralCode",referralCode);
+
+        }catch (Exception e){
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+        }
+        return result;
+    }
+
 }

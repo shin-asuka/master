@@ -43,6 +43,7 @@ public class TeacherEnum {
         //2016-11 新增渠道分类
         TEACHER,
         PARTNER,
+		REFERRAL_CODE,
         OTHER // 其他
     }
 

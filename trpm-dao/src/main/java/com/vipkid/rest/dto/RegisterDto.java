@@ -25,6 +25,26 @@ public class RegisterDto {
     @NotNull
     private String imageCode;
 
+    private String referralCode;
+
+    private String channel;
+
+    public String getChannel() {
+        return channel;
+    }
+
+    public void setChannel(String channel) {
+        this.channel = channel;
+    }
+
+    public String getReferralCode() {
+        return referralCode;
+    }
+
+    public void setReferralCode(String referralCode) {
+        this.referralCode = referralCode;
+    }
+
     public String getEmail() {
         return email;
     }

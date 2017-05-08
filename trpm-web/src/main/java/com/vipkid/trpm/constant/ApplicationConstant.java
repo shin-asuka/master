@@ -73,6 +73,10 @@ public interface ApplicationConstant {
 
         public static String VERIFY_CODE_ERROR = "verify-code-error";
 
+        public static String REFERRAL_CODE_ERROR = "referral-code-error";
+
+        public static String REFERRAL_NOT_EXIST = "referral-not-exist";
+
         public static String SYSTEM_BUSY = "system-busy";
 
     }

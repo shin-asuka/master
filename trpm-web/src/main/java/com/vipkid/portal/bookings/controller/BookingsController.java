@@ -123,7 +123,7 @@ public class BookingsController {
                     bookingsService.doCreateTimeSlotWithLock(timeSlotCreateRequest, loginService.getTeacher());
             if (Objects.nonNull(dataMap.get("error"))) {
                 response.setStatus(HttpStatus.FORBIDDEN.value());
-                return ApiResponseUtils.buildErrorResp(HttpStatus.FORBIDDEN.value(), (String) dataMap.get("error"));
+                return ApiResponseUtils.buildErrorResp(HttpStatus.FORBIDDEN.value(), String.valueOf(dataMap.get("error")));
             } else {
                 return ApiResponseUtils.buildSuccessDataResp(dataMap);
             }
@@ -162,7 +162,7 @@ public class BookingsController {
                     bookingsService.doCancelTimeSlot(timeSlotCancelRequest, loginService.getTeacher());
             if (Objects.nonNull(dataMap.get("error"))) {
                 response.setStatus(HttpStatus.FORBIDDEN.value());
-                return ApiResponseUtils.buildErrorResp(HttpStatus.FORBIDDEN.value(), (String) dataMap.get("error"));
+                return ApiResponseUtils.buildErrorResp(HttpStatus.FORBIDDEN.value(), String.valueOf(dataMap.get("error")));
             } else {
                 return ApiResponseUtils.buildSuccessDataResp(dataMap);
             }
