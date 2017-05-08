@@ -15,10 +15,8 @@ import com.vipkid.rest.utils.UserUtils;
 import com.vipkid.trpm.dao.OnlineClassDao;
 import com.vipkid.trpm.dao.TeacherDao;
 import com.vipkid.trpm.dao.TeacherGloryInfoDao;
-import com.vipkid.trpm.entity.OnlineClass;
-import com.vipkid.trpm.entity.Teacher;
-import com.vipkid.trpm.entity.TeacherGloryInfo;
-import com.vipkid.trpm.entity.User;
+import com.vipkid.trpm.dao.TeacherGloryLogDao;
+import com.vipkid.trpm.entity.*;
 import com.vipkid.trpm.service.portal.OnlineClassService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -53,6 +51,9 @@ public class TeacherGloryRestService{
     private TeacherApplicationDao teacherApplicationDao;
     @Autowired
     private TeacherGloryInfoDao teacherGloryInfoDao;
+    @Autowired
+    private TeacherGloryLogDao teacherGloryLogDao;
+
     public String[] refeshGlory(String currentGlory,Integer userId) {
 
         //新建一个成就数组，初始化数据
@@ -335,4 +336,9 @@ public class TeacherGloryRestService{
         }
     }
 
+    public void saveLog(List<TeacherGlory> teacherGlories){
+        for(TeacherGlory teacherGlorie:teacherGlories){
+            teacherGloryLogDao.saveLog(teacherGlorie.toTeacherGloryLog(teacherGlorie));
+        }
+    }
 }

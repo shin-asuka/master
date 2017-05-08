@@ -1,5 +1,10 @@
 package com.vipkid.portal.glory.model;
 
+import com.vipkid.trpm.entity.TeacherGloryLog;
+
+import java.sql.Timestamp;
+import java.util.Calendar;
+
 /**
  * Created by LP-813 on 2017/4/24.
  */
@@ -95,4 +100,13 @@ public class TeacherGlory {
     public void setTitle(String title) {
         this.title = title;
     }
+
+    public TeacherGloryLog toTeacherGloryLog(TeacherGlory teacherGlory){
+        TeacherGloryLog teacherGloryLog = new TeacherGloryLog();
+        teacherGloryLog.setId(null);
+        teacherGloryLog.setUserId(teacherGlory.getUserId());
+        teacherGloryLog.setGloryId(teacherGlory.getId());
+        teacherGloryLog.setShowTime(new Timestamp(Calendar.getInstance().getTime().getTime()));
+        return teacherGloryLog;
+    };
 }
