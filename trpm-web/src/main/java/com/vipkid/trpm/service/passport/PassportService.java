@@ -177,15 +177,6 @@ public class PassportService {
             teacher.setId(user.getId());
             teacher.setEmail(bean.getEmail());
             teacher.setLifeCycle(TeacherEnum.LifeCycle.SIGNUP.toString());
-            String serialNumber = teacherDao.getSerialNumber();
-
-            //启用分布式锁检查，避免出现重复serialNumber
-            lockKey = trySerialNumberLock(serialNumber);
-            if (StringUtils.isBlank(lockKey)) {
-                logger.info("老师注册, 最大serialNumber已被占用， 请稍后再试 . email="+email);
-                return ReturnMapUtils.returnFail(ApplicationConstant.AjaxCode.SYSTEM_BUSY);
-            }
-            teacher.setSerialNumber(serialNumber);
             teacher.setRecruitmentId(System.currentTimeMillis() + "-" + encoder.encode(teacher.getSerialNumber() + "kxoucywejl" + teacher.getEmail()));
             teacher.setCurrency(TeacherEnum.Currency.US_DOLLAR.toString());
             teacher.setContractType(TeacherEnum.ContractType.FOUR_A.getVal());
@@ -215,9 +206,6 @@ public class PassportService {
         } catch(Exception e){
             logger.error("老师注册发生异常，email="+bean.getEmail(), e);
             throw new ServiceException(TeacherPortalCodeEnum.SYS_FAIL.getCode(), TeacherPortalCodeEnum.SYS_FAIL.getMsg());
-        } finally {
-            releaseLock(usernameKey);
-            releaseLock(lockKey);
         }
         return ReturnMapUtils.returnSuccess(resultMap);
     }
