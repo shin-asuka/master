@@ -197,13 +197,15 @@ public class TeacherGloryRestService{
         String handle12(String status){
             if(TeacherGloryEnum.Status.UNFINISH.equals(status)) {
                 StudentCommentPageVo studentCommentPageVo = manageGatewayService.getStudentCommentListByTeacherId(userId.intValue(), null, null, "high");
-                Integer total = studentCommentPageVo.getTotal();
+                Integer total = 0;
+                if(CollectionUtils.isNotEmpty(studentCommentPageVo.getData())){
+                    total = studentCommentPageVo.getData().size();
+                };
                 if(total>0) {
-                    StudentCommentPageVo lastStudentComment = manageGatewayService.getStudentCommentListByTeacherId(userId.intValue(), total-1,1, "high");
-                    List<StudentCommentVo> studentCommentVos = lastStudentComment.getData();
-                    if(CollectionUtils.isNotEmpty(studentCommentVos)) {
+                    StudentCommentVo lastStudentComment = studentCommentPageVo.getData().get(total-1);
+                    if(null != lastStudentComment) {
                         try {
-                            Date finishTime = DateUtils.parseDate(studentCommentVos.get(0).getCreate_time());
+                            Date finishTime = DateUtils.parseDate(lastStudentComment.getCreate_time());
                             Long now = Calendar.getInstance().getTime().getTime()/1000;
                             if(now - finishTime.getTime()/1000 <= 7*24*1000){
                                 status = TeacherGloryEnum.Status.FINISH.value();
