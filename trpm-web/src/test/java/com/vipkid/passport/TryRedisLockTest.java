@@ -72,7 +72,7 @@ public class TryRedisLockTest {
 //            System.out.println("**************result============"+result);
 
             RegisterDto dto = new RegisterDto();
-            dto.setEmail("luojiaoxicvdd"+index+"@aaa.com");
+            dto.setEmail("luojiaoxicdvdd"+index+"@aaa.com");
             dto.setPassword("aaaaa33");
             dto.setImageCode("aaaa");
 

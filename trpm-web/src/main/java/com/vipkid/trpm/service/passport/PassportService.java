@@ -192,7 +192,7 @@ public class PassportService {
                     this.teacherDao.updateActivityExamInfo(bean.getActivityExamId(), teacher.getId());
                 }
             }
-            logger.info(" Sign up teacher: " + teacher.getSerialNumber());
+            logger.info(" Sign up teacher,teacherId: " + teacher.getId());
             if (PropertyConfigurer.booleanValue("signup.send.mail.switch")) {
                 // 4.发送邮件(带着Recruitment ID)
                 EmailUtils.sendActivationEmail(teacher);
