@@ -18,10 +18,7 @@ import com.vipkid.recruitment.practicum.PracticumConstant;
 import com.vipkid.recruitment.utils.ReturnMapUtils;
 import com.vipkid.rest.dto.TimezoneDto;
 import com.vipkid.trpm.constant.ApplicationConstant.FinishType;
-import com.vipkid.trpm.dao.OnlineClassDao;
-import com.vipkid.trpm.dao.TeacherAddressDao;
-import com.vipkid.trpm.dao.TeacherDao;
-import com.vipkid.trpm.dao.TeacherLocationDao;
+import com.vipkid.trpm.dao.*;
 import com.vipkid.trpm.entity.OnlineClass;
 import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.entity.TeacherAddress;
@@ -65,6 +62,9 @@ public class RecruitmentService {
 
     @Autowired
     private TeacherLockLogDao teacherLockLogDao;
+
+    @Autowired
+    private TeacherPeFeedbackDao teacherPeFeedbackDao;
 
     /**
      * 获取老师当前LifeCycle状态下的流程结果 
@@ -400,6 +400,15 @@ public class RecruitmentService {
                 result.put("scheduledDateTime",onlineClass.getScheduledDateTime().getTime());
                 result.put("onlineClassId", onlineClass.getId());
                 result.put("isQuickInterview", onlineClass.getClassType() == OnlineClassEnum.ClassType.QUICK_INTERVIEW.val() ? true : false);
+                // mockclass
+                TeacherApplication teacherApplication = teacherApplicationDao.findApplicationByOnlineClassId(onlineClass.getId(), teacher.getId());
+                if(null != teacherApplication) {
+                    result.put("applicationId", teacherApplication.getId());
+                    int appId = Long.valueOf(teacherApplication.getId()).intValue();
+                    result.put("submitted", teacherPeFeedbackDao.hasTeacherPeFeedback(appId));
+                    // 灰度发布 FIXME
+                    result.put("showFeedback", teacherApplicationDao.countByInterviewer(teacherApplication.getStduentId()));
+                }
             }
         }
         return result;
@@ -437,10 +446,7 @@ public class RecruitmentService {
         }
         //当前步骤已经pass过 不允许操作
         List<TeacherApplication> pass = teacherApplicationDao.findApplicationForStatusResult(teacher.getId(),teacher.getLifeCycle(),Result.PASS.toString());
-        if(CollectionUtils.isNotEmpty(pass)){
-            return true;
-        }
-        return false;
+        return CollectionUtils.isNotEmpty(pass);
     }
 
     public int getRemainRescheduleTimes(Teacher teacher, String status, String type, boolean isForRescheduleAction){

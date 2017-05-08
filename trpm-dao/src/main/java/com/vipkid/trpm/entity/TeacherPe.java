@@ -1,8 +1,8 @@
 package com.vipkid.trpm.entity;
 
-import java.io.Serializable;
-
 import org.community.dao.support.Entity;
+
+import java.io.Serializable;
 
 public class TeacherPe extends Entity implements Serializable {
 
@@ -11,25 +11,25 @@ public class TeacherPe extends Entity implements Serializable {
     private int id;
     /*  */
     private long onlineClassId;
-    /*  */
+    /* candidate id */
     private long teacherId;
-    /*  */
+    /* candidate 的名称 */
     private String teacherName;
-    /*  */
+    /* PES 的 id */
     private long peId = -1;
-    /*  */
+    /* 课程序列号 */
     private String serialNumber;
-    /*  */
+    /* 课程名称 */
     private String lessonName;
-    /*  */
+    /* 课程开始时间 */
     private java.sql.Timestamp scheduleTime;
-    /*  */
+    /* PE 名字 */
     private String studentName;
-    /*  */
+    /* PE 的 id */
     private long studentId;
-    /*  */
+    /* PE 的评价 */
     private String teacherComment;
-    /*  */
+    /* PES 的评价 */
     private String peComment;
     /*  */
     private java.sql.Timestamp creationTime;
@@ -43,8 +43,10 @@ public class TeacherPe extends Entity implements Serializable {
     /* 1:Fail, 2.TBD */
     private int teacherAction;
 
+    // 过期毫秒值
     private long expiredMillis;
 
+    // 过期提醒
     private int expiredRemind = -1;
 
     private java.sql.Timestamp operatorStartTime;

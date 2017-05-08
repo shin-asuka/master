@@ -177,6 +177,19 @@ public class TeacherApplicationDao extends MapperDaoTemplate<TeacherApplication>
         }
     }
 
+    public TeacherApplication findByOlineclassId(long onlineClassId) {
+        TeacherApplication teacherApplication = new TeacherApplication();
+        teacherApplication.setOrderString("id DESC");
+        List<TeacherApplication> teacherApplications =
+                super.selectList(teacherApplication.setOnlineClassId(onlineClassId));
+
+        if(CollectionUtils.isNotEmpty(teacherApplications)){
+            return teacherApplications.stream().findFirst().get();
+        }else{
+            return teacherApplication;
+        }
+    }
+
     @Override
     public int save(TeacherApplication teacherApplication) {
         return super.save(teacherApplication);
@@ -253,6 +266,12 @@ public class TeacherApplicationDao extends MapperDaoTemplate<TeacherApplication>
     public void initApplicationAnswer(TeacherApplication teacherApplication){
         Preconditions.checkArgument(0!=teacherApplication.getId());
         super.update(teacherApplication, "initApplicationAnswer");
+    }
+
+    public int countByInterviewer(long studentId){
+        TeacherApplication teacherApplication = new TeacherApplication();
+        teacherApplication.setStduentId(studentId);
+        return super.selectCount(teacherApplication, "countByInterviewer");
     }
 
 }
