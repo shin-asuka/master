@@ -13,7 +13,6 @@ public class TeacherGloryLog extends Entity implements Serializable {
     private Integer id;
     private Integer userId;
     private Integer gloryId;
-    private Integer status;
     private Timestamp showTime;
 
     public Integer getId() {
@@ -38,14 +37,6 @@ public class TeacherGloryLog extends Entity implements Serializable {
 
     public void setGloryId(Integer gloryId) {
         this.gloryId = gloryId;
-    }
-
-    public Integer getStatus() {
-        return status;
-    }
-
-    public void setStatus(Integer status) {
-        this.status = status;
     }
 
        public Timestamp getShowTime() {
