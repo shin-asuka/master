@@ -672,8 +672,8 @@ public class LoginController extends RestfulController {
 
         Map<String,Object> result = Maps.newHashMap();
         try {
-            long referralId = param.get("referralId");
-            Preconditions.checkArgument(null != Long.valueOf(referralId),"referralId can not be null");
+            Preconditions.checkArgument(null != param.get("referralId"),"referralId can not be null");
+            long referralId = param.get("referralId").longValue();
             String referralCode = teacherService.getReferralCodeByTeacherId(referralId);
             result.put("referralCode",referralCode);
 
