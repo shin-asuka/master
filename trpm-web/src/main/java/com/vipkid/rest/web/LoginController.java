@@ -309,7 +309,7 @@ public class LoginController extends RestfulController {
                 long referralId = teacherService.getTeacherIdByReferralCode(referralCode);
                 bean.setRefereeId(referralId);
                 User user = passportService.findUserById(referralId);
-                if (null == user){
+                if (null == user || !StringUtils.equals(user.getDtype(),UserEnum.Dtype.TEACHER.val())){
                     response.setStatus(HttpStatus.BAD_REQUEST.value());
                     return ReturnMapUtils.returnFail(AjaxCode.REFERRAL_NOT_EXIST,"Referral code does not exist, please check.");
                 }
