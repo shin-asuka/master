@@ -37,7 +37,7 @@ public class PrizeHandleService {
 	/**
 	 * 课程限制开始时间 2017-04-01 00:00:00
 	 */
-	public final static Date CLASS_START_DATE = DateUtils.parseDate("2016-04-01 00:00:00");
+	public final static Date CLASS_START_DATE = DateUtils.parseDate("2017-04-01 00:00:00");
 	
 	/**
 	 * 
