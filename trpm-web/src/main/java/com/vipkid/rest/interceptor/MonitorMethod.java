@@ -110,7 +110,7 @@ public class MonitorMethod {
         	stopWatch.stop();
             String logString = reslult;
             if(logString != null && logString.length() > 100) logString = logString.substring(0,100);
-            logger.info("\nInvocation Time : Execution use time【" + (stopWatch.getNanoTime()/(1000*1000)) + " 毫秒】, MonitorMethod:【" +pjp + "】,参数:【"+argString+"】, 结果集(前100位):" + logString);
+            logger.info("Invocation Time : Execution use time【" + (stopWatch.getNanoTime()/(1000*1000)) + " 毫秒】, MonitorMethod:【" +pjp + "】,参数:【"+argString+"】, 结果集(前100位):" + logString);
         }
     }
 }
