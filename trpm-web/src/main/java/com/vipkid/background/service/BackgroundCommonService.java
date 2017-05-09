@@ -68,7 +68,7 @@ public class BackgroundCommonService {
             return backgroundStatusDto;
         }
         Date now =new Date();
-        boolean hasAlert=DateUtils.addMonth(contractEndDate, -intervalMonth).before(now);
+        boolean hasAlert = DateUtils.addMonth(contractEndDate, -1).before(now);
         if(hasAlert || DateUtils.addMonth(contractEndDate,1).after(now)){ //合同到期的时候进行续约提醒
             backgroundStatusDto.setContractEndWithInOneMonth(personalInfoService.needNewContract(teacher));
         }
@@ -82,10 +82,9 @@ public class BackgroundCommonService {
         }
 
 
-
-
         //合同即将到期需进行背调,提前一个月进行弹窗提示
-        if (hasAlert){
+        boolean needCheck = DateUtils.addMonth(contractEndDate, -intervalMonth).before(now);
+        if (needCheck){
             BackgroundScreening backgroundScreening = backgroundScreeningDao.findByTeacherIdTopOne(teacher.getId());
 
             //没有背调结果，即第一次开始背调
@@ -265,7 +264,7 @@ public class BackgroundCommonService {
             return backgroundStatusDto;
         }
         Date now =new Date();
-        boolean hasAlert=DateUtils.addMonth(contractEndDate, -intervalMonth).before(now);
+        boolean hasAlert = DateUtils.addMonth(contractEndDate, -1).before(now);
         if(hasAlert || DateUtils.addMonth(contractEndDate,1).after(now)){ //合同到期的时候进行续约提醒
             backgroundStatusDto.setContractEndWithInOneMonth(personalInfoService.needNewContract(teacher));
         }
@@ -282,8 +281,10 @@ public class BackgroundCommonService {
 //        Calendar  remindTime = Calendar.getInstance();
 //        remindTime.setTime(contractEndDate);
 //        remindTime.add(Calendar.MONTH,-1);
+
         //合同即将到期需进行背调,提前一个月进行弹窗提示
-        if (hasAlert) {
+        boolean needCheck = DateUtils.addMonth(contractEndDate, -intervalMonth).before(now);
+        if (needCheck) {
             CanadaBackgroundScreening canadaBackgroundScreening = canadaBackgroundScreeningDao.findByTeacherId(teacher.getId());
             //第一次进行背调
             if (null == canadaBackgroundScreening) {
