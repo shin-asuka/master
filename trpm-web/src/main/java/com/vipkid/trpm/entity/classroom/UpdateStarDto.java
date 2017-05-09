@@ -6,7 +6,7 @@ public class UpdateStarDto {
 
     private String msg;
 
-    private boolean data;
+    private int data;
 
     public int getCode() {
         return code;
@@ -24,11 +24,11 @@ public class UpdateStarDto {
         this.msg = msg;
     }
 
-    public boolean isData() {
+    public int getData() {
         return data;
     }
 
-    public void setData(boolean data) {
+    public void setData(int data) {
         this.data = data;
     }
 

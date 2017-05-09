@@ -572,7 +572,8 @@ public class ClassroomService {
            if (null != resultJson) {
                UpdateStarDto updateStarDto = JsonUtils.toBean(resultJson, UpdateStarDto.class);
                if(updateStarDto.getCode() == HttpStatus.OK.value()){
-                   resultMap.put("status", updateStarDto.isData());
+                   resultMap.put("status", true);
+                   resultMap.put("data",updateStarDto.getData());
                } else {
             	   resultMap.put("info", " The request error. ");
             	   logger.info("请求未返回200,code:"+updateStarDto.getCode()+",url:"+url);
