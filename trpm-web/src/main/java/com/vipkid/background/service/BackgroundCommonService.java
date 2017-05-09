@@ -53,7 +53,7 @@ public class BackgroundCommonService {
 
     private static Logger logger = LoggerFactory.getLogger(BackgroundCommonService.class);
     private boolean  backgroundSwitch = PropertyConfigurer.booleanValue("background.sterling.switch");
-
+    private int intervalMonth = 2;
 
     public BackgroundStatusDto getUsaBackgroundStatus(Teacher teacher){
         BackgroundStatusDto backgroundStatusDto = new BackgroundStatusDto();
@@ -68,7 +68,7 @@ public class BackgroundCommonService {
             return backgroundStatusDto;
         }
         Date now =new Date();
-        boolean hasAlert=DateUtils.addMonth(contractEndDate,-1).before(now);
+        boolean hasAlert=DateUtils.addMonth(contractEndDate, -intervalMonth).before(now);
         if(hasAlert || DateUtils.addMonth(contractEndDate,1).after(now)){ //合同到期的时候进行续约提醒
             backgroundStatusDto.setContractEndWithInOneMonth(personalInfoService.needNewContract(teacher));
         }
@@ -265,7 +265,7 @@ public class BackgroundCommonService {
             return backgroundStatusDto;
         }
         Date now =new Date();
-        boolean hasAlert=DateUtils.addMonth(contractEndDate,-1).before(now);
+        boolean hasAlert=DateUtils.addMonth(contractEndDate, -intervalMonth).before(now);
         if(hasAlert || DateUtils.addMonth(contractEndDate,1).after(now)){ //合同到期的时候进行续约提醒
             backgroundStatusDto.setContractEndWithInOneMonth(personalInfoService.needNewContract(teacher));
         }
@@ -283,7 +283,7 @@ public class BackgroundCommonService {
 //        remindTime.setTime(contractEndDate);
 //        remindTime.add(Calendar.MONTH,-1);
         //合同即将到期需进行背调,提前一个月进行弹窗提示
-        if (hasAlert ) {
+        if (hasAlert) {
             CanadaBackgroundScreening canadaBackgroundScreening = canadaBackgroundScreeningDao.findByTeacherId(teacher.getId());
             //第一次进行背调
             if (null == canadaBackgroundScreening) {
@@ -422,8 +422,8 @@ public class BackgroundCommonService {
     }
 
     public Calendar backgroundDateCondition(Calendar calendar){
-        calendar.add(Calendar.YEAR,-2);
-        calendar.add(Calendar.MONTH,1);
+        calendar.add(Calendar.YEAR, -2);
+        calendar.add(Calendar.MONTH, intervalMonth);
         return calendar;
     }
 }
