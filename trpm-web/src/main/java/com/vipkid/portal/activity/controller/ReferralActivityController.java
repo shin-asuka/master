@@ -178,6 +178,9 @@ public class ReferralActivityController extends RestfulController{
 	    	StartHandleVo beanVo = new StartHandleVo();
 			if(NumericUtils.isNull(user)){
 				//一般用户参与
+				if(bean.getShareRecordId() == 0){
+					return ApiResponseUtils.buildErrorResp(-3, "访问参数错误!");
+				}
 				beanVo = this.referralActivityService.updateStartEaxm(bean.getShareRecordId(), bean.getCandidateKey(), IpUtils.getIpAddress(request), 1);
 			}else{
 				//老师参与 

@@ -5,12 +5,9 @@ package com.vipkid.http.utils;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.google.common.base.Preconditions;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpEntity;
@@ -243,6 +240,11 @@ public class WebUtils {
     }
 
     public static String postJSON(String url, JSONObject json) {
+        return postJSON(url, json, null);
+    }
+
+
+    public static String postJSON(String url, JSONObject json, Map<String,String> haredMpas) {
         logger.info("Post data,url = {},params = {}", url, json);
         CloseableHttpResponse response = null;
         try {
@@ -252,7 +254,11 @@ public class WebUtils {
             stringEntity.setContentType("application/json");
             httpPost.setEntity(stringEntity);
             logger.info("Post data map,url = {},params = {}", url, json);
-
+            if(org.apache.commons.collections.MapUtils.isNotEmpty(haredMpas)){
+	            for(String key : haredMpas.keySet()){
+	            	httpPost.addHeader(key, haredMpas.get(key).toString());
+	            }
+            }
             CloseableHttpClient httpclient = HttpClients.createDefault();
             response = httpclient.execute(httpPost);
             logger.info("Post data,response status line = {}",response.getStatusLine());
