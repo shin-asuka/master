@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -83,6 +84,10 @@ public class PrizeController extends RestfulController {
 	    	StudentCommentVo checkBean = list.get(0);
 	    	if(checkBean.getRating() < 4.6){
 	    		return ApiResponseUtils.buildErrorResp(-2, "获取抽奖卷失败，原因不是五星好评的Comment:"+onlineClassIdStr);	    		
+	    	}
+	    	
+	    	if(StringUtils.isBlank(checkBean.getContent())){
+	    		return ApiResponseUtils.buildErrorResp(-2, "获取抽奖卷失败，原因不是有评论五星好评的Comment:"+onlineClassIdStr);	    		
 	    	}
 	    	
 	    	if(checkBean.getTeacher_id() != teacherId.intValue()){
