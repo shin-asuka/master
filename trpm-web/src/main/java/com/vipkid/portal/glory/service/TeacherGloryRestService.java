@@ -35,7 +35,7 @@ import java.util.*;
  * Created by LP-813 on 2017/4/25.
  */
 @Service
-public class TeacherGloryRestService{
+public class TeacherGloryRestService {
 
     private static final String NO_GLORY = "0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0";
 
@@ -54,15 +54,15 @@ public class TeacherGloryRestService{
     @Autowired
     private TeacherGloryLogDao teacherGloryLogDao;
 
-    public String[] refeshGlory(String currentGlory,Integer userId) {
+    public String[] refeshGlory(String currentGlory, Integer userId) {
 
         //新建一个成就数组，初始化数据
-        String initGlory  = NO_GLORY + "," + new Date().getTime()/1000;
-        String[] gloryArr = StringUtils.split(initGlory,",");
+        String initGlory = NO_GLORY + "," + new Date().getTime() / 1000;
+        String[] gloryArr = StringUtils.split(initGlory, ",");
 
         //加载当前成就
-        if(StringUtils.isNotEmpty(currentGlory)) {
-            gloryArr = StringUtils.split(currentGlory,",");
+        if (StringUtils.isNotEmpty(currentGlory)) {
+            gloryArr = StringUtils.split(currentGlory, ",");
 //            Long cacheTime = NumberUtils.toLong(gloryArr[gloryArr.length - 1]);
 
 //            //距上次成就计算时间不足15min，不再重新计算
@@ -90,25 +90,25 @@ public class TeacherGloryRestService{
         gloryArr[13] = gloryHandler.handle14(gloryArr[13]);
         gloryArr[14] = gloryHandler.handle15(gloryArr[14]);
         gloryArr[15] = gloryHandler.handle16(gloryArr[15]);
-        gloryArr[16] = String.valueOf(new Date().getTime()/1000);
+        gloryArr[16] = String.valueOf(new Date().getTime() / 1000);
         return gloryArr;
     }
 
-    public List<TeacherGlory> getGloryView(String[] gloryArr,long userId,String site) {
+    public List<TeacherGlory> getGloryView(String[] gloryArr, long userId, String site) {
         //读取glory字典
         List<TeacherGloryInfo> teacherGloryInfoList = teacherGloryInfoDao.getAll();
-        Map<Integer,TeacherGloryInfo> gloryMap = Maps.newHashMap();
-        for(TeacherGloryInfo teacherGloryInfo :teacherGloryInfoList){
-            gloryMap.put(teacherGloryInfo.getId(),teacherGloryInfo);
+        Map<Integer, TeacherGloryInfo> gloryMap = Maps.newHashMap();
+        for (TeacherGloryInfo teacherGloryInfo : teacherGloryInfoList) {
+            gloryMap.put(teacherGloryInfo.getId(), teacherGloryInfo);
         }
 
         //计算需要展示的成绩内容
         List<TeacherGlory> teacherGloryList = Lists.newArrayList();
-        for(int i=0;i<gloryArr.length;i++) {
-            if(TeacherGloryEnum.Status.FINISH.value().equals(gloryArr[i])){
-                if(i == 14 && TeacherGloryEnum.Source.CONTRACT.value().equals(site) ||
-                   i == 13 && TeacherGloryEnum.Source.TRAINING.value().equals(site) ||
-                   i!=13 && i!=14 && TeacherGloryEnum.Source.BOOKING.value().equals(site)){
+        for (int i = 0; i < gloryArr.length; i++) {
+            if (TeacherGloryEnum.Status.FINISH.value().equals(gloryArr[i])) {
+                if (i == 14 && TeacherGloryEnum.Source.CONTRACT.value().equals(site) ||
+                        i == 13 && TeacherGloryEnum.Source.TRAINING.value().equals(site) ||
+                        i != 13 && i != 14 && TeacherGloryEnum.Source.BOOKING.value().equals(site)) {
                     TeacherGlory teacherGlory = new TeacherGlory();
                     Integer gloryId = i + 1;
                     teacherGlory.setId(gloryId);
@@ -131,7 +131,7 @@ public class TeacherGloryRestService{
 
     //完成展示，状态转移为SHOWN
     public String[] markShownStatus(String[] gloryArr) {
-        for(int i=0;i<gloryArr.length;i++) {
+        for (int i = 0; i < gloryArr.length; i++) {
             if (TeacherGloryEnum.Status.FINISH.value().equals(gloryArr[i])) {
                 gloryArr[i] = TeacherGloryEnum.Status.SHOWN.value();
             }
@@ -139,113 +139,152 @@ public class TeacherGloryRestService{
         return gloryArr;
     }
 
-    class GloryHandler{
+    class GloryHandler {
 
         private Long userId;
-        private List<Map<String,Object>> teacherClassList = null;
-        private List<Map<String,Object>> teacherReferalList = null;
+        private List<Map<String, Object>> teacherClassList = null;
+        private List<Map<String, Object>> teacherReferalList = null;
 
-        GloryHandler(Long userId){
+        GloryHandler(Long userId) {
             this.userId = userId;
         }
 
         //Life Cycle变为Regular
-        String handle1(String status){
-            return recruitmentStatusGlory(status,"CONTRACT_INFO",0);
-        };
+        String handle1(String status) {
+            return recruitmentStatusGlory(status, "CONTRACT_INFO", 0);
+        }
+
+        ;
+
         //As Schedule课程记录达到1节
-        String handle2(String status){
-            return classNumGlory(status,1);
-        };
+        String handle2(String status) {
+            return classNumGlory(status, 1);
+        }
+
+        ;
+
         //As Schedule课程记录达到10节
-        String handle3(String status){
-            return classNumGlory(status,10);
-        };
+        String handle3(String status) {
+            return classNumGlory(status, 10);
+        }
+
+        ;
+
         //As Schedule课程记录达到100节
-        String handle4(String status){
-            return classNumGlory(status,100);
-        };
+        String handle4(String status) {
+            return classNumGlory(status, 100);
+        }
+
+        ;
+
         //As Schedule课程记录达到500节
-        String handle5(String status){
-            return classNumGlory(status,500);
-        };
+        String handle5(String status) {
+            return classNumGlory(status, 500);
+        }
+
+        ;
+
         //As Schedule课程记录达到1000节
-        String handle6(String status){
-            return classNumGlory(status,1000);
-        };
+        String handle6(String status) {
+            return classNumGlory(status, 1000);
+        }
+
+        ;
+
         //推荐成功的⽼师（有⾄少⼀节As Schedule完课记录）数量达到1
-        String handle7(String status){
-            return referalNumGlory(status,1);
-        };
+        String handle7(String status) {
+            return referalNumGlory(status, 1);
+        }
+
+        ;
+
         //推荐成功的⽼师（有⾄少⼀节As Schedule完课记录）数量达到10
-        String handle8(String status){
-            return referalNumGlory(status,10);
-        };
+        String handle8(String status) {
+            return referalNumGlory(status, 10);
+        }
+
+        ;
+
         //推荐成功的⽼师（有⾄少⼀节As Schedule完课记录）数量达到100
-        String handle9(String status){
-            return referalNumGlory(status,100);
-        };
+        String handle9(String status) {
+            return referalNumGlory(status, 100);
+        }
+
+        ;
+
         //推荐成功的⽼师（有⾄少一节As Schedule完课记录）数量达到500
-        String handle10(String status){
-            return referalNumGlory(status,500);
-        };
+        String handle10(String status) {
+            return referalNumGlory(status, 500);
+        }
+
+        ;
+
         //推荐成功的⽼师（有⾄少一节As Schedule完课记录）数量达到1000
-        String handle11(String status){
-            return referalNumGlory(status,1000);
-        };
+        String handle11(String status) {
+            return referalNumGlory(status, 1000);
+        }
+
+        ;
+
         //收到了了第⼀个5苹果家⻓评价
-        String handle12(String status){
-            if(TeacherGloryEnum.Status.UNFINISH.value().equals(status)) {
-                StudentCommentPageVo studentCommentPageVo = manageGatewayService.getStudentCommentListByTeacherId(userId.intValue(), null, null, "high");
+        String handle12(String status) {
+            if (TeacherGloryEnum.Status.UNFINISH.value().equals(status)) {
+                StudentCommentPageVo studentCommentPageVo = manageGatewayService.getStudentCommentListByTeacherId(userId.intValue(), null, null, "5");
                 Integer total = 0;
-                if(CollectionUtils.isNotEmpty(studentCommentPageVo.getData())){
+                if (CollectionUtils.isNotEmpty(studentCommentPageVo.getData())) {
                     total = studentCommentPageVo.getData().size();
-                };
-                if(total>0) {
-                    StudentCommentVo lastStudentComment = studentCommentPageVo.getData().get(total-1);
-                    if(null != lastStudentComment) {
-                        try {
-                            Date finishTime = DateUtils.parseDate(lastStudentComment.getCreate_time());
-                            Long now = Calendar.getInstance().getTime().getTime()/1000;
-                            if(now - finishTime.getTime()/1000 <= 7*24*1000){
-                                status = TeacherGloryEnum.Status.FINISH.value();
-                            }else {
-                                status = TeacherGloryEnum.Status.EXPIRED.value();
-                            }
-                        } catch (ParseException e) {
-                            logger.error("【GloryNo12】ParseException---userId:" + userId, e);
+                }
+                ;
+                if (total > 0) {
+                    StudentCommentVo lastStudentComment = studentCommentPageVo.getData().get(total - 1);
+                    if (null != lastStudentComment) {
+                        Long finishTime = NumberUtils.toLong(lastStudentComment.getCreate_time());
+                        Long now = Calendar.getInstance().getTime().getTime() / 1000;
+                        if (now - finishTime <= 7 * 24 * 1000) {
+                            status = TeacherGloryEnum.Status.FINISH.value();
+                        } else {
+                            status = TeacherGloryEnum.Status.EXPIRED.value();
                         }
                     }
                 }
             }
             return status;
-        };
+        }
+
+        ;
+
         //Life Cycle变为Regular时间达到100天
-        String handle13(String status){
-            return recruitmentStatusGlory(status,"CONTRACT_INFO",100);
-        };
+        String handle13(String status) {
+            return recruitmentStatusGlory(status, "CONTRACT_INFO", 100);
+        }
+
+        ;
 
         //Life Cycle变为Teaching Prep
-        String handle14(String status){
-            return recruitmentStatusGlory(status,"INTERVIEW",0);
-        };
+        String handle14(String status) {
+            return recruitmentStatusGlory(status, "INTERVIEW", 0);
+        }
+
+        ;
 
         //Life Cycle变为Contract&Info
-        String handle15(String status){
-            return recruitmentStatusGlory(status,"PRACTICUM",0);
-        };
+        String handle15(String status) {
+            return recruitmentStatusGlory(status, "PRACTICUM", 0);
+        }
+
+        ;
 
         //第⼀节Booked Class记录
-        String handle16(String status){
-            if(status.equals(TeacherGloryEnum.Status.UNFINISH.value())) {
+        String handle16(String status) {
+            if (status.equals(TeacherGloryEnum.Status.UNFINISH.value())) {
                 Long now = Calendar.getInstance().getTime().getTime() / 1000;
                 HashMap cond = Maps.newHashMap();
-                cond.put("teacherId",userId);
-                cond.put("limit",1);
-                List<Map<String,Object>> bookclassList = onlineClassDao.findBookedClassByTeacherId(cond);
-                if(CollectionUtils.isNotEmpty(bookclassList)) {
-                    Map<String,Object> onlineClass = bookclassList.get(0);
-                    Long finishTime = (Long)onlineClass.get("bookDateTime");
+                cond.put("teacherId", userId);
+                cond.put("limit", 1);
+                List<Map<String, Object>> bookclassList = onlineClassDao.findBookedClassByTeacherId(cond);
+                if (CollectionUtils.isNotEmpty(bookclassList)) {
+                    Map<String, Object> onlineClass = bookclassList.get(0);
+                    Long finishTime = (Long) onlineClass.get("bookDateTime");
                     if (now - finishTime <= 7 * 24 * 3600) {
                         return TeacherGloryEnum.Status.FINISH.value();
                     } else {
@@ -254,26 +293,29 @@ public class TeacherGloryRestService{
                 }
             }
             return status;
-        };
+        }
+
+        ;
 
         /**
          * 招募状态类成就通用逻辑，例如：某人PASS某阶段满X天
-         * @param status 成就状态
+         *
+         * @param status            成就状态
          * @param recruitmentStatus 招募状态
-         * @param dayNum 达到天数
+         * @param dayNum            达到天数
          * @return
          */
-        String recruitmentStatusGlory(String status,String recruitmentStatus,Integer dayNum){
-            if(status.equals(TeacherGloryEnum.Status.UNFINISH.value())) {
+        String recruitmentStatusGlory(String status, String recruitmentStatus, Integer dayNum) {
+            if (status.equals(TeacherGloryEnum.Status.UNFINISH.value())) {
                 Long now = Calendar.getInstance().getTime().getTime() / 1000;
                 List<TeacherApplication> teacherApplications = teacherApplicationDao.findApplicationForStatusResult(userId, recruitmentStatus, "PASS");
-                if(CollectionUtils.isNotEmpty(teacherApplications)) {
+                if (CollectionUtils.isNotEmpty(teacherApplications)) {
                     TeacherApplication ta = teacherApplications.get(0);
-                    if(ta.getAuditDateTime()!=null) {
+                    if (ta.getAuditDateTime() != null) {
                         Long finishTime = ta.getAuditDateTime().getTime() / 1000;
-                        if (now - finishTime < (7+dayNum) * 86400 && now - finishTime > dayNum * 86400 ) {
+                        if (now - finishTime < (7 + dayNum) * 86400 && now - finishTime > dayNum * 86400) {
                             return TeacherGloryEnum.Status.FINISH.value();
-                        } else if(now - finishTime <= dayNum * 86400){
+                        } else if (now - finishTime <= dayNum * 86400) {
                             return TeacherGloryEnum.Status.UNFINISH.value();
                         } else {
                             return TeacherGloryEnum.Status.EXPIRED.value();
@@ -287,51 +329,54 @@ public class TeacherGloryRestService{
         /**
          * AS_SCHEDULE类成就通用逻辑
          */
-        String classNumGlory(String status,Integer classNumRequired){
-            if(!status.equals(TeacherGloryEnum.Status.UNFINISH.value())){
+        String classNumGlory(String status, Integer classNumRequired) {
+            if (!status.equals(TeacherGloryEnum.Status.UNFINISH.value())) {
                 return status;
             }
-            if(null==teacherClassList){
+            if (null == teacherClassList) {
                 HashMap cond = Maps.newHashMap();
-                cond.put("teacherId",userId);
+                cond.put("teacherId", userId);
                 teacherClassList = onlineClassDao.findClassByTeacherId(cond);
-            };
-            if(teacherClassList.size()<classNumRequired){
+            }
+            ;
+            if (teacherClassList.size() < classNumRequired) {
                 return TeacherGloryEnum.Status.UNFINISH.value();
             }
-            Long now = Calendar.getInstance().getTime().getTime()/1000;
+            Long now = Calendar.getInstance().getTime().getTime() / 1000;
             int size = teacherClassList.size();
-            Map<String,Object> map = teacherClassList.get(size-classNumRequired);
+            Map<String, Object> map = teacherClassList.get(size - classNumRequired);
             Long scheduledDateTime = (Long) map.get("scheduledDateTime");
-            if(now - scheduledDateTime >= 7*24*3600 + 25*60) {
+            if (now - scheduledDateTime >= 7 * 24 * 3600 + 25 * 60) {
                 return TeacherGloryEnum.Status.EXPIRED.value();
-            }else {
+            } else {
                 return TeacherGloryEnum.Status.FINISH.value();
             }
         }
 
         /**
          * Referal类成就通用逻辑
+         *
          * @param status
          * @param referalNumRequired
          * @return
          */
-        String referalNumGlory(String status,Integer referalNumRequired){
-            if(!status.equals(TeacherGloryEnum.Status.UNFINISH.value())){
+        String referalNumGlory(String status, Integer referalNumRequired) {
+            if (!status.equals(TeacherGloryEnum.Status.UNFINISH.value())) {
                 return status;
             }
-            if(null==teacherReferalList){
+            if (null == teacherReferalList) {
                 HashMap cond = Maps.newHashMap();
-                cond.put("teacherId",userId);
+                cond.put("teacherId", userId);
                 teacherReferalList = onlineClassDao.findReferalByTeacherId(cond);
-            };
-            if(teacherReferalList.size()>referalNumRequired){
+            }
+            ;
+            if (teacherReferalList.size() > referalNumRequired) {
                 int size = teacherReferalList.size();
-                Long lastScheduledDateTime = (Long)teacherReferalList.get(size-referalNumRequired).get("scheduledDateTime");
-                Long now = Calendar.getInstance().getTime().getTime()/1000;
-                if(null == lastScheduledDateTime || now - lastScheduledDateTime <= 7*24*3600 + 25*60) {
+                Long lastScheduledDateTime = (Long) teacherReferalList.get(size - referalNumRequired).get("scheduledDateTime");
+                Long now = Calendar.getInstance().getTime().getTime() / 1000;
+                if (null == lastScheduledDateTime || now - lastScheduledDateTime <= 7 * 24 * 3600 + 25 * 60) {
                     return TeacherGloryEnum.Status.FINISH.value();
-                }else{
+                } else {
                     return TeacherGloryEnum.Status.EXPIRED.value();
                 }
             }
@@ -339,8 +384,8 @@ public class TeacherGloryRestService{
         }
     }
 
-    public void saveLog(List<TeacherGlory> teacherGlories){
-        for(TeacherGlory teacherGlorie:teacherGlories){
+    public void saveLog(List<TeacherGlory> teacherGlories) {
+        for (TeacherGlory teacherGlorie : teacherGlories) {
             teacherGloryLogDao.saveLog(teacherGlorie.toTeacherGloryLog(teacherGlorie));
         }
     }
