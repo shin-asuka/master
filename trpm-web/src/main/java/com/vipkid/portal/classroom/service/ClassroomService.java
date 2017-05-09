@@ -1,23 +1,5 @@
 package com.vipkid.portal.classroom.service;
 
-import java.sql.Timestamp;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.community.config.PropertyConfigurer;
-import org.community.http.client.HttpClientProxy;
-import org.community.tools.JsonTools;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Service;
-
 import com.alibaba.fastjson.JSON;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.api.client.util.Maps;
@@ -31,18 +13,8 @@ import com.vipkid.recruitment.entity.TeacherApplication;
 import com.vipkid.recruitment.utils.ReturnMapUtils;
 import com.vipkid.rest.dto.InfoRoomDto;
 import com.vipkid.trpm.constant.ApplicationConstant;
-import com.vipkid.trpm.dao.AuditDao;
-import com.vipkid.trpm.dao.LessonDao;
-import com.vipkid.trpm.dao.OnlineClassDao;
-import com.vipkid.trpm.dao.StudentDao;
-import com.vipkid.trpm.dao.StudentExamDao;
-import com.vipkid.trpm.dao.UserDao;
-import com.vipkid.trpm.entity.Lesson;
-import com.vipkid.trpm.entity.OnlineClass;
-import com.vipkid.trpm.entity.Student;
-import com.vipkid.trpm.entity.StudentExam;
-import com.vipkid.trpm.entity.Teacher;
-import com.vipkid.trpm.entity.User;
+import com.vipkid.trpm.dao.*;
+import com.vipkid.trpm.entity.*;
 import com.vipkid.trpm.entity.classroom.GetStarDto;
 import com.vipkid.trpm.entity.classroom.UpdateStarDto;
 import com.vipkid.trpm.proxy.OnlineClassProxy;
@@ -50,6 +22,22 @@ import com.vipkid.trpm.service.portal.TeacherService;
 import com.vipkid.trpm.util.FilesUtils;
 import com.vipkid.trpm.util.IpUtils;
 import com.vipkid.trpm.util.LessonSerialNumber;
+import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.community.config.PropertyConfigurer;
+import org.community.http.client.HttpClientProxy;
+import org.community.tools.JsonTools;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
+
+import javax.servlet.http.HttpServletRequest;
+import java.sql.Timestamp;
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
 public class ClassroomService {
