@@ -195,7 +195,7 @@ public class TeacherGloryRestService{
         };
         //收到了了第⼀个5苹果家⻓评价
         String handle12(String status){
-            if(TeacherGloryEnum.Status.UNFINISH.equals(status)) {
+            if(TeacherGloryEnum.Status.UNFINISH.value().equals(status)) {
                 StudentCommentPageVo studentCommentPageVo = manageGatewayService.getStudentCommentListByTeacherId(userId.intValue(), null, null, "high");
                 Integer total = 0;
                 if(CollectionUtils.isNotEmpty(studentCommentPageVo.getData())){
