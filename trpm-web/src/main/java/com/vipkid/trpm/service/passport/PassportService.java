@@ -131,7 +131,6 @@ public class PassportService {
      */
     public Map<String, Object> saveSignUp(RegisterDto bean) {
         Map<String, Object> resultMap = Maps.newHashMap();
-        String lockKey = "";
         String usernameKey = "";
         String email = bean.getEmail();
         try {
@@ -206,6 +205,8 @@ public class PassportService {
         } catch(Exception e){
             logger.error("老师注册发生异常，email="+bean.getEmail(), e);
             throw new ServiceException(TeacherPortalCodeEnum.SYS_FAIL.getCode(), TeacherPortalCodeEnum.SYS_FAIL.getMsg());
+        } finally {
+            releaseLock(usernameKey);
         }
         return ReturnMapUtils.returnSuccess(resultMap);
     }
@@ -552,16 +553,6 @@ public class PassportService {
         boolean bl = redisProxy.lock(key, SIGN_UP_TIME_OUT);
         if (!bl) {
             logger.error("老师注册，username已存在redis，不能重复提交.key="+key);
-            return null;
-        }
-        return key;
-    }
-
-    private String trySerialNumberLock(String serialNumber){
-        String key = SIGN_UP_KEY + serialNumber;
-        boolean bl = redisProxy.lock(key, SIGN_UP_TIME_OUT);
-        if (!bl) {
-            logger.error("老师注册，serialNumber已存在redis，请稍后再试.key="+key);
             return null;
         }
         return key;
