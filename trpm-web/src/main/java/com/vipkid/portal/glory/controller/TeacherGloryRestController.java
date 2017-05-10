@@ -56,7 +56,7 @@ public class TeacherGloryRestController extends RestfulController {
             teacherGloryRestService.saveLog(ret);
             return ApiResponseUtils.buildSuccessDataResp(ret);
         }catch(Exception e){
-            return ApiResponseUtils.buildErrorResp(1,"");
+            return ApiResponseUtils.buildErrorResp(1,"获取成就失败");
         }
     }
 }
