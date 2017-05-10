@@ -17,6 +17,7 @@ public class TeacherGloryInfo extends Entity implements Serializable {
     private String description;
     private String shareTitle;
     private String shareDescription;
+    private Long expireTime;
 
     public Integer getId() {
         return id;
@@ -80,5 +81,13 @@ public class TeacherGloryInfo extends Entity implements Serializable {
 
     public void setShareDescription(String shareDescription) {
         this.shareDescription = shareDescription;
+    }
+
+    public Long getExpireTime() {
+        return expireTime;
+    }
+
+    public void setExpireTime(Long expireTime) {
+        this.expireTime = expireTime;
     }
 }

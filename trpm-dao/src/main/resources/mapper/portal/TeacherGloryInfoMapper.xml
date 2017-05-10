@@ -3,7 +3,7 @@
 <mapper namespace="TeacherGloryInfoMapper">
 
     <select id="findAll" resultType="com.vipkid.trpm.entity.TeacherGloryInfo">
-		select id,name,priority,avatar,title,description,share_title as shareTitle,share_description as shareDescription from teacher_glory_info;
+		select id,name,priority,avatar,title,description,share_title as shareTitle,share_description as shareDescription,expire_time as expireTime from teacher_glory_info;
 	</select>
 
 </mapper>

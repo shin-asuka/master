@@ -37,7 +37,7 @@ import java.util.*;
 @Service
 public class TeacherGloryRestService {
 
-    private static final String NO_GLORY = "0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0";
+    private static final String NO_GLORY = "0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0";
 
     private static final Logger logger = LoggerFactory.getLogger(TeacherGloryRestService.class);
 
@@ -53,22 +53,19 @@ public class TeacherGloryRestService {
     private TeacherGloryInfoDao teacherGloryInfoDao;
     @Autowired
     private TeacherGloryLogDao teacherGloryLogDao;
+    private Long cacheTime = new Date().getTime()/1000;
 
     public String[] refeshGlory(String currentGlory, Integer userId) {
 
         //新建一个成就数组，初始化数据
-        String initGlory = NO_GLORY + "," + new Date().getTime() / 1000;
+        String initGlory = NO_GLORY ;
         String[] gloryArr = StringUtils.split(initGlory, ",");
 
         //加载当前成就
         if (StringUtils.isNotEmpty(currentGlory)) {
             gloryArr = StringUtils.split(currentGlory, ",");
-//            Long cacheTime = NumberUtils.toLong(gloryArr[gloryArr.length - 1]);
-
-//            //距上次成就计算时间不足15min，不再重新计算
-//            if (new Date().getTime() / 1000 - cacheTime < 15 * 60) {
-//                return gloryArr;
-//            }
+            //距上次成就计算时间不足15min，不再重新计算
+            cacheTime = NumberUtils.toLong(gloryArr[gloryArr.length - 1]);
         }
 
         //计算成就，更新状态。
@@ -144,13 +141,18 @@ public class TeacherGloryRestService {
         private Long userId;
         private List<Map<String, Object>> teacherClassList = null;
         private List<Map<String, Object>> teacherReferalList = null;
+        private List<TeacherGloryInfo> teacherGloryInfoList;
 
         GloryHandler(Long userId) {
             this.userId = userId;
+            teacherGloryInfoList = teacherGloryInfoDao.getAll();
         }
 
         //Life Cycle变为Regular
         String handle1(String status) {
+            if(new Date().getTime() / 1000 - cacheTime < teacherGloryInfoList.get(0).getExpireTime()) {
+                return status;
+            }
             return recruitmentStatusGlory(status, "CONTRACT_INFO", 0);
         }
 
@@ -158,6 +160,9 @@ public class TeacherGloryRestService {
 
         //As Schedule课程记录达到1节
         String handle2(String status) {
+            if(new Date().getTime() / 1000 - cacheTime < teacherGloryInfoList.get(1).getExpireTime()) {
+                return status;
+            }
             return classNumGlory(status, 1);
         }
 
@@ -165,6 +170,9 @@ public class TeacherGloryRestService {
 
         //As Schedule课程记录达到10节
         String handle3(String status) {
+            if(new Date().getTime() / 1000 - cacheTime < teacherGloryInfoList.get(2).getExpireTime()) {
+                return status;
+            }
             return classNumGlory(status, 10);
         }
 
@@ -172,6 +180,9 @@ public class TeacherGloryRestService {
 
         //As Schedule课程记录达到100节
         String handle4(String status) {
+            if(new Date().getTime() / 1000 - cacheTime < teacherGloryInfoList.get(3).getExpireTime()) {
+                return status;
+            }
             return classNumGlory(status, 100);
         }
 
@@ -179,6 +190,9 @@ public class TeacherGloryRestService {
 
         //As Schedule课程记录达到500节
         String handle5(String status) {
+            if(new Date().getTime() / 1000 - cacheTime < teacherGloryInfoList.get(4).getExpireTime()) {
+                return status;
+            }
             return classNumGlory(status, 500);
         }
 
@@ -186,6 +200,9 @@ public class TeacherGloryRestService {
 
         //As Schedule课程记录达到1000节
         String handle6(String status) {
+            if(new Date().getTime() / 1000 - cacheTime < teacherGloryInfoList.get(5).getExpireTime()) {
+                return status;
+            }
             return classNumGlory(status, 1000);
         }
 
@@ -193,6 +210,9 @@ public class TeacherGloryRestService {
 
         //推荐成功的⽼师（有⾄少⼀节As Schedule完课记录）数量达到1
         String handle7(String status) {
+            if(new Date().getTime() / 1000 - cacheTime < teacherGloryInfoList.get(6).getExpireTime()) {
+                return status;
+            }
             return referalNumGlory(status, 1);
         }
 
@@ -200,6 +220,9 @@ public class TeacherGloryRestService {
 
         //推荐成功的⽼师（有⾄少⼀节As Schedule完课记录）数量达到10
         String handle8(String status) {
+            if(new Date().getTime() / 1000 - cacheTime < teacherGloryInfoList.get(7).getExpireTime()) {
+                return status;
+            }
             return referalNumGlory(status, 10);
         }
 
@@ -207,6 +230,9 @@ public class TeacherGloryRestService {
 
         //推荐成功的⽼师（有⾄少⼀节As Schedule完课记录）数量达到100
         String handle9(String status) {
+            if(new Date().getTime() / 1000 - cacheTime < teacherGloryInfoList.get(8).getExpireTime()) {
+                return status;
+            }
             return referalNumGlory(status, 100);
         }
 
@@ -214,6 +240,9 @@ public class TeacherGloryRestService {
 
         //推荐成功的⽼师（有⾄少一节As Schedule完课记录）数量达到500
         String handle10(String status) {
+            if(new Date().getTime() / 1000 - cacheTime < teacherGloryInfoList.get(9).getExpireTime()) {
+                return status;
+            }
             return referalNumGlory(status, 500);
         }
 
@@ -221,6 +250,9 @@ public class TeacherGloryRestService {
 
         //推荐成功的⽼师（有⾄少一节As Schedule完课记录）数量达到1000
         String handle11(String status) {
+            if(new Date().getTime() / 1000 - cacheTime < teacherGloryInfoList.get(10).getExpireTime()) {
+                return status;
+            }
             return referalNumGlory(status, 1000);
         }
 
@@ -228,6 +260,9 @@ public class TeacherGloryRestService {
 
         //收到了了第⼀个5苹果家⻓评价
         String handle12(String status) {
+            if(new Date().getTime() / 1000 - cacheTime < teacherGloryInfoList.get(11).getExpireTime()) {
+                return status;
+            }
             if (TeacherGloryEnum.Status.UNFINISH.value().equals(status)) {
                 StudentCommentPageVo studentCommentPageVo = manageGatewayService.getStudentCommentListByTeacherId(userId.intValue(), null, null, "5");
                 Integer total = 0;
@@ -255,6 +290,9 @@ public class TeacherGloryRestService {
 
         //Life Cycle变为Regular时间达到100天
         String handle13(String status) {
+            if(new Date().getTime() / 1000 - cacheTime < teacherGloryInfoList.get(12).getExpireTime()) {
+                return status;
+            }
             return recruitmentStatusGlory(status, "CONTRACT_INFO", 100);
         }
 
@@ -262,6 +300,9 @@ public class TeacherGloryRestService {
 
         //Life Cycle变为Teaching Prep
         String handle14(String status) {
+            if(new Date().getTime() / 1000 - cacheTime < teacherGloryInfoList.get(13).getExpireTime()) {
+                return status;
+            }
             return recruitmentStatusGlory(status, "INTERVIEW", 0);
         }
 
@@ -269,6 +310,9 @@ public class TeacherGloryRestService {
 
         //Life Cycle变为Contract&Info
         String handle15(String status) {
+            if(new Date().getTime() / 1000 - cacheTime < teacherGloryInfoList.get(14).getExpireTime()) {
+                return status;
+            }
             return recruitmentStatusGlory(status, "PRACTICUM", 0);
         }
 
@@ -276,6 +320,9 @@ public class TeacherGloryRestService {
 
         //第⼀节Booked Class记录
         String handle16(String status) {
+            if(new Date().getTime() / 1000 - cacheTime < teacherGloryInfoList.get(15).getExpireTime()) {
+                return status;
+            }
             if (status.equals(TeacherGloryEnum.Status.UNFINISH.value())) {
                 Long now = Calendar.getInstance().getTime().getTime() / 1000;
                 HashMap cond = Maps.newHashMap();
