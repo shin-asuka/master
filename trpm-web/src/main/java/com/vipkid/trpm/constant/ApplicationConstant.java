@@ -294,6 +294,8 @@ public interface ApplicationConstant {
         public static final String TRPM_SHARE_KEY = "TRPM_SHARE_KEY_"; // facebook 活动分享模板缓存Key
         public static final int TRPM_SHARE_TIME = 60 * 60 * 24 * 10; // facebook 活动分享模板缓存Key 10天
         
+        public static final String TRPM_PRIZER_KEY = "TRPM_PRIZER_KEY";
+        public static final int TRPM_PRIZER_TIME = 20; //20 获取最近最新的中奖记录，这里缓存20秒       
     }
     public static final class TrailLessonConstants{
 

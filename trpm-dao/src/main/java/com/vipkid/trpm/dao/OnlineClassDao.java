@@ -128,7 +128,6 @@ public class OnlineClassDao extends MapperDaoTemplate<OnlineClass> {
 	 */
 	public OnlineClass findById(long onlineClassId) {
 		if(onlineClassId == 0) return null;
-		
 		OnlineClass onlineClass = new OnlineClass();
 		onlineClass.setId(onlineClassId);
 

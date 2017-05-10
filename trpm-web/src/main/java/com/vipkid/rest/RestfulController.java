@@ -13,7 +13,7 @@ import org.springframework.http.HttpStatus;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
-import com.vipkid.teacher.tools.utils.ReturnMapUtils;
+import com.vipkid.rest.utils.ApiResponseUtils;
 import com.vipkid.teacher.tools.utils.validation.ValidateUtils;
 import com.vipkid.teacher.tools.utils.validation.tools.Result;
 import com.vipkid.trpm.entity.Teacher;
@@ -44,7 +44,7 @@ public class RestfulController {
         if(CollectionUtils.isNotEmpty(list) && list.get(0).isResult()){
             response.setStatus(HttpStatus.BAD_REQUEST.value());
             logger.info(list.get(0).getName() + "," + list.get(0).getMessages());
-            return ReturnMapUtils.returnFail(-1, "Parameter validation results:"+list.get(0).getName() + "," + list.get(0).getMessages());
+            return ApiResponseUtils.buildErrorResp(-1, "Parameter validation results:"+list.get(0).getName() + "," + list.get(0).getMessages());
         }
         return Maps.newHashMap();
     }

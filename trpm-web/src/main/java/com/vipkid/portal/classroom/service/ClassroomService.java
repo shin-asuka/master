@@ -101,7 +101,7 @@ public class ClassroomService {
 		}else{
 			logger.warn("onlineClass is null,onlineClassId:{},studentId:{}",bean.getOnlineClassId(), bean.getStudentId());
 		}
-		if(CollectionUtils.isEmpty(onlineClassDao.findOnlineClassIdAndStudentId(onlineClass.getId(), bean.getStudentId()))){
+		if(onlineClass == null || CollectionUtils.isEmpty(onlineClassDao.findOnlineClassIdAndStudentId(onlineClass.getId(), bean.getStudentId()))){
 			logger.info("没有权限获取数据,studentId 与 onlineClassId 不匹配");
 			resultMap.put("info", "Parameters (onlineClassId,studentId) with the request data does not match.");
 			return resultMap;
@@ -379,7 +379,6 @@ public class ClassroomService {
      */
     public Map<String, Object> sendTeacherInClassroom(Map<String, String> requestParams, Teacher teacher) {
         Map<String, Object> modelMap = Maps.newHashMap();
-        modelMap.put("status", false);
 
         String t = "TEACHER " + teacher.getId();
         Map<String, String> requestHeader = new HashMap<String, String>();
@@ -389,11 +388,7 @@ public class ClassroomService {
         logger.info("### Mark that teacher enter classroom: {}", content);
         logger.info("### Sent get request to {} with params {}", ApplicationConstant.TEACHER_IN_CLASSROOM_URL,
                 requestParams.get("onlineClassId"));
-        if (!StringUtils.isNotEmpty(content)) {
-            modelMap.put("status", true);
-        } else {
-            modelMap.put("msg", "Failed to tell the fireman teacher in the classroom!");
-        }
+        modelMap.put("status", true);
         return modelMap;
     }
 

@@ -50,22 +50,22 @@ public class AuditEmailServiceTest {
     @Autowired
     private OnlineClassDao onlineClassDao;
 
-//    @Test
-//    public void testSendTBDResultToMonter() {
-//        TeacherApplication teacherApplication = teacherApplicationDao.findApplictionById(1213790);
-//        OnlineClass onlineClass = onlineClassDao.findById(teacherApplication.getOnlineClassId());
-//
-//        Teacher peTeacher = teacherDao.findById(onlineClass.getTeacherId());
-//        User candidate = userDao.findById(teacherApplication.getTeacherId());
-//
-//        String mockClass = "Mock Class 2";
-//        Lesson lesson = lessonDao.findById(onlineClass.getLessonId());
-//        if (StringUtils.equals(MOCK_CLASS_1, lesson.getSerialNumber())) {
-//            mockClass = "Mock Class 1";
-//        }
-//
-//        auditEmailService.sendTBDResultToMonter(peTeacher, candidate.getName(), mockClass, teacherApplication,
-//                        onlineClass);
-//    }
+    @Test
+    public void testSendTBDResultToMonter() {
+        TeacherApplication teacherApplication = teacherApplicationDao.findApplicationById(1213790);
+        OnlineClass onlineClass = onlineClassDao.findById(teacherApplication.getOnlineClassId());
+
+        Teacher peTeacher = teacherDao.findById(onlineClass.getTeacherId());
+        User candidate = userDao.findById(teacherApplication.getTeacherId());
+
+        String mockClass = "Mock Class 2";
+        Lesson lesson = lessonDao.findById(onlineClass.getLessonId());
+        if (StringUtils.equals(MOCK_CLASS_1, lesson.getSerialNumber())) {
+            mockClass = "Mock Class 1";
+        }
+
+        auditEmailService.sendTBDResultToMonter(peTeacher, candidate.getName(), mockClass, teacherApplication,
+                        onlineClass);
+    }
 
 }
