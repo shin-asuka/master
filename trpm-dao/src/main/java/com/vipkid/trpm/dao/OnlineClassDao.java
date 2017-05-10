@@ -420,7 +420,7 @@ public class OnlineClassDao extends MapperDaoTemplate<OnlineClass> {
 	}
 
 	public List<Map<String, Object>> findReferalInfoByTeacherIds(HashMap<String,Object> cond) {
-		return listEntity("findReferalInfoByTeacherIds", cond);
+		return getSqlSession().selectList("findReferalInfoByTeacherIds", cond);
 	}
 
 	public List<Map<String, Object>> findBookedClassByTeacherId(HashMap<String,Object> onlineClassVoCond) {

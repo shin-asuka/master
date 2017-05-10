@@ -423,8 +423,12 @@ public class TeacherGloryRestService {
                 cond.put("teacherId", userId);
                 List<Integer> tempTeacherIds = onlineClassDao.findReferalByTeacherId(cond);
                 cond.clear();
-                cond.put("ids",tempTeacherIds);
-                teacherReferalList = onlineClassDao.findReferalInfoByTeacherIds(cond);
+                cond.put("ids", tempTeacherIds);
+                if(CollectionUtils.isNotEmpty(tempTeacherIds)) {
+                    teacherReferalList = onlineClassDao.findReferalInfoByTeacherIds(cond);
+                }else{
+                    teacherReferalList = Lists.newArrayList();
+                }
             }
             ;
             if (teacherReferalList.size() > referalNumRequired) {
