@@ -2,6 +2,7 @@ package com.vipkid.portal.glory.service;
 
 import com.google.api.client.util.Lists;
 import com.google.api.client.util.Maps;
+import com.vipkid.dataSource.annotation.Slave;
 import com.vipkid.enums.TeacherEnum;
 import com.vipkid.enums.TeacherGloryEnum;
 import com.vipkid.http.service.ManageGatewayService;
@@ -352,7 +353,9 @@ public class TeacherGloryRestService {
          * @param dayNum            达到天数
          * @return
          */
+        @Slave
         String recruitmentStatusGlory(String status, String recruitmentStatus, Integer dayNum) {
+            logger.info("recruitmentStatusGlory开始");
             if (status.equals(TeacherGloryEnum.Status.UNFINISH.value())) {
                 Long now = Calendar.getInstance().getTime().getTime() / 1000;
                 List<TeacherApplication> teacherApplications = teacherApplicationDao.findApplicationForStatusResult(userId, recruitmentStatus, "PASS");
@@ -376,7 +379,9 @@ public class TeacherGloryRestService {
         /**
          * AS_SCHEDULE类成就通用逻辑
          */
+        @Slave
         String classNumGlory(String status, Integer classNumRequired) {
+            logger.info("classNumGlory开始");
             if (!status.equals(TeacherGloryEnum.Status.UNFINISH.value())) {
                 return status;
             }
@@ -407,14 +412,19 @@ public class TeacherGloryRestService {
          * @param referalNumRequired
          * @return
          */
+        @Slave
         String referalNumGlory(String status, Integer referalNumRequired) {
+            logger.info("referalNumGlory开始");
             if (!status.equals(TeacherGloryEnum.Status.UNFINISH.value())) {
                 return status;
             }
             if (null == teacherReferalList) {
                 HashMap cond = Maps.newHashMap();
                 cond.put("teacherId", userId);
-                teacherReferalList = onlineClassDao.findReferalByTeacherId(cond);
+                List<Integer> tempTeacherIds = onlineClassDao.findReferalByTeacherId(cond);
+                cond.clear();
+                cond.put("ids",tempTeacherIds);
+                teacherReferalList = onlineClassDao.findReferalInfoByTeacherIds(cond);
             }
             ;
             if (teacherReferalList.size() > referalNumRequired) {

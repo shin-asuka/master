@@ -832,44 +832,37 @@
 		o.finish_type = 'AS_SCHEDULED'order by scheduled_date_time DESC
 	</select>
 
-	<select id="findReferalByTeacherId" resultType="java.util.HashMap">
+	<select id="findReferalByTeacherId" resultType="java.lang.Integer">
+		SELECT id FROM teacher WHERE referee LIKE CONCAT(#{teacherId},'%')
+	</select>
+
+	<select id="findReferalInfoByTeacherIds" resultType="java.util.HashMap">
 		SELECT
-		*
-		FROM
-		(
+	teacher_id as teacherId,
+	scheduled_date_time as scheduledDateTime
+FROM
+	(
 		SELECT
-		teacher_id AS teacherId,
-		scheduled_date_time AS scheduleDateTime
+			teacher_id,
+			scheduled_date_time
 		FROM
-		online_class
+			online_class
 		WHERE
-		teacher_id IN (
-		SELECT
-		id
-		FROM
-		teacher
-		WHERE
-		referee LIKE CONCAT(#{teacherId}, '%')
-		AND EXISTS (
-		SELECT
-		*
-		FROM
-		online_class
-		WHERE
-		teacher_id = teacher.id
+			teacher_id IN
+		<foreach collection="ids" index="index" item="item" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+			
 		AND `status` = 'FINISHED'
 		AND finish_type = 'AS_SCHEDULED'
-		HAVING
-		count(1) > 0
-		)
-		)
 		ORDER BY
-		scheduled_date_time ASC
-		) AS a
-		GROUP BY
-		teacherId
-		ORDER BY
-		scheduleDateTime DESC;
+			teacher_id,
+			scheduled_date_time ASC
+	) t
+GROUP BY
+	t.teacher_id
+ORDER BY
+	scheduled_date_time ASC
 	</select>
 
 	<select id="findBookedClassByTeacherId" resultType="java.util.HashMap">
