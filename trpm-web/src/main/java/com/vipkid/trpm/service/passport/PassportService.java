@@ -180,6 +180,8 @@ public class PassportService {
             teacher.setCurrency(TeacherEnum.Currency.US_DOLLAR.toString());
             teacher.setContractType(TeacherEnum.ContractType.FOUR_A.getVal());
             teacher.setHide(TeacherEnum.Hide.NONE.toString());
+            //避免其他系统出错，赋一个默认值0
+            teacher.setSerialNumber("0");
             // 设置推荐人保存字段
             teacher = this.prerefereeId(teacher, bean.getRefereeId(), bean.getPartnerId(),bean.getChannel());
             teacherDao.save(teacher);
