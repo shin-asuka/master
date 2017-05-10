@@ -836,10 +836,10 @@
 		SELECT id FROM teacher WHERE referee LIKE CONCAT(#{teacherId},'%')
 	</select>
 
-	<select id="findReferalInfoByTeacherIds" resultType="java.util.HashMap">
+	<select id="findReferalInfoByTeacherIds" parameterType="java.util.List" resultType="java.util.HashMap">
 		SELECT
 	teacher_id as teacherId,
-	scheduled_date_time as scheduledDateTime
+	unix_timestamp(scheduled_date_time) as scheduledDateTime
 FROM
 	(
 		SELECT
@@ -849,7 +849,7 @@ FROM
 			online_class
 		WHERE
 			teacher_id IN
-		<foreach collection="ids" index="index" item="item" open="(" separator="," close=")">
+		<foreach collection="list" index="index" item="item" open="(" separator="," close=")">
 			#{item}
 		</foreach>
 			
