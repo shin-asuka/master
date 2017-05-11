@@ -433,7 +433,7 @@ public class TeacherGloryRestService {
             ;
             if (teacherReferalList.size() >= referalNumRequired) {
                 int size = teacherReferalList.size();
-                Long lastScheduledDateTime = (Long) teacherReferalList.get(size - referalNumRequired).get("scheduledDateTime");
+                Long lastScheduledDateTime = (Long) teacherReferalList.get(referalNumRequired - 1).get("scheduledDateTime");
                 Long now = Calendar.getInstance().getTime().getTime() / 1000;
                 if (null == lastScheduledDateTime || now - lastScheduledDateTime <= 7 * 24 * 3600 + 25 * 60) {
                     return TeacherGloryEnum.Status.FINISH.value();
