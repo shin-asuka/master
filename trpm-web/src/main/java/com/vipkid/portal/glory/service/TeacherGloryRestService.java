@@ -54,7 +54,7 @@ public class TeacherGloryRestService {
     private TeacherGloryInfoDao teacherGloryInfoDao;
     @Autowired
     private TeacherGloryLogDao teacherGloryLogDao;
-    private Long cacheTime = new Date().getTime()/1000;
+    private Long cacheTime = 0l;
 
     public String[] refeshGlory(String currentGlory, Integer userId) {
 
@@ -431,7 +431,7 @@ public class TeacherGloryRestService {
                 }
             }
             ;
-            if (teacherReferalList.size() > referalNumRequired) {
+            if (teacherReferalList.size() >= referalNumRequired) {
                 int size = teacherReferalList.size();
                 Long lastScheduledDateTime = (Long) teacherReferalList.get(size - referalNumRequired).get("scheduledDateTime");
                 Long now = Calendar.getInstance().getTime().getTime() / 1000;
