@@ -88,6 +88,7 @@ public class TeacherGloryRestService {
         gloryArr[13] = gloryHandler.handle14(gloryArr[13]);
         gloryArr[14] = gloryHandler.handle15(gloryArr[14]);
         gloryArr[15] = gloryHandler.handle16(gloryArr[15]);
+        cacheTime = 0l;
         gloryArr[16] = String.valueOf(new Date().getTime() / 1000);
         return gloryArr;
     }
