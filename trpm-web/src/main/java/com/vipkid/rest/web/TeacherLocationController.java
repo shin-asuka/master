@@ -1,20 +1,18 @@
 package com.vipkid.rest.web;
 
-import java.util.List;
-
-import javax.annotation.Resource;
-
+import com.google.common.base.Preconditions;
+import com.vipkid.http.service.TeacherAppService;
+import com.vipkid.rest.utils.ApiResponseUtils;
+import com.vipkid.trpm.entity.TeacherLocation;
+import com.vipkid.trpm.entity.TeacherNationalityCode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.google.common.base.Preconditions;
-import com.vipkid.http.service.TeacherAppService;
-import com.vipkid.rest.utils.ApiResponseUtils;
-import com.vipkid.trpm.entity.TeacherLocation;
-import com.vipkid.trpm.entity.TeacherNationalityCode;
+import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * @author zouqinghua
@@ -60,7 +58,16 @@ public class TeacherLocationController {
 	 * @param countryId
 	 * @return
 	 */
-	 
+	@RequestMapping(value = "/info/states", method = RequestMethod.GET)
+	public Object getStateList(Integer countryId) {
+		logger.info("getStateList countryId = {}", countryId);
+		Preconditions.checkArgument(countryId != null , "countryId 不能为空");
+
+		List<TeacherLocation> list = teacherAppService.getStateList(countryId);
+		logger.info("stateList countryId = {}, list = {}",countryId,list.size());
+
+		return ApiResponseUtils.buildSuccessDataResp(list);
+	}
 	
 	/**
 	 * 根据stateId 获取cities 列表
