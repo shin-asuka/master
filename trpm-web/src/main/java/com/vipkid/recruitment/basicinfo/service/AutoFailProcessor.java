@@ -28,7 +28,12 @@ public class AutoFailProcessor {
 
     private static final List<String> PREFERRED_NATIONALITY = Lists.newArrayList(
             "United States",
-            "Canada");
+            "Canada",
+            "Puerto Rico",
+            "Guam",
+            "U.S. Virgin Islands",
+            "American Samoa"
+    );
 
     public AutoFailProcessor(Teacher teacher, List<TeachingExperience> experiences, TeacherAddress teacherAddress) {
         this.teacher = teacher;

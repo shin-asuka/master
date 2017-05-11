@@ -810,17 +810,19 @@ public class BookingsService {
 
         Timestamp scheduleDateTime = parseFrom(scheduleTime, FMT_YMD_HMS);
         final String key = "TP:LOCK:MAJOR:" + teacher.getId() + ":" + scheduleDateTime.getTime();
-        try {
-            if (redisProxy.lock(key, LOCK_TIMESLOT_EXPIRED)) {
+
+        if (redisProxy.lock(key, LOCK_TIMESLOT_EXPIRED)) {
+            try {
                 return doCreateTimeSlot(teacher, scheduleTime, courseType);
-            } else {
-                Map<String, Object> modelMap = Maps.newHashMap();
-                modelMap.put("error", BookingsResult.DISABLED_PLACE);
-                return modelMap;
+            } finally {
+                redisProxy.del(key);
             }
-        } finally {
-            redisProxy.del(key);
+        } else {
+            Map<String, Object> modelMap = Maps.newHashMap();
+            modelMap.put("error", BookingsResult.DISABLED_PLACE);
+            return modelMap;
         }
+
     }
 
     /**
