@@ -411,6 +411,21 @@ public class OnlineClassDao extends MapperDaoTemplate<OnlineClass> {
 		return listEntity("findMajorCourseListByCond", onlineClassVoCond);
 	}
 
+	public List<Map<String, Object>> findClassByTeacherId(HashMap<String,Object> onlineClassVoCond) {
+		return listEntity("findClassByTeacherId", onlineClassVoCond);
+	}
+
+	public List<Integer> findReferalByTeacherId(HashMap<String,Object> cond) {
+		return listEntity("findReferalByTeacherId", cond);
+	}
+
+	public List<Map<String, Object>> findReferalInfoByTeacherIds(HashMap<String,Object> cond) {
+		return getSqlSession().selectList("findReferalInfoByTeacherIds", cond);
+	}
+
+	public List<Map<String, Object>> findBookedClassByTeacherId(HashMap<String,Object> onlineClassVoCond) {
+		return listEntity("findBookedClassByTeacherId", onlineClassVoCond);
+	}
 	/**
 	 * 根据老师ID统计老师一共正常上了多少节课程
 	 * @param teacherId

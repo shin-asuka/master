@@ -822,4 +822,53 @@
 					o.scheduled_date_time
 			) a
 	</select>
+
+	<select id="findClassByTeacherId" resultType="java.util.HashMap">
+		SELECT teacher_id as teacherId,unix_timestamp(scheduled_date_time) as scheduledDateTime
+		FROM online_class o
+		WHERE
+		o.teacher_id = #{teacherId} and
+		o.`status` = 'FINISHED' and
+		o.finish_type = 'AS_SCHEDULED'order by scheduled_date_time DESC
+	</select>
+
+	<select id="findReferalByTeacherId" resultType="java.lang.Integer">
+		SELECT id FROM teacher WHERE referee LIKE CONCAT(#{teacherId},'%')
+	</select>
+
+	<select id="findReferalInfoByTeacherIds" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		SELECT
+	teacher_id as teacherId,
+	unix_timestamp(scheduled_date_time) as scheduledDateTime
+FROM
+	(
+		SELECT
+			teacher_id,
+			scheduled_date_time
+		FROM
+			online_class
+		WHERE
+			teacher_id IN
+		<foreach collection="ids" index="index" item="item" open="(" close=")" separator=",">
+			#{item}
+		</foreach>
+
+		AND `status` = 'FINISHED'
+		AND finish_type = 'AS_SCHEDULED'
+		ORDER BY
+			teacher_id,
+			scheduled_date_time ASC
+	) t
+GROUP BY
+	t.teacher_id
+ORDER BY
+	scheduled_date_time ASC
+	</select>
+
+	<select id="findBookedClassByTeacherId" resultType="java.util.HashMap">
+		SELECT teacher_id as teacherId,unix_timestamp(book_date_time) as bookDateTime from online_class
+		where teacher_id = #{teacherId} and book_date_time is not null order by book_date_time ASC  limit #{limit};
+	</select>
+
+
 </mapper>
