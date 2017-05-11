@@ -155,6 +155,7 @@ public class PortalBasicInfoController extends RestfulController{
             redisProxy.set(key,String.valueOf(teacherId),180*24*60);
             setReferral = true;
             logger.info("set teacher {} agree referral",teacherId);
+            response.setStatus(HttpStatus.OK.value());
             return ApiResponseUtils.buildSuccessDataResp(setReferral);
         }catch (Exception e){
             logger.error("set teacher {} agree referral error",teacherId,e);
@@ -171,8 +172,10 @@ public class PortalBasicInfoController extends RestfulController{
             boolean isAgree = false;
             if (String.valueOf(teacherId).equals(redisProxy.get(key))){
                 isAgree = true;
+                response.setStatus(HttpStatus.OK.value());
                 return ApiResponseUtils.buildSuccessDataResp(isAgree);
             }else {
+                response.setStatus(HttpStatus.BAD_REQUEST.value());
                 return ApiResponseUtils.buildErrorResp(0,"teacher not agree referral",isAgree);
             }
         }catch (Exception e){
