@@ -584,7 +584,7 @@ public class ClassroomService {
                resultMap.put("status", false);
                logger.info("请求未响应,url:"+url);
                resultMap.put("info", " The backend request without response. ");
-               resultMap.put("code", HttpStatus.NO_CONTENT.value());
+               resultMap.put("code", HttpStatus.INTERNAL_SERVER_ERROR.value());
            }
        } catch(Exception e) {
            logger.error("Invoke star server updateStar failed", e);
