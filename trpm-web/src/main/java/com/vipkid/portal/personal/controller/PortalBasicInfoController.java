@@ -175,7 +175,7 @@ public class PortalBasicInfoController extends RestfulController{
                 response.setStatus(HttpStatus.OK.value());
                 return ApiResponseUtils.buildSuccessDataResp(isAgree);
             }else {
-                response.setStatus(HttpStatus.BAD_REQUEST.value());
+                response.setStatus(HttpStatus.OK.value());
                 return ApiResponseUtils.buildErrorResp(0,"teacher not agree referral",isAgree);
             }
         }catch (Exception e){
