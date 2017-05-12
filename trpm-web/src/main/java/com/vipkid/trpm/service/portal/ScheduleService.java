@@ -683,18 +683,20 @@ public class ScheduleService {
     public Map<String, Object> doCreateTimeSlotWithLock(Teacher teacher, String scheduleTime, String courseType) {
 		Timestamp scheduleDateTime = parseFrom(scheduleTime, FMT_YMD_HMS);
         String key = "TP:LOCK:" + teacher.getId() + ":" + scheduleDateTime.getTime();
-        try {
-            if (redisProxy.lock(key, LOCK_TIMESLOT_EXPIRED)) {
+
+        if (redisProxy.lock(key, LOCK_TIMESLOT_EXPIRED)) {
+            try {
                 return doCreateTimeSlot(teacher, scheduleTime, courseType);
-            } else {
-				Map<String, Object> modelMap = Maps.newHashMap();
-                modelMap.put("action", false);
-                modelMap.put("disabledPlaceErr", true);
-                return modelMap;
+            } finally {
+                redisProxy.del(key);
             }
-        } finally {
-            redisProxy.del(key);
+        } else {
+            Map<String, Object> modelMap = Maps.newHashMap();
+            modelMap.put("action", false);
+            modelMap.put("disabledPlaceErr", true);
+            return modelMap;
         }
+
     }
 
     /**
