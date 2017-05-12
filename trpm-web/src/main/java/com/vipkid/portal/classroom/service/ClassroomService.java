@@ -572,7 +572,8 @@ public class ClassroomService {
            if (null != resultJson) {
                UpdateStarDto updateStarDto = JsonUtils.toBean(resultJson, UpdateStarDto.class);
                if(updateStarDto.getCode() == HttpStatus.OK.value()){
-                   resultMap.put("status", updateStarDto.isData());
+                   resultMap.put("status", true);
+                   resultMap.put("data",updateStarDto.getData());
                } else {
             	   resultMap.put("info", " The request error. ");
             	   logger.info("请求未返回200,code:"+updateStarDto.getCode()+",url:"+url);
@@ -583,7 +584,7 @@ public class ClassroomService {
                resultMap.put("status", false);
                logger.info("请求未响应,url:"+url);
                resultMap.put("info", " The backend request without response. ");
-               resultMap.put("code", HttpStatus.NO_CONTENT.value());
+               resultMap.put("code", HttpStatus.INTERNAL_SERVER_ERROR.value());
            }
        } catch(Exception e) {
            logger.error("Invoke star server updateStar failed", e);
