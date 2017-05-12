@@ -22,6 +22,7 @@ import com.vipkid.rest.service.LoginService;
 import com.vipkid.trpm.constant.ApplicationConstant;
 import com.vipkid.trpm.dao.*;
 import com.vipkid.trpm.entity.*;
+import com.vipkid.trpm.proxy.RedisProxy;
 import com.vipkid.trpm.service.pe.AppserverPracticumService;
 import com.vipkid.trpm.service.pe.TeacherPeLevelsService;
 import com.vipkid.trpm.service.pe.TeacherPeResultService;
@@ -133,6 +134,11 @@ public class MockClassService {
     @Resource
     private AuditEmailService auditEmailService;
 
+    @Autowired
+    private RedisProxy redisProxy;
+
+    private static final int LOCK_PE_COMMENTS_EXPIRED = 5;
+
     public PeReviewOutputDto doPeReview(Integer applicationId) {
         TeacherApplication teacherApplication = teacherApplicationDao.findApplicationById(applicationId);
         Preconditions.checkNotNull(teacherApplication, "Teacher application [" + applicationId + "] not found");
@@ -151,7 +157,17 @@ public class MockClassService {
             teacherPeComments = new TeacherPeComments();
             teacherPeComments.setApplicationId(applicationId);
             teacherPeComments.setTemplateId(getCurrentPeTemplate().getId());
-            teacherPeCommentsDao.saveTeacherPeComments(teacherPeComments);
+
+            final String key = "TP:LOCK:PE_COMMENTS:" + applicationId + ":" + getCurrentPeTemplate().getId();
+
+            if (redisProxy.lock(key, LOCK_PE_COMMENTS_EXPIRED)) {
+                try {
+                    teacherPeCommentsDao.saveTeacherPeComments(teacherPeComments);
+                } finally {
+                    redisProxy.del(key);
+                }
+            }
+
         } else {
             Preconditions.checkArgument(0 != teacherPeComments.getTemplateId(),
                             "This applicationId [" + applicationId + "] is illegal");

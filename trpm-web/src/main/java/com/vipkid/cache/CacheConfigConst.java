@@ -6,7 +6,7 @@ package com.vipkid.cache;
 public class CacheConfigConst {
     public static final String PREFIX_TEACHING_KEY = "TEACHING_KEY"; //教师教学信息key
     public static final String PREFIX_TEACHER_FILE_KEY = "TEACHER_FILE_KEY"; //教师文件信息key
-    
+    public static final String TEACHER_GLORY_KEY = "TEACHER_GLORY_KEY";//教师荣誉信息key
     /**
      * 教师报税锁前缀
      */

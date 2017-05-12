@@ -346,9 +346,11 @@ public class InterviewService {
             		cityName = tl.getName();
             	}
             }
-            EmailUtils.sendEmail4InterviewBook(teacher,onlineClass,cityName,teacherNumber);
-            // 保存 Interview 提醒
-            sendMailAtDayTimeService.saveAllInterviewBookedReminder(teacher, onlineClass.getScheduledDateTime(), onlineClassId);
+            if (onlineClass.getClassType() == 2) {
+                EmailUtils.sendEmail4InterviewBook(teacher,onlineClass,cityName,teacherNumber);
+                // 保存 Interview 提醒
+                sendMailAtDayTimeService.saveAllInterviewBookedReminder(teacher, onlineClass.getScheduledDateTime(), onlineClassId);
+            }
         }
         return result;
     }
