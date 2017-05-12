@@ -78,8 +78,7 @@ public class PersonalInfoDataController {
 
         Date today = new Date();
         Teacher teacher = teacherService.get(teacherId);
-        if (StringUtils.isNotBlank(teacher.getContract())
-                && teacher.getContractStartDate() != null
+        if (teacher.getContractStartDate() != null
                 && teacher.getContractEndDate() != null
                 && DateUtils.compareDate(today, teacher.getContractStartDate()) >= 0
                 && DateUtils.compareDate(today, teacher.getContractEndDate()) <= 0) {
