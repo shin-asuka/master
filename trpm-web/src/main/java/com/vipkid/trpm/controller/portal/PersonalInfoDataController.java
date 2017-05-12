@@ -82,6 +82,9 @@ public class PersonalInfoDataController {
                 && teacher.getContractEndDate() != null
                 && DateUtils.compareDate(today, teacher.getContractStartDate()) >= 0
                 && DateUtils.compareDate(today, teacher.getContractEndDate()) <= 0) {
+            if(StringUtils.isBlank(teacher.getContract())){//为了前端不显示合同按钮，添加一个假数据
+                teacher.setContract(ApplicationConstant.HTTP);
+            }
             //如果是在合同期内(注意one的时区和today的时区必须都要是北京时区)
             signedList.add(new QueryContractByTeacherIdOutputDto(teacher.getContractStartDate(),
                     teacher.getContractEndDate(),
