@@ -239,8 +239,9 @@ public class RedisProxy implements InitializingBean, DisposableBean {
     }
 
     public boolean lock(String key, int expireSeconds) {
-        Jedis jedis = jedisPool.getResource();
+        Jedis jedis = null;
         try {
+            jedis = jedisPool.getResource();
             long result = jedis.setnx(key, "true");
             if (0 != expireSeconds) {
                 jedis.expire(key, expireSeconds);
@@ -250,7 +251,9 @@ public class RedisProxy implements InitializingBean, DisposableBean {
             logger.error("RedisCache setnx: [" + key + "] failed", e);
             return false;
         } finally {
-            jedis.close();
+            if(jedis != null){
+                jedis.close();
+            }
         }
     }
 
@@ -301,5 +304,4 @@ public class RedisProxy implements InitializingBean, DisposableBean {
         return ret;
 	}
 
-    
 }

@@ -131,7 +131,6 @@ public class PassportService {
      */
     public Map<String, Object> saveSignUp(RegisterDto bean) {
         Map<String, Object> resultMap = Maps.newHashMap();
-        String lockKey = "";
         String usernameKey = "";
         String email = bean.getEmail();
         try {
@@ -177,25 +176,12 @@ public class PassportService {
             teacher.setId(user.getId());
             teacher.setEmail(bean.getEmail());
             teacher.setLifeCycle(TeacherEnum.LifeCycle.SIGNUP.toString());
-            String serialNumber = teacherDao.getSerialNumber();
-
-            //启用分布式锁检查，避免出现重复serialNumber
-            lockKey = trySerialNumberLock(serialNumber);
-            if (StringUtils.isBlank(lockKey)) {
-                //休眠1000ms再去查询一次max serialNumber
-                Thread.sleep(1000);
-                serialNumber = teacherDao.getSerialNumber();
-                lockKey = trySerialNumberLock(serialNumber);
-                if (StringUtils.isBlank(lockKey)) {
-                    logger.error("老师注册，最大seriaNumber已被占用， 请稍后再试, email=" + bean.getEmail());
-                    throw new ServiceException(TeacherPortalCodeEnum.ORDER_ALREADY_EXISTED.getCode(), "seriaNumber已经存在， 请稍后再试");
-                }
-            }
-            teacher.setSerialNumber(serialNumber);
             teacher.setRecruitmentId(System.currentTimeMillis() + "-" + encoder.encode(teacher.getSerialNumber() + "kxoucywejl" + teacher.getEmail()));
             teacher.setCurrency(TeacherEnum.Currency.US_DOLLAR.toString());
             teacher.setContractType(TeacherEnum.ContractType.FOUR_A.getVal());
             teacher.setHide(TeacherEnum.Hide.NONE.toString());
+            //避免其他系统出错，赋一个默认值0
+            teacher.setSerialNumber("0");
             // 设置推荐人保存字段
             teacher = this.prerefereeId(teacher, bean.getRefereeId(), bean.getPartnerId(),bean.getChannel());
             teacherDao.save(teacher);
@@ -207,7 +193,7 @@ public class PassportService {
                     this.teacherDao.updateActivityExamInfo(bean.getActivityExamId(), teacher.getId());
                 }
             }
-            logger.info(" Sign up teacher: " + teacher.getSerialNumber());
+            logger.info(" Sign up teacher,teacherId: " + teacher.getId());
             if (PropertyConfigurer.booleanValue("signup.send.mail.switch")) {
                 // 4.发送邮件(带着Recruitment ID)
                 EmailUtils.sendActivationEmail(teacher);
@@ -223,7 +209,6 @@ public class PassportService {
             throw new ServiceException(TeacherPortalCodeEnum.SYS_FAIL.getCode(), TeacherPortalCodeEnum.SYS_FAIL.getMsg());
         } finally {
             releaseLock(usernameKey);
-            releaseLock(lockKey);
         }
         return ReturnMapUtils.returnSuccess(resultMap);
     }
@@ -570,16 +555,6 @@ public class PassportService {
         boolean bl = redisProxy.lock(key, SIGN_UP_TIME_OUT);
         if (!bl) {
             logger.error("老师注册，username已存在redis，不能重复提交.key="+key);
-            return null;
-        }
-        return key;
-    }
-
-    private String trySerialNumberLock(String serialNumber){
-        String key = SIGN_UP_KEY + serialNumber;
-        boolean bl = redisProxy.lock(key, SIGN_UP_TIME_OUT);
-        if (!bl) {
-            logger.error("老师注册，serialNumber已存在redis，请稍后再试.key="+key);
             return null;
         }
         return key;

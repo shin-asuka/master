@@ -68,6 +68,7 @@ public class TeacherDao extends MapperDaoTemplate<Teacher> {
      * @param
      * @return
      */
+    @Deprecated
     public String getSerialNumber() {
         Teacher teacher = new Teacher();
         int count = this.selectCount(teacher, "getMaxSerialNumber");
@@ -84,6 +85,7 @@ public class TeacherDao extends MapperDaoTemplate<Teacher> {
      * @param serialNumber
      * @return
      */
+    @Deprecated
     public boolean checkSerialNumber(String serialNumber) {
         Teacher t = new Teacher();
         t.setSerialNumber(serialNumber);
