@@ -158,14 +158,10 @@ public class MockClassService {
             teacherPeComments.setApplicationId(applicationId);
             teacherPeComments.setTemplateId(getCurrentPeTemplate().getId());
 
-            final String key = "TP:LOCK:PE_COMMENTS:" + applicationId + ":" + getCurrentPeTemplate().getId();
+            final String key = "TP:LOCK:PE_COMMENTS:" + applicationId;
 
             if (redisProxy.lock(key, LOCK_PE_COMMENTS_EXPIRED)) {
-                try {
-                    teacherPeCommentsDao.saveTeacherPeComments(teacherPeComments);
-                } finally {
-                    redisProxy.del(key);
-                }
+                teacherPeCommentsDao.saveTeacherPeComments(teacherPeComments);
             }
 
         } else {
