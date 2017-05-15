@@ -50,6 +50,8 @@ public class PortalBasicInfoController extends RestfulController{
 
     @Autowired
     RedisProxy redisProxy;
+
+    private static final String REFERRAL_KEY = "AGREE_REFERRAL:";
 	
     /**
      * 个人基本信息上传
@@ -151,8 +153,8 @@ public class PortalBasicInfoController extends RestfulController{
     public Map<String,Object> agreeReferral(HttpServletRequest request, HttpServletResponse response, long teacherId){
         boolean setReferral = false;
         try {
-            String key = "AGREE_REFERRAL_" + teacherId;
-            redisProxy.set(key,String.valueOf(teacherId),180*24*60);
+            String key = REFERRAL_KEY + teacherId;
+            redisProxy.set(key,String.valueOf(System.currentTimeMillis()),180*24*60);
             setReferral = true;
             logger.info("set teacher {} agree referral",teacherId);
             response.setStatus(HttpStatus.OK.value());
@@ -168,9 +170,9 @@ public class PortalBasicInfoController extends RestfulController{
     @RequestMapping(value = "/queryReferral", method = RequestMethod.GET, produces = RestfulConfig.JSON_UTF_8)
     public Map<String,Object> queryReferral(HttpServletRequest request, HttpServletResponse response, long teacherId){
         try {
-            String key = "AGREE_REFERRAL_" + teacherId;
+            String key = REFERRAL_KEY + teacherId;
             boolean isAgree = false;
-            if (String.valueOf(teacherId).equals(redisProxy.get(key))){
+            if (null != redisProxy.get(key)){
                 isAgree = true;
                 response.setStatus(HttpStatus.OK.value());
                 return ApiResponseUtils.buildSuccessDataResp(isAgree);
