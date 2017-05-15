@@ -1,23 +1,20 @@
 package com.vipkid.http.service;
 
-import java.io.Serializable;
-import java.util.HashMap;
-
-import java.util.Map;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.api.client.util.Maps;
+import com.vipkid.file.model.FileUploadStatus;
+import com.vipkid.http.utils.JsonUtils;
+import com.vipkid.http.utils.WebUtils;
+import com.vipkid.http.vo.HttpResult;
+import com.vipkid.http.vo.TeacherFile;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.vipkid.file.model.FileUploadStatus;
-import com.vipkid.http.utils.JsonUtils;
-import com.vipkid.http.utils.WebUtils;
-
-import com.vipkid.http.vo.HttpResult;
-import com.vipkid.http.vo.TeacherFile;
+import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 包装 Teacher Information Service 中的文件接口
@@ -234,7 +231,7 @@ public class FileHttpService extends HttpBaseService {
 
                         String fileUrl = null;
                         if(null !=data.get("url")){
-                            data.get("url").textValue();
+                            fileUrl = data.get("url").textValue();
                         }
 
                         fileUploadStatus = new FileUploadStatus();
