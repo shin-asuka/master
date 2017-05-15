@@ -68,10 +68,10 @@ public class BackgroundCommonService {
             return backgroundStatusDto;
         }
         Date now =new Date();
-        Date contratEndAfterOneMonth = DateUtils.addMonth(contractEndDate,contractIntervalMonth);  //超过一个月
-        Date contratEndBeforOneMonth = DateUtils.addMonth(contractEndDate,-contractIntervalMonth); //提前一个月
+        Date contratEndAfterOneMonth = DateUtils.addMonth(contractEndDate, contractIntervalMonth);  //超过一个月
+        Date contratEndBeforOneMonth = DateUtils.addMonth(contractEndDate, -contractIntervalMonth); //提前一个月
 
-        if(DateUtils.compareDate(now,contratEndBeforOneMonth)>0&& DateUtils.compareDate(contratEndAfterOneMonth,now)>0){
+        if (DateUtils.compareDate(now, contratEndBeforOneMonth) > 0 && DateUtils.compareDate(contratEndAfterOneMonth, now) > 0) {
             backgroundStatusDto.setContractEndWithInOneMonth(personalInfoService.needNewContract(teacher));
         }
 
@@ -271,13 +271,20 @@ public class BackgroundCommonService {
             backgroundStatusDto.setResult("");
             return backgroundStatusDto;
         }
-        Date now =new Date();
-        boolean hasAlertAfterMonth = DateUtils.addMonth(contractEndDate,contractIntervalMonth).after(now) && contractEndDate.before(now); //超过一个月之
-        boolean hasAlertBeforeMonth = DateUtils.addMonth(contractEndDate, -contractIntervalMonth).before(now) && now.before(contractEndDate); //提前一个月
 
-        if(hasAlertBeforeMonth || hasAlertAfterMonth){ //合同到期的时候进行续约提醒
+        Date now = new Date();
+        Date contratEndAfterOneMonth = DateUtils.addMonth(contractEndDate, contractIntervalMonth);  //超过一个月
+        Date contratEndBeforOneMonth = DateUtils.addMonth(contractEndDate, -contractIntervalMonth); //提前一个月
+
+        if (DateUtils.compareDate(now, contratEndBeforOneMonth) > 0 && DateUtils.compareDate(contratEndAfterOneMonth, now) > 0) {
             backgroundStatusDto.setContractEndWithInOneMonth(personalInfoService.needNewContract(teacher));
         }
+//        boolean hasAlertAfterMonth = DateUtils.addMonth(contractEndDate,contractIntervalMonth).after(now) && contractEndDate.before(now); //超过一个月之
+//        boolean hasAlertBeforeMonth = DateUtils.addMonth(contractEndDate, -contractIntervalMonth).before(now) && now.before(contractEndDate); //提前一个月
+//
+//        if(hasAlertBeforeMonth || hasAlertAfterMonth){ //合同到期的时候进行续约提醒
+//            backgroundStatusDto.setContractEndWithInOneMonth(personalInfoService.needNewContract(teacher));
+//        }
 
         boolean needBackgroundCheck = needBackgroundCheck(teacher.getId());
         //不在灰度列表中
