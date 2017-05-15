@@ -9,6 +9,7 @@ import com.vipkid.enums.TeacherApplicationEnum.Result;
 import com.vipkid.enums.TeacherApplicationEnum.Status;
 import com.vipkid.enums.TeacherModuleEnum;
 import com.vipkid.enums.TeacherModuleEnum.RoleClass;
+import com.vipkid.http.service.OnlineClassProxyService;
 import com.vipkid.recruitment.dao.TeacherApplicationDao;
 import com.vipkid.recruitment.entity.TeacherApplication;
 import com.vipkid.trpm.constant.ApplicationConstant;
@@ -18,6 +19,7 @@ import com.vipkid.trpm.proxy.OnlineClassProxy;
 import com.vipkid.trpm.util.DateUtils;
 import com.vipkid.trpm.util.FilesUtils;
 import com.vipkid.trpm.util.IpUtils;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -58,6 +60,9 @@ public class PeSupervisorService {
 
     @Autowired
     private TeacherModuleDao teacherModuleDao;
+    
+	@Autowired
+	private OnlineClassProxyService onlineClassProxyService;
 
     public int totalPe(long teacherId) {
         return teacherPeDao.countByTeacherId(teacherId);
@@ -83,7 +88,7 @@ public class PeSupervisorService {
 
     public String getClassRoomUrl(TeacherPe teacherPe) {
         OnlineClass onlineClass = onlineClassDao.findById(teacherPe.getOnlineClassId());
-        Map<String,Object> result = OnlineClassProxy.generateRoomEnterUrl(String.valueOf(teacherPe.getStudentId()),
+        Map<String,Object> result = onlineClassProxyService.generateRoomEnterUrl(String.valueOf(teacherPe.getStudentId()),
                 teacherPe.getStudentName(), onlineClass.getClassroom(), OnlineClassProxy.RoomRole.STUDENT,
                 onlineClass.getSupplierCode(),onlineClass.getId(),OnlineClassProxy.ClassType.PRACTICUM);
         return result.get("url")+"";

@@ -12,6 +12,7 @@ import com.vipkid.enums.TeacherApplicationEnum.Status;
 import com.vipkid.enums.TeacherModuleEnum;
 import com.vipkid.enums.TeacherModuleEnum.RoleClass;
 import com.vipkid.http.service.AssessmentHttpService;
+import com.vipkid.http.service.OnlineClassProxyService;
 import com.vipkid.http.utils.JsonUtils;
 import com.vipkid.http.vo.OnlineClassVo;
 import com.vipkid.http.vo.StudentUnitAssessment;
@@ -32,6 +33,7 @@ import com.vipkid.trpm.proxy.OnlineClassProxy;
 import com.vipkid.trpm.util.DateUtils;
 import com.vipkid.trpm.util.FilesUtils;
 import com.vipkid.trpm.util.IpUtils;
+
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -113,6 +115,9 @@ public class OnlineClassService {
 
     @Autowired
     private TeacherPeCommentsDao teacherPeCommentsDao;
+    
+	@Autowired
+	private OnlineClassProxyService onlineClassProxyService;
     /**
      * 根据id找online class
      *
@@ -149,7 +154,7 @@ public class OnlineClassService {
                 studentId);
         Map<String, Object> modelMap = Maps.newHashMap();
         modelMap.putAll(this.enterBefore(onlineClass, studentId, "OPEN"));
-        modelMap.putAll(OnlineClassProxy.generateRoomEnterUrl(String.valueOf(teacher.getId()), user.getName(),
+        modelMap.putAll(onlineClassProxyService.generateRoomEnterUrl(String.valueOf(teacher.getId()), user.getName(),
                 onlineClass.getClassroom(), OnlineClassProxy.RoomRole.TEACHER, onlineClass.getSupplierCode(),onlineClass.getId(),OnlineClassProxy.ClassType.OPEN));
 
         this.enterAfter(teacher, onlineClass);
@@ -176,7 +181,7 @@ public class OnlineClassService {
 
         TeacherApplication teacherApplication =
                 teacherApplicationDao.findApplicationByOnlineClassId(onlineClass.getId(), student.getId());
-        modelMap.putAll(OnlineClassProxy.generateRoomEnterUrl(String.valueOf(student.getId()), user.getName(),
+        modelMap.putAll(onlineClassProxyService.generateRoomEnterUrl(String.valueOf(student.getId()), user.getName(),
                 onlineClass.getClassroom(), OnlineClassProxy.RoomRole.STUDENT, onlineClass.getSupplierCode(),onlineClass.getId(),OnlineClassProxy.ClassType.PRACTICUM));
         modelMap.put("teacherPe", teacherPeDao.findByOnlineClassId(onlineClass.getId()));
         List<TeacherApplication> list = teacherApplicationDao.findApplicationForStatusResult(
@@ -247,7 +252,7 @@ public class OnlineClassService {
             DemoReport currentReport = demoReportDao.findByStudentIdAndOnlineClassId(studentId, onlineClass.getId());
             modelMap.put("currentReport", currentReport);
         }
-        modelMap.putAll(OnlineClassProxy.generateRoomEnterUrl(String.valueOf(teacher.getId()), user.getName(),
+        modelMap.putAll(onlineClassProxyService.generateRoomEnterUrl(String.valueOf(teacher.getId()), user.getName(),
                 onlineClass.getClassroom(), OnlineClassProxy.RoomRole.TEACHER, onlineClass.getSupplierCode(),onlineClass.getId(),OnlineClassProxy.ClassType.MAJOR));
 
         this.enterAfter(teacher, onlineClass);

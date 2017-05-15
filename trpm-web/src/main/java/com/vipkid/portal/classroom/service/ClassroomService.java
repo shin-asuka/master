@@ -1,27 +1,11 @@
 package com.vipkid.portal.classroom.service;
 
-import com.alibaba.fastjson.JSON;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.google.api.client.util.Maps;
-import com.vipkid.enums.OnlineClassEnum;
-import com.vipkid.enums.OnlineClassEnum.CourseName;
-import com.vipkid.http.utils.JsonUtils;
-import com.vipkid.portal.classroom.model.ClassRoomVo;
-import com.vipkid.portal.classroom.model.SendSysInfoVo;
-import com.vipkid.recruitment.dao.TeacherApplicationDao;
-import com.vipkid.recruitment.entity.TeacherApplication;
-import com.vipkid.recruitment.utils.ReturnMapUtils;
-import com.vipkid.rest.dto.InfoRoomDto;
-import com.vipkid.trpm.constant.ApplicationConstant;
-import com.vipkid.trpm.dao.*;
-import com.vipkid.trpm.entity.*;
-import com.vipkid.trpm.entity.classroom.GetStarDto;
-import com.vipkid.trpm.entity.classroom.UpdateStarDto;
-import com.vipkid.trpm.proxy.OnlineClassProxy;
-import com.vipkid.trpm.service.portal.TeacherService;
-import com.vipkid.trpm.util.FilesUtils;
-import com.vipkid.trpm.util.IpUtils;
-import com.vipkid.trpm.util.LessonSerialNumber;
+import java.sql.Timestamp;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -34,10 +18,42 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import javax.servlet.http.HttpServletRequest;
-import java.sql.Timestamp;
-import java.util.HashMap;
-import java.util.Map;
+import com.alibaba.fastjson.JSON;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.google.api.client.util.Maps;
+import com.vipkid.enums.OnlineClassEnum;
+import com.vipkid.enums.OnlineClassEnum.ClassType;
+import com.vipkid.enums.OnlineClassEnum.CourseName;
+import com.vipkid.http.service.OnlineClassProxyService;
+import com.vipkid.http.utils.JsonUtils;
+import com.vipkid.portal.classroom.model.ClassRoomVo;
+import com.vipkid.portal.classroom.model.SendSysInfoVo;
+import com.vipkid.recruitment.dao.TeacherApplicationDao;
+import com.vipkid.recruitment.entity.TeacherApplication;
+import com.vipkid.recruitment.utils.ReturnMapUtils;
+import com.vipkid.rest.dto.InfoRoomDto;
+import com.vipkid.trpm.constant.ApplicationConstant;
+import com.vipkid.trpm.dao.AuditDao;
+import com.vipkid.trpm.dao.LessonDao;
+import com.vipkid.trpm.dao.OnlineClassDao;
+import com.vipkid.trpm.dao.StudentDao;
+import com.vipkid.trpm.dao.StudentExamDao;
+import com.vipkid.trpm.dao.TeacherPeCommentsDao;
+import com.vipkid.trpm.dao.UserDao;
+import com.vipkid.trpm.entity.Lesson;
+import com.vipkid.trpm.entity.OnlineClass;
+import com.vipkid.trpm.entity.Student;
+import com.vipkid.trpm.entity.StudentExam;
+import com.vipkid.trpm.entity.Teacher;
+import com.vipkid.trpm.entity.TeacherPeComments;
+import com.vipkid.trpm.entity.User;
+import com.vipkid.trpm.entity.classroom.GetStarDto;
+import com.vipkid.trpm.entity.classroom.UpdateStarDto;
+import com.vipkid.trpm.proxy.OnlineClassProxy;
+import com.vipkid.trpm.service.portal.TeacherService;
+import com.vipkid.trpm.util.FilesUtils;
+import com.vipkid.trpm.util.IpUtils;
+import com.vipkid.trpm.util.LessonSerialNumber;
 
 @Service
 public class ClassroomService {
@@ -75,6 +91,9 @@ public class ClassroomService {
     @Autowired
     private TeacherPeCommentsDao teacherPeCommentsDao;
   
+	@Autowired
+	private OnlineClassProxyService onlineClassProxyService;
+    
 	public Map<String,Object> getInfoRoom(ClassRoomVo bean , Teacher teacher){
 		
 		Map<String,Object> resultMap = Maps.newHashMap();
@@ -82,79 +101,97 @@ public class ClassroomService {
 		Student student = this.studentDao.findById(bean.getStudentId());
 		//Student Info
 		InfoRoomDto resultDto = new InfoRoomDto();
-		if(student != null){
-			resultDto.setStudentId(student.getId());
-			resultDto.setStudentEnglishName(student.getEnglishName());
-			User userStudent = userDao.findById(student.getId());
-			resultDto.setCreateTime(userStudent.getCreateDateTime());
-		}else{
+		if(student == null){
 			logger.warn("student is null,onlineClassId:{},studentId:{}",bean.getOnlineClassId(), bean.getStudentId());
-		}
+			resultMap.put("info", "Student information error!");
+			return resultMap;
+		}		
+		resultDto.setStudentId(student.getId());
+		resultDto.setStudentEnglishName(student.getEnglishName());
+		User userStudent = userDao.findById(student.getId());
+		resultDto.setCreateTime(userStudent.getCreateDateTime());
 		
 		//Teacher Info
 		OnlineClass onlineClass = this.onlineClassDao.findById(bean.getOnlineClassId());
-		if(onlineClass != null){
-			resultDto.setOnlineClassId(onlineClass.getId());
-			resultDto.setClassroom(onlineClass.getClassroom());
-			resultDto.setScheduleTime(onlineClass.getScheduledDateTime());
-			resultDto.setSupplierCode(onlineClass.getSupplierCode());
-		}else{
+		if(onlineClass == null){
 			logger.warn("onlineClass is null,onlineClassId:{},studentId:{}",bean.getOnlineClassId(), bean.getStudentId());
-		}
-		if(onlineClass == null || CollectionUtils.isEmpty(onlineClassDao.findOnlineClassIdAndStudentId(onlineClass.getId(), bean.getStudentId()))){
-			logger.info("没有权限获取数据,studentId 与 onlineClassId 不匹配");
+			resultMap.put("info", "OnlineClass information error!");
+			return resultMap;
+		}		
+		
+		if(CollectionUtils.isEmpty(onlineClassDao.findOnlineClassIdAndStudentId(onlineClass.getId(), bean.getStudentId()))){
+			logger.warn("没有权限获取数据,studentId:{}, 与 onlineClassId:{}, 不匹配", teacher.getId(),bean.getOnlineClassId());
 			resultMap.put("info", "Parameters (onlineClassId,studentId) with the request data does not match.");
 			return resultMap;
 		}
 		
+		if (onlineClass.getClassType() == ClassType.MAJOR.val() && OnlineClassEnum.FinishedType.TEACHER_NO_SHOW.toString().equals(onlineClass.getFinishType())) {
+			logger.warn("teacherId:{},没有权限进入教室，原因:onlineClass 状态为：INVALID,onlineClassId:{}", teacher.getId(),bean.getOnlineClassId());
+			resultMap.put("info", "Parameters (onlineClassId,studentId) with the request data does not match.");
+			return resultMap;
+		}
+		
+		if (OnlineClassEnum.ClassStatus.INVALID.toString().equals(onlineClass.getStatus())) {
+            logger.warn("teacherId:{},没有权限进入教室，原因:onlineClass FinishType为：TEACHER_NO_SHOW,onlineClassId:{}",teacher.getId(),bean.getOnlineClassId());
+			resultMap.put("info", "Parameters (onlineClassId,studentId) with the request data does not match.");
+			return resultMap;
+		}
+		
+		resultDto.setOnlineClassId(onlineClass.getId());
+		resultDto.setClassroom(onlineClass.getClassroom());
+		resultDto.setScheduleTime(onlineClass.getScheduledDateTime());
+		resultDto.setSupplierCode(onlineClass.getSupplierCode());
+		
 		//Lesson Info
 		Lesson lesson = this.lessonDao.findById(onlineClass.getLessonId());
-		if(lesson != null){
-			resultDto.setLessonName(lesson.getName());
-			resultDto.setSerialNumber(lesson.getSerialNumber());
-			resultDto.setObjective(lesson.getObjective());
-			resultDto.setVocabularies(lesson.getVocabularies());
-			resultDto.setSentencePatterns(lesson.getSentencePatterns());
-            resultDto.setPrevip(obtainPrevip(lesson.getSerialNumber()));
-            resultDto.setUa(obtainUa(onlineClass.getId()));
-            resultDto.setCourseType(OnlineClassEnum.CourseName.obtainCourseName(lesson.getSerialNumber()));
-            if(CourseName.PRACTICUM1.show().equals(resultDto.getCourseType()) || CourseName.PRACTICUM2.show().equals(resultDto.getCourseType())){
-            	TeacherApplication application = teacherApplicationDao.findApplicationByOnlineClassId(bean.getOnlineClassId(), teacher.getId());
-            	if(application != null){
-            		resultDto.setTeacherApplicationId(application.getId());
+		if(lesson == null){
+			logger.warn("lesson is null,onlineClassId:{},studentId:{}",bean.getOnlineClassId(), bean.getStudentId());
+			resultMap.put("info", "lesson is null,onlineClassId:"+bean.getOnlineClassId()+",studentId:"+bean.getStudentId());
+			return resultMap;
+		}
+		
+		resultDto.setLessonName(lesson.getName());
+		resultDto.setSerialNumber(lesson.getSerialNumber());
+		resultDto.setObjective(lesson.getObjective());
+		resultDto.setVocabularies(lesson.getVocabularies());
+		resultDto.setSentencePatterns(lesson.getSentencePatterns());
+        resultDto.setPrevip(obtainPrevip(lesson.getSerialNumber()));
+        resultDto.setUa(obtainUa(onlineClass.getId()));
+        resultDto.setCourseType(OnlineClassEnum.CourseName.obtainCourseName(lesson.getSerialNumber()));
+        if(CourseName.PRACTICUM1.show().equals(resultDto.getCourseType()) || CourseName.PRACTICUM2.show().equals(resultDto.getCourseType())){
+        	TeacherApplication application = teacherApplicationDao.findApplicationByOnlineClassId(bean.getOnlineClassId(), teacher.getId());
+        	if(application != null){
+        		resultDto.setTeacherApplicationId(application.getId());
 
-                    // mock class 2.0
+                // mock class 2.0
+                resultDto.setVersion(MOCK_CLASS_V2);
+                TeacherPeComments teacherPeComments = teacherPeCommentsDao.getTeacherPeComments(resultDto.getTeacherApplicationId().intValue());
+                if(null != teacherPeComments && 0 == teacherPeComments.getTemplateId()){
+                    // mock class 1.0
+                    resultDto.setVersion(MOCK_CLASS_V1);
+                } else if(null == teacherPeComments && StringUtils.isNotBlank(application.getResult())){
+                    // mock class 1.0
+                    resultDto.setVersion(MOCK_CLASS_V1);
+                }
+                // 灰度发布 FIXME
+                if(0 != teacherApplicationDao.countByInterviewer(application.getStduentId())){
                     resultDto.setVersion(MOCK_CLASS_V2);
-                    TeacherPeComments teacherPeComments = teacherPeCommentsDao.getTeacherPeComments(resultDto.getTeacherApplicationId().intValue());
+                    logger.info("Current mock class gray release for application: {}", application.getId());
+
                     if(null != teacherPeComments && 0 == teacherPeComments.getTemplateId()){
                         // mock class 1.0
                         resultDto.setVersion(MOCK_CLASS_V1);
+                        logger.info("Exist pe comments for application: {}, set version=1", application.getId());
                     } else if(null == teacherPeComments && StringUtils.isNotBlank(application.getResult())){
                         // mock class 1.0
                         resultDto.setVersion(MOCK_CLASS_V1);
+                        logger.info("Exist pe comments for application: {}, set version=1", application.getId());
                     }
-                    // 灰度发布 FIXME
-                    if(0 != teacherApplicationDao.countByInterviewer(application.getStduentId())){
-                        resultDto.setVersion(MOCK_CLASS_V2);
-                        logger.info("Current mock class gray release for application: {}", application.getId());
-
-                        if(null != teacherPeComments && 0 == teacherPeComments.getTemplateId()){
-                            // mock class 1.0
-                            resultDto.setVersion(MOCK_CLASS_V1);
-                            logger.info("Exist pe comments for application: {}, set version=1", application.getId());
-                        } else if(null == teacherPeComments && StringUtils.isNotBlank(application.getResult())){
-                            // mock class 1.0
-                            resultDto.setVersion(MOCK_CLASS_V1);
-                            logger.info("Exist pe comments for application: {}, set version=1", application.getId());
-                        }
-                    }else{
-                        resultDto.setVersion(MOCK_CLASS_V1);
-                    }
+                }else{
+                    resultDto.setVersion(MOCK_CLASS_V1);
                 }
             }
-        }else{
-			logger.warn("lesson is null,onlineClassId:{},studentId:{}",bean.getOnlineClassId(), bean.getStudentId());
-		}
+        }
 		
 		//Other Info
 		int stars = 0;
@@ -276,7 +313,7 @@ public class ClassroomService {
             }
         }
 
-        Map<String,Object> urlResult = OnlineClassProxy.generateRoomEnterUrl(String.valueOf(teacher.getId()), user.getName(),
+        Map<String,Object> urlResult = onlineClassProxyService.generateRoomEnterUrl(String.valueOf(teacher.getId()), user.getName(),
                 onlineClass.getClassroom(), role, onlineClass.getSupplierCode(),onlineClass.getId(),OnlineClassProxy.ClassType.MAJOR);
         
         if(ReturnMapUtils.isSuccess(urlResult)){

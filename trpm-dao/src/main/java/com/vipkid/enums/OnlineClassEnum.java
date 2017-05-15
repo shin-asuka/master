@@ -132,4 +132,11 @@ public class OnlineClassEnum {
         }
 
     }
+    
+    public enum FinishedType {
+    	
+    	TEACHER_NO_SHOW
+    	
+    }
+
 }

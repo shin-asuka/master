@@ -24,6 +24,7 @@ import com.vipkid.enums.TeacherApplicationEnum.Result;
 import com.vipkid.enums.TeacherApplicationEnum.Status;
 import com.vipkid.enums.TeacherEnum.LifeCycle;
 import com.vipkid.enums.TeacherQuizEnum.Version;
+import com.vipkid.http.service.OnlineClassProxyService;
 import com.vipkid.recruitment.common.service.RecruitmentService;
 import com.vipkid.recruitment.dao.InterviewDao;
 import com.vipkid.recruitment.dao.TeacherApplicationDao;
@@ -93,6 +94,9 @@ public class InterviewService {
 
     @Autowired
     private SendMailAtDayTimeService sendMailAtDayTimeService;
+    
+	@Autowired
+	private OnlineClassProxyService onlineClassProxyService;
 
     private static Logger logger = LoggerFactory.getLogger(InterviewService.class);
 
@@ -169,7 +173,7 @@ public class InterviewService {
         	return result;
         }
 
-        Map<String,Object> urlResult = OnlineClassProxy.generateRoomEnterUrl(teacher.getId()+"", user.getName(),onlineClass.getClassroom(), OnlineClassProxy.RoomRole.TEACHER, onlineClass.getSupplierCode(),onlineClassId,OnlineClassProxy.ClassType.TEACHER_RECRUITMENT);
+        Map<String,Object> urlResult = onlineClassProxyService.generateRoomEnterUrl(teacher.getId()+"", user.getName(),onlineClass.getClassroom(), OnlineClassProxy.RoomRole.TEACHER, onlineClass.getSupplierCode(),onlineClassId,OnlineClassProxy.ClassType.TEACHER_RECRUITMENT);
 
         result.putAll(urlResult);
         
