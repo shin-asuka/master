@@ -36,7 +36,7 @@ public class QueryContractByTeacherIdOutputDto {
             String contract) {
         startTime = DateUtils.formatDate(contractStartDate,DateUtils.MMMM_DD_YYYY,Locale.ENGLISH);
         endTime = DateUtils.formatDate(contractEndDate,DateUtils.MMMM_DD_YYYY,Locale.ENGLISH);
-        if(StringUtils.isNotBlank(contract) && !contract.contains(ApplicationConstant.HTTP)){
+        if(StringUtils.isNotBlank(contract) && !contract.startsWith(ApplicationConstant.HTTP)){
             paperContractUrl =ApplicationConstant.ContractConstants.PDF_URL+ contract;//不包含http://resource.vipkid.com.cn
         }else {
             paperContractUrl = contract;//不包含http://resource.vipkid.com.cn

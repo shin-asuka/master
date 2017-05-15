@@ -54,7 +54,7 @@ public class BackgroundCommonService {
     private static Logger logger = LoggerFactory.getLogger(BackgroundCommonService.class);
     private boolean  backgroundSwitch = PropertyConfigurer.booleanValue("background.sterling.switch");
     private int intervalMonth = 2;
-
+    private int contractIntervalMonth = 1;
     public BackgroundStatusDto getUsaBackgroundStatus(Teacher teacher){
         BackgroundStatusDto backgroundStatusDto = new BackgroundStatusDto();
 
@@ -68,8 +68,8 @@ public class BackgroundCommonService {
             return backgroundStatusDto;
         }
         Date now =new Date();
-        boolean hasAlert = DateUtils.addMonth(contractEndDate, -1).before(now);
-        if(hasAlert || DateUtils.addMonth(contractEndDate,1).after(now)){ //合同到期的时候进行续约提醒
+        boolean hasAlert = DateUtils.addMonth(contractEndDate,contractIntervalMonth).after(now) && contractEndDate.before(now);
+        if(DateUtils.addMonth(contractEndDate, -contractIntervalMonth).before(now)  && hasAlert){ //合同到期的时候进行续约提醒
             backgroundStatusDto.setContractEndWithInOneMonth(personalInfoService.needNewContract(teacher));
         }
         boolean needBackgroundCheck = needBackgroundCheck(teacher.getId());
@@ -235,7 +235,7 @@ public class BackgroundCommonService {
                         }
                     } else {
                         backgroundStatusDto.setPhase(BackgroundPhase.START.getVal());
-                        backgroundStatusDto.setNeedBackgroundCheck(true);
+                        backgroundStatusDto.setNeedBackgroundCheck(false);
                         backgroundStatusDto.setResult("");
                     }
                 }
@@ -264,8 +264,8 @@ public class BackgroundCommonService {
             return backgroundStatusDto;
         }
         Date now =new Date();
-        boolean hasAlert = DateUtils.addMonth(contractEndDate, -1).before(now);
-        if(hasAlert || DateUtils.addMonth(contractEndDate,1).after(now)){ //合同到期的时候进行续约提醒
+        boolean hasAlert = DateUtils.addMonth(contractEndDate,1).after(now) && contractEndDate.before(now);
+        if(DateUtils.addMonth(contractEndDate, -contractIntervalMonth).before(now)  && hasAlert){ //合同到期的时候进行续约提醒
             backgroundStatusDto.setContractEndWithInOneMonth(personalInfoService.needNewContract(teacher));
         }
 
@@ -288,10 +288,17 @@ public class BackgroundCommonService {
             CanadaBackgroundScreening canadaBackgroundScreening = canadaBackgroundScreeningDao.findByTeacherId(teacher.getId());
             //第一次进行背调
             if (null == canadaBackgroundScreening) {
-                backgroundStatusDto.setNeedBackgroundCheck(true);
+                //加拿大并没有直接调取接口，首次提交canadaBackgroundScreening中是没有记录的，要去根据老师上传文件状态判断是否需要bgCheck
+                BackgroundFileStatusDto fileStatus=getBackgroundFileStatus(teacher.getId(),"CANADA");
+                if(FileResult.FAIL.getValue().equals(fileStatus .getFileResult())
+                        || StringUtils.isBlank(fileStatus.getFileStatus())
+                        || FileStatus.SAVE.getValue().equals(fileStatus.getFileStatus())){
+                    backgroundStatusDto.setNeedBackgroundCheck(true);
+                }else{
+                    backgroundStatusDto.setNeedBackgroundCheck(false);
+                }
                 backgroundStatusDto.setPhase(BackgroundPhase.START.getVal());
                 backgroundStatusDto.setResult("");
-
                 return backgroundStatusDto;
             }
             Calendar current = Calendar.getInstance();
@@ -423,8 +430,8 @@ public class BackgroundCommonService {
     }
 
     public Calendar backgroundDateCondition(Calendar calendar){
-        calendar.add(Calendar.YEAR, -2);
-        calendar.add(Calendar.MONTH, intervalMonth);
+        calendar.add(Calendar.YEAR,-2);
+        calendar.add(Calendar.MONTH,intervalMonth);
         return calendar;
     }
 }

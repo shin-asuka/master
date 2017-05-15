@@ -41,7 +41,7 @@ public interface ApplicationConstant {
 
     public static Integer UA_FOR_CLASS_ID = 20160420;
 
-    public static final String HTTP ="http://";
+    public static final String HTTP ="http";
 
 
     public static final class AjaxCode {
