@@ -1,25 +1,8 @@
 package com.vipkid.recruitment.common.controller;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import com.vipkid.http.utils.JacksonUtils;
-import org.apache.commons.collections.CollectionUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
-
-import com.google.api.client.util.Lists;
 import com.google.common.collect.Maps;
+import com.vipkid.enums.TeacherApplicationEnum;
+import com.vipkid.http.utils.JacksonUtils;
 import com.vipkid.recruitment.common.service.RecruitmentService;
 import com.vipkid.recruitment.utils.ReturnMapUtils;
 import com.vipkid.rest.RestfulController;
@@ -33,7 +16,20 @@ import com.vipkid.rest.web.LoginController;
 import com.vipkid.trpm.entity.Teacher;
 import com.vipkid.trpm.entity.TeacherAddress;
 import com.vipkid.trpm.entity.TeacherLocation;
-import com.vipkid.trpm.entity.TeacherRecruitPeakTime;
+import org.apache.commons.collections.CollectionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 该类,仅提供给招募端各个状态下需要调用的通用接口
@@ -145,7 +141,9 @@ public class RecruitmentController extends RestfulController{
             Teacher teacher = getTeacher(request);
             String status = String.valueOf(map.get("status"));
             List<Long> scheduledDateTimeList = (List<Long>) map.get("scheduledDateTime");
-
+            if (TeacherApplicationEnum.Status.PRACTICUM.getVal().equalsIgnoreCase(status) || "MockClass".equalsIgnoreCase(status)) {
+                status = TeacherApplicationEnum.Status.PRACTICUM.toString();
+            }
             return recruitmentService.saveTeacherRecruitPeak(teacher, status, scheduledDateTimeList);
         }catch (Exception e){
             logger.error("保存老师约面试时间异常{}",e);

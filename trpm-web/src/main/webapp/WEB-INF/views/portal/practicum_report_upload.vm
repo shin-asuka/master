@@ -29,7 +29,7 @@
 			<div id="upload" class="modal-body">
 				<form class="form-horizontal" id="uploadReportForm" action="#springUrl('/uploadPracticumReport.json')" method="post" enctype="multipart/form-data">
 					<div class="line-row"> 
-						<a href="http://vipkid.oss-cn-beijing.aliyuncs.com/teaching_resource/unitAssessment/$!{template.name}.docx" download="Template.docx" class="modalBtnCom">Download</a>
+						<a href="https://resource.vipkid.com.cn/teaching_resource/unitAssessment/$!{template.name}.docx" download="Template.docx" class="modalBtnCom">Download</a>
 			            <span>$!{template.name}.docx</span>
 			        </div>
 					#if($mark)
