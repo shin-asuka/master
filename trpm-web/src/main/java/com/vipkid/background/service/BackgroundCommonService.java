@@ -69,7 +69,7 @@ public class BackgroundCommonService {
         }
         Date now =new Date();
         boolean hasAlert = DateUtils.addMonth(contractEndDate,contractIntervalMonth).after(now) && contractEndDate.before(now);
-        if(DateUtils.addMonth(contractEndDate, -contractIntervalMonth).before(now)  || hasAlert){ //合同到期的时候进行续约提醒
+        if(DateUtils.addMonth(contractEndDate, -contractIntervalMonth).before(now)  && hasAlert){ //合同到期的时候进行续约提醒
             backgroundStatusDto.setContractEndWithInOneMonth(personalInfoService.needNewContract(teacher));
         }
         boolean needBackgroundCheck = needBackgroundCheck(teacher.getId());
@@ -265,7 +265,7 @@ public class BackgroundCommonService {
         }
         Date now =new Date();
         boolean hasAlert = DateUtils.addMonth(contractEndDate,1).after(now) && contractEndDate.before(now);
-        if(DateUtils.addMonth(contractEndDate, -1).before(now) || hasAlert){ //合同到期的时候进行续约提醒
+        if(DateUtils.addMonth(contractEndDate, -contractIntervalMonth).before(now)  && hasAlert){ //合同到期的时候进行续约提醒
             backgroundStatusDto.setContractEndWithInOneMonth(personalInfoService.needNewContract(teacher));
         }
 
@@ -430,8 +430,8 @@ public class BackgroundCommonService {
     }
 
     public Calendar backgroundDateCondition(Calendar calendar){
-        calendar.add(Calendar.YEAR, -2);
-        calendar.add(Calendar.MONTH, intervalMonth);
+        calendar.add(Calendar.YEAR,-2);
+        calendar.add(Calendar.MONTH,1);
         return calendar;
     }
 }
