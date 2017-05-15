@@ -53,7 +53,7 @@ import com.vipkid.trpm.util.AwsFileUtils;
  *
  */
 @RestController
-@RestInterface(lifeCycle = {LifeCycle.REGULAR,LifeCycle.QUIT})
+@RestInterface(lifeCycle = {LifeCycle.ALL })
 @RequestMapping("/portal/personal")
 public class PortalPersonalInfoController extends RestfulController {
 	private final Logger logger = LoggerFactory.getLogger(PortalPersonalInfoController.class);
