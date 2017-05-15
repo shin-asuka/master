@@ -59,19 +59,8 @@ public class BackgroundCommonService {
         BackgroundStatusDto backgroundStatusDto = new BackgroundStatusDto();
 
         Date  contractEndDate = teacher.getContractEndDate();
-        backgroundStatusDto.setContractEndWithInOneMonth(false);
 
-        if(contractEndDate ==null){
-            backgroundStatusDto.setNeedBackgroundCheck(false);
-            backgroundStatusDto.setPhase("");
-            backgroundStatusDto.setResult("");
-            return backgroundStatusDto;
-        }
-        Date now =new Date();
-        boolean hasAlert = DateUtils.addMonth(contractEndDate,contractIntervalMonth).after(now) && contractEndDate.before(now);
-        if(DateUtils.addMonth(contractEndDate, -contractIntervalMonth).before(now)  || hasAlert){ //合同到期的时候进行续约提醒
-            backgroundStatusDto.setContractEndWithInOneMonth(personalInfoService.needNewContract(teacher));
-        }
+        backgroundStatusDto.setContractEndWithInOneMonth(personalInfoService.needNewContract(teacher));
         boolean needBackgroundCheck = needBackgroundCheck(teacher.getId());
         //不在灰度列表中
         if (!needBackgroundCheck){
@@ -83,7 +72,7 @@ public class BackgroundCommonService {
 
 
         //合同即将到期需进行背调,提前一个月进行弹窗提示
-        boolean needCheck = DateUtils.addMonth(contractEndDate, -intervalMonth).before(now);
+        boolean needCheck = DateUtils.addMonth(contractEndDate, -intervalMonth).before(new Date());
         if (needCheck){
             BackgroundScreening backgroundScreening = backgroundScreeningDao.findByTeacherIdTopOne(teacher.getId());
 
@@ -256,18 +245,7 @@ public class BackgroundCommonService {
         BackgroundStatusDto backgroundStatusDto = new BackgroundStatusDto();
         Date  contractEndDate = teacher.getContractEndDate();
 
-        backgroundStatusDto.setContractEndWithInOneMonth(false);
-        if(contractEndDate ==null){
-            backgroundStatusDto.setNeedBackgroundCheck(false);
-            backgroundStatusDto.setPhase("");
-            backgroundStatusDto.setResult("");
-            return backgroundStatusDto;
-        }
-        Date now =new Date();
-        boolean hasAlert = DateUtils.addMonth(contractEndDate,1).after(now) && contractEndDate.before(now);
-        if(DateUtils.addMonth(contractEndDate, -1).before(now) || hasAlert){ //合同到期的时候进行续约提醒
-            backgroundStatusDto.setContractEndWithInOneMonth(personalInfoService.needNewContract(teacher));
-        }
+        backgroundStatusDto.setContractEndWithInOneMonth(personalInfoService.needNewContract(teacher));
 
         boolean needBackgroundCheck = needBackgroundCheck(teacher.getId());
         //不在灰度列表中
@@ -283,7 +261,7 @@ public class BackgroundCommonService {
 //        remindTime.add(Calendar.MONTH,-1);
 
         //合同即将到期需进行背调,提前一个月进行弹窗提示
-        boolean needCheck = DateUtils.addMonth(contractEndDate, -intervalMonth).before(now);
+        boolean needCheck = DateUtils.addMonth(contractEndDate, -intervalMonth).before(new Date());
         if (needCheck) {
             CanadaBackgroundScreening canadaBackgroundScreening = canadaBackgroundScreeningDao.findByTeacherId(teacher.getId());
             //第一次进行背调
