@@ -431,7 +431,7 @@ public class BackgroundCommonService {
 
     public Calendar backgroundDateCondition(Calendar calendar){
         calendar.add(Calendar.YEAR,-2);
-        calendar.add(Calendar.MONTH,1);
+        calendar.add(Calendar.MONTH,intervalMonth);
         return calendar;
     }
 }
