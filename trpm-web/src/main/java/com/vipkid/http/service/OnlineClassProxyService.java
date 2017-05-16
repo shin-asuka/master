@@ -31,9 +31,6 @@ public class OnlineClassProxyService extends HttpBaseService{
 	@Autowired
 	private OnlineClassService onlineClassService;
 	
-	@Autowired
-	private OnlineClassProxyService onlineClassProxyService;
-	
 	public Map<String,Object> generateRoomEnterUrl(String userId, String realName, String roomId,RoomRole userRole,String supplierCode,long onlineClassId,ClassType type) {
 		String requestUrl = new StringBuilder(super.serverAddress).append("/api/invoker/service/classroom/").append(roomId).toString();
         if (StringUtils.isBlank(roomId)) {
