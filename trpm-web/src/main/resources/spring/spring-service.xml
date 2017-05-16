@@ -41,4 +41,8 @@
     <bean id="prizeService" class="com.vipkid.http.service.PrizeService">
     	<property name="serverAddress" value="${teacher.activity.serverAddress}"/>
     </bean>
+    
+    <bean id="onlineClassProxyService" class="com.vipkid.http.service.OnlineClassProxyService">
+    	<property name="serverAddress" value="${api.classroom.server.url}" />
+    </bean>
 </beans>

@@ -4,6 +4,8 @@
 package com.vipkid.http.utils;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Map;
@@ -164,6 +166,64 @@ public class WebUtils {
         return StringUtils.join(cookieList, COOKIE_SPLIT);
     }
 
+    public static String simpleGet(String url,Map<String,Object> pramMap,Map<String, String> headsMap){
+    	StringBuilder strbuid = new StringBuilder(url);
+     	if(org.apache.commons.collections.MapUtils.isNotEmpty(pramMap)){
+     		strbuid.append("?");
+    		for (String key: pramMap.keySet()) {
+    			try {
+					strbuid.append(key).append("=").append(URLEncoder.encode(pramMap.get(key).toString(),"UTF-8")).append("&");
+				} catch (UnsupportedEncodingException e) {
+					logger.warn("【getClassroomUrl】参数异常{}", pramMap.get(key));
+					return null;
+				}
+			}
+    	}
+     	url = strbuid.toString();
+     	url = url.endsWith("&") ? url.substring(0,url.length()-1):url;
+     	if(org.apache.commons.collections.MapUtils.isNotEmpty(headsMap)){
+     		return simpleGet(url,headsMap);
+     	}else{
+     		return simpleGet(url);
+     	}
+    }
+    
+    public static String simpleGet(String url, Map<String, String> headsMap) {
+        logger.info("get data,url = "+url );
+        CloseableHttpResponse response = null;
+        try {
+            HttpGet httpGet = new HttpGet(url);
+            httpGet.setConfig(DEFAULT_REQUEST_CONFIG);
+            if(org.apache.commons.collections.MapUtils.isNotEmpty(headsMap)){ 
+            	for (String key : headsMap.keySet()) {
+            		httpGet.setHeader(key, headsMap.get(key));
+				}
+            }
+            CloseableHttpClient httpclient = HttpClients.createDefault();
+            response = httpclient.execute(httpGet);
+            logger.info("get data,response status line = "+response.getStatusLine());
+            HttpEntity entity = response.getEntity();
+            String rt = EntityUtils.toString(entity);
+            if(HttpStatus.OK.value()!=response.getStatusLine().getStatusCode()){
+                logger.error("http get error =  "+ rt);
+                throw new Exception(rt);
+            }
+            return rt;
+        } catch (Exception e) {
+            logger.error("get data error,url = "+url+" e= "+e);
+        } finally {
+            if (null != response) {
+                try {
+                    response.close();
+                } catch (IOException e) {
+                    logger.error("关闭输出流时出错，url = "+url, e);
+                }
+            }
+        }
+        return null;
+    }
+    
+    
     public static String simpleGet(String url) {
         logger.info("get data,url = "+url );
         CloseableHttpResponse response = null;
