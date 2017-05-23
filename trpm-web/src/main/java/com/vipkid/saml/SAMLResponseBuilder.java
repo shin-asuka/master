@@ -44,12 +44,12 @@ import org.opensaml.saml2.core.impl.SubjectConfirmationDataBuilder;
 import org.opensaml.xml.encryption.EncryptionConstants;
 import org.opensaml.xml.schema.XSString;
 import org.opensaml.xml.schema.impl.XSStringBuilder;
-import com.vipkid.saml.IdentityException;
-import com.vipkid.saml.SAMLSSOServiceProviderDO;
-import com.vipkid.saml.SAMLSSOConstants;
-import com.vipkid.saml.SignKeyDataHolder;
-import com.vipkid.saml.SAMLSSOUtil;
-import com.vipkid.saml.SAMLValidatorUtil;
+import org.wso2.carbon.identity.base.IdentityException;
+import org.wso2.carbon.identity.core.model.SAMLSSOServiceProviderDO;
+import org.wso2.carbon.identity.sso.saml.SAMLSSOConstants;
+import org.wso2.carbon.identity.sso.saml.builders.SignKeyDataHolder;
+import org.wso2.carbon.identity.sso.saml.util.SAMLSSOUtil;
+import org.wso2.carbon.identity.tools.saml.validator.util.SAMLValidatorUtil;
 import org.wso2.carbon.utils.multitenancy.MultitenantUtils;
 
 import java.util.Iterator;
@@ -60,11 +60,11 @@ public class SAMLResponseBuilder {
     private static Log log = LogFactory.getLog(SAMLResponseBuilder.class);
 
     /**
-     * Build SAML response using IdP configuration & user name 
+     * Build SAML response using IdP configuration & user name
      *
      * @param ssoIdPConfigs
      * @param userName
-     * @return SAML Response object 
+     * @return SAML Response object
      * @throws IdentityException
      */
     public Response buildSAMLResponse(SAMLSSOServiceProviderDO ssoIdPConfigs, String userName)
@@ -108,12 +108,12 @@ public class SAMLResponseBuilder {
     }
 
     /**
-     * Build SAML assertion 
+     * Build SAML assertion
      *
      * @param ssoIdPConfigs
      * @param notOnOrAfter
      * @param userName
-     * @return Assertion object 
+     * @return Assertion object
      * @throws IdentityException
      */
     private Assertion buildSAMLAssertion(SAMLSSOServiceProviderDO ssoIdPConfigs,
@@ -204,7 +204,7 @@ public class SAMLResponseBuilder {
     }
 
     /**
-     * Get attributes 
+     * Get attributes
      *
      * @param ssoIdPConfigs
      * @param userName
@@ -222,22 +222,22 @@ public class SAMLResponseBuilder {
     }
 
     /**
-     * Get status 
+     * Get status
      *
      * @param status
      * @param statMsg
-     * @return Status object 
+     * @return Status object
      */
     private Status buildStatus(String status, String statMsg) {
 
         Status stat = new StatusBuilder().buildObject();
 
-        // Set the status code 
+        // Set the status code
         StatusCode statCode = new StatusCodeBuilder().buildObject();
         statCode.setValue(status);
         stat.setStatusCode(statCode);
 
-        // Set the status Message 
+        // Set the status Message
         if (statMsg != null) {
             StatusMessage statMesssage = new StatusMessageBuilder().buildObject();
             statMesssage.setMessage(statMsg);
@@ -248,7 +248,7 @@ public class SAMLResponseBuilder {
     }
 
     /**
-     * Build Attribute Statement 
+     * Build Attribute Statement
      *
      * @param claims
      * @return AttributeStatement
@@ -263,8 +263,8 @@ public class SAMLResponseBuilder {
                 Attribute attrib = new AttributeBuilder().buildObject();
                 String claimUri = ite.next();
                 attrib.setName(claimUri);
-                // look 
-                // https://wiki.shibboleth.net/confluence/display/OpenSAML/OSTwoUsrManJavaAnyTypes 
+                // look
+                // https://wiki.shibboleth.net/confluence/display/OpenSAML/OSTwoUsrManJavaAnyTypes
                 XSStringBuilder stringBuilder =
                         (XSStringBuilder) Configuration.getBuilderFactory()
                                 .getBuilder(XSString.TYPE_NAME);
