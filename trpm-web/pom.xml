@@ -357,6 +357,13 @@
 			<groupId>com.vipkid.teacher.tools</groupId>
 			<artifactId>tools-dao</artifactId>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.opensaml/opensaml -->
+		<dependency>
+			<groupId>org.opensaml</groupId>
+			<artifactId>opensaml</artifactId>
+			<version>2.6.1</version>
+		</dependency>
+
 	</dependencies>
 
 	<build>
